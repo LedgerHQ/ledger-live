@@ -11,7 +11,7 @@ export function parseTokenAccountInfo(info: unknown): TokenAccountInfo {
 }
 
 export function tryParseAsTokenAccount(
-  data: ParsedAccountData
+  data: ParsedAccountData,
 ): TokenAccountInfo | undefined | Error {
   const routine = () => {
     const info = create(data.parsed, ParsedInfo);
@@ -34,7 +34,7 @@ export function parseVoteAccountInfo(info: unknown): VoteAccountInfo {
 }
 
 export function tryParseAsVoteAccount(
-  data: ParsedAccountData
+  data: ParsedAccountData,
 ): VoteAccountInfo | undefined | Error {
   const routine = () => {
     const info = create(data.parsed, ParsedInfo);

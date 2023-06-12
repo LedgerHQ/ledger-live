@@ -13,11 +13,7 @@ type Props = {
   accounts?: AccountLike[];
 };
 
-const FabAssetActionsComponent: React.FC<Props> = ({
-  currency,
-  accounts,
-  defaultAccount,
-}) => {
+const FabAssetActionsComponent: React.FC<Props> = ({ currency, accounts, defaultAccount }) => {
   const { mainActions } = useAssetActions({ currency, accounts });
 
   return (

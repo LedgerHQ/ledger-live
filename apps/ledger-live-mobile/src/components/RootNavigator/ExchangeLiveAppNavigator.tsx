@@ -14,10 +14,7 @@ import { BuyAndSellScreen } from "../../screens/PTX/BuyAndSell";
 const Stack = createStackNavigator<ExchangeLiveAppNavigatorParamList>();
 
 const ExchangeBuy = (
-  _props: StackNavigatorProps<
-    ExchangeLiveAppNavigatorParamList,
-    ScreenName.ExchangeBuy
-  >,
+  _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeBuy>,
 ) => {
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
@@ -40,10 +37,7 @@ const ExchangeBuy = (
 };
 
 const ExchangeSell = (
-  _props: StackNavigatorProps<
-    ExchangeLiveAppNavigatorParamList,
-    ScreenName.ExchangeSell
-  >,
+  _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeSell>,
 ) => {
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
@@ -66,15 +60,10 @@ const ExchangeSell = (
   );
 };
 
-export default function ExchangeLiveAppNavigator(
-  _props?: Record<string, unknown>,
-) {
+export default function ExchangeLiveAppNavigator(_props?: Record<string, unknown>) {
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator {...stackNavigationConfig}>

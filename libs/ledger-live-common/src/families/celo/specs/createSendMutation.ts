@@ -12,10 +12,7 @@ export const createSend50PercentMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Move 50% to another account",
   maxRun: 1,
   transaction: ({ account, siblings, bridge, maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo:  Move 50% | balance is too low"
-    );
+    invariant(maxSpendable.gt(minimalAmount), "Celo:  Move 50% | balance is too low");
     const sibling = pickSiblings(siblings, maxAccount);
     const recipient = sibling.freshAddress;
     const amount = maxSpendable.div(2).integerValue();
@@ -30,10 +27,7 @@ export const createSendMaxMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Send max to another account",
   maxRun: 1,
   transaction: ({ account, siblings, bridge, maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo: Send Max | Balance is too low"
-    );
+    invariant(maxSpendable.gt(minimalAmount), "Celo: Send Max | Balance is too low");
     const sibling = pickSiblings(siblings, maxAccount);
     const recipient = sibling.freshAddress;
     return {

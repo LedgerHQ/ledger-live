@@ -41,15 +41,15 @@ export class BufferWriter {
   }
 
   writeUInt8(i: number): void {
-    this.write(1, (b) => b.writeUInt8(i, 0));
+    this.write(1, b => b.writeUInt8(i, 0));
   }
 
   writeInt32(i: number): void {
-    this.write(4, (b) => b.writeInt32LE(i, 0));
+    this.write(4, b => b.writeInt32LE(i, 0));
   }
 
   writeUInt32(i: number): void {
-    this.write(4, (b) => b.writeUInt32LE(i, 0));
+    this.write(4, b => b.writeUInt32LE(i, 0));
   }
 
   writeUInt64(i: number): void {

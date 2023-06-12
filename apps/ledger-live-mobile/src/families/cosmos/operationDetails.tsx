@@ -1,10 +1,7 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -16,19 +13,11 @@ import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import Section from "../../screens/OperationDetails/Section";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
-function getURLFeesInfo(
-  op: Operation,
-  currencyId: string,
-): string | null | undefined {
-  return op.fee.gt(200000)
-    ? cryptoFactory(currencyId).stakingDocUrl
-    : undefined;
+function getURLFeesInfo(op: Operation, currencyId: string): string | null | undefined {
+  return op.fee.gt(200000) ? cryptoFactory(currencyId).stakingDocUrl : undefined;
 }
 
-function getURLWhatIsThis(
-  op: Operation,
-  currencyId: string,
-): string | null | undefined {
+function getURLWhatIsThis(op: Operation, currencyId: string): string | null | undefined {
   return op.type !== "IN" && op.type !== "OUT"
     ? cryptoFactory(currencyId).stakingDocUrl
     : undefined;
@@ -50,32 +39,22 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const currencyId = account.currency.id;
-  const { validators: cosmosValidators } =
-    useCosmosFamilyPreloadData(currencyId);
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const redirectAddressCreator = useCallback(
     address => () => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account],
   );
 
   const getValidatorName = (validatorAddress: string) => {
-    const relatedValidator = cosmosValidators.find(
-      v => v.validatorAddress === validatorAddress,
-    );
+    const relatedValidator = cosmosValidators.find(v => v.validatorAddress === validatorAddress);
     return relatedValidator ? relatedValidator.name : validatorAddress;
   };
 
   const OperationDetailsSection = (
-    <>
-      {extra.memo && (
-        <Section title={t("operationDetails.extra.memo")} value={extra.memo} />
-      )}
-    </>
+    <>{extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}</>
   );
 
   if (!extra.validators || extra.validators.length <= 0) {
@@ -88,27 +67,17 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     case "DELEGATE": {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
-      const formattedAmount = formatCurrencyUnit(
-        unit,
-        BigNumber(validator.amount),
-        {
-          disableRounding: true,
-          alwaysShowSign: false,
-          showCode: true,
-          discreet,
-          locale,
-        },
-      );
+      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+        discreet,
+        locale,
+      });
       ret = (
         <>
-          <Section
-            title={t("operationDetails.extra.delegatedTo")}
-            value={formattedValidator}
-          />
-          <Section
-            title={t("operationDetails.extra.delegatedAmount")}
-            value={formattedAmount}
-          />
+          <Section title={t("operationDetails.extra.delegatedTo")} value={formattedValidator} />
+          <Section title={t("operationDetails.extra.delegatedAmount")} value={formattedAmount} />
         </>
       );
       break;
@@ -117,17 +86,13 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     case "UNDELEGATE": {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
-      const formattedAmount = formatCurrencyUnit(
-        unit,
-        BigNumber(validator.amount),
-        {
-          disableRounding: true,
-          alwaysShowSign: false,
-          showCode: true,
-          discreet,
-          locale,
-        },
-      );
+      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+        discreet,
+        locale,
+      });
       ret = (
         <>
           <Section
@@ -137,10 +102,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
               redirectAddressCreator(validator.address);
             }}
           />
-          <Section
-            title={t("operationDetails.extra.undelegatedAmount")}
-            value={formattedAmount}
-          />
+          <Section title={t("operationDetails.extra.undelegatedAmount")} value={formattedAmount} />
         </>
       );
       break;
@@ -152,17 +114,13 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
       const formattedSourceValidator = getValidatorName(sourceValidator);
-      const formattedAmount = formatCurrencyUnit(
-        unit,
-        BigNumber(validator.amount),
-        {
-          disableRounding: true,
-          alwaysShowSign: false,
-          showCode: true,
-          discreet,
-          locale,
-        },
-      );
+      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+        discreet,
+        locale,
+      });
       ret = (
         <>
           <Section
@@ -179,10 +137,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
               redirectAddressCreator(validator.address);
             }}
           />
-          <Section
-            title={t("operationDetails.extra.redelegatedAmount")}
-            value={formattedAmount}
-          />
+          <Section title={t("operationDetails.extra.redelegatedAmount")} value={formattedAmount} />
         </>
       );
       break;

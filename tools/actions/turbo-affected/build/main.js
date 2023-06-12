@@ -2190,11 +2190,15 @@ async function main() {
   const command = core.getInput("command");
   try {
     const turboOutput = (0, import_child_process.execSync)(
-      `npx turbo@1.7 run ${command} --filter=...[${ref}] --dry=json`,
-      { encoding: "utf-8" }
+      `npx turbo@^1.10.1 run ${command} --filter=...[${ref}] --dry=json`,
+      {
+        encoding: "utf-8",
+        maxBuffer: 2048 * 1024
+      }
     );
     const pnpmOutput = (0, import_child_process.execSync)(`npx pnpm list -r --depth=0 --json`, {
-      encoding: "utf-8"
+      encoding: "utf-8",
+      maxBuffer: 2048 * 1024
     });
     const turboAffected = JSON.parse(turboOutput);
     if (turboAffected === null) {
@@ -2215,21 +2219,15 @@ async function main() {
         }
       });
       const affected = JSON.stringify(affectedPackages);
-      core.info(
-        `Affected packages since ${ref} (${packages.length}):
-${affected}`
-      );
+      core.info(`Affected packages since ${ref} (${packages.length}):
+${affected}`);
       core.setOutput("affected", affected);
       core.setOutput("is-package-affected", isPackageAffected);
       core.summary.addHeading("Affected Packages");
-      core.summary.addRaw(
-        `There are ${packages.length} affected packages since ${ref}`
-      );
+      core.summary.addRaw(`There are ${packages.length} affected packages since ${ref}`);
       core.summary.addTable([
         [{ data: "name", header: true }],
-        ...packages.map(
-          (p) => p === pkg ? [`<strong>${p}</strong>`] : [p]
-        )
+        ...packages.map((p) => p === pkg ? [`<strong>${p}</strong>`] : [p])
       ]);
     } else {
       core.info(`No packages affected since ${ref}`);

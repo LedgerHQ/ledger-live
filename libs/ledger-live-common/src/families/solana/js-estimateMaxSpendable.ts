@@ -15,7 +15,7 @@ const estimateMaxSpendableWithAPI = async (
     parentAccount,
     transaction,
   }: Parameters<AccountBridge<Transaction>["estimateMaxSpendable"]>[0],
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -26,22 +26,15 @@ const estimateMaxSpendableWithAPI = async (
 
       switch (txKind) {
         case "stake.createAccount": {
-          const stakeAccRentExempt =
-            await getStakeAccountMinimumBalanceForRentExemption(api);
-          return BigNumber.max(
-            account.spendableBalance.minus(txFee).minus(stakeAccRentExempt),
-            0
-          );
+          const stakeAccRentExempt = await getStakeAccountMinimumBalanceForRentExemption(api);
+          return BigNumber.max(account.spendableBalance.minus(txFee).minus(stakeAccRentExempt), 0);
         }
         default: {
           const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
             api,
-            account.freshAddress
+            account.freshAddress,
           );
-          return BigNumber.max(
-            account.spendableBalance.minus(txFee).minus(rentExemptMin),
-            0
-          );
+          return BigNumber.max(account.spendableBalance.minus(txFee).minus(rentExemptMin), 0);
         }
       }
     }

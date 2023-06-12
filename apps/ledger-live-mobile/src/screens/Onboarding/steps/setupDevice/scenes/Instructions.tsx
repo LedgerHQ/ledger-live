@@ -27,10 +27,7 @@ const items = [
   },
 ];
 
-type CurrentRouteType = RouteProp<
-  { params: { deviceModelId: "nanoS" | "nanoX" } },
-  "params"
->;
+type CurrentRouteType = RouteProp<{ params: { deviceModelId: "nanoS" | "nanoX" } }, "params">;
 
 const InstructionScene = () => {
   const { t } = useTranslation();

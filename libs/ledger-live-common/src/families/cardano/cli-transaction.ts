@@ -18,10 +18,7 @@ const options = [
   },
 ];
 
-function inferAccounts(
-  account: Account,
-  opts: Record<string, any>
-): Account[] | TokenAccount[] {
+function inferAccounts(account: Account, opts: Record<string, any>): Account[] | TokenAccount[] {
   invariant(account.currency.family === "cardano", "cardano family");
 
   if (!opts.token) {
@@ -29,10 +26,10 @@ function inferAccounts(
     return accounts;
   }
 
-  return opts.token.map((token) => {
+  return opts.token.map(token => {
     const subAccounts = account.subAccounts || [];
 
-    const subAccount = subAccounts.find((a) => {
+    const subAccount = subAccounts.find(a => {
       const currency = getAccountCurrency(a);
       return token.toLowerCase() === currency.id.toLowerCase();
     });
@@ -42,7 +39,7 @@ function inferAccounts(
         "token account '" +
           token +
           "' not found. Available: " +
-          subAccounts.map((t) => t.id).join("\n")
+          subAccounts.map(t => t.id).join("\n"),
       );
     }
 
@@ -52,17 +49,14 @@ function inferAccounts(
 
 function inferTransactions(
   transactions: Array<{ account: AccountLike; transaction: Transaction }>,
-  opts: Record<string, any>
+  opts: Record<string, any>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     if (transaction.family !== "cardano") {
       throw new Error("transaction is not of type cardano");
     }
 
-    if (
-      account.type === "Account" &&
-      !(account as CardanoAccount).cardanoResources
-    ) {
+    if (account.type === "Account" && !(account as CardanoAccount).cardanoResources) {
       throw new Error("unactivated account");
     }
 

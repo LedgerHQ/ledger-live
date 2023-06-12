@@ -52,20 +52,12 @@ const QuitManagerModal = ({
 }: Props) => {
   const actionRunning = useMemo(
     () =>
-      installQueue.length > 0
-        ? uninstallQueue.length > 0
-          ? "update"
-          : "install"
-        : "uninstall",
+      installQueue.length > 0 ? (uninstallQueue.length > 0 ? "update" : "install") : "uninstall",
     [uninstallQueue.length, installQueue.length],
   );
 
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={!!isOpened}
-      onClose={onClose}
-      noCloseButton
-    >
+    <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose} noCloseButton>
       <Flex alignItems="center">
         <IconContainer borderColor="neutral.c40">
           <Icons.QuitMedium size={24} color="neutral.c100" />
@@ -74,15 +66,8 @@ const QuitManagerModal = ({
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
             <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.title`} />
           </ModalText>
-          <ModalText
-            marginTop="16px"
-            color="neutral.c70"
-            fontWeight="medium"
-            variant="body"
-          >
-            <Trans
-              i18nKey={`errors.ManagerQuitPage.${actionRunning}.description`}
-            />
+          <ModalText marginTop="16px" color="neutral.c70" fontWeight="medium" variant="body">
+            <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.description`} />
           </ModalText>
         </TextContainer>
         <ButtonsContainer>

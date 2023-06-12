@@ -25,7 +25,7 @@ const USDC_ASSET_ID = `${USDC_CODE}:${USDC_ISSUER}`;
 const MIN_ASSET_BALANCE = parseCurrencyUnit(currency.units[0], "0.01");
 
 const findAssetUSDC = <T extends { id: string }>(subAccounts?: T[]) =>
-  (subAccounts || []).find((s) => s.id.endsWith(USDC_ASSET_ID));
+  (subAccounts || []).find(s => s.id.endsWith(USDC_ASSET_ID));
 
 const stellar: AppSpec<Transaction> = {
   name: "Stellar",
@@ -52,7 +52,7 @@ const stellar: AppSpec<Transaction> = {
         if (!sibling.used && amount.lt(reserve)) {
           invariant(
             maxSpendable.gt(reserve.plus(minAmountCutoff)),
-            "not enough XLM funds to send to new account"
+            "not enough XLM funds to send to new account",
           );
           amount = reserve;
         }
@@ -86,15 +86,15 @@ const stellar: AppSpec<Transaction> = {
         // submitted. Using higher max fee to make sure tx doesn't time out.
         botTest("account balance decreased with operation", () =>
           expect(account.balance.toNumber()).toBeLessThanOrEqual(
-            accountBeforeTransaction.balance.minus(operation.value).toNumber()
-          )
+            accountBeforeTransaction.balance.minus(operation.value).toNumber(),
+          ),
         );
 
         if (transaction.memoValue) {
           botTest("operation memo", () =>
             expect(operation.extra).toMatchObject({
               memo: transaction.memoValue,
-            })
+            }),
           );
         }
 
@@ -109,9 +109,7 @@ const stellar: AppSpec<Transaction> = {
           }
         };
 
-        botTest("transaction mode", () =>
-          expect(transaction.mode).toMatch(getType())
-        );
+        botTest("transaction mode", () => expect(transaction.mode).toMatch(getType()));
       },
     },
     {
@@ -153,15 +151,15 @@ const stellar: AppSpec<Transaction> = {
         // submitted. Using higher max fee to make sure tx doesn't time out.
         botTest("balance decreased with operation", () =>
           expect(account.balance.toNumber()).toBeLessThanOrEqual(
-            accountBeforeTransaction.balance.minus(operation.value).toNumber()
-          )
+            accountBeforeTransaction.balance.minus(operation.value).toNumber(),
+          ),
         );
 
         if (transaction.memoValue) {
           botTest("operation memo", () =>
             expect(operation.extra).toMatchObject({
               memo: transaction.memoValue,
-            })
+            }),
           );
         }
 
@@ -176,9 +174,7 @@ const stellar: AppSpec<Transaction> = {
           }
         };
 
-        botTest("transaction mode", () =>
-          expect(transaction.mode).toMatch(getType())
-        );
+        botTest("transaction mode", () => expect(transaction.mode).toMatch(getType()));
       },
     },
     {
@@ -188,10 +184,10 @@ const stellar: AppSpec<Transaction> = {
         invariant(maxSpendable.gt(reserve), "XLM balance is too low 1");
         invariant(
           account.subAccounts && !findAssetUSDC(account.subAccounts),
-          "already have subaccounts"
+          "already have subaccounts",
         );
         const assetUSDC = findAssetUSDC<TokenCurrency>(
-          listTokensForCryptoCurrency(account.currency)
+          listTokensForCryptoCurrency(account.currency),
         );
         invariant(assetUSDC, "USDC asset not found");
 
@@ -217,9 +213,7 @@ const stellar: AppSpec<Transaction> = {
       },
       test: ({ account }) => {
         const assetId = `${USDC_CODE}:${USDC_ISSUER}`;
-        const hasAsset = account.subAccounts?.find((a) =>
-          a.id.endsWith(assetId)
-        );
+        const hasAsset = account.subAccounts?.find(a => a.id.endsWith(assetId));
         botTest("has asset", () => expect(hasAsset).toBeTruthy());
       },
     },
@@ -232,14 +226,9 @@ const stellar: AppSpec<Transaction> = {
         const usdcSubAccount = findAssetUSDC<SubAccount>(account?.subAccounts);
 
         invariant(usdcSubAccount, "USDC asset not found");
-        invariant(
-          usdcSubAccount?.balance.gt(MIN_ASSET_BALANCE),
-          "USDC balance is too low"
-        );
+        invariant(usdcSubAccount?.balance.gt(MIN_ASSET_BALANCE), "USDC balance is too low");
 
-        const siblingWithAssetUSDC = siblings.find((s) =>
-          findAssetUSDC(s.subAccounts)
-        );
+        const siblingWithAssetUSDC = siblings.find(s => findAssetUSDC(s.subAccounts));
         invariant(siblingWithAssetUSDC, "No siblings with USDC asset");
 
         if (!usdcSubAccount || !siblingWithAssetUSDC) {
@@ -248,9 +237,7 @@ const stellar: AppSpec<Transaction> = {
 
         const transaction = bridge.createTransaction(account);
         const recipient = siblingWithAssetUSDC.freshAddress;
-        const amount = usdcSubAccount.balance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        const amount = usdcSubAccount.balance.div(1.9 + 0.2 * Math.random()).integerValue();
 
         const updates: Array<Partial<Transaction>> = [
           {
@@ -279,29 +266,21 @@ const stellar: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({
-        account,
-        accountBeforeTransaction,
-        operation,
-        transaction,
-        status,
-      }) => {
+      test: ({ account, accountBeforeTransaction, operation, transaction, status }) => {
         const asset = findAssetUSDC<SubAccount>(account?.subAccounts);
-        const assetBeforeTx = findAssetUSDC<SubAccount>(
-          accountBeforeTransaction?.subAccounts
-        );
+        const assetBeforeTx = findAssetUSDC<SubAccount>(accountBeforeTransaction?.subAccounts);
 
         botTest("asset balance decreased with operation", () =>
           expect(asset?.balance.toString()).toBe(
-            assetBeforeTx?.balance.minus(status.amount).toString()
-          )
+            assetBeforeTx?.balance.minus(status.amount).toString(),
+          ),
         );
 
         if (transaction.memoValue) {
           botTest("operation memo", () =>
             expect(operation.extra).toMatchObject({
               memo: transaction.memoValue,
-            })
+            }),
           );
         }
       },

@@ -49,9 +49,10 @@ export default function DashboardPage() {
   const totalAccounts = accounts.length;
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const totalCurrencies = useMemo(() => uniq(accounts.map(a => a.currency.id)).length, [accounts]);
-  const totalOperations = useMemo(() => accounts.reduce((sum, a) => sum + a.operations.length, 0), [
-    accounts,
-  ]);
+  const totalOperations = useMemo(
+    () => accounts.reduce((sum, a) => sum + a.operations.length, 0),
+    [accounts],
+  );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
   const showCarousel = hasInstalledApps && totalAccounts > 0;

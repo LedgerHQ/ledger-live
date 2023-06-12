@@ -27,9 +27,7 @@ const AssetGraph = ({
   const assetPortfolio = usePortfolioForAccounts(accounts, {
     flattenSourceAccounts: false,
   });
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
+  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
   return (
     <AssetCentricGraphCard
       assetPortfolio={assetPortfolio}

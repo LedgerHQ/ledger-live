@@ -7,12 +7,7 @@ type Props = {
   warningColor?: string;
   backgroundColor?: string;
 };
-const FullNodeWarning = ({
-  size = 16,
-  color,
-  warningColor = "white",
-  backgroundColor,
-}: Props) => (
+const FullNodeWarning = ({ size = 16, color, warningColor = "white", backgroundColor }: Props) => (
   <Svg width={size} height={size} fill="none">
     <Mask
       id="a"

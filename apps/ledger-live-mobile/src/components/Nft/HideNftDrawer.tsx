@@ -19,13 +19,7 @@ type Props = {
   isOpened: boolean;
   onClose: () => void;
 };
-const HideNftDrawer = ({
-  nftId,
-  nftContract,
-  collection,
-  isOpened,
-  onClose,
-}: Props) => {
+const HideNftDrawer = ({ nftId, nftContract, collection, isOpened, onClose }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -71,29 +65,13 @@ const HideNftDrawer = ({
         collectionName: collection,
       })}
     >
-      <TrackScreen
-        category="Hide NFT Confirmation"
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category="Hide NFT Confirmation" type="drawer" refreshSource={false} />
 
-      <Button
-        type="main"
-        size="large"
-        alignSelf="stretch"
-        onPress={onClickContinue}
-        mt={4}
-        mb={2}
-      >
+      <Button type="main" size="large" alignSelf="stretch" onPress={onClickContinue} mt={4} mb={2}>
         {t("wallet.nftGallery.hideNftModal.cta")}
       </Button>
 
-      <Button
-        type="default"
-        size="large"
-        alignSelf="stretch"
-        onPress={onPressCancel}
-      >
+      <Button type="default" size="large" alignSelf="stretch" onPress={onPressCancel}>
         {t("common.cancel")}
       </Button>
     </QueuedDrawer>

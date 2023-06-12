@@ -17,12 +17,10 @@ type UseAppsRunnerResult = [State, (arg0: Action) => void];
 export const useAppsRunner = (
   listResult: ListAppsResult,
   exec: Exec,
-  appsToRestore?: string[]
+  appsToRestore?: string[],
 ): UseAppsRunnerResult => {
   // $FlowFixMe for ledger-live-mobile older react/flow version
-  const [state, dispatch] = useReducer(reducer, null, () =>
-    initState(listResult, appsToRestore)
-  );
+  const [state, dispatch] = useReducer(reducer, null, () => initState(listResult, appsToRestore));
   const nextAppOp = useMemo(() => getNextAppOp(state), [state]);
   const appOp = state.currentAppOp || nextAppOp;
 
@@ -35,7 +33,7 @@ export const useAppsRunner = (
 
   useEffect(() => {
     if (appOp) {
-      const sub = runAppOp(state, appOp, exec).subscribe((event) => {
+      const sub = runAppOp(state, appOp, exec).subscribe(event => {
         dispatch({
           type: "onRunnerEvent",
           event,
@@ -50,10 +48,7 @@ export const useAppsRunner = (
   return [state, dispatch];
 };
 
-export function useNotEnoughMemoryToInstall(
-  state: State,
-  name: string
-): boolean {
+export function useNotEnoughMemoryToInstall(state: State, name: string): boolean {
   return useMemo(
     () =>
       isOutOfMemoryState(
@@ -61,10 +56,10 @@ export function useNotEnoughMemoryToInstall(
           reducer(state, {
             type: "install",
             name,
-          })
-        )
+          }),
+        ),
       ),
-    [name, state]
+    [name, state],
   );
 }
 
@@ -80,21 +75,15 @@ type AppsSectionsOpts = {
   sort: SortOptions;
 };
 
-export function useAppsSections(
-  state: State,
-  opts: AppsSectionsOpts
-): AppsSections {
+export function useAppsSections(state: State, opts: AppsSectionsOpts): AppsSections {
   const { updateAllQueue, appByName, installed, installQueue, apps } = state;
   const appsUpdating = useMemo(
-    () => updateAllQueue.map((name) => appByName[name]).filter(Boolean),
-    [appByName, updateAllQueue]
+    () => updateAllQueue.map(name => appByName[name]).filter(Boolean),
+    [appByName, updateAllQueue],
   );
   const updatableAppList = useMemo(
-    () =>
-      apps.filter(({ name }) =>
-        installed.some((i) => i.name === name && !i.updated)
-      ),
-    [apps, installed]
+    () => apps.filter(({ name }) => installed.some(i => i.name === name && !i.updated)),
+    [apps, installed],
   );
   const update = appsUpdating.length > 0 ? appsUpdating : updatableAppList;
   const filterParam = useMemo(
@@ -103,7 +92,7 @@ export function useAppsSections(
       installedApps: installed,
       type: [opts.appFilter],
     }),
-    [installed, opts.appFilter, opts.query]
+    [installed, opts.appFilter, opts.query],
   );
 
   const catalog = useSortedFilteredApps(apps, filterParam, opts.sort);
@@ -118,7 +107,7 @@ export function useAppsSections(
     {
       type: "default",
       order: "asc",
-    }
+    },
   );
 
   const device = installedAppList.sort(({ name: _name }, { name }) => {
@@ -142,11 +131,7 @@ export function useAppInstallProgress(state: State, name: string): number {
   const { currentProgressSubject, currentAppOp } = state;
   const [progress, setProgress] = useState(0);
   useEffect(() => {
-    if (
-      !currentAppOp ||
-      !currentProgressSubject ||
-      currentAppOp.name !== name
-    ) {
+    if (!currentAppOp || !currentProgressSubject || currentAppOp.name !== name) {
       setProgress(0);
       return;
     }
@@ -166,7 +151,7 @@ export function useAppInstallProgress(state: State, name: string): number {
 // this should returns all params the modal also need (so we don't do things twice)
 export function useAppInstallNeedsDeps(
   state: State,
-  app: App
+  app: App,
 ):
   | {
       app: App;
@@ -177,12 +162,12 @@ export function useAppInstallNeedsDeps(
   const { appByName, installed: installedList, installQueue } = state;
   const res = useMemo(() => {
     const dependencies = (app.dependencies || [])
-      .map((name) => appByName[name])
+      .map(name => appByName[name])
       .filter(
-        (dep) =>
+        dep =>
           dep &&
-          !installedList.some((app) => app.name === dep.name) &&
-          !installQueue.includes(dep.name)
+          !installedList.some(app => app.name === dep.name) &&
+          !installQueue.includes(dep.name),
       );
 
     if (dependencies.length) {
@@ -201,7 +186,7 @@ export function useAppInstallNeedsDeps(
 // this should returns all params the modal also need (so we don't do things twice)
 export function useAppUninstallNeedsDeps(
   state: State,
-  app: App
+  app: App,
 ):
   | {
       dependents: App[];
@@ -212,9 +197,7 @@ export function useAppUninstallNeedsDeps(
   const { apps, installed } = state;
   const res = useMemo(() => {
     const dependents = apps.filter(
-      (a) =>
-        installed.some((i) => i.name === a.name) &&
-        a.dependencies.includes(app.name)
+      a => installed.some(i => i.name === a.name) && a.dependencies.includes(app.name),
     );
 
     if (dependents.length) {

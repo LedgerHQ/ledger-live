@@ -19,18 +19,18 @@ export default {
   job: (
     opts: ScanCommonOpts & {
       format: string;
-    }
+    },
   ) => {
     if (!opts.currency) throw new Error("-c currency is missing");
     const apdus: string[] = [];
-    listen((log) => {
+    listen(log => {
       if (log.type === "apdu" && log.message) {
         apdus.push(log.message);
       }
     });
     return scan(opts).pipe(
       reduce<Account, Account[]>((all, a) => all.concat(a), []),
-      map<Account[], string>((accounts) => {
+      map<Account[], string>(accounts => {
         if (accounts.length === 0) throw new Error("no accounts!");
         const { currency } = accounts[0];
         return `
@@ -43,14 +43,14 @@ const dataset: CurrenciesData<Transaction> = {
   scanAccounts: [
     {
       name: "${currency.id} seed 1",
-      apdus: \`\n${apdus.map((a) => "      " + a).join("\n")}\n      \`,
+      apdus: \`\n${apdus.map(a => "      " + a).join("\n")}\n      \`,
     },
   ],
 };
 
 testBridge(dataset);
 `;
-      })
+      }),
     );
   },
 };

@@ -65,7 +65,7 @@ export type OperationDetailsExtraProps<A> = {
 export type LLDCoinFamily<
   A extends Account,
   T extends TransactionCommon,
-  TS extends TransactionStatus
+  TS extends TransactionStatus,
 > = {
   operationDetails?: {
     /**
@@ -279,7 +279,7 @@ export type LLDCoinFamily<
 export type FieldComponentProps<
   A extends Account,
   T extends TransactionCommon,
-  TS extends TransactionStatus
+  TS extends TransactionStatus,
 > = {
   account: A | SubAccount;
   parentAccount: A | undefined | null;

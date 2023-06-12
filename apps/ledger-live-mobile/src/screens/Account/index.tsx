@@ -1,9 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -55,12 +52,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
-  return (
-    <AccountScreenInner
-      account={account}
-      parentAccount={parentAccount || undefined}
-    />
-  );
+  return <AccountScreenInner account={account} parentAccount={parentAccount || undefined} />;
 }
 
 const AccountScreenInner = ({
@@ -72,10 +64,8 @@ const AccountScreenInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const route =
-    useRoute<RouteProp<AccountsNavigatorParamList, ScreenName.Account>>();
-  const navigation =
-    useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
+  const route = useRoute<RouteProp<AccountsNavigatorParamList, ScreenName.Account>>();
+  const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
@@ -193,9 +183,7 @@ const AccountScreenInner = ({
             marginTop: 92,
           }}
           data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
+          renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}

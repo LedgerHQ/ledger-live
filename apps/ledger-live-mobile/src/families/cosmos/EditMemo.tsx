@@ -12,10 +12,7 @@ import TextInput from "../../components/FocusedTextInput";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.CosmosFamilyEditMemo
->;
+type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.CosmosFamilyEditMemo>;
 
 function CosmosFamilyEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -45,10 +42,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus

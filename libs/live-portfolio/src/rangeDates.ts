@@ -1,7 +1,4 @@
-import type {
-  PortfolioRangeConfig,
-  PortfolioRange,
-} from "@ledgerhq/types-live";
+import type { PortfolioRangeConfig, PortfolioRange } from "@ledgerhq/types-live";
 
 export const hourIncrement = 60 * 60 * 1000;
 export const dayIncrement = 24 * hourIncrement;
@@ -24,9 +21,7 @@ export function startOfWeek(t: Date): Date {
   return new Date(d.getTime() - d.getDay() * dayIncrement);
 }
 
-export function getPortfolioRangeConfig(
-  r: PortfolioRange
-): PortfolioRangeConfig {
+export function getPortfolioRangeConfig(r: PortfolioRange): PortfolioRangeConfig {
   return ranges[r];
 }
 export const granularities = {

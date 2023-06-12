@@ -19,10 +19,7 @@ import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/types-devices";
 
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "../../const";
 import {
@@ -32,9 +29,7 @@ import {
 } from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import FramedImage, {
-  previewConfig,
-} from "../../components/CustomImage/FramedImage";
+import StaxFramedImage, { previewConfig } from "../../components/CustomImage/StaxFramedImage";
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
@@ -51,10 +46,7 @@ import Link from "../../components/wrappedUi/Link";
 const DEFAULT_CONTRAST = 1;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImagePreviewPreEdit
-  >
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImagePreviewPreEdit>
 >;
 
 const analyticsScreenName = "Preview of the lockscreen picture";
@@ -179,19 +171,19 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   /** RESULT IMAGE HANDLING */
 
   const [previewLoading, setPreviewLoading] = useState<boolean>(true);
-  const [processorPreviewImage, setProcessorPreviewImage] =
-    useState<ProcessorPreviewResult | null>(null);
+  const [processorPreviewImage, setProcessorPreviewImage] = useState<ProcessorPreviewResult | null>(
+    null,
+  );
   const [rawResultLoading, setRawResultLoading] = useState(false);
   const imageProcessorRef = useRef<ImageProcessor>(null);
 
-  const handlePreviewResult: ImageProcessorProps["onPreviewResult"] =
-    useCallback(
-      data => {
-        setProcessorPreviewImage(data);
-        setPreviewLoading(false);
-      },
-      [setProcessorPreviewImage],
-    );
+  const handlePreviewResult: ImageProcessorProps["onPreviewResult"] = useCallback(
+    data => {
+      setProcessorPreviewImage(data);
+      setPreviewLoading(false);
+    },
+    [setProcessorPreviewImage],
+  );
 
   const handleRawResult: ImageProcessorProps["onRawResult"] = useCallback(
     (data: ProcessorRawResult) => {
@@ -238,8 +230,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     useCallback(() => {
       let dead = false;
       const listener: EventListenerCallback<
-        StackNavigationEventMap &
-          EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
+        StackNavigationEventMap & EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
         "beforeRemove"
       > = e => {
         if (forceDefaultNavigationBehaviour.current || !isPictureFromGallery) {
@@ -323,13 +314,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
       ) : (
         <Flex flex={1}>
           <Flex flex={1}>
-            <Flex
-              flex={1}
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <FramedImage
+            <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
+              <StaxFramedImage
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}

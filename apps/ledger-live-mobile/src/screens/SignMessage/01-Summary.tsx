@@ -2,10 +2,7 @@ import React, { useCallback, useState, memo, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  getAccountName,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -15,22 +12,13 @@ import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import WalletIcon from "../../icons/Wallet";
 import LText from "../../components/LText";
-import {
-  getMessageProperties,
-  NanoDisplayedInfoFor712,
-} from "../../helpers/signMessageUtils";
+import { getMessageProperties, NanoDisplayedInfoFor712 } from "../../helpers/signMessageUtils";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const MessageProperty = memo(
-  ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | string[] | null | undefined;
-  }) => {
+  ({ label, value }: { label: string; value: string | string[] | null | undefined }) => {
     const { colors } = useTheme();
 
     if (!value) return null;
@@ -89,10 +77,7 @@ MessageProperties.displayName = "MessageProperties";
 function SignSummary({
   navigation,
   route,
-}: StackNavigatorProps<
-  SignMessageNavigatorStackParamList,
-  ScreenName.SignSummary
->) {
+}: StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignSummary>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -120,9 +105,7 @@ function SignSummary({
   }>({});
 
   useEffect(() => {
-    getMessageProperties(mainAccount.currency, messageData).then(
-      setMessageProperties,
-    );
+    getMessageProperties(mainAccount.currency, messageData).then(setMessageProperties);
   }, [mainAccount.currency, messageData, setMessageProperties]);
 
   const { message, fields } = messageProperties;
@@ -181,10 +164,7 @@ function SignSummary({
           </View>
           {fields ? (
             <View>
-              <Button
-                type="color"
-                onPress={() => setShowAdvanced(!showAdvanced)}
-              >
+              <Button type="color" onPress={() => setShowAdvanced(!showAdvanced)}>
                 {showAdvanced
                   ? `- ${t("signMessage.eip712.hideFullMessage")}`
                   : `+ ${t("signMessage.eip712.showFullMessage")}`}

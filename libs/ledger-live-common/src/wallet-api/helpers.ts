@@ -10,7 +10,7 @@ import { WALLET_API_FAMILIES } from "./constants";
 import { includes } from "../helpers";
 
 export function isWalletAPISupportedCurrency(
-  currency: Currency
+  currency: Currency,
 ): currency is WalletAPISupportedCurrency {
   if (isCryptoCurrency(currency)) {
     return includes([...WALLET_API_FAMILIES, "evm"], currency.family);
@@ -23,27 +23,24 @@ export function isWalletAPISupportedCurrency(
 }
 
 export function isWalletAPICryptoCurrency(
-  currency: WalletAPICurrency
+  currency: WalletAPICurrency,
 ): currency is WalletAPICryptoCurrency {
   return currency.type === "CryptoCurrency";
 }
 
 export function isWalletAPITokenCurrency(
-  currency: WalletAPICurrency
+  currency: WalletAPICurrency,
 ): currency is WalletAPIERC20TokenCurrency {
   return currency.type === "TokenCurrency";
 }
 
 export function isWalletAPIERC20TokenCurrency(
-  currency: WalletAPICurrency
+  currency: WalletAPICurrency,
 ): currency is WalletAPIERC20TokenCurrency {
   return (currency as WalletAPIERC20TokenCurrency).standard === "ERC20";
 }
 
-export function addParamsToURL(
-  url: URL,
-  inputs?: Record<string, string>
-): void {
+export function addParamsToURL(url: URL, inputs?: Record<string, string>): void {
   if (inputs) {
     const keys = Object.keys(inputs);
 
@@ -61,9 +58,7 @@ type getHostHeadersParams = {
   theme: "light" | "dark";
 };
 
-export function getClientHeaders(
-  params: getHostHeadersParams
-): Record<string, string> {
+export function getClientHeaders(params: getHostHeadersParams): Record<string, string> {
   return {
     "x-ledger-host": params.client,
     "x-ledger-host-theme": params.theme,

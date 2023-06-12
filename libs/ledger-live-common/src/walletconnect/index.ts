@@ -72,8 +72,7 @@ export const parseCallRequest: Parser = async (account, payload) => {
             .digest("hex"),
       };
     case "personal_sign":
-      message =
-        message || Buffer.from(payload.params[0].slice(2), "hex").toString();
+      message = message || Buffer.from(payload.params[0].slice(2), "hex").toString();
       rawMessage = rawMessage || payload.params[0];
       hashes = hashes || {
         stringHash: "0x" + sha("sha256").update(message).digest("hex"),
@@ -129,15 +128,9 @@ export const parseCallRequest: Parser = async (account, payload) => {
         });
       }
 
-      if (
-        wcTransactionData.maxFeePerGas &&
-        wcTransactionData.maxPriorityFeePerGas
-      ) {
+      if (wcTransactionData.maxFeePerGas && wcTransactionData.maxPriorityFeePerGas) {
         const maxFeePerGas = new BigNumber(wcTransactionData.maxFeePerGas, 16);
-        const maxPriorityFeePerGas = new BigNumber(
-          wcTransactionData.maxPriorityFeePerGas,
-          16
-        );
+        const maxPriorityFeePerGas = new BigNumber(wcTransactionData.maxPriorityFeePerGas, 16);
         if (maxFeePerGas.isGreaterThanOrEqualTo(maxPriorityFeePerGas)) {
           transaction = bridge.updateTransaction(transaction, {
             maxFeePerGas,

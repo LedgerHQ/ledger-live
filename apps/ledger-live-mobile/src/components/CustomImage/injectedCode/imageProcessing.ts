@@ -65,15 +65,8 @@ function codeToInject() {
       const x = pxIndex % width;
       const y = (pxIndex - x) / width;
 
-      const [redIndex, greenIndex, blueIndex] = [
-        4 * pxIndex,
-        4 * pxIndex + 1,
-        4 * pxIndex + 2,
-      ];
-      const gray256 =
-        0.299 * data[redIndex] +
-        0.587 * data[greenIndex] +
-        0.114 * data[blueIndex];
+      const [redIndex, greenIndex, blueIndex] = [4 * pxIndex, 4 * pxIndex + 1, 4 * pxIndex + 2];
+      const gray256 = 0.299 * data[redIndex] + 0.587 * data[greenIndex] + 0.114 * data[blueIndex];
 
       /** gray rgb value after applying the contrast */
       pixels256[y][x] = clamp(contrastRGB(gray256, contrastAmount), 0, 255);
@@ -96,24 +89,16 @@ function codeToInject() {
         if (dither) {
           const quantError = oldpixel - newpixel;
           if (x < width - 1) {
-            pixels256[y][x + 1] = Math.floor(
-              pixels256[y][x + 1] + quantError * (7 / 16),
-            );
+            pixels256[y][x + 1] = Math.floor(pixels256[y][x + 1] + quantError * (7 / 16));
           }
           if (x > 0 && y < height - 1) {
-            pixels256[y + 1][x - 1] = Math.floor(
-              pixels256[y + 1][x - 1] + quantError * (3 / 16),
-            );
+            pixels256[y + 1][x - 1] = Math.floor(pixels256[y + 1][x - 1] + quantError * (3 / 16));
           }
           if (y < height - 1) {
-            pixels256[y + 1][x] = Math.floor(
-              pixels256[y + 1][x] + quantError * (5 / 16),
-            );
+            pixels256[y + 1][x] = Math.floor(pixels256[y + 1][x] + quantError * (5 / 16));
           }
           if (x < width - 1 && y < height - 1) {
-            pixels256[y + 1][x + 1] = Math.floor(
-              pixels256[y + 1][x + 1] + quantError * (1 / 16),
-            );
+            pixels256[y + 1][x + 1] = Math.floor(pixels256[y + 1][x + 1] + quantError * (1 / 16));
           }
         }
 
@@ -165,17 +150,10 @@ function codeToInject() {
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
     // 2. applying filter to the image data
-    const { imageDataResult: grayData, hexRawResult } = applyFilter(
-      imageData,
-      contrastAmount,
-    );
+    const { imageDataResult: grayData, hexRawResult } = applyFilter(imageData, contrastAmount);
 
     // 3. putting the result in canvas
-    context.putImageData(
-      new ImageData(grayData, image.width, image.height),
-      0,
-      0,
-    );
+    context.putImageData(new ImageData(grayData, image.width, image.height), 0, 0);
 
     const grayScaleBase64 = canvas.toDataURL();
     return {

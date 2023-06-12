@@ -10,10 +10,7 @@ import { AccountsNavigatorParamList } from "../../../components/RootNavigator/ty
 type Props = {
   currency: CryptoCurrency | TokenCurrency;
   screen: "Wallet" | "Assets";
-  navigation: StackNavigatorNavigation<
-    AccountsNavigatorParamList,
-    ScreenName.Accounts
-  >;
+  navigation: StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.Accounts>;
 };
 
 const ReadOnlyAccountRow = ({ navigation, currency, screen }: Props) => {

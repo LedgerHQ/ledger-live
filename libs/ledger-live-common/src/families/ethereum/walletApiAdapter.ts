@@ -13,11 +13,8 @@ const CAN_EDIT_FEES = true;
 
 type Transaction = EthTx | EvmTx;
 
-const areFeesProvided: AreFeesProvided<WalletAPIEthereumTransaction> = (tx) =>
-  !!(
-    (tx.gasLimit && tx.gasPrice) ||
-    (tx.gasLimit && tx.maxFeePerGas && tx.maxPriorityFeePerGas)
-  );
+const areFeesProvided: AreFeesProvided<WalletAPIEthereumTransaction> = tx =>
+  !!((tx.gasLimit && tx.gasPrice) || (tx.gasLimit && tx.maxFeePerGas && tx.maxPriorityFeePerGas));
 
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIEthereumTransaction,
@@ -44,7 +41,7 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIEthereumTransaction,
   Transaction
-> = (params) => {
+> = params => {
   return {
     canEditFees: CAN_EDIT_FEES,
     liveTx: convertToLiveTransaction(params),
@@ -54,9 +51,7 @@ const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos
 
 export default { getWalletAPITransactionSignFlowInfos };
 
-function convertToEvmLiveTransaction(
-  tx: WalletAPIEthereumTransaction
-): Partial<EvmTx> {
+function convertToEvmLiveTransaction(tx: WalletAPIEthereumTransaction): Partial<EvmTx> {
   const params = {
     family: "evm" as const,
     nonce: tx.nonce,

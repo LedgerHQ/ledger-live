@@ -22,10 +22,7 @@ const totalSteps = "3";
 function DelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -37,9 +34,7 @@ function DelegationFlow() {
         name={ScreenName.CosmosDelegationStarted}
         component={DelegationStarted}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("delegation.started.title")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
         }}
       />
       <Stack.Screen
@@ -64,27 +59,18 @@ function DelegationFlow() {
         component={SelectValidator}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("delegation.selectValidatorTitle")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
         }}
       />
 
       <Stack.Screen
         name={ScreenName.CosmosDelegationAmount}
         component={DelegationAmount}
-        options={({
-          route,
-        }: {
-          route: { params: { validator: CosmosValidatorItem } };
-        }) => ({
+        options={({ route }: { route: { params: { validator: CosmosValidatorItem } } }) => ({
           headerRight: undefined,
           headerTitle: () => (
             <StepHeader
-              title={
-                route.params.validator?.name ??
-                route.params.validator.validatorAddress
-              }
+              title={route.params.validator?.name ?? route.params.validator.validatorAddress}
               subtitle={t("cosmos.delegation.stepperHeader.amountSubTitle")}
             />
           ),

@@ -107,9 +107,11 @@ const AccountPage = ({
     },
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
+
   if (!account || !mainAccount) {
     return <Redirect to="/accounts" />;
   }
+
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
   return (

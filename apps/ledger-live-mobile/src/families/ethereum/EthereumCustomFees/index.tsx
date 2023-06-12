@@ -18,10 +18,7 @@ import {
 import { ScreenName } from "../../../const";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.EthereumCustomFees
-  >
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.EthereumCustomFees>
 >;
 
 const options = {
@@ -40,9 +37,7 @@ export default function EthereumCustomFees({ route }: Props) {
 
   const onValidateFees = useCallback(
     (transactionPatch: Partial<Transaction>) => () => {
-      setTransaction(
-        bridge.updateTransaction(route.params.transaction, transactionPatch),
-      );
+      setTransaction(bridge.updateTransaction(route.params.transaction, transactionPatch));
       navigation.goBack();
     },
     [bridge, navigation, route.params, setTransaction],

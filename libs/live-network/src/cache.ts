@@ -25,7 +25,7 @@ export const makeLRUCache = <A extends Array<any>, T>(
   lruOpts: LRU.Options<string, any> = {
     max: 100,
     ttl: 5 * 60 * 1000,
-  }
+  },
 ): CacheRes<A, T> => {
   // LRU-Cache is written in JS and do not enforce in its code the type checking.
   // Regarding its [documentation](https://github.com/isaacs/node-lru-cache/#ttl), `max` or `ttlAutopurge` must be set.
@@ -44,7 +44,7 @@ export const makeLRUCache = <A extends Array<any>, T>(
     const key = keyExtractor(...args);
     let promise = cache.get(key);
     if (promise) return promise;
-    promise = f(...args).catch((e) => {
+    promise = f(...args).catch(e => {
       cache.delete(key);
       throw e;
     });
@@ -54,7 +54,7 @@ export const makeLRUCache = <A extends Array<any>, T>(
 
   result.force = (...args: A) => {
     const key = keyExtractor(...args);
-    const promise = f(...args).catch((e) => {
+    const promise = f(...args).catch(e => {
       cache.delete(key);
       throw e;
     });

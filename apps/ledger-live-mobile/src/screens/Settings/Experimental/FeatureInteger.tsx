@@ -126,9 +126,7 @@ const FeatureInteger = ({
           ref={inputRef}
           style={[
             { color: colors.darkBlue },
-            enabled
-              ? { ...styles.input, borderColor: colors.lightFog }
-              : styles.inputHidden,
+            enabled ? { ...styles.input, borderColor: colors.lightFog } : styles.inputHidden,
           ]}
           keyboardType="numeric"
           value={enabled ? inputValue : ""}

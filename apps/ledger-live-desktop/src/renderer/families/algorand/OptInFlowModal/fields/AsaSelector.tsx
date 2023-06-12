@@ -61,10 +61,10 @@ export default function DelegationSelectorField({
   const [query, setQuery] = useState("");
   const subAccounts = account.subAccounts;
   const options = listTokensForCryptoCurrency(account.currency);
-  const value = useMemo(() => options.find(({ id }) => id === transaction.assetId), [
-    options,
-    transaction,
-  ]);
+  const value = useMemo(
+    () => options.find(({ id }) => id === transaction.assetId),
+    [options, transaction],
+  );
   return (
     <Box flow={1} mb={4}>
       <Select

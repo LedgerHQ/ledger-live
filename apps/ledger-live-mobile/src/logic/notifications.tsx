@@ -58,13 +58,10 @@ export type NotificationCategory = {
   category?: string;
 };
 
-const pushNotificationsDataOfUserAsyncStorageKey =
-  "pushNotificationsDataOfUser";
+const pushNotificationsDataOfUserAsyncStorageKey = "pushNotificationsDataOfUser";
 
 async function getPushNotificationsDataOfUserFromStorage() {
-  const dataOfUser = await AsyncStorage.getItem(
-    pushNotificationsDataOfUserAsyncStorageKey,
-  );
+  const dataOfUser = await AsyncStorage.getItem(pushNotificationsDataOfUserAsyncStorageKey);
   if (!dataOfUser) return null;
 
   return JSON.parse(dataOfUser);
@@ -87,37 +84,16 @@ const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");
   const notifications = useSelector(notificationsSelector);
 
-  const notificationsCategoriesHidden =
-    pushNotificationsFeature?.params?.notificationsCategories
-      ?.filter(
-        (notificationsCategory: NotificationCategory) =>
-          !notificationsCategory?.displayed,
-      )
-      .map(
-        (notificationsCategory: NotificationCategory) =>
-          notificationsCategory?.category || "",
-      );
-  const isPushNotificationsModalOpen = useSelector(
-    notificationsModalOpenSelector,
-  );
-  const isPushNotificationsModalLocked = useSelector(
-    notificationsModalLockedSelector,
-  );
-  const pushNotificationsModalType = useSelector(
-    notificationsModalTypeSelector,
-  );
-  const pushNotificationsOldRoute = useSelector(
-    notificationsCurrentRouteNameSelector,
-  );
-  const pushNotificationsEventTriggered = useSelector(
-    notificationsEventTriggeredSelector,
-  );
-  const pushNotificationsDataOfUser = useSelector(
-    notificationsDataOfUserSelector,
-  );
-  const accountsWithAmountCount = useSelector(
-    accountsWithPositiveBalanceCountSelector,
-  );
+  const notificationsCategoriesHidden = pushNotificationsFeature?.params?.notificationsCategories
+    ?.filter((notificationsCategory: NotificationCategory) => !notificationsCategory?.displayed)
+    .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
+  const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
+  const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
+  const pushNotificationsModalType = useSelector(notificationsModalTypeSelector);
+  const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
+  const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
+  const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
+  const accountsWithAmountCount = useSelector(accountsWithPositiveBalanceCountSelector);
 
   const dispatch = useDispatch();
 
@@ -177,12 +153,8 @@ const useNotifications = () => {
 
     // minimum accounts number criteria
     const minimumAccountsNumber: number =
-      pushNotificationsFeature?.params?.conditions
-        ?.minimum_accounts_with_funds_number;
-    if (
-      minimumAccountsNumber &&
-      accountsWithAmountCount < minimumAccountsNumber
-    ) {
+      pushNotificationsFeature?.params?.conditions?.minimum_accounts_with_funds_number;
+    if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
       return false;
     }
 
@@ -198,16 +170,12 @@ const useNotifications = () => {
 
     // duration since first app start long enough criteria
     const minimumDurationSinceAppFirstStart: Duration =
-      pushNotificationsFeature?.params?.conditions
-        ?.minimum_duration_since_app_first_start;
+      pushNotificationsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
     if (
       pushNotificationsDataOfUser.appFirstStartDate &&
       isBefore(
         Date.now(),
-        add(
-          pushNotificationsDataOfUser.appFirstStartDate,
-          minimumDurationSinceAppFirstStart,
-        ),
+        add(pushNotificationsDataOfUser.appFirstStartDate, minimumDurationSinceAppFirstStart),
       )
     ) {
       return false;
@@ -216,20 +184,16 @@ const useNotifications = () => {
     return true;
   }, [
     pushNotificationsDataOfUser,
-    pushNotificationsFeature?.params?.conditions
-      ?.minimum_accounts_with_funds_number,
+    pushNotificationsFeature?.params?.conditions?.minimum_accounts_with_funds_number,
     pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number,
-    pushNotificationsFeature?.params?.conditions
-      ?.minimum_duration_since_app_first_start,
+    pushNotificationsFeature?.params?.conditions?.minimum_duration_since_app_first_start,
     accountsWithAmountCount,
   ]);
 
   const isEventTriggered = useCallback(
     (eventTrigger: EventTrigger, newRoute?: string) =>
-      (eventTrigger.type === "on_enter" &&
-        eventTrigger.route_name === newRoute) ||
-      (eventTrigger.type === "on_leave" &&
-        eventTrigger.route_name === pushNotificationsOldRoute),
+      (eventTrigger.type === "on_enter" && eventTrigger.route_name === newRoute) ||
+      (eventTrigger.type === "on_leave" && eventTrigger.route_name === pushNotificationsOldRoute),
     [pushNotificationsOldRoute],
   );
 
@@ -242,8 +206,7 @@ const useNotifications = () => {
 
       if (isOtherModalOpened || !areConditionsMet()) return false;
 
-      for (const eventTrigger of pushNotificationsFeature?.params
-        ?.trigger_events) {
+      for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
         if (isEventTriggered(eventTrigger, newRoute)) {
           dispatch(setRatingsModalLocked(true));
           const timeout = setTimeout(() => {
@@ -298,20 +261,11 @@ const useNotifications = () => {
         numberOfAppStarts: (dataOfUser?.numberOfAppStarts ?? 0) + 1,
       });
     });
-  }, [
-    dispatch,
-    notifications,
-    updatePushNotificationsDataOfUserInStateAndStore,
-  ]);
+  }, [dispatch, notifications, updatePushNotificationsDataOfUserInStateAndStore]);
 
   const triggerMarketPushNotificationModal = useCallback(() => {
-    if (
-      pushNotificationsDataOfUser?.doNotAskAgain ||
-      isPushNotificationsModalLocked
-    )
-      return;
-    const marketCoinStarredParams =
-      pushNotificationsFeature?.params?.marketCoinStarred;
+    if (pushNotificationsDataOfUser?.doNotAskAgain || isPushNotificationsModalLocked) return;
+    const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
     if (marketCoinStarredParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
       const timeout = setTimeout(() => {
@@ -334,32 +288,29 @@ const useNotifications = () => {
     setPushNotificationsModalOpenCallback,
   ]);
 
-  const triggerJustFinishedOnboardingNewDevicePushNotificationModal =
-    useCallback(() => {
-      if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked)
-        return;
-      const justFinishedOnboardingParams =
-        pushNotificationsFeature?.params?.justFinishedOnboarding;
-      if (justFinishedOnboardingParams?.enabled) {
-        dispatch(setRatingsModalLocked(true));
-        const timeout = setTimeout(() => {
-          setPushNotificationsModalOpenCallback(true);
-        }, justFinishedOnboardingParams?.timer);
-        dispatch(
-          setNotificationsEventTriggered({
-            route_name: "Portfolio",
-            timer: justFinishedOnboardingParams?.timer,
-            timeout,
-          }),
-        );
-      }
-    }, [
-      pushNotificationsFeature?.enabled,
-      isPushNotificationsModalLocked,
-      dispatch,
-      pushNotificationsFeature?.params?.justFinishedOnboarding,
-      setPushNotificationsModalOpenCallback,
-    ]);
+  const triggerJustFinishedOnboardingNewDevicePushNotificationModal = useCallback(() => {
+    if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
+    const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
+    if (justFinishedOnboardingParams?.enabled) {
+      dispatch(setRatingsModalLocked(true));
+      const timeout = setTimeout(() => {
+        setPushNotificationsModalOpenCallback(true);
+      }, justFinishedOnboardingParams?.timer);
+      dispatch(
+        setNotificationsEventTriggered({
+          route_name: "Portfolio",
+          timer: justFinishedOnboardingParams?.timer,
+          timeout,
+        }),
+      );
+    }
+  }, [
+    pushNotificationsFeature?.enabled,
+    isPushNotificationsModalLocked,
+    dispatch,
+    pushNotificationsFeature?.params?.justFinishedOnboarding,
+    setPushNotificationsModalOpenCallback,
+  ]);
 
   const handleSetDateOfNextAllowedRequest = useCallback(
     (delay, additionalParams?: Partial<DataOfUser>) => {
@@ -372,10 +323,7 @@ const useNotifications = () => {
         });
       }
     },
-    [
-      pushNotificationsDataOfUser,
-      updatePushNotificationsDataOfUserInStateAndStore,
-    ],
+    [pushNotificationsDataOfUser, updatePushNotificationsDataOfUserInStateAndStore],
   );
 
   const modalAllowNotifications = useCallback(() => {
@@ -386,21 +334,16 @@ const useNotifications = () => {
     });
     setPushNotificationsModalOpenCallback(false);
     handlePushNotificationsPermission();
-    if (
-      pushNotificationsFeature?.params?.conditions
-        ?.default_delay_between_two_prompts
-    ) {
+    if (pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts) {
       handleSetDateOfNextAllowedRequest(
-        pushNotificationsFeature?.params?.conditions
-          ?.default_delay_between_two_prompts,
+        pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
       );
     }
   }, [
     pushNotificationsOldRoute,
     setPushNotificationsModalOpenCallback,
     handlePushNotificationsPermission,
-    pushNotificationsFeature?.params?.conditions
-      ?.default_delay_between_two_prompts,
+    pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
     handleSetDateOfNextAllowedRequest,
   ]);
 
@@ -419,8 +362,7 @@ const useNotifications = () => {
     } else {
       handleSetDateOfNextAllowedRequest(
         pushNotificationsFeature?.params?.conditions?.maybe_later_delay ||
-          pushNotificationsFeature?.params?.conditions
-            ?.default_delay_between_two_prompts,
+          pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
         {
           alreadyDelayedToLater: true,
         },
@@ -430,8 +372,7 @@ const useNotifications = () => {
     pushNotificationsOldRoute,
     handleSetDateOfNextAllowedRequest,
     pushNotificationsDataOfUser,
-    pushNotificationsFeature?.params?.conditions
-      ?.default_delay_between_two_prompts,
+    pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
     pushNotificationsFeature?.params?.conditions?.maybe_later_delay,
     setPushNotificationsModalOpenCallback,
     updatePushNotificationsDataOfUserInStateAndStore,

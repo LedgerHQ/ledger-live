@@ -82,8 +82,9 @@ const ExportLogsBtn = ({
     });
     const path = await remote.dialog.showSaveDialog({
       title: "Export logs",
-      defaultPath: `ledgerlive-logs-${moment().format("YYYY.MM.DD-HH.mm.ss")}-${__GIT_REVISION__ ||
-        "unversioned"}.json`,
+      defaultPath: `ledgerlive-logs-${moment().format("YYYY.MM.DD-HH.mm.ss")}-${
+        __GIT_REVISION__ || "unversioned"
+      }.json`,
       filters: [
         {
           name: "All Files",

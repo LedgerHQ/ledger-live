@@ -10,8 +10,7 @@ class Desmos extends CosmosBase {
   ledgerValidator!: string;
   constructor() {
     super();
-    this.stakingDocUrl =
-      "https://support.ledger.com/hc/en-us/articles/9604865330717?support=true";
+    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/9604865330717?support=true";
     this.unbondingPeriod = 21;
     this.prefix = "desmos";
     this.validatorPrefix = `${this.prefix}valoper`;

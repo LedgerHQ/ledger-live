@@ -2,18 +2,11 @@ import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
 import BigNumber from "bignumber.js";
-import {
-  MutationSpec,
-  TransactionDestinationTestInput,
-} from "@ledgerhq/coin-framework/bot/types";
+import { MutationSpec, TransactionDestinationTestInput } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrencyIds } from "@ledgerhq/types-live";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
-import {
-  botTest,
-  genericTestDestination,
-  pickSiblings,
-} from "@ledgerhq/coin-framework/bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import {
   getCryptoCurrencyById,
   parseCurrencyUnit,
@@ -43,9 +36,7 @@ const minBalancePerCurrencyId: Record<CryptoCurrencyIds, BigNumber> = {
  *
  * ⚠️ Some blockchains specific rules are included
  */
-const testCoinDestination = (
-  args: TransactionDestinationTestInput<EvmTransaction>
-) => {
+const testCoinDestination = (args: TransactionDestinationTestInput<EvmTransaction>) => {
   const { sendingAccount } = args;
   const { currency } = sendingAccount;
 
@@ -83,17 +74,14 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // value + gasLimit * gasPrice <-- gasPrice can be wrong here.
   const underValuedFeesCurrencies = ["optimism", "optimism_goerli"];
   const overValuedFeesCurrencies = ["arbitrum", "arbitrum_goerli"];
-  const currenciesWithFlakyBehaviour = [
-    ...underValuedFeesCurrencies,
-    ...overValuedFeesCurrencies,
-  ];
+  const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 
   // Classic test verifying exactly the balance
   if (!currenciesWithFlakyBehaviour.includes(account.currency.id)) {
     botTest("account balance moved with operation value", () =>
       expect(account.balance.toString()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toString()
-      )
+        accountBeforeTransaction.balance.minus(operation.value).toString(),
+      ),
     );
   } else {
     // fallback test verifying the balance moved between the maximum and minimum possible values of the operation
@@ -105,7 +93,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
         // has lost *at least* the operation value + fee
         if (underValuedFeesCurrencies.includes(account.currency.id)) {
           const maxBalance = accountBeforeTransaction.balance.minus(
-            operation.value.minus(operation.fee) // type OUT operations value includes fees so we remove it
+            operation.value.minus(operation.fee), // type OUT operations value includes fees so we remove it
           );
 
           expect({
@@ -121,10 +109,10 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
         // previous balance minus operation value + fee
         if (overValuedFeesCurrencies.includes(account.currency.id)) {
           const minBalance = accountBeforeTransaction.balance.minus(
-            operation.value // type OUT operations value includes fees
+            operation.value, // type OUT operations value includes fees
           );
           const maxBalance = accountBeforeTransaction.balance.minus(
-            operation.value.minus(operation.fee)
+            operation.value.minus(operation.fee),
           );
 
           expect({
@@ -135,7 +123,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
             lessThanMaxBalance: true,
           });
         }
-      }
+      },
     );
   }
 };
@@ -146,10 +134,9 @@ const transactionCheck =
     const currency = getCryptoCurrencyById(currencyId);
     invariant(
       maxSpendable.gt(
-        minBalancePerCurrencyId[currency.id] ||
-          parseCurrencyUnit(currency.units[0], "1")
+        minBalancePerCurrencyId[currency.id] || parseCurrencyUnit(currency.units[0], "1"),
       ),
-      `${currencyId} balance is too low`
+      `${currencyId} balance is too low`,
     );
   };
 
@@ -187,15 +174,13 @@ const evmBasicMutations: ({
       // workaround for buggy explorer behavior (nodes desync)
       invariant(
         Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s"
+        "operation time to be older than 60s",
       );
       const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || transaction.maxFeePerGas || 0
+        transaction.gasPrice || transaction.maxFeePerGas || 0,
       );
       botTest("operation fee is not exceeding estimated gas", () =>
-        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-          estimatedGas.toNumber()
-        )
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
       );
 
       testCoinBalance({
@@ -239,15 +224,13 @@ const evmBasicMutations: ({
       // workaround for buggy explorer behavior (nodes desync)
       invariant(
         Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s"
+        "operation time to be older than 60s",
       );
       const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || transaction.maxFeePerGas || 0
+        transaction.gasPrice || transaction.maxFeePerGas || 0,
       );
       botTest("operation fee is not exceeding estimated gas", () =>
-        expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-          estimatedGas.toNumber()
-        )
+        expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
       );
 
       testCoinBalance({
@@ -264,9 +247,7 @@ const evmBasicMutations: ({
     name: "move some ERC20",
     maxRun: 1,
     transaction: ({ account, siblings, bridge }) => {
-      const erc20Account = sample(
-        (account.subAccounts || []).filter((a) => a.balance.gt(0))
-      );
+      const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
       invariant(erc20Account, "no erc20 account");
       const sibling = pickSiblings(siblings, 3);
       const recipient = sibling.freshAddress;
@@ -282,9 +263,7 @@ const evmBasicMutations: ({
                 useAllAmount: true,
               }
             : {
-                amount: erc20Account!.balance
-                  .times(Math.random())
-                  .integerValue(),
+                amount: erc20Account!.balance.times(Math.random()).integerValue(),
               },
         ],
       };
@@ -293,28 +272,24 @@ const evmBasicMutations: ({
       // workaround for buggy explorer behavior (nodes desync)
       invariant(
         Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s"
+        "operation time to be older than 60s",
       );
       invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
       const erc20accountBefore = accountBeforeTransaction.subAccounts?.find(
-        (s) => s.id === transaction.subAccountId
+        s => s.id === transaction.subAccountId,
       );
       invariant(erc20accountBefore, "erc20 acc was here before");
       invariant(account.subAccounts, "sub accounts");
-      const erc20account = account.subAccounts!.find(
-        (s) => s.id === transaction.subAccountId
-      );
+      const erc20account = account.subAccounts!.find(s => s.id === transaction.subAccountId);
       invariant(erc20account, "erc20 acc is still here");
 
       if (transaction.useAllAmount) {
-        botTest("erc20 account is empty", () =>
-          expect(erc20account!.balance.toString()).toBe("0")
-        );
+        botTest("erc20 account is empty", () => expect(erc20account!.balance.toString()).toBe("0"));
       } else {
         botTest("account balance moved with tx amount", () =>
           expect(erc20account!.balance.toString()).toBe(
-            erc20accountBefore!.balance.minus(transaction.amount).toString()
-          )
+            erc20accountBefore!.balance.minus(transaction.amount).toString(),
+          ),
         );
       }
     },
@@ -322,7 +297,7 @@ const evmBasicMutations: ({
 ];
 
 export default Object.values(cryptocurrenciesById)
-  .filter((currency) => currency.family === "evm")
+  .filter(currency => currency.family === "evm")
   .reduce((acc, currency) => {
     // @ts-expect-error FIXME: fix typings
     acc[currency.id] = {

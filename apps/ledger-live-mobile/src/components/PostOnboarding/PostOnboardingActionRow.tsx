@@ -2,16 +2,10 @@ import React, { useCallback } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import {
-  PostOnboardingActionState,
-  PostOnboardingAction,
-} from "@ledgerhq/types-live";
+import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
 import Touchable from "../Touchable";
 import { track } from "../../analytics";
-import {
-  BaseNavigationComposite,
-  StackNavigatorNavigation,
-} from "../RootNavigator/types/helpers";
+import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
 
 export type Props = PostOnboardingAction & PostOnboardingActionState;
@@ -32,9 +26,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const { t } = useTranslation();
   const navigation =
     useNavigation<
-      BaseNavigationComposite<
-        StackNavigatorNavigation<PostOnboardingNavigatorParamList>
-      >
+      BaseNavigationComposite<StackNavigatorNavigation<PostOnboardingNavigatorParamList>>
     >();
 
   const handlePress = useCallback(() => {
@@ -46,10 +38,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   }, [navigationParams, navigation, buttonLabelForAnalyticsEvent]);
 
   return (
-    <Touchable
-      disabled={disabled}
-      onPress={completed ? undefined : handlePress}
-    >
+    <Touchable disabled={disabled} onPress={completed ? undefined : handlePress}>
       <Flex
         flexDirection="row"
         alignItems="center"
@@ -58,10 +47,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         opacity={disabled ? 0.5 : 1}
       >
         <Flex flexDirection="row" alignItems="center" flexShrink={1}>
-          <Icon
-            size={24}
-            color={completed || disabled ? "neutral.c70" : "primary.c80"}
-          />
+          <Icon size={24} color={completed || disabled ? "neutral.c70" : "primary.c80"} />
           <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
             <Flex flexDirection="row" alignItems="center">
               <Text
@@ -84,13 +70,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
             )}
           </Flex>
         </Flex>
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          flexShrink={0}
-          flexGrow={1}
-          pl={6}
-        >
+        <Flex flexDirection="row" alignItems="center" flexShrink={0} flexGrow={1} pl={6}>
           {disabled ? null : completed ? (
             <Icons.CheckAloneMedium color="success.c50" size={20} />
           ) : (

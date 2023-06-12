@@ -29,10 +29,7 @@ import type { SolanaAccount, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
-  async function prepareTransaction(
-    mainAccount: SolanaAccount,
-    transaction: Transaction
-  ) {
+  async function prepareTransaction(mainAccount: SolanaAccount, transaction: Transaction) {
     const config: Config = {
       endpoint: endpointByCurrencyId(mainAccount.currency.id),
     };
@@ -45,7 +42,7 @@ function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
 }
 
 function makeSyncAndScan(getChainAPI: (config: Config) => Promise<ChainAPI>) {
-  const getAccountShape: GetAccountShape = async (info) => {
+  const getAccountShape: GetAccountShape = async info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.currency.id),
     };
@@ -59,18 +56,14 @@ function makeSyncAndScan(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   };
 }
 
-function makeEstimateMaxSpendable(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
-) {
+function makeEstimateMaxSpendable(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   async function estimateMaxSpendable(
-    arg: Parameters<AccountBridge<Transaction>["estimateMaxSpendable"]>[0]
+    arg: Parameters<AccountBridge<Transaction>["estimateMaxSpendable"]>[0],
   ): Promise<BigNumber> {
     const { account, parentAccount } = arg;
 
     const currencyId =
-      account.type === "Account"
-        ? account.currency.id
-        : parentAccount?.currency.id;
+      account.type === "Account" ? account.currency.id : parentAccount?.currency.id;
 
     if (currencyId === undefined) {
       throw new Error("currency not found");
@@ -100,17 +93,11 @@ function makeEstimateMaxSpendable(
     }`;
   };
 
-  return makeLRUCache(
-    estimateMaxSpendable,
-    cacheKeyByAccSpendableBalance,
-    minutes(5)
-  );
+  return makeLRUCache(estimateMaxSpendable, cacheKeyByAccSpendableBalance, minutes(5));
 }
 
-function makeBroadcast(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
-): BroadcastFnSignature {
-  return async (info) => {
+function makeBroadcast(getChainAPI: (config: Config) => Promise<ChainAPI>): BroadcastFnSignature {
+  return async info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.account.currency.id),
     };
@@ -120,9 +107,9 @@ function makeBroadcast(
 }
 
 function makeSign(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
+  getChainAPI: (config: Config) => Promise<ChainAPI>,
 ): SignOperationFnSignature<Transaction> {
-  return (info) => {
+  return info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.account.currency.id),
     };
@@ -132,7 +119,7 @@ function makeSign(
 }
 
 function makePreload(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
+  getChainAPI: (config: Config) => Promise<ChainAPI>,
 ): CurrencyBridge["preload"] {
   const preload = (currency: CryptoCurrency): Promise<Record<string, any>> => {
     const config: Config = {

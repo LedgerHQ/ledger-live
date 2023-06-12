@@ -6,9 +6,7 @@ import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Step1Cropping from "../../screens/CustomImage/Step1Crop";
 import Step2ChooseContrast from "../../screens/CustomImage/Step2ChooseContrast";
-import Step3Transfer, {
-  step3TransferHeaderOptions,
-} from "../../screens/CustomImage/Step3Transfer";
+import Step3Transfer, { step3TransferHeaderOptions } from "../../screens/CustomImage/Step3Transfer";
 import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
 import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
 import PreviewPreEdit from "../../screens/CustomImage/PreviewPreEdit";
@@ -18,10 +16,7 @@ import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
 
 export default function CustomImageNavigator() {
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const { t } = useTranslation();
 
   return (

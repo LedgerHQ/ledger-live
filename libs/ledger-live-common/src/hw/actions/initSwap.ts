@@ -121,28 +121,18 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
-  initSwapExec: (arg0: InitSwapInput) => Observable<SwapRequestEvent>
+  initSwapExec: (arg0: InitSwapInput) => Observable<SwapRequestEvent>,
 ): InitSwapAction => {
   const useHook = (
     reduxDevice: Device | null | undefined,
-    initSwapRequest: InitSwapRequest
+    initSwapRequest: InitSwapRequest,
   ): InitSwapState => {
     const [state, setState] = useState(initialState);
-    const reduxDeviceFrozen = useFrozenValue(
-      reduxDevice,
-      state.freezeReduxDevice
-    );
+    const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
 
-    const {
-      exchange,
-      exchangeRate,
-      transaction,
-      userId,
-      requireLatestFirmware,
-    } = initSwapRequest;
+    const { exchange, exchangeRate, transaction, userId, requireLatestFirmware } = initSwapRequest;
 
-    const { fromAccount, fromParentAccount, toAccount, toParentAccount } =
-      exchange;
+    const { fromAccount, fromParentAccount, toAccount, toParentAccount } = exchange;
     const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
     const maintoAccount = getMainAccount(toAccount, toParentAccount);
 
@@ -160,10 +150,7 @@ export const createAction = (
         requireLatestFirmware,
       };
     }, [mainFromAccount, maintoAccount, requireLatestFirmware]);
-    const appState = createAppAction(connectAppExec).useHook(
-      reduxDeviceFrozen,
-      request
-    );
+    const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
     const { device, opened, error } = appState;
     const hasError = error || state.error;
     useEffect(() => {
@@ -182,19 +169,19 @@ export const createAction = (
           transaction,
           deviceId: device.deviceId,
           userId,
-        })
+        }),
       )
         .pipe(
-          tap((e) => {
+          tap(e => {
             log("actions-initSwap-event", e.type, e);
           }),
           catchError((error: Error) =>
             of(<SwapRequestEvent>{
               type: "init-swap-error",
               error,
-            })
+            }),
           ),
-          scan(reducer, { ...initialState, isLoading: !hasError })
+          scan(reducer, { ...initialState, isLoading: !hasError }),
         )
         .subscribe(setState);
       return () => {

@@ -11,10 +11,7 @@ import ForceTheme from "./theme/ForceTheme";
 import buyImgSource from "../images/illustration/Shared/_NanoXTop.png";
 import setupImgSource from "../images/illustration/Shared/_NanoXBoxTop.png";
 import { track } from "../analytics";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "./RootNavigator/types/helpers";
+import { RootNavigationComposite, StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 
 type Props = {
@@ -79,11 +76,7 @@ export default function BuyDeviceBanner({
 }: Props) {
   const { t } = useTranslation();
   const { navigate } =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const handleOnPress = useCallback(() => {
     navigate(NavigatorName.BuyDevice);
@@ -125,20 +118,10 @@ export default function BuyDeviceBanner({
         <Flex flexDirection="column" alignItems="flex-start">
           {topLeft || (
             <Flex flexDirection="column" width="80%">
-              <Text
-                variant="h5"
-                fontWeight="semiBold"
-                color="constant.black"
-                mb={3}
-              >
+              <Text variant="h5" fontWeight="semiBold" color="constant.black" mb={3}>
                 {t("buyDevice.bannerTitle")}
               </Text>
-              <Text
-                variant="paragraph"
-                fontWeight="medium"
-                color="constant.black"
-                mb="20px"
-              >
+              <Text variant="paragraph" fontWeight="medium" color="constant.black" mb="20px">
                 {t("buyDevice.bannerSubtitle")}
               </Text>
             </Flex>
@@ -148,9 +131,7 @@ export default function BuyDeviceBanner({
               onPress={onPress}
               size={buttonSize}
               event={variant === "setup" ? undefined : event}
-              eventProperties={
-                variant === "setup" ? undefined : eventProperties
-              }
+              eventProperties={variant === "setup" ? undefined : eventProperties}
               type="main"
               flexShrink={0}
             >

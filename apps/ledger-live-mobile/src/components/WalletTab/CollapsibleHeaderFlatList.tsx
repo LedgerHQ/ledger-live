@@ -1,13 +1,7 @@
 import { Flex } from "@ledgerhq/native-ui";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback } from "react";
-import {
-  Dimensions,
-  Animated,
-  StatusBar,
-  FlatList,
-  FlatListProps,
-} from "react-native";
+import { Dimensions, Animated, StatusBar, FlatList, FlatListProps } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import AnimatedProps = Animated.AnimatedProps;
@@ -18,8 +12,9 @@ function CollapsibleHeaderFlatList<T>({
   testScroll,
   ...otherProps
 }: AnimatedProps<FlatListProps<T>> & { testScroll?: (event: any) => void }) {
-  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } =
-    useContext(WalletTabNavigatorScrollContext);
+  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } = useContext(
+    WalletTabNavigatorScrollContext,
+  );
   const windowHeight = Dimensions.get("window").height;
   const route = useRoute();
   const isFocused = useIsFocused();
@@ -43,6 +38,15 @@ function CollapsibleHeaderFlatList<T>({
       <Animated.FlatList<T>
         scrollToOverflowEnabled={true}
         ref={(ref: FlatList) => onGetRef({ key: route.name, value: ref })}
+        onScroll={
+          !!testScroll
+            ? testScroll
+            : isFocused
+            ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+                useNativeDriver: true,
+              })
+            : undefined
+        }
         scrollEventThrottle={16}
         onScrollEndDrag={onMomentumScrollEnd}
         onMomentumScrollEnd={onMomentumScrollEnd}
@@ -56,19 +60,6 @@ function CollapsibleHeaderFlatList<T>({
         ]}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        onScroll={
-          // event.preventDefault();
-          !!testScroll
-            ? testScroll
-            : isFocused
-            ? Animated.event(
-                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                {
-                  useNativeDriver: true,
-                },
-              )
-            : undefined
-        }
         {...otherProps}
       >
         {children}

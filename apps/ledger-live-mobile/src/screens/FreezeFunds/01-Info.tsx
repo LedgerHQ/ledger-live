@@ -40,10 +40,7 @@ export default function FreezeInfo({ navigation, route }: NavigatorProps) {
         },
       ]}
     >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="FreezeFlow" name="Info" />
         <IlluRewards />
         <LText secondary style={styles.description}>

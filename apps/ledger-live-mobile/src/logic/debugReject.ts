@@ -14,9 +14,7 @@ export const rejectionOp =
       ? observable
       : Observable.create((o: PartialObserver<T>) => {
           const s = observable.subscribe(o);
-          const s2 = rejections
-            .pipe(flatMap(() => throwError(createError())))
-            .subscribe(o);
+          const s2 = rejections.pipe(flatMap(() => throwError(createError()))).subscribe(o);
           return () => {
             s.unsubscribe();
             s2.unsubscribe();

@@ -82,9 +82,10 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
-  const diffInDays = useMemo(() => moment().diff(delegation.operation.date, "days"), [
-    delegation.operation.date,
-  ]);
+  const diffInDays = useMemo(
+    () => moment().diff(delegation.operation.date, "days"),
+    [delegation.operation.date],
+  );
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const bakerURL = getAddressExplorer(explorerView, delegation.address);
   const txURL = getTransactionExplorer(explorerView, delegation.operation.hash);

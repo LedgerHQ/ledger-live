@@ -190,7 +190,7 @@ export function useWebviewState(
     }));
   }, [webviewRef]);
 
-  const handleFailLoad = (useCallback(
+  const handleFailLoad = useCallback(
     (errorEvent: {
       errorCode: number;
       errorDescription: string;
@@ -215,7 +215,7 @@ export function useWebviewState(
       }
     },
     [],
-  ) as unknown) as EventListenerOrEventListenerObject;
+  ) as unknown as EventListenerOrEventListenerObject;
 
   const handleCrashed = useCallback(() => {
     setState(oldState => ({

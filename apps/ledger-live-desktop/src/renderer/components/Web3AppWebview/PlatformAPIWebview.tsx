@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 import * as remote from "@electron/remote";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
@@ -284,7 +282,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       const webview = webviewRef.current;
       if (webview) {
         const origin = new URL(webview.src).origin;
-        // @ts-expect-error issue in Electron type of Webview?
         webview.contentWindow?.postMessage(JSON.stringify(request), origin);
       }
 
@@ -374,7 +371,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * seem to be set
            */
           style={webviewStyle}
-          preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
+          // eslint-disable-next-line react/no-unknown-property
+          preload={`file://${remote.app.getAppPath()}/webviewPreloader.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to
@@ -382,6 +380,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * cf. https://github.com/electron/electron/issues/6046
            */
           // @ts-expect-error: see above comment
+          // eslint-disable-next-line react/no-unknown-property
           allowpopups="true"
           {...webviewProps}
         />

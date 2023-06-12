@@ -29,13 +29,11 @@ describe("BitcoinApi", () => {
               fees: "21304",
               inputs: [
                 {
-                  output_hash:
-                    "214d4ee98c074bf4bc6e91c669f02a581d9a6d5a5e9476b05a3fccde508dfdfc",
+                  output_hash: "214d4ee98c074bf4bc6e91c669f02a581d9a6d5a5e9476b05a3fccde508dfdfc",
                   output_index: 17,
                   input_index: 0,
                   value: "130000",
-                  address:
-                    "bc1p4hdgsumm299ncy53g5xxlexsex0qqj0sl0flr5hp7d5q6xskw7rqq3srjc",
+                  address: "bc1p4hdgsumm299ncy53g5xxlexsex0qqj0sl0flr5hp7d5q6xskw7rqq3srjc",
                   script_signature: "",
                   txinwitness: [
                     "bf23e6252bdaf8c15da8a5c5338b58a4747fd27fd37c2cb50efb8b76c58f7517047f4cda36befe2ee4d3c643e14ecf40e11602b9cfdb991f925b514e7ef001e8",
@@ -47,16 +45,14 @@ describe("BitcoinApi", () => {
                 {
                   output_index: 0,
                   value: "30000",
-                  address:
-                    "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
+                  address: "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
                   script_hex:
                     "512069e978007ea0d1a4b9cd3db695b62b62b4b406300d93b9d788ee9743418a5f7e",
                 },
                 {
                   output_index: 1,
                   value: "78696",
-                  address:
-                    "bc1p4hdgsumm299ncy53g5xxlexsex0qqj0sl0flr5hp7d5q6xskw7rqq3srjc",
+                  address: "bc1p4hdgsumm299ncy53g5xxlexsex0qqj0sl0flr5hp7d5q6xskw7rqq3srjc",
                   script_hex:
                     "5120adda88737b514b3c1291450c6fe4d0c99e0049f0fbd3f1d2e1f3680d1a167786",
                 },
@@ -76,13 +72,11 @@ describe("BitcoinApi", () => {
               fees: "25208",
               inputs: [
                 {
-                  output_hash:
-                    "e50d0ca77b4584a9feca88886e174f2863252e3488185826b6b7a3c25c9de659",
+                  output_hash: "e50d0ca77b4584a9feca88886e174f2863252e3488185826b6b7a3c25c9de659",
                   output_index: 0,
                   input_index: 0,
                   value: "30000",
-                  address:
-                    "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
+                  address: "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
                   script_signature: "",
                   txinwitness: [
                     "ca817c52fdb82530b15e3f35ca336257f69f649ca1b987aefe445d9ec2004e0dd475725b3d1c3496a5d82c4cc3af0119f94e3400d165c271b60865a05faea1e0",
@@ -96,8 +90,7 @@ describe("BitcoinApi", () => {
                 {
                   output_index: 0,
                   value: "546",
-                  address:
-                    "bc1p4hdgsumm299ncy53g5xxlexsex0qqj0sl0flr5hp7d5q6xskw7rqq3srjc",
+                  address: "bc1p4hdgsumm299ncy53g5xxlexsex0qqj0sl0flr5hp7d5q6xskw7rqq3srjc",
                   script_hex:
                     "5120adda88737b514b3c1291450c6fe4d0c99e0049f0fbd3f1d2e1f3680d1a167786",
                 },
@@ -128,10 +121,9 @@ describe("BitcoinApi", () => {
         {
           account: 0,
           index: 0,
-          address:
-            "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
+          address: "bc1pd85hsqr75rg6fwwd8kmftd3tv26tgp3spkfmn4uga6t5xsv2talqmzqt0h",
         },
-        params
+        params,
       );
       expect(txs.length).toEqual(2);
       expect(txs[0].inputs.length).toEqual(1);
@@ -184,9 +176,7 @@ describe("BitcoinApi", () => {
           hash: "00000000000000000003cbb024a4051d02e15df7c6c205493e23fa0c91ac6d03",
           height: 788997,
           time: "2023-05-09T23:20:52Z",
-          txs: [
-            "f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff56474",
-          ],
+          txs: ["f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff56474"],
         },
       });
     });
@@ -194,7 +184,7 @@ describe("BitcoinApi", () => {
       const currentBlock = await explorer.getCurrentBlock();
       expect(currentBlock?.height).toEqual(788997);
       expect(currentBlock?.hash).toEqual(
-        "00000000000000000003cbb024a4051d02e15df7c6c205493e23fa0c91ac6d03"
+        "00000000000000000003cbb024a4051d02e15df7c6c205493e23fa0c91ac6d03",
       );
     });
   });
@@ -204,17 +194,16 @@ describe("BitcoinApi", () => {
       // @ts-expect-error method is mocked
       network.mockResolvedValue({
         data: {
-          result:
-            "f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff56474",
+          result: "f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff56474",
         },
       });
     });
     it("broadcast api should return transaction hash by using /tx/send endpoint", async () => {
       const tx = await explorer.broadcast(
-        "02000000000101f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff564740000000000ffffffff02a0860100000000001600141a1653e4395b75aa062bbe6a05c1bedc5f268d790000000000000"
+        "02000000000101f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff564740000000000ffffffff02a0860100000000001600141a1653e4395b75aa062bbe6a05c1bedc5f268d790000000000000",
       );
       expect(tx.data.result).toEqual(
-        "f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff56474"
+        "f3a2aebc6cf6f27a04d95809a97b78e78a47b100672612eac07f17dd5ff56474",
       );
     });
   });

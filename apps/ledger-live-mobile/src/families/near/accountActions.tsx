@@ -30,8 +30,7 @@ const getMainActions = ({
         NavigatorName.NearStakingFlow,
         {
           screen:
-            account.nearResources &&
-            account.nearResources?.stakingPositions.length > 0
+            account.nearResources && account.nearResources?.stakingPositions.length > 0
               ? ScreenName.NearStakingValidator
               : ScreenName.NearStakingStarted,
         },

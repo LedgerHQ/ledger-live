@@ -1,13 +1,7 @@
 /* eslint-disable prefer-template */
 import Transport from "@ledgerhq/hw-transport";
-import {
-  DisconnectedDevice,
-  TransportOpenUserCancelled,
-} from "@ledgerhq/errors";
-import {
-  getBluetoothServiceUuids,
-  getInfosForServiceUuid,
-} from "@ledgerhq/devices";
+import { DisconnectedDevice, TransportOpenUserCancelled } from "@ledgerhq/errors";
+import { getBluetoothServiceUuids, getInfosForServiceUuid } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
 import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
@@ -29,38 +23,35 @@ const requiresBluetooth = () => {
 };
 
 const availability = (): Observable<boolean> =>
-  Observable.create((observer) => {
+  Observable.create(observer => {
     const bluetooth = requiresBluetooth();
 
-    const onAvailabilityChanged = (e) => {
+    const onAvailabilityChanged = e => {
       observer.next(e.value);
     };
 
     bluetooth.addEventListener("availabilitychanged", onAvailabilityChanged);
     let unsubscribed = false;
-    bluetooth.getAvailability().then((available) => {
+    bluetooth.getAvailability().then(available => {
       if (!unsubscribed) {
         observer.next(available);
       }
     });
     return () => {
       unsubscribed = true;
-      bluetooth.removeEventListener(
-        "availabilitychanged",
-        onAvailabilityChanged
-      );
+      bluetooth.removeEventListener("availabilitychanged", onAvailabilityChanged);
     };
   });
 
 const transportsCache = {};
 
 const requestDeviceParam = () => ({
-  filters: getBluetoothServiceUuids().map((uuid) => ({
+  filters: getBluetoothServiceUuids().map(uuid => ({
     services: [uuid],
   })),
 });
 
-const retrieveService = async (device) => {
+const retrieveService = async device => {
   if (!device.gatt) throw new Error("bluetooth gatt not found");
   const [service] = await device.gatt.getPrimaryServices();
   if (!service) throw new Error("bluetooth service not found");
@@ -97,18 +88,13 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     service.getCharacteristic(notifyUuid),
   ]);
   const notifyObservable = monitorCharacteristic(notifyC).pipe(
-    tap((value) => {
+    tap(value => {
       log("ble-frame", "<= " + value.toString("hex"));
     }),
-    share()
+    share(),
   );
   const notif = notifyObservable.subscribe();
-  const transport = new BluetoothTransport(
-    device,
-    writeC,
-    notifyObservable,
-    deviceModel
-  );
+  const transport = new BluetoothTransport(device, writeC, notifyObservable, deviceModel);
 
   if (!device.gatt.connected) {
     throw new DisconnectedDevice();
@@ -117,7 +103,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   // eslint-disable-next-line require-atomic-updates
   transportsCache[transport.id] = transport;
 
-  const onDisconnect = (e) => {
+  const onDisconnect = e => {
     console.log("onDisconnect!", e);
     delete transportsCache[transport.id];
     transport.notYetDisconnected = false;
@@ -145,7 +131,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     if (needsReconnect) {
       await device.gatt.disconnect();
       // necessary time for the bonding workaround
-      await new Promise((s) => setTimeout(s, 4000));
+      await new Promise(s => setTimeout(s, 4000));
     }
   }
 
@@ -167,7 +153,7 @@ export default class BluetoothTransport extends Transport {
       .then(requiresBluetooth)
       .then(
         () => true,
-        () => false
+        () => false,
       );
 
   /**
@@ -175,8 +161,7 @@ export default class BluetoothTransport extends Transport {
    * (available is generic, type is specific)
    * an event is emit once and then each time it changes
    */
-  static observeAvailability = (observer: any): Subscription =>
-    availability().subscribe(observer);
+  static observeAvailability = (observer: any): Subscription => availability().subscribe(observer);
   static list = (): any => Promise.resolve([]);
 
   /**
@@ -188,7 +173,7 @@ export default class BluetoothTransport extends Transport {
     let unsubscribed;
     const bluetooth = requiresBluetooth();
     bluetooth.requestDevice(requestDeviceParam()).then(
-      (device) => {
+      device => {
         if (!unsubscribed) {
           observer.next({
             type: "add",
@@ -197,9 +182,9 @@ export default class BluetoothTransport extends Transport {
           observer.complete();
         }
       },
-      (error) => {
+      error => {
         observer.error(new TransportOpenUserCancelled(error.message));
-      }
+      },
     );
 
     function unsubscribe() {
@@ -241,7 +226,7 @@ export default class BluetoothTransport extends Transport {
     device: Device,
     writeCharacteristic: Characteristic,
     notifyObservable: Observable<any>,
-    deviceModel: DeviceModel
+    deviceModel: DeviceModel,
   ) {
     super();
     this.id = device.id;
@@ -259,12 +244,10 @@ export default class BluetoothTransport extends Transport {
         mtu =
           (await merge(
             this.notifyObservable.pipe(
-              first((buffer) => buffer.readUInt8(0) === 0x08),
-              map((buffer) => buffer.readUInt8(5))
+              first(buffer => buffer.readUInt8(0) === 0x08),
+              map(buffer => buffer.readUInt8(5)),
             ),
-            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(
-              ignoreElements()
-            )
+            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
           ).toPromise()) + 3;
       } catch (e) {
         log("ble-error", "inferMTU got " + String(e));
@@ -275,10 +258,7 @@ export default class BluetoothTransport extends Transport {
 
     if (mtu > 23) {
       const mtuSize = mtu - 3;
-      log(
-        "ble-verbose",
-        `BleTransport(${String(this.id)}) mtu set to ${String(mtuSize)}`
-      );
+      log("ble-verbose", `BleTransport(${String(this.id)}) mtu set to ${String(mtuSize)}`);
       this.mtuSize = mtuSize;
     }
 
@@ -297,7 +277,7 @@ export default class BluetoothTransport extends Transport {
         log("apdu", `=> ${msgIn}`);
         const data = await merge(
           this.notifyObservable.pipe(receiveAPDU),
-          sendAPDU(this.write, apdu, this.mtuSize)
+          sendAPDU(this.write, apdu, this.mtuSize),
         ).toPromise();
         const msgOut = data.toString("hex");
         log("apdu", `<= ${msgOut}`);

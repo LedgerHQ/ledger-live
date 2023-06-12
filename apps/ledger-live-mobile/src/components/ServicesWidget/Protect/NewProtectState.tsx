@@ -34,12 +34,7 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
       >
         {t(`servicesWidget.protect.status.new.actions.learnMore`)}
       </Button>
-      <Text
-        variant="paragraph"
-        fontWeight={"semiBold"}
-        color="neutral.c100"
-        textAlign={"center"}
-      >
+      <Text variant="paragraph" fontWeight={"semiBold"} color="neutral.c100" textAlign={"center"}>
         <Trans
           i18nKey="servicesWidget.protect.status.new.actions.alreadySubscribed"
           components={{

@@ -48,16 +48,10 @@ const PickMethod = (props: PickMethodPropsType) => {
   const currency = getAccountCurrency(mainAccount);
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const unit = getAccountUnit(mainAccount);
-  const methods = [
-    TransactionMethodEnum.claimRewards,
-    TransactionMethodEnum.reDelegateRewards,
-  ];
+  const methods = [TransactionMethodEnum.claimRewards, TransactionMethodEnum.reDelegateRewards];
 
   const currentDelegation = useMemo(
-    () =>
-      account.elrondResources.delegations.find(
-        delegation => recipient === delegation.contract,
-      ),
+    () => account.elrondResources.delegations.find(delegation => recipient === delegation.contract),
     [account.elrondResources.delegations, recipient],
   );
 
@@ -81,59 +75,42 @@ const PickMethod = (props: PickMethodPropsType) => {
 
   const options: OptionType[] = methods.map(method => ({
     value: method,
-    label: (
-      <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${method}`} />
-    ),
-    disabled:
-      method === TransactionMethodEnum.reDelegateRewards && !canCompoundReward,
+    label: <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${method}`} />,
+    disabled: method === TransactionMethodEnum.reDelegateRewards && !canCompoundReward,
   }));
 
   const modals: ModalType[] = methods.map(method => ({
-    title: (
-      <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${method}`} />
-    ),
-    description: (
-      <Trans
-        i18nKey={`elrond.claimRewards.flow.steps.method.${method}Tooltip`}
-      />
-    ),
+    title: <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${method}`} />,
+    description: <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${method}Tooltip`} />,
   }));
 
   /*
    * If no transaction sent through the parameters of the navigation, instantiate a new one, otherwise, return the old one.
    */
 
-  const { transaction, status, updateTransaction } = useBridgeTransaction(
-    () => {
-      if (route.params.transaction) {
-        return {
-          account,
-          transaction: route.params.transaction,
-        };
-      }
-
+  const { transaction, status, updateTransaction } = useBridgeTransaction(() => {
+    if (route.params.transaction) {
       return {
         account,
-        transaction: bridge.updateTransaction(
-          bridge.createTransaction(mainAccount),
-          {
-            recipient,
-            mode: TransactionMethodEnum.claimRewards,
-            amount: new BigNumber(value),
-          },
-        ),
+        transaction: route.params.transaction,
       };
-    },
-  );
+    }
+
+    return {
+      account,
+      transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+        recipient,
+        mode: TransactionMethodEnum.claimRewards,
+        amount: new BigNumber(value),
+      }),
+    };
+  });
 
   /*
    * Handle the possible warnings and errors of the transaction status and return the first of each.
    */
 
-  const { warning, error } = useMemo(
-    () => handleTransactionStatus(status),
-    [status],
-  );
+  const { warning, error } = useMemo(() => handleTransactionStatus(status), [status]);
 
   /*
    * Callback called when navigating to the next screen of the current flow.
@@ -157,9 +134,7 @@ const PickMethod = (props: PickMethodPropsType) => {
     (mode: string) => {
       if (transaction) {
         setMode(mode);
-        updateTransaction(() =>
-          bridge.updateTransaction(transaction, { mode }),
-        );
+        updateTransaction(() => bridge.updateTransaction(transaction, { mode }));
       }
     },
     [transaction, bridge, updateTransaction],
@@ -190,19 +165,11 @@ const PickMethod = (props: PickMethodPropsType) => {
           </LText>
 
           <LText semiBold={true} style={[styles.label, styles.value]}>
-            <CurrencyUnitValue
-              unit={unit}
-              value={new BigNumber(value)}
-              showCode={true}
-            />
+            <CurrencyUnitValue unit={unit} value={new BigNumber(value)} showCode={true} />
           </LText>
 
           <LText semiBold={true} style={styles.subLabel} color="grey">
-            <CounterValue
-              currency={currency}
-              value={new BigNumber(value)}
-              withPlaceholder={true}
-            />
+            <CounterValue currency={currency} value={new BigNumber(value)} withPlaceholder={true} />
           </LText>
         </View>
 
@@ -222,9 +189,7 @@ const PickMethod = (props: PickMethodPropsType) => {
 
         <View style={styles.sectionLabel}>
           <LText style={styles.desc}>
-            <Trans
-              i18nKey={`elrond.claimRewards.flow.steps.method.${mode}Info`}
-            />
+            <Trans i18nKey={`elrond.claimRewards.flow.steps.method.${mode}Info`} />
           </LText>
         </View>
 
@@ -265,11 +230,7 @@ const PickMethod = (props: PickMethodPropsType) => {
         />
       </View>
 
-      <InfoModal
-        isOpened={modal}
-        onClose={() => setModal(false)}
-        data={modals}
-      />
+      <InfoModal isOpened={modal} onClose={() => setModal(false)} data={modals} />
     </View>
   );
 };

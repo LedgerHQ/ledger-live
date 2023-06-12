@@ -11,15 +11,11 @@ describe("nfts fixtures", () => {
     expect(FIXTURE.tokenId).not.toBeUndefined();
     expect(FIXTURE.id).toContain("account-mock");
 
-    expect(
-      NFTs.map((nft) => nft.tokenId).includes(FIXTURE.tokenId)
-    ).toBeTruthy();
+    expect(NFTs.map(nft => nft.tokenId).includes(FIXTURE.tokenId)).toBeTruthy();
 
     const FIXTURE_POL = createFixtureNFT("account-mock-pol", POL);
     expect(FIXTURE_POL.currencyId).toEqual("polygon");
 
-    expect(
-      NFTs_POLYGON.map((nft) => nft.tokenId).includes(FIXTURE_POL.tokenId)
-    ).toBeTruthy();
+    expect(NFTs_POLYGON.map(nft => nft.tokenId).includes(FIXTURE_POL.tokenId)).toBeTruthy();
   });
 });

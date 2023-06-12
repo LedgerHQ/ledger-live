@@ -14,13 +14,11 @@ export const installModule = (module: Module): void => {
 
 export const fetchHistorical = (
   granularity: RateGranularity,
-  pair: TrackingPair
+  pair: TrackingPair,
 ): Promise<Record<string, any>> => {
   let fn = api.fetchHistorical;
   // a module can override the default api. first who handle wins.
-  const m = modules.find(
-    (m) => m.handleAPI && m.handleAPI(pair) && m.fetchHistorical
-  );
+  const m = modules.find(m => m.handleAPI && m.handleAPI(pair) && m.fetchHistorical);
 
   if (m && m.fetchHistorical) {
     fn = m.fetchHistorical;
@@ -37,7 +35,7 @@ type CountervaluesJobs = {
 
 export const fetchLatest = async (
   pairs: TrackingPair[],
-  disableAutoRecoverErrors?: boolean
+  disableAutoRecoverErrors?: boolean,
 ): Promise<Array<number | null | undefined>> => {
   // a module can override as well. but as latest is a "one api" call,
   // we need to segment the pairs in diff modules
@@ -49,22 +47,22 @@ export const fetchLatest = async (
     },
     ...(<CountervaluesJobs[]>modules
       .map(
-        (m) =>
+        m =>
           m.fetchLatest && {
             fn: m.fetchLatest,
             pairs: [],
             indexes: [],
-          }
+          },
       )
       .filter(Boolean)),
   ];
 
   for (let i = 0; i < pairs.length; i++) {
     const pair = pairs[i];
-    const m = modules.find((m) => m.handleAPI && m.handleAPI(pair));
+    const m = modules.find(m => m.handleAPI && m.handleAPI(pair));
 
     if (m && m.fetchLatest) {
-      const j = jobs.find((j) => m.fetchLatest === j.fn);
+      const j = jobs.find(j => m.fetchLatest === j.fn);
 
       if (j) {
         j.pairs.push(pair);
@@ -79,20 +77,20 @@ export const fetchLatest = async (
   const result = Array(pairs.length).fill(0);
   await Promise.all(
     jobs
-      .filter((j) => j.pairs.length > 0)
-      .map((j) =>
+      .filter(j => j.pairs.length > 0)
+      .map(j =>
         j
           .fn(j.pairs)
-          .then((r) => {
+          .then(r => {
             for (let i = 0; i < j.pairs.length; i++) {
               result[j.indexes[i]] = r[i];
             }
           })
-          .catch((e) => {
+          .catch(e => {
             if (disableAutoRecoverErrors) throw e;
             log("error", "latest fetch issue: " + String(e));
-          })
-      )
+          }),
+      ),
   );
   return result;
 };
@@ -102,9 +100,8 @@ export const mapRate = (
     from: Currency;
     to: Currency;
   },
-  rate: number
-): number =>
-  modules.reduce((rate, m) => (m.mapRate ? m.mapRate(pair, rate) : rate), rate);
+  rate: number,
+): number => modules.reduce((rate, m) => (m.mapRate ? m.mapRate(pair, rate) : rate), rate);
 
 export const aliasPair = (pair: {
   from: Currency;
@@ -112,8 +109,7 @@ export const aliasPair = (pair: {
 }): {
   from: Currency;
   to: Currency;
-} =>
-  modules.reduce((pair, m) => (m.aliasPair ? m.aliasPair(pair) : pair), pair);
+} => modules.reduce((pair, m) => (m.aliasPair ? m.aliasPair(pair) : pair), pair);
 
 export const resolveTrackingPair = (pair: {
   from: Currency;
@@ -122,11 +118,7 @@ export const resolveTrackingPair = (pair: {
   from: Currency;
   to: Currency;
 } =>
-  modules.reduce(
-    (pair, m) => (m.resolveTrackingPair ? m.resolveTrackingPair(pair) : pair),
-    pair
-  );
+  modules.reduce((pair, m) => (m.resolveTrackingPair ? m.resolveTrackingPair(pair) : pair), pair);
 
 export const isCountervalueEnabled = (c: Currency): boolean =>
-  !c.disableCountervalue ||
-  modules.some((m) => m.handleCountervalue && m.handleCountervalue(c));
+  !c.disableCountervalue || modules.some(m => m.handleCountervalue && m.handleCountervalue(c));

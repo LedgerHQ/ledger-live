@@ -13,17 +13,12 @@ import { ScreenName } from "../../../const";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    PolkadotNominateFlowParamList,
-    ScreenName.PolkadotNominateValidationError
-  >
+  StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateValidationError>
 >;
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();
@@ -38,11 +33,7 @@ export default function ValidationError({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen category="NominateFlow" name="ValidationError" />
-      <ValidateError
-        error={route.params.error}
-        onRetry={retry}
-        onClose={onClose}
-      />
+      <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

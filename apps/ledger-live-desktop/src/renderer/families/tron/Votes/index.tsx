@@ -43,9 +43,10 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVoteDate = getLastVotedDate(account);
-  const duration = useMemo(() => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0), [
-    lastVoteDate,
-  ]);
+  const duration = useMemo(
+    () => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0),
+    [lastVoteDate],
+  );
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
   const { tronResources } = account;

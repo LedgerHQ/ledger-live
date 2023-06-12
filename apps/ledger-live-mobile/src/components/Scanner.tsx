@@ -69,10 +69,7 @@ const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <NavigationHeaderCloseButtonAdvanced
-          color={colors.neutral.c100}
-          preferDismiss={false}
-        />
+        <NavigationHeaderCloseButtonAdvanced color={colors.neutral.c100} preferDismiss={false} />
       ),
     });
   }, [colors.neutral.c100, navigation]);

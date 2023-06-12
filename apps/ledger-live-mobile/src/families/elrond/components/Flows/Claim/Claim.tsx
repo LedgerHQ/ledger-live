@@ -34,10 +34,7 @@ const Claim = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   /*
    * Return the rendered component.
@@ -78,9 +75,7 @@ const Claim = () => {
         name={ScreenName.ElrondClaimRewardsMethod}
         component={PickMethod}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("elrond.claimRewards.stepperHeader.method")} />
-          ),
+          headerTitle: () => <StepHeader title={t("elrond.claimRewards.stepperHeader.method")} />,
         }}
       />
 

@@ -33,7 +33,7 @@ async function checkLocationPermission() {
 
 type RequestResult = {
   granted: boolean;
-  status: typeof RESULTS[number];
+  status: (typeof RESULTS)[number];
 };
 
 /**

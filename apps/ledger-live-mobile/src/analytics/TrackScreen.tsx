@@ -10,12 +10,7 @@ type Props = {
   refreshSource?: boolean;
 };
 
-export default function TrackScreen({
-  category,
-  name,
-  refreshSource = true,
-  ...props
-}: Props) {
+export default function TrackScreen({ category, name, refreshSource = true, ...props }: Props) {
   const isFocused = useIsFocused();
   const isFocusedRef = useRef<boolean>();
 

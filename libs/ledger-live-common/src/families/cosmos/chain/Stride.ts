@@ -10,8 +10,7 @@ class Stride extends CosmosBase {
 
   constructor() {
     super();
-    this.stakingDocUrl =
-      "https://support.ledger.com/hc/en-us/articles/9604429835421?support=true";
+    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/9604429835421?support=true";
     this.unbondingPeriod = 28;
     this.prefix = "stride";
     this.validatorPrefix = `${this.prefix}valoper`;

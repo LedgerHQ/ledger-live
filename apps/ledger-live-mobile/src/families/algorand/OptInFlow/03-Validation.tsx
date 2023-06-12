@@ -16,10 +16,7 @@ import { ScreenName } from "../../../const";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  AlgorandOptInFlowParamList,
-  ScreenName.AlgorandOptInSummary
->;
+type Props = StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInSummary>;
 export default function Validation({ route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
@@ -29,10 +26,8 @@ export default function Validation({ route }: Props) {
     context: "AlgorandOptIn",
     account,
     parentAccount: undefined,
-    updateAccountWithUpdater: (
-      accountId: string,
-      updater: (account: Account) => Account,
-    ) => dispatch(updateAccountWithUpdater({ accountId, updater })),
+    updateAccountWithUpdater: (accountId: string, updater: (account: Account) => Account) =>
+      dispatch(updateAccountWithUpdater({ accountId, updater })),
   });
   const { status, transaction, modelId, wired, deviceId } = route.params;
   const device = useMemo(
