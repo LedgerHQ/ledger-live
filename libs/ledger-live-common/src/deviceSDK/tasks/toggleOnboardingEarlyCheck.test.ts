@@ -6,9 +6,7 @@ import { withTransport } from "../transports/core";
 import { aTransportRefBuilder } from "../mocks/aTransportRef";
 
 jest.mock("../commands/toggleOnboardingEarlyCheck");
-const mockedToggleOnboardingEarlyCheckCmd = jest.mocked(
-  toggleOnboardingEarlyCheckCmd
-);
+const mockedToggleOnboardingEarlyCheckCmd = jest.mocked(toggleOnboardingEarlyCheckCmd);
 
 jest.mock("../transports/core");
 const mockedWithTransport = jest.mocked(withTransport);
@@ -16,21 +14,19 @@ const mockedWithTransport = jest.mocked(withTransport);
 describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
   beforeAll(async () => {
     const transportRef = await aTransportRefBuilder();
-    mockedWithTransport.mockReturnValue((job) => from(job({ transportRef })));
+    mockedWithTransport.mockReturnValue(job => from(job({ transportRef })));
   });
 
   describe("When the device is in the expected onboarding state", () => {
-    it("should emit a success event after being able to enter or exit the onboarding early checks step successfully", (done) => {
-      mockedToggleOnboardingEarlyCheckCmd.mockReturnValue(
-        of({ type: "success" })
-      );
+    it("should emit a success event after being able to enter or exit the onboarding early checks step successfully", done => {
+      mockedToggleOnboardingEarlyCheckCmd.mockReturnValue(of({ type: "success" }));
 
       // `enter` and `exit` have the same behavior
       toggleOnboardingEarlyCheckTask({
         deviceId: "",
         toggleType: "exit",
       }).subscribe({
-        next: (event) => {
+        next: event => {
           expect(event.type).toBe("success");
           done();
         },
@@ -42,18 +38,16 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
   });
 
   describe("When the device is neither in the WELCOME and WELCOME_STEP2 onboarding state, and it returns 0x6982", () => {
-    it("should emit a task error event with the correct error type", (done) => {
+    it("should emit a task error event with the correct error type", done => {
       mockedToggleOnboardingEarlyCheckCmd.mockReturnValue(
-        throwError(
-          new TransportStatusError(StatusCodes.SECURITY_STATUS_NOT_SATISFIED)
-        )
+        throwError(new TransportStatusError(StatusCodes.SECURITY_STATUS_NOT_SATISFIED)),
       );
 
       toggleOnboardingEarlyCheckTask({
         deviceId: "",
         toggleType: "enter",
       }).subscribe({
-        next: (event) => {
+        next: event => {
           try {
             if (event.type === "taskError") {
               expect(event.error).toBe("DeviceInInvalidState");
@@ -67,9 +61,7 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
         },
         error: (error: unknown) => {
           done(
-            `The error should have been mapped to an event, not thrown: ${JSON.stringify(
-              error
-            )}`
+            `The error should have been mapped to an event, not thrown: ${JSON.stringify(error)}`,
           );
         },
       });
@@ -77,16 +69,16 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
   });
 
   describe("When the command is not respected the expected APDU format", () => {
-    it("should emit a task error event with the correct error type", (done) => {
+    it("should emit a task error event with the correct error type", done => {
       mockedToggleOnboardingEarlyCheckCmd.mockReturnValue(
-        throwError(new TransportStatusError(StatusCodes.INCORRECT_LENGTH))
+        throwError(new TransportStatusError(StatusCodes.INCORRECT_LENGTH)),
       );
 
       toggleOnboardingEarlyCheckTask({
         deviceId: "",
         toggleType: "enter",
       }).subscribe({
-        next: (event) => {
+        next: event => {
           try {
             if (event.type === "taskError") {
               expect(event.error).toBe("InternalError");
@@ -100,9 +92,7 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
         },
         error: (error: unknown) => {
           done(
-            `The error should have been mapped to an event, not thrown: ${JSON.stringify(
-              error
-            )}`
+            `The error should have been mapped to an event, not thrown: ${JSON.stringify(error)}`,
           );
         },
       });

@@ -77,11 +77,10 @@ export const OperationDetailsDelegation = ({
   isTransactionField,
   validators,
 }: OperationDetailsDelegationProps) => {
-  const mappedDelegationInfo = useMemo(() => mapDelegationInfo(delegations, validators, unit), [
-    delegations,
-    validators,
-    unit,
-  ]);
+  const mappedDelegationInfo = useMemo(
+    () => mapDelegationInfo(delegations, validators, unit),
+    [delegations, validators, unit],
+  );
   return (
     <OpDetailsSection>
       {!isTransactionField && (

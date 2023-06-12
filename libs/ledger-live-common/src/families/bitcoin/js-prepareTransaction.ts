@@ -4,10 +4,7 @@ import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import { inferFeePerByte } from "./logic";
 import { Account } from "@ledgerhq/types-live";
 
-const prepareTransaction = async (
-  a: Account,
-  t: Transaction
-): Promise<Transaction> => {
+const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   let networkInfo = t.networkInfo;
 
   if (!networkInfo) {

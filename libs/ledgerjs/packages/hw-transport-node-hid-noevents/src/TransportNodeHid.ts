@@ -16,7 +16,7 @@ import {
   DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
 
-const filterInterface = (device) =>
+const filterInterface = device =>
   ["win32", "darwin"].includes(process.platform)
     ? device.usagePage === 0xffa0
     : device.interface === 0;
@@ -37,19 +37,17 @@ export default class TransportNodeHidNoEvents extends Transport {
   /**
    *
    */
-  static isSupported = (): Promise<boolean> =>
-    Promise.resolve(typeof HID.HID === "function");
+  static isSupported = (): Promise<boolean> => Promise.resolve(typeof HID.HID === "function");
 
   /**
    *
    */
-  static list = (): Promise<any> =>
-    Promise.resolve(getDevices().map((d) => d.path));
+  static list = (): Promise<any> => Promise.resolve(getDevices().map(d => d.path));
 
   /**
    */
   static listen = (observer: Observer<DescriptorEvent<any>>): Subscription => {
-    getDevices().forEach((device) => {
+    getDevices().forEach(device => {
       const deviceModel = identifyUSBProductId(device.productId);
       observer.next({
         type: "add",
@@ -90,8 +88,7 @@ export default class TransportNodeHidNoEvents extends Transport {
     this.device = device;
     // @ts-expect-error accessing low level API in C
     const info = device.getDeviceInfo();
-    this.deviceModel =
-      info && info.product ? identifyProductName(info.product) : null;
+    this.deviceModel = info && info.product ? identifyProductName(info.product) : null;
   }
 
   setDisconnected = () => {
@@ -129,9 +126,7 @@ export default class TransportNodeHidNoEvents extends Transport {
 
         if (e) {
           const maybeMappedError =
-            e && e.message
-              ? new DisconnectedDeviceDuringOperation(e.message)
-              : e;
+            e && e.message ? new DisconnectedDeviceDuringOperation(e.message) : e;
           if (maybeMappedError instanceof DisconnectedDeviceDuringOperation) {
             this.setDisconnected();
           }
@@ -141,7 +136,7 @@ export default class TransportNodeHidNoEvents extends Transport {
           const buffer = Buffer.from(res);
           resolve(buffer);
         }
-      })
+      }),
     );
 
   /**

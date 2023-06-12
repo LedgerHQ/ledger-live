@@ -11,10 +11,7 @@ import type { AlgorandAccount, Transaction } from "./types";
  */
 const prepareTransaction =
   (algorandAPI: AlgorandAPI) =>
-  async (
-    account: AlgorandAccount,
-    transaction: Transaction
-  ): Promise<Transaction> => {
+  async (account: AlgorandAccount, transaction: Transaction): Promise<Transaction> => {
     let recipient: string;
     let amount: BigNumber;
     if (transaction.mode === "send") {
@@ -22,10 +19,7 @@ const prepareTransaction =
       amount = transaction.useAllAmount
         ? await estimateMaxSpendable(algorandAPI)({ account, transaction })
         : transaction.amount;
-    } else if (
-      transaction.mode === "optIn" ||
-      transaction.mode === "claimReward"
-    ) {
+    } else if (transaction.mode === "optIn" || transaction.mode === "claimReward") {
       recipient = account.freshAddress;
       amount = new BigNumber(0);
     } else {

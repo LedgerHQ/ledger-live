@@ -30,10 +30,7 @@ const iconSend = Icons.ArrowTopMedium;
 const iconAddAccount = Icons.WalletMedium;
 const iconStake = Icons.ClaimRewardsMedium;
 
-export default function useAssetActions({
-  currency,
-  accounts,
-}: useAssetActionsProps): {
+export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
   const route = useRoute();
@@ -50,16 +47,10 @@ export default function useAssetActions({
     [accounts],
   );
 
-  const hasMultipleAccounts = useMemo(
-    () => !!(accounts && accounts.length > 1),
-    [accounts],
-  );
+  const hasMultipleAccounts = useMemo(() => !!(accounts && accounts.length > 1), [accounts]);
 
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
-  const availableOnSwap =
-    currency && swapSelectableCurrencies.includes(currency.id);
+  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
+  const availableOnSwap = currency && swapSelectableCurrencies.includes(currency.id);
 
   const rampCatalog = useRampCatalog();
   const [canBeBought, canBeSold] = useMemo(() => {
@@ -70,12 +61,9 @@ export default function useAssetActions({
     const onRampProviders = filterRampCatalogEntries(rampCatalog.value.onRamp, {
       tickers: [currency.ticker],
     });
-    const offRampProviders = filterRampCatalogEntries(
-      rampCatalog.value.offRamp,
-      {
-        tickers: [currency.ticker],
-      },
-    );
+    const offRampProviders = filterRampCatalogEntries(rampCatalog.value.offRamp, {
+      tickers: [currency.ticker],
+    });
 
     return [onRampProviders.length > 0, offRampProviders.length > 0];
   }, [rampCatalog.value, currency]);
@@ -253,9 +241,7 @@ export default function useAssetActions({
                       {
                         screen: ScreenName.AddAccountsSelectCrypto,
                         params: {
-                          filterCurrencyIds: currency
-                            ? [currency.id]
-                            : undefined,
+                          filterCurrencyIds: currency ? [currency.id] : undefined,
                         },
                       },
                     ] as const,

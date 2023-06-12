@@ -1,11 +1,4 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -23,10 +16,7 @@ import TranslatedError from "../components/TranslatedError";
 import DeviceActionModal from "../components/DeviceActionModal";
 import KeyboardView from "../components/KeyboardView";
 import { saveBleDeviceName } from "../actions/ble";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../components/RootNavigator/types/helpers";
+import { RootComposite, StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../const";
 import { BaseOnboardingNavigatorParamList } from "../components/RootNavigator/types/BaseOnboardingNavigator";
@@ -40,10 +30,7 @@ const mapDispatchToProps = {
 
 type NavigationProps = RootComposite<
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.EditDeviceName>
-  | StackNavigatorProps<
-      BaseOnboardingNavigatorParamList,
-      ScreenName.EditDeviceName
-    >
+  | StackNavigatorProps<BaseOnboardingNavigatorParamList, ScreenName.EditDeviceName>
 >;
 type Props = {
   saveBleDeviceName: ({ deviceId, name }: BleSaveDeviceNamePayload) => void;
@@ -68,9 +55,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     [device.modelId, deviceInfo.version],
   );
 
-  const [name, setName] = useState<string>(
-    originalName.slice(0, maxDeviceName),
-  );
+  const [name, setName] = useState<string>(originalName.slice(0, maxDeviceName));
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
@@ -81,6 +66,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     // by our firmware, replacing it a U+0027. Same for U+201C,U+201D,...
     // TODO when we offer device rename on LLD, move this logic to common.
     const sanitizedName = name.replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
+    // eslint-disable-next-line no-control-regex
     const invalidCharacters = sanitizedName.replace(/[\x00-\x7F]*/g, "");
     const maybeError = invalidCharacters
       ? new DeviceNameInvalid("", { invalidCharacters })
@@ -124,8 +110,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
   const remainingCount = maxDeviceName - name.length;
   const cleanName = name.trim();
-  const disabled =
-    !cleanName || !!error || running || cleanName === originalName;
+  const disabled = !cleanName || !!error || running || cleanName === originalName;
 
   /**
    * Blurring the input when "running" (when the device action modal is mounted)
@@ -167,21 +152,13 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
             {error ? (
               <Flex alignItems={"center"} flexDirection={"row"} mt={1}>
                 <Icons.WarningMedium color="error.c50" size={16} />
-                <Text
-                  variant="small"
-                  color="error.c50"
-                  ml={2}
-                  numberOfLines={2}
-                >
+                <Text variant="small" color="error.c50" ml={2} numberOfLines={2}>
                   <TranslatedError error={error} />
                 </Text>
               </Flex>
             ) : (
               <Text variant="small" color="neutral.c80" mt={1}>
-                <Trans
-                  i18nKey="EditDeviceName.charactersRemaining"
-                  values={{ remainingCount }}
-                />
+                <Trans i18nKey="EditDeviceName.charactersRemaining" values={{ remainingCount }} />
               </Text>
             )}
 

@@ -45,9 +45,7 @@ export default ({ searchQuery, onQueryUpdate }: Props) => {
         value={searchQuery}
         numberOfLines={1}
         style={{ color: colors.neutral.c100 }}
-        keyboardType={
-          Platform.OS === "android" ? "visible-password" : "default"
-        }
+        keyboardType={Platform.OS === "android" ? "visible-password" : "default"}
       />
       {searchQuery && searchQuery.length > 0 ? (
         <TouchableOpacity onPress={clear}>

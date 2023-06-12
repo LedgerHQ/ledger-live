@@ -34,18 +34,15 @@ import {
 const makeRecursiveFieldStructImplem = (
   transport: Transport,
   types: EIP712MessageTypes,
-  filters?: MessageFilters
+  filters?: MessageFilters,
 ): ((
   destructedType: ReturnType<typeof destructTypeFromString>,
   data: unknown,
-  path?: string
+  path?: string,
 ) => Promise<void>) => {
   const typesMap = {} as Record<string, Record<string, string>>;
   for (const type in types) {
-    typesMap[type] = types[type]?.reduce(
-      (acc, curr) => ({ ...acc, [curr.name]: curr.type }),
-      {}
-    );
+    typesMap[type] = types[type]?.reduce((acc, curr) => ({ ...acc, [curr.name]: curr.type }), {});
   }
 
   // This recursion will call itself to handle each level of each field
@@ -53,12 +50,11 @@ const makeRecursiveFieldStructImplem = (
   const recursiveFieldStructImplem = async (
     destructedType: ReturnType<typeof destructTypeFromString>,
     data,
-    path = ""
+    path = "",
   ) => {
     const [typeDescription, arrSizes] = destructedType;
     const [currSize, ...restSizes] = arrSizes;
-    const isCustomType =
-      !EIP712_TYPE_PROPERTIES[typeDescription?.name?.toUpperCase() || ""];
+    const isCustomType = !EIP712_TYPE_PROPERTIES[typeDescription?.name?.toUpperCase() || ""];
 
     if (Array.isArray(data) && typeof currSize !== "undefined") {
       await sendStructImplem(transport, {
@@ -66,28 +62,22 @@ const makeRecursiveFieldStructImplem = (
         value: data.length,
       });
       for (const entry of data) {
-        await recursiveFieldStructImplem(
-          [typeDescription, restSizes],
-          entry,
-          `${path}.[]`
-        );
+        await recursiveFieldStructImplem([typeDescription, restSizes], entry, `${path}.[]`);
       }
     } else if (isCustomType) {
-      for (const [fieldName, fieldValue] of Object.entries(
-        data as EIP712Message["message"]
-      )) {
+      for (const [fieldName, fieldValue] of Object.entries(data as EIP712Message["message"])) {
         const fieldType = typesMap[typeDescription?.name || ""]?.[fieldName];
 
         if (fieldType) {
           await recursiveFieldStructImplem(
             destructTypeFromString(fieldType),
             fieldValue,
-            `${path}.${fieldName}`
+            `${path}.${fieldName}`,
           );
         }
       }
     } else {
-      const filter = filters?.fields.find((f) => path === f.path);
+      const filter = filters?.fields.find(f => path === f.path);
 
       if (filter) {
         await sendFilteringInfo(transport, "showField", {
@@ -120,10 +110,7 @@ const makeRecursiveFieldStructImplem = (
  * @param {String|Buffer} value
  * @returns {Promise<void>}
  */
-const sendStructDef = (
-  transport: Transport,
-  structDef: StructDefData
-): Promise<Buffer> => {
+const sendStructDef = (transport: Transport, structDef: StructDefData): Promise<Buffer> => {
   enum APDU_FIELDS {
     CLA = 0xe0,
     INS = 0x1a,
@@ -144,7 +131,7 @@ const sendStructDef = (
     APDU_FIELDS.INS,
     APDU_FIELDS.P1_complete,
     structType === "name" ? APDU_FIELDS.P2_name : APDU_FIELDS.P2_field,
-    data
+    data,
   );
 };
 
@@ -169,7 +156,7 @@ const sendStructDef = (
  */
 const sendStructImplem = async (
   transport: Transport,
-  structImplem: StructImplemData
+  structImplem: StructImplemData,
 ): Promise<Buffer | void> => {
   enum APDU_FIELDS {
     CLA = 0xe0,
@@ -189,7 +176,7 @@ const sendStructImplem = async (
       APDU_FIELDS.INS,
       APDU_FIELDS.P1_complete,
       APDU_FIELDS.P2_root,
-      Buffer.from(value, "utf-8")
+      Buffer.from(value, "utf-8"),
     );
   }
 
@@ -199,15 +186,16 @@ const sendStructImplem = async (
       APDU_FIELDS.INS,
       APDU_FIELDS.P1_complete,
       APDU_FIELDS.P2_array,
-      Buffer.from(intAsHexBytes(value, 1), "hex")
+      Buffer.from(intAsHexBytes(value, 1), "hex"),
     );
   }
 
   if (structType === "field") {
     const { data: rawData, type, sizeInBits } = value;
-    const encodedData: Buffer | null = EIP712_TYPE_ENCODERS[
-      type.toUpperCase()
-    ]?.(rawData, sizeInBits);
+    const encodedData: Buffer | null = EIP712_TYPE_ENCODERS[type.toUpperCase()]?.(
+      rawData,
+      sizeInBits,
+    );
 
     if (encodedData) {
       // const dataLengthPer16Bits = (encodedData.length & 0xff00) >> 8;
@@ -233,7 +221,7 @@ const sendStructImplem = async (
             ? APDU_FIELDS.P1_partial
             : APDU_FIELDS.P1_complete,
           APDU_FIELDS.P2_field,
-          bufferSlice
+          bufferSlice,
         );
       }
     }
@@ -242,24 +230,21 @@ const sendStructImplem = async (
   return Promise.resolve();
 };
 
-async function sendFilteringInfo(
-  transport: Transport,
-  type: "activate"
-): Promise<Buffer>;
+async function sendFilteringInfo(transport: Transport, type: "activate"): Promise<Buffer>;
 async function sendFilteringInfo(
   transport: Transport,
   type: "contractName",
-  data: FilteringInfoContractName
+  data: FilteringInfoContractName,
 ): Promise<Buffer>;
 async function sendFilteringInfo(
   transport: Transport,
   type: "showField",
-  data: FilteringInfoShowField
+  data: FilteringInfoShowField,
 ): Promise<Buffer>;
 async function sendFilteringInfo(
   transport: Transport,
   type: "activate" | "contractName" | "showField",
-  data?: FilteringInfoContractName | FilteringInfoShowField
+  data?: FilteringInfoContractName | FilteringInfoShowField,
 ): Promise<Buffer | void> {
   enum APDU_FIELDS {
     CLA = 0xe0,
@@ -276,25 +261,15 @@ async function sendFilteringInfo(
         APDU_FIELDS.CLA,
         APDU_FIELDS.INS,
         APDU_FIELDS.P1,
-        APDU_FIELDS.P2_activate
+        APDU_FIELDS.P2_activate,
       );
 
     case "contractName": {
-      const { displayName, filtersCount, sig } =
-        data as FilteringInfoContractName;
-      const displayNameLengthBuffer = Buffer.from(
-        intAsHexBytes(displayName.length, 1),
-        "hex"
-      );
+      const { displayName, filtersCount, sig } = data as FilteringInfoContractName;
+      const displayNameLengthBuffer = Buffer.from(intAsHexBytes(displayName.length, 1), "hex");
       const displayNameBuffer = Buffer.from(displayName);
-      const filtersCountBuffer = Buffer.from(
-        intAsHexBytes(filtersCount, 1),
-        "hex"
-      );
-      const sigLengthBuffer = Buffer.from(
-        intAsHexBytes(sig.length / 2, 1),
-        "hex"
-      );
+      const filtersCountBuffer = Buffer.from(intAsHexBytes(filtersCount, 1), "hex");
+      const sigLengthBuffer = Buffer.from(intAsHexBytes(sig.length / 2, 1), "hex");
       const sigBuffer = Buffer.from(sig, "hex");
 
       const callData = Buffer.concat([
@@ -310,21 +285,15 @@ async function sendFilteringInfo(
         APDU_FIELDS.INS,
         APDU_FIELDS.P1,
         APDU_FIELDS.P2_contract_name,
-        callData
+        callData,
       );
     }
 
     case "showField": {
       const { displayName, sig } = data as FilteringInfoShowField;
-      const displayNameLengthBuffer = Buffer.from(
-        intAsHexBytes(displayName.length, 1),
-        "hex"
-      );
+      const displayNameLengthBuffer = Buffer.from(intAsHexBytes(displayName.length, 1), "hex");
       const displayNameBuffer = Buffer.from(displayName);
-      const sigLengthBuffer = Buffer.from(
-        intAsHexBytes(sig.length / 2, 1),
-        "hex"
-      );
+      const sigLengthBuffer = Buffer.from(intAsHexBytes(sig.length / 2, 1), "hex");
       const sigBuffer = Buffer.from(sig, "hex");
 
       const callData = Buffer.concat([
@@ -339,7 +308,7 @@ async function sendFilteringInfo(
         APDU_FIELDS.INS,
         APDU_FIELDS.P1,
         APDU_FIELDS.P2_show_field,
-        callData
+        callData,
       );
     }
   }
@@ -383,7 +352,7 @@ export const signEIP712Message = async (
   path: string,
   jsonMessage: EIP712Message,
   fullImplem = false,
-  loadConfig: LoadConfig
+  loadConfig: LoadConfig,
 ): Promise<{
   v: number;
   s: string;
@@ -404,7 +373,7 @@ export const signEIP712Message = async (
 
   const typeEntries = Object.entries(types) as [
     keyof EIP712MessageTypes,
-    EIP712MessageTypesEntry[]
+    EIP712MessageTypesEntry[],
   ][];
   // Looping on all types entries and fields to send structures' definitions
   for (const [typeName, entries] of typeEntries) {
@@ -427,11 +396,7 @@ export const signEIP712Message = async (
   }
   // Create the recursion that should pass on each entry
   // of the domain fields and primaryType fields
-  const recursiveFieldStructImplem = makeRecursiveFieldStructImplem(
-    transport,
-    types,
-    filters
-  );
+  const recursiveFieldStructImplem = makeRecursiveFieldStructImplem(transport, types, filters);
 
   // Looping on all domain type's entries and fields to send
   // structures' implementations
@@ -443,10 +408,7 @@ export const signEIP712Message = async (
   const domainTypeFields = types[domainName];
   for (const { name, type } of domainTypeFields) {
     const domainFieldValue = domain[name];
-    await recursiveFieldStructImplem(
-      destructTypeFromString(type as string),
-      domainFieldValue
-    );
+    await recursiveFieldStructImplem(destructTypeFromString(type as string), domainFieldValue);
   }
 
   if (filters) {
@@ -471,7 +433,7 @@ export const signEIP712Message = async (
     await recursiveFieldStructImplem(
       destructTypeFromString(type as string),
       primaryTypeValue,
-      name
+      name,
     );
   }
 
@@ -489,9 +451,9 @@ export const signEIP712Message = async (
       APDU_FIELDS.INS,
       APDU_FIELDS.P1,
       fullImplem ? APDU_FIELDS.P2_v0 : APDU_FIELDS.P2_full,
-      signatureBuffer
+      signatureBuffer,
     )
-    .then((response) => {
+    .then(response => {
       const v = response[0];
       const r = response.slice(1, 1 + 32).toString("hex");
       const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
@@ -521,7 +483,7 @@ export const signEIP712HashedMessage = (
   transport: Transport,
   path: string,
   domainSeparatorHex: string,
-  hashStructMessageHex: string
+  hashStructMessageHex: string,
 ): Promise<{
   v: number;
   s: string;
@@ -541,7 +503,7 @@ export const signEIP712HashedMessage = (
   offset += 32;
   hashStruct.copy(buffer, offset);
 
-  return transport.send(0xe0, 0x0c, 0x00, 0x00, buffer).then((response) => {
+  return transport.send(0xe0, 0x0c, 0x00, 0x00, buffer).then(response => {
     const v = response[0];
     const r = response.slice(1, 1 + 32).toString("hex");
     const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");

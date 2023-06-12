@@ -5,11 +5,7 @@ import type { AppOp, InstalledItem } from "./types";
  * the device block size. It accepts a formatting function to be able to
  * customize the rounding if needed.
  **/
-export const formatSize = (
-  value = 0,
-  blockSize: number,
-  floor = false
-): [string, string] => {
+export const formatSize = (value = 0, blockSize: number, floor = false): [string, string] => {
   const units = ["bytes", "kbUnit", "mbUnit"];
   const k = 1024; // 1kb unit
 
@@ -27,9 +23,7 @@ export const formatSize = (
 };
 
 export const prettyActionPlan = (ops: AppOp[]): string =>
-  ops.map((op) => (op.type === "install" ? "+" : "-") + op.name).join(", ");
+  ops.map(op => (op.type === "install" ? "+" : "-") + op.name).join(", ");
 
 export const prettyInstalled = (items: InstalledItem[]): string =>
-  items
-    .map(({ name, updated }) => name + (updated ? "" : " (outdated)"))
-    .join(", ");
+  items.map(({ name, updated }) => name + (updated ? "" : " (outdated)")).join(", ");

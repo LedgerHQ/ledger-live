@@ -1,10 +1,6 @@
 import { Observable } from "rxjs";
 import Eth, { ledgerService } from "@ledgerhq/hw-app-eth";
-import {
-  Account,
-  SignOperationFnSignature,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import { Account, SignOperationFnSignature, SignOperationEvent } from "@ledgerhq/types-live";
 import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { prepareForSignOperation } from "./prepareTransaction";
@@ -53,29 +49,23 @@ export const buildSignOperation =
     transaction: Transaction;
   }): Observable<SignOperationEvent> =>
     withDevice(deviceId)(
-      (transport) =>
-        new Observable((o) => {
+      transport =>
+        new Observable(o => {
           async function main() {
-            const preparedTransaction = await prepareForSignOperation(
-              account,
-              transaction
-            );
-            const serializedTxHexString =
-              getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
+            const preparedTransaction = await prepareForSignOperation(account, transaction);
+            const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
             // Configure type of resolutions necessary for the clear signing
             const resolutionConfig: ResolutionConfig = {
               externalPlugins: true,
               erc20: true,
-              domains: transaction.recipientDomain
-                ? [transaction.recipientDomain]
-                : [],
+              domains: transaction.recipientDomain ? [transaction.recipientDomain] : [],
             };
             // Look for resolutions for external plugins and ERC20
             const resolution = await ledgerService.resolveTransaction(
               serializedTxHexString,
               {},
-              resolutionConfig
+              resolutionConfig,
             );
 
             o.next({
@@ -88,21 +78,18 @@ export const buildSignOperation =
             const sig = await eth.signTransaction(
               account.freshAddressPath,
               serializedTxHexString,
-              resolution
+              resolution,
             );
 
             o.next({ type: "device-signature-granted" }); // Signature is done
 
             const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
             // Create a new serialized tx with the signature now
-            const signature = await getSerializedTransaction(
-              preparedTransaction,
-              {
-                r: "0x" + sig.r,
-                s: "0x" + sig.s,
-                v: applyEIP155(sig.v, chainId),
-              }
-            );
+            const signature = await getSerializedTransaction(preparedTransaction, {
+              r: "0x" + sig.r,
+              s: "0x" + sig.s,
+              v: applyEIP155(sig.v, chainId),
+            });
 
             const operation = buildOptimisticOperation(account, {
               ...transaction,
@@ -121,7 +108,7 @@ export const buildSignOperation =
 
           main().then(
             () => o.complete(),
-            (e) => o.error(e)
+            e => o.error(e),
           );
-        })
+        }),
     );

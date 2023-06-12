@@ -1,8 +1,4 @@
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountLike,
@@ -93,12 +89,11 @@ export function usePortfolioThrottled({
   options?: GetPortfolioOptionsType;
   stableThrottleDelay?: number;
 }): Portfolio {
-  const [variableThrottleDelay, setVariableThrottleDelay] =
-    useState(lowThrottleDelay);
+  const [variableThrottleDelay, setVariableThrottleDelay] = useState(lowThrottleDelay);
   const cvState = useCountervaluesState();
   const [throttledCVState, throttledAccounts] = useThrottledValues(
     [cvState, accounts],
-    variableThrottleDelay
+    variableThrottleDelay,
   );
   /**
    * Options are not supposed to change.
@@ -108,7 +103,7 @@ export function usePortfolioThrottled({
    * */
   const opts = useRef(options);
   const [portfolio, setPortfolio] = useState(() =>
-    getPortfolio(throttledAccounts, range, throttledCVState, to, opts.current)
+    getPortfolio(throttledAccounts, range, throttledCVState, to, opts.current),
   );
 
   const ignoreUseEffectFirstCall = useRef(true);
@@ -119,16 +114,9 @@ export function usePortfolioThrottled({
       // (once at state initialisation, then once here at mount)
       return;
     }
-    const portfolio = getPortfolio(
-      throttledAccounts,
-      range,
-      throttledCVState,
-      to,
-      opts.current
-    );
+    const portfolio = getPortfolio(throttledAccounts, range, throttledCVState, to, opts.current);
     setPortfolio(portfolio);
-    if (portfolio.balanceAvailable)
-      setVariableThrottleDelay(intermediateThrottleDelay);
+    if (portfolio.balanceAvailable) setVariableThrottleDelay(intermediateThrottleDelay);
     if (throttledAccounts.length > 0 && portfolio.availableAccounts.length > 0)
       setVariableThrottleDelay(stableThrottleDelay);
   }, [throttledAccounts, range, throttledCVState, to, stableThrottleDelay]);
@@ -147,9 +135,7 @@ export function useCurrencyPortfolio({
   to: Currency;
   currency: CryptoCurrency | TokenCurrency;
 }): CurrencyPortfolio {
-  const accounts = flattenAccounts(rawAccounts).filter(
-    (a) => getAccountCurrency(a) === currency
-  );
+  const accounts = flattenAccounts(rawAccounts).filter(a => getAccountCurrency(a) === currency);
   const state = useCountervaluesState();
   return getCurrencyPortfolio(accounts, range, state, to);
 }

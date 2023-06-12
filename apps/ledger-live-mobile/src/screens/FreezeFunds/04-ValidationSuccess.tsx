@@ -3,16 +3,10 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import {
-  useTronPowerLoading,
-  getLastVotedDate,
-} from "@ledgerhq/live-common/families/tron/react";
+import { useTronPowerLoading, getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import {
-  TronAccount,
-  Transaction,
-} from "@ledgerhq/live-common/families/tron/types";
+import { TronAccount, Transaction } from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
@@ -28,20 +22,13 @@ import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/F
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type NavigatorProps = CompositeScreenProps<
-  StackNavigatorProps<
-    FreezeNavigatorParamList,
-    ScreenName.FreezeValidationSuccess
-  >,
+  StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeValidationSuccess>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function ValidationSuccess({
-  navigation,
-  route,
-}: NavigatorProps) {
+export default function ValidationSuccess({ navigation, route }: NavigatorProps) {
   const { colors } = useTheme();
-  const account = useSelector(accountScreenSelector(route))
-    .account as TronAccount;
+  const account = useSelector(accountScreenSelector(route)).account as TronAccount;
   invariant(account && account.type === "Account", "account is required");
   const time = useTimer(60);
   const isLoading = useTronPowerLoading(account);
@@ -50,15 +37,11 @@ export default function ValidationSuccess({
   const accountId = account.id;
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToVote = useCallback(() => {
     onClose();
-    const screenName = lastVotedDate
-      ? ScreenName.VoteSelectValidator
-      : ScreenName.VoteStarted;
+    const screenName = lastVotedDate ? ScreenName.VoteSelectValidator : ScreenName.VoteStarted;
     navigation.navigate(NavigatorName.TronVoteFlow, {
       screen: screenName,
       params: {

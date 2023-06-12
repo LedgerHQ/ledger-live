@@ -106,7 +106,6 @@ class OperationComponent extends PureComponent<Props> {
     );
   }
 }
-const ConnectedOperationComponent: React.ComponentType<OwnProps> = connect(mapStateToProps)(
-  OperationComponent,
-);
+const ConnectedOperationComponent: React.ComponentType<OwnProps> =
+  connect(mapStateToProps)(OperationComponent);
 export default ConnectedOperationComponent;

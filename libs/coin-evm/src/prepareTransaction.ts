@@ -1,11 +1,7 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import {
-  getFeesEstimation,
-  getGasEstimation,
-  getTransactionCount,
-} from "./api/rpc";
+import { getFeesEstimation, getGasEstimation, getTransactionCount } from "./api/rpc";
 import { validateRecipient } from "./getTransactionStatus";
 import { getAdditionalLayer2Fees, getEstimatedFees } from "./logic";
 import { getTransactionData, getTypedTransaction } from "./transaction";
@@ -18,7 +14,7 @@ import { Transaction as EvmTransaction } from "./types";
  */
 export const prepareCoinTransaction = async (
   account: Account,
-  typedTransaction: EvmTransaction
+  typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
   // A `useAllAmount` transaction is a specific case of the live, and because we're in the
   // context of a coinTransaction, no smart contract should be involed
@@ -36,13 +32,10 @@ export const prepareCoinTransaction = async (
       gasLimit,
     };
     const estimatedFees = getEstimatedFees(draftTransaction);
-    const additionalFees = await getAdditionalLayer2Fees(
-      account.currency,
-      draftTransaction
-    );
+    const additionalFees = await getAdditionalLayer2Fees(account.currency, draftTransaction);
     const amount = BigNumber.max(
       account.balance.minus(estimatedFees).minus(additionalFees || 0),
-      0
+      0,
     );
 
     return {
@@ -58,7 +51,7 @@ export const prepareCoinTransaction = async (
     // E.g. A DApp is creating an invalid transaction, swaping more Tokens than the user actually have -> fail
     // This value of 0 should be catched by `getTransactionStatus`
     // and displayed in the UI as `set the gas manually`
-    () => new BigNumber(0)
+    () => new BigNumber(0),
   );
   const additionalFees = await getAdditionalLayer2Fees(account.currency, {
     ...typedTransaction,
@@ -79,12 +72,10 @@ export const prepareCoinTransaction = async (
 export const prepareTokenTransaction = async (
   account: Account,
   tokenAccount: TokenAccount,
-  typedTransaction: EvmTransaction
+  typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
   const [recipientErrors] = validateRecipient(account, typedTransaction);
-  const amount = typedTransaction.useAllAmount
-    ? tokenAccount.balance
-    : typedTransaction.amount;
+  const amount = typedTransaction.useAllAmount ? tokenAccount.balance : typedTransaction.amount;
   const data = !Object.keys(recipientErrors).length
     ? getTransactionData({ ...typedTransaction, amount })
     : undefined;
@@ -123,15 +114,12 @@ export const prepareTokenTransaction = async (
  */
 export const prepareTransaction = async (
   account: Account,
-  transaction: EvmTransaction
+  transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
   const { currency } = account;
   // Get the current network status fees
   const feeData = await getFeesEstimation(currency);
-  const subAccount = findSubAccountById(
-    account,
-    transaction.subAccountId || ""
-  );
+  const subAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const typedTransaction = getTypedTransaction(transaction, feeData);
 
@@ -148,17 +136,11 @@ export const prepareTransaction = async (
  */
 export const prepareForSignOperation = async (
   account: Account,
-  transaction: EvmTransaction
+  transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
-  const nonce = await getTransactionCount(
-    account.currency,
-    account.freshAddress
-  );
+  const nonce = await getTransactionCount(account.currency, account.freshAddress);
 
-  const subAccount = findSubAccountById(
-    account,
-    transaction.subAccountId || ""
-  );
+  const subAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
 
   return isTokenTransaction

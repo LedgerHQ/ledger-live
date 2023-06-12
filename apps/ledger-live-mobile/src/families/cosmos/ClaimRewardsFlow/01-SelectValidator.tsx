@@ -2,15 +2,9 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
-import type {
-  CosmosAccount,
-  Transaction,
-} from "@ledgerhq/live-common/families/cosmos/types";
+import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  getMainAccount,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
@@ -43,15 +37,9 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
       }),
     };
   }).transaction as Transaction;
-  invariant(
-    transaction && transaction.validators,
-    "transaction and validators required",
-  );
+  invariant(transaction && transaction.validators, "transaction and validators required");
   const unit = getAccountUnit(account);
-  const delegations = useCosmosFamilyMappedDelegations(
-    mainAccount,
-    "claimReward",
-  );
+  const delegations = useCosmosFamilyMappedDelegations(mainAccount, "claimReward");
   const onSelect = useCallback(
     (validator, value) => {
       const tx = bridge.updateTransaction(transaction, {

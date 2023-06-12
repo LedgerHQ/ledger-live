@@ -19,19 +19,14 @@ import type { CosmosDelegationFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CosmosDelegationFlowParamList,
-    ScreenName.CosmosDelegationValidationSuccess
-  >
+  StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const validator = route.params.validatorName ?? "unknown";
@@ -74,12 +69,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="cosmos.delegation.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="cosmos.delegation.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="cosmos.delegation.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="cosmos.delegation.flow.steps.verification.success.text" />}
       />
     </View>
   );

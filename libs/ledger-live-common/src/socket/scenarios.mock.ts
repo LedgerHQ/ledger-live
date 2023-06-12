@@ -30,22 +30,10 @@ const scenarios: Array<Scenario> = [
   <= 9000
 `,
     events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "0000000002" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 3, "data": "0000000003" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "bulk", "nonce": 4, "data": ["0001", "0002", "0003", "0004"] }',
-      ],
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "0000000002" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 3, "data": "0000000003" }'],
+      ["onmessage", '{ "query": "bulk", "nonce": 4, "data": ["0001", "0002", "0003", "0004"] }'],
     ],
   },
   // Triggering a secure channel prompt where the user refuses
@@ -58,14 +46,8 @@ const scenarios: Array<Scenario> = [
   <= 5501
 `,
     events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "e051000000" }',
-      ],
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "e051000000" }'],
     ],
   },
   // Triggering a secure channel prompt where the user approves
@@ -80,18 +62,9 @@ const scenarios: Array<Scenario> = [
   <= 9000
 `,
     events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "e051000000" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 3, "data": "0000000002" }',
-      ],
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "e051000000" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 3, "data": "0000000002" }'],
       ["onmessage", '{ "query": "success", "payload": "0000" }', true],
     ],
   },
@@ -102,12 +75,7 @@ const scenarios: Array<Scenario> = [
   => 0000000001
   <= 5515
 `,
-    events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-    ],
+    events: [["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }']],
   },
 
   // Other errors (not in bulk) don't throw
@@ -120,14 +88,8 @@ const scenarios: Array<Scenario> = [
     <= 9000
   `,
     events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "0000000002" }',
-      ],
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "0000000002" }'],
       ["onmessage", '{ "query": "success", "payload": "0000" }', true],
     ],
   },
@@ -144,18 +106,9 @@ const scenarios: Array<Scenario> = [
   <= 5501
 `,
     events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "0000000002" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 3, "data": "0000000003" }',
-      ],
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "0000000002" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 3, "data": "0000000003" }'],
       ["onclose"],
     ],
   },
@@ -179,22 +132,10 @@ const scenarios: Array<Scenario> = [
   <= 9000
 `,
     events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "0000000002" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 3, "data": "0000000003" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "bulk", "nonce": 4, "data": ["0001", "0002", "0003", "0004"] }',
-      ],
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "0000000002" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 3, "data": "0000000003" }'],
+      ["onmessage", '{ "query": "bulk", "nonce": 4, "data": ["0001", "0002", "0003", "0004"] }'],
     ],
   },
   // Network errors should throw
@@ -207,14 +148,8 @@ const scenarios: Array<Scenario> = [
   <= 9000
 `,
     events: [
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 1, "data": "0000000001" }',
-      ],
-      [
-        "onmessage",
-        '{ "query": "exchange", "nonce": 2, "data": "0000000002" }',
-      ],
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "0000000002" }'],
       ["onerror"],
     ],
   },

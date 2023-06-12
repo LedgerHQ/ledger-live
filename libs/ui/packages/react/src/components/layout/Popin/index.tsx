@@ -25,7 +25,7 @@ export type PopinHeaderProps = BaseStyledProps & {
 
 const ICON_SIZE = 20;
 
-const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
+const Wrapper = styled(Flex).attrs<FlexBoxProps>(p => ({
   flexDirection: "column",
   alignItems: "stretch",
   justifyContent: "space-between",
@@ -41,7 +41,7 @@ const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
   backgroundColor: "background.main",
 }))``;
 
-const Overlay = styled(Flex).attrs((p) => ({
+const Overlay = styled(Flex).attrs(p => ({
   justifyContent: "center",
   alignItems: "center",
   width: "100vw",

@@ -6,17 +6,9 @@ import { MarketNavigatorStackParamList } from "./MarketNavigator";
 import { PortfolioNavigatorStackParamList } from "./PortfolioNavigator";
 
 export type MainNavigatorParamList = {
-  [NavigatorName.Portfolio]:
-    | NavigatorScreenParams<PortfolioNavigatorStackParamList>
-    | undefined;
-  [NavigatorName.Market]:
-    | NavigatorScreenParams<MarketNavigatorStackParamList>
-    | undefined;
+  [NavigatorName.Portfolio]: NavigatorScreenParams<PortfolioNavigatorStackParamList> | undefined;
+  [NavigatorName.Market]: NavigatorScreenParams<MarketNavigatorStackParamList> | undefined;
   [ScreenName.Transfer]: undefined;
-  [NavigatorName.Discover]:
-    | NavigatorScreenParams<DiscoverNavigatorStackParamList>
-    | undefined;
-  [NavigatorName.Manager]:
-    | NavigatorScreenParams<ManagerNavigatorStackParamList>
-    | undefined;
+  [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList> | undefined;
+  [NavigatorName.Manager]: NavigatorScreenParams<ManagerNavigatorStackParamList> | undefined;
 };

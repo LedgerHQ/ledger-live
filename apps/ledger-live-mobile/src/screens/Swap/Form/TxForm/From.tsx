@@ -2,10 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import {
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountName, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePickDefaultAccount } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
@@ -32,9 +29,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
 
-  const accounts = useSelector(fromSelector)(
-    useSelector(shallowAccountsSelector),
-  );
+  const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const { name, balance, unit } = useMemo(() => {
     const { currency, account } = swapTx.swap.from;
 
@@ -52,11 +47,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
     };
   }, [swapTx.swap.from]);
 
-  usePickDefaultAccount(
-    accounts,
-    swapTx.swap.from.account,
-    swapTx.setFromAccount,
-  );
+  usePickDefaultAccount(accounts, swapTx.swap.from.account, swapTx.setFromAccount);
 
   const pairs = useSelector(pairsSelector);
 
@@ -88,12 +79,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
   );
 
   return (
-    <Flex
-      borderBottomWidth={1}
-      borderColor="neutral.c70"
-      paddingBottom={2}
-      marginBottom={4}
-    >
+    <Flex borderBottomWidth={1} borderColor="neutral.c70" paddingBottom={2} marginBottom={4}>
       <Text variant="small" marginBottom={2}>
         {t("transfer.swap2.form.from")}
       </Text>

@@ -1,8 +1,4 @@
-export function encodeERC721OperationId(
-  nftId: string,
-  hash: string,
-  type: string
-): string {
+export function encodeERC721OperationId(nftId: string, hash: string, type: string): string {
   return `${nftId}-${hash}-${type}`;
 }
 
@@ -24,7 +20,7 @@ export function encodeERC1155OperationId(
   hash: string,
   type: string,
   i = 0,
-  j = 0
+  j = 0,
 ): string {
   return `${nftId}-${hash}-${type}-i${i}_${j}`;
 }

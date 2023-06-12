@@ -20,10 +20,7 @@ const NftMetadataServiceRow = () => {
   const onChange = useCallback(
     (enabled: boolean) => {
       setStagingNftMetadataService(enabled);
-      setEnvUnsafe(
-        "NFT_ETH_METADATA_SERVICE",
-        enabled ? STAGING_URL : PRODUCTION_URL,
-      );
+      setEnvUnsafe("NFT_ETH_METADATA_SERVICE", enabled ? STAGING_URL : PRODUCTION_URL);
       clearCache();
     },
     [clearCache],

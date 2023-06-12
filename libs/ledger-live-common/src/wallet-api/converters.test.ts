@@ -56,8 +56,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    const { canEditFees, hasFeesProvided, liveTx } =
-      getWalletAPITransactionSignFlowInfos({ tx, account: dummyAccount });
+    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos({
+      tx,
+      account: dummyAccount,
+    });
 
     // Then
     expect(ethBridge).toBeCalledTimes(0);

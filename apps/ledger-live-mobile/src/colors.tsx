@@ -15,8 +15,7 @@ export const ensureContrast = (color1: string, color2: string) => {
   return color1;
 };
 
-export const rgba = (c: string, a: number) =>
-  color(c).alpha(a).rgb().toString();
+export const rgba = (c: string, a: number) => color(c).alpha(a).rgb().toString();
 
 export const darken = (c: string, a: number) => color(c).darken(a).toString();
 

@@ -42,13 +42,7 @@ const Leaf = ({ path, label, value, onPress, icon }: LeafProps) => (
           <Text variant={"small"} fontWeight={"medium"} color={"neutral.c70"}>
             {`${typeof value}`}
           </Text>
-          <Text
-            mt={3}
-            variant={"body"}
-            fontWeight={"medium"}
-            color={"neutral.c90"}
-            selectable
-          >
+          <Text mt={3} variant={"body"} fontWeight={"medium"} color={"neutral.c90"} selectable>
             {`${value}`}
           </Text>
         </Flex>
@@ -101,10 +95,7 @@ const Node = ({ data = {}, path, onEdit }: Props) => {
         return (
           <View
             key={rowKey}
-            style={[
-              styles.wrapper,
-              { borderColor: colors.black, borderLeftWidth: path ? 5 : 0 },
-            ]}
+            style={[styles.wrapper, { borderColor: colors.black, borderLeftWidth: path ? 5 : 0 }]}
           >
             <Leaf
               onPress={isObject ? toggleVisibility : onEdit}
@@ -117,11 +108,7 @@ const Node = ({ data = {}, path, onEdit }: Props) => {
             {isObject
               ? isOpen &&
                 value && (
-                  <Node
-                    data={value as Record<string, unknown>}
-                    path={rowKey}
-                    onEdit={onEdit}
-                  />
+                  <Node data={value as Record<string, unknown>} path={rowKey} onEdit={onEdit} />
                 )
               : null}
           </View>

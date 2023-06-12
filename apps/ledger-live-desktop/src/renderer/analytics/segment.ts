@@ -11,6 +11,7 @@ import {
   lastSeenDeviceSelector,
   localeSelector,
   languageSelector,
+  seenDevicesSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, idsToLanguage } from "@ledgerhq/types-live";
@@ -50,6 +51,7 @@ const extraProperties = (store: ReduxStore) => {
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
   const systemLocale = getParsedSystemLocale();
   const device = lastSeenDeviceSelector(state);
+  const devices = seenDevicesSelector(state);
   const accounts = accountsSelector(state);
   const deviceInfo = device
     ? {
@@ -98,6 +100,7 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
+    modelIdList: devices.map(d => d.modelId),
     ...deviceInfo,
   };
 };
@@ -116,8 +119,12 @@ export const start = async (store: ReduxStore) => {
   storeInstance = store;
   const analytics = getAnalytics();
   if (!analytics) return;
-  logger.analyticsStart(id, extraProperties(store));
-  analytics.identify(id, extraProperties(store), {
+  const allProperties = {
+    ...extraProperties(store),
+    braze_external_id: id, // Needed for braze with this exact name
+  };
+  logger.analyticsStart(id, allProperties);
+  analytics.identify(id, allProperties, {
     context: getContext(),
   });
 };
@@ -162,6 +169,21 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
     ...filterAccount,
     ...filterParentAccount,
   };
+};
+
+export const updateIdentify = async () => {
+  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) return;
+
+  const analytics = getAnalytics();
+  const { id } = await user();
+
+  const allProperties = {
+    ...extraProperties(storeInstance),
+    braze_external_id: id, // Needed for braze with this exact name
+  };
+  analytics.identify(id, allProperties, {
+    context: getContext(),
+  });
 };
 
 export const track = (

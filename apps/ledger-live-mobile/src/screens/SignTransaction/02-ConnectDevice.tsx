@@ -35,8 +35,7 @@ function ConnectDevice({
     account: mainAccount,
     transaction: route.params.transaction,
   }));
-  const tokenCurrency =
-    account.type === "TokenAccount" ? account.token : undefined;
+  const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandlerWithoutBroadcast({
     onSuccess,
   });
@@ -52,15 +51,7 @@ function ConnectDevice({
       dependencies: [mainAccount],
       requireLatestFirmware: true,
     }),
-    [
-      account,
-      appName,
-      mainAccount,
-      parentAccount,
-      status,
-      tokenCurrency,
-      transaction,
-    ],
+    [account, appName, mainAccount, parentAccount, status, tokenCurrency, transaction],
   );
   return transaction ? (
     <SafeAreaView
@@ -71,10 +62,7 @@ function ConnectDevice({
         },
       ]}
     >
-      <TrackScreen
-        category={route.name.replace("ConnectDevice", "")}
-        name="ConnectDevice"
-      />
+      <TrackScreen category={route.name.replace("ConnectDevice", "")} name="ConnectDevice" />
       <DeviceAction
         action={action}
         // @ts-expect-error Wrong types?

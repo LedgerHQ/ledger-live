@@ -9,16 +9,14 @@ export const recipientHasAsset =
   (algorandAPI: AlgorandAPI) =>
   async (recipientAddress: string, assetId: string): Promise<boolean> => {
     const recipientAccount = await algorandAPI.getAccount(recipientAddress);
-    return recipientAccount.assets.map((a) => a.assetId).includes(assetId);
+    return recipientAccount.assets.map(a => a.assetId).includes(assetId);
   };
 
 export const isAmountValid =
   (algorandAPI: AlgorandAPI) =>
   async (recipientAddress: string, amount: BigNumber): Promise<boolean> => {
     const recipientAccount = await algorandAPI.getAccount(recipientAddress);
-    return recipientAccount.balance.isZero()
-      ? amount.gte(ALGORAND_MIN_ACCOUNT_BALANCE)
-      : true;
+    return recipientAccount.balance.isZero() ? amount.gte(ALGORAND_MIN_ACCOUNT_BALANCE) : true;
   };
 
 export const computeAlgoMaxSpendable = ({
@@ -37,7 +35,7 @@ export const computeAlgoMaxSpendable = ({
 
 const computeMinimumAlgoBalance = (
   mode: AlgorandOperationMode,
-  nbAccountAssets: number
+  nbAccountAssets: number,
 ): BigNumber => {
   const base = 100000; // 0.1 algo = 100000 malgo
   const currentAssets = nbAccountAssets;

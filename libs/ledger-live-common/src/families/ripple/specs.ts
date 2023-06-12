@@ -35,7 +35,7 @@ const ripple: AppSpec<Transaction> = {
         if (!sibling.used && amount.lt(reserve)) {
           invariant(
             maxSpendable.gt(reserve.plus(minAmountCutoff)),
-            "not enough funds to send to new account"
+            "not enough funds to send to new account",
           );
           amount = reserve;
         }
@@ -62,14 +62,14 @@ const ripple: AppSpec<Transaction> = {
           botTest("operation tag matches (in extra)", () =>
             expect(operation.extra).toMatchObject({
               tag: transaction.tag,
-            })
+            }),
           );
         }
 
         botTest("account balance moved with operation.value", () =>
           expect(account.balance.toString()).toBe(
-            accountBeforeTransaction.balance.minus(operation.value).toString()
-          )
+            accountBeforeTransaction.balance.minus(operation.value).toString(),
+          ),
         );
       },
     },

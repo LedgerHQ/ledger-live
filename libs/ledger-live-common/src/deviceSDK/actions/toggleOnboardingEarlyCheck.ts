@@ -1,9 +1,5 @@
 import { DeviceId } from "@ledgerhq/types-live";
-import {
-  FullActionState,
-  initialSharedActionState,
-  sharedReducer,
-} from "./core";
+import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
 import {
   ToggleOnboardingEarlyCheckTaskError,
   ToggleOnboardingEarlyCheckTaskEvent,
@@ -18,8 +14,7 @@ export type ToggleOnboardingEarlyCheckActionArgs = {
 };
 
 // Union of all the tasks specific errors
-export type ToggleOnboardingEarlyCheckActionErrorName =
-  ToggleOnboardingEarlyCheckTaskError;
+export type ToggleOnboardingEarlyCheckActionErrorName = ToggleOnboardingEarlyCheckTaskError;
 
 export type ToggleOnboardingEarlyCheckActionState = FullActionState<{
   toggleStatus: "none" | "success" | "failure";
@@ -52,35 +47,35 @@ export function toggleOnboardingEarlyCheckAction({
   toggleType,
 }: ToggleOnboardingEarlyCheckActionArgs): Observable<ToggleOnboardingEarlyCheckActionState> {
   return toggleOnboardingEarlyCheckTask({ deviceId, toggleType }).pipe(
-    scan<
-      ToggleOnboardingEarlyCheckTaskEvent,
-      ToggleOnboardingEarlyCheckActionState
-    >((currentState, event) => {
-      switch (event.type) {
-        case "taskError":
-          return {
-            ...initialState,
-            error: {
-              type: "ToggleOnboardingEarlyCheckError",
-              name: event.error,
-            },
-            toggleStatus: "failure",
-          };
-        case "success":
-          return {
-            ...currentState,
-            error: null,
-            toggleStatus: "success",
-          };
-        case "error":
-          return {
-            ...currentState,
-            ...sharedReducer({
-              event,
-            }),
-            toggleStatus: "failure",
-          };
-      }
-    }, initialState)
+    scan<ToggleOnboardingEarlyCheckTaskEvent, ToggleOnboardingEarlyCheckActionState>(
+      (currentState, event) => {
+        switch (event.type) {
+          case "taskError":
+            return {
+              ...initialState,
+              error: {
+                type: "ToggleOnboardingEarlyCheckError",
+                name: event.error,
+              },
+              toggleStatus: "failure",
+            };
+          case "success":
+            return {
+              ...currentState,
+              error: null,
+              toggleStatus: "success",
+            };
+          case "error":
+            return {
+              ...currentState,
+              ...sharedReducer({
+                event,
+              }),
+              toggleStatus: "failure",
+            };
+        }
+      },
+      initialState,
+    ),
   );
 }

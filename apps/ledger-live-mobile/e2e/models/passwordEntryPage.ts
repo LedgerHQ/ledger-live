@@ -1,9 +1,4 @@
-import {
-  getElementById,
-  getElementByText,
-  tapByElement,
-  typeTextByElement,
-} from "../helpers";
+import { getElementById, getElementByText, tapByElement, typeTextByElement } from "../helpers";
 
 export default class PasswordEntryPage {
   getPasswordTextInput = () => getElementById("password-text-input");

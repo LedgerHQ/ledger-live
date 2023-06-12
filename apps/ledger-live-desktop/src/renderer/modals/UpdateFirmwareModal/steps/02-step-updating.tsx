@@ -36,12 +36,13 @@ const StepUpdating = ({
   setUpdatedDeviceInfo,
 }: StepProps) => {
   useEffect(() => {
-    const sub = (getEnv("MOCK")
-      ? mockedEventEmitter()
-      : withDevicePolling("")(
-          transport => from(getDeviceInfo(transport)),
-          () => true,
-        )
+    const sub = (
+      getEnv("MOCK")
+        ? mockedEventEmitter()
+        : withDevicePolling("")(
+            transport => from(getDeviceInfo(transport)),
+            () => true,
+          )
     )
       .pipe(timeout(5 * 60 * 1000))
       .subscribe({

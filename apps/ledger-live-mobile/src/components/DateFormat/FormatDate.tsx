@@ -3,12 +3,7 @@ import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import compareDate from "../../logic/compareDate";
 import { dateFormatSelector, languageSelector } from "../../reducers/settings";
-import {
-  ddmmyyyyFormatter,
-  Format,
-  genericFormatter,
-  mmddyyyyFormatter,
-} from "./formatter.util";
+import { ddmmyyyyFormatter, Format, genericFormatter, mmddyyyyFormatter } from "./formatter.util";
 
 type Props = {
   date: Date | null | undefined;
@@ -28,10 +23,7 @@ const hoursAndMinutesOptionsSelector = createSelector(
     }),
 );
 
-function FormatDate({
-  date,
-  withHoursMinutes = false,
-}: Props): JSX.Element | null {
+function FormatDate({ date, withHoursMinutes = false }: Props): JSX.Element | null {
   const defaultOptions = useSelector(defaultOptionsSelector);
   const hoursAndMinutesOptions = useSelector(hoursAndMinutesOptionsSelector);
   const dateFormat = useSelector(dateFormatSelector);

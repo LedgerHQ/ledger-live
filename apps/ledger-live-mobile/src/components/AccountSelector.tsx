@@ -33,23 +33,11 @@ const AccountSelector = ({
     () => (
       <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
         <NoResultsFound />
-        <Text
-          color="neutral.c100"
-          fontWeight="medium"
-          variant="h2"
-          mt={6}
-          textAlign="center"
-        >
+        <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
           {t("transfer.receive.noResultsFound")}
         </Text>
         <Flex>
-          <Text
-            color="neutral.c80"
-            fontWeight="medium"
-            variant="body"
-            pt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
             {t("transfer.receive.noResultsDesc")}
           </Text>
         </Flex>

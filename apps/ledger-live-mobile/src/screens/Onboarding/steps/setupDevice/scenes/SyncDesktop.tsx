@@ -28,13 +28,7 @@ const SyncDesktopScene = () => {
   return (
     <>
       <Text variant="h2">{t("onboarding.stepImportAccounts.title")}</Text>
-      <Text
-        variant="body"
-        color="neutral.c70"
-        mt={5}
-        mb={8}
-        lineHeight="23.8px"
-      >
+      <Text variant="body" color="neutral.c70" mt={5} mb={8} lineHeight="23.8px">
         {t("onboarding.stepImportAccounts.desc")}
       </Text>
       <IconBoxList
@@ -49,12 +43,7 @@ const SyncDesktopScene = () => {
               {""}
             </Trans>
           ) : (
-            <Text
-              variant="body"
-              fontWeight="medium"
-              color="neutral.c100"
-              lineHeight="16.94px"
-            >
+            <Text variant="body" fontWeight="medium" color="neutral.c100" lineHeight="16.94px">
               {t(item.title)}
             </Text>
           ),

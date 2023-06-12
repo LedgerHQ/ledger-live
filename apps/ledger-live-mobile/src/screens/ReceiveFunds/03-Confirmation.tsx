@@ -4,10 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
-import type {
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
   getMainAccount,
@@ -33,10 +30,7 @@ import byFamily from "../../generated/Confirmation";
 import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<
@@ -65,20 +59,14 @@ export default function ReceiveConfirmation({ navigation }: Props) {
   ) : null;
 }
 
-function ReceiveConfirmationInner({
-  navigation,
-  route,
-  account,
-  parentAccount,
-}: Props) {
+function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
   const [isToastDisplayed, setIsToastDisplayed] = useState(false);
-  const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] =
-    useState(verified);
+  const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] = useState(verified);
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
 
@@ -113,8 +101,7 @@ function ReceiveConfirmationInner({
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency =
-    route.params?.currency || (account && getAccountCurrency(account));
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
 
   useEffect(() => {
     if (route.params?.createTokenAccount && !hasAddedTokenAccount) {
@@ -122,19 +109,14 @@ function ReceiveConfirmationInner({
       if (
         !newMainAccount.subAccounts ||
         !newMainAccount.subAccounts.find(
-          acc =>
-            (acc as TokenAccount)?.token?.id ===
-            (currency as CryptoOrTokenCurrency).id,
+          acc => (acc as TokenAccount)?.token?.id === (currency as CryptoOrTokenCurrency).id,
         )
       ) {
         const emptyTokenAccount = makeEmptyTokenAccount(
           newMainAccount as Account,
           currency as TokenCurrency,
         );
-        newMainAccount.subAccounts = [
-          ...(newMainAccount.subAccounts || []),
-          emptyTokenAccount,
-        ];
+        newMainAccount.subAccounts = [...(newMainAccount.subAccounts || []), emptyTokenAccount];
 
         // @TODO create a new action for adding a single account at a time instead of replacing
         dispatch(
@@ -148,13 +130,7 @@ function ReceiveConfirmationInner({
         setHasAddedTokenAccount(true);
       }
     }
-  }, [
-    currency,
-    route.params?.createTokenAccount,
-    mainAccount,
-    dispatch,
-    hasAddedTokenAccount,
-  ]);
+  }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -187,10 +163,7 @@ function ReceiveConfirmationInner({
   if (!account || !currency || !mainAccount) return null;
 
   // check for coin specific UI
-  if (
-    currency.type === "CryptoCurrency" &&
-    Object.keys(byFamily).includes(currency.family)
-  ) {
+  if (currency.type === "CryptoCurrency" && Object.keys(byFamily).includes(currency.family)) {
     const CustomConfirmation =
       currency.type === "CryptoCurrency"
         ? byFamily[currency.family as keyof typeof byFamily]
@@ -221,11 +194,7 @@ function ReceiveConfirmationInner({
     <Flex flex={1} mb={9}>
       <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
-        <TrackScreen
-          category="Receive"
-          name="Qr Code"
-          currency={currency.name}
-        />
+        <TrackScreen category="Receive" name="Qr Code" currency={currency.name} />
         <Flex p={6} alignItems="center" justifyContent="center">
           <Text
             testID="receive-header-step3-title"
@@ -240,29 +209,16 @@ function ReceiveConfirmationInner({
           </Text>
           <Flex>
             {verified ? (
-              <Flex
-                alignItems="center"
-                justifyContent="center"
-                flexDirection="row"
-              >
+              <Flex alignItems="center" justifyContent="center" flexDirection="row">
                 <Icons.ShieldCheckMedium color="success.c50" size={16} />
-                <Text
-                  color="success.c50"
-                  fontWeight="medium"
-                  variant="paragraphLineHeight"
-                  ml={2}
-                >
+                <Text color="success.c50" fontWeight="medium" variant="paragraphLineHeight" ml={2}>
                   {t("transfer.receive.receiveConfirmation.addressVerified")}
                 </Text>
               </Flex>
             ) : (
               <Flex>
                 <TouchableOpacity onPress={onRetry}>
-                  <Flex
-                    alignItems="center"
-                    justifyContent="center"
-                    flexDirection="row"
-                  >
+                  <Flex alignItems="center" justifyContent="center" flexDirection="row">
                     <Icons.ShieldSecurityMedium color="warning.c50" size={16} />
                     <Text
                       color="warning.c50"
@@ -335,22 +291,14 @@ function ReceiveConfirmationInner({
               {t("transfer.receive.copyAddress")}
             </CopyLink>
           </Flex>
-          <Text
-            variant="body"
-            fontWeight="medium"
-            color="neutral.c70"
-            mt={6}
-            textAlign="center"
-          >
+          <Text variant="body" fontWeight="medium" color="neutral.c70" mt={6} textAlign="center">
             {t("transfer.receive.receiveConfirmation.sendWarning", {
               currencyName: currency.name,
               currencyTicker: currency.ticker,
             })}
           </Text>
         </Flex>
-        {CustomConfirmationAlert && (
-          <CustomConfirmationAlert mainAccount={mainAccount} />
-        )}
+        {CustomConfirmationAlert && <CustomConfirmationAlert mainAccount={mainAccount} />}
       </NavigationScrollView>
       <Flex m={6}>
         {isToastDisplayed ? (
@@ -377,9 +325,7 @@ function ReceiveConfirmationInner({
           </Button>
         )}
       </Flex>
-      {verified ? null : isModalOpened ? (
-        <ReceiveSecurityModal onVerifyAddress={onRetry} />
-      ) : null}
+      {verified ? null : isModalOpened ? <ReceiveSecurityModal onVerifyAddress={onRetry} /> : null}
 
       <AdditionalInfoModal
         isOpen={isAddionalInfoModalOpen}

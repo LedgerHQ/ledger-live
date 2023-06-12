@@ -14,13 +14,7 @@ import { PolkadotAPI } from "./api";
  */
 const getEstimatedFees =
   (polkadotAPI: PolkadotAPI) =>
-  async ({
-    a,
-    t,
-  }: {
-    a: PolkadotAccount;
-    t: Transaction;
-  }): Promise<BigNumber> => {
+  async ({ a, t }: { a: PolkadotAccount; t: Transaction }): Promise<BigNumber> => {
     const transaction = {
       ...t,
       recipient: getAbandonSeedAddress(a.currency.id),
@@ -30,10 +24,7 @@ const getEstimatedFees =
         t: { ...t, fees: new BigNumber(0) },
       }), // Remove fees if present since we are fetching fees
     };
-    const { unsigned, registry } = await buildTransaction(polkadotAPI)(
-      a,
-      transaction
-    );
+    const { unsigned, registry } = await buildTransaction(polkadotAPI)(a, transaction);
     const fakeSignedTx = await fakeSignExtrinsic(unsigned, registry);
     const payment = await polkadotAPI.getPaymentInfo({
       a,

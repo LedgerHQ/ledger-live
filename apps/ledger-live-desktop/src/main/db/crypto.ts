@@ -47,7 +47,6 @@ export const decryptData = (raw: string, encryptionKey: string) => {
   log("db/crypto", "fallback to deprecated API");
 
   // if not, then we fallback to the deprecated API
-  // eslint-disable-next-line node/no-deprecated-api
   const decipher = crypto.createDecipher(ENCRYPTION_ALGORITHM, encryptionKey);
   return Buffer.concat([decipher.update(data), decipher.final()]).toString("utf8");
 };

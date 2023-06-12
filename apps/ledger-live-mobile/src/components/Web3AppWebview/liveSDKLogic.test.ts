@@ -1,9 +1,5 @@
 import BigNumber from "bignumber.js";
-import {
-  CryptoCurrency,
-  CryptoCurrencyId,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 
@@ -18,10 +14,7 @@ describe("prepareSignTransaction", () => {
   it("returns a Transaction", () => {
     // Given
     const parentAccount = createAccount("12");
-    const childAccount = createTokenAccount(
-      "22",
-      "ethereumjs:2:ethereum:0x012:",
-    );
+    const childAccount = createTokenAccount("22", "ethereumjs:2:ethereum:0x012:");
     const expectedResult = {
       amount: new BigNumber("1000"),
       data: Buffer.from([]),
@@ -43,11 +36,7 @@ describe("prepareSignTransaction", () => {
     };
 
     // When
-    const result = prepareSignTransaction(
-      childAccount,
-      parentAccount,
-      createEtherumTransaction(),
-    );
+    const result = prepareSignTransaction(childAccount, parentAccount, createEtherumTransaction());
 
     // Then
     expect(result).toEqual(expectedResult);
@@ -55,9 +44,7 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createEtherumTransaction(): Partial<
-  Transaction & { gasLimit: BigNumber }
-> {
+function createEtherumTransaction(): Partial<Transaction & { gasLimit: BigNumber }> {
   return {
     family: "ethereum",
     amount: new BigNumber("1000"),
@@ -101,10 +88,7 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
 });
 
 const defaultEthCryptoFamily = createCryptoCurrency("ethereum");
-const createAccount = (
-  id: string,
-  crypto: CryptoCurrency = defaultEthCryptoFamily,
-): Account => ({
+const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFamily): Account => ({
   type: "Account",
   id: `ethereumjs:2:ethereum:0x0${id}:`,
   seedIdentifier: "0x01",

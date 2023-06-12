@@ -24,9 +24,7 @@ export type AddAccountsSectionResult = {
 function sameAccountIdentity(a: Account, b: Account) {
   return (
     a.id === b.id ||
-    (a.freshAddress
-      ? a.currency === b.currency && a.freshAddress === b.freshAddress
-      : false) ||
+    (a.freshAddress ? a.currency === b.currency && a.freshAddress === b.freshAddress : false) ||
     (a.xpub ? a.currency === b.currency && a.xpub === b.xpub : false)
   );
 }
@@ -40,7 +38,7 @@ export function groupAddAccounts(
   context: {
     scanning: boolean;
     preferredNewAccountSchemes?: DerivationMode[];
-  }
+  },
 ): AddAccountsSectionResult {
   const importedAccounts: Account[] = [];
   const importableAccounts: Account[] = [];
@@ -48,10 +46,8 @@ export function groupAddAccounts(
   let alreadyEmptyAccount: Account | null = null;
   const scannedAccountsWithoutMigrate = [...scannedAccounts];
 
-  scannedAccountsWithoutMigrate.forEach((acc) => {
-    const existingAccount = existingAccounts.find((a) =>
-      sameAccountIdentity(a, acc)
-    );
+  scannedAccountsWithoutMigrate.forEach(acc => {
+    const existingAccount = existingAccounts.find(a => sameAccountIdentity(a, acc));
 
     if (existingAccount) {
       if (!acc.used && !alreadyEmptyAccount) {
@@ -88,13 +84,12 @@ export function groupAddAccounts(
       selectable: true,
       defaultSelected: false,
       data:
-        context.preferredNewAccountSchemes &&
-        context.preferredNewAccountSchemes.length > 0
+        context.preferredNewAccountSchemes && context.preferredNewAccountSchemes.length > 0
           ? creatableAccounts.filter(
-              (a) =>
+              a =>
                 context.preferredNewAccountSchemes &&
                 // Note: we could use a simple preferredNewAccountScheme param
-                a.derivationMode === context.preferredNewAccountSchemes[0]
+                a.derivationMode === context.preferredNewAccountSchemes[0],
             )
           : creatableAccounts,
     });
@@ -134,10 +129,10 @@ export function addAccounts({
 }: AddAccountsProps): Account[] {
   const newAccounts: Account[] = [];
   // scanned accounts that was selected
-  const selected = scannedAccounts.filter((a) => selectedIds.includes(a.id));
-  existingAccounts.forEach((existing) => {
+  const selected = scannedAccounts.filter(a => selectedIds.includes(a.id));
+  existingAccounts.forEach(existing => {
     // we'll try to find an updated version of the existing account as opportunity to refresh the operations
-    const update = selected.find((a) => sameAccountIdentity(a, existing));
+    const update = selected.find(a => sameAccountIdentity(a, existing));
 
     if (update) {
       // preserve existing name
@@ -153,15 +148,15 @@ export function addAccounts({
     }
   });
   // append the new accounts
-  selected.forEach((acc) => {
-    const alreadyThere = newAccounts.find((a) => sameAccountIdentity(a, acc));
+  selected.forEach(acc => {
+    const alreadyThere = newAccounts.find(a => sameAccountIdentity(a, acc));
 
     if (!alreadyThere) {
       newAccounts.push(acc);
     }
   });
   // dedup and apply the renaming
-  return uniqWith(newAccounts, sameAccountIdentity).map((a) => {
+  return uniqWith(newAccounts, sameAccountIdentity).map(a => {
     const name = validateNameEdition(a, renamings[a.id]);
     if (name) return { ...a, name };
     return a;

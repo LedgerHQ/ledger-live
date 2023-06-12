@@ -1,13 +1,7 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const NanoS = ({
-  size = 85,
-  color = "neutral.c100",
-}: {
-  size?: number;
-  color?: string;
-}) => (
+const NanoS = ({ size = 85, color = "neutral.c100" }: { size?: number; color?: string }) => (
   <Svg width={size} height={size} fill="none" viewBox="0 0 85 87">
     <Path
       fillRule="evenodd"

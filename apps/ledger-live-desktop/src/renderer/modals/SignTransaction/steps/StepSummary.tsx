@@ -58,13 +58,8 @@ export default class StepSummary extends PureComponent<StepProps> {
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!mainAccount || !transaction) return null;
-    const {
-      estimatedFees,
-      amount,
-      totalSpent,
-      warnings,
-      txInputs,
-    } = status as TransactionStatusCommon & { txInputs: unknown[] };
+    const { estimatedFees, amount, totalSpent, warnings, txInputs } =
+      status as TransactionStatusCommon & { txInputs: unknown[] };
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
     const feesUnit = getAccountUnit(mainAccount);

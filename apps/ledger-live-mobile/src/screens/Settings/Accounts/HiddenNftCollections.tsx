@@ -53,11 +53,10 @@ const HiddenNftCollectionRow = ({
   const nfts = account?.nfts || [];
   const nft = nfts.find(nft => nft?.contract === contractAddress);
 
-  const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(
-      contractAddress,
-      nft?.currencyId,
-    ) as NFTResource & { metadata?: NFTResourceLoaded["metadata"] };
+  const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
+    contractAddress,
+    nft?.currencyId,
+  ) as NFTResource & { metadata?: NFTResourceLoaded["metadata"] };
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     contractAddress,
     nft?.tokenId,
@@ -75,20 +74,10 @@ const HiddenNftCollectionRow = ({
         metadata={nftMetadata as NFTMetadata}
         mediaFormat={"preview"}
       />
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        flexShrink={1}
-        justifyContent="space-between"
-      >
+      <Flex flexDirection="row" alignItems="center" flexShrink={1} justifyContent="space-between">
         <Flex mx={6} flexGrow={1} flexShrink={1} flexDirection="column">
           <CollectionNameSkeleton loading={loading}>
-            <Text
-              fontWeight={"semiBold"}
-              variant={"large"}
-              ellipsizeMode="tail"
-              numberOfLines={2}
-            >
+            <Text fontWeight={"semiBold"} variant={"large"} ellipsizeMode="tail" numberOfLines={2}>
               {collectionMetadata?.tokenName || contractAddress}
             </Text>
           </CollectionNameSkeleton>

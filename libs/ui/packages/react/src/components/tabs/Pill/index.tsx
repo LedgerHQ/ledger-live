@@ -37,14 +37,14 @@ const Item = styled(Flex).attrs({ flex: 1, justifyContent: "center", alignItems:
   padding: 8px 10px 8px 10px;
   border: 1px solid;
   &[data-active="false"] {
-    color: ${(p) => p.theme.colors.neutral.c80};
-    background-color: ${(p) => p.theme.colors.neutral.c00};
-    border-color: ${(p) => p.theme.colors.neutral.c40};
+    color: ${p => p.theme.colors.neutral.c80};
+    background-color: ${p => p.theme.colors.neutral.c00};
+    border-color: ${p => p.theme.colors.neutral.c40};
   }
   &[data-active="true"] {
-    color: ${(p) => p.theme.colors.neutral.c00};
-    background-color: ${(p) => p.theme.colors.neutral.c100};
-    border-color: ${(p) => p.theme.colors.neutral.c100};
+    color: ${p => p.theme.colors.neutral.c00};
+    background-color: ${p => p.theme.colors.neutral.c100};
+    border-color: ${p => p.theme.colors.neutral.c100};
 
     &:not(:last-child) {
       border-right-width: 0;

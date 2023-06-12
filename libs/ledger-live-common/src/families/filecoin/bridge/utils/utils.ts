@@ -1,14 +1,8 @@
 import { Account, Address, Operation } from "@ledgerhq/types-live";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "../../../../currencies";
+import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../../currencies";
 import { BigNumber } from "bignumber.js";
 import { BroadcastTransactionRequest, TransactionResponse } from "./types";
-import {
-  GetAccountShape,
-  AccountShapeInfo,
-} from "../../../../bridge/jsHelpers";
+import { GetAccountShape, AccountShapeInfo } from "../../../../bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
 import { encodeOperationId } from "../../../../operation";
@@ -23,9 +17,7 @@ type TxsById = {
 
 export const getUnit = () => getCryptoCurrencyById("filecoin").units[0];
 
-export const processTxs = (
-  txs: TransactionResponse[]
-): TransactionResponse[] => {
+export const processTxs = (txs: TransactionResponse[]): TransactionResponse[] => {
   const txsById = txs.reduce((result: TxsById, currentTx) => {
     const { hash, type } = currentTx;
     const txById = result[hash] || {};
@@ -104,18 +96,10 @@ export const getAddress = (a: Account): Address =>
 
 export const getTxToBroadcast = (
   operation: Operation,
-  signature: string
+  signature: string,
 ): BroadcastTransactionRequest => {
   const { extra, senders, recipients, value, fee } = operation;
-  const {
-    gasLimit,
-    gasFeeCap,
-    gasPremium,
-    method,
-    version,
-    nonce,
-    signatureType,
-  } = extra;
+  const { gasLimit, gasFeeCap, gasPremium, method, version, nonce, signatureType } = extra;
 
   return {
     message: {
@@ -137,7 +121,7 @@ export const getTxToBroadcast = (
   };
 };
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode } = info;
 
   const accountId = encodeAccountId({

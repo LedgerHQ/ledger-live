@@ -1,8 +1,5 @@
 import { renderHook } from "@testing-library/react-hooks";
-import {
-  usePollKYCStatus,
-  KYC_STATUS_POLLING_INTERVAL,
-} from "./usePollKYCStatus";
+import { usePollKYCStatus, KYC_STATUS_POLLING_INTERVAL } from "./usePollKYCStatus";
 import type { UsePollKYCStatusProps } from "./usePollKYCStatus";
 import { KYC_STATUS } from "../utils";
 import { getKYCStatus } from "..";
@@ -31,8 +28,8 @@ describe("usePollKYCStatus", () => {
 
   test("KYC status isn't fetched when the local status isn't PENDING", () => {
     Object.values(KYC_STATUS)
-      .filter((status) => status !== "pending")
-      .forEach((status) => {
+      .filter(status => status !== "pending")
+      .forEach(status => {
         const input = { ...defaultInput, kyc: { id: "1", status } };
         renderHook(() => usePollKYCStatus(input));
         expect(mockedGetKYCStatus).toHaveBeenCalledTimes(0);
@@ -48,10 +45,7 @@ describe("usePollKYCStatus", () => {
 
     renderHook(() => usePollKYCStatus(input));
     expect(mockedGetKYCStatus).toHaveBeenCalledTimes(1);
-    expect(mockedGetKYCStatus).toHaveBeenCalledWith(
-      input.provider,
-      input.kyc?.id
-    );
+    expect(mockedGetKYCStatus).toHaveBeenCalledWith(input.provider, input.kyc?.id);
     expect(onChange).toHaveBeenCalledTimes(0);
   });
 

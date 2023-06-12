@@ -57,10 +57,9 @@ const illustrations = {
 export const DeviceIllustration = styled.img.attrs<{
   deviceModel: DeviceModel;
 }>(p => ({
-  src:
-    illustrations[
-      (process.env.OVERRIDE_MODEL_ID || p.deviceModel.id) as keyof typeof illustrations
-    ][p.theme.colors.palette.type || "light"],
+  src: illustrations[
+    (process.env.OVERRIDE_MODEL_ID || p.deviceModel.id) as keyof typeof illustrations
+  ][p.theme.colors.palette.type || "light"],
 }))<{
   deviceModel: DeviceModel;
 }>`

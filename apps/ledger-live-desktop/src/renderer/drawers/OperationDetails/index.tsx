@@ -477,9 +477,7 @@ const OperationD = (props: Props) => {
                 onClick={() => openURL(urlWhatIsThis)}
               />
             </Box>
-          ) : (
-            undefined
-          )}
+          ) : undefined}
           <Text ff="Inter|SemiBold" textAlign="center" fontSize={4} color="palette.text.shade60">
             <Trans i18nKey={`operation.type.${operation.type}`} />
           </Text>

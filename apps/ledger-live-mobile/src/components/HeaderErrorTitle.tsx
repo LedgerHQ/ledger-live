@@ -18,23 +18,12 @@ function HeaderErrorTitle({ error, withDescription }: Props) {
         <LText style={styles.icon}>
           <Icon name="x-circle" size={16} color={colors.alert} />
         </LText>
-        <LText
-          numberOfLines={2}
-          secondary
-          style={styles.title}
-          semiBold
-          color="alert"
-        >
+        <LText numberOfLines={2} secondary style={styles.title} semiBold color="alert">
           <TranslatedError error={error} />
         </LText>
       </View>
       {withDescription ? (
-        <LText
-          secondary
-          style={styles.description}
-          color="alert"
-          numberOfLines={2}
-        >
+        <LText secondary style={styles.description} color="alert" numberOfLines={2}>
           <TranslatedError error={error} field="description" />
         </LText>
       ) : null}

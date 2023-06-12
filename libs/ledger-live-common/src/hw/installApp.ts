@@ -8,7 +8,7 @@ import { getDependencies } from "../apps/polyfill";
 export default function installApp(
   transport: Transport,
   targetId: string | number,
-  app: ApplicationVersion | App
+  app: ApplicationVersion | App,
 ): Observable<{
   progress: number;
 }> {
@@ -34,11 +34,11 @@ export default function installApp(
           new ManagerAppDepInstallRequired("", {
             appName: app.name,
             dependency: dependencies.join(", "),
-          })
+          }),
         );
       }
 
       return throwError(e);
-    })
+    }),
   );
 }

@@ -48,10 +48,7 @@ const RequiresCameraPermissions: React.FC<Props> = ({
     contextValue,
   } = useCameraPermissions();
 
-  if (
-    permission?.granted ||
-    (optimisticallyMountChildren && !firstAutomaticRequestCompleted)
-  )
+  if (permission?.granted || (optimisticallyMountChildren && !firstAutomaticRequestCompleted))
     return (
       <CameraPermissionContext.Provider value={contextValue}>
         {children}

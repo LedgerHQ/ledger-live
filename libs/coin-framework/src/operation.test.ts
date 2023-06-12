@@ -12,7 +12,7 @@ const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = getTokenById("ethereum/erc20/usd__coin");
 const cardano = getCryptoCurrencyById("cardano");
 const lobster = getTokenById(
-  "cardano/native/8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552"
+  "cardano/native/8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552",
 );
 
 describe("Operation.ts", () => {
@@ -21,12 +21,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: ethereum });
       const tokenAccount = genTokenAccount(0, account, usdc);
       const operation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(0),
       };
 
@@ -37,12 +32,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: cardano });
       const tokenAccount = genTokenAccount(0, account, lobster);
       const operation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(0),
       };
 
@@ -53,12 +43,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: ethereum });
       const tokenAccount = genTokenAccount(0, account, usdc);
       const operation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(1),
       };
 
@@ -69,12 +54,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: cardano });
       const tokenAccount = genTokenAccount(0, account, lobster);
       const operation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(1),
       };
 
@@ -85,12 +65,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: ethereum });
       const tokenAccount = genTokenAccount(0, account, lobster);
       const operation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(1),
       };
 

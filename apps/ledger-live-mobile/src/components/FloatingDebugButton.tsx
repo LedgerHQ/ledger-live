@@ -30,14 +30,11 @@ const FloatingDebugButton: React.FC<Props> = ({
 }) => {
   const { height, width } = useWindowDimensions();
   const { top, left, right, bottom } = useSafeAreaInsets();
-  const pan = useRef(
-    new Animated.ValueXY({ x: 10000, y: top + 2 * boxHeight }),
-  ).current;
+  const pan = useRef(new Animated.ValueXY({ x: 10000, y: top + 2 * boxHeight })).current;
 
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gestureState) =>
-        Math.abs(gestureState.dx) > 5,
+      onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dx) > 5,
       onPanResponderGrant(e, gestureState) {
         pan.setOffset({
           x: gestureState.x0 - boxWidth / 2,
@@ -85,11 +82,7 @@ const FloatingDebugButton: React.FC<Props> = ({
           justifyContent="center"
           {...iconContainerProps}
         >
-          {React.isValidElement(Icon) ? (
-            Icon
-          ) : (
-            <Icon size={(2 * boxWidth) / 3} color="white" />
-          )}
+          {React.isValidElement(Icon) ? Icon : <Icon size={(2 * boxWidth) / 3} color="white" />}
         </Flex>
       </TouchableWithoutFeedback>
     </Animated.View>

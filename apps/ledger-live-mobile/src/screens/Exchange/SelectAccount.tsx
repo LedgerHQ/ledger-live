@@ -22,10 +22,7 @@ import { ExchangeStackNavigatorParamList } from "../../components/RootNavigator/
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    ExchangeStackNavigatorParamList,
-    ScreenName.ExchangeSelectAccount
-  >,
+  StackNavigatorProps<ExchangeStackNavigatorParamList, ScreenName.ExchangeSelectAccount>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -34,12 +31,7 @@ type Props = Navigation;
 
 export default function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const {
-    mode = "buy",
-    currency,
-    analyticsPropertyFlow,
-    onAccountChange,
-  } = route.params;
+  const { mode = "buy", currency, analyticsPropertyFlow, onAccountChange } = route.params;
   const accounts = useSelector(accountsSelector);
   const availableAccounts = useMemo(
     () => (currency ? getAccountTuplesForCurrency(currency, accounts) : []),
@@ -53,15 +45,11 @@ export default function SelectAccount({ navigation, route }: Props) {
           acc &&
           acc.currency &&
           acc.currency.id ===
-            (currency.type === "TokenCurrency"
-              ? currency.parentCurrency.id
-              : currency.id),
+            (currency.type === "TokenCurrency" ? currency.parentCurrency.id : currency.id),
       );
 
     if (currency.type === "TokenCurrency") {
-      return filteredAccounts.map(
-        acc => acc && accountWithMandatoryTokens(acc, [currency]),
-      );
+      return filteredAccounts.map(acc => acc && accountWithMandatoryTokens(acc, [currency]));
     }
 
     return filteredAccounts;
@@ -131,9 +119,8 @@ export default function SelectAccount({ navigation, route }: Props) {
     () =>
       allAccounts.filter(
         account =>
-          (account?.type === "TokenAccount"
-            ? account?.token.id
-            : account?.currency.id) === currency.id,
+          (account?.type === "TokenAccount" ? account?.token.id : account?.currency.id) ===
+          currency.id,
       ),
     [allAccounts, currency.id],
   );

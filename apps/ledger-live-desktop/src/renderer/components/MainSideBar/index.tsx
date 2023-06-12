@@ -243,9 +243,10 @@ const MainSideBar = () => {
 
   const trackEntry = useCallback(
     (entry: string, flagged = false) => {
-      track(flagged ? "menu_entry_click_flagged" : "menuentry_clicked", {
+      track("menuentry_clicked", {
         entry,
         page: history.location.pathname,
+        flagged,
       });
     },
     [history.location.pathname],
