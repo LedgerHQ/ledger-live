@@ -124,7 +124,7 @@ const loadNanoAppPlugins = async (
       const { plugin, payload, signature, erc20OfInterest, abi } = contractMethodInfos;
 
       if (plugin) {
-        log("ethereum", "found plugin for " + selector);
+        log("ethereum", `found plugin (${plugin}) for selector: ${selector}`);
         resolution.externalPlugin.push({ payload, signature });
       }
 
