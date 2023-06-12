@@ -18,47 +18,31 @@ describe("buildTransactionWithUnsignedPayload", () => {
     it("should return a MsgSend message if transaction is complete", async () => {
       transaction.recipient = "address";
       transaction.amount = new BigNumber(1000);
-      const [message] = (await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      )) as any[];
+      const [message] = (await buildUnsignedPayloadTransaction(account, transaction)) as any[];
       expect(message).toBeTruthy();
       expect(message.typeUrl).toContain("MsgSend");
       expect(message.value.toAddress).toEqual(transaction.recipient);
       expect(message.value.fromAddress).toEqual(account.freshAddress);
-      expect(message.value.amount[0].amount).toEqual(
-        transaction.amount.toString()
-      );
-      expect(message.value.amount[0].denom).toEqual(
-        account.currency.units[1].code
-      );
+      expect(message.value.amount[0].amount).toEqual(transaction.amount.toString());
+      expect(message.value.amount[0].denom).toEqual(account.currency.units[1].code);
     });
 
     it("should return no message if recipient isn't defined", async () => {
       transaction.amount = new BigNumber(10);
       transaction.recipient = "";
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
     it("should return no message if amount is zero", async () => {
       transaction.amount = new BigNumber(0);
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
     it("should return no message if amount is negative", async () => {
       transaction.amount = new BigNumber(-10);
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
   });
@@ -78,61 +62,42 @@ describe("buildTransactionWithUnsignedPayload", () => {
       ];
       const [message] = (await buildUnsignedPayloadTransaction(
         account,
-        transaction
+        transaction,
       )) as MsgDelegateEncodeObject[];
       expect(message).toBeTruthy();
       expect(message.typeUrl).toContain("MsgDelegate");
-      expect(message.value.validatorAddress).toEqual(
-        transaction.validators[0].address
-      );
+      expect(message.value.validatorAddress).toEqual(transaction.validators[0].address);
       expect(message.value.delegatorAddress).toEqual(account.freshAddress);
-      expect(message.value.amount?.amount).toEqual(
-        transaction.amount.toString()
-      );
-      expect(message.value.amount?.denom).toEqual(
-        account.currency.units[1].code
-      );
+      expect(message.value.amount?.amount).toEqual(transaction.amount.toString());
+      expect(message.value.amount?.denom).toEqual(account.currency.units[1].code);
     });
 
     it("should return no message if tx has a 0 amount", async () => {
       transaction.amount = new BigNumber(0);
-      transaction.validators = [
-        { address: "realAddressTrustMe" } as CosmosDelegationInfo,
-      ];
+      transaction.validators = [{ address: "realAddressTrustMe" } as CosmosDelegationInfo];
       const messages = (await buildUnsignedPayloadTransaction(
         account,
-        transaction
+        transaction,
       )) as MsgDelegateEncodeObject[];
       expect(messages.length).toEqual(0);
     });
 
     it("should return no message if tx has a negative amount", async () => {
       transaction.amount = new BigNumber(-1);
-      transaction.validators = [
-        { address: "realAddressTrustMe" } as CosmosDelegationInfo,
-      ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      transaction.validators = [{ address: "realAddressTrustMe" } as CosmosDelegationInfo];
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
     it("should return no message if validators has no address", async () => {
       transaction.validators = [{} as CosmosDelegationInfo];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
     it("should return no message if validators aren't defined", async () => {
       transaction.validators = [];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
   });
@@ -152,28 +117,19 @@ describe("buildTransactionWithUnsignedPayload", () => {
       ];
       const [message] = (await buildUnsignedPayloadTransaction(
         account,
-        transaction
+        transaction,
       )) as MsgDelegateEncodeObject[];
       expect(message).toBeTruthy();
       expect(message.typeUrl).toContain("MsgUndelegate");
-      expect(message.value.validatorAddress).toEqual(
-        transaction.validators[0].address
-      );
+      expect(message.value.validatorAddress).toEqual(transaction.validators[0].address);
       expect(message.value.delegatorAddress).toEqual(account.freshAddress);
-      expect(message.value.amount?.amount).toEqual(
-        transaction.validators[0].amount.toString()
-      );
-      expect(message.value.amount?.denom).toEqual(
-        account.currency.units[1].code
-      );
+      expect(message.value.amount?.amount).toEqual(transaction.validators[0].amount.toString());
+      expect(message.value.amount?.denom).toEqual(account.currency.units[1].code);
     });
 
     it("should return no message if validators aren't defined", async () => {
       transaction.validators = [];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
@@ -184,10 +140,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(100),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
@@ -198,10 +151,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(0),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
@@ -212,10 +162,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(-10),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
   });
@@ -233,25 +180,14 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(100),
         } as CosmosDelegationInfo,
       ];
-      const [message] = (await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      )) as any[];
+      const [message] = (await buildUnsignedPayloadTransaction(account, transaction)) as any[];
       expect(message).toBeTruthy();
       expect(message.typeUrl).toContain("MsgBeginRedelegate");
-      expect(message.value.validatorSrcAddress).toEqual(
-        transaction.sourceValidator
-      );
-      expect(message.value.validatorDstAddress).toEqual(
-        transaction.validators[0].address
-      );
+      expect(message.value.validatorSrcAddress).toEqual(transaction.sourceValidator);
+      expect(message.value.validatorDstAddress).toEqual(transaction.validators[0].address);
       expect(message.value.delegatorAddress).toEqual(account.freshAddress);
-      expect(message.value.amount.amount).toEqual(
-        transaction.validators[0].amount.toString()
-      );
-      expect(message.value.amount.denom).toEqual(
-        account.currency.units[1].code
-      );
+      expect(message.value.amount.amount).toEqual(transaction.validators[0].amount.toString());
+      expect(message.value.amount.denom).toEqual(account.currency.units[1].code);
     });
 
     it("should return no message if sourceValidator isn't defined", async () => {
@@ -262,10 +198,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(100),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
@@ -276,10 +209,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(100),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
@@ -290,10 +220,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(0),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
@@ -304,10 +231,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(-10),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
   });
@@ -324,24 +248,16 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(1000),
         } as CosmosDelegationInfo,
       ];
-      const [message] = (await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      )) as any[];
+      const [message] = (await buildUnsignedPayloadTransaction(account, transaction)) as any[];
       expect(message).toBeTruthy();
       expect(message.typeUrl).toContain("MsgWithdrawDelegatorReward");
-      expect(message.value.validatorAddress).toEqual(
-        transaction.validators[0].address
-      );
+      expect(message.value.validatorAddress).toEqual(transaction.validators[0].address);
       expect(message.value.delegatorAddress).toEqual(account.freshAddress);
     });
 
     it("should return no message if validator isn't defined", async () => {
       transaction.validators = [];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
 
@@ -352,10 +268,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(1000),
         } as CosmosDelegationInfo,
       ];
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
   });
@@ -372,30 +285,22 @@ describe("buildTransactionWithUnsignedPayload", () => {
           amount: new BigNumber(1000),
         } as CosmosDelegationInfo,
       ];
-      const [withDrawMessage, delegateMessage] =
-        (await buildUnsignedPayloadTransaction(account, transaction)) as any[];
+      const [withDrawMessage, delegateMessage] = (await buildUnsignedPayloadTransaction(
+        account,
+        transaction,
+      )) as any[];
       expect(withDrawMessage).toBeTruthy();
       expect(withDrawMessage.typeUrl).toContain("MsgWithdrawDelegatorReward");
-      expect(withDrawMessage.value.validatorAddress).toEqual(
-        transaction.validators[0].address
-      );
-      expect(withDrawMessage.value.delegatorAddress).toEqual(
-        account.freshAddress
-      );
+      expect(withDrawMessage.value.validatorAddress).toEqual(transaction.validators[0].address);
+      expect(withDrawMessage.value.delegatorAddress).toEqual(account.freshAddress);
       expect(delegateMessage).toBeTruthy();
       expect(delegateMessage.typeUrl).toContain("MsgDelegate");
-      expect(delegateMessage.value.validatorAddress).toEqual(
-        transaction.validators[0].address
-      );
-      expect(delegateMessage.value.delegatorAddress).toEqual(
-        account.freshAddress
-      );
+      expect(delegateMessage.value.validatorAddress).toEqual(transaction.validators[0].address);
+      expect(delegateMessage.value.delegatorAddress).toEqual(account.freshAddress);
       expect(delegateMessage.value.amount.amount).toEqual(
-        transaction.validators[0].amount.toString()
+        transaction.validators[0].amount.toString(),
       );
-      expect(delegateMessage.value.amount.denom).toEqual(
-        account.currency.units[1].code
-      );
+      expect(delegateMessage.value.amount.denom).toEqual(account.currency.units[1].code);
     });
   });
 
@@ -403,10 +308,7 @@ describe("buildTransactionWithUnsignedPayload", () => {
     it("should return no message", async () => {
       // @ts-expect-error Random mode that isn't listed in typescript type
       transaction.mode = "RandomModeThatICreatedMyself";
-      const messages = await buildUnsignedPayloadTransaction(
-        account,
-        transaction
-      );
+      const messages = await buildUnsignedPayloadTransaction(account, transaction);
       expect(messages.length).toEqual(0);
     });
   });

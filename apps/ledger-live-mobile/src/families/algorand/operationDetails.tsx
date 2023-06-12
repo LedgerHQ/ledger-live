@@ -38,20 +38,12 @@ function OperationDetailsExtra({ extra, account }: Props) {
   return (
     <>
       {formattedRewards && (
-        <Section
-          title={t("operationDetails.extra.rewards")}
-          value={formattedRewards}
-        />
+        <Section title={t("operationDetails.extra.rewards")} value={formattedRewards} />
       )}
       {extra.assetId && (
-        <Section
-          title={t("operationDetails.extra.assetId")}
-          value={extra.assetId}
-        />
+        <Section title={t("operationDetails.extra.assetId")} value={extra.assetId} />
       )}
-      {extra.memo && (
-        <Section title={t("operationDetails.extra.memo")} value={extra.memo} />
-      )}
+      {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
     </>
   );
 }
@@ -81,12 +73,7 @@ const OperationIcon = ({
       />
     </View>
   ) : (
-    <OperationStatusIcon
-      confirmed={confirmed}
-      type={type}
-      failed={hasFailed}
-      size={size}
-    />
+    <OperationStatusIcon confirmed={confirmed} type={type} failed={hasFailed} size={size} />
   );
 };
 

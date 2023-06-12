@@ -1,11 +1,4 @@
-import React, {
-  useMemo,
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-} from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef, useContext } from "react";
 import { useTheme } from "styled-components/native";
 import {
   Flex,
@@ -40,16 +33,10 @@ import TrackScreen from "../../analytics/TrackScreen";
 import { useProviders } from "../Swap/Form/index";
 import Illustration from "../../images/illustration/Illustration";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
-import {
-  setMarketFilterByStarredAccounts,
-  setMarketRequestParams,
-} from "../../actions/settings";
+import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "../../actions/settings";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
 
 const noResultIllustration = {
@@ -80,19 +67,13 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
 
-const BottomSection = ({
-  navigation,
-}: {
-  navigation: NavigationProps["navigation"];
-}) => {
+const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation"] }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { requestParams, counterCurrency, refresh } = useMarketData();
   const { range, orderBy, order, top100 } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(
-    marketFilterByStarredAccountsSelector,
-  );
+  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const firstMount = useRef(true); // To known if this is the first mount of the page
 
   useEffect(() => {
@@ -178,9 +159,7 @@ const BottomSection = ({
       <SortBadge
         label={t("market.filters.sort")}
         valueLabel={t(
-          top100
-            ? `market.filters.order.topGainers`
-            : `market.filters.order.${orderBy}`,
+          top100 ? `market.filters.order.topGainers` : `market.filters.order.${orderBy}`,
         )}
         Icon={
           top100
@@ -245,13 +224,7 @@ const BottomSection = ({
           <Text fontWeight="semiBold" variant="body">
             {t("market.filters.currency")}
           </Text>
-          <Text
-            ml={2}
-            fontWeight="semiBold"
-            variant="body"
-            color="primary.c80"
-            uppercase
-          >
+          <Text ml={2} fontWeight="semiBold" variant="body" color="primary.c80" uppercase>
             {counterCurrency}
           </Text>
         </Badge>
@@ -290,9 +263,7 @@ export default function Market({ navigation }: NavigationProps) {
   const initialTop100 = params?.top100;
   const { isConnected } = useNetInfo();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(
-    marketFilterByStarredAccountsSelector,
-  );
+  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
 
   useProviders();
 
@@ -371,13 +342,7 @@ export default function Market({ navigation }: NavigationProps) {
   const renderEmptyComponent = useCallback(
     () =>
       search ? ( // shows up in case of no search results
-        <Flex
-          flex={1}
-          flexDirection="column"
-          alignItems="stretch"
-          p="4"
-          mt={70}
-        >
+        <Flex flex={1} flexDirection="column" alignItems="stretch" p="4" mt={70}>
           <Flex alignItems="center">
             <Illustration
               size={164}
@@ -389,10 +354,7 @@ export default function Market({ navigation }: NavigationProps) {
             {t("market.warnings.noCryptosFound")}
           </Text>
           <Text textAlign="center" variant="body" color="neutral.c70">
-            <Trans
-              i18nKey="market.warnings.noSearchResultsFor"
-              values={{ search }}
-            >
+            <Trans i18nKey="market.warnings.noSearchResultsFor" values={{ search }}>
               <Text fontWeight="bold" variant="body" color="neutral.c70">
                 {""}
               </Text>
@@ -403,13 +365,7 @@ export default function Market({ navigation }: NavigationProps) {
           </Button>
         </Flex>
       ) : !isConnected ? ( // shows up in case of network down
-        <Flex
-          flex={1}
-          flexDirection="column"
-          alignItems="stretch"
-          p="4"
-          mt={70}
-        >
+        <Flex flex={1} flexDirection="column" alignItems="stretch" p="4" mt={70}>
           <Flex alignItems="center">
             <Illustration
               size={164}
@@ -429,14 +385,7 @@ export default function Market({ navigation }: NavigationProps) {
       ) : (
         <InfiniteLoader size={30} />
       ), // shows up in case loading is ongoing
-    [
-      search,
-      t,
-      resetSearch,
-      isConnected,
-      filterByStarredAccount,
-      starredMarketCoins.length,
-    ],
+    [search, t, resetSearch, isConnected, filterByStarredAccount, starredMarketCoins.length],
   );
 
   const onEndReached = useCallback(() => {

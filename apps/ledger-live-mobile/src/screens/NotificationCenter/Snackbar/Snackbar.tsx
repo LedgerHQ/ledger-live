@@ -19,8 +19,7 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
 
-const AnimatedTouchableOpacity =
-  Animated.createAnimatedComponent(TouchableHighlight);
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableHighlight);
 
 type Props = {
   toast: ToastData;
@@ -76,12 +75,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
   const Icon = icon ? icons[icon as IconsKeys] : undefined;
 
   const animatedTouchableOpacityStyle = useAnimatedStyle(() => {
-    const maxHeight = interpolate(
-      openState.value,
-      [0, 0.4, 1],
-      [0, 200, 200],
-      Extrapolate.CLAMP,
-    );
+    const maxHeight = interpolate(openState.value, [0, 0.4, 1], [0, 200, 200], Extrapolate.CLAMP);
 
     const translateX = interpolate(
       openState.value,
@@ -90,19 +84,9 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
       Extrapolate.CLAMP,
     );
 
-    const opacity = interpolate(
-      openState.value,
-      [0, 0.6, 1],
-      [0, 0, 1],
-      Extrapolate.CLAMP,
-    );
+    const opacity = interpolate(openState.value, [0, 0.6, 1], [0, 0, 1], Extrapolate.CLAMP);
 
-    const marginBottom = interpolate(
-      openState.value,
-      [0, 0.4, 1],
-      [0, 8, 8],
-      Extrapolate.CLAMP,
-    );
+    const marginBottom = interpolate(openState.value, [0, 0.4, 1], [0, 8, 8], Extrapolate.CLAMP);
 
     return {
       maxHeight,

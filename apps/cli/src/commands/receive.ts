@@ -24,21 +24,20 @@ export default {
     opts: ScanCommonOpts & {
       qr: boolean;
       freshAddressIndex: number | null | undefined;
-    }
+    },
   ) =>
     scan(opts).pipe(
-      concatMap((account) =>
+      concatMap(account =>
         concat(
           of(
-            opts.freshAddressIndex !== undefined &&
-              opts.freshAddressIndex !== null
+            opts.freshAddressIndex !== undefined && opts.freshAddressIndex !== null
               ? account.freshAddresses[opts.freshAddressIndex]?.address
-              : account.freshAddress
+              : account.freshAddress,
           ).pipe(
-            map((address) => {
+            map(address => {
               if (!address) throw new FreshAddressIndexInvalid();
               return address;
-            })
+            }),
           ),
           opts.qr ? asQR(account.freshAddress) : EMPTY,
           getAccountBridge(account)
@@ -47,8 +46,8 @@ export default {
               verify: true,
               freshAddressIndex: opts.freshAddressIndex as number,
             })
-            .pipe(ignoreElements())
-        )
-      )
+            .pipe(ignoreElements()),
+        ),
+      ),
     ),
 };

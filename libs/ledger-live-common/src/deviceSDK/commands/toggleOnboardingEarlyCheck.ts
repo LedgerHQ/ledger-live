@@ -28,14 +28,14 @@ export function toggleOnboardingEarlyCheckCmd({
   transport: Transport;
   p2: ToggleTypeP2;
 }): Observable<ToggleOnboardingEarlyCheckCmdEvent> {
-  return new Observable((subscriber) => {
+  return new Observable(subscriber => {
     transport
       .send(0xe0, 0x03, 0x00, p2)
       .then(() => {
         subscriber.next({ type: "success" });
         subscriber.complete();
       })
-      .catch((error) => {
+      .catch(error => {
         subscriber.error(error);
       });
   });

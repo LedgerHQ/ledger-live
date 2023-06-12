@@ -1,7 +1,4 @@
-import {
-  findTokenById,
-  listTokensForCryptoCurrency,
-} from "@ledgerhq/cryptoassets";
+import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -25,12 +22,7 @@ async function buildElrondESDTTokenAccount({
   const tokenIdentifierHex = extractTokenId(token.id);
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
-  const operations = await getESDTOperations(
-    tokenAccountId,
-    accountAddress,
-    tokenIdentifier,
-    0
-  );
+  const operations = await getESDTOperations(tokenAccountId, accountAddress, tokenIdentifier, 0);
 
   const tokenAccount: TokenAccount = {
     type: "TokenAccount",
@@ -44,10 +36,7 @@ async function buildElrondESDTTokenAccount({
     balance,
     spendableBalance: balance,
     swapHistory: [],
-    creationDate:
-      operations.length > 0
-        ? operations[operations.length - 1].date
-        : new Date(),
+    creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
   };
   return tokenAccount;
@@ -55,24 +44,17 @@ async function buildElrondESDTTokenAccount({
 
 async function syncESDTTokenAccountOperations(
   tokenAccount: TokenAccount,
-  address: string
+  address: string,
 ): Promise<TokenAccount> {
   const oldOperations = tokenAccount?.operations || [];
   // Needed for incremental synchronisation
-  const startAt = oldOperations.length
-    ? Math.floor(oldOperations[0].date.valueOf() / 1000)
-    : 0;
+  const startAt = oldOperations.length ? Math.floor(oldOperations[0].date.valueOf() / 1000) : 0;
 
   const tokenIdentifierHex = extractTokenId(tokenAccount.token.id);
   const tokenIdentifier = Buffer.from(tokenIdentifierHex, "hex").toString();
 
   // Merge new operations with the previously synced ones
-  const newOperations = await getESDTOperations(
-    tokenAccount.id,
-    address,
-    tokenIdentifier,
-    startAt
-  );
+  const newOperations = await getESDTOperations(tokenAccount.id, address, tokenIdentifier, startAt);
   const operations = mergeOps(oldOperations, newOperations);
 
   if (operations === oldOperations) return tokenAccount;
@@ -136,10 +118,7 @@ async function elrondBuildESDTTokenAccounts({
         });
       } else {
         const inputTokenAccount = tokenAccount;
-        tokenAccount = await syncESDTTokenAccountOperations(
-          inputTokenAccount,
-          accountAddress
-        );
+        tokenAccount = await syncESDTTokenAccountOperations(inputTokenAccount, accountAddress);
         const balance = new BigNumber(esdt.balance);
         if (!balance.eq(tokenAccount.balance)) {
           // only recreate the object if balance changed

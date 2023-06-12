@@ -18,17 +18,14 @@ export type UsePollKYCStatusProps = {
 
 export const usePollKYCStatus = (
   { provider, kyc, onChange }: UsePollKYCStatusProps,
-  dependencies: React.DependencyList = []
+  dependencies: React.DependencyList = [],
 ): void => {
   useEffect(
     () => {
       if (kyc?.status !== KYC_STATUS.pending) return;
 
       let cancelled = false;
-      const intervalId = setInterval(
-        updateKYCStatus,
-        KYC_STATUS_POLLING_INTERVAL
-      );
+      const intervalId = setInterval(updateKYCStatus, KYC_STATUS_POLLING_INTERVAL);
       updateKYCStatus();
 
       return () => {

@@ -107,16 +107,8 @@ const SwapOperationDetails = ({
   mappedSwapOperation: MappedSwapOperation;
   onClose?: () => void;
 }) => {
-  const {
-    fromAccount,
-    toAccount,
-    operation,
-    provider,
-    swapId,
-    status,
-    fromAmount,
-    toAmount,
-  } = mappedSwapOperation;
+  const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
+    mappedSwapOperation;
   const history = useHistory();
   const fromUnit = getAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);

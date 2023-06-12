@@ -13,7 +13,7 @@ import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (
   { mode, amount, recipient, useAllAmount }: Transaction,
-  account: Account
+  account: Account,
 ): string => `
 ${mode.toUpperCase()} ${
   useAllAmount

@@ -236,9 +236,7 @@ const StaxFramedImage: React.FC<Props> = ({
               />
             ) : null}
           </AbsoluteInnerImageContainer>
-          <Flex style={{ height: innerHeight, width: innerWidth }}>
-            {children}
-          </Flex>
+          <Flex style={{ height: innerHeight, width: innerWidth }}>{children}</Flex>
         </ForceTheme>
       </Box>
     </Box>
@@ -255,12 +253,9 @@ const initialState = {
   source: undefined,
 };
 
-export const ImageSourceContext =
-  React.createContext<SourceContext>(initialState);
+export const ImageSourceContext = React.createContext<SourceContext>(initialState);
 
-export const StaxFramedImageWithContext: React.FC<
-  Omit<Props, "source">
-> = props => {
+export const StaxFramedImageWithContext: React.FC<Omit<Props, "source">> = props => {
   const { source } = useContext(ImageSourceContext);
   return <StaxFramedImage {...props} source={source} />;
 };

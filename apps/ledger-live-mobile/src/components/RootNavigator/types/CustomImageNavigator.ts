@@ -2,16 +2,8 @@ import { Device } from "@ledgerhq/types-devices";
 
 import { ScreenName } from "../../../const";
 import { CropResult } from "../../CustomImage/ImageCropper";
-import {
-  ProcessorPreviewResult,
-  ProcessorRawResult,
-} from "../../CustomImage/ImageProcessor";
-import {
-  GalleryNFT,
-  ImageFileUri,
-  ImageUrl,
-  ImageType,
-} from "../../CustomImage/types";
+import { ProcessorPreviewResult, ProcessorRawResult } from "../../CustomImage/ImageProcessor";
+import { GalleryNFT, ImageFileUri, ImageUrl, ImageType } from "../../CustomImage/types";
 
 type BaseParams = {
   device: Device | null;

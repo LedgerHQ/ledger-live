@@ -48,7 +48,7 @@ function getDeviceTransactionConfig({
           type: "text",
           label: "Network",
           value: mainAccount.currency.name,
-        }
+        },
       );
       break;
   }

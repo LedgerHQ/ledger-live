@@ -1,19 +1,7 @@
-import {
-  useMemo,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  RefObject,
-} from "react";
+import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
 import { formatDistanceToNow } from "date-fns";
-import {
-  Account,
-  AccountLike,
-  Operation,
-  SignedOperation,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   WalletHandlers,
@@ -38,11 +26,7 @@ import {
 import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
-import {
-  listCurrencies,
-  findCryptoCurrencyById,
-  findTokenById,
-} from "../currencies";
+import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamillyAccountGetXPubLogic,
@@ -57,19 +41,14 @@ import {
 } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "../env";
-import openTransportAsSubject, {
-  BidirectionalEvent,
-} from "../hw/openTransportAsSubject";
+import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { MessageData } from "../hw/signMessage/types";
 import { TypedMessageData } from "../families/ethereum/types";
 import { Transaction } from "../generated/types";
 import { useManifests } from "../platform/providers/RemoteLiveAppProvider";
-import {
-  DISCOVER_INITIAL_CATEGORY,
-  MAX_RECENTLY_USED_LENGTH,
-} from "./constants";
+import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
 import { DiscoverDB } from "./types";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): T {
@@ -79,11 +58,9 @@ export function safeGetRefValue<T>(ref: RefObject<T>): T {
   return ref.current;
 }
 
-export function useWalletAPIAccounts(
-  accounts: AccountLike[]
-): WalletAPIAccount[] {
+export function useWalletAPIAccounts(accounts: AccountLike[]): WalletAPIAccount[] {
   return useMemo(() => {
-    return accounts.map((account) => {
+    return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
       return accountToWalletAPIAccount(account, parentAccount);
@@ -93,20 +70,17 @@ export function useWalletAPIAccounts(
 
 export function useWalletAPICurrencies(): WalletAPICurrency[] {
   return useMemo(() => {
-    return listCurrencies(true).reduce<WalletAPICurrency[]>(
-      (filtered, currency) => {
-        if (isWalletAPISupportedCurrency(currency)) {
-          filtered.push(currencyToWalletAPICurrency(currency));
-        }
-        return filtered;
-      },
-      []
-    );
+    return listCurrencies(true).reduce<WalletAPICurrency[]>((filtered, currency) => {
+      if (isWalletAPISupportedCurrency(currency)) {
+        filtered.push(currencyToWalletAPICurrency(currency));
+      }
+      return filtered;
+    }, []);
   }, []);
 }
 
 export function useGetAccountIds(
-  accounts$: Observable<WalletAPIAccount[]> | undefined
+  accounts$: Observable<WalletAPIAccount[]> | undefined,
 ): Map<string, boolean> | undefined {
   const [accounts, setAccounts] = useState<WalletAPIAccount[]>([]);
 
@@ -115,7 +89,7 @@ export function useGetAccountIds(
       return undefined;
     }
 
-    const subscription = accounts$.subscribe((walletAccounts) => {
+    const subscription = accounts$.subscribe(walletAccounts => {
       setAccounts(walletAccounts);
     });
 
@@ -140,10 +114,7 @@ export interface UiHook {
   "account.request": (params: {
     accounts$: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
-    onSuccess: (
-      account: AccountLike,
-      parentAccount: Account | undefined
-    ) => void;
+    onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onError: () => void;
   }) => void;
   "account.receive": (params: {
@@ -179,7 +150,7 @@ export interface UiHook {
     account: AccountLike,
     parentAccount: Account | undefined,
     mainAccount: Account,
-    optimisticOperation: Operation
+    optimisticOperation: Operation,
   ) => void;
   "device.transport": (params: {
     appName: string | undefined;
@@ -204,13 +175,11 @@ function usePermission(manifest: AppManifest): Permission {
       currencyIds: manifest.currencies === "*" ? ["**"] : manifest.currencies,
       methodIds: manifest.permissions as unknown as string[], // TODO remove when using the correct manifest type
     }),
-    [manifest]
+    [manifest],
   );
 }
 
-function useTransport(
-  postMessage: (message: string) => void | undefined
-): Transport {
+function useTransport(postMessage: (message: string) => void | undefined): Transport {
   return useMemo(() => {
     return {
       onMessage: undefined,
@@ -219,12 +188,7 @@ function useTransport(
   }, [postMessage]);
 }
 
-export function useConfig({
-  appId,
-  userId,
-  tracking,
-  wallet,
-}: ServerConfig): ServerConfig {
+export function useConfig({ appId, userId, tracking, wallet }: ServerConfig): ServerConfig {
   return useMemo(
     () => ({
       appId,
@@ -232,7 +196,7 @@ export function useConfig({
       tracking,
       wallet,
     }),
-    [appId, tracking, userId, wallet]
+    [appId, tracking, userId, wallet],
   );
 }
 
@@ -263,32 +227,28 @@ function useDeviceTransport({ manifest, tracking }) {
           return;
         }
 
-        subject$
-          .pipe(
-            first((e) => e.type === "device-response" || e.type === "error")
-          )
-          .subscribe({
-            next: (e) => {
-              if (e.type === "device-response") {
-                tracking.deviceExchangeSuccess(manifest);
-                resolve(e.data);
-                return;
-              }
-              if (e.type === "error") {
-                tracking.deviceExchangeFail(manifest);
-                reject(e.error || new Error("deviceExchange: unknown error"));
-              }
-            },
-            error: (error) => {
+        subject$.pipe(first(e => e.type === "device-response" || e.type === "error")).subscribe({
+          next: e => {
+            if (e.type === "device-response") {
+              tracking.deviceExchangeSuccess(manifest);
+              resolve(e.data);
+              return;
+            }
+            if (e.type === "error") {
               tracking.deviceExchangeFail(manifest);
-              reject(error);
-            },
-          });
+              reject(e.error || new Error("deviceExchange: unknown error"));
+            }
+          },
+          error: error => {
+            tracking.deviceExchangeFail(manifest);
+            reject(error);
+          },
+        });
 
         subject$.next({ type: "input-frame", apduHex });
       });
     },
-    [manifest, tracking]
+    [manifest, tracking],
   );
 
   useEffect(() => {
@@ -297,10 +257,7 @@ function useDeviceTransport({ manifest, tracking }) {
     };
   }, []);
 
-  return useMemo(
-    () => ({ ref, subscribe, close, exchange }),
-    [close, exchange, subscribe]
-  );
+  return useMemo(() => ({ ref, subscribe, close, exchange }), [close, exchange, subscribe]);
 }
 
 const allCurrenciesAndTokens = listCurrencies(true);
@@ -373,9 +330,7 @@ export function useWalletAPIServer({
         let currencyList: CryptoOrTokenCurrency[] = [];
         // if single currency available redirect to select account directly
         if (currencyIds.length === 1) {
-          const currency =
-            findCryptoCurrencyById(currencyIds[0]) ||
-            findTokenById(currencyIds[0]);
+          const currency = findCryptoCurrencyById(currencyIds[0]) || findTokenById(currencyIds[0]);
           if (currency) {
             currencyList = [currency];
           }
@@ -386,18 +341,13 @@ export function useWalletAPIServer({
             reject(new ServerError(createCurrencyNotFound(currencyIds[0])));
           }
         } else {
-          currencyList = allCurrenciesAndTokens.filter(({ id }) =>
-            currencyIds.includes(id)
-          );
+          currencyList = allCurrenciesAndTokens.filter(({ id }) => currencyIds.includes(id));
         }
 
         uiAccountRequest({
           accounts$,
           currencies: currencyList,
-          onSuccess: (
-            account: AccountLike,
-            parentAccount: Account | undefined
-          ) => {
+          onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
             tracking.requestAccountSuccess(manifest);
             resolve(accountToWalletAPIAccount(account, parentAccount));
           },
@@ -423,7 +373,7 @@ export function useWalletAPIServer({
               account,
               parentAccount,
               accountAddress,
-              onSuccess: (accountAddress) => {
+              onSuccess: accountAddress => {
                 tracking.receiveSuccess(manifest);
                 resolve(accountAddress);
               },
@@ -431,13 +381,13 @@ export function useWalletAPIServer({
                 tracking.receiveFail(manifest);
                 reject(new Error("User cancelled"));
               },
-              onError: (error) => {
+              onError: error => {
                 tracking.receiveFail(manifest);
                 reject(error);
               },
-            })
-          )
-      )
+            }),
+          ),
+      ),
     );
   }, [accounts, manifest, server, tracking, uiAccountReceive]);
 
@@ -454,7 +404,7 @@ export function useWalletAPIServer({
             return uiMessageSign({
               account,
               message,
-              onSuccess: (signature) => {
+              onSuccess: signature => {
                 tracking.signMessageSuccess(manifest);
                 resolve(Buffer.from(signature.replace("0x", ""), "hex"));
               },
@@ -462,13 +412,13 @@ export function useWalletAPIServer({
                 tracking.signMessageFail(manifest);
                 reject(UserRefusedOnDevice());
               },
-              onError: (error) => {
+              onError: error => {
                 tracking.signMessageFail(manifest);
                 reject(error);
               },
             });
-          })
-      )
+          }),
+      ),
     );
   }, [accounts, manifest, server, tracking, uiMessageSign]);
 
@@ -487,102 +437,90 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiTxSign) return;
 
-    server.setHandler(
-      "transaction.sign",
-      async ({ account, transaction, options }) => {
-        const signedOperation = await signTransactionLogic(
-          { manifest, accounts, tracking },
-          account.id,
-          transaction,
-          (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) =>
-              uiTxSign({
-                account,
-                parentAccount,
-                signFlowInfos,
-                options,
-                onSuccess: (signedOperation) => {
-                  tracking.signTransactionSuccess(manifest);
-                  resolve(signedOperation);
-                },
-                onError: (error) => {
-                  tracking.signTransactionFail(manifest);
-                  reject(error);
-                },
-              })
-            )
-        );
+    server.setHandler("transaction.sign", async ({ account, transaction, options }) => {
+      const signedOperation = await signTransactionLogic(
+        { manifest, accounts, tracking },
+        account.id,
+        transaction,
+        (account, parentAccount, signFlowInfos) =>
+          new Promise((resolve, reject) =>
+            uiTxSign({
+              account,
+              parentAccount,
+              signFlowInfos,
+              options,
+              onSuccess: signedOperation => {
+                tracking.signTransactionSuccess(manifest);
+                resolve(signedOperation);
+              },
+              onError: error => {
+                tracking.signTransactionFail(manifest);
+                reject(error);
+              },
+            }),
+          ),
+      );
 
-        return Buffer.from(signedOperation.signature);
-      }
-    );
+      return Buffer.from(signedOperation.signature);
+    });
   }, [accounts, manifest, server, tracking, uiTxSign]);
 
   useEffect(() => {
     if (!uiTxSign) return;
 
-    server.setHandler(
-      "transaction.signAndBroadcast",
-      async ({ account, transaction, options }) => {
-        const signedTransaction = await signTransactionLogic(
-          { manifest, accounts, tracking },
-          account.id,
-          transaction,
-          (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) =>
-              uiTxSign({
-                account,
-                parentAccount,
-                signFlowInfos,
-                options,
-                onSuccess: (signedOperation) => {
-                  tracking.signTransactionSuccess(manifest);
-                  resolve(signedOperation);
-                },
-                onError: (error) => {
-                  tracking.signTransactionFail(manifest);
-                  reject(error);
-                },
-              })
-            )
-        );
+    server.setHandler("transaction.signAndBroadcast", async ({ account, transaction, options }) => {
+      const signedTransaction = await signTransactionLogic(
+        { manifest, accounts, tracking },
+        account.id,
+        transaction,
+        (account, parentAccount, signFlowInfos) =>
+          new Promise((resolve, reject) =>
+            uiTxSign({
+              account,
+              parentAccount,
+              signFlowInfos,
+              options,
+              onSuccess: signedOperation => {
+                tracking.signTransactionSuccess(manifest);
+                resolve(signedOperation);
+              },
+              onError: error => {
+                tracking.signTransactionFail(manifest);
+                reject(error);
+              },
+            }),
+          ),
+      );
 
-        return broadcastTransactionLogic(
-          { manifest, accounts, tracking },
-          account.id,
-          signedTransaction,
-          async (account, parentAccount, signedOperation) => {
-            const bridge = getAccountBridge(account, parentAccount);
-            const mainAccount = getMainAccount(account, parentAccount);
+      return broadcastTransactionLogic(
+        { manifest, accounts, tracking },
+        account.id,
+        signedTransaction,
+        async (account, parentAccount, signedOperation) => {
+          const bridge = getAccountBridge(account, parentAccount);
+          const mainAccount = getMainAccount(account, parentAccount);
 
-            let optimisticOperation: Operation = signedOperation.operation;
+          let optimisticOperation: Operation = signedOperation.operation;
 
-            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-              try {
-                optimisticOperation = await bridge.broadcast({
-                  account: mainAccount,
-                  signedOperation,
-                });
-                tracking.broadcastSuccess(manifest);
-              } catch (error) {
-                tracking.broadcastFail(manifest);
-                throw error;
-              }
+          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+            try {
+              optimisticOperation = await bridge.broadcast({
+                account: mainAccount,
+                signedOperation,
+              });
+              tracking.broadcastSuccess(manifest);
+            } catch (error) {
+              tracking.broadcastFail(manifest);
+              throw error;
             }
-
-            uiTxBroadcast &&
-              uiTxBroadcast(
-                account,
-                parentAccount,
-                mainAccount,
-                optimisticOperation
-              );
-
-            return optimisticOperation.hash;
           }
-        );
-      }
-    );
+
+          uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+
+          return optimisticOperation.hash;
+        },
+      );
+    });
   }, [accounts, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
 
   const onLoad = useCallback(() => {
@@ -646,12 +584,12 @@ export function useWalletAPIServer({
               reject(new Error("User cancelled"));
             },
           });
-        })
+        }),
     );
   }, [device, manifest, server, tracking, uiDeviceTransport]);
 
   useEffect(() => {
-    server.setHandler("device.exchange", (params) => {
+    server.setHandler("device.exchange", params => {
       if (!device.ref.current) {
         return Promise.reject(new Error("No device opened"));
       }
@@ -680,10 +618,7 @@ export function useWalletAPIServer({
 
   useEffect(() => {
     server.setHandler("bitcoin.getXPub", ({ accountId }) => {
-      return bitcoinFamillyAccountGetXPubLogic(
-        { manifest, accounts, tracking },
-        accountId
-      );
+      return bitcoinFamillyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
     });
   }, [accounts, manifest, server, tracking]);
 
@@ -704,12 +639,12 @@ export function useWalletAPIServer({
                 tracking.startExchangeSuccess(manifest);
                 resolve(nonce);
               },
-              onCancel: (error) => {
+              onCancel: error => {
                 tracking.completeExchangeFail(manifest);
                 reject(error);
               },
-            })
-          )
+            }),
+          ),
       );
     });
   }, [uiExchangeStart, accounts, manifest, server, tracking]);
@@ -719,13 +654,12 @@ export function useWalletAPIServer({
       return;
     }
 
-    server.setHandler("exchange.complete", (params) => {
+    server.setHandler("exchange.complete", params => {
       // retrofit of the exchange params to fit the old platform spec
       const request: CompleteExchangeRequest = {
         provider: params.provider,
         fromAccountId: params.fromAccount.id,
-        toAccountId:
-          params.exchangeType === "SWAP" ? params.toAccount.id : undefined,
+        toAccountId: params.exchangeType === "SWAP" ? params.toAccount.id : undefined,
         transaction: params.transaction,
         binaryPayload: params.binaryPayload.toString("hex"),
         signature: params.signature.toString("hex"),
@@ -736,7 +670,7 @@ export function useWalletAPIServer({
       return completeExchangeLogic(
         { manifest, accounts, tracking },
         request,
-        (request) =>
+        request =>
           new Promise((resolve, reject) =>
             uiExchangeComplete({
               exchangeParams: request,
@@ -744,12 +678,12 @@ export function useWalletAPIServer({
                 tracking.completeExchangeSuccess(manifest);
                 resolve(hash);
               },
-              onCancel: (error) => {
+              onCancel: error => {
                 tracking.completeExchangeFail(manifest);
                 reject(error);
               },
-            })
-          )
+            }),
+          ),
       );
     });
   }, [uiExchangeComplete, accounts, manifest, server, tracking]);
@@ -781,8 +715,7 @@ export interface Categories {
 export function useCategories(): Categories {
   const manifestsSearchable = useManifests({ visibility: "searchable" });
   const manifestsCompleted = useManifests({ visibility: "complete" });
-  const { categories, manifestsByCategories } =
-    useCategoriesRaw(manifestsCompleted);
+  const { categories, manifestsByCategories } = useCategoriesRaw(manifestsCompleted);
   const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
@@ -791,7 +724,7 @@ export function useCategories(): Categories {
 
   const manifests = useMemo(
     () => [...manifestsSearchable, ...manifestsCompleted],
-    [manifestsSearchable, manifestsCompleted]
+    [manifestsSearchable, manifestsCompleted],
   );
 
   return useMemo(
@@ -803,7 +736,7 @@ export function useCategories(): Categories {
       setSelected,
       reset,
     }),
-    [manifests, categories, manifestsByCategories, selected, setSelected, reset]
+    [manifests, categories, manifestsByCategories, selected, setSelected, reset],
   );
 }
 
@@ -813,7 +746,7 @@ function useCategoriesRaw(manifests: AppManifest[]): {
 } {
   const manifestsByCategories = useMemo(() => {
     const res = manifests.reduce((res, m) => {
-      m.categories.forEach((c) => {
+      m.categories.forEach(c => {
         const list = res.has(c) ? [...res.get(c), m] : [m];
         res.set(c, list);
       });
@@ -824,10 +757,7 @@ function useCategoriesRaw(manifests: AppManifest[]): {
     return res;
   }, [manifests]);
 
-  const categories = useMemo(
-    () => [...manifestsByCategories.keys()],
-    [manifestsByCategories]
-  );
+  const categories = useMemo(() => [...manifestsByCategories.keys()], [manifestsByCategories]);
 
   return {
     categories,
@@ -847,13 +777,13 @@ export type RecentlyUsedManifest = AppManifest & { usedAt?: Date };
 
 export function useRecentlyUsed(
   manifests: AppManifest[],
-  [recentlyUsed, setState]: RecentlyUsedDB
+  [recentlyUsed, setState]: RecentlyUsedDB,
 ): RecentlyUsed {
   const data = useMemo(
     () =>
       recentlyUsed
-        .map((r) => {
-          const res = manifests.find((m) => m.id === r.id);
+        .map(r => {
+          const res = manifests.find(m => m.id === r.id);
           const distance = formatDistanceToNow(new Date(r.usedAt));
           return res
             ? {
@@ -862,16 +792,14 @@ export function useRecentlyUsed(
               }
             : res;
         })
-        .filter((m) => m !== undefined) as AppManifest[],
-    [recentlyUsed, manifests]
+        .filter(m => m !== undefined) as AppManifest[],
+    [recentlyUsed, manifests],
   );
 
   const append = useCallback(
     (manifest: AppManifest) => {
-      setState((state) => {
-        const index = state.recentlyUsed.findIndex(
-          ({ id }) => id === manifest.id
-        );
+      setState(state => {
+        const index = state.recentlyUsed.findIndex(({ id }) => id === manifest.id);
 
         // Manifest already in first position
         if (index === 0) {
@@ -906,18 +834,15 @@ export function useRecentlyUsed(
                   { id: manifest.id, usedAt: new Date().toISOString() },
                   ...state.recentlyUsed.slice(0, -1),
                 ]
-              : [
-                  { id: manifest.id, usedAt: new Date().toISOString() },
-                  ...state.recentlyUsed,
-                ],
+              : [{ id: manifest.id, usedAt: new Date().toISOString() }, ...state.recentlyUsed],
         };
       });
     },
-    [setState]
+    [setState],
   );
 
   const clear = useCallback(() => {
-    setState((state) => ({ ...state, recentlyUsed: [] }));
+    setState(state => ({ ...state, recentlyUsed: [] }));
   }, [setState]);
 
   return { data, append, clear };
@@ -931,7 +856,7 @@ export interface DisclaimerRaw {
 interface DisclaimerUiHook {
   prompt: (
     manifest: AppManifest,
-    onContinue: (manifest: AppManifest, isChecked: boolean) => void
+    onContinue: (manifest: AppManifest, isChecked: boolean) => void,
   ) => void;
   dismiss: () => void;
   openApp: (manifest: AppManifest) => void;
@@ -962,7 +887,7 @@ export function useDisclaimerRaw({
       appendRecentlyUsed(manifest);
       uiHook.openApp(manifest);
     },
-    [uiHook, appendRecentlyUsed]
+    [uiHook, appendRecentlyUsed],
   );
 
   const onSelect = useCallback(
@@ -978,7 +903,7 @@ export function useDisclaimerRaw({
         uiHook.openApp(manifest);
       }
     },
-    [isReadOnly, isDismissed, uiHook, appendRecentlyUsed, onConfirm]
+    [isReadOnly, isDismissed, uiHook, appendRecentlyUsed, onConfirm],
   );
 
   return {

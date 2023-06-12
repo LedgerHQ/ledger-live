@@ -7,7 +7,5 @@ import { urls } from "../../../../../config/urls";
  * Handle the helper declaration.
  */
 
-export const getURLWhatIsThis = (
-  operation: Operation,
-): getURLWhatIsThisReturnType =>
+export const getURLWhatIsThis = (operation: Operation): getURLWhatIsThisReturnType =>
   !["IN", "OUT"].includes(operation.type) ? urls.elrondStaking : undefined;

@@ -46,17 +46,17 @@ export default function installLanguage({
   const { language } = request;
 
   const sub = withDevice(deviceId)(
-    (transport) =>
-      new Observable((subscriber) => {
+    transport =>
+      new Observable(subscriber => {
         const timeoutSub = of<InstallLanguageEvent>({
           type: "unresponsiveDevice",
         })
           .pipe(delay(1000))
-          .subscribe((e) => subscriber.next(e));
+          .subscribe(e => subscriber.next(e));
 
         const sub = from(getDeviceInfo(transport))
           .pipe(
-            mergeMap(async (deviceInfo) => {
+            mergeMap(async deviceInfo => {
               timeoutSub.unsubscribe();
 
               if (language === "english") {
@@ -70,16 +70,13 @@ export default function installLanguage({
                 return;
               }
 
-              const languages = await ManagerAPI.getLanguagePackagesForDevice(
-                deviceInfo
-              );
+              const languages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
 
               const packs: LanguagePackage[] = languages.filter(
-                (l: any) => l.language === language
+                (l: any) => l.language === language,
               );
 
-              if (!packs.length)
-                return subscriber.error(new LanguageNotFound(language));
+              if (!packs.length) return subscriber.error(new LanguageNotFound(language));
 
               const pack = packs[0];
               const { apdu_install_url } = pack;
@@ -101,22 +98,18 @@ export default function installLanguage({
                   });
                 }
 
-                const response = await transport.exchange(
-                  Buffer.from(apdus[i], "hex")
-                );
+                const response = await transport.exchange(Buffer.from(apdus[i], "hex"));
                 const status = response.readUInt16BE(response.length - 2);
                 const statusStr = status.toString(16);
 
                 // Some error handling
                 if (status === StatusCodes.USER_REFUSED_ON_DEVICE) {
-                  return subscriber.error(
-                    new LanguageInstallRefusedOnDevice(statusStr)
-                  );
+                  return subscriber.error(new LanguageInstallRefusedOnDevice(statusStr));
                 } else if (status === StatusCodes.NOT_ENOUGH_SPACE) {
                   return subscriber.error(new ManagerNotEnoughSpaceError());
                 } else if (status !== StatusCodes.OK) {
                   return subscriber.error(
-                    new TransportError("Unexpected device response", statusStr)
+                    new TransportError("Unexpected device response", statusStr),
                   );
                 }
 
@@ -139,21 +132,21 @@ export default function installLanguage({
                   e instanceof TransportStatusError &&
                   [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
                     // @ts-expect-error typescript not checking agains the instanceof
-                    e.statusCode
+                    e.statusCode,
                   ))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
-                  concatMap((appAndVersion) => {
+                  concatMap(appAndVersion => {
                     return !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
                       : of<InstallLanguageEvent>({
                           type: "appDetected",
                         });
-                  })
+                  }),
                 );
               }
               return throwError(e);
-            })
+            }),
           )
           .subscribe(subscriber);
 
@@ -161,7 +154,7 @@ export default function installLanguage({
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
   return sub as Observable<InstallLanguageEvent>;
@@ -174,6 +167,6 @@ const uninstallAllLanguages = async (transport: Transport) => {
     0xff,
     0x00,
     undefined,
-    [0x9000, 0x5501] // Expected responses when uninstalling.
+    [0x9000, 0x5501], // Expected responses when uninstalling.
   );
 };

@@ -24,9 +24,7 @@ function requiredNodeConfig(nodeConfig) {
   const errors = validateRPCNodeConfig(nodeConfig);
 
   if (errors.length) {
-    throw new Error(
-      errors.map((e) => e.field + ": " + e.error.message).join(", ")
-    );
+    throw new Error(errors.map(e => e.field + ": " + e.error.message).join(", "));
   }
 
   return nodeConfig;
@@ -98,12 +96,12 @@ export default {
       : jsonFromFile(lss, true).pipe(
           map(parseSatStackConfig),
           first(),
-          catchError(() => of(null))
+          catchError(() => of(null)),
         );
     const maybeDescriptorsO = noDevice
       ? of([])
       : scanDescriptors(device || "", bitcoin).pipe(
-          reduce((acc, item) => acc.concat(item), [] as AccountDescriptor[])
+          reduce((acc, item) => acc.concat(item), [] as AccountDescriptor[]),
         );
     const maybeNodeConfigOverride = rpcHOST
       ? requiredNodeConfig({
@@ -120,20 +118,17 @@ export default {
         ? from(checkRPCNodeConfig(maybeNodeConfigOverride))
         : of(null),
     }).pipe(
-      map((a) => {
+      map(a => {
         const { initialConfig, descriptors } = a;
         const patch = {
           node: requiredNodeConfig(
-            maybeNodeConfigOverride ||
-              (initialConfig ? initialConfig.node : null)
+            maybeNodeConfigOverride || (initialConfig ? initialConfig.node : null),
           ),
-          accounts: descriptors.map((descriptor) => ({
+          accounts: descriptors.map(descriptor => ({
             descriptor,
           })),
         };
-        const config = initialConfig
-          ? editSatStackConfig(initialConfig, patch)
-          : patch;
+        const config = initialConfig ? editSatStackConfig(initialConfig, patch) : patch;
         const str = stringifySatStackConfig(config);
 
         if (lss && !noSave) {
@@ -142,7 +137,7 @@ export default {
         }
 
         return str;
-      })
+      }),
     );
   },
 };

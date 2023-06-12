@@ -3,10 +3,8 @@ import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 const TagId = 0x05;
 // operator that transform the input raw stream into one apdu response and finishes
-export const receiveAPDU = (
-  rawStream: Observable<Buffer>
-): Observable<Buffer> =>
-  Observable.create((o) => {
+export const receiveAPDU = (rawStream: Observable<Buffer>): Observable<Buffer> =>
+  Observable.create(o => {
     let notifiedIndex = 0;
     let notifiedDataLength = 0;
     let notifiedData = Buffer.alloc(0);
@@ -15,20 +13,18 @@ export const receiveAPDU = (
         o.error(new DisconnectedDevice());
         sub.unsubscribe();
       },
-      error: (e) => {
+      error: e => {
         log("ble-error", "in receiveAPDU " + String(e));
         o.error(e);
         sub.unsubscribe();
       },
-      next: (value) => {
+      next: value => {
         const tag = value.readUInt8(0);
         const index = value.readUInt16BE(1);
         let data = value.slice(3);
 
         if (tag !== TagId) {
-          o.error(
-            new TransportError("Invalid tag " + tag.toString(16), "InvalidTag")
-          );
+          o.error(new TransportError("Invalid tag " + tag.toString(16), "InvalidTag"));
           return;
         }
 
@@ -39,8 +35,8 @@ export const receiveAPDU = (
                 index +
                 " but expected " +
                 notifiedIndex,
-              "InvalidSequence"
-            )
+              "InvalidSequence",
+            ),
           );
           return;
         }
@@ -60,8 +56,8 @@ export const receiveAPDU = (
                 notifiedData.length +
                 " but expected " +
                 notifiedDataLength,
-              "BLETooMuchData"
-            )
+              "BLETooMuchData",
+            ),
           );
           return;
         }

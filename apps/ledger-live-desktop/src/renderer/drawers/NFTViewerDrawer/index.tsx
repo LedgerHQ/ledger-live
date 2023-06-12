@@ -177,13 +177,14 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
     protoNft.tokenId,
     protoNft.currencyId,
   );
-  const loading = useMemo(() => nftStatus === "loading" || collectionStatus === "loading", [
-    collectionStatus,
-    nftStatus,
-  ]);
-  const contentType = useMemo(() => getMetadataMediaType(metadata as NFTMetadata, "big"), [
-    metadata,
-  ]);
+  const loading = useMemo(
+    () => nftStatus === "loading" || collectionStatus === "loading",
+    [collectionStatus, nftStatus],
+  );
+  const contentType = useMemo(
+    () => getMetadataMediaType(metadata as NFTMetadata, "big"),
+    [metadata],
+  );
   const currency = useMemo(() => getCryptoCurrencyById(protoNft.currencyId), [protoNft.currencyId]);
   const name = (metadata && "nftName" in metadata && metadata.nftName) || protoNft.tokenId;
   const [floorPriceLoading, setFloorPriceLoading] = useState(false);
@@ -337,14 +338,16 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
             </Text>
             <Text lineHeight="15.73px" fontSize={4} color="palette.text.shade100">
               <CopiableField value={protoNft.tokenId}>
-                {// only needed for very long tokenIds but works with any length > 4
-                protoNft.tokenId?.length >= 4 ? (
-                  <HashContainer>
-                    <SplitAddress value={protoNft.tokenId} />
-                  </HashContainer>
-                ) : (
-                  protoNft.tokenId
-                )}
+                {
+                  // only needed for very long tokenIds but works with any length > 4
+                  protoNft.tokenId?.length >= 4 ? (
+                    <HashContainer>
+                      <SplitAddress value={protoNft.tokenId} />
+                    </HashContainer>
+                  ) : (
+                    protoNft.tokenId
+                  )
+                }
               </CopiableField>
             </Text>
             {protoNft.standard === "ERC1155" ? (

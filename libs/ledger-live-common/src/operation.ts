@@ -1,15 +1,9 @@
 import type { NFTStandard, Operation, AccountLike } from "@ledgerhq/types-live";
 import { decodeAccountId } from "./account";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import {
-  encodeERC1155OperationId,
-  encodeERC721OperationId,
-} from "./nft/nftOperationId";
+import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
 
-const nftOperationIdEncoderPerStandard: Record<
-  NFTStandard,
-  (...args: any[]) => string
-> = {
+const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
   ERC721: encodeERC721OperationId,
   ERC1155: encodeERC1155OperationId,
 };
@@ -45,10 +39,7 @@ export {
   isAddressPoisoningOperation,
 };
 
-export function patchOperationWithHash(
-  operation: Operation,
-  hash: string
-): Operation {
+export function patchOperationWithHash(operation: Operation, hash: string): Operation {
   const commonOperation = commonPatchOperationWithHash(operation, hash);
 
   return {
@@ -61,7 +52,7 @@ export function patchOperationWithHash(
           operation.accountId,
           nftOp.contract || "",
           nftOp.tokenId || "",
-          currencyId
+          currencyId,
         );
         const nftOperationIdEncoder =
           nftOperationIdEncoderPerStandard[nftOp?.standard || ""] ||
@@ -76,17 +67,12 @@ export function patchOperationWithHash(
   };
 }
 
-export function isEditableOperation(
-  account: AccountLike,
-  operation: Operation
-): boolean {
+export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
   let isEthFamily = false;
   if (account.type === "Account") {
     isEthFamily = account.currency.family === "ethereum";
   } else if (account.type === "TokenAccount") {
     isEthFamily = account.token.parentCurrency.family === "ethereum";
   }
-  return (
-    isEthFamily && operation.blockHeight === null && !!operation.transactionRaw
-  );
+  return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
 }

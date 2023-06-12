@@ -1,8 +1,5 @@
 import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
-import {
-  extractOnboardingState,
-  OnboardingStep,
-} from "./extractOnboardingState";
+import { extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
 
 describe("@hw/extractOnboardingState", () => {
   describe("extractOnboardingState", () => {
@@ -11,7 +8,7 @@ describe("@hw/extractOnboardingState", () => {
         const incompleteFlagsBytes = Buffer.from([0, 0]);
 
         expect(() => extractOnboardingState(incompleteFlagsBytes)).toThrow(
-          DeviceExtractOnboardingStateError
+          DeviceExtractOnboardingStateError,
         );
       });
     });
@@ -50,30 +47,22 @@ describe("@hw/extractOnboardingState", () => {
           flagsBytes[3] = 0;
           let onboardingState = extractOnboardingState(flagsBytes);
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.WelcomeScreen1
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.WelcomeScreen1);
 
           flagsBytes[3] = 1;
           onboardingState = extractOnboardingState(flagsBytes);
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.WelcomeScreen2
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.WelcomeScreen2);
 
           flagsBytes[3] = 2;
           onboardingState = extractOnboardingState(flagsBytes);
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.WelcomeScreen3
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.WelcomeScreen3);
 
           flagsBytes[3] = 3;
           onboardingState = extractOnboardingState(flagsBytes);
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.WelcomeScreen4
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.WelcomeScreen4);
         });
       });
 
@@ -86,9 +75,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.OnboardingEarlyCheck
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.OnboardingEarlyCheck);
         });
       });
 
@@ -101,9 +88,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.ChooseName
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.ChooseName);
         });
       });
 
@@ -116,9 +101,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.Pin
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Pin);
         });
       });
 
@@ -131,9 +114,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.SetupChoice
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.SetupChoice);
         });
       });
 
@@ -160,9 +141,7 @@ describe("@hw/extractOnboardingState", () => {
               const onboardingState = extractOnboardingState(flagsBytes);
 
               expect(onboardingState).not.toBeNull();
-              expect(onboardingState?.currentOnboardingStep).toBe(
-                OnboardingStep.NewDevice
-              );
+              expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.NewDevice);
             });
 
             it("should return a device state with the index of the current seed word being written", () => {
@@ -188,7 +167,7 @@ describe("@hw/extractOnboardingState", () => {
 
               expect(onboardingState).not.toBeNull();
               expect(onboardingState?.currentOnboardingStep).toBe(
-                OnboardingStep.NewDeviceConfirming
+                OnboardingStep.NewDeviceConfirming,
               );
             });
 
@@ -216,9 +195,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.SetupChoiceRestore
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.SetupChoiceRestore);
         });
       });
 
@@ -261,9 +238,7 @@ describe("@hw/extractOnboardingState", () => {
               const onboardingState = extractOnboardingState(flagsBytes);
 
               expect(onboardingState).not.toBeNull();
-              expect(onboardingState?.currentOnboardingStep).toBe(
-                OnboardingStep.RestoreSeed
-              );
+              expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.RestoreSeed);
             });
 
             it("should return a device state with the index of the current seed word being confirmed", () => {
@@ -290,9 +265,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.RecoverRestore
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.RecoverRestore);
         });
       });
 
@@ -305,9 +278,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.SafetyWarning
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.SafetyWarning);
         });
       });
 
@@ -320,9 +291,7 @@ describe("@hw/extractOnboardingState", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.Ready
-          );
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
         });
       });
 
@@ -336,7 +305,7 @@ describe("@hw/extractOnboardingState", () => {
           // DeviceExtractOnboardingStateError is not of type Error,
           // so cannot check in toThrow(DeviceExtractOnboardingStateError)
           expect(() => extractOnboardingState(flagsBytes)).toThrow(
-            DeviceExtractOnboardingStateError
+            DeviceExtractOnboardingStateError,
           );
         });
       });

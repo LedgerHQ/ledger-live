@@ -39,17 +39,10 @@ export default function StakingStarted({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="StakingFlow" name="Started" />
         <Flex alignItems="center" mb={6}>
-          <Illustration
-            lightSource={EarnLight}
-            darkSource={EarnDark}
-            size={150}
-          />
+          <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
         <Text fontWeight="semiBold" style={styles.description}>
           <Trans i18nKey="near.staking.flow.steps.starter.description" />
@@ -74,10 +67,7 @@ export default function StakingStarted({ navigation, route }: Props) {
       </NavigationScrollView>
       <View style={[styles.footer]}>
         <View>
-          <Alert
-            type="info"
-            title={t("near.staking.flow.steps.starter.warning.description")}
-          />
+          <Alert type="info" title={t("near.staking.flow.steps.starter.warning.description")} />
         </View>
         <Button onPress={onNext} type="main" mt={6}>
           <Trans i18nKey="near.staking.flow.steps.starter.cta" />

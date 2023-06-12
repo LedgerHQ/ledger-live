@@ -102,28 +102,29 @@ const StepReceiveFunds = ({
           name="Step 3"
           currencyName={currencyName}
         />
-        {verifyAddressError ? (
-          <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
-        ) : device ? (
-          // verification with device
-          <>
-            <Receive1ShareAddress
-              account={mainAccount}
-              address={address}
-              showQRCodeModal={showQRCodeModal}
-            />
-
-            {/* show warning for unverified address */}
-            <Alert type="security" mt={4}>
-              <Trans
-                i18nKey="hedera.currentAddress.messageIfVirtual"
-                values={{
-                  name,
-                }}
+        {
+          verifyAddressError ? (
+            <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
+          ) : device ? (
+            // verification with device
+            <>
+              <Receive1ShareAddress
+                account={mainAccount}
+                address={address}
+                showQRCodeModal={showQRCodeModal}
               />
-            </Alert>
-          </>
-        ) : null // should not happen
+
+              {/* show warning for unverified address */}
+              <Alert type="security" mt={4}>
+                <Trans
+                  i18nKey="hedera.currentAddress.messageIfVirtual"
+                  values={{
+                    name,
+                  }}
+                />
+              </Alert>
+            </>
+          ) : null // should not happen
         }
       </Box>
 

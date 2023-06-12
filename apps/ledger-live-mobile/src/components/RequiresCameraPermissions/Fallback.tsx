@@ -14,9 +14,7 @@ type Props = {
   event: string;
 };
 
-const IconSettings = () => (
-  <Icon name="settings" size={16} color="neutral.c100" />
-);
+const IconSettings = () => <Icon name="settings" size={16} color="neutral.c100" />;
 
 const FallbackCameraBody: React.FC<Props> = ({
   title,

@@ -1,7 +1,4 @@
-import {
-  DeviceAppVerifyNotSupported,
-  UserRefusedAddress,
-} from "@ledgerhq/errors";
+import { DeviceAppVerifyNotSupported, UserRefusedAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,7 +16,7 @@ import { TypedMessageData } from "../../families/ethereum/types";
 
 export const prepareMessageToSign = (
   account: Account,
-  message: string
+  message: string,
 ): MessageData | TypedMessageData => {
   const { currency, freshAddressPath, derivationMode } = account;
 
@@ -32,7 +29,7 @@ export const prepareMessageToSign = (
       currency,
       freshAddressPath,
       derivationMode,
-      message
+      message,
     );
   }
 
@@ -51,19 +48,16 @@ const signMessage: SignMessage = (transport, opts) => {
   const signMessage = perFamily[currency.family].signMessage;
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
   return signMessage(transport, opts)
-    .then((result) => {
+    .then(result => {
       log(
         "hw",
         `signMessage ${currency.id} on ${opts.path} with message [${opts.message}]`,
-        result
+        result,
       );
       return result;
     })
-    .catch((e) => {
-      log(
-        "hw",
-        `signMessage ${currency.id} on ${opts.path} FAILED ${String(e)}`
-      );
+    .catch(e => {
+      log("hw", `signMessage ${currency.id} on ${opts.path} FAILED ${String(e)}`);
 
       if (e && e.name === "TransportStatusError") {
         if (e.statusCode === 0x6b00 && verify) {
@@ -95,12 +89,9 @@ export type Input = {
   deviceId: string;
 };
 
-export const signMessageExec = ({
-  request,
-  deviceId,
-}: Input): Observable<Result> => {
-  const result: Observable<Result> = withDevice(deviceId)((transport) =>
-    from(signMessage(transport, request.message))
+export const signMessageExec = ({ request, deviceId }: Input): Observable<Result> => {
+  const result: Observable<Result> = withDevice(deviceId)(transport =>
+    from(signMessage(transport, request.message)),
   );
   return result;
 };
@@ -112,21 +103,13 @@ const initialState: BaseState = {
 };
 
 export const createAction = (
-  connectAppExec: (
-    connectAppInput: ConnectAppInput
-  ) => Observable<ConnectAppEvent>,
-  signMessage: (input: Input) => Observable<Result> = signMessageExec
+  connectAppExec: (connectAppInput: ConnectAppInput) => Observable<ConnectAppEvent>,
+  signMessage: (input: Input) => Observable<Result> = signMessageExec,
 ) => {
-  const useHook = (
-    reduxDevice: Device | null | undefined,
-    request: Request
-  ): State => {
-    const appState: AppState = createAppAction(connectAppExec).useHook(
-      reduxDevice,
-      {
-        account: request.account,
-      }
-    );
+  const useHook = (reduxDevice: Device | null | undefined, request: Request): State => {
+    const appState: AppState = createAppAction(connectAppExec).useHook(reduxDevice, {
+      account: request.account,
+    });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState<BaseState>({
       ...initialState,
@@ -171,14 +154,7 @@ export const createAction = (
         signedFired.current = true;
         sign();
       }
-    }, [
-      device,
-      opened,
-      inWrongDeviceForAccount,
-      error,
-      sign,
-      state.signMessageRequested,
-    ]);
+    }, [device, opened, inWrongDeviceForAccount, error, sign, state.signMessageRequested]);
     return { ...appState, ...state };
   };
 

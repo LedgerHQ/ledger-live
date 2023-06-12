@@ -103,9 +103,8 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
 
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
   // Needed because the device object can be null or changed if disconnected/reconnected
-  const [lastKnownDeviceModelId, setLastKnownDeviceModelId] = useState<DeviceModelId>(
-    deviceModelId,
-  );
+  const [lastKnownDeviceModelId, setLastKnownDeviceModelId] =
+    useState<DeviceModelId>(deviceModelId);
 
   useEffect(() => {
     if (device) {

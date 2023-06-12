@@ -3,9 +3,7 @@ import BigNumber from "bignumber.js";
 import type { SuperRepresentative } from "../types";
 import superRepresentatives from "./superRepresentativesData.mock";
 
-export const getTronSuperRepresentatives = (): Promise<
-  SuperRepresentative[]
-> => {
+export const getTronSuperRepresentatives = (): Promise<SuperRepresentative[]> => {
   return Promise.resolve(<SuperRepresentative[]>superRepresentatives);
 };
 

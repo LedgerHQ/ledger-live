@@ -5,23 +5,14 @@ import { getPostOnboardingAction } from "../../logic/postOnboarding";
 import { NavigatorName, ScreenName } from "../../const";
 import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    PostOnboardingNavigatorParamList,
-    ScreenName.PostOnboardingMockActionScreen
-  >
+  StackNavigatorProps<PostOnboardingNavigatorParamList, ScreenName.PostOnboardingMockActionScreen>
 >;
 
-const PostOnboardingMockActionScreen = ({
-  navigation,
-  route,
-}: NavigationProps) => {
+const PostOnboardingMockActionScreen = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { id } = params;
   const navigateToHub = useNavigateToPostOnboardingHubCallback();

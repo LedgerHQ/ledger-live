@@ -29,16 +29,14 @@ jest.mock("./deviceAccess", () => {
 
   return {
     ...originalModule, // import and retain the original functionalities
-    withDevice: jest.fn().mockReturnValue((job) => {
+    withDevice: jest.fn().mockReturnValue(job => {
       return from(job(new Transport()));
     }),
   };
 });
 
 jest.mock("../manager");
-const mockedGetLatestFirmwareForDevice = jest.mocked(
-  manager.getLatestFirmwareForDevice
-);
+const mockedGetLatestFirmwareForDevice = jest.mocked(manager.getLatestFirmwareForDevice);
 
 jest.mock("./getDeviceInfo");
 const mockedGetDeviceInfo = jest.mocked(getDeviceInfo);
@@ -61,14 +59,14 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
   });
 
   describe("The device is locked, and the mechanism to know that a device is locked is a 0x5515 locked-device response", () => {
-    it("should notify the function consumer of the need to unlock the device, and once done, continue the get latest available firmware flow", (done) => {
+    it("should notify the function consumer of the need to unlock the device, and once done, continue the get latest available firmware flow", done => {
       let count = 0;
       // Could not simply mockedRejectValueOnce followed by a mockedResolveValueOnce.
       // Needed to transform getDeviceInfo into an Observable.
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore returning an Observable and not a Promise.
       mockedGetDeviceInfo.mockImplementation(() => {
-        return new Observable<DeviceInfo>((o) => {
+        return new Observable<DeviceInfo>(o => {
           if (count < 1) {
             count++;
             o.error(new LockedDeviceError("Locked device"));
@@ -78,9 +76,7 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
         });
       });
 
-      mockedGetLatestFirmwareForDevice.mockResolvedValue(
-        aLatestFirmwareContext
-      );
+      mockedGetLatestFirmwareForDevice.mockResolvedValue(aLatestFirmwareContext);
 
       let step = 1;
       getLatestAvailableFirmwareFromDeviceId({
@@ -127,7 +123,7 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
         // Needed so the retry is not triggered before unsubscribing during our test
         mockedTimer.mockImplementation((dueTime?: number | Date) => {
           if (typeof dueTime === "number") {
-            return new Observable<number>((subscriber) => {
+            return new Observable<number>(subscriber => {
               setTimeout(() => {
                 subscriber.next(1);
               }, dueTime);
@@ -138,14 +134,14 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
         });
       });
 
-      it("should stop completely the getLatestAvailableFirmware flow", (done) => {
+      it("should stop completely the getLatestAvailableFirmware flow", done => {
         let count = 0;
         // Could not simply mockedRejectValueOnce followed by a mockedResolveValueOnce.
         // Needed to transform getDeviceInfo into an Observable.
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore returning an Observable and not a Promise.
         mockedGetDeviceInfo.mockImplementation(() => {
-          return new Observable<DeviceInfo>((o) => {
+          return new Observable<DeviceInfo>(o => {
             if (count < 1) {
               count++;
               o.error(new LockedDeviceError("Locked device"));
@@ -155,9 +151,7 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
           });
         });
 
-        mockedGetLatestFirmwareForDevice.mockResolvedValue(
-          aLatestFirmwareContext
-        );
+        mockedGetLatestFirmwareForDevice.mockResolvedValue(aLatestFirmwareContext);
 
         let step = 1;
         const subscriber = getLatestAvailableFirmwareFromDeviceId({

@@ -24,9 +24,7 @@ type Props = {
   account: Account;
   parentAccount: Account | undefined | null;
   strategies: FeeStrategy[];
-  mapStrategies?: (
-    a: FeeStrategy,
-  ) => FeeStrategy & {
+  mapStrategies?: (a: FeeStrategy) => FeeStrategy & {
     [x: string]: unknown;
   };
   suffixPerByte?: boolean;

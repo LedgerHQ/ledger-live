@@ -2,10 +2,7 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet, Pressable } from "react-native";
 import { Flex, Switch, Icons, Divider, Alert, Text } from "@ledgerhq/native-ui";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import Slider from "react-native-slider";
 import FloatingDebugButton from "../FloatingDebugButton";
@@ -22,12 +19,9 @@ enum Visibility {
 
 const AnalyticsConsole = () => {
   const render = useEnv("ANALYTICS_CONSOLE");
-  const [visibility, setVisibility] = useState<Visibility>(
-    Visibility.transparent,
-  );
+  const [visibility, setVisibility] = useState<Visibility>(Visibility.transparent);
   const [previewTransparent, setPreviewTransparent] = useState(false);
-  const [transparentHeightPercentage, setTransparentHeightPercentage] =
-    useState(60);
+  const [transparentHeightPercentage, setTransparentHeightPercentage] = useState(60);
   const [showExtraProps, setShowExtraProps] = useState(false);
   const [hideSyncEvents, setHideSyncEvents] = useState(false);
   const onPressDebugButton = useCallback(() => {
@@ -88,20 +82,13 @@ const AnalyticsConsole = () => {
         <Flex
           style={StyleSheet.absoluteFillObject}
           bg={"white"}
-          opacity={
-            visibility === Visibility.opaque && !previewTransparent ? 1 : 0.6
-          }
+          opacity={visibility === Visibility.opaque && !previewTransparent ? 1 : 0.6}
         />
         <SafeAreaView>
           <AnimatedFlex>
             {visibility === Visibility.opaque ? (
               <AnimatedFlex entering={FadeIn} exiting={FadeOut} p={4}>
-                <Flex
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  mb={3}
-                >
+                <Flex flexDirection="row" alignItems="center" justifyContent="space-between" mb={3}>
                   <Switch
                     checked={showExtraProps}
                     onChange={setShowExtraProps}
@@ -134,10 +121,7 @@ const AnalyticsConsole = () => {
             ) : null}
           </AnimatedFlex>
           <AnimatedFlex flexShrink={1} layout={Layout}>
-            <EventList
-              showExtraProps={showExtraProps}
-              hideSyncEvents={hideSyncEvents}
-            />
+            <EventList showExtraProps={showExtraProps} hideSyncEvents={hideSyncEvents} />
           </AnimatedFlex>
         </SafeAreaView>
       </Flex>
@@ -153,10 +137,7 @@ const AnalyticsConsole = () => {
       >
         <Alert showIcon={false} title={`Analytics console: ${visibility}`} />
       </AnimatedFlex>
-      <FloatingDebugButton
-        onPress={onPressDebugButton}
-        Icon={Icons.ActivityMedium}
-      />
+      <FloatingDebugButton onPress={onPressDebugButton} Icon={Icons.ActivityMedium} />
     </>
   );
 };

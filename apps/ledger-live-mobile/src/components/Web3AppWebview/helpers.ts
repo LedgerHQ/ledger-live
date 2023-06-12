@@ -1,17 +1,7 @@
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import {
-  addParamsToURL,
-  getClientHeaders,
-} from "@ledgerhq/live-common/wallet-api/helpers";
+import { addParamsToURL, getClientHeaders } from "@ledgerhq/live-common/wallet-api/helpers";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView } from "react-native-webview";
 import { useTheme } from "styled-components/native";
 import { WebviewAPI, WebviewState } from "./types";
@@ -93,44 +83,35 @@ export function useWebviewState(
     [webviewRef],
   );
 
-  const onLoad: Required<WebViewProps>["onLoad"] = useCallback(
-    ({ nativeEvent }) => {
-      setState({
-        title: nativeEvent.title,
-        url: nativeEvent.url,
-        canGoBack: nativeEvent.canGoBack,
-        canGoForward: nativeEvent.canGoForward,
-        loading: nativeEvent.loading,
-      });
-    },
-    [],
-  );
+  const onLoad: Required<WebViewProps>["onLoad"] = useCallback(({ nativeEvent }) => {
+    setState({
+      title: nativeEvent.title,
+      url: nativeEvent.url,
+      canGoBack: nativeEvent.canGoBack,
+      canGoForward: nativeEvent.canGoForward,
+      loading: nativeEvent.loading,
+    });
+  }, []);
 
-  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(
-    ({ nativeEvent }) => {
-      setState({
-        title: nativeEvent.title,
-        url: nativeEvent.url,
-        canGoBack: nativeEvent.canGoBack,
-        canGoForward: nativeEvent.canGoForward,
-        loading: nativeEvent.loading,
-      });
-    },
-    [],
-  );
+  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(({ nativeEvent }) => {
+    setState({
+      title: nativeEvent.title,
+      url: nativeEvent.url,
+      canGoBack: nativeEvent.canGoBack,
+      canGoForward: nativeEvent.canGoForward,
+      loading: nativeEvent.loading,
+    });
+  }, []);
 
-  const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(
-    ({ nativeEvent }) => {
-      setState({
-        title: nativeEvent.title,
-        url: nativeEvent.url,
-        canGoBack: nativeEvent.canGoBack,
-        canGoForward: nativeEvent.canGoForward,
-        loading: nativeEvent.loading,
-      });
-    },
-    [],
-  );
+  const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(({ nativeEvent }) => {
+    setState({
+      title: nativeEvent.title,
+      url: nativeEvent.url,
+      canGoBack: nativeEvent.canGoBack,
+      canGoForward: nativeEvent.canGoForward,
+      loading: nativeEvent.loading,
+    });
+  }, []);
 
   const onLoadProgress: Required<WebViewProps>["onLoadProgress"] = useCallback(
     ({ nativeEvent }) => {
@@ -145,8 +126,8 @@ export function useWebviewState(
     [],
   );
 
-  const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] =
-    useCallback(event => {
+  const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] = useCallback(
+    event => {
       setState({
         title: event.title,
         url: event.url,
@@ -154,7 +135,9 @@ export function useWebviewState(
         canGoForward: event.canGoForward,
         loading: event.loading,
       });
-    }, []);
+    },
+    [],
+  );
 
   const props: Partial<WebViewProps> = useMemo(
     () => ({
@@ -165,14 +148,7 @@ export function useWebviewState(
       onNavigationStateChange,
       source,
     }),
-    [
-      onLoad,
-      onLoadEnd,
-      onLoadProgress,
-      onLoadStart,
-      onNavigationStateChange,
-      source,
-    ],
+    [onLoad, onLoadEnd, onLoadProgress, onLoadStart, onNavigationStateChange, source],
   );
 
   return {

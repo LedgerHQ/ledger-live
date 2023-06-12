@@ -20,11 +20,7 @@ const ButtonContainer = styled(Box).attrs({
   justifyContent: "center",
 })``;
 
-export default function AppUpdateButton({
-  app,
-  state,
-  dispatch: dispatchProps,
-}: Props) {
+export default function AppUpdateButton({ app, state, dispatch: dispatchProps }: Props) {
   const { name } = app;
   const { installed } = state;
 

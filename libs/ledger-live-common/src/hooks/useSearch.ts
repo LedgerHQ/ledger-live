@@ -35,7 +35,7 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   useEffect(() => {
     if (debouncedInput && fuse.current) {
       setIsSearching(true);
-      setResult(fuse.current.search(debouncedInput).map((res) => res.item));
+      setResult(fuse.current.search(debouncedInput).map(res => res.item));
     } else {
       setResult([]);
     }

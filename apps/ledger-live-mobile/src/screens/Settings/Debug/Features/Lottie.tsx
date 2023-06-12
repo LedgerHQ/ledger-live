@@ -110,18 +110,14 @@ const DebugLottie = () => {
               borderWidth: 1,
             }}
           >
-            {animationLight && (
-              <Animation key={animationNodeKey} source={animationLight} />
-            )}
+            {animationLight && <Animation key={animationNodeKey} source={animationLight} />}
           </View>
           <View
             style={{
               backgroundColor: "#121212",
             }}
           >
-            {animationDark && (
-              <Animation key={animationNodeKey} source={animationDark} />
-            )}
+            {animationDark && <Animation key={animationNodeKey} source={animationDark} />}
           </View>
         </ScrollView>
       </Flex>
@@ -157,9 +153,7 @@ const DebugLottie = () => {
         type="primary"
         outline={false}
         title={`Show ${wired ? "Bluetooth" : "Wired"}`}
-        disabled={
-          !["nanoX", "stax"].includes(selectedModelId) || !keys.includes(key)
-        }
+        disabled={!["nanoX", "stax"].includes(selectedModelId) || !keys.includes(key)}
         onPress={() => setWired(wired => !wired)}
       />
       <Flex mt={8} flexDirection="row">
@@ -172,11 +166,7 @@ const DebugLottie = () => {
           Icon={Icons.ChevronLeftMedium}
         />
         <Flex mx={3} flex={1}>
-          <Button
-            type="primary"
-            title="Animation key"
-            onPress={() => setKeyModalVisible(true)}
-          />
+          <Button type="primary" title="Animation key" onPress={() => setKeyModalVisible(true)} />
         </Flex>
         <Button
           disabled={keyIndex === allKeys.length - 1}

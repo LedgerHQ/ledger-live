@@ -84,8 +84,9 @@ const TargetAccount = memo(function TargetAccount({
     });
     setAccount && setAccount(currency, account, parentAccount || undefined);
   }, [swapDefaultTrack, currency, name, parentName, setAccount, account, parentAccount]);
-  const Wrapper: React.ComponentType<React.ComponentProps<typeof Box> &
-    React.ComponentProps<typeof AccountWrapper>> = setAccount ? AccountWrapper : Box;
+  const Wrapper: React.ComponentType<
+    React.ComponentProps<typeof Box> & React.ComponentProps<typeof AccountWrapper>
+  > = setAccount ? AccountWrapper : Box;
   return (
     <Wrapper
       horizontal

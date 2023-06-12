@@ -48,11 +48,10 @@ const AccountCrumb = () => {
     [tokenAccount, account],
   );
 
-  const items = useMemo(() => (parentId && account ? listSubAccounts(account) : accounts), [
-    parentId,
-    account,
-    accounts,
-  ]);
+  const items = useMemo(
+    () => (parentId && account ? listSubAccounts(account) : accounts),
+    [parentId, account, accounts],
+  );
 
   const renderItem = useCallback(({ item, isActive }) => {
     const currency = getAccountCurrency(item.account);
@@ -121,10 +120,10 @@ const AccountCrumb = () => {
     [],
   );
 
-  const processedItems = useMemo(() => processItemsForDropdown(items || []), [
-    items,
-    processItemsForDropdown,
-  ]);
+  const processedItems = useMemo(
+    () => processItemsForDropdown(items || []),
+    [items, processItemsForDropdown],
+  );
 
   // no more id can happens if the account were just deleted
   if (!id) {

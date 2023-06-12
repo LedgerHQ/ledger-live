@@ -111,12 +111,14 @@ const AppsList = ({
       : state;
     return distribute(newState);
   }, [state, installQueue]);
-  const onCloseDepsInstallModal = useCallback(() => setAppInstallDep(undefined), [
-    setAppInstallDep,
-  ]);
-  const onCloseDepsUninstallModal = useCallback(() => setAppUninstallDep(undefined), [
-    setAppUninstallDep,
-  ]);
+  const onCloseDepsInstallModal = useCallback(
+    () => setAppInstallDep(undefined),
+    [setAppInstallDep],
+  );
+  const onCloseDepsUninstallModal = useCallback(
+    () => setAppUninstallDep(undefined),
+    [setAppUninstallDep],
+  );
   const installState =
     installQueue.length > 0 ? (uninstallQueue.length > 0 ? "update" : "install") : "uninstall";
   const onCloseError = useCallback(() => {

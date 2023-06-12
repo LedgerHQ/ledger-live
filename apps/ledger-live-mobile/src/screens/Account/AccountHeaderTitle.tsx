@@ -2,10 +2,7 @@ import React from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import {
-  getAccountCurrency,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import { Text } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../reducers/accounts";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
@@ -20,10 +17,7 @@ export default function AccountHeaderTitle() {
     <TouchableWithoutFeedback onPress={scrollToTop}>
       <View style={styles.headerContainer}>
         <View style={styles.iconContainer}>
-          <ParentCurrencyIcon
-            size={32}
-            currency={getAccountCurrency(account)}
-          />
+          <ParentCurrencyIcon size={32} currency={getAccountCurrency(account)} />
         </View>
         <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1} pr={8}>
           {getAccountName(account)}

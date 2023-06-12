@@ -43,10 +43,7 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isPushNotificationsModalOpen}
-      noCloseButton
-    >
+    <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
       <TrackScreen
         category="Notification Prompt"
         name={

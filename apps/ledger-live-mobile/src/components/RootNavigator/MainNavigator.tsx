@@ -3,10 +3,7 @@ import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { RouteProp, useRoute } from "@react-navigation/core";
 
-import {
-  BottomTabBarProps,
-  createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs";
+import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
@@ -16,10 +13,7 @@ import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
-import {
-  hasOrderedNanoSelector,
-  readOnlyModeEnabledSelector,
-} from "../../reducers/settings";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
@@ -36,8 +30,7 @@ const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
 
 export default function MainNavigator() {
-  const route =
-    useRoute<RouteProp<BaseNavigatorStackParamList, NavigatorName.Main>>();
+  const route = useRoute<RouteProp<BaseNavigatorStackParamList, NavigatorName.Main>>();
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
@@ -61,9 +54,7 @@ export default function MainNavigator() {
     callback => {
       // NB This is conditionally going to show the confirmation modal from the manager
       // in the event of having ongoing installs/uninstalls.
-      managerNavLockCallback
-        ? managerNavLockCallback(() => callback)
-        : callback();
+      managerNavLockCallback ? managerNavLockCallback(() => callback) : callback();
     },
     [managerNavLockCallback],
   );
@@ -118,11 +109,7 @@ export default function MainNavigator() {
             headerShown: false,
             unmountOnBlur: true,
             tabBarIcon: props => (
-              <TabIcon
-                Icon={Icons.GraphGrowMedium}
-                i18nKey="tabs.market"
-                {...props}
-              />
+              <TabIcon Icon={Icons.GraphGrowMedium} i18nKey="tabs.market" {...props} />
             ),
           }}
           listeners={({ navigation }) => ({
@@ -151,11 +138,7 @@ export default function MainNavigator() {
           options={{
             headerShown: false,
             tabBarIcon: props => (
-              <TabIcon
-                Icon={Icons.PlanetMedium}
-                i18nKey="tabs.discover"
-                {...props}
-              />
+              <TabIcon Icon={Icons.PlanetMedium} i18nKey="tabs.discover" {...props} />
             ),
           }}
           listeners={({ navigation }) => ({
@@ -181,9 +164,7 @@ export default function MainNavigator() {
               e.preventDefault();
               managerLockAwareCallback(() => {
                 if (readOnlyModeEnabled && hasOrderedNano) {
-                  navigation.navigate(
-                    ScreenName.PostBuyDeviceSetupNanoWallScreen,
-                  );
+                  navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
                 } else if (readOnlyModeEnabled) {
                   navigation.navigate(NavigatorName.BuyDevice);
                 } else {

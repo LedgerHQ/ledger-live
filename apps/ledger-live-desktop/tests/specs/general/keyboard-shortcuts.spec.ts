@@ -20,9 +20,7 @@ test("Keyboard shortcuts", async ({ page }) => {
       : await page.keyboard.press("Control+Shift+I");
 
     const isDevToolsOpened = await page.evaluate(() => {
-      return require("@electron/remote")
-        .getCurrentWebContents()
-        .isDevToolsOpened();
+      return require("@electron/remote").getCurrentWebContents().isDevToolsOpened();
     });
 
     expect(isDevToolsOpened).toBe(false);
@@ -44,11 +42,7 @@ test("Keyboard shortcuts", async ({ page }) => {
 
   // test that backspace doesn't go back in history
   await test.step("it doesn't go back in history", async () => {
-    const pageURL = () =>
-      page
-        .url()
-        .split("/")
-        .pop();
+    const pageURL = () => page.url().split("/").pop();
 
     await layout.goToSettings();
     const current = pageURL(); // -> settings

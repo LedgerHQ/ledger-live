@@ -23,10 +23,7 @@ export default function NotificationCenterNavigator() {
   const navigation = useNavigation();
   const { colors, space } = useTheme();
 
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const { incidents } = useFilteredServiceStatus();
 
   const goToNotificationsSettings = useCallback(() => {
@@ -59,10 +56,7 @@ export default function NotificationCenterNavigator() {
           headerRight: () => (
             <Flex flexDirection="row">
               {incidents.length > 0 && (
-                <TouchableOpacity
-                  style={{ marginRight: space[6] }}
-                  onPress={goToStatusCenter}
-                >
+                <TouchableOpacity style={{ marginRight: space[6] }} onPress={goToStatusCenter}>
                   <FullNodeWarning
                     size={24}
                     color={colors.neutral.c100}

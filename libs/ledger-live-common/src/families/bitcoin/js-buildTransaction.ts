@@ -9,10 +9,7 @@ import wallet, { getWalletAccount } from "./wallet-btc";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
 
-const selectUtxoPickingStrategy = (
-  walletAccount: WalletAccount,
-  utxoStrategy: UtxoStrategy
-) => {
+const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: UtxoStrategy) => {
   const handler = {
     [bitcoinPickingStrategy.MERGE_OUTPUTS]: Merge,
     [bitcoinPickingStrategy.DEEP_OUTPUTS_FIRST]: DeepFirst,
@@ -23,13 +20,13 @@ const selectUtxoPickingStrategy = (
   return new handler(
     walletAccount.xpub.crypto,
     walletAccount.xpub.derivationMode,
-    utxoStrategy.excludeUTXOs
+    utxoStrategy.excludeUTXOs,
   );
 };
 
 export const buildTransaction = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<WalletTxInfo> => {
   const { feePerByte, recipient, opReturnData, utxoStrategy } = transaction;
 
@@ -38,17 +35,14 @@ export const buildTransaction = async (
   }
 
   const walletAccount = getWalletAccount(account);
-  const utxoPickingStrategy = selectUtxoPickingStrategy(
-    walletAccount,
-    transaction.utxoStrategy
-  );
+  const utxoPickingStrategy = selectUtxoPickingStrategy(walletAccount, transaction.utxoStrategy);
 
   const maxSpendable = await wallet.estimateAccountMaxSpendable(
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     utxoStrategy.excludeUTXOs,
     [recipient],
-    opReturnData
+    opReturnData,
   );
 
   log("btcwallet", "building transaction", transaction);

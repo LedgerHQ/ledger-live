@@ -13,11 +13,7 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { Account, AccountBridge, SubAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import {
-  eip1559TransactionHasFees,
-  getEstimatedFees,
-  legacyTransactionHasFees,
-} from "./logic";
+import { eip1559TransactionHasFees, getEstimatedFees, legacyTransactionHasFees } from "./logic";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -40,7 +36,7 @@ const ethAddressRegEx = /^(0x)?[0-9a-fA-F]{40}$/;
  */
 export const validateRecipient = (
   account: Account,
-  tx: EvmTransaction
+  tx: EvmTransaction,
 ): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
@@ -79,7 +75,7 @@ export const validateRecipient = (
 export const validateAmount = (
   account: Account | SubAccount,
   transaction: EvmTransaction,
-  totalSpent: BigNumber
+  totalSpent: BigNumber,
 ): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
@@ -92,10 +88,7 @@ export const validateAmount = (
   const canHaveZeroAmount = isSmartContractInteraction && transactionHasFees;
 
   // if no amount or 0
-  if (
-    (!transaction.amount || transaction.amount.isZero()) &&
-    !canHaveZeroAmount
-  ) {
+  if ((!transaction.amount || transaction.amount.isZero()) && !canHaveZeroAmount) {
     errors.amount = new AmountRequired(); // "Amount required"
   } else if (totalSpent.isGreaterThan(account.balance)) {
     // if not enough to make the transaction
@@ -111,7 +104,7 @@ export const validateGas = (
   account: Account,
   tx: EvmTransaction,
   gasLimit: BigNumber,
-  estimatedFees: BigNumber
+  estimatedFees: BigNumber,
 ): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
@@ -141,46 +134,42 @@ export const validateGas = (
 /**
  * Validate a transaction and get all possibles errors and warnings about it
  */
-export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] =
-  async (account, tx) => {
-    const subAccount = findSubAccountById(account, tx.subAccountId || "");
-    const isTokenTransaction = subAccount?.type === "TokenAccount";
-    const { gasLimit, additionalFees, amount } = tx;
-    const estimatedFees = getEstimatedFees(tx);
-    const totalFees = estimatedFees.plus(additionalFees || 0);
-    const totalSpent = isTokenTransaction
-      ? tx.amount
-      : tx.amount.plus(totalFees);
+export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] = async (
+  account,
+  tx,
+) => {
+  const subAccount = findSubAccountById(account, tx.subAccountId || "");
+  const isTokenTransaction = subAccount?.type === "TokenAccount";
+  const { gasLimit, additionalFees, amount } = tx;
+  const estimatedFees = getEstimatedFees(tx);
+  const totalFees = estimatedFees.plus(additionalFees || 0);
+  const totalSpent = isTokenTransaction ? tx.amount : tx.amount.plus(totalFees);
 
-    // Recipient related errors and warnings
-    const [recipientErr, recipientWarn] = validateRecipient(account, tx);
-    // Amount related errors and warnings
-    const [amountErr, amountWarn] = validateAmount(
-      subAccount || account,
-      tx,
-      totalSpent
-    );
-    // Gas related errors and warnings
-    const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, totalFees);
+  // Recipient related errors and warnings
+  const [recipientErr, recipientWarn] = validateRecipient(account, tx);
+  // Amount related errors and warnings
+  const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
+  // Gas related errors and warnings
+  const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, totalFees);
 
-    const errors: ValidationIssues = {
-      ...recipientErr,
-      ...gasErr,
-      ...amountErr,
-    };
-    const warnings: ValidationIssues = {
-      ...recipientWarn,
-      ...gasWarn,
-      ...amountWarn,
-    };
-
-    return {
-      errors,
-      warnings,
-      estimatedFees,
-      amount,
-      totalSpent,
-    };
+  const errors: ValidationIssues = {
+    ...recipientErr,
+    ...gasErr,
+    ...amountErr,
   };
+  const warnings: ValidationIssues = {
+    ...recipientWarn,
+    ...gasWarn,
+    ...amountWarn,
+  };
+
+  return {
+    errors,
+    warnings,
+    estimatedFees,
+    amount,
+    totalSpent,
+  };
+};
 
 export default getTransactionStatus;

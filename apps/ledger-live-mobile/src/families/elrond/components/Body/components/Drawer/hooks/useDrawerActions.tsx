@@ -7,10 +7,7 @@ import type { StackNavigationProp } from "@react-navigation/stack";
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { NavigationType } from "../../../../../types";
 import type { DrawerPropsType } from "../types";
-import type {
-  Action,
-  IconProps,
-} from "../../../../../../../components/DelegationDrawer";
+import type { Action, IconProps } from "../../../../../../../components/DelegationDrawer";
 
 import Circle from "../../../../../../../components/Circle";
 import ClaimRewardIcon from "../../../../../../../icons/ClaimReward";
@@ -85,10 +82,7 @@ const useDrawerActions = (
    */
 
   const rewardsEnabled = useMemo(
-    () =>
-      isDelegation && claimableRewards
-        ? new BigNumber(claimableRewards).isGreaterThan(0)
-        : 0,
+    () => (isDelegation && claimableRewards ? new BigNumber(claimableRewards).isGreaterThan(0) : 0),
     [isDelegation, claimableRewards],
   );
 
@@ -115,15 +109,8 @@ const useDrawerActions = (
               onPress: onCollectRwards,
               event: "DelegationActionCollectRewards",
               Icon: (props: IconProps) => (
-                <Circle
-                  {...props}
-                  bg={
-                    rewardsEnabled ? rgba(colors.yellow, 0.2) : colors.lightFog
-                  }
-                >
-                  <ClaimRewardIcon
-                    color={rewardsEnabled ? undefined : colors.grey}
-                  />
+                <Circle {...props} bg={rewardsEnabled ? rgba(colors.yellow, 0.2) : colors.lightFog}>
+                  <ClaimRewardIcon color={rewardsEnabled ? undefined : colors.grey} />
                 </Circle>
               ),
             },
@@ -133,29 +120,14 @@ const useDrawerActions = (
               event: "DelegationActionUndelegate",
               disabled: amount.isZero(),
               Icon: (props: IconProps) => (
-                <Circle
-                  {...props}
-                  bg={
-                    amount.isZero() ? colors.lightFog : rgba(colors.alert, 0.2)
-                  }
-                >
-                  <UndelegateIcon
-                    color={amount.isZero() ? colors.grey : undefined}
-                  />
+                <Circle {...props} bg={amount.isZero() ? colors.lightFog : rgba(colors.alert, 0.2)}>
+                  <UndelegateIcon color={amount.isZero() ? colors.grey : undefined} />
                 </Circle>
               ),
             },
           ]
         : [],
-    [
-      isDelegation,
-      rewardsEnabled,
-      colors,
-      amount,
-      t,
-      onUndelegation,
-      onCollectRwards,
-    ],
+    [isDelegation, rewardsEnabled, colors, amount, t, onUndelegation, onCollectRwards],
   );
 
   /*
@@ -174,16 +146,9 @@ const useDrawerActions = (
               Icon: (props: IconProps) => (
                 <Circle
                   {...props}
-                  bg={
-                    withdrawalEnabled
-                      ? rgba(colors.green, 0.2)
-                      : colors.lightFog
-                  }
+                  bg={withdrawalEnabled ? rgba(colors.green, 0.2) : colors.lightFog}
                 >
-                  <WithdrawIcon
-                    size={24}
-                    color={withdrawalEnabled ? colors.green : colors.grey}
-                  />
+                  <WithdrawIcon size={24} color={withdrawalEnabled ? colors.green : colors.grey} />
                 </Circle>
               ),
             },

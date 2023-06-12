@@ -37,14 +37,7 @@ export type Props = ImageFileUri & {
  * or pass a ref to this component and call `ref.current.saveImage(true, 100)`
  */
 const ImageCropper = React.forwardRef<CropView, Props>((props, ref) => {
-  const {
-    style,
-    imageFileUri,
-    aspectRatio,
-    onError,
-    onResult,
-    withButton = false,
-  } = props;
+  const { style, imageFileUri, aspectRatio, onError, onResult, withButton = false } = props;
 
   const cropViewRef = useRef<CropView>(null);
   const { t } = useTranslation();

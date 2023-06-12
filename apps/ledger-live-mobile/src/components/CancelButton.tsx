@@ -6,13 +6,7 @@ type Props = Omit<React.ComponentProps<typeof Button>, "type" | "title">;
 
 class CancelButton extends Component<Props> {
   render() {
-    return (
-      <Button
-        type="secondary"
-        title={<Trans i18nKey="common.cancel" />}
-        {...this.props}
-      />
-    );
+    return <Button type="secondary" title={<Trans i18nKey="common.cancel" />} {...this.props} />;
   }
 }
 

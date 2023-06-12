@@ -5,10 +5,7 @@ import { TouchableOpacity, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
@@ -39,10 +36,7 @@ type Props = {
   account?: TokenAccount | Account;
   parentAccount?: Account;
   readOnlyModeEnabled?: boolean;
-} & StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveVerifyAddress
->;
+} & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveVerifyAddress>;
 
 const AnimationContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -101,8 +95,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   );
 
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency =
-    route.params?.currency || (account && getAccountCurrency(account));
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -164,30 +157,16 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             <TouchableOpacity onPress={redirectToSupport}>
               <LText variant="body" color="neutral.c70" textAlign="center">
                 <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
-                  <LText
-                    color="primary.c80"
-                    style={{ textDecorationLine: "underline" }}
-                  />
+                  <LText color="primary.c80" style={{ textDecorationLine: "underline" }} />
                 </Trans>
               </LText>
             </TouchableOpacity>
           </Flex>
-          <Flex
-            p={6}
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Flex p={6} flexDirection="row" justifyContent="space-between" alignItems="center">
             <Button flex={1} type="secondary" outline onPress={goBack}>
               {t("common.cancel")}
             </Button>
-            <Button
-              flex={1}
-              type="main"
-              ml={6}
-              outline={false}
-              onPress={onRetry}
-            >
+            <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>
               {t("common.retry")}
             </Button>
           </Flex>

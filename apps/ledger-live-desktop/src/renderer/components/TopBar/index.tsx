@@ -51,10 +51,10 @@ const TopBar = () => {
   const discreetMode = useSelector(discreetModeSelector);
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
-  const handleDiscreet = useCallback(() => dispatch(setDiscreetMode(!discreetMode)), [
-    discreetMode,
-    dispatch,
-  ]);
+  const handleDiscreet = useCallback(
+    () => dispatch(setDiscreetMode(!discreetMode)),
+    [discreetMode, dispatch],
+  );
   const navigateToSettings = useCallback(() => {
     const url = "/settings";
     if (location.pathname !== url) {

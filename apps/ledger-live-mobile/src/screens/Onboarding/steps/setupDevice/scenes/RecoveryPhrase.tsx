@@ -8,13 +8,7 @@ const RecoveryPhraseScene = () => {
 
   return (
     <>
-      <Text
-        variant="h2"
-        color="palette.neutral.c100"
-        mb={4}
-        uppercase
-        lineHeight="34.8px"
-      >
+      <Text variant="h2" color="palette.neutral.c100" mb={4} uppercase lineHeight="34.8px">
         {t("onboarding.stepSetupDevice.recoveryPhrase.title")}
       </Text>
       <Text variant="paragraph" color="palette.neutral.c80" mb={4}>
@@ -41,13 +35,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         onChange={onChange}
         label={t("onboarding.stepSetupDevice.recoveryPhrase.checkboxDesc")}
       />
-      <Button
-        mt={6}
-        disabled={!checked}
-        type="main"
-        size="large"
-        onPress={onNext}
-      >
+      <Button mt={6} disabled={!checked} type="main" size="large" onPress={onNext}>
         {t("onboarding.stepSetupDevice.recoveryPhrase.cta")}
       </Button>
     </>

@@ -24,7 +24,7 @@ import { buildTransaction } from "./js-buildTransaction";
 
 const getTransactionStatus = async (
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -43,7 +43,7 @@ const getTransactionStatus = async (
 
   const tokenAccount =
     t.subAccountId && a.subAccounts
-      ? a.subAccounts.find((a) => {
+      ? a.subAccounts.find(a => {
           return a.id === t.subAccountId;
         })
       : undefined;
@@ -67,16 +67,14 @@ const getTransactionStatus = async (
     ];
   } else {
     // ADA transaction
-    amount = t.useAllAmount
-      ? await estimateMaxSpendable({ account: a, transaction: t })
-      : amount;
+    amount = t.useAllAmount ? await estimateMaxSpendable({ account: a, transaction: t }) : amount;
     totalSpent = amount.plus(estimatedFees);
   }
 
   const minTransactionAmount = TyphonUtils.calculateMinUtxoAmount(
     tokensToSend,
     new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
-    false
+    false,
   );
 
   if (!t.fees) {
@@ -90,18 +88,12 @@ const getTransactionStatus = async (
   }
 
   if (!amount.gt(0)) {
-    errors.amount = useAllAmount
-      ? new CardanoNotEnoughFunds()
-      : new AmountRequired();
+    errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
   } else if (!t.subAccountId && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
       amount: minTransactionAmount.div(1e6).toString(),
     });
-  } else if (
-    tokenAccount
-      ? totalSpent.gt(tokenAccount.balance)
-      : totalSpent.gt(a.balance)
-  ) {
+  } else if (tokenAccount ? totalSpent.gt(tokenAccount.balance) : totalSpent.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
   } else {
     try {

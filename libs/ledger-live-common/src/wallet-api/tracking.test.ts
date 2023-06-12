@@ -124,9 +124,9 @@ describe("trackingWrapper", () => {
         {
           walletAPI: appManifest.name,
         },
-        null
+        null,
       );
-    }
+    },
   );
 });
 

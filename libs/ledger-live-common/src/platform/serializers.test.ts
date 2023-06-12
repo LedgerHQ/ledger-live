@@ -53,8 +53,7 @@ const RAW_SIGNED_TRANSACTION: SignedOperationRaw = {
 const ACCOUNT_ID = "js:2:ethereum:0x3f87926741ecaXXXXXXXXXXXXXXXXXXXXXXXXXXX:";
 
 test("should serialize a platform signed transaction", () => {
-  const serializedSignedTransaction =
-    serializePlatformSignedTransaction(SIGNED_TRANSACTION);
+  const serializedSignedTransaction = serializePlatformSignedTransaction(SIGNED_TRANSACTION);
 
   expect(serializedSignedTransaction).toEqual(RAW_SIGNED_TRANSACTION);
 });
@@ -62,7 +61,7 @@ test("should serialize a platform signed transaction", () => {
 test("should deserialize a raw platform signed transaction", () => {
   const signedTransaction = deserializePlatformSignedTransaction(
     RAW_SIGNED_TRANSACTION,
-    ACCOUNT_ID
+    ACCOUNT_ID,
   );
 
   expect(signedTransaction).toEqual(SIGNED_TRANSACTION);
@@ -70,25 +69,20 @@ test("should deserialize a raw platform signed transaction", () => {
 
 describe("Serialize -> Deserialize flow", () => {
   test("should not alter signedTransaction", () => {
-    const serializedSignedTransaction =
-      serializePlatformSignedTransaction(SIGNED_TRANSACTION);
+    const serializedSignedTransaction = serializePlatformSignedTransaction(SIGNED_TRANSACTION);
 
-    const stringifiedSignedTransaction = JSON.stringify(
-      serializedSignedTransaction
-    );
+    const stringifiedSignedTransaction = JSON.stringify(serializedSignedTransaction);
 
-    const parsedSignedTransaction = JSON.parse(
-      stringifiedSignedTransaction
-    ) as SignedOperationRaw;
+    const parsedSignedTransaction = JSON.parse(stringifiedSignedTransaction) as SignedOperationRaw;
 
     const expectedSignedTransaction = deserializePlatformSignedTransaction(
       parsedSignedTransaction,
-      ACCOUNT_ID
+      ACCOUNT_ID,
     );
 
     const signedTransaction = deserializePlatformSignedTransaction(
       RAW_SIGNED_TRANSACTION,
-      ACCOUNT_ID
+      ACCOUNT_ID,
     );
 
     expect(signedTransaction).toEqual(expectedSignedTransaction);
