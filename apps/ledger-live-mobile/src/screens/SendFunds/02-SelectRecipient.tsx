@@ -200,8 +200,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             <EditOperationCard
               isOperationStuck
               oldestEditableOperation={stuckAccountAndOperation.operation}
-              account={account}
-              parentAccount={parentAccount}
+              account={stuckAccountAndOperation.account}
+              parentAccount={stuckAccountAndOperation.parentAccount}
             />
           ) : null}
           <NavigationScrollView

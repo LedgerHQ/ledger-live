@@ -38,7 +38,7 @@ export const EditOperationCard = ({
         },
       });
     }
-  }, [account, oldestEditableOperation, parentAccount]);
+  }, [account, oldestEditableOperation, parentAccount, navigation]);
 
   return flag?.enabled ? (
     <SectionContainer px={6}>

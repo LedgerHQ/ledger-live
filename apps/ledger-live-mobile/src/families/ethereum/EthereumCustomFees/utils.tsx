@@ -37,22 +37,16 @@ export const inferMaxPriorityFeeRange = (
       transactionRaw.maxPriorityFeePerGas,
     ).times(1 + maxPriorityFeeGap);
 
-    const { units } = mainAccount.currency;
-    const unit = units.length > 1 ? units[1] : units[0];
-    const newMaxPriorityFeePerGasinGwei = new BigNumber(
-      formatCurrencyUnit(unit, newMaxPriorityFeePerGas),
-    );
-
     if (
-      new BigNumber(newMaxPriorityFeePerGasinGwei).isGreaterThan(
+      new BigNumber(newMaxPriorityFeePerGas).isGreaterThan(
         new BigNumber(minValue),
       )
     ) {
       minValue = newMaxPriorityFeePerGas;
     }
 
-    if (newMaxPriorityFeePerGasinGwei.isGreaterThan(new BigNumber(maxValue))) {
-      maxValue = newMaxPriorityFeePerGasinGwei;
+    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(maxValue))) {
+      maxValue = newMaxPriorityFeePerGas;
     }
   }
 
