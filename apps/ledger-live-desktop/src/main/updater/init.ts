@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import { autoUpdater, UpdateDownloadedEvent } from "@ledgerhq/electron-updater";
+import { autoUpdater, UpdateDownloadedEvent } from "electron-updater";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
 
