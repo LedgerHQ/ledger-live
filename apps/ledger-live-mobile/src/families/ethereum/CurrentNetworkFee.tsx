@@ -6,11 +6,7 @@ import {
   fromTransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { useTranslation } from "react-i18next";
-import type {
-  Account,
-  AccountLike,
-  TransactionCommonRaw,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { View } from "react-native";
 import { log } from "@ledgerhq/logs";
@@ -34,10 +30,7 @@ const CurrentNetworkFeeComponent = ({
   if (transactionRaw) {
     const transaction = fromTransactionRaw(transactionRaw as TransactionRaw);
 
-    log(
-      "Edit Transaction",
-      `transactionRaw.maxFeePerGas: ${transaction.maxFeePerGas}`,
-    );
+    log("Edit Transaction", `transactionRaw.maxFeePerGas: ${transaction.maxFeePerGas}`);
     log("Edit Transaction", `transactionRaw.gasPrice: ${transaction.gasPrice}`);
     log(
       "Edit Transaction",
@@ -46,21 +39,15 @@ const CurrentNetworkFeeComponent = ({
 
     const mainAccount = getMainAccount(account, parentAccount);
     const feePerGas = new BigNumber(
-      EIP1559ShouldBeUsed(mainAccount.currency)
-        ? transaction.maxFeePerGas!
-        : transaction.gasPrice!,
+      EIP1559ShouldBeUsed(mainAccount.currency) ? transaction.maxFeePerGas! : transaction.gasPrice!,
     );
 
-    const feeValue = new BigNumber(
-      transaction.userGasLimit || transaction.estimatedGasLimit || 1,
-    )
+    const feeValue = new BigNumber(transaction.userGasLimit || transaction.estimatedGasLimit || 1)
       .times(feePerGas)
       .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
 
     if (advancedMode) {
-      const maxPriorityFeePerGasinGwei = new BigNumber(
-        transaction.maxPriorityFeePerGas ?? 0,
-      )
+      const maxPriorityFeePerGasinGwei = new BigNumber(transaction.maxPriorityFeePerGas ?? 0)
         .dividedBy(1_000_000_000)
         .toFixed();
 

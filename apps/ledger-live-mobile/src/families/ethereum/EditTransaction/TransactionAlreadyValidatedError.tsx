@@ -19,17 +19,11 @@ import { EditTransactionParamList } from "../editTransactionNavigatorParamsList"
 import { ScreenName } from "../../../const";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    EditTransactionParamList,
-    ScreenName.TransactionAlreadyValidatedError
-  >,
+  StackNavigatorProps<EditTransactionParamList, ScreenName.TransactionAlreadyValidatedError>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-const TransactionAlreadyValidatedErrorComponent = ({
-  navigation,
-  route,
-}: Props) => {
+const TransactionAlreadyValidatedErrorComponent = ({ navigation, route }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { error } = route.params;
@@ -44,11 +38,7 @@ const TransactionAlreadyValidatedErrorComponent = ({
       ]}
     >
       <View style={styles.container}>
-        <Flex
-          flexDirection={"column"}
-          alignItems={"center"}
-          alignSelf="stretch"
-        >
+        <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch">
           <Flex height={100} justifyContent="center">
             <BoxedIcon
               Icon={CloseMedium}
@@ -91,11 +81,7 @@ const TransactionAlreadyValidatedErrorComponent = ({
           type="lightSecondary"
           containerStyle={styles.button}
           onPress={() => {
-            navigation
-              .getParent<
-                StackNavigatorNavigation<BaseNavigatorStackParamList>
-              >()
-              .pop();
+            navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
           }}
         />
       </View>

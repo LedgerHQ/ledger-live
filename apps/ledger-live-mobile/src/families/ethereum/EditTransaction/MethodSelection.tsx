@@ -5,17 +5,11 @@ import BigNumber from "bignumber.js";
 import { Linking } from "react-native";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
-import {
-  Transaction,
-  TransactionRaw,
-} from "@ledgerhq/live-common/families/ethereum/types";
+import { Transaction, TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account } from "@ledgerhq/types-live";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
@@ -49,14 +43,13 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     operation.transactionRaw as TransactionRaw,
   ) as Transaction;
 
-  const { transaction, setTransaction, status } =
-    useBridgeTransaction<Transaction>(() => {
-      return {
-        account,
-        parentAccount,
-        transaction: transactionToEdit,
-      };
-    });
+  const { transaction, setTransaction, status } = useBridgeTransaction<Transaction>(() => {
+    return {
+      account,
+      parentAccount,
+      transaction: transactionToEdit,
+    };
+  });
 
   invariant(
     transaction,
@@ -85,25 +78,16 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       .plus(account.type === "Account" ? transactionToEdit.amount : 0),
   );
 
-  const [selectedMethod, setSelectedMethod] = useState<
-    "cancel" | "speedup" | null
-  >();
+  const [selectedMethod, setSelectedMethod] = useState<"cancel" | "speedup" | null>();
 
-  const stuckAccountAndOperation = getStuckAccountAndOperation(
-    account,
-    parentAccount,
-  );
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
   const oldestOperation = stuckAccountAndOperation?.operation;
   const currency = getAccountCurrency(account);
   const bridge = getAccountBridge(account, parentAccount as Account);
 
   const onSelect = useCallback(
     (option: "cancel" | "speedup") => {
-      log(
-        "Edit Transaction - Method Selection",
-        "onSelect Cancel/Speed up",
-        option,
-      );
+      log("Edit Transaction - Method Selection", "onSelect Cancel/Speed up", option);
 
       switch (option) {
         case "cancel":
@@ -122,18 +106,14 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               if (transactionToEdit.maxPriorityFeePerGas) {
                 updatedTransaction.maxPriorityFeePerGas =
                   transactionToEdit.maxPriorityFeePerGas?.times(
-                    1 +
-                      getEnv(
-                        "EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR",
-                      ),
+                    1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"),
                   );
               }
 
               if (transactionToEdit.maxFeePerGas) {
-                updatedTransaction.maxFeePerGas =
-                  transactionToEdit.maxFeePerGas?.times(
-                    1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"),
-                  );
+                updatedTransaction.maxFeePerGas = transactionToEdit.maxFeePerGas?.times(
+                  1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"),
+                );
               }
             } else if (transactionToEdit.gasPrice) {
               updatedTransaction.gasPrice = transactionToEdit.gasPrice.times(
@@ -141,9 +121,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               );
             }
 
-            setTransaction(
-              bridge.updateTransaction(transaction, updatedTransaction),
-            );
+            setTransaction(bridge.updateTransaction(transaction, updatedTransaction));
 
             setSelectedMethod("cancel");
           }
@@ -166,9 +144,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               maxPriorityFeePerGas: null,
             };
 
-            setTransaction(
-              bridge.updateTransaction(transaction, updatedTransaction),
-            );
+            setTransaction(bridge.updateTransaction(transaction, updatedTransaction));
 
             setSelectedMethod("speedup");
           }

@@ -1,9 +1,6 @@
 import React, { useState, memo, useMemo } from "react";
 import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
-import {
-  Transaction,
-  TransactionRaw,
-} from "@ledgerhq/live-common/families/ethereum/types";
+import { Transaction, TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -48,20 +45,13 @@ const EthereumLegacyCustomFees = ({
   }
 
   let range = lastNetworkGasPrice || fallbackGasPrice;
-  const [gasPrice, setGasPrice] = useState(
-    transaction.gasPrice || range.initial,
-  );
-  
+  const [gasPrice, setGasPrice] = useState(transaction.gasPrice || range.initial);
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
 
   // update gas price range according to previous pending transaction if necessary
   if (transactionRaw?.gasPrice) {
-    const gaspriceGap: number = getEnv(
-      "EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR",
-    );
-    const minNewGasPrice = new BigNumber(transactionRaw.gasPrice).times(
-      1 + gaspriceGap,
-    );
+    const gaspriceGap: number = getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR");
+    const minNewGasPrice = new BigNumber(transactionRaw.gasPrice).times(1 + gaspriceGap);
     const minValue = BigNumber.max(range.min, minNewGasPrice);
     let maxValue = BigNumber.max(range.max, minNewGasPrice);
     // avoid lower bound = upper bound, which will cause an error in inferDynamicRange

@@ -9,10 +9,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-import {
-  NotEnoughGas,
-  TransactionHasBeenValidatedError,
-} from "@ledgerhq/errors";
+import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
@@ -161,22 +158,18 @@ function SendSummary({ navigation, route }: Props) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const errorNavigation = useNavigation<any>();
-  const editableOperation =
-    operation && isEditableOperation(account, operation);
+  const editableOperation = operation && isEditableOperation(account, operation);
 
   if (editableOperation) {
     apiForCurrency(mainAccount.currency)
       .getTransactionByHash(operation?.hash || "")
       .then(tx => {
         if (tx?.confirmations) {
-          errorNavigation.navigate(
-            ScreenName.TransactionAlreadyValidatedError,
-            {
-              error: new TransactionHasBeenValidatedError(
-                "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
-              ),
-            },
-          );
+          errorNavigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+            error: new TransactionHasBeenValidatedError(
+              "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+            ),
+          });
         }
       });
   }
