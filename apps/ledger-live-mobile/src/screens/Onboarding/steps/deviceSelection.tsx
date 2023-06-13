@@ -67,9 +67,7 @@ function OnboardingStepDeviceSelection() {
   }, [syncOnboarding?.enabled]);
 
   const getProductName = (modelId: DeviceModelId) =>
-    getDeviceModel(modelId)
-      ?.productName.replace("Ledger", "")
-      .trimStart() || modelId;
+    getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
   const next = (deviceModelId: DeviceModelId) => {
     if (route.params?.next) {

@@ -344,16 +344,12 @@ export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequest
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
 export type SettingsSetMarketFilterByStarredAccountsPayload =
   SettingsState["marketFilterByStarredAccounts"];
-export type SettingsSetSensitiveAnalyticsPayload =
-  SettingsState["sensitiveAnalytics"];
-export type SettingsSetOnboardingHasDevicePayload =
-  SettingsState["onboardingHasDevice"];
+export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
+export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
-export type SettingsSetNotificationsPayload = Partial<
-  SettingsState["notifications"]
->;
+export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];

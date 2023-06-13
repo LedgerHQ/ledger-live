@@ -216,14 +216,12 @@ export const setMarketFilterByStarredAccounts =
   createAction<SettingsSetMarketFilterByStarredAccountsPayload>(
     SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS,
   );
-export const setSensitiveAnalytics =
-  createAction<SettingsSetSensitiveAnalyticsPayload>(
-    SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
-  );
-export const setOnboardingHasDevice =
-  createAction<SettingsSetOnboardingHasDevicePayload>(
-    SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
-  );
+export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsPayload>(
+  SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
+);
+export const setOnboardingHasDevice = createAction<SettingsSetOnboardingHasDevicePayload>(
+  SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
+);
 export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
   SettingsActionTypes.SET_ONBOARDING_TYPE,
 );

@@ -543,15 +543,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE]: (state, action) => ({
     ...state,
-    onboardingHasDevice: (
-      action as Action<SettingsSetOnboardingHasDevicePayload>
-    ).payload,
+    onboardingHasDevice: (action as Action<SettingsSetOnboardingHasDevicePayload>).payload,
   }),
 
   [SettingsActionTypes.SET_ONBOARDING_TYPE]: (state, action) => ({
     ...state,
-    onboardingType: (action as Action<SettingsSetOnboardingTypePayload>)
-      .payload,
+    onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
   }),
 
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
@@ -785,16 +782,11 @@ export const marketRequestParamsSelector = (state: State) => state.settings.mark
 export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
-export const customImageBackupSelector = (state: State) =>
-  state.settings.customImageBackup;
-export const sensitiveAnalyticsSelector = (state: State) =>
-  state.settings.sensitiveAnalytics;
-export const onboardingHasDeviceSelector = (state: State) =>
-  state.settings.onboardingHasDevice;
-export const onboardingTypeSelector = (state: State) =>
-  state.settings.onboardingType;
-export const notificationsSelector = (state: State) =>
-  state.settings.notifications;
+export const customImageBackupSelector = (state: State) => state.settings.customImageBackup;
+export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
+export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
+export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
+export const notificationsSelector = (state: State) => state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;

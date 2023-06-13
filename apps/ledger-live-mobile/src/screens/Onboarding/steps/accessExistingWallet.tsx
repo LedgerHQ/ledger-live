@@ -53,12 +53,7 @@ const Card = ({ title, event, eventProperties, testID, onPress, Icon }: CardProp
           {Icon}
         </Box>
         <Box pr={space[7]}>
-          <Text
-            variant="h5"
-            fontWeight="medium"
-            color="neutral.c100"
-            flexWrap="wrap"
-          >
+          <Text variant="h5" fontWeight="medium" color="neutral.c100" flexWrap="wrap">
             {title}
           </Text>
         </Box>
