@@ -30,8 +30,8 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
-  typecheck:
-    name: "Ledger Live Desktop TypeCheck"
+  codechecks:
+    name: "Ledger Live code checks"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -47,8 +47,20 @@ jobs:
         with:
           skip_builds: true
           install_dotnet: true
-      - name: Run code checkers
-        run: pnpm desktop test:codecheck
+      - name: lint
+        run: |
+          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+      - name: prettier
+        run: pnpm desktop prettier:check
+      - name: typecheck
+        run: pnpm desktop typecheck
+      - uses: actions/upload-artifact@v3
+        name: upload eslint json output
+        if: always()
+        with:
+          name: lint
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
 
   deadcodecheck:
     name: "Desktop deadcode check"
@@ -304,10 +316,15 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   report:
-    needs: [typecheck, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
+    needs:
+      [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
+      - name: "download linter results"
+        uses: actions/download-artifact@v3
+        with:
+          name: lint
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
@@ -345,6 +362,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
+            const path = require("path");
 
             const [ owner, repo ] = "${{ github.repository }}".split("/");
 
@@ -377,8 +395,8 @@ jobs:
             };
 
             const typecheck = {
-              pass: ${{ needs.typecheck.result == 'success' }},
-              status: "${{ needs.typecheck.result }}",
+              pass: ${{ needs.codechecks.result == 'success' }},
+              status: "${{ needs.codechecks.result }}",
             };
 
             const unitTests = {
@@ -448,8 +466,40 @@ jobs:
             ${{ steps.comment.outputs.body }}
             `
 
+            // Store eslint results as annotations
+            let annotations = []
+            try {
+              const lintResult = require("./lint.json");
+              const LEVELS = {
+                0: "notice",
+                1: "warning",
+                2: "failure"
+              };
+              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
+              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
+                messages.map((m) => {
+                  const sameLine = m.line === m.endLine;
+                  return {
+                    path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
+                    start_line: m.line,
+                    end_line: m.endLine,
+                    // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
+                    // https://docs.github.com/en/rest/reference/checks#create-a-check-run
+                    start_column: sameLine ? m.column : undefined,
+                    end_column: sameLine ? m.endColumn : undefined,
+                    annotation_level: LEVELS[m.severity],
+                    message: m.message,
+                    title: m.ruleId,
+                  }
+                })
+              );
+            } catch(error) {
+              console.error("Failed processing eslint annotations", error)
+            }
+
             const output = {
               summary,
+              annotations,
               // actions: playwrightSuccess ? [] : [{
               actions: [{
                 // 20 chars max
