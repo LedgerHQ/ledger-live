@@ -31,8 +31,8 @@
         "debug" : "Débugger"
       },
       "banner" : {
-        "title" : "Découvrez le Catalogue d’apps Live",
-        "description" : "Nous mettons tout en œuvre pour vous ouvrir les portes du monde de la DeFi, des NFT et bien plus encore. En toute sécurité depuis Ledger Live !"
+        "title" : "Découvrez notre Catalogue d’apps Live",
+        "description" : "Nous vous ouvrons les portes de la DeFi, des NFT, et bien plus encore. En toute sécurité depuis Ledger Live !"
       },
       "twitterBanner" : {
         "description" : "Indiquez-nous le service que vous rêvez de voir dans Ledger Live avec le hashtag",
@@ -614,7 +614,7 @@
         "swap" : {
           "title" : "Échanger",
           "label" : "Populaire",
-          "body" : "Convertissez vos cryptos en toute sécurité."
+          "body" : "Échangez une crypto contre une autre en toute sécurité."
         },
         "receive" : {
           "title" : "Recevoir",
@@ -1321,7 +1321,7 @@
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
-      "description" : "Tout ce qu’il faut savoir sur la blockchain, la sécurité, les cryptomonnaies et votre appareil Ledger.",
+      "description" : "Tout ce qu’il faut savoir à propos de la blockchain, la sécurité, la crypto et votre wallet Ledger.",
       "cta" : "Commencer à apprendre"
     },
     "stakeCosmos" : {
@@ -1353,7 +1353,7 @@
     },
     "swap" : {
       "title" : "Échanger des cryptos",
-      "description" : "Échangez une crypto contre une autre sur Ledger Live grâce à nos prestataires tiers."
+      "description" : "Échangez une crypto contre une autre via Ledger Live grâce à nos prestataires tiers."
     },
     "lending" : {
       "title" : "Prêter",
@@ -1364,8 +1364,8 @@
       "description" : "Profitez de 40 % de réduction sur les wallets Ledger avec le code promo BLACKFRIDAY20"
     },
     "referralProgram" : {
-      "title" : "Parrainez et gagnez 10 $ US",
-      "description" : "Parrainez un ami et gagnez tous les deux 10 $ US en bitcoins."
+      "title" : "Parrainez et gagnez 10 USD",
+      "description" : "Parrainez un ami et gagnez tous les deux 10 USD en bitcoins."
     }
   },
   "signmessage" : {
@@ -1426,7 +1426,7 @@
       },
       "swap" : {
         "title" : "Swap",
-        "description" : "Convertissez vos cryptos en cryptos en toute sécurité.",
+        "description" : "Échangez une crypto contre une autre en toute sécurité.",
         "label" : "Populaire"
       },
       "earn" : {
@@ -3820,7 +3820,7 @@
       "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des applications, les versions des applications, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
-      "launchOnboarding" : "Configurer votre appareil",
+      "launchOnboarding" : "Configurer un appareil Ledger",
       "launchOnboardingDesc" : "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés."
     },
     "help" : {
@@ -4162,15 +4162,15 @@
           },
           "1" : {
             "title" : "Détenez votre clé privée",
-            "desc" : "Votre clé privée est stockée dans votre Nano.\nVous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+            "desc" : "Votre clé privée est stockée dans votre wallet Ledger.\nVous devez être la seule personne à la détenir pour contrôler vos cryptos."
           },
           "2" : {
             "title" : "Restez hors ligne",
-            "desc" : "Votre Nano est un wallet de stockage à froid.\nCela signifie que votre clé privée n’est jamais exposée sur Internet, même lorsque vous utilisez Ledger Live."
+            "desc" : "Votre appareil Ledger est un wallet de stockage à froid.\nVotre clé privée n’est jamais exposée à Internet, même lorsque vous utilisez Ledger Live."
           },
           "3" : {
             "title" : "Validez vos transactions",
-            "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live.\nVous devez valider chaque transaction de cryptos avec votre Nano."
+            "desc" : "Ledger Live vous permet d’acheter, vendre, échanger, gérer et gagner des cryptos en toute sécurité.\nVous devrez valider chaque transaction avec votre wallet Ledger."
           },
           "4" : {
             "title" : "Configurez votre Nano",
@@ -4306,7 +4306,7 @@
           },
           "quizSuccess" : {
             "title" : "Vous êtes déjà pro.",
-            "paragraph" : "Vous connaissez les précautions à adopter pour gérer vos cryptos en toute sécurité.\n\nIl ne vous reste qu’à connecter votre appareil.",
+            "paragraph" : "Vous pouvez gérer vos cryptos en toute sécurité.\n\nPlus qu’une étape.",
             "buttons" : {
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
@@ -4314,8 +4314,8 @@
             }
           },
           "quizFailure" : {
-            "title" : "Vous êtes sur le point de passer pro...",
-            "paragraph" : "Pas d’inquiétude, Ledger sera là pour vous guider. Vous vous sentirez bientôt parfaitement à l’aise pour bien protéger vos cryptos.\n\nIl ne vous reste qu’à connecter votre appareil.",
+            "title" : "Vous allez bientôt devenir pro...",
+            "paragraph" : "Pas de panique, Ledger est là pour vous guider. Vous vous sentirez bientôt parfaitement à l’aise pour bien protéger vos cryptos.\n\nPlus qu’une étape.",
             "buttons" : {
               "next" : "Étape suivante",
               "prev" : "Étape précédente"
@@ -4443,8 +4443,8 @@
           },
           "genuineCheck" : {
             "success" : {
-              "title" : "Rien à signaler",
-              "desc" : "Votre Ledger {{deviceName}} est authentique et est prêt à être utilisé avec l’application Ledger Live."
+              "title" : "Parfait",
+              "desc" : "Votre Ledger {{deviceName}} est authentique et prêt à être utilisé avec l’application Ledger Live."
             },
             "buttons" : {
               "next" : "Continuer",
@@ -4470,7 +4470,7 @@
           },
           "pairMyNano" : {
             "title" : "Vérification de l’authenticité",
-            "paragraph" : "Nous allons nous assurer que votre Nano est authentique. Ce contrôle est facile et rapide.",
+            "paragraph" : "Nous allons nous assurer que votre wallet Ledger est authentique. La vérification est rapide et facile.",
             "buttons" : {
               "next" : "Vérifier mon Nano",
               "prev" : "Étape précédente",
@@ -4493,29 +4493,29 @@
         },
         "ownYourPrivateKey" : {
           "title" : "Détenez votre clé privée",
-          "description" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+          "description" : "Votre clé privée est stockée dans votre wallet Ledger. Vous devez être la seule personne à la détenir pour contrôler vos cryptos."
         },
         "stayOffline" : {
           "title" : "Restez hors ligne",
-          "description" : "Votre Nano est un wallet physique de stockage à froid. Cela signifie que votre clé privée n’est jamais exposée sur Internet, même lorsque vous utilisez Ledger Live."
+          "description" : "Votre appareil Ledger est un wallet de stockage à froid. Votre clé privée n’est jamais exposée à Internet, même lorsque vous utilisez Ledger Live."
         },
         "validateTransactions" : {
           "title" : "Validez vos transactions",
-          "description" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de cryptos avec votre Nano."
+          "description" : "Ledger Live vous permet d’acheter, vendre, échanger, gérer et gagner des cryptos en toute sécurité. Vous devrez valider chaque transaction avec votre wallet Ledger."
         },
         "setUpNanoWallet" : {
           "title" : "Configurez votre Nano",
-          "description" : "Commencez par configurer les paramètres de votre nouveau Nano.",
+          "description" : "Commencez par configurer votre nouveau Nano.",
           "CTA" : "Configurer"
         }
       }
     },
     "quizz" : {
       "heading" : "Quiz",
-      "title" : "Faites le quiz",
-      "descr" : "Répondez à 3 questions rapides pour mieux comprendre votre wallet physique.",
+      "title" : "C’est parti !",
+      "descr" : "Répondez à ces 3 questions faciles pour mieux comprendre votre wallet physique.",
       "buttons" : {
-        "start" : "Répondre aux questions",
+        "start" : "Commencer le quiz",
         "next" : "Question suivante",
         "finish" : "Finir le quiz"
       },
@@ -5655,7 +5655,7 @@
   },
   "customImage" : {
     "title" : "Écran de verrouillage personnalisé",
-    "managerCTA" : "Écran de verrouillage",
+    "managerCTA" : "Image de verrouillage",
     "steps" : {
       "choose" : {
         "stepLabel" : "Choisissez une image",
