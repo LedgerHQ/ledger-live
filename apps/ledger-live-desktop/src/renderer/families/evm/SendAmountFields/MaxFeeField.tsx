@@ -1,17 +1,19 @@
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+// FIXME: removed nextBaseFeeValue for now because data not available at the time
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+// import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { Transaction } from "@ledgerhq/coin-evm/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import React, { memo, useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
-import Label from "~/renderer/components/Label";
+// import Label from "~/renderer/components/Label";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { openURL } from "~/renderer/linking";
@@ -35,25 +37,26 @@ const WarningDisplay = styled(Box)`
   color: ${p => p.theme.colors.warning};
 `;
 
-const FeesValues = styled.span`
-  color: ${p => p.theme.colors.neutral.c90};
-`;
+// const FeesValues = styled.span`
+//   color: ${p => p.theme.colors.neutral.c90};
+// `;
 
-const WhiteSpacedLabel = styled(Label)`
-  white-space: pre;
-  color: ${p => p.theme.colors.neutral.c60};
-`;
+// const WhiteSpacedLabel = styled(Label)`
+//   white-space: pre;
+//   color: ${p => p.theme.colors.neutral.c60};
+// `;
 
 const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   account,
+  parentAccount,
   transaction,
   status,
   updateTransaction,
 }) => {
-  invariant(transaction.family === "evm", "MaxFeeField: evm family expected");
-  invariant(transaction.type === 2, "MaxFeeField: transaction should be of type 2 (EIP1559)");
+  invariant(transaction.family === "evm", "FeeField: evm family expected");
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
   const { t } = useTranslation();
 
   const onMaxFeeChange = useCallback(
@@ -67,19 +70,28 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
     [bridge, transaction, updateTransaction],
   );
 
-  const { maxFeePerGas } = transaction;
-  const { units } = account.currency;
+  // const defaultMaxFeePerGas = useMemo(
+  //   () =>
+  //     transaction.gasOptions?.medium.maxFeePerGas
+  //       ?.times(getEnv("EIP1559_BASE_FEE_MULTIPLIER"))
+  //       .plus(transaction?.maxPriorityFeePerGas || 0)
+  //       .integerValue(),
+  //   [transaction.maxPriorityFeePerGas, transaction.gasOptions?.medium.maxFeePerGas],
+  // );
+
+  const maxFeePerGas = transaction.maxFeePerGas || transaction.gasOptions?.medium.maxFeePerGas;
+  const { units } = mainAccount.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
 
-  const nextBaseFeeValue = useMemo(
-    () =>
-      formatCurrencyUnit(unit, transaction.gasOptions?.medium.nextBaseFee || new BigNumber(0), {
-        showCode: true,
-        disableRounding: true,
-      }),
-    [transaction.gasOptions?.medium.nextBaseFee, unit],
-  );
+  // const nextBaseFeeValue = useMemo(
+  //   () =>
+  //     formatCurrencyUnit(unit, transaction.gasOptions?.medium.maxFeePerGas || new BigNumber(0), {
+  //       showCode: true,
+  //       disableRounding: true,
+  //     }),
+  //   [transaction.gasOptions?.medium.maxFeePerGas, unit],
+  // );
 
   const validTransactionError = status.errors.maxFee;
   const validTransactionWarning = status.warnings.maxFee;
@@ -115,12 +127,12 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
           </WarningDisplay>
         ) : null}
       </ErrorContainer>
-      <WhiteSpacedLabel>
+      {/* <WhiteSpacedLabel>
         {`${t("send.steps.details.nextBlock")} : `}
         <FeesValues>{nextBaseFeeValue}</FeesValues>
-      </WhiteSpacedLabel>
+      </WhiteSpacedLabel> */}
     </Box>
   );
 };
 
-export default memo(FeesField);
+export default FeesField;

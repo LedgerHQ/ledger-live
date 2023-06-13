@@ -1,19 +1,24 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
-import invariant from "invariant";
 import React, { memo, useCallback } from "react";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import { Account } from "@ledgerhq/types-live";
+import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
-import { EvmFamily } from "../types";
+import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
 
+type Props = {
+  account: Account;
+  transaction: Transaction;
+  status: TransactionStatus;
+  updateTransaction: (updater: (_: Transaction) => Transaction) => void;
+};
+
+const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
 let lastNetworkGasPrice: Range | undefined; // local cache of last value to prevent extra blinks
 
-const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
-  account,
-  transaction,
-  status,
-  updateTransaction,
-}) => {
-  invariant(transaction.family === "evm", "GasPriceField: evm family expected");
+const FeesField = ({ account, transaction, status, updateTransaction }: Props) => {
+  invariant(transaction.family === "evm", "FeeField: evm family expected");
   const bridge = getAccountBridge(account);
   const onGasPriceChange = useCallback(
     gasPrice => {
@@ -29,22 +34,18 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
 
   const { gasOptions } = transaction;
 
-  invariant(gasOptions, "GasPriceField: 'transaction.gasOptions' should be defined");
-  invariant(
-    gasOptions.medium.gasPrice,
-    "GasPriceField: 'transaction.gasOptions.medium.gasPrice' should be defined",
-  );
+  // FIXME: gasPrice should always be defined if gasOptions is defined
+  const networkGasPrice =
+    gasOptions &&
+    inferDynamicRange(gasOptions.medium.gasPrice || new BigNumber(0), {
+      minValue: gasOptions.slow.gasPrice || undefined,
+      maxValue: gasOptions.fast.gasPrice || undefined,
+    });
 
-  const networkGasPrice = inferDynamicRange(gasOptions.medium.gasPrice, {
-    minValue: gasOptions.slow.gasPrice,
-    maxValue: gasOptions.fast.gasPrice,
-  });
-
-  if (!lastNetworkGasPrice) {
+  if (!lastNetworkGasPrice && networkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
   }
-
-  const range = networkGasPrice || lastNetworkGasPrice;
+  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
   const gasPrice = transaction.gasPrice || range.initial;
   const { units } = account.currency;
 

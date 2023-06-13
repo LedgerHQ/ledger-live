@@ -1,45 +1,56 @@
-import { getGasLimit } from "@ledgerhq/coin-evm/logic";
+import React, { useCallback, useState } from "react";
+import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
 import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { useTranslation } from "react-i18next";
 import { Button } from "@ledgerhq/react-ui";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { memo, useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
-import { EvmFamily } from "../types";
 
-const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
+type Props = {
+  transaction: Transaction;
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  status: TransactionStatus;
+  updateTransaction: Result<Transaction>["updateTransaction"];
+};
+
+const AdvancedOptions = ({
   account,
+  parentAccount,
   transaction,
   status,
   updateTransaction,
-}) => {
+}: Props) => {
   invariant(transaction.family === "evm", "AdvancedOptions: evm family expected");
-  invariant(account, "Account required");
+  const mainAccount = getMainAccount(account, parentAccount);
+  invariant(mainAccount, "Account required");
   const [editable, setEditable] = useState(false);
   const { t } = useTranslation();
 
   const onGasLimitChange = useCallback(
     (str: string) => {
-      const bridge = getAccountBridge(account);
+      const bridge = getAccountBridge(mainAccount);
       let gasLimit = new BigNumber(str || 0);
       if (!gasLimit.isFinite()) {
         gasLimit = DEFAULT_GAS_LIMIT;
       }
       updateTransaction((transaction: Transaction) =>
-        bridge.updateTransaction(transaction, { customGasLimit: gasLimit }),
+        bridge.updateTransaction(transaction, { gasLimit, feesStrategy: "custom" }),
       );
     },
-    [account, updateTransaction],
+    [mainAccount, updateTransaction],
   );
 
   const onEditClick = useCallback(() => setEditable(true), [setEditable]);
 
-  const gasLimit = getGasLimit(transaction);
+  const { gasLimit } = transaction;
   const { gasLimit: gasLimitError } = status.errors;
   const { gasLimit: gasLimitWarning } = status.warnings;
 
@@ -81,4 +92,4 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
   );
 };
 
-export default memo(AdvancedOptions);
+export default AdvancedOptions;
