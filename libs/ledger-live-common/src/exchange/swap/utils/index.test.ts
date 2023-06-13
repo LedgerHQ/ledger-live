@@ -1,8 +1,5 @@
 import { getTokenById } from "@ledgerhq/cryptoassets";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "../../../currencies";
@@ -48,11 +45,7 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
         getPolkadotAccount(),
       ];
 
-      const results = getAccountTuplesForCurrency(
-        ethCurrency,
-        allAccounts,
-        false
-      );
+      const results = getAccountTuplesForCurrency(ethCurrency, allAccounts, false);
 
       expect(results).toHaveLength(2);
       results.forEach((result, index) => {
@@ -77,11 +70,7 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
         getPolkadotAccount(),
       ];
 
-      const results = getAccountTuplesForCurrency(
-        ethCurrency,
-        allAccounts,
-        true
-      );
+      const results = getAccountTuplesForCurrency(ethCurrency, allAccounts, true);
 
       expect(results).toHaveLength(richEthAccounts.length);
       results.forEach((result, index) => {
@@ -92,17 +81,9 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
 
     test("returns an empty array if the CryptoCurrency passed has no associated account", () => {
       const ethCurrency = getCryptoCurrencyById("ethereum");
-      const allAccounts: Account[] = [
-        getCosmosAccount(),
-        getBtcAccount(),
-        getPolkadotAccount(),
-      ];
+      const allAccounts: Account[] = [getCosmosAccount(), getBtcAccount(), getPolkadotAccount()];
 
-      const results = getAccountTuplesForCurrency(
-        ethCurrency,
-        allAccounts,
-        false
-      );
+      const results = getAccountTuplesForCurrency(ethCurrency, allAccounts, false);
 
       expect(results).toHaveLength(0);
     });
@@ -123,18 +104,14 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
         getPolkadotAccount(),
       ];
 
-      const results = getAccountTuplesForCurrency(
-        aaveToken,
-        allAccounts,
-        false
-      );
+      const results = getAccountTuplesForCurrency(aaveToken, allAccounts, false);
 
       expect(results).toHaveLength(ethAccounts.length);
       results.forEach((result, index) => {
         expect(result.account).toEqual(ethAccounts[index]);
-        expect(
-          (result.subAccount as SubAccount & { token: TokenCurrency }).token
-        ).toEqual(aaveToken);
+        expect((result.subAccount as SubAccount & { token: TokenCurrency }).token).toEqual(
+          aaveToken,
+        );
       });
     });
 
@@ -147,29 +124,21 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
         getPolkadotAccount(),
       ];
 
-      const results = getAccountTuplesForCurrency(
-        aaveToken,
-        allAccounts,
-        false
-      );
+      const results = getAccountTuplesForCurrency(aaveToken, allAccounts, false);
 
       expect(results).toHaveLength(ethAccounts.length);
       results.forEach((result, index) => {
         expect(result.account).toEqual(ethAccounts[index]);
-        expect(
-          (result.subAccount as SubAccount & { token: TokenCurrency }).token
-        ).toEqual(aaveToken);
+        expect((result.subAccount as SubAccount & { token: TokenCurrency }).token).toEqual(
+          aaveToken,
+        );
       });
     });
 
     test("returns an empty array when a TokenCurrency is provided but the accounts list is empty", () => {
       const allAccounts: Account[] = [];
 
-      const results = getAccountTuplesForCurrency(
-        aaveToken,
-        allAccounts,
-        false
-      );
+      const results = getAccountTuplesForCurrency(aaveToken, allAccounts, false);
       expect(results).toHaveLength(0);
     });
   });
@@ -182,12 +151,9 @@ describe("swap/utils/getAvailableAccountsById", () => {
   const getCosmosAccount = getAccountCreator("cosmos");
 
   test("return the correct accounts after sorting/filtering them", () => {
-    const [
-      disabledAccount,
-      higherBalanceAccount,
-      lowerBalanceAccount,
-      ...accounts
-    ] = new Array(6).fill(null).map(getEthAccount);
+    const [disabledAccount, higherBalanceAccount, lowerBalanceAccount, ...accounts] = new Array(6)
+      .fill(null)
+      .map(getEthAccount);
 
     // mutate some accounts to test sorting/filtering
     disabledAccount.disabled = true;
@@ -208,9 +174,7 @@ describe("swap/utils/getAvailableAccountsById", () => {
     expect(results).toHaveLength(5);
     expect(results[0].balance.toNumber()).toBeGreaterThan(0);
     expect(results[1].balance.toNumber()).toBeGreaterThan(0);
-    expect(results[0].balance.toNumber()).toBeGreaterThan(
-      results[1].balance.toNumber()
-    );
+    expect(results[0].balance.toNumber()).toBeGreaterThan(results[1].balance.toNumber());
   });
 });
 
@@ -224,7 +188,7 @@ describe("swap/utils/shouldShowLoginBanner", () => {
     expect(result).toBe(false);
   });
 
-  ["changelly", "wyre"].forEach((provider) => {
+  ["changelly", "wyre"].forEach(provider => {
     test(`should not display Login banner for ${provider}`, () => {
       const result = shouldShowLoginBanner({
         provider,
@@ -235,7 +199,7 @@ describe("swap/utils/shouldShowLoginBanner", () => {
     });
   });
 
-  ["ftx", "ftxus"].forEach((provider) => {
+  ["ftx", "ftxus"].forEach(provider => {
     describe(`${provider.toUpperCase()}`, () => {
       test("should display Login banner if no token is provided", () => {
         const result = shouldShowLoginBanner({
@@ -280,9 +244,9 @@ describe("swap/utils/shouldShowKYCBanner", () => {
     expect(result).toBe(false);
   });
 
-  ["ftx", "ftxus", "wyre"].forEach((provider) => {
+  ["ftx", "ftxus", "wyre"].forEach(provider => {
     describe(`${provider.toUpperCase()}`, () => {
-      ["pending", "upgradeRequired", "rejected"].forEach((status) => {
+      ["pending", "upgradeRequired", "rejected"].forEach(status => {
         test(`should display KYC banner if kycStatus is ${status}`, () => {
           const result = shouldShowKYCBanner({
             provider,

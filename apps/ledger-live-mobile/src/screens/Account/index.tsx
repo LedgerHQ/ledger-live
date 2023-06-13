@@ -1,11 +1,8 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
@@ -42,6 +39,7 @@ import useAccountActions from "./hooks/useAccountActions";
 import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { EthereumStakingDrawer } from "../../families/ethereum/EthereumStakingDrawer";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -54,12 +52,7 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
-  return (
-    <AccountScreenInner
-      account={account}
-      parentAccount={parentAccount || undefined}
-    />
-  );
+  return <AccountScreenInner account={account} parentAccount={parentAccount || undefined} />;
 }
 
 const AccountScreenInner = ({
@@ -71,8 +64,8 @@ const AccountScreenInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
+  const route = useRoute<RouteProp<AccountsNavigatorParamList, ScreenName.Account>>();
+  const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
@@ -190,9 +183,7 @@ const AccountScreenInner = ({
             marginTop: 92,
           }}
           data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
+          renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
@@ -207,6 +198,7 @@ const AccountScreenInner = ({
           countervalueAvailable={countervalueAvailable}
           parentAccount={parentAccount}
         />
+        <EthereumStakingDrawer drawer={route.params.drawer} />
       </TabBarSafeAreaView>
     </ReactNavigationPerformanceView>
   );

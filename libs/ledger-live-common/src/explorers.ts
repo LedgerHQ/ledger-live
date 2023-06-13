@@ -1,27 +1,21 @@
-import type {
-  CryptoCurrency,
-  ExplorerView,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, ExplorerView } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
-export const getDefaultExplorerView = (
-  currency: CryptoCurrency
-): ExplorerView | null | undefined => currency.explorerViews[0];
+export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | null | undefined =>
+  currency.explorerViews[0];
 export const getTransactionExplorer = (
   explorerView: ExplorerView | null | undefined,
-  txHash: string
+  txHash: string,
 ): string | null | undefined =>
   explorerView && explorerView.tx && explorerView.tx.replace("$hash", txHash);
 export const getAddressExplorer = (
   explorerView: ExplorerView | null | undefined,
-  address: string
+  address: string,
 ): string | null | undefined =>
-  explorerView &&
-  explorerView.address &&
-  explorerView.address.replace("$address", address);
+  explorerView && explorerView.address && explorerView.address.replace("$address", address);
 export const getAccountContractExplorer = (
   explorerView: ExplorerView | null | undefined,
   account: TokenAccount,
-  parentAccount: Account
+  parentAccount: Account,
 ): string | null | undefined =>
   explorerView &&
   explorerView.token &&

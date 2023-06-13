@@ -21,22 +21,15 @@ import { RequestAccountNavigatorParamList } from "./types/RequestAccountNavigato
 
 type NavigationProps =
   | StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.AddAccounts>
-  | StackNavigatorProps<
-      RequestAccountNavigatorParamList,
-      NavigatorName.RequestAccountsAddAccounts
-    >;
+  | StackNavigatorProps<RequestAccountNavigatorParamList, NavigatorName.RequestAccountsAddAccounts>;
 
 const totalSteps = "3";
 export default function AddAccountsNavigator({ route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
-  const { currency, token, returnToSwap, analyticsPropertyFlow } =
-    route.params || {};
+  const { currency, token, returnToSwap, analyticsPropertyFlow } = route.params || {};
 
   return (
     <Stack.Navigator

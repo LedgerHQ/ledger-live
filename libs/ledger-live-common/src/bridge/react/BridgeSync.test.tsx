@@ -14,7 +14,7 @@ jest.setTimeout(30000);
 const defaultsBridgeSyncOpts = {
   accounts: [],
   updateAccountWithUpdater: () => {},
-  recoverError: (e) => e,
+  recoverError: e => e,
   trackAnalytics: () => {},
   prepareCurrency: () => Promise.resolve(),
   hydrateCurrency: () => Promise.resolve(),
@@ -30,7 +30,7 @@ describe("BridgeSync", () => {
   });
 
   test("executes a sync at start tracked as reason=initial", async () => {
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       const BTC = getCryptoCurrencyById("bitcoin");
       const accounts = [genAccount("btc1", { currency: BTC })];
       function track(type, opts) {
@@ -43,19 +43,15 @@ describe("BridgeSync", () => {
         }
       }
       render(
-        <BridgeSync
-          {...defaultsBridgeSyncOpts}
-          accounts={accounts}
-          trackAnalytics={track}
-        >
+        <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} trackAnalytics={track}>
           {null}
-        </BridgeSync>
+        </BridgeSync>,
       );
     });
   });
 
   test("sync all accounts in parallel at start tracked as reason=initial", async () => {
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       const BTC = getCryptoCurrencyById("bitcoin");
       const ETH = getCryptoCurrencyById("ethereum");
       const accounts = [
@@ -72,7 +68,7 @@ describe("BridgeSync", () => {
             setTimeout(
               reject,
               5000,
-              new Error("prepareCurrency doesn't seem to be called in parallel")
+              new Error("prepareCurrency doesn't seem to be called in parallel"),
             );
           });
         }
@@ -101,7 +97,7 @@ describe("BridgeSync", () => {
           trackAnalytics={track}
         >
           {null}
-        </BridgeSync>
+        </BridgeSync>,
       );
     });
   });

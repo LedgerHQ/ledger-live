@@ -11,7 +11,7 @@ import { track } from "../../../analytics";
 import DeviceOptionRow from "./DeviceOptionRow";
 
 type Props = {
-  pendingInstalls: boolean;
+  disabled: boolean;
   currentDeviceLanguage: Language;
   device: Device;
   deviceInfo: DeviceInfo;
@@ -19,7 +19,7 @@ type Props = {
 };
 
 const DeviceLanguage: React.FC<Props> = ({
-  pendingInstalls,
+  disabled,
   currentDeviceLanguage,
   device,
   deviceInfo,
@@ -28,16 +28,12 @@ const DeviceLanguage: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    currentDeviceLanguage,
-  );
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(currentDeviceLanguage);
 
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
-  const [shouldInstallLanguage, setShouldInstallLanguage] =
-    useState<boolean>(false);
-  const [deviceForActionModal, setDeviceForActionModal] =
-    useState<Device | null>(null);
+  const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(false);
+  const [deviceForActionModal, setDeviceForActionModal] = useState<Device | null>(null);
 
   const closeChangeLanguageModal = useCallback(
     () => setIsChangeLanguageOpen(false),
@@ -94,13 +90,11 @@ const DeviceLanguage: React.FC<Props> = ({
       <DeviceOptionRow
         Icon={Icons.LanguageMedium}
         label={t("deviceLocalization.language")}
-        onPress={pendingInstalls ? undefined : openChangeLanguageModal}
+        onPress={disabled ? undefined : openChangeLanguageModal}
         linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
         right={
           availableLanguages.length ? undefined : (
-            <Text>
-              {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-            </Text>
+            <Text>{t(`deviceLocalization.languages.${currentDeviceLanguage}`)}</Text>
           )
         }
       />

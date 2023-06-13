@@ -54,32 +54,20 @@ function OnboardingView({
   };
 
   return (
-    <SafeAreaView
-      style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}
-    >
+    <SafeAreaView style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}>
       {/* HEADER */}
       <Flex mb={8} px={6} pt={8}>
-        <Flex
-          flexDirection="row"
-          justifyContent="space-between"
-          mb={subTitle ? 9 : 6}
-        >
+        <Flex flexDirection="row" justifyContent="space-between" mb={subTitle ? 9 : 6}>
           <View>
             {hasBackButton ? (
-              <TouchableOpacity
-                onPress={handlecustomBackAction}
-                hitSlop={hitSlop}
-              >
+              <TouchableOpacity onPress={handlecustomBackAction} hitSlop={hitSlop}>
                 <Icons.ArrowLeftMedium size="24px" />
               </TouchableOpacity>
             ) : null}
           </View>
           <View>
             {hasCloseButton ? (
-              <TouchableOpacity
-                onPress={handlecustomCloseAction}
-                hitSlop={hitSlop}
-              >
+              <TouchableOpacity onPress={handlecustomCloseAction} hitSlop={hitSlop}>
                 <Icons.CloseMedium size="24px" />
               </TouchableOpacity>
             ) : null}

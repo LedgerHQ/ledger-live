@@ -164,10 +164,11 @@ export type Props = ImageBase64Data & {
   onError: (_: Error) => void;
   onResult: (_: ProcessorResult) => void;
   setLoading: (_: boolean) => void;
+  onContrastChanged: (_: { index: number; value: number }) => void;
 };
 
 const ImageGrayscalePreview: React.FC<Props> = props => {
-  const { onError, imageBase64DataUri, onResult, setLoading } = props;
+  const { onError, imageBase64DataUri, onResult, setLoading, onContrastChanged } = props;
   const [contrastIndex, setContrastIndex] = useState<number>(0);
   const [sourceUriLoaded, setSourceUriLoaded] = useState<string | null>(null);
   const [previewResult, setPreviewResult] = useState<ProcessorPreviewResult | null>(null);
@@ -175,6 +176,10 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
 
   const theme = useTheme();
   const contrasts = useMemo(() => getContrasts(theme), [theme]);
+
+  useEffect(() => {
+    onContrastChanged({ index: contrastIndex, value: contrasts[contrastIndex].val });
+  }, [contrastIndex, contrasts, onContrastChanged]);
 
   useEffect(() => {
     if (sourceImageRef.current && sourceUriLoaded && sourceUriLoaded === imageBase64DataUri) {
@@ -233,4 +238,4 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
   );
 };
 
-export default ImageGrayscalePreview;
+export default React.memo(ImageGrayscalePreview);

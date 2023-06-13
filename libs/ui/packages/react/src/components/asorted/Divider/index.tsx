@@ -3,15 +3,18 @@ import styled from "styled-components";
 import Flex, { FlexBoxProps } from "../../layout/Flex";
 import Text from "../../asorted/Text";
 
+export type Props = FlexBoxProps & { text?: string };
 const DividerBase = styled(Flex).attrs<FlexBoxProps>((p: FlexBoxProps) => ({
   my: p.my || 0,
   height: 1,
   backgroundColor: "neutral.c40",
-}))``;
+}))`
+  &[data-variant="light"] {
+    background: ${p => p.theme.colors.neutral.c30};
+  }
+`;
 
-export type Props = FlexBoxProps & { text?: string };
-
-const Divider: React.FC<Props> = (props) => {
+const Divider: React.FC<Props> = props => {
   if (!props.text) return <DividerBase {...props} />;
   return (
     <Flex {...props} flexDirection="row" alignItems="center">

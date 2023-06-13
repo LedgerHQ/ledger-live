@@ -1,8 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  createStackNavigator,
-  TransitionPresets,
-} from "@react-navigation/stack";
+import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
@@ -24,9 +21,7 @@ import DebugFeatures from "../../screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
   debugFetchCustomImageHeaderOptions,
 } from "../../screens/Settings/Debug/Features/FetchCustomImage";
-import DebugFirmwareUpdate, {
-  debugFirmwareUpdateHeaderOptions,
-} from "../../screens/Settings/Debug/Features/FirmwareUpdate";
+import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
@@ -39,6 +34,7 @@ import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/Comman
 import DebugPlayground from "../../screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
+import DebugSnackbars from "../../screens/Settings/Debug/Features/Snackbars";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
@@ -56,9 +52,7 @@ import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
-import DeveloperSettings, {
-  DeveloperCustomManifest,
-} from "../../screens/Settings/Developer";
+import DeveloperSettings, { DeveloperCustomManifest } from "../../screens/Settings/Developer";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
@@ -77,10 +71,7 @@ const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
@@ -385,13 +376,22 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugFirmwareUpdate}
         component={DebugFirmwareUpdate}
-        options={useMemo(() => debugFirmwareUpdateHeaderOptions(t), [t])}
+        options={{
+          title: "Debug Firmware update",
+        }}
       />
       <Stack.Screen
         name={ScreenName.DebugCustomImageGraphics}
         component={DebugCustomImageGraphics}
         options={{
           title: "Custom image graphics",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSnackbars}
+        component={DebugSnackbars}
+        options={{
+          title: "Debug snackbars",
         }}
       />
       <Stack.Screen
@@ -428,10 +428,7 @@ export default function SettingsNavigator() {
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
       />
-      <Stack.Screen
-        name={ScreenName.DebugCameraPermissions}
-        component={CameraPermissions}
-      />
+      <Stack.Screen name={ScreenName.DebugCameraPermissions} component={CameraPermissions} />
       <Stack.Screen
         name={ScreenName.DebugPerformance}
         component={DebugPerformance}

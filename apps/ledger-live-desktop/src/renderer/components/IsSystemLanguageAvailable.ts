@@ -14,22 +14,22 @@ export function answerLanguageAvailable() {
 }
 const IsSystemLanguageAvailable = () => {
   const dispatch = useDispatch();
-  const currAppLanguage = useSelector(languageSelector);
+  const currentLanguage = useSelector(languageSelector);
   const defaultLanguage = getInitialLanguageLocale();
   useEffect(() => {
     if (
       !hasAnsweredLanguageAvailable() &&
-      currAppLanguage !== defaultLanguage &&
+      currentLanguage !== defaultLanguage &&
       pushedLanguages.includes(defaultLanguage as Locale)
     ) {
       dispatch(
         openModal("MODAL_SYSTEM_LANGUAGE_AVAILABLE", {
           osLanguage: defaultLanguage,
-          currAppLanguage,
+          currentLanguage,
         }),
       );
     }
-  }, [defaultLanguage, dispatch, currAppLanguage]);
+  }, [defaultLanguage, dispatch, currentLanguage]);
   return null;
 };
 export default IsSystemLanguageAvailable;

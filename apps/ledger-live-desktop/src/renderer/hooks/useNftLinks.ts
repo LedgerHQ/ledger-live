@@ -142,18 +142,22 @@ export default (
       Icon: Icons.ToolsMedium,
       callback: () => {
         if (customImageUri)
-          setDrawer(CustomImage, {
-            imageUri: customImageUri,
-            isFromNFTEntryPoint: true,
-            reopenPreviousDrawer: isInsideDrawer
-              ? () =>
-                  setDrawer(NFTViewerDrawer, {
-                    account,
-                    nftId: nft.id,
-                    isOpen: true,
-                  })
-              : undefined,
-          });
+          setDrawer(
+            CustomImage,
+            {
+              imageUri: customImageUri,
+              isFromNFTEntryPoint: true,
+              reopenPreviousDrawer: isInsideDrawer
+                ? () =>
+                    setDrawer(NFTViewerDrawer, {
+                      account,
+                      nftId: nft.id,
+                      isOpen: true,
+                    })
+                : undefined,
+            },
+            { forceDisableFocusTrap: true },
+          );
       },
     };
     return img;

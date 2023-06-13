@@ -73,9 +73,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
           )}
         </Flex>
       </Pressable>
-      {focused ? (
-        <FeatureFlagEdit flagName={flagName} flagValue={flagValue} />
-      ) : null}
+      {focused ? <FeatureFlagEdit flagName={flagName} flagValue={flagValue} /> : null}
       {!isLast && focused ? <Divider /> : null}
     </View>
   );

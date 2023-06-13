@@ -1,11 +1,16 @@
 import React from "react";
 import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
-import { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosAccount,
+  CosmosMappedDelegation,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
+import { TFunction } from "react-i18next";
 const renderItem = ({
   data: { validatorAddress, validator, formattedPendingRewards },
 }: {
@@ -24,7 +29,17 @@ const renderItem = ({
     </Box>
   );
 };
-export default function DelegationSelectorField({ account, transaction, t, onChange }: any) {
+export default function DelegationSelectorField({
+  account,
+  transaction,
+  t,
+  onChange,
+}: {
+  account: CosmosAccount;
+  transaction: Transaction;
+  t: TFunction;
+  onChange: (t: CosmosMappedDelegation | null | undefined) => void;
+}) {
   const { query, setQuery, options, value } = useCosmosFamilyDelegationsQuerySelector(
     account,
     transaction,

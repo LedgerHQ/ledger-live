@@ -1,9 +1,12 @@
 import btc from "./walletApiAdapter";
 import { BitcoinTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Transaction } from "./types";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
+  const dummyAccount = {} as Account;
+
   describe("should properly get infos for BTC platform tx", () => {
     test("without fees provided", () => {
       const btcPlatformTx: WalletAPITransaction = {
@@ -18,8 +21,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         recipient: btcPlatformTx.recipient,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        btc.getWalletAPITransactionSignFlowInfos(btcPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        tx: btcPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 
@@ -44,8 +49,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         feesStrategy: null,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        btc.getWalletAPITransactionSignFlowInfos(btcPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        tx: btcPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 

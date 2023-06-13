@@ -1,29 +1,24 @@
 import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
-import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
+
 const MemoValueField = ({
   onChange,
   account,
   transaction,
   status,
 }: {
-  onChange: (a: string) => void;
+  onChange: (a: Transaction) => void;
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
 }) => {
-  invariant(transaction.family === "stellar", "MemoTypeField: stellar family expected");
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
     memoValue => {
-      onChange(
-        bridge.updateTransaction(transaction, {
-          memoValue,
-        }),
-      );
+      onChange(bridge.updateTransaction(transaction, { memoValue }));
     },
     [onChange, transaction, bridge],
   );
@@ -35,7 +30,7 @@ const MemoValueField = ({
     <Input
       warning={status.warnings.transaction}
       error={status.errors.transaction}
-      value={transaction.memoValue}
+      value={transaction.memoValue || ""}
       onChange={onMemoValueChange}
       spellCheck="false"
     />

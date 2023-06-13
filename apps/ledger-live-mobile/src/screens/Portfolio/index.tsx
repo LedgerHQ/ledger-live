@@ -8,6 +8,7 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
   discreetModeSelector,
@@ -47,7 +48,6 @@ import {
 } from "../../reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
-import { useLearnMoreURI } from "../../hooks/recoverFeatureFlag";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -55,10 +55,9 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
 >;
 
-const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
-  CollapsibleHeaderFlatList,
-  { progressViewOffset: 64 },
-);
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
+  progressViewOffset: 64,
+});
 
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -71,7 +70,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
   const protectFeature = useFeature("protectServicesMobile");
-  const recoverUpsellURL = useLearnMoreURI();
+  const recoverUpsellURL = useLearnMoreURI(protectFeature);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -101,10 +100,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   }, [setAddModalOpened]);
   useProviders();
 
-  const closeAddModal = useCallback(
-    () => setAddModalOpened(false),
-    [setAddModalOpened],
-  );
+  const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -133,11 +129,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           />
         </Box>
       ) : (
-        <TrackScreen
-          category="Wallet"
-          accountsLength={0}
-          discreet={discreetMode}
-        />
+        <TrackScreen category="Wallet" accountsLength={0} discreet={discreetMode} />
       ),
       ...(showAssets && isAWalletCardDisplayed
         ? [
@@ -184,10 +176,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 
   return (
-    <ReactNavigationPerformanceView
-      screenName={ScreenName.Portfolio}
-      interactive
-    >
+    <ReactNavigationPerformanceView screenName={ScreenName.Portfolio} interactive>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <RefreshableCollapsibleHeaderFlatList

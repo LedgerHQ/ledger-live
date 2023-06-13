@@ -31,10 +31,7 @@ const Withdraw = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   /*
    * Return the rendered component.
@@ -51,9 +48,7 @@ const Withdraw = () => {
         name={ScreenName.ElrondWithdrawFunds}
         component={WithdrawFunds}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("elrond.withdraw.stepperHeader.method")} />
-          ),
+          headerTitle: () => <StepHeader title={t("elrond.withdraw.stepperHeader.method")} />,
         }}
       />
 

@@ -15,9 +15,7 @@ const DownloadingUpdateStep = ({ progress }: Props) => {
       <Track event="FirmwareUpdateDownloading" onMount />
       <DeviceActionProgress progress={progress} />
       <Text variant="h2" mt={8}>
-        {progress
-          ? t("FirmwareUpdate.steps.firmware")
-          : t("FirmwareUpdate.steps.preparing")}
+        {progress ? t("FirmwareUpdate.steps.firmware") : t("FirmwareUpdate.steps.preparing")}
       </Text>
       <Text variant="small" color="neutral.c70" my={6}>
         {t("FirmwareUpdate.pleaseWaitDownload")}

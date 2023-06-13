@@ -57,21 +57,14 @@ const AnalyticsRow = () => {
 
   return (
     <>
-      <Track
-        event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"}
-        mandatory
-        onUpdate
-      />
+      <Track event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"} mandatory onUpdate />
       <SettingsRow
         event="AnalyticsRow"
         title={t("settings.display.analytics")}
         desc={t("settings.display.analyticsDesc")}
         onHelpPress={() => setIsOpened(true)}
       >
-        <Switch
-          checked={analyticsEnabled}
-          onChange={value => dispatch(setAnalytics(value))}
-        />
+        <Switch checked={analyticsEnabled} onChange={value => dispatch(setAnalytics(value))} />
       </SettingsRow>
       <QueuedDrawer
         isRequestingToBeOpened={isOpened}

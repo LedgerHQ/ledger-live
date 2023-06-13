@@ -15,7 +15,7 @@ export type FirmwareUpdateGettingStatus =
 
 export type useGetLatestAvailableFirmwareDependencies = {
   getLatestAvailableFirmwareFromDeviceId?: (
-    args: GetLatestAvailableFirmwareFromDeviceIdArgs
+    args: GetLatestAvailableFirmwareFromDeviceIdArgs,
   ) => GetLatestAvailableFirmwareFromDeviceIdOutput;
 };
 
@@ -50,11 +50,9 @@ export const useGetLatestAvailableFirmware = ({
   deviceId,
 }: useGetLatestAvailableFirmwareArgs &
   useGetLatestAvailableFirmwareDependencies): useGetLatestAvailableFirmwareResult => {
-  const [latestFirmware, setLatestFirmware] =
-    useState<FirmwareUpdateContext | null>(null);
+  const [latestFirmware, setLatestFirmware] = useState<FirmwareUpdateContext | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [status, setStatus] =
-    useState<FirmwareUpdateGettingStatus>("unchecked");
+  const [status, setStatus] = useState<FirmwareUpdateGettingStatus>("unchecked");
   const [lockedDevice, setLockedDevice] = useState<boolean>(false);
 
   useEffect(() => {

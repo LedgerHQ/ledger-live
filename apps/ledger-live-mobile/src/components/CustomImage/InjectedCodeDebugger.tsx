@@ -29,11 +29,7 @@ export function InjectedCodeDebugger({
   return (
     <>
       {debug && (
-        <Switch
-          checked={sourceVisible}
-          onChange={toggleShowSource}
-          label="Show injected code"
-        />
+        <Switch checked={sourceVisible} onChange={toggleShowSource} label="Show injected code" />
       )}
       {sourceVisible && (
         <ScrollView horizontal>

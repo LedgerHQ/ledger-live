@@ -10,7 +10,6 @@ export default function StepValidators({
   onUpdateTransaction,
   transaction,
   transitionTo,
-  t,
 }: StepProps) {
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
@@ -42,9 +41,7 @@ export default function StepValidators({
     <ValidatorField
       transaction={transaction}
       account={account}
-      t={t}
       onChange={updateDestinationValidator}
-      isOpen
     />
   );
 }

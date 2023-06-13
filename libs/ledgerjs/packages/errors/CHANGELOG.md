@@ -1,5 +1,17 @@
 # @ledgerhq/errors
 
+## 6.12.6
+
+### Patch Changes
+
+- [#3306](https://github.com/LedgerHQ/ledger-live/pull/3306) [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546) Thanks [@chabroA](https://github.com/chabroA)! - Add missing ClaimRewardsFeesWarning error definition
+
+## 6.12.6-next.0
+
+### Patch Changes
+
+- [#3306](https://github.com/LedgerHQ/ledger-live/pull/3306) [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546) Thanks [@chabroA](https://github.com/chabroA)! - Add missing ClaimRewardsFeesWarning error definition
+
 ## 6.12.5
 
 ### Patch Changes

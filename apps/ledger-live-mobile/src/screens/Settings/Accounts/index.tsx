@@ -25,10 +25,7 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 
 export default function AccountsSettings({
   navigation,
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.AccountsSettings
->) {
+}: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.AccountsSettings>) {
   const { colors } = useTheme() as DefaultTheme & Theme;
   const { t } = useTranslation();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
@@ -37,11 +34,7 @@ export default function AccountsSettings({
   const dispatch = useDispatch();
 
   const renderSectionHeader = useCallback(
-    ({
-      section: { parentCurrency },
-    }: {
-      section: { parentCurrency: CryptoCurrency };
-    }) => (
+    ({ section: { parentCurrency } }: { section: { parentCurrency: CryptoCurrency } }) => (
       <View style={styles.section}>
         <LText style={[styles.sectionTitle, { backgroundColor: colors.card }]}>
           {parentCurrency.name}

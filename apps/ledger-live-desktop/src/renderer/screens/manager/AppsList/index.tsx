@@ -1,6 +1,5 @@
 import React, { memo, useRef, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
-import { log } from "@ledgerhq/logs";
 import { withTranslation } from "react-i18next";
 import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Exec, InstalledItem, ListAppsResult } from "@ledgerhq/live-common/apps/types";
@@ -21,6 +20,7 @@ import AppDepsInstallModal from "./AppDepsInstallModal";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
 import {
+  addNewDevice,
   clearLastSeenCustomImage,
   setHasInstalledApps,
   setLastSeenDeviceInfo,
@@ -112,12 +112,14 @@ const AppsList = ({
       : state;
     return distribute(newState);
   }, [state, installQueue]);
-  const onCloseDepsInstallModal = useCallback(() => setAppInstallDep(undefined), [
-    setAppInstallDep,
-  ]);
-  const onCloseDepsUninstallModal = useCallback(() => setAppUninstallDep(undefined), [
-    setAppUninstallDep,
-  ]);
+  const onCloseDepsInstallModal = useCallback(
+    () => setAppInstallDep(undefined),
+    [setAppInstallDep],
+  );
+  const onCloseDepsUninstallModal = useCallback(
+    () => setAppUninstallDep(undefined),
+    [setAppUninstallDep],
+  );
   const installState =
     installQueue.length > 0 ? (uninstallQueue.length > 0 ? "update" : "install") : "uninstall";
   const onCloseError = useCallback(() => {
@@ -147,6 +149,7 @@ const AppsList = ({
         latestFirmware: firmware,
       }),
     );
+    reduxDispatch(addNewDevice({ seenDevice: lastSeenDevice }));
   }, [device, state.installed, deviceInfo, reduxDispatch, firmware]);
 
   useEffect(() => {
@@ -196,7 +199,6 @@ const AppsList = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
-          firmware={firmware}
         />
         <ProviderWarning />
         <AppList

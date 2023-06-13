@@ -36,7 +36,7 @@ test("mock generators don't generate negative balances", () => {
   for (let i = 0; i < 100; i++) {
     const account = genAccount("negative?" + i);
     const history = getBalanceHistory(account, "year", 300);
-    const invalidDataPoints = history.filter((h) => h.value < 0);
+    const invalidDataPoints = history.filter(h => h.value < 0);
     expect(invalidDataPoints).toMatchObject([]);
   }
 });

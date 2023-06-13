@@ -2,15 +2,18 @@ import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { NavigatorName, ScreenName } from "../../const";
 
 const getMainActions = ({
   account,
   parentAccount,
+  parentRoute,
 }: {
   account: SolanaAccount;
   parentAccount: Account;
+  parentRoute: RouteProp<ParamListBase, ScreenName>;
 }) => {
   const delegationDisabled = account.solanaResources?.stakes.length > 1;
 
@@ -35,6 +38,7 @@ const getMainActions = ({
             delegationAction: {
               kind: "new",
             },
+            source: parentRoute,
           },
         },
       ];

@@ -48,11 +48,7 @@ const CheckTermOfUseUpdateModal = () => {
           </Flex>
 
           <Alert type="help" noIcon>
-            <Link
-              type="color"
-              onPress={handleLink}
-              Icon={Icons.ExternalLinkMedium}
-            >
+            <Link type="color" onPress={handleLink} Icon={Icons.ExternalLinkMedium}>
               {t("updatedTerms.link")}
             </Link>
           </Alert>

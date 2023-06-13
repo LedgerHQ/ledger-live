@@ -1,8 +1,8 @@
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from ".";
-import network from "../network";
 import defaultConfig from "./defaultConfig";
-jest.mock("../network");
+jest.mock("@ledgerhq/live-network/network");
 
 describe("getCurrencyConfiguration", () => {
   const cosmosCurrencyMock = {
@@ -47,7 +47,7 @@ describe("getCurrencyConfiguration", () => {
         getCurrencyConfiguration({
           id: "idontexistasacurrency",
           family: "ihavenofamily",
-        } as unknown as CryptoCurrency)
+        } as unknown as CryptoCurrency),
       ).rejects.toThrow(Error);
     });
   });
@@ -69,7 +69,7 @@ describe("getCurrencyConfiguration", () => {
         getCurrencyConfiguration({
           id: "idontexistasacurrency",
           family: "ihavenofamily",
-        } as unknown as CryptoCurrency)
+        } as unknown as CryptoCurrency),
       ).rejects.toThrow(Error);
     });
   });

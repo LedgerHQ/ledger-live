@@ -22,7 +22,7 @@ async function main() {
   const reportsFolder = path.resolve(core.getInput("path"));
   const slackCommentTemplateP = fs.promises.readFile(
     path.join(reportsFolder, "slack-comment-template.md"),
-    "utf-8"
+    "utf-8",
   );
 
   // upload to github comment
@@ -41,7 +41,7 @@ async function main() {
     try {
       const fullReportBodyP = fs.promises.readFile(
         path.join(reportsFolder, "full-report.md"),
-        "utf-8"
+        "utf-8",
       );
       githubComment = await fetch(githubUrl, {
         method: "POST",
@@ -52,15 +52,13 @@ async function main() {
         body: JSON.stringify({ body: await fullReportBodyP }),
       })
         .then(handleErrors)
-        .then((r) => r.json());
+        .then(r => r.json());
     } catch (e) {
-      console.error(
-        "Couldn't send the full report. fallbacking on the lighter version"
-      );
+      console.error("Couldn't send the full report. fallbacking on the lighter version");
 
       const reportBodyP = fs.promises.readFile(
         path.join(reportsFolder, "github-report.md"),
-        "utf-8"
+        "utf-8",
       );
       githubComment = await fetch(githubUrl, {
         method: "POST",
@@ -71,17 +69,14 @@ async function main() {
         body: JSON.stringify({ body: await reportBodyP }),
       })
         .then(handleErrors)
-        .then((r) => r.json());
+        .then(r => r.json());
     }
   }
 
   // optionally send to slack
   if (slackApiToken && githubComment) {
     const slackCommentTemplate = await slackCommentTemplateP;
-    const text = slackCommentTemplate.replace(
-      "{{url}}",
-      githubComment.html_url
-    );
+    const text = slackCommentTemplate.replace("{{url}}", githubComment.html_url);
     await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
       headers: {
@@ -97,6 +92,6 @@ async function main() {
   }
 }
 
-main().catch((err) => {
+main().catch(err => {
   core.setFailed(err);
 });

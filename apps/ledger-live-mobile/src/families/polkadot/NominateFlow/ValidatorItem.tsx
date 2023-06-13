@@ -18,14 +18,7 @@ type Props = {
 
 function Item({ item, selected, disabled, onSelect, onClick }: Props) {
   const { colors } = useTheme();
-  const {
-    identity,
-    address,
-    commission,
-    nominatorsCount,
-    isOversubscribed,
-    isElected,
-  } = item;
+  const { identity, address, commission, nominatorsCount, isOversubscribed, isElected } = item;
   const onPress = useCallback(() => {
     onSelect(item, selected);
   }, [onSelect, item, selected]);

@@ -1,12 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import {
-  Button,
-  Text,
-  List,
-  Icons,
-  ScrollListContainer,
-} from "@ledgerhq/native-ui";
+import { Button, Text, List, Icons, ScrollListContainer } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 
 const content = [

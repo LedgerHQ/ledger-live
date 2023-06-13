@@ -1,10 +1,5 @@
 import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
-import {
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "react-native";
+import { TextInput, StyleSheet, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { useTheme, CompositeScreenProps } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { Box } from "@ledgerhq/native-ui";
@@ -34,33 +29,23 @@ const OpenButton: React.ComponentType<{
 }> = ({ onPress, disabled }) => {
   const { colors } = useTheme();
   return (
-    <TouchableOpacity
-      style={styles.buttons}
-      onPress={onPress}
-      disabled={disabled}
-    >
+    <TouchableOpacity style={styles.buttons} onPress={onPress} disabled={disabled}>
       <ArrowRight size={18} color={colors.black} />
     </TouchableOpacity>
   );
 };
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.DeveloperCustomManifest
-  >,
+  StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DeveloperCustomManifest>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
 export default function CustomManifest({ navigation }: Props) {
   const { colors } = useTheme();
-  const { manifest, disabled, addLocalManifest, onChange } =
-    useCustomManifest();
+  const { manifest, disabled, addLocalManifest, onChange } = useCustomManifest();
   const onOpen = useCallback(() => {
     const json = JSON.parse(manifest);
-    Array.isArray(json)
-      ? json.map(m => addLocalManifest(m))
-      : addLocalManifest(json);
+    Array.isArray(json) ? json.map(m => addLocalManifest(m)) : addLocalManifest(json);
     const params = Array.isArray(json)
       ? {
           platform: json[0].id,

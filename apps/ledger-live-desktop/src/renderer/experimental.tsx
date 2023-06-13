@@ -74,16 +74,6 @@ export const experimentalFeatures: Feature[] = [
     description: <Trans i18nKey="settings.experimental.features.scanForInvalidPaths.description" />,
   },
   {
-    type: "toggle",
-    name: "LEDGER_COUNTERVALUES_API",
-    title: <Trans i18nKey="settings.experimental.features.experimentalCountervalues.title" />,
-    description: (
-      <Trans i18nKey="settings.experimental.features.experimentalCountervalues.description" />
-    ),
-    valueOn: "https://countervalues-experimental.live.ledger.com",
-    valueOff: "https://countervalues.live.ledger.com",
-  },
-  {
     type: "integer",
     name: "KEYCHAIN_OBSERVABLE_RANGE",
     title: <Trans i18nKey="settings.experimental.features.keychainObservableRange.title" />,

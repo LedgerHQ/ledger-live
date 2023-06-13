@@ -3,11 +3,7 @@ import { Platform } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
-import {
-  CompositeScreenProps,
-  useNavigation,
-  useIsFocused,
-} from "@react-navigation/native";
+import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
 import { Text, Flex, Icons, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
@@ -20,24 +16,13 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import Touchable from "../Touchable";
 import Item from "./Item";
 import { saveBleDeviceName } from "../../actions/ble";
-import {
-  setHasConnectedDevice,
-  updateMainNavigatorVisibility,
-} from "../../actions/appstate";
-import {
-  setLastConnectedDevice,
-  setReadOnlyMode,
-} from "../../actions/settings";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../RootNavigator/types/helpers";
+import { setHasConnectedDevice, updateMainNavigatorVisibility } from "../../actions/appstate";
+import { setLastConnectedDevice, setReadOnlyMode } from "../../actions/settings";
+import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
-import BleDevicePairingFlow, {
-  SetHeaderOptionsRequest,
-} from "../BleDevicePairingFlow";
+import BleDevicePairingFlow, { SetHeaderOptionsRequest } from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
@@ -97,10 +82,7 @@ export default function SelectDevice({
   });
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
-  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(
-    navigation,
-    false,
-  );
+  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(navigation, false);
 
   // To be able to triggers the device selection once all the bluetooth requirements are respected
   const [
@@ -110,14 +92,11 @@ export default function SelectDevice({
 
   // Enforces the BLE requirements for a "connecting" action. The requirements are only enforced
   // if the bluetooth is needed (isBleRequired is true).
-  const {
-    bluetoothRequirementsState,
-    retryRequestOnIssue,
-    cannotRetryRequest,
-  } = useDebouncedRequireBluetooth({
-    requiredFor: "connecting",
-    isHookEnabled: isBleRequired,
-  });
+  const { bluetoothRequirementsState, retryRequestOnIssue, cannotRetryRequest } =
+    useDebouncedRequireBluetooth({
+      requiredFor: "connecting",
+      isHookEnabled: isBleRequired,
+    });
 
   // If the user tries to close the drawer displaying issues on BLE requirements,
   // this cancels the requirements checking and does not do anything in order to stop the
@@ -162,13 +141,7 @@ export default function SelectDevice({
       onSelect(device);
       dispatch(setReadOnlyMode(false));
     },
-    [
-      bluetoothRequirementsState,
-      dispatch,
-      isBleRequired,
-      onSelect,
-      setIsBleRequired,
-    ],
+    [bluetoothRequirementsState, dispatch, isBleRequired, onSelect, setIsBleRequired],
   );
 
   // Once all the bluetooth requirements are respected, the device selection is triggered
@@ -180,15 +153,10 @@ export default function SelectDevice({
       handleOnSelect(lastSelectedDeviceBeforeRequireBluetoothCheck);
       setLastSelectedDeviceBeforeRequireBluetoothCheck(null);
     }
-  }, [
-    bluetoothRequirementsState,
-    lastSelectedDeviceBeforeRequireBluetoothCheck,
-    handleOnSelect,
-  ]);
+  }, [bluetoothRequirementsState, lastSelectedDeviceBeforeRequireBluetoothCheck, handleOnSelect]);
 
   useEffect(() => {
-    const filter = ({ id }: { id: string }) =>
-      ["hid", "httpdebug"].includes(id);
+    const filter = ({ id }: { id: string }) => ["hid", "httpdebug"].includes(id);
     const sub = discoverDevices(filter).subscribe(e => {
       const setDevice = e.id.startsWith("usb") ? setUSBDevice : setProxyDevice;
 
@@ -329,12 +297,7 @@ export default function SelectDevice({
                 <PostOnboardingEntryPointCard />
               </Box>
             )}
-            <Flex
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={1}
-            >
+            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Text variant="h5" fontWeight="semiBold">
                 <Trans i18nKey="manager.selectDevice.title" />
               </Text>
@@ -344,9 +307,7 @@ export default function SelectDevice({
                     <Text color="primary.c90" mr={3} fontWeight="semiBold">
                       <Trans
                         i18nKey={`manager.selectDevice.${
-                          Platform.OS === "android"
-                            ? "addWithBluetooth"
-                            : "addNewCTA"
+                          Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
                         }`}
                       />
                     </Text>
@@ -358,11 +319,7 @@ export default function SelectDevice({
             <ScrollContainer my={4}>
               {deviceList.length > 0 ? (
                 deviceList.map(device => (
-                  <Item
-                    key={device.deviceId}
-                    device={device as Device}
-                    onPress={handleOnSelect}
-                  />
+                  <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
                 ))
               ) : (
                 <Touchable onPress={onAddNewPress}>
@@ -380,9 +337,7 @@ export default function SelectDevice({
                     <Text variant="large" fontWeight="semiBold" ml={5}>
                       {t(
                         `manager.selectDevice.${
-                          Platform.OS === "android"
-                            ? "addWithBluetooth"
-                            : "addALedger"
+                          Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
                         }`,
                       )}
                     </Text>
@@ -413,13 +368,7 @@ export default function SelectDevice({
             >
               <Flex>
                 <Touchable onPress={onSetUpNewDevice}>
-                  <Flex
-                    backgroundColor="neutral.c30"
-                    mb={4}
-                    px={6}
-                    py={7}
-                    borderRadius={8}
-                  >
+                  <Flex backgroundColor="neutral.c30" mb={4} px={6} py={7} borderRadius={8}>
                     <Flex flexDirection="row" justifyContent="space-between">
                       <Flex flexShrink={1}>
                         <Text variant="large" fontWeight="semiBold" mb={3}>
@@ -429,17 +378,8 @@ export default function SelectDevice({
                           {t("manager.selectDevice.setUpNewLedgerDescription")}
                         </Text>
                       </Flex>
-                      <Flex
-                        justifyContent="center"
-                        alignItems="center"
-                        ml={5}
-                        mr={2}
-                      >
-                        <Flex
-                          borderRadius="9999px"
-                          backgroundColor="neutral.c40"
-                          p={4}
-                        >
+                      <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                        <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
                           <Icons.PlusMedium color="primary.c80" size={24} />
                         </Flex>
                       </Flex>
@@ -447,38 +387,19 @@ export default function SelectDevice({
                   </Flex>
                 </Touchable>
                 <Touchable onPress={openBlePairingFlow}>
-                  <Flex
-                    backgroundColor="neutral.c30"
-                    px={6}
-                    py={7}
-                    borderRadius={8}
-                  >
+                  <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
                     <Flex flexDirection="row" justifyContent="space-between">
                       <Flex flexShrink={1}>
                         <Text variant="large" fontWeight="semiBold" mb={3}>
                           {t("manager.selectDevice.connectExistingLedger")}
                         </Text>
                         <Text variant="paragraph" color="neutral.c80">
-                          {t(
-                            "manager.selectDevice.connectExistingLedgerDescription",
-                          )}
+                          {t("manager.selectDevice.connectExistingLedgerDescription")}
                         </Text>
                       </Flex>
-                      <Flex
-                        justifyContent="center"
-                        alignItems="center"
-                        ml={5}
-                        mr={2}
-                      >
-                        <Flex
-                          borderRadius="9999px"
-                          backgroundColor="neutral.c40"
-                          p={4}
-                        >
-                          <Icons.BluetoothMedium
-                            color="primary.c80"
-                            size={24}
-                          />
+                      <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
+                        <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
+                          <Icons.BluetoothMedium color="primary.c80" size={24} />
                         </Flex>
                       </Flex>
                     </Flex>

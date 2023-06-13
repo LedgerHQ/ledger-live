@@ -26,7 +26,7 @@ import { UnionToIntersection } from "../types/helpers";
 import { BaseNavigation } from "./RootNavigator/types/helpers";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
-  typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
+  (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
 >;
 
 const ContainerTouchable = styled(Flex).attrs(_ => ({
@@ -113,9 +113,7 @@ function OperationRow({
   }, 300);
 
   const isNftOperation =
-    ["NFT_IN", "NFT_OUT"].includes(operation.type) &&
-    operation.contract &&
-    operation.tokenId;
+    ["NFT_IN", "NFT_OUT"].includes(operation.type) && operation.contract && operation.tokenId;
 
   const renderAmountCellExtra = useCallback(() => {
     const mainAccount = getMainAccount(account, parentAccount);
@@ -129,17 +127,11 @@ function OperationRow({
 
     const SpecificAmountCell =
       specific && specific.amountCell
-        ? specific.amountCell[
-            operation.type as keyof typeof specific.amountCell
-          ]
+        ? specific.amountCell[operation.type as keyof typeof specific.amountCell]
         : null;
 
     return SpecificAmountCell ? (
-      <SpecificAmountCell
-        operation={operation}
-        unit={unit}
-        currency={currency}
-      />
+      <SpecificAmountCell operation={operation} unit={unit} currency={currency} />
     ) : null;
   }, [account, operation, parentAccount]);
 
@@ -157,11 +149,7 @@ function OperationRow({
   );
 
   return (
-    <ContainerTouchable
-      as={TouchableOpacity}
-      isLast={isLast}
-      onPress={goToOperationDetails}
-    >
+    <ContainerTouchable as={TouchableOpacity} isLast={isLast} onPress={goToOperationDetails}>
       <Box opacity={isOptimistic ? 0.5 : 1}>
         <OperationIcon
           size={40}
@@ -172,40 +160,23 @@ function OperationRow({
       </Box>
       <Wrapper opacity={isOptimistic ? 0.5 : 1}>
         <BodyLeftContainer>
-          <Text
-            variant="body"
-            fontWeight="semiBold"
-            color="neutral.c100"
-            numberOfLines={1}
-          >
+          <Text variant="body" fontWeight="semiBold" color="neutral.c100" numberOfLines={1}>
             {multipleAccounts ? getAccountName(account) : text}
           </Text>
 
           {isOptimistic ? (
             <Flex flexDirection="row" alignItems="center">
               {spinner}
-              <Text
-                numberOfLines={1}
-                variant="paragraph"
-                fontWeight="medium"
-                color="neutral.c70"
-              >
+              <Text numberOfLines={1} variant="paragraph" fontWeight="medium" color="neutral.c70">
                 <Trans
                   i18nKey={
-                    amount.isNegative()
-                      ? "operationDetails.sending"
-                      : "operationDetails.receiving"
+                    amount.isNegative() ? "operationDetails.sending" : "operationDetails.receiving"
                   }
                 />
               </Text>
             </Flex>
           ) : (
-            <Text
-              numberOfLines={1}
-              color="neutral.c70"
-              variant="paragraph"
-              fontWeight="medium"
-            >
+            <Text numberOfLines={1} color="neutral.c70" variant="paragraph" fontWeight="medium">
               {text} <OperationRowDate date={operation.date} />
             </Text>
           )}
@@ -223,18 +194,8 @@ function OperationRow({
           </BodyRightContainer>
         ) : amount.isZero() ? null : (
           <BodyRightContainer>
-            <Text
-              numberOfLines={1}
-              color={valueColor}
-              variant="body"
-              fontWeight="semiBold"
-            >
-              <CurrencyUnitValue
-                showCode
-                unit={unit}
-                value={amount}
-                alwaysShowSign
-              />
+            <Text numberOfLines={1} color={valueColor} variant="body" fontWeight="semiBold">
+              <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
             <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
               <CounterValue

@@ -7,7 +7,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64",
     "freshAddressPath": "84'/0'/0'/0/27",
     "freshAddresses": Array [
@@ -36,7 +35,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
     "freshAddressPath": "84'/0'/1'/0/53",
     "freshAddresses": Array [
@@ -65,7 +63,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "bc1qnqy7vyp0df7tl90mwz9jwca66t6hef4yj9hl6n",
     "freshAddressPath": "84'/0'/2'/0/0",
     "freshAddresses": Array [
@@ -94,7 +91,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "taproot",
-    "feesCurrencyId": undefined,
     "freshAddress": "bc1p3ldd4dsgv7phm4z3ah5zqaap5eferesr9n5ymufhwe0medvlaqfq25rfvz",
     "freshAddressPath": "86'/0'/0'/0/0",
     "freshAddresses": Array [
@@ -123,7 +119,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "34WDB297Z1crydk6CMa1UvUpZ8G4cPXiYE",
     "freshAddressPath": "49'/0'/0'/0/34",
     "freshAddresses": Array [
@@ -152,7 +147,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "3EyuXJk735CE5oBummZqzzFGN5qSMYLQ9w",
     "freshAddressPath": "49'/0'/1'/0/44",
     "freshAddresses": Array [
@@ -181,7 +175,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "3DUk27bxJm3y7txoPTK4GGBWcyoW6ibGuh",
     "freshAddressPath": "49'/0'/2'/0/0",
     "freshAddresses": Array [
@@ -210,7 +203,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "1Ktck8TvjnCUj2jNXexzBXJ2ihNikfCDii",
     "freshAddressPath": "44'/0'/0'/0/60",
     "freshAddresses": Array [
@@ -239,7 +231,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "1JepjRPgzuV4hyBTZxftBYqbAaXMygCMRV",
     "freshAddressPath": "44'/0'/1'/0/0",
     "freshAddresses": Array [
@@ -11413,7 +11404,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_cash",
     "derivationMode": "unsplit",
-    "feesCurrencyId": undefined,
     "freshAddress": "bitcoincash:qzam62zsdr43xdc58xs7effux924f0wvj5hpzy230a",
     "freshAddressPath": "44'/0'/0'/0/19",
     "freshAddresses": Array [
@@ -11442,7 +11432,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_cash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "bitcoincash:qrpv5gkjr7t734nc9j5dmaln02rhzntl2cv0u822y5",
     "freshAddressPath": "44'/145'/0'/0/23",
     "freshAddresses": Array [
@@ -11471,7 +11460,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_cash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "bitcoincash:qqgaflq75ze7k9k40uf5f6k7dvsafu8zdckqw2styt",
     "freshAddressPath": "44'/145'/1'/0/0",
     "freshAddresses": Array [
@@ -14006,7 +13994,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "unsplit",
-    "feesCurrencyId": undefined,
     "freshAddress": "GL8PMhsyKkUV7ZBrJrEPc9cFVzVVR2y6Hw",
     "freshAddressPath": "44'/0'/0'/0/3",
     "freshAddresses": Array [
@@ -14035,7 +14022,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "segwit_unsplit",
-    "feesCurrencyId": undefined,
     "freshAddress": "APbUEw3HsVLXVcTk8JE3URdYH1YEGffm5P",
     "freshAddressPath": "49'/0'/0'/0/3",
     "freshAddresses": Array [
@@ -14064,7 +14050,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "AcZizfpXmETHFJGaDdkeJxYngngf3ttGhc",
     "freshAddressPath": "49'/156'/0'/0/5",
     "freshAddresses": Array [
@@ -14093,7 +14078,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "AKebKHcMrb9nvoPCy1qmjD67QFLt8Unr1q",
     "freshAddressPath": "49'/156'/1'/0/0",
     "freshAddresses": Array [
@@ -14122,7 +14106,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "GZ1PLSCQxD9aUkb5CmMeXC6ZAaHnRtBwbb",
     "freshAddressPath": "44'/156'/0'/0/2",
     "freshAddresses": Array [
@@ -14151,7 +14134,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "bitcoin_gold",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "GQRj65ZHznRTCV4MNbSstxPsfaLmwaysmD",
     "freshAddressPath": "44'/156'/1'/0/0",
     "freshAddresses": Array [
@@ -14888,7 +14870,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "dash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "Xq6jQDPGVMcCoTmEHFbQGGWf53EFNF8SDg",
     "freshAddressPath": "44'/5'/0'/0/8",
     "freshAddresses": Array [
@@ -14917,7 +14898,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "dash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "Xkp9AXxGDqeZM38V8ko3Eg2TaY9oQVT9oo",
     "freshAddressPath": "44'/5'/1'/0/12",
     "freshAddresses": Array [
@@ -14946,7 +14926,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "dash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "XtNhJXfydhg5bWrhBgDon7rAMqtK2XJ3Jr",
     "freshAddressPath": "44'/5'/2'/0/0",
     "freshAddresses": Array [
@@ -15953,7 +15932,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "decred",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DskW13e355a7M3kmhBjZrSGrGYTYn9T4dbk",
     "freshAddressPath": "44'/42'/0'/0/49",
     "freshAddresses": Array [
@@ -15982,7 +15960,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "decred",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DsbwT9HXsWj2n95bQrLpm6iozVj2hiJxSLK",
     "freshAddressPath": "44'/42'/1'/0/45",
     "freshAddresses": Array [
@@ -16011,7 +15988,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "decred",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DsR3hULYzWkMmkXDQzf3D26jmjLjaefvrVS",
     "freshAddressPath": "44'/42'/2'/0/4",
     "freshAddresses": Array [
@@ -16040,7 +16016,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "decred",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DsVPKFbctGLqezRon4kzgmS16XqYS6Z3rxa",
     "freshAddressPath": "44'/42'/3'/0/0",
     "freshAddresses": Array [
@@ -20823,7 +20798,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "native_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "dgb1qs45s7zq4gn6uygzrthyh067crzphvhwu33a8sl",
     "freshAddressPath": "84'/20'/0'/0/3",
     "freshAddresses": Array [
@@ -20852,7 +20826,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "native_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "dgb1q6c5jzgduyje29w9lsdwkd52dn3qxpcch87urdm",
     "freshAddressPath": "84'/20'/1'/0/0",
     "freshAddresses": Array [
@@ -20881,7 +20854,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "Sb4r6mx1WEZGzJvXZVqr17vYQ9yLhmjuSz",
     "freshAddressPath": "49'/20'/0'/0/20",
     "freshAddresses": Array [
@@ -20910,7 +20882,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "STTqUnTuhXEuVjVsa1rGNrVqweStbcx39e",
     "freshAddressPath": "49'/20'/1'/0/1",
     "freshAddresses": Array [
@@ -20939,7 +20910,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "SR7rLXSrTYjDA7kqP3CmScvkYhWNBE9AH1",
     "freshAddressPath": "49'/20'/2'/0/0",
     "freshAddresses": Array [
@@ -20968,7 +20938,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DMtVdcKhnbntP1dSYYmSFNg8GK1T8aCwCb",
     "freshAddressPath": "44'/20'/0'/0/12",
     "freshAddresses": Array [
@@ -20997,7 +20966,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DDqL91AjNtppYSybRcABYjrUtpuwQMVSZR",
     "freshAddressPath": "44'/20'/1'/0/0",
     "freshAddresses": Array [
@@ -22751,7 +22719,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "dogecoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DPWV3zLpMWMNyvGzWLzCJsUGNqAqCLd7nk",
     "freshAddressPath": "44'/3'/0'/0/7",
     "freshAddresses": Array [
@@ -22780,7 +22747,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "dogecoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DJcmPdxWR9LmVgY4udNS8TnLyeJg5kArpG",
     "freshAddressPath": "44'/3'/1'/0/5",
     "freshAddresses": Array [
@@ -22809,7 +22775,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "dogecoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DFL8gp5WQviz3hkqNppKaTAmosmAdLpDUh",
     "freshAddressPath": "44'/3'/2'/0/0",
     "freshAddresses": Array [
@@ -23436,7 +23401,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "RPyriQuwaVtfxjG8qhdTCCsV27LDkgvAX9",
     "freshAddressPath": "44'/141'/0'/0/29",
     "freshAddresses": Array [
@@ -23465,7 +23429,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "RJ4o1mozTbMYxH1MMyJD1DMhbBHNhTosXX",
     "freshAddressPath": "44'/141'/1'/0/25",
     "freshAddresses": Array [
@@ -23494,7 +23457,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "RBLBuovvYmojwhPoLo7GML2KpkqZqu1WEe",
     "freshAddressPath": "44'/141'/2'/0/35",
     "freshAddresses": Array [
@@ -23523,7 +23485,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "RBC5h3JZPQXRY2RXhtDkCEMZ89mRKS7Ah6",
     "freshAddressPath": "44'/141'/3'/0/0",
     "freshAddresses": Array [
@@ -27860,7 +27821,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "native_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
     "freshAddressPath": "84'/2'/0'/0/3",
     "freshAddresses": Array [
@@ -27889,7 +27849,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "native_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "ltc1qd2x2x0wf3wgkka87qlm8772tuw6yx6fl9j07ag",
     "freshAddressPath": "84'/2'/1'/0/0",
     "freshAddresses": Array [
@@ -27918,7 +27877,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "MGWgRF4qLAHtYhEe6VcQNeQRxVhPd3evHc",
     "freshAddressPath": "49'/2'/0'/0/24",
     "freshAddresses": Array [
@@ -27947,7 +27905,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "MMqwmFyJixCSt2iKbARzNMPkSbhec8qJ2d",
     "freshAddressPath": "49'/2'/1'/0/1",
     "freshAddresses": Array [
@@ -27976,7 +27933,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "M88iGfkJikQaKy7MafsyXfrRSSvuneFW7K",
     "freshAddressPath": "49'/2'/2'/0/0",
     "freshAddresses": Array [
@@ -28005,7 +27961,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "LLVLXPBzLTHYjF5Q4r6iCEEztCmWecazwP",
     "freshAddressPath": "44'/2'/0'/0/15",
     "freshAddresses": Array [
@@ -28034,7 +27989,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "LSqQsgC8oa3PzzPZZigq7EYrFe6tqA6L6p",
     "freshAddressPath": "44'/2'/1'/0/0",
     "freshAddresses": Array [
@@ -30209,7 +30163,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "peercoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "PHRKwqt8ZWWNdEiqMRpiU1xhUDYjmV7XiX",
     "freshAddressPath": "44'/6'/0'/0/1",
     "freshAddresses": Array [
@@ -30238,7 +30191,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "peercoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "PCrC3djBR5XMoob4dxp7TtZcaNwahTnBcd",
     "freshAddressPath": "44'/6'/1'/0/3",
     "freshAddresses": Array [
@@ -30267,7 +30219,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "peercoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "PNWyBf25cbMx9CEjvyxJRtDtg42GAX2wx8",
     "freshAddressPath": "44'/6'/2'/0/0",
     "freshAddresses": Array [
@@ -30496,7 +30447,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "pivx",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DBUbDxkrqF7W4XeTqjt32z2kwc7kCnWWcZ",
     "freshAddressPath": "44'/77'/0'/0/2",
     "freshAddresses": Array [
@@ -30525,7 +30475,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "pivx",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DG4Zmw1PyrxZrBFhjtHDyfCxWY4PrP5WZq",
     "freshAddressPath": "44'/77'/1'/0/5",
     "freshAddresses": Array [
@@ -30554,7 +30503,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "pivx",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "DEoUabmgN4eJ3XMThHT1ZAPekpVfr1m17F",
     "freshAddressPath": "44'/77'/2'/0/0",
     "freshAddresses": Array [
@@ -30966,7 +30914,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "MQnGUQsKBDpoFG5uvtai3Z4UWXu9s9P3s3",
     "freshAddressPath": "49'/88'/0'/0/23",
     "freshAddresses": Array [
@@ -30995,7 +30942,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "MFdP4rJefFPFXaZBSxsCGVt2KHNPwHYU8M",
     "freshAddressPath": "49'/88'/1'/0/3",
     "freshAddresses": Array [
@@ -31024,7 +30970,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "MMQq1ibHKKingHDdvjosq2eWz2W8n2bgNH",
     "freshAddressPath": "49'/88'/2'/0/0",
     "freshAddresses": Array [
@@ -31053,7 +30998,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "Qht4N9PNgSTYnXgSNoqfFtotBcXj6qapSQ",
     "freshAddressPath": "44'/88'/0'/0/16",
     "freshAddresses": Array [
@@ -31082,7 +31026,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "QVprz8QrPULXVFvREZo2tpHBdFC7uN6wKm",
     "freshAddressPath": "44'/88'/1'/0/13",
     "freshAddresses": Array [
@@ -31111,7 +31054,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "QY61GahhtwSsDg22SJa9q24qiFwNiRhvrt",
     "freshAddressPath": "44'/88'/2'/0/0",
     "freshAddresses": Array [
@@ -33871,7 +33813,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "vertcoin_128",
-    "feesCurrencyId": undefined,
     "freshAddress": "Vx36mGuxsW1cmvx3fMN55Z5UytHKpnE31U",
     "freshAddressPath": "44'/128'/0'/0/1",
     "freshAddresses": Array [
@@ -33900,7 +33841,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "vertcoin_128_segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "33BEXEpmL4ZGBZasUrCFEhdZpxKBe5uTYy",
     "freshAddressPath": "49'/128'/0'/0/4",
     "freshAddresses": Array [
@@ -33929,7 +33869,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "3FiUuTYW5jMbJSwVdgCJTYKNFwai6JX5FD",
     "freshAddressPath": "49'/28'/0'/0/2",
     "freshAddresses": Array [
@@ -33958,7 +33897,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "34TxZRuFCgyMKtFYmwKoRoWVCt1puAH9Xz",
     "freshAddressPath": "49'/28'/1'/0/0",
     "freshAddresses": Array [
@@ -33987,7 +33925,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "VsgCiKyCTMhiTravK6ESeKpg2qETx35wx8",
     "freshAddressPath": "44'/28'/0'/0/4",
     "freshAddresses": Array [
@@ -34016,7 +33953,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "Vg18CTCzdTXpRQR66voFahDH8LkS6exoxZ",
     "freshAddressPath": "44'/28'/1'/0/0",
     "freshAddresses": Array [
@@ -34594,7 +34530,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "ETvLmkNFbgbsdVMez1YaYjTCbB7aNco8Zp",
     "freshAddressPath": "49'/14'/0'/0/4",
     "freshAddresses": Array [
@@ -34623,7 +34558,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "segwit",
-    "feesCurrencyId": undefined,
     "freshAddress": "EHAAgFSDMfY4UHsRn6gEJxVhnVLPNNupw4",
     "freshAddressPath": "49'/14'/1'/0/0",
     "freshAddresses": Array [
@@ -34652,7 +34586,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "VfsNF82yMv738budvbxue1ZPLrzyW19z3x",
     "freshAddressPath": "44'/14'/0'/0/5",
     "freshAddresses": Array [
@@ -34681,7 +34614,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "VkC4KsRTFazUtM2G55NMSTYYqrHpz2dBgd",
     "freshAddressPath": "44'/14'/1'/0/0",
     "freshAddresses": Array [
@@ -35166,7 +35098,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "zcash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "t1fsRqkKtcsbptNVf4d27K6LdxEa8BhDQaR",
     "freshAddressPath": "44'/133'/0'/0/53",
     "freshAddresses": Array [
@@ -35195,7 +35126,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "zcash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "t1coCk73b8n112xnR2XAaAfx1WuqyHtCac2",
     "freshAddressPath": "44'/133'/1'/0/15",
     "freshAddresses": Array [
@@ -35224,7 +35154,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "zcash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "t1W7cEdkaa5jYoY91cpBmSLuaHQqS5DXDfX",
     "freshAddressPath": "44'/133'/2'/0/13",
     "freshAddresses": Array [
@@ -35253,7 +35182,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "zcash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "t1KS5gL64ZbWNSj8B4c1P7hL8zQDDpE1QRR",
     "freshAddressPath": "44'/133'/3'/0/0",
     "freshAddresses": Array [
@@ -39114,7 +39042,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "zencash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "znjQLDUvNXDwYNKPumEkkTWvshCFtT1xNNc",
     "freshAddressPath": "44'/121'/0'/0/71",
     "freshAddresses": Array [
@@ -39143,7 +39070,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "zencash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "zniChoxBVZTCZvD8cBjuncojhz4LUfrq179",
     "freshAddressPath": "44'/121'/1'/0/57",
     "freshAddresses": Array [
@@ -39172,7 +39098,6 @@ Array [
     "bitcoinResources": Object {},
     "currencyId": "zencash",
     "derivationMode": "",
-    "feesCurrencyId": undefined,
     "freshAddress": "znpMUEmboPrPE8GynEDZ1UcSSNK9ua4S6ag",
     "freshAddressPath": "44'/121'/2'/0/0",
     "freshAddresses": Array [

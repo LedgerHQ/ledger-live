@@ -100,7 +100,7 @@ const WyreKYC = ({ onClose }: { onClose: () => void }) => {
   const [street2, setStreet2] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [country, setCountry] = useState<typeof countryOptions[0] | null | undefined>(
+  const [country, setCountry] = useState<(typeof countryOptions)[0] | null | undefined>(
     countryOptions[0],
   );
   const [postalCode, setPostalCode] = useState("");

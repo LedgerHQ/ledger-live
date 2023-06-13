@@ -11,8 +11,7 @@ import { StackNavigatorNavigation } from "../../../../components/RootNavigator/t
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 
 export default function Features() {
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   return (
     <SettingsNavigationScrollView>
       <SettingsRow
@@ -37,8 +36,8 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugFetchCustomImage)}
       />
       <SettingsRow
-        title="Firmware Update"
-        desc="Test the firmware update feature. USE AT YOUR OWN RISK!"
+        title="Firmware Update UI"
+        desc="Test the firmware update feature. UI-only"
         iconLeft={<Icons.NanoFirmwareUpdateMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugFirmwareUpdate)}
       />
@@ -53,9 +52,7 @@ export default function Features() {
         title="Post Onboarding"
         desc="Entry to the post onboarding flow"
         iconLeft={<Icons.UserMedium size={32} color="black" />}
-        onPress={() =>
-          navigation.navigate(ScreenName.PostOnboardingDebugScreen)
-        }
+        onPress={() => navigation.navigate(ScreenName.PostOnboardingDebugScreen)}
       />
       <SettingsRow
         title="Lotties"
@@ -94,6 +91,13 @@ export default function Features() {
         desc="Open and close several bottom drawers"
         iconLeft={<Icons.LayersMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawers)}
+      />
+
+      <SettingsRow
+        title="Snackbars"
+        desc="Test toasts and other snackbars"
+        iconLeft={<Icons.MailMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugSnackbars)}
       />
     </SettingsNavigationScrollView>
   );

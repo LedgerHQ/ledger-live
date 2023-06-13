@@ -25,10 +25,17 @@
     },
     "catalog": {
       "title": "Discover",
+      "section": {
+        "recentlyUsed": "Recently used",
+        "browse": "Browse"
+      },
+      "filter": {
+        "categories": "Categories"
+      },
       "branch": {
-        "soon": "coming soon",
-        "experimental": "experimental",
-        "debug": "debug"
+        "soon": "Coming soon",
+        "experimental": "Experimental",
+        "debug": "Debug"
       },
       "banner": {
         "title": "Discover our Live Apps Catalog",
@@ -47,6 +54,11 @@
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live.",
         "button": "Go to portal"
+      },
+      "warnings": {
+        "notFound": "Not found",
+        "retrySearchKeyword": "Please retry the search with another keyword.",
+        "retrySearchKeywordAndUrl": "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live."
       }
     },
     "disclaimer": {
@@ -60,6 +72,7 @@
   "common": {
     "never": "Never",
     "new": "New",
+    "skip": "Skip",
     "apply": "Apply",
     "done": "Done",
     "confirm": "Confirm",
@@ -128,7 +141,8 @@
     "info": "Info",
     "connectDevice": "Connect your device",
     "add": "Add",
-    "or": "OR"
+    "or": "OR",
+    "clearAll": "Clear all"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -1759,7 +1773,8 @@
     "loading": "Loading...",
     "connectAndUnlockDevice": "Connect and unlock your device",
     "unlockDevice": "Unlock your device",
-    "unlockDeviceAfterFirmwareUpdate": "Wait for the firmware to update and unlock your device with your PIN",
+    "unlockDeviceAfterFirmwareUpdateStep1": "Wait for installation to finish on your {{productName}}",
+    "unlockDeviceAfterFirmwareUpdateStep2": "Unlock {{productName}} to complete installation",
     "quitApp": "Quit the application on your device",
     "appNotInstalledTitle": "Missing required app",
     "appNotInstalledTitle_plural": "Missing required apps",
@@ -1824,9 +1839,8 @@
       "installed": "Apps",
       "capacity": "Capacity",
       "used": "Used",
-      "firmwareAvailable": "Firmware is outdated:",
-      "firmwareUpToDate": "Firmware is up to date:",
-      "genuine": "Your device is Genuine",
+      "OSVersion": "OS version",
+      "genuine": "Device is genuine",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
     "applist": {
@@ -1918,7 +1932,7 @@
       "dontHaveSeed": "Don't have your recovery phrase? ",
       "followTheGuide": "Follow our step by step update guide",
       "removeApps": "Uninstall all apps before updating",
-      "update": "Firmware update",
+      "update": "Update {{productName}}",
       "updateBtn": "Update firmware",
       "banner": {
         "warning": "Update Firmware to {{latestFirmware}} is available",
@@ -1933,25 +1947,31 @@
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
-      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
-      "downloadingUpdateDesc": "Please wait for the update installer to be downloaded"
+      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>."
     },
     "modal": {
+      "title": "Update {{productName}}",
       "steps": {
-        "downloadingUpdate": "Downloading update",
+        "preparingUpdate": "Preparing update",
+        "transferringUpdate": "Transferring update to {{productName}}",
+        "prepare": "Prepare update",
+        "install": "Install update",
+        "restore": "Restore settings",
+        "apps": "Restore apps",
+
         "updateMCU": "Firmware update",
         "updating": "Firmware update",
         "reset": "Prepare device",
         "osu": "Installing OSU...",
         "flash-mcu": "MCU updating...",
         "flash-bootloader": "Bootloader updating...",
+        "progress": "Installing update {{current}}/{{total}}",
         "firmware": "Firmware updating...",
         "flash": "Preparing your device..."
       },
       "confirmIdentifier": "Verify the identifier",
-      "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
+      "confirmIdentifierText": "Confirm install on {{productName}}",
       "identifier": "Identifier",
-      "preparation": "Preparation",
       "newFirmware": "New firmware {{version}}",
       "confirmUpdate": "Please confirm the update on your device",
       "mcuTitle": "Finalize update",
@@ -1961,10 +1981,10 @@
       "mcuSecondNanoX": "Press and hold the left button until <1><0>{{bootloaderOption}}</0></1> appears. Press both buttons to confirm and reconnect your device.",
       "mcuBlueFirst": "Press and hold the side button for 10 seconds to turn off the device. Release the button.",
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
-      "successTitle": "Firmware updated",
+      "successTitle": "OS update success.",
       "successTextApps": "Please re-install the apps on your device",
       "successTextNoApps": "You can now install apps on your device",
-      "sucessCTAApps": "Re-install apps",
+      "sucessCTAApps": "Reinstall apps",
       "SuccessCTANoApps": "Install apps",
       "cancelReinstallCTA": "Install update",
       "resetSteps": {
@@ -2270,16 +2290,16 @@
     "renamed": "{{ productName }} name changed to \n“{{ name }}” "
   },
   "removeCustomLockscreen": {
+    "title": "Remove lock screen picture",
     "cta": "Remove",
     "confirmation": "Confirm removal of image on your Ledger Stax",
     "success": "Lock screen picture removed"
   },
   "deviceLocalization": {
     "language": "Language",
-    "deviceLanguage": "Language",
+    "deviceLanguage": "Change device language",
     "changeLanguage": "Change language",
     "changeDeviceLanguage": "Change your device language?",
-    "chooseLanguage": "Choose a language for your {{deviceName}}.",
     "changeDeviceLanguagePrompt": {
       "title": "{{language}} is also available for your {{deviceName}}",
       "description": "Would you like to change its language to {{language}}?"
@@ -3576,17 +3596,25 @@
   },
   "ethereum": {
     "stake": {
-      "title": "Earn Ethereum",
+      "title": "Grow your ETH holdings",
+      "subTitle": "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
       "lido": {
-        "tag": "No minimum",
-        "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum."
+        "title": "Earn with Lido",
+        "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum.",
+        "supportLink": "Learn more about Lido"
       },
       "kiln": {
+        "title": "Kiln dedicated staking",
         "tag": "Requires 32 ETH",
-        "description": "Got more than 32 ETH? Earn rewards daily by securely staking your ETH with Kiln."
+        "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+        "supportLink": "Learn more about Kiln validator"
       },
-      "providerTitle": "Earn with {{provider}}",
-      "providerLink": "Learn more about {{provider}}"
+      "kiln_pooling": {
+        "title": "Kiln staking pool",
+        "tag": "No minimum",
+        "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
+        "supportLink": "Learn more about Kiln pooling"
+      }
     }
   },
   "near": {
@@ -3972,10 +4000,6 @@
         "scanForInvalidPaths": {
           "title": "Extended account search",
           "description": "Scan for accounts with erroneous derivation paths. Please send potentially found assets to a regular account."
-        },
-        "experimentalCountervalues": {
-          "title": "Experimental countervalues API",
-          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
         },
         "experimentalExplorers": {
           "title": "Experimental Explorers API",
@@ -5164,6 +5188,10 @@
       "title": "Language installation refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "RestoreLanguageInstallRefusedOnDevice": {
+      "title": "Restoration of Language was cancelled on Ledger Stax",
+      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
     "LanguageNotFound": {
       "title": "Language not found",
       "description": "The language you are trying to install was not found. Please try installing another language."
@@ -5344,8 +5372,8 @@
       "title": "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate": {
-      "title": "Update cancelled on device",
-      "description": "All apps on your device have been uninstalled. Keep your device up to date to benefit from improvements in security and functionality."
+      "title": "Update was cancelled on device",
+      "description": "The installation of OS update was refused on your device. If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice": {
       "title": "Action rejected",
@@ -5723,12 +5751,24 @@
       "description": "Please try again with another image"
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Image commit refused on device (TODO: final wording)",
+      "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Image load refused on device (TODO: final wording)",
+      "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "ImageDoesNotExistOnDevice": {
+      "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description": "The customized lock screen picture was previously removed."
+    },
+    "RestoreImageCommitRefusedOnDevice": {
+      "title": "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
+    "RestoreImageLoadRefusedOnDevice": {
+      "title": "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
     },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."
@@ -5833,9 +5873,11 @@
         "stepLabel": "Transfer",
         "uploadAnotherImage": "Upload another image",
         "allowPreview": "Allow lock screen picture to load on your {{productName}}",
+        "allowConfirmPreview": "Allow lock screen picture restoration on {{productName}}",
         "loadingPicture": "Loading...",
         "imageLoaded": "Image loaded on {{productName}}",
         "confirmPicture": "Like what you see?\nKeep it!",
+        "confirmRestorePicture": "Confirm restoration of the lock screen picture",
         "doThisLater": "Maybe later"
       }
     },
@@ -5844,7 +5886,7 @@
       "description": "By customizing the screen",
       "actionCompletedPopupLabel": "Device personalized"
     },
-    "customImageSet": "Lockscreen set",
+    "customImageSet": "Lock screen set",
     "finishCTA": "Finish"
   },
   "onboardingAppInstall": {
@@ -5886,5 +5928,14 @@
     "description": "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until June 30th 2023",
     "cta": "Why should I subscribe?",
     "downloadLLM": "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+  },
+  "webview": {
+    "networkError": {
+      "title": "Network Error",
+      "subtitle": "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
+      "tryAgain": "Try again",
+      "contactSupport": "Contact Ledger support",
+      "saveLog": "Save log"
+    }
   }
 }

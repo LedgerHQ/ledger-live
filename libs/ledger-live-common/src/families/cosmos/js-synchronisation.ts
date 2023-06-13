@@ -4,11 +4,12 @@ import {
   makeScanAccounts,
   GetAccountShape,
   mergeOps,
+  AccountShapeInfo,
 } from "../../bridge/jsHelpers";
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosDelegationInfo } from "./types";
+import { CosmosDelegationInfo, CosmosMessage, CosmosTx } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 
@@ -30,42 +31,46 @@ const getBlankOperation = (tx, fees, id) => ({
   transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
 });
 
-const txToOps = (info: any, id: string, txs: any): Operation[] => {
+const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Operation[] => {
   const { address, currency } = info;
   const ops: Operation[] = [];
-
   for (const tx of txs) {
     let fees = new BigNumber(0);
 
-    tx.tx.auth_info.fee.amount.forEach((elem) => {
+    tx.tx.auth_info.fee.amount.forEach(elem => {
       if (elem.denom === currency.units[1].code) fees = fees.plus(elem.amount);
     });
 
-    const op: Operation = getBlankOperation(tx, fees, id);
+    const op: Operation = getBlankOperation(tx, fees, accountId);
 
-    const messages = tx.logs.map((log) => log.events).flat(1);
+    const messages: CosmosMessage[] = tx.logs.map(log => log.events).flat(1);
 
-    const message = getMainMessage(messages);
+    const mainMessage = getMainMessage(messages);
 
-    if (message == null) {
+    if (mainMessage === undefined) {
+      // happens when we don't know this message type in our implementation, example : proposal_vote
       continue;
     }
 
-    // parse attributes as key:value
+    const correspondingMessages = messages.filter(m => m.type === mainMessage.type);
+
+    if (correspondingMessages.length === 0) {
+      continue;
+    }
+
+    // TODO: This mechanism should be removed
     const attributes: { [id: string]: any } = {};
-    message.attributes.forEach((item) => (attributes[item.key] = item.value));
+    mainMessage.attributes.forEach(item => (attributes[item.key] = item.value));
 
     // https://docs.cosmos.network/v0.42/modules/staking/07_events.html
-    switch (message.type) {
+    switch (mainMessage.type) {
       case "transfer":
         if (attributes.sender && attributes.recipient && attributes.amount) {
           op.senders.push(attributes.sender);
           op.recipients.push(attributes.recipient);
 
           if (attributes.amount.indexOf(currency.units[1].code) != -1) {
-            op.value = op.value.plus(
-              attributes.amount.replace(currency.units[1].code, "")
-            );
+            op.value = op.value.plus(attributes.amount.replace(currency.units[1].code, ""));
           }
 
           if (!op.type && attributes.sender === address) {
@@ -77,31 +82,50 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
         }
         break;
 
-      case "withdraw_rewards":
-        if (
-          (attributes.amount &&
-            attributes.amount.indexOf(currency.units[1].code) != -1) ||
-          // handle specifc case with empty amount value like
-          // tx DF458FE6A82C310837D7A33735FA5298BCF71B0BFF7A4134641AAE30F6F1050
-          attributes.amount === ""
-        ) {
-          op.type = "REWARD";
-          const reward = message.attributes
-            .find((attr) => attr.key === "amount")
-            .value.replace("uatom", "");
-          op.value = new BigNumber(reward || 0);
-          op.extra.validators.push({
-            address: attributes.validator,
-            amount: attributes.amount.replace(currency.units[1].code, "") || 0,
+      case "withdraw_rewards": {
+        op.type = "REWARD";
+
+        const rewardShards: { amount: BigNumber; address: string }[] = [];
+
+        let txRewardValue = new BigNumber(0);
+
+        for (const message of correspondingMessages) {
+          const validatorAttribute = message.attributes.find(attr => attr.key === "validator");
+
+          if (validatorAttribute == null) {
+            continue;
+          }
+
+          const validatorAddress = validatorAttribute.value;
+
+          let messageRewardValue = new BigNumber(0);
+          const amountAttributes = message.attributes.filter(
+            attribute =>
+              attribute.key === "amount" && attribute.value.includes(currency.units[1].code),
+          );
+
+          amountAttributes.forEach(amountAttribute => {
+            messageRewardValue = messageRewardValue.plus(
+              new BigNumber(amountAttribute.value.replace(currency.units[1].code, "")),
+            );
           });
+
+          rewardShards.push({
+            amount: messageRewardValue,
+            address: validatorAddress,
+          });
+
+          txRewardValue = txRewardValue.plus(messageRewardValue);
         }
+
+        op.value = txRewardValue;
+        op.extra.validators = rewardShards;
+
         break;
+      }
 
       case "delegate":
-        if (
-          attributes.amount &&
-          attributes.amount.indexOf(currency.units[1].code) != -1
-        ) {
+        if (attributes.amount && attributes.amount.indexOf(currency.units[1].code) != -1) {
           op.type = "DELEGATE";
           op.value = new BigNumber(fees);
           op.extra.validators.push({
@@ -144,12 +168,17 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
         break;
     }
 
+    if (tx.tx.body.memo != null) {
+      op.extra.memo = tx.tx.body.memo;
+    }
+
+    // Dirty, to remove after attributes map is gone
     if (!["IN", "OUT"].includes(op.type)) {
       op.senders = [];
       op.recipients = [];
     }
 
-    op.id = encodeOperationId(id, tx.txhash, op.type);
+    op.id = encodeOperationId(accountId, tx.txhash, op.type);
 
     if (op.type) {
       ops.push(op);
@@ -159,7 +188,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
   return ops;
 };
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode, initialAccount } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -169,15 +198,8 @@ export const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
-  const {
-    balances,
-    blockHeight,
-    txs,
-    delegations,
-    redelegations,
-    unbondings,
-    withdrawAddress,
-  } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+  const { balances, blockHeight, txs, delegations, redelegations, unbondings, withdrawAddress } =
+    await new CosmosAPI(currency.id).getAccountInfo(address, currency);
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);
@@ -190,9 +212,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     delegatedBalance = delegatedBalance.plus(delegation.amount);
     balance = balance.plus(delegation.amount);
 
-    pendingRewardsBalance = pendingRewardsBalance.plus(
-      delegation.pendingRewards
-    );
+    pendingRewardsBalance = pendingRewardsBalance.plus(delegation.pendingRewards);
   }
 
   for (const unbonding of unbondings) {

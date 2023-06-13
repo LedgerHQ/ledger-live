@@ -1,10 +1,7 @@
 import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { CompositeScreenProps } from "@react-navigation/native";
 import perFamily from "../generated/SendRowsFee";
@@ -23,14 +20,8 @@ type Props = {
   setTransaction: (..._: Array<Transaction>) => void;
   disabledStrategies?: Array<string>;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;

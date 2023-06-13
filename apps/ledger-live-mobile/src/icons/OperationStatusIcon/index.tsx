@@ -58,21 +58,11 @@ const OperationStatusIcon = ({
   Badge?: React.ComponentType<{ size?: number; color?: string }>;
   failed?: boolean;
 }) => {
-  const Icon =
-    iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
+  const Icon = iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
   const BadgeIcon =
-    Badge ||
-    (failed
-      ? Icons.CircledCrossSolidMedium
-      : confirmed
-      ? undefined
-      : Icons.HistoryMedium);
+    Badge || (failed ? Icons.CircledCrossSolidMedium : confirmed ? undefined : Icons.HistoryMedium);
   const borderColor = failed ? "error.c40" : "neutral.c40";
-  const iconColor = failed
-    ? "error.c50"
-    : confirmed
-    ? "neutral.c100"
-    : "neutral.c50";
+  const iconColor = failed ? "error.c50" : confirmed ? "neutral.c100" : "neutral.c50";
   const badgeColor = failed ? "error.c50" : "neutral.c70";
   return (
     <BoxedIcon

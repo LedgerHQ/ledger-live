@@ -9,9 +9,7 @@ let currentCeloPreloadedData: CeloPreloadData = {
   validatorGroups: [],
 };
 
-function fromHydrateValidator(
-  validatorGroupRaw: Record<string, any>
-): CeloValidatorGroup {
+function fromHydrateValidator(validatorGroupRaw: Record<string, any>): CeloValidatorGroup {
   return {
     address: validatorGroupRaw.address,
     name: validatorGroupRaw.name,
@@ -70,9 +68,6 @@ export const preload = async (): Promise<CeloPreloadData> => {
 
 export const hydrate = (data: unknown) => {
   const hydrated = fromHydratePreloadData(data);
-  log(
-    "celo/preload",
-    "hydrate " + hydrated.validatorGroups.length + " celo validatorGroups"
-  );
+  log("celo/preload", "hydrate " + hydrated.validatorGroups.length + " celo validatorGroups");
   setCeloPreloadData(hydrated);
 };

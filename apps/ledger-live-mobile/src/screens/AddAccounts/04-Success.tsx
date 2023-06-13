@@ -17,10 +17,7 @@ import type { AddAccountsNavigatorParamList } from "../../components/RootNavigat
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    AddAccountsNavigatorParamList,
-    ScreenName.AddAccountsSuccess
-  >,
+  StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSuccess>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -48,11 +45,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen
-        category="AddAccounts"
-        name="Success"
-        currencyName={currency?.name}
-      />
+      <TrackScreen category="AddAccounts" name="Success" currencyName={currency?.name} />
       {currency ? <CurrencySuccess currency={currency} /> : null}
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="addAccounts.imported" />

@@ -6,6 +6,8 @@ import { BigNumber } from "bignumber.js";
 import type { ModeModule } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
 import { convertERC20, ERC20Token } from "@ledgerhq/cryptoassets";
+import network from "@ledgerhq/live-network/network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { inferTokenAccount } from "../transaction";
 import { getAccountCurrency } from "../../../account";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -13,8 +15,6 @@ import { addTokens } from "../../../currencies";
 import { DeviceTransactionField } from "../../../transaction";
 import { getEnv } from "../../../env";
 import { log } from "@ledgerhq/logs";
-import network from "../../../network";
-import { makeLRUCache } from "../../../cache";
 import { findERC20SignaturesInfo } from "@ledgerhq/hw-app-eth/erc20";
 import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
@@ -63,11 +63,7 @@ const erc20approve: ModeModule = {
       amount = new BigNumber(t.amount);
     }
 
-    const data = abi.simpleEncode(
-      "approve(address,uint256)",
-      recipient,
-      amount.toString(10)
-    );
+    const data = abi.simpleEncode("approve(address,uint256)", recipient, amount.toString(10));
     tx.data = "0x" + data.toString("hex");
     tx.to = subAccount.token.contractAddress;
     tx.value = "0x00";
@@ -133,12 +129,10 @@ export const fetchERC20Tokens: () => Promise<ERC20Token[]> = makeLRUCache(
   () => "erc20-tokens",
   {
     ttl: 6 * 60 * 60 * 1000,
-  }
+  },
 );
 
-export async function preload(
-  currency: CryptoCurrency
-): Promise<ERC20Token[] | null | undefined> {
+export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | null | undefined> {
   if (currency.id !== "ethereum") {
     return Promise.resolve(null);
   }
@@ -153,18 +147,14 @@ export async function preload(
   }
 }
 
-export function hydrate(
-  value: ERC20Token[] | null | undefined,
-  currency: CryptoCurrency
-): void {
+export function hydrate(value: ERC20Token[] | null | undefined, currency: CryptoCurrency): void {
   if (currency.id !== "ethereum" || !value) return;
   addTokens(value.map(convertERC20));
   log("ethereum/preload", "hydrate " + value.length + " tokens");
 }
 
-export const erc20SignatureInfo: (
-  loadConfig: LoadConfig
-) => Promise<string | undefined | null> = makeLRUCache(
-  async (loadConfig: LoadConfig) => findERC20SignaturesInfo(loadConfig),
-  () => "erc20-signatures"
-);
+export const erc20SignatureInfo: (loadConfig: LoadConfig) => Promise<string | undefined | null> =
+  makeLRUCache(
+    async (loadConfig: LoadConfig) => findERC20SignaturesInfo(loadConfig),
+    () => "erc20-signatures",
+  );

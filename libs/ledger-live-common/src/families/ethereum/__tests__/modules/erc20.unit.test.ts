@@ -1,9 +1,9 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import network from "@ledgerhq/live-network/network";
 import { preload } from "../../modules/erc20";
-import network from "../../../../network";
 
 const currency1 = getCryptoCurrencyById("ethereum");
-jest.mock("../../../../network");
+jest.mock("@ledgerhq/live-network/network");
 
 describe("Ethereum ERC20 module tests", () => {
   it("should not break on malformed dynamic CAL", async () => {

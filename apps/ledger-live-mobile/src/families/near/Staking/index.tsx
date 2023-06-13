@@ -4,25 +4,15 @@ import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { useNearMappedStakingPositions } from "@ledgerhq/live-common/families/near/react";
 import type {
   NearMappedStakingPosition,
   NearAccount,
 } from "@ledgerhq/live-common/families/near/types";
-import {
-  canStake,
-  canUnstake,
-  canWithdraw,
-  FIGMENT_NEAR_VALIDATOR_ADDRESS,
-} from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
+import { canStake, canUnstake, canWithdraw } from "@ledgerhq/live-common/families/near/logic";
 import { Account } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
@@ -52,14 +42,12 @@ function StakingPositions({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account) as NearAccount;
-  const stakingPositions: NearMappedStakingPosition[] =
-    useNearMappedStakingPositions(mainAccount);
+  const stakingPositions: NearMappedStakingPosition[] = useNearMappedStakingPositions(mainAccount);
 
   const currency = getAccountCurrency(mainAccount);
   const navigation = useNavigation();
 
-  const [stakingPosition, setStakingPosition] =
-    useState<NearMappedStakingPosition>();
+  const [stakingPosition, setStakingPosition] = useState<NearMappedStakingPosition>();
 
   const onNavigate = useCallback(
     ({
@@ -73,13 +61,10 @@ function StakingPositions({ account }: Props) {
     }) => {
       setStakingPosition(undefined);
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
-        route,
-        {
-          screen,
-          params: { ...params, accountId: account.id },
-        },
-      );
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
     },
     [navigation, account.id],
   );
@@ -120,10 +105,7 @@ function StakingPositions({ account }: Props) {
 
   const onOpenExplorer = useCallback(
     (address: string) => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account.currency],
@@ -204,15 +186,8 @@ function StakingPositions({ account }: Props) {
           {
             label: t("near.staking.actions.unstake"),
             Icon: (props: IconProps) => (
-              <Circle
-                {...props}
-                bg={
-                  !unstakingEnabled ? colors.lightFog : rgba(colors.alert, 0.2)
-                }
-              >
-                <UndelegateIcon
-                  color={!unstakingEnabled ? colors.grey : undefined}
-                />
+              <Circle {...props} bg={!unstakingEnabled ? colors.lightFog : rgba(colors.alert, 0.2)}>
+                <UndelegateIcon color={!unstakingEnabled ? colors.grey : undefined} />
               </Circle>
             ),
             disabled: !unstakingEnabled,
@@ -224,15 +199,9 @@ function StakingPositions({ account }: Props) {
             Icon: (props: IconProps) => (
               <Circle
                 {...props}
-                bg={
-                  !withdrawingEnabled
-                    ? colors.lightFog
-                    : rgba(colors.yellow, 0.2)
-                }
+                bg={!withdrawingEnabled ? colors.lightFog : rgba(colors.yellow, 0.2)}
               >
-                <ClaimRewardIcon
-                  color={!withdrawingEnabled ? colors.grey : undefined}
-                />
+                <ClaimRewardIcon color={!withdrawingEnabled ? colors.grey : undefined} />
               </Circle>
             ),
             disabled: !withdrawingEnabled,
@@ -252,8 +221,7 @@ function StakingPositions({ account }: Props) {
     colors.alert,
   ]);
 
-  const stakingDisabled =
-    stakingPositions.length <= 0 || !canStake(account as NearAccount);
+  const stakingDisabled = stakingPositions.length <= 0 || !canStake(account as NearAccount);
 
   return (
     <View style={styles.root}>
@@ -263,9 +231,7 @@ function StakingPositions({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
-            isLedger={
-              stakingPosition?.validatorId === FIGMENT_NEAR_VALIDATOR_ADDRESS
-            }
+            isLedger={stakingPosition?.validatorId === FIGMENT_NEAR_VALIDATOR_ADDRESS}
             name={stakingPosition?.validatorId ?? ""}
             size={size}
           />
@@ -291,9 +257,7 @@ function StakingPositions({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel
             name={t("near.staking.sectionLabel")}
-            RightComponent={
-              <LabelRight disabled={stakingDisabled} onPress={onStake} />
-            }
+            RightComponent={<LabelRight disabled={stakingDisabled} onPress={onStake} />}
           />
           {stakingPositions.map((sp, i) => (
             <View key={sp.validatorId} style={[styles.delegationsWrapper]}>

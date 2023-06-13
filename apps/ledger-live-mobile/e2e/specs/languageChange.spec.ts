@@ -8,16 +8,11 @@ let portfolioPage: PortfolioPage;
 let settingsPage: SettingsPage;
 let generalSettingsPage: GeneralSettingsPage;
 
-const verifyLanguageCanBeChanged = (l10n: {
-  lang: string;
-  localization: string;
-}) => {
+const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }) => {
   it(`should change selected language to ${l10n.lang}`, async () => {
     await generalSettingsPage.navigateToLanguageSelect();
     await generalSettingsPage.selectLanguage(l10n.lang);
-    await expect(
-      generalSettingsPage.isLocalized(l10n.localization),
-    ).toBeVisible();
+    await expect(generalSettingsPage.isLocalized(l10n.localization)).toBeVisible();
   });
 };
 
@@ -36,7 +31,7 @@ describe("Change Language", () => {
   ];
 
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETH", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
     portfolioPage = new PortfolioPage();
     settingsPage = new SettingsPage();
     generalSettingsPage = new GeneralSettingsPage();

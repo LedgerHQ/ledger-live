@@ -16,7 +16,7 @@ export const valueFormatter = (value: string | number): string => {
     { value: 1, unit: "" },
   ];
 
-  const item = breakpoints.find((item) => value >= item.value);
+  const item = breakpoints.find(item => value >= item.value);
   const formatedValue = typeof value === "number" ? value : parseFloat(value);
   return item ? `${(formatedValue / item.value).toFixed(1).replace(".0", "")} ${item.unit}` : "0";
 };

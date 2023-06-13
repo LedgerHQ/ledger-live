@@ -95,16 +95,8 @@ const mapStateToProps = (state: State) => ({
 });
 class Skeleton extends React.PureComponent<Props> {
   render() {
-    const {
-      width,
-      barHeight,
-      minHeight,
-      full,
-      children,
-      mt,
-      show,
-      alwaysShowSkeletons,
-    } = this.props;
+    const { width, barHeight, minHeight, full, children, mt, show, alwaysShowSkeletons } =
+      this.props;
     const isSkeletonVisible: boolean = show || alwaysShowSkeletons;
     const content = isSkeletonVisible ?? (isSkeletonVisible || !children) ? "" : children;
     const key = content ? "content" : "holder";

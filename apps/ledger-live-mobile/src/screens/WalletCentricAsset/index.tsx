@@ -1,9 +1,6 @@
 import React, { useMemo, useState, useCallback, useRef } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Box, Flex } from "@ledgerhq/native-ui";
@@ -32,14 +29,12 @@ import Header from "./Header";
 import { track, TrackScreen } from "../../analytics";
 import { FabAssetActions } from "../../components/FabActions/actionsList/asset";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { ReferralProgram } from "./referralProgram";
+import { EthereumStakingDrawer } from "../../families/ethereum/EthereumStakingDrawer";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -59,8 +54,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
     isEqual,
   );
 
-  const defaultAccount =
-    cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
+  const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
   const cryptoAccountsEmpty = useMemo(
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
@@ -82,8 +76,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, []);
 
   const currencyBalance = useMemo(
-    () =>
-      cryptoAccounts.reduce((acc, val) => acc.plus(val.balance), BigNumber(0)),
+    () => cryptoAccounts.reduce((acc, val) => acc.plus(val.balance), BigNumber(0)),
     [cryptoAccounts],
   );
 
@@ -120,10 +113,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       </Box>,
       currency.ticker === "BTC" ? <ReferralProgram /> : null,
       <SectionContainer px={6} isFirst>
-        <SectionTitle
-          title={t("account.quickActions")}
-          containerProps={{ mb: 6 }}
-        />
+        <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
           currency={currency}
           accounts={cryptoAccounts}
@@ -185,9 +175,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           style={{ flex: 1, paddingTop: 48 }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
+          renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
@@ -199,6 +187,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currencyBalance={currencyBalance}
         />
       </TabBarSafeAreaView>
+      <EthereumStakingDrawer drawer={route.params.drawer} />
     </ReactNavigationPerformanceView>
   );
 };

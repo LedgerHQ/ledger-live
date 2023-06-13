@@ -7,10 +7,10 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import LanguageSelect from "~/renderer/screens/settings/sections/General/LanguageSelect";
 
-const StorylyDebugger = ({ name }: { name: string }) => {
+const StorylyDebugger = () => {
   return (
     <Modal
-      name={name}
+      name="MODAL_STORYLY_DEBUGGER"
       centered
       render={({ onClose }: { onClose?: () => void }) => (
         <ModalBody

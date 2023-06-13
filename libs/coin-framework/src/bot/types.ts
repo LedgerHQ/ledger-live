@@ -56,7 +56,7 @@ export type DeviceActionArg<T extends TransactionCommon, S> = {
   disableStrictStepValueValidation?: boolean;
 };
 export type DeviceAction<T extends TransactionCommon, S> = (
-  arg0: DeviceActionArg<T, S>
+  arg0: DeviceActionArg<T, S>,
 ) => S | null | undefined;
 export type TransactionArg<T extends TransactionCommon> = {
   appCandidate: AppCandidate;

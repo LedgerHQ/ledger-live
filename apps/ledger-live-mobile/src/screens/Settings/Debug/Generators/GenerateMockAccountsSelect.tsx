@@ -3,14 +3,7 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation } from "@react-navigation/native";
 import { Alert as Confirm, ScrollView } from "react-native";
-import {
-  Button,
-  Checkbox,
-  Flex,
-  Text,
-  Icons,
-  Alert,
-} from "@ledgerhq/native-ui";
+import { Button, Checkbox, Flex, Text, Icons, Alert } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import SettingsRow from "../../../../components/SettingsRow";
@@ -23,10 +16,7 @@ import { SettingsNavigatorStackParamList } from "../../../../components/RootNavi
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import TextInput from "../../../../components/TextInput";
 
-async function injectMockAccountsInDB(
-  currencies: CryptoCurrency[],
-  tokens: string,
-) {
+async function injectMockAccountsInDB(currencies: CryptoCurrency[], tokens: string) {
   const tokenIds = tokens.split(",").map(t => t.toLowerCase().trim());
   await saveAccounts({
     active: currencies.map(currency =>
@@ -40,17 +30,13 @@ async function injectMockAccountsInDB(
   });
 }
 
-const currencies = listSupportedCurrencies().sort((a, b) =>
-  a.name.localeCompare(b.name),
-);
+const currencies = listSupportedCurrencies().sort((a, b) => a.name.localeCompare(b.name));
 
 export const GenerateMockAccountSelectScreen = () => {
   const reboot = useReboot();
   const [tokens, setTokens] = useState<string>("");
 
-  const [checkedCurrencies, setCheckedCurrencies] = useState(
-    {} as Record<string, boolean>,
-  );
+  const [checkedCurrencies, setCheckedCurrencies] = useState({} as Record<string, boolean>);
 
   const handleItemPressed = useCallback(
     ({ id }) => {
@@ -63,9 +49,7 @@ export const GenerateMockAccountSelectScreen = () => {
   );
 
   const handlePressContinue = useCallback(() => {
-    const selectedCurrencies = currencies.filter(
-      ({ id }) => checkedCurrencies[id],
-    );
+    const selectedCurrencies = currencies.filter(({ id }) => checkedCurrencies[id]);
     Confirm.alert(
       "This will erase existing accounts",
       "Continue?",
@@ -91,9 +75,7 @@ export const GenerateMockAccountSelectScreen = () => {
         <Flex pb={3}>
           <Alert
             type={"info"}
-            title={
-              "Currencies will also have token balance for valid ids below."
-            }
+            title={"Currencies will also have token balance for valid ids below."}
           />
         </Flex>
         <TextInput

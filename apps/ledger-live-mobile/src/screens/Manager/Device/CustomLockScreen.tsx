@@ -18,15 +18,16 @@ import { NavigatorName, ScreenName } from "../../../const";
 import CustomImageBottomModal from "../../../components/CustomImage/CustomImageBottomModal";
 import DeviceOptionRow from "./DeviceOptionRow";
 
-const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
+const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
+  device,
+  disabled,
+}) => {
   const navigation = useNavigation();
   const [isCustomImageOpen, setIsCustomImageOpen] = useState(false);
   const [deviceHasImage, setDeviceHasImage] = useState(false);
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
 
-  const hasCompletedCustomImageFlow = useSelector(
-    hasCompletedCustomImageFlowSelector,
-  );
+  const hasCompletedCustomImageFlow = useSelector(hasCompletedCustomImageFlowSelector);
 
   const { t } = useTranslation();
 
@@ -35,9 +36,7 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
   }, [lastSeenCustomImage]);
 
   useEffect(() => {
-    withDevice(device.deviceId)(transport =>
-      from(staxFetchImageHash(transport)),
-    )
+    withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport)))
       .toPromise()
       .then(hash => {
         setDeviceHasImage(hash !== "");
@@ -63,7 +62,7 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
         Icon={Icons.PhotographMedium}
         iconSize={20}
         label={t("customImage.title")}
-        onPress={handleStartCustomImage}
+        onPress={disabled ? undefined : handleStartCustomImage}
         linkLabel={t(deviceHasImage ? "customImage.replace" : "common.add")}
       />
       <CustomImageBottomModal

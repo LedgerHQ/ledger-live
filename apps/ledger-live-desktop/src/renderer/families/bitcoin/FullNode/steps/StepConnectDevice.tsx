@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { reduce } from "rxjs/operators";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
-import { scanDescriptors } from "@ledgerhq/live-common/families/bitcoin/descriptor";
+import {
+  AccountDescriptor,
+  scanDescriptors,
+} from "@ledgerhq/live-common/families/bitcoin/descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Text from "~/renderer/components/Text";
@@ -16,19 +19,22 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from "..";
 import IconCheck from "~/renderer/icons/Check";
+import { Device } from "@ledgerhq/types-devices";
+import { ScannedDescriptor } from "../../types";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const StepConnectDevice = ({
   setScannedDescriptors,
   numberOfAccountsToScan,
   setError,
 }: {
-  setScannedDescriptors: (a: any) => void;
+  setScannedDescriptors: (a: { descriptor: AccountDescriptor }[]) => void;
   numberOfAccountsToScan: number;
   setError: (a: Error) => void;
 }) => {
   const currency = getCryptoCurrencyById("bitcoin");
-  const [device, setDevice] = useState(null);
+  const [device, setDevice] = useState<Device>(null);
   const [scanStatus, setScanStatus] = useState<ConnectionStatus>(connectionStatus.IDLE);
+  const request = useMemo(() => ({ currency }), [currency]);
   useEffect(() => {
     if (device) {
       const sub = scanDescriptors(
@@ -37,9 +43,9 @@ const StepConnectDevice = ({
         numberOfAccountsToScan,
       )
         // I don't know what you want.
-        .pipe(
+        .pipe<ScannedDescriptor[]>(
           reduce(
-            (acc, item) =>
+            (acc: ScannedDescriptor[], item) =>
               acc.concat({
                 descriptor: item,
               }),
@@ -62,9 +68,7 @@ const StepConnectDevice = ({
       {scanStatus === connectionStatus.IDLE ? (
         <DeviceAction
           action={action}
-          request={{
-            currency,
-          }}
+          request={request}
           onResult={({ device }) => {
             setDevice(device);
             setScanStatus(connectionStatus.PENDING);
@@ -127,7 +131,7 @@ export const StepDeviceFooter = ({
 }: {
   onClose: () => void;
   onStepChange: (a: FullNodeSteps) => void;
-  scannedDescriptors: any;
+  scannedDescriptors?: ScannedDescriptor[];
 }) => (
   <Box horizontal alignItems={"flex-end"}>
     {scannedDescriptors ? (

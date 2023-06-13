@@ -23,12 +23,15 @@ import AccountsList from "~/renderer/components/AccountsList";
 import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconCheckCircle from "~/renderer/icons/CheckCircle";
 import Alert from "~/renderer/components/Alert";
+import { ModalData } from "../types";
+
 type OwnProps = {};
 type Props = OwnProps & {
-  closeModal: (a: string) => void;
+  closeModal: (a: keyof ModalData) => void;
   accounts: Account[];
   countervalueCurrency?: Currency;
 };
+
 const mapStateToProps = createStructuredSelector({
   accounts: activeAccountsSelector,
   countervalueCurrency: counterValueCurrencySelector,
@@ -46,7 +49,9 @@ const exportOperations = async (
     if (res && callback) {
       callback();
     }
-  } catch (error) {}
+  } catch (error) {
+    // ignore
+  }
 };
 function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props) {
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
@@ -214,4 +219,5 @@ const ConnectedExportOperations: React.ComponentType<OwnProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ExportOperations);
-export default memo<Props>(ConnectedExportOperations);
+
+export default memo(ConnectedExportOperations);

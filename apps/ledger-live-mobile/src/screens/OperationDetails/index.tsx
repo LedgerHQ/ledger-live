@@ -2,10 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import {
-  getDefaultExplorerView,
-  getTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Operation } from "@ledgerhq/types-live";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
@@ -15,10 +12,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import Footer from "./Footer";
 import Content from "./Content";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 
@@ -31,10 +25,7 @@ function OperationDetails({ route }: NavigatorProps) {
   if (!account) return null;
   const operation = route.params?.operation;
   const mainAccount = getMainAccount(account, parentAccount);
-  const url = getTransactionExplorer(
-    getDefaultExplorerView(mainAccount.currency),
-    operation.hash,
-  );
+  const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const specific =
     byFamiliesOperationDetails[
       mainAccount.currency.family as keyof typeof byFamiliesOperationDetails

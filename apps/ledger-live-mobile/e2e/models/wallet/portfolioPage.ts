@@ -1,11 +1,6 @@
-import {
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  waitForElementByID,
-} from "../../helpers";
+import { getElementById, openDeeplink, tapByElement, waitForElementByID } from "../../helpers";
 
-let baseLink: string = "portfolio";
+const baseLink = "portfolio";
 
 export default class PortfolioPage {
   emptyPortfolioComponent = () => getElementById("PortfolioEmptyAccount");

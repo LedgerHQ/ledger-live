@@ -1,11 +1,11 @@
 import React from "react";
 const Check = ({
   id,
-  size,
+  size = 16,
   color = "currentColor",
 }: {
   id?: string;
-  size: number;
+  size?: number;
   color?: string;
 }) => (
   <svg id={id} viewBox="0 0 16 16" height={size} width={size}>

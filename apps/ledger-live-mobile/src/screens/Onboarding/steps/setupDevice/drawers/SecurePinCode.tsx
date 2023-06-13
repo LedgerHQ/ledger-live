@@ -1,13 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  Button,
-  List,
-  Icons,
-  Text,
-  ScrollListContainer,
-} from "@ledgerhq/native-ui";
+import { Flex, Button, List, Icons, Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 
 const content = [
@@ -26,11 +19,7 @@ const OnboardingSetupDeviceInformation = () => {
   const navigation = useNavigation();
 
   return (
-    <Flex
-      flex={1}
-      justifyContent="space-between"
-      backgroundColor="background.main"
-    >
+    <Flex flex={1} justifyContent="space-between" backgroundColor="background.main">
       <ScrollListContainer contentContainerStyle={{ padding: 16 }}>
         <Text variant="h1" mb={6}>
           {t("onboarding.stepSetupDevice.pinCodeSetup.infoModal.title")}

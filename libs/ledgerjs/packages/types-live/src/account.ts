@@ -1,9 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";
@@ -14,10 +10,7 @@ export type GranularityId = "HOUR" | "DAY" | "WEEK";
 // the cache is maintained for as many granularity as we need on Live.
 // it's currently an in memory cache so there is no problem regarding the storage.
 // in future, it could be saved and we can rethink how it's stored (independently of how it's in memory)
-export type BalanceHistoryCache = Record<
-  GranularityId,
-  BalanceHistoryDataCache
->;
+export type BalanceHistoryCache = Record<GranularityId, BalanceHistoryDataCache>;
 
 // the way BalanceHistoryDataCache works is:
 // - a "cursor" date which is the "latestDate" representing the latest datapoint date. it's null if it never was loaded or if it's empty.
@@ -199,11 +192,7 @@ export type AccountLike = Account | SubAccount;
 /**
  * An array of AccountLikes
  */
-export type AccountLikeArray =
-  | AccountLike[]
-  | TokenAccount[]
-  | ChildAccount[]
-  | Account[];
+export type AccountLikeArray = AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
 
 /** */
 export type TokenAccountRaw = {

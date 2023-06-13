@@ -1,5 +1,47 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.29.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Remove BLE high priority connection request as it was breaking the firmware update via BLE on Android
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Remove BLE high priority connection request as it was breaking the firmware update via BLE on Android
+
+## 6.28.8
+
+### Patch Changes
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546)]:
+  - @ledgerhq/errors@6.12.6
+  - @ledgerhq/devices@8.0.3
+  - @ledgerhq/hw-transport@6.28.4
+
+## 6.28.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546)]:
+  - @ledgerhq/errors@6.12.6-next.0
+  - @ledgerhq/devices@8.0.3-next.0
+  - @ledgerhq/hw-transport@6.28.4-next.0
+
+## 6.28.7
+
+### Patch Changes
+
+- [#3380](https://github.com/LedgerHQ/ledger-live/pull/3380) [`05c4b20b3a`](https://github.com/LedgerHQ/ledger-live/commit/05c4b20b3a89a1fe0e851189b51a2b5fdf625f01) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the mapping of errors on the BLE transport. "Disconnect" and "device not found" errors were not correctly being mapped.
+
+## 6.28.7-next.0
+
+### Patch Changes
+
+- [#3380](https://github.com/LedgerHQ/ledger-live/pull/3380) [`05c4b20b3a`](https://github.com/LedgerHQ/ledger-live/commit/05c4b20b3a89a1fe0e851189b51a2b5fdf625f01) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the mapping of errors on the BLE transport. "Disconnect" and "device not found" errors were not correctly being mapped.
+
 ## 6.28.6
 
 ### Patch Changes

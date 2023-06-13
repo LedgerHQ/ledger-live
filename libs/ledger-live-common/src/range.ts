@@ -50,7 +50,7 @@ export type InferDynamicRangeOpts = {
 // for (let i = 0.1; i < 10; i += 0.1) console.log(i, inferDynamicRange(i));
 export function inferDynamicRange(
   amount: BigNumber,
-  opts: Partial<InferDynamicRangeOpts> = {}
+  opts: Partial<InferDynamicRangeOpts> = {},
 ): Range {
   const { minMult, maxMult, targetSteps, minValue, maxValue } = {
     ...defaultOpts,

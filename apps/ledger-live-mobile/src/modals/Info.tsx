@@ -10,10 +10,7 @@ type Props = {
 };
 export type ModalInfo = {
   description?: React.ReactNode;
-  Icon?: () => React.ReactElement<
-    React.ComponentProps<React.ElementType>,
-    React.ElementType
-  >;
+  Icon?: () => React.ReactElement<React.ComponentProps<React.ElementType>, React.ElementType>;
   title?: React.ReactNode;
   footer?: React.ReactNode;
   titleProps?: Opts;
@@ -21,23 +18,9 @@ export type ModalInfo = {
 };
 export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (
-    <QueuedDrawer
-      style={styles.root}
-      isRequestingToBeOpened={isOpened}
-      onClose={onClose}
-    >
+    <QueuedDrawer style={styles.root} isRequestingToBeOpened={isOpened} onClose={onClose}>
       {data.map(
-        (
-          {
-            description,
-            Icon,
-            title,
-            footer,
-            titleProps = {},
-            descriptionProps = {},
-          },
-          i,
-        ) => (
+        ({ description, Icon, title, footer, titleProps = {}, descriptionProps = {} }, i) => (
           <View style={styles.section} key={i}>
             <View style={styles.header}>
               {Icon && (
@@ -69,20 +52,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   section: {
-    marginVertical: 8,
+    marginVertical: 2,
   },
   header: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: 16,
   },
   iconWrapper: {
-    marginRight: 12,
+    marginBottom: 24,
   },
   title: {
     fontSize: 20,
-    flex: 1,
   },
   footer: {
     marginTop: 12,

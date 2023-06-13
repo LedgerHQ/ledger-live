@@ -1,12 +1,6 @@
 import HID from "node-hid";
-import TransportNodeHidNoEvents, {
-  getDevices,
-} from "@ledgerhq/hw-transport-node-hid-noevents";
-import type {
-  Observer,
-  DescriptorEvent,
-  Subscription,
-} from "@ledgerhq/hw-transport";
+import TransportNodeHidNoEvents, { getDevices } from "@ledgerhq/hw-transport-node-hid-noevents";
+import type { Observer, DescriptorEvent, Subscription } from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
 import { identifyUSBProductId } from "@ledgerhq/devices";
 import { CantOpenDevice } from "@ledgerhq/errors";
@@ -26,7 +20,7 @@ const setDisconnectTimeout = () => {
   clearDisconnectTimeout();
   disconnectTimeout = setTimeout(
     () => TransportNodeHidSingleton.autoDisconnect(),
-    DISCONNECT_TIMEOUT
+    DISCONNECT_TIMEOUT,
   );
 };
 
@@ -56,7 +50,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
    */
   static listen = (observer: Observer<ListenDescriptorEvent>): Subscription => {
     let unsubscribed;
-    Promise.resolve(getDevices()).then((devices) => {
+    Promise.resolve(getDevices()).then(devices => {
       // this needs to run asynchronously so the subscription is defined during this phase
       for (const device of devices) {
         if (!unsubscribed) {
@@ -73,7 +67,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
       }
     });
 
-    const onAdd = (device) => {
+    const onAdd = device => {
       const deviceModel = identifyUSBProductId(device.productId);
       observer.next({
         type: "add",
@@ -85,7 +79,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
       });
     };
 
-    const onRemove = (device) => {
+    const onRemove = device => {
       const deviceModel = identifyUSBProductId(device.productId);
       observer.next({
         type: "remove",
@@ -149,9 +143,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
       const device = getDevices()[0];
       if (!device) throw new CantOpenDevice("no device found");
       log("hid-verbose", "new HID transport");
-      transportInstance = new TransportNodeHidSingleton(
-        new HID.HID(device.path as string)
-      );
+      transportInstance = new TransportNodeHidSingleton(new HID.HID(device.path as string));
       const unlisten = listenDevices(
         () => {},
         () => {
@@ -159,7 +151,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
           if (transportInstance) {
             transportInstance.emit("disconnect");
           }
-        }
+        },
       );
 
       const onDisconnect = () => {

@@ -11,25 +11,13 @@ type Props = {
 };
 const R = 26;
 const CENTER = 38;
-export default ({
-  size = 53,
-  backgroundColor,
-  progressColor,
-  progress,
-}: Props) => {
+export default ({ size = 53, backgroundColor, progressColor, progress }: Props) => {
   const { colors } = useTheme();
   const stroke = backgroundColor || colors.lightFog;
   const progColor = progressColor || colors.live;
   return (
     <Svg width={size} height={size} viewBox="0 0 76 76">
-      <Circle
-        cx={CENTER}
-        cy={CENTER}
-        r={R}
-        fill="none"
-        stroke={stroke}
-        strokeWidth={4}
-      />
+      <Circle cx={CENTER} cy={CENTER} r={R} fill="none" stroke={stroke} strokeWidth={4} />
       <G
         transform={{
           rotation: -90,

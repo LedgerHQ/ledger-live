@@ -2,10 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  getMainAccount,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
@@ -35,10 +32,9 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   const { transaction } = useBridgeTransaction(() => ({
     account,
-    transaction: bridge.updateTransaction(
-      bridge.createTransaction(mainAccount),
-      { mode: "claimRewards" },
-    ),
+    transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+      mode: "claimRewards",
+    }),
   }));
 
   /*
@@ -47,9 +43,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   const data = useMemo(
     () =>
-      delegations.filter(delegation =>
-        new BigNumber(delegation.claimableRewards).isGreaterThan(0),
-      ),
+      delegations.filter(delegation => new BigNumber(delegation.claimableRewards).isGreaterThan(0)),
     [delegations],
   );
 
@@ -88,9 +82,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
           keyExtractor={delegation =>
             `${delegation.address}-${delegation.userActiveStake}-${delegation.claimableRewards}`
           }
-          renderItem={props => (
-            <Item unit={unit} onSelect={onSelect} {...props} />
-          )}
+          renderItem={props => <Item unit={unit} onSelect={onSelect} {...props} />}
         />
       </View>
     </View>

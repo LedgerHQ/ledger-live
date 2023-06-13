@@ -1,26 +1,19 @@
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
 import { listCryptoCurrencies, setSupportedCurrencies } from "./currencies";
-import {
-  accountDataToAccount,
-  accountToAccountData,
-  encode,
-  decode,
-} from "./cross";
+import { accountDataToAccount, accountToAccountData, encode, decode } from "./cross";
 import { Account } from "@ledgerhq/types-live";
 
 setSupportedCurrencies(["ethereum", "ethereum_classic"]);
 
 test("accountDataToAccount / accountToAccountData", () => {
-  listCryptoCurrencies().forEach((currency) => {
-    getDerivationModesForCurrency(currency).forEach((derivationMode) => {
+  listCryptoCurrencies().forEach(currency => {
+    getDerivationModesForCurrency(currency).forEach(derivationMode => {
       const account = genAccount(`${currency.id}_${derivationMode}`, {
         currency,
       });
       const data = accountToAccountData(account);
-      expect(accountToAccountData(accountDataToAccount(data))).toMatchObject(
-        data
-      );
+      expect(accountToAccountData(accountDataToAccount(data))).toMatchObject(data);
     });
   });
 });
@@ -28,14 +21,14 @@ test("encode/decode", () => {
   const accounts = listCryptoCurrencies().reduce(
     (acc: Account[], currency) =>
       acc.concat(
-        getDerivationModesForCurrency(currency).map((derivationMode) => {
+        getDerivationModesForCurrency(currency).map(derivationMode => {
           const account = genAccount(`${currency.id}_${derivationMode}`, {
             currency,
           });
           return account;
-        })
+        }),
       ),
-    <Account[]>[]
+    <Account[]>[],
   );
   const data = {
     accounts,
@@ -76,13 +69,13 @@ test("encode/decode", () => {
   const data = encode(arg);
   const res = decode(data);
   expect(res.accounts).toMatchObject(
-    accounts.map((a) => ({
+    accounts.map(a => ({
       balance: a.balance.toString(),
       currencyId: a.currency.id,
       id: a.id,
       name: a.name,
       index: a.index,
-    }))
+    })),
   );
   expect(res.settings).toMatchObject({
     counterValue: "USD",

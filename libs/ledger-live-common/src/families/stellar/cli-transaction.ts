@@ -1,8 +1,4 @@
-import type {
-  AccountLike,
-  Account,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { AccountLike, Account, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import type { Transaction } from "../../generated/types";
 import { getAccountCurrency } from "../../account";
@@ -46,7 +42,7 @@ function inferTransactions(
     account: AccountLike;
     transaction: Transaction;
   }>,
-  opts: Record<string, any>
+  opts: Record<string, any>,
 ): Transaction[] {
   return transactions.map(({ transaction, account }) => {
     invariant(transaction.family === "stellar", "stellar family");
@@ -63,16 +59,11 @@ function inferTransactions(
   });
 }
 
-function inferAccounts(
-  account: Account,
-  opts: Record<string, any>
-): AccountLikeArray {
+function inferAccounts(account: Account, opts: Record<string, any>): AccountLikeArray {
   invariant(account.currency.family === "stellar", "stellar family");
 
   if (opts.subAccountId) {
-    const assetSubAccount = account.subAccounts?.find(
-      (a) => a.id === opts.subAccountId
-    );
+    const assetSubAccount = account.subAccounts?.find(a => a.id === opts.subAccountId);
 
     if (!assetSubAccount) {
       throw new Error(`${opts.subAccountId} asset not found`);
@@ -84,7 +75,7 @@ function inferAccounts(
   if (opts.assetCode) {
     const subAccounts = account.subAccounts || [];
 
-    const subAccount = subAccounts.find((sa) => {
+    const subAccount = subAccounts.find(sa => {
       const currency = getAccountCurrency(sa);
       return (
         opts.assetCode.toLowerCase() === currency.ticker.toLowerCase() ||
@@ -97,7 +88,7 @@ function inferAccounts(
         "token account '" +
           opts.assetCode +
           "' not found. Available: " +
-          subAccounts.map((t) => getAccountCurrency(t).ticker).join(", ")
+          subAccounts.map(t => getAccountCurrency(t).ticker).join(", "),
       );
     }
 

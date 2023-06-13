@@ -556,12 +556,10 @@ describe("filterAnnouncements", () => {
 
     beforeEach(() => {
       const appVersionsData = [["<=2.42.0", ">=3"], [], ["=2.41.3"]];
-      const rawAnnouncementsVersioned = rawAnnouncements.map(
-        (announcement, index) => ({
-          ...announcement,
-          appVersions: appVersionsData[index],
-        })
-      );
+      const rawAnnouncementsVersioned = rawAnnouncements.map((announcement, index) => ({
+        ...announcement,
+        appVersions: appVersionsData[index],
+      }));
 
       announcements = localizeAnnouncements(rawAnnouncementsVersioned, context);
     });
@@ -636,12 +634,10 @@ describe("filterAnnouncements", () => {
 
     beforeEach(() => {
       const liveCommonVersionsData = [["<=12.42.0", ">=13"], [], ["=12.41.3"]];
-      const rawAnnouncementsVersioned = rawAnnouncements.map(
-        (announcement, index) => ({
-          ...announcement,
-          liveCommonVersions: liveCommonVersionsData[index],
-        })
-      );
+      const rawAnnouncementsVersioned = rawAnnouncements.map((announcement, index) => ({
+        ...announcement,
+        liveCommonVersions: liveCommonVersionsData[index],
+      }));
 
       announcements = localizeAnnouncements(rawAnnouncementsVersioned, context);
     });

@@ -15,18 +15,18 @@ import {
   Title,
   TitleWrapper,
 } from "~/renderer/families/elrond/blocks/Summary";
-import { Account } from "@ledgerhq/live-common/types/index";
-import { UnbondingType, DelegationType } from "./types";
-export interface Props {
-  account: Account;
-}
+import { DelegationType } from "./types";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { SubAccount } from "@ledgerhq/types-live";
+
 interface BalanceType {
   tooltip: string;
   title: string;
   show: boolean;
   amount: BigNumber;
 }
-const Summary = (props: Props) => {
+
+const Summary = (props: { account: ElrondAccount }) => {
   const { account } = props;
   const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
   const [delegationsResources, setDelegationResources] = useState(
@@ -52,11 +52,8 @@ const Summary = (props: Props) => {
     [delegationsResources],
   );
   const unbondings = useMemo(
-    (): BigNumber =>
-      delegationsResources.reduce(
-        (total: BigNumber, item: UnbondingType) => total.plus(item.userUnBondable),
-        BigNumber(0),
-      ),
+    () =>
+      delegationsResources.reduce((total, item) => total.plus(item.userUnBondable), BigNumber(0)),
     [delegationsResources],
   );
   const balances = useMemo(
@@ -112,4 +109,10 @@ const Summary = (props: Props) => {
     </Wrapper>
   );
 };
-export default Summary;
+
+function AccountBalanceSummaryFooter({ account }: { account: ElrondAccount | SubAccount }) {
+  if (account.type !== "Account") return null;
+  return <Summary account={account} />;
+}
+
+export default AccountBalanceSummaryFooter;

@@ -10,12 +10,7 @@ type Props = {
   isLast?: boolean;
 };
 
-const Event: React.FC<Props> = ({
-  report,
-  date,
-  showExtraProps = false,
-  isLast,
-}) => {
+const Event: React.FC<Props> = ({ report, date, showExtraProps = false, isLast }) => {
   const [forceShowExtra, setForceShowExtra] = useState(false);
   const propertiesToDisplay = showExtraProps
     ? report
@@ -31,11 +26,7 @@ const Event: React.FC<Props> = ({
   const propertiesText = useMemo(
     () =>
       propertiesToDisplay
-        ? JSON.stringify(
-            propertiesToDisplay,
-            Object.keys(propertiesToDisplay).sort(),
-            2,
-          )
+        ? JSON.stringify(propertiesToDisplay, Object.keys(propertiesToDisplay).sort(), 2)
             .split("\n")
             .slice(1, -1)
             .join("\n")

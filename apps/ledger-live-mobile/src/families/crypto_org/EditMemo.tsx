@@ -12,10 +12,7 @@ import TextInput from "../../components/FocusedTextInput";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.CryptoOrgEditMemo
->;
+type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.CryptoOrgEditMemo>;
 
 function CryptoOrgEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -43,10 +40,7 @@ function CryptoOrgEditMemo({ navigation, route }: Props) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus

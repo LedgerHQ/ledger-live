@@ -5,7 +5,7 @@ import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/t
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
@@ -18,12 +18,7 @@ type Props = {
   isLast?: boolean;
 };
 
-export default function StakingRow({
-  stakingPosition,
-  currency,
-  onPress,
-  isLast = false,
-}: Props) {
+export default function StakingRow({ stakingPosition, currency, onPress, isLast = false }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { validatorId, formattedAmount, staked } = stakingPosition;
@@ -33,9 +28,7 @@ export default function StakingRow({
       style={[
         styles.row,
         styles.wrapper,
-        !isLast
-          ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey }
-          : undefined,
+        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
       ]}
       onPress={() => onPress(stakingPosition)}
     >

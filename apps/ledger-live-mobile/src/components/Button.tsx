@@ -56,9 +56,7 @@ type Props = BaseButtonProps & {
 function ButtonWrapped(props: BaseButtonProps) {
   const isFocused = useIsFocused(); // @Warning be careful not to import the wrapped button outside of navigation context
   const useTouchable = useContext(ButtonUseTouchable);
-  return (
-    <BaseButton {...props} useTouchable={useTouchable} isFocused={isFocused} />
-  );
+  return <BaseButton {...props} useTouchable={useTouchable} isFocused={isFocused} />;
 }
 
 export function BaseButton({
@@ -112,8 +110,7 @@ export function BaseButton({
   ]);
 
   const ButtonIcon = Icon ?? IconRight ?? IconLeft;
-  const buttonIconPosition =
-    iconPosition ?? (IconRight && "right") ?? (IconLeft && "left");
+  const buttonIconPosition = iconPosition ?? (IconRight && "right") ?? (IconLeft && "left");
 
   return (
     <Button

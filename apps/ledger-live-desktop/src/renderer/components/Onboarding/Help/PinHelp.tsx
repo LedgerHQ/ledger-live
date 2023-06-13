@@ -24,16 +24,12 @@ const RuleIconContainer = styled(Flex).attrs({
 const ruleTypes = {
   success: {
     color: "#66BE54",
-    bgColor: Color("#66BE54")
-      .alpha(0.1)
-      .toString(),
+    bgColor: Color("#66BE54").alpha(0.1).toString(),
     Icon: IconCheck,
   },
   error: {
     color: "#EA2E49",
-    bgColor: Color("#EA2E49")
-      .alpha(0.1)
-      .toString(),
+    bgColor: Color("#EA2E49").alpha(0.1).toString(),
     Icon: IconCross,
   },
 };

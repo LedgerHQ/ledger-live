@@ -30,7 +30,6 @@ import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
-import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
@@ -75,9 +74,7 @@ import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect, {
-  deviceConnectHeaderOptions,
-} from "../../screens/DeviceConnect";
+import DeviceConnect, { deviceConnectHeaderOptions } from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
@@ -95,17 +92,13 @@ const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 export default function BaseNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
-  const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
 
   return (
     <Stack.Navigator
@@ -114,11 +107,7 @@ export default function BaseNavigator() {
         ...TransitionPresets.DefaultTransition,
       }}
     >
-      <Stack.Screen
-        name={NavigatorName.Main}
-        component={Main}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
       <Stack.Screen
         name={NavigatorName.BuyDevice}
         component={BuyDeviceNavigator}
@@ -263,14 +252,10 @@ export default function BaseNavigator() {
               since this listener is on top of another navigator
             */
             const onError =
-              route.params?.onError ||
-              (route.params as unknown as typeof route)?.params?.onError;
+              route.params?.onError || (route.params as unknown as typeof route)?.params?.onError;
             // @TODO replace with correct error
             if (onError && typeof onError === "function")
-              onError(
-                route.params.error ||
-                  new Error("Request account interrupted by user"),
-              );
+              onError(route.params.error || new Error("Request account interrupted by user"));
           },
         })}
       />
@@ -284,8 +269,7 @@ export default function BaseNavigator() {
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =
-              route.params?.onClose ||
-              (route.params as unknown as typeof route)?.params?.onClose;
+              route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
             if (onClose && typeof onClose === "function") {
               onClose();
             }
@@ -293,17 +277,8 @@ export default function BaseNavigator() {
         })}
       />
       <Stack.Screen
-        name={NavigatorName.FirmwareUpdate}
-        component={FirmwareUpdateNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
         name={NavigatorName.Exchange}
-        component={
-          ptxSmartRoutingMobile?.enabled
-            ? ExchangeLiveAppNavigator
-            : ExchangeNavigator
-        }
+        component={ptxSmartRoutingMobile?.enabled ? ExchangeLiveAppNavigator : ExchangeNavigator}
         options={
           ptxSmartRoutingMobile?.enabled
             ? { headerShown: false }
@@ -326,9 +301,7 @@ export default function BaseNavigator() {
         name={ScreenName.ProviderView}
         component={ProviderView}
         options={({ route }) => ({
-          headerTitle: () => (
-            <ScreenHeader icon={route.params.icon} name={route.params.name} />
-          ),
+          headerTitle: () => <ScreenHeader icon={route.params.icon} name={route.params.name} />,
           headerStyle: styles.headerNoShadow,
         })}
       />
@@ -397,9 +370,7 @@ export default function BaseNavigator() {
         component={PairDevices}
         options={({ navigation, route }) => ({
           title: "",
-          headerRight: () => (
-            <ErrorHeaderInfo route={route} navigation={navigation} />
-          ),
+          headerRight: () => <ErrorHeaderInfo route={route} navigation={navigation} />,
           headerShown: true,
           headerStyle: styles.headerNoShadow,
         })}
@@ -482,9 +453,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.WalletConnect}
         component={
-          walletConnectLiveApp?.enabled
-            ? WalletConnectLiveAppNavigator
-            : WalletConnectNavigator
+          walletConnectLiveApp?.enabled ? WalletConnectLiveAppNavigator : WalletConnectNavigator
         }
         options={{
           headerShown: false,
@@ -552,8 +521,7 @@ export default function BaseNavigator() {
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =
-              route.params?.onClose ||
-              (route.params as unknown as typeof route)?.params?.onClose;
+              route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
             if (onClose && typeof onClose === "function") {
               onClose();
             }
@@ -575,9 +543,7 @@ export default function BaseNavigator() {
         component={NoFundsFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerRight: () => (
-            <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />
-          ),
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
           headerLeft: () => null,
         }}
       />
@@ -586,9 +552,7 @@ export default function BaseNavigator() {
         component={StakeFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerRight: () => (
-            <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />
-          ),
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
           headerLeft: () => null,
         }}
       />

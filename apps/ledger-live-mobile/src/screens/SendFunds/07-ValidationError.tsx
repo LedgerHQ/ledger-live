@@ -6,10 +6,7 @@ import { useSelector } from "react-redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { TrackScreen } from "../../analytics";
 import ValidateError from "../../components/ValidateError";
-import {
-  context as _wcContext,
-  setCurrentCallRequestError,
-} from "../WalletConnect/Provider";
+import { context as _wcContext, setCurrentCallRequestError } from "../WalletConnect/Provider";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
@@ -20,10 +17,7 @@ import type {
 } from "../../components/RootNavigator/types/helpers";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendValidationError
-  >,
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendValidationError>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 export default function ValidationError({ navigation, route }: Props) {
@@ -43,9 +37,7 @@ export default function ValidationError({ navigation, route }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();
@@ -59,11 +51,7 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen
-        category="SendFunds"
-        name="ValidationError"
-        currencyName={currency?.name}
-      />
+      <TrackScreen category="SendFunds" name="ValidationError" currencyName={currency?.name} />
       {error && (
         <ValidateError
           error={error}
