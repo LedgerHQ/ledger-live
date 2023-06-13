@@ -245,14 +245,27 @@ const OperationD = (props: Props) => {
   const handleOpenEditModal = useCallback(
     (account, parentAccount, transactionRaw, transactionHash) => {
       setDrawer(undefined);
-      dispatch(
-        openModal("MODAL_EDIT_TRANSACTION", {
-          account,
-          parentAccount,
-          transactionRaw,
-          transactionHash,
-        }),
-      );
+      if (subOperations.length > 0 && isToken) {
+        // if the operation is a token operation,(ERC-20 send), in order to speedup/cancel we need to find the subAccount
+        const opAccount = findSubAccountById(account, subOperations[0].accountId);
+        dispatch(
+          openModal("MODAL_EDIT_TRANSACTION", {
+            account: opAccount,
+            parentAccount: account,
+            transactionRaw,
+            transactionHash,
+          }),
+        );
+      } else {
+        dispatch(
+          openModal("MODAL_EDIT_TRANSACTION", {
+            account,
+            parentAccount,
+            transactionRaw,
+            transactionHash,
+          }),
+        );
+      }
     },
     [dispatch],
   );
