@@ -111,8 +111,10 @@ const SelectCurrency = ({
 
   const filteredOptions = useMemo(() => {
     const fuse = new Fuse(options, fuseOptions);
-    return searchInputValue.length > 0 ? fuse.search(searchInputValue).map(res => res.item) : options;
-  }, [searchInputValue, options, fuseOptions])
+    return searchInputValue.length > 0
+      ? fuse.search(searchInputValue).map(res => res.item)
+      : options;
+  }, [searchInputValue, options, fuseOptions]);
 
   return (
     <Select
