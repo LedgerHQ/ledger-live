@@ -4,6 +4,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/core";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { useTheme } from "styled-components/native";
 
 import LText from "../../../components/LText";
 import Link from "../../../components/wrappedUi/Link";
@@ -27,6 +28,7 @@ const EditOperationPanelComponent = ({
   const { t } = useTranslation();
   const flag = useFeature("editEthTx");
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   const onLinkPress = useCallback(() => {
     onPress && onPress();
@@ -37,7 +39,7 @@ const EditOperationPanelComponent = ({
         params: { operation, account, parentAccount },
       });
     }
-  }, [account, parentAccount, operation, onPress]);
+  }, [account, parentAccount, operation, navigation, onPress]);
 
   return flag?.enabled && account ? (
     <Flex
@@ -51,10 +53,14 @@ const EditOperationPanelComponent = ({
     >
       {isOperationStuck ? (
         <Box>
-          <LText color="neutral.c20">{t("editTransaction.panel.stuckMessage")}</LText>
+          <LText color={colors.neutral.c20}>{t("editTransaction.panel.stuckMessage")}</LText>
           <LText marginTop={4}>
             <Link onPress={onLinkPress}>
-              <LText color="neutral.c20" style={{ textDecorationLine: "underline" }} marginTop={4}>
+              <LText
+                color={colors.neutral.c20}
+                style={{ textDecorationLine: "underline" }}
+                marginTop={4}
+              >
                 {t("editTransaction.cta")}
               </LText>
             </Link>
@@ -63,11 +69,11 @@ const EditOperationPanelComponent = ({
       ) : (
         <>
           <Box>
-            <LText color="neutral.c20">{t("editTransaction.panel.speedupMessage")}</LText>
+            <LText color={colors.neutral.c20}>{t("editTransaction.panel.speedupMessage")}</LText>
             <LText marginTop={4}>
               <Link onPress={onLinkPress}>
                 <LText
-                  color="neutral.c20"
+                  color={colors.neutral.c20}
                   style={{ textDecorationLine: "underline" }}
                   marginTop={4}
                 >
