@@ -148,8 +148,7 @@ function OperationRow({
   const isOptimistic = operation.blockHeight === null;
   const isOperationStuck =
     isEditableOperation(account, operation) &&
-    operation.date.getTime() <=
-      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const spinner = isOperationStuck ? (
     <WarningMedium />

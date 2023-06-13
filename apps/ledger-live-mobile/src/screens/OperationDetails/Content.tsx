@@ -129,8 +129,7 @@ export default function Content({
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const uniqueSenders = uniq<(typeof operation.senders)[0]>(operation.senders);
   const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
-  const { extra, type } = operation;
-  const { hasFailed } = operation;
+  const { extra, type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
@@ -144,8 +143,7 @@ export default function Content({
   const isEditable = isEditableOperation(mainAccount, operation);
   const isOperationStuck =
     isEditable &&
-    operation.date.getTime() <=
-      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const specific =
     byFamiliesOperationDetails[
@@ -159,6 +157,7 @@ export default function Content({
       operation,
       mainAccount.currency.id,
     );
+
   const Extra =
     specific && (specific as { OperationDetailsExtra: React.ComponentType }).OperationDetailsExtra
       ? (

@@ -64,7 +64,6 @@ const AccountScreenInner = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
-
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =
