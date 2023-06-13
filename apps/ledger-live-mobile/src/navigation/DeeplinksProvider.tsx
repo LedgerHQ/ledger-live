@@ -2,11 +2,7 @@ import React, { useContext, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking, Platform } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import {
-  getStateFromPath,
-  LinkingOptions,
-  NavigationContainer,
-} from "@react-navigation/native";
+import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import Braze from "react-native-appboy-sdk";
@@ -77,11 +73,7 @@ function getProxyURL(url: string) {
   const { hostname, pathname } = uri;
   const platform = pathname.split("/")[1];
 
-  if (
-    hostname === "discover" &&
-    platform &&
-    recoverManifests.includes(platform)
-  ) {
+  if (hostname === "discover" && platform && recoverManifests.includes(platform)) {
     return url.replace("://discover", "://recover");
   }
 
@@ -103,9 +95,7 @@ const linkingOptions = {
         resolve(initialUrl);
       });
     });
-    return brazeUrl && !isInvalidWalletConnectLink(brazeUrl)
-      ? getProxyURL(brazeUrl)
-      : null;
+    return brazeUrl && !isInvalidWalletConnectLink(brazeUrl) ? getProxyURL(brazeUrl) : null;
   },
 
   prefixes: [
@@ -257,15 +247,11 @@ const linkingOptions = {
               [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
-          [NavigatorName.Swap]: {
-            screens: {
-              /**
-               * @params ?currency: string
-               * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
-               */
-              [ScreenName.Swap]: "swap",
-            },
-          },
+          /**
+           * ie: "ledgerlive://swap" -> will redirect to the main swap page
+           */
+          [NavigatorName.Swap]: "swap",
+
           [NavigatorName.SendFunds]: {
             screens: {
               /**
@@ -310,10 +296,6 @@ const linkingOptions = {
             },
           },
 
-          /**
-           * ie: "ledgerlive://swap" -> will redirect to the main swap page
-           */
-          [NavigatorName.Swap]: "swap",
           [NavigatorName.Settings]: {
             initialRouteName: [ScreenName.SettingsScreen],
             screens: {
@@ -380,8 +362,7 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
                */
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
-              [ScreenName.RedirectToRecoverStaxFlow]:
-                "recover-restore-stax-flow",
+              [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
             },
           },
         },
@@ -475,9 +456,7 @@ export const DeeplinksProvider = ({
               return getStateFromPath(path, config);
             }
 
-            const manifest = manifests.find(
-              m => m.id.toLowerCase() === platform.toLowerCase(),
-            );
+            const manifest = manifests.find(m => m.id.toLowerCase() === platform.toLowerCase());
             if (!manifest) return undefined;
             url.pathname = `/${manifest.id}`;
             url.searchParams.set("name", manifest.name);

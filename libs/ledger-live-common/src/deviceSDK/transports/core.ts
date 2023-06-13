@@ -22,7 +22,7 @@ export { Transport };
 // So a queue is indeed created for each device, by creating a chain of promises, but only the end of the queue is stored for each device.
 const deviceQueues: { [deviceId: string]: Promise<void> } = {};
 
-const identifyTransport = (t) => (typeof t.id === "string" ? t.id : "");
+const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
 
 const needsCleanup = {};
 // When a series of APDUs are interrupted, this is called
@@ -60,10 +60,8 @@ export type JobArgs = {
  *   - transportRef: a reference to the transport that can be updated by calling a transportRef.refreshTransport()
  */
 export const withTransport = (deviceId: string) => {
-  return <T>(
-    job: ({ transportRef }: JobArgs) => Observable<T>
-  ): Observable<T> =>
-    new Observable((subscriber) => {
+  return <T>(job: ({ transportRef }: JobArgs) => Observable<T>): Observable<T> =>
+    new Observable(subscriber => {
       const nonce = withRefreshableTransportNonce++;
       log("withTransport", `${nonce}: New job: deviceId=${deviceId || "USB"}`);
 
@@ -77,14 +75,14 @@ export const withTransport = (deviceId: string) => {
         return close(transport, deviceId)
           .catch(() => {})
           .then(() => {
-            cleanups.forEach((c) => c());
+            cleanups.forEach(c => c());
           });
       };
 
       // When we'll finish all the current job, we'll call finish
       let resolveQueuedDevice;
       // This new promise is the next exec queue
-      deviceQueues[deviceId] = new Promise((resolve) => {
+      deviceQueues[deviceId] = new Promise(resolve => {
         resolveQueuedDevice = resolve;
       });
 
@@ -120,9 +118,7 @@ export const withTransport = (deviceId: string) => {
       };
 
       // Returns an object containing: the reference to a transport and a function to refresh it
-      const buildRefreshableTransport = (
-        transport: Transport
-      ): TransportRef => {
+      const buildRefreshableTransport = (transport: Transport): TransportRef => {
         const transportRef: TransportRef = {
           current: transport,
           _refreshedCounter: 0,
@@ -135,7 +131,7 @@ export const withTransport = (deviceId: string) => {
               // Silently ignore errors on transport close
               .catch(() => {})
               .then(async () => open(deviceId))
-              .then(async (newTransport) => {
+              .then(async newTransport => {
                 await setupTransport(transportRef.current);
 
                 transportRef.current = newTransport;
@@ -152,7 +148,7 @@ export const withTransport = (deviceId: string) => {
         .then(() => {
           return open(deviceId);
         })
-        .then((transport) => {
+        .then(transport => {
           return buildRefreshableTransport(transport);
         })
         .then(async (transportRef: TransportRef) => {
@@ -162,7 +158,7 @@ export const withTransport = (deviceId: string) => {
         })
         .catch(onErrorDuringTransportSetup)
         // Executes the job
-        .then((transportRef) => {
+        .then(transportRef => {
           if (!transportRef.current) return;
 
           if (unsubscribed) {
@@ -177,11 +173,11 @@ export const withTransport = (deviceId: string) => {
               transportFinally(() => {
                 log("withTransport", `${nonce}: job fully completed`);
                 return finalize(transportRef.current, [resolveQueuedDevice]);
-              })
+              }),
             )
             .subscribe(subscriber);
         })
-        .catch((error) => {
+        .catch(error => {
           subscriber.error(error);
         });
 
@@ -198,7 +194,7 @@ export const withTransport = (deviceId: string) => {
 const transportFinally =
   (cleanup: () => Promise<void>) =>
   <T>(observable: Observable<T>): Observable<T> =>
-    new Observable((o) => {
+    new Observable(o => {
       let done = false;
 
       const finalize = () => {
@@ -208,11 +204,11 @@ const transportFinally =
       };
 
       const sub = observable.subscribe({
-        next: (e) => o.next(e),
+        next: e => o.next(e),
         complete: () => {
           finalize().then(() => o.complete());
         },
-        error: (e) => {
+        error: e => {
           finalize().then(() => o.error(e));
         },
       });
@@ -222,7 +218,7 @@ const transportFinally =
       };
     });
 
-const initialErrorRemapping = (error) => {
+const initialErrorRemapping = error => {
   return throwError(
     error &&
       error instanceof TransportStatusError &&
@@ -231,13 +227,11 @@ const initialErrorRemapping = (error) => {
       ? new DeviceHalted(error.message)
       : error.statusCode === 0x6b00
       ? new FirmwareOrAppUpdateRequired(error.message)
-      : error
+      : error,
   );
 };
 
-let errorRemapping = (e) => throwError(e);
-export const setErrorRemapping = (
-  f: (arg0: Error) => Observable<never>
-): void => {
+let errorRemapping = e => throwError(e);
+export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
 };

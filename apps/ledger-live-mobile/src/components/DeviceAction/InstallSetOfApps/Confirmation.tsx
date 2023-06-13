@@ -15,10 +15,7 @@ const Confirmation = ({ onConfirm, onReject, productName }: Props) => (
       <Illustration />
     </Flex>
     <Text variant="h5" fontWeight="semiBold" textAlign="center">
-      <Trans
-        i18nKey="installSetOfApps.landing.title"
-        values={{ productName }}
-      />
+      <Trans i18nKey="installSetOfApps.landing.title" values={{ productName }} />
     </Text>
     <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={3}>
       <Trans i18nKey="installSetOfApps.landing.subtitle" />

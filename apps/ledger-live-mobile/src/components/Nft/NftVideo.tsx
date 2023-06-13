@@ -43,14 +43,7 @@ class NftVideo extends React.PureComponent<Props> {
   };
 
   render() {
-    const {
-      style,
-      src,
-      colors,
-      resizeMode = "cover",
-      srcFallback,
-      children,
-    } = this.props;
+    const { style, src, colors, resizeMode = "cover", srcFallback, children } = this.props;
     const { isPosterMode } = this.state;
 
     return (

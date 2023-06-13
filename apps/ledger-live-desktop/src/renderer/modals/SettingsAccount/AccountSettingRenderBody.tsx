@@ -79,33 +79,33 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
       accountName: value,
     });
 
-  handleSubmit = (account: Account, onClose: () => void) => (
-    e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>,
-  ) => {
-    e.preventDefault();
-    const { updateAccount, setDataModal } = this.props;
-    const { accountName, accountUnit, endpointConfig, endpointConfigError } = this.state;
-    if (!account.name.length) {
-      this.setState({
-        accountNameError: new AccountNameRequiredError(),
-      });
-    } else if (!endpointConfigError) {
-      const name = validateNameEdition(account, accountName);
-      account = {
-        ...account,
-        unit: accountUnit || account.unit,
-        name,
-      };
-      if (endpointConfig && !endpointConfigError) {
-        account.endpointConfig = endpointConfig;
+  handleSubmit =
+    (account: Account, onClose: () => void) =>
+    (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
+      e.preventDefault();
+      const { updateAccount, setDataModal } = this.props;
+      const { accountName, accountUnit, endpointConfig, endpointConfigError } = this.state;
+      if (!account.name.length) {
+        this.setState({
+          accountNameError: new AccountNameRequiredError(),
+        });
+      } else if (!endpointConfigError) {
+        const name = validateNameEdition(account, accountName);
+        account = {
+          ...account,
+          unit: accountUnit || account.unit,
+          name,
+        };
+        if (endpointConfig && !endpointConfigError) {
+          account.endpointConfig = endpointConfig;
+        }
+        updateAccount(account);
+        setDataModal("MODAL_SETTINGS_ACCOUNT", {
+          account,
+        });
+        onClose();
       }
-      updateAccount(account);
-      setDataModal("MODAL_SETTINGS_ACCOUNT", {
-        account,
-      });
-      onClose();
-    }
-  };
+    };
 
   handleFocus = (e: React.FocusEvent<HTMLInputElement>, name: string) => {
     e.target.select();

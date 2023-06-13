@@ -26,10 +26,7 @@ const analyticsButtonEventProps = {
 };
 
 const Step0Welcome: React.FC<
-  StackScreenProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageStep0Welcome
-  >
+  StackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
 > = ({ route }) => {
   const theme = useTheme();
   const [modalOpened, setModalOpened] = useState(false);
@@ -62,8 +59,7 @@ const Step0Welcome: React.FC<
           }
           style={{
             width: screenWidth,
-            height:
-              (videoDimensions.height / videoDimensions.width) * screenWidth,
+            height: (videoDimensions.height / videoDimensions.width) * screenWidth,
           }}
           muted
           repeat
@@ -95,11 +91,7 @@ const Step0Welcome: React.FC<
           </Button>
         </BottomButtonsContainer>
       </Flex>
-      <CustomImageBottomModal
-        device={device}
-        isOpened={modalOpened}
-        onClose={closeModal}
-      />
+      <CustomImageBottomModal device={device} isOpened={modalOpened} onClose={closeModal} />
     </SafeAreaView>
   );
 };

@@ -80,12 +80,13 @@ const StepFlashMcu = ({
     let sub: null | Subscriber<DeviceInfo>;
 
     if (isMcuUpdateFinished) {
-      sub = (getEnv("MOCK")
-        ? mockedEventEmitter()
-        : withDevicePolling("")(
-            transport => from(getDeviceInfo(transport)),
-            () => true,
-          )
+      sub = (
+        getEnv("MOCK")
+          ? mockedEventEmitter()
+          : withDevicePolling("")(
+              transport => from(getDeviceInfo(transport)),
+              () => true,
+            )
       )
         .pipe(timeout(5 * 60 * 1000))
         .subscribe({
@@ -132,9 +133,8 @@ const StepFlashMcu = ({
     }, DELAY_PHASE);
     let endOfFirstFlashMcuTimeout: null | ReturnType<typeof setTimeout>;
 
-    const sub = (getEnv("MOCK")
-      ? mockedEventEmitter()
-      : firmwareUpdateMain("", firmware)
+    const sub = (
+      getEnv("MOCK") ? mockedEventEmitter() : firmwareUpdateMain("", firmware)
     ).subscribe({
       next: ({ progress, installing }: { progress: number; installing: string }) => {
         setProgress(progress);

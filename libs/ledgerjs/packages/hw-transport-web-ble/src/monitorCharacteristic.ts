@@ -2,10 +2,8 @@ import { Observable } from "rxjs";
 import type { Characteristic } from "./types";
 import { log } from "@ledgerhq/logs";
 
-export const monitorCharacteristic = (
-  characteristic: Characteristic
-): Observable<Buffer> =>
-  Observable.create((o) => {
+export const monitorCharacteristic = (characteristic: Characteristic): Observable<Buffer> =>
+  Observable.create(o => {
     log("ble-verbose", "start monitor " + characteristic.uuid);
 
     function onCharacteristicValueChanged(event) {
@@ -17,10 +15,7 @@ export const monitorCharacteristic = (
     }
 
     characteristic.startNotifications().then(() => {
-      characteristic.addEventListener(
-        "characteristicvaluechanged",
-        onCharacteristicValueChanged
-      );
+      characteristic.addEventListener("characteristicvaluechanged", onCharacteristicValueChanged);
     });
     return () => {
       log("ble-verbose", "end monitor " + characteristic.uuid);

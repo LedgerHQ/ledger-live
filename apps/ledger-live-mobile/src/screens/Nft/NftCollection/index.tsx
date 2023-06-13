@@ -12,12 +12,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
-import {
-  Account,
-  DailyOperationsSection,
-  Operation,
-  ProtoNFT,
-} from "@ledgerhq/types-live";
+import { Account, DailyOperationsSection, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -65,10 +60,7 @@ const NftCollection = ({ route }: NavigationProps) => {
 
   // nfts' list related -----
   const [nftCount, setNftCount] = useState(MAX_NFT_FIRST_RENDER);
-  const nfts = useMemo(
-    () => collection?.slice(0, nftCount),
-    [nftCount, collection],
-  );
+  const nfts = useMemo(() => collection?.slice(0, nftCount), [nftCount, collection]);
   const sendToken = () => {
     account &&
       navigation.navigate(NavigatorName.SendFunds, {
@@ -108,8 +100,7 @@ const NftCollection = ({ route }: NavigationProps) => {
   const [opCount, setOpCount] = useState(100);
   const { sections, completed } = groupAccountOperationsByDay(account!, {
     count: opCount,
-    filterOperation: op =>
-      !!op?.nftOperations?.find(op => op?.contract === nft?.contract),
+    filterOperation: op => !!op?.nftOperations?.find(op => op?.contract === nft?.contract),
   });
 
   const renderOperationItem = useCallback(
@@ -138,8 +129,7 @@ const NftCollection = ({ route }: NavigationProps) => {
   const onCloseModal = useCallback(() => {
     setOpen(false);
   }, []);
-  const isNFTDisabled =
-    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+  const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   const data = [
     <View style={styles.buttonContainer}>
@@ -171,9 +161,7 @@ const NftCollection = ({ route }: NavigationProps) => {
         renderSectionHeader={renderOperationSectionHeader}
         onEndReached={onOperationsEndReached}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={
-          !completed ? <LoadingFooter /> : <NoMoreOperationFooter />
-        }
+        ListFooterComponent={!completed ? <LoadingFooter /> : <NoMoreOperationFooter />}
       />
     </View>,
   ];

@@ -16,16 +16,13 @@ describe("useToggleOnboardingEarlyCheck", () => {
   });
 
   it("should return a success state when the toggle action is successful", async () => {
-    mockedToggleOnboardingEarlyCheckAction.mockReturnValue(
-      of({ toggleStatus: "success" })
-    );
+    mockedToggleOnboardingEarlyCheckAction.mockReturnValue(of({ toggleStatus: "success" }));
     const { result } = renderHook(() =>
       useToggleOnboardingEarlyCheck({
-        toggleOnboardingEarlyCheckAction:
-          mockedToggleOnboardingEarlyCheckAction,
+        toggleOnboardingEarlyCheckAction: mockedToggleOnboardingEarlyCheckAction,
         deviceId: "",
         toggleType: "enter",
-      })
+      }),
     );
 
     await act(async () => {
@@ -40,7 +37,7 @@ describe("useToggleOnboardingEarlyCheck", () => {
   it("should return a state initialized and reset at null when successively triggering the hook", async () => {
     const delayMs = 1000;
     mockedToggleOnboardingEarlyCheckAction.mockReturnValue(
-      of({ toggleStatus: "success" }).pipe(delay(delayMs))
+      of({ toggleStatus: "success" }).pipe(delay(delayMs)),
     );
 
     // Step 1: enter
@@ -48,18 +45,17 @@ describe("useToggleOnboardingEarlyCheck", () => {
 
     const { result, rerender } = renderHook(() =>
       useToggleOnboardingEarlyCheck({
-        toggleOnboardingEarlyCheckAction:
-          mockedToggleOnboardingEarlyCheckAction,
+        toggleOnboardingEarlyCheckAction: mockedToggleOnboardingEarlyCheckAction,
         deviceId: "",
         toggleType,
-      })
+      }),
     );
 
     // No response for now from the action -> reset to `none` value
     expect(result.current.state).toEqual(
       expect.objectContaining({
         toggleStatus: "none",
-      })
+      }),
     );
 
     await act(async () => {
@@ -78,7 +74,7 @@ describe("useToggleOnboardingEarlyCheck", () => {
     expect(result.current.state).toEqual(
       expect.objectContaining({
         toggleStatus: "none",
-      })
+      }),
     );
 
     await act(async () => {
@@ -100,7 +96,7 @@ describe("useToggleOnboardingEarlyCheck", () => {
     expect(result.current.state).toEqual(
       expect.objectContaining({
         toggleStatus: "none",
-      })
+      }),
     );
 
     // Step 4: again an enter
@@ -111,7 +107,7 @@ describe("useToggleOnboardingEarlyCheck", () => {
     expect(result.current.state).toEqual(
       expect.objectContaining({
         toggleStatus: "none",
-      })
+      }),
     );
 
     await act(async () => {

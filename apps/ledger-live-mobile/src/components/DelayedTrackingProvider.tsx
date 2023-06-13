@@ -39,9 +39,7 @@ const getDelayedEvents = async (): Promise<TrackingEvent[] | null> => {
   }
 };
 
-export const pushDelayedTrackingEvent = async (
-  event: TrackingEvent,
-): Promise<void> => {
+export const pushDelayedTrackingEvent = async (event: TrackingEvent): Promise<void> => {
   try {
     const events = (await getDelayedEvents()) || [];
 
@@ -49,9 +47,7 @@ export const pushDelayedTrackingEvent = async (
 
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(events));
   } catch (error) {
-    console.error(
-      `Failed to push new delayed tracking event with error "${error}"`,
-    );
+    console.error(`Failed to push new delayed tracking event with error "${error}"`);
   }
 };
 
@@ -100,9 +96,7 @@ export default function DelayedTrackingProvider() {
           }
         });
       } catch (error) {
-        console.error(
-          `Failed to handle delayed tracking events with error "${error}"`,
-        );
+        console.error(`Failed to handle delayed tracking events with error "${error}"`);
       }
     };
     handleDelayedTracking();

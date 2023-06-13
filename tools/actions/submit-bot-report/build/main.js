@@ -5254,9 +5254,7 @@ async function main() {
         body: JSON.stringify({ body: await fullReportBodyP })
       }).then(handleErrors).then((r) => r.json());
     } catch (e) {
-      console.error(
-        "Couldn't send the full report. fallbacking on the lighter version"
-      );
+      console.error("Couldn't send the full report. fallbacking on the lighter version");
       const reportBodyP = fs.promises.readFile(
         path.join(reportsFolder, "github-report.md"),
         "utf-8"
@@ -5273,10 +5271,7 @@ async function main() {
   }
   if (slackApiToken && githubComment) {
     const slackCommentTemplate = await slackCommentTemplateP;
-    const text = slackCommentTemplate.replace(
-      "{{url}}",
-      githubComment.html_url
-    );
+    const text = slackCommentTemplate.replace("{{url}}", githubComment.html_url);
     await (0, import_isomorphic_unfetch.default)("https://slack.com/api/chat.postMessage", {
       method: "POST",
       headers: {

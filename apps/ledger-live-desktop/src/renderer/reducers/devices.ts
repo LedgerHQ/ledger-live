@@ -76,6 +76,6 @@ export function getDevices(state: { devices: DevicesState }) {
   return state.devices.devices;
 }
 export default handleActions<DevicesState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as DevicesHandlers<false>,
+  handlers as unknown as DevicesHandlers<false>,
   initialState,
 );

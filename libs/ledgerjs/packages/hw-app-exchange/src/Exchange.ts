@@ -38,15 +38,10 @@ export default class Exchange {
   transactionType: ExchangeTypes;
   transactionRate: RateTypes;
   allowedStatuses: Array<number> = [
-    0x9000, 0x6a80, 0x6a81, 0x6a82, 0x6a83, 0x6a84, 0x6a85, 0x6e00, 0x6d00,
-    0x9d1a,
+    0x9000, 0x6a80, 0x6a81, 0x6a82, 0x6a83, 0x6a84, 0x6a85, 0x6e00, 0x6d00, 0x9d1a,
   ];
 
-  constructor(
-    transport: Transport,
-    transactionType: ExchangeTypes,
-    transactionRate?: RateTypes
-  ) {
+  constructor(transport: Transport, transactionType: ExchangeTypes, transactionRate?: RateTypes) {
     this.transactionType = transactionType;
     this.transactionRate = transactionRate || RateTypes.Fixed;
     this.transport = transport;
@@ -59,7 +54,7 @@ export default class Exchange {
       this.transactionRate,
       this.transactionType,
       Buffer.alloc(0),
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
 
@@ -80,7 +75,7 @@ export default class Exchange {
       this.transactionRate,
       this.transactionType,
       partnerNameAndPublicKey,
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
   }
@@ -92,7 +87,7 @@ export default class Exchange {
       this.transactionRate,
       this.transactionType,
       signatureOfPartnerData,
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
   }
@@ -113,7 +108,7 @@ export default class Exchange {
       this.transactionRate,
       this.transactionType,
       bufferToSend,
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
   }
@@ -125,7 +120,7 @@ export default class Exchange {
       this.transactionRate,
       this.transactionType,
       transactionSignature,
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
   }
@@ -133,14 +128,13 @@ export default class Exchange {
   async checkPayoutAddress(
     payoutCurrencyConfig: Buffer,
     currencyConfigSignature: Buffer,
-    addressParameters: Buffer
+    addressParameters: Buffer,
   ): Promise<void> {
     invariant(payoutCurrencyConfig.length <= 255, "Currency config is too big");
     invariant(addressParameters.length <= 255, "Address parameter is too big.");
     invariant(
-      currencyConfigSignature.length >= 67 &&
-        currencyConfigSignature.length <= 73,
-      "Signature should be DER serialized and have length in [67, 73] bytes."
+      currencyConfigSignature.length >= 67 && currencyConfigSignature.length <= 73,
+      "Signature should be DER serialized and have length in [67, 73] bytes.",
     );
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([payoutCurrencyConfig.length]),
@@ -151,13 +145,11 @@ export default class Exchange {
     ]);
     const result: Buffer = await this.transport.send(
       0xe0,
-      this.transactionType === ExchangeTypes.Swap
-        ? CHECK_PAYOUT_ADDRESS
-        : CHECK_ASSET_IN,
+      this.transactionType === ExchangeTypes.Swap ? CHECK_PAYOUT_ADDRESS : CHECK_ASSET_IN,
       this.transactionRate,
       this.transactionType,
       bufferToSend,
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
   }
@@ -165,14 +157,13 @@ export default class Exchange {
   async checkRefundAddress(
     refundCurrencyConfig: Buffer,
     currencyConfigSignature: Buffer,
-    addressParameters: Buffer
+    addressParameters: Buffer,
   ): Promise<void> {
     invariant(refundCurrencyConfig.length <= 255, "Currency config is too big");
     invariant(addressParameters.length <= 255, "Address parameter is too big.");
     invariant(
-      currencyConfigSignature.length >= 67 &&
-        currencyConfigSignature.length <= 73,
-      "Signature should be DER serialized and have length in [67, 73] bytes."
+      currencyConfigSignature.length >= 67 && currencyConfigSignature.length <= 73,
+      "Signature should be DER serialized and have length in [67, 73] bytes.",
     );
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([refundCurrencyConfig.length]),
@@ -187,7 +178,7 @@ export default class Exchange {
       this.transactionRate,
       this.transactionType,
       bufferToSend,
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
   }
@@ -199,7 +190,7 @@ export default class Exchange {
       this.transactionRate,
       this.transactionType,
       Buffer.alloc(0),
-      this.allowedStatuses
+      this.allowedStatuses,
     );
     maybeThrowProtocolError(result);
   }

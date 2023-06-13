@@ -12,12 +12,7 @@ export function SearchBar({
 
   return (
     <>
-      <Flex
-        backgroundColor="background.main"
-        marginBottom={16}
-        flexDirection={"row"}
-        zIndex={10}
-      >
+      <Flex backgroundColor="background.main" marginBottom={16} flexDirection={"row"} zIndex={10}>
         <SearchInput
           containerStyle={{
             flexGrow: 1,

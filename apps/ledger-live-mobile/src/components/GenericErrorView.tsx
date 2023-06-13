@@ -107,11 +107,7 @@ const GenericErrorView = ({
       ) : null}
       {children}
       {hasExportLogButton ? (
-        <StyledLink
-          Icon={exportLogIcon}
-          onPress={onExport}
-          iconPosition={exportLogIconPosition}
-        >
+        <StyledLink Icon={exportLogIcon} onPress={onExport} iconPosition={exportLogIconPosition}>
           {t("common.saveLogs")}
         </StyledLink>
       ) : null}

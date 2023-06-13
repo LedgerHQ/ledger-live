@@ -6,12 +6,7 @@ import React from "react";
 const ValidatorHead = ({ title }: { title?: string }) => {
   return (
     <View style={styles.validatorHead}>
-      <Text
-        style={styles.validatorHeadText}
-        color="smoke"
-        numberOfLines={1}
-        fontWeight="semiBold"
-      >
+      <Text style={styles.validatorHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
         {title ?? <Trans i18nKey="delegation.validator" />}
       </Text>
       <View style={styles.validatorHeadContainer}>

@@ -1,11 +1,6 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import {
-  Account,
-  Operation,
-  OperationType,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
 import { getEstimatedFees } from "./logic";
@@ -17,7 +12,7 @@ import { Transaction as EvmTransaction } from "./types";
 export const buildOptimisticCoinOperation = (
   account: Account,
   transaction: EvmTransaction,
-  transactionType?: OperationType
+  transactionType?: OperationType,
 ): Operation => {
   const type = transactionType ?? "OUT";
   const estimatedFees = getEstimatedFees(transaction);
@@ -49,13 +44,11 @@ export const buildOptimisticCoinOperation = (
 export const buildOptimisticTokenOperation = (
   account: Account,
   tokenAccount: TokenAccount,
-  transaction: EvmTransaction
+  transaction: EvmTransaction,
 ): Operation => {
   const type = "OUT";
   const estimatedFees = getEstimatedFees(transaction);
-  const value = transaction.useAllAmount
-    ? tokenAccount.balance
-    : transaction.amount;
+  const value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
 
   const coinOperation = buildOptimisticCoinOperation(
     account,
@@ -64,7 +57,7 @@ export const buildOptimisticTokenOperation = (
       recipient: tokenAccount.token.contractAddress,
       amount: new BigNumber(0),
     },
-    "FEES"
+    "FEES",
   );
   // keys marked with a <-- will be updated by the broadcast method
   const operation: Operation = {
@@ -97,12 +90,9 @@ export const buildOptimisticTokenOperation = (
  */
 export const buildOptimisticOperation = (
   account: Account,
-  transaction: EvmTransaction
+  transaction: EvmTransaction,
 ): Operation => {
-  const subAccount = findSubAccountById(
-    account,
-    transaction?.subAccountId || ""
-  );
+  const subAccount = findSubAccountById(account, transaction?.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
 
   return isTokenTransaction

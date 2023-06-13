@@ -88,8 +88,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
 }) => {
   const dispatchRedux = useDispatch();
 
-  const [pairingFlowStep, setPairingFlowStep] =
-    useState<PairingFlowStep>("scanning");
+  const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep>("scanning");
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
   const [isPaired, setIsPaired] = useState(false);
@@ -166,9 +165,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
       requestToSetHeaderOptions({
         type: "set",
         options: {
-          headerLeft: () => (
-            <NavigationHeaderBackButton onPress={onGoBackFromScanning} />
-          ),
+          headerLeft: () => <NavigationHeaderBackButton onPress={onGoBackFromScanning} />,
           headerRight: () => null,
         },
       });
@@ -178,9 +175,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
           type: "set",
           options: {
             headerLeft: () => null,
-            headerRight: () => (
-              <NavigationHeaderCloseButton onPress={onRetryPairingFlow} />
-            ),
+            headerRight: () => <NavigationHeaderCloseButton onPress={onRetryPairingFlow} />,
           },
         });
       } else {

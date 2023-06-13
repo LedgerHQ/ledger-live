@@ -13,10 +13,8 @@ export type GetVersionCmdEvent =
 
 export type GetVersionCmdArgs = { transport: Transport };
 
-export function getVersion({
-  transport,
-}: GetVersionCmdArgs): Observable<GetVersionCmdEvent> {
-  return new Observable((subscriber) => {
+export function getVersion({ transport }: GetVersionCmdArgs): Observable<GetVersionCmdEvent> {
+  return new Observable(subscriber => {
     // TODO: defines actual value
     const oldTimeout = transport.unresponsiveTimeout;
     transport.setExchangeUnresponsiveTimeout(1000);
@@ -96,9 +94,7 @@ export function getVersion({
 
             // if SE: mcu version
             const mcuVersionLength = data[i++];
-            let mcuVersionBuf: Buffer = Buffer.from(
-              data.slice(i, i + mcuVersionLength)
-            );
+            let mcuVersionBuf: Buffer = Buffer.from(data.slice(i, i + mcuVersionLength));
             i += mcuVersionLength;
 
             if (mcuVersionBuf[mcuVersionBuf.length - 1] === 0) {
@@ -114,16 +110,14 @@ export function getVersion({
               if (isBootloaderVersionSupported(seVersion, deviceModel?.id)) {
                 const bootloaderVersionLength = data[i++];
                 let bootloaderVersionBuf: Buffer = Buffer.from(
-                  data.slice(i, i + bootloaderVersionLength)
+                  data.slice(i, i + bootloaderVersionLength),
                 );
                 i += bootloaderVersionLength;
 
-                if (
-                  bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0
-                ) {
+                if (bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0) {
                   bootloaderVersionBuf = bootloaderVersionBuf.slice(
                     0,
-                    bootloaderVersionBuf.length - 1
+                    bootloaderVersionBuf.length - 1,
                   );
                 }
                 bootloaderVersion = bootloaderVersionBuf.toString();
@@ -131,17 +125,13 @@ export function getVersion({
 
               if (isHardwareVersionSupported(seVersion, deviceModel?.id)) {
                 const hardwareVersionLength = data[i++];
-                hardwareVersion = data
-                  .slice(i, i + hardwareVersionLength)
-                  .readUIntBE(0, 1); // ?? string? number?
+                hardwareVersion = data.slice(i, i + hardwareVersionLength).readUIntBE(0, 1); // ?? string? number?
                 i += hardwareVersionLength;
               }
 
               if (isDeviceLocalizationSupported(seVersion, deviceModel?.id)) {
                 const languageIdLength = data[i++];
-                languageId = data
-                  .slice(i, i + languageIdLength)
-                  .readUIntBE(0, 1);
+                languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
               }
             }
           }
@@ -164,7 +154,7 @@ export function getVersion({
             },
           });
         }),
-        finalize(() => transport.setExchangeUnresponsiveTimeout(oldTimeout))
+        finalize(() => transport.setExchangeUnresponsiveTimeout(oldTimeout)),
       )
       .subscribe(subscriber);
   });
@@ -183,15 +173,12 @@ const deviceVersionRangesForBootloaderVersion: {
  * @returns whether the Bootloader Version bytes are included in the result of the
  * getVersion APDU
  **/
-export const isBootloaderVersionSupported = (
-  seVersion: string,
-  modelId?: DeviceModelId
-): boolean =>
+export const isBootloaderVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
   !!modelId &&
   !!deviceVersionRangesForBootloaderVersion[modelId] &&
   !!versionSatisfies(
     semverCoerce(seVersion) || seVersion,
-    deviceVersionRangesForBootloaderVersion[modelId] as string
+    deviceVersionRangesForBootloaderVersion[modelId] as string,
   );
 
 const deviceVersionRangesForHardwareVersion: {
@@ -204,13 +191,10 @@ const deviceVersionRangesForHardwareVersion: {
  * @returns whether the Hardware Version bytes are included in the result of the
  * getVersion APDU
  **/
-export const isHardwareVersionSupported = (
-  seVersion: string,
-  modelId?: DeviceModelId
-): boolean =>
+export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
   !!modelId &&
   !!deviceVersionRangesForHardwareVersion[modelId] &&
   !!versionSatisfies(
     semverCoerce(seVersion) || seVersion,
-    deviceVersionRangesForHardwareVersion[modelId] as string
+    deviceVersionRangesForHardwareVersion[modelId] as string,
   );

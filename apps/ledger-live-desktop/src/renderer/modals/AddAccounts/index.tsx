@@ -239,15 +239,8 @@ class AddAccounts extends PureComponent<Props, State> {
       flow = "add account",
       preventSkippingCurrencySelection,
     } = this.props;
-    const {
-      currency,
-      scannedAccounts,
-      checkedAccountsIds,
-      scanStatus,
-      err,
-      editedNames,
-      reset,
-    } = this.state;
+    const { currency, scannedAccounts, checkedAccountsIds, scanStatus, err, editedNames, reset } =
+      this.state;
     let { stepId } = this.state;
     const stepperProps = {
       currency,

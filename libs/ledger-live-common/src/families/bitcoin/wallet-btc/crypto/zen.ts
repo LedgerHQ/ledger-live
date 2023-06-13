@@ -33,11 +33,7 @@ class Zen extends Base {
     this.network.usesTimestampedTransaction = false;
   }
 
-  async getLegacyAddress(
-    xpub: string,
-    account: number,
-    index: number
-  ): Promise<string> {
+  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
@@ -49,7 +45,7 @@ class Zen extends Base {
     derivationMode: string,
     xpub: string,
     account: number,
-    index: number
+    index: number,
   ): Promise<string> {
     return await this.getLegacyAddress(xpub, account, index);
   }
@@ -59,9 +55,7 @@ class Zen extends Base {
       throw new InvalidAddress();
     }
     let outputScript: Buffer;
-    const version = Number(
-      "0x" + bs58check.decode(address).slice(0, 2).toString("hex")
-    );
+    const version = Number("0x" + bs58check.decode(address).slice(0, 2).toString("hex"));
     if (version === this.network.pubKeyHash) {
       //Pay-to-PubkeyHash
       outputScript = bjs.payments.p2pkh({
@@ -78,7 +72,7 @@ class Zen extends Base {
     // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/scripts/BitcoinLikeScript.cpp#L139 and https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/networks.cpp#L39 for bip115 Script and its network parameters
     const bip115Script = Buffer.from(
       "209ec9845acb02fab24e1c0368b3b517c1a4488fba97f0e3459ac053ea0100000003c01f02b4",
-      "hex"
+      "hex",
     );
     return Buffer.concat([outputScript, bip115Script]);
   }
@@ -87,12 +81,7 @@ class Zen extends Base {
     const res = bs58check.decodeUnsafe(address);
     if (!res) return false;
     // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/networks.cpp#L142
-    return (
-      res &&
-      res.length > 3 &&
-      res[0] === 0x20 &&
-      (res[1] === 0x89 || res[1] === 0x96)
-    );
+    return res && res.length > 3 && res[0] === 0x20 && (res[1] === 0x89 || res[1] === 0x96);
   }
 }
 

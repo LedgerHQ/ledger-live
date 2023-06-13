@@ -22,7 +22,7 @@ for (const [id, config, signature] of all) {
  *
  */
 export const findTestExchangeCurrencyConfig = (
-  id: string
+  id: string,
 ):
   | {
       config: string;

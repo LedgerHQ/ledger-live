@@ -42,12 +42,7 @@ const AppUninstallButton = ({
 
   return (
     <TouchableOpacity onPress={uninstallApp}>
-      <ButtonContainer
-        width={size}
-        height={size}
-        borderRadius={size}
-        borderColor="error.c50"
-      >
+      <ButtonContainer width={size} height={size} borderRadius={size} borderColor="error.c50">
         <Icons.TrashMedium size={size * 0.375} color="error.c50" />
       </ButtonContainer>
     </TouchableOpacity>

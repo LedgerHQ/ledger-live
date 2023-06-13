@@ -10,10 +10,7 @@ import { DiscoverNavigatorStackParamList } from "./types/DiscoverNavigator";
 
 export default function DiscoverNavigator() {
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   const config = useFeature("discover");
 

@@ -20,14 +20,8 @@ import { SignTransactionNavigatorParamList } from "../../components/RootNavigato
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
@@ -55,12 +49,7 @@ export default function CardanoSendRowsCustom(props: Props) {
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
         {transaction.memo ? (
-          <LText
-            semiBold
-            style={styles.tagText}
-            onPress={editMemo}
-            numberOfLines={1}
-          >
+          <LText semiBold style={styles.tagText} onPress={editMemo} numberOfLines={1}>
             {transaction.memo}
           </LText>
         ) : (

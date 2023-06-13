@@ -1,12 +1,5 @@
 import React, { PureComponent } from "react";
-import {
-  View,
-  StyleSheet,
-  Animated,
-  StyleProp,
-  ViewStyle,
-  TextStyle,
-} from "react-native";
+import { View, StyleSheet, Animated, StyleProp, ViewStyle, TextStyle } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
@@ -65,14 +58,7 @@ export class BulletItem extends PureComponent<{
   }
 
   render() {
-    const {
-      index,
-      value,
-      Bullet,
-      itemContainerStyle,
-      itemStyle,
-      itemTextStyle,
-    } = this.props;
+    const { index, value, Bullet, itemContainerStyle, itemStyle, itemTextStyle } = this.props;
     const { opacity } = this;
     return (
       <Animated.View
@@ -121,9 +107,7 @@ class BulletList extends PureComponent<{
   list: React.ComponentProps<typeof BulletItem>["value"][];
   animated?: boolean;
   Bullet: React.ComponentType<unknown>;
-  itemContainerStyle?: React.ComponentProps<
-    typeof BulletItem
-  >["itemContainerStyle"];
+  itemContainerStyle?: React.ComponentProps<typeof BulletItem>["itemContainerStyle"];
   itemStyle?: React.ComponentProps<typeof BulletItem>["itemStyle"];
   style?: StyleProp<ViewStyle>;
 }> {
@@ -132,8 +116,7 @@ class BulletList extends PureComponent<{
   };
 
   render() {
-    const { list, animated, Bullet, itemContainerStyle, itemStyle, style } =
-      this.props;
+    const { list, animated, Bullet, itemContainerStyle, itemStyle, style } = this.props;
     return (
       <View style={style}>
         {list.map((value, index) => (

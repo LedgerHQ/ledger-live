@@ -24,10 +24,7 @@ import {
 import type { SolanaDelegationFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SolanaDelegationFlowParamList,
-    ScreenName.DelegationSelectValidator
-  >
+  StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSelectValidator>
 >;
 
 export default function SelectValidator({ navigation, route }: Props) {
@@ -60,10 +57,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
-      <SelectValidatorSearchBox
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+      <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>
         <ValidatorHead />
       </View>
@@ -163,21 +157,11 @@ const keyExtractor = (v: ValidatorsAppValidator) => v.voteAccount;
 
 const ValidatorHead = () => (
   <View style={styles.validatorHead}>
-    <Text
-      style={styles.validatorHeadText}
-      color="smoke"
-      numberOfLines={1}
-      fontWeight="semiBold"
-    >
+    <Text style={styles.validatorHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
       <Trans i18nKey="delegation.validator" />
     </Text>
     <View style={styles.validatorHeadContainer}>
-      <Text
-        style={styles.validatorHeadText}
-        color="smoke"
-        numberOfLines={1}
-        fontWeight="semiBold"
-      >
+      <Text style={styles.validatorHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
         <Trans i18nKey="solana.delegation.totalStake" />
       </Text>
     </View>
@@ -211,28 +195,14 @@ const ValidatorRow = ({
           name={validator.name ?? validator.voteAccount}
         />
         <View style={styles.validatorBody}>
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            style={styles.validatorName}
-          >
+          <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.name || validator.voteAccount}
           </Text>
-          <Text
-            fontWeight="semiBold"
-            numberOfLines={1}
-            style={styles.overdelegated}
-          >
-            <Trans i18nKey="solana.delegation.commission" />{" "}
-            {validator.commission} %
+          <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>
+            <Trans i18nKey="solana.delegation.commission" /> {validator.commission} %
           </Text>
         </View>
-        <Text
-          fontWeight="semiBold"
-          numberOfLines={1}
-          style={[styles.validatorYield]}
-          color="smoke"
-        >
+        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue
               showCode

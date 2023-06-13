@@ -51,10 +51,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   }, [exitMultiSelectMode, multiSelectModeEnabled]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackPress,
-    );
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
     return () => backHandler.remove();
   }, [handleBackPress]);
 

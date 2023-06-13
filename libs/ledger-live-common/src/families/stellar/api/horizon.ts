@@ -1,8 +1,5 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
-import {
-  requestInterceptor,
-  responseInterceptor,
-} from "@ledgerhq/live-network/network";
+import { requestInterceptor, responseInterceptor } from "@ledgerhq/live-network/network";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import StellarSdk, {
@@ -35,7 +32,7 @@ export const MIN_BALANCE = 1;
 
 StellarSdk.HorizonAxiosClient.interceptors.request.use(requestInterceptor);
 
-StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {
+StellarSdk.HorizonAxiosClient.interceptors.response.use(response => {
   responseInterceptor(response);
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
@@ -52,9 +49,7 @@ StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {
 });
 
 const getFormattedAmount = (amount: BigNumber) => {
-  return amount
-    .div(new BigNumber(10).pow(currency.units[0].magnitude))
-    .toString(10);
+  return amount.div(new BigNumber(10).pow(currency.units[0].magnitude)).toString(10);
 };
 
 export const fetchBaseFee = async (): Promise<{
@@ -80,10 +75,7 @@ export const fetchBaseFee = async (): Promise<{
     const ledgerCapacityUsage = feeStats.ledger_capacity_usage;
     recommendedFee = Number(feeStats.fee_charged.mode);
 
-    if (
-      ledgerCapacityUsage > TRESHOLD_LOW &&
-      ledgerCapacityUsage <= TRESHOLD_MEDIUM
-    ) {
+    if (ledgerCapacityUsage > TRESHOLD_LOW && ledgerCapacityUsage <= TRESHOLD_MEDIUM) {
       networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
     } else if (ledgerCapacityUsage > TRESHOLD_MEDIUM) {
       networkCongestionLevel = NetworkCongestionLevel.HIGH;
@@ -108,7 +100,7 @@ export const fetchBaseFee = async (): Promise<{
  * @param {*} addr
  */
 export const fetchAccount = async (
-  addr: string
+  addr: string,
 ): Promise<{
   blockHeight?: number;
   balance: BigNumber;
@@ -121,26 +113,20 @@ export const fetchAccount = async (
 
   try {
     account = await server.accounts().accountId(addr).call();
-    balance = account.balances?.find((balance) => {
+    balance = account.balances?.find(balance => {
       return balance.asset_type === "native";
     });
     // Getting all non-native (XLM) assets on the account
-    assets = account.balances?.filter((balance) => {
+    assets = account.balances?.filter(balance => {
       return balance.asset_type !== "native";
     });
   } catch (e) {
     balance.balance = "0";
   }
 
-  const formattedBalance = parseCurrencyUnit(
-    currency.units[0],
-    balance.balance
-  );
+  const formattedBalance = parseCurrencyUnit(currency.units[0], balance.balance);
 
-  const spendableBalance = await getAccountSpendableBalance(
-    formattedBalance,
-    account
-  );
+  const spendableBalance = await getAccountSpendableBalance(formattedBalance, account);
 
   return {
     blockHeight: account.sequence ? Number(account.sequence) : undefined,
@@ -194,13 +180,13 @@ export const fetchOperations = async ({
     }
 
     operations = operations.concat(
-      await rawOperationsToOperations(rawOperations.records, addr, accountId)
+      await rawOperationsToOperations(rawOperations.records, addr, accountId),
     );
 
     while (rawOperations.records.length > 0) {
       rawOperations = await rawOperations.next();
       operations = operations.concat(
-        await rawOperationsToOperations(rawOperations.records, addr, accountId)
+        await rawOperationsToOperations(rawOperations.records, addr, accountId),
       );
     }
 
@@ -234,17 +220,11 @@ export const fetchOperations = async ({
   }
 };
 
-export const fetchAccountNetworkInfo = async (
-  account: Account
-): Promise<NetworkInfo> => {
+export const fetchAccountNetworkInfo = async (account: Account): Promise<NetworkInfo> => {
   try {
-    const extendedAccount = await server
-      .accounts()
-      .accountId(account.freshAddress)
-      .call();
+    const extendedAccount = await server.accounts().accountId(account.freshAddress).call();
     const baseReserve = getReservedBalance(extendedAccount);
-    const { recommendedFee, networkCongestionLevel, baseFee } =
-      await fetchBaseFee();
+    const { recommendedFee, networkCongestionLevel, baseFee } = await fetchBaseFee();
 
     return {
       family: "stellar",
@@ -266,30 +246,20 @@ export const fetchAccountNetworkInfo = async (
 
 export const fetchSequence = async (a: Account): Promise<BigNumber> => {
   const extendedAccount = await loadAccount(a.freshAddress);
-  return extendedAccount
-    ? new BigNumber(extendedAccount.sequence)
-    : new BigNumber(0);
+  return extendedAccount ? new BigNumber(extendedAccount.sequence) : new BigNumber(0);
 };
 
 export const fetchSigners = async (a: Account): Promise<Signer[]> => {
   try {
-    const extendedAccount = await server
-      .accounts()
-      .accountId(a.freshAddress)
-      .call();
+    const extendedAccount = await server.accounts().accountId(a.freshAddress).call();
     return extendedAccount.signers;
   } catch (error) {
     return [];
   }
 };
 
-export const broadcastTransaction = async (
-  signedTransaction: string
-): Promise<string> => {
-  const transaction = new StellarSdk.Transaction(
-    signedTransaction,
-    StellarSdk.Networks.PUBLIC
-  );
+export const broadcastTransaction = async (signedTransaction: string): Promise<string> => {
+  const transaction = new StellarSdk.Transaction(signedTransaction, StellarSdk.Networks.PUBLIC);
   const res = await server.submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });
@@ -322,10 +292,7 @@ export const buildPaymentOperation = ({
   });
 };
 
-export const buildCreateAccountOperation = (
-  destination: string,
-  amount: BigNumber
-): any => {
+export const buildCreateAccountOperation = (destination: string, amount: BigNumber): any => {
   const formattedAmount = getFormattedAmount(amount);
   return StellarSdk.Operation.createAccount({
     destination: destination,
@@ -333,19 +300,13 @@ export const buildCreateAccountOperation = (
   });
 };
 
-export const buildChangeTrustOperation = (
-  assetCode: string,
-  assetIssuer: string
-): any => {
+export const buildChangeTrustOperation = (assetCode: string, assetIssuer: string): any => {
   return StellarSdk.Operation.changeTrust({
     asset: new StellarSdk.Asset(assetCode, assetIssuer),
   });
 };
 
-export const buildTransactionBuilder = (
-  source: typeof StellarSdk.Account,
-  fee: BigNumber
-): any => {
+export const buildTransactionBuilder = (source: typeof StellarSdk.Account, fee: BigNumber): any => {
   const formattedFee = fee.toString();
   return new StellarSdk.TransactionBuilder(source, {
     fee: formattedFee,
@@ -353,9 +314,7 @@ export const buildTransactionBuilder = (
   });
 };
 
-export const loadAccount = async (
-  addr: string
-): Promise<AccountRecord | null> => {
+export const loadAccount = async (addr: string): Promise<AccountRecord | null> => {
   if (!addr || !addr.length) {
     return null;
   }

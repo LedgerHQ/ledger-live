@@ -131,21 +131,21 @@ export type ConnectAppEvent =
 
 export const openAppFromDashboard = (
   transport: Transport,
-  appName: string
+  appName: string,
 ): Observable<ConnectAppEvent> =>
   from(getDeviceInfo(transport)).pipe(
-    mergeMap((deviceInfo) =>
+    mergeMap(deviceInfo =>
       merge(
         // Nb Allows LLD/LLM to update lastSeenDevice, this can run in parallel
         // since there are no more device exchanges.
         from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
-          concatMap((latestFirmware) =>
+          concatMap(latestFirmware =>
             of<ConnectAppEvent>({
               type: "device-update-last-seen",
               deviceInfo,
               latestFirmware,
-            })
-          )
+            }),
+          ),
         ),
         concat(
           of<ConnectAppEvent>({
@@ -156,9 +156,9 @@ export const openAppFromDashboard = (
             concatMap(() =>
               of<ConnectAppEvent>({
                 type: "device-permission-granted",
-              })
+              }),
             ),
-            catchError((e) => {
+            catchError(e => {
               if (e && e instanceof TransportStatusError) {
                 // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
@@ -167,8 +167,7 @@ export const openAppFromDashboard = (
                     return inlineAppInstall({
                       transport,
                       appNames: [appName],
-                      onSuccessObs: () =>
-                        from(openAppFromDashboard(transport, appName)),
+                      onSuccessObs: () => from(openAppFromDashboard(transport, appName)),
                     }) as Observable<ConnectAppEvent>;
                   case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
                   case 0x5501: // No StatusCodes definition
@@ -182,26 +181,23 @@ export const openAppFromDashboard = (
               }
 
               return throwError(e);
-            })
-          )
-        )
-      )
-    )
+            }),
+          ),
+        ),
+      ),
+    ),
   );
 
-const attemptToQuitApp = (
-  transport,
-  appAndVersion?: AppAndVersion
-): Observable<ConnectAppEvent> =>
+const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<ConnectAppEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)
     ? from(quitApp(transport)).pipe(
         concatMap(() =>
           of<ConnectAppEvent>({
             type: "disconnected",
             expected: true,
-          })
+          }),
         ),
-        catchError((e) => throwError(e))
+        catchError(e => throwError(e)),
       )
     : of({
         type: "ask-quit-app",
@@ -217,15 +213,15 @@ const derivationLogic = (
     requiresDerivation: RequiresDerivation;
     appAndVersion?: AppAndVersion;
     appName: string;
-  }
+  },
 ): Observable<ConnectAppEvent> =>
   defer(() =>
     from(
       getAddress(transport, {
         currency: getCryptoCurrencyById(currencyId),
         ...derivationRest,
-      })
-    )
+      }),
+    ),
   ).pipe(
     map<any, ConnectAppEvent>(({ address }) => ({
       type: "opened",
@@ -234,7 +230,7 @@ const derivationLogic = (
         address,
       },
     })),
-    catchError((e) => {
+    catchError(e => {
       if (!e) return throwError(e);
 
       if (e instanceof BtcUnmatchedApp) {
@@ -275,7 +271,7 @@ const derivationLogic = (
       }
 
       return throwError(e);
-    })
+    }),
   );
 
 /**
@@ -292,13 +288,13 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
     allowPartialDependencies = false,
   } = request;
   return withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         const timeoutSub = of({
           type: "unresponsiveDevice",
         })
           .pipe(delay(1000))
-          .subscribe((e) => o.next(e as ConnectAppEvent));
+          .subscribe(e => o.next(e as ConnectAppEvent));
         const innerSub = ({
           appName,
           dependencies,
@@ -314,68 +310,54 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                   return from(getDeviceInfo(transport)).pipe(
                     mergeMap((deviceInfo: DeviceInfo) =>
                       from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
-                        mergeMap(
-                          (
-                            latest: FirmwareUpdateContext | undefined | null
-                          ) => {
-                            const isLatest =
-                              !latest ||
-                              semver.eq(
-                                deviceInfo.version,
-                                latest.final.version
-                              );
+                        mergeMap((latest: FirmwareUpdateContext | undefined | null) => {
+                          const isLatest =
+                            !latest || semver.eq(deviceInfo.version, latest.final.version);
 
-                            if (
-                              (!requireLatestFirmware ||
-                                (requireLatestFirmware && isLatest)) &&
-                              outdatedApp
-                            ) {
-                              return from(
-                                isUpdateAvailable(deviceInfo, outdatedApp)
-                              ).pipe(
-                                mergeMap((isAvailable) =>
-                                  isAvailable
-                                    ? throwError(
-                                        new UpdateYourApp(undefined, {
-                                          managerAppName: outdatedApp.name,
-                                        })
-                                      )
-                                    : throwError(
-                                        new LatestFirmwareVersionRequired(
-                                          "LatestFirmwareVersionRequired",
-                                          {
-                                            latest: latest?.final.version,
-                                            current: deviceInfo.version,
-                                          }
-                                        )
-                                      )
-                                )
-                              );
-                            }
-
-                            if (isLatest) {
-                              o.next({ type: "latest-firmware-resolved" });
-                              return innerSub({
-                                appName,
-                                dependencies,
-                                allowPartialDependencies,
-                                // requireLatestFirmware // Resolved!.
-                              });
-                            } else {
-                              return throwError(
-                                new LatestFirmwareVersionRequired(
-                                  "LatestFirmwareVersionRequired",
-                                  {
-                                    latest: latest.final.version,
-                                    current: deviceInfo.version,
-                                  }
-                                )
-                              );
-                            }
+                          if (
+                            (!requireLatestFirmware || (requireLatestFirmware && isLatest)) &&
+                            outdatedApp
+                          ) {
+                            return from(isUpdateAvailable(deviceInfo, outdatedApp)).pipe(
+                              mergeMap(isAvailable =>
+                                isAvailable
+                                  ? throwError(
+                                      new UpdateYourApp(undefined, {
+                                        managerAppName: outdatedApp.name,
+                                      }),
+                                    )
+                                  : throwError(
+                                      new LatestFirmwareVersionRequired(
+                                        "LatestFirmwareVersionRequired",
+                                        {
+                                          latest: latest?.final.version,
+                                          current: deviceInfo.version,
+                                        },
+                                      ),
+                                    ),
+                              ),
+                            );
                           }
-                        )
-                      )
-                    )
+
+                          if (isLatest) {
+                            o.next({ type: "latest-firmware-resolved" });
+                            return innerSub({
+                              appName,
+                              dependencies,
+                              allowPartialDependencies,
+                              // requireLatestFirmware // Resolved!.
+                            });
+                          } else {
+                            return throwError(
+                              new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
+                                latest: latest.final.version,
+                                current: deviceInfo.version,
+                              }),
+                            );
+                          }
+                        }),
+                      ),
+                    ),
                   );
                 }
                 // check if we meet dependencies
@@ -383,10 +365,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                   const completesInDashboard = isDashboardName(appName);
                   return inlineAppInstall({
                     transport,
-                    appNames: [
-                      ...(completesInDashboard ? [] : [appName]),
-                      ...dependencies,
-                    ],
+                    appNames: [...(completesInDashboard ? [] : [appName]), ...dependencies],
                     onSuccessObs: () => {
                       o.next({
                         type: "dependencies-resolved",
@@ -414,10 +393,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 return openAppFromDashboard(transport, appName);
               }
 
-              const appNeedsUpgrade = mustUpgrade(
-                appAndVersion.name,
-                appAndVersion.version
-              );
+              const appNeedsUpgrade = mustUpgrade(appAndVersion.name, appAndVersion.version);
               if (appNeedsUpgrade) {
                 // quit app, check provider's app update for device's minimum requirements.
                 o.next({
@@ -433,10 +409,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 appAndVersion.name !== appName ||
                 appNeedsUpgrade
               ) {
-                return attemptToQuitApp(
-                  transport,
-                  appAndVersion as AppAndVersion
-                );
+                return attemptToQuitApp(transport, appAndVersion as AppAndVersion);
               }
 
               if (requiresDerivation) {
@@ -486,7 +459,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
               }
 
               return throwError(e);
-            })
+            }),
           );
 
         const sub = innerSub({
@@ -500,7 +473,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 };
 

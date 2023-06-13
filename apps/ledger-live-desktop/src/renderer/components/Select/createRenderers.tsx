@@ -27,7 +27,7 @@ const InputWrapper = styled(Box)`
 export default <
   OptionType extends OptionTypeBase = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 >({
   renderOption,
   renderValue,

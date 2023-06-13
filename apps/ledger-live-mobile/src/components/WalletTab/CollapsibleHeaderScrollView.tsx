@@ -1,13 +1,7 @@
 import { Flex } from "@ledgerhq/native-ui";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback } from "react";
-import {
-  Dimensions,
-  Animated,
-  ScrollView,
-  ScrollViewProps,
-  StatusBar,
-} from "react-native";
+import { Dimensions, Animated, ScrollView, ScrollViewProps, StatusBar } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
@@ -16,8 +10,9 @@ const CollapsibleHeaderScrollView = ({
   contentContainerStyle,
   ...otherProps
 }: ScrollViewProps) => {
-  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } =
-    useContext(WalletTabNavigatorScrollContext);
+  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } = useContext(
+    WalletTabNavigatorScrollContext,
+  );
   const windowHeight = Dimensions.get("window").height;
   const route = useRoute();
   const isFocused = useIsFocused();
@@ -43,12 +38,9 @@ const CollapsibleHeaderScrollView = ({
         scrollEventThrottle={16}
         onScroll={
           isFocused
-            ? Animated.event(
-                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                {
-                  useNativeDriver: true,
-                },
-              )
+            ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+                useNativeDriver: true,
+              })
             : undefined
         }
         onScrollEndDrag={onMomentumScrollEnd}

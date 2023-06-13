@@ -12,36 +12,24 @@ import { avalancheSpeculosDeviceAction } from "./speculos-deviceActions-avalanch
 
 const testTimeout = 8 * 60 * 1000;
 
-const testBasicMutation = ({
-  account,
-  accountBeforeTransaction,
-  operation,
-  transaction,
-}) => {
+const testBasicMutation = ({ account, accountBeforeTransaction, operation, transaction }) => {
   // workaround for buggy explorer behavior (nodes desync)
-  invariant(
-    Date.now() - operation.date > 60000,
-    "operation time to be older than 60s"
-  );
+  invariant(Date.now() - operation.date > 60000, "operation time to be older than 60s");
   const gasPrice = EIP1559ShouldBeUsed(account.currency)
     ? transaction.maxFeePerGas
     : transaction.gasPrice;
   const estimatedGas = getGasLimit(transaction).times(gasPrice);
   botTest("operation fee is not exceeding estimated gas", () =>
-    expect(operation.fee.toNumber()).toBeLessThanOrEqual(
-      estimatedGas.toNumber()
-    )
+    expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
   );
   botTest("account balance moved with operation value", () =>
     expect(account.balance.toString()).toBe(
-      accountBeforeTransaction.balance.minus(operation.value).toString()
-    )
+      accountBeforeTransaction.balance.minus(operation.value).toString(),
+    ),
   );
 };
 
-const ethereumBasicMutations = ({
-  maxAccount,
-}): MutationSpec<Transaction>[] => [
+const ethereumBasicMutations = ({ maxAccount }): MutationSpec<Transaction>[] => [
   {
     name: "move 50%",
     maxRun: 2,
@@ -85,18 +73,13 @@ const ethereumBasicMutations = ({
   },
 ];
 
-const minAmountETH = parseCurrencyUnit(
-  getCryptoCurrencyById("ethereum").units[0],
-  "0.01"
-);
+const minAmountETH = parseCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], "0.01");
 
 const erc20mutation: MutationSpec<Transaction> = {
   name: "move some ERC20",
   maxRun: 1,
   transaction: ({ account, siblings, bridge }) => {
-    const erc20Account = sample(
-      (account.subAccounts || []).filter((a) => a.balance.gt(0))
-    );
+    const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
     if (!erc20Account) throw new Error("no erc20 account");
     const sibling = pickSiblings(siblings, 3);
     const recipient = sibling.freshAddress;
@@ -119,30 +102,23 @@ const erc20mutation: MutationSpec<Transaction> = {
   },
   test: ({ accountBeforeTransaction, account, transaction, operation }) => {
     // workaround for buggy explorer behavior (nodes desync)
-    invariant(
-      Date.now() - Number(operation.date) > 60000,
-      "operation time to be older than 60s"
-    );
+    invariant(Date.now() - Number(operation.date) > 60000, "operation time to be older than 60s");
     invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
     const erc20accountBefore = accountBeforeTransaction.subAccounts?.find(
-      (s) => s.id === transaction.subAccountId
+      s => s.id === transaction.subAccountId,
     );
     if (!erc20accountBefore) throw new Error("no erc20 account before");
     invariant(account.subAccounts, "sub accounts");
-    const erc20account = account.subAccounts?.find(
-      (s) => s.id === transaction.subAccountId
-    );
+    const erc20account = account.subAccounts?.find(s => s.id === transaction.subAccountId);
     if (!erc20account) throw new Error("no erc20 account");
 
     if (transaction.useAllAmount) {
-      botTest("erc20 account is empty", () =>
-        expect(erc20account.balance.toString()).toBe("0")
-      );
+      botTest("erc20 account is empty", () => expect(erc20account.balance.toString()).toBe("0"));
     } else {
       botTest("account balance moved with tx amount", () =>
         expect(erc20account.balance.toString()).toBe(
-          erc20accountBefore.balance.minus(transaction.amount).toString()
-        )
+          erc20accountBefore.balance.minus(transaction.amount).toString(),
+        ),
       );
     }
   },
@@ -167,10 +143,7 @@ const ethereum: AppSpec<Transaction> = {
   }).concat([erc20mutation]),
 };
 
-const minAmountETC = parseCurrencyUnit(
-  getCryptoCurrencyById("ethereum_classic").units[0],
-  "0.05"
-);
+const minAmountETC = parseCurrencyUnit(getCryptoCurrencyById("ethereum_classic").units[0], "0.05");
 const ethereumClassic: AppSpec<Transaction> = {
   name: "Ethereum Classic",
   currency: getCryptoCurrencyById("ethereum_classic"),
@@ -208,10 +181,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
   }),
 };
 
-const minAmountBSC = parseCurrencyUnit(
-  getCryptoCurrencyById("bsc").units[0],
-  "0.005"
-);
+const minAmountBSC = parseCurrencyUnit(getCryptoCurrencyById("bsc").units[0], "0.005");
 const bsc: AppSpec<Transaction> = {
   name: "BSC",
   currency: getCryptoCurrencyById("bsc"),
@@ -231,9 +201,7 @@ const bsc: AppSpec<Transaction> = {
       name: "move some BEP20",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
-        const bep20Account = sample(
-          (account.subAccounts || []).filter((a) => a.balance.gt(0))
-        );
+        const bep20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
         if (!bep20Account) throw new Error("no bep20 account");
         const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
@@ -244,9 +212,7 @@ const bsc: AppSpec<Transaction> = {
             Math.random() < 0.5
               ? { useAllAmount: true }
               : {
-                  amount: bep20Account.balance
-                    .times(Math.random())
-                    .integerValue(),
+                  amount: bep20Account.balance.times(Math.random()).integerValue(),
                 },
           ],
         };
@@ -255,10 +221,7 @@ const bsc: AppSpec<Transaction> = {
   ]),
 };
 
-const minAmountPolygon = parseCurrencyUnit(
-  getCryptoCurrencyById("polygon").units[0],
-  "0.005"
-);
+const minAmountPolygon = parseCurrencyUnit(getCryptoCurrencyById("polygon").units[0], "0.005");
 
 const polygon: AppSpec<Transaction> = {
   name: "Polygon",
@@ -279,9 +242,7 @@ const polygon: AppSpec<Transaction> = {
       name: "move some ERC20",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
-        const erc20Account = sample(
-          (account.subAccounts || []).filter((a) => a.balance.gt(0))
-        );
+        const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
         if (!erc20Account) throw new Error("no erc20 account");
         const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
@@ -292,9 +253,7 @@ const polygon: AppSpec<Transaction> = {
             Math.random() < 0.5
               ? { useAllAmount: true }
               : {
-                  amount: erc20Account.balance
-                    .times(Math.random())
-                    .integerValue(),
+                  amount: erc20Account.balance.times(Math.random()).integerValue(),
                 },
           ],
         };

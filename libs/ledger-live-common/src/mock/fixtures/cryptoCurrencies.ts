@@ -1,8 +1,5 @@
 import BigNumber from "bignumber.js";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CoinType, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { cryptocurrenciesById, findTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
@@ -11,7 +8,7 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
   return {
     type: "CryptoCurrency",
     id: "testCoinId" as CryptoCurrencyId,
-    coinType: 8008,
+    coinType: 8008 as CoinType,
     name: "MyCoin",
     managerAppName: "MyCoin",
     ticker: "MYC",
@@ -45,7 +42,7 @@ const defaultERC20USDTToken = findTokenById["usd_tether__erc20_"];
 
 export function createFixtureTokenAccount(
   id = "00",
-  token: TokenCurrency = defaultERC20USDTToken
+  token: TokenCurrency = defaultERC20USDTToken,
 ): TokenAccount {
   return {
     type: "TokenAccount",
@@ -79,7 +76,7 @@ export function createFixtureTokenAccount(
 
 export function createFixtureAccount(
   id = "00",
-  currency: CryptoCurrency = defaultEthCryptoFamily
+  currency: CryptoCurrency = defaultEthCryptoFamily,
 ): Account {
   return {
     type: "Account",

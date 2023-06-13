@@ -10,8 +10,7 @@ class Stargaze extends CosmosBase {
 
   constructor() {
     super();
-    this.stakingDocUrl =
-      "https://support.ledger.com/hc/en-us/articles/9604638272669?support=true;";
+    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/9604638272669?support=true;";
     this.unbondingPeriod = 28;
     this.prefix = "stars";
     this.validatorPrefix = `${this.prefix}valoper`;

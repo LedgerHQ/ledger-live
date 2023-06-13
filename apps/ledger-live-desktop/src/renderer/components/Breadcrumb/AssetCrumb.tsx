@@ -55,14 +55,14 @@ export default function AssetCrumb() {
       })),
     [],
   );
-  const processedItems = useMemo(() => processItemsForDropdown(distribution.list || []), [
-    distribution,
-    processItemsForDropdown,
-  ]);
-  const activeItem = useMemo(() => distribution.list.find(dist => dist.currency.id === assetId), [
-    assetId,
-    distribution.list,
-  ]);
+  const processedItems = useMemo(
+    () => processItemsForDropdown(distribution.list || []),
+    [distribution, processItemsForDropdown],
+  );
+  const activeItem = useMemo(
+    () => distribution.list.find(dist => dist.currency.id === assetId),
+    [assetId, distribution.list],
+  );
   if (!distribution || !distribution.list) return null;
   return (
     <>

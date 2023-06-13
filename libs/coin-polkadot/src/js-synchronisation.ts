@@ -6,13 +6,11 @@ import { PolkadotAPI } from "./api";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {
-  return async (info) => {
+  return async info => {
     await loadPolkadotCrypto();
     const { address, initialAccount, currency, derivationMode } = info;
     const oldOperations = initialAccount?.operations || [];
-    const startAt = oldOperations.length
-      ? (oldOperations[0].blockHeight || 0) + 1
-      : 0;
+    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
     const {
       blockHeight,
       balance,
@@ -34,11 +32,7 @@ export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {
       xpubOrAddress: address,
       derivationMode,
     });
-    const newOperations = await polkadotAPI.getOperations(
-      accountId,
-      address,
-      startAt
-    );
+    const newOperations = await polkadotAPI.getOperations(accountId, address, startAt);
     const operations = mergeOps(oldOperations, newOperations);
     const shape = {
       id: accountId,

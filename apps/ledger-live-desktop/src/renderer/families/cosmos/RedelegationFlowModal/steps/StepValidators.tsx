@@ -117,12 +117,14 @@ export default function StepValidators({
       }),
     [updateRedelegation, transaction],
   );
-  const selectedValidator = useMemo(() => transaction.validators && transaction.validators[0], [
-    transaction,
-  ]);
-  const amount = useMemo(() => (selectedValidator ? selectedValidator.amount : BigNumber(0)), [
-    selectedValidator,
-  ]);
+  const selectedValidator = useMemo(
+    () => transaction.validators && transaction.validators[0],
+    [transaction],
+  );
+  const amount = useMemo(
+    () => (selectedValidator ? selectedValidator.amount : BigNumber(0)),
+    [selectedValidator],
+  );
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
   const selectedValidatorData = useMemo(

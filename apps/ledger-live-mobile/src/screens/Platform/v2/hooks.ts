@@ -12,10 +12,7 @@ import {
   DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
 } from "@ledgerhq/live-common/wallet-api/constants";
-import {
-  DiscoverDB,
-  AppManifest,
-} from "@ledgerhq/live-common/wallet-api/types";
+import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
@@ -55,10 +52,7 @@ export function useCatalog() {
   );
 }
 
-function useDeeplinkEffect(
-  manifests: AppManifest[],
-  openApp: (manifest: AppManifest) => void,
-) {
+function useDeeplinkEffect(manifests: AppManifest[], openApp: (manifest: AppManifest) => void) {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
   const { platform, ...params } = route.params ?? {};
@@ -86,9 +80,7 @@ export type Disclaimer = DisclaimerRaw & {
   openApp: (manifest: AppManifest) => void;
 };
 
-function useDisclaimer(
-  appendRecentlyUsed: (manifest: AppManifest) => void,
-): Disclaimer {
+function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Disclaimer {
   const isReadOnly = useSelector(readOnlyModeEnabledSelector);
   const [isDismissed, dismiss] = useBanner(DAPP_DISCLAIMER_ID);
 

@@ -4,8 +4,7 @@ import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "./api";
 import BigNumber from "bignumber.js";
 
-const sameFees = (a: BigNumber, b?: BigNumber | null) =>
-  !a || !b ? a === b : a.eq(b);
+const sameFees = (a: BigNumber, b?: BigNumber | null) => (!a || !b ? a === b : a.eq(b));
 
 /**
  * Calculate fees for the current transaction

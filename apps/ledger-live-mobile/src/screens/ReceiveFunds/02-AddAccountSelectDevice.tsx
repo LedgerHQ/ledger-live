@@ -11,9 +11,7 @@ import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen, track } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2, {
-  SetHeaderOptionsRequest,
-} from "../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
@@ -39,10 +37,7 @@ const action = createAction(connectApp);
 export default function AddAccountsSelectDevice({
   navigation,
   route,
-}: StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveAddAccountSelectDevice
->) {
+}: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccountSelectDevice>) {
   const { currency } = route.params;
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
@@ -128,15 +123,8 @@ export default function AddAccountsSelectDevice({
           />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
-          <TrackScreen
-            category="AddAccounts"
-            name="SelectDevice"
-            currencyName={currency.name}
-          />
+        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+          <TrackScreen category="AddAccounts" name="SelectDevice" currencyName={currency.name} />
           <SelectDevice onSelect={onSetDevice} />
         </NavigationScrollView>
       )}

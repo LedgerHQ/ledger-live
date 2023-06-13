@@ -37,19 +37,9 @@ function ValidateSuccess({
 }: Props) {
   return (
     <Flex flex={1} p={6}>
-      <Flex
-        flex={1}
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
+      <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
         {icon ? (
-          <IconBox
-            Icon={icon}
-            color={iconColor}
-            boxSize={iconBoxSize}
-            iconSize={iconSize}
-          />
+          <IconBox Icon={icon} color={iconColor} boxSize={iconBoxSize} iconSize={iconSize} />
         ) : null}
         <Flex py={8}>
           <Log>{title || <Trans i18nKey="send.validation.sent" />}</Log>

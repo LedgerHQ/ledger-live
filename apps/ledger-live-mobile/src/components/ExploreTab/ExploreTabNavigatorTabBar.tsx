@@ -49,9 +49,7 @@ function Tab({
       borderRadius={2}
       px={4}
       mr={4}
-      backgroundColor={
-        isActive ? "primary.c70" : rgba(colors.constant.white, 0.05)
-      }
+      backgroundColor={isActive ? "primary.c70" : rgba(colors.constant.white, 0.05)}
     >
       <Text fontWeight={"semiBold"} variant={"body"} color={"neutral.c100"}>
         {label}
@@ -62,11 +60,7 @@ function Tab({
 
 const MemoTab = memo(Tab);
 
-const ExploreTabNavigatorTabBar = ({
-  state,
-  descriptors,
-  navigation,
-}: MaterialTopTabBarProps) => (
+const ExploreTabNavigatorTabBar = ({ state, descriptors, navigation }: MaterialTopTabBarProps) => (
   <Flex px={6} py={4} justifyContent={"flex-end"}>
     <Flex flexDirection={"row"}>
       {state.routes.map((route, index) => {

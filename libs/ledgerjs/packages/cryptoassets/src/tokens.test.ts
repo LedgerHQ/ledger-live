@@ -73,10 +73,7 @@ describe("tokens", () => {
       expect(listTokens().length).toBe(2);
       expect(listTokens({ withDelisted: true }).length).toBe(4);
       expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(2);
-      expect(
-        listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true })
-          .length
-      ).toBe(4);
+      expect(listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true }).length).toBe(4);
     });
 
     it("Add token and readd the same token shouldn't delete anything", () => {
@@ -95,12 +92,12 @@ describe("tokens", () => {
         ],
       ];
       const tokenHash = createTokenHash(convertERC20(changeToken[0]));
-      const existingToken = listTokens().find((t) => t.ticker === "KIBA");
+      const existingToken = listTokens().find(t => t.ticker === "KIBA");
       if (!existingToken) throw new Error("Should not be empty");
       expect(tokenHash).toBe(createTokenHash(existingToken));
 
       addTokens(changeToken.map(convertERC20));
-      const tokenAfterChange = listTokens().find((t) => t.ticker === "KIBA");
+      const tokenAfterChange = listTokens().find(t => t.ticker === "KIBA");
       if (!tokenAfterChange) throw new Error("Should not be empty");
       expect(tokenHash).toBe(createTokenHash(tokenAfterChange));
     });
@@ -126,10 +123,7 @@ describe("tokens", () => {
       expect(listTokens({ withDelisted: true }).length).toBe(4);
 
       expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(1);
-      expect(
-        listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true })
-          .length
-      ).toBe(4);
+      expect(listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true }).length).toBe(4);
     });
   });
 });

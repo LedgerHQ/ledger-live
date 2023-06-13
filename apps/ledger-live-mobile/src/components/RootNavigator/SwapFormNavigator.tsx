@@ -19,10 +19,7 @@ const Tab = createMaterialTopTabNavigator<SwapFormNavigatorParamList>();
 export default function SwapFormNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const tabNavigationConfig = useMemo(
-    () => getLineTabNavigatorConfig(colors),
-    [colors],
-  );
+  const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [colors]);
 
   return (
     <Tab.Navigator {...tabNavigationConfig}>
@@ -32,12 +29,7 @@ export default function SwapFormNavigator() {
         options={{
           title: t("transfer.swap.form.tab"),
           tabBarLabel: (props: TabLabelProps) => (
-            <Text
-              variant="body"
-              fontWeight="semiBold"
-              {...props}
-              testID="swap-form-tab"
-            >
+            <Text variant="body" fontWeight="semiBold" {...props} testID="swap-form-tab">
               {t("transfer.swap.form.tab")}
             </Text>
           ),

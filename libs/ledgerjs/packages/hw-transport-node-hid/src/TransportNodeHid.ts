@@ -1,12 +1,6 @@
 import HID from "node-hid";
-import TransportNodeHidNoEvents, {
-  getDevices,
-} from "@ledgerhq/hw-transport-node-hid-noevents";
-import type {
-  Observer,
-  DescriptorEvent,
-  Subscription,
-} from "@ledgerhq/hw-transport";
+import TransportNodeHidNoEvents, { getDevices } from "@ledgerhq/hw-transport-node-hid-noevents";
+import type { Observer, DescriptorEvent, Subscription } from "@ledgerhq/hw-transport";
 import { identifyUSBProductId } from "@ledgerhq/devices";
 import { TransportError } from "@ledgerhq/errors";
 import listenDevices from "./listenDevices";
@@ -51,17 +45,17 @@ export default class TransportNodeHid extends TransportNodeHidNoEvents {
    */
   static setListenDevicesDebug = () => {
     console.warn(
-      "setListenDevicesDebug is deprecated. Use @ledgerhq/logs instead. No logs will get emitted there anymore."
+      "setListenDevicesDebug is deprecated. Use @ledgerhq/logs instead. No logs will get emitted there anymore.",
     );
   };
 
   /**
    */
   static listen = (
-    observer: Observer<DescriptorEvent<string | null | undefined>>
+    observer: Observer<DescriptorEvent<string | null | undefined>>,
   ): Subscription => {
     let unsubscribed = false;
-    Promise.resolve(getDevices()).then((devices) => {
+    Promise.resolve(getDevices()).then(devices => {
       // this needs to run asynchronously so the subscription is defined during this phase
       for (const device of devices) {
         if (!unsubscribed) {
@@ -76,12 +70,9 @@ export default class TransportNodeHid extends TransportNodeHidNoEvents {
         }
       }
     });
-    const { events, stop } = listenDevices(
-      listenDevicesDebounce,
-      listenDevicesPollingSkip
-    );
+    const { events, stop } = listenDevices(listenDevicesDebounce, listenDevicesPollingSkip);
 
-    const onAdd = (device) => {
+    const onAdd = device => {
       if (unsubscribed || !device) return;
       const deviceModel = identifyUSBProductId(device.productId);
       observer.next({
@@ -92,7 +83,7 @@ export default class TransportNodeHid extends TransportNodeHidNoEvents {
       });
     };
 
-    const onRemove = (device) => {
+    const onRemove = device => {
       if (unsubscribed || !device) return;
       const deviceModel = identifyUSBProductId(device.productId);
       observer.next({

@@ -19,10 +19,7 @@ const totalSteps = "3";
 export default function SignTransactionNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   // @TODO replace with correct error
   const listeners = ({
@@ -35,9 +32,7 @@ export default function SignTransactionNavigator() {
   >) => ({
     beforeRemove: () =>
       route.params?.onError &&
-      route.params?.onError(
-        route.params.error || new Error("Signature interrupted by user"),
-      ),
+      route.params?.onError(route.params.error || new Error("Signature interrupted by user")),
   });
 
   return (

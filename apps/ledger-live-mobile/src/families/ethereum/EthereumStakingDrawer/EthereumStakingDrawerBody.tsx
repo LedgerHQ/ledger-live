@@ -28,20 +28,11 @@ export function EthereumStakingDrawerBody({
   const { track, page } = useAnalytics();
 
   const onProviderPress = useCallback(
-    ({
-      manifest,
-      provider,
-    }: {
-      manifest: LiveAppManifest;
-      provider: ListProvider;
-    }) => {
+    ({ manifest, provider }: { manifest: LiveAppManifest; provider: ListProvider }) => {
       if (manifest) {
         const customDappURL =
           provider.queryParams &&
-          appendQueryParamsToDappURL(
-            manifest,
-            provider.queryParams,
-          )?.toString();
+          appendQueryParamsToDappURL(manifest, provider.queryParams)?.toString();
         track("button_clicked", {
           button: provider.id,
           page,
@@ -73,13 +64,7 @@ export function EthereumStakingDrawerBody({
   );
 
   const redirectIfOneProvider = useCallback(
-    ({
-      manifest,
-      provider,
-    }: {
-      manifest: LiveAppManifest;
-      provider: ListProvider;
-    }) => {
+    ({ manifest, provider }: { manifest: LiveAppManifest; provider: ListProvider }) => {
       if (singleProviderRedirectMode && providers.length === 1) {
         onProviderPress({ manifest, provider });
       }

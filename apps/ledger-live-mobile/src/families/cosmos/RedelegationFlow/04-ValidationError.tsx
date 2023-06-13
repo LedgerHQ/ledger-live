@@ -14,17 +14,12 @@ import type { CosmosRedelegationFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CosmosRedelegationFlowParamList,
-    ScreenName.CosmosRedelegationValidationError
-  >
+  StackNavigatorProps<CosmosRedelegationFlowParamList, ScreenName.CosmosRedelegationValidationError>
 >;
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

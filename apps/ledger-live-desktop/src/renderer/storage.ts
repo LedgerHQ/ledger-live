@@ -63,7 +63,7 @@ type DatabaseValue<
   T = K extends keyof Transforms ? Transforms[K] : unknown,
   // This is needed to make the type inference work here.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  V = T extends Transform<any, any> ? ReturnType<T["get"]> : DatabaseValues[K]
+  V = T extends Transform<any, any> ? ReturnType<T["get"]> : DatabaseValues[K],
 > = V;
 
 // A Transformer is a pair of functions to encode/decode the raw data.
@@ -95,7 +95,7 @@ const transforms: Transforms = {
 export const getKey = async <
   K extends keyof DatabaseValues,
   V = DatabaseValue<K>,
-  DV extends V = V
+  DV extends V = V,
 >(
   ns: string,
   keyPath: K,
@@ -115,8 +115,11 @@ export const getKey = async <
 
 let debounceToUse = debounce;
 if (getEnv("PLAYWRIGHT_RUN")) {
-  // @ts-expect-error This is specific to playwright, silence the error
-  debounceToUse = fn => (...args) => setTimeout(() => fn(...args));
+  debounceToUse =
+    fn =>
+    (...args) =>
+      // @ts-expect-error This is specific to playwright, silence the error
+      setTimeout(() => fn(...args));
 }
 
 const debouncedSetKey = memoize(
@@ -224,7 +227,7 @@ export function useDB<
   Selected,
   K extends keyof DatabaseValues,
   V = DatabaseValue<K>,
-  DV extends V = V
+  DV extends V = V,
 >(
   ns: string,
   keyPath: K,
