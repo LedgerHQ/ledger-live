@@ -7,7 +7,7 @@ import {
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
 
 export type UseBateryStatusesArgs = {
-  deviceId: string;
+  deviceId?: string;
   statuses: BatteryStatusTypes[];
 };
 
@@ -25,19 +25,30 @@ export const useBatteryStatuses = ({
   batteryStatusesState: GetBatteryStatusesActionState;
   requestCompleted: boolean;
   triggerRequest: () => void;
+  cancelRequest: () => void;
 } => {
   const [batteryStatusesState, setBatteryStatusesState] =
     useState<GetBatteryStatusesActionState>(initialState);
   const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
   const [nonce, setNonce] = useState(0);
+  const [cancelRequest, setCancelRequest] = useState<() => void>(() => {});
 
   useEffect(() => {
-    if (nonce > 0) {
+    if (nonce > 0 && deviceId) {
       const sub = getBatteryStatusesAction({
         deviceId,
         statuses,
       }).subscribe({
         next: (state) => setBatteryStatusesState(state),
+        complete: () => {
+          setRequestCompleted(true);
+        },
+      });
+
+      setCancelRequest(() => () => {
+        sub.unsubscribe();
+        setRequestCompleted(false);
+        setBatteryStatusesState(initialState);
       });
 
       return () => {
@@ -56,5 +67,6 @@ export const useBatteryStatuses = ({
     batteryStatusesState,
     triggerRequest,
     requestCompleted,
+    cancelRequest,
   };
 };
