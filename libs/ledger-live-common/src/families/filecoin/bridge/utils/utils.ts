@@ -1,19 +1,9 @@
 import { Account, Address, Operation } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "../../../../currencies";
+import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../../currencies";
 import { BigNumber } from "bignumber.js";
-import {
-  BroadcastTransactionRequest,
-  TransactionResponse,
-  TxStatus,
-} from "./types";
-import {
-  GetAccountShape,
-  AccountShapeInfo,
-} from "../../../../bridge/jsHelpers";
+import { BroadcastTransactionRequest, TransactionResponse, TxStatus } from "./types";
+import { GetAccountShape, AccountShapeInfo } from "../../../../bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
 import { encodeOperationId } from "../../../../operation";
@@ -45,10 +35,7 @@ export const processTxs = (txs: TransactionResponse[]): TransactionResponse[] =>
 
     if (!sendTx) {
       if (feeTx) {
-        log(
-          "warn",
-          `feeTx [${feeTx.hash}] found without a sendTx linked to it.`
-        );
+        log("warn", `feeTx [${feeTx.hash}] found without a sendTx linked to it.`);
       }
 
       continue;

@@ -29,17 +29,7 @@ const bigNumberToArray = (v: BigNumber) => {
 
 export const toCBOR = (account: Account, tx: Transaction): Buffer => {
   const { address: from } = getAddress(account);
-  const {
-    method,
-    version,
-    nonce,
-    gasLimit,
-    gasPremium,
-    gasFeeCap,
-    params,
-    amount,
-    recipient,
-  } = tx;
+  const { method, version, nonce, gasLimit, gasPremium, gasFeeCap, params, amount, recipient } = tx;
   const answer: any[] = [];
 
   const recipientBytes = validateAddress(recipient);

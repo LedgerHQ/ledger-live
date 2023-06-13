@@ -142,19 +142,13 @@ const estimateMaxSpendable = async ({
   return balance;
 };
 
-const prepareTransaction = async (
-  a: Account,
-  t: Transaction
-): Promise<Transaction> => {
+const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   const { balance } = a;
   const { address } = getAddress(a);
   const { recipient, useAllAmount } = t;
 
   if (recipient && address) {
-    if (
-      validateAddress(recipient).isValid &&
-      validateAddress(address).isValid
-    ) {
+    if (validateAddress(recipient).isValid && validateAddress(address).isValid) {
       const newTx = { ...t };
 
       const result = await fetchEstimatedFees({ to: recipient, from: address });
@@ -201,15 +195,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
         async function main() {
           // log("debug", "[signOperation] start fn");
 
-          const {
-            recipient,
-            method,
-            version,
-            nonce,
-            gasFeeCap,
-            gasLimit,
-            gasPremium,
-          } = transaction;
+          const { recipient, method, version, nonce, gasFeeCap, gasLimit, gasPremium } =
+            transaction;
           const { amount } = transaction;
           const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
