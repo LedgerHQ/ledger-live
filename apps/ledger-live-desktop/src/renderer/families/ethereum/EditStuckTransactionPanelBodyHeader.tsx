@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import Box from "~/renderer/components/Box";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -33,4 +33,4 @@ const EditStuckTransactionPanelBodyHeader = (props: Props) => {
   );
 };
 
-export default EditStuckTransactionPanelBodyHeader;
+export default memo<Props>(EditStuckTransactionPanelBodyHeader);
