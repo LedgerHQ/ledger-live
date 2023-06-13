@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
+import Button from "../../../../components/Button";
 
 import FilteredSearchBar from "../../../../components/FilteredSearchBar";
 
@@ -17,10 +18,18 @@ import type { Node, NodeList } from "../types";
 type Props = {
   nodeList: NodeList;
   onNodeSelect: (node: Node) => void;
+  onNext: () => void;
+  validation: boolean;
   onBack: () => void;
 };
 
-function StakeToNodeSelect({ onNodeSelect, nodeList, onBack }: Props) {
+function StakeToNodeSelect({
+  onNodeSelect,
+  nodeList,
+  onNext,
+  validation,
+  onBack,
+}: Props) {
   const { colors } = useTheme();
 
   const onNodePress = (node: Node) => {
@@ -101,6 +110,16 @@ function StakeToNodeSelect({ onNodeSelect, nodeList, onBack }: Props) {
         renderList={renderList}
         renderEmptySearch={renderEmptyList}
       />
+      <View style={styles.spacer} />
+      <View style={styles.buttonContainer}>
+        <Button
+          disabled={!validation}
+          event="Hedera StepStakingStartedContinueBtn"
+          onPress={onNext}
+          title={<Trans i18nKey="hedera.common.continue" />}
+          type="primary"
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -108,6 +127,11 @@ function StakeToNodeSelect({ onNodeSelect, nodeList, onBack }: Props) {
 const styles = StyleSheet.create({
   root: {
     alignItems: "center",
+    display: "flex",
+    justifyContent: "space-between",
+    flexGrow: 1,
+    flexShrink: 0,
+    height: "80%",
   },
   topRow: {
     display: "flex",
@@ -152,6 +176,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     fontSize: 14,
     marginBottom: 2,
+    maxWidth: "60%",
   },
   staked: {
     fontSize: 14,
@@ -198,6 +223,15 @@ const styles = StyleSheet.create({
   emptySearchText: {
     marginTop: 10,
     textAlign: "center",
+  },
+  spacer: {
+    flexGrow: 1,
+    flexShrink: 0,
+  },
+  buttonContainer: {
+    marginBottom: 24,
+    width: "100%",
+    paddingHorizontal: 16,
   },
 });
 

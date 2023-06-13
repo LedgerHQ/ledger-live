@@ -220,13 +220,17 @@ function StepStakingType({ navigation, route }: Props) {
         },
       }),
     );
+  };
+
+  const handleNodeIdNext =  () => {
+    invariant(transaction, "transaction required");
 
     navigation.navigate(ScreenName.HederaStakeSummary, {
       ...route.params,
       account: hederaAccount,
       transaction,
       accountId: "",
-      nodeId,
+      nodeId: stakeToNode,
       nodeList,
     });
   };
@@ -301,7 +305,9 @@ function StepStakingType({ navigation, route }: Props) {
         {currentScreen === "node" ? (
           <StakeToNodeSelect
             onNodeSelect={handleNodeIdSelect}
+            onNext={handleNodeIdNext}
             nodeList={nodeList}
+            validation={stakeToNode}
             onBack={onBack}
           />
         ) : null}
