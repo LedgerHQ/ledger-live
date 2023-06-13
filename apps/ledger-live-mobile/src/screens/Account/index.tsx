@@ -66,7 +66,6 @@ const AccountScreenInner = ({
   const { colors } = useTheme();
   const route = useRoute<RouteProp<AccountsNavigatorParamList, ScreenName.Account>>();
   const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
-
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =

@@ -51,16 +51,10 @@ const EditOperationPanelComponent = ({
     >
       {isOperationStuck ? (
         <Box>
-          <LText color="neutral.c20">
-            {t("editTransaction.panel.stuckMessage")}
-          </LText>
+          <LText color="neutral.c20">{t("editTransaction.panel.stuckMessage")}</LText>
           <LText marginTop={4}>
             <Link onPress={onLinkPress}>
-              <LText
-                color="neutral.c20"
-                style={{ textDecorationLine: "underline" }}
-                marginTop={4}
-              >
+              <LText color="neutral.c20" style={{ textDecorationLine: "underline" }} marginTop={4}>
                 {t("editTransaction.cta")}
               </LText>
             </Link>
@@ -69,9 +63,7 @@ const EditOperationPanelComponent = ({
       ) : (
         <>
           <Box>
-            <LText color="neutral.c20">
-              {t("editTransaction.panel.speedupMessage")}
-            </LText>
+            <LText color="neutral.c20">{t("editTransaction.panel.speedupMessage")}</LText>
             <LText marginTop={4}>
               <Link onPress={onLinkPress}>
                 <LText
@@ -90,6 +82,4 @@ const EditOperationPanelComponent = ({
   ) : null;
 };
 
-export const EditOperationPanel = memo<EditOperationPanelProps>(
-  EditOperationPanelComponent,
-);
+export const EditOperationPanel = memo<EditOperationPanelProps>(EditOperationPanelComponent);

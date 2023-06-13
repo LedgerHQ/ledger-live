@@ -2,10 +2,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { Account, AccountLike, ProtoNFT } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   Transaction as EthereumTransaction,
   TransactionRaw as EtherumTransactionRaw,

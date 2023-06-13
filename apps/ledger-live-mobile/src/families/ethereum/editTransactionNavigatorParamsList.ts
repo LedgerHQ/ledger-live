@@ -2,10 +2,7 @@ import {
   TransactionRaw,
   Transaction as EthereumTransaction,
 } from "@ledgerhq/live-common/families/ethereum/types";
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 
@@ -28,9 +25,7 @@ export type EditTransactionParamList = {
     transactionRaw?: TransactionRaw;
     operation?: Operation;
     currentNavigation: ScreenName.EditTransactionMethodSelection;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     appName?: string;

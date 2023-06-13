@@ -161,10 +161,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
 
-  const stuckAccountAndOperation = getStuckAccountAndOperation(
-    account,
-    mainAccount,
-  );
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
 
   return (
     <>
