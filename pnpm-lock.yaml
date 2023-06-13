@@ -2183,8 +2183,8 @@ importers:
         specifier: v8.1.0-zondax-no-bigint
         version: 8.1.0-zondax-no-bigint
       '@zondax/izari-filecoin':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.2.0
+        version: 1.2.0
       '@zondax/ledger-filecoin':
         specifier: ^0.11.2
         version: 0.11.2
@@ -24861,8 +24861,8 @@ packages:
       nofilter: 3.1.0
     dev: false
 
-  /@zondax/izari-filecoin@1.0.1:
-    resolution: {integrity: sha512-6C3C9/xnaUJam1+3PIf0Yrk8jC5GoVM0QjqJw4B2JE2cQRpnD+zdi6oA08lp+RhvhC+R0GRMft57ZkuipAGhUA==}
+  /@zondax/izari-filecoin@1.2.0:
+    resolution: {integrity: sha512-pixz+VOaNy2RXbU/eUPYtoulxJ4QYKpj05rP5rzEG4yckE1WkLVMajrYH/VWJlNw48GjtxZko6cWwJAi8ZDolQ==}
     engines: {node: '>= 16.0.0'}
     dependencies:
       '@bitcoinerlab/secp256k1': 1.0.2
