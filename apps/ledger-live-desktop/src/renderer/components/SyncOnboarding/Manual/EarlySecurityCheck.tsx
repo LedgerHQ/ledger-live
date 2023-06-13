@@ -21,12 +21,12 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   device: _device,
   notifyOnboardingEarlyCheckEnded,
 }) => {
-  // To implement
+  // TODO: To implement
   // const [currentStep, setCurrentStep] = useState<
   //   "idle" | "genuine-check" | "firmware-update-check" | "firmware-updating"
   // >("idle");
 
-  // For now short circuiting the ESC step
+  // FIXME: For now short circuiting the ESC step
   useEffect(() => {
     notifyOnboardingEarlyCheckEnded();
   }, [notifyOnboardingEarlyCheckEnded]);
