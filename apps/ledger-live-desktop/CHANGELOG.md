@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.2
+
+### Patch Changes
+
+- [#3599](https://github.com/LedgerHQ/ledger-live/pull/3599) [`73838624a8`](https://github.com/LedgerHQ/ledger-live/commit/73838624a84f1bfad6194c0d7576c47f75dd2073) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLD - Add modelIdList user property and event property
+
+- [#3649](https://github.com/LedgerHQ/ledger-live/pull/3649) [`4884b4da6d`](https://github.com/LedgerHQ/ledger-live/commit/4884b4da6d6c5e20844145b3d37315ee388f2265) Thanks [@Justkant](https://github.com/Justkant)! - fix: ConnectDevice request undefined
+
+- [#3646](https://github.com/LedgerHQ/ledger-live/pull/3646) [`b8f51580b8`](https://github.com/LedgerHQ/ledger-live/commit/b8f51580b8a6a467f6c992c05ef2ab5d732b0fe1) Thanks [@Justkant](https://github.com/Justkant)! - fix: webview preload dirname for prod app
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241)]:
+  - @ledgerhq/errors@6.12.7-nightly.0
+  - @ledgerhq/live-common@31.1.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.6-nightly.1
+  - @ledgerhq/domain-service@1.1.4-nightly.1
+  - @ledgerhq/devices@8.0.4-nightly.0
+  - @ledgerhq/hw-transport@6.28.5-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.16-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.13-nightly.0
+  - @ledgerhq/live-network@1.1.1-nightly.0
+
 ## 2.62.0-nightly.1
 
 ### Patch Changes

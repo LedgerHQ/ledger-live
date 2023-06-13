@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.12.7-nightly.0
+
+### Patch Changes
+
+- [#3631](https://github.com/LedgerHQ/ledger-live/pull/3631) [`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914) Thanks [@scnale](https://github.com/scnale)! - Adds message to TransportStatusErrors displayed in node.js
+
 ## 6.12.6
 
 ### Patch Changes

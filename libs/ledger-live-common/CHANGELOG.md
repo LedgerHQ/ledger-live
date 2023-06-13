@@ -1,5 +1,37 @@
 # @ledgerhq/live-common
 
+## 31.1.0-nightly.1
+
+### Minor Changes
+
+- [#3640](https://github.com/LedgerHQ/ledger-live/pull/3640) [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change unbonding period for onomy
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7-nightly.0
+  - @ledgerhq/coin-algorand@0.2.2-nightly.1
+  - @ledgerhq/coin-evm@0.2.1-nightly.1
+  - @ledgerhq/coin-framework@0.3.6-nightly.1
+  - @ledgerhq/coin-polkadot@0.1.7-nightly.1
+  - @ledgerhq/domain-service@1.1.4-nightly.1
+  - @ledgerhq/devices@8.0.4-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.28.2-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.6-nightly.1
+  - @ledgerhq/hw-app-exchange@0.1.3-nightly.0
+  - @ledgerhq/hw-app-near@6.27.11-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.16-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.10-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.16-nightly.0
+  - @ledgerhq/hw-transport@6.28.5-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.16-nightly.0
+  - @ledgerhq/live-network@1.1.1-nightly.0
+  - @ledgerhq/hw-app-btc@10.0.5-nightly.0
+  - @ledgerhq/hw-app-str@6.27.16-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.16-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.16-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.16-nightly.0
+
 ## 31.0.1-nightly.0
 
 ### Patch Changes

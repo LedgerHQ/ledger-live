@@ -1,5 +1,22 @@
 # live-common-tools
 
+## 0.5.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241)]:
+  - @ledgerhq/errors@6.12.7-nightly.0
+  - @ledgerhq/live-common@31.1.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.6-nightly.1
+  - @ledgerhq/domain-service@1.1.4-nightly.1
+  - @ledgerhq/devices@8.0.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.6-nightly.1
+  - @ledgerhq/hw-transport@6.28.5-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.16-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.27.16-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.27.16-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.27.16-nightly.0
+
 ## 0.5.1-nightly.0
 
 ### Patch Changes
