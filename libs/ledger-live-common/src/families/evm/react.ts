@@ -1,9 +1,7 @@
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
 import type { GasOptions, Transaction } from "@ledgerhq/coin-evm/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useEffect, useState } from "react";
-
-type ReturnType = GasOptions | Error | null;
+import { useEffect, useMemo, useState } from "react";
 
 /**
  * React hook to get gas options for a given currency
@@ -18,10 +16,10 @@ export const useGasOptions = ({
   currency: CryptoCurrency;
   transaction: Transaction;
   interval?: number;
-}): ReturnType => {
+}): GasOptions | Error | null => {
   const [gasOptions, setGasOptions] = useState<GasOptions | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const gasTracker = getGasTracker(currency);
+  const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
 
   const shouldUseEip1559 = transaction.type === 2;
 
@@ -41,7 +39,7 @@ export const useGasOptions = ({
       return;
     }
 
-    const intervalId = setInterval(() => getGasOptionsCallback, interval);
+    const intervalId = setInterval(() => getGasOptionsCallback, interval * 1000);
 
     return () => {
       clearInterval(intervalId);
