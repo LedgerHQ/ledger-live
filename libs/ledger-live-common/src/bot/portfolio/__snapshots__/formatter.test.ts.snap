@@ -43,30 +43,11 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | [🙏](https://etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | Ethereum Classic | [🙏](https://blockscout.com/etc/mainnet/address/0x932E8214E25AceC996aD7d195339AF5139625065/transactions) | ? |
 | Ethereum Goerli | [🙏](https://goerli.etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
-| Arbitrum Goerli | [🙏](https://goerli.arbiscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
-| Cronos | ❌ | ? |
-| Fantom | ⚠️ | ? |
-| Flare | [🙏](https://flare-explorer.flare.network/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f/transactions) | ? |
-| Songbird | ❌ | ? |
-| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) | ? |
-| RSK | [🙏](https://explorer.rsk.co/address/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ? |
-| Bittorent Chain | ❌ | ? |
-| Kava EVM | ✅ | ? |
-| Evmos EVM | ✅ | ? |
-| Optimism | [🙏](https://optimistic.etherscan.io/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
-| Optimism Goerli | [🙏](https://goerli-optimism.etherscan.io/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
-| Energy Web | ❌ | ? |
-| Astar | ✅ | ? |
-| Metis | [🙏](https://andromeda-explorer.metis.io/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt) | ? |
-| Boba | [🙏](https://bobascan.com/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r) | ? |
-| Moonriver | [🙏](https://moonriver.moonscan.io/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ? |
-| Velas EVM | ✅ | ? |
-| Syscoin | [🙏](https://explorer.syscoin.org/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
-| Filecoin | [🙏](https://beryx.io/v1/explore/fil/mainnet/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
-| Hedera | [🙏](https://hashscan.io/mainnet/account/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
-| NEAR | [🙏](https://explorer.near.org/accounts/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
-| XRP | [🙏](https://bithomp.com/explorer/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
-| Solana | [🙏](https://explorer.solana.com/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
+| Filecoin | [🙏](https://filfox.info/en/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
+| Hedera | ❌ | ? |
+| NEAR | ⚠️ | ? |
+| XRP | [🙏](https://bithomp.com/explorer/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ? |
+| Solana | ❌ | ? |
 | Stellar | ⚠️ | ? |
 | Tezos | [🙏](https://tzkt.io/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ? |
 | Tron | ❌ | ? |
