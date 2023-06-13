@@ -158,6 +158,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
           maxFeePerGas: null,
           maxPriorityFeePerGas: null,
           gasPrice: null,
+          useAllAmount: false,
         }),
       );
     } else {
@@ -187,6 +188,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
                 .integerValue()
             : null,
           feesStrategy: "custom",
+          useAllAmount: false,
         }),
       );
     }

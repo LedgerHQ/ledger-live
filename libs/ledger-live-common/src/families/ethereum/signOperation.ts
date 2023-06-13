@@ -150,6 +150,9 @@ export const signOperation = ({
 
               const transactionSequenceNumber = nonce;
               transaction.nonce = nonce;
+              if (transaction.useAllAmount && transaction.amount.eq(0)) {
+                transaction.amount = new BigNumber(value);
+              }
               const accountId = account.id;
               // currently, all mode are always at least one OUT tx on ETH parent
               const operation: Operation = {

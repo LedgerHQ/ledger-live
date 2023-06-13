@@ -138,11 +138,6 @@ export class StepFeesFooter extends PureComponent<StepProps> {
     ) {
       errorCount = errorCount - 1;
     }
-    if (errorCount > 0) {
-      for (const [key, value] of Object.entries(errors)) {
-        logger.log(`edit transaction fees error:  ${key}: ${value.name}`);
-      }
-    }
     return (
       <>
         {this.state.transactionHasBeenValidated ? (
@@ -150,6 +145,10 @@ export class StepFeesFooter extends PureComponent<StepProps> {
         ) : errors.gasPrice && errors.gasPrice instanceof NotEnoughGas ? (
           <Box width={"70%"}>
             <Alert type={"error"} title={<TranslatedError error={errors.gasPrice} />} />
+          </Box>
+        ) : errorCount ? (
+          <Box width={"70%"}>
+            <Alert type={"error"} title={<TranslatedError error={Object.values(errors)[0]} />} />
           </Box>
         ) : null}
         <Button

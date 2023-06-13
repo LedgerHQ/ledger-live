@@ -197,14 +197,14 @@ const Body = ({
   );
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue
-      .times(1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))
-      .plus(account.type === "Account" ? params.transactionRaw.amount : 0),
+      .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
+      .plus(account.type === "Account" ? new BigNumber(params.transactionRaw.amount) : 0),
   );
   // log account and fees info
   logger.log(`main account address: ${mainAccount.freshAddress}`);
   logger.log(`main account balance: ${mainAccount.balance.toFixed()}`);
   logger.log(`feeValue: ${feeValue.toFixed()}`);
-
+  logger.log(`pending transaction amount: ${params.transactionRaw.amount}`);
   let isOldestEditableOperation = true;
   mainAccount.pendingOperations.forEach((operation: Operation) => {
     if (isEditableOperation(account, operation)) {
