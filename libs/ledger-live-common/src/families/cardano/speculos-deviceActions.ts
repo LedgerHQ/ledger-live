@@ -40,7 +40,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         //expectedValue: ({ transaction }) => transaction.recipient,
       },
       {
-        title: "Send",
+        title: "end", // FIXME: Should be Send but in some case cardano OCR doesn't recognize S : https://github.com/LedgerHQ/speculos/issues/204
         button: SpeculosButton.BOTH,
         ignoreAssertionFailure: true,
         expectedValue: ({ account, status }) =>
