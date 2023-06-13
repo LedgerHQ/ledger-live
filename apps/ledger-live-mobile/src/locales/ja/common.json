@@ -587,6 +587,12 @@
       "title" : "問題が発生しました。",
       "description" : "ハードウェアウォレットに、選択したアカウントのリカバリーフレーズ、またはパスフレーズが設定されていることを確認してください。"
     },
+    "WebPTXPlayerNetworkFail" : {
+      "title" : "ネットワークエラー",
+      "description" : "インターネット接続を確認して、もう一お度試しください。問題が解決しない場合は、Ledgerサポートにご連絡ください。",
+      "contactSupport" : "Ledgerサポートへ問い合わせ",
+      "primaryCTA" : "再試行"
+    },
     "UnexpectedBootloader" : {
       "title" : "デバイスがBootloaderモードの場合ご利用いただけません。",
       "description" : "ロゴが表示されたら、ボタンを押さずにデバイスを再起動してください。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
@@ -1191,7 +1197,8 @@
       "terms" : "「はじめる」をタップすることで、お客様が同意したことになります。",
       "termsLink" : "サービス利用規約",
       "privacyLink" : "プライバシーポリシー",
-      "and" : "そして"
+      "and" : "そして",
+      "recoverLogIn" : "Ledger Recoverにログイン"
     },
     "stepDoYouHaveALedgerDevice" : {
       "title" : "Ledgerデバイスをお持ちですか？",
@@ -2668,6 +2675,10 @@
       "title" : "試験的機能",
       "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
       "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
+      "provider" : "試験的設定「マイLedgerプロバイダー（{{forcedProvider}}）」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。これは設定で無効にできます。",
+      "providerDevMode" : "試験的設定「My Ledgerプロバイダー（{{forcedProvider}}）」と「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
+      "devMode" : "試験的設定「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
+      "providerCTA" : "設定を開く",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "試験的統合",
@@ -2696,6 +2707,10 @@
         "experimentalSwap" : {
           "title" : "新しいスワップインタフェース",
           "description" : "新しい試験的スワップインタフェースを使用する"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "ネットワークログを有効にする",
+          "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3689,8 @@
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
     "allowManagerPermission" : "お持ちの{{productName}}で{{wording}}を許可する",
+    "allowRemoveCustomLockscreen" : "Ledger Staxの画像の削除を確定する",
+    "allowSecureConnection" : "Ledgerとの安全な接続を許可する",
     "loading" : "読み込み中...",
     "turnOnAndUnlockDevice" : "デバイスの電源をオンにしてロックを解除する",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
@@ -4025,16 +4042,34 @@
   },
   "FirmwareUpdate" : {
     "title" : "ファームウェアをアップデート",
+    "updateDevice" : "{{deviceName}}をアップデートする",
+    "updateDone" : "完了です！お客様の{{deviceName}}は、最新の状態です",
+    "updateDoneDescription" : "新しいOSバージョン：{{firmwareVersion}}",
     "preparing" : "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
     "confirmIdentifierText" : "デバイスの識別子が以下の識別子と同じであることを認証します。必要に応じて、PINコードを確認して入力します。",
     "pleaseReinstallApps" : "デバイスにアプリを再インストールしてください。",
     "pleaseConfirmUpdate" : "アップデートをデバイスで確認",
+    "pleaseConfirmUpdateOnYourDevice" : "{{deviceName}}へのインストールを確定する",
+    "finishUpdateCTA" : "終了する",
     "finishUpdate" : "{{deviceName}}でアップデートを完了します",
     "identifierTitle" : "識別子：",
     "pleaseWaitDownload" : "インストールが完了するまでお待ちください",
+    "doNotLeaveLedgerLive" : "アップデートが完了するまでLedger Liveアプリを離れないでください。",
     "preparingDevice" : "デバイスの準備中",
     "pleaseWaitUpdate" : "アップデートが完了するまでお待ちください",
+    "viewUpdateChangelog" : "更新の変更履歴を表示する",
     "waitForFirmwareUpdate" : "デバイスのファームウェアアップデート完了までお待ちください",
+    "waitForInstallationToFinish" : "{{deviceName}}でのインストールが完了するまでお待ちください",
+    "staxBatteryLow" : "Ledger Staxのバッテリー不足のためアップデートできません",
+    "staxBatteryLowDescription" : "OSのアップデートを実行するには、Ledgerが20%以上充電されているか、充電中である必要があります。",
+    "updateCancelled" : "{{deviceName}}のアップデートがキャンセルされました",
+    "updateCancelledDescription" : "OSアップデート{{newFirmwareVersion}}のインストールが{{deviceName}}で拒否されました。間違いである場合は、アップデートを再開してください",
+    "updateNotYetComplete" : "アップデートはまだ完了していません",
+    "updateNotYetCompleteDescription" : "アップデートを中断すると、アプリ、言語、ロック画面の画像が正しく復元されない場合があります。",
+    "restartUpdate" : "OSアップデートを再開する",
+    "quitUpdate" : "アップデートを終了する",
+    "continueUpdate" : "アップデートを続行",
+    "unlockDeviceToComplete" : "{{deviceName}}のロックを解除してインストールを完了します",
     "unlockDeviceWithPin" : "PINコードでデバイスのロックを解除",
     "reinstallApps" : "アプリを再インストールします。",
     "currentVersionNumber" : "現在のバージョン",
@@ -4056,7 +4091,23 @@
       "flash-bootloader" : "ブートローダーをアップデート中",
       "flash" : "デバイスをフラッシュ中",
       "preparing" : "アップデートを準備しています",
-      "firmware" : "アップデートをダウンロードしています"
+      "firmware" : "アップデートをダウンロードしています",
+      "prepareUpdate" : {
+        "titleActive" : "インストール用のアップデートを準備しています",
+        "description" : "構成をバックアップし、アップデートを{{deviceName}}に転送します。"
+      },
+      "installUpdate" : {
+        "titleInactive" : "アップデートをインストール",
+        "titleActive" : "アップデートをインストールしています",
+        "description" : "{{deviceName}}は複数回再起動します。\n\n{{deviceName}}でのインストールが完了したら、デバイスのロックを解除してインストールを完了してください"
+      },
+      "restoreSettings" : {
+        "titleInactive" : "アプリと設定を復元する",
+        "description" : "設定とブロックチェーンアプリが復元されます。",
+        "restoreLockScreenPicture" : "ロック画面の画像を復元",
+        "restoreLanguage" : "言語を復元",
+        "installingApps" : "アプリをインストール"
+      }
     },
     "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
     "drawerUpdate" : {
@@ -4064,6 +4115,12 @@
       "description" : "Ledger Nanoをデスクトップ版Ledger Liveアプリに接続して、Ledger Nanoのファームウェアをアップデートします。",
       "pleaseConnectUsbTitle" : "USBケーブルが必要です",
       "pleaseConnectUsbDescription" : "ファームウェアのアップデートを開始するには、 {{deviceName}}をUSBケーブルでスマートフォンに接続します。"
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "アップデートタイムアウト",
+        "description" : "{{deviceName}}への接続が失われたため、アップデートを完了できませんでした"
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -5929,9 +5986,10 @@
       "txDetails" : "トランザクションの詳細"
     },
     "modalDisabled" : {
-      "title" : "送信機能はご利用いただけません",
+      "title" : "送信機能はiOSでは利用できません",
       "body" : "AppleのApp Storeによる最近のアップデートに準拠するため、NFTの送信は現在、一時的にご利用いただけなくなっています。デスクトップのLedger Liveを使用してNFTを送信することは引き続き可能です。",
-      "contactSupport" : "詳しくは、サポート記事をご覧ください。"
+      "learnMore" : "詳細はこちら",
+      "continue" : "了解！"
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5966,9 +6024,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "画像ギャラリーから選択",
-        "selectFromNFTGallery" : "NFTギャラリーから選択"
+        "selectFromNFTGallery" : "NFTギャラリーから選択",
+        "remove" : "現在の画像を削除する"
       }
     },
+    "toastRemove" : "ロック画面の画像が削除されました",
     "cropImage" : "画像のトリミング",
     "chooseConstrast" : "コントラストを選択",
     "uploadAnotherImage" : "他の画像をアップロードする",
@@ -6060,8 +6120,8 @@
         "selectAndHide" : "選択して非表示",
         "hide" : "{{count}}個のコレクションを非表示",
         "hide_plural" : "{{count}}個のコレクションを非表示",
-        "alertHide" : "1個のコレクションが非表示です。設定に移動して、いつでも表示か非表示を選択可能です",
-        "alertHide_plural" : "{{count}}個のコレクションが非表示です。設定に移動して、いつでも表示か非表示を選択可能です"
+        "alertHide" : "1件のコレクションが非表示です。「設定」の「アカウント」セクションに移動して、いつでも表示・非表示を選択できます。",
+        "alertHide_plural" : "{{count}}件のコレクションが非表示です。「設定」の「アカウント」セクションから、いつでも表示・非表示を選択できます。"
       },
       "empty" : {
         "title" : "表示できるNFTがありません",
@@ -6102,20 +6162,6 @@
             "alreadySubscribed" : "ログイン済みですか？<LinkAccount>サブスクリプションを見る</LinkAccount>"
           }
         }
-      }
-    }
-  },
-  "protect" : {
-    "login" : {
-      "title" : "ログイン",
-      "desc" : "Ledgerアカウントでログインすると、Protectサブスクリプションを管理できます。",
-      "email" : "メールアドレス",
-      "password" : "パスワード",
-      "cta" : "ログイン",
-      "forgotPassword" : "パスワードをお忘れですか？",
-      "errors" : {
-        "emptyEmail" : "メールアドレスを入力してください",
-        "emptyPassword" : "パスワードを入力してください"
       }
     }
   },

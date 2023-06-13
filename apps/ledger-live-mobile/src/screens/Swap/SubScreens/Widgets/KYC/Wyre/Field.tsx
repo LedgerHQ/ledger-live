@@ -69,9 +69,7 @@ export function Field({
         />
       )}
       <LText color={"alert"}>
-        {error && validate && (
-          <Trans i18nKey={`transfer.swap.kyc.wyre.form.${field}Error`} />
-        )}
+        {error && validate && <Trans i18nKey={`transfer.swap.kyc.wyre.form.${field}Error`} />}
       </LText>
     </>
   );

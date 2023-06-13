@@ -88,5 +88,5 @@ export function lenseDevices(ids: Array<keyof typeof deviceInfos>): Array<{
   deviceInfo: DeviceInfo;
   modelId: DeviceModelId;
 }> {
-  return ids.map((id) => deviceInfos[id]);
+  return ids.map(id => deviceInfos[id]);
 }

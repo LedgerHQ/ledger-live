@@ -12,16 +12,12 @@ type PlatformAppProviderWrapperProps = {
 const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
 const PLATFORM = Platform.OS === "ios" ? "ios" : "android";
 
-export default function PlatformAppProviderWrapper({
-  children,
-}: PlatformAppProviderWrapperProps) {
+export default function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrapperProps) {
   const isExperimentalAppEnabled = useEnv<"PLATFORM_EXPERIMENTAL_APPS">(
     "PLATFORM_EXPERIMENTAL_APPS",
   ) as boolean;
 
-  const isDebugAppEnabled = useEnv<"PLATFORM_DEBUG">(
-    "PLATFORM_DEBUG",
-  ) as boolean;
+  const isDebugAppEnabled = useEnv<"PLATFORM_DEBUG">("PLATFORM_DEBUG") as boolean;
 
   // There is no more staging since migration to manifest API. Everything points to prod by default.
   // const provider = __DEV__ ? "staging" : "production";
@@ -37,10 +33,7 @@ export default function PlatformAppProviderWrapper({
       }}
     >
       <LocalLiveAppProvider>
-        <RampCatalogProvider
-          provider={provider}
-          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
-        >
+        <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>

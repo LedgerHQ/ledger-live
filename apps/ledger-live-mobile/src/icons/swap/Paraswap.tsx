@@ -18,12 +18,7 @@ export const Paraswap = React.memo(({ size }: { size: number }) => {
       </G>
       <Defs>
         <ClipPath id="clip0">
-          <Rect
-            width="32"
-            height="32"
-            fill="white"
-            transform="translate(0.166992)"
-          />
+          <Rect width="32" height="32" fill="white" transform="translate(0.166992)" />
         </ClipPath>
       </Defs>
     </Svg>

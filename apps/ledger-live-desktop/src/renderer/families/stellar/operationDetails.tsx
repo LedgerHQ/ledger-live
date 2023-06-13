@@ -9,14 +9,9 @@ import {
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { Account } from "@ledgerhq/types-live";
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: any;
-  };
-  type: string;
-  account: Account;
-};
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
+import { OperationDetailsExtraProps } from "../types";
+
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps<Account>) => {
   return (
     <>
       {Object.keys(extra).map(key => {

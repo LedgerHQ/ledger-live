@@ -44,12 +44,18 @@ export function useWebviewState(
   const { manifest, inputs } = params;
 
   const initialURL = useMemo(() => {
-    const url = new URL(manifest.url);
-    addParamsToURL(url, inputs);
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
+    try {
+      const url = new URL(manifest.url);
+      addParamsToURL(url, inputs);
+      if (manifest.params) {
+        url.searchParams.set("params", JSON.stringify(manifest.params));
+      }
+
+      return url.toString();
+    } catch (e) {
+      if (e instanceof Error) console.error(e.message);
+      return manifest.url.toString();
     }
-    return url.toString();
   }, [manifest, inputs]);
 
   const [state, setState] = useState<WebviewState>(initialWebviewState);
@@ -184,7 +190,7 @@ export function useWebviewState(
     }));
   }, [webviewRef]);
 
-  const handleFailLoad = (useCallback(
+  const handleFailLoad = useCallback(
     (errorEvent: {
       errorCode: number;
       errorDescription: string;
@@ -209,7 +215,7 @@ export function useWebviewState(
       }
     },
     [],
-  ) as unknown) as EventListenerOrEventListenerObject;
+  ) as unknown as EventListenerOrEventListenerObject;
 
   const handleCrashed = useCallback(() => {
     setState(oldState => ({

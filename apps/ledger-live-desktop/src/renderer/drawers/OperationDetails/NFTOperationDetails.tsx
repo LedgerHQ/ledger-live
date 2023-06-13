@@ -31,10 +31,10 @@ const NFTOperationDetails = ({ operation }: { operation: Operation }) => {
     operation.contract,
     currencyId,
   );
-  const show = useMemo(() => nftStatus === "loading" || collectionStatus === "loading", [
-    collectionStatus,
-    nftStatus,
-  ]);
+  const show = useMemo(
+    () => nftStatus === "loading" || collectionStatus === "loading",
+    [collectionStatus, nftStatus],
+  );
   return operation.contract && operation.tokenId ? (
     <>
       <OpDetailsSection>

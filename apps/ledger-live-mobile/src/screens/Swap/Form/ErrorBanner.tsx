@@ -32,7 +32,5 @@ export function ErrorBanner({
     }
   }, [errorCode, provider, t]);
 
-  return (
-    <Banner message={message} cta={t("common.getSupport")} onPress={onPress} />
-  );
+  return <Banner message={message} cta={t("common.getSupport")} onPress={onPress} />;
 }

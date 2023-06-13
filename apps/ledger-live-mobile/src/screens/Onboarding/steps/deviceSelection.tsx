@@ -43,10 +43,7 @@ const stax = {
 
 type NavigationProp = RootNavigationComposite<
   BaseNavigationComposite<
-    StackNavigatorNavigation<
-      OnboardingNavigatorParamList,
-      ScreenName.OnboardingDeviceSelection
-    >
+    StackNavigatorNavigation<OnboardingNavigatorParamList, ScreenName.OnboardingDeviceSelection>
   >
 >;
 

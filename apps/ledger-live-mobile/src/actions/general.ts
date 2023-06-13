@@ -15,15 +15,13 @@ import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
-import {
-  counterValueCurrencySelector,
-  orderAccountsSelector,
-} from "../reducers/settings";
+import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 
-const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> =
-  new BehaviorSubject<TrackingPair[]>([]);
+const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
+  TrackingPair[]
+>([]);
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionCommon>[0], "accounts" | "to">,
 ) {
@@ -110,21 +108,13 @@ export function useUserSettings() {
 }
 export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
   const value = extraSessionTrackingPairsChanges.value;
-  if (
-    !value.some(
-      tp => tp.from === trackingPair.from && tp.to === trackingPair.to,
-    )
-  )
+  if (!value.some(tp => tp.from === trackingPair.from && tp.to === trackingPair.to))
     extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
 }
 export function useExtraSessionTrackingPair() {
-  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState<
-    TrackingPair[]
-  >([]);
+  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState<TrackingPair[]>([]);
   useEffect(() => {
-    const sub = extraSessionTrackingPairsChanges.subscribe(
-      setExtraSessionTrackingPair,
-    );
+    const sub = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
     return () => sub && sub.unsubscribe();
   }, []);
   return extraSessionTrackingPair;

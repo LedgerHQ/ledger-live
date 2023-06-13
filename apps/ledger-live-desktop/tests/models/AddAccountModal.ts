@@ -25,7 +25,7 @@ export class AddAccountModal extends Modal {
 
   async select(currency: string) {
     await this.selectAccount.click();
-    await this.selectAccountInput.fill(currency);
+    await this.selectAccountInput.type(currency);
     await this.selectAccountInput.press("Enter");
   }
 

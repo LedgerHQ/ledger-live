@@ -98,6 +98,7 @@ const GenericErrorView = ({
             color="neutral.c80"
             textAlign="center"
             numberOfLines={6}
+            mt={5}
           >
             <TranslatedError error={error} field="description" />
           </Text>
@@ -106,11 +107,7 @@ const GenericErrorView = ({
       ) : null}
       {children}
       {hasExportLogButton ? (
-        <StyledLink
-          Icon={exportLogIcon}
-          onPress={onExport}
-          iconPosition={exportLogIconPosition}
-        >
+        <StyledLink Icon={exportLogIcon} onPress={onExport} iconPosition={exportLogIconPosition}>
           {t("common.saveLogs")}
         </StyledLink>
       ) : null}

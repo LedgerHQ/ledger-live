@@ -1,18 +1,14 @@
 import "../../__tests__/test-helpers/setup";
 
 import { BigNumber } from "bignumber.js";
-import {
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughBalance,
-} from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource, NotEnoughBalance } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 
 import type { Transaction } from "./types";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { fromTransactionRaw } from "../elrond/transaction";
 
-const TEST_ADDRESS =
-  "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
+const TEST_ADDRESS = "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 
 const elrond: CurrenciesData<Transaction> = {
   FIXME_ignorePreloadFields: [
@@ -86,8 +82,7 @@ const elrond: CurrenciesData<Transaction> = {
           name: "Not enough balance",
           transaction: fromTransactionRaw({
             family: "elrond",
-            recipient:
-              "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
+            recipient: "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
             amount: "1000000000000000000000000",
             mode: "send",
             fees: null,
@@ -104,8 +99,7 @@ const elrond: CurrenciesData<Transaction> = {
           name: "Not enough balance (ESDT transfer)",
           transaction: fromTransactionRaw({
             family: "elrond",
-            recipient:
-              "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
+            recipient: "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
             amount: "1000000000000000000000000",
             mode: "send",
             fees: null,
@@ -123,8 +117,7 @@ const elrond: CurrenciesData<Transaction> = {
           name: "Send max",
           transaction: fromTransactionRaw({
             family: "elrond",
-            recipient:
-              "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
+            recipient: "erd1frj909pfums4m8aza596595l9pl56crwdj077vs2aqcw6ynl28wsfkw9rd",
             useAllAmount: true,
             amount: "0",
             mode: "send",

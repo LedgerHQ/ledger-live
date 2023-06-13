@@ -20,7 +20,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     if ("startAction" in props) {
       props.startAction();
       buttonLabelForAnalyticsEvent &&
-        track("button_clicked", { button: buttonLabelForAnalyticsEvent });
+        track("button_clicked", { button: buttonLabelForAnalyticsEvent, flow: "post-onboarding" });
     }
   }, [props, buttonLabelForAnalyticsEvent]);
 

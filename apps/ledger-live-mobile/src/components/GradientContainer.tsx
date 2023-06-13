@@ -10,19 +10,12 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function GradientContainer({
-  color,
-  containerStyle,
-  children,
-}: Props) {
+export default function GradientContainer({ color, containerStyle, children }: Props) {
   const { colors } = useTheme();
 
   return (
     <Flex flex={1} borderRadius={8} overflow="hidden" style={containerStyle}>
-      <Svg
-        style={{ position: "absolute" }}
-        preserveAspectRatio="xMinYMin slice"
-      >
+      <Svg style={{ position: "absolute" }} preserveAspectRatio="xMinYMin slice">
         <Defs>
           <LinearGradient
             id="myGradient"
@@ -32,16 +25,8 @@ export default function GradientContainer({
             y2="100%"
             gradientUnits="userSpaceOnUse"
           >
-            <Stop
-              offset="0%"
-              stopOpacity={1}
-              stopColor={color || colors.neutral.c30}
-            />
-            <Stop
-              offset="100%"
-              stopOpacity={0}
-              stopColor={color || colors.neutral.c30}
-            />
+            <Stop offset="0%" stopOpacity={1} stopColor={color || colors.neutral.c30} />
+            <Stop offset="100%" stopOpacity={0} stopColor={color || colors.neutral.c30} />
           </LinearGradient>
         </Defs>
         <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />

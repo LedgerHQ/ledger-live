@@ -47,7 +47,7 @@ const getIdsFromTuple = (accountTuple: AccountTuple) => ({
   subAccountId: accountTuple.subAccount ? accountTuple.subAccount.id : null,
 });
 export type UseCurrencyAccountSelectReturnType<
-  C extends CryptoOrTokenCurrency = CryptoOrTokenCurrency
+  C extends CryptoOrTokenCurrency = CryptoOrTokenCurrency,
 > = {
   availableAccounts: Array<AccountTuple>;
   currency: C | undefined | null;

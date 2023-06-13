@@ -18,36 +18,27 @@ export function useCryptopanicPosts(
   const newsfeedPageFeature = useFeature("newsfeedPage");
   const [loadingState, setLoadingState] = useState<LoadingStateType>(null);
   const [ready, setReady] = useState(false);
-  const [lastDataLoadingDate, setLastDataLoadingDate] = useState<
-    Date | undefined
-  >();
+  const [lastDataLoadingDate, setLastDataLoadingDate] = useState<Date | undefined>();
   const [posts, setPosts] = useState<CryptopanicNewsWithMetadata[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   const cryptopanicLocale = useMemo(
     () =>
-      cryptopanicAvailableRegions.includes(
-        locale as CryptopanicAvailableRegionsType,
-      )
+      cryptopanicAvailableRegions.includes(locale as CryptopanicAvailableRegionsType)
         ? locale
         : undefined,
     [locale],
   );
 
   const getCryptoPanicPosts = useCallback(
-    async (
-      { page = 1, concatPosts = false },
-      loadingState: LoadingStateType,
-    ) => {
+    async ({ page = 1, concatPosts = false }, loadingState: LoadingStateType) => {
       try {
         setLoadingState(loadingState);
         const apiResult = await getPosts({
           ...params,
           page,
-          regions: cryptopanicLocale && [
-            cryptopanicLocale as CryptopanicAvailableRegionsType,
-          ],
+          regions: cryptopanicLocale && [cryptopanicLocale as CryptopanicAvailableRegionsType],
           auth_token: newsfeedPageFeature?.params.cryptopanicApiKey,
         });
         if (concatPosts) {
@@ -83,10 +74,7 @@ export function useCryptopanicPosts(
 
   const loadMore = useCallback(async () => {
     if (!ready || loadingState || !hasMore) return;
-    await getCryptoPanicPosts(
-      { page: currentPage + 1, concatPosts: true },
-      "loadingMore",
-    );
+    await getCryptoPanicPosts({ page: currentPage + 1, concatPosts: true }, "loadingMore");
   }, [currentPage, getCryptoPanicPosts, hasMore, loadingState, ready]);
 
   return {

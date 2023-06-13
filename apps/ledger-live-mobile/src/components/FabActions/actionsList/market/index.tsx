@@ -20,7 +20,10 @@ const FabMarketActionsComponent: React.FC<Props> = ({
   defaultAccount,
   eventProperties,
 }) => {
-  const { mainActions } = useAssetActions({ currency, accounts });
+  const { mainActions } = useAssetActions({
+    currency,
+    accounts,
+  });
 
   return (
     <FabButtonBarProvider

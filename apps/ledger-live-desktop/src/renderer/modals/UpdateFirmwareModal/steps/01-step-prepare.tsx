@@ -25,6 +25,7 @@ import { EMPTY, concat } from "rxjs";
 import { map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { StepProps } from "..";
+import manager from "@ledgerhq/live-common/manager/index";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -42,7 +43,10 @@ const HighlightVersion = styled(Text).attrs(() => ({
   py: 1,
   mx: 3,
 }))`
+  display: inline-block;
+  word-break: break-word;
   border-radius: 4px;
+  text-align: center;
 `;
 
 const Body = ({
@@ -69,7 +73,6 @@ const Body = ({
   const from = deviceInfo.version;
   const to = firmware?.final.name;
   const normalProgress = (progress || 0) * 100;
-  const maybeHash = firmware?.osu?.hash;
 
   if (!displayedOnDevice) {
     return (
@@ -111,18 +114,22 @@ const Body = ({
             <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
           </Box>
         )}
-
-        <Flex flexDirection="row" alignItems="center" my={2}>
-          {hasHash ? (
-            <HighlightVersion>{maybeHash}</HighlightVersion>
-          ) : (
+        {hasHash ? (
+          <HighlightVersion>
+            {firmware.osu &&
+              manager
+                .formatHashName(firmware.osu.hash, deviceModelId, deviceInfo)
+                .map((hash, i) => <span key={`${i}-${hash}`}>{hash}</span>)}
+          </HighlightVersion>
+        ) : (
+          <Flex flexDirection="row" alignItems="center" my={2}>
             <>
               <HighlightVersion>{`V ${from}`}</HighlightVersion>
               <Icons.ArrowRightMedium size={14} />
               <HighlightVersion>{`V ${to}`}</HighlightVersion>
             </>
-          )}
-        </Flex>
+          </Flex>
+        )}
 
         <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
           {t("manager.modal.confirmIdentifierText", { productName: deviceModel.productName })}

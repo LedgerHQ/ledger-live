@@ -9,7 +9,7 @@ export function getStyles<
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
 >(): NonNullable<StylesConfig<O, M, G>["dropdownIndicator"]> {
-  return (provided) => ({
+  return provided => ({
     ...provided,
     padding: 0,
   });

@@ -44,8 +44,7 @@ const dataset: CurrenciesData<Transaction> = {
       FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
-        seedIdentifier:
-          "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
+        seedIdentifier: "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
         xpub: "cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4",
         derivationMode: "",
         index: 0,
@@ -71,7 +70,7 @@ const dataset: CurrenciesData<Transaction> = {
       transactions: [
         {
           name: "Same as Recipient",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -85,7 +84,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Invalid Address",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: "dsadasdasdasdas",
@@ -112,14 +111,11 @@ const dataset: CurrenciesData<Transaction> = {
             memo: null,
             mode: "send",
           }),
-          expectedStatus: (account) => {
+          expectedStatus: account => {
             const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources)
-              throw new Error("Should exist because it's cosmos");
+            if (!cosmosResources) throw new Error("Should exist because it's cosmos");
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(
-                cosmosResources.delegatedBalance
-              )
+              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -145,13 +141,10 @@ const dataset: CurrenciesData<Transaction> = {
           }),
           expectedStatus: (account, t) => {
             const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources)
-              throw new Error("Should exist because it's cosmos");
+            if (!cosmosResources) throw new Error("Should exist because it's cosmos");
             invariant(t.memo === "test", "Should have a memo");
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(
-                cosmosResources.delegatedBalance
-              )
+              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -162,7 +155,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Not Enough balance",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber("99999999999999999"),
             recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
@@ -176,7 +169,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Redelegation - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             validators: [
@@ -185,8 +178,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            sourceValidator:
-              "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
             mode: "redelegate",
           }),
           expectedStatus: (a, t) => {
@@ -199,7 +191,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "redelegation - AmountRequired",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "redelegate",
             validators: [
@@ -208,8 +200,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(0),
               },
             ],
-            sourceValidator:
-              "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: {
             errors: {
@@ -220,7 +211,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "redelegation - Source is Destination",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "redelegate",
             validators: [
@@ -229,8 +220,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            sourceValidator:
-              "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: {
             errors: {
@@ -241,7 +231,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unbonding - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "undelegate",
             validators: [
@@ -261,7 +251,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unbonding - AmountRequired",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "undelegate",
             validators: [
@@ -280,7 +270,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Delegate - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "delegate",
             validators: [
@@ -300,7 +290,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Delegate - not a valid",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "delegate",
             validators: [
@@ -319,7 +309,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "ClaimReward - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {
@@ -339,7 +329,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "ClaimReward - not a cosmosvaloper",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {
@@ -358,7 +348,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "claimRewardCompound - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {

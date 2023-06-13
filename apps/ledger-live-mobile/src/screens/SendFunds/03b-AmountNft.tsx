@@ -1,12 +1,6 @@
 import React, { useCallback, useMemo, memo } from "react";
 
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+import { View, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
@@ -23,16 +17,10 @@ import Button from "../../components/Button";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendAmountNft
-  >
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendAmountNft>
 >;
 
 const SendAmountNFT = ({ route }: Props) => {
@@ -46,12 +34,11 @@ const SendAmountNFT = ({ route }: Props) => {
     () => (account ? getAccountBridge(account, parentAccount) : null),
     [account, parentAccount],
   );
-  const { transaction, setTransaction, status, bridgePending } =
-    useBridgeTransaction(() => ({
-      transaction: route.params.transaction,
-      account,
-      parentAccount,
-    }));
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => ({
+    transaction: route.params.transaction,
+    account,
+    parentAccount,
+  }));
 
   const onQuantityChange = useCallback(
     text => {
@@ -119,9 +106,7 @@ const SendAmountNFT = ({ route }: Props) => {
 
   return (
     <>
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={{ flex: 1 }}>
@@ -156,15 +141,9 @@ const SendAmountNFT = ({ route }: Props) => {
               <View style={styles.continueContainer}>
                 <Button
                   type="primary"
-                  title={
-                    !bridgePending
-                      ? t("common.continue")
-                      : t("send.amount.loadingNetwork")
-                  }
+                  title={!bridgePending ? t("common.continue") : t("send.amount.loadingNetwork")}
                   onPress={onContinue}
-                  disabled={
-                    !quantity || !!status.errors.amount || bridgePending
-                  }
+                  disabled={!quantity || !!status.errors.amount || bridgePending}
                 />
               </View>
             </View>

@@ -1,9 +1,5 @@
 import { makeRe } from "minimatch";
-import {
-  isCryptoCurrency,
-  isTokenCurrency,
-  listCurrencies,
-} from "../currencies";
+import { isCryptoCurrency, isTokenCurrency, listCurrencies } from "../currencies";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import {
   PlatformCurrency,
@@ -17,7 +13,7 @@ import { includes } from "../helpers";
 import { CurrencyFilters } from "./filters";
 
 export function isPlatformSupportedCurrency(
-  currency: Currency
+  currency: Currency,
 ): currency is PlatformSupportedCurrency {
   if (isCryptoCurrency(currency)) {
     return includes(PLATFORM_FAMILIES, currency.family);
@@ -29,32 +25,32 @@ export function isPlatformSupportedCurrency(
 }
 
 export function isPlatformCryptoCurrency(
-  currency: PlatformCurrency
+  currency: PlatformCurrency,
 ): currency is PlatformCryptoCurrency {
   return currency.type === PlatformCurrencyType.CryptoCurrency;
 }
 
 export function isPlatformTokenCurrency(
-  currency: PlatformCurrency
+  currency: PlatformCurrency,
 ): currency is PlatformERC20TokenCurrency {
   return currency.type === PlatformCurrencyType.TokenCurrency;
 }
 
 export function isPlatformERC20TokenCurrency(
-  currency: PlatformCurrency
+  currency: PlatformCurrency,
 ): currency is PlatformERC20TokenCurrency {
   return (currency as PlatformERC20TokenCurrency).standard === "ERC20";
 }
 
 export function filterCurrencies(
   currencies: PlatformSupportedCurrency[],
-  filters: CurrencyFilters
+  filters: CurrencyFilters,
 ): CryptoOrTokenCurrency[] {
   const filterCurrencyRegexes = filters.currencies
-    ? filters.currencies.map((filter) => makeRe(filter))
+    ? filters.currencies.map(filter => makeRe(filter))
     : null;
 
-  return currencies.filter((currency) => {
+  return currencies.filter(currency => {
     if (!filters.includeTokens && isTokenCurrency(currency)) {
       return false;
     }
@@ -62,7 +58,7 @@ export function filterCurrencies(
     if (
       filterCurrencyRegexes &&
       filterCurrencyRegexes.length &&
-      !filterCurrencyRegexes.some((regex) => currency.id.match(regex))
+      !filterCurrencyRegexes.some(regex => currency.id.match(regex))
     ) {
       return false;
     }

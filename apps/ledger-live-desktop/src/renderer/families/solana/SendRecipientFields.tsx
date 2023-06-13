@@ -1,9 +1,22 @@
 import React from "react";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import MemoValueField from "./MemoValueField";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
-const Root = (props: any) => {
+import {
+  TransactionStatus,
+  Transaction,
+  SolanaAccount,
+} from "@ledgerhq/live-common/families/solana/types";
+
+type Props = {
+  onChange: (t: Transaction) => void;
+  transaction: Transaction;
+  status: TransactionStatus;
+  account: SolanaAccount;
+};
+
+const Root = (props: Props) => {
   return (
     <Box flow={1}>
       <Box mb={10}>
@@ -22,6 +35,6 @@ const Root = (props: any) => {
   );
 };
 export default {
-  component: withTranslation()(Root),
+  component: Root,
   fields: ["memo"],
 };

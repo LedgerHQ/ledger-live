@@ -17,16 +17,12 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function MarketDataProviderWrapper({
-  children,
-}: Props): ReactElement {
+export default function MarketDataProviderWrapper({ children }: Props): ReactElement {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const marketRequestParams = useSelector(marketRequestParamsSelector);
   const marketCounterCurrency = useSelector(marketCounterCurrencySelector);
   const starredMarketCoins = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount = useSelector(
-    marketFilterByStarredAccountsSelector,
-  );
+  const filterByStarredAccount = useSelector(marketFilterByStarredAccountsSelector);
   const { isConnected } = useNetInfo();
 
   const counterCurrency = !isConnected

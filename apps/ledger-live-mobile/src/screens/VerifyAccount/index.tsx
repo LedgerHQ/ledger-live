@@ -3,10 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import {
-  getMainAccount,
-  getReceiveFlowError,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -52,8 +49,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
     [account, parentAccount],
   );
   const onDone = useCallback(() => {
-    const n =
-      navigation.getParent<StackNavigatorNavigation<RootStackParamList>>();
+    const n = navigation.getParent<StackNavigatorNavigation<RootStackParamList>>();
 
     if (n) {
       n.pop();
@@ -101,8 +97,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
     );
   }
 
-  const tokenCurrency =
-    account && account.type === "TokenAccount" ? account.token : undefined;
+  const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
   return (
     <SafeAreaView
       style={[
@@ -122,10 +117,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
           />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
+        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
           <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
         </NavigationScrollView>
       )}
@@ -140,11 +132,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
             tokenCurrency,
           }}
           renderOnResult={({ device }) => (
-            <VerifyAddress
-              account={mainAccount}
-              device={device}
-              onResult={onConfirm}
-            />
+            <VerifyAddress account={mainAccount} device={device} onResult={onConfirm} />
           )}
         />
       ) : !device && skipDevice ? (

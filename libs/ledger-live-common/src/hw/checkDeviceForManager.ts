@@ -3,10 +3,7 @@ import { Observable, of, throwError } from "rxjs";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import genuineCheck from "./genuineCheck";
 import { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
-export default (
-  transport: Transport,
-  deviceInfo: DeviceInfo
-): Observable<SocketEvent> =>
+export default (transport: Transport, deviceInfo: DeviceInfo): Observable<SocketEvent> =>
   deviceInfo.isOSU || deviceInfo.managerAllowed
     ? of({
         type: "result",

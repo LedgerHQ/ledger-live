@@ -24,12 +24,8 @@ export type DomainServiceContextState = {
 };
 
 export type DomainServiceContextAPI = {
-  loadDomainServiceAPI: (
-    domainOrAddress: string,
-    registry?: SupportedRegistries
-  ) => Promise<void>;
+  loadDomainServiceAPI: (domainOrAddress: string, registry?: SupportedRegistries) => Promise<void>;
   clearCache: () => void;
 };
 
-export type DomainServiceContextType = DomainServiceContextState &
-  DomainServiceContextAPI;
+export type DomainServiceContextType = DomainServiceContextState & DomainServiceContextAPI;

@@ -16,8 +16,7 @@ const mapStateToProps = createStructuredSelector<
   }
 >({
   hideEmptyTokenAccountsEnabled: hideEmptyTokenAccountsEnabledSelector,
-  filterTokenOperationsZeroAmountEnabled:
-    filterTokenOperationsZeroAmountEnabledSelector,
+  filterTokenOperationsZeroAmountEnabled: filterTokenOperationsZeroAmountEnabledSelector,
 });
 
 class SetEnvsFromSettings extends PureComponent<{
@@ -25,15 +24,9 @@ class SetEnvsFromSettings extends PureComponent<{
   filterTokenOperationsZeroAmountEnabled: boolean;
 }> {
   apply() {
-    const {
-      hideEmptyTokenAccountsEnabled,
-      filterTokenOperationsZeroAmountEnabled,
-    } = this.props;
+    const { hideEmptyTokenAccountsEnabled, filterTokenOperationsZeroAmountEnabled } = this.props;
     setEnvUnsafe("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccountsEnabled);
-    setEnvUnsafe(
-      "FILTER_ZERO_AMOUNT_ERC20_EVENTS",
-      filterTokenOperationsZeroAmountEnabled,
-    );
+    setEnvUnsafe("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmountEnabled);
   }
 
   componentDidMount() {

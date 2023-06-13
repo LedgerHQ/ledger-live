@@ -66,19 +66,10 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
       onClose={onPressClose}
       Icon={<EthPolygonIcons />}
     >
-      <TrackScreen
-        category="Confirm Receive NFT"
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category="Confirm Receive NFT" type="drawer" refreshSource={false} />
       <View testID="wallet-nft-gallery-receive-modal">
         {new Array(2).fill(null).map((_e, index) => (
-          <Text
-            variant="body"
-            fontWeight="medium"
-            color="neutral.c80"
-            key={index}
-          >
+          <Text variant="body" fontWeight="medium" color="neutral.c80" key={index}>
             {t(`wallet.nftGallery.receiveModal.bullets.${index}`)}
           </Text>
         ))}
@@ -122,10 +113,7 @@ const EthPolygonIcons = () => {
       </Mask>
       <G mask="url(#mask0_10885_163131)">
         <Rect x="0.5" y="4" width="40" height="40" rx="20" fill="#0EBDCD" />
-        <Path
-          d="M26.7479 23.5L20.4991 14L14.25 23.5L20.4991 27.128L26.7479 23.5Z"
-          fill="white"
-        />
+        <Path d="M26.7479 23.5L20.4991 14L14.25 23.5L20.4991 27.128L26.7479 23.5Z" fill="white" />
         <Path
           d="M20.4991 33.9999L26.7521 25.3489L20.4991 28.9764L14.25 25.3489L20.4991 33.9999Z"
           fill="white"

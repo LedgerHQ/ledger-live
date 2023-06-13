@@ -87,11 +87,7 @@ const DebugVideos = () => {
             Icon={Icons.ChevronLeftMedium}
           />
           <Flex mx={3} flex={1}>
-            <Button
-              type="primary"
-              title="Video key"
-              onPress={() => setKeyModalVisible(true)}
-            />
+            <Button type="primary" title="Video key" onPress={() => setKeyModalVisible(true)} />
           </Flex>
           <Button
             disabled={selectedIndex === entries.length - 1}

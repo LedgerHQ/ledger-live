@@ -4,14 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  submitKYC,
-  countries,
-} from "@ledgerhq/live-common/exchange/swap/index";
-import type {
-  KYCData,
-  KYCStatus,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { submitKYC, countries } from "@ledgerhq/live-common/exchange/swap/index";
+import type { KYCData, KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import { ScreenName } from "../../../../../../const";
 import { Wyre as IconWyre } from "../../../../../../icons/swap/Wyre";
 import LText from "../../../../../../components/LText";
@@ -29,9 +23,7 @@ export function WyreKYC() {
   const [isLoading, setLoading] = useState(false);
   const [hasSubmittedOnce, setHasSubmittedOnce] = useState(false);
   const { navigate } =
-    useNavigation<
-      StackNavigatorNavigation<SwapNavigatorParamList, ScreenName.SwapKYC>
-    >();
+    useNavigation<StackNavigatorNavigation<SwapNavigatorParamList, ScreenName.SwapKYC>>();
   const swapKYC = useSelector(swapKYCSelector);
   const dispatch = useDispatch();
   const { colors } = useTheme();
@@ -79,17 +71,7 @@ export function WyreKYC() {
         postalCode,
       },
     }),
-    [
-      city,
-      country?.value,
-      dateOfBirth,
-      firstName,
-      lastName,
-      postalCode,
-      state,
-      street1,
-      street2,
-    ],
+    [city, country?.value, dateOfBirth, firstName, lastName, postalCode, state, street1, street2],
   );
 
   const onSelectState = useCallback(() => {
@@ -154,10 +136,7 @@ export function WyreKYC() {
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={{ flex: 1 }}>
         {swapKYC.wyre ? (
-          <Pending
-            status={swapKYC.wyre.status}
-            onContinue={() => navigate(ScreenName.SwapTab)}
-          />
+          <Pending status={swapKYC.wyre.status} onContinue={() => navigate(ScreenName.SwapTab)} />
         ) : (
           <>
             <ScrollView style={styles.scroll}>
@@ -201,11 +180,7 @@ export function WyreKYC() {
                   validate={hasSubmittedOnce}
                   error={errors?.street1}
                 />
-                <Field
-                  isLoading={isLoading}
-                  field={"street2"}
-                  onChange={setStreet2}
-                />
+                <Field isLoading={isLoading} field={"street2"} onChange={setStreet2} />
                 <Field
                   isLoading={isLoading}
                   field={"city"}
@@ -222,15 +197,11 @@ export function WyreKYC() {
                       styles.input,
                       {
                         color: state ? color : borderColor,
-                        borderColor:
-                          hasSubmittedOnce && errors?.state
-                            ? colors.alert
-                            : borderColor,
+                        borderColor: hasSubmittedOnce && errors?.state ? colors.alert : borderColor,
                       },
                     ]}
                   >
-                    {state?.value ||
-                      t("transfer.swap.kyc.wyre.form.statePlaceholder")}
+                    {state?.value || t("transfer.swap.kyc.wyre.form.statePlaceholder")}
                   </LText>
                 </TouchableOpacity>
                 <LText color={"alert"}>
@@ -241,9 +212,7 @@ export function WyreKYC() {
                 <LText style={styles.label} color={"smoke"}>
                   <Trans i18nKey={"transfer.swap.kyc.wyre.form.country"} />
                 </LText>
-                <LText style={[styles.input, { color, borderColor }]}>
-                  {country?.label}
-                </LText>
+                <LText style={[styles.input, { color, borderColor }]}>{country?.label}</LText>
                 <Field
                   isLoading={isLoading}
                   field={"postalCode"}

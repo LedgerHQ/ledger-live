@@ -4,7 +4,7 @@ const numbers = "0123456789";
 export const sanitizeValueString = (
   unit: Unit,
   valueString: string,
-  locale?: string
+  locale?: string,
 ): {
   display: string;
   value: string;

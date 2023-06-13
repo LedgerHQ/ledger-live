@@ -28,8 +28,7 @@ RestoreRecoveryPhraseScene.id = "RestoreRecoveryPhraseScene";
 
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<OnboardingNavigatorParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<OnboardingNavigatorParamList>>();
 
   const handlePress = useCallback(() => {
     navigation.navigate(NavigatorName.OnboardingCarefulWarning, {

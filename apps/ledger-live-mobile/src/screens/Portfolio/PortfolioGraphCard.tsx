@@ -16,9 +16,7 @@ type Props = {
 const PortfolioGraphCard = ({ showAssets }: Props) => {
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
   const portfolio = usePortfolioAllAccounts();
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
+  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);

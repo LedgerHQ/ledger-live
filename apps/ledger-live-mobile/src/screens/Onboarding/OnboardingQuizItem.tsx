@@ -38,13 +38,7 @@ export default function OnboardingQuizItem({
       <Flex flex={1} px={6} py={7}>
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Image
-            source={
-              selectedAnswer
-                ? selectedAnswer.correct
-                  ? successImage
-                  : failImage
-                : image
-            }
+            source={selectedAnswer ? (selectedAnswer.correct ? successImage : failImage) : image}
             style={{ width: "100%", height: 200 }}
             resizeMode="contain"
           />
@@ -65,24 +59,14 @@ export default function OnboardingQuizItem({
               </Text>
             </>
           ) : (
-            <Text
-              variant="h2"
-              mt={8}
-              textAlign="center"
-              color="constant.black"
-              lineHeight="34.8px"
-            >
+            <Text variant="h2" mt={8} textAlign="center" color="constant.black" lineHeight="34.8px">
               {question}
             </Text>
           )}
         </Flex>
 
         {selectedAnswer ? (
-          <Button
-            type="main"
-            size="large"
-            onPress={() => onNext(selectedAnswer.correct)}
-          >
+          <Button type="main" size="large" onPress={() => onNext(selectedAnswer.correct)}>
             {cta}
           </Button>
         ) : (
@@ -97,12 +81,7 @@ export default function OnboardingQuizItem({
               }}
               mt={6}
             >
-              <Text
-                variant="body"
-                flex={1}
-                textAlign="center"
-                color="constant.black"
-              >
+              <Text variant="body" flex={1} textAlign="center" color="constant.black">
                 {answer.answer}
               </Text>
             </BaseButton>

@@ -20,8 +20,7 @@ export type Props = {
 
 function Modal({ isOpened, onClose, currency }: Props) {
   const { colors } = useTheme();
-  const tokenType =
-    currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
+  const tokenType = currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <SafeAreaView style={styles.modal}>
@@ -46,9 +45,7 @@ function Modal({ isOpened, onClose, currency }: Props) {
             containerStyle={[styles.modalBtn, styles.learnMore]}
             onPress={() =>
               Linking.openURL(
-                urls.supportLinkByTokenType[
-                  tokenType as keyof typeof urls.supportLinkByTokenType
-                ],
+                urls.supportLinkByTokenType[tokenType as keyof typeof urls.supportLinkByTokenType],
               )
             }
           />

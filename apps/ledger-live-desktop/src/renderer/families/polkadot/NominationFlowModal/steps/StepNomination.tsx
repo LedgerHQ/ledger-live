@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
@@ -11,7 +10,6 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 export default function StepNomination({
   account,
-  parentAccount,
   onUpdateTransaction,
   transaction,
   status,
@@ -21,11 +19,7 @@ export default function StepNomination({
   onClose,
   t,
 }: StepProps) {
-  invariant(account && transaction && transaction.validators, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
-  const { polkadotResources } = account;
-  invariant(polkadotResources, "polkadotResources required");
-  const nominations = polkadotResources.nominations || [];
+  const bridge = account && getAccountBridge(account);
   const onGoToChill = useCallback(() => {
     onClose();
     openModal("MODAL_POLKADOT_SIMPLE_OPERATION", {
@@ -36,13 +30,16 @@ export default function StepNomination({
   const updateNomination = useCallback(
     updater => {
       onUpdateTransaction(transaction =>
-        bridge.updateTransaction(transaction, {
+        bridge?.updateTransaction(transaction, {
           validators: updater(transaction.validators || []),
         }),
       );
     },
     [bridge, onUpdateTransaction],
   );
+  if (!account || !transaction) return null;
+  const { polkadotResources } = account;
+  const nominations = polkadotResources.nominations || [];
   return (
     <Box flow={1}>
       <TrackPage category="Nomination Flow" name="Step 1" />
@@ -63,18 +60,17 @@ export default function StepNomination({
 export function StepNominationFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,
 }: StepProps) {
-  invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
+  if (!account) return null;
   return (
     <>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter account={account} status={status} />
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

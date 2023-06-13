@@ -28,13 +28,7 @@ export default function AddAccountsModalCard({
         mx: 0,
         mb: hasMarginBottom ? "16px" : 0,
       }}
-      Image={
-        <Illustration
-          size={130}
-          darkSource={imageSource}
-          lightSource={imageSource}
-        />
-      }
+      Image={<Illustration size={130} darkSource={imageSource} lightSource={imageSource} />}
     />
   );
 }

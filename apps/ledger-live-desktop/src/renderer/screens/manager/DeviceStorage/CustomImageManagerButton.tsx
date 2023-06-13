@@ -19,7 +19,7 @@ const CustomImageManagerButton = (props: Props) => {
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
 
   const onAdd = useCallback(() => {
-    setDrawer(CustomImage);
+    setDrawer(CustomImage, {}, { forceDisableFocusTrap: true });
   }, []);
 
   const onRemove = useCallback(() => {

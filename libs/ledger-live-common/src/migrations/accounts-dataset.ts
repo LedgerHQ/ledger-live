@@ -240,6 +240,6 @@ const accounts: Account[] = [
       },
     ],
   },
-].map((raw) => fromAccountRaw(raw as AccountRaw));
+].map(raw => fromAccountRaw(raw as AccountRaw));
 
 export default accounts;

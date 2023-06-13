@@ -39,23 +39,18 @@ export default function ReceiveFundsNavigator() {
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => (
-        <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
-      ),
+      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
     }),
     [colors, onClose],
   );
 
-  const onConnectDeviceBack = useCallback(
-    (navigation: NavigationProp<Record<string, unknown>>) => {
-      track("button_clicked", {
-        button: "Back arrow",
-        screen: ScreenName.ReceiveConnectDevice,
-      });
-      navigation.goBack();
-    },
-    [],
-  );
+  const onConnectDeviceBack = useCallback((navigation: NavigationProp<Record<string, unknown>>) => {
+    track("button_clicked", {
+      button: "Back arrow",
+      screen: ScreenName.ReceiveConnectDevice,
+    });
+    navigation.goBack();
+  }, []);
 
   const onConfirmationClose = useCallback(() => {
     track("button_clicked", {
@@ -158,11 +153,7 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerTitle: "",
           headerLeft: () => null,
-          headerRight: () => (
-            <NavigationHeaderCloseButtonAdvanced
-              onClose={onConfirmationClose}
-            />
-          ),
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />,
         }}
       />
       {/* Receive Address Device Verification */}
@@ -173,9 +164,7 @@ export default function ReceiveFundsNavigator() {
           headerTitle: "",
           headerLeft: () => null,
           headerRight: () => (
-            <NavigationHeaderCloseButtonAdvanced
-              onClose={onVerificationConfirmationClose}
-            />
+            <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
           ),
         }}
       />

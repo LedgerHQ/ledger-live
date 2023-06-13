@@ -1,12 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
-import {
-  concatMap,
-  delay,
-  scan,
-  distinctUntilChanged,
-  throttleTime,
-} from "rxjs/operators";
+import { concatMap, delay, scan, distinctUntilChanged, throttleTime } from "rxjs/operators";
 import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
@@ -24,33 +18,31 @@ type Res = {
 
 const main = (
   deviceId: string,
-  { final, shouldFlashMCU }: FirmwareUpdateContext
+  { final, shouldFlashMCU }: FirmwareUpdateContext,
 ): Observable<Res> => {
   log("hw", "firmwareUpdate-main started");
   const withFinal = hasFinalFirmware(final);
   const withDeviceInfo = withDevicePolling(deviceId)(
-    (transport) => from(getDeviceInfo(transport)),
-    () => true // accept all errors. we're waiting forever condition that make getDeviceInfo work
+    transport => from(getDeviceInfo(transport)),
+    () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
   );
 
-  const withDeviceInstall = (install) =>
+  const withDeviceInstall = install =>
     withDevicePolling(deviceId)(
       install,
-      (e) => e instanceof CantOpenDevice // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
+      e => e instanceof CantOpenDevice, // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
     );
 
   const waitForBootloader = withDeviceInfo.pipe(
-    concatMap((deviceInfo) =>
-      deviceInfo.isBootloader ? EMPTY : concat(wait2s, waitForBootloader)
-    )
+    concatMap(deviceInfo => (deviceInfo.isBootloader ? EMPTY : concat(wait2s, waitForBootloader))),
   );
   const potentialAutoFlash = withDeviceInfo.pipe(
-    concatMap((deviceInfo) =>
+    concatMap(deviceInfo =>
       deviceInfo.isOSU
         ? EMPTY
         : withDevice(deviceId)(
-            (transport) =>
-              new Observable((o) => {
+            transport =>
+              new Observable(o => {
                 const timeout = setTimeout(() => {
                   log("firmware", "potentialAutoFlash timeout");
                   o.complete();
@@ -66,25 +58,25 @@ const main = (
                   clearTimeout(timeout);
                   transport.off("disconnect", disconnect);
                 };
-              })
-          )
-    )
+              }),
+          ),
+    ),
   );
   const bootloaderLoop = withDeviceInfo.pipe(
-    concatMap((deviceInfo) =>
+    concatMap(deviceInfo =>
       !deviceInfo.isBootloader
         ? EMPTY
-        : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop)
-    )
+        : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop),
+    ),
   );
   const finalStep = !withFinal
     ? EMPTY
     : withDeviceInfo.pipe(
-        concatMap((deviceInfo) =>
+        concatMap(deviceInfo =>
           !deviceInfo.isOSU
             ? throwError(new DeviceInOSUExpected())
-            : withDeviceInstall(installFinalFirmware)
-        )
+            : withDeviceInstall(installFinalFirmware),
+        ),
       );
   const all = shouldFlashMCU
     ? concat(waitForBootloader, bootloaderLoop, finalStep)
@@ -108,10 +100,10 @@ const main = (
       {
         progress: 0,
         installing: null,
-      }
+      },
     ),
     distinctUntilChanged(),
-    throttleTime(100)
+    throttleTime(100),
   );
 };
 

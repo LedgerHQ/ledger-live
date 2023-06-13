@@ -47,15 +47,13 @@ const solana: AppSpec<Transaction> = {
         const transaction = bridge.createTransaction(account);
         const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
-        const amount = account.spendableBalance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        const amount = account.spendableBalance.div(1.9 + 0.2 * Math.random()).integerValue();
         return {
           transaction,
           updates: [{ recipient }, { amount }, maybeTransferMemo()],
         };
       },
-      test: (input) => {
+      test: input => {
         expectCorrectBalanceChange(input);
         expectCorrectMemo(input);
       },
@@ -74,10 +72,10 @@ const solana: AppSpec<Transaction> = {
           updates: [{ recipient }, { useAllAmount: true }, maybeTransferMemo()],
         };
       },
-      test: (input) => {
+      test: input => {
         const { account } = input;
         botTest("account balance should be zero", () =>
-          expect(account.spendableBalance.toNumber()).toBe(0)
+          expect(account.spendableBalance.toNumber()).toBe(0),
         );
         expectCorrectBalanceChange(input);
         expectCorrectMemo(input);
@@ -94,19 +92,14 @@ const solana: AppSpec<Transaction> = {
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
         }
-        invariant(
-          solanaResources.stakes.length < 10,
-          "already enough delegations"
-        );
+        invariant(solanaResources.stakes.length < 10, "already enough delegations");
 
         invariant(account.spendableBalance.gte(3000000), "not enough balance");
 
         const { validators } = getCurrentSolanaPreloadData(account.currency);
 
-        const notUsedValidators = validators.filter((v) =>
-          solanaResources.stakes.every(
-            (s) => s.delegation?.voteAccAddr !== v.voteAccount
-          )
+        const notUsedValidators = validators.filter(v =>
+          solanaResources.stakes.every(s => s.delegation?.voteAccAddr !== v.voteAccount),
         );
 
         const validator = sample(notUsedValidators);
@@ -145,19 +138,16 @@ const solana: AppSpec<Transaction> = {
           throw new Error("wrong transaction");
         }
 
-        const voteAccAddrUsedInTx =
-          transaction.model.uiState.delegate.voteAccAddress;
+        const voteAccAddrUsedInTx = transaction.model.uiState.delegate.voteAccAddress;
 
         const { stakes } = solanaResources;
-        const stake = stakes.find(
-          (s) => s.delegation?.voteAccAddr === voteAccAddrUsedInTx
-        );
+        const stake = stakes.find(s => s.delegation?.voteAccAddr === voteAccAddrUsedInTx);
         if (stake === undefined) {
           throw new Error("expected delegation not found in account resources");
         }
 
         botTest("transaction amount is the stake amount", () =>
-          expect(transaction.amount.toNumber()).toBe(stake.delegation?.stake)
+          expect(transaction.amount.toNumber()).toBe(stake.delegation?.stake),
         );
       },
     },
@@ -174,7 +164,7 @@ const solana: AppSpec<Transaction> = {
         }
 
         const activatingStakes = solanaResources.stakes.filter(
-          (s) => s.activation.state === "activating"
+          s => s.activation.state === "activating",
         );
 
         const stake = sample(activatingStakes);
@@ -212,17 +202,13 @@ const solana: AppSpec<Transaction> = {
 
         const stakeAccAddrUsedInTx = transaction.model.uiState.stakeAccAddr;
 
-        const stake = solanaResources.stakes.find(
-          (s) => s.stakeAccAddr === stakeAccAddrUsedInTx
-        );
+        const stake = solanaResources.stakes.find(s => s.stakeAccAddr === stakeAccAddrUsedInTx);
 
         if (stake === undefined) {
           throw new Error("expected stake not found in account resources");
         }
 
-        botTest("activation state", () =>
-          expect(stake.activation.state).toBe("inactive")
-        );
+        botTest("activation state", () => expect(stake.activation.state).toBe("inactive"));
       },
     },
     {
@@ -237,9 +223,7 @@ const solana: AppSpec<Transaction> = {
           throw new Error("solana resources required");
         }
 
-        const activeStakes = solanaResources.stakes.filter(
-          (s) => s.activation.state === "active"
-        );
+        const activeStakes = solanaResources.stakes.filter(s => s.activation.state === "active");
 
         const stake = sample(activeStakes);
 
@@ -276,16 +260,12 @@ const solana: AppSpec<Transaction> = {
 
         const stakeAccAddrUsedInTx = transaction.model.uiState.stakeAccAddr;
 
-        const stake = solanaResources.stakes.find(
-          (s) => s.stakeAccAddr === stakeAccAddrUsedInTx
-        );
+        const stake = solanaResources.stakes.find(s => s.stakeAccAddr === stakeAccAddrUsedInTx);
 
         if (stake === undefined) {
           throw new Error("expected stake not found in account resources");
         }
-        botTest("activation state", () =>
-          expect(stake.activation.state).toBe("deactivating")
-        );
+        botTest("activation state", () => expect(stake.activation.state).toBe("deactivating"));
       },
     },
     {
@@ -301,7 +281,7 @@ const solana: AppSpec<Transaction> = {
         }
 
         const deactivatingStakes = solanaResources.stakes.filter(
-          (s) => s.activation.state === "deactivating"
+          s => s.activation.state === "deactivating",
         );
 
         const stake = sample(deactivatingStakes);
@@ -345,18 +325,16 @@ const solana: AppSpec<Transaction> = {
         const dataUsedInTx = transaction.model.uiState;
 
         const stake = solanaResources.stakes.find(
-          (s) =>
+          s =>
             s.stakeAccAddr === dataUsedInTx.stakeAccAddr &&
-            s.delegation?.voteAccAddr === dataUsedInTx.voteAccAddr
+            s.delegation?.voteAccAddr === dataUsedInTx.voteAccAddr,
         );
 
         if (stake === undefined) {
           throw new Error("expected stake not found in account resources");
         }
 
-        botTest("activation state", () =>
-          expect(stake.activation.state).toBe("active")
-        );
+        botTest("activation state", () => expect(stake.activation.state).toBe("active"));
       },
     },
     {
@@ -372,7 +350,7 @@ const solana: AppSpec<Transaction> = {
         }
 
         const inactiveStakes = solanaResources.stakes.filter(
-          (s) => s.activation.state === "inactive"
+          s => s.activation.state === "inactive",
         );
 
         const stake = sample(inactiveStakes);
@@ -416,17 +394,15 @@ const solana: AppSpec<Transaction> = {
         const dataUsedInTx = transaction.model.uiState;
 
         const stake = solanaResources.stakes.find(
-          (s) =>
+          s =>
             s.stakeAccAddr === dataUsedInTx.stakeAccAddr &&
-            s.delegation?.voteAccAddr === dataUsedInTx.voteAccAddr
+            s.delegation?.voteAccAddr === dataUsedInTx.voteAccAddr,
         );
 
         if (stake === undefined) {
           throw new Error("expected stake not found in account resources");
         }
-        botTest("activation state", () =>
-          expect(stake.activation.state).toBe("activating")
-        );
+        botTest("activation state", () => expect(stake.activation.state).toBe("activating"));
       },
     },
     {
@@ -441,9 +417,7 @@ const solana: AppSpec<Transaction> = {
           throw new Error("solana resources required");
         }
 
-        const withdrawableStakes = solanaResources.stakes.filter(
-          (s) => s.withdrawable > 0
-        );
+        const withdrawableStakes = solanaResources.stakes.filter(s => s.withdrawable > 0);
 
         const stake = sample(withdrawableStakes);
 
@@ -481,12 +455,10 @@ const solana: AppSpec<Transaction> = {
         const stakeAccAddrUsedInTx = transaction.model.uiState.stakeAccAddr;
 
         const delegationExists = solanaResources.stakes.some(
-          (s) => s.stakeAccAddr === stakeAccAddrUsedInTx
+          s => s.stakeAccAddr === stakeAccAddrUsedInTx,
         );
 
-        botTest("delegation exists", () =>
-          expect(delegationExists).toBe(false)
-        );
+        botTest("delegation exists", () => expect(delegationExists).toBe(false));
       },
     },
   ],
@@ -511,9 +483,7 @@ function expectCorrectMemo(input: TransactionTestInput<Transaction>) {
     case "transfer":
     case "token.transfer": {
       const memo = transaction.model.uiState.memo;
-      botTest("memo matches in op extra", () =>
-        expect(operation.extra.memo).toBe(memo)
-      );
+      botTest("memo matches in op extra", () => expect(operation.extra.memo).toBe(memo));
       break;
     }
     case "token.createATA":
@@ -532,8 +502,8 @@ function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, operation, accountBeforeTransaction } = input;
   botTest("account balance decreased with operation value", () =>
     expect(account.balance.toNumber()).toBe(
-      accountBeforeTransaction.balance.minus(operation.value).toNumber()
-    )
+      accountBeforeTransaction.balance.minus(operation.value).toNumber(),
+    ),
   );
 }
 

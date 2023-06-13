@@ -3,11 +3,7 @@ import {
   MappedSwapOperation,
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import type {

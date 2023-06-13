@@ -40,9 +40,7 @@ export const reconnectDeviceErrors: LedgerErrorConstructor<{
 export type FirmwareUpdateParams = {
   device: Device;
   deviceInfo: DeviceInfo;
-  updateFirmwareAction?: (
-    args: updateFirmwareActionArgs,
-  ) => Observable<UpdateFirmwareActionState>;
+  updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
 };
 
 export type UpdateStep =
@@ -116,9 +114,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     [staxFetchImageState.hexImage],
   );
   const staxLoadImageState = staxLoadImageAction.useHook(
-    updateStep === "imageRestore" && staxFetchImageState.hexImage
-      ? device
-      : null,
+    updateStep === "imageRestore" && staxFetchImageState.hexImage ? device : null,
     staxLoadImageRequest,
   );
 
@@ -174,10 +170,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, [proceedToAppsRestore, staxFetchImageState.hexImage]);
 
   const proceedToLanguageRestore = useCallback(() => {
-    if (
-      deviceInfo.languageId !== undefined &&
-      deviceInfo.languageId !== languageIds.english
-    ) {
+    if (deviceInfo.languageId !== undefined && deviceInfo.languageId !== languageIds.english) {
       setUpdateStep("languageRestore");
     } else {
       proceedToImageRestore();
@@ -196,21 +189,13 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsBackup":
         unrecoverableError =
           connectManagerState.error &&
-          !reconnectDeviceErrors.some(
-            err => connectManagerState.error instanceof err,
-          );
+          !reconnectDeviceErrors.some(err => connectManagerState.error instanceof err);
         if (connectManagerState.result || unrecoverableError) {
           if (connectManagerState.error) {
-            log(
-              "FirmwareUpdate",
-              "error while backing up device apps",
-              connectManagerState.error,
-            );
+            log("FirmwareUpdate", "error while backing up device apps", connectManagerState.error);
           }
           if (connectManagerState.result) {
-            const installedAppsNames = connectManagerState.result.installed.map(
-              ({ name }) => name,
-            );
+            const installedAppsNames = connectManagerState.result.installed.map(({ name }) => name);
             setInstalledApps(installedAppsNames);
           }
           proceedToImageBackup();
@@ -219,16 +204,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageBackup":
         unrecoverableError =
           staxFetchImageState.error &&
-          !reconnectDeviceErrors.some(
-            err => staxFetchImageState.error instanceof err,
-          );
+          !reconnectDeviceErrors.some(err => staxFetchImageState.error instanceof err);
         if (staxFetchImageState.imageFetched || unrecoverableError) {
           if (staxFetchImageState.error)
-            log(
-              "FirmwareUpdate",
-              "error while backing up stax image",
-              staxFetchImageState.error,
-            );
+            log("FirmwareUpdate", "error while backing up stax image", staxFetchImageState.error);
           proceedToFirmwareUpdate();
         }
         break;
@@ -242,36 +221,20 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "languageRestore":
         unrecoverableError =
           installLanguageState.error &&
-          !reconnectDeviceErrors.some(
-            err => installLanguageState.error instanceof err,
-          );
+          !reconnectDeviceErrors.some(err => installLanguageState.error instanceof err);
         if (installLanguageState.languageInstalled || unrecoverableError) {
           if (installLanguageState.error)
-            log(
-              "FirmwareUpdate",
-              "error while restoring language",
-              installLanguageState.error,
-            );
+            log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
           proceedToImageRestore();
         }
         break;
       case "imageRestore":
         unrecoverableError =
           staxLoadImageState.error &&
-          !reconnectDeviceErrors.some(
-            err => staxLoadImageState.error instanceof err,
-          );
-        if (
-          staxLoadImageState.imageLoaded ||
-          unrecoverableError ||
-          !staxFetchImageState.hexImage
-        ) {
+          !reconnectDeviceErrors.some(err => staxLoadImageState.error instanceof err);
+        if (staxLoadImageState.imageLoaded || unrecoverableError || !staxFetchImageState.hexImage) {
           if (staxLoadImageState.error) {
-            log(
-              "FirmwareUpdate",
-              "error while restoring stax image",
-              staxLoadImageState.error,
-            );
+            log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
           }
           proceedToAppsRestore();
         }
@@ -279,16 +242,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsRestore":
         unrecoverableError =
           restoreAppsState.error &&
-          !reconnectDeviceErrors.some(
-            err => restoreAppsState.error instanceof err,
-          );
+          !reconnectDeviceErrors.some(err => restoreAppsState.error instanceof err);
         if (restoreAppsState.opened || unrecoverableError) {
           if (restoreAppsState.error) {
-            log(
-              "FirmwareUpdate",
-              "error while restoring apps",
-              restoreAppsState.error,
-            );
+            log("FirmwareUpdate", "error while restoring apps", restoreAppsState.error);
           }
           proceedToUpdateCompleted();
         }

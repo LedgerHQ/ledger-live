@@ -44,12 +44,10 @@ const getBaseSidecarUrl = (): string => getEnv("API_POLKADOT_SIDECAR");
  *
  * @returns {string}
  */
-const getSidecarUrl = (route: string): string =>
-  `${getBaseSidecarUrl()}${route || ""}`;
+const getSidecarUrl = (route: string): string => `${getBaseSidecarUrl()}${route || ""}`;
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
-const ELECTION_STATUS_OPTIMISTIC_THRESHOLD =
-  getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD") || 25;
+const ELECTION_STATUS_OPTIMISTIC_THRESHOLD = getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD") || 25;
 
 // blocks = 2 minutes 30
 
@@ -92,9 +90,7 @@ const fetchStashAddr =
       data: SidecarPalletStorageItem;
     } = await network({
       method: "GET",
-      url: getSidecarUrl(
-        `/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`
-      ),
+      url: getSidecarUrl(`/pallets/staking/storage/ledger?keys[]=${addr}&key1=${addr}`),
     });
     return data.value?.stash ?? null;
   };
@@ -116,9 +112,7 @@ const fetchControllerAddr =
       data: SidecarPalletStorageItem;
     } = await network({
       method: "GET",
-      url: getSidecarUrl(
-        `/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`
-      ),
+      url: getSidecarUrl(`/pallets/staking/storage/bonded?keys[]=${addr}&key1=${addr}`),
     });
     return data.value ?? null;
   };
@@ -175,18 +169,17 @@ const fetchNominations =
  *
  * @returns {Object}
  */
-const fetchConstants =
-  (network: NetworkRequestCall) => async (): Promise<Record<string, any>> => {
-    const {
-      data,
-    }: {
-      data: SidecarConstants;
-    } = await network({
-      method: "GET",
-      url: getSidecarUrl(`/runtime/constants`),
-    });
-    return data.consts;
-  };
+const fetchConstants = (network: NetworkRequestCall) => async (): Promise<Record<string, any>> => {
+  const {
+    data,
+  }: {
+    data: SidecarConstants;
+  } = await network({
+    method: "GET",
+    url: getSidecarUrl(`/runtime/constants`),
+  });
+  return data.consts;
+};
 
 /**
  * Returns the activeEra info
@@ -196,8 +189,7 @@ const fetchConstants =
  * @returns {SidecarPalletStorageItem}
  */
 const fetchActiveEra =
-  (network: NetworkRequestCall) =>
-  async (): Promise<SidecarPalletStorageItem> => {
+  (network: NetworkRequestCall) => async (): Promise<SidecarPalletStorageItem> => {
     const {
       data,
     }: {
@@ -242,7 +234,7 @@ const fetchValidators =
   (network: NetworkRequestCall) =>
   async (
     status: SidecarValidatorsParamStatus = "all",
-    addresses?: SidecarValidatorsParamAddresses
+    addresses?: SidecarValidatorsParamAddresses,
   ): Promise<SidecarValidators> => {
     let params = {};
 
@@ -273,8 +265,7 @@ const fetchValidators =
  * @returns {SidecarPalletStakingProgress}
  */
 const fetchStakingProgress =
-  (network: NetworkRequestCall) =>
-  async (): Promise<SidecarPalletStakingProgress> => {
+  (network: NetworkRequestCall) => async (): Promise<SidecarPalletStakingProgress> => {
     const {
       data,
     }: {
@@ -297,7 +288,7 @@ const fetchTransactionMaterial =
   (network: NetworkRequestCall) =>
   async (
     // By default we don't want any metadata.
-    withMetadata = false
+    withMetadata = false,
   ): Promise<SidecarTransactionMaterial> => {
     const params = withMetadata ? "?metadata=scale" : "?noMeta=true";
     const {
@@ -338,11 +329,10 @@ const fetchChainSpec = (network: NetworkRequestCall) => async () => {
  *
  * @returns {boolean}
  */
-export const isElectionClosed =
-  (network: NetworkRequestCall) => async (): Promise<boolean> => {
-    const progress = await fetchStakingProgress(network)();
-    return !progress.electionStatus?.status?.Open;
-  };
+export const isElectionClosed = (network: NetworkRequestCall) => async (): Promise<boolean> => {
+  const progress = await fetchStakingProgress(network)();
+  return !progress.electionStatus?.status?.Open;
+};
 
 /**
  * Returns true if the address is a new account with no balance.
@@ -356,9 +346,7 @@ export const isNewAccount =
   (network: NetworkRequestCall) =>
   async (addr: string): Promise<boolean> => {
     const { nonce, free } = await fetchBalanceInfo(network)(addr);
-    return (
-      new BigNumber(0).isEqualTo(nonce) && new BigNumber(0).isEqualTo(free)
-    );
+    return new BigNumber(0).isEqualTo(nonce) && new BigNumber(0).isEqualTo(free);
   };
 
 /**
@@ -387,12 +375,9 @@ export const isControllerAddress =
 export const verifyValidatorAddresses =
   (network: NetworkRequestCall) =>
   async (validators: string[]): Promise<string[]> => {
-    const existingValidators = await fetchValidators(network)(
-      "all",
-      validators
-    );
-    const existingIds = existingValidators.map((v) => v.accountId);
-    return validators.filter((v) => !existingIds.includes(v));
+    const existingValidators = await fetchValidators(network)("all", validators);
+    const existingIds = existingValidators.map(v => v.accountId);
+    return validators.filter(v => !existingIds.includes(v));
   };
 
 /**
@@ -428,9 +413,7 @@ const getBalances = (network: NetworkRequestCall) => async (addr: string) => {
     return total;
   }, new BigNumber(0));
   const balance = new BigNumber(balanceInfo.free);
-  const spendableBalance = totalLocked.gt(balance)
-    ? new BigNumber(0)
-    : balance.minus(totalLocked);
+  const spendableBalance = totalLocked.gt(balance) ? new BigNumber(0) : balance.minus(totalLocked);
   return {
     blockHeight: balanceInfo.at?.height ? Number(balanceInfo.at.height) : null,
     balance,
@@ -477,28 +460,22 @@ export const getStakingInfo =
 
     const sessionsPerEra = new BigNumber(consts?.staking?.sessionsPerEra || 6); // 6 sessions
 
-    const eraLength = sessionsPerEra
-      .multipliedBy(epochDuration)
-      .multipliedBy(blockTime)
-      .toNumber();
+    const eraLength = sessionsPerEra.multipliedBy(epochDuration).multipliedBy(blockTime).toNumber();
     const unlockings = stakingInfo?.staking.unlocking
-      ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>((lock) => ({
+      ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => ({
           amount: new BigNumber(lock.value),
           completionDate: new Date(
-            activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength
+            activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength,
           ), // This is an estimation of the date of completion, since it depends on block validation speed
         }))
       : [];
     const now = new Date();
-    const unlocked = unlockings.filter((lock) => lock.completionDate <= now);
+    const unlocked = unlockings.filter(lock => lock.completionDate <= now);
     const unlockingBalance = unlockings.reduce(
       (sum, lock) => sum.plus(lock.amount),
-      new BigNumber(0)
+      new BigNumber(0),
     );
-    const unlockedBalance = unlocked.reduce(
-      (sum, lock) => sum.plus(lock.amount),
-      new BigNumber(0)
-    );
+    const unlockedBalance = unlocked.reduce((sum, lock) => sum.plus(lock.amount), new BigNumber(0));
     const numSlashingSpans = Number(stakingInfo?.numSlashingSpans || 0);
     return {
       controller: controller || null,
@@ -523,7 +500,7 @@ export const getNominations =
   async (addr: string): Promise<PolkadotNomination[]> => {
     const nominations = await fetchNominations(network)(addr);
     if (!nominations) return [];
-    return nominations.targets.map<PolkadotNomination>((nomination) => ({
+    return nominations.targets.map<PolkadotNomination>(nomination => ({
       address: nomination.address,
       value: new BigNumber(nomination.value || 0),
       status: nomination.status,
@@ -535,19 +512,18 @@ export const getNominations =
  *
  * @async
  */
-export const getTransactionParams =
-  (network: NetworkRequestCall) => async () => {
-    const material = await fetchTransactionMaterial(network)();
-    return {
-      blockHash: material.at.hash,
-      blockNumber: material.at.height,
-      chainName: material.chainName,
-      genesisHash: material.genesisHash,
-      specName: material.specName,
-      transactionVersion: material.txVersion,
-      specVersion: material.specVersion,
-    };
+export const getTransactionParams = (network: NetworkRequestCall) => async () => {
+  const material = await fetchTransactionMaterial(network)();
+  return {
+    blockHash: material.at.hash,
+    blockNumber: material.at.height,
+    chainName: material.chainName,
+    genesisHash: material.genesisHash,
+    specName: material.specName,
+    transactionVersion: material.txVersion,
+    specVersion: material.specVersion,
   };
+};
 
 /**
  * Broadcast the transaction to the substrate node
@@ -611,9 +587,7 @@ export const paymentInfo =
 export const getValidators =
   (network: NetworkRequestCall) =>
   async (
-    stashes:
-      | SidecarValidatorsParamStatus
-      | SidecarValidatorsParamAddresses = "elected"
+    stashes: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses = "elected",
   ): Promise<PolkadotValidator[]> => {
     let validators;
 
@@ -623,19 +597,14 @@ export const getValidators =
       validators = await fetchValidators(network)(stashes);
     }
 
-    return validators.map((v) => ({
+    return validators.map(v => ({
       address: v.accountId,
       identity: v.identity
-        ? [v.identity.displayParent, v.identity.display]
-            .filter(Boolean)
-            .join(" - ")
-            .trim()
+        ? [v.identity.displayParent, v.identity.display].filter(Boolean).join(" - ").trim()
         : "",
       nominatorsCount: Number(v.nominatorsCount),
       rewardPoints: v.rewardsPoints ? new BigNumber(v.rewardsPoints) : null,
-      commission: new BigNumber(v.commission).dividedBy(
-        VALIDATOR_COMISSION_RATIO
-      ),
+      commission: new BigNumber(v.commission).dividedBy(VALIDATOR_COMISSION_RATIO),
       totalBonded: new BigNumber(v.total),
       selfBonded: new BigNumber(v.own),
       isElected: v.isElected,
@@ -706,8 +675,8 @@ export const getRegistry =
         registry,
         material.chainName,
         material.specName,
-        Number(material.specVersion)
-      ) as any
+        Number(material.specVersion),
+      ) as any,
     );
     // Register the chain properties for this registry
     registry.setChainProperties(
@@ -715,7 +684,7 @@ export const getRegistry =
         ss58Format: Number(spec.properties.ss58Format),
         tokenDecimals: Number(spec.properties.tokenDecimals),
         tokenSymbol: spec.properties.tokenSymbol,
-      })
+      }),
     );
     registry.setMetadata(metadata);
     const extrinsics = expandMetadata(registry, metadata).tx;
@@ -744,7 +713,7 @@ const getConstants = (network: NetworkRequestCall, cache: LRUCacheFn) =>
     {
       max: 1, // Store only one constants object since we only have polkadot.
       ttl: 60 * 60 * 1000, // 1 hour
-    }
+    },
   );
 
 /**
@@ -754,15 +723,11 @@ const getConstants = (network: NetworkRequestCall, cache: LRUCacheFn) =>
  *
  * @returns {Promise<Object>} consts
  */
-const getTransactionMaterialWithMetadata = (
-  network: NetworkRequestCall,
-  cache: LRUCacheFn
-) =>
+const getTransactionMaterialWithMetadata = (network: NetworkRequestCall, cache: LRUCacheFn) =>
   cache(
-    async (): Promise<SidecarTransactionMaterial> =>
-      fetchTransactionMaterial(network)(true),
+    async (): Promise<SidecarTransactionMaterial> => fetchTransactionMaterial(network)(true),
     () => "polkadot",
     {
       ttl: 60 * 60 * 1000, // 1 hour - could be Infinity
-    }
+    },
   );

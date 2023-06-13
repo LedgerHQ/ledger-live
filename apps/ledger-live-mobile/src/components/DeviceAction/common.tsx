@@ -11,13 +11,7 @@ import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 // NEW DEVICE ACTION UX
 // area reserved to the project of redefining the UX of the device actions
 // new renderings should be define here in order to progressively move towards then new UX
-export const AllowManager = ({
-  wording,
-  device,
-}: {
-  wording: string;
-  device: Device;
-}) => {
+export const AllowManager = ({ wording, device }: { wording: string; device: Device }) => {
   const { theme } = useTheme();
   return (
     <Flex pb={6} pt={6}>
@@ -26,9 +20,7 @@ export const AllowManager = ({
           {wording}
         </Text>
       </Flex>
-      <Animation
-        source={getDeviceAnimation({ device, key: "allowManager", theme })}
-      />
+      <Animation source={getDeviceAnimation({ device, key: "allowManager", theme })} />
     </Flex>
   );
 };
@@ -55,23 +47,11 @@ export const ConfirmFirmwareUpdate = ({
         </Text>
       </Flex>
       <Flex flexDirection="row" justifyContent="center">
-        <Flex
-          borderRadius={4}
-          px={3}
-          py={1}
-          backgroundColor="neutral.c40"
-          mr={3}
-        >
+        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40" mr={3}>
           <Text>{oldFirmwareVersion}</Text>
         </Flex>
         <Icons.ArrowRightMedium />
-        <Flex
-          borderRadius={4}
-          px={3}
-          py={1}
-          backgroundColor="neutral.c40"
-          ml={3}
-        >
+        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40" ml={3}>
           <Text>{newFirmwareVersion}</Text>
         </Flex>
       </Flex>
@@ -86,13 +66,7 @@ export const ConfirmFirmwareUpdate = ({
   );
 };
 
-export const FinishFirmwareUpdate = ({
-  t,
-  device,
-}: {
-  t: TFunction;
-  device: Device;
-}) => {
+export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Device }) => {
   const { theme } = useTheme();
 
   return (
@@ -115,9 +89,7 @@ export const FinishFirmwareUpdate = ({
           </Text>
         </Flex>
       </Flex>
-      <Animation
-        source={getDeviceAnimation({ device, key: "enterPinCode", theme })}
-      />
+      <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
     </Flex>
   );
 };
@@ -137,11 +109,7 @@ export const FirmwareUpdateDenied = ({
 }) => {
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
-      <IconBadge
-        iconColor="primary.c100"
-        iconSize={32}
-        Icon={Icons.InfoAltFillMedium}
-      />
+      <IconBadge iconColor="primary.c100" iconSize={32} Icon={Icons.InfoAltFillMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateCancelled", {
           deviceName: getDeviceModel(device.modelId).productName,
@@ -153,22 +121,10 @@ export const FirmwareUpdateDenied = ({
           newFirmwareVersion,
         })}
       </Text>
-      <Button
-        type="main"
-        outline={false}
-        onPress={onPressRestart}
-        mt={8}
-        alignSelf="stretch"
-      >
+      <Button type="main" outline={false} onPress={onPressRestart} mt={8} alignSelf="stretch">
         {t("FirmwareUpdate.restartUpdate")}
       </Button>
-      <Button
-        type="default"
-        outline={false}
-        onPress={onPressQuit}
-        mt={6}
-        alignSelf="stretch"
-      >
+      <Button type="default" outline={false} onPress={onPressQuit} mt={6} alignSelf="stretch">
         {t("FirmwareUpdate.quitUpdate")}
       </Button>
     </Flex>
@@ -198,12 +154,9 @@ export const DeviceActionError = ({
     const contextSpecificErrorTitle = t(contextSpecificErrorTitleId, {
       deviceName: getDeviceModel(device.modelId).productName,
     });
-    const contextSpecificErrorDescription = t(
-      contextSpecificErrorDescriptionId,
-      {
-        deviceName: getDeviceModel(device.modelId).productName,
-      },
-    );
+    const contextSpecificErrorDescription = t(contextSpecificErrorDescriptionId, {
+      deviceName: getDeviceModel(device.modelId).productName,
+    });
 
     const genericErrorTitle = t(genericErrorTitleId, {
       deviceName: getDeviceModel(device.modelId).productName,
@@ -233,11 +186,7 @@ export const DeviceActionError = ({
 
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
-      <IconBadge
-        iconColor="warning.c100"
-        iconSize={32}
-        Icon={Icons.WarningSolidMedium}
-      />
+      <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {errorTitle}
       </Text>

@@ -13,10 +13,7 @@ const lldRoot = path.resolve(__dirname, "..", "..");
 let GIT_REVISION = process.env.GIT_REVISION;
 
 if (!GIT_REVISION) {
-  GIT_REVISION = childProcess
-    .execSync("git rev-parse --short HEAD")
-    .toString("utf8")
-    .trim();
+  GIT_REVISION = childProcess.execSync("git rev-parse --short HEAD").toString("utf8").trim();
 }
 
 const parsed = prerelease(pkg.version);
@@ -106,6 +103,10 @@ const buildViteConfig = argv =>
           path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-algorand"),
           "lib-es",
         ),
+        "@ledgerhq/coin-evm": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-evm"),
+          "lib-es",
+        ),
         "@ledgerhq/live-network": path.join(
           path.resolve(__dirname, "..", "..", "..", "..", "libs", "live-network"),
           "lib-es",
@@ -124,7 +125,7 @@ const buildViteConfig = argv =>
             name: "Externalize Nodejs Standard Library",
             setup(build) {
               nodeExternals.forEach(external => {
-                build.onResolve({ filter: new RegExp(`^${external}$`) }, args => ({
+                build.onResolve({ filter: new RegExp(`^${external}$`) }, _args => ({
                   path: external,
                   external: true,
                 }));

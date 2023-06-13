@@ -11,7 +11,7 @@ const ScrollContainer = styled(Box).attrs(p => ({
 type ScrollLoadingListProps<D> = {
   data: Array<D>;
   renderItem: (a: D, index: number) => React.ReactNode;
-  noResultPlaceholder: React.ReactNode | undefined | null;
+  noResultPlaceholder?: React.ReactNode | null;
   scrollEndThreshold?: number;
   bufferSize?: number;
   style?: React.CSSProperties;
@@ -55,4 +55,4 @@ function ScrollLoadingList<D>({
     </ScrollContainer>
   );
 }
-export default memo<ScrollLoadingListProps<unknown>>(ScrollLoadingList);
+export default memo<ScrollLoadingListProps<unknown>>(ScrollLoadingList) as typeof ScrollLoadingList;

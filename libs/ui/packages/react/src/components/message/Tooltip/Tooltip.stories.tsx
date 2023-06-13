@@ -73,7 +73,7 @@ export default {
   },
 };
 
-export const Tooltip: StoryTemplate<Props> = (args) => (
+export const Tooltip: StoryTemplate<Props> = args => (
   <FlexBox alignItems="center" justifyContent="center">
     <TooltipComponent {...args}>
       <div style={{ margin: "50px" }}>

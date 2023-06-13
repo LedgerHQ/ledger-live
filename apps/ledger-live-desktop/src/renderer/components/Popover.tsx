@@ -130,14 +130,8 @@ const Popover = ({ position = "top", children, content }: PopoverProps) => {
   const [visible, setVisible] = useState(false);
   const onClick = useCallback(() => {
     if (!visible && childrenContainer && childrenContainer.current) {
-      const {
-        top,
-        right,
-        bottom,
-        left,
-        height,
-        width,
-      } = childrenContainer.current.getBoundingClientRect();
+      const { top, right, bottom, left, height, width } =
+        childrenContainer.current.getBoundingClientRect();
       const pos: { bottom: number | string; left: number | string } = {
         bottom,
         left,

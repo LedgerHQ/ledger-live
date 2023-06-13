@@ -13,7 +13,6 @@ import { StepProps } from "../types";
 import AmountField from "../fields/AmountField";
 export default function StepAmount({
   account,
-  parentAccount,
   onChangeTransaction,
   transaction,
   status,
@@ -38,7 +37,6 @@ export default function StepAmount({
       <AmountField
         transaction={transaction}
         account={account}
-        parentAccount={parentAccount}
         bridgePending={bridgePending}
         onChangeTransaction={onChangeTransaction}
         status={status}
@@ -50,7 +48,6 @@ export default function StepAmount({
 export function StepAmountFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,
@@ -61,7 +58,7 @@ export function StepAmountFooter({
   const canNext = !bridgePending && !hasErrors;
   return (
     <>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter account={account} status={status} />
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

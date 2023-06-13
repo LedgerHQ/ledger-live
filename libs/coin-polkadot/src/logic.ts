@@ -48,9 +48,7 @@ export const hasExternalController = (a: PolkadotAccount): boolean => {
  * @param {PolkadotAccount} a
  */
 export const hasExternalStash = (a: PolkadotAccount): boolean => {
-  return a.polkadotResources?.stash
-    ? a.polkadotResources?.stash !== a.freshAddress
-    : false;
+  return a.polkadotResources?.stash ? a.polkadotResources?.stash !== a.freshAddress : false;
 };
 
 /**
@@ -70,7 +68,7 @@ export const canBond = (a: Account): boolean => {
  */
 export const getMinimumAmountToBond = (
   a: PolkadotAccount,
-  minimumBondBalance: BigNumber | undefined
+  minimumBondBalance: BigNumber | undefined,
 ): BigNumber => {
   const currentlyBondedBalance = calculateMaxUnbond(a);
 
@@ -89,8 +87,7 @@ export const getMinimumAmountToBond = (
 export const hasMinimumBondBalance = (a: PolkadotAccount): boolean => {
   const { minimumBondBalance } = getCurrentPolkadotPreloadData();
   return (
-    !a.polkadotResources ||
-    a.polkadotResources.lockedBalance.gte(new BigNumber(minimumBondBalance))
+    !a.polkadotResources || a.polkadotResources.lockedBalance.gte(new BigNumber(minimumBondBalance))
   );
 };
 
@@ -99,11 +96,8 @@ export const hasMinimumBondBalance = (a: PolkadotAccount): boolean => {
  *
  * @param {PolkadotAccount} a
  */
-export const hasPendingOperationType = (
-  a: Account,
-  type: OperationType
-): boolean => {
-  return a.pendingOperations?.some((op) => op.type === type) ?? false;
+export const hasPendingOperationType = (a: Account, type: OperationType): boolean => {
+  return a.pendingOperations?.some(op => op.type === type) ?? false;
 };
 
 /**
@@ -122,10 +116,8 @@ export const hasMaxUnlockings = (a: PolkadotAccount) => {
  * @param {PolkadotAccount} a
  */
 export const hasLockedBalance = (a: PolkadotAccount) => {
-  const {
-    lockedBalance = new BigNumber(0),
-    unlockingBalance = new BigNumber(0),
-  } = a.polkadotResources || {};
+  const { lockedBalance = new BigNumber(0), unlockingBalance = new BigNumber(0) } =
+    a.polkadotResources || {};
   return lockedBalance.minus(unlockingBalance).gt(0);
 };
 
@@ -154,9 +146,7 @@ export const isFirstBond = (a: PolkadotAccount): boolean => !isStash(a);
 
 export const isElectionOpen = (): boolean => {
   const { staking } = getCurrentPolkadotPreloadData();
-  return staking?.electionClosed !== undefined
-    ? !staking?.electionClosed
-    : false;
+  return staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
 };
 
 /**
@@ -170,7 +160,7 @@ export const getNonce = (a: PolkadotAccount): number => {
     a.polkadotResources?.nonce || 0,
     lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
       ? lastPendingOp.transactionSequenceNumber + 1
-      : 0
+      : 0,
   );
   return nonce;
 };
@@ -183,9 +173,7 @@ export const getNonce = (a: PolkadotAccount): number => {
  * @param {*} t
  */
 const calculateMaxBond = (a: PolkadotAccount, t: Transaction): BigNumber => {
-  const amount = a.spendableBalance
-    .minus(t.fees || 0)
-    .minus(FEES_SAFETY_BUFFER);
+  const amount = a.spendableBalance.minus(t.fees || 0).minus(FEES_SAFETY_BUFFER);
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
@@ -196,9 +184,8 @@ const calculateMaxBond = (a: PolkadotAccount, t: Transaction): BigNumber => {
  */
 const calculateMaxUnbond = (a: PolkadotAccount): BigNumber => {
   return (
-    a.polkadotResources?.lockedBalance.minus(
-      a.polkadotResources.unlockingBalance
-    ) ?? new BigNumber(0)
+    a.polkadotResources?.lockedBalance.minus(a.polkadotResources.unlockingBalance) ??
+    new BigNumber(0)
   );
 };
 
@@ -227,13 +214,7 @@ const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
  *
  * @param {*} param
  */
-export const calculateAmount = ({
-  a,
-  t,
-}: {
-  a: PolkadotAccount;
-  t: Transaction;
-}): BigNumber => {
+export const calculateAmount = ({ a, t }: { a: PolkadotAccount; t: Transaction }): BigNumber => {
   let amount = t.amount;
 
   if (t.useAllAmount) {

@@ -1,7 +1,3 @@
-const git = require("git-rev-sync");
-const pkg = require("../../package.json");
-const repoInfo = require("./repo-info");
-
 let verbose = false;
 
 const log = str => {
@@ -10,57 +6,7 @@ const log = str => {
   }
 };
 
-// eslint-disable-next-line no-unused-vars
-const isClean = () => {
-  const isDirty = git.isDirty();
-
-  log(`git.isDirty(): ${isDirty}`);
-
-  if (isDirty) {
-    throw new Error("You have uncommitted local changes");
-  }
-};
-
-// eslint-disable-next-line no-unused-vars
-const isTagged = nightly => ctx => {
-  const isTagDirty = git.isTagDirty();
-
-  log(`git.isTagDirty(): ${isTagDirty}`);
-
-  const tag = git.tag();
-
-  log(`git.tag(): ${tag}`);
-
-  if ((isTagDirty && !nightly) || !tag) {
-    throw new Error("HEAD is not tagged or dirty");
-  }
-
-  ctx.tag = tag;
-};
-
-// eslint-disable-next-line no-unused-vars
-const checkRemote = nightly => ctx => {
-  const { repository } = pkg;
-  const gitRemote = git.remoteUrl();
-
-  log(`package.json repository is ${repository}, git remote is ${gitRemote}`);
-
-  const pkgInfo = repoInfo(repository);
-  const gitInfo = repoInfo(gitRemote);
-
-  if (nightly) {
-    ctx.repo = pkgInfo;
-    return;
-  }
-
-  if (pkgInfo.owner !== gitInfo.owner || pkgInfo.repo !== gitInfo.repo) {
-    throw new Error("git remote URL does not match package.json `repository` entry");
-  }
-
-  ctx.repo = pkgInfo;
-};
-
-const checkEnv = nightly => ctx => {
+const checkEnv = nightly => _ctx => {
   const platform = require("os").platform();
 
   // const { GH_TOKEN, APPLEID, APPLEID_PASSWORD } = process.env;
@@ -96,19 +42,5 @@ module.exports = args => {
       title: "Check for required environment variables",
       task: checkEnv(args.nightly),
     },
-    // TODO: make sure this is not needed anymore
-    // {
-    //   title: "Check that git remote branch matches package.json `repository`",
-    //   task: checkRemote(args.nightly),
-    // },
-    // {
-    //   title: "Check that the local git repository is clean",
-    //   task: isClean,
-    //   skip: () => !!args.nightly,
-    // },
-    // {
-    //   title: "Check that HEAD is tagged",
-    //   task: isTagged(args.nightly),
-    // },
   ];
 };

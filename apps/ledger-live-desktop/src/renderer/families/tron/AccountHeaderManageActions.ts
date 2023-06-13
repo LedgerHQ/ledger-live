@@ -1,14 +1,24 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
+import { SubAccount } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import IconCoins from "~/renderer/icons/Coins";
+import { ManageAction } from "../types";
+import noop from "lodash/noop";
+
 type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+  account: TronAccount | SubAccount;
+  parentAccount: TronAccount | undefined | null;
 };
-const AccountHeaderManageActionsComponent = ({ parentAccount }: Props) => {
+
+const AccountHeaderManageActions = ({
+  account,
+  parentAccount,
+}: Props): ManageAction[] | null | undefined => {
   const { t } = useTranslation();
-  if (parentAccount) return null;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { tronResources } = mainAccount;
+  if (!tronResources || parentAccount) return null;
   const disabledLabel = t("tron.voting.warnDisableStaking");
   return [
     {
@@ -21,16 +31,8 @@ const AccountHeaderManageActionsComponent = ({ parentAccount }: Props) => {
       eventProperties: {
         button: "stake",
       },
+      onClick: noop,
     },
   ];
-};
-const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const { tronResources } = mainAccount;
-  if (!tronResources) return null;
-  return AccountHeaderManageActionsComponent({
-    account,
-    parentAccount,
-  });
 };
 export default AccountHeaderManageActions;

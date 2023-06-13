@@ -667,15 +667,15 @@ export const renderError = ({
         size={64}
       />
       <ErrorTitle>
-        <TranslatedError error={(error as unknown) as Error} noLink />
+        <TranslatedError error={error as unknown as Error} noLink />
       </ErrorTitle>
       <ErrorDescription>
-        <TranslatedError error={(error as unknown) as Error} field="description" />
+        <TranslatedError error={error as unknown as Error} field="description" />
       </ErrorDescription>
       {list ? (
         <ErrorDescription>
           <ol style={{ textAlign: "justify" }}>
-            <TranslatedError error={(error as unknown) as Error} field="list" />
+            <TranslatedError error={error as unknown as Error} field="list" />
           </ol>
         </ErrorDescription>
       ) : null}

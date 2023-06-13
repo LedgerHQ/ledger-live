@@ -1,4 +1,12 @@
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  ElrondProvider,
+  ElrondAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/elrond/types";
+import { LLDCoinFamily } from "../types";
+
+export type ElrondFamily = LLDCoinFamily<ElrondAccount, Transaction, TransactionStatus>;
 
 export interface UnbondingType {
   amount: string;

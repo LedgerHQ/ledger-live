@@ -6,10 +6,8 @@ import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 
 export default function FilterTokenOperationsZeroAmount() {
-  const [
-    filterTokenOperationsZeroAmount,
-    setFilterTokenOperationsZeroAmount,
-  ] = useFilterTokenOperationsZeroAmount();
+  const [filterTokenOperationsZeroAmount, setFilterTokenOperationsZeroAmount] =
+    useFilterTokenOperationsZeroAmount();
   const { t } = useTranslation();
 
   return (

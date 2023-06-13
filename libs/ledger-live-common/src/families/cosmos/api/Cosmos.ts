@@ -24,7 +24,7 @@ export class CosmosAPI {
 
   getAccountInfo = async (
     address: string,
-    currency: CryptoCurrency
+    currency: CryptoCurrency,
   ): Promise<{
     balances: BigNumber;
     blockHeight: number;
@@ -35,23 +35,16 @@ export class CosmosAPI {
     withdrawAddress: string;
   }> => {
     try {
-      const [
-        balances,
-        blockHeight,
-        txs,
-        delegations,
-        redelegations,
-        unbondings,
-        withdrawAddress,
-      ] = await Promise.all([
-        this.getAllBalances(address, currency),
-        this.getHeight(),
-        this.getTransactions(address),
-        this.getDelegations(address, currency),
-        this.getRedelegations(address),
-        this.getUnbondings(address),
-        this.getWithdrawAddress(address),
-      ]);
+      const [balances, blockHeight, txs, delegations, redelegations, unbondings, withdrawAddress] =
+        await Promise.all([
+          this.getAllBalances(address, currency),
+          this.getHeight(),
+          this.getTransactions(address),
+          this.getDelegations(address, currency),
+          this.getRedelegations(address),
+          this.getUnbondings(address),
+          this.getWithdrawAddress(address),
+        ]);
 
       return {
         balances,
@@ -63,15 +56,11 @@ export class CosmosAPI {
         withdrawAddress,
       };
     } catch (e) {
-      throw new Error(
-        `"Error during cosmos synchronization: "${(e as Error).message}`
-      );
+      throw new Error(`"Error during cosmos synchronization: "${(e as Error).message}`);
     }
   };
 
-  getAccount = async (
-    address: string
-  ): Promise<{ accountNumber: number; sequence: number }> => {
+  getAccount = async (address: string): Promise<{ accountNumber: number; sequence: number }> => {
     const response = {
       accountNumber: 0,
       sequence: 0,
@@ -113,10 +102,7 @@ export class CosmosAPI {
     return parseInt(data.block.header.height);
   };
 
-  getAllBalances = async (
-    address: string,
-    currency: CryptoCurrency
-  ): Promise<BigNumber> => {
+  getAllBalances = async (address: string, currency: CryptoCurrency): Promise<BigNumber> => {
     const { data } = await network({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/bank/${this.version}/balances/${address}`,
@@ -125,8 +111,7 @@ export class CosmosAPI {
     let amount = new BigNumber(0);
 
     for (const elem of data.balances) {
-      if (elem.denom === currency.units[1].code)
-        amount = amount.plus(elem.amount);
+      if (elem.denom === currency.units[1].code) amount = amount.plus(elem.amount);
     }
 
     return amount;
@@ -134,7 +119,7 @@ export class CosmosAPI {
 
   getDelegations = async (
     address: string,
-    currency: CryptoCurrency
+    currency: CryptoCurrency,
   ): Promise<CosmosDelegation[]> => {
     const delegations: Array<CosmosDelegation> = [];
 
@@ -143,9 +128,7 @@ export class CosmosAPI {
       url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/delegations/${address}`,
     });
 
-    data1.delegation_responses = data1.delegation_responses.filter(
-      (d) => d.balance.amount !== "0"
-    );
+    data1.delegation_responses = data1.delegation_responses.filter(d => d.balance.amount !== "0");
 
     let status = "unbonded";
     const statusMap = {
@@ -184,7 +167,7 @@ export class CosmosAPI {
           for (const reward of r.reward) {
             if (reward.denom === currency.units[1].code)
               d.pendingRewards = d.pendingRewards.plus(
-                new BigNumber(reward.amount).integerValue(BigNumber.ROUND_CEIL)
+                new BigNumber(reward.amount).integerValue(BigNumber.ROUND_CEIL),
               );
           }
         }
@@ -247,25 +230,51 @@ export class CosmosAPI {
   };
 
   getTransactions = async (address: string): Promise<CosmosTx[]> => {
-    const receive = await network({
-      method: "GET",
-      url:
-        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`transfer.recipient='${address}'`),
-    });
+    let receive;
+    let send;
 
-    const send = await network({
-      method: "GET",
-      url:
-        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`message.sender='${address}'`),
-    });
+    try {
+      send = await this.getSendingTransactions(address, "ORDER_BY_DESC");
+      receive = await this.getReceivingTransactions(address, "ORDER_BY_DESC");
+    } catch (e) {
+      // FIXME: remove and always orderBy once pagination is implemented or every nodes are upgraded to 0.47
+      // See https://github.com/cosmos/cosmos-sdk/issues/15437
+      if ((e as Error).message.includes("ORDER_BY_DESC")) {
+        send = await this.getSendingTransactions(address);
+        receive = await this.getReceivingTransactions(address);
+      }
+    }
+
     return [...receive.data.tx_responses, ...send.data.tx_responses];
   };
 
-  broadcast = async ({
-    signedOperation: { operation, signature },
-  }): Promise<Operation> => {
+  private async getReceivingTransactions(
+    address: string,
+    orderBy?: "ORDER_BY_DESC" | "ORDER_BY_ASC",
+  ) {
+    return await network({
+      method: "GET",
+      url:
+        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
+        encodeURI(`transfer.recipient='${address}'`) +
+        (orderBy ? `&order_by=${orderBy}` : ""),
+    });
+  }
+
+  private async getSendingTransactions(
+    address: string,
+    orderBy?: "ORDER_BY_DESC" | "ORDER_BY_ASC",
+  ) {
+    return await network({
+      method: "GET",
+      url:
+        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
+        encodeURI(`message.sender='${address}'`) +
+        (orderBy ? `&order_by=${orderBy}` : ""),
+    });
+  }
+
+  broadcast = async ({ signedOperation: { operation, signature } }): Promise<Operation> => {
     const { data } = await network({
       method: "POST",
       url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs`,
@@ -282,7 +291,7 @@ export class CosmosAPI {
           (data.tx_response.code || "?") +
           ", message: '" +
           (data.tx_response.raw_log || "") +
-          "')"
+          "')",
       );
     }
 

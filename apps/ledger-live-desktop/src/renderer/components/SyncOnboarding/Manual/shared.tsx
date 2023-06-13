@@ -4,6 +4,8 @@ import styled, { StyledComponent, DefaultTheme, useTheme } from "styled-componen
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
 
+export const analyticsFlowName = "Onboarding";
+
 export const StepText = styled(VerticalTimeline.BodyText)`
   white-space: pre-wrap;
 `;

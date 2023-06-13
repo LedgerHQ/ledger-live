@@ -12,13 +12,7 @@ export default function DebugPlayground() {
           type="info"
           title="Convenience screen for testing purposes, please leave empty when committing."
         />
-        <Button
-          mt={4}
-          type={"primary"}
-          event={""}
-          onPress={undefined}
-          title={"Action"}
-        />
+        <Button mt={4} type={"primary"} event={""} onPress={undefined} title={"Action"} />
       </Flex>
     </NavigationScrollView>
   );

@@ -104,7 +104,7 @@ const StarIcon = styled.div<{
   background-repeat: no-repeat;
   background-size: 3000%;
   filter: brightness(1);
-  transition: filter .1s ease-out;
+  transition: filter 0.1s ease-out;
   &:hover {
     filter: ${p =>
       p.theme.colors.palette.type === "dark" ? "brightness(1.3)" : "brightness(0.8)"};

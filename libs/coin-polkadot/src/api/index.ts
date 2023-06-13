@@ -91,9 +91,7 @@ export class PolkadotAPI {
 
   private getMinimumBondBalanceFn: CacheRes<Array<void>, BigNumber> | undefined;
   private getRegistryFn: CacheRes<Array<void>, Registry> | undefined;
-  private getTransactionParamsFn:
-    | CacheRes<Array<void>, Record<string, any>>
-    | undefined;
+  private getTransactionParamsFn: CacheRes<Array<void>, Record<string, any>> | undefined;
   private isControllerAddressFn: CacheRes<Array<string>, boolean> | undefined;
   private isElectionClosedFn: CacheRes<Array<void>, boolean> | undefined;
   private isNewAccountFn: CacheRes<Array<string>, boolean> | undefined;
@@ -110,26 +108,20 @@ export class PolkadotAPI {
     return sidecardGetAccount(this.network, this.cache)(address);
   }
 
-  async getOperations(
-    accountId: string,
-    addr: string,
-    startA = 0
-  ): Promise<Operation[]> {
+  async getOperations(accountId: string, addr: string, startA = 0): Promise<Operation[]> {
     return bisonGetOperations(this.network)(accountId, addr, startA);
   }
 
   async getMinimumBondBalance(): Promise<BigNumber> {
-    if (this.getMinimumBondBalanceFn !== undefined)
-      return this.getMinimumBondBalanceFn();
+    if (this.getMinimumBondBalanceFn !== undefined) return this.getMinimumBondBalanceFn();
 
     this.getMinimumBondBalanceFn = this.cache(
-      async (): Promise<BigNumber> =>
-        sidecarGetMinimumBondBalance(this.network)(),
+      async (): Promise<BigNumber> => sidecarGetMinimumBondBalance(this.network)(),
       () => "polkadot",
       {
         max: 1, // Store only one object since we only have polkadot.
         ttl: 60 * 60 * 1000, // 1 hour
-      }
+      },
     );
 
     return this.getMinimumBondBalanceFn();
@@ -145,7 +137,7 @@ export class PolkadotAPI {
       () => "polkadot",
       {
         ttl: 60 * 60 * 1000, // 1 hour - could be Infinity
-      }
+      },
     );
 
     return this.getRegistryFn();
@@ -156,37 +148,30 @@ export class PolkadotAPI {
   }
 
   async getValidators(
-    stashes:
-      | SidecarValidatorsParamStatus
-      | SidecarValidatorsParamAddresses = "elected"
+    stashes: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses = "elected",
   ): Promise<PolkadotValidator[]> {
     return sidecarGetValidators(this.network)(stashes);
   }
 
   async getTransactionParams(
-    { force }: CacheOpts = { force: false }
+    { force }: CacheOpts = { force: false },
   ): Promise<Record<string, any>> {
     if (this.getTransactionParamsFn !== undefined) {
-      return force
-        ? this.getTransactionParamsFn.force()
-        : this.getTransactionParamsFn();
+      return force ? this.getTransactionParamsFn.force() : this.getTransactionParamsFn();
     }
 
     this.getTransactionParamsFn = this.cache(
-      async (): Promise<Record<string, any>> =>
-        sidecarGetTransactionParams(this.network)(),
+      async (): Promise<Record<string, any>> => sidecarGetTransactionParams(this.network)(),
       () => "polkadot",
       {
         ttl: 5 * 60 * 1000, // 5 minutes
-      }
+      },
     );
 
     return this.getTransactionParamsFn();
   }
 
-  async getPaymentInfo(
-    data: PaymentInfoParams
-  ): Promise<Pick<SidecarPaymentInfo, "partialFee">> {
+  async getPaymentInfo(data: PaymentInfoParams): Promise<Pick<SidecarPaymentInfo, "partialFee">> {
     if (this.paymentInfoFn !== undefined) return this.paymentInfoFn(data);
 
     this.paymentInfoFn = this.cache(
@@ -200,23 +185,21 @@ export class PolkadotAPI {
       ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
       {
         ttl: 5 * 60 * 1000, // 5 minutes
-      }
+      },
     );
 
     return this.paymentInfoFn(data);
   }
 
   async isControllerAddress(address: string): Promise<boolean> {
-    if (this.isControllerAddressFn !== undefined)
-      return this.isControllerAddressFn(address);
+    if (this.isControllerAddressFn !== undefined) return this.isControllerAddressFn(address);
 
     this.isControllerAddressFn = this.cache(
-      async (address): Promise<boolean> =>
-        sidecarIsControllerAddress(this.network)(address),
-      (address) => address,
+      async (address): Promise<boolean> => sidecarIsControllerAddress(this.network)(address),
+      address => address,
       {
         ttl: 5 * 60 * 1000, // 5 minutes
-      }
+      },
     );
 
     return this.isControllerAddressFn(address);
@@ -230,7 +213,7 @@ export class PolkadotAPI {
       () => "",
       {
         ttl: 60 * 1000, // 1 minute
-      }
+      },
     );
 
     return this.isElectionClosedFn();
@@ -240,12 +223,11 @@ export class PolkadotAPI {
     if (this.isNewAccountFn !== undefined) return this.isNewAccountFn(address);
 
     this.isNewAccountFn = this.cache(
-      async (address): Promise<boolean> =>
-        sidecarIsNewAccount(this.network)(address),
-      (address) => address,
+      async (address): Promise<boolean> => sidecarIsNewAccount(this.network)(address),
+      address => address,
       {
         ttl: 60 * 1000, // 1 minute
-      }
+      },
     );
 
     return this.isNewAccountFn(address);
@@ -268,11 +250,7 @@ export class PolkadotAPI {
  *
  * @returns {string} hash
  */
-const hashTransactionParams = (
-  a: PolkadotAccount,
-  t: Transaction,
-  signedTx: string
-) => {
+const hashTransactionParams = (a: PolkadotAccount, t: Transaction, signedTx: string) => {
   // Nonce is added to discard previous estimation when account is synced.
   const prefix = `${a.id}_${a.polkadotResources?.nonce || 0}_${t.mode}`;
   // Fees depends on extrinsic bytesize

@@ -1,7 +1,7 @@
 import { getElementById, openDeeplink } from "../../helpers";
 import { expect } from "detox";
 
-let baseLink: string = "swap";
+const baseLink = "swap";
 
 export default class SwapFormPage {
   swapFormTab = () => getElementById("swap-form-tab");

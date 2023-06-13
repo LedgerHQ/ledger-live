@@ -8,12 +8,7 @@ export type WrappedButtonProps = ButtonProps & {
   eventProperties?: unknown;
 };
 
-function Button({
-  onPress,
-  event,
-  eventProperties,
-  ...othersProps
-}: WrappedButtonProps) {
+function Button({ onPress, event, eventProperties, ...othersProps }: WrappedButtonProps) {
   const onPressHandler = useCallback(
     async pressEvent => {
       if (!onPress) return;

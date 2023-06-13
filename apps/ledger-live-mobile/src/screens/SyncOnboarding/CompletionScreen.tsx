@@ -8,10 +8,7 @@ import { useTheme } from "styled-components/native";
 
 import { NavigatorName, ScreenName } from "../../const";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
-import {
-  BaseComposite,
-  RootNavigation,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, RootNavigation } from "../../components/RootNavigator/types/helpers";
 import useIsAppInBackground from "../../components/useIsAppInBackground";
 import videoSources from "../../../assets/videos";
 
@@ -29,10 +26,7 @@ const absoluteStyle = {
 };
 
 type Props = BaseComposite<
-  StackScreenProps<
-    SyncOnboardingStackParamList,
-    ScreenName.SyncOnboardingCompletion
-  >
+  StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
 >;
 
 const CompletionScreen = ({ navigation, route }: Props) => {
@@ -92,12 +86,7 @@ const CompletionScreen = ({ navigation, route }: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={skipDelay}>
-      <Flex
-        width="100%"
-        height="100%"
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
         {videoMounted && (
           <Video
             disableFocus
