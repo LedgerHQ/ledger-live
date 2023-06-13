@@ -1071,15 +1071,15 @@
     },
     "1" : {
       "title" : "DeFi'a ve NFT'lere Erişin",
-      "desc" : "Güvenilir DeFi uygulamalarımızla doğrudan uygulama içinden güvenli bir şekilde etkileşim kurun."
+      "desc" : "Ledger Live kullanarak güvenilir DeFi uygulamalarımız ile doğrudan etkileşim kurun."
     },
     "2" : {
-      "title" : "Web3 anahtarınız",
-      "desc" : "Ledger cihazınızla ortaklarımız üzerinden başlıca kripto paraları güvenle satın alabilir, satabilir ve takas edebilirsiniz."
+      "title" : "Web3'e açılan kapı",
+      "desc" : "Ledger'ınızı kullanarak sağlayıcılarımız aracılığıyla güvenle kripto alın, satın ve takas edin."
     },
     "3" : {
       "title" : "Sertifikalı güvenlik",
-      "desc" : "Ürünlerimiz, güvenlik açısından ulusal siber güvenlik kurumları tarafından onaylanmış tek donanım cüzdanlarıdır."
+      "desc" : "Ürünlerimiz, güvenilirliği ulusal siber güvenlik kurumları tarafından onaylanmış olan tek donanım cüzdanlarıdır."
     },
     "title" : "Bir Ledger'a ihtiyacınız var",
     "desc" : "Güvenliğiniz için Ledger Live yalnızca bir cihazla çalışır. Devam etmek için bir cihaza ihtiyacınız var.",
@@ -1127,7 +1127,7 @@
   },
   "discover" : {
     "title" : "Keşfedin",
-    "desc" : "Web3 dünyasını güvenle keşfedin",
+    "desc" : "Web3 dünyasında güvenle dolaşın",
     "link" : "Daha fazla bilgi ver",
     "sections" : {
       "learn" : {
@@ -1156,7 +1156,7 @@
       },
       "referralProgram" : {
         "title" : "Arkadaşına Öner",
-        "desc" : "Arkadaşınız bir Ledger satın aldığında ikiniz de 10$ değerinde BTC kazanırsınız."
+        "desc" : "Arkadaşınız bir Ledger satın aldığında ikiniz de $10 değerinde BTC kazanırsınız."
       }
     },
     "comingSoon" : "Çok yakında",
@@ -1186,7 +1186,7 @@
   "onboarding" : {
     "stepWelcome" : {
       "title" : "Ledger'a Hoş Geldiniz",
-      "subtitle" : "Dijital mülkiyeti güvenli ve basit hâle getiriyoruz",
+      "subtitle" : "Dijital mülkiyet artık basit ve güvenli",
       "start" : "Hemen başla",
       "noDevice" : "Cihazınız yok mu?",
       "buy" : "{{fullDeviceName}} satın al",
@@ -1216,7 +1216,7 @@
       },
       "discoverLedger" : {
         "title" : "Ledger Live'ı keşfedin",
-        "subtitle" : "Uygulamayı keşfedip ne gibi faydaları olduğunu öğrenin "
+        "subtitle" : "Uygulamayı inceleyin ve sunduğu avantajları öğrenin "
       },
       "desktopSync" : {
         "title" : "Masaüstü uygulamasıyla senkronize edin",
@@ -1230,10 +1230,10 @@
         "title" : "Tüm kripto varlıklarınızı güvenceye alın."
       },
       "1" : {
-        "title" : "Bir gözünüz piyasalarda olsun."
+        "title" : "Bir gözünüz piyasada olsun."
       },
       "2" : {
-        "title" : "Uygulamaları keşfedin ve Web3 ile ilgili bilgi alın."
+        "title" : "Uygulamaları ve Web3'ü keşfedin."
       },
       "3" : {
         "title" : "Kriptolarınızı ve NFT'lerinizi güvende tutun."
@@ -1309,18 +1309,18 @@
       },
       "1" : {
         "label" : "Temel Bilgiler",
-        "title" : "Özel anahtarınıza sahip çıkın",
-        "desc" : "Özel anahtarınız Nano'nuzda saklanır ve fonlarınızı kontrol eden tek kişi olmak için bu özel anahtar sadece sizde olmalıdır."
+        "title" : "Özel anahtarınızın sahibi olun",
+        "desc" : "Özel anahtarınız Nano'nuzda saklanır. Anahtarınız yalnızca sizin erişiminizde olmalıdır. Böylece fonlarınızın kontrolü sadece size ait olur."
       },
       "2" : {
         "label" : "Temel Bilgiler",
         "title" : "Çevrim dışı kalın",
-        "desc" : "Ledger Live sayesinde güvenliğinizden feragat etmeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz. Her kripto işleminizi Nano cihazınızla onaylıyor olacaksınız."
+        "desc" : "Ledger Live ile güvenliğinizden ödün vermeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz. Tüm kripto işlemlerinizi Nano cihazınızla onaylıyor olacaksınız."
       },
       "3" : {
         "label" : "Temel Bilgiler",
-        "title" : "İşlemleri onaylayın",
-        "desc" : "Nano cihazınız \"soğuk depolama\" cüzdanı olarak çalışır. Yani özel anahtarınız, bu uygulamayı kullanırken bile asla çevrim içi olarak açığa çıkmaz."
+        "title" : "İşlemlerinizi onaylayın",
+        "desc" : "Nano cihazınız \"soğuk depolama\" cüzdanı olarak çalışır. Bu sayede özel anahtarınız, uygulamayı kullanırken bile çevrim içi olarak açığa çıkmaz."
       },
       "4" : {
         "label" : "Temel Bilgiler",
@@ -1515,8 +1515,8 @@
           }
         },
         "warning" : {
-          "title" : "Sınav zamanı!",
-          "desc" : "Donanım cüzdanınızla ilgili yaygın yanılgılardan kaçınmak için 3 basit soruyu yanıtlayın.",
+          "title" : "Test zamanı!",
+          "desc" : "Donanım cüzdanınızla ilgili yaygın yanılgılardan kaçınmanız için size 3 basit soru hazırladık.",
           "cta" : "Sınava hazırım"
         }
       }
@@ -1787,9 +1787,9 @@
         }
       },
       "final" : {
-        "successTitle" : "İşin ustası oldunuz bile!",
+        "successTitle" : "İşin uzmanı oldunuz bile!",
         "successText" : "Kriptolarınızı güvenli bir şekilde yönetmeye hazırsınız. Sadece küçük bir adım kaldı!",
-        "failTitle" : "İşin ustası olmanıza az kaldı...",
+        "failTitle" : "Yakında bu işin uzmanı olacaksınız.",
         "failText" : "Merak etmeyin! Ledger, yolculuğunuz boyunca size rehberlik etmek için burada. Yakında kripto güvenliğiniz konusunda çok daha rahat hissedeceksiniz. Sadece küçük bir adım kaldı!",
         "cta" : "Sonraki adım"
       },
@@ -1840,7 +1840,7 @@
           "title" : "Cihazınız kilitlendi",
           "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
         },
-        "retryCta" : "Tekrar deneyin"
+        "retryCta" : "Tekrar dene"
       }
     }
   },
@@ -1937,7 +1937,7 @@
       "genuineCheckCancelledDrawer" : {
         "title" : "Orijinallik Denetimi iptal edildi",
         "description" : "Bu denetim, {{productName}} cihazınızın resmî bir Ledger ürünü olduğundan emin olmak için önemlidir.",
-        "retryCta" : "Orijinallik Kontrolünü tekrar çalıştırın",
+        "retryCta" : "Orijinallik Denetimini tekrar çalıştırın",
         "skipCta" : "Daha sonra yapacağım"
       },
       "updateAvailableDrawer" : {
@@ -2031,7 +2031,7 @@
         "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
       },
-      "title" : "Başlangıç olarak en çok kullandığınız varlıkları cüzdanınıza ekleyin",
+      "title" : "İlk olarak en çok kullandığınız varlıkları cüzdanınıza ekleyin",
       "subtitle" : "Ledger 6.000'den fazla coin ve token'ı destekler",
       "addAccount" : "veya bir hesap ekleyin"
     },
