@@ -7,10 +7,11 @@ let swapPage: SwapFormPage;
 
 describe("Swap", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    await loadLocalManifest();
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
+
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    await loadLocalManifest();
   });
 
   it("should load the Swap page from the Transfer menu", async () => {

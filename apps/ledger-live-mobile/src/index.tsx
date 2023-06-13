@@ -26,7 +26,7 @@ import {
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  LocalLiveAppProvider,
+  addLocalManifest,
   useLocalLiveAppContext,
 } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { init, e2eBridgeSubject } from "../e2e/bridge/client";
@@ -90,6 +90,7 @@ import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { getTestManifest } from "../e2e/setups/manifests/testManifest";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -147,16 +148,6 @@ function App() {
     (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
     [],
   );
-
-  if (Config.MOCK) {
-    e2eBridgeSubject.subscribe(message => {
-      if (message.type === "loadLocalManifest") {
-        // eslint-disable-next-line no-console
-        console.log("Manifest to add:", message.payload);
-        addLocalManifest(message);
-      }
-    });
-  }
 
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
@@ -283,6 +274,18 @@ export default class Root extends Component {
   onInitFinished = () => {
     if (Config.MOCK) {
       init();
+
+      // // e2eBridgeSubject.subscribe(message => {
+      // //   if (message.type === "loadLocalManifest") {
+      // //     // eslint-disable-next-line no-console
+      // //     console.log("Manifest to add:", message.payload);
+      // //     addLocalManifest(message);
+      // //   }
+      // // });
+      // const manifest = getTestManifest();
+      // console.log("Manifest to add:", manifest);
+      // // addLocalManifest(manifest);
+      // this.setState({ initialLocalManifest: manifest.payload });
     }
   };
 

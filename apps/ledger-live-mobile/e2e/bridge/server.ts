@@ -31,13 +31,7 @@ export async function loadConfig(
   }
 
   const f = fs.readFileSync(
-    path.resolve(
-      // "apps",
-      // "ledger-live-mobile",
-      "e2e",
-      "setups",
-      `${fileName}.json`,
-    ),
+    path.resolve("e2e", "setups", `${fileName}.json`),
     "utf8",
   );
 
@@ -87,8 +81,9 @@ export function openNano() {
 }
 
 // in future pass the manifest in as an argument
-export function loadLocalManifest() {
-  postMessage({ type: "loadLocalManifest", payload: getTestManifest() });
+export async function loadLocalManifest(): Promise<void> {
+  const manifest = getTestManifest();
+  postMessage({ type: "loadLocalManifest", payload: manifest });
 }
 
 function onMessage(messageStr: string) {

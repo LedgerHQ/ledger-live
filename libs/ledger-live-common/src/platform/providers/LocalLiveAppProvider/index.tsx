@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
+import { getEnv } from "../../../env";
 
 const initialState: LiveAppRegistry = {
   liveAppById: {},
@@ -28,6 +29,7 @@ export const liveAppContext = createContext<LiveAppContextType>({
 
 type LiveAppProviderProps = {
   children: React.ReactNode;
+  localLiveAppManifest?: LiveAppManifest;
 };
 
 export function useLocalLiveAppManifest(
@@ -44,11 +46,18 @@ export function useLocalLiveAppContext(): LiveAppContextType {
 
 export function LocalLiveAppProvider({
   children,
-}: LiveAppProviderProps): JSX.Element {
+}: // localLiveAppManifest,
+LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<LiveAppRegistry>(initialState);
 
+  console.log("THE LOCAL LIVE APP PROVIDER HAS BEEN LOADED OMGGGGG");
+
   const addLocalManifest = useCallback((newManifest: LiveAppManifest) => {
+    // eslint-disable-next-line no-console
+    console.log("WE ARE IN ADD LOCAL MANIFEST");
     setState((oldState) => {
+      // eslint-disable-next-line no-console
+      console.log("Here we go: ADDING MANIFEST", newManifest);
       const liveAppByIndex = oldState.liveAppByIndex.filter(
         (manifest) => manifest.id !== newManifest.id
       );
@@ -63,11 +72,6 @@ export function LocalLiveAppProvider({
       };
     });
   }, []);
-
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log({ state });
-  }, [state]);
 
   const removeLocalManifestById = useCallback((manifestId: string) => {
     setState((oldState) => {
@@ -88,6 +92,14 @@ export function LocalLiveAppProvider({
     });
   }, []);
 
+  // const mockedState: LiveAppRegistry = getEnv("MOCK") &&
+  //   localLiveAppManifest && {
+  //     liveAppById: {
+  //       [localLiveAppManifest.id]: localLiveAppManifest,
+  //     },
+  //     liveAppByIndex: [localLiveAppManifest],
+  //   };
+
   const value: LiveAppContextType = useMemo(
     () => ({
       state,
@@ -96,6 +108,15 @@ export function LocalLiveAppProvider({
     }),
     [state, addLocalManifest, removeLocalManifestById]
   );
+
+  // const mockedValue: LiveAppContextType = useMemo(
+  //   () => ({
+  //     mockedState,
+  //     addLocalManifest,
+  //     removeLocalManifestById,
+  //   }),
+  //   [mockedState, addLocalManifest, removeLocalManifestById]
+  // );
 
   return (
     <liveAppContext.Provider value={value}>{children}</liveAppContext.Provider>

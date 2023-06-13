@@ -236,7 +236,6 @@ export function TransferTabIcon() {
         hitSlop={hitSlop}
         onPress={onPressButton}
         bottom={MAIN_BUTTON_BOTTOM + bottomInset}
-        // touchableTestID="main-button"
         testID="transfer-button"
       >
         <ButtonAnimation

@@ -84,5 +84,5 @@ async function onMessage(event: { data: unknown }) {
 
 function log(message: string) {
   // eslint-disable-next-line no-console
-  console.log(`[E2E Bridge Client]: ${message}`);
+  // console.log(`[E2E Bridge Client]: ${message}`);
 }
