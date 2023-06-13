@@ -28,24 +28,23 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props) {
 
   const params = {
     screen: parentRoute.name,
+    stakingDrawer: {
+      id: "EthStakingDrawer",
+      props: {
+        singleProviderRedirectMode: true,
+        accountId: account.id,
+      },
+    },
     params: {
       ...(parentRoute.params ?? {}),
       account,
       parentAccount,
-      drawer: {
-        id: "EthStakingDrawer",
-        props: {
-          singleProviderRedirectMode: true,
-          accountId: account.id,
-        },
-      },
     },
   };
 
   switch (parentRoute.name) {
     // since we have to go to different navigators b
     case ScreenName.Account:
-      return [NavigatorName.Accounts, params];
     case ScreenName.Asset:
       return [NavigatorName.Accounts, params];
     case ScreenName.MarketDetail:

@@ -43,12 +43,17 @@ const StakeFlow = ({ route }: Props) => {
       )?.navigationParams;
       if (!stakeFlow) return null;
       const [name, options] = stakeFlow;
-      navigation.navigate(name, {
-        screen: options?.screen,
+
+      navigation.navigate(NavigatorName.Base, {
+        screen: name,
+        stakingDrawer: options?.stakingDrawer,
         params: {
-          ...(options?.params ?? {}),
-          account,
-          parentAccount,
+          screen: name,
+          params: {
+            ...(options?.params || {}),
+            account,
+            parentAccount,
+          },
         },
       });
     },

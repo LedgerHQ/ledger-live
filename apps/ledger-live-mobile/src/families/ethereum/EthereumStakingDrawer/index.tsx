@@ -7,20 +7,15 @@ import QueuedDrawer from "../../../components/QueuedDrawer";
 import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
 import { Track } from "../../../analytics";
+import { StakingDrawerNavigationProps } from "../../../components/Stake/types";
 
 type Props = {
-  drawer?: {
-    id: string;
-    props: {
-      accountId: string;
-      singleProviderRedirectMode?: boolean;
-    };
-  };
+  stakingDrawer?: StakingDrawerNavigationProps;
 };
 
-export function EthereumStakingDrawer({ drawer }: Props) {
+export function EthereumStakingDrawer({ stakingDrawer }: Props) {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
 
   const onClose = useCallback(() => {
@@ -28,11 +23,11 @@ export function EthereumStakingDrawer({ drawer }: Props) {
   }, [setIsOpen]);
 
   useEffect(() => {
-    setIsOpen(drawer?.id === "EthStakingDrawer");
-  }, [drawer]);
+    setIsOpen(stakingDrawer?.id === "EthStakingDrawer");
+  }, [stakingDrawer]);
 
   if (
-    !drawer ||
+    !stakingDrawer ||
     !ethStakingProviders?.enabled ||
     (ethStakingProviders.params?.listProvider ?? []).length < 1
   ) {
@@ -44,8 +39,8 @@ export function EthereumStakingDrawer({ drawer }: Props) {
       <Flex rowGap={52}>
         <Track onMount event="ETH Stake Modal" />
         <EthereumStakingDrawerBody
-          singleProviderRedirectMode={drawer.props.singleProviderRedirectMode ?? true}
-          accountId={drawer.props.accountId}
+          singleProviderRedirectMode={stakingDrawer.props.singleProviderRedirectMode ?? true}
+          accountId={stakingDrawer.props.accountId}
           providers={ethStakingProviders.params!.listProvider}
         />
         <Button onPress={onClose} type="main">
