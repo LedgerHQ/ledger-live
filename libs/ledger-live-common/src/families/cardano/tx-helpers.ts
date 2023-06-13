@@ -7,10 +7,7 @@ import {
   Withdrawal,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
-import {
-  types as TyphonTypes,
-  address as TyphonAddress,
-} from "@stricahq/typhonjs";
+import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
 import groupBy from "lodash/groupBy";
 import {
   AddressType,
@@ -29,10 +26,7 @@ import { getBipPathString } from "./logic";
  * @param {number} accountIndex
  * @returns {TxInput}
  */
-export function prepareLedgerInput(
-  input: TyphonTypes.Input,
-  accountIndex: number
-): TxInput {
+export function prepareLedgerInput(input: TyphonTypes.Input, accountIndex: number): TxInput {
   const paymentKeyPath =
     input.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS
       ? input.address.paymentCredential.bipPath
@@ -46,7 +40,7 @@ export function prepareLedgerInput(
             account: accountIndex,
             chain: paymentKeyPath.chain,
             index: paymentKeyPath.index,
-          })
+          }),
         )
       : null,
   };
@@ -59,10 +53,7 @@ export function prepareLedgerInput(
  * @param accountIndex
  * @returns {TxOutput}
  */
-export function prepareLedgerOutput(
-  output: TyphonTypes.Output,
-  accountIndex: number
-): TxOutput {
+export function prepareLedgerOutput(output: TyphonTypes.Output, accountIndex: number): TxOutput {
   const isByronAddress = output.address instanceof TyphonAddress.ByronAddress;
   let isDeviceOwnedAddress = false;
   let destination: TxOutputDestination;
@@ -78,12 +69,10 @@ export function prepareLedgerOutput(
   if (isDeviceOwnedAddress) {
     const address = output.address as TyphonAddress.BaseAddress;
 
-    const paymentKeyPath = (
-      address.paymentCredential as TyphonTypes.HashCredential
-    ).bipPath as TyphonTypes.BipPath;
-    const stakingKeyPath = (
-      address.stakeCredential as TyphonTypes.HashCredential
-    ).bipPath as TyphonTypes.BipPath;
+    const paymentKeyPath = (address.paymentCredential as TyphonTypes.HashCredential)
+      .bipPath as TyphonTypes.BipPath;
+    const stakingKeyPath = (address.stakeCredential as TyphonTypes.HashCredential)
+      .bipPath as TyphonTypes.BipPath;
 
     const paymentKeyPathString = getBipPathString({
       account: accountIndex,
@@ -117,10 +106,10 @@ export function prepareLedgerOutput(
   }
 
   const tokenBundle: Array<AssetGroup> = Object.values(
-    groupBy(output.tokens, ({ policyId }) => policyId)
-  ).map((tokens) => ({
+    groupBy(output.tokens, ({ policyId }) => policyId),
+  ).map(tokens => ({
     policyIdHex: tokens[0].policyId,
-    tokens: tokens.map((token) => ({
+    tokens: tokens.map(token => ({
       assetNameHex: token.assetName,
       amount: token.amount.toString(),
     })),
@@ -134,7 +123,7 @@ export function prepareLedgerOutput(
 }
 
 export function prepareStakeRegistrationCertificate(
-  certificate: TyphonTypes.StakeRegistrationCertificate
+  certificate: TyphonTypes.StakeRegistrationCertificate,
 ): {
   type: CertificateType.STAKE_REGISTRATION;
   params: StakeRegistrationParams;
@@ -153,7 +142,7 @@ export function prepareStakeRegistrationCertificate(
               account: certificate.stakeCredential.bipPath.account,
               chain: certificate.stakeCredential.bipPath.chain,
               index: certificate.stakeCredential.bipPath.index,
-            })
+            }),
           ),
         },
       },
@@ -164,7 +153,7 @@ export function prepareStakeRegistrationCertificate(
 }
 
 export function prepareStakeDelegationCertificate(
-  certificate: TyphonTypes.StakeDelegationCertificate
+  certificate: TyphonTypes.StakeDelegationCertificate,
 ): {
   type: CertificateType.STAKE_DELEGATION;
   params: StakeDelegationParams;
@@ -183,7 +172,7 @@ export function prepareStakeDelegationCertificate(
               account: certificate.stakeCredential.bipPath.account,
               chain: certificate.stakeCredential.bipPath.chain,
               index: certificate.stakeCredential.bipPath.index,
-            })
+            }),
           ),
         },
         poolKeyHashHex: certificate.poolHash,
@@ -194,9 +183,7 @@ export function prepareStakeDelegationCertificate(
   }
 }
 
-export function prepareStakeDeRegistrationCertificate(
-  certificate: TyphonTypes.Certificate
-): {
+export function prepareStakeDeRegistrationCertificate(certificate: TyphonTypes.Certificate): {
   type: CertificateType.STAKE_DEREGISTRATION;
   params: StakeDeregistrationParams;
 } {
@@ -214,7 +201,7 @@ export function prepareStakeDeRegistrationCertificate(
               account: certificate.stakeCredential.bipPath.account,
               chain: certificate.stakeCredential.bipPath.chain,
               index: certificate.stakeCredential.bipPath.index,
-            })
+            }),
           ),
         },
       },
@@ -224,12 +211,9 @@ export function prepareStakeDeRegistrationCertificate(
   }
 }
 
-export function prepareWithdrawal(
-  withdrawal: TyphonTypes.Withdrawal
-): Withdrawal {
+export function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): Withdrawal {
   if (
-    withdrawal.rewardAccount.stakeCredential.type ===
-      TyphonTypes.HashType.ADDRESS &&
+    withdrawal.rewardAccount.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
     withdrawal.rewardAccount.stakeCredential.bipPath
   ) {
     return {
@@ -240,7 +224,7 @@ export function prepareWithdrawal(
             account: withdrawal.rewardAccount.stakeCredential.bipPath.account,
             chain: withdrawal.rewardAccount.stakeCredential.bipPath.chain,
             index: withdrawal.rewardAccount.stakeCredential.bipPath.index,
-          })
+          }),
         ),
       },
       amount: withdrawal.amount.toString(),

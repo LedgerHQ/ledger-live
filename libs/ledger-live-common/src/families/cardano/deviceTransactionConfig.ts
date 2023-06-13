@@ -45,7 +45,6 @@ function getDeviceTransactionConfig({
       const { assetId } = decodeTokenCurrencyId(account.token.id);
       const { policyId, assetName } = decodeTokenAssetId(assetId);
       const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
-      const { fees } = transaction;
 
       const tokensToSend = [
         {
@@ -92,10 +91,7 @@ function getDeviceTransactionConfig({
       });
     }
   } else if (mode === "delegate" && account.type === "Account") {
-    const stakeCredential = getAccountStakeCredential(
-      account.xpub as string,
-      account.index
-    );
+    const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
     fields.push({
       type: "text",
       label: "Staking key",
@@ -111,10 +107,7 @@ function getDeviceTransactionConfig({
       value: getBech32PoolId(transaction.poolId as string, account.currency.id),
     });
   } else if (mode === "undelegate" && account.type === "Account") {
-    const stakeCredential = getAccountStakeCredential(
-      account.xpub as string,
-      account.index
-    );
+    const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
     fields.push({
       type: "text",
       label: "Staking key",

@@ -15,11 +15,7 @@ import type {
 } from "./types";
 import { isHexString, isValidAddress } from "./logic";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import {
-  CardanoInvalidPoolId,
-  CardanoMinAmountError,
-  CardanoNotEnoughFunds,
-} from "./errors";
+import { CardanoInvalidPoolId, CardanoMinAmountError, CardanoNotEnoughFunds } from "./errors";
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
@@ -28,7 +24,7 @@ import { buildTransaction } from "./js-buildTransaction";
 
 async function getSendTransactionStatus(
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TransactionStatus> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -121,7 +117,7 @@ async function getSendTransactionStatus(
 
 async function getDelegateTransactionStatus(
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TransactionStatus> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -160,7 +156,7 @@ async function getDelegateTransactionStatus(
 
 async function getUndelegateTransactionStatus(
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TransactionStatus> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -201,7 +197,7 @@ async function getUndelegateTransactionStatus(
 
 const getTransactionStatus = async (
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TransactionStatus> => {
   if (a.pendingOperations.length > 0) {
     throw new AccountAwaitingSendPendingOperations();

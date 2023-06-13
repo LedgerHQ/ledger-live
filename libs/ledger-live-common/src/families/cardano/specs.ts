@@ -149,18 +149,14 @@ const cardano: AppSpec<Transaction> = {
       name: "delegate to pool",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(
-          maxSpendable.gte(minBalanceRequiredForDelegate),
-          "balance is too low"
-        );
+        invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");
         const transaction = bridge.createTransaction(account);
         return {
           transaction,
           updates: [
             {
               mode: "delegate",
-              poolId:
-                "7df262feae9201d1b2e32d4c825ca91b29fbafb2b8e556f6efb7f549",
+              poolId: "7df262feae9201d1b2e32d4c825ca91b29fbafb2b8e556f6efb7f549",
             },
           ],
         };
@@ -171,9 +167,7 @@ const cardano: AppSpec<Transaction> = {
         });
 
         botTest("op value should be equal to fees", () => {
-          expect(operation.value.toString()).toEqual(
-            transaction.fees?.toString()
-          );
+          expect(operation.value.toString()).toEqual(transaction.fees?.toString());
         });
       },
     },
@@ -181,13 +175,10 @@ const cardano: AppSpec<Transaction> = {
       name: "redelegate to pool",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(
-          maxSpendable.gte(minBalanceRequiredForDelegate),
-          "balance is too low"
-        );
+        invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");
         invariant(
           (account as CardanoAccount).cardanoResources.delegation?.poolId,
-          "account should already be delegated to redelegate"
+          "account should already be delegated to redelegate",
         );
         const transaction = bridge.createTransaction(account);
         return {
@@ -195,8 +186,7 @@ const cardano: AppSpec<Transaction> = {
           updates: [
             {
               mode: "delegate",
-              poolId:
-                "da50099e7aa1d926e1888990b1c404caf554dd6f68a1cb0322999d1d",
+              poolId: "da50099e7aa1d926e1888990b1c404caf554dd6f68a1cb0322999d1d",
             },
           ],
         };
@@ -207,9 +197,7 @@ const cardano: AppSpec<Transaction> = {
         });
 
         botTest("op value should be equal to fees", () => {
-          expect(operation.value.toString()).toEqual(
-            transaction.fees?.toString()
-          );
+          expect(operation.value.toString()).toEqual(transaction.fees?.toString());
         });
       },
     },
@@ -217,13 +205,10 @@ const cardano: AppSpec<Transaction> = {
       name: "undelegate",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(
-          maxSpendable.gte(minBalanceRequiredForDelegate),
-          "balance is too low"
-        );
+        invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");
         invariant(
           (account as CardanoAccount).cardanoResources.delegation?.poolId,
-          "account should already be delegated to undelegate"
+          "account should already be delegated to undelegate",
         );
         const transaction = bridge.createTransaction(account);
         return {
@@ -241,9 +226,7 @@ const cardano: AppSpec<Transaction> = {
         });
 
         botTest("op value should be equal to fees", () => {
-          expect(operation.value.toString()).toEqual(
-            transaction.fees?.toString()
-          );
+          expect(operation.value.toString()).toEqual(transaction.fees?.toString());
         });
       },
     },

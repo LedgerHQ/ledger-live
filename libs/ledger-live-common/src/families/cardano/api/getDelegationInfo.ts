@@ -1,17 +1,14 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import network from "../../../network";
-import {
-  CARDANO_API_ENDPOINT,
-  CARDANO_TESTNET_API_ENDPOINT,
-} from "../constants";
+import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import { isTestnet } from "../logic";
 import { CardanoDelegation } from "../types";
 import { APIDelegation } from "./api-types";
 
 async function fetchDelegationInfo(
   currency: CryptoCurrency,
-  stakeKey: string
+  stakeKey: string,
 ): Promise<APIDelegation> {
   const res = await network({
     method: "GET",
@@ -27,7 +24,7 @@ async function fetchDelegationInfo(
 
 export async function getDelegationInfo(
   currency: CryptoCurrency,
-  stakeKey: string
+  stakeKey: string,
 ): Promise<CardanoDelegation | undefined> {
   const res = await fetchDelegationInfo(currency, stakeKey);
   return (

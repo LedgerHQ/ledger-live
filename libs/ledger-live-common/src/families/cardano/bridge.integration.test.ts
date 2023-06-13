@@ -96,8 +96,7 @@ const dataset: DatasetTest<Transaction> = {
                 recipient: "",
                 amount: "0",
                 mode: "delegate",
-                poolId:
-                  "efae72c07a26e4542ba55ef59d35ad45ffaaac312865e3a758ede997",
+                poolId: "efae72c07a26e4542ba55ef59d35ad45ffaaac312865e3a758ede997",
               }),
               expectedStatus: {},
             },

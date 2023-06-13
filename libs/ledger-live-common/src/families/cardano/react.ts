@@ -38,7 +38,7 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
             setIsSearching(false);
           });
       },
-      searchQuery ? 500 : 0
+      searchQuery ? 500 : 0,
     );
 
     return () => clearInterval(delayDebounceFn);
@@ -51,7 +51,7 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
 
     fetchPoolList(currency, searchQuery, pageNo.current, limit)
       .then((apiRes: APIGetPoolList) => {
-        setPools((currentPools) => {
+        setPools(currentPools => {
           return [...currentPools, ...apiRes.pools];
         });
       })

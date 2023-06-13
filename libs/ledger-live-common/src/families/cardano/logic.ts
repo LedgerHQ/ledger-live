@@ -30,7 +30,13 @@ import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddre
 import type { OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import bech32 from "bech32";
-import { AddressType, AssetGroup, TxInput, TxOutputDestination, TxOutputDestinationType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import {
+  AddressType,
+  AssetGroup,
+  TxInput,
+  TxOutputDestination,
+  TxOutputDestinationType,
+} from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 
 /**

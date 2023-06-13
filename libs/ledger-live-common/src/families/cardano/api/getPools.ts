@@ -1,17 +1,14 @@
 import network from "../../../network";
 import { APIGetPoolList, APIGetPoolsDetail } from "./api-types";
 import { isTestnet } from "../logic";
-import {
-  CARDANO_API_ENDPOINT,
-  CARDANO_TESTNET_API_ENDPOINT,
-} from "../constants";
+import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function fetchPoolList(
   currency: CryptoCurrency,
   search: string,
   pageNo: number,
-  limit: number
+  limit: number,
 ): Promise<APIGetPoolList> {
   const res = await network({
     method: "GET",
@@ -25,7 +22,7 @@ export async function fetchPoolList(
 
 export async function fetchPoolDetails(
   currency: CryptoCurrency,
-  poolIds: Array<string>
+  poolIds: Array<string>,
 ): Promise<APIGetPoolsDetail> {
   const res = await network({
     method: "GET",

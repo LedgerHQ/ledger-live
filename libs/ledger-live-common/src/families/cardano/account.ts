@@ -16,28 +16,19 @@ export function formatAccountSpecifics(account: CardanoAccount): string {
   let str = " ";
 
   if (cardanoResources?.delegation?.poolId) {
-    str +=
-      formatCurrencyUnit(unit, account.balance, formatConfig) +
-      " delegated to ";
+    str += formatCurrencyUnit(unit, account.balance, formatConfig) + " delegated to ";
   }
 
-  if (cardanoResources.delegation?.name)
-    str += cardanoResources.delegation.name + " ";
+  if (cardanoResources.delegation?.name) str += cardanoResources.delegation.name + " ";
 
-  if (cardanoResources.delegation?.ticker)
-    str += "(" + cardanoResources.delegation.ticker + ") ";
+  if (cardanoResources.delegation?.ticker) str += "(" + cardanoResources.delegation.ticker + ") ";
 
-  if (cardanoResources.delegation?.poolId)
-    str += cardanoResources.delegation.poolId + ". ";
+  if (cardanoResources.delegation?.poolId) str += cardanoResources.delegation.poolId + ". ";
 
   if (cardanoResources.delegation?.rewards)
     str +=
       "Total " +
-      formatCurrencyUnit(
-        unit,
-        cardanoResources.delegation.rewards,
-        formatConfig
-      ) +
+      formatCurrencyUnit(unit, cardanoResources.delegation.rewards, formatConfig) +
       " rewards available.";
 
   return str;
