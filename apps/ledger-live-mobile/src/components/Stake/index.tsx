@@ -65,6 +65,7 @@ const StakeFlow = ({ route }: Props) => {
         screen: ScreenName.RequestAccountsSelectAccount,
         params: {
           currency: cryptoCurrencies[0],
+          shouldNotPopNavigationOnSuccess: true,
           onSuccess,
         },
         onError,
@@ -75,6 +76,7 @@ const StakeFlow = ({ route }: Props) => {
         params: {
           currencies: cryptoCurrencies,
           allowAddAccount: true,
+          shouldNotPopNavigationOnSuccess: true,
           onSuccess,
         },
         onError,

@@ -20,6 +20,7 @@ export type RequestAccountNavigatorParamList = {
     currency: CryptoOrTokenCurrency;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
+    shouldNotPopNavigationOnSuccess?: boolean;
     onError?: (_: Error) => void;
   };
   [NavigatorName.RequestAccountsAddAccounts]: NavigatorScreenParams<AddAccountsNavigatorParamList> &
