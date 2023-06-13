@@ -1295,7 +1295,7 @@
       "titleCompleted" : "¡y eso es\ntodo!"
     },
     "postOnboardingContent" : {
-      "skipLink" : "Lo haré más tarde"
+      "skipLink" : "Lo haré más adelante"
     },
     "postOnboardingBanner" : {
       "title" : "¿Qué es lo siguiente con tu Ledger Stax?",
@@ -1633,12 +1633,12 @@
     "tokensTip" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
     "accountToImportSubtitle_plural" : "Agregar cuentas existentes",
     "selectAll" : "Seleccionar todas ({{count}})",
-    "unselectAll" : "Deseleccionar todas ({{count}})",
+    "unselectAll" : "Desmarcar todas ({{count}})",
     "noAccountToImport" : "No existen cuentas de {{currencyName}} para agregar.",
     "success" : "Cuenta agregada con éxito",
     "success_plural" : "Cuentas agregadas correctamente",
-    "successDescription" : "Agregar otras cuentas o volver al Portfolio",
-    "successDescription_plural" : "Agregar otras cuentas o volver al Portfolio",
+    "successDescription" : "Agrega otra cuenta o vuelve al Portfolio",
+    "successDescription_plural" : "Agrega otra cuenta o vuelve al Portfolio",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "No es posible agregar una cuenta nueva antes de haber recibido activos en tu cuenta de <1><0>{{accountName}}</0></1>",
       "noAccountToCreate" : "No fue creada ninguna cuenta de <1><0>{{currencyName}}</0></1>",
@@ -4101,7 +4101,7 @@
       "recoverySeed" : {
         "title1" : "¿Cómo funciona una Frase de recuperación?",
         "paragraph1" : "Tu Frase de recuperación funciona como una llave maestra única. Tu dispositivo Ledger la utiliza para calcular las claves privadas de cada activo cripto que posees.",
-        "paragraph2" : "Para restaurar el acceso a tus criptos, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
+        "paragraph2" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
         "link" : "Más información acerca del funcionamiento de la Frase de recuperación",
         "title2" : "¿Qué pasa si pierdo el acceso a mi Nano?",
         "paragraph3" : "No te preocupes, sigue estos pasos:",
@@ -4109,7 +4109,7 @@
         "points" : {
           "1" : "Utiliza una billetera de hardware distinta.",
           "2" : "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger.",
-          "3" : "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus criptos."
+          "3" : "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus cripto."
         }
       },
       "whereToHide" : {
@@ -4117,7 +4117,7 @@
         "points" : {
           "1" : "<0>NUNCA</0> lo ingreses en una PC, smartphone o cualquier otro dispositivo. No le tomes fotografías.",
           "2" : "<0>NUNCA</0> compartas tus 24 Palabras con nadie.",
-          "3" : "<0>SIEMPRE</0> guárdalo en un lugar seguro, fuera de la vista.",
+          "3" : "<0>SIEMPRE</0> guárdala en un lugar seguro, fuera de la vista.",
           "4" : "Ledger nunca te pedirá tu Frase de recuperación.",
           "5" : "Si alguien (o alguna aplicación) te la pide, ¡tiene fines deshonestos!"
         }
@@ -4151,7 +4151,7 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
-        "byTapping" : "Al tocar “Empezar” otorgas tu consentimiento y aceptas nuestros",
+        "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
         "privacyPolicy" : "Política de Privacidad",
@@ -4212,7 +4212,7 @@
           "importYourRecoveryPhrase" : {
             "title" : "Restaurar a partir de Frase de recuperación",
             "paragraph1" : "Restaura tu Nano a partir de tu Frase de recuperación para restaurar, reemplazar o hacer una copia de seguridad de tu billetera de hardware Ledger.",
-            "paragraph2" : "Tu Nano restaurará tus claves privadas y podrás acceder a tus criptos y administrarlas.",
+            "paragraph2" : "Tu Nano restaurará tus claves privadas y podrás acceder a tus cripto y administrarlas.",
             "buttons" : {
               "next" : "De acuerdo, ¡todo listo!",
               "prev" : "Paso anterior",
@@ -5660,7 +5660,7 @@
       "choose" : {
         "stepLabel" : "Elige una imagen",
         "description" : "Elige una imagen para establecerla como (...)",
-        "pickFromNftGallery" : "Seleccionar de mi galería de NFT",
+        "pickFromNftGallery" : "Elegir de la galería de NFTs",
         "myNfts" : "Mis NFTs",
         "upload" : "Cargar desde mi PC",
         "chooseNft" : "Elige un NFT",
