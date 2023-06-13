@@ -499,7 +499,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         flexGrow={0}
         flexShrink={1}
       >
-        <Text variant="h3Inter" fontSize="28px" fontWeight="semiBold" mb={8}>
+        <Text variant="h3Inter" fontSize="8" fontWeight="semiBold" mb="8">
           {t("syncOnboarding.manual.title", { deviceName })}
         </Text>
         <Box>
