@@ -68,6 +68,13 @@ export interface MempoolResponse {
   results: MempoolTransaction[];
 }
 
+export interface GetNonceResponse {
+  last_mempool_tx_nonce: number;
+  last_executed_tx_nonce: number;
+  possible_next_nonce: number;
+  detected_missing_nonces: number[];
+}
+
 export interface BalanceResponse {
   balance: string;
 }
