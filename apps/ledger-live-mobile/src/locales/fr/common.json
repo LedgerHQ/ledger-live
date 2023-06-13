@@ -1066,20 +1066,20 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "C’est votre argent. Prenez le contrôle.",
-      "desc" : "Prenez le contrôle et pilotez votre portefeuille de cryptos en toute liberté."
+      "title" : "Prenez le contrôle de votre argent.",
+      "desc" : "Profitez de la liberté de posséder vos cryptos."
     },
     "1" : {
       "title" : "Accédez à la DeFi et aux NFT",
       "desc" : "Interagissez en toute sécurité avec des applications DeFi de confiance directement depuis Ledger Live."
     },
     "2" : {
-      "title" : "Vos clés vers le Web3",
-      "desc" : "Achetez, vendez et échangez les cryptos les plus connues, via nos prestataires tiers et en toute sécurité avec votre Ledger."
+      "title" : "Vos accès au Web3",
+      "desc" : "Achetez, vendez et échangez les cryptos leaders, via nos prestataires tiers et en toute sécurité avec votre wallet Ledger."
     },
     "3" : {
-      "title" : "Une sécurité certifiée",
-      "desc" : "Nos produits sont les seuls wallets physiques dont la sécurité a été certifiée par l’Agence nationale de la cybersécurité."
+      "title" : "Sécurité certifiée",
+      "desc" : "Nos wallets physiques sont les seuls dont la sécurité a été certifiée par l’Agence nationale de la cybersécurité."
     },
     "title" : "Vous avez besoin d’un Ledger",
     "desc" : "Pour votre sécurité, Ledger Live ne fonctionne qu’avec un appareil. Vous avez besoin d’un Ledger pour continuer. ",
@@ -1127,7 +1127,7 @@
   },
   "discover" : {
     "title" : "Discover",
-    "desc" : "Explorez le monde du Web3 en toute sécurité",
+    "desc" : "Explorez le Web3 en toute sécurité",
     "link" : "En savoir plus",
     "sections" : {
       "learn" : {
@@ -1152,11 +1152,11 @@
       },
       "mint" : {
         "title" : "Minter",
-        "desc" : "Mintez des NFT exclusifs sur le [ L ] Market."
+        "desc" : "Mintez des NFT de collections exclusives sur le [ L ] Market."
       },
       "referralProgram" : {
         "title" : "Parrainage",
-        "desc" : "Parrainez un(e) ami(e) et gagnez tous les deux 10 $ US en BTC."
+        "desc" : "Parrainez un(e) ami(e) et gagnez tous les deux 10 USD en BTC."
       }
     },
     "comingSoon" : "Prochainement",
@@ -1204,7 +1204,7 @@
     "postWelcomeStep" : {
       "title" : "Commencez",
       "subtitle_yes" : "Configurez votre Ledger ou commencez par explorer l’app.",
-      "subtitle_no" : "Vous pouvez commencer par explorer l’app ou choisir d’acheter un Nano X.",
+      "subtitle_no" : "Vous pouvez commencer par explorer l’app ou choisir d’acheter un Ledger Nano X.",
       "noLedgerLink" : "Je n’ai pas de Ledger et souhaite en acheter un",
       "setupLedger" : {
         "title" : "Configurer mon Ledger",
@@ -1212,11 +1212,11 @@
       },
       "buyNano" : {
         "title" : "Acheter un Ledger Nano X",
-        "subtitle" : "Les wallets physiques sont les seuls outils permettant de sécuriser vos actifs. "
+        "subtitle" : "Un wallet physique est le seul moyen de sécuriser de vos actifs. "
       },
       "discoverLedger" : {
-        "title" : "Explorer Ledger Live",
-        "subtitle" : "Découvrez l’app et tous ses avantages. "
+        "title" : "Découvrir Ledger Live",
+        "subtitle" : "Explorez l’app et tous ses avantages. "
       },
       "desktopSync" : {
         "title" : "Synchroniser avec Ledger Live pour l’ordinateur",
@@ -1310,22 +1310,22 @@
       "1" : {
         "label" : "Les bases",
         "title" : "Détenez votre clé privée",
-        "desc" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+        "desc" : "Votre clé privée est stockée dans votre wallet Ledger. Vous devez être la seule personne à la détenir pour contrôler vos cryptos."
       },
       "2" : {
         "label" : "Les bases",
         "title" : "Restez hors ligne",
-        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de cryptos avec votre Nano."
+        "desc" : "Ledger Live vous permet d’acheter, vendre, échanger, gérer et gagner des cryptos en toute sécurité. Vous devrez valider chaque transaction avec votre wallet Ledger."
       },
       "3" : {
         "label" : "Les bases",
         "title" : "Validez vos transactions",
-        "desc" : "Votre Nano est un wallet physique de stockage à froid. Cela signifie que votre clé privée n’est jamais exposée sur Internet, même lorsque vous utilisez Ledger Live."
+        "desc" : "Votre appareil Ledger est un wallet de stockage à froid. Votre clé privée n’est jamais exposée à Internet, même lorsque vous utilisez Ledger Live."
       },
       "4" : {
         "label" : "Les bases",
         "title" : "Configurez votre Nano",
-        "desc" : "Commencez par configurer les paramètres de votre nouveau Nano."
+        "desc" : "Commencez par configurer votre nouveau Nano."
       },
       "cta" : "Configurer le Nano",
       "title" : "LES BASES"
@@ -1515,9 +1515,9 @@
           }
         },
         "warning" : {
-          "title" : "Faites le quiz",
-          "desc" : "Répondez à 3 questions rapides pour mieux comprendre votre wallet physique.",
-          "cta" : "Répondre aux questions"
+          "title" : "C’est parti !",
+          "desc" : "Répondez à ces 3 questions faciles pour mieux comprendre votre wallet physique.",
+          "cta" : "Commencer le quiz"
         }
       }
     },
@@ -1788,9 +1788,9 @@
       },
       "final" : {
         "successTitle" : "Vous êtes déjà pro.",
-        "successText" : "Vous connaissez les précautions à adopter pour gérer vos cryptos en toute sécurité. Il ne vous reste qu’à connecter votre appareil.",
-        "failTitle" : "Vous êtes sur le point de passer pro...",
-        "failText" : "Pas d’inquiétude, Ledger sera là pour vous guider. Vous vous sentirez bientôt parfaitement à l’aise pour bien protéger vos cryptos. Il ne vous reste qu’à connecter votre appareil.",
+        "successText" : "Vous pouvez gérer vos cryptos en toute sécurité. Plus qu’une étape.",
+        "failTitle" : "Vous allez bientôt devenir pro...",
+        "failText" : "Pas de panique, Ledger est là pour vous guider. Vous vous sentirez bientôt parfaitement à l’aise pour bien protéger vos cryptos. Plus qu’une étape.",
         "cta" : "Étape suivante"
       },
       "nextQuestion" : "Question suivante",
@@ -2392,7 +2392,7 @@
     "quickActions" : "Raccourcis",
     "banner" : {
       "redelegation" : {
-        "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
+        "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux de votre validateur actuel.",
         "cta" : "Redéléguer"
       },
       "delegation" : {
@@ -3739,7 +3739,7 @@
       },
       "genuineCheck" : {
         "title" : "Activer le \"Ledger Manager\" (Gestionnaire Ledger) sur le {{productName}}",
-        "accept" : "N’éteignez pas votre Nano X. Veuillez autoriser le <1>\"Ledger Manager\"</1> (Gestionnaire)."
+        "accept" : "N’éteignez pas votre Ledger Nano X. Veuillez autoriser la <1>connexion sécurisée</1>."
       },
       "genuineCheckPending" : {
         "title" : "Vérification de l’authenticité de l’appareil..."
@@ -3796,8 +3796,8 @@
     },
     "GenuineCheck" : {
       "title" : "Vérification de l’authenticité de l’appareil",
-      "accept" : "N’éteignez pas votre Nano X. Veuillez autoriser le <1>\"Ledger Manager\"</1> (Gestionnaire).",
-      "info" : "Cela vous permet de vérifier que votre Nano est authentique."
+      "accept" : "N’éteignez pas votre Ledger Nano X. Veuillez autoriser la <1>connexion sécurisée</1>.",
+      "info" : "Cela vous permet de vérifier que votre appareil est authentique."
     },
     "ScanningHeader" : {
       "title" : "Recherche d’appareils",
@@ -3886,7 +3886,7 @@
     },
     "storage" : {
       "title" : "Stockage",
-      "used" : "utilisés",
+      "used" : "Utilisés",
       "genuine" : "Votre Ledger est authentique.",
       "appsInstalled" : "<0>{{number}}</0> app",
       "appsInstalled_plural" : "<0>{{number}}</0> apps",
@@ -6139,7 +6139,7 @@
         "swap" : {
           "title" : "Échanger",
           "label" : "Populaire",
-          "body" : "Convertissez vos cryptos en toute sécurité."
+          "body" : "Échangez une crypto contre une autre en toute sécurité."
         },
         "receive" : {
           "title" : "Recevoir",
