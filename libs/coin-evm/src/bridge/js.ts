@@ -18,14 +18,12 @@ import type { Transaction as EvmTransaction, Transaction } from "../types";
 
 const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   transaction,
-  patch
+  patch,
 ) => {
   return { ...transaction, ...patch } as EvmTransaction;
 };
 
-export function buildCurrencyBridge(
-  deviceCommunication: DeviceCommunication
-): CurrencyBridge {
+export function buildCurrencyBridge(deviceCommunication: DeviceCommunication): CurrencyBridge {
   const scanAccounts = makeScanAccounts({
     getAccountShape,
     deviceCommunication,
@@ -40,12 +38,9 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  deviceCommunication: DeviceCommunication
+  deviceCommunication: DeviceCommunication,
 ): AccountBridge<Transaction> {
-  const receive = makeAccountBridgeReceive(
-    getAddressWrapper(getAddress),
-    deviceCommunication
-  );
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
   const signOperation = buildSignOperation(deviceCommunication);
 
   return {
@@ -68,7 +63,7 @@ export function buildAccountBridge(
 export function createBridges(
   deviceCommunication: DeviceCommunication,
   _network: unknown,
-  _cacheFn: unknown
+  _cacheFn: unknown,
 ) {
   return {
     currencyBridge: buildCurrencyBridge(deviceCommunication),

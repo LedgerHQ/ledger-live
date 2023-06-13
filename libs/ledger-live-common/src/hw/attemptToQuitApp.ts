@@ -14,16 +14,16 @@ export type AttemptToQuitAppEvent =
 
 const attemptToQuitApp = (
   transport,
-  appAndVersion?: AppAndVersion
+  appAndVersion?: AppAndVersion,
 ): Observable<AttemptToQuitAppEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)
     ? from(quitApp(transport)).pipe(
         concatMap(() =>
           of(<AttemptToQuitAppEvent>{
             type: "unresponsiveDevice",
-          })
+          }),
         ),
-        catchError((e) => throwError(e))
+        catchError(e => throwError(e)),
       )
     : of({
         type: "appDetected",

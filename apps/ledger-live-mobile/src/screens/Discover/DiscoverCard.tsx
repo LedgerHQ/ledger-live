@@ -56,11 +56,7 @@ const DiscoverCard = ({
         alignItems="flex-start"
         flexDirection={subtitleFirst ? "column-reverse" : "column"}
       >
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          mb={subtitleFirst ? 0 : 3}
-        >
+        <Flex flexDirection="row" alignItems="center" mb={subtitleFirst ? 0 : 3}>
           <Text
             mt={2}
             variant={"h5"}

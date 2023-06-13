@@ -41,10 +41,7 @@ function getURLWhatIsThis({
 }
 function formatPalletMethod(palletMethod?: string | null): string {
   if (!palletMethod) return "";
-  return palletMethod
-    .split(".")
-    .map(startCase)
-    .join(" - ");
+  return palletMethod.split(".").map(startCase).join(" - ");
 }
 const redirectAddress = (currency: Currency, address: string) => () => {
   const url =
@@ -110,10 +107,10 @@ export const OperationDetailsRewardFrom = ({
 }: OperationDetailsRewardFromProps) => {
   const { currency } = account;
   const { validators: polkadotValidators } = usePolkadotPreloadData();
-  const validator = useMemo(() => polkadotValidators.find(v => v.address === validatorStash), [
-    validatorStash,
-    polkadotValidators,
-  ]);
+  const validator = useMemo(
+    () => polkadotValidators.find(v => v.address === validatorStash),
+    [validatorStash, polkadotValidators],
+  );
   return (
     <OpDetailsSection>
       <OpDetailsTitle>

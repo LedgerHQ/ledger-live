@@ -6,9 +6,7 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SelectDevice from "../../../components/SelectDevice";
-import SelectDevice2, {
-  SetHeaderOptionsRequest,
-} from "../../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../../components/SelectDevice2";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { TrackScreen } from "../../../analytics";
 import SkipSelectDevice from "../../SkipSelectDevice";
@@ -70,11 +68,7 @@ export function Connect({
 
   return (
     <Flex padding={4}>
-      <TrackScreen
-        category="Swap Form"
-        name="ConnectDeviceListApps"
-        provider={provider}
-      />
+      <TrackScreen category="Swap Form" name="ConnectDeviceListApps" provider={provider} />
       <SkipSelectDevice onResult={setDevice} />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex height="100%" px={2} py={2}>

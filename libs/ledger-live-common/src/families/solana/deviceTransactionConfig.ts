@@ -41,7 +41,7 @@ export default getDeviceTransactionConfig;
 
 function fieldsForCommand(
   commandDescriptor: CommandDescriptor,
-  account: AccountLike
+  account: AccountLike,
 ): DeviceTransactionField[] {
   const { command } = commandDescriptor;
   switch (command.kind) {
@@ -66,9 +66,7 @@ function fieldsForCommand(
   }
 }
 
-function fieldsForTransfer(
-  _command: TransferCommand
-): DeviceTransactionField[] {
+function fieldsForTransfer(_command: TransferCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -78,9 +76,7 @@ function fieldsForTransfer(
 
   return fields;
 }
-function fieldsForTokenTransfer(
-  command: TokenTransferCommand
-): DeviceTransactionField[] {
+function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
@@ -128,9 +124,7 @@ function fieldsForTokenTransfer(
   return fields;
 }
 
-function fieldsForCreateATA(
-  command: TokenCreateATACommand
-): DeviceTransactionField[] {
+function fieldsForCreateATA(command: TokenCreateATACommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -167,7 +161,7 @@ function fieldsForCreateATA(
 }
 function fieldsForStakeCreateAccount(
   command: StakeCreateAccountCommand,
-  account: AccountLike
+  account: AccountLike,
 ): DeviceTransactionField[] {
   if (account.type !== "Account") {
     throw new Error("unsupported account type");
@@ -194,7 +188,7 @@ function fieldsForStakeCreateAccount(
       {
         disableRounding: true,
         showCode: true,
-      }
+      },
     ),
   });
 
@@ -213,9 +207,7 @@ function fieldsForStakeCreateAccount(
   return fields;
 }
 
-function fieldsForStakeDelegate(
-  command: StakeDelegateCommand
-): DeviceTransactionField[] {
+function fieldsForStakeDelegate(command: StakeDelegateCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -233,9 +225,7 @@ function fieldsForStakeDelegate(
   return fields;
 }
 
-function fieldsForStakeUndelegate(
-  command: StakeUndelegateCommand
-): DeviceTransactionField[] {
+function fieldsForStakeUndelegate(command: StakeUndelegateCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -247,9 +237,7 @@ function fieldsForStakeUndelegate(
   return fields;
 }
 
-function fieldsForStakeWithdraw(
-  command: StakeWithdrawCommand
-): DeviceTransactionField[] {
+function fieldsForStakeWithdraw(command: StakeWithdrawCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -266,9 +254,7 @@ function fieldsForStakeWithdraw(
   return fields;
 }
 
-function fieldsForStakeSplit(
-  command: StakeSplitCommand
-): DeviceTransactionField[] {
+function fieldsForStakeSplit(command: StakeSplitCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({

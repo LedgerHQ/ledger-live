@@ -2,13 +2,7 @@ import React from "react";
 import Svg, { Path } from "react-native-svg";
 import { useTheme } from "@react-navigation/native";
 
-export default function Freeze({
-  size = 16,
-  color,
-}: {
-  size?: number;
-  color?: string;
-}) {
+export default function Freeze({ size = 16, color }: { size?: number; color?: string }) {
   const { colors } = useTheme();
   return (
     <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">

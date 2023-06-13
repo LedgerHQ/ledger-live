@@ -9,9 +9,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "../../analytics";
-import SelectDevice2, {
-  SetHeaderOptionsRequest,
-} from "../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import DeviceActionModal from "../../components/DeviceActionModal";
@@ -31,9 +29,7 @@ type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.DeviceConnect>
 >;
 
-export const deviceConnectHeaderOptions = (
-  t: TFunction,
-): ReactNavigationHeaderOptions => ({
+export const deviceConnectHeaderOptions = (t: TFunction): ReactNavigationHeaderOptions => ({
   headerShown: true,
   title: t("deviceConnect.title"),
   headerRight: () => null,
@@ -121,21 +117,10 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
           />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
-          <SelectDevice
-            autoSelectOnAdd
-            onSelect={setDevice}
-            onBluetoothDeviceAction={onShowMenu}
-          />
+        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+          <SelectDevice autoSelectOnAdd onSelect={setDevice} onBluetoothDeviceAction={onShowMenu} />
           {chosenDevice ? (
-            <RemoveDeviceMenu
-              open={showMenu}
-              device={chosenDevice}
-              onHideMenu={onHideMenu}
-            />
+            <RemoveDeviceMenu open={showMenu} device={chosenDevice} onHideMenu={onHideMenu} />
           ) : null}
         </NavigationScrollView>
       )}

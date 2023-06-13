@@ -19,20 +19,16 @@ export const broadcast: AccountBridge<EvmTransaction>["broadcast"] = async ({
     blockNumber: txResponse.blockNumber,
     blockHeight: txResponse.blockNumber,
     blockHash: txResponse.blockHash,
-    date: new Date(
-      txResponse.timestamp ? txResponse.timestamp * 1000 : Date.now()
-    ),
+    date: new Date(txResponse.timestamp ? txResponse.timestamp * 1000 : Date.now()),
     subOperations:
-      operation.subOperations?.map((subOp) => ({
+      operation.subOperations?.map(subOp => ({
         ...subOp,
         id: encodeOperationId(subOp.accountId, txResponse.hash, subOp.type),
         hash: txResponse.hash,
         blockNumber: txResponse.blockNumber,
         blockHeight: txResponse.blockNumber,
         blockHash: txResponse.blockHash,
-        date: new Date(
-          txResponse.timestamp ? txResponse.timestamp * 1000 : Date.now()
-        ),
+        date: new Date(txResponse.timestamp ? txResponse.timestamp * 1000 : Date.now()),
       })) || [],
   } as Operation;
 };

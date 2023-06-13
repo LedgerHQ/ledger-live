@@ -9,10 +9,7 @@ import { DiscoverNavigatorStackParamList } from "../../../components/RootNavigat
 import { ScreenName } from "../../../const";
 
 export type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    DiscoverNavigatorStackParamList,
-    ScreenName.PlatformCatalog
-  >
+  StackNavigatorProps<DiscoverNavigatorStackParamList, ScreenName.PlatformCatalog>
 >;
 
 export type Search = SearchRaw<AppManifest, TextInput>;

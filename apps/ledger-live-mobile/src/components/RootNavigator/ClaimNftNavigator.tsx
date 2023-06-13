@@ -9,10 +9,7 @@ import { ClaimNftNavigatorParamList } from "./types/ClaimNftNavigator";
 
 export default function ClaimNftNavigator() {
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>

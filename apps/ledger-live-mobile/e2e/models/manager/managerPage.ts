@@ -8,8 +8,8 @@ import {
 import { expect } from "detox";
 import * as bridge from "../../bridge/server";
 
-let proceedButtonId = "Proceed";
-let baseLink: string = "myledger";
+const proceedButtonId = "Proceed";
+const baseLink = "myledger";
 
 export default class ManagerPage {
   getManagerTitle = () => getElementById("manager-title");

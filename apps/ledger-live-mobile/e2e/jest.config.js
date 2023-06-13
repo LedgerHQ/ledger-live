@@ -6,7 +6,6 @@ module.exports = {
     "^.+\\.[tj]sx?$": [
       "ts-jest",
       {
-        babelConfig: true,
         babelConfig: "<rootDir>/e2e/babel.config.detox.js",
       },
     ],

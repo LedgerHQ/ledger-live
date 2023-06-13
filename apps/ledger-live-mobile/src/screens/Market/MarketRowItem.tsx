@@ -64,21 +64,11 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
       ) : (
         image && (
           <IconContainer>
-            <Image
-              source={{ uri: image }}
-              style={{ width: 30, height: 30 }}
-              resizeMode="contain"
-            />
+            <Image source={{ uri: image }} style={{ width: 30, height: 30 }} resizeMode="contain" />
           </IconContainer>
         )
       )}
-      <Flex
-        mx="4"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="flex-start"
-        flex={1}
-      >
+      <Flex mx="4" flexDirection="column" justifyContent="center" alignItems="flex-start" flex={1}>
         <Text variant="large" fontWeight="semiBold" numberOfLines={1}>
           {`${name} (${ticker.toLocaleUpperCase()})`}
         </Text>
@@ -109,11 +99,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
           </Text>
         </Flex>
       </Flex>
-      <Flex
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="flex-end"
-      >
+      <Flex flexDirection="column" justifyContent="center" alignItems="flex-end">
         <Text variant="large" fontWeight="semiBold">
           {counterValueFormatter({
             value: price,

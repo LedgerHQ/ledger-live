@@ -11,7 +11,7 @@ const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
 const tokenAccount = {
   ...makeTokenAccount(
     "0x055C1e159E345cB4197e3844a86A61E0a801d856", // jacquie.eth
-    tokenCurrency
+    tokenCurrency,
   ),
   balance: new BigNumber(150),
   spendableBalance: new BigNumber(150),
@@ -19,7 +19,7 @@ const tokenAccount = {
 const account = makeAccount(
   "0x055C1e159E345cB4197e3844a86A61E0a801d856", // jacquie.eth
   currency,
-  [tokenAccount]
+  [tokenAccount],
 );
 
 describe("EVM Family", () => {
@@ -70,7 +70,7 @@ describe("EVM Family", () => {
           recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
           data: Buffer.from(
             "a9059cbb00000000000000000000000059569e96d0e3d9728dc07bf5c1443809e6f237fd0000000000000000000000000000000000000000000000000c06701668d322ac",
-            "hex"
+            "hex",
           ),
           feesStrategy: "custom",
           family: "evm",
@@ -128,7 +128,7 @@ describe("EVM Family", () => {
           recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
           data: Buffer.from(
             "a9059cbb00000000000000000000000059569e96d0e3d9728dc07bf5c1443809e6f237fd0000000000000000000000000000000000000000000000000c06701668d322ac",
-            "hex"
+            "hex",
           ),
           feesStrategy: "custom",
           family: "evm",

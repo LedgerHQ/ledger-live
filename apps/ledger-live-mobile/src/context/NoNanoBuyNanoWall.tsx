@@ -1,8 +1,5 @@
 import { useSelector } from "react-redux";
-import {
-  CardStyleInterpolators,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+import { CardStyleInterpolators, StackNavigationOptions } from "@react-navigation/stack";
 import BuyDeviceNavigator from "../components/RootNavigator/BuyDeviceNavigator";
 import {
   hasCompletedOnboardingSelector,

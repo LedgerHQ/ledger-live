@@ -118,10 +118,10 @@ export function Row({
       tooltip: !withdawingEnabled ? <Trans i18nKey="near.withdraw.disabledTooltip" /> : null,
     },
   ];
-  const onExternalLinkClick = useCallback(() => onExternalLink(validatorId), [
-    onExternalLink,
-    validatorId,
-  ]);
+  const onExternalLinkClick = useCallback(
+    () => onExternalLink(validatorId),
+    [onExternalLink, validatorId],
+  );
   return (
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>

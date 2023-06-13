@@ -1,12 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  AccountLike,
-  AccountRaw,
-  AccountRawLike,
-  Operation,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
@@ -14,10 +8,7 @@ import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTran
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
 export type KYCStatus = { id: string; status: ValidKYCStatus | "rejected" };
 export type GetKYCStatus = (arg0: string, arg1: string) => Promise<KYCStatus>;
-export type SubmitKYC = (
-  str: string,
-  data: KYCData
-) => Promise<KYCStatus | { error: Error }>;
+export type SubmitKYC = (str: string, data: KYCData) => Promise<KYCStatus | { error: Error }>;
 
 export type KYCData = {
   firstName: string;
@@ -147,7 +138,7 @@ export type GetExchangeRates = (
   wyreUserId?: string,
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
   providers?: AvailableProviderV3[],
-  includeDEX?: boolean
+  includeDEX?: boolean,
 ) => Promise<ExchangeRate[]>;
 export type GetProviders = () => Promise<AvailableProvider[]>;
 export type InitSwapResult = {
@@ -155,12 +146,7 @@ export type InitSwapResult = {
   swapId: string;
 };
 
-type ValidSwapStatus =
-  | "pending"
-  | "onhold"
-  | "expired"
-  | "finished"
-  | "refunded";
+type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";
 export type SwapStatusRequest = {
   provider: string;
   swapId: string;
@@ -185,22 +171,14 @@ export type SwapStateAcceptedRequest = SwapStateRequest & {
 
 export type SwapStateCancelledRequest = SwapStateRequest;
 
-export type PostSwapAccepted = (
-  arg0: SwapStateAcceptedRequest
-) => Promise<null>;
+export type PostSwapAccepted = (arg0: SwapStateAcceptedRequest) => Promise<null>;
 
-export type PostSwapCancelled = (
-  arg0: SwapStateCancelledRequest
-) => Promise<null>;
+export type PostSwapCancelled = (arg0: SwapStateCancelledRequest) => Promise<null>;
 
 // -----
 
-export type UpdateAccountSwapStatus = (
-  arg0: Account
-) => Promise<Account | null | undefined>;
-export type GetMultipleStatus = (
-  arg0: SwapStatusRequest[]
-) => Promise<SwapStatus[]>;
+export type UpdateAccountSwapStatus = (arg0: Account) => Promise<Account | null | undefined>;
+export type GetMultipleStatus = (arg0: SwapStatusRequest[]) => Promise<SwapStatus[]>;
 export type SwapRequestEvent =
   | { type: "init-swap" }
   | {
@@ -332,7 +310,7 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   setToAccount: (
     currency: SwapSelectorStateType["currency"],
     account: SwapSelectorStateType["account"],
-    parentAccount: SwapSelectorStateType["parentAccount"]
+    parentAccount: SwapSelectorStateType["parentAccount"],
   ) => void;
   setFromAmount: (amount: BigNumber) => void;
   setToAmount: (amount: BigNumber) => void;

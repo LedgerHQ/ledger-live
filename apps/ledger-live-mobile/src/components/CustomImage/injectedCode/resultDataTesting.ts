@@ -75,11 +75,7 @@ function codeToInject() {
         }
       }
 
-      context.putImageData(
-        new ImageData(Uint8ClampedArray.from(imageData), width, height),
-        0,
-        0,
-      );
+      context.putImageData(new ImageData(Uint8ClampedArray.from(imageData), width, height), 0, 0);
 
       const grayScaleBase64 = canvas.toDataURL();
       postDataToWebView({

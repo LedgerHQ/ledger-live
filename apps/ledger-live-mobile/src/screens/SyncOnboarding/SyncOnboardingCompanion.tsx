@@ -7,13 +7,7 @@ import React, {
   useRef,
   useLayoutEffect,
 } from "react";
-import {
-  Flex,
-  VerticalTimeline,
-  Text,
-  ContinueOnDevice,
-  Divider,
-} from "@ledgerhq/native-ui";
+import { Flex, VerticalTimeline, Text, ContinueOnDevice, Divider } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
@@ -101,10 +95,7 @@ const READY_REDIRECT_DELAY_MS = 2500;
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
-const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<
-  SeedPhraseType,
-  string
->([
+const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, string>([
   [SeedPhraseType.TwentyFour, "TwentyFour"],
   [SeedPhraseType.Eighteen, "Eighteen"],
   [SeedPhraseType.Twelve, "Twelve"],
@@ -127,13 +118,7 @@ const ContinueOnDeviceWithAnim: React.FC<{
   withTopDivider?: boolean;
 }> = ({ text, withTopDivider }) => {
   // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
-  return (
-    <ContinueOnDevice
-      Icon={ContinueOnStax}
-      text={text}
-      withTopDivider={withTopDivider}
-    />
-  );
+  return <ContinueOnDevice Icon={ContinueOnStax} text={text} withTopDivider={withTopDivider} />;
 };
 
 /**
@@ -143,9 +128,7 @@ const ContinueOnDeviceWithAnim: React.FC<{
  * The resync alert message overlay is rendered from this component to better handle relative position
  * with the vertical timeline.
  */
-export const SyncOnboardingCompanion: React.FC<
-  SyncOnboardingCompanionProps
-> = ({
+export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   navigation,
   device,
   updateHeaderOverlayDelay,
@@ -157,12 +140,10 @@ export const SyncOnboardingCompanion: React.FC<
   const dispatchRedux = useDispatch();
   const deviceInitialApps = useFeature("deviceInitialApps");
 
-  const productName =
-    getDeviceModel(device.modelId).productName || device.modelId;
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
   const deviceName = device.deviceName || productName;
 
-  const initialAppsToInstall =
-    deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
+  const initialAppsToInstall = deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
@@ -208,19 +189,15 @@ export const SyncOnboardingCompanion: React.FC<
 
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
 
-  const [isResyncOverlayOpen, setIsResyncOverlayOpen] =
-    useState<boolean>(false);
-  const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] =
-    useState<number>(NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS);
-
-  const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(
-    NORMAL_DESYNC_TIMEOUT_MS,
+  const [isResyncOverlayOpen, setIsResyncOverlayOpen] = useState<boolean>(false);
+  const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] = useState<number>(
+    NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
+
+  const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(NORMAL_DESYNC_TIMEOUT_MS);
 
   const desyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const readyRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
@@ -281,10 +258,7 @@ export const SyncOnboardingCompanion: React.FC<
   // Reacts to allowedError from the polling to set or clean the desync timeout
   useEffect(() => {
     if (allowedError) {
-      desyncTimerRef.current = setTimeout(
-        handleDesyncTimedOut,
-        desyncTimeoutMs,
-      );
+      desyncTimerRef.current = setTimeout(handleDesyncTimedOut, desyncTimeoutMs);
 
       // Displays an overlay to alert the user. This overlay should also hide the screen header
       setIsResyncOverlayOpen(true);
@@ -303,12 +277,7 @@ export const SyncOnboardingCompanion: React.FC<
         desyncTimerRef.current = null;
       }
     };
-  }, [
-    allowedError,
-    handleDesyncTimedOut,
-    desyncTimeoutMs,
-    onShouldHeaderBeOverlaid,
-  ]);
+  }, [allowedError, handleDesyncTimedOut, desyncTimeoutMs, onShouldHeaderBeOverlaid]);
 
   /**
    * True if the device was initially onboarded/seeded when this component got
@@ -339,9 +308,7 @@ export const SyncOnboardingCompanion: React.FC<
     }
   }, [deviceOnboardingState]);
 
-  const analyticsSeedConfiguration = useRef<
-    "new_seed" | "restore_seed" | "recover_seed"
-  >();
+  const analyticsSeedConfiguration = useRef<"new_seed" | "restore_seed" | "recover_seed">();
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -362,9 +329,7 @@ export const SyncOnboardingCompanion: React.FC<
         undefined,
         {
           seedPhraseType: analyticsSeedPhraseType.current
-            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(
-                analyticsSeedPhraseType.current,
-              )
+            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
             : undefined,
           seedConfiguration: analyticsSeedConfiguration.current,
         },
@@ -383,10 +348,9 @@ export const SyncOnboardingCompanion: React.FC<
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
     if (
       deviceOnboardingState?.isOnboarded &&
-      [
-        DeviceOnboardingStep.Ready,
-        DeviceOnboardingStep.WelcomeScreen1,
-      ].includes(deviceOnboardingState?.currentOnboardingStep)
+      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
+        deviceOnboardingState?.currentOnboardingStep,
+      )
     ) {
       setCompanionStepKey(CompanionStepKey.SoftwareCheck);
       return;
@@ -440,11 +404,7 @@ export const SyncOnboardingCompanion: React.FC<
       default:
         break;
     }
-  }, [
-    deviceOnboardingState,
-    notifySyncOnboardingShouldReset,
-    shouldRestoreApps,
-  ]);
+  }, [deviceOnboardingState, notifySyncOnboardingShouldReset, shouldRestoreApps]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -452,19 +412,15 @@ export const SyncOnboardingCompanion: React.FC<
   useEffect(() => {
     if (
       deviceOnboardingState?.seedPhraseType &&
-      [
-        DeviceOnboardingStep.NewDeviceConfirming,
-        DeviceOnboardingStep.RestoreSeed,
-      ].includes(deviceOnboardingState?.currentOnboardingStep)
+      [DeviceOnboardingStep.NewDeviceConfirming, DeviceOnboardingStep.RestoreSeed].includes(
+        deviceOnboardingState?.currentOnboardingStep,
+      )
     ) {
       const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
         deviceOnboardingState.seedPhraseType,
       );
 
-      if (
-        nbOfSeedWords &&
-        deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2
-      ) {
+      if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
         setResyncOverlayDisplayDelayMs(LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS);
         updateHeaderOverlayDelay(LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS);
         setDesyncTimeoutMs(LONG_DESYNC_TIMEOUT_MS);
@@ -512,12 +468,8 @@ export const SyncOnboardingCompanion: React.FC<
           title: t("syncOnboarding.pairingStep.title", { productName }),
           renderBody: () => (
             <>
-              <TrackScreen
-                category={`Set up ${productName}: Step 1 device paired`}
-              />
-              <BodyText>
-                {t("syncOnboarding.pairingStep.description", { productName })}
-              </BodyText>
+              <TrackScreen category={`Set up ${productName}: Step 1 device paired`} />
+              <BodyText>{t("syncOnboarding.pairingStep.description", { productName })}</BodyText>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.pairingStep.continueOnDevice", {
@@ -534,9 +486,7 @@ export const SyncOnboardingCompanion: React.FC<
           renderBody: () => (
             <Flex>
               <TrackScreen category={`Set up ${productName}: Step 2 PIN`} />
-              <BodyText>
-                {t("syncOnboarding.pinStep.description", { productName })}
-              </BodyText>
+              <BodyText>{t("syncOnboarding.pinStep.description", { productName })}</BodyText>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.pinStep.continueOnDevice", {
@@ -552,9 +502,7 @@ export const SyncOnboardingCompanion: React.FC<
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen
-                category={`Set up ${productName}: Step 3 Seed Intro`}
-              />
+              <TrackScreen category={`Set up ${productName}: Step 3 Seed Intro`} />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
                   <BodyText mb={6}>
@@ -562,11 +510,7 @@ export const SyncOnboardingCompanion: React.FC<
                       productName,
                     })}
                   </BodyText>
-                  <Stories
-                    instanceID={StorylyInstanceID.recoverySeed}
-                    vertical
-                    keepOriginalOrder
-                  />
+                  <Stories instanceID={StorylyInstanceID.recoverySeed} vertical keepOriginalOrder />
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
                     text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {
@@ -576,35 +520,24 @@ export const SyncOnboardingCompanion: React.FC<
                 </Flex>
               ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
                 <Flex>
-                  <SubtitleText>
-                    {t("syncOnboarding.seedStep.restoreChoiceSRPTitle")}
-                  </SubtitleText>
-                  <BodyText>
-                    {t("syncOnboarding.seedStep.restoreChoiceSRPDescription")}
-                  </BodyText>
+                  <SubtitleText>{t("syncOnboarding.seedStep.restoreChoiceSRPTitle")}</SubtitleText>
+                  <BodyText>{t("syncOnboarding.seedStep.restoreChoiceSRPDescription")}</BodyText>
                   <Divider text={t("common.or")} my={6} />
                   <SubtitleText>
                     {t("syncOnboarding.seedStep.restoreChoiceRecoverTitle")}
                   </SubtitleText>
                   <BodyText>
-                    {t(
-                      "syncOnboarding.seedStep.restoreChoiceRecoverDescription",
-                    )}
+                    {t("syncOnboarding.seedStep.restoreChoiceRecoverDescription")}
                   </BodyText>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
-                    text={t(
-                      "syncOnboarding.seedStep.restoreChoiceContinueOnDevice",
-                      {
-                        productName,
-                      },
-                    )}
+                    text={t("syncOnboarding.seedStep.restoreChoiceContinueOnDevice", {
+                      productName,
+                    })}
                   />
                 </Flex>
               ) : seedPathStatus === "restore_seed" ? (
-                <BodyText>
-                  {t("syncOnboarding.seedStep.restoreSeed", { productName })}
-                </BodyText>
+                <BodyText>{t("syncOnboarding.seedStep.restoreSeed", { productName })}</BodyText>
               ) : seedPathStatus === "recover_seed" ? (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : (
@@ -616,12 +549,9 @@ export const SyncOnboardingCompanion: React.FC<
                   </BodyText>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
-                    text={t(
-                      "syncOnboarding.seedStep.selectionContinueOnDevice",
-                      {
-                        productName,
-                      },
-                    )}
+                    text={t("syncOnboarding.seedStep.selectionContinueOnDevice", {
+                      productName,
+                    })}
                   />
                 </Flex>
               )}
@@ -690,10 +620,7 @@ export const SyncOnboardingCompanion: React.FC<
 
   return (
     <>
-      <HelpDrawer
-        isOpen={isHelpDrawerOpen}
-        onClose={() => setHelpDrawerOpen(false)}
-      />
+      <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <Flex position="relative" flex={1} px={6}>
         <ResyncOverlay
           isOpen={isResyncOverlayOpen}

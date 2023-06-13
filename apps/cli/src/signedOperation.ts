@@ -17,20 +17,20 @@ export const inferSignedOperationsOpts = [
 ];
 export function inferSignedOperations(
   mainAccount: Account,
-  opts: InferSignedOperationsOpts
+  opts: InferSignedOperationsOpts,
 ): Observable<SignedOperation> {
   const file = opts["signed-operation"];
   invariant(file, "--signed-operation file is required");
   return jsonFromFile(file as string).pipe(
-    map((json) => {
+    map(json => {
       invariant(typeof json === "object", "not an object JSON");
       invariant(typeof json.signature === "string", "missing signature");
       invariant(typeof json.operation === "object", "missing operation object");
       invariant(
         json.operation.accountId === mainAccount.id,
-        "the operation does not match the specified account"
+        "the operation does not match the specified account",
       );
       return fromSignedOperationRaw(json, mainAccount.id);
-    })
+    }),
   );
 }

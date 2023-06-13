@@ -20,9 +20,7 @@ class BitcoinLikeExplorer implements IExplorer {
     forcedExplorerURI?: string;
   }) {
     this.baseUrl =
-      forcedExplorerURI != null
-        ? forcedExplorerURI
-        : blockchainBaseURL(cryptoCurrency);
+      forcedExplorerURI != null ? forcedExplorerURI : blockchainBaseURL(cryptoCurrency);
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {
@@ -50,9 +48,7 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url,
     });
-    return data
-      ? { height: data.height, hash: data.hash, time: data.time }
-      : null;
+    return data ? { height: data.height, hash: data.hash, time: data.time } : null;
   }
 
   async getBlockByHeight(height: number): Promise<Block | null> {
@@ -60,9 +56,7 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/block/${height}`,
     });
-    return data[0]
-      ? { height: data[0].height, hash: data[0].hash, time: data[0].time }
-      : null;
+    return data[0] ? { height: data[0].height, hash: data[0].hash, time: data[0].time } : null;
   }
 
   async getFees(): Promise<{ [key: string]: number }> {
@@ -87,7 +81,7 @@ class BitcoinLikeExplorer implements IExplorer {
       batch_size: nbMax,
     };
     const pendingsTxs = await this.fetchPendingTxs(address, params);
-    pendingsTxs.forEach((tx) => this.hydrateTx(address, tx));
+    pendingsTxs.forEach(tx => this.hydrateTx(address, tx));
     return pendingsTxs;
   }
 
@@ -100,10 +94,7 @@ class BitcoinLikeExplorer implements IExplorer {
     return data.data;
   }
 
-  async fetchPendingTxs(
-    address: Address,
-    params: ExplorerParams
-  ): Promise<TX[]> {
+  async fetchPendingTxs(address: Address, params: ExplorerParams): Promise<TX[]> {
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs/pending`,
@@ -131,7 +122,7 @@ class BitcoinLikeExplorer implements IExplorer {
     tx.index = address.index;
     // eslint-disable-next-line no-param-reassign
     tx.address = address.address;
-    tx.inputs.forEach((input) => {
+    tx.inputs.forEach(input => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       delete input.txinwitness;
@@ -142,7 +133,7 @@ class BitcoinLikeExplorer implements IExplorer {
       // @ts-ignore
       delete input.input_index;
     });
-    tx.outputs.forEach((output) => {
+    tx.outputs.forEach(output => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       delete output.script_hex;
@@ -159,7 +150,7 @@ class BitcoinLikeExplorer implements IExplorer {
     batchSize: number,
     address: Address,
     startingBlockheight: number,
-    isPending: boolean
+    isPending: boolean,
   ): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: batchSize,
@@ -175,7 +166,7 @@ class BitcoinLikeExplorer implements IExplorer {
     const hydratedTxs: TX[] = [];
 
     // faster than mapping
-    txs.forEach((tx) => {
+    txs.forEach(tx => {
       this.hydrateTx(address, tx);
       hydratedTxs.push(tx);
     });

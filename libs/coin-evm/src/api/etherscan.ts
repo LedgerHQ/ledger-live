@@ -5,17 +5,14 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { EtherscanERC20Event, EtherscanOperation } from "../types";
 import { EtherscanAPIError } from "../errors";
-import {
-  etherscanERC20EventToOperation,
-  etherscanOperationToOperation,
-} from "../adapters";
+import { etherscanERC20EventToOperation, etherscanOperationToOperation } from "../adapters";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
 
 async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
-  retries = DEFAULT_RETRIES_API
+  retries = DEFAULT_RETRIES_API,
 ): Promise<T> {
   try {
     const { data } = await axios.request<{
@@ -25,10 +22,10 @@ async function fetchWithRetries<T>(
     }>(params);
 
     if (!Number(data.status) && data.message === "NOTOK") {
-      throw new EtherscanAPIError(
-        "Error while fetching data from Etherscan like API",
-        { params, data }
-      );
+      throw new EtherscanAPIError("Error while fetching data from Etherscan like API", {
+        params,
+        data,
+      });
     }
 
     return data.result;
@@ -47,12 +44,7 @@ async function fetchWithRetries<T>(
  * Get all the last "normal" transactions (no tokens / NFTs)
  */
 export const getLastCoinOperations = makeLRUCache<
-  [
-    currency: CryptoCurrency,
-    address: string,
-    accountId: string,
-    fromBlock: number
-  ],
+  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
   Operation[]
 >(
   async (currency, address, accountId, fromBlock) => {
@@ -72,23 +64,18 @@ export const getLastCoinOperations = makeLRUCache<
     });
 
     return ops
-      .map((tx) => etherscanOperationToOperation(accountId, tx))
+      .map(tx => etherscanOperationToOperation(accountId, tx))
       .filter(Boolean) as Operation[];
   },
   (currency, address, accountId, fromBlock) => accountId + fromBlock,
-  { ttl: 5 * 1000 }
+  { ttl: 5 * 1000 },
 );
 
 /**
  * Get all the last ERC20 transactions
  */
 export const getLastTokenOperations = makeLRUCache<
-  [
-    currency: CryptoCurrency,
-    address: string,
-    accountId: string,
-    fromBlock: number
-  ],
+  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
   { tokenCurrency: TokenCurrency; operation: Operation }[]
 >(
   async (currency, address, accountId, fromBlock) => {
@@ -107,15 +94,13 @@ export const getLastTokenOperations = makeLRUCache<
       url,
     });
 
-    return ops
-      .map((event) => etherscanERC20EventToOperation(accountId, event))
-      .filter(Boolean) as {
+    return ops.map(event => etherscanERC20EventToOperation(accountId, event)).filter(Boolean) as {
       tokenCurrency: TokenCurrency;
       operation: Operation;
     }[];
   },
   (currency, address, accountId, fromBlock) => accountId + fromBlock,
-  { ttl: 5 * 1000 }
+  { ttl: 5 * 1000 },
 );
 
 export default {

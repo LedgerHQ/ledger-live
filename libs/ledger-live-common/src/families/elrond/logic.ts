@@ -1,11 +1,7 @@
 import { decode, fromWords } from "bech32";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type {
-  Transaction,
-  ElrondTransactionMode,
-  ElrondDelegation,
-} from "./types";
+import type { Transaction, ElrondTransactionMode, ElrondDelegation } from "./types";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -61,20 +57,16 @@ export const isAmountSpentFromBalance = (mode: ElrondTransactionMode) => {
   return ["send", "delegate"].includes(mode);
 };
 
-export const computeDelegationBalance = (
-  delegations: ElrondDelegation[]
-): BigNumber => {
+export const computeDelegationBalance = (delegations: ElrondDelegation[]): BigNumber => {
   let totalDelegationBalance = new BigNumber(0);
 
   for (const delegation of delegations) {
     let delegationBalance = new BigNumber(delegation.userActiveStake).plus(
-      new BigNumber(delegation.claimableRewards)
+      new BigNumber(delegation.claimableRewards),
     );
 
     for (const undelegation of delegation.userUndelegatedList) {
-      delegationBalance = delegationBalance.plus(
-        new BigNumber(undelegation.amount)
-      );
+      delegationBalance = delegationBalance.plus(new BigNumber(undelegation.amount));
     }
 
     totalDelegationBalance = totalDelegationBalance.plus(delegationBalance);

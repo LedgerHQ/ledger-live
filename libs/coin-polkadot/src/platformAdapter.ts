@@ -5,15 +5,13 @@ import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = false;
 
-const convertToLiveTransaction = (
-  tx: PlatformTransaction
-): Partial<Transaction> => ({
+const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction> => ({
   ...tx,
   era: tx.era ? `${tx.era}` : undefined,
 });
 
 const getPlatformTransactionSignFlowInfos = (
-  tx: PlatformTransaction
+  tx: PlatformTransaction,
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;

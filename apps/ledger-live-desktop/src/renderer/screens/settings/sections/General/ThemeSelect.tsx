@@ -29,12 +29,14 @@ const ThemeSelect = () => {
   );
   const options = useMemo(
     () =>
-      ([
-        {
-          value: null,
-          label: t("theme.system"),
-        },
-      ] as ThemeSelectOption[]).concat(
+      (
+        [
+          {
+            value: null,
+            label: t("theme.system"),
+          },
+        ] as ThemeSelectOption[]
+      ).concat(
         Object.keys(themeLabels).map(key => ({
           value: key,
           label: t(themeLabels[key as keyof typeof themeLabels]),

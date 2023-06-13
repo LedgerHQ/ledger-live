@@ -55,10 +55,8 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const locale = useSelector(localeSelector);
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, cosmosResources } = account;
-  const {
-    delegatedBalance: _delegatedBalance,
-    unbondingBalance: _unbondingBalance,
-  } = cosmosResources;
+  const { delegatedBalance: _delegatedBalance, unbondingBalance: _unbondingBalance } =
+    cosmosResources;
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: false,

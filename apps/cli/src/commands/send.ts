@@ -1,12 +1,5 @@
 import { from, defer, of, concat, EMPTY, Observable } from "rxjs";
-import {
-  map,
-  switchMap,
-  mergeMap,
-  concatMap,
-  catchError,
-  tap,
-} from "rxjs/operators";
+import { map, switchMap, mergeMap, concatMap, catchError, tap } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -50,19 +43,19 @@ export default {
         "ignore-errors": boolean;
         "disable-broadcast": boolean;
         format: string;
-      }
+      },
   ) => {
     const l =
       opts.format !== "json" && opts.format !== "silent" // eslint-disable-next-line no-console
-        ? (l) => console.log(l)
-        : (_l) => {};
+        ? l => console.log(l)
+        : _l => {};
     return scan(opts).pipe(
-      tap((account) => {
+      tap(account => {
         l(`→ FROM ${formatAccount(account, "basic")}`);
       }),
-      switchMap((account) =>
+      switchMap(account =>
         from(inferTransactions(account, opts)).pipe(
-          concatMap((inferred) =>
+          concatMap(inferred =>
             inferred.reduce(
               (acc, [t, status]) =>
                 concat(
@@ -70,9 +63,7 @@ export default {
                   from(
                     defer(() => {
                       l(`✔️ transaction ${formatTransaction(t, account)}`);
-                      l(
-                        `STATUS ${formatTransactionStatus(t, status, account)}`
-                      );
+                      l(`STATUS ${formatTransactionStatus(t, status, account)}`);
                       const bridge = getAccountBridge(account);
                       return bridge
                         .signOperation({
@@ -83,34 +74,29 @@ export default {
                         .pipe(
                           map(toSignOperationEventRaw),
                           // @ts-expect-error more voodoo stuff
-                          ...(opts["disable-broadcast"] ||
-                          getEnv("DISABLE_TRANSACTION_BROADCAST")
+                          ...(opts["disable-broadcast"] || getEnv("DISABLE_TRANSACTION_BROADCAST")
                             ? []
                             : [
                                 concatMap((e: any) => {
                                   if (e.type === "signed") {
-                                    l(
-                                      `✔️ has been signed! ${JSON.stringify(
-                                        e.signedOperation
-                                      )}`
-                                    );
+                                    l(`✔️ has been signed! ${JSON.stringify(e.signedOperation)}`);
                                     return from(
                                       bridge
                                         .broadcast({
                                           account,
                                           signedOperation: e.signedOperation,
                                         })
-                                        .then((op) => {
+                                        .then(op => {
                                           l(
                                             `✔️ broadcasted! optimistic operation: ${formatOperation(
-                                              account
+                                              account,
                                             )(
                                               // @ts-expect-error we are supposed to give an OperationRaw and yet it's an Operation
-                                              fromOperationRaw(op, account.id)
-                                            )}`
+                                              fromOperationRaw(op, account.id),
+                                            )}`,
                                           );
                                           return op;
-                                        })
+                                        }),
                                     );
                                   }
 
@@ -119,7 +105,7 @@ export default {
                               ]),
                           ...(opts["ignore-errors"]
                             ? [
-                                catchError((e) => {
+                                catchError(e => {
                                   return of({
                                     type: "error",
                                     error: e,
@@ -127,19 +113,17 @@ export default {
                                   });
                                 }),
                               ]
-                            : [])
+                            : []),
                         );
-                    })
-                  )
+                    }),
+                  ),
                 ),
-              EMPTY as Observable<any>
-            )
+              EMPTY as Observable<any>,
+            ),
           ),
-          mergeMap((obj) =>
-            opts.format !== "json" ? EMPTY : of(JSON.stringify(obj))
-          )
-        )
-      )
+          mergeMap(obj => (opts.format !== "json" ? EMPTY : of(JSON.stringify(obj)))),
+        ),
+      ),
     );
   },
 };

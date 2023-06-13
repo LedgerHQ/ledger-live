@@ -15,14 +15,9 @@ export const getEstimatedFees =
 
     let suggestedFees = 0;
     if (params.fee) {
-      const payload = await buildTransactionPayload(algorandAPI)(
-        account,
-        transaction
-      );
+      const payload = await buildTransactionPayload(algorandAPI)(account, transaction);
       const encoded = encodeToSign(payload);
-      suggestedFees =
-        params.fee *
-        (Buffer.from(encoded, "hex").length + SINGLE_SIGNATURE_SIZE);
+      suggestedFees = params.fee * (Buffer.from(encoded, "hex").length + SINGLE_SIGNATURE_SIZE);
     }
     return new BigNumber(Math.max(suggestedFees, params.minFee));
   };

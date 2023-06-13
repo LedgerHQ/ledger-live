@@ -22,10 +22,7 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 import { CosmosDelegationFlowParamList } from "./types";
 import { accountScreenSelector } from "../../../reducers/accounts";
 
-type Props = StackNavigatorProps<
-  CosmosDelegationFlowParamList,
-  ScreenName.CosmosDelegationStarted
->;
+type Props = StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationStarted>;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -47,17 +44,10 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="DelegationFlow" name="Started" />
         <Flex alignItems="center" mb={6}>
-          <Illustration
-            lightSource={EarnLight}
-            darkSource={EarnDark}
-            size={150}
-          />
+          <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
         <Text fontWeight="semiBold" style={styles.description}>
           <Trans
@@ -90,9 +80,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <View>
           <Alert
             type="info"
-            title={t(
-              "cosmos.delegation.flow.steps.starter.warning.description",
-            )}
+            title={t("cosmos.delegation.flow.steps.starter.warning.description")}
           />
         </View>
         <Button onPress={onNext} type="main" mt={6}>

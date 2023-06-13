@@ -43,8 +43,7 @@ export const useToggleOnboardingEarlyCheck = ({
 }: UseToggleOnboardingEarlyCheckArgs): {
   state: ToggleOnboardingEarlyCheckActionState;
 } => {
-  const [state, setState] =
-    useState<ToggleOnboardingEarlyCheckActionState>(initialState);
+  const [state, setState] = useState<ToggleOnboardingEarlyCheckActionState>(initialState);
 
   useEffect(() => {
     if (toggleType === null) return;

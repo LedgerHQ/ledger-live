@@ -13,19 +13,14 @@ import { ScreenName } from "../../const";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type NavigatorProps = CompositeScreenProps<
-  StackNavigatorProps<
-    FreezeNavigatorParamList,
-    ScreenName.FreezeValidationError
-  >,
+  StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeValidationError>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
 export default function ValidationError({ navigation, route }: NavigatorProps) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();
@@ -40,11 +35,7 @@ export default function ValidationError({ navigation, route }: NavigatorProps) {
       ]}
     >
       <TrackScreen category="FreezeFunds" name="ValidationError" />
-      <ValidateError
-        error={route.params.error}
-        onRetry={retry}
-        onClose={onClose}
-      />
+      <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

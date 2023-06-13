@@ -1,11 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  SafeAreaView,
-  ListRenderItem,
-} from "react-native";
+import { View, StyleSheet, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
@@ -41,10 +35,7 @@ const SEARCH_KEYS = [
 ];
 
 type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    RequestAccountNavigatorParamList,
-    ScreenName.RequestAccountsSelectAccount
-  >,
+  StackNavigatorProps<RequestAccountNavigatorParamList, ScreenName.RequestAccountsSelectAccount>,
   StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.AddAccounts>
 >;
 
@@ -66,12 +57,7 @@ const Item = ({
   );
   return (
     <View>
-      <AccountCard
-        disabled={!match}
-        account={account}
-        style={styles.card}
-        onPress={onPress}
-      />
+      <AccountCard disabled={!match} account={account} style={styles.card} onPress={onPress} />
     </View>
   );
 };
@@ -102,19 +88,17 @@ const List = ({
 
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { accounts$, currency, allowAddAccount, onSuccess, onError } =
-    route.params;
+  const { accounts$, currency, allowAddAccount, onSuccess, onError } = route.params;
   const accountIds = useGetAccountIds(accounts$);
-  const accounts = useSelector(
-    accountsByCryptoCurrencyScreenSelector(currency, accountIds),
-  ) as { account: AccountLike; subAccount: SubAccount | null }[];
+  const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds)) as {
+    account: AccountLike;
+    subAccount: SubAccount | null;
+  }[];
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       onSuccess && onSuccess(account, parentAccount);
       const n =
-        navigation.getParent<
-          StackNavigatorNavigation<BaseNavigatorStackParamList>
-        >() || navigation;
+        navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() || navigation;
       n.pop();
     },
     [navigation, onSuccess],
@@ -160,9 +144,7 @@ function SelectAccount({ navigation, route }: Props) {
     [allowAddAccount, currency.name, onAddAccount],
   );
   const renderList = useCallback(
-    items => (
-      <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
-    ),
+    items => <List items={items} renderItem={renderItem} renderFooter={renderFooter} />,
     [renderFooter, renderItem],
   );
   const renderEmptySearch = useCallback(

@@ -25,7 +25,7 @@ function main(ref: string) {
         ...new Set(
           stdout
             .split("\n")
-            .map((line) => {
+            .map(line => {
               const m = line.match(/live-common\/src\/([^/]+)\/([^/]+)/);
               if (m) {
                 const [, first, second] = m;
@@ -38,20 +38,18 @@ function main(ref: string) {
                 }
               }
             })
-            .filter(Boolean)
+            .filter(Boolean),
         ),
       ];
       core.setOutput("is-affected", String(list.length > 0));
       core.setOutput("paths", list.join(" "));
       if (list.length > 0) {
-        core.info(
-          `${list.length} paths affected since ${ref}: ${list.join(" ")}`
-        );
+        core.info(`${list.length} paths affected since ${ref}: ${list.join(" ")}`);
       } else {
         core.info(`No paths affected since ${ref}`);
       }
       core.summary.write();
-    }
+    },
   );
 }
 

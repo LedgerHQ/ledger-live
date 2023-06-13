@@ -225,9 +225,7 @@ const waitingDrawers: ToBeDisplayedDrawer[] = [];
  *   It should set a state that makes the drawer visible/not visible.
  * @returns the id of the drawer
  */
-function addToWaitingDrawers(
-  onNotifyDrawer: ToBeDisplayedDrawer["onNotifyDrawer"],
-) {
+function addToWaitingDrawers(onNotifyDrawer: ToBeDisplayedDrawer["onNotifyDrawer"]) {
   const id = drawersCounter++;
 
   waitingDrawers.push({ id, onNotifyDrawer });
@@ -253,9 +251,7 @@ function removeFromWaitingDrawers(id: ToBeDisplayedDrawer["id"]) {
     return;
   }
 
-  const index = waitingDrawers.findIndex(
-    waitingDrawer => waitingDrawer.id === id,
-  );
+  const index = waitingDrawers.findIndex(waitingDrawer => waitingDrawer.id === id);
 
   if (index >= 0) {
     waitingDrawers.splice(index, 1);

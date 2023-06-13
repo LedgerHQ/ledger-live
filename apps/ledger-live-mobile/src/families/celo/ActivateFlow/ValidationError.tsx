@@ -14,18 +14,13 @@ import { ScreenName } from "../../../const";
 import type { CeloActivateFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CeloActivateFlowParamList,
-    ScreenName.CeloActivateValidationError
-  >
+  StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const retry = useCallback(() => {

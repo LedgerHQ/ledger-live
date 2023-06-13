@@ -7,12 +7,7 @@ import {
   getAltStatusMessage,
   TransportStatusError,
 } from "@ledgerhq/errors";
-export {
-  TransportError,
-  TransportStatusError,
-  StatusCodes,
-  getAltStatusMessage,
-};
+export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
 
 /**
  */
@@ -93,9 +88,7 @@ export default class Transport {
   complete: () => {}
   })
    */
-  static readonly listen: (
-    observer: Observer<DescriptorEvent<any>>
-  ) => Subscription;
+  static readonly listen: (observer: Observer<DescriptorEvent<any>>) => Subscription;
 
   /**
    * Attempt to create a Transport instance with a specific descriptor.
@@ -105,10 +98,7 @@ export default class Transport {
    * @example
   TransportFoo.open(descriptor).then(transport => ...)
    */
-  static readonly open: (
-    descriptor?: any,
-    timeout?: number
-  ) => Promise<Transport>;
+  static readonly open: (descriptor?: any, timeout?: number) => Promise<Transport>;
 
   /**
    * Send data to the device using a low level API.
@@ -148,7 +138,7 @@ export default class Transport {
 
     main().then(
       () => !unsubscribed && observer.complete(),
-      (e) => !unsubscribed && observer.error(e)
+      e => !unsubscribed && observer.error(e),
     );
 
     return { unsubscribe };
@@ -199,7 +189,7 @@ export default class Transport {
    */
   setDebugMode() {
     console.warn(
-      "setDebugMode is deprecated. use @ledgerhq/logs instead. No logs are emitted in this anymore."
+      "setDebugMode is deprecated. use @ledgerhq/logs instead. No logs are emitted in this anymore.",
     );
   }
 
@@ -233,25 +223,21 @@ export default class Transport {
     p1: number,
     p2: number,
     data: Buffer = Buffer.alloc(0),
-    statusList: Array<number> = [StatusCodes.OK]
+    statusList: Array<number> = [StatusCodes.OK],
   ): Promise<Buffer> => {
     if (data.length >= 256) {
       throw new TransportError(
         "data.length exceed 256 bytes limit. Got: " + data.length,
-        "DataLengthTooBig"
+        "DataLengthTooBig",
       );
     }
 
     const response = await this.exchange(
-      Buffer.concat([
-        Buffer.from([cla, ins, p1, p2]),
-        Buffer.from([data.length]),
-        data,
-      ])
+      Buffer.concat([Buffer.from([cla, ins, p1, p2]), Buffer.from([data.length]), data]),
     );
     const sw = response.readUInt16BE(response.length - 2);
 
-    if (!statusList.some((s) => s === sw)) {
+    if (!statusList.some(s => s === sw)) {
       throw new TransportStatusError(sw);
     }
 
@@ -265,20 +251,17 @@ export default class Transport {
    * @example
   TransportFoo.create().then(transport => ...)
    */
-  static create(
-    openTimeout = 3000,
-    listenTimeout?: number
-  ): Promise<Transport> {
+  static create(openTimeout = 3000, listenTimeout?: number): Promise<Transport> {
     return new Promise((resolve, reject) => {
       let found = false;
       const sub = this.listen({
-        next: (e) => {
+        next: e => {
           found = true;
           if (sub) sub.unsubscribe();
           if (listenTimeoutId) clearTimeout(listenTimeoutId);
           this.open(e.descriptor, openTimeout).then(resolve, reject);
         },
-        error: (e) => {
+        error: e => {
           if (listenTimeoutId) clearTimeout(listenTimeoutId);
           reject(e);
         },
@@ -286,41 +269,29 @@ export default class Transport {
           if (listenTimeoutId) clearTimeout(listenTimeoutId);
 
           if (!found) {
-            reject(
-              new TransportError(
-                this.ErrorMessage_NoDeviceFound,
-                "NoDeviceFound"
-              )
-            );
+            reject(new TransportError(this.ErrorMessage_NoDeviceFound, "NoDeviceFound"));
           }
         },
       });
       const listenTimeoutId = listenTimeout
         ? setTimeout(() => {
             sub.unsubscribe();
-            reject(
-              new TransportError(
-                this.ErrorMessage_ListenTimeout,
-                "ListenTimeout"
-              )
-            );
+            reject(new TransportError(this.ErrorMessage_ListenTimeout, "ListenTimeout"));
           }, listenTimeout)
         : null;
     });
   }
 
   exchangeBusyPromise: Promise<void> | null | undefined;
-  exchangeAtomicImpl = async (
-    f: () => Promise<Buffer | void>
-  ): Promise<Buffer | void> => {
+  exchangeAtomicImpl = async (f: () => Promise<Buffer | void>): Promise<Buffer | void> => {
     if (this.exchangeBusyPromise) {
       throw new TransportRaceCondition(
-        "An action was already pending on the Ledger device. Please deny or reconnect."
+        "An action was already pending on the Ledger device. Please deny or reconnect.",
       );
     }
 
     let resolveBusy;
-    const busyPromise: Promise<void> = new Promise((r) => {
+    const busyPromise: Promise<void> = new Promise(r => {
       resolveBusy = r;
     });
     this.exchangeBusyPromise = busyPromise;
@@ -345,18 +316,9 @@ export default class Transport {
     }
   };
 
-  decorateAppAPIMethods(
-    self: Record<string, any>,
-    methods: Array<string>,
-    scrambleKey: string
-  ) {
+  decorateAppAPIMethods(self: Record<string, any>, methods: Array<string>, scrambleKey: string) {
     for (const methodName of methods) {
-      self[methodName] = this.decorateAppAPIMethod(
-        methodName,
-        self[methodName],
-        self,
-        scrambleKey
-      );
+      self[methodName] = this.decorateAppAPIMethod(methodName, self[methodName], self, scrambleKey);
     }
   }
 
@@ -366,17 +328,14 @@ export default class Transport {
     methodName: string,
     f: (...args: A) => Promise<R>,
     ctx: any,
-    scrambleKey: string
+    scrambleKey: string,
   ): (...args: A) => Promise<R> {
     return async (...args) => {
       const { _appAPIlock } = this;
 
       if (_appAPIlock) {
         return Promise.reject(
-          new TransportError(
-            "Ledger Device is busy (lock " + _appAPIlock + ")",
-            "TransportLocked"
-          )
+          new TransportError("Ledger Device is busy (lock " + _appAPIlock + ")", "TransportLocked"),
         );
       }
 

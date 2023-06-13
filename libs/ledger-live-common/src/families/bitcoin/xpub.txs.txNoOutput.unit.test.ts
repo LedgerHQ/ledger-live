@@ -6,8 +6,7 @@ describe("testing transaction without output", () => {
       id: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
       inputs: [
         {
-          output_hash:
-            "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
+          output_hash: "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
           output_index: 0,
           value: "5000000000",
           address: "2NCDBM9DAuMrD1T8XDHMxvbTmLutP7at4AB",
@@ -25,13 +24,7 @@ describe("testing transaction without output", () => {
       address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
       received_at: "2021-07-28T13:34:38Z",
     };
-    const out = mapTxToOperations(
-      tx,
-      "zcash",
-      "zcash 1",
-      new Set<string>(),
-      new Set<string>()
-    );
+    const out = mapTxToOperations(tx, "zcash", "zcash 1", new Set<string>(), new Set<string>());
     expect(out.length).toEqual(0);
   }, 30000);
 });

@@ -1,13 +1,7 @@
 import { Flex } from "@ledgerhq/native-ui";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback } from "react";
-import {
-  Dimensions,
-  Animated,
-  StatusBar,
-  FlatList,
-  FlatListProps,
-} from "react-native";
+import { Dimensions, Animated, StatusBar, FlatList, FlatListProps } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import AnimatedProps = Animated.AnimatedProps;
@@ -17,8 +11,9 @@ function CollapsibleHeaderFlatList<T>({
   contentContainerStyle,
   ...otherProps
 }: AnimatedProps<FlatListProps<T>>) {
-  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } =
-    useContext(WalletTabNavigatorScrollContext);
+  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } = useContext(
+    WalletTabNavigatorScrollContext,
+  );
   const windowHeight = Dimensions.get("window").height;
   const route = useRoute();
   const isFocused = useIsFocused();
@@ -44,12 +39,9 @@ function CollapsibleHeaderFlatList<T>({
         scrollEventThrottle={16}
         onScroll={
           isFocused
-            ? Animated.event(
-                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                {
-                  useNativeDriver: true,
-                },
-              )
+            ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+                useNativeDriver: true,
+              })
             : undefined
         }
         onScrollEndDrag={onMomentumScrollEnd}

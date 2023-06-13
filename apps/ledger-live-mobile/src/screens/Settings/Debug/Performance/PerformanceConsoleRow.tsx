@@ -11,10 +11,7 @@ const PerformanceConsoleRow = () => {
   }, [performanceConsoleVisibility]);
   return (
     <SettingsRow title="Performance overlay" desc="Toggle performance console">
-      <Switch
-        value={performanceConsoleVisibility}
-        onValueChange={togglePerformanceConsole}
-      />
+      <Switch value={performanceConsoleVisibility} onValueChange={togglePerformanceConsole} />
     </SettingsRow>
   );
 };

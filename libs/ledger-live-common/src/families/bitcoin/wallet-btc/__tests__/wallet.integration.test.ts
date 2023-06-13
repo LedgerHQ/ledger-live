@@ -23,11 +23,11 @@ describe("testing wallet", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      getCryptoCurrencyById("bitcoin")
+      getCryptoCurrencyById("bitcoin"),
     );
 
     expect(account.xpub.xpub).toEqual(
-      "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP"
+      "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
     );
   });
 
@@ -40,20 +40,14 @@ describe("testing wallet", () => {
 
   it("should allow to store and load an account", async () => {
     const serializedAccount = await wallet.exportToSerializedAccount(account);
-    const unserializedAccount = await wallet.importFromSerializedAccount(
-      serializedAccount
-    );
+    const unserializedAccount = await wallet.importFromSerializedAccount(serializedAccount);
     const balance = await wallet.getAccountBalance(unserializedAccount);
     expect(balance.toNumber()).toEqual(109088);
   });
 
   it("should allow to build a transaction", async () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
-    const utxoPickingStrategy = new Merge(
-      account.xpub.crypto,
-      account.xpub.derivationMode,
-      []
-    );
+    const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
     const txInfo = await wallet.buildAccountTx({
       fromAccount: account,
@@ -74,11 +68,7 @@ describe("testing wallet", () => {
 
   it("should allow to build a transaction with op_return output", async () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
-    const utxoPickingStrategy = new Merge(
-      account.xpub.crypto,
-      account.xpub.derivationMode,
-      []
-    );
+    const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
 
     const { outputs } = await wallet.buildAccountTx({
       fromAccount: account,
@@ -92,23 +82,18 @@ describe("testing wallet", () => {
 
     expect(outputs.length).toBe(3);
 
-    const [opReturnOutput] = outputs.filter(
-      (output) => output.address === null
-    );
+    const [opReturnOutput] = outputs.filter(output => output.address === null);
 
     expect(opReturnOutput).toBeDefined();
 
-    const [opType, message] = script.decompile(opReturnOutput.script) as [
-      number,
-      Buffer
-    ];
+    const [opType, message] = script.decompile(opReturnOutput.script) as [number, Buffer];
 
     expect(opReturnOutput.isChange).toBe(false);
     expect(opReturnOutput.value.toNumber()).toBe(0);
     expect(opType).toEqual(script.OPS.OP_RETURN);
     expect(message.toString()).toEqual("charley loves heidi");
 
-    const [valueTx] = outputs.filter((output) => output.value.eq(100000));
+    const [valueTx] = outputs.filter(output => output.value.eq(100000));
     expect(valueTx).toBeDefined();
     expect(valueTx.address).toBe(receiveAddress.address);
   });
@@ -116,11 +101,7 @@ describe("testing wallet", () => {
   it("should allow to build a transaction splitting outputs", async () => {
     const receiveAddress = await wallet.getAccountNewReceiveAddress(account);
     account.xpub.OUTPUT_VALUE_MAX = 60000;
-    const utxoPickingStrategy = new Merge(
-      account.xpub.crypto,
-      account.xpub.derivationMode,
-      []
-    );
+    const utxoPickingStrategy = new Merge(account.xpub.crypto, account.xpub.derivationMode, []);
     const txInfo = await wallet.buildAccountTx({
       fromAccount: account,
       dest: receiveAddress.address,

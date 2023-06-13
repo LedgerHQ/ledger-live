@@ -18,10 +18,7 @@ async function main() {
 
   const reports = await loadReports({ branch, days, githubToken, environment });
 
-  const { reportMarkdownBody, reportSlackText } = generateSuperReport(
-    reports,
-    days
-  );
+  const { reportMarkdownBody, reportSlackText } = generateSuperReport(reports, days);
 
   const sha = await getLatestCommitShaOfBranch({ githubToken, branch });
 
@@ -37,6 +34,6 @@ async function main() {
   }
 }
 
-main().catch((err) => {
+main().catch(err => {
   core.setFailed(err);
 });

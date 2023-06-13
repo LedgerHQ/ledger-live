@@ -34,10 +34,7 @@ import type {
 import { computeAlgoMaxSpendable } from "./logic";
 import { addPrefixToken, extractTokenId } from "./tokens";
 
-const getASAOperationAmount = (
-  transaction: AlgoTransaction,
-  accountAddress: string
-): BigNumber => {
+const getASAOperationAmount = (transaction: AlgoTransaction, accountAddress: string): BigNumber => {
   let assetAmount = new BigNumber(0);
   if (transaction.type === AlgoTransactionType.ASSET_TRANSFER) {
     const details = transaction.details as AlgoAssetTransferInfo;
@@ -46,17 +43,13 @@ const getASAOperationAmount = (
       : transaction.senderAddress;
 
     // Account is either sender or recipient (if both the balance is unchanged)
-    if (
-      (assetSender === accountAddress) !==
-      (details.assetRecipientAddress == accountAddress)
-    ) {
+    if ((assetSender === accountAddress) !== (details.assetRecipientAddress == accountAddress)) {
       assetAmount = assetAmount.plus(details.assetAmount);
     }
     // Account is either sender or close-to, but not both
     if (
       (assetSender === accountAddress) !==
-      (details.assetCloseToAddress &&
-        details.assetCloseToAddress === accountAddress)
+      (details.assetCloseToAddress && details.assetCloseToAddress === accountAddress)
     ) {
       if (details.assetCloseAmount) {
         assetAmount = assetAmount.plus(details.assetCloseAmount);
@@ -68,7 +61,7 @@ const getASAOperationAmount = (
 
 const getOperationAmounts = (
   transaction: AlgoTransaction,
-  accountAddress: string
+  accountAddress: string,
 ): { amount: BigNumber; rewards: BigNumber } => {
   let amount = new BigNumber(0);
   let rewards = new BigNumber(0);
@@ -114,15 +107,12 @@ const getOperationAmounts = (
 
 const getASAOperationType = (
   transaction: AlgoTransaction,
-  accountAddress: string
+  accountAddress: string,
 ): OperationType => {
   return transaction.senderAddress === accountAddress ? "OUT" : "IN";
 };
 
-const getOperationType = (
-  transaction: AlgoTransaction,
-  accountAddress: string
-): OperationType => {
+const getOperationType = (transaction: AlgoTransaction, accountAddress: string): OperationType => {
   if (transaction.type === AlgoTransactionType.ASSET_TRANSFER) {
     const details = transaction.details as AlgoAssetTransferInfo;
     if (
@@ -130,10 +120,7 @@ const getOperationType = (
       transaction.senderAddress == details.assetRecipientAddress
     ) {
       return "OPT_IN";
-    } else if (
-      details.assetCloseToAddress &&
-      transaction.senderAddress == accountAddress
-    ) {
+    } else if (details.assetCloseToAddress && transaction.senderAddress == accountAddress) {
       return "OPT_OUT";
     } else {
       return "FEES";
@@ -166,9 +153,7 @@ const getOperationRecipients = (transaction: AlgoTransaction): string[] => {
   return recipients;
 };
 
-const getOperationAssetId = (
-  transaction: AlgoTransaction
-): string | undefined => {
+const getOperationAssetId = (transaction: AlgoTransaction): string | undefined => {
   if (transaction.type === AlgoTransactionType.ASSET_TRANSFER) {
     const details = transaction.details as AlgoAssetTransferInfo;
     return details.assetId;
@@ -179,7 +164,7 @@ const mapTransactionToOperation = (
   tx: AlgoTransaction,
   accountId: string,
   accountAddress: string,
-  subAccounts?: TokenAccount[]
+  subAccounts?: TokenAccount[],
 ): Partial<Operation> => {
   const hash = tx.id;
   const blockHeight = tx.round;
@@ -192,9 +177,7 @@ const mapTransactionToOperation = (
   const type = getOperationType(tx, accountAddress);
   const assetId = getOperationAssetId(tx);
 
-  const subOperations = subAccounts
-    ? inferSubOperations(tx.id, subAccounts)
-    : undefined;
+  const subOperations = subAccounts ? inferSubOperations(tx.id, subAccounts) : undefined;
 
   return {
     id: encodeOperationId(accountId, hash, type),
@@ -219,7 +202,7 @@ const mapTransactionToOperation = (
 const mapTransactionToASAOperation = (
   tx: AlgoTransaction,
   accountId: string,
-  accountAddress: string
+  accountAddress: string,
 ): Partial<Operation> => {
   const hash = tx.id;
   const blockHeight = tx.round;
@@ -249,9 +232,7 @@ export function makeGetAccountShape(algorandAPI: AlgorandAPI): GetAccountShape {
   return async (info, syncConfig): Promise<Partial<Account>> => {
     const { address, initialAccount, currency, derivationMode } = info;
     const oldOperations = initialAccount?.operations || [];
-    const startAt = oldOperations.length
-      ? (oldOperations[0].blockHeight || 0) + 1
-      : 0;
+    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
@@ -260,8 +241,7 @@ export function makeGetAccountShape(algorandAPI: AlgorandAPI): GetAccountShape {
       derivationMode,
     });
 
-    const { round, balance, pendingRewards, assets } =
-      await algorandAPI.getAccount(address);
+    const { round, balance, pendingRewards, assets } = await algorandAPI.getAccount(address);
 
     const nbAssets = assets.length;
 
@@ -272,8 +252,10 @@ export function makeGetAccountShape(algorandAPI: AlgorandAPI): GetAccountShape {
       mode: "send",
     });
 
-    const newTransactions: AlgoTransaction[] =
-      await algorandAPI.getAccountTransactions(address, startAt);
+    const newTransactions: AlgoTransaction[] = await algorandAPI.getAccountTransactions(
+      address,
+      startAt,
+    );
 
     const subAccounts = await buildSubAccounts({
       currency,
@@ -285,8 +267,8 @@ export function makeGetAccountShape(algorandAPI: AlgorandAPI): GetAccountShape {
       syncConfig,
     });
 
-    const newOperations = newTransactions.map((tx) =>
-      mapTransactionToOperation(tx, accountId, address, subAccounts)
+    const newOperations = newTransactions.map(tx =>
+      mapTransactionToOperation(tx, accountId, address, subAccounts),
     );
 
     const operations = mergeOps(oldOperations, newOperations as Operation[]);
@@ -330,15 +312,13 @@ async function buildSubAccount({
   const oldOperations = initialTokenAccount?.operations || [];
 
   const newOperations = newTransactions
-    .filter((tx) => tx.type === AlgoTransactionType.ASSET_TRANSFER)
-    .filter((tx) => {
+    .filter(tx => tx.type === AlgoTransactionType.ASSET_TRANSFER)
+    .filter(tx => {
       const details = tx.details as AlgoAssetTransferInfo;
       return Number(details.assetId) === Number(extractedId);
     })
-    .filter((tx) => getOperationType(tx, parentAccountAddress) != "OPT_IN")
-    .map((tx) =>
-      mapTransactionToASAOperation(tx, tokenAccountId, parentAccountAddress)
-    );
+    .filter(tx => getOperationType(tx, parentAccountAddress) != "OPT_IN")
+    .map(tx => mapTransactionToASAOperation(tx, tokenAccountId, parentAccountAddress));
 
   const operations = mergeOps(oldOperations, newOperations as Operation[]);
 
@@ -354,10 +334,7 @@ async function buildSubAccount({
     balance,
     spendableBalance: balance,
     swapHistory: [],
-    creationDate:
-      operations.length > 0
-        ? operations[operations.length - 1].date
-        : new Date(),
+    creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache,
   };
   return tokenAccount;
@@ -400,7 +377,7 @@ async function buildSubAccounts({
   }
 
   // filter by token existence
-  await promiseAllBatched(3, assets, async (asset) => {
+  await promiseAllBatched(3, assets, async asset => {
     const token = findTokenById(addPrefixToken(asset.assetId));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {

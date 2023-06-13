@@ -1,7 +1,4 @@
-import {
-  NFTCollectionMetadataResponse,
-  NFTMetadataResponse,
-} from "@ledgerhq/types-live";
+import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 
 export type NFTResourceQueued = {
   status: "queued";
@@ -17,9 +14,7 @@ export type NFTResourceLoading = {
 
 export type NFTResourceLoaded = {
   status: "loaded";
-  metadata:
-    | NFTMetadataResponse["result"]
-    | NFTCollectionMetadataResponse["result"];
+  metadata: NFTMetadataResponse["result"] | NFTCollectionMetadataResponse["result"];
   updatedAt: number;
 };
 
@@ -48,20 +43,12 @@ export type NFTMetadataContextState = {
 };
 
 export type NFTMetadataContextAPI = {
-  loadNFTMetadata: (
-    contract: string,
-    tokenId: string,
-    currencyId: string
-  ) => Promise<void>;
-  loadCollectionMetadata: (
-    contract: string,
-    currencyId: string
-  ) => Promise<void>;
+  loadNFTMetadata: (contract: string, tokenId: string, currencyId: string) => Promise<void>;
+  loadCollectionMetadata: (contract: string, currencyId: string) => Promise<void>;
   clearCache: () => void;
 };
 
-export type NFTMetadataContextType = NFTMetadataContextState &
-  NFTMetadataContextAPI;
+export type NFTMetadataContextType = NFTMetadataContextState & NFTMetadataContextAPI;
 
 export type Batcher = {
   load: (
@@ -72,7 +59,7 @@ export type Batcher = {
         }
       | {
           contract: string;
-        }
+        },
   ) => Promise<NFTMetadataResponse | NFTCollectionMetadataResponse>;
 };
 

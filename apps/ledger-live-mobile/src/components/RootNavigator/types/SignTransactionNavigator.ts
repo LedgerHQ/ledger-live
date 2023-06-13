@@ -1,7 +1,4 @@
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import type {
   CardanoAccount,
@@ -60,10 +57,7 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
-    onSuccess: (payload: {
-      signedOperation: SignedOperation;
-      transactionSignError: Error;
-    }) => void;
+    onSuccess: (payload: { signedOperation: SignedOperation; transactionSignError: Error }) => void;
   } & ListenersParams;
   [ScreenName.SignTransactionSelectDevice]: ListenersParams;
   [ScreenName.SignTransactionConnectDevice]: {

@@ -15,26 +15,15 @@ import {
 } from "../../account";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
-import type {
-  Operation,
-  TokenAccount,
-  SubAccount,
-  Account,
-} from "@ledgerhq/types-live";
+import type { Operation, TokenAccount, SubAccount, Account } from "@ledgerhq/types-live";
 import { API, apiForCurrency, Block, Tx } from "./api";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
 import { encodeOperationId, encodeSubOperationId } from "../../operation";
-import {
-  encodeERC1155OperationId,
-  encodeERC721OperationId,
-} from "../../nft/nftOperationId";
+import { encodeERC1155OperationId, encodeERC721OperationId } from "../../nft/nftOperationId";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-export const getAccountShape: GetAccountShape = async (
-  infoInput,
-  { blacklistedTokenIds }
-) => {
+export const getAccountShape: GetAccountShape = async (infoInput, { blacklistedTokenIds }) => {
   const { currency, initialAccount, derivationMode } = infoInput;
   let { address } = infoInput;
 
@@ -47,9 +36,7 @@ export const getAccountShape: GetAccountShape = async (
     derivationMode,
   });
   const api = apiForCurrency(currency);
-  const initialStableOperations = initialAccount
-    ? stableOperations(initialAccount)
-    : [];
+  const initialStableOperations = initialAccount ? stableOperations(initialAccount) : [];
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
   const currentBlockP = fetchCurrentBlock(currency);
@@ -75,11 +62,7 @@ export const getAccountShape: GetAccountShape = async (
       ? mostRecentStableOperation.blockHeight
       : undefined;
   const txsP = fetchAllTransactions(api, address, pullFromBlockHeight);
-  const [txs, currentBlock, balance] = await Promise.all([
-    txsP,
-    currentBlockP,
-    balanceP,
-  ]);
+  const [txs, currentBlock, balance] = await Promise.all([txsP, currentBlockP, balanceP]);
   const blockHeight = currentBlock?.height.toNumber();
 
   if (!pullFromBlockHeight && txs.length === 0) {
@@ -96,11 +79,11 @@ export const getAccountShape: GetAccountShape = async (
   let newOps = flatMap(txs, txToOps({ address, id: accountId, currency }));
   // extracting out the sub operations by token account
   const perTokenAccountIdOperations = {};
-  newOps.forEach((op) => {
+  newOps.forEach(op => {
     const { subOperations } = op;
 
     if (subOperations?.length) {
-      subOperations.forEach((sop) => {
+      subOperations.forEach(sop => {
         if (!perTokenAccountIdOperations[sop.accountId]) {
           perTokenAccountIdOperations[sop.accountId] = [];
         }
@@ -110,7 +93,7 @@ export const getAccountShape: GetAccountShape = async (
     }
   });
   const subAccountsExisting = {};
-  initialAccount?.subAccounts?.forEach((a) => {
+  initialAccount?.subAccounts?.forEach(a => {
     // in case of coming from libcore, we need to converge to new ids
     const { token } = decodeTokenAccountId(a.id);
     if (!token) return;
@@ -121,22 +104,16 @@ export const getAccountShape: GetAccountShape = async (
   const perTokenAccountChangedIds = Object.keys(perTokenAccountIdOperations);
   log(
     "ethereum",
-    `${address} reconciliate ${txs.length} txs => ${newOps.length} new ops. ${perTokenAccountChangedIds.length} updates into ${subAccountsExistingIds.length} token accounts`
+    `${address} reconciliate ${txs.length} txs => ${newOps.length} new ops. ${perTokenAccountChangedIds.length} updates into ${subAccountsExistingIds.length} token accounts`,
   );
   // reconciliate token accounts
-  let tokenAccounts: TokenAccount[] = union(
-    subAccountsExistingIds,
-    perTokenAccountChangedIds
-  )
-    .map((id) => {
+  let tokenAccounts: TokenAccount[] = union(subAccountsExistingIds, perTokenAccountChangedIds)
+    .map(id => {
       const existing = subAccountsExisting[id];
       const newOps = perTokenAccountIdOperations[id];
       const { accountId, token } = decodeTokenAccountId(id);
 
-      if (
-        !token ||
-        (blacklistedTokenIds && blacklistedTokenIds.includes(token.id))
-      ) {
+      if (!token || (blacklistedTokenIds && blacklistedTokenIds.includes(token.id))) {
         return null;
       }
 
@@ -145,8 +122,7 @@ export const getAccountShape: GetAccountShape = async (
       const operations = newOps ? mergeOps(existingOps, newOps) : existingOps;
       const lastOperation = operations[operations.length - 1];
       const creationDate =
-        existing?.creationDate ||
-        (lastOperation ? lastOperation.date : new Date());
+        existing?.creationDate || (lastOperation ? lastOperation.date : new Date());
       const pendingOperations = existing?.pendingOperations || [];
       const starred = existing?.starred || false;
       const swapHistory = existing?.swapHistory || [];
@@ -172,21 +148,18 @@ export const getAccountShape: GetAccountShape = async (
   tokenAccounts = await loadERC20Balances(tokenAccounts, address, api);
   const subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
   // has sub accounts have changed, we need to relink the subOperations
-  newOps = newOps.map((o) => ({
+  newOps = newOps.map(o => ({
     ...o,
     subOperations: inferSubOperations(o.hash, subAccounts),
   }));
-  const operations = mergeOps(
-    blockHashExistsOnChain ? initialStableOperations : [],
-    newOps
-  );
+  const operations = mergeOps(blockHashExistsOnChain ? initialStableOperations : [], newOps);
 
   const nfts = isNFTActive(currency)
     ? mergeNfts(
         initialAccount?.nfts || [],
-        nftsFromOperations(
-          mergeOps(operations, initialAccount?.pendingOperations || [])
-        ).filter((n) => n.amount.gt(0))
+        nftsFromOperations(mergeOps(operations, initialAccount?.pendingOperations || [])).filter(
+          n => n.amount.gt(0),
+        ),
       )
     : undefined;
 
@@ -252,11 +225,7 @@ const txToOps =
             // Since explorer is considering also wrapping tx as an internal action,
             // we must filter it by considering that only internal action with same data,
             // sender and receiver, is the one representing/corresponding to wrapping tx
-            if (
-              actionFrom === from &&
-              actionTo === to &&
-              value.eq(actionValue)
-            ) {
+            if (actionFrom === from && actionTo === to && value.eq(actionValue)) {
               return;
             }
 
@@ -295,10 +264,7 @@ const txToOps =
             return [];
           }
 
-          const token = findTokenByAddressInCurrency(
-            event.contract,
-            currency.id
-          );
+          const token = findTokenByAddressInCurrency(event.contract, currency.id);
           if (!token) return [];
           const accountId = encodeTokenAccountId(id, token);
           const value = new BigNumber(event.count);
@@ -349,7 +315,7 @@ const txToOps =
     const erc721Operations =
       !erc721_transfer_events || !isNFTActive(currency)
         ? []
-        : flatMap(erc721_transfer_events, (event) => {
+        : flatMap(erc721_transfer_events, event => {
             const sender = safeEncodeEIP55(event.sender);
             const receiver = safeEncodeEIP55(event.receiver);
             const contract = safeEncodeEIP55(event.contract);
@@ -541,9 +507,7 @@ const txToOps =
     if (
       !sending &&
       !receiving &&
-      (internalOperations.length ||
-        subOperations.length ||
-        nftOperations.length)
+      (internalOperations.length || subOperations.length || nftOperations.length)
     ) {
       const type = "NONE";
       ops.push({
@@ -570,17 +534,17 @@ const txToOps =
   };
 
 const fetchCurrentBlock = (
-  (perCurrencyId) =>
+  perCurrencyId =>
   (currency: CryptoCurrency): Promise<Block> | undefined => {
     if (perCurrencyId[currency.id]) return perCurrencyId[currency.id]();
     const api = apiForCurrency(currency);
     const f = throttle(
       () =>
-        api.getCurrentBlock().catch((e) => {
+        api.getCurrentBlock().catch(e => {
           f.cancel();
           throw e;
         }),
-      5000
+      5000,
     );
     perCurrencyId[currency.id] = f;
     return f();
@@ -590,7 +554,7 @@ const fetchCurrentBlock = (
 export const fetchAllTransactions = async (
   api: API,
   address: string,
-  blockHeight: number | null | undefined
+  blockHeight: number | null | undefined,
 ): Promise<Tx[]> => {
   let accumulatedTxs: Tx[] = [];
   let currentToken: string | undefined;
@@ -600,7 +564,7 @@ export const fetchAllTransactions = async (
       address,
       blockHeight,
       2000,
-      currentToken
+      currentToken,
     );
     currentToken = nextPageToken;
     accumulatedTxs = accumulatedTxs.concat(txs);
@@ -612,22 +576,22 @@ export const fetchAllTransactions = async (
 async function loadERC20Balances(
   tokenAccounts: TokenAccount[],
   address: string,
-  api: API
+  api: API,
 ): Promise<TokenAccount[]> {
   const erc20balances = await api.getERC20Balances(
     tokenAccounts.map(({ token }) => ({
       contract: token.contractAddress,
       address,
-    }))
+    })),
   );
 
   return tokenAccounts
-    .map((a) => {
+    .map(a => {
       const r = erc20balances.find(
-        (b) =>
+        b =>
           b.contract &&
           b.balance &&
-          b.contract.toLowerCase() === a.token.contractAddress.toLowerCase()
+          b.contract.toLowerCase() === a.token.contractAddress.toLowerCase(),
       );
 
       if (!r) {
@@ -648,15 +612,14 @@ const SAFE_REORG_THRESHOLD = 80;
 
 function stableOperations(a: Account): Operation[] {
   return a.operations.filter(
-    (op) =>
-      op.blockHeight && a.blockHeight - op.blockHeight > SAFE_REORG_THRESHOLD
+    op => op.blockHeight && a.blockHeight - op.blockHeight > SAFE_REORG_THRESHOLD,
   );
 }
 
 // reconciliate the existing token accounts so that refs don't change if no changes is contained
 function reconciliateSubAccounts(
   tokenAccounts: TokenAccount[],
-  initialAccount: Account | undefined
+  initialAccount: Account | undefined,
 ): SubAccount[] {
   let subAccounts: SubAccount[] = [];
 
@@ -665,16 +628,13 @@ function reconciliateSubAccounts(
     let anySubAccountHaveChanged = false;
     const stats: string[] = [];
 
-    if (
-      initialSubAccounts &&
-      tokenAccounts.length !== initialSubAccounts.length
-    ) {
+    if (initialSubAccounts && tokenAccounts.length !== initialSubAccounts.length) {
       stats.push("length differ");
       anySubAccountHaveChanged = true;
     }
 
-    subAccounts = tokenAccounts.map((ta) => {
-      const existing = initialSubAccounts?.find((a) => a.id === ta.id);
+    subAccounts = tokenAccounts.map(ta => {
+      const existing = initialSubAccounts?.find(a => a.id === ta.id);
 
       if (existing) {
         let shallowEqual = true;
@@ -705,19 +665,14 @@ function reconciliateSubAccounts(
     if (!anySubAccountHaveChanged && initialSubAccounts) {
       log(
         "ethereum",
-        "incremental sync: " +
-          String(initialSubAccounts.length) +
-          " sub accounts have not changed"
+        "incremental sync: " + String(initialSubAccounts.length) + " sub accounts have not changed",
       );
       subAccounts = initialSubAccounts;
     } else {
-      log(
-        "ethereum",
-        "incremental sync: sub accounts changed: " + stats.join(", ")
-      );
+      log("ethereum", "incremental sync: sub accounts changed: " + stats.join(", "));
     }
   } else {
-    subAccounts = tokenAccounts.map((a) => a);
+    subAccounts = tokenAccounts.map(a => a);
   }
 
   return subAccounts;

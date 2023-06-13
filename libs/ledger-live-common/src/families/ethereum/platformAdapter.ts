@@ -5,12 +5,9 @@ import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
-const areFeesProvided = (tx: PlatformTransaction): boolean =>
-  !!(tx.gasLimit || tx.gasPrice);
+const areFeesProvided = (tx: PlatformTransaction): boolean => !!(tx.gasLimit || tx.gasPrice);
 
-const convertToLiveTransaction = (
-  tx: PlatformTransaction
-): Partial<Transaction> => {
+const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction> => {
   const hasFeesProvided = areFeesProvided(tx);
 
   const { gasLimit, ...restTx } = tx;
@@ -27,7 +24,7 @@ const convertToLiveTransaction = (
 };
 
 const getPlatformTransactionSignFlowInfos = (
-  tx: PlatformTransaction
+  tx: PlatformTransaction,
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;

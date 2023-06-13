@@ -35,9 +35,7 @@ export default function ImportBridgeStreamData({ title, dataStr }: Props) {
   const importFromClipboard = useCallback(() => {
     Clipboard.getString().then(str => {
       importString(
-        str.startsWith("BRIDGESTREAM_DATA=")
-          ? str.replace("BRIDGESTREAM_DATA=", "")
-          : str,
+        str.startsWith("BRIDGESTREAM_DATA=") ? str.replace("BRIDGESTREAM_DATA=", "") : str,
       );
     });
   }, [importString]);

@@ -20,7 +20,7 @@ export const SyncSkipUnderPriority = ({ priority }: { priority: number }) => {
       const priority =
         SyncSkipUnderPriorityInstances.length === 0
           ? -1
-          : Math.max(...SyncSkipUnderPriorityInstances.map((i) => i.priority));
+          : Math.max(...SyncSkipUnderPriorityInstances.map(i => i.priority));
       sync({
         type: "SET_SKIP_UNDER_PRIORITY",
         priority,

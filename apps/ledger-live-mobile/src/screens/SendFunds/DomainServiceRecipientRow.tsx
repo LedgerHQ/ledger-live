@@ -7,10 +7,7 @@ import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Platform, StyleSheet, View } from "react-native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import Clipboard from "@react-native-community/clipboard";
-import {
-  InvalidDomain,
-  NoResolution,
-} from "@ledgerhq/domain-service/errors/index";
+import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { Trans } from "react-i18next";
 import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientInput from "../../components/RecipientInput";
@@ -46,10 +43,7 @@ const DomainServiceRecipientInput = ({
   const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
 
   const ensResolution = useMemo(
-    () =>
-      isLoaded(domainServiceResponse)
-        ? domainServiceResponse.resolutions[0]
-        : null,
+    () => (isLoaded(domainServiceResponse) ? domainServiceResponse.resolutions[0] : null),
     [domainServiceResponse],
   );
   const domainError = useMemo(
@@ -105,14 +99,7 @@ const DomainServiceRecipientInput = ({
         }),
       );
     }
-  }, [
-    bridge,
-    setTransaction,
-    ensResolution,
-    transaction,
-    isForwardResolution,
-    value,
-  ]);
+  }, [bridge, setTransaction, ensResolution, transaction, isForwardResolution, value]);
 
   return (
     <>
@@ -160,10 +147,7 @@ const DomainServiceRecipientInput = ({
 
       {domainError && domainErrorHandled ? (
         <View style={styles.inputWrapper}>
-          <DomainErrorsView
-            domainError={domainError}
-            isForwardResolution={isForwardResolution}
-          />
+          <DomainErrorsView domainError={domainError} isForwardResolution={isForwardResolution} />
         </View>
       ) : null}
     </>

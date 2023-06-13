@@ -15,10 +15,7 @@ const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
 
 const PostOnboardingNavigator = () => {
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator

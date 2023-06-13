@@ -10,10 +10,7 @@ import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/t
 import LText from "./LText";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
-import {
-  getMessageProperties,
-  NanoDisplayedInfoFor712,
-} from "../helpers/signMessageUtils";
+import { getMessageProperties, NanoDisplayedInfoFor712 } from "../helpers/signMessageUtils";
 
 type Props = {
   device: Device;
@@ -21,11 +18,7 @@ type Props = {
   account: AccountLike;
 };
 
-export default function ValidateOnDevice({
-  device,
-  message: messageData,
-  account,
-}: Props) {
+export default function ValidateOnDevice({ device, message: messageData, account }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -55,9 +48,7 @@ export default function ValidateOnDevice({
   }>({});
 
   useEffect(() => {
-    getMessageProperties(mainAccount.currency, messageData).then(
-      setMessageProperties,
-    );
+    getMessageProperties(mainAccount.currency, messageData).then(setMessageProperties);
   }, [mainAccount.currency, messageData, setMessageProperties]);
 
   const { message, fields } = messageProperties;
@@ -78,13 +69,9 @@ export default function ValidateOnDevice({
             />
           </View>
         </View>
-        <LText style={styles.action}>
-          {t("walletconnect.stepVerification.action")}
-        </LText>
+        <LText style={styles.action}>{t("walletconnect.stepVerification.action")}</LText>
         <View style={messageContainerStyle}>
-          <LText style={messageTextStyle}>
-            {t("walletconnect.stepVerification.accountName")}
-          </LText>
+          <LText style={messageTextStyle}>{t("walletconnect.stepVerification.accountName")}</LText>
           <LText semiBold>{mainAccount.name}</LText>
         </View>
         {fields ? (

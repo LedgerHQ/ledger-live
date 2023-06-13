@@ -14,9 +14,7 @@ const account = {
   balance: new BigNumber(42069000000),
 };
 
-jest
-  .spyOn(rpcAPI, "getGasEstimation")
-  .mockImplementation(async () => new BigNumber(21000));
+jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => new BigNumber(21000));
 jest.spyOn(rpcAPI, "getFeesEstimation").mockImplementation(async () => ({
   gasPrice: new BigNumber(10000),
   maxFeePerGas: new BigNumber(10000),

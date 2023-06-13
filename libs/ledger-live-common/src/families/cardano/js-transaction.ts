@@ -1,9 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { CardanoAccount, Transaction } from "./types";
-import {
-  types as TyphonTypes,
-  address as TyphonAddress,
-} from "@stricahq/typhonjs";
+import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
 
 import { buildTransaction } from "./js-buildTransaction";
 
@@ -27,10 +24,10 @@ export const createTransaction = (): Transaction => ({
  * @param {*} t
  * @param {*} patch
  */
-export const updateTransaction = (
-  t: Transaction,
-  patch: Partial<Transaction>
-): Transaction => ({ ...t, ...patch });
+export const updateTransaction = (t: Transaction, patch: Partial<Transaction>): Transaction => ({
+  ...t,
+  ...patch,
+});
 
 /**
  * Prepare transaction before checking status
@@ -40,7 +37,7 @@ export const updateTransaction = (
  */
 export const prepareTransaction = async (
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<Transaction> => {
   let transaction;
   try {
@@ -55,12 +52,10 @@ export const prepareTransaction = async (
     : transaction
         .getOutputs()
         .filter(
-          (o) =>
+          o =>
             !(o.address instanceof TyphonAddress.BaseAddress) ||
-            !(
-              o.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS
-            ) ||
-            o.address.paymentCredential.bipPath === undefined
+            !(o.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) ||
+            o.address.paymentCredential.bipPath === undefined,
         )
         .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
 

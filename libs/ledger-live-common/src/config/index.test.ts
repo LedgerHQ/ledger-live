@@ -47,7 +47,7 @@ describe("getCurrencyConfiguration", () => {
         getCurrencyConfiguration({
           id: "idontexistasacurrency",
           family: "ihavenofamily",
-        } as unknown as CryptoCurrency)
+        } as unknown as CryptoCurrency),
       ).rejects.toThrow(Error);
     });
   });
@@ -69,7 +69,7 @@ describe("getCurrencyConfiguration", () => {
         getCurrencyConfiguration({
           id: "idontexistasacurrency",
           family: "ihavenofamily",
-        } as unknown as CryptoCurrency)
+        } as unknown as CryptoCurrency),
       ).rejects.toThrow(Error);
     });
   });

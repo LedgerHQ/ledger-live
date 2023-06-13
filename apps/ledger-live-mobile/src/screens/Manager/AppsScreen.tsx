@@ -1,10 +1,7 @@
 import React, { useState, useCallback, useMemo, memo } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import {
-  listTokens,
-  isCurrencySupported,
-} from "@ledgerhq/live-common/currencies/index";
+import { listTokens, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import {
   distribute,
   Action,
@@ -107,12 +104,8 @@ const AppsScreen = ({
   }, [state]);
 
   const [appFilter, setFilter] = useState<AppType | null | undefined>("all");
-  const [sort, setSort] = useState<SortOptions["type"] | null | undefined>(
-    "marketcap",
-  );
-  const [order, setOrder] = useState<SortOptions["order"] | null | undefined>(
-    "desc",
-  );
+  const [sort, setSort] = useState<SortOptions["type"] | null | undefined>("marketcap");
+  const [order, setOrder] = useState<SortOptions["order"] | null | undefined>("desc");
 
   const sortOptions = useMemo(
     () => ({
@@ -157,10 +150,7 @@ const AppsScreen = ({
     () =>
       found &&
       found.parentCurrency &&
-      installed.find(
-        ({ name }) =>
-          name.toLowerCase() === found.parentCurrency.name.toLowerCase(),
-      ),
+      installed.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, installed],
   );
 
@@ -168,10 +158,7 @@ const AppsScreen = ({
     () =>
       found &&
       found.parentCurrency &&
-      apps.find(
-        ({ name }) =>
-          name.toLowerCase() === found.parentCurrency.name.toLowerCase(),
-      ),
+      apps.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, apps],
   );
 
@@ -192,13 +179,7 @@ const AppsScreen = ({
               <AppIcon app={parent} size={18} radius={100} />
             </Flex>
           </Flex>
-          <Text
-            color="neutral.c100"
-            fontWeight="medium"
-            variant="h2"
-            mt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
             <Trans
               i18nKey="manager.token.title"
               values={{
@@ -207,13 +188,7 @@ const AppsScreen = ({
             />
           </Text>
           <Flex>
-            <Text
-              color="neutral.c80"
-              fontWeight="medium"
-              variant="body"
-              pt={6}
-              textAlign="center"
-            >
+            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
               {parentInstalled ? (
                 <Trans
                   i18nKey="manager.token.noAppNeeded"
@@ -237,23 +212,11 @@ const AppsScreen = ({
       ) : (
         <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
           <NoResultsFound />
-          <Text
-            color="neutral.c100"
-            fontWeight="medium"
-            variant="h2"
-            mt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
             <Trans i18nKey="manager.appList.noResultsFound" />
           </Text>
           <Flex>
-            <Text
-              color="neutral.c80"
-              fontWeight="medium"
-              variant="body"
-              pt={6}
-              textAlign="center"
-            >
+            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
               <Trans i18nKey="manager.appList.noResultsDesc" />
             </Text>
           </Flex>
@@ -326,12 +289,7 @@ const AppsScreen = ({
                 isModalOpened={updateModalOpened}
               />
             )}
-            <Flex
-              flexDirection="row"
-              mt={8}
-              mb={6}
-              backgroundColor="background.main"
-            >
+            <Flex flexDirection="row" mt={8} mb={6} backgroundColor="background.main">
               <Searchbar searchQuery={query} onQueryUpdate={setQuery} />
               <Flex ml={6}>
                 <AppFilter

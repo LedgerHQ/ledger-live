@@ -74,22 +74,13 @@ export type DesignedForStaxDrawerProps = {
   onClose?: () => void;
 };
 
-export const DesignedForStaxDrawer = ({
-  isOpen,
-  onClose,
-}: DesignedForStaxDrawerProps) => {
+export const DesignedForStaxDrawer = ({ isOpen, onClose }: DesignedForStaxDrawerProps) => {
   const { t } = useTranslation();
 
   return (
     <QueuedDrawer noCloseButton isRequestingToBeOpened={isOpen}>
       <DesignedForStaxText size="large" hideBackground={true} />
-      <Text
-        variant="bodyLineHeight"
-        color="neutral.c80"
-        textAlign="center"
-        my={4}
-        mx={6}
-      >
+      <Text variant="bodyLineHeight" color="neutral.c80" textAlign="center" my={4} mx={6}>
         {t("nft.designedForStax.drawer.description")}
       </Text>
       <Button mt={8} type="main" onPress={onClose}>

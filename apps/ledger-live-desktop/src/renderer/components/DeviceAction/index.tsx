@@ -13,7 +13,11 @@ import {
 } from "@ledgerhq/live-common/errors";
 import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
+import {
+  setPreferredDeviceModel,
+  setLastSeenDeviceInfo,
+  addNewDevice,
+} from "~/renderer/actions/settings";
 import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
@@ -241,6 +245,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         apps: [],
       };
       dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware }));
+      dispatch(addNewDevice({ seenDevice: lastSeenDevice }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
@@ -484,7 +489,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
-    const { account, parentAccount, status, transaction } = (request as unknown) as {
+    const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
       status: TransactionStatus;
@@ -504,7 +509,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && signMessageRequested) {
-    const { account, parentAccount } = (request as unknown) as {
+    const { account, parentAccount } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
     };

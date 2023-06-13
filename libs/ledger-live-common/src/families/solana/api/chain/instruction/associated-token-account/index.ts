@@ -1,18 +1,14 @@
 import { ParsedInfo } from "../../validators";
 import { create, Infer } from "superstruct";
 import { ParsedInstruction } from "@solana/web3.js";
-import {
-  AssociatedTokenAccountInstructionType,
-  IX_STRUCTS,
-  IX_TITLES,
-} from "./types";
+import { AssociatedTokenAccountInstructionType, IX_STRUCTS, IX_TITLES } from "./types";
 
 import { PARSED_PROGRAMS } from "../../program/constants";
 
 export function parseAssociatedTokenAccountInstruction(
   ix: ParsedInstruction & {
     program: typeof PARSED_PROGRAMS.SPL_ASSOCIATED_TOKEN_ACCOUNT;
-  }
+  },
 ): AssociatedTokenAccountInstructionDescriptor {
   // TODO: check this
   const parsed = create(ix.parsed, ParsedInfo);
@@ -30,8 +26,8 @@ export function parseAssociatedTokenAccountInstruction(
 
 export type AssociatedTokenAccountInstructionDescriptor = {
   [K in AssociatedTokenAccountInstructionType]: {
-    title: typeof IX_TITLES[K];
+    title: (typeof IX_TITLES)[K];
     type: K;
-    info: Infer<typeof IX_STRUCTS[K]>;
+    info: Infer<(typeof IX_STRUCTS)[K]>;
   };
 }[AssociatedTokenAccountInstructionType];

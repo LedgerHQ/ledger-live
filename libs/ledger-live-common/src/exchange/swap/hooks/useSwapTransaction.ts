@@ -25,12 +25,12 @@ export const selectorStateDefaultValues = {
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
 export const useFromAmountError = (
-  errors: Record<string, Error | undefined>
+  errors: Record<string, Error | undefined>,
 ): Error | undefined => {
   const fromAmountError = useMemo(() => {
     const [error] = [errors?.gasPrice, errors?.amount]
       .filter(Boolean)
-      .filter((error) => !(error instanceof AmountRequired));
+      .filter(error => !(error instanceof AmountRequired));
 
     return error;
   }, [errors?.gasPrice, errors?.amount]);
@@ -70,8 +70,9 @@ export const useSwapTransaction = ({
     defaultParentAccount,
     bridgeTransaction,
   });
-  const { toState, setToAccount, setToAmount, setToCurrency, targetAccounts } =
-    useToState({ accounts });
+  const { toState, setToAccount, setToAmount, setToCurrency, targetAccounts } = useToState({
+    accounts,
+  });
   const {
     account: fromAccount,
     parentAccount: fromParentAccount,
@@ -122,7 +123,7 @@ export const useSwapTransaction = ({
         rates.value && excludeFixedRates
           ? {
               ...rates,
-              value: rates.value.filter((v) => v.tradeMethod !== "fixed"),
+              value: rates.value.filter(v => v.tradeMethod !== "fixed"),
             }
           : rates,
       refetchRates,

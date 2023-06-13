@@ -18,10 +18,7 @@ const totalSteps = "3";
 function WithdrawingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -35,9 +32,7 @@ function WithdrawingFlow() {
         options={({ route }) => ({
           headerTitle: () => (
             <StepHeader
-              title={
-                route.params?.stakingPosition?.validator?.validatorAddress ?? ""
-              }
+              title={route.params?.stakingPosition?.validator?.validatorAddress ?? ""}
               subtitle={t("near.withdrawing.stepperHeader.amountSubTitle")}
             />
           ),

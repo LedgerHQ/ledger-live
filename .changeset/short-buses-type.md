@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-add image as asset
+fix: ConnectDevice request undefined

@@ -26,18 +26,12 @@ export function RecentlyUsed({
 
         <TouchableOpacity onPress={clear}>
           <Flex margin={4}>
-            <Text color="primary.c80">
-              {t("browseWeb3.catalog.section.clearAll")}
-            </Text>
+            <Text color="primary.c80">{t("browseWeb3.catalog.section.clearAll")}</Text>
           </Flex>
         </TouchableOpacity>
       </Flex>
 
-      <ScrollContainer
-        paddingLeft={6}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
+      <ScrollContainer paddingLeft={6} horizontal showsHorizontalScrollIndicator={false}>
         {data.map(manifest => (
           <TouchableOpacity
             key={`${manifest.id}.${manifest.branch}`}

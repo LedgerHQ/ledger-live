@@ -6,8 +6,5 @@ import type { ElrondUndelegationFlowParamList } from "../../types";
 import type { ScreenName } from "../../../../../../../const";
 
 export type ValidationErrorPropsType = BaseComposite<
-  StackNavigatorProps<
-    ElrondUndelegationFlowParamList,
-    ScreenName.ElrondUndelegationValidationError
-  >
+  StackNavigatorProps<ElrondUndelegationFlowParamList, ScreenName.ElrondUndelegationValidationError>
 >;

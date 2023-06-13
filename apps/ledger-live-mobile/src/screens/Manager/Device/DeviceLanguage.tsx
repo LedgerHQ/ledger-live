@@ -28,16 +28,12 @@ const DeviceLanguage: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    currentDeviceLanguage,
-  );
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(currentDeviceLanguage);
 
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
 
-  const [shouldInstallLanguage, setShouldInstallLanguage] =
-    useState<boolean>(false);
-  const [deviceForActionModal, setDeviceForActionModal] =
-    useState<Device | null>(null);
+  const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(false);
+  const [deviceForActionModal, setDeviceForActionModal] = useState<Device | null>(null);
 
   const closeChangeLanguageModal = useCallback(
     () => setIsChangeLanguageOpen(false),
@@ -98,9 +94,7 @@ const DeviceLanguage: React.FC<Props> = ({
         linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
         right={
           availableLanguages.length ? undefined : (
-            <Text>
-              {t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
-            </Text>
+            <Text>{t(`deviceLocalization.languages.${currentDeviceLanguage}`)}</Text>
           )
         }
       />

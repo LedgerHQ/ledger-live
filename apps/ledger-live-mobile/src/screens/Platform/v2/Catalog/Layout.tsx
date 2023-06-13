@@ -67,12 +67,7 @@ export function Layout({
       >
         {topHeaderContent}
         <Animated.View style={[opacityStyle]}>
-          <Text
-            fontSize={20}
-            marginLeft={4}
-            fontWeight="semiBold"
-            variant="large"
-          >
+          <Text fontSize={20} marginLeft={4} fontWeight="semiBold" variant="large">
             {title}
           </Text>
         </Animated.View>
@@ -84,9 +79,7 @@ export function Layout({
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={listStickyElement}
       >
-        {titleHeaderContent && (
-          <Flex style={[styles.marginHorizontal]}>{titleHeaderContent}</Flex>
-        )}
+        {titleHeaderContent && <Flex style={[styles.marginHorizontal]}>{titleHeaderContent}</Flex>}
         {middleHeaderContent && (
           <Flex style={[styles.marginHorizontal]}>{middleHeaderContent}</Flex>
         )}

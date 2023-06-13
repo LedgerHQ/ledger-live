@@ -41,8 +41,7 @@ const account = {
 const coinOperation1 = makeOperation({
   hash: "0xH4sH",
   accountId: "js:2:ethereum:0xkvn:",
-  blockHash:
-    "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+  blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
   senders: ["0xd48f2332Eeed88243Cb6b1D0d65a10368A5370f0"], // johnnyhallyday.eth
   transactionSequenceNumber: 1,
   date: new Date(),
@@ -65,8 +64,7 @@ const coinOperation3 = makeOperation({
 const tokenOperation1 = makeOperation({
   hash: "0xH4sHT0k3n",
   accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin",
-  blockHash:
-    "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
+  blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
   recipients: ["0xB0B"],
   senders: ["0x9b744C0451D73C0958d8aA566dAd33022E4Ee797"], // sbf.eth
   contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -117,14 +115,14 @@ describe("EVM Family", () => {
           Promise.resolve({
             blockHeight: 10,
             balance: new BigNumber(100),
-          })
+          }),
         );
         jest.spyOn(rpcAPI, "getSubAccount").mockImplementation(() =>
           Promise.resolve({
             blockHeight: 10,
             balance: new BigNumber(100),
             nonce: 1,
-          })
+          }),
         );
       });
 
@@ -142,7 +140,7 @@ describe("EVM Family", () => {
                 ethereumLikeInfo: undefined,
               },
             },
-            {} as any
+            {} as any,
           );
           fail("Promise should have been rejected");
         } catch (e: any) {
@@ -169,7 +167,7 @@ describe("EVM Family", () => {
                 },
               },
             },
-            {} as any
+            {} as any,
           );
           fail("Promise should have been rejected");
         } catch (e: any) {
@@ -203,7 +201,7 @@ describe("EVM Family", () => {
         it("should return an account with a valid id", async () => {
           const account = await synchronization.getAccountShape(
             getAccountShapeParameters,
-            {} as any
+            {} as any,
           );
           expect(decodeAccountId(account.id || "")).toEqual({
             type: "js",
@@ -217,7 +215,7 @@ describe("EVM Family", () => {
         it("should return an account with the correct balance", async () => {
           const account = await synchronization.getAccountShape(
             getAccountShapeParameters,
-            {} as any
+            {} as any,
           );
           expect(account.balance).toEqual(new BigNumber(100));
         });
@@ -225,7 +223,7 @@ describe("EVM Family", () => {
         it("should return an account with the correct operations count", async () => {
           const account = await synchronization.getAccountShape(
             getAccountShapeParameters,
-            {} as any
+            {} as any,
           );
           expect(account.operationsCount).toBe(account.operations?.length);
         });
@@ -233,7 +231,7 @@ describe("EVM Family", () => {
         it("should return an account with the correct block height", async () => {
           const account = await synchronization.getAccountShape(
             getAccountShapeParameters,
-            {} as any
+            {} as any,
           );
           expect(account.blockHeight).toBe(10);
         });
@@ -250,18 +248,14 @@ describe("EVM Family", () => {
                 subAccounts: [{ ...tokenAccount, operations: tokenOperations }],
               },
             },
-            {} as any
+            {} as any,
           );
           expect(accountWithSubAccount.operations).toBe(operations);
-          expect(accountWithSubAccount?.subAccounts?.[0].operations).toBe(
-            tokenOperations
-          );
+          expect(accountWithSubAccount?.subAccounts?.[0].operations).toBe(tokenOperations);
         });
 
         it("should do a full sync when syncHash changes", async () => {
-          jest
-            .spyOn(logic, "getSyncHash")
-            .mockImplementationOnce(() => "0xNope");
+          jest.spyOn(logic, "getSyncHash").mockImplementationOnce(() => "0xNope");
 
           await synchronization.getAccountShape(
             {
@@ -269,29 +263,23 @@ describe("EVM Family", () => {
               initialAccount: {
                 ...account,
                 operations: [coinOperation1],
-                subAccounts: [
-                  { ...tokenAccount, operations: [tokenOperation1] },
-                ],
+                subAccounts: [{ ...tokenAccount, operations: [tokenOperation1] }],
               },
             },
-            {} as any
+            {} as any,
           );
 
-          expect(
-            etherscanAPI?.default.getLastCoinOperations
-          ).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.getLastCoinOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            0
+            0,
           );
-          expect(
-            etherscanAPI?.default.getLastTokenOperations
-          ).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.getLastTokenOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            0
+            0,
           );
         });
 
@@ -302,29 +290,23 @@ describe("EVM Family", () => {
               initialAccount: {
                 ...account,
                 operations: [coinOperation1],
-                subAccounts: [
-                  { ...tokenAccount, operations: [tokenOperation1] },
-                ],
+                subAccounts: [{ ...tokenAccount, operations: [tokenOperation1] }],
               },
             },
-            {} as any
+            {} as any,
           );
 
-          expect(
-            etherscanAPI?.default.getLastCoinOperations
-          ).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.getLastCoinOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            coinOperation1.blockHeight
+            coinOperation1.blockHeight,
           );
-          expect(
-            etherscanAPI?.default.getLastTokenOperations
-          ).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.getLastTokenOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            tokenOperation1.blockHeight
+            tokenOperation1.blockHeight,
           );
         });
       });
@@ -333,32 +315,26 @@ describe("EVM Family", () => {
         beforeAll(() => {
           jest
             .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() =>
-              Promise.resolve([coinOperation1, coinOperation2])
-            );
-          jest
-            .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-            .mockImplementation(() =>
-              Promise.resolve([
-                {
-                  tokenCurrency: tokenCurrency1,
-                  operation: tokenOperation1,
-                },
-                {
-                  tokenCurrency: tokenCurrency1,
-                  operation: tokenOperation2,
-                },
-              ])
-            );
+            .mockImplementation(() => Promise.resolve([coinOperation1, coinOperation2]));
+          jest.spyOn(etherscanAPI?.default, "getLastTokenOperations").mockImplementation(() =>
+            Promise.resolve([
+              {
+                tokenCurrency: tokenCurrency1,
+                operation: tokenOperation1,
+              },
+              {
+                tokenCurrency: tokenCurrency1,
+                operation: tokenOperation2,
+              },
+            ]),
+          );
           jest
             .spyOn(rpcAPI, "getTokenBalance")
             .mockImplementation(async (a, b, contractAddress) => {
               if (contractAddress === tokenCurrency1.contractAddress) {
                 return new BigNumber(10000);
               }
-              throw new Error(
-                "Shouldn't be trying to fetch this token balance"
-              );
+              throw new Error("Shouldn't be trying to fetch this token balance");
             });
         });
 
@@ -372,12 +348,9 @@ describe("EVM Family", () => {
               ...getAccountShapeParameters,
               initialAccount: account,
             },
-            {} as any
+            {} as any,
           );
-          expect(accountShape.operations).toEqual([
-            coinOperation2,
-            coinOperation1,
-          ]);
+          expect(accountShape.operations).toEqual([coinOperation2, coinOperation1]);
           expect(accountShape?.subAccounts?.[0]?.operations).toEqual([
             tokenOperation2,
             tokenOperation1,
@@ -397,7 +370,7 @@ describe("EVM Family", () => {
                 operations,
               },
             },
-            {} as any
+            {} as any,
           );
 
           expect(accountShape).toEqual({
@@ -440,7 +413,7 @@ describe("EVM Family", () => {
           jest
             .spyOn(synchronization, "getOperationStatus")
             .mockImplementation((currency, op) =>
-              Promise.resolve(op.hash === "0xH4sH" ? coinOperation1 : null)
+              Promise.resolve(op.hash === "0xH4sH" ? coinOperation1 : null),
             );
         });
 
@@ -465,7 +438,7 @@ describe("EVM Family", () => {
                 ],
               },
             },
-            {} as any
+            {} as any,
           );
 
           expect(accountShape.operations).toEqual([coinOperation1]);
@@ -475,42 +448,38 @@ describe("EVM Family", () => {
 
     describe("getSubAccounts", () => {
       beforeEach(() => {
-        jest
-          .spyOn(rpcAPI, "getTokenBalance")
-          .mockImplementation(async (a, b, contractAddress) => {
-            switch (contractAddress) {
-              case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
-                return new BigNumber(1);
-              case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
-                return new BigNumber(2);
-              default:
-                return new BigNumber(0);
-            }
-          });
+        jest.spyOn(rpcAPI, "getTokenBalance").mockImplementation(async (a, b, contractAddress) => {
+          switch (contractAddress) {
+            case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
+              return new BigNumber(1);
+            case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
+              return new BigNumber(2);
+            default:
+              return new BigNumber(0);
+          }
+        });
       });
       afterEach(() => {
         jest.restoreAllMocks();
       });
 
       it("should return the right subAccounts", async () => {
-        jest
-          .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-          .mockImplementation(async () => [
-            { tokenCurrency: tokenCurrency1, operation: tokenOperation1 },
-            { tokenCurrency: tokenCurrency1, operation: tokenOperation2 },
-            { tokenCurrency: tokenCurrency2, operation: tokenOperation4 },
-            {
-              tokenCurrency: undefined as any,
-              operation: ignoredTokenOperation,
-            },
-          ]);
+        jest.spyOn(etherscanAPI?.default, "getLastTokenOperations").mockImplementation(async () => [
+          { tokenCurrency: tokenCurrency1, operation: tokenOperation1 },
+          { tokenCurrency: tokenCurrency1, operation: tokenOperation2 },
+          { tokenCurrency: tokenCurrency2, operation: tokenOperation4 },
+          {
+            tokenCurrency: undefined as any,
+            operation: ignoredTokenOperation,
+          },
+        ]);
 
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,
             initialAccount: account,
           },
-          account.id
+          account.id,
         );
 
         const expectedUsdcAccount = {
@@ -532,10 +501,7 @@ describe("EVM Family", () => {
           swapHistory: [],
         };
 
-        expect(tokenAccounts).toEqual([
-          expectedUsdcAccount,
-          expectedUsdtAccount,
-        ]);
+        expect(tokenAccounts).toEqual([expectedUsdcAccount, expectedUsdtAccount]);
       });
 
       it("should return a partial sub account based on blockHeight", async () => {
@@ -562,7 +528,7 @@ describe("EVM Family", () => {
             ...getAccountShapeParameters,
             initialAccount: accountWithIncompleteSubAccount,
           },
-          account.id
+          account.id,
         );
 
         const expectedUsdcAccount = {
@@ -581,7 +547,7 @@ describe("EVM Family", () => {
           currency,
           account.freshAddress,
           account.id,
-          tokenOperation2.blockHeight
+          tokenOperation2.blockHeight,
         );
       });
 
@@ -601,7 +567,7 @@ describe("EVM Family", () => {
                 },
               },
             },
-            account.id
+            account.id,
           );
           fail("Promise should have been rejected");
         } catch (e: any) {
@@ -615,18 +581,16 @@ describe("EVM Family", () => {
 
     describe("getSubAccountShape", () => {
       beforeEach(() => {
-        jest
-          .spyOn(rpcAPI, "getTokenBalance")
-          .mockImplementation(async (a, b, contractAddress) => {
-            switch (contractAddress) {
-              case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
-                return new BigNumber(1);
-              case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
-                return new BigNumber(2);
-              default:
-                return new BigNumber(0);
-            }
-          });
+        jest.spyOn(rpcAPI, "getTokenBalance").mockImplementation(async (a, b, contractAddress) => {
+          switch (contractAddress) {
+            case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": // usdc
+              return new BigNumber(1);
+            case "0xdAC17F958D2ee523a2206206994597C13D831ec7": // usdt
+              return new BigNumber(2);
+            default:
+              return new BigNumber(0);
+          }
+        });
       });
       afterEach(() => {
         jest.restoreAllMocks();
@@ -637,7 +601,7 @@ describe("EVM Family", () => {
           currency,
           account.id,
           tokenCurrency1,
-          [tokenOperation1, tokenOperation2, tokenOperation3]
+          [tokenOperation1, tokenOperation2, tokenOperation3],
         );
 
         expect(subAccount).toEqual({
@@ -658,9 +622,7 @@ describe("EVM Family", () => {
           throw new Error();
         });
 
-        expect(
-          await synchronization.getOperationStatus(currency, coinOperation1)
-        ).toBe(null);
+        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toBe(null);
       });
 
       it("should return null if retrieved transaction has no blockHeight", async () => {
@@ -670,12 +632,10 @@ describe("EVM Family", () => {
               blockHash: "hash",
               timestamp: 101010010,
               nonce: 1,
-            } as any)
+            } as any),
         );
 
-        expect(
-          await synchronization.getOperationStatus(currency, coinOperation1)
-        ).toBe(null);
+        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toBe(null);
       });
 
       it("should return the retrieved operation with network properties", async () => {
@@ -686,12 +646,10 @@ describe("EVM Family", () => {
               blockHash: "hash",
               timestamp: Date.now() / 1000,
               nonce: 123,
-            } as any)
+            } as any),
         );
 
-        expect(
-          await synchronization.getOperationStatus(currency, coinOperation1)
-        ).toEqual({
+        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toEqual({
           ...coinOperation1,
           blockHash: "hash",
           blockHeight: 10,
@@ -707,17 +665,13 @@ describe("EVM Family", () => {
               blockNumber: 10,
               blockHash: "hash",
               nonce: 123,
-            } as any)
+            } as any),
         );
         jest
           .spyOn(rpcAPI, "getBlock")
-          .mockImplementationOnce(
-            async () => ({ timestamp: Date.now() / 1000 } as any)
-          );
+          .mockImplementationOnce(async () => ({ timestamp: Date.now() / 1000 } as any));
 
-        expect(
-          await synchronization.getOperationStatus(currency, coinOperation1)
-        ).toEqual({
+        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toEqual({
           ...coinOperation1,
           blockHash: "hash",
           blockHeight: 10,
@@ -739,10 +693,7 @@ describe("EVM Family", () => {
         };
 
         expect(
-          synchronization.postSync(
-            { ...account, subAccounts: [] },
-            accountWithTokenAccount
-          )
+          synchronization.postSync({ ...account, subAccounts: [] }, accountWithTokenAccount),
         ).toEqual(accountWithTokenAccount);
       });
 
@@ -758,15 +709,15 @@ describe("EVM Family", () => {
         };
 
         // should not change anything if we maintain the pending op
-        expect(
-          synchronization.postSync(accountWithPending, accountWithPending)
-        ).toEqual(accountWithPending);
+        expect(synchronization.postSync(accountWithPending, accountWithPending)).toEqual(
+          accountWithPending,
+        );
         // Should remove the pending from tokenAccount as well if removed from main account
         expect(
           synchronization.postSync(accountWithPending, {
             ...accountWithPending,
             pendingOperations: [],
-          })
+          }),
         ).toEqual(account);
       });
 
@@ -792,7 +743,7 @@ describe("EVM Family", () => {
                 operations: [pendingOperation],
               },
             ],
-          })
+          }),
         ).toEqual({
           ...accountWithPending,
           subAccounts: [
@@ -820,12 +771,9 @@ describe("EVM Family", () => {
         };
 
         // Should remove the pending from tokenAccount if it was confirmed in the tokenAccount ops
-        expect(
-          synchronization.postSync(
-            accountWithTokenAccount,
-            accountWithTokenAccount
-          )
-        ).toEqual(account);
+        expect(synchronization.postSync(accountWithTokenAccount, accountWithTokenAccount)).toEqual(
+          account,
+        );
       });
     });
   });

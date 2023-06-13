@@ -40,10 +40,7 @@ type Metadata = {
 };
 
 type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingPairNew
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingPairNew>
 >;
 
 const scenes = [PairNew, ConnectNano] as Step[];
@@ -54,8 +51,7 @@ function OnboardingStepPairNew() {
   const route = useRoute<NavigationProps["route"]>();
 
   const dispatch = useDispatch();
-  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } =
-    useNotifications();
+  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning, next, isProtectFlow } = route.params;
@@ -98,12 +94,7 @@ function OnboardingStepPairNew() {
             },
       },
     ],
-    [
-      newDeviceSelectionFeatureFlag?.enabled,
-      deviceModelId,
-      theme,
-      isProtectFlow,
-    ],
+    [newDeviceSelectionFeatureFlag?.enabled, deviceModelId, theme, isProtectFlow],
   );
 
   const startPostOnboarding = useStartPostOnboardingCallback();
@@ -121,10 +112,7 @@ function OnboardingStepPairNew() {
 
     const parentNav =
       navigation.getParent<
-        StackNavigatorNavigation<
-          BaseOnboardingNavigatorParamList,
-          NavigatorName.Onboarding
-        >
+        StackNavigatorNavigation<BaseOnboardingNavigatorParamList, NavigatorName.Onboarding>
       >();
     if (parentNav) {
       parentNav.popToTop();

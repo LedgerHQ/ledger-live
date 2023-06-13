@@ -14,7 +14,7 @@ export const KYC_STATUS = {
   upgradeRequired: "upgradeRequired",
 } as const;
 
-export type KYCStatus = typeof KYC_STATUS[keyof typeof KYC_STATUS];
+export type KYCStatus = (typeof KYC_STATUS)[keyof typeof KYC_STATUS];
 
 export type AccountTuple = {
   account: Account | null | undefined;
@@ -24,41 +24,40 @@ export type AccountTuple = {
 export function getAccountTuplesForCurrency(
   currency: CryptoCurrency | TokenCurrency,
   allAccounts: Account[],
-  hideEmpty?: boolean
+  hideEmpty?: boolean,
 ): AccountTuple[] {
   if (currency.type === "TokenCurrency") {
     return allAccounts
-      .filter((account) => account.currency.id === currency.parentCurrency.id)
-      .map((account) => ({
+      .filter(account => account.currency.id === currency.parentCurrency.id)
+      .map(account => ({
         account,
         subAccount:
           (account.subAccounts &&
             account.subAccounts.find(
               (subAcc: SubAccount) =>
-                subAcc.type === "TokenAccount" &&
-                subAcc.token.id === currency.id
+                subAcc.type === "TokenAccount" && subAcc.token.id === currency.id,
             )) ||
           makeEmptyTokenAccount(account, currency),
       }))
-      .filter((a) => (hideEmpty ? a.subAccount?.balance.gt(0) : true));
+      .filter(a => (hideEmpty ? a.subAccount?.balance.gt(0) : true));
   }
   return allAccounts
-    .filter((account) => account.currency.id === currency.id)
-    .map((account) => ({
+    .filter(account => account.currency.id === currency.id)
+    .map(account => ({
       account,
       subAccount: null,
     }))
-    .filter((a) => (hideEmpty ? a.account?.balance.gt(0) : true));
+    .filter(a => (hideEmpty ? a.account?.balance.gt(0) : true));
 }
 
 export const getAvailableAccountsById = (
   id: string,
-  accounts: (AccountLike & { disabled?: boolean })[]
+  accounts: (AccountLike & { disabled?: boolean })[],
 ): (AccountLike & {
   disabled?: boolean | undefined;
 })[] =>
   accounts
-    .filter((acc) => getAccountCurrency(acc)?.id === id && !acc.disabled)
+    .filter(acc => getAccountCurrency(acc)?.id === id && !acc.disabled)
     .sort((a, b) => b.balance.minus(a.balance).toNumber());
 
 // Note: used in UI (LLD / LLM)
@@ -80,7 +79,7 @@ export const isJwtExpired = (jwtToken: string): boolean => {
 
 // Note: used in UI (LLD / LLM)
 export const getKYCStatusFromCheckQuoteStatus = (
-  checkQuoteStatus: CheckQuoteStatus
+  checkQuoteStatus: CheckQuoteStatus,
 ): KYCStatus | null => {
   switch (checkQuoteStatus.codeName) {
     case "KYC_PENDING":
@@ -194,9 +193,7 @@ export const getProviderName = (provider: string): string => {
   }
 };
 
-export const getNoticeType = (
-  provider: string
-): { message: string; learnMore: boolean } => {
+export const getNoticeType = (provider: string): { message: string; learnMore: boolean } => {
   switch (provider) {
     case "cic":
       return { message: "provider", learnMore: false };

@@ -90,9 +90,7 @@ describe("EVM Family", () => {
       });
 
       it("should return empty [] if dynamic CAL fails and local CAL fails", async () => {
-        jest
-          .spyOn(evms, "tokens", "get")
-          .mockImplementationOnce(() => ({} as any));
+        jest.spyOn(evms, "tokens", "get").mockImplementationOnce(() => ({} as any));
 
         const tokens = await fetchERC20Tokens(currency1);
         expect(tokens).toEqual([]);
@@ -101,9 +99,7 @@ describe("EVM Family", () => {
 
     describe("preload", () => {
       it("should register tokens", async () => {
-        jest
-          .spyOn(CALTokensAPI, "addTokens")
-          .mockImplementationOnce(() => null);
+        jest.spyOn(CALTokensAPI, "addTokens").mockImplementationOnce(() => null);
 
         const tokens = await preload(currency1);
 
@@ -124,9 +120,7 @@ describe("EVM Family", () => {
       });
 
       it("should register tokens", async () => {
-        jest
-          .spyOn(CALTokensAPI, "addTokens")
-          .mockImplementationOnce(() => null);
+        jest.spyOn(CALTokensAPI, "addTokens").mockImplementationOnce(() => null);
 
         await hydrate([usdcDefinition]);
 

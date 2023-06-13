@@ -28,12 +28,8 @@ const OnboardingRecoveryPhraseWarning = () => {
         <ModalHeader
           Icon={Icons.WarningMedium}
           iconColor={"warning.c50"}
-          title={t(
-            "onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.title",
-          )}
-          description={t(
-            "onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.desc",
-          )}
+          title={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.title")}
+          description={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.desc")}
         />
       </ScrollContainer>
       <Button type="main" size="large" onPress={handlePress} mt={4}>
