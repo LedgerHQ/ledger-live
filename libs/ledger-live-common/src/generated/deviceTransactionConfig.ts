@@ -5,7 +5,6 @@ import cosmos from "../families/cosmos/deviceTransactionConfig";
 import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import elrond from "../families/elrond/deviceTransactionConfig";
 import ethereum from "../families/ethereum/deviceTransactionConfig";
-import evm from "../families/evm/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import near from "../families/near/deviceTransactionConfig";
@@ -16,6 +15,7 @@ import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
+import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 
 export default {
   bitcoin,
@@ -25,7 +25,6 @@ export default {
   crypto_org,
   elrond,
   ethereum,
-  evm,
   filecoin,
   hedera,
   near,
@@ -36,6 +35,7 @@ export default {
   tron,
   polkadot,
   algorand,
+  evm,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";

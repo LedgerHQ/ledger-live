@@ -1,5 +1,12 @@
-import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
-import { BoxedIcon, Flex, FlowStepper, Icons, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import React, {
+  ComponentProps,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { BoxedIcon, Flex, FlowStepper, Icons, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -19,8 +26,11 @@ import StepTransfer from "./Step4Transfer";
 import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import { analyticsDrawerContext, setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
+import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
+import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = {
   imageUri?: string;
@@ -46,6 +56,10 @@ const CustomImage: React.FC<Props> = props => {
     isFromPostOnboardingEntryPoint,
   } = props;
   const { t } = useTranslation();
+  const track = useTrack();
+  const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
+
+  useEffect(() => setAnalyticsDrawerName(analyticsDrawerName), [setAnalyticsDrawerName]);
 
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
 
@@ -132,13 +146,8 @@ const CustomImage: React.FC<Props> = props => {
   }, []);
 
   const handleStepTransferResult = useCallback(() => {
-    // TODO: when post onboarding hub is merged: completeAction(PostOnboardingAction.customImage)
     setTransferDone(true);
   }, []);
-
-  const handleErrorRetryClicked = useCallback(() => {
-    setStepWrapper(Step.chooseImage);
-  }, [setStepWrapper]);
 
   const handleError = useCallback(
     (step: Step, error: Error) => {
@@ -160,23 +169,24 @@ const CustomImage: React.FC<Props> = props => {
 
   const error = stepError[step];
 
+  const handleErrorRetryClicked = useCallback(() => {
+    error?.name && track("button_clicked", { button: "Retry" });
+    setStepWrapper(Step.chooseImage);
+  }, [error?.name, setStepWrapper, track]);
+
   const previousStep: Step | undefined = orderedSteps[orderedSteps.findIndex(s => s === step) - 1];
 
   const openPostOnboarding = useNavigateToPostOnboardingHubCallback();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (transferDone && isFromPostOnboardingEntryPoint) {
-      dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
-    }
-  }, [dispatch, transferDone, isFromPostOnboardingEntryPoint]);
-
   const handleDone = useCallback(() => {
     exit();
+    dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
     if (isFromPostOnboardingEntryPoint) {
+      setTrackingSource(analyticsPageNames.success);
       openPostOnboarding();
     }
-  }, [exit, openPostOnboarding, isFromPostOnboardingEntryPoint]);
+  }, [exit, dispatch, isFromPostOnboardingEntryPoint, openPostOnboarding]);
 
   const renderError = useMemo(
     () =>
@@ -189,9 +199,18 @@ const CustomImage: React.FC<Props> = props => {
                     previousStep={previousStep}
                     previousLabel={t("common.previous")}
                     setStep={setStepWrapper}
+                    previousEventProperties={{
+                      button: "Previous",
+                    }}
                   />
                 }
               >
+                <TrackPage
+                  category={analyticsPageNames.error + error.name}
+                  type="drawer"
+                  flow={analyticsFlowName}
+                  refreshSource={false}
+                />
                 <ErrorDisplayV2 error={error} onRetry={handleErrorRetryClicked} />
               </StepContainer>
             );
@@ -226,20 +245,15 @@ const CustomImage: React.FC<Props> = props => {
             itemKey={Step.chooseImage}
             label={t("customImage.steps.choose.stepLabel")}
           >
-            {sourceLoading ? (
-              <Flex flex={1} justifyContent="center" alignItems="center">
-                <InfiniteLoader />
-              </Flex>
-            ) : (
-              <StepChooseImage
-                onError={errorHandlers[Step.chooseImage]}
-                onResult={handleStepChooseImageResult}
-                setStep={setStepWrapper}
-                setLoading={setSourceLoading}
-                isShowingNftGallery={isShowingNftGallery}
-                setIsShowingNftGallery={setIsShowingNftGallery}
-              />
-            )}
+            <StepChooseImage
+              onError={errorHandlers[Step.chooseImage]}
+              onResult={handleStepChooseImageResult}
+              setStep={setStepWrapper}
+              loading={sourceLoading}
+              setLoading={setSourceLoading}
+              isShowingNftGallery={isShowingNftGallery}
+              setIsShowingNftGallery={setIsShowingNftGallery}
+            />
           </FlowStepper.Indexed.Step>
           <FlowStepper.Indexed.Step
             itemKey={Step.adjustImage}
@@ -286,9 +300,16 @@ const CustomImage: React.FC<Props> = props => {
               setStep={setStepWrapper}
               onClickNext={handleDone}
               nextTestId="custom-image-finish-button"
+              nextEventProperties={{ button: "Finish" }}
             />
           }
         >
+          <TrackPage
+            category={analyticsPageNames.success}
+            type="drawer"
+            flow={analyticsFlowName}
+            refreshSource={false}
+          />
           <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}

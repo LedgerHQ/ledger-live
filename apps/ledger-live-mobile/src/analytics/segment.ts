@@ -146,6 +146,7 @@ const extraProperties = async (store: AppStore) => {
     notificationsAllowed,
     notificationsBlacklisted,
     userId: user?.id,
+    braze_external_id: user?.id, // Needed for braze with this exact name
     accountsWithFunds,
     blockchainsWithNftsOwned,
     hasGenesisPass,

@@ -17,7 +17,9 @@ export default function StepAmount({ account, transaction, status, error }: Step
       <TrackPage category="Solana Delegation Withdraw" name="Step Amount" />
       {error && <ErrorBanner error={error} />}
       <Label>{t("send.steps.details.amount")}</Label>
-      <AmountField transaction={transaction} account={account} status={status} />
+      {transaction ? (
+        <AmountField transaction={transaction} account={account} status={status} />
+      ) : null}
       {status.errors.fee && <ErrorDisplay error={status.errors.fee} />}
     </Box>
   );

@@ -3,14 +3,17 @@ import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import {
+  CosmosDelegationInfo,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 
 type Props = {
   amount: BigNumber;
-  validator: any;
+  validator: CosmosDelegationInfo;
   account: Account;
   status: TransactionStatus;
   onChange: (amount: BigNumber) => void;
@@ -29,7 +32,7 @@ export default function AmountField({
   const [focused, setFocused] = useState(false);
   const [initialAmount, setInitialAmount] = useState(validator ? validator.amount : BigNumber(0));
   useEffect(() => {
-    if (validator && validator.validatorAddress !== currentValidator.validatorAddress) {
+    if (validator && validator.address !== currentValidator.address) {
       setCurrentValidator(validator);
       setInitialAmount(validator.amount);
     }
@@ -107,12 +110,15 @@ const InputRight = styled(Box).attrs(() => ({
 }))`
   padding: ${p => p.theme.space[2]}px;
 `;
-const AmountButton: ThemedComponent<{
+const AmountButton = styled.button.attrs<{
   error: boolean;
   active: boolean;
-}> = styled.button.attrs(() => ({
+}>(() => ({
   type: "button",
-}))`
+}))<{
+  error: boolean;
+  active: boolean;
+}>`
   background-color: ${p =>
     p.error
       ? p.theme.colors.lightRed

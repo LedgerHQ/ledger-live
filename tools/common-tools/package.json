@@ -1,6 +1,6 @@
 {
   "name": "live-common-tools",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "private": true,
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
@@ -18,11 +18,9 @@
     "@ledgerhq/hw-transport-webusb": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@material-ui/core": "^4.11.3",
     "axios": "*",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "*",
-    "flow-bin": "^0.145.0",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
@@ -55,6 +53,9 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-syntax-import-meta": "^7.10.1",
+    "@babel/plugin-transform-logical-assignment-operators": "^7.22.3",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.22.3",
+    "@babel/plugin-transform-private-methods": "^7.22.3",
     "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "react-app-rewired": "^2.1.8"
   }

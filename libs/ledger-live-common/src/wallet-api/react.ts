@@ -7,6 +7,7 @@ import {
   RefObject,
 } from "react";
 import semver from "semver";
+import { formatDistanceToNow } from "date-fns";
 import {
   Account,
   AccountLike,
@@ -25,6 +26,7 @@ import {
   Transport,
   Permission,
 } from "@ledgerhq/wallet-api-core";
+import { StateDB } from "../hooks/useDBRaw";
 import { Subject } from "rxjs";
 import { Observable, firstValueFrom } from "rxjs7";
 import { first } from "rxjs/operators";
@@ -63,6 +65,12 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { MessageData } from "../hw/signMessage/types";
 import { TypedMessageData } from "../families/ethereum/types";
 import { Transaction } from "../generated/types";
+import { useManifests } from "../platform/providers/RemoteLiveAppProvider";
+import {
+  DISCOVER_INITIAL_CATEGORY,
+  MAX_RECENTLY_USED_LENGTH,
+} from "./constants";
+import { DiscoverDB } from "./types";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): T {
   if (!ref.current) {
@@ -448,7 +456,7 @@ export function useWalletAPIServer({
               message,
               onSuccess: (signature) => {
                 tracking.signMessageSuccess(manifest);
-                resolve(Buffer.from(signature));
+                resolve(Buffer.from(signature.replace("0x", ""), "hex"));
               },
               onCancel: () => {
                 tracking.signMessageFail(manifest);
@@ -759,4 +767,222 @@ export enum ExchangeType {
   SWAP = 0x00,
   SELL = 0x01,
   FUND = 0x02,
+}
+
+export interface Categories {
+  manifests: AppManifest[];
+  categories: string[];
+  manifestsByCategories: Map<string, AppManifest[]>;
+  selected: string;
+  setSelected: (val: string) => void;
+  reset: () => void;
+}
+
+export function useCategories(): Categories {
+  const manifestsSearchable = useManifests({ visibility: "searchable" });
+  const manifestsCompleted = useManifests({ visibility: "complete" });
+  const { categories, manifestsByCategories } =
+    useCategoriesRaw(manifestsCompleted);
+  const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
+
+  const reset = useCallback(() => {
+    setSelected(DISCOVER_INITIAL_CATEGORY);
+  }, []);
+
+  const manifests = useMemo(
+    () => [...manifestsSearchable, ...manifestsCompleted],
+    [manifestsSearchable, manifestsCompleted]
+  );
+
+  return useMemo(
+    () => ({
+      manifests,
+      categories,
+      manifestsByCategories,
+      selected,
+      setSelected,
+      reset,
+    }),
+    [manifests, categories, manifestsByCategories, selected, setSelected, reset]
+  );
+}
+
+function useCategoriesRaw(manifests: AppManifest[]): {
+  categories: string[];
+  manifestsByCategories: Map<string, AppManifest[]>;
+} {
+  const manifestsByCategories = useMemo(() => {
+    const res = manifests.reduce((res, m) => {
+      m.categories.forEach((c) => {
+        const list = res.has(c) ? [...res.get(c), m] : [m];
+        res.set(c, list);
+      });
+
+      return res;
+    }, new Map().set("all", manifests));
+
+    return res;
+  }, [manifests]);
+
+  const categories = useMemo(
+    () => [...manifestsByCategories.keys()],
+    [manifestsByCategories]
+  );
+
+  return {
+    categories,
+    manifestsByCategories,
+  };
+}
+
+export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+
+export interface RecentlyUsed {
+  data: RecentlyUsedManifest[];
+  append: (manifest: AppManifest) => void;
+  clear: () => void;
+}
+
+export type RecentlyUsedManifest = AppManifest & { usedAt?: Date };
+
+export function useRecentlyUsed(
+  manifests: AppManifest[],
+  [recentlyUsed, setState]: RecentlyUsedDB
+): RecentlyUsed {
+  const data = useMemo(
+    () =>
+      recentlyUsed
+        .map((r) => {
+          const res = manifests.find((m) => m.id === r.id);
+          const distance = formatDistanceToNow(new Date(r.usedAt));
+          return res
+            ? {
+                ...res,
+                usedAt: distance[0].toUpperCase() + distance.slice(1) + " ago",
+              }
+            : res;
+        })
+        .filter((m) => m !== undefined) as AppManifest[],
+    [recentlyUsed, manifests]
+  );
+
+  const append = useCallback(
+    (manifest: AppManifest) => {
+      setState((state) => {
+        const index = state.recentlyUsed.findIndex(
+          ({ id }) => id === manifest.id
+        );
+
+        // Manifest already in first position
+        if (index === 0) {
+          return {
+            ...state,
+            recentlyUsed: [
+              { ...state.recentlyUsed[0], usedAt: new Date().toISOString() },
+              ...state.recentlyUsed.slice(1),
+            ],
+          };
+        }
+
+        // Manifest present we move it to the first position
+        // No need to check for MAX_LENGTH as we only move it
+        if (index !== -1) {
+          return {
+            ...state,
+            recentlyUsed: [
+              { id: manifest.id, usedAt: new Date().toISOString() },
+              ...state.recentlyUsed.slice(0, index),
+              ...state.recentlyUsed.slice(index + 1),
+            ],
+          };
+        }
+
+        // Manifest not preset we simply append and check for the length
+        return {
+          ...state,
+          recentlyUsed:
+            state.recentlyUsed.length >= MAX_RECENTLY_USED_LENGTH
+              ? [
+                  { id: manifest.id, usedAt: new Date().toISOString() },
+                  ...state.recentlyUsed.slice(0, -1),
+                ]
+              : [
+                  { id: manifest.id, usedAt: new Date().toISOString() },
+                  ...state.recentlyUsed,
+                ],
+        };
+      });
+    },
+    [setState]
+  );
+
+  const clear = useCallback(() => {
+    setState((state) => ({ ...state, recentlyUsed: [] }));
+  }, [setState]);
+
+  return { data, append, clear };
+}
+
+export interface DisclaimerRaw {
+  onConfirm: (manifest: AppManifest, isChecked: boolean) => void;
+  onSelect: (manifest: AppManifest) => void;
+}
+
+interface DisclaimerUiHook {
+  prompt: (
+    manifest: AppManifest,
+    onContinue: (manifest: AppManifest, isChecked: boolean) => void
+  ) => void;
+  dismiss: () => void;
+  openApp: (manifest: AppManifest) => void;
+  close: () => void;
+}
+
+export function useDisclaimerRaw({
+  isReadOnly = false,
+  isDismissed,
+  uiHook,
+  appendRecentlyUsed,
+}: {
+  // used only on mobile for now
+  isReadOnly?: boolean;
+  isDismissed: boolean;
+  appendRecentlyUsed: (manifest: AppManifest) => void;
+  uiHook: DisclaimerUiHook;
+}): DisclaimerRaw {
+  const onConfirm = useCallback(
+    (manifest: AppManifest, isChecked: boolean) => {
+      if (!manifest) return;
+
+      if (isChecked) {
+        uiHook.dismiss();
+      }
+
+      uiHook.close();
+      appendRecentlyUsed(manifest);
+      uiHook.openApp(manifest);
+    },
+    [uiHook, appendRecentlyUsed]
+  );
+
+  const onSelect = useCallback(
+    (manifest: AppManifest) => {
+      if (manifest.branch === "soon") {
+        return;
+      }
+
+      if (!isDismissed && !isReadOnly && manifest.author !== "ledger") {
+        uiHook.prompt(manifest, onConfirm);
+      } else {
+        appendRecentlyUsed(manifest);
+        uiHook.openApp(manifest);
+      }
+    },
+    [isReadOnly, isDismissed, uiHook, appendRecentlyUsed, onConfirm]
+  );
+
+  return {
+    onSelect,
+    onConfirm,
+  };
 }

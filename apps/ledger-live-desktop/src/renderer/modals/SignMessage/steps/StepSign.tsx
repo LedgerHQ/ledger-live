@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { StepProps } from "../types";
@@ -20,13 +20,17 @@ export default function StepSign({
   onFailHandler,
 }: StepProps) {
   const dispatch = useDispatch();
+  const request = useMemo(
+    () => ({
+      account,
+      message,
+    }),
+    [account, message],
+  );
   return (
     <DeviceAction
       action={action}
-      request={{
-        account,
-        message,
-      }}
+      request={request}
       onResult={r => {
         const result = r as {
           error: Error | null | undefined;

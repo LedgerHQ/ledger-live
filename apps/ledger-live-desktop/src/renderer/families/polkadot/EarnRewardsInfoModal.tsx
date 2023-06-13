@@ -1,32 +1,26 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import WarnBox from "~/renderer/components/WarnBox";
-type Props = {
-  name?: string;
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+
+export type Props = {
+  account: PolkadotAccount;
 };
-export default function PolkadotEarnRewardsInfoModal({ name, account }: Props) {
+export default function PolkadotEarnRewardsInfoModal({ account }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(closeModal(name));
-    dispatch(
-      openModal("MODAL_POLKADOT_BOND", {
-        account,
-      }),
-    );
-  }, [account, dispatch, name]);
+    dispatch(openModal("MODAL_POLKADOT_BOND", { account }));
+  }, [account, dispatch]);
   return (
     <EarnRewardsInfoModal
-      name={name}
+      name="MODAL_POLKADOT_REWARDS_INFO"
       onNext={onNext}
       description={t("polkadot.bond.steps.starter.description")}
       bullets={[

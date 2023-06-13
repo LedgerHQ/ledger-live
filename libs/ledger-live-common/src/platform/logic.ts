@@ -3,7 +3,6 @@ import {
   AccountLike,
   Operation,
   SignedOperation,
-  TransactionCommon,
 } from "@ledgerhq/types-live";
 
 import {
@@ -113,7 +112,10 @@ export function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  if (accountFamily !== platformTransaction.family) {
+  if (
+    accountFamily !== platformTransaction.family &&
+    !(accountFamily === "evm" && transaction.family === "ethereum")
+  ) {
     return Promise.reject(
       new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${platformTransaction.family}
       `)
@@ -174,7 +176,7 @@ export type CompleteExchangeRequest = {
 export type CompleteExchangeUiRequest = {
   provider: string;
   exchange: Exchange;
-  transaction: TransactionCommon;
+  transaction: Transaction;
   binaryPayload: string;
   signature: string;
   feesStrategy: string;

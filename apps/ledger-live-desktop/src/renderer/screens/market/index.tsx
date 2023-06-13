@@ -9,7 +9,7 @@ import CounterValueSelect from "./CountervalueSelect";
 import MarketList from "./MarketList";
 import SideDrawerFilter from "./SideDrawerFilter";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import Track from "~/renderer/analytics/Track";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -108,10 +108,8 @@ export default function Market() {
 
   return (
     <Container>
-      <Track
-        event="Page Market"
-        onMount
-        onUpdate
+      <TrackPage
+        category="Market"
         sort={order !== "desc"}
         timeframe={range}
         countervalue={counterCurrency}

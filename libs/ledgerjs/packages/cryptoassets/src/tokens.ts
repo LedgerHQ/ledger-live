@@ -41,7 +41,7 @@ const defaultTokenListOptions: TokensListOptions = {
 };
 export function createTokenHash(token: TokenCurrency): string {
   return token
-    ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.countervalueTicker}${token.ledgerSignature}`
+    ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.ledgerSignature}`
     : "";
 }
 
@@ -225,8 +225,8 @@ export function addTokens(list: TokenCurrency[]): void {
      * Like this we can update any change from a already added token coming from Dynamic CAL
      * and maintain it up to date without having to release a new version of LLD or LLM
      */
-    removeTokenFromAllLists(token);
     const { id, contractAddress, parentCurrency, delisted, ticker } = token;
+    if (tokensById[id]) removeTokenFromAllLists(token);
     const lowCaseContract = contractAddress.toLowerCase();
 
     if (!delisted) tokensArray.push(token);
@@ -268,7 +268,6 @@ export function convertERC20([
   contractAddress,
   disableCountervalue,
   delisted,
-  countervalueTicker,
 ]: ERC20Token | PolygonERC20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
@@ -282,7 +281,6 @@ export function convertERC20([
     ticker,
     delisted,
     disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
-    countervalueTicker,
     units: [
       {
         name,
@@ -303,7 +301,6 @@ function convertBEP20([
   contractAddress,
   disableCountervalue,
   delisted,
-  countervalueTicker,
 ]: BEP20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
@@ -317,7 +314,6 @@ function convertBEP20([
     ticker,
     delisted,
     disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
-    countervalueTicker,
     units: [
       {
         name,

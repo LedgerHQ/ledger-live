@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useRoute } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
@@ -20,6 +21,7 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
+import { useCanShowStake } from "./useCanShowStake";
 
 type Props = {
   account: AccountLike;
@@ -40,9 +42,11 @@ export default function useAccountActions({
   secondaryActions: ActionButtonEvent[];
 } {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const route = useRoute();
   const { t } = useTranslation();
 
   const currency = getAccountCurrency(account);
+  const canShowStake = useCanShowStake(currency);
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -197,13 +201,14 @@ export default function useAccountActions({
     ...extraReceiveActionParams,
   };
 
-  const familySpecificMainActions =
+  const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
       decorators.getMainActions &&
       decorators.getMainActions({
         account,
         parentAccount,
         colors,
+        parentRoute: route,
       })) ||
     [];
 
@@ -211,7 +216,11 @@ export default function useAccountActions({
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...(!readOnlyModeEnabled ? familySpecificMainActions : []),
+    ...(!readOnlyModeEnabled
+      ? familySpecificMainActions.filter(
+          action => action.id !== "stake" || canShowStake,
+        )
+      : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];

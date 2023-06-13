@@ -68,13 +68,13 @@ import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
 import {
-  FramedImageWithContext,
+  StaxFramedImageWithContext,
   transferConfig,
-} from "../CustomImage/FramedImage";
+} from "../CustomImage/StaxFramedImage";
 import {
   Props as FramedImageWithLottieProps,
-  FramedImageWithLottieWithContext,
-} from "../CustomImage/FramedImageWithLottie";
+  StaxFramedLottieWithContext,
+} from "../CustomImage/StaxFramedLottie";
 import ModalLock from "../ModalLock";
 import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../animations/stax/customimage/allowConnection.json";
@@ -658,6 +658,7 @@ export function renderError({
   Icon,
   iconColor,
   device,
+  hasExportLogButton,
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -666,6 +667,7 @@ export function renderError({
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
   device?: Device;
+  hasExportLogButton?: boolean;
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -702,6 +704,7 @@ export function renderError({
         withIcon
         Icon={Icon}
         iconColor={iconColor}
+        hasExportLogButton={hasExportLogButton}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>
@@ -1172,19 +1175,19 @@ const ImageLoadingGeneric: React.FC<{
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {lottieSource ? (
-          <FramedImageWithLottieWithContext
+          <StaxFramedLottieWithContext
             loadingProgress={progress}
             lottieSource={lottieSource}
           >
             {children}
-          </FramedImageWithLottieWithContext>
+          </StaxFramedLottieWithContext>
         ) : (
-          <FramedImageWithContext
+          <StaxFramedImageWithContext
             loadingProgress={progress}
             frameConfig={transferConfig}
           >
             {children}
-          </FramedImageWithContext>
+          </StaxFramedImageWithContext>
         )}
       </Flex>
     </Flex>

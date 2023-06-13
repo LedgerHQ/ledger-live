@@ -31,7 +31,7 @@ const rmDir = dir => {
   return rimraf(fullPath);
 };
 
-const cleaningTasks = args => [
+const cleaningTasks = _args => [
   {
     title: "Remove `node_modules/.cache` folder",
     task: () => rmDir("node_modules/.cache"),
@@ -252,7 +252,9 @@ yargs
   .command(
     "check",
     "Run health checks",
-    () => {},
+    () => {
+      // ignore
+    },
     args => runTasks(healthChecksTasks, args),
   )
   .command(

@@ -3,35 +3,35 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { areEarnRewardsEnabled } from "@ledgerhq/live-common/families/elrond/helpers/areEarnRewardsEnabled";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
-import { modals } from "./modals";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+import { SubAccount } from "@ledgerhq/types-live";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
+const AccountHeaderManageActions = (props: {
+  account: ElrondAccount | SubAccount;
+  parentAccount?: ElrondAccount | null;
   source?: string;
-};
-const AccountHeaderActions = (props: Props) => {
-  const { account, parentAccount, source } = props;
+}) => {
+  const { account, source } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const validators = useElrondRandomizedValidators();
-  const earnRewardEnabled = useMemo(() => areEarnRewardsEnabled(account), [account]);
-  const hasDelegations = account.elrondResources
-    ? account.elrondResources.delegations.length > 0
-    : false;
+  const earnRewardEnabled = useMemo(
+    () => account.type === "Account" && areEarnRewardsEnabled(account),
+    [account],
+  );
+  const hasDelegations =
+    account.type === "Account" && account.elrondResources
+      ? account.elrondResources.delegations.length > 0
+      : false;
   const onClick = useCallback(() => {
+    if (account.type !== "Account") return;
     if (!earnRewardEnabled) {
-      dispatch(
-        openModal("MODAL_NO_FUNDS_STAKE", {
-          account,
-          parentAccount,
-        }),
-      );
+      dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account }));
     } else if (hasDelegations) {
       dispatch(
-        openModal(modals.stake, {
+        openModal("MODAL_ELROND_DELEGATE", {
           account,
           validators,
           source,
@@ -39,14 +39,14 @@ const AccountHeaderActions = (props: Props) => {
       );
     } else {
       dispatch(
-        openModal(modals.rewards, {
+        openModal("MODAL_ELROND_REWARDS_INFO", {
           account,
           validators,
         }),
       );
     }
-  }, [earnRewardEnabled, hasDelegations, dispatch, account, parentAccount, validators, source]);
-  if (parentAccount) return null;
+  }, [earnRewardEnabled, hasDelegations, dispatch, account, validators, source]);
+  if (account.type !== "Account") return null;
   return [
     {
       key: "Stake",
@@ -60,4 +60,5 @@ const AccountHeaderActions = (props: Props) => {
     },
   ];
 };
-export default AccountHeaderActions;
+
+export default AccountHeaderManageActions;

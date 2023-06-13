@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import moment from "moment";
-import { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -39,8 +38,16 @@ import {
   ExternalStashUnsupportedWarning,
 } from "./UnsupportedWarning";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+import {
+  PolkadotAccount,
+  PolkadotNomination,
+  PolkadotUnlocking,
+  PolkadotValidator,
+} from "@ledgerhq/live-common/families/polkadot/types";
+import { SubAccount } from "@ledgerhq/types-live";
+
 type Props = {
-  account: Account;
+  account: PolkadotAccount | SubAccount;
 };
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -49,7 +56,15 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Nomination = ({ account }: Props) => {
+
+export type NominationValidator =
+  | {
+      nomination: PolkadotNomination;
+      validator?: PolkadotValidator;
+    }
+  | PolkadotUnlocking;
+
+const Nomination = ({ account }: { account: PolkadotAccount }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
@@ -67,7 +82,7 @@ const Nomination = ({ account }: Props) => {
           validator,
         };
       }) || [];
-    return all.reduce(
+    return all?.reduce(
       (sections, mapped) => {
         if (mapped.nomination.status === "active") {
           sections.uncollapsed.push(mapped);
@@ -77,8 +92,8 @@ const Nomination = ({ account }: Props) => {
         return sections;
       },
       {
-        uncollapsed: [],
-        collapsed: [],
+        uncollapsed: [] as NominationValidator[],
+        collapsed: [] as NominationValidator[],
       },
     );
   }, [nominations, validators]);
@@ -91,7 +106,7 @@ const Nomination = ({ account }: Props) => {
         ? [
             {
               amount: unlockedBalance,
-              completionDate: now,
+              completionDate: now.toDate(),
             },
             ...withoutUnlocked,
           ]
@@ -442,7 +457,7 @@ const Nomination = ({ account }: Props) => {
   );
 };
 const Nominations = ({ account }: Props) => {
-  if (!account.polkadotResources) return null;
+  if (account.type !== "Account") return null;
   return <Nomination account={account} />;
 };
 export default Nominations;

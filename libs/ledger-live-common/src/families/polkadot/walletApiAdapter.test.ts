@@ -1,10 +1,13 @@
-import dot from "./walletApiAdapter";
+import { Account } from "@ledgerhq/types-live";
 import { PolkadotTransaction as PlatformTransaction } from "@ledgerhq/wallet-api-core";
-import BigNumber from "bignumber.js";
 import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import BigNumber from "bignumber.js";
+import dot from "./walletApiAdapter";
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
   describe("should properly get infos for DOT platform tx", () => {
+    const dummyAccount = {} as Account;
+
     it("with most basic tx", () => {
       const dotPlatformTx: PlatformTransaction = {
         family: "polkadot",
@@ -21,7 +24,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
-        dot.getWalletAPITransactionSignFlowInfos(dotPlatformTx);
+        dot.getWalletAPITransactionSignFlowInfos({
+          tx: dotPlatformTx,
+          account: dummyAccount,
+        });
 
       expect(canEditFees).toBe(false);
 
@@ -48,7 +54,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
-        dot.getWalletAPITransactionSignFlowInfos(dotPlatformTx);
+        dot.getWalletAPITransactionSignFlowInfos({
+          tx: dotPlatformTx,
+          account: dummyAccount,
+        });
 
       expect(canEditFees).toBe(false);
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TFunction, useTranslation } from "react-i18next";
@@ -94,6 +94,13 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     [navigation, t],
   );
 
+  const request = useMemo(
+    () => ({
+      appName,
+    }),
+    [appName],
+  );
+
   return (
     <SafeAreaView
       edges={["bottom"]}
@@ -137,9 +144,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
         device={device}
         onResult={handleSuccess}
         onClose={resetDevice}
-        request={{
-          appName,
-        }}
+        request={request}
         analyticsPropertyFlow={"device connect"}
       />
     </SafeAreaView>

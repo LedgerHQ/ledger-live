@@ -68,7 +68,7 @@ There are two modes of usage of this library.
     *   [Parameters](#parameters-21)
 *   [removeTokenFromAllLists](#removetokenfromalllists)
     *   [Parameters](#parameters-22)
-*   [removeTokenFromAllLists](#removetokenfromalllists-1)
+*   [id](#id)
 
 ### abandonSeedAddresses
 
@@ -284,7 +284,7 @@ Delete previous token entry to all array
 
 *   `token` **TokenCurrency** 
 
-### removeTokenFromAllLists
+### id
 
 We clean all the reference of an existing token, if an hash doesn't  match.
 Like this we can update any change from a already added token coming from Dynamic CAL

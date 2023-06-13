@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -40,8 +40,28 @@ function ConnectDevice({
   const handleTx = useSignedTxHandlerWithoutBroadcast({
     onSuccess,
   });
-  // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
-  const dependencies = [mainAccount];
+
+  const request = useMemo(
+    () => ({
+      account,
+      parentAccount,
+      appName,
+      transaction,
+      status,
+      tokenCurrency,
+      dependencies: [mainAccount],
+      requireLatestFirmware: true,
+    }),
+    [
+      account,
+      appName,
+      mainAccount,
+      parentAccount,
+      status,
+      tokenCurrency,
+      transaction,
+    ],
+  );
   return transaction ? (
     <SafeAreaView
       style={[
@@ -57,16 +77,8 @@ function ConnectDevice({
       />
       <DeviceAction
         action={action}
-        request={{
-          account,
-          parentAccount,
-          appName,
-          transaction,
-          status,
-          tokenCurrency,
-          dependencies,
-          requireLatestFirmware: true,
-        }}
+        // @ts-expect-error Wrong types?
+        request={request}
         device={route.params.device}
         onResult={handleTx}
         onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}

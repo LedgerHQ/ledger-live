@@ -15,7 +15,7 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (str: string) => void;
   account: Account;
-  error: Error;
+  error: Error | undefined;
   message: MessageData | TypedMessageData;
   onConfirmationHandler: (arg: string) => void;
   onFailHandler: (arg: Error) => void;

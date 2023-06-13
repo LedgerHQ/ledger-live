@@ -111,6 +111,7 @@ function DelegationAmount({ navigation, route }: Props) {
     // @ts-expect-error navigate cannot infer the correct navigator + route
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
+      validatorName: route.params.validator.name,
       transaction,
       fromSelectAmount: true,
     });

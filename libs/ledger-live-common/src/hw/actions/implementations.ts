@@ -6,6 +6,7 @@ import {
   Subscription,
   TimeoutError,
   concat,
+  interval,
   of,
   timer,
 } from "rxjs";
@@ -16,6 +17,7 @@ import {
 import {
   catchError,
   debounce,
+  delayWhen,
   filter,
   switchMap,
   tap,
@@ -188,6 +190,15 @@ const pollingImplementation: Implementation = <
                   // All other events pass through.
                   return EMPTY;
                 }
+              ),
+              // NB An error is a dead-end as far as the task is concerned, and by delaying
+              // the emission of the event we prevent instant failures from showing flashing
+              // UI that looks like a glitch. For instance, if the device is locked and we retry
+              // this would allow a better UX, 800ms before a failure is totally acceptable.
+              delayWhen((e: any) =>
+                e.type === "error" || e.type === "lockedDevice"
+                  ? interval(800)
+                  : interval(0)
               )
             )
             .subscribe({
@@ -260,6 +271,15 @@ const eventImplementation: Implementation = <SpecificType, GenericRequestType>(
               type: "error",
               error,
             })
+          ),
+          // NB An error is a dead-end as far as the task is concerned, and by delaying
+          // the emission of the event we prevent instant failures from showing flashing
+          // UI that looks like a glitch. For instance, if the device is locked and we retry
+          // this would allow a better UX, 800ms before a failure is totally acceptable.
+          delayWhen((e: any) =>
+            e.type === "error" || e.type === "lockedDevice"
+              ? interval(800)
+              : interval(0)
           )
         )
         .subscribe({

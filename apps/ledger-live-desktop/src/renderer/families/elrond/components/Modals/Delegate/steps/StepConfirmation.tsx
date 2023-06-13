@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -13,15 +13,27 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { multiline } from "~/renderer/styles/helpers";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { StepProps } from "../types";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
-  const { t, optimisticOperation = {}, error, signed, transaction, source, validators } = props;
+  const {
+    t,
+    optimisticOperation = {},
+    account,
+    error,
+    signed,
+    transaction,
+    source,
+    validators,
+  } = props;
   const voteAccAddress = transaction?.recipient;
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
@@ -40,7 +52,7 @@ const StepConfirmation = (props: StepProps) => {
     return (
       <Container>
         <TrackPage category="Delegation Cosmos" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        {account ? <SyncOneAccountOnMount priority={10} accountId={account.id} /> : null}
 
         <SuccessDisplay
           title={<Trans i18nKey="elrond.delegation.flow.steps.confirmation.success.title" />}
@@ -67,7 +79,7 @@ const StepConfirmation = (props: StepProps) => {
   return null;
 };
 const StepConfirmationFooter = (props: StepProps) => {
-  const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
+  const { account, onRetry, error, onClose, optimisticOperation } = props;
   const concernedOperation = optimisticOperation;
   return (
     <Box horizontal alignItems="right">
@@ -86,7 +98,6 @@ const StepConfirmationFooter = (props: StepProps) => {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -100,4 +111,4 @@ const StepConfirmationFooter = (props: StepProps) => {
   );
 };
 export { StepConfirmationFooter };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

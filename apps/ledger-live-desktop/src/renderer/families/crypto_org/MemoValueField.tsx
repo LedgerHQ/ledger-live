@@ -2,22 +2,24 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
-import invariant from "invariant";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import {
+  CryptoOrgAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/crypto_org/types";
+
 const MemoValueField = ({
   onChange,
   account,
   transaction,
   status,
 }: {
-  onChange: (a: string) => void;
-  account: Account;
+  onChange: (t: Transaction) => void;
+  account: CryptoOrgAccount;
   transaction: Transaction;
   status: TransactionStatus;
 }) => {
   const { t } = useTranslation();
-  invariant(transaction.family === "crypto_org", "MemoTypeField: Crypto.org family expected");
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
     memo => {
@@ -37,7 +39,7 @@ const MemoValueField = ({
     <Input
       warning={status.warnings.transaction}
       error={status.errors.transaction}
-      value={transaction.memo}
+      value={transaction.memo as string | undefined} // FIXME: Should we change it ?
       onChange={onMemoValueChange}
       placeholder={t("cryptoOrg.memoPlaceholder")}
     />
