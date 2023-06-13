@@ -43,6 +43,7 @@ import {
 } from "../../components/DeviceAction/rendering";
 import { useUpdateFirmwareAndRestoreSettings } from "./useUpdateFirmwareAndRestoreSettings";
 import { urls } from "../../config/urls";
+import { TrackScreen } from "../../analytics";
 
 type FirmwareUpdateProps = {
   device: Device;
@@ -112,7 +113,7 @@ export const FirmwareUpdate = ({
     Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
   }, [device.modelId]);
 
-  const deviceName = useMemo(() => getDeviceModel(device.modelId).productName, [device.modelId]);
+  const productName = useMemo(() => getDeviceModel(device.modelId).productName, [device.modelId]);
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
@@ -226,22 +227,30 @@ export const FirmwareUpdate = ({
         status: ItemStatus.inactive,
         title: t("FirmwareUpdate.steps.prepareUpdate.titleActive"),
         renderBody: () => (
-          <Text color="neutral.c80">
-            {t("FirmwareUpdate.steps.prepareUpdate.description", {
-              deviceName,
-            })}
-          </Text>
+          <>
+            <TrackScreen
+              category={`Update ${productName} - Step 1: preparing updates for install`}
+            />
+            <Text color="neutral.c80">
+              {t("FirmwareUpdate.steps.prepareUpdate.description", {
+                deviceName: productName,
+              })}
+            </Text>
+          </>
         ),
       },
       installUpdate: {
         status: ItemStatus.inactive,
         title: t("FirmwareUpdate.steps.installUpdate.titleInactive"),
         renderBody: () => (
-          <Text color="neutral.c80">
-            {t("FirmwareUpdate.steps.installUpdate.description", {
-              deviceName,
-            })}
-          </Text>
+          <>
+            <TrackScreen category={`Update ${productName} - Step 2: installing updates`} />
+            <Text color="neutral.c80">
+              {t("FirmwareUpdate.steps.installUpdate.description", {
+                deviceName: productName,
+              })}
+            </Text>
+          </>
         ),
       },
       restoreAppsAndSettings: {
@@ -249,13 +258,14 @@ export const FirmwareUpdate = ({
         title: t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
+            <TrackScreen category={`Update ${productName} - Step 3: restore apps and settings`} />
             <Text color="neutral.c80">{t("FirmwareUpdate.steps.restoreSettings.description")}</Text>
             {restoreSteps.length > 0 && <VerticalStepper nested steps={restoreSteps} />}
           </Flex>
         ),
       },
     }),
-    [t, deviceName, restoreSteps],
+    [t, productName, restoreSteps],
   );
 
   useEffect(() => {
@@ -513,12 +523,13 @@ export const FirmwareUpdate = ({
     <>
       {fullUpdateComplete ? (
         <Flex flex={1} px={7}>
+          <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex mb={7}>
               <Icons.CircledCheckSolidMedium color="success.c80" size={100} />
             </Flex>
             <Text textAlign="center" fontSize={7} mb={3}>
-              {t("FirmwareUpdate.updateDone", { deviceName })}
+              {t("FirmwareUpdate.updateDone", { deviceName: productName })}
             </Text>
             <Text textAlign="center" fontSize={4} color="neutral.c80">
               {t("FirmwareUpdate.updateDoneDescription", {
@@ -539,7 +550,7 @@ export const FirmwareUpdate = ({
         <Flex flex={1} justifyContent="space-between">
           <Flex>
             <Text variant="h4" ml={5}>
-              {t("FirmwareUpdate.updateDevice", { deviceName })}
+              {t("FirmwareUpdate.updateDevice", { deviceName: productName })}
             </Text>
             <VerticalStepper steps={steps} />
           </Flex>
@@ -558,6 +569,17 @@ export const FirmwareUpdate = ({
           onPressQuit={quitUpdate}
         />
       </QueuedDrawer>
+      {updateStep === "languageRestore" ? (
+        <TrackScreen category={`Update ${productName} - Step 3a: restore language`} />
+      ) : updateStep === "imageRestore" ? (
+        <TrackScreen category={`Update ${productName} - Step 3b: restore lock screen picture`} />
+      ) : updateStep === "appsRestore" ? (
+        <TrackScreen category={`Update ${productName} - Step 3c: reinstall apps`} />
+      ) : updateStep === "completed" ? (
+        <TrackScreen
+          category={`Update ${productName} - Step 3d: apps and settings successfully restored`}
+        />
+      ) : null}
     </>
   );
 };
