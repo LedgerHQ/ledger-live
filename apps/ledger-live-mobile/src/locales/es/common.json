@@ -956,12 +956,12 @@
       "tour" : {
         "title" : "Haz un recorrido",
         "description" : "Explora la aplicación Ledger Live y descubre cómo comprar, hacer crecer y proteger tus activos",
-        "cta" : "Examinar"
+        "cta" : "Explora"
       },
       "academy" : {
         "title" : "Ledger Academy",
         "description" : "Todo lo que debes saber acerca de la cadena de bloques",
-        "cta" : "Examinar"
+        "cta" : "Explora"
       },
       "stakeCosmos" : {
         "title" : "Participación con COSMOS",
@@ -1015,7 +1015,7 @@
       "market" : {
         "title" : "Mercados cripto",
         "description" : "Verifica los precios de las cripto y las tendencias del mercado directamente desde la aplicación",
-        "cta" : "Examinar"
+        "cta" : "Explora"
       },
       "manageCard" : {
         "title" : "Presentamos la Tarjeta CL",
@@ -1151,7 +1151,7 @@
         "desc" : "Haz crecer tus cripto a través de la puesta en participación y los préstamos."
       },
       "mint" : {
-        "title" : "Acuñar",
+        "title" : "Acuña",
         "desc" : "Acuña NFTs de campañas exclusivas de [ L ] Market."
       },
       "referralProgram" : {
@@ -1167,14 +1167,14 @@
       "title" : "¿Quieres instalar las mismas aplicaciones que tenías en el {{deviceName}}?",
       "titleNoDeviceName" : "¿Quieres instalar las mismas aplicaciones que tenías en tu dispositivo Ledger anterior?",
       "installCTA" : "Restaurar ahora",
-      "skipCTA" : "Lo haré más tarde"
+      "skipCTA" : "Lo haré más adelante"
     },
     "landing" : {
       "estimatedTime" : "{{ minutes }} min",
       "title" : "El {{ productName }} usa aplicaciones para posibilitar transacciones seguras en la cadena de bloques",
       "subtitle" : "Te recomendamos descargar un conjunto de aplicaciones por defecto. Puedes descargar otras más adelante.",
       "installCTA" : "Instalar aplicaciones",
-      "skipCTA" : "Lo haré más tarde"
+      "skipCTA" : "Lo haré más adelante"
     },
     "ongoing" : {
       "resolving" : "Resolviendo dependencias",
@@ -1190,7 +1190,7 @@
       "start" : "Comenzar",
       "noDevice" : "¿No tienes un dispositivo?",
       "buy" : "Compra un {{fullDeviceName}}",
-      "terms" : "Al tocar “Empezar” otorgas tu consentimiento y aceptas nuestros ",
+      "terms" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros ",
       "termsLink" : "Términos del Servicio",
       "privacyLink" : "Política de Privacidad",
       "and" : "Y"
@@ -1220,7 +1220,7 @@
       },
       "desktopSync" : {
         "title" : "Sincronizar con aplicación Desktop",
-        "subtitle" : "Sincroniza tus activos desde Ledger Live Desktop con tu teléfono."
+        "subtitle" : "Sincroniza tus cuentas desde Ledger Live Desktop con tu teléfono."
       }
     },
     "discoverLive" : {
@@ -1369,7 +1369,7 @@
             }
           },
           "1" : {
-            "title" : "Examinar",
+            "title" : "Explora",
             "label" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
           },
           "2" : {
@@ -1498,7 +1498,7 @@
           "title" : "¿Dónde debo guardar mi Frase de recuperación?",
           "bullets" : {
             "0" : {
-              "label" : "<bold>NUNCA</bold> lo ingreses en una PC, teléfono o cualquier otro dispositivo. No le tomes fotografías."
+              "label" : "<bold>NUNCA</bold> la ingreses en una PC, teléfono o cualquier otro dispositivo. No le tomes fotografías."
             },
             "1" : {
               "label" : "<bold>NUNCA</bold> compartas tus 24 Palabras con NADIE."
@@ -1570,7 +1570,7 @@
             }
           },
           "1" : {
-            "title" : "Examinar",
+            "title" : "Explora",
             "label" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
           },
           "2" : {
@@ -2064,11 +2064,11 @@
     "description" : "Puedes elegir añadir cripto directamente desde tu Ledger, o importarlas desde Ledger Live Desktop.",
     "add" : {
       "title" : "Con tu Ledger",
-      "description" : "Crear o importar activos con tu Ledger"
+      "description" : "Crea o importa cuentas con tu Ledger"
     },
     "import" : {
       "title" : "Importar desde Desktop",
-      "description" : "Importar activos desde Ledger Live Desktop"
+      "description" : "Importar cuentas desde Ledger Live Desktop"
     }
   },
   "byteSize" : {
@@ -2219,7 +2219,7 @@
     "noMoreTransactions" : "No hay otras transacciones"
   },
   "selectableAccountsList" : {
-    "deselectAll" : "Deseleccionar todo",
+    "deselectAll" : "Desmarcar todo",
     "selectAll" : "Seleccionar todo",
     "tokenCount" : "+1 token",
     "tokenCount_plural" : "+{{count}} tokens",
@@ -3739,7 +3739,7 @@
       },
       "genuineCheck" : {
         "title" : "Habilita Ledger Manager en tu {{productName}}",
-        "accept" : "No apagues tu Nano X. Asegúrate de permitir el <1>Manager de Ledger</1>."
+        "accept" : "No apagues tu Nano X. Asegúrate de permitir una <1>Conexión Segura con Ledger</1>."
       },
       "genuineCheckPending" : {
         "title" : "Comprobando si el dispositivo es original..."
@@ -3796,7 +3796,7 @@
     },
     "GenuineCheck" : {
       "title" : "Comprobación de la autenticación del dispositivo",
-      "accept" : "No apagues tu Nano X. Asegúrate de permitir el <1>Manager de Ledger</1>.",
+      "accept" : "No apagues tu Nano X. Asegúrate de permitir una <1>Conexión Segura con Ledger</1>.",
       "info" : "Este paso está pensado para garantizar que tu Nano sea auténtico."
     },
     "ScanningHeader" : {
@@ -5623,7 +5623,7 @@
       "selectAccount" : "Selecciona una cuenta",
       "wantToSell" : "Quiero vender",
       "connectDevice" : "Conecta tu dispositivo",
-      "title" : "Vende criptos a través de nuestro socio",
+      "title" : "Vende cripto a través de nuestro socio",
       "description" : "Vende activos cripto directamente desde la cuenta de Ledger mediante Coinify y recibe dinero fiduciario en tu cuenta bancaria.",
       "CTAButton" : "Vender ahora",
       "emptyState" : {
@@ -5965,7 +5965,7 @@
     "replace" : "Sustituir",
     "drawer" : {
       "options" : {
-        "uploadFromPhone" : "Elegir de mi galería de fotos",
+        "uploadFromPhone" : "Elegir de la galería de imágenes",
         "selectFromNFTGallery" : "Elegir de la galería de NFTs"
       }
     },
