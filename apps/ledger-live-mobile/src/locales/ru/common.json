@@ -2665,7 +2665,7 @@
       "repairDeviceDesc" : "Если при обновлении устройства возникла проблема и вы не можете продолжить обновление, воспользуйтесь этой функцией для устранения неполадок."
     },
     "experimental" : {
-      "title" : "Экспериментальные функции",
+      "title" : "Экспериментальный режим",
       "desc" : "Попробуйте экспериментальные функции и скажите нам, что вы думаете.",
       "disclaimer" : "Это Экспериментальные функции, предоставляемые на условиях «как есть» для нашего сообщества технических энтузиастов. Эти функции могут быть изменены, заблокированы или удалены в любое время. Активируя их, вы принимаете на себя все риски от использования.",
       "experimentalFeatures" : {
@@ -3365,7 +3365,7 @@
       "selectAmount" : "Сумма",
       "summary" : "Сводка",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
       "quantity" : "Количество",
       "selectCollection" : "Коллекция",
@@ -3470,7 +3470,7 @@
       "selectAmount" : "Заморозить",
       "summary" : "Сводка",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "info" : {
@@ -3508,7 +3508,7 @@
       "selectAmount" : "Разморозить",
       "summary" : "Сводка",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "amount" : {
@@ -3528,7 +3528,7 @@
   "claimReward" : {
     "stepperHeader" : {
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "validation" : {
@@ -3544,7 +3544,7 @@
       "selectValidator" : "Передать голоса",
       "castVote" : "Мои голоса",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "selectValidator" : {
@@ -4139,7 +4139,7 @@
       "stepperHeader" : {
         "info" : "Получение вознаграждений",
         "starter" : "Вознаграждения",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "verification" : "Проверка",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
@@ -4178,7 +4178,7 @@
     "optIn" : {
       "stepperHeader" : {
         "selectToken" : "Добавление активов ASA",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "verification" : "Проверка",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
@@ -4276,7 +4276,7 @@
         "title" : "Разблокировать активы",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4300,7 +4300,7 @@
         "title" : "Голосовать",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4335,7 +4335,7 @@
         "title" : "Активировать голоса",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "title" : "Активировать голоса",
       "flow" : {
@@ -4355,7 +4355,7 @@
         "title" : "Голосовать",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4389,7 +4389,7 @@
         "continue" : "Продолжить",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4410,7 +4410,7 @@
         "title" : "Заблокировать активы",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4452,7 +4452,7 @@
         "title" : "Голосовать",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4531,7 +4531,7 @@
         "summary" : "Сводка",
         "verification" : "Проверка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4595,7 +4595,7 @@
         "amountTitle" : "{{from}} → {{to}}",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4631,7 +4631,7 @@
         "amountSubTitle" : "Сумма отзыва делегирования",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4659,7 +4659,7 @@
         "method" : "Получение вознаграждения",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4732,7 +4732,7 @@
         "summary" : "Сводка",
         "verification" : "Проверка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4797,7 +4797,7 @@
         "method" : "Получить вознаграждения",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4834,7 +4834,7 @@
         "amountSubTitle" : "Сумма вывода из стейкинга",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4866,7 +4866,7 @@
         "method" : "Получить вознаграждение",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -5040,7 +5040,7 @@
     "addAsset" : {
       "stepperHeader" : {
         "selectAsset" : "Добавить актив",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "verification" : "Проверка",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
@@ -5170,7 +5170,7 @@
       "stepperHeader" : {
         "validators" : "Выбор валидаторов",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5206,7 +5206,7 @@
         "starter" : "Получение вознаграждений",
         "amount" : "Сумма блокировки",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5242,7 +5242,7 @@
       "stepperHeader" : {
         "amount" : "Сумма повторной блокировки",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5265,7 +5265,7 @@
       "stepperHeader" : {
         "amount" : "Сумма разблокировки",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5304,7 +5304,7 @@
       "stepperHeader" : {
         "info" : "Подробнее",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5415,7 +5415,7 @@
       "stepperHeader" : {
         "amountSubTitle" : "Сумма для стейкинга",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
