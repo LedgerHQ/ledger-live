@@ -8,7 +8,7 @@
  * scheme is generally the id
  * color: is the dominant color of the currency logo, we will color the logo svg with it.
  * managerAppName: if any, is the exact name of the related Ledger's app in LL Manager.
- * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
+ * blockAvgTime: the average time between 2 blocks, in seconds. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
  * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
  * terminated: Present when we no longer support this specific coin.
