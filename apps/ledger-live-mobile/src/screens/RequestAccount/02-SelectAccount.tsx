@@ -88,7 +88,7 @@ const List = ({
 
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { accounts$, currency, allowAddAccount, onSuccess, onError } = route.params;
+  const { accounts$, currency, allowAddAccount, onSuccess, onError, shouldNotPopNavigationOnSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds)) as {
     account: AccountLike;
@@ -97,11 +97,13 @@ function SelectAccount({ navigation, route }: Props) {
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       onSuccess && onSuccess(account, parentAccount);
-      const n =
-        navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() || navigation;
-      n.pop();
+      if (!shouldNotPopNavigationOnSuccess) {
+        const n =
+          navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() || navigation;
+        n.pop();
+      }
     },
-    [navigation, onSuccess],
+    [navigation, onSuccess, shouldNotPopNavigationOnSuccess],
   );
   const renderItem = useCallback(
     ({ item }) => <Item item={item} onSelect={onSelect} />,
