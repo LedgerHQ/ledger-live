@@ -20,22 +20,11 @@ const PairNewScene = ({ deviceModelId }: { deviceModelId: string }) => {
 
 PairNewScene.id = "PairNewScene";
 
-const Next = ({
-  onNext,
-  deviceModelId,
-}: {
-  onNext: () => void;
-  deviceModelId: string;
-}) => {
+const Next = ({ onNext, deviceModelId }: { onNext: () => void; deviceModelId: string }) => {
   const { t } = useTranslation();
 
   return (
-    <Button
-      type="main"
-      size="large"
-      onPress={onNext}
-      testID="Onboarding-PairNewNano"
-    >
+    <Button type="main" size="large" onPress={onNext} testID="Onboarding-PairNewNano">
       {t(`onboarding.stepPairNew.${deviceModelId}.cta`)}
     </Button>
   );

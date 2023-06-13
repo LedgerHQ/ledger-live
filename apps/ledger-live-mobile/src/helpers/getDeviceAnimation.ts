@@ -6,10 +6,7 @@ import Config from "react-native-config";
 type AnimationSource = AnimatedLottieViewProps["source"];
 type AnimationRecord = Record<"light" | "dark", AnimationSource>;
 
-type S_SP_BLUE =
-  | DeviceModelId.nanoS
-  | DeviceModelId.nanoSP
-  | DeviceModelId.blue;
+type S_SP_BLUE = DeviceModelId.nanoS | DeviceModelId.nanoSP | DeviceModelId.blue;
 export type Animations = {
   [modelId in S_SP_BLUE]: Record<string, AnimationRecord>;
 } & {
@@ -294,15 +291,10 @@ export function getDeviceAnimation({
 
   let animation: AnimationSource | undefined;
 
-  if (
-    [DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.blue].includes(
-      modelId,
-    )
-  ) {
+  if ([DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.blue].includes(modelId)) {
     animation = animations[modelId as S_SP_BLUE][key][theme];
   } else {
-    animation =
-      animations[modelId]?.[wired ? "wired" : "bluetooth"]?.[key][theme];
+    animation = animations[modelId]?.[wired ? "wired" : "bluetooth"]?.[key][theme];
   }
 
   if (!animation) {

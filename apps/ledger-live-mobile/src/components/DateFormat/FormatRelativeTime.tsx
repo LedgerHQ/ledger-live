@@ -59,15 +59,10 @@ export function relativeTimeFromElapsed(
   return "";
 }
 
-function FormatRelativeTime({
-  date,
-  baseDate = new Date(),
-}: Props): JSX.Element | null {
+function FormatRelativeTime({ date, baseDate = new Date() }: Props): JSX.Element | null {
   const defaultFormatter = useSelector(defaultRelativeTimeFormatterSelector);
   const jsx =
-    date && date.getTime()
-      ? relativeTimeFromDates(defaultFormatter, date, baseDate)
-      : null;
+    date && date.getTime() ? relativeTimeFromDates(defaultFormatter, date, baseDate) : null;
   return <>{jsx}</>;
 }
 

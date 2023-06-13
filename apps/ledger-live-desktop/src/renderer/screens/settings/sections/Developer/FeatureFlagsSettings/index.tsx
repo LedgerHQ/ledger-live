@@ -208,9 +208,10 @@ const FeatureFlagsSettings = () => {
   const [contentExpanded, setContentExpanded] = useState(false);
   const location = useLocation<{ shouldOpenFeatureFlags?: boolean }>();
 
-  useEffect(() => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)), [
-    location.state?.shouldOpenFeatureFlags,
-  ]);
+  useEffect(
+    () => setContentExpanded(Boolean(location.state?.shouldOpenFeatureFlags)),
+    [location.state?.shouldOpenFeatureFlags],
+  );
 
   const toggleContentVisibility = useCallback(() => {
     setContentExpanded(!contentExpanded);

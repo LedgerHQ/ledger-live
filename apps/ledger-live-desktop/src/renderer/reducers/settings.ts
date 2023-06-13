@@ -401,7 +401,7 @@ const handlers: SettingsHandlers = {
   }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as SettingsHandlers<false>,
+  handlers as unknown as SettingsHandlers<false>,
   INITIAL_STATE,
 );
 

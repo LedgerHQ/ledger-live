@@ -325,7 +325,6 @@ class AccountRowItem extends PureComponent<Props, State> {
 const mapStateToProps = createStructuredSelector({
   hideEmptyTokenAccounts: hideEmptyTokenAccountsSelector,
 });
-const ConnectedAccountRowItem: React.ComponentType<Props> = connect(mapStateToProps)(
-  AccountRowItem,
-);
+const ConnectedAccountRowItem: React.ComponentType<Props> =
+  connect(mapStateToProps)(AccountRowItem);
 export default ConnectedAccountRowItem;

@@ -102,10 +102,7 @@ export function Search({ title, disclaimer, search }: Props) {
             <AnimatedView animation="fadeInUp" delay={50} duration={300}>
               <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT + 50}>
                 {result.length ? (
-                  <ManifestList
-                    manifests={result}
-                    onSelect={disclaimer.onSelect}
-                  />
+                  <ManifestList manifests={result} onSelect={disclaimer.onSelect} />
                 ) : (
                   noResultFoundComponent
                 )}

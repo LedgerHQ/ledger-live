@@ -1,10 +1,7 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { WebView } from "react-native-webview";
-import {
-  WebViewErrorEvent,
-  WebViewMessageEvent,
-} from "react-native-webview/lib/WebViewTypes";
+import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { injectedCode } from "./injectedCode/imageProcessing";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
@@ -56,8 +53,7 @@ export default class ImageProcessor extends React.Component<Props> {
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.contrast !== this.props.contrast) this.setAndApplyContrast();
-    if (prevProps.imageBase64DataUri !== this.props.imageBase64DataUri)
-      this.computeResult();
+    if (prevProps.imageBase64DataUri !== this.props.imageBase64DataUri) this.computeResult();
   }
 
   handleWebViewMessage = ({ nativeEvent: { data } }: WebViewMessageEvent) => {

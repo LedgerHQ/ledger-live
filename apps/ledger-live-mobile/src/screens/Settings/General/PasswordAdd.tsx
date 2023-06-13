@@ -5,10 +5,7 @@ import { PasswordAddFlowParamList } from "../../../components/RootNavigator/type
 import { ScreenName } from "../../../const";
 import PasswordForm from "./PasswordForm";
 
-type NavigationProps = StackNavigatorProps<
-  PasswordAddFlowParamList,
-  ScreenName.PasswordAdd
->;
+type NavigationProps = StackNavigatorProps<PasswordAddFlowParamList, ScreenName.PasswordAdd>;
 
 type Props = {
   t: TFunction;

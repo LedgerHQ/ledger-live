@@ -12,7 +12,7 @@ import { useFromAmountError } from "./useSwapTransaction";
 describe("useSwapTransaction", () => {
   test("useFromAmountError - returns nothing when no errors are caught", () => {
     const { result } = renderHook(() =>
-      useFromAmountError({ gasPrice: undefined, amount: undefined })
+      useFromAmountError({ gasPrice: undefined, amount: undefined }),
     );
 
     expect(result.current).toBeUndefined();
@@ -46,7 +46,7 @@ describe("useSwapTransaction", () => {
     const amountError = new AmountRequired("This error will be filtered");
 
     const { result } = renderHook(() =>
-      useFromAmountError({ gasPrice: undefined, amount: amountError })
+      useFromAmountError({ gasPrice: undefined, amount: amountError }),
     );
 
     expect(result.current).toBeUndefined();

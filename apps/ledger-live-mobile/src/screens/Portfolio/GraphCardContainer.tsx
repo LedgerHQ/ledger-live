@@ -1,10 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  Currency,
-  TokenCurrency,
-  CryptoCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { Currency, TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Animated from "react-native-reanimated";
 import { Portfolio } from "@ledgerhq/types-live";
 import { currenciesSelector } from "../../reducers/accounts";
@@ -27,8 +23,7 @@ const GraphCardContainer = ({
   currentPositionY: Animated.SharedValue<number>;
   graphCardEndPosition: number;
 }) => {
-  const currencies: Array<CryptoCurrency | TokenCurrency> =
-    useSelector(currenciesSelector);
+  const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(currenciesSelector);
 
   return (
     <>

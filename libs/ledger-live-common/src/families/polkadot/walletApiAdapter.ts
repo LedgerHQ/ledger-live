@@ -19,7 +19,7 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIPolkadotTransaction,
   Transaction
-> = (params) => {
+> = params => {
   return {
     canEditFees: CAN_EDIT_FEES,
     liveTx: convertToLiveTransaction(params),

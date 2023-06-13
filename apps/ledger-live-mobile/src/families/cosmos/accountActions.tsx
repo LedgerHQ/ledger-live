@@ -37,8 +37,7 @@ const getMainActions = ({
         NavigatorName.CosmosDelegationFlow,
         {
           screen:
-            account.cosmosResources &&
-            account.cosmosResources?.delegations.length > 0
+            account.cosmosResources && account.cosmosResources?.delegations.length > 0
               ? ScreenName.CosmosDelegationValidator
               : ScreenName.CosmosDelegationStarted,
           params: {

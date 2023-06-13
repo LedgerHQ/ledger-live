@@ -82,10 +82,7 @@ const Delegation = (props: DelegationPropsType) => {
     const filterDelegations = (delegation: DelegationType): boolean =>
       BigNumber(delegation.userActiveStake).isGreaterThan(0) ||
       BigNumber(delegation.claimableRewards).isGreaterThan(0);
-    return delegationResources
-      .map(assignValidator)
-      .sort(sortDelegations)
-      .filter(filterDelegations);
+    return delegationResources.map(assignValidator).sort(sortDelegations).filter(filterDelegations);
   }, [findValidator, delegationResources]);
   const unbondings = useMemo(
     (): UnbondingType[] =>

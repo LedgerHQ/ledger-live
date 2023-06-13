@@ -129,10 +129,7 @@ export default function Store() {
       try {
         await Share.open(options);
       } catch (err) {
-        if (
-          (err as { error?: { code?: string } })?.error?.code !==
-          "ECANCELLED500"
-        ) {
+        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
           logger.critical(err as Error);
         }
       }
@@ -143,10 +140,7 @@ export default function Store() {
     <SafeAreaView>
       <Flex p={4}>
         {hasMadeChanges ? (
-          <Alert
-            type="warning"
-            title="Changes are not persisted until you confirm."
-          />
+          <Alert type="warning" title="Changes are not persisted until you confirm." />
         ) : (
           <Alert type="info" title="Read and modify the application state." />
         )}
@@ -167,19 +161,9 @@ export default function Store() {
           disabled={!hasMadeChanges}
           onPress={onRestore}
         />
-        <Button
-          ml={3}
-          type="shade"
-          iconName={"Share"}
-          onPress={onExportState}
-        />
+        <Button ml={3} type="shade" iconName={"Share"} onPress={onExportState} />
         {__DEV__ ? (
-          <Button
-            ml={3}
-            type="shade"
-            iconName={"Warning"}
-            onPress={onStoreDebug}
-          />
+          <Button ml={3} type="shade" iconName={"Warning"} onPress={onStoreDebug} />
         ) : null}
       </Flex>
       <Separator />

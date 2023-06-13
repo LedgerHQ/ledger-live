@@ -40,9 +40,7 @@ export function SelectCurrency({
       <FlatList
         contentContainerStyle={styles.list}
         data={items}
-        renderItem={({ item }) => (
-          <CurrencyRow currency={item} onPress={onSelect} />
-        )}
+        renderItem={({ item }) => <CurrencyRow currency={item} onPress={onSelect} />}
         keyExtractor={currency => currency.id}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
@@ -54,11 +52,7 @@ export function SelectCurrency({
   return (
     <KeyboardView>
       <Flex>
-        <TrackScreen
-          category="Swap Form"
-          name="Edit Target Currency"
-          provider={provider}
-        />
+        <TrackScreen category="Swap Form" name="Edit Target Currency" provider={provider} />
 
         <FilteredSearchBar
           keys={["name", "ticker"]}

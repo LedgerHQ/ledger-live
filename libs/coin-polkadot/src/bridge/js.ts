@@ -51,7 +51,7 @@ const broadcast =
 export function buildCurrencyBridge(
   deviceCommunication: DeviceCommunication,
   network: NetworkRequestCall,
-  cacheFn: LRUCacheFn
+  cacheFn: LRUCacheFn,
 ): CurrencyBridge {
   const polkadotAPI = new PolkadotAPI(network, cacheFn);
 
@@ -73,14 +73,11 @@ export function buildCurrencyBridge(
 export function buildAccountBridge(
   deviceCommunication: DeviceCommunication,
   network: NetworkRequestCall,
-  cacheFn: LRUCacheFn
+  cacheFn: LRUCacheFn,
 ): AccountBridge<Transaction> {
   const polkadotAPI = new PolkadotAPI(network, cacheFn);
 
-  const receive = makeAccountBridgeReceive(
-    getAddressWrapper(getAddress),
-    deviceCommunication
-  );
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
   const signOperation = buildSignOperation(deviceCommunication, polkadotAPI);
   const getAccountShape = makeGetAccountShape(polkadotAPI);
   const sync = makeSync({ getAccountShape });
@@ -103,7 +100,7 @@ export function buildAccountBridge(
 export function createBridges(
   deviceCommunication: DeviceCommunication,
   network: NetworkRequestCall,
-  cacheFn: LRUCacheFn
+  cacheFn: LRUCacheFn,
 ) {
   return {
     currencyBridge: buildCurrencyBridge(deviceCommunication, network, cacheFn),

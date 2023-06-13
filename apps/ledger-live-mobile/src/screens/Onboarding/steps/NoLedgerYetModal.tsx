@@ -4,10 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/core";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
-import {
-  setHasOrderedNano,
-  setOnboardingHasDevice,
-} from "../../../actions/settings";
+import { setHasOrderedNano, setOnboardingHasDevice } from "../../../actions/settings";
 import { NavigatorName, ScreenName } from "../../../const";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import {
@@ -67,9 +64,9 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
 
   const buyLedger = useCallback(() => {
     setFromBuy(true);
-    (
-      navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>
-    ).navigate(NavigatorName.BuyDevice);
+    (navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>).navigate(
+      NavigatorName.BuyDevice,
+    );
   }, [navigation]);
 
   return (
@@ -83,12 +80,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("onboarding.postWelcomeStep.noLedgerYetModal.title")}
         </Text>
-        <Text
-          variant="bodyLineHeight"
-          fontWeight="medium"
-          color="neutral.c70"
-          mt={6}
-        >
+        <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c70" mt={6}>
           {t("onboarding.postWelcomeStep.noLedgerYetModal.desc")}
         </Text>
       </Flex>
@@ -130,11 +122,7 @@ const CustomHeader = ({ children }: HeaderProps) => (
   <StyledHeader height={200}>
     {children}
     <StyledImageContainer>
-      <Illustration
-        size={550}
-        lightSource={ImageLedger}
-        darkSource={ImageLedger}
-      />
+      <Illustration size={550} lightSource={ImageLedger} darkSource={ImageLedger} />
     </StyledImageContainer>
   </StyledHeader>
 );

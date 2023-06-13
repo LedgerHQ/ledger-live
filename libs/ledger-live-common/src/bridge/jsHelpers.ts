@@ -29,14 +29,10 @@ export const makeScanAccounts = ({
 }: {
   getAccountShape: GetAccountShape;
   buildIterateResult?: IterateResultBuilder;
-  getAddressFn?: (
-    transport: Transport
-  ) => (opts: GetAddressOptions) => Promise<Result>;
+  getAddressFn?: (transport: Transport) => (opts: GetAddressOptions) => Promise<Result>;
 }): CurrencyBridge["scanAccounts"] => {
   const getAddr: Resolver = (transport: Transport, opts: GetAddressOptions) => {
-    return getAddressFn
-      ? getAddressFn(transport)(opts)
-      : getAddress(transport, opts);
+    return getAddressFn ? getAddressFn(transport)(opts) : getAddress(transport, opts);
   };
 
   return commonMakeScanAccounts({
@@ -58,7 +54,7 @@ export function makeAccountBridgeReceive({
     deviceId: string;
     subAccountId?: string;
     freshAddressIndex?: number;
-  }
+  },
 ) => Observable<{
   address: string;
   path: string;

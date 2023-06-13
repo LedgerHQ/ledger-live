@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { resolveAddress, resolveDomain } from "../resolvers";
 import { getRegistriesForAddress } from "../registries";
 import { getRegistriesForDomain } from "../registries";
@@ -17,12 +11,7 @@ import {
   DomainServiceContextType,
   DomainServiceStatus,
 } from "./types";
-import {
-  DomainEmpty,
-  InvalidDomain,
-  NoResolution,
-  UnsupportedDomainOrAddress,
-} from "../errors";
+import { DomainEmpty, InvalidDomain, NoResolution, UnsupportedDomainOrAddress } from "../errors";
 
 const DomainServiceContext = createContext<DomainServiceContextType>({
   cache: {},
@@ -33,7 +22,7 @@ const DomainServiceContext = createContext<DomainServiceContextType>({
 
 export const useDomain = (
   addressOrDomain: string,
-  registry?: SupportedRegistries
+  registry?: SupportedRegistries,
 ): DomainServiceStatus => {
   const [state, setState] = useState<DomainServiceStatus>({ status: "queued" });
   const addressOrDomainLC = addressOrDomain.toLowerCase();
@@ -105,11 +94,8 @@ export function DomainServiceProvider({
 
   const api: DomainServiceContextAPI = useMemo(
     () => ({
-      loadDomainServiceAPI: async (
-        addressOrDomain: string,
-        registry?: SupportedRegistries
-      ) => {
-        setState((oldState) => ({
+      loadDomainServiceAPI: async (addressOrDomain: string, registry?: SupportedRegistries) => {
+        setState(oldState => ({
           ...oldState,
           cache: {
             ...oldState.cache,
@@ -123,7 +109,7 @@ export function DomainServiceProvider({
           resolveDomain(addressOrDomain, registry),
           resolveAddress(addressOrDomain, registry),
         ])
-          .then((res) => res.flat())
+          .then(res => res.flat())
           .catch((e: Error) => e);
 
         const newEntry = (() => {
@@ -136,9 +122,7 @@ export function DomainServiceProvider({
                 }
               : {
                   status: "error" as const,
-                  error: new NoResolution(
-                    `No resolution found for ${addressOrDomain}`
-                  ),
+                  error: new NoResolution(`No resolution found for ${addressOrDomain}`),
                   updatedAt: Date.now(),
                 };
           }
@@ -149,7 +133,7 @@ export function DomainServiceProvider({
           };
         })();
 
-        setState((oldState) => ({
+        setState(oldState => ({
           ...oldState,
           cache: {
             ...oldState.cache,
@@ -158,20 +142,16 @@ export function DomainServiceProvider({
         }));
       },
       clearCache: () => {
-        setState((oldState) => ({
+        setState(oldState => ({
           ...oldState,
           cache: {},
         }));
       },
     }),
-    []
+    [],
   );
 
   const value = { ...state, ...api };
 
-  return (
-    <DomainServiceContext.Provider value={value}>
-      {children}
-    </DomainServiceContext.Provider>
-  );
+  return <DomainServiceContext.Provider value={value}>{children}</DomainServiceContext.Provider>;
 }

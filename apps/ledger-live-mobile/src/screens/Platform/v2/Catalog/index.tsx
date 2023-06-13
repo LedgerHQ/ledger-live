@@ -45,10 +45,7 @@ export function Catalog() {
             }
             disableStyleBottomHeader
             bottomHeaderContent={
-              <RecentlyUsed
-                recentlyUsed={recentlyUsed}
-                disclaimer={disclaimer}
-              />
+              <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
             }
             disableStyleSubBottomHeader
             subBottomHeaderContent={<CatalogSection categories={categories} />}
@@ -56,11 +53,7 @@ export function Catalog() {
               <AnimatedView animation="fadeInUp" delay={50} duration={300}>
                 <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT}>
                   <ManifestList
-                    manifests={
-                      categories.manifestsByCategories.get(
-                        categories.selected,
-                      ) ?? []
-                    }
+                    manifests={categories.manifestsByCategories.get(categories.selected) ?? []}
                     onSelect={disclaimer.onSelect}
                   />
                 </Flex>

@@ -87,16 +87,14 @@ export enum AppStateActionTypes {
 }
 
 export type AppStateIsConnectedPayload = AppState["isConnected"];
-export type AppStateSetHasConnectedDevicePayload =
-  AppState["hasConnectedDevice"];
+export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
 export type AppStateSetWiredDevicePayload = AppState["wiredDevice"];
 export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
 
-export type AppStateUpdateMainNavigatorVisibilityPayload =
-  AppState["isMainNavigatorVisible"];
+export type AppStateUpdateMainNavigatorVisibilityPayload = AppState["isMainNavigatorVisible"];
 export type AppStatePayload =
   | AppStateIsConnectedPayload
   | AppStateSetHasConnectedDevicePayload
@@ -139,23 +137,18 @@ export enum NotificationsActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
-export type NotificationsSetModalOpenPayload =
-  NotificationsState["isPushNotificationsModalOpen"];
+export type NotificationsSetModalOpenPayload = NotificationsState["isPushNotificationsModalOpen"];
 
 export type NotificationsSetModalLockedPayload =
   NotificationsState["isPushNotificationsModalLocked"];
 
-export type NotificationsSetModalTypePayload =
-  NotificationsState["notificationsModalType"];
+export type NotificationsSetModalTypePayload = NotificationsState["notificationsModalType"];
 
-export type NotificationsSetCurrentRouteNamePayload =
-  NotificationsState["currentRouteName"];
+export type NotificationsSetCurrentRouteNamePayload = NotificationsState["currentRouteName"];
 
-export type NotificationsSetEventTriggeredPayload =
-  NotificationsState["eventTriggered"];
+export type NotificationsSetEventTriggeredPayload = NotificationsState["eventTriggered"];
 
-export type NotificationsSetDataOfUserPayload =
-  NotificationsState["dataOfUser"];
+export type NotificationsSetDataOfUserPayload = NotificationsState["dataOfUser"];
 
 export type NotificationsPayload =
   | NotificationsSetModalOpenPayload
@@ -174,17 +167,13 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
 }
 
-export type DynamicContentSetWalletCardsPayload =
-  DynamicContentState["walletCards"];
+export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
 
-export type DynamicContentSetAssetCardsPayload =
-  DynamicContentState["assetsCards"];
+export type DynamicContentSetAssetCardsPayload = DynamicContentState["assetsCards"];
 
-export type DynamicContentSetLearnCardsPayload =
-  DynamicContentState["learnCards"];
+export type DynamicContentSetLearnCardsPayload = DynamicContentState["learnCards"];
 
-export type DynamicContentSetNotificationCardsPayload =
-  DynamicContentState["notificationCards"];
+export type DynamicContentSetNotificationCardsPayload = DynamicContentState["notificationCards"];
 
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
@@ -205,8 +194,7 @@ export enum RatingsActionTypes {
 
 export type RatingsSetModalOpenPayload = RatingsState["isRatingsModalOpen"];
 export type RatingsSetModalLockedPayload = RatingsState["isRatingsModalLocked"];
-export type RatingsSetCurrentRouteNamePayload =
-  RatingsState["currentRouteName"];
+export type RatingsSetCurrentRouteNamePayload = RatingsState["currentRouteName"];
 export type RatingsSetHappyMomentPayload = RatingsState["happyMoment"];
 export type RatingsDataOfUserPayload = RatingsState["dataOfUser"];
 export type RatingsPayload =
@@ -297,20 +285,15 @@ export type SettingsUpdateCurrencyPayload = {
 };
 export type SettingsSetPrivacyPayload = Privacy;
 export type SettingsSetPrivacyBiometricsPayload = boolean;
-export type SettingsSetReportErrorsPayload =
-  SettingsState["reportErrorsEnabled"];
+export type SettingsSetReportErrorsPayload = SettingsState["reportErrorsEnabled"];
 export type SettingsSetAnalyticsPayload = SettingsState["analyticsEnabled"];
 export type SettingsSetCountervaluePayload = SettingsState["counterValue"];
 export type SettingsSetOrderAccountsPayload = SettingsState["orderAccounts"];
 export type SettingsSetPairsPayload = { pairs: Array<Pair> };
-export type SettingsSetSelectedTimeRangePayload =
-  SettingsState["selectedTimeRange"];
-export type SettingsInstallAppFirstTimePayload =
-  SettingsState["hasInstalledAnyApp"];
-export type SettingsSetReadOnlyModePayload =
-  SettingsState["readOnlyModeEnabled"];
-export type SettingsHideEmptyTokenAccountsPayload =
-  SettingsState["hideEmptyTokenAccounts"];
+export type SettingsSetSelectedTimeRangePayload = SettingsState["selectedTimeRange"];
+export type SettingsInstallAppFirstTimePayload = SettingsState["hasInstalledAnyApp"];
+export type SettingsSetReadOnlyModePayload = SettingsState["readOnlyModeEnabled"];
+export type SettingsHideEmptyTokenAccountsPayload = SettingsState["hideEmptyTokenAccounts"];
 export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
 export type SettingsShowTokenPayload = string;
@@ -318,12 +301,10 @@ export type SettingsBlacklistTokenPayload = string;
 export type SettingsHideNftCollectionPayload = string;
 export type SettingsUnhideNftCollectionPayload = string;
 export type SettingsDismissBannerPayload = string;
-export type SettingsSetAvailableUpdatePayload =
-  SettingsState["hasAvailableUpdate"];
+export type SettingsSetAvailableUpdatePayload = SettingsState["hasAvailableUpdate"];
 export type SettingsSetThemePayload = SettingsState["theme"];
 export type SettingsSetOsThemePayload = SettingsState["osTheme"];
-export type SettingsSetDismissedDynamicCardsPayload =
-  SettingsState["dismissedDynamicCards"];
+export type SettingsSetDismissedDynamicCardsPayload = SettingsState["dismissedDynamicCards"];
 export type SettingsSetDiscreetModePayload = SettingsState["discreetMode"];
 export type SettingsSetLanguagePayload = SettingsState["language"];
 export type SettingsSetLocalePayload = SettingsState["locale"];
@@ -346,12 +327,8 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 >["deviceInfo"];
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
-export type SettingsAddStarredMarketcoinsPayload = Unpacked<
-  SettingsState["starredMarketCoins"]
->;
-export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<
-  SettingsState["starredMarketCoins"]
->;
+export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
+export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetLastConnectedDevicePayload = Device;
 export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
   SettingsState,
@@ -361,27 +338,18 @@ export type SettingsSetCustomImageBackupPayload = {
   hex: string;
   hash: string;
 };
-export type SettingsSetCustomImageTypePayload = Pick<
-  SettingsState,
-  "customImageType"
->;
+export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customImageType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
-export type SettingsSetMarketRequestParamsPayload =
-  SettingsState["marketRequestParams"];
-export type SettingsSetMarketCounterCurrencyPayload =
-  SettingsState["marketCounterCurrency"];
+export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequestParams"];
+export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
 export type SettingsSetMarketFilterByStarredAccountsPayload =
   SettingsState["marketFilterByStarredAccounts"];
-export type SettingsSetSensitiveAnalyticsPayload =
-  SettingsState["sensitiveAnalytics"];
-export type SettingsSetOnboardingHasDevicePayload =
-  SettingsState["onboardingHasDevice"];
+export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
+export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
-export type SettingsSetNotificationsPayload = Partial<
-  SettingsState["notifications"]
->;
+export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
@@ -391,21 +359,16 @@ export type SettingsSetOverriddenFeatureFlagPlayload = {
   id: FeatureId;
   value: Feature | undefined;
 };
-export type SettingsSetOverriddenFeatureFlagsPlayload =
-  SettingsState["overriddenFeatureFlags"];
+export type SettingsSetOverriddenFeatureFlagsPlayload = SettingsState["overriddenFeatureFlags"];
 export type SettingsSetFeatureFlagsBannerVisiblePayload =
   SettingsState["featureFlagsBannerVisible"];
 export type SettingsSetDebugAppLevelDrawerOpenedPayload =
   SettingsState["debugAppLevelDrawerOpened"];
 
-export type SettingsSetHasBeenUpsoldProtectPayload =
-  SettingsState["hasBeenUpsoldProtect"];
+export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsoldProtect"];
 
-export type SettingsCompleteOnboardingPayload =
-  | void
-  | SettingsState["hasCompletedOnboarding"];
-export type SettingsSetGeneralTermsVersionAccepted =
-  SettingsState["generalTermsVersionAccepted"];
+export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
+export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -481,10 +444,7 @@ export type UpdateProvidersPayload = SwapStateType["providers"];
 export type UpdateTransactionPayload = Transaction | undefined;
 export type UpdateRatePayload = ExchangeRate | undefined;
 
-export type SwapPayload =
-  | UpdateProvidersPayload
-  | UpdateTransactionPayload
-  | UpdateRatePayload;
+export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | UpdateRatePayload;
 
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {

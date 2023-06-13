@@ -29,9 +29,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   const currency = getAccountCurrency(account);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -72,12 +70,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="cosmos.redelegation.flow.steps.verification.success.text" />}
       />
     </View>
   );

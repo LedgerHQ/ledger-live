@@ -5,10 +5,7 @@ import { getSwapAPIBaseURL } from "./";
 import { mockGetKYCStatus } from "./mock";
 import type { GetKYCStatus } from "./types";
 
-export const getKYCStatus: GetKYCStatus = async (
-  provider: string,
-  id: string
-) => {
+export const getKYCStatus: GetKYCStatus = async (provider: string, id: string) => {
   const mockedStatus = getEnv("MOCK_SWAP_KYC");
   if (mockedStatus) return mockGetKYCStatus(id, mockedStatus);
 

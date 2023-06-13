@@ -11,10 +11,7 @@ import {
   loadAccount,
 } from "./api";
 import { getRecipientAccount, getAmountValue } from "./logic";
-import {
-  StellarAssetRequired,
-  StellarMuxedAccountNotExist,
-} from "../../errors";
+import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../../errors";
 
 /**
  * @param {Account} a
@@ -22,18 +19,10 @@ import {
  */
 export const buildTransaction = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<any> => {
-  const {
-    recipient,
-    networkInfo,
-    fees,
-    memoType,
-    memoValue,
-    mode,
-    assetCode,
-    assetIssuer,
-  } = transaction;
+  const { recipient, networkInfo, fees, memoType, memoValue, mode, assetCode, assetIssuer } =
+    transaction;
 
   if (!fees) {
     throw new FeeNotLoaded();

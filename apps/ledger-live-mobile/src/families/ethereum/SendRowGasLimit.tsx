@@ -42,15 +42,7 @@ export default function EthereumGasLimit({
       setGasLimit,
       gasLimit,
     });
-  }, [
-    navigation,
-    route.params,
-    account.id,
-    parentAccount,
-    transaction,
-    setGasLimit,
-    gasLimit,
-  ]);
+  }, [navigation, route.params, account.id, parentAccount, transaction, setGasLimit, gasLimit]);
   return (
     <View style={styles.root}>
       <SummaryRow

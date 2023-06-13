@@ -42,10 +42,10 @@ const Row = ({ nfts, contract, account, onClick }: Props) => {
     account.currency.id,
   );
   const { tokenName } = collectionMetadata || {};
-  const loading = useMemo(() => nftStatus === "loading" || collectionStatus === "loading", [
-    collectionStatus,
-    nftStatus,
-  ]);
+  const loading = useMemo(
+    () => nftStatus === "loading" || collectionStatus === "loading",
+    [collectionStatus, nftStatus],
+  );
   return (
     <NFTCollectionContextMenu
       collectionName={tokenName || undefined}

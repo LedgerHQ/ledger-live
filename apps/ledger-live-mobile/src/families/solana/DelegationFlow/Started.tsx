@@ -15,10 +15,7 @@ import { ScreenName } from "../../../const";
 import IlluStaking from "../../tezos/IlluStaking";
 import { SolanaDelegationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  SolanaDelegationFlowParamList,
-  ScreenName.SolanaDelegationStarted
->;
+type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaDelegationStarted>;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -34,10 +31,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="DelegationFlow" name="Started" />
         <IlluStaking />
         <Text fontWeight="semiBold" style={styles.title}>

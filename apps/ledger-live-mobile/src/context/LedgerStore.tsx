@@ -19,10 +19,7 @@ import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
 import { updateProtectData, updateProtectStatus } from "../actions/protect";
-import {
-  INITIAL_STATE as settingsState,
-  supportedCountervalues,
-} from "../reducers/settings";
+import { INITIAL_STATE as settingsState, supportedCountervalues } from "../reducers/settings";
 import { INITIAL_STATE as accountsState } from "../reducers/accounts";
 import { INITIAL_STATE as appstateState } from "../reducers/appstate";
 import { INITIAL_STATE as bleState } from "../reducers/ble";
@@ -49,11 +46,7 @@ const INITIAL_STATE: State = {
   protect: protectState,
 };
 
-export const store = createStore(
-  reducers,
-  INITIAL_STATE,
-  compose(applyMiddleware(thunk)),
-);
+export const store = createStore(reducers, INITIAL_STATE, compose(applyMiddleware(thunk)));
 
 export type StoreType = typeof store;
 
@@ -109,9 +102,7 @@ export default class LedgerStoreProvider extends Component<
     if (
       settingsData &&
       settingsData.counterValue &&
-      !supportedCountervalues.find(
-        ({ ticker }) => ticker === settingsData.counterValue,
-      )
+      !supportedCountervalues.find(({ ticker }) => ticker === settingsData.counterValue)
     ) {
       settingsData.counterValue = settingsState.counterValue;
     }
@@ -122,9 +113,7 @@ export default class LedgerStoreProvider extends Component<
 
     const postOnboardingState = await getPostOnboardingState();
     if (postOnboardingState) {
-      store.dispatch(
-        importPostOnboardingState({ newState: postOnboardingState }),
-      );
+      store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
     }
 
     const protect = await getProtect();
@@ -148,10 +137,6 @@ export default class LedgerStoreProvider extends Component<
   render() {
     const { children } = this.props;
     const { ready, initialCountervalues } = this.state;
-    return (
-      <Provider store={store}>
-        {children(ready, store, initialCountervalues)}
-      </Provider>
-    );
+    return <Provider store={store}>{children(ready, store, initialCountervalues)}</Provider>;
   }
 }

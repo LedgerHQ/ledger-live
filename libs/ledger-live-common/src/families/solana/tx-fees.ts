@@ -10,7 +10,7 @@ import { log } from "@ledgerhq/logs";
 export async function estimateTxFee(
   api: ChainAPI,
   account: Account,
-  kind: TransactionModel["kind"]
+  kind: TransactionModel["kind"],
 ) {
   const tx = createDummyTx(account, kind);
   const [onChainTx] = await buildTransactionWithAPI(account, tx, api);
@@ -161,32 +161,27 @@ const randomAddresses = [
   "AEtRo9MKfLqGtjvxdz8H93R7SQxXLEkibVSJbs9XKnD1",
 ];
 
-async function retryWithNewBlockhash(
-  api: ChainAPI,
-  onChainTx: OnChainTransaction
-) {
+async function retryWithNewBlockhash(api: ChainAPI, onChainTx: OnChainTransaction) {
   if (onChainTx.message.recentBlockhash === undefined) {
     throw new Error("expected recentBlockhash");
   }
 
   onChainTx.message.recentBlockhash = await waitNextBlockhash(
     api,
-    onChainTx.message.recentBlockhash
+    onChainTx.message.recentBlockhash,
   );
 
   const fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
-    throw new Error(
-      `unexpected fee: <${fee}>, after retry with a new blockhash`
-    );
+    throw new Error(`unexpected fee: <${fee}>, after retry with a new blockhash`);
   }
 
   return fee;
 }
 
 function sleep(durationMS: number): Promise<void> {
-  return new Promise((res) => setTimeout(res, durationMS));
+  return new Promise(res => setTimeout(res, durationMS));
 }
 
 async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {

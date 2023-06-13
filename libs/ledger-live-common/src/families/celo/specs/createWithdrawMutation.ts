@@ -13,22 +13,13 @@ export const createWithdrawMutation = (): MutationSpec<Transaction> => ({
   transaction: ({ account, bridge, maxSpendable }) => {
     const celoAccount = account as CeloAccount;
     const { celoResources } = celoAccount;
-    invariant(
-      celoResources?.registrationStatus,
-      "Celo: Withdraw | Account is not registered"
-    );
+    invariant(celoResources?.registrationStatus, "Celo: Withdraw | Account is not registered");
 
     const pendingWithdrawals = availablePendingWithdrawals(celoAccount);
 
-    invariant(
-      pendingWithdrawals.length > 0,
-      "Celo: Withdraw | No withdrawable balance"
-    );
+    invariant(pendingWithdrawals.length > 0, "Celo: Withdraw | No withdrawable balance");
 
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo:  Withdraw Vote | balance is too low"
-    );
+    invariant(maxSpendable.gt(minimalAmount), "Celo:  Withdraw Vote | balance is too low");
 
     return {
       transaction: bridge.createTransaction(celoAccount),

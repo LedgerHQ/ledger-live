@@ -5,14 +5,7 @@ import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevic
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans, useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import {
-  Flex,
-  InfiniteLoader,
-  Text,
-  Button,
-  Icons,
-  BoxedIcon,
-} from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, Button, Icons, BoxedIcon } from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
@@ -37,17 +30,12 @@ export type BleDevicePairingProps = {
  * @param onPaired Function called when pairing was successful
  * @param onRetry Function called when the user chooses to retry on unsuccessful pairing
  */
-const BleDevicePairing = ({
-  deviceToPair,
-  onPaired,
-  onRetry,
-}: BleDevicePairingProps) => {
+const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const theme = colors.type as "dark" | "light";
 
-  const productName =
-    getDeviceModel(deviceToPair.modelId).productName || deviceToPair.modelId;
+  const productName = getDeviceModel(deviceToPair.modelId).productName || deviceToPair.modelId;
   const deviceName = deviceToPair.deviceName || productName;
 
   const { isPaired, pairingError } = useBleDevicePairing({
@@ -82,13 +70,7 @@ const BleDevicePairing = ({
               iconColor={colors.success.c50}
             />
           </Flex>
-          <Text
-            mb={4}
-            mt={16}
-            textAlign="center"
-            variant="h4"
-            fontWeight="semiBold"
-          >
+          <Text mb={4} mt={16} textAlign="center" variant="h4" fontWeight="semiBold">
             {t("blePairingFlow.pairing.success.title", {
               deviceName,
             })}
@@ -125,12 +107,7 @@ const BleDevicePairing = ({
           <Button type="main" onPress={onRetry} mt={6}>
             <Trans i18nKey="common.retry" />
           </Button>
-          <Button
-            iconPosition="right"
-            Icon={Icons.ExternalLinkMedium}
-            onPress={onOpenHelp}
-            mb={0}
-          >
+          <Button iconPosition="right" Icon={Icons.ExternalLinkMedium} onPress={onOpenHelp} mb={0}>
             <Trans i18nKey="help.helpCenter.desc" />
           </Button>
         </Flex>
@@ -168,13 +145,7 @@ const BleDevicePairing = ({
               iconColor={colors.error.c60}
             />
           </Flex>
-          <Text
-            mt={4}
-            mb={2}
-            textAlign="center"
-            variant="h4"
-            fontWeight="semiBold"
-          >
+          <Text mt={4} mb={2} textAlign="center" variant="h4" fontWeight="semiBold">
             {title}
           </Text>
           <Text variant="body" mb={8} color="neutral.c80" textAlign="center">
@@ -202,13 +173,7 @@ const BleDevicePairing = ({
               iconColor={colors.success.c50}
             />
           </Flex>
-          <Text
-            mb={4}
-            mt={16}
-            textAlign="center"
-            variant="h4"
-            fontWeight="semiBold"
-          >
+          <Text mb={4} mt={16} textAlign="center" variant="h4" fontWeight="semiBold">
             {t("blePairingFlow.pairing.loading.title", { deviceName })}
           </Text>
           {/* Transparent text in order to have a smooth transition between loading and success */}

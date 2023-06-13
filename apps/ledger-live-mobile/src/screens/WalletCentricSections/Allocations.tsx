@@ -1,9 +1,6 @@
 import React, { memo, useMemo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import {
-  getCurrencyColor,
-  ColorableCurrency,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor, ColorableCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { DefaultTheme, useTheme } from "styled-components/native";
@@ -25,13 +22,7 @@ const getCurrencyColorEnsureContrast = (
 ) => ensureContrast(getCurrencyColor(currency), colors.background.main);
 
 const AllocationCaption = React.memo(
-  ({
-    currencyTicker,
-    currencyColor,
-  }: {
-    currencyTicker: string;
-    currencyColor: string;
-  }) => {
+  ({ currencyTicker, currencyColor }: { currencyTicker: string; currencyColor: string }) => {
     return (
       <Flex flexDirection="row" alignItems="center" mb={3}>
         <Flex bg={currencyColor} width={8} height={8} borderRadius={4} mr={2} />
@@ -112,22 +103,17 @@ const Allocations = () => {
 
   const allocations = useMemo(
     () =>
-      chunk(distributionListFormatted.slice(0, 4), 2).map(
-        (column, columnIndex) => (
-          <Flex key={columnIndex} ml={columnIndex === 0 ? 0 : 8}>
-            {column.map(distributionItem => (
-              <AllocationCaption
-                key={distributionItem.currency.id}
-                currencyTicker={distributionItem.currency.ticker}
-                currencyColor={getCurrencyColorEnsureContrast(
-                  distributionItem.currency,
-                  colors,
-                )}
-              />
-            ))}
-          </Flex>
-        ),
-      ),
+      chunk(distributionListFormatted.slice(0, 4), 2).map((column, columnIndex) => (
+        <Flex key={columnIndex} ml={columnIndex === 0 ? 0 : 8}>
+          {column.map(distributionItem => (
+            <AllocationCaption
+              key={distributionItem.currency.id}
+              currencyTicker={distributionItem.currency.ticker}
+              currencyColor={getCurrencyColorEnsureContrast(distributionItem.currency, colors)}
+            />
+          ))}
+        </Flex>
+      )),
     [distributionListFormatted, colors],
   );
 
@@ -136,12 +122,7 @@ const Allocations = () => {
       <TouchableOpacity onPress={goToAnalyticsAllocations}>
         <Flex flexDirection="row" alignItems="center">
           <Flex>
-            <RingChart
-              size={94}
-              strokeWidth={5}
-              data={distributionListFormatted}
-              colors={colors}
-            />
+            <RingChart size={94} strokeWidth={5} data={distributionListFormatted} colors={colors} />
           </Flex>
           <Flex flex={1} ml={8} flexDirection="row" mt={3}>
             {allocations}

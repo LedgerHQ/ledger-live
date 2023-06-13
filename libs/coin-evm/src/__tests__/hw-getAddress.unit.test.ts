@@ -10,7 +10,7 @@ jest.mock(
         publicKey: "",
         address: address.toLowerCase(),
       });
-    }
+    },
 );
 
 describe("EVM Family", () => {

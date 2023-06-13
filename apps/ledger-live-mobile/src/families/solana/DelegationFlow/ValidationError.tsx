@@ -14,18 +14,13 @@ import { ScreenName } from "../../../const";
 import type { SolanaDelegationFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SolanaDelegationFlowParamList,
-    ScreenName.DelegationValidationError
-  >
+  StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const retry = useCallback(() => {

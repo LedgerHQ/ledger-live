@@ -19,10 +19,8 @@ export function isOutdated(resource: DomainServiceStatus): boolean {
   return false;
 }
 
-export const isLoaded = (
-  domain: DomainServiceStatus
-): domain is DomainServiceResponseLoaded => domain.status === "loaded";
+export const isLoaded = (domain: DomainServiceStatus): domain is DomainServiceResponseLoaded =>
+  domain.status === "loaded";
 
-export const isError = (
-  domain: DomainServiceStatus
-): domain is DomainServiceResponseError => domain.status === "error";
+export const isError = (domain: DomainServiceStatus): domain is DomainServiceResponseError =>
+  domain.status === "error";

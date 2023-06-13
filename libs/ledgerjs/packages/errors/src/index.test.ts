@@ -20,7 +20,7 @@ describe("custom errors", () => {
       const i = e.stack.indexOf("functionA");
       expect(e.stack.slice(0, i + 9)).toEqual(
         `AmountRequired: AmountRequired
-    at functionA`
+    at functionA`,
       );
     }
   });
@@ -39,7 +39,7 @@ describe("custom errors", () => {
     } catch (e: any) {
       expect(
         // FIXME it's not yet the good type here
-        e instanceof CurrencyNotSupported && (e as any).currencyName
+        e instanceof CurrencyNotSupported && (e as any).currencyName,
       ).toEqual("foo");
     }
   });
@@ -65,9 +65,7 @@ describe("custom errors", () => {
   });
 
   test("promise error instanceof", () => {
-    expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(
-      AmountRequired
-    );
+    expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(AmountRequired);
   });
 
   test("error is instance of Error", () => {

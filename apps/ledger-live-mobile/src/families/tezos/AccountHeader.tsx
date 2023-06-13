@@ -13,10 +13,7 @@ import Button from "../../components/wrappedUi/Button";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-type Navigation = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.Account
->;
+type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
 const styles = StyleSheet.create({
   banner: {

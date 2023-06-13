@@ -17,21 +17,14 @@ type Props = {
   currencies: CryptoCurrency[];
 };
 
-const mapStateToProps = createStructuredSelector<
-  State,
-  { currencies: CryptoCurrency[] }
->({
+const mapStateToProps = createStructuredSelector<State, { currencies: CryptoCurrency[] }>({
   currencies: cryptoCurrenciesSelector,
 });
 
 function CurrenciesList({
   navigation,
   currencies,
-}: Props &
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.CryptoAssetsSettings
-  >) {
+}: Props & StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.CryptoAssetsSettings>) {
   const currenciesWithSetting = useMemo(
     () => currencies.filter(getCurrencyHasSettings),
     [currencies],
@@ -46,12 +39,7 @@ function CurrenciesList({
           <>
             {item.name}
             {"  "}
-            <Text
-              variant={"body"}
-              fontWeight={"medium"}
-              color={"neutral.c70"}
-              ml={3}
-            >
+            <Text variant={"body"} fontWeight={"medium"} color={"neutral.c70"} ml={3}>
               {item.ticker}
             </Text>
           </>

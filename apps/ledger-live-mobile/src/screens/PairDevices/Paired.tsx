@@ -35,12 +35,7 @@ export default function Paired({ device, onContinue: onContinueProps }: Props) {
     <Flex flexDirection={"column"} flex={1} justifyContent={"center"} mx={6}>
       <TrackScreen category="PairDevices" name="Paired" />
       <Flex alignItems={"center"}>
-        <IconBox
-          Icon={CheckAloneMedium}
-          iconSize={24}
-          boxSize={64}
-          color={"success.c50"}
-        />
+        <IconBox Icon={CheckAloneMedium} iconSize={24} boxSize={64} color={"success.c50"} />
       </Flex>
       <Text variant={"h2"} textAlign={"center"} mb={5} mt={7}>
         <Trans
@@ -60,12 +55,7 @@ export default function Paired({ device, onContinue: onContinueProps }: Props) {
           values={getDeviceModel("nanoX" as DeviceModelId)}
         />
       </Text>
-      <Button
-        event="PairDevicesContinue"
-        type="main"
-        onPress={onContinue}
-        width={"100%"}
-      >
+      <Button event="PairDevicesContinue" type="main" onPress={onContinue} width={"100%"}>
         <Trans i18nKey="PairDevices.Paired.action" />
       </Button>
     </Flex>

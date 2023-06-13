@@ -9,10 +9,7 @@ import { TrackScreen, track, updateIdentify } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 
-import {
-  setOnboardingHasDevice,
-  setReadOnlyMode,
-} from "../../../actions/settings";
+import { setOnboardingHasDevice, setReadOnlyMode } from "../../../actions/settings";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 

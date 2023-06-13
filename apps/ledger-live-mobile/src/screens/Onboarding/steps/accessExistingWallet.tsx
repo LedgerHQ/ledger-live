@@ -1,12 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Text,
-  ScrollListContainer,
-  Box,
-  Flex,
-  Icons,
-} from "@ledgerhq/native-ui";
+import { Text, ScrollListContainer, Box, Flex, Icons } from "@ledgerhq/native-ui";
 import { props } from "lodash/fp";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -35,14 +29,7 @@ type NavigationProps = StackNavigatorProps<
   ScreenName.OnboardingWelcomeBack
 >;
 
-const Card = ({
-  title,
-  event,
-  eventProperties,
-  testID,
-  onPress,
-  Icon,
-}: CardProps) => {
+const Card = ({ title, event, eventProperties, testID, onPress, Icon }: CardProps) => {
   const { colors, space } = useTheme();
 
   const pressAndTrack = useCallback(() => {
@@ -66,12 +53,7 @@ const Card = ({
           {Icon}
         </Box>
         <Box pr={space[7]}>
-          <Text
-            variant="h5"
-            fontWeight="medium"
-            color="neutral.c100"
-            flexWrap="wrap"
-          >
+          <Text variant="h5" fontWeight="medium" color="neutral.c100" flexWrap="wrap">
             {title}
           </Text>
         </Box>
@@ -88,7 +70,7 @@ function AccessExistingWallet() {
 
   const connect = useCallback(() => {
     dispatch(setOnboardingType(OnboardingType.connect));
-    
+
     navigation.navigate(ScreenName.OnboardingPairNew, {
       deviceModelId: undefined,
       showSeedWarning: false,
@@ -106,13 +88,7 @@ function AccessExistingWallet() {
         {t("onboarding.welcomeBackStep.title")}
       </Text>
 
-      <Text
-        variant="paragraph"
-        mb={7}
-        mt={2}
-        fontWeight="medium"
-        color={colors.opacityDefault.c70}
-      >
+      <Text variant="paragraph" mb={7} mt={2} fontWeight="medium" color={colors.opacityDefault.c70}>
         {t("onboarding.welcomeBackStep.subtitle")}
       </Text>
 

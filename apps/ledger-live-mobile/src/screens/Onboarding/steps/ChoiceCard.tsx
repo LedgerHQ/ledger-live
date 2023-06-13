@@ -74,12 +74,7 @@ const ChoiceCard = ({
           </Text>
 
           {notCompatible ? (
-            <Text
-              mt={2}
-              variant="paragraph"
-              fontWeight="medium"
-              color={"neutral.c100"}
-            >
+            <Text mt={2} variant="paragraph" fontWeight="medium" color={"neutral.c100"}>
               {t("syncOnboarding.deviceSelection.notCompatible")}
             </Text>
           ) : null}

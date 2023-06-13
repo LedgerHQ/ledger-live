@@ -79,15 +79,10 @@ class AuthPass extends PureComponent<Props, State> {
 
   // The state lifecycle differs between iOS and Android. This is to prevent FaceId from triggering an inactive state and looping.
   checkAppStateChange = (appState: string) =>
-    Platform.OS === "ios"
-      ? appState === "background"
-      : appState.match(/inactive|background/);
+    Platform.OS === "ios" ? appState === "background" : appState.match(/inactive|background/);
 
   handleAppStateChange = (nextAppState: string) => {
-    if (
-      this.checkAppStateChange(this.state.appState) &&
-      nextAppState === "active"
-    ) {
+    if (this.checkAppStateChange(this.state.appState) && nextAppState === "active") {
       this.lock();
     }
 
@@ -101,13 +96,7 @@ class AuthPass extends PureComponent<Props, State> {
     const { privacy } = this.props;
     const { isLocked, authModalOpen } = this.state;
 
-    if (
-      isLocked &&
-      privacy &&
-      privacy.biometricsEnabled &&
-      !authModalOpen &&
-      this.state.mounted
-    ) {
+    if (isLocked && privacy && privacy.biometricsEnabled && !authModalOpen && this.state.mounted) {
       this.setState({
         authModalOpen: true,
       });

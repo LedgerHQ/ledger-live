@@ -23,7 +23,7 @@ export type NearTransaction = {
         deposit: string;
         method_name: string;
       };
-    }
+    },
   ];
 };
 

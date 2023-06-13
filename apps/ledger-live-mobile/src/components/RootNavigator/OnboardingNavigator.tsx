@@ -53,26 +53,18 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import AccessExistingWallet from "../../screens/Onboarding/steps/accessExistingWallet";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
-const OnboardingCarefulWarningStack =
-  createStackNavigator<OnboardingCarefulWarningParamList>();
+const OnboardingCarefulWarningStack = createStackNavigator<OnboardingCarefulWarningParamList>();
 const OnboardingPreQuizModalStack =
   createStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
 
 function OnboardingCarefulWarning(
-  props: StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    NavigatorName.OnboardingCarefulWarning
-  >,
+  props: StackNavigatorProps<OnboardingNavigatorParamList, NavigatorName.OnboardingCarefulWarning>,
 ) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
       <Flex backgroundColor="background.main">
-        <NavigationHeader
-          {...props}
-          hideBack
-          containerProps={{ backgroundColor: "transparent" }}
-        />
+        <NavigationHeader {...props} hideBack containerProps={{ backgroundColor: "transparent" }} />
       </Flex>
     ),
     headerStyle: { backgroundColor: "transparent" },
@@ -113,20 +105,13 @@ function OnboardingCarefulWarning(
 }
 
 function OnboardingPreQuizModalNavigator(
-  props: StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    NavigatorName.OnboardingPreQuiz
-  >,
+  props: StackNavigatorProps<OnboardingNavigatorParamList, NavigatorName.OnboardingPreQuiz>,
 ) {
   const options: Partial<StackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
       <Flex bg="constant.purple">
-        <NavigationHeader
-          {...props}
-          hideBack
-          containerProps={{ backgroundColor: "transparent" }}
-        />
+        <NavigationHeader {...props} hideBack containerProps={{ backgroundColor: "transparent" }} />
       </Flex>
     ),
     headerStyle: {},
@@ -160,11 +145,7 @@ const modalOptions: Partial<StackNavigationOptions> = {
   ...TransitionPresets.ModalTransition,
 };
 
-const infoModalOptions = ({
-  theme,
-}: {
-  theme: Theme;
-}): Partial<StackNavigationOptions> => ({
+const infoModalOptions = ({ theme }: { theme: Theme }): Partial<StackNavigationOptions> => ({
   ...TransitionPresets.ModalTransition,
   headerStyle: {
     backgroundColor: theme.colors.background.drawer,
@@ -186,10 +167,7 @@ export default function OnboardingNavigator() {
         cardStyle: { backgroundColor: theme.colors.background.main },
       }}
     >
-      <Stack.Screen
-        name={ScreenName.OnboardingWelcome}
-        component={OnboardingWelcome}
-      />
+      <Stack.Screen name={ScreenName.OnboardingWelcome} component={OnboardingWelcome} />
       <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
         component={PostWelcomeSelection}
@@ -219,10 +197,7 @@ export default function OnboardingNavigator() {
           headerTitle: t("onboarding.stepLanguage.title"),
         }}
       />
-      <Stack.Screen
-        name={ScreenName.OnboardingTermsOfUse}
-        component={OnboardingTerms}
-      />
+      <Stack.Screen name={ScreenName.OnboardingTermsOfUse} component={OnboardingTerms} />
       <Stack.Screen
         name={ScreenName.OnboardingDeviceSelection}
         component={OnboardingDeviceSelection}
@@ -231,10 +206,7 @@ export default function OnboardingNavigator() {
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
       />
-      <Stack.Screen
-        name={ScreenName.OnboardingUseCase}
-        component={OnboardingUseCase}
-      />
+      <Stack.Screen name={ScreenName.OnboardingUseCase} component={OnboardingUseCase} />
       <Stack.Screen
         name={NavigatorName.OnboardingCarefulWarning}
         component={OnboardingCarefulWarning}
@@ -278,10 +250,7 @@ export default function OnboardingNavigator() {
         component={ProtectConnectionInformationModal}
         options={infoModalOptions({ theme })}
       />
-      <Stack.Screen
-        name={ScreenName.OnboardingSetNewDevice}
-        component={OnboardingNewDevice}
-      />
+      <Stack.Screen name={ScreenName.OnboardingSetNewDevice} component={OnboardingNewDevice} />
 
       <Stack.Screen
         name={ScreenName.OnboardingRecoveryPhrase}
@@ -296,35 +265,20 @@ export default function OnboardingNavigator() {
         }}
       />
 
-      <Stack.Screen
-        name={ScreenName.OnboardingPairNew}
-        component={OnboardingPairNew}
-      />
+      <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />
 
-      <Stack.Screen
-        name={ScreenName.OnboardingProtectFlow}
-        component={OnboardingProtectFlow}
-      />
+      <Stack.Screen name={ScreenName.OnboardingProtectFlow} component={OnboardingProtectFlow} />
 
       <Stack.Screen
         name={ScreenName.OnboardingImportAccounts}
         component={OnboardingImportAccounts}
       />
 
-      <Stack.Screen
-        name={NavigatorName.PasswordAddFlow}
-        component={PasswordAddFlowNavigator}
-      />
+      <Stack.Screen name={NavigatorName.PasswordAddFlow} component={PasswordAddFlowNavigator} />
 
-      <Stack.Screen
-        name={ScreenName.OnboardingQuiz}
-        component={OnboardingQuiz}
-      />
+      <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
 
-      <Stack.Screen
-        name={ScreenName.OnboardingQuizFinal}
-        component={OnboardingQuizFinal}
-      />
+      <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
     </Stack.Navigator>
   );
 }

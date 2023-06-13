@@ -33,14 +33,7 @@ import {
 import type { DeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { Observable, defer, merge, from, of, throwError, Observer } from "rxjs";
-import {
-  share,
-  ignoreElements,
-  first,
-  map,
-  tap,
-  catchError,
-} from "rxjs/operators";
+import { share, ignoreElements, first, map, tap, catchError } from "rxjs/operators";
 import {
   CantOpenDevice,
   TransportError,
@@ -51,11 +44,7 @@ import {
 } from "@ledgerhq/errors";
 import { monitorCharacteristic } from "./monitorCharacteristic";
 import { awaitsBleOn } from "./awaitsBleOn";
-import {
-  decoratePromiseErrors,
-  remapError,
-  mapBleErrorToHwTransportError,
-} from "./remapErrors";
+import { decoratePromiseErrors, remapError, mapBleErrorToHwTransportError } from "./remapErrors";
 import { ReconnectionConfig } from "./types";
 
 /**
@@ -67,9 +56,7 @@ let reconnectionConfig: ReconnectionConfig | null | undefined = {
   delayAfterFirstPairing: 4000,
 };
 
-export const setReconnectionConfig = (
-  config: ReconnectionConfig | null | undefined
-): void => {
+export const setReconnectionConfig = (config: ReconnectionConfig | null | undefined): void => {
   reconnectionConfig = config;
 };
 
@@ -85,8 +72,7 @@ const retrieveInfos = (device: Device | null) => {
   return infos;
 };
 
-const delay = (ms: number | undefined) =>
-  new Promise((success) => setTimeout(success, ms));
+const delay = (ms: number | undefined) => new Promise(success => setTimeout(success, ms));
 
 /**
  * A cache of Bluetooth transport instances associated with device IDs.
@@ -153,11 +139,9 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       // which have discovered services, connected to system doesn't mean
       // connected to our app, we check that below.
       const connectedDevices = await bleManagerInstance().connectedDevices(
-        getBluetoothServiceUuids()
+        getBluetoothServiceUuids(),
       );
-      const connectedDevicesFiltered = connectedDevices.filter(
-        (d) => d.id === deviceOrId
-      );
+      const connectedDevicesFiltered = connectedDevices.filter(d => d.id === deviceOrId);
       log(TAG, `found ${connectedDevicesFiltered.length} connected devices`);
       [device] = connectedDevicesFiltered;
     }
@@ -167,10 +151,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       log(TAG, `connectToDevice(${deviceOrId})`);
       // Nb ConnectionOptions dropped since it's not used internally by ble-plx.
       try {
-        device = await bleManagerInstance().connectToDevice(
-          deviceOrId,
-          connectOptions
-        );
+        device = await bleManagerInstance().connectToDevice(deviceOrId, connectOptions);
       } catch (e: any) {
         log(TAG, `error code ${e.errorCode}`);
         if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
@@ -201,10 +182,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
         log("ble-verbose", `device.mtu=${device.mtu}, reconnecting`);
         connectOptions = {};
         await device.connect();
-      } else if (
-        e.iosErrorCode === 14 ||
-        e.reason === "Peer removed pairing information"
-      ) {
+      } else if (e.iosErrorCode === 14 || e.reason === "Peer removed pairing information") {
         log("ble-verbose", "iOS broken pairing");
         log("ble-verbose", JSON.stringify(device));
         log("ble-verbose", JSON.stringify(bluetoothInfoCache[device.id]));
@@ -265,65 +243,48 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   }
 
   if (!writeC) {
-    throw new TransportError(
-      "write characteristic not found",
-      "BLECharacteristicNotFound"
-    );
+    throw new TransportError("write characteristic not found", "BLECharacteristicNotFound");
   }
 
   if (!notifyC) {
-    throw new TransportError(
-      "notify characteristic not found",
-      "BLECharacteristicNotFound"
-    );
+    throw new TransportError("notify characteristic not found", "BLECharacteristicNotFound");
   }
 
   if (!writeC.isWritableWithResponse) {
     throw new TransportError(
       "write characteristic not writableWithResponse",
-      "BLECharacteristicInvalid"
+      "BLECharacteristicInvalid",
     );
   }
 
   if (!notifyC.isNotifiable) {
-    throw new TransportError(
-      "notify characteristic not notifiable",
-      "BLECharacteristicInvalid"
-    );
+    throw new TransportError("notify characteristic not notifiable", "BLECharacteristicInvalid");
   }
 
   if (writeCmdC) {
     if (!writeCmdC.isWritableWithoutResponse) {
       throw new TransportError(
         "write cmd characteristic not writableWithoutResponse",
-        "BLECharacteristicInvalid"
+        "BLECharacteristicInvalid",
       );
     }
   }
 
   log(TAG, `device.mtu=${device.mtu}`);
   const notifyObservable = monitorCharacteristic(notifyC).pipe(
-    catchError((e) => {
+    catchError(e => {
       // LL-9033 fw 2.0.2 introduced this case, we silence the inner unhandled error.
       const msg = String(e);
-      return msg.includes("notify change failed")
-        ? of(new PairingFailed(msg))
-        : throwError(e);
+      return msg.includes("notify change failed") ? of(new PairingFailed(msg)) : throwError(e);
     }),
-    tap((value) => {
+    tap(value => {
       if (value instanceof PairingFailed) return;
       log("ble-frame", "<= " + value.toString("hex"));
     }),
-    share()
+    share(),
   );
   const notif = notifyObservable.subscribe();
-  const transport = new BleTransport(
-    device,
-    writeC,
-    writeCmdC,
-    notifyObservable,
-    deviceModel
-  );
+  const transport = new BleTransport(device, writeC, writeCmdC, notifyObservable, deviceModel);
 
   // Keeping it as a comment for now but if no new bluetooth issues occur, we will be able to remove it
   // await transport.requestConnectionPriority("High");
@@ -345,7 +306,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   transportsCache[transport.id] = transport;
   const beforeMTUTime = Date.now();
 
-  disconnectedSub = device.onDisconnected((e) => {
+  disconnectedSub = device.onDisconnected(e => {
     if (!transport.notYetDisconnected) return;
     onDisconnect(e);
   });
@@ -391,8 +352,7 @@ export default class BleTransport extends Transport {
   /**
    *
    */
-  static isSupported = (): Promise<boolean> =>
-    Promise.resolve(typeof BleManager === "function");
+  static isSupported = (): Promise<boolean> => Promise.resolve(typeof BleManager === "function");
 
   /**
    *
@@ -424,7 +384,7 @@ export default class BleTransport extends Transport {
     observer: Observer<{
       type: string;
       available: boolean;
-    }>
+    }>,
   ): TransportSubscription {
     const emitFromState = (type: string) => {
       observer.next({
@@ -445,26 +405,20 @@ export default class BleTransport extends Transport {
    * @param observer Device is partial in order to avoid the live-common/this dep
    * @returns TransportSubscription
    */
-  static listen(
-    observer: TransportObserver<any, HwTransportError>
-  ): TransportSubscription {
+  static listen(observer: TransportObserver<any, HwTransportError>): TransportSubscription {
     log(TAG, "listening for devices");
 
     let unsubscribed: boolean;
 
-    const stateSub = bleManagerInstance().onStateChange(async (state) => {
+    const stateSub = bleManagerInstance().onStateChange(async state => {
       if (state === "PoweredOn") {
         stateSub.remove();
-        const devices = await bleManagerInstance().connectedDevices(
-          getBluetoothServiceUuids()
-        );
+        const devices = await bleManagerInstance().connectedDevices(getBluetoothServiceUuids());
         if (unsubscribed) return;
         if (devices.length) {
           log(TAG, "disconnecting from devices");
 
-          await Promise.all(
-            devices.map((d) => BleTransport.disconnect(d.id).catch(() => {}))
-          );
+          await Promise.all(devices.map(d => BleTransport.disconnect(d.id).catch(() => {})));
         }
 
         if (unsubscribed) return;
@@ -488,7 +442,7 @@ export default class BleTransport extends Transport {
                 deviceModel,
               });
             }
-          }
+          },
         );
       }
     }, true);
@@ -540,7 +494,7 @@ export default class BleTransport extends Transport {
     writeCharacteristic: Characteristic,
     writeCmdCharacteristic: Characteristic | undefined,
     notifyObservable: Observable<any>,
-    deviceModel: DeviceModel
+    deviceModel: DeviceModel,
   ) {
     super();
     this.id = device.id;
@@ -568,7 +522,7 @@ export default class BleTransport extends Transport {
 
         const data = await merge(
           this.notifyObservable.pipe(receiveAPDU),
-          sendAPDU(this.write, apdu, this.mtuSize)
+          sendAPDU(this.write, apdu, this.mtuSize),
         ).toPromise();
 
         const msgOut = data.toString("hex");
@@ -600,15 +554,13 @@ export default class BleTransport extends Transport {
       try {
         mtu = await merge(
           this.notifyObservable.pipe(
-            tap((maybeError) => {
+            tap(maybeError => {
               if (maybeError instanceof Error) throw maybeError;
             }),
-            first((buffer) => buffer.readUInt8(0) === 0x08),
-            map((buffer) => buffer.readUInt8(5))
+            first(buffer => buffer.readUInt8(0) === 0x08),
+            map(buffer => buffer.readUInt8(5)),
           ),
-          defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(
-            ignoreElements()
-          )
+          defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
         ).toPromise();
       } catch (e: any) {
         log("ble-error", "inferMTU got " + JSON.stringify(e));
@@ -636,12 +588,10 @@ export default class BleTransport extends Transport {
    * @returns {Promise<Device>} Connected device.
    */
   async requestConnectionPriority(
-    connectionPriority: "Balanced" | "High" | "LowPower"
+    connectionPriority: "Balanced" | "High" | "LowPower",
   ): Promise<Device> {
     return await decoratePromiseErrors(
-      this.device.requestConnectionPriority(
-        ConnectionPriority[connectionPriority]
-      )
+      this.device.requestConnectionPriority(ConnectionPriority[connectionPriority]),
     );
   }
 
@@ -655,19 +605,13 @@ export default class BleTransport extends Transport {
     log("ble-frame", "=> " + buffer.toString("hex"));
     if (!this.writeCmdCharacteristic) {
       try {
-        await this.writeCharacteristic.writeWithResponse(
-          buffer.toString("base64"),
-          txid
-        );
+        await this.writeCharacteristic.writeWithResponse(buffer.toString("base64"), txid);
       } catch (e: any) {
         throw new DisconnectedDeviceDuringOperation(e.message);
       }
     } else {
       try {
-        await this.writeCmdCharacteristic.writeWithoutResponse(
-          buffer.toString("base64"),
-          txid
-        );
+        await this.writeCmdCharacteristic.writeWithoutResponse(buffer.toString("base64"), txid);
       } catch (e: any) {
         throw new DisconnectedDeviceDuringOperation(e.message);
       }
@@ -684,7 +628,7 @@ export default class BleTransport extends Transport {
    */
   async close(): Promise<void> {
     let resolve: (value: void | PromiseLike<void>) => void;
-    const disconnectPromise = new Promise<void>((innerResolve) => {
+    const disconnectPromise = new Promise<void>(innerResolve => {
       resolve = innerResolve;
     });
 
@@ -705,10 +649,7 @@ export default class BleTransport extends Transport {
 
     // The closure will occur no later than 5s, triggered either by disconnection
     // or the actual response of the apdu.
-    await Promise.race([
-      this.exchangeBusyPromise || Promise.resolve(),
-      disconnectPromise,
-    ]);
+    await Promise.race([this.exchangeBusyPromise || Promise.resolve(), disconnectPromise]);
 
     return;
   }

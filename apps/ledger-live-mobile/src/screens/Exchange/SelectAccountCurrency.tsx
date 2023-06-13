@@ -1,10 +1,7 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,22 +33,15 @@ export default function SelectAccountCurrency({
 }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const allAccounts = useSelector(accountsSelector);
-  const {
-    availableAccounts,
-    currency,
-    account,
-    subAccount,
-    setAccount,
-    setCurrency,
-  } = useCurrencyAccountSelect({
-    allCurrencies: allCurrencies || [],
-    allAccounts,
-    defaultCurrencyId,
-    defaultAccountId,
-  });
+  const { availableAccounts, currency, account, subAccount, setAccount, setCurrency } =
+    useCurrencyAccountSelect({
+      allCurrencies: allCurrencies || [],
+      allAccounts,
+      defaultCurrencyId,
+      defaultAccountId,
+    });
   const onCurrencyChange = useCallback(
     (selectedCurrency: CryptoCurrency | TokenCurrency) => {
       setCurrency(selectedCurrency);
@@ -91,15 +81,10 @@ export default function SelectAccountCurrency({
         currency: currency as TokenCurrency | CryptoCurrency,
         type: flow === "buy" ? "onRamp" : "offRamp",
       });
-      track(
-        `${flow.charAt(0).toUpperCase()}${flow.slice(
-          1,
-        )} Crypto Continue Button`,
-        {
-          currencyName: getAccountCurrency(account).name,
-          isEmpty: isAccountEmpty(account),
-        },
-      );
+      track(`${flow.charAt(0).toUpperCase()}${flow.slice(1)} Crypto Continue Button`, {
+        currencyName: getAccountCurrency(account).name,
+        isEmpty: isAccountEmpty(account),
+      });
     }
   }, [account, currency, flow, navigation]);
   const onAddAccount = useCallback(() => {
@@ -132,9 +117,7 @@ export default function SelectAccountCurrency({
         ]}
       >
         <LText secondary semiBold>
-          {flow === "buy"
-            ? t("exchange.buy.wantToBuy")
-            : t("exchange.sell.wantToSell")}
+          {flow === "buy" ? t("exchange.buy.wantToBuy") : t("exchange.sell.wantToSell")}
         </LText>
         <TouchableOpacity onPress={onSelectCurrency}>
           <View
@@ -156,9 +139,7 @@ export default function SelectAccountCurrency({
                   />
                 </View>
               ) : (
-                <LText style={styles.placeholder}>
-                  {t("exchange.buy.selectCurrency")}
-                </LText>
+                <LText style={styles.placeholder}>{t("exchange.buy.selectCurrency")}</LText>
               )}
             </View>
             <DropdownArrow size={10} color={colors.grey} />
@@ -179,14 +160,9 @@ export default function SelectAccountCurrency({
                 ]}
               >
                 {account || subAccount ? (
-                  <AccountCard
-                    style={styles.card}
-                    account={subAccount || account}
-                  />
+                  <AccountCard style={styles.card} account={subAccount || account} />
                 ) : (
-                  <LText style={styles.placeholder}>
-                    {t("exchange.buy.selectAccount")}
-                  </LText>
+                  <LText style={styles.placeholder}>{t("exchange.buy.selectAccount")}</LText>
                 )}
                 <DropdownArrow size={10} color={colors.grey} />
               </View>

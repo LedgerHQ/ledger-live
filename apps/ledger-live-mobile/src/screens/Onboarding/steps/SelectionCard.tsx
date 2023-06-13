@@ -49,11 +49,7 @@ export const SelectionCard = ({
             {title}
           </Text>
 
-          <Text
-            variant="body"
-            fontWeight="medium"
-            color={colors.opacityDefault.c50}
-          >
+          <Text variant="body" fontWeight="medium" color={colors.opacityDefault.c50}>
             {subTitle}
           </Text>
         </Flex>

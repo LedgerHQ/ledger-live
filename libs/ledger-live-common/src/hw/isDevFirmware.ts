@@ -7,7 +7,7 @@ const isDevFirmware = (seVersion: string | undefined): boolean => {
   if (!seVersion) return false;
 
   const knownDevSuffixes = ["lo", "rc", "il", "tr"]; // FW can't guarantee non digits in versions
-  return knownDevSuffixes.some((suffix) => seVersion.includes("-" + suffix));
+  return knownDevSuffixes.some(suffix => seVersion.includes("-" + suffix));
 };
 
 export default isDevFirmware;

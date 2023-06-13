@@ -1,8 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  createStackNavigator,
-  TransitionPresets,
-} from "@react-navigation/stack";
+import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
@@ -55,9 +52,7 @@ import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
-import DeveloperSettings, {
-  DeveloperCustomManifest,
-} from "../../screens/Settings/Developer";
+import DeveloperSettings, { DeveloperCustomManifest } from "../../screens/Settings/Developer";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
@@ -76,10 +71,7 @@ const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
@@ -436,10 +428,7 @@ export default function SettingsNavigator() {
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
       />
-      <Stack.Screen
-        name={ScreenName.DebugCameraPermissions}
-        component={CameraPermissions}
-      />
+      <Stack.Screen name={ScreenName.DebugCameraPermissions} component={CameraPermissions} />
       <Stack.Screen
         name={ScreenName.DebugPerformance}
         component={DebugPerformance}

@@ -35,10 +35,7 @@ type Props = {
   lastSeenDeviceModelId?: DeviceModelId;
 };
 
-const RestoreIllustrations = ({
-  deviceModelId,
-  lastSeenDeviceModelId,
-}: Props) => {
+const RestoreIllustrations = ({ deviceModelId, lastSeenDeviceModelId }: Props) => {
   const isFromStax = lastSeenDeviceModelId === DeviceModelId.stax;
   const isToStax = deviceModelId === DeviceModelId.stax;
 

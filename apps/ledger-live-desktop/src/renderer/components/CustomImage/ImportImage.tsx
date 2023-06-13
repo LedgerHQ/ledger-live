@@ -46,7 +46,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
         }
 
         setLoading(true);
-        reader.onloadend = function() {
+        reader.onloadend = function () {
           if (!dead && typeof reader.result === "string")
             onResult({ imageBase64DataUri: reader.result });
         };

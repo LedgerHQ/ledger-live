@@ -28,9 +28,7 @@ function getDeviceTransactionConfig({
 
       const { assetId } = decodeTokenCurrencyId(account.token.id);
       const { policyId, assetName } = decodeTokenAssetId(assetId);
-      const transactionAmount = transaction.useAllAmount
-        ? account.balance
-        : transaction.amount;
+      const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
       const { fees } = transaction;
 
       const tokensToSend = [
@@ -43,16 +41,15 @@ function getDeviceTransactionConfig({
 
       const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
         tokensToSend,
-        new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord)
+        new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
       );
       fields.push({
         type: "text",
         label: "ADA",
-        value: formatCurrencyUnit(
-          getAccountUnit(mainAccount),
-          requiredMinAdaForTokens,
-          { showCode: true, disableRounding: true }
-        ),
+        value: formatCurrencyUnit(getAccountUnit(mainAccount), requiredMinAdaForTokens, {
+          showCode: true,
+          disableRounding: true,
+        }),
       });
       fields.push({
         type: "text",
@@ -79,9 +76,7 @@ function getDeviceTransactionConfig({
       }
     } else if (account.type === "Account") {
       const { fees } = transaction;
-      const transactionAmount = transaction.useAllAmount
-        ? account.balance
-        : transaction.amount;
+      const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
       fields.push({
         type: "text",
         label: "Amount",

@@ -35,8 +35,7 @@ const OnboardingStepUseCaseSelection = () => {
 
   const deviceModelId = route?.params?.deviceModelId;
   const getProductName = (modelId: DeviceModelId) =>
-    getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() ||
-    modelId;
+    getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
   const onCloseProtectDrawer = useCallback(() => {
     setIsProtectDrawerOpen(false);
@@ -137,10 +136,7 @@ const OnboardingStepUseCaseSelection = () => {
         </Box>
       )}
 
-      <QueuedDrawer
-        isRequestingToBeOpened={isProtectDrawerOpen}
-        onClose={onCloseProtectDrawer}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isProtectDrawerOpen} onClose={onCloseProtectDrawer}>
         <Flex>
           <Text variant="h4" textAlign="center" mb={6}>
             {t("onboarding.stepUseCase.protect.drawer.title")}

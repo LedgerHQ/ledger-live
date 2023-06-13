@@ -3,12 +3,7 @@ import { map } from "rxjs/operators";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-  SubAccount,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray, SubAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import type { Baker } from "./bakers";
 import { listBakers, fetchAllBakers } from "./bakers";
@@ -42,10 +37,7 @@ const options = [
   },
 ];
 
-function inferAccounts(
-  account: Account,
-  opts: Record<string, any>
-): AccountLikeArray {
+function inferAccounts(account: Account, opts: Record<string, any>): AccountLikeArray {
   invariant(account.currency.family === "tezos", "tezos family");
 
   if (!opts.subAccount) {
@@ -55,7 +47,7 @@ function inferAccounts(
 
   const { subAccounts } = account;
   invariant(subAccounts, "no sub accounts");
-  return opts.subAccount.map((i) => {
+  return opts.subAccount.map(i => {
     const acc = (subAccounts as SubAccount[])[i];
     invariant(acc, "sub account not found (index %s)", i);
     return acc;
@@ -68,7 +60,7 @@ function inferTransactions(
     transaction: Transaction;
   }>,
   opts: Record<string, any>,
-  { inferAmount }: any
+  { inferAmount }: any,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "tezos", "tezos family");
@@ -90,13 +82,10 @@ function inferTransactions(
 }
 
 const bakersFormatters = {
-  json: (list) => JSON.stringify(list),
-  default: (list) =>
+  json: list => JSON.stringify(list),
+  default: list =>
     list
-      .map(
-        (b) =>
-          `${b.address} "${b.name}" ${b.nominalYield} ${b.capacityStatus} ${b.logoURL}`
-      )
+      .map(b => `${b.address} "${b.name}" ${b.nominalYield} ${b.capacityStatus} ${b.logoURL}`)
       .join("\n"),
 };
 const tezosListBakers = {
@@ -121,10 +110,9 @@ const tezosListBakers = {
   }>): Observable<string> =>
     from(whitelist ? listBakers(defaultList) : fetchAllBakers()).pipe(
       map((list: Baker[]) => {
-        const f =
-          (format && bakersFormatters[format]) || bakersFormatters.default;
+        const f = (format && bakersFormatters[format]) || bakersFormatters.default;
         return f(list);
-      })
+      }),
     ),
 };
 export default {

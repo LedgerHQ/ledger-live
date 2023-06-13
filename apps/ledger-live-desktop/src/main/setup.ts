@@ -40,51 +40,42 @@ ipcMain.handle(
   },
 );
 const lssFileName = "lss.json";
-ipcMain.handle(
-  "generate-lss-config",
-  async (event, data: string): Promise<boolean> => {
-    const userDataDirectory = resolveUserDataDirectory();
-    const filePath = path.resolve(userDataDirectory, lssFileName);
-    if (filePath) {
-      if (filePath && data) {
-        await fs.writeFile(filePath, data, { mode: "640" });
-        log("satstack", "wrote to lss.json file");
-        return true;
-      }
-    }
-    return false;
-  },
-);
-ipcMain.handle(
-  "delete-lss-config",
-  async (): Promise<boolean> => {
-    const userDataDirectory = resolveUserDataDirectory();
-    const filePath = path.resolve(userDataDirectory, lssFileName);
-    if (filePath) {
-      await fs.unlink(filePath);
-      log("satstack", "deleted lss.json file");
+ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boolean> => {
+  const userDataDirectory = resolveUserDataDirectory();
+  const filePath = path.resolve(userDataDirectory, lssFileName);
+  if (filePath) {
+    if (filePath && data) {
+      await fs.writeFile(filePath, data, { mode: "640" });
+      log("satstack", "wrote to lss.json file");
       return true;
     }
-    return false;
-  },
-);
-ipcMain.handle(
-  "load-lss-config",
-  async (): Promise<string | undefined | null> => {
-    try {
-      const userDataDirectory = resolveUserDataDirectory();
-      const filePath = path.resolve(userDataDirectory, lssFileName);
-      if (filePath) {
-        const contents = await fs.readFile(filePath, "utf8");
-        log("satstack", `loaded lss.json file with length ${contents.length}`);
-        return contents;
-      }
-    } catch (e) {
-      log("satstack", "tried to load lss.json");
+  }
+  return false;
+});
+ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
+  const userDataDirectory = resolveUserDataDirectory();
+  const filePath = path.resolve(userDataDirectory, lssFileName);
+  if (filePath) {
+    await fs.unlink(filePath);
+    log("satstack", "deleted lss.json file");
+    return true;
+  }
+  return false;
+});
+ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> => {
+  try {
+    const userDataDirectory = resolveUserDataDirectory();
+    const filePath = path.resolve(userDataDirectory, lssFileName);
+    if (filePath) {
+      const contents = await fs.readFile(filePath, "utf8");
+      log("satstack", `loaded lss.json file with length ${contents.length}`);
+      return contents;
     }
-    return undefined;
-  },
-);
+  } catch (e) {
+    log("satstack", "tried to load lss.json");
+  }
+  return undefined;
+});
 process.setMaxListeners(0);
 
 // eslint-disable-next-line no-console

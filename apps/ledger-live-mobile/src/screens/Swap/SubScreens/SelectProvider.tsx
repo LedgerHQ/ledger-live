@@ -26,10 +26,7 @@ export function SelectProvider({
 }: SelectProviderParamList) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
-  const fromUnit = useMemo(
-    () => from.account && getAccountUnit(from.account),
-    [from.account],
-  );
+  const fromUnit = useMemo(() => from.account && getAccountUnit(from.account), [from.account]);
 
   const onSelect = useCallback(
     (rate: ExchangeRate) => {
@@ -129,11 +126,7 @@ export function SelectProvider({
 
                 <Flex alignItems="flex-end">
                   <Text variant="large" paddingBottom={2}>
-                    <CurrencyUnitValue
-                      value={rate.toAmount}
-                      unit={toCurrency.units[0]}
-                      showCode
-                    />
+                    <CurrencyUnitValue value={rate.toAmount} unit={toCurrency.units[0]} showCode />
                   </Text>
 
                   <Text variant="tiny" color="neutral.c70">

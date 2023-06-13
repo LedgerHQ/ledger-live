@@ -44,10 +44,7 @@ const stax = {
 
 type NavigationProp = RootNavigationComposite<
   BaseNavigationComposite<
-    StackNavigatorNavigation<
-      OnboardingNavigatorParamList,
-      ScreenName.OnboardingDeviceSelection
-    >
+    StackNavigatorNavigation<OnboardingNavigatorParamList, ScreenName.OnboardingDeviceSelection>
   >
 >;
 
@@ -69,8 +66,7 @@ function OnboardingStepDeviceSelection() {
   }, [syncOnboarding?.enabled]);
 
   const getProductName = (modelId: DeviceModelId) =>
-    getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() ||
-    modelId;
+    getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc. when they will support the sync-onboarding
@@ -139,9 +135,7 @@ function OnboardingStepDeviceSelection() {
           testID={`onboarding-device-selection-${device.id}`}
           title={getProductName(device.id)}
           onPress={() =>
-            isNotCompatible(device.id)
-              ? triggerNotCompatibleDrawer()
-              : next(device.id)
+            isNotCompatible(device.id) ? triggerNotCompatibleDrawer() : next(device.id)
           }
           notCompatible={isNotCompatible(device.id)}
           Image={

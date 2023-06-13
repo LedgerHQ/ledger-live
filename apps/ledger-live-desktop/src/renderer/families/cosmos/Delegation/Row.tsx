@@ -166,10 +166,10 @@ export function Row({
     [pendingRewards, _canRedelegate, _canUndelegate, formattedRedelegationDate],
   );
   const name = validator?.name ?? validatorAddress;
-  const onExternalLinkClick = useCallback(() => onExternalLink(validatorAddress), [
-    onExternalLink,
-    validatorAddress,
-  ]);
+  const onExternalLinkClick = useCallback(
+    () => onExternalLink(validatorAddress),
+    [onExternalLink, validatorAddress],
+  );
   return (
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
@@ -242,14 +242,15 @@ export function UnbondingRow({
   delegation: { validator, formattedAmount, validatorAddress, completionDate },
   onExternalLink,
 }: UnbondingRowProps) {
-  const date = useMemo(() => (completionDate ? moment(completionDate).fromNow() : "N/A"), [
-    completionDate,
-  ]);
+  const date = useMemo(
+    () => (completionDate ? moment(completionDate).fromNow() : "N/A"),
+    [completionDate],
+  );
   const name = validator?.name ?? validatorAddress;
-  const onExternalLinkClick = useCallback(() => onExternalLink(validatorAddress), [
-    onExternalLink,
-    validatorAddress,
-  ]);
+  const onExternalLinkClick = useCallback(
+    () => onExternalLink(validatorAddress),
+    [onExternalLink, validatorAddress],
+  );
   return (
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>

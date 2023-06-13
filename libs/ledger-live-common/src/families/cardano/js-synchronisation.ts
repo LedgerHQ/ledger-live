@@ -1,8 +1,4 @@
-import {
-  GetAccountShape,
-  makeScanAccounts,
-  mergeOps,
-} from "../../bridge/jsHelpers";
+import { GetAccountShape, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { makeSync } from "../../bridge/jsHelpers";
 import { encodeAccountId, inferSubOperations } from "../../account";
 
@@ -37,7 +33,7 @@ function mapTxToAccountOperation(
   tx: APITransaction,
   accountId: string,
   accountCredentialsMap: Record<string, PaymentCredential>,
-  subAccounts: Array<TokenAccount>
+  subAccounts: Array<TokenAccount>,
 ): Operation {
   const accountChange = getAccountChange(tx, accountCredentialsMap);
   const mainOperationType = getOperationType({
@@ -59,15 +55,11 @@ function mapTxToAccountOperation(
     type: mainOperationType,
     fee: new BigNumber(tx.fees),
     value: accountChange.ada.absoluteValue(),
-    senders: tx.inputs.map((i) =>
-      isHexString(i.address)
-        ? TyphonUtils.getAddressFromHex(i.address).getBech32()
-        : i.address
+    senders: tx.inputs.map(i =>
+      isHexString(i.address) ? TyphonUtils.getAddressFromHex(i.address).getBech32() : i.address,
     ),
-    recipients: tx.outputs.map((o) =>
-      isHexString(o.address)
-        ? TyphonUtils.getAddressFromHex(o.address).getBech32()
-        : o.address
+    recipients: tx.outputs.map(o =>
+      isHexString(o.address) ? TyphonUtils.getAddressFromHex(o.address).getBech32() : o.address,
     ),
     subOperations,
     blockHeight: tx.blockHeight,
@@ -80,14 +72,14 @@ function mapTxToAccountOperation(
 function prepareUtxos(
   newTransactions: Array<APITransaction>,
   stableUtxos: Array<CardanoOutput>,
-  accountCredentialsMap: Record<string, PaymentCredential>
+  accountCredentialsMap: Record<string, PaymentCredential>,
 ): Array<CardanoOutput> {
   const newUtxos: Array<CardanoOutput> = [];
   // spentUtxoKey = txId#index
   const spentUtxoKeys: Set<string> = new Set();
 
-  newTransactions.forEach((t) => {
-    t.inputs.forEach((i) => {
+  newTransactions.forEach(t => {
+    t.inputs.forEach(i => {
       const cred = accountCredentialsMap[i.paymentKey];
       if (cred) spentUtxoKeys.add(`${i.txId}#${i.index}`);
     });
@@ -100,7 +92,7 @@ function prepareUtxos(
           index: outputIndex,
           address: o.address,
           amount: new BigNumber(o.value),
-          tokens: o.tokens.map((token) => ({
+          tokens: o.tokens.map(token => ({
             assetName: token.assetName,
             policyId: token.policyId,
             amount: new BigNumber(token.value),
@@ -114,18 +106,14 @@ function prepareUtxos(
     });
   });
 
-  const utxos = uniqBy(
-    [...stableUtxos, ...newUtxos],
-    (u) => `${u.hash}#${u.index}`
-  ).filter((u) => !spentUtxoKeys.has(`${u.hash}#${u.index}`));
+  const utxos = uniqBy([...stableUtxos, ...newUtxos], u => `${u.hash}#${u.index}`).filter(
+    u => !spentUtxoKeys.has(`${u.hash}#${u.index}`),
+  );
 
   return utxos;
 }
 
-export const getAccountShape: GetAccountShape = async (
-  info,
-  { blacklistedTokenIds }
-) => {
+export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenIds }) => {
   const {
     transport,
     currency,
@@ -150,9 +138,7 @@ export const getAccountShape: GetAccountShape = async (
       path: str_to_path(accountPath),
     });
   }
-  const xpub =
-    paramXpub ||
-    `${extendedPubKeyRes.publicKeyHex}${extendedPubKeyRes.chainCodeHex}`;
+  const xpub = paramXpub || `${extendedPubKeyRes.publicKeyHex}${extendedPubKeyRes.chainCodeHex}`;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -173,9 +159,7 @@ export const getAccountShape: GetAccountShape = async (
   const requiredConfirmations = 90;
 
   const oldOperations = initialAccount?.operations || [];
-  const lastBlockHeight = oldOperations.length
-    ? (oldOperations[0].blockHeight || 0) + 1
-    : 0;
+  const lastBlockHeight = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
 
   const syncFromBlockHeight = outdatedSyncHash
     ? 0
@@ -193,38 +177,31 @@ export const getAccountShape: GetAccountShape = async (
     accountIndex,
     initialAccount as CardanoAccount,
     syncFromBlockHeight,
-    currency
+    currency,
   );
 
-  const accountCredentialsMap = [
-    ...externalCredentials,
-    ...internalCredentials,
-  ].reduce((finalMap, cred) => {
-    finalMap[cred.key] = cred;
-    return finalMap;
-  }, {} as Record<string, PaymentCredential>);
+  const accountCredentialsMap = [...externalCredentials, ...internalCredentials].reduce(
+    (finalMap, cred) => {
+      finalMap[cred.key] = cred;
+      return finalMap;
+    },
+    {} as Record<string, PaymentCredential>,
+  );
 
   const stableOperationsByIds: Record<string, Operation> = {};
-  (initialAccount?.operations || []).forEach((o) => {
+  (initialAccount?.operations || []).forEach(o => {
     if ((o.blockHeight as number) < syncFromBlockHeight) {
       stableOperationsByIds[o.hash] = o;
     }
   });
 
-  const stableUtxos = (
-    (initialAccount as CardanoAccount)?.cardanoResources?.utxos || []
-  ).filter((u) => stableOperationsByIds[u.hash]);
+  const stableUtxos = ((initialAccount as CardanoAccount)?.cardanoResources?.utxos || []).filter(
+    u => stableOperationsByIds[u.hash],
+  );
 
-  const utxos = prepareUtxos(
-    newTransactions,
-    stableUtxos,
-    accountCredentialsMap
-  );
-  const accountBalance = utxos.reduce(
-    (total, u) => total.plus(u.amount),
-    new BigNumber(0)
-  );
-  const tokenBalance = mergeTokens(utxos.map((u) => u.tokens).flat());
+  const utxos = prepareUtxos(newTransactions, stableUtxos, accountCredentialsMap);
+  const accountBalance = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
+  const tokenBalance = mergeTokens(utxos.map(u => u.tokens).flat());
   const subAccounts = buildSubAccounts({
     initialAccount,
     parentAccountId: accountId,
@@ -232,22 +209,19 @@ export const getAccountShape: GetAccountShape = async (
     newTransactions,
     tokens: tokenBalance,
     accountCredentialsMap,
-  }).filter((a) => !blacklistedTokenIds?.includes(a.token.id));
+  }).filter(a => !blacklistedTokenIds?.includes(a.token.id));
 
-  const newOperations = newTransactions.map((t) =>
-    mapTxToAccountOperation(t, accountId, accountCredentialsMap, subAccounts)
+  const newOperations = newTransactions.map(t =>
+    mapTxToAccountOperation(t, accountId, accountCredentialsMap, subAccounts),
   );
 
-  const operations = mergeOps(
-    Object.values(stableOperationsByIds),
-    newOperations
-  );
+  const operations = mergeOps(Object.values(stableOperationsByIds), newOperations);
 
   const stakeCredential = getAccountStakeCredential(xpub, accountIndex);
   const networkParams = getNetworkParameters(currency.id);
   const freshAddresses = externalCredentials
-    .filter((c) => !c.isUsed)
-    .map((c) => ({
+    .filter(c => !c.isUsed)
+    .map(c => ({
       derivationPath: getBipPathString(c.path),
       address: getBaseAddress({
         networkId: networkParams.networkId,
@@ -255,15 +229,12 @@ export const getAccountShape: GetAccountShape = async (
         stakeCred: stakeCredential,
       }).getBech32(),
     }));
-  const cardanoNetworkInfo = await getNetworkInfo(
-    initialAccount as CardanoAccount,
-    currency
-  );
+  const cardanoNetworkInfo = await getNetworkInfo(initialAccount as CardanoAccount, currency);
   const minAdaBalanceForTokens = tokenBalance.length
     ? calculateMinUtxoAmount(
         tokenBalance,
         new BigNumber(cardanoNetworkInfo.protocolParams.lovelacePerUtxoWord),
-        false
+        false,
       )
     : new BigNumber(0);
 

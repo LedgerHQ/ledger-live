@@ -14,11 +14,7 @@ export function NotCompatibleModal({ onClose, isOpen }: Props) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={!!isOpen}
-      onClose={onClose}
-      noCloseButton
-    >
+    <QueuedDrawer isRequestingToBeOpened={!!isOpen} onClose={onClose} noCloseButton>
       <Flex alignItems="center" mt={6}>
         <Circle bg={colors.opacityDefault.c05} size={70}>
           <InfoMedium size={30} color={"primary.c80"} />
@@ -29,12 +25,7 @@ export function NotCompatibleModal({ onClose, isOpen }: Props) {
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("syncOnboarding.deviceSelection.modal.title")}
         </Text>
-        <Text
-          variant="bodyLineHeight"
-          fontWeight="medium"
-          color="neutral.c70"
-          mt={6}
-        >
+        <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c70" mt={6}>
           {t("syncOnboarding.deviceSelection.modal.desc")}
         </Text>
       </Flex>

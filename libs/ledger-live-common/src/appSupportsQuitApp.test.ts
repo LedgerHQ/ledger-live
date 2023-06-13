@@ -5,7 +5,7 @@ test("appSupportsQuitApp - Apps that are listed fail if version is lt", () => {
       name: "Wanchain",
       version: "1.0.0",
       flags: 0,
-    })
+    }),
   ).toBeFalsy();
 });
 test("appSupportsQuitApp - Apps that are listed pass if version is gte", () => {
@@ -14,7 +14,7 @@ test("appSupportsQuitApp - Apps that are listed pass if version is gte", () => {
       name: "Wanchain",
       version: "1.4.0",
       flags: 0,
-    })
+    }),
   ).toBeTruthy();
 });
 test("appSupportsQuitApp - Apps that are not listed pass the test", () => {
@@ -23,6 +23,6 @@ test("appSupportsQuitApp - Apps that are not listed pass the test", () => {
       name: "FakeAppName",
       version: "1.2.3",
       flags: 0,
-    })
+    }),
   ).toBeTruthy();
 });

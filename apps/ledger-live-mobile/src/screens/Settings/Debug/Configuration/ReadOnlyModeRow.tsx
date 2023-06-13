@@ -14,10 +14,7 @@ type Props = {
   setReadOnlyMode: (_: boolean) => void;
   reboot: (_?: boolean | null) => void;
 };
-const mapStateToProps = createStructuredSelector<
-  State,
-  { readOnlyModeEnabled: boolean }
->({
+const mapStateToProps = createStructuredSelector<State, { readOnlyModeEnabled: boolean }>({
   readOnlyModeEnabled: readOnlyModeEnabledSelector,
 });
 const mapDispatchToProps = {
@@ -41,22 +38,14 @@ class ReadOnlyModeRow extends PureComponent<Props> {
         desc="Readonly mode for testing, relaunch to refresh topbar"
       >
         <Track
-          event={
-            readOnlyModeEnabled ? "EnableReadOnlyMode" : "DisableReadOnlyMode"
-          }
+          event={readOnlyModeEnabled ? "EnableReadOnlyMode" : "DisableReadOnlyMode"}
           onUpdate
         />
-        <Switch
-          value={readOnlyModeEnabled}
-          onValueChange={this.setReadOnlyModeAndReset}
-        />
+        <Switch value={readOnlyModeEnabled} onValueChange={this.setReadOnlyModeAndReset} />
       </SettingsRow>
     );
   }
 }
 
-const m = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withReboot(ReadOnlyModeRow));
+const m = connect(mapStateToProps, mapDispatchToProps)(withReboot(ReadOnlyModeRow));
 export default m;

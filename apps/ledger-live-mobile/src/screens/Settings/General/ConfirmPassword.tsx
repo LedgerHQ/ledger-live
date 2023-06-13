@@ -27,8 +27,7 @@ const ConfirmPassword = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<Error | null>(null);
-  const [biometricsType, setPBiometricType] =
-    useState<Keychain.BIOMETRY_TYPE | null>(null);
+  const [biometricsType, setPBiometricType] = useState<Keychain.BIOMETRY_TYPE | null>(null);
 
   const save = useCallback(async () => {
     if (!route.params?.password) return;
@@ -40,21 +39,14 @@ const ConfirmPassword = ({ route, navigation }: Props) => {
             rules: Keychain.SECURITY_RULES.NONE,
           };
     try {
-      await Keychain.setGenericPassword(
-        "ledger",
-        route.params?.password,
-        options,
-      );
+      await Keychain.setGenericPassword("ledger", route.params?.password, options);
       dispatch(
         setPrivacy({
           biometricsType,
           biometricsEnabled: false,
         }),
       );
-      const n =
-        navigation.getParent<
-          StackNavigatorNavigation<BaseNavigatorStackParamList>
-        >();
+      const n = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
       if (n) n.goBack();
     } catch (err) {
       // eslint-disable-next-line no-console

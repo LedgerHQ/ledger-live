@@ -18,19 +18,14 @@ const totalSteps = "3";
 function BondFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigatorConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator screenOptions={stackNavigatorConfig}>
       <Stack.Screen
         name={ScreenName.PolkadotBondStarted}
         component={Started}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("polkadot.bond.stepperHeader.starter")} />
-          ),
+          headerTitle: () => <StepHeader title={t("polkadot.bond.stepperHeader.starter")} />,
         }}
       />
       <Stack.Screen

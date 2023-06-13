@@ -3,11 +3,7 @@ import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import {
-  useNavigation,
-  useRoute,
-  useTheme as useNavTheme,
-} from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme as useNavTheme } from "@react-navigation/native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -22,10 +18,7 @@ import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
 import { track } from "../../analytics";
-import {
-  setLastConnectedDevice,
-  setReadOnlyMode,
-} from "../../actions/settings";
+import { setLastConnectedDevice, setReadOnlyMode } from "../../actions/settings";
 import Button from "../wrappedUi/Button";
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
@@ -64,10 +57,7 @@ export default function SelectDevice({
   const route = useRoute();
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
-  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(
-    navigation,
-    false,
-  );
+  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(navigation, false);
 
   // To be able to triggers the device selection once all the bluetooth requirements are respected
   const [
@@ -77,14 +67,11 @@ export default function SelectDevice({
 
   // Enforces the BLE requirements for a "connecting" action. The requirements are only enforced
   // if the bluetooth is needed (isBleRequired is true).
-  const {
-    bluetoothRequirementsState,
-    retryRequestOnIssue,
-    cannotRetryRequest,
-  } = useDebouncedRequireBluetooth({
-    requiredFor: "connecting",
-    isHookEnabled: isBleRequired,
-  });
+  const { bluetoothRequirementsState, retryRequestOnIssue, cannotRetryRequest } =
+    useDebouncedRequireBluetooth({
+      requiredFor: "connecting",
+      isHookEnabled: isBleRequired,
+    });
 
   // If the user tries to close the drawer displaying issues on BLE requirements,
   // this cancels the requirements checking and does not do anything in order to stop the
@@ -135,13 +122,7 @@ export default function SelectDevice({
       onSelect(device);
       dispatch(setReadOnlyMode(false));
     },
-    [
-      bluetoothRequirementsState,
-      dispatch,
-      isBleRequired,
-      onSelect,
-      setIsBleRequired,
-    ],
+    [bluetoothRequirementsState, dispatch, isBleRequired, onSelect, setIsBleRequired],
   );
 
   // Once all the bluetooth requirements are respected, the device selection is triggered
@@ -153,11 +134,7 @@ export default function SelectDevice({
       handleOnSelect(lastSelectedDeviceBeforeRequireBluetoothCheck);
       setLastSelectedDeviceBeforeRequireBluetoothCheck(null);
     }
-  }, [
-    bluetoothRequirementsState,
-    lastSelectedDeviceBeforeRequireBluetoothCheck,
-    handleOnSelect,
-  ]);
+  }, [bluetoothRequirementsState, lastSelectedDeviceBeforeRequireBluetoothCheck, handleOnSelect]);
 
   // When a new pairing (with a navigation) occurs, this component gets unmounted/remounted
   // Therefore, its state (isBleRequired, or a selectedDevice) cannot be updated.
@@ -241,8 +218,7 @@ export default function SelectDevice({
   const hasUSBSection = Platform.OS === "android" || other.length > 0;
 
   useEffect(() => {
-    const filter = ({ id }: { id: string }) =>
-      ["hid", "httpdebug"].includes(id);
+    const filter = ({ id }: { id: string }) => ["hid", "httpdebug"].includes(id);
     const subscription = discoverDevices(filter).subscribe(e => {
       setDevices(devices => {
         const isUSBDevice = e.id.startsWith("usb|");
@@ -300,21 +276,12 @@ export default function SelectDevice({
         {usbOnly && withArrows && !hideAnimation ? (
           <UsbPlaceholder />
         ) : usbOnly ? null : ble.length === 0 ? (
-          <BluetoothEmpty
-            hideAnimation={hideAnimation}
-            onPairNewDevice={onPairNewDevice}
-          />
+          <BluetoothEmpty hideAnimation={hideAnimation} onPairNewDevice={onPairNewDevice} />
         ) : (
           <View>
             <BluetoothHeader />
             {ble.map(renderItem)}
-            <Button
-              onPress={onPairNewDevice}
-              event="AddDevice"
-              type={"main"}
-              mt={6}
-              mb={6}
-            >
+            <Button onPress={onPairNewDevice} event="AddDevice" type={"main"} mt={6} mb={6}>
               <Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />
             </Button>
           </View>
@@ -322,12 +289,7 @@ export default function SelectDevice({
         {hasUSBSection &&
           !usbOnly &&
           (ble.length === 0 ? (
-            <View
-              style={[
-                styles.separator,
-                { backgroundColor: colors.neutral.c40 },
-              ]}
-            />
+            <View style={[styles.separator, { backgroundColor: colors.neutral.c40 }]} />
           ) : (
             <USBHeader />
           ))}
@@ -339,13 +301,7 @@ export default function SelectDevice({
         {onWithoutDevice && (
           <View>
             <WithoutDeviceHeader />
-            <Button
-              onPress={onWithoutDevice}
-              event="WithoutDevice"
-              type={"main"}
-              mt={6}
-              mb={6}
-            >
+            <Button onPress={onWithoutDevice} event="WithoutDevice" type={"main"} mt={6} mb={6}>
               <Trans i18nKey="SelectDevice.withoutDevice" />
             </Button>
           </View>
