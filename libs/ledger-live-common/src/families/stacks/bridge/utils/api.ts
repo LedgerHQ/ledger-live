@@ -5,7 +5,10 @@ import {
   BroadcastTransactionRequest,
   BroadcastTransactionResponse,
   EstimatedFeesRequest,
-  EstimatedFeesResponse, MempoolResponse, MempoolTransaction,
+  EstimatedFeesResponse,
+  GetNonceResponse,
+  MempoolResponse,
+  MempoolTransaction,
   NetworkStatusResponse,
   TransactionResponse,
   TransactionsResponse,
@@ -158,4 +161,11 @@ export const fetchFullMempoolTxs = async (
   } while (offset < qty);
 
   return txs; // TODO Validate if the response fits this interface
+};
+
+export const fetchNonce = async (addr: string): Promise<GetNonceResponse> => {
+  const response = await fetch<GetNonceResponse>(
+    `/extended/v1/address/${addr}/nonces`
+  );
+  return response; // TODO Validate if the response fits this interface
 };
