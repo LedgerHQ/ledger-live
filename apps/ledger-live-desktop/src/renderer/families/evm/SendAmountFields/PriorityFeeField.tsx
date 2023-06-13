@@ -1,21 +1,23 @@
-import { GasOptions, Transaction } from "@ledgerhq/coin-evm/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { AccountBridge } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import React, { useCallback, useMemo } from "react";
 import invariant from "invariant";
-import React, { memo, useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import BigNumber from "bignumber.js";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
-import { track } from "~/renderer/analytics/segment";
-import Box from "~/renderer/components/Box";
-import InputCurrency from "~/renderer/components/InputCurrency";
-import Label from "~/renderer/components/Label";
+import { useTranslation } from "react-i18next";
+import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
+import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import TranslatedError from "~/renderer/components/TranslatedError";
+import InputCurrency from "~/renderer/components/InputCurrency";
+import { track } from "~/renderer/analytics/segment";
+import Label from "~/renderer/components/Label";
 import { openURL } from "~/renderer/linking";
-import { EvmFamily } from "../types";
+import Box from "~/renderer/components/Box";
+import { urls } from "~/config/urls";
 
 const ErrorContainer = styled(Box)<{ hasError?: boolean }>`
   margin-top: 0px;
@@ -44,18 +46,21 @@ const WhiteSpacedLabel = styled(Label)`
   color: ${p => p.theme.colors.neutral.c60};
 `;
 
-const strategies: (keyof GasOptions)[] = ["slow", "medium", "fast"];
+type Props = {
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
+  transaction: Transaction;
+  status: TransactionStatus;
+  updateTransaction: Result<Transaction>["updateTransaction"];
+};
 
-const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
-  account,
-  transaction,
-  status,
-  updateTransaction,
-}) => {
-  invariant(transaction.family === "evm", "PriorityFeeField: evm family expected");
-  invariant(transaction.type === 2, "PriorityFeeField: transaction should be of type 2 (EIP1559)");
+const fallbackMaxPriorityFeePerGas = inferDynamicRange(new BigNumber(10e9));
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+const FeesField = ({ account, parentAccount, transaction, status, updateTransaction }: Props) => {
+  invariant(transaction.family === "evm", "FeeField: evm family expected");
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
   const { t } = useTranslation();
 
   const onPriorityFeeChange = useCallback(
@@ -71,26 +76,26 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
 
   const { gasOptions } = transaction;
 
-  invariant(gasOptions, "PriorityFeeField: 'transaction.gasOptions' should be defined");
-
-  strategies.forEach(strategy => {
-    invariant(
-      gasOptions[strategy].maxPriorityFeePerGas,
-      `PriorityFeeField: 'gasOptions[${strategy}].maxPriorityFeePerGas' should be defined`,
-    );
-  });
-
-  const { maxPriorityFeePerGas: maxPriorityFee } = transaction;
-  const { units } = account.currency;
+  const maxPriorityFee =
+    transaction.maxPriorityFeePerGas ??
+    gasOptions?.medium.maxPriorityFeePerGas ??
+    fallbackMaxPriorityFeePerGas.initial;
+  const { units } = mainAccount.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
 
   const [lowPriorityFeeValue, highPriorityFeeValue] = useMemo(
     () => [
-      formatCurrencyUnit(unit, gasOptions.slow.maxPriorityFeePerGas!),
-      formatCurrencyUnit(unit, gasOptions.fast.maxPriorityFeePerGas!),
+      formatCurrencyUnit(
+        unit,
+        gasOptions?.slow.maxPriorityFeePerGas || fallbackMaxPriorityFeePerGas.min,
+      ),
+      formatCurrencyUnit(
+        unit,
+        gasOptions?.fast.maxPriorityFeePerGas || fallbackMaxPriorityFeePerGas.max,
+      ),
     ],
-    [gasOptions.slow, gasOptions.fast, unit],
+    [gasOptions?.slow, gasOptions?.fast, unit],
   );
 
   const validTransactionError = status.errors.maxPriorityFee;
@@ -137,4 +142,4 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   );
 };
 
-export default memo(FeesField);
+export default FeesField;

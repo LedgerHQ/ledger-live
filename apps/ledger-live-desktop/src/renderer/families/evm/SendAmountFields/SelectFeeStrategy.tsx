@@ -1,24 +1,33 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Account } from "@ledgerhq/types-live";
-import React, { memo, useMemo } from "react";
-import { Trans } from "react-i18next";
+import React, { memo } from "react";
 import styled from "styled-components";
-import Box, { Tabbable } from "~/renderer/components/Box";
+import {
+  getAccountCurrency,
+  getAccountUnit,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
+import { Trans } from "react-i18next";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
+import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import Text from "~/renderer/components/Text";
-import Clock from "~/renderer/icons/Clock";
 import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
-import TachometerMedium from "~/renderer/icons/TachometerMedium";
+import Box, { Tabbable } from "~/renderer/components/Box";
+import Text from "~/renderer/components/Text";
+import Clock from "~/renderer/icons/Clock";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
+
+type OnClickType = {
+  feesStrategy: keyof GasOptions;
+};
 
 type Props = {
-  onClick: (_: { feesStrategy: keyof GasOptions }) => void;
+  onClick: (arg: OnClickType) => void;
   transaction: EvmTransaction;
-  account: Account;
+  account: AccountLike;
+  parentAccount: Account | null | undefined;
   gasOptions: GasOptions;
 };
 
@@ -64,13 +73,14 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
 
 const strategies: (keyof GasOptions)[] = ["slow", "medium", "fast"];
 
-const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props) => {
-  const accountUnit = getAccountUnit(account);
-  const feesCurrency = getAccountCurrency(account);
+const SelectFeeStrategy = ({ transaction, account, parentAccount, onClick, gasOptions }: Props) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const accountUnit = getAccountUnit(mainAccount);
+  const feesCurrency = getAccountCurrency(mainAccount);
 
-  const feeStrategies = useMemo(
-    () =>
-      strategies.map(strategy => {
+  return (
+    <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
+      {strategies.map(strategy => {
         const selected = transaction.feesStrategy === strategy;
 
         const gasOption = gasOptions[strategy];
@@ -145,13 +155,7 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props)
             </>
           </FeesWrapper>
         );
-      }),
-    [accountUnit, feesCurrency, gasOptions, onClick, transaction],
-  );
-
-  return (
-    <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
-      {feeStrategies}
+      })}
     </Box>
   );
 };
