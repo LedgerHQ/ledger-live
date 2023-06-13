@@ -1,8 +1,8 @@
-import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/errors";
 import type { DeviceId } from "@ledgerhq/types-live";
 
 import { Observable, concat } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+import { filter, map, switchMap } from "rxjs/operators";
 import {
   SharedTaskEvent,
   retryOnErrorsCommandWrapper,
@@ -43,7 +43,16 @@ function internalGetBatteryStatusesTask({
           const statusesObservable = statuses.map((statusType) =>
             retryOnErrorsCommandWrapper({
               command: ({ transport }) =>
-                getBatteryStatus({ transport, statusType }),
+                getBatteryStatus({ transport, statusType }).pipe(
+                  filter(
+                    (
+                      e
+                    ): e is {
+                      type: "data";
+                      batteryStatus: number | BatteryStatusFlags;
+                    } => e.type === "data"
+                  )
+                ),
               allowedErrors: [
                 { maxRetries: 3, errorClass: DisconnectedDevice },
               ],
@@ -52,10 +61,6 @@ function internalGetBatteryStatusesTask({
           return concat(...statusesObservable);
         }),
         map((value) => {
-          if (value.type === "unresponsive") {
-            return { type: "error" as const, error: new LockedDeviceError() };
-          }
-
           const { batteryStatus } = value;
 
           return { type: "data" as const, batteryStatus };
