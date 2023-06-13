@@ -1,8 +1,8 @@
-import network from "../../../network";
 import { APIGetPoolList, APIGetPoolsDetail } from "./api-types";
 import { isTestnet } from "../logic";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import network from "@ledgerhq/live-network/network";
 
 export async function fetchPoolList(
   currency: CryptoCurrency,

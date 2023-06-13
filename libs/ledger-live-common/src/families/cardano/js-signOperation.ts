@@ -31,7 +31,13 @@ import {
   prepareStakeDeRegistrationCertificate,
   prepareWithdrawal,
 } from "./tx-helpers";
-import { Account, Operation, SignedOperation, SignOperationEvent } from "@ledgerhq/types-live";
+import {
+  Account,
+  Operation,
+  OperationType,
+  SignedOperation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,

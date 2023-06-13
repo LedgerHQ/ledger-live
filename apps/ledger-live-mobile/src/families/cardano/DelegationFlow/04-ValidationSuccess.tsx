@@ -18,10 +18,7 @@ import type { BaseNavigatorStackParamList } from "../../../components/RootNaviga
 import { CardanoDelegationFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CardanoDelegationFlowParamList,
-    ScreenName.CardanoDelegationValidationSuccess
-  >
+  StackNavigatorProps<CardanoDelegationFlowParamList, ScreenName.CardanoDelegationValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -29,9 +26,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {
@@ -53,12 +48,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="cardano.delegation.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="cardano.delegation.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="cardano.delegation.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="cardano.delegation.flow.steps.verification.success.text" />}
       />
     </View>
   );

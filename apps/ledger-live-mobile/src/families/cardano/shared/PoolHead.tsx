@@ -6,12 +6,7 @@ import React from "react";
 const PoolHead = ({ title }: { title?: string }) => {
   return (
     <View style={styles.poolHead}>
-      <Text
-        style={styles.poolHeadText}
-        color="smoke"
-        numberOfLines={1}
-        fontWeight="semiBold"
-      >
+      <Text style={styles.poolHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
         {title ?? <Trans i18nKey="cardano.delegation.pools" />}
       </Text>
     </View>

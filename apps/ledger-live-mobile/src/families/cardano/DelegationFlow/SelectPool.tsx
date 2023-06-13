@@ -27,14 +27,8 @@ export default function SelectPool({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const {
-    pools,
-    searchQuery,
-    setSearchQuery,
-    onScrollEndReached,
-    isSearching,
-    isPaginating,
-  } = useCardanoFamilyPools(account.currency);
+  const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
+    useCardanoFamilyPools(account.currency);
 
   const onItemPress = useCallback(
     (pool: StakePool) => {
@@ -56,10 +50,7 @@ export default function SelectPool({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
-      <SelectPoolSearchBox
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
+      <SelectPoolSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>
         <PoolHead />
       </View>

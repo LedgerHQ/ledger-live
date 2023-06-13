@@ -12,10 +12,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  formatCurrencyUnit,
-  getCurrencyColor,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   CardanoAccount,
   CardanoDelegation,
@@ -49,23 +46,22 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, undefined);
 
-  const { transaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
-      const tx = route.params.transaction;
+  const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(() => {
+    const tx = route.params.transaction;
 
-      if (!tx) {
-        const t = bridge.createTransaction(mainAccount);
+    if (!tx) {
+      const t = bridge.createTransaction(mainAccount);
 
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "undelegate",
-          }),
-        };
-      }
+      return {
+        account,
+        transaction: bridge.updateTransaction(t, {
+          mode: "undelegate",
+        }),
+      };
+    }
 
-      return { account, transaction: tx };
-    });
+    return { account, transaction: tx };
+  });
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
@@ -92,10 +88,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
         </View>
 
         <View style={styles.summary}>
-          <SummaryWords
-            currentDelegation={currentDelegation}
-            account={account}
-          />
+          <SummaryWords currentDelegation={currentDelegation} account={account} />
         </View>
       </View>
       <View style={styles.footer}>
@@ -184,12 +177,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function SummaryWords({
-  account,
-}: {
-  account: AccountLike;
-  currentDelegation: CardanoDelegation;
-}) {
+function SummaryWords({ account }: { account: AccountLike; currentDelegation: CardanoDelegation }) {
   const unit = getAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -219,12 +207,7 @@ function SummaryWords({
         <DataField
           label={t("cardano.delegation.networkFees")}
           Component={
-            <LText
-              numberOfLines={1}
-              semiBold
-              ellipsizeMode="middle"
-              style={[styles.valueText]}
-            >
+            <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
               {formatCurrencyUnit(unit, new BigNumber(170000), formatConfig)}
             </LText>
           }
@@ -233,12 +216,7 @@ function SummaryWords({
         <DataField
           label={t("cardano.delegation.stakeKeyRegistrationDepositRefund")}
           Component={
-            <LText
-              numberOfLines={1}
-              semiBold
-              ellipsizeMode="middle"
-              style={[styles.valueText]}
-            >
+            <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
               {formatCurrencyUnit(unit, new BigNumber(2000000), formatConfig)}
             </LText>
           }
@@ -252,9 +230,7 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View
-      style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}
-    >
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}

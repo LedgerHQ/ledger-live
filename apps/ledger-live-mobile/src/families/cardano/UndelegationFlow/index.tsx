@@ -18,10 +18,7 @@ const totalSteps = "3";
 function UndelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -33,9 +30,7 @@ function UndelegationFlow() {
         name={ScreenName.CardanoUndelegationSummary}
         component={UndelegationSummary}
         options={() => ({
-          headerTitle: () => (
-            <StepHeader title={t("cardano.undelegation.undelegate")} />
-          ),
+          headerTitle: () => <StepHeader title={t("cardano.undelegation.undelegate")} />,
         })}
       />
       <Stack.Screen

@@ -15,18 +15,13 @@ import { CardanoDelegationFlowParamList } from "./types";
 import { ScreenName } from "../../../const";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CardanoDelegationFlowParamList,
-    ScreenName.CardanoDelegationValidationError
-  >
+  StackNavigatorProps<CardanoDelegationFlowParamList, ScreenName.CardanoDelegationValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const retry = useCallback(() => {

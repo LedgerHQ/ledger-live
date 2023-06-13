@@ -1,7 +1,4 @@
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/cardano/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";

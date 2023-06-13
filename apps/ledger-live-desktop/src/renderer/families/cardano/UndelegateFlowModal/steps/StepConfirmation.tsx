@@ -1,25 +1,24 @@
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
@@ -63,4 +62,4 @@ export function StepConfirmationFooter({ onRetry, error, onClose }: StepProps) {
   );
 }
 
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

@@ -29,9 +29,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {
@@ -53,12 +51,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="cardano.undelegation.verificationSuccessTitle" />
-        }
-        description={
-          <Trans i18nKey="cardano.delegation.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="cardano.undelegation.verificationSuccessTitle" />}
+        description={<Trans i18nKey="cardano.delegation.flow.steps.verification.success.text" />}
       />
     </View>
   );

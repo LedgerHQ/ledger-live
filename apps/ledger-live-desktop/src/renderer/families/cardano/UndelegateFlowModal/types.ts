@@ -18,9 +18,9 @@ export type StepProps = {
   parentAccount: CardanoAccount | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
+  openModal: (key: string, config?: unknown) => void;
   optimisticOperation: Operation;
-  error: any;
+  error: Error;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

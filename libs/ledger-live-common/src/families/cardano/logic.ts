@@ -34,6 +34,7 @@ import {
   AddressType,
   AssetGroup,
   TxInput,
+  TxOutput,
   TxOutputDestination,
   TxOutputDestinationType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";

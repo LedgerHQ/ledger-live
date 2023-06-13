@@ -29,11 +29,7 @@ const PoolRow = ({
     alwaysShowSign: false,
     showCode: true,
   };
-  const poolCost = formatCurrencyUnit(
-    unit,
-    new BigNumber(pool.cost),
-    formatConfig,
-  );
+  const poolCost = formatCurrencyUnit(unit, new BigNumber(pool.cost), formatConfig);
 
   return (
     <Touchable
@@ -49,13 +45,8 @@ const PoolRow = ({
           <Text numberOfLines={1} fontWeight="semiBold" style={styles.poolName}>
             {`${pool.ticker} - ${pool.name}`}
           </Text>
-          <Text
-            fontWeight="medium"
-            numberOfLines={1}
-            style={styles.overdelegated}
-          >
-            <Trans i18nKey="cardano.delegation.commission" />{" "}
-            <Text>{pool.margin} %</Text>
+          <Text fontWeight="medium" numberOfLines={1} style={styles.overdelegated}>
+            <Trans i18nKey="cardano.delegation.commission" /> <Text>{pool.margin} %</Text>
             {"   "}
             <Trans i18nKey="cardano.delegation.cost" /> <Text>{poolCost}</Text>
           </Text>
