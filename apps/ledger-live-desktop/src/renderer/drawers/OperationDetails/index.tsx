@@ -181,7 +181,10 @@ const OperationD = (props: Props) => {
   const uniqueSenders = uniq(senders);
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
-  const subOperations = operation.subOperations || [];
+  const subOperations: Operation[] = useMemo(
+    () => operation.subOperations || [],
+    [operation.subOperations],
+  );
   const internalOperations = operation.internalOperations || [];
   const isToken = listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
   const openOperation = useCallback(
@@ -267,7 +270,7 @@ const OperationD = (props: Props) => {
         );
       }
     },
-    [dispatch],
+    [dispatch, isToken, subOperations],
   );
   // pending transactions that exceeds 5 minutes are considered as stuck transactions
   const isStuck =
