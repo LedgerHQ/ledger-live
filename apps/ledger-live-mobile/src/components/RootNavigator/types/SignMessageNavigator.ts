@@ -13,6 +13,8 @@ export type SignMessageNavigatorStackParamList = {
   [ScreenName.SignSummary]: {
     currentNavigation?: keyof SignMessageNavigatorStackParamList;
     nextNavigation?: keyof SignMessageNavigatorStackParamList;
+    onConfirmationHandler?: (_: string) => void;
+    onFailHandler?: (_: Error) => void;
   } & CommonParams;
   [ScreenName.SignSelectDevice]: CommonParams;
   [ScreenName.SignConnectDevice]: {

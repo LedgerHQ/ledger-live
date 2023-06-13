@@ -247,15 +247,11 @@ const linkingOptions = {
               [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
-          [NavigatorName.Swap]: {
-            screens: {
-              /**
-               * @params ?currency: string
-               * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
-               */
-              [ScreenName.Swap]: "swap",
-            },
-          },
+          /**
+           * ie: "ledgerlive://swap" -> will redirect to the main swap page
+           */
+          [NavigatorName.Swap]: "swap",
+
           [NavigatorName.SendFunds]: {
             screens: {
               /**
@@ -300,10 +296,6 @@ const linkingOptions = {
             },
           },
 
-          /**
-           * ie: "ledgerlive://swap" -> will redirect to the main swap page
-           */
-          [NavigatorName.Swap]: "swap",
           [NavigatorName.Settings]: {
             initialRouteName: [ScreenName.SettingsScreen],
             screens: {

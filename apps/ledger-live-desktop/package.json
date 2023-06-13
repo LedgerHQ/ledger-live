@@ -79,7 +79,7 @@
     "electron-store": "^8.1.0",
     "firebase": "^9.6.6",
     "focus-trap": "^6.6.1",
-    "fuse.js": "^3.6.1",
+    "fuse.js": "^6.6.2",
     "i18next": "^19.9.2",
     "invariant": "^2.2.4",
     "json-rpc-2.0": "^0.2.19",

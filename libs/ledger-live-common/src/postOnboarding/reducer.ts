@@ -75,7 +75,7 @@ export const postOnboardingSelector: Selector<
   { postOnboarding: PostOnboardingState },
   PostOnboardingState
 > = createSelector(
-  state => state.postOnboarding,
+  (state: { postOnboarding: PostOnboardingState }) => state.postOnboarding,
   postOnboarding => ({
     ...postOnboarding,
     deviceModelId: sanitizeDeviceModelId(postOnboarding.deviceModelId),
