@@ -7,7 +7,6 @@ import {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   Alert,
-  Button,
   Flex,
   IconBadge,
   Icons,
@@ -48,6 +47,7 @@ import ImageHexProcessor from "../../components/CustomImage/ImageHexProcessor";
 import { targetDataDimensions } from "../CustomImage/shared";
 import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
 import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage";
+import Button from "../../components/wrappedUi/Button";
 
 type FirmwareUpdateProps = {
   device: Device;
@@ -78,6 +78,7 @@ const CloseWarning = ({
 
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
+      <TrackScreen category="Error: update not complete yet" type="drawer" refreshSource={false} />
       <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateNotYetComplete")}
@@ -85,10 +86,34 @@ const CloseWarning = ({
       <Text fontSize={14} textAlign="center" color="neutral.c80" mt={6}>
         {t("FirmwareUpdate.updateNotYetCompleteDescription")}
       </Text>
-      <Button type="main" outline={false} onPress={onPressContinue} mt={8} alignSelf="stretch">
+      <Button
+        event="button_clicked"
+        eventProperties={{
+          button: "Continue update",
+          screen: "Firmware update",
+          drawer: "Error: update not complete yet",
+        }}
+        type="main"
+        outline={false}
+        onPress={onPressContinue}
+        mt={8}
+        alignSelf="stretch"
+      >
         {t("FirmwareUpdate.continueUpdate")}
       </Button>
-      <Button type="default" outline={false} onPress={onPressQuit} mt={6} alignSelf="stretch">
+      <Button
+        event="button_clicked"
+        eventProperties={{
+          button: "Exit update",
+          screen: "Firmware update",
+          drawer: "Error: update not complete yet",
+        }}
+        type="default"
+        outline={false}
+        onPress={onPressQuit}
+        mt={6}
+        alignSelf="stretch"
+      >
         {t("FirmwareUpdate.quitUpdate")}
       </Button>
     </Flex>
@@ -117,7 +142,7 @@ export const FirmwareUpdate = ({
     Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
   }, [device.modelId]);
 
-  const productName = useMemo(() => getDeviceModel(device.modelId).productName, [device.modelId]);
+  const productName = getDeviceModel(device.modelId).productName;
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
@@ -435,7 +460,20 @@ export const FirmwareUpdate = ({
           errorName={error.name}
           translationContext="FirmwareUpdate"
         >
-          <Button type="main" outline={false} onPress={quitUpdate} mt={6} alignSelf="stretch">
+          <TrackScreen category={`Error: ${error.name}`} refreshSource={false} type="drawer" />
+          <Button
+            event="button_clicked"
+            eventProperties={{
+              button: "Quit flow",
+              screen: "Firmware update",
+              drawer: `Error: ${error.name}`,
+            }}
+            type="main"
+            outline={false}
+            onPress={quitUpdate}
+            mt={6}
+            alignSelf="stretch"
+          >
             {t("FirmwareUpdate.quitUpdate")}
           </Button>
         </DeviceActionError>
