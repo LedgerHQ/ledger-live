@@ -1,4 +1,4 @@
-import { Linking } from "react-native";
+import { Image, Linking } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
   updateFirmwareActionArgs,
@@ -44,6 +44,10 @@ import {
 import { useUpdateFirmwareAndRestoreSettings } from "./useUpdateFirmwareAndRestoreSettings";
 import { urls } from "../../config/urls";
 import { TrackScreen } from "../../analytics";
+import ImageHexProcessor from "../../components/CustomImage/ImageHexProcessor";
+import { targetDataDimensions } from "../CustomImage/shared";
+import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
+import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage";
 
 type FirmwareUpdateProps = {
   device: Device;
@@ -133,6 +137,19 @@ export const FirmwareUpdate = ({
     device,
     deviceInfo,
   });
+
+  const [staxImageSource, setStaxImageSource] = useState<
+    React.ComponentProps<typeof Image>["source"]
+  >();
+  const handleStaxImageSourceLoaded = useCallback((res: ProcessorPreviewResult) => {
+    setStaxImageSource({ uri: res.imageBase64DataUri });
+  }, []);
+  const staxImageSourceProviderValue = useMemo(
+    () => ({
+      source: staxImageSource,
+    }),
+    [staxImageSource],
+  );
 
   useEffect(() => {
     if (updateStep === "completed") {
@@ -564,7 +581,9 @@ export const FirmwareUpdate = ({
       )}
 
       <QueuedDrawer isRequestingToBeOpened={Boolean(deviceInteractionDisplay)} noCloseButton>
-        {deviceInteractionDisplay}
+        <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
+          {deviceInteractionDisplay}
+        </ImageSourceContext.Provider>
       </QueuedDrawer>
       <QueuedDrawer isRequestingToBeOpened={isCloseWarningOpen} noCloseButton>
         <CloseWarning
@@ -585,6 +604,14 @@ export const FirmwareUpdate = ({
         <TrackScreen
           key="d"
           category={`Update ${productName} - Step 3d: apps and settings successfully restored`}
+        />
+      ) : null}
+      {staxFetchImageState.hexImage ? (
+        <ImageHexProcessor
+          hexData={staxFetchImageState.hexImage as string}
+          {...targetDataDimensions}
+          onPreviewResult={handleStaxImageSourceLoaded}
+          onError={error => console.error(error)}
         />
       ) : null}
     </>

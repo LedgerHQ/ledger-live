@@ -4,7 +4,7 @@ import { Dimensions, Image, Pressable } from "react-native";
 import Alert from "../Alert";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
 import { fitImageContain } from "./imageUtils";
-import ResultDataTester from "./ResultDataTester";
+import ImageHexProcessor from "./ImageHexProcessor";
 
 type Props = {
   rawData: ProcessorRawResult;
@@ -38,8 +38,10 @@ This should NOT happen, it means that some data has been lost.`;
 
 const TestImage: React.FC<Props> = props => {
   const { rawData, previewData, onError } = props;
-  const [reconstructedPreviewResult, setReconstructedPreviewResult] =
-    useState<ProcessorPreviewResult | null>(null);
+  const [
+    reconstructedPreviewResult,
+    setReconstructedPreviewResult,
+  ] = useState<ProcessorPreviewResult | null>(null);
 
   const handlePreviewResult = useCallback((res: ProcessorPreviewResult) => {
     setReconstructedPreviewResult(res);
@@ -90,7 +92,7 @@ const TestImage: React.FC<Props> = props => {
         Image reconstructed from raw data:
       </Text>
       {rawData && (
-        <ResultDataTester
+        <ImageHexProcessor
           {...rawData}
           onPreviewResult={handlePreviewResult}
           onError={handleError}
