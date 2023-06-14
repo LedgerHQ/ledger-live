@@ -198,9 +198,9 @@ export const createAction = (
               ? e.type === "deviceChange" && currentMode === "polling"
                 ? interval(defaultConfig.pollingFrequency + 50)
                 : interval(100)
-              : EMPTY
+              : EMPTY,
           ),
-          scan(reducer, getInitialState())
+          scan(reducer, getInitialState()),
         )
         .subscribe(setState);
       return () => {
