@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Linking, Platform } from "react-native";
+import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { useFlipper } from "@react-navigation/devtools";
@@ -212,15 +212,12 @@ const linkingOptions = {
                 },
               },
               [NavigatorName.Discover]: {
-                screens:
-                  Platform.OS === "ios"
-                    ? {}
-                    : {
-                        /**
-                         * ie: "ledgerlive://discover" will open the catalog
-                         */
-                        [ScreenName.PlatformCatalog]: "discover",
-                      },
+                screens: {
+                  /**
+                   * ie: "ledgerlive://discover" will open the catalog
+                   */
+                  [ScreenName.PlatformCatalog]: "discover",
+                },
               },
               [NavigatorName.Manager]: {
                 screens: {
@@ -247,15 +244,11 @@ const linkingOptions = {
               [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
-          [NavigatorName.Swap]: {
-            screens: {
-              /**
-               * @params ?currency: string
-               * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
-               */
-              [ScreenName.Swap]: "swap",
-            },
-          },
+          /**
+           * ie: "ledgerlive://swap" -> will redirect to the main swap page
+           */
+          [NavigatorName.Swap]: "swap",
+
           [NavigatorName.SendFunds]: {
             screens: {
               /**
@@ -300,10 +293,6 @@ const linkingOptions = {
             },
           },
 
-          /**
-           * ie: "ledgerlive://swap" -> will redirect to the main swap page
-           */
-          [NavigatorName.Swap]: "swap",
           [NavigatorName.Settings]: {
             initialRouteName: [ScreenName.SettingsScreen],
             screens: {

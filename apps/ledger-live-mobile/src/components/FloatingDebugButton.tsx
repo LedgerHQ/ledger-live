@@ -82,7 +82,12 @@ const FloatingDebugButton: React.FC<Props> = ({
           justifyContent="center"
           {...iconContainerProps}
         >
-          {React.isValidElement(Icon) ? Icon : <Icon size={(2 * boxWidth) / 3} color="white" />}
+          {React.isValidElement(Icon) ? (
+            Icon
+          ) : (
+            /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
+            <Icon size={(2 * boxWidth) / 3} color="white" />
+          )}
         </Flex>
       </TouchableWithoutFeedback>
     </Animated.View>
