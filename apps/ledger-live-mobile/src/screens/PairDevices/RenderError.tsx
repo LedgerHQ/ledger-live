@@ -1,10 +1,6 @@
 import React, { useCallback } from "react";
 import { Linking, StyleSheet } from "react-native";
-import {
-  BleError,
-  BleError as DeprecatedError,
-  BleErrorCode,
-} from "react-native-ble-plx";
+import { BleError, BleError as DeprecatedError, BleErrorCode } from "react-native-ble-plx";
 import { Trans } from "react-i18next";
 import {
   PairingFailed,
@@ -58,8 +54,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
 
   // Location service is disabled
   if (
-    (error instanceof BleError &&
-      error.errorCode === BleErrorCode.LocationServicesDisabled) ||
+    (error instanceof BleError && error.errorCode === BleErrorCode.LocationServicesDisabled) ||
     (error instanceof HwTransportError &&
       error.type === HwTransportErrorType.LocationServicesDisabled)
   ) {
@@ -69,8 +64,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   // Location has not enough permissions
   // Indeed BleErrorCode.BluetoothUnauthorized is not the right error code. Legacy code.
   if (
-    (error instanceof BleError &&
-      error.errorCode === BleErrorCode.BluetoothUnauthorized) ||
+    (error instanceof BleError && error.errorCode === BleErrorCode.BluetoothUnauthorized) ||
     (error instanceof HwTransportError &&
       error.type === HwTransportErrorType.LocationServicesUnauthorized)
   ) {

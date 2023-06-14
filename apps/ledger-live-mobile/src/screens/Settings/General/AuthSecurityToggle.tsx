@@ -16,9 +16,7 @@ export default function AuthSecurityToggle() {
 
   const onValueChange = (authSecurityEnabled: boolean): void =>
     navigate(
-      authSecurityEnabled
-        ? NavigatorName.PasswordAddFlow
-        : NavigatorName.PasswordModifyFlow,
+      authSecurityEnabled ? NavigatorName.PasswordAddFlow : NavigatorName.PasswordModifyFlow,
     );
 
   return (
@@ -28,11 +26,7 @@ export default function AuthSecurityToggle() {
         title={t("settings.display.password")}
         desc={t("settings.display.passwordDesc")}
       >
-        <Switch
-          checked={!!privacy}
-          onChange={onValueChange}
-          testID="password-settings-switch"
-        />
+        <Switch checked={!!privacy} onChange={onValueChange} testID="password-settings-switch" />
       </SettingsRow>
       {privacy ? <BiometricsRow /> : null}
     </>

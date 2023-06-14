@@ -4,10 +4,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -28,22 +25,12 @@ type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
-export default function AlgorandFeeRow({
-  account,
-  parentAccount,
-  transaction,
-}: Props) {
+export default function AlgorandFeeRow({ account, parentAccount, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
@@ -75,9 +62,7 @@ export default function AlgorandFeeRow({
           ) : null}
         </View>
         <LText style={styles.countervalue} color="grey">
-          {fees ? (
-            <CounterValue before="≈ " value={fees} currency={currency} />
-          ) : null}
+          {fees ? <CounterValue before="≈ " value={fees} currency={currency} /> : null}
         </LText>
       </View>
     </SummaryRow>

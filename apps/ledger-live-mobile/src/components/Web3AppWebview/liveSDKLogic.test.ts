@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import {
+  CoinType,
   CryptoCurrency,
   CryptoCurrencyId,
   TokenCurrency,
@@ -18,10 +19,7 @@ describe("prepareSignTransaction", () => {
   it("returns a Transaction", () => {
     // Given
     const parentAccount = createAccount("12");
-    const childAccount = createTokenAccount(
-      "22",
-      "ethereumjs:2:ethereum:0x012:",
-    );
+    const childAccount = createTokenAccount("22", "ethereumjs:2:ethereum:0x012:");
     const expectedResult = {
       amount: new BigNumber("1000"),
       data: Buffer.from([]),
@@ -43,11 +41,7 @@ describe("prepareSignTransaction", () => {
     };
 
     // When
-    const result = prepareSignTransaction(
-      childAccount,
-      parentAccount,
-      createEtherumTransaction(),
-    );
+    const result = prepareSignTransaction(childAccount, parentAccount, createEtherumTransaction());
 
     // Then
     expect(result).toEqual(expectedResult);
@@ -55,9 +49,7 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createEtherumTransaction(): Partial<
-  Transaction & { gasLimit: BigNumber }
-> {
+function createEtherumTransaction(): Partial<Transaction & { gasLimit: BigNumber }> {
   return {
     family: "ethereum",
     amount: new BigNumber("1000"),
@@ -72,11 +64,10 @@ function createEtherumTransaction(): Partial<
 const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
   id: "testCoinId" as CryptoCurrencyId,
-  coinType: 8008,
+  coinType: 8008 as CoinType,
   name: "ethereum",
   managerAppName: "ethereum",
   ticker: "MYC",
-  countervalueTicker: "MYC",
   scheme: "ethereum",
   color: "#ff0000",
   family,
@@ -102,10 +93,7 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
 });
 
 const defaultEthCryptoFamily = createCryptoCurrency("ethereum");
-const createAccount = (
-  id: string,
-  crypto: CryptoCurrency = defaultEthCryptoFamily,
-): Account => ({
+const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFamily): Account => ({
   type: "Account",
   id: `ethereumjs:2:ethereum:0x0${id}:`,
   seedIdentifier: "0x01",

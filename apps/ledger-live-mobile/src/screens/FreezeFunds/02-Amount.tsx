@@ -73,8 +73,8 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
 
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {
@@ -83,7 +83,8 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
       });
 
       return { account, transaction };
-    });
+    },
+  );
 
   const options = useMemo(
     () => [
@@ -215,9 +216,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   return (
     <>
       <TrackScreen category="FreezeFunds" name="Amount" />
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <View style={styles.topContainer}>
             <GraphTabs
@@ -247,11 +246,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                   hasError={!!error}
                   hasWarning={!!warning}
                 />
-                <LText
-                  style={[styles.error]}
-                  color={error ? "alert" : "orange"}
-                  numberOfLines={2}
-                >
+                <LText style={[styles.error]} color={error ? "alert" : "orange"} numberOfLines={2}>
                   <TranslatedError error={error || warning} />
                 </LText>
               </View>
@@ -290,10 +285,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                     <CurrencyUnitValue
                       showCode
                       unit={unit}
-                      value={getDecimalPart(
-                        account.spendableBalance,
-                        defaultUnit.magnitude,
-                      )}
+                      value={getDecimalPart(account.spendableBalance, defaultUnit.magnitude)}
                     />
                   </Text>
                 </View>
@@ -314,21 +306,14 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
         </KeyboardView>
       </SafeAreaView>
 
-      <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
-        data={infoModalData}
-      />
+      <InfoModal isOpened={!!infoModalOpen} onClose={closeInfoModal} data={infoModalData} />
 
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}

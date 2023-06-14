@@ -42,11 +42,7 @@ const GenuineCheckFailedDrawer = ({
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen
-        category="Failed Stax hardware check"
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category="Failed Stax hardware check" type="drawer" refreshSource={false} />
       {error ? (
         <>
           <Flex p={3}>
@@ -59,52 +55,28 @@ const GenuineCheckFailedDrawer = ({
         </>
       ) : (
         <>
-          <Flex
-            justifyContent="center"
-            alignItems="center"
-            flex={1}
-            mt={9}
-            mb={6}
-          >
+          <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
             <BoxedIcon
-              Icon={<WarningSolidMedium color="warning.c40" size={24} />}
+              Icon={<WarningSolidMedium color="warning.c70" size={32} />}
               variant="circle"
               backgroundColor="neutral.c30"
               borderColor="transparent"
-              size={48}
+              size={64}
             />
           </Flex>
-          <Text
-            textAlign="center"
-            variant="h4"
-            fontWeight="semiBold"
-            mb={4}
-            mt={8}
-          >
-            {t(
-              "syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.title",
-            )}
+          <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
+            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.title")}
           </Text>
-          <Text
-            textAlign="center"
-            variant="bodyLineHeight"
-            mb={8}
-            color="neutral.c80"
-          >
-            {t(
-              "syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.description",
-              { productName },
-            )}
+          <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
+            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.description", {
+              productName,
+            })}
           </Text>
           <Button type="main" mb={4} onPress={onRetry}>
-            {t(
-              "syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.retryCta",
-            )}
+            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.retryCta")}
           </Button>
           <Button onPress={onSkip}>
-            {t(
-              "syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.skipCta",
-            )}
+            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.skipCta")}
           </Button>
         </>
       )}

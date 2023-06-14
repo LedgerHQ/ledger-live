@@ -4,34 +4,30 @@ import { Linking, Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  useAlreadySubscribedURI,
+  useLearnMoreURI,
+} from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import NewProtectState from "./Protect/NewProtectState";
-import { ServicesConfig } from "./types";
+import { ServicesConfigParams } from "./types";
 import Touchable from "../Touchable";
 
 import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
 import LedgerRecoverLogoDark from "../../images/ledger_recover_dark.png";
 
 import LedgerRecoverCardTopImage from "../../images/ledger_recover_card_top.png";
-import {
-  useAlreadySubscribedURI,
-  useLearnMoreURI,
-} from "../../hooks/recoverFeatureFlag";
 
 function ServicesWidget() {
   const { t } = useTranslation();
-  const servicesConfig: ServicesConfig | null = useFeature(
-    "protectServicesMobile",
-  );
+  const servicesConfig = useFeature<ServicesConfigParams>("protectServicesMobile");
   const theme = useTheme();
 
-  const learnMoreURI = useLearnMoreURI();
-  const alreadySubscribedURI = useAlreadySubscribedURI();
+  const learnMoreURI = useLearnMoreURI(servicesConfig);
+  const alreadySubscribedURI = useAlreadySubscribedURI(servicesConfig);
 
   const onCardPress = useCallback(() => {
     if (alreadySubscribedURI) {
-      Linking.canOpenURL(alreadySubscribedURI).then(() =>
-        Linking.openURL(alreadySubscribedURI),
-      );
+      Linking.canOpenURL(alreadySubscribedURI).then(() => Linking.openURL(alreadySubscribedURI));
     }
   }, [alreadySubscribedURI]);
 
@@ -48,17 +44,10 @@ function ServicesWidget() {
             style={{ width: "100%", height: 8 }}
           />
           <Flex p={7}>
-            <Flex
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={6}
-            >
+            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb={6}>
               <Image
                 source={
-                  theme.colors.type === "light"
-                    ? LedgerRecoverLogoLight
-                    : LedgerRecoverLogoDark
+                  theme.colors.type === "light" ? LedgerRecoverLogoLight : LedgerRecoverLogoDark
                 }
                 style={{ width: 90, height: 26 }}
               />

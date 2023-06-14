@@ -11,7 +11,7 @@ const common = require("./common.esbuild");
 
 module.exports = {
   ...common,
-  entryPoints: ["src/renderer/index.js"],
+  entryPoints: ["src/renderer/index.ts"],
   entryNames: "renderer.bundle",
   platform: "browser",
   target: ["chrome91"],
@@ -35,7 +35,7 @@ module.exports = {
     HtmlPlugin({
       files: [
         {
-          entryPoints: ["src/renderer/index.js", "renderer.bundle.css"],
+          entryPoints: ["src/renderer/index.ts", "renderer.bundle.css"],
           htmlTemplate: "src/renderer/index.html",
           filename: "index.html",
           title: "Ledger Live",

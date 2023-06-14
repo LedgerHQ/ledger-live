@@ -26,20 +26,20 @@ const Container = styled(Flex).attrs((p: { size: number }) => ({
 
 const IconBoxBackground = styled(Flex)<{ size: number; badgeSize: number; hasBadge: boolean }>`
   position: absolute;
-  height: ${(p) => p.size}px;
-  width: ${(p) => p.size}px;
-  ${(p) => {
+  height: ${p => p.size}px;
+  width: ${p => p.size}px;
+  ${p => {
     return (
       p.hasBadge &&
       `clip-path: ${getTopRightSquareClippedPolygon(p.size, getClipRectangleSize(p.badgeSize))};`
     );
   }};
-  border-radius: ${(p) => p.theme.radii[2]}px;
+  border-radius: ${p => p.theme.radii[2]}px;
 `;
 
 const BadgeContainer = styled.div<{ badgeSize: number }>`
   position: absolute;
-  ${(p) => `
+  ${p => `
     top: -${p.badgeSize / 2 - 2}px;
     right: -${p.badgeSize / 2 - 2}px;`}
 `;

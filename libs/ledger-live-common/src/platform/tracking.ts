@@ -8,7 +8,7 @@ import type { LiveAppManifest } from "./types";
 type TrackPlatform = (
   event: string,
   properties: Record<string, any> | null,
-  mandatory: boolean | null
+  mandatory: boolean | null,
 ) => void;
 
 export type TrackFunction = (manifest: LiveAppManifest) => void;
@@ -28,9 +28,7 @@ function getEventData(manifest: LiveAppManifest) {
  * @param trackCall
  * @returns a dictionary of event to trigger.
  */
-export default function trackingWrapper(
-  trackCall: TrackPlatform
-): Record<string, TrackFunction> {
+export default function trackingWrapper(trackCall: TrackPlatform): Record<string, TrackFunction> {
   const track = (event: string, properties: Record<string, any> | null) =>
     trackCall(event, properties, null);
 

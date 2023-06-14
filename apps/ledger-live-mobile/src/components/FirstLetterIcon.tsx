@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
+import { StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 

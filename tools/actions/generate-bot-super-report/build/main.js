@@ -25864,9 +25864,7 @@ async function promiseAllBatched(batch, items, fn) {
 var import_groupBy = __toESM(require_groupBy());
 function handleErrors(response) {
   if (!response.ok) {
-    throw Error(
-      response.url + ": " + response.status + " " + response.statusText
-    );
+    throw Error(response.url + ": " + response.status + " " + response.statusText);
   }
   return response;
 }
@@ -25909,7 +25907,7 @@ function successRateDisplay(a, b) {
     return "N/A";
   if (!a)
     return "\u274C 0%";
-  let r = a / b;
+  const r = a / b;
   return (r === 1 ? "\u2705 " : r < 0.8 ? "\u26A0\uFE0F " : "") + Math.round(100 * r) + "%";
 }
 async function loadReports({
@@ -25922,7 +25920,7 @@ async function loadReports({
   const maxPage = 100;
   const dateFrom = days ? new Date(Date.now() - 24 * 60 * 60 * 1e3 * parseInt(days, 10)) : void 0;
   let latestDateReached = false;
-  let artifacts = [];
+  const artifacts = [];
   let res;
   do {
     const url = `https://api.github.com/repos/LedgerHQ/ledger-live/actions/artifacts?per_page=100&page=${page}`;
@@ -25957,10 +25955,10 @@ async function loadReports({
   const reports = (await promiseAllBatched(
     5,
     artifacts,
-    (artifact) => downloadArchive(
-      githubToken,
-      artifact.archive_download_url
-    ).then((report) => ({ artifact, report }))
+    (artifact) => downloadArchive(githubToken, artifact.archive_download_url).then((report) => ({
+      artifact,
+      report
+    }))
   )).filter(Boolean).filter(({ report }) => {
     if (environment) {
       return report.environment === environment;
@@ -25978,7 +25976,7 @@ function generateSuperReport(all, days) {
   const stats = {};
   all.forEach(({ report }) => {
     report.results.forEach(({ specName, existingMutationNames }) => {
-      let s = stats[specName] = stats[specName] || {
+      const s = stats[specName] = stats[specName] || {
         specName,
         fatalErrors: [],
         runs: 0,
@@ -26027,7 +26025,7 @@ function generateSuperReport(all, days) {
       });
     });
   });
-  let ctx = days ? `${days} last days` : "all available reports";
+  const ctx = days ? `${days} last days` : "all available reports";
   const coverageInfo = Object.values(stats).reduce(
     ([success, total], { mutations }) => {
       const m = Object.values(mutations);
@@ -26039,10 +26037,7 @@ function generateSuperReport(all, days) {
   const summary = `${ctx}: ${totalReports} runs, ${totalOperations} success txs. ${successRateDisplay(
     totalOperations,
     totalMutations
-  )} success rate. ${successRateDisplay(
-    coverageInfo[0],
-    coverageInfo[1]
-  )} coverage rate.`;
+  )} success rate. ${successRateDisplay(coverageInfo[0], coverageInfo[1])} coverage rate.`;
   reportMarkdownBody += `# Bot "super report" on ${ctx}
 `;
   reportMarkdownBody += "\n> What is the Bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n";
@@ -26055,10 +26050,7 @@ function generateSuperReport(all, days) {
     const txsAttempts = m.reduce((acc, m2) => acc + m2.runs, 0) || 0;
     const txsSuccess = successRateDisplay(txs, txsAttempts);
     const mutationsWithOneSuccess = m.filter((m2) => m2.success > 0);
-    const mutationCoverage = successRateDisplay(
-      mutationsWithOneSuccess.length,
-      m.length
-    );
+    const mutationCoverage = successRateDisplay(mutationsWithOneSuccess.length, m.length);
     return `|${specName}|${successRateDisplay(
       runs - fatalErrors.length,
       runs
@@ -26093,10 +26085,7 @@ function generateSuperReport(all, days) {
       reportMarkdownBody += "|--|--|--|--|\n";
       reportMarkdownBody += m.map(({ errors, success, runs, mutationName }) => {
         const grouped = groupErrors(errors);
-        return `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(
-          success,
-          runs
-        )}|${success ? success : "\u274C"}|${groupedErrors.filter((e) => grouped.some((e2) => e2.error === e.error)).map(({ index }) => index).join(", ")}|
+        return `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(success, runs)}|${success ? success : "\u274C"}|${groupedErrors.filter((e) => grouped.some((e2) => e2.error === e.error)).map(({ index }) => index).join(", ")}|
 `;
       }).join("");
       if (groupedErrors.length) {
@@ -26187,9 +26176,7 @@ function safeErrorDisplay(txt) {
   return txt.slice(0, 200).replace(/[\s`]/g, " ");
 }
 function groupErrors(errors) {
-  const grouped = (0, import_groupBy.default)(
-    errors.map((e) => groupSimilarError(safeErrorDisplay(e)))
-  );
+  const grouped = (0, import_groupBy.default)(errors.map((e) => groupSimilarError(safeErrorDisplay(e))));
   return Object.keys(grouped).map((error, i) => ({
     error,
     index: i + 1,

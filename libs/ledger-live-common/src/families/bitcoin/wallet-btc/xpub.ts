@@ -54,27 +54,18 @@ class Xpub {
     this.freshAddressIndex = 0;
   }
 
-  async syncAddress(account: number, index: number): Promise<boolean> {
-    const address = await this.crypto.getAddress(
-      this.derivationMode,
-      this.xpub,
-      account,
-      index
-    );
+  async syncAddress(account: number, index: number, needReorg: boolean): Promise<boolean> {
+    const address = await this.crypto.getAddress(this.derivationMode, this.xpub, account, index);
 
     this.storage.addAddress(
       `${this.crypto.network.name}-${this.derivationMode}-${this.xpub}-${account}-${index}`,
-      address
+      address,
     );
-
-    // TODO handle eventual reorg case using lastBlock
-    // TODO perf: bad : looping in the tx array
-    await this.checkAddressReorg(account, index);
-
+    if (needReorg) {
+      await this.checkAddressReorg(account, index);
+    }
     // in case pendings have changed we clean them out
-    // TODO perf : bad : looping in the tx array
-    const hasPendings = !!this.storage.getLastTx({
-      confirmed: false,
+    const hasPendings = this.storage.hasPendingTx({
       account,
       index,
     });
@@ -82,49 +73,56 @@ class Xpub {
       this.storage.removePendingTxs({ account, index });
     }
     await this.fetchHydrateAndStoreNewTxs(address, account, index);
-    const lastTx = this.storage.getLastTx({
+    const hasTx = this.storage.hasTx({
       account,
       index,
     });
-    if (account === 0 && lastTx) {
+    if (account === 0 && hasTx) {
       this.freshAddressIndex = Math.max(this.freshAddressIndex, index + 1);
     }
 
-    return !!lastTx;
+    return hasTx;
   }
 
-  async checkAddressesBlock(account: number, index: number): Promise<boolean> {
+  async checkAddressesBlock(account: number, index: number, needReorg: boolean): Promise<boolean> {
     const addressesResults = await Promise.all(
-      range(this.GAP).map((_, key) => this.syncAddress(account, index + key))
+      range(this.GAP).map((_, key) => this.syncAddress(account, index + key, needReorg)),
     );
-    return some(addressesResults, (lastTx) => !!lastTx);
+    return some(addressesResults, lastTx => !!lastTx);
   }
 
-  async syncAccount(account: number): Promise<number> {
+  async syncAccount(account: number, needReorg: boolean): Promise<number> {
     let index = 0;
     // eslint-disable-next-line no-await-in-loop
-    while (await this.checkAddressesBlock(account, index)) {
+    while (await this.checkAddressesBlock(account, index, needReorg)) {
       index += this.GAP;
     }
     return index;
   }
 
   // TODO : test fail case + incremental
-  async sync(): Promise<number> {
+  async sync(): Promise<void> {
     this.freshAddressIndex = 0;
-    let account = 0;
-    // eslint-disable-next-line no-await-in-loop
-    while (account < 2 && (await this.syncAccount(account))) {
-      // account=0 for receive address; account=1 for change address. No need to handle account>1
-      account += 1;
+    const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
+    let needReorg = !!highestBlockFromStorage;
+    if (highestBlockFromStorage) {
+      const highestBlockFromExplorer = await this.explorer.getBlockByHeight(
+        highestBlockFromStorage.height,
+      );
+      if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
+        needReorg = false;
+      }
     }
+    await Promise.all([
+      this.syncAccount(0, needReorg), // for receive addresses
+      this.syncAccount(1, needReorg), // for change addresses
+    ]);
     this.freshAddress = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
       0,
-      this.freshAddressIndex
+      this.freshAddressIndex,
     );
-    return account;
   }
 
   async getXpubBalance(): Promise<BigNumber> {
@@ -139,10 +137,7 @@ class Xpub {
 
   async getAddressBalance(address: Address): Promise<BigNumber> {
     const unspentUtxos = this.storage.getAddressUnspentUtxos(address);
-    return unspentUtxos.reduce(
-      (total, { value }) => total.plus(value),
-      new BigNumber(0)
-    );
+    return unspentUtxos.reduce((total, { value }) => total.plus(value), new BigNumber(0));
   }
 
   async getXpubAddresses(): Promise<Address[]> {
@@ -163,12 +158,7 @@ class Xpub {
       index = lastIndex + gap;
     }
     const address: Address = {
-      address: await this.crypto.getAddress(
-        this.derivationMode,
-        this.xpub,
-        account,
-        index
-      ),
+      address: await this.crypto.getAddress(this.derivationMode, this.xpub, account, index),
       account,
       index,
     };
@@ -216,9 +206,7 @@ class Xpub {
         isChange: false,
       });
 
-      desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(
-        this.OUTPUT_VALUE_MAX
-      );
+      desiredOutputLeftToFit.value = desiredOutputLeftToFit.value.minus(this.OUTPUT_VALUE_MAX);
     }
 
     if (desiredOutputLeftToFit.value.gt(0)) {
@@ -242,22 +230,16 @@ class Xpub {
       unspentUtxos: unspentUtxoSelected,
       fee,
       needChangeoutput,
-    } = await utxoPickingStrategy.selectUnspentUtxosToUse(
-      this,
-      outputs,
-      feePerByte
-    );
+    } = await utxoPickingStrategy.selectUnspentUtxosToUse(this, outputs, feePerByte);
 
     const txHexs = await Promise.all(
-      unspentUtxoSelected.map((unspentUtxo) =>
-        this.explorer.getTxHex(unspentUtxo.output_hash)
-      )
+      unspentUtxoSelected.map(unspentUtxo => this.explorer.getTxHex(unspentUtxo.output_hash)),
     );
 
     const txs = await Promise.all(
-      unspentUtxoSelected.map((unspentUtxo) =>
-        this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash)
-      )
+      unspentUtxoSelected.map(unspentUtxo =>
+        this.storage.getTx(unspentUtxo.address, unspentUtxo.output_hash),
+      ),
     );
 
     const inputs: InputInfo[] = unspentUtxoSelected.map((utxo, index) => {
@@ -271,21 +253,19 @@ class Xpub {
       };
     });
 
-    const associatedDerivations: [number, number][] = unspentUtxoSelected.map(
-      (_utxo, index) => {
-        if (txs[index] == null) {
-          throw new Error("Invalid index in txs[index]");
-        }
-        return [txs[index]?.account || 0, txs[index]?.index || 0];
+    const associatedDerivations: [number, number][] = unspentUtxoSelected.map((_utxo, index) => {
+      if (txs[index] == null) {
+        throw new Error("Invalid index in txs[index]");
       }
-    );
+      return [txs[index]?.account || 0, txs[index]?.index || 0];
+    });
 
     const txSize = maxTxSizeCeil(
       unspentUtxoSelected.length,
-      outputs.map((o) => o.script),
+      outputs.map(o => o.script),
       true,
       this.crypto,
-      this.derivationMode
+      this.derivationMode,
     );
 
     const dustLimit = computeDustAmount(this.crypto, txSize);
@@ -300,10 +280,7 @@ class Xpub {
       });
     }
 
-    const outputsValue: BigNumber = outputs.reduce(
-      (cur, o) => cur.plus(o.value),
-      new BigNumber(0)
-    );
+    const outputsValue: BigNumber = outputs.reduce((cur, o) => cur.plus(o.value), new BigNumber(0));
 
     return {
       inputs,
@@ -320,60 +297,69 @@ class Xpub {
 
   // internal
   async getAddressesBalance(addresses: Address[]): Promise<BigNumber> {
-    const balances = await Promise.all(
-      addresses.map((address) => this.getAddressBalance(address))
-    );
+    const balances = await Promise.all(addresses.map(address => this.getAddressBalance(address)));
 
-    return balances.reduce(
-      (total, balance) => total.plus(balance),
-      new BigNumber(0)
-    );
+    return balances.reduce((total, balance) => total.plus(balance), new BigNumber(0));
   }
 
   async fetchHydrateAndStoreNewTxs(
     address: string,
     account: number,
-    index: number
+    index: number,
   ): Promise<number> {
     let pendingTxs: TX[] = [];
     let txs: TX[] = [];
     let inserted = 0;
     do {
-      const lastTx = this.storage.getLastTx({
-        account,
-        index,
-        confirmed: true,
-      });
-
-      txs = await this.explorer.getAddressTxsSinceLastTxBlock(
-        this.txsSyncArraySize,
-        { address, account, index },
-        lastTx
-      );
-      if (pendingTxs.length === 0) {
-        pendingTxs = txs.filter((tx) => !tx.block);
+      const lastTxBlockheight =
+        this.storage.getLastConfirmedTxBlock({
+          account,
+          index,
+        })?.height || 0;
+      if (pendingTxs.length > 0) {
+        txs = await this.explorer.getTxsSinceBlockheight(
+          this.txsSyncArraySize,
+          { address, account, index },
+          lastTxBlockheight,
+          false,
+        );
+        inserted += this.storage.appendTxs(txs); // insert not pending tx
+      } else {
+        [pendingTxs, txs] = await Promise.all([
+          this.explorer.getTxsSinceBlockheight(
+            this.txsSyncArraySize,
+            { address, account, index },
+            0,
+            true,
+          ),
+          this.explorer.getTxsSinceBlockheight(
+            this.txsSyncArraySize,
+            { address, account, index },
+            lastTxBlockheight,
+            false,
+          ),
+        ]);
+        inserted += this.storage.appendTxs(txs); // insert not pending tx
       }
-      inserted += this.storage.appendTxs(txs.filter((tx) => tx.block)); // only insert not pending tx
-    } while (txs.length - pendingTxs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
-    inserted += this.storage.appendTxs(pendingTxs);
+    } while (txs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
+    inserted += this.storage.appendTxs(pendingTxs); // insert pending tx
     return inserted;
   }
 
   async checkAddressReorg(account: number, index: number): Promise<void> {
-    const lastTx = this.storage.getLastTx({
+    const lastConfirmedTxBlock = this.storage.getLastConfirmedTxBlock({
       account,
       index,
-      confirmed: true,
     });
 
-    if (!lastTx) {
+    if (!lastConfirmedTxBlock) {
       return;
     }
 
-    const block = await this.explorer.getBlockByHeight(lastTx.block.height);
+    const block = await this.explorer.getBlockByHeight(lastConfirmedTxBlock.height);
 
     // all good the block is valid
-    if (block && block.hash === lastTx.block.hash) {
+    if (block && block.hash === lastConfirmedTxBlock.hash) {
       return;
     }
 

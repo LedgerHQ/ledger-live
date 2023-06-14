@@ -1,12 +1,6 @@
 import invariant from "invariant";
 import { Observable, defer, of, range, empty } from "rxjs";
-import {
-  catchError,
-  switchMap,
-  concatMap,
-  takeWhile,
-  map,
-} from "rxjs/operators";
+import { catchError, switchMap, concatMap, takeWhile, map } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -231,55 +225,32 @@ const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
-  invariant(
-    derivationMode in modes,
-    "not a derivationMode. Got: '%s'",
-    derivationMode
-  );
+  invariant(derivationMode in modes, "not a derivationMode. Got: '%s'", derivationMode);
   return derivationMode as DerivationMode;
 };
-export const getAllDerivationModes = (): DerivationMode[] =>
-  Object.keys(modes) as DerivationMode[];
-export const getMandatoryEmptyAccountSkip = (
-  derivationMode: DerivationMode
-): number =>
-  (modes[derivationMode] as { mandatoryEmptyAccountSkip: number })
-    .mandatoryEmptyAccountSkip || 0;
-export const isInvalidDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
+export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number =>
+  (modes[derivationMode] as { mandatoryEmptyAccountSkip: number }).mandatoryEmptyAccountSkip || 0;
+export const isInvalidDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isInvalid: boolean }).isInvalid || false;
-export const isSegwitDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isSegwitDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isSegwit: boolean }).isSegwit || false;
-export const isNativeSegwitDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
-  (modes[derivationMode] as { isNativeSegwit: boolean }).isNativeSegwit ||
-  false;
-export const isTaprootDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isNativeSegwitDerivationMode = (derivationMode: DerivationMode): boolean =>
+  (modes[derivationMode] as { isNativeSegwit: boolean }).isNativeSegwit || false;
+export const isTaprootDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isTaproot: boolean }).isTaproot || false;
 
-export const isUnsplitDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isUnsplitDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isUnsplit: boolean }).isUnsplit || false;
-export const isIterableDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isIterableDerivationMode = (derivationMode: DerivationMode): boolean =>
   !(modes[derivationMode] as { isNonIterable: boolean }).isNonIterable;
-export const getDerivationModeStartsAt = (
-  derivationMode: DerivationMode
-): number => (modes[derivationMode] as { startsAt: number }).startsAt || 0;
-export const getPurposeDerivationMode = (
-  derivationMode: DerivationMode
-): number => (modes[derivationMode] as { purpose: number }).purpose || 44;
+export const getDerivationModeStartsAt = (derivationMode: DerivationMode): number =>
+  (modes[derivationMode] as { startsAt: number }).startsAt || 0;
+export const getPurposeDerivationMode = (derivationMode: DerivationMode): number =>
+  (modes[derivationMode] as { purpose: number }).purpose || 44;
 export const getTagDerivationMode = (
   currency: CryptoCurrency,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 ): string | null | undefined => {
   const mode = modes[derivationMode] as { tag: any; isInvalid: any };
 
@@ -297,14 +268,11 @@ export const getTagDerivationMode = (
 
   return null;
 };
-export const getAddressFormatDerivationMode = (
-  derivationMode: DerivationMode
-): string =>
-  (modes[derivationMode] as { addressFormat: string }).addressFormat ||
-  "legacy";
+export const getAddressFormatDerivationMode = (derivationMode: DerivationMode): string =>
+  (modes[derivationMode] as { addressFormat: string }).addressFormat || "legacy";
 export const derivationModeSupportsIndex = (
   derivationMode: DerivationMode,
-  index: number
+  index: number,
 ): boolean => {
   const mode = modes[derivationMode];
   if ((mode as { skipFirst: boolean }).skipFirst && index === 0) return false;
@@ -330,8 +298,7 @@ export const getDerivationScheme = ({
     overridesCoinType: string;
   };
   if (overridesDerivation) return overridesDerivation;
-  const splitFrom =
-    isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
+  const splitFrom = isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
     : typeof overridesCoinType === "number"
@@ -354,7 +321,7 @@ export const runDerivationScheme = (
     account?: number | string;
     node?: number | string;
     address?: number | string;
-  } = {}
+  } = {},
 ) =>
   derivationScheme
     .replace("<coin_type>", String(coinType))
@@ -369,7 +336,7 @@ export const runAccountDerivationScheme = (
   },
   opts: {
     account?: number | string;
-  } = {}
+  } = {},
 ) =>
   runDerivationScheme(scheme, currency, {
     ...opts,
@@ -407,15 +374,11 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
 };
 export const getSeedIdentifierDerivation = (
   currency: CryptoCurrency,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 ): string => {
-  const unsplitFork = isUnsplitDerivationMode(derivationMode)
-    ? currency.forkedFrom
-    : null;
+  const unsplitFork = isUnsplitDerivationMode(derivationMode) ? currency.forkedFrom : null;
   const purpose = getPurposeDerivationMode(derivationMode);
-  const { coinType } = unsplitFork
-    ? getCryptoCurrencyById(unsplitFork)
-    : currency;
+  const { coinType } = unsplitFork ? getCryptoCurrencyById(unsplitFork) : currency;
   const f = seedIdentifierPath[currency.id] || seedIdentifierPath._;
   return f({
     purpose,
@@ -423,9 +386,7 @@ export const getSeedIdentifierDerivation = (
   });
 };
 // return an array of ways to derivate, by convention the latest is the standard one.
-export const getDerivationModesForCurrency = (
-  currency: CryptoCurrency
-): DerivationMode[] => {
+export const getDerivationModesForCurrency = (currency: CryptoCurrency): DerivationMode[] => {
   let all: DerivationMode[] = [];
   if (currency.family in legacyDerivationsPerFamily) {
     all = all.concat(legacyDerivationsPerFamily[currency.family]);
@@ -471,32 +432,25 @@ export const getDerivationModesForCurrency = (
   }
 
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {
-    return all.filter((a) => !isInvalidDerivationMode(a));
+    return all.filter(a => !isInvalidDerivationMode(a));
   }
 
   return all;
 };
-const preferredList: DerivationMode[] = [
-  "native_segwit",
-  "taproot",
-  "segwit",
-  "",
-];
+const preferredList: DerivationMode[] = ["native_segwit", "taproot", "segwit", ""];
 // null => no settings
 // [ .. ]
 export const getPreferredNewAccountScheme = (
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): DerivationMode[] | null | undefined => {
   if (currency.family !== "bitcoin") return null;
   const derivationsModes = getDerivationModesForCurrency(currency);
-  const list = preferredList.filter((p) =>
-    derivationsModes.includes(p as DerivationMode)
-  );
+  const list = preferredList.filter(p => derivationsModes.includes(p as DerivationMode));
   if (list.length === 1) return null;
   return list as DerivationMode[];
 };
 export const getDefaultPreferredNewAccountScheme = (
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): DerivationMode | null | undefined => {
   const list = getPreferredNewAccountScheme(currency);
   return list && list[0];
@@ -533,23 +487,19 @@ export function walletDerivation<R>({
       path,
       derivationMode,
     }).pipe(
-      catchError((e) => {
-        if (
-          e instanceof TransportStatusError ||
-          e instanceof UserRefusedAddress
-        ) {
+      catchError(e => {
+        if (e instanceof TransportStatusError || e instanceof UserRefusedAddress) {
           log("scanAccounts", "ignore derivationMode=" + derivationMode);
         }
 
         return empty();
-      })
-    )
+      }),
+    ),
   ).pipe(
-    switchMap((parentDerivation) => {
+    switchMap(parentDerivation => {
       const seedIdentifier = parentDerivation.publicKey;
       const emptyCount = 0;
-      const mandatoryEmptyAccountSkip =
-        getMandatoryEmptyAccountSkip(derivationMode);
+      const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(derivationMode);
       const derivationScheme = getDerivationScheme({
         derivationMode,
         currency,
@@ -558,7 +508,7 @@ export function walletDerivation<R>({
       const startsAt = getDerivationModeStartsAt(derivationMode);
       return range(startsAt, stopAt - startsAt).pipe(
         // derivate addresses/xpubs
-        concatMap((index) => {
+        concatMap(index => {
           if (!derivationModeSupportsIndex(derivationMode, index)) {
             return empty();
           }
@@ -575,11 +525,11 @@ export function walletDerivation<R>({
             path,
             derivationMode,
           }).pipe(
-            map((accountDerivation) => ({
+            map(accountDerivation => ({
               parentDerivation,
               accountDerivation,
               index,
-            }))
+            })),
           );
         }), // do action with these derivations (e.g. synchronize)
         concatMap(({ parentDerivation, accountDerivation, index }) =>
@@ -590,12 +540,12 @@ export function walletDerivation<R>({
             derivationMode,
             shouldSkipEmpty: emptyCount < mandatoryEmptyAccountSkip,
             seedIdentifier,
-          })
+          }),
         ), // take until the list is complete (based on criteria defined by stepAddress)
         // $FlowFixMe
-        takeWhile((r) => !r.complete, true), // emit just the results
-        concatMap(({ result }) => (result ? of(result) : empty()))
+        takeWhile(r => !r.complete, true), // emit just the results
+        concatMap(({ result }) => (result ? of(result) : empty())),
       );
-    })
+    }),
   );
 }

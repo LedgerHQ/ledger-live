@@ -10,45 +10,30 @@ import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import ExchangeTransport from "@ledgerhq/hw-app-exchange";
-import type {
-  CompleteExchangeInputSwap,
-  CompleteExchangeRequestEvent,
-} from "../platform/types";
+import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
+  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
 
 const completeExchange = (
-  input: CompleteExchangeInputSwap
+  input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
-  const {
-    deviceId,
-    exchange,
-    provider,
-    binaryPayload,
-    signature,
-    exchangeType,
-    rateType,
-  } = input;
+  const { deviceId, exchange, provider, binaryPayload, signature, exchangeType, rateType } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
   const { toAccount, toParentAccount } = exchange;
 
-  return new Observable((o) => {
+  return new Observable(o => {
     let unsubscribed = false;
     let ignoreTransportError = false;
 
     const confirmExchange = async () => {
-      await withDevicePromise(deviceId, async (transport) => {
+      await withDevicePromise(deviceId, async transport => {
         const providerConfig = getProviderConfig(provider);
-        const exchange = new ExchangeTransport(
-          transport,
-          exchangeType,
-          rateType
-        );
+        const exchange = new ExchangeTransport(transport, exchangeType, rateType);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
@@ -59,15 +44,14 @@ const completeExchange = (
         if (refundCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
 
-        transaction = await accountBridge.prepareTransaction(
-          refundAccount,
-          transaction
-        );
+        transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
 
         if (unsubscribed) return;
 
-        const { errors, estimatedFees } =
-          await accountBridge.getTransactionStatus(refundAccount, transaction);
+        const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
+          refundAccount,
+          transaction,
+        );
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
@@ -83,15 +67,10 @@ const completeExchange = (
         await exchange.checkPartner(providerConfig.signature);
         if (unsubscribed) return;
 
-        await exchange.processTransaction(
-          Buffer.from(binaryPayload, "hex"),
-          estimatedFees
-        );
+        await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
 
-        const goodSign = <Buffer>(
-          secp256k1.signatureExport(Buffer.from(signature, "hex"))
-        );
+        const goodSign = <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
@@ -100,20 +79,18 @@ const completeExchange = (
         ].getSerializedAddressParameters(
           payoutAccount.freshAddressPath,
           payoutAccount.derivationMode,
-          mainPayoutCurrency.id
+          mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
 
-        const {
-          config: payoutAddressConfig,
-          signature: payoutAddressConfigSignature,
-        } = getCurrencyExchangeConfig(mainPayoutCurrency);
+        const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
+          getCurrencyExchangeConfig(mainPayoutCurrency);
 
         try {
           await exchange.checkPayoutAddress(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters
+            payoutAddressParameters.addressParameters,
           );
         } catch (e) {
           // @ts-expect-error TransportStatusError to be typed on ledgerjs
@@ -133,21 +110,19 @@ const completeExchange = (
         ].getSerializedAddressParameters(
           refundAccount.freshAddressPath,
           refundAccount.derivationMode,
-          refundCurrency.id
+          refundCurrency.id,
         );
         if (unsubscribed) return;
 
-        const {
-          config: refundAddressConfig,
-          signature: refundAddressConfigSignature,
-        } = getCurrencyExchangeConfig(refundCurrency);
+        const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
+          getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
 
         try {
           await exchange.checkRefundAddress(
             refundAddressConfig,
             refundAddressConfigSignature,
-            refundAddressParameters.addressParameters
+            refundAddressParameters.addressParameters,
           );
           log("exchange", "checkrefund address");
         } catch (e) {
@@ -169,7 +144,7 @@ const completeExchange = (
         if (unsubscribed) return;
         ignoreTransportError = true;
         await exchange.signCoinTransaction();
-      }).catch((e) => {
+      }).catch(e => {
         if (ignoreTransportError) return;
 
         // @ts-expect-error TransportStatusError to be typed on ledgerjs
@@ -192,14 +167,14 @@ const completeExchange = (
         o.complete();
         unsubscribed = true;
       },
-      (e) => {
+      e => {
         o.next({
           type: "complete-exchange-error",
           error: e,
         });
         o.complete();
         unsubscribed = true;
-      }
+      },
     );
     return () => {
       unsubscribed = true;

@@ -12,7 +12,7 @@ import Explorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // FIXME Skipped because Praline required on CI
 describe.skip("testing xpub reorg management", () => {
@@ -21,21 +21,17 @@ describe.skip("testing xpub reorg management", () => {
   const explorer = new Explorer({
     cryptoCurrency: getCryptoCurrencyById("bitcoin_testnet"),
     forcedExplorerURI: "http://localhost:20000/blockchain/v3",
-    disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
   const crypto = new Crypto({
     network,
   });
 
-  const xpubs = [1].map((i) => {
+  const xpubs = [1].map(i => {
     const storage = new BitcoinLikeStorage();
     const seed = bip39.mnemonicToSeedSync(`test${i} test${i} test${i}`);
     const node = bip32.fromSeed(seed, network);
     const signer = (account: number, index: number) =>
-      bitcoin.ECPair.fromWIF(
-        node.derive(account).derive(index).toWIF(),
-        network
-      );
+      bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
     const xpub = new Xpub({
       storage,
       explorer,
@@ -89,9 +85,7 @@ describe.skip("testing xpub reorg management", () => {
 
     try {
       await axios.post("http://localhost:28443/chain/clear/all");
-      await axios.post(
-        `http://localhost:28443/chain/mine/2N1MYgVbjLgveWPSicdScTAsYSDYEzyg7vd/1`
-      );
+      await axios.post(`http://localhost:28443/chain/mine/2N1MYgVbjLgveWPSicdScTAsYSDYEzyg7vd/1`);
       await axios.post(`http://localhost:28443/chain/faucet/${address}/7.0`);
     } catch (e) {
       // eslint-disable-next-line no-console

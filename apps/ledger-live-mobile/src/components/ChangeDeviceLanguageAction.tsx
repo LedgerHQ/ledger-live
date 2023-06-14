@@ -54,9 +54,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
           )}
         />
       </Flex>
-      {showAlert && (
-        <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />
-      )}
+      {showAlert && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}
     </>
   );
 };

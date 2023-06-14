@@ -53,10 +53,7 @@ describe("isUpdateAvailable tests", () => {
     it(name, async () => {
       jest.mock("../manager/api");
       // I don't know how to avoid the internal API calls to the Manager API.
-      const result = await isUpdateAvailable(
-        deviceInfo,
-        outdatedApp as AppAndVersion
-      );
+      const result = await isUpdateAvailable(deviceInfo, outdatedApp as AppAndVersion);
       expect(result).toBe(expectedResult);
     });
   });

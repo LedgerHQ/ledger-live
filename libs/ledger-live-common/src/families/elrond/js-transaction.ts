@@ -29,10 +29,7 @@ export const createTransaction = (): Transaction => {
  * @param {*} t
  * @param {*} patch
  */
-export const updateTransaction = (
-  t: Transaction,
-  patch: $Shape<Transaction>
-): Transaction => {
+export const updateTransaction = (t: Transaction, patch: $Shape<Transaction>): Transaction => {
   return { ...t, ...patch };
 };
 
@@ -44,15 +41,12 @@ export const updateTransaction = (
  */
 export const prepareTransaction = async (
   a: ElrondAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<Transaction> => {
   const preparedTx: Transaction = t;
 
   const tokenAccount =
-    (t.subAccountId &&
-      a.subAccounts &&
-      a.subAccounts.find((ta) => ta.id === t.subAccountId)) ||
-    null;
+    (t.subAccountId && a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId)) || null;
 
   if (tokenAccount) {
     preparedTx.data = ElrondEncodeTransaction.ESDTTransfer(t, tokenAccount);
@@ -88,9 +82,7 @@ export const prepareTransaction = async (
 
   if (t.useAllAmount) {
     // Set the max amount
-    preparedTx.amount = tokenAccount
-      ? tokenAccount.balance
-      : a.spendableBalance;
+    preparedTx.amount = tokenAccount ? tokenAccount.balance : a.spendableBalance;
 
     // Compute estimated fees for that amount
     preparedTx.fees = await getFees(preparedTx);

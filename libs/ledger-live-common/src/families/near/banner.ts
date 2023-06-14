@@ -1,5 +1,6 @@
 import { getCurrentNearPreloadData } from "./preload";
-import { canStake, canUnstake, FIGMENT_NEAR_VALIDATOR_ADDRESS } from "./logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "./constants";
+import { canStake, canUnstake } from "./logic";
 import type { NearAccount, NearValidatorItem } from "./types";
 
 export interface AccountBannerState {
@@ -9,15 +10,11 @@ export interface AccountBannerState {
   ledgerValidator: NearValidatorItem | undefined;
 }
 
-export function getAccountBannerState(
-  account: NearAccount
-): AccountBannerState {
+export function getAccountBannerState(account: NearAccount): AccountBannerState {
   // Group current validator
-  const nearResources = account.nearResources
-    ? account.nearResources
-    : { stakingPositions: [] };
+  const nearResources = account.nearResources ? account.nearResources : { stakingPositions: [] };
 
-  const delegations = nearResources?.stakingPositions.map((delegation) => {
+  const delegations = nearResources?.stakingPositions.map(delegation => {
     return delegation;
   });
 
@@ -27,7 +24,7 @@ export function getAccountBannerState(
   };
 
   const ledgerValidator = validators.find(
-    (validator) => validator.validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS
+    validator => validator.validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS,
   );
 
   // If Ledger doesn't provide validator, we don't display banner
@@ -48,9 +45,7 @@ export function getAccountBannerState(
   let worstValidator = ledgerValidator;
   for (const delegation of delegations) {
     const validatorAdress = delegation?.validatorId;
-    const validator = validators.find(
-      (validator) => validator.validatorAddress === validatorAdress
-    );
+    const validator = validators.find(validator => validator.validatorAddress === validatorAdress);
     const isValidRedelegation =
       validator &&
       validatorAdress !== ledgerValidator.validatorAddress &&
@@ -64,9 +59,7 @@ export function getAccountBannerState(
     }
   }
   if (worstValidator) {
-    if (
-      worstValidator?.validatorAddress === ledgerValidator?.validatorAddress
-    ) {
+    if (worstValidator?.validatorAddress === ledgerValidator?.validatorAddress) {
       if (canStake(account)) {
         display = true;
       }

@@ -1,33 +1,27 @@
-import { useSelector } from "react-redux";
-import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
-import { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { accountSelector } from "~/renderer/reducers/accounts";
+import React, { useCallback, useEffect } from "react";
+import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { multiline } from "~/renderer/styles/helpers";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import * as S from "./StepConfirmation.styles";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
+import * as S from "./StepConfirmation.styles";
+
 export const StepConfirmationFooter = ({
-  account: initialAccount,
+  account,
   onRetry,
   error,
   onClose,
   optimisticOperation,
 }: StepProps) => {
-  const account = useSelector(s =>
-    accountSelector(s, {
-      accountId: initialAccount?.id,
-    }),
-  );
   const goToOperationDetails = useCallback(() => {
     onClose();
     if (account && optimisticOperation) {
@@ -65,14 +59,18 @@ export const StepConfirmationFooter = ({
     </Box>
   );
 };
-const StepConfirmation = ({
-  t,
-  optimisticOperation,
-  error,
-  signed,
-}: StepProps & {
-  theme: any;
-}) => {
+const StepConfirmation = ({ t, optimisticOperation, error, signed, source }: StepProps) => {
+  useEffect(() => {
+    if (optimisticOperation) {
+      track("staking_completed", {
+        currency: "CELO",
+        source,
+        delegation: "lock",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, source]);
+
   if (optimisticOperation) {
     return (
       <S.Container>
@@ -99,4 +97,4 @@ const StepConfirmation = ({
   }
   return null;
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

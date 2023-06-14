@@ -9,6 +9,7 @@ import starAnim2 from "~/renderer/images/starAnim2.png";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Transition } from "react-transition-group";
 import { track } from "~/renderer/analytics/segment";
+import { State } from "~/renderer/reducers";
 type Props = {
   accountId: string;
   parentId?: string;
@@ -16,7 +17,7 @@ type Props = {
   rounded?: boolean;
 };
 export default function Star({ accountId, parentId, yellow, rounded }: Props) {
-  const isAccountStarred = useSelector(state =>
+  const isAccountStarred = useSelector((state: State) =>
     isStarredAccountSelector(state, {
       accountId,
     }),
@@ -103,7 +104,7 @@ const StarIcon = styled.div<{
   background-repeat: no-repeat;
   background-size: 3000%;
   filter: brightness(1);
-  transition: filter .1s ease-out;
+  transition: filter 0.1s ease-out;
   &:hover {
     filter: ${p =>
       p.theme.colors.palette.type === "dark" ? "brightness(1.3)" : "brightness(0.8)"};

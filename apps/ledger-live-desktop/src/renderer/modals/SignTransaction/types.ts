@@ -19,7 +19,7 @@ export type StepProps = {
   error: Error | undefined | null;
   warning: Error | undefined | null;
   closeModal: (a: void) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
   onChangeTransaction: (a: Transaction) => void;
   onTransactionError: (a: Error) => void;
@@ -29,6 +29,6 @@ export type StepProps = {
   onResetMaybeRecipient: () => void;
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
-  updateTransaction: (updater: any) => void;
+  updateTransaction: (updater: (_: Transaction) => Transaction) => void;
 };
 export type St = Step<StepId, StepProps>;

@@ -17,8 +17,7 @@ import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
 import NftMetadataServiceRow from "./NftMetadataServiceRow";
 
 export default function Configuration() {
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
 
   return (
     <SettingsNavigationScrollView>

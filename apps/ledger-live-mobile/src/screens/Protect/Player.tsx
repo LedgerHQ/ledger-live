@@ -14,10 +14,7 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../const";
 
-export type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.Recover
->;
+export type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>;
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 

@@ -2,24 +2,15 @@ import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 
 import { sync, scanAccounts } from "../js-synchronisation";
-import {
-  AccountBridge,
-  AccountLike,
-  CurrencyBridge,
-} from "@ledgerhq/types-live";
-import {
-  createTransaction,
-  updateTransaction,
-  prepareTransaction,
-} from "../js-transaction";
+import { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import { createTransaction, updateTransaction, prepareTransaction } from "../js-transaction";
 import getTransactionStatus from "../js-getTransactionStatus";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import BigNumber from "bignumber.js";
 import { calculateMaxFeesToken } from "../utils/calculateTransactionInfo";
 
-const receive: AccountBridge<Transaction>["receive"] =
-  makeAccountBridgeReceive();
+const receive: AccountBridge<Transaction>["receive"] = makeAccountBridgeReceive();
 
 const currencyBridge: CurrencyBridge = {
   scanAccounts,

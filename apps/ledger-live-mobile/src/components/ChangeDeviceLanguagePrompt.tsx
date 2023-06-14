@@ -11,10 +11,7 @@ type Props = {
   onConfirm: () => void;
   deviceModel: DeviceModel;
   language: Language;
-} & (
-  | { canSkip: true; onSkip: () => void }
-  | { canSkip?: false; onSkip?: undefined }
-);
+} & ({ canSkip: true; onSkip: () => void } | { canSkip?: false; onSkip?: undefined });
 
 type Images = {
   [key in DeviceModelId]?: { [key in "light" | "dark"]: ImageSourcePropType };
@@ -43,11 +40,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
   return (
     <Flex alignItems="center">
       {illustration ? (
-        <Illustration
-          size={200}
-          darkSource={illustration.dark}
-          lightSource={illustration.light}
-        />
+        <Illustration size={200} darkSource={illustration.dark} lightSource={illustration.light} />
       ) : null}
       <Text variant="h4" textAlign="center">
         {t("onboarding.stepLanguage.changeDeviceLanguage", {

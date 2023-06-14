@@ -18,9 +18,7 @@ function formatAccountSpecifics(account: ElrondAccount): string {
   let str = " ";
 
   if (account.spendableBalance) {
-    str +=
-      formatCurrencyUnit(unit, account.spendableBalance, formatConfig) +
-      " spendable. ";
+    str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
   } else {
     str += " 0 spendable.";
   }
@@ -37,36 +35,27 @@ function formatAccountSpecifics(account: ElrondAccount): string {
       delegated = delegated.plus(delegation.userActiveStake);
       undelegating = delegation.userUndelegatedList.reduce(
         (sum, undelegation) => sum.plus(undelegation.amount),
-        undelegating
+        undelegating,
       );
       rewards = rewards.plus(delegation.claimableRewards);
     }
 
     str +=
       delegated && delegated.gt(0)
-        ? `\n  delegated: ${
-            unit ? formatCurrencyUnit(unit, delegated, formatConfig) : delegated
-          }`
+        ? `\n  delegated: ${unit ? formatCurrencyUnit(unit, delegated, formatConfig) : delegated}`
         : undelegating && undelegating.gt(0)
         ? `\n  undelegating: ${
-            unit
-              ? formatCurrencyUnit(unit, undelegating, formatConfig)
-              : undelegating
+            unit ? formatCurrencyUnit(unit, undelegating, formatConfig) : undelegating
           }`
         : rewards && rewards.gt(0)
-        ? `\n  rewards: ${
-            unit ? formatCurrencyUnit(unit, rewards, formatConfig) : rewards
-          }`
+        ? `\n  rewards: ${unit ? formatCurrencyUnit(unit, rewards, formatConfig) : rewards}`
         : "";
   }
 
   return str;
 }
 
-function formatOperationSpecifics(
-  op: Operation,
-  unit: Unit | null | undefined
-): string {
+function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
   const { amount } = op.extra;
   return amount?.gt && amount.gt(0)
     ? " amount: " +

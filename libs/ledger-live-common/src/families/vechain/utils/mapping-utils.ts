@@ -8,16 +8,16 @@ import { getFees } from "./transaction-utils";
 export const mapVetTransfersToOperations = async (
   txs: TransferLog[],
   accountId: string,
-  addr: string
+  addr: string,
 ): Promise<Operation[]> => {
   return Promise.all(
-    txs.map(async (tx) => {
+    txs.map(async tx => {
       const fees = await getFees(tx.meta.txID);
       return {
         id: encodeOperationId(
           accountId,
           tx.meta.txID,
-          tx.recipient === addr.toLowerCase() ? "IN" : "OUT"
+          tx.recipient === addr.toLowerCase() ? "IN" : "OUT",
         ),
         hash: tx.meta.txID,
         type: tx.recipient === addr.toLowerCase() ? "IN" : "OUT",
@@ -31,24 +31,24 @@ export const mapVetTransfersToOperations = async (
         date: new Date(tx.meta.blockTimestamp * 1000),
         extra: {},
       };
-    })
+    }),
   );
 };
 
 export const mapTokenTransfersToOperations = async (
   evnts: EventLog[],
   accountId: string,
-  addr: string
+  addr: string,
 ): Promise<Operation[]> => {
   return Promise.all(
-    evnts.map(async (evnt) => {
+    evnts.map(async evnt => {
       const decoded = vip180.TransferEvent.decode(evnt.data, evnt.topics);
       const fees = await getFees(evnt.meta.txID);
       return {
         id: encodeOperationId(
           accountId,
           evnt.meta.txID,
-          decoded.to === addr.toLowerCase() ? "IN" : "OUT"
+          decoded.to === addr.toLowerCase() ? "IN" : "OUT",
         ),
         hash: evnt.meta.txID,
         type: decoded.to === addr.toLowerCase() ? "IN" : "OUT",
@@ -62,7 +62,7 @@ export const mapTokenTransfersToOperations = async (
         date: new Date(evnt.meta.blockTimestamp * 1000),
         extra: {},
       };
-    })
+    }),
   );
 };
 
@@ -78,11 +78,10 @@ export const scaleNumberUp = (
   val: BigNumber.Value,
   scaleDecimal: number,
   roundDecimal = 0,
-  roundingStrategy: BigNumber.RoundingMode = BigNumber.ROUND_HALF_UP
+  roundingStrategy: BigNumber.RoundingMode = BigNumber.ROUND_HALF_UP,
 ): string => {
   if (scaleDecimal === 0) return new BigNumber(val).toFixed();
-  if (scaleDecimal < 0)
-    throw Error("Decimal value must be greater than or equal to 0");
+  if (scaleDecimal < 0) throw Error("Decimal value must be greater than or equal to 0");
   const valBn = new BigNumber(val);
   if (valBn.isNaN()) throw Error("The value provided is NaN.");
 

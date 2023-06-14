@@ -1,17 +1,8 @@
 import { getEnv } from "../../../env";
-import network from "../../../network";
-import {
-  AccountResponse,
-  VetTxsQuery,
-  TokenTxsQuery,
-  Query,
-  QueryResponse,
-} from "./types";
+import network from "@ledgerhq/live-network/network";
+import { AccountResponse, VetTxsQuery, TokenTxsQuery, Query, QueryResponse } from "./types";
 import type { Operation } from "@ledgerhq/types-live";
-import {
-  mapVetTransfersToOperations,
-  mapTokenTransfersToOperations,
-} from "../utils/mapping-utils";
+import { mapVetTransfersToOperations, mapTokenTransfersToOperations } from "../utils/mapping-utils";
 import { padAddress } from "../utils/pad-address";
 import { TransferEventSignature } from "../contracts/constants";
 import { Transaction } from "thor-devkit";
@@ -47,7 +38,7 @@ export const getLastBlock = async (): Promise<{ number: number }> => {
 export const getOperations = async (
   accountId: string,
   addr: string,
-  startAt: number
+  startAt: number,
 ): Promise<Operation[]> => {
   const query: VetTxsQuery = {
     range: {
@@ -64,11 +55,7 @@ export const getOperations = async (
     data: JSON.stringify(query),
   });
 
-  const operations: Operation[] = await mapVetTransfersToOperations(
-    data,
-    accountId,
-    addr
-  );
+  const operations: Operation[] = await mapVetTransfersToOperations(data, accountId, addr);
 
   return operations;
 };
@@ -85,7 +72,7 @@ export const getTokenOperations = async (
   accountId: string,
   addr: string,
   tokenAddr: string,
-  startAt: number
+  startAt: number,
 ): Promise<Operation[]> => {
   const paddedAddress = padAddress(addr);
 

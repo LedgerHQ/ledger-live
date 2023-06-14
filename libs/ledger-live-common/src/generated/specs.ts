@@ -1,4 +1,3 @@
-import algorand from "../families/algorand/specs";
 import bitcoin from "../families/bitcoin/specs";
 import cardano from "../families/cardano/specs";
 import celo from "../families/celo/specs";
@@ -6,7 +5,6 @@ import cosmos from "../families/cosmos/specs";
 import crypto_org from "../families/crypto_org/specs";
 import elrond from "../families/elrond/specs";
 import ethereum from "../families/ethereum/specs";
-import evm from "../families/evm/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import near from "../families/near/specs";
@@ -17,9 +15,10 @@ import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
 import vechain from "../families/vechain/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
+import algorand from "@ledgerhq/coin-algorand/specs";
+import evm from "@ledgerhq/coin-evm/specs";
 
 export default {
-  algorand,
   bitcoin,
   cardano,
   celo,
@@ -27,7 +26,6 @@ export default {
   crypto_org,
   elrond,
   ethereum,
-  evm,
   filecoin,
   hedera,
   near,
@@ -38,4 +36,6 @@ export default {
   tron,
   vechain,
   polkadot,
+  algorand,
+  evm,
 };

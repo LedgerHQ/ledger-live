@@ -29,12 +29,13 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-common/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import byFamily from "~/renderer/generated/StepReceiveFunds";
-import byFamilyPostAlert from "~/renderer/generated/StepReceiveFundsPostAlert";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getLLDCoinFamily } from "~/renderer/families";
+
 const Separator = styled.div`
   border-top: 1px solid #99999933;
   margin: 50px 0;
@@ -48,9 +49,6 @@ const QRCodeWrapper = styled.div`
   height: 208px;
   width: 208px;
   background: white;
-`;
-const AlertBoxContainer = styled.div`
-  margin-top: 20px;
 `;
 const Receive1ShareAddress = ({
   account,
@@ -94,8 +92,8 @@ const Receive1ShareAddress = ({
     </>
   );
 };
-const Receive2Device = ({ name, device }: { name: string; device: any }) => {
-  const type = useTheme("colors.palette.type");
+const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
+  const type = useTheme().colors.palette.type;
   return (
     <>
       <Box horizontal alignItems="center" flow={2}>
@@ -216,7 +214,7 @@ const StepReceiveFunds = (props: StepProps) => {
       if (receiveStakingFlowConfig?.params?.[id]?.direct) {
         dispatch(
           openModal("MODAL_ETH_STAKE", {
-            account,
+            account: mainAccount,
             checkbox: true,
             singleProviderRedirectMode: false,
             source: "receive",
@@ -230,8 +228,7 @@ const StepReceiveFunds = (props: StepProps) => {
       onClose();
     }
   }, [
-    account,
-    mainAccount?.currency?.id,
+    mainAccount,
     currencyName,
     dispatch,
     name,
@@ -249,13 +246,13 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [isAddressVerified, confirmAddress]);
 
   // custom family UI for StepReceiveFunds
-  const CustomStepReceiveFunds = byFamily[mainAccount.currency.family as keyof typeof byFamily];
+  const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const CustomStepReceiveFunds = specific?.StepReceiveFunds;
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
 
-  const CustomPostAlertReceiveFunds =
-    byFamilyPostAlert[mainAccount.currency.family as keyof typeof byFamilyPostAlert];
+  const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;
 
   return (
     <>
@@ -265,73 +262,78 @@ const StepReceiveFunds = (props: StepProps) => {
           name="Step 3"
           currencyName={currencyName}
         />
-        {verifyAddressError ? (
-          <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
-        ) : isAddressVerified === true ? (
-          // Address was confirmed on device! we display a success screen!
+        {
+          verifyAddressError ? (
+            <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
+          ) : isAddressVerified === true ? (
+            // Address was confirmed on device! we display a success screen!
 
-          <Box alignItems="center">
-            <SuccessDisplay
-              title={<Trans i18nKey="receive.successTitle" />}
-              description={
-                <LinkWithExternalIcon
-                  style={{
-                    display: "inline-flex",
-                    marginLeft: "10px",
-                  }}
-                  onClick={() => openURL(urls.recipientAddressInfo)}
-                  label={<Trans i18nKey="common.learnMore" />}
-                />
-              }
-            >
-              <Box flow={4} pt={4} horizontal justifyContent="center">
-                <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
-                  <Trans i18nKey="common.reverify" />
-                </Button>
-                <Button data-test-id="modal-continue-button" primary onClick={onFinishReceiveFlow}>
-                  <Trans i18nKey="common.done" />
-                </Button>
-              </Box>
-            </SuccessDisplay>
-          </Box>
-        ) : isAddressVerified === false ? (
-          // User explicitly bypass device verification (no device)
-          <>
-            <Receive1ShareAddress
-              account={mainAccount}
-              name={name}
-              address={address}
-              showQRCodeModal={showQRCodeModal}
-            />
-            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-            <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
-              <Trans
-                i18nKey="currentAddress.messageIfSkipped"
-                values={{
-                  name,
-                }}
+            <Box alignItems="center">
+              <SuccessDisplay
+                title={<Trans i18nKey="receive.successTitle" />}
+                description={
+                  <LinkWithExternalIcon
+                    style={{
+                      display: "inline-flex",
+                      marginLeft: "10px",
+                    }}
+                    onClick={() => openURL(urls.recipientAddressInfo)}
+                    label={<Trans i18nKey="common.learnMore" />}
+                  />
+                }
+              >
+                <Box flow={4} pt={4} horizontal justifyContent="center">
+                  <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
+                    <Trans i18nKey="common.reverify" />
+                  </Button>
+                  <Button
+                    data-test-id="modal-continue-button"
+                    primary
+                    onClick={onFinishReceiveFlow}
+                  >
+                    <Trans i18nKey="common.done" />
+                  </Button>
+                </Box>
+              </SuccessDisplay>
+            </Box>
+          ) : isAddressVerified === false ? (
+            // User explicitly bypass device verification (no device)
+            <>
+              <Receive1ShareAddress
+                account={mainAccount}
+                name={name}
+                address={address}
+                showQRCodeModal={showQRCodeModal}
               />
-            </Alert>
-            <Separator2 />
-            <Receive2NoDevice
-              onVerify={onVerify}
-              onContinue={() => onChangeAddressVerified(true)}
-            />
-          </>
-        ) : device ? (
-          // verification with device
-          <>
-            <Receive1ShareAddress
-              account={mainAccount}
-              name={name}
-              address={address}
-              showQRCodeModal={showQRCodeModal}
-            />
-            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-            <Separator />
-            <Receive2Device device={device} name={name} />
-          </>
-        ) : null // should not happen
+              {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
+              <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
+                <Trans
+                  i18nKey="currentAddress.messageIfSkipped"
+                  values={{
+                    name,
+                  }}
+                />
+              </Alert>
+              <Separator2 />
+              <Receive2NoDevice
+                onVerify={onVerify}
+                onContinue={() => onChangeAddressVerified(true)}
+              />
+            </>
+          ) : device ? (
+            // verification with device
+            <>
+              <Receive1ShareAddress
+                account={mainAccount}
+                name={name}
+                address={address}
+                showQRCodeModal={showQRCodeModal}
+              />
+              {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
+              <Separator />
+              <Receive2Device device={device} name={name} />
+            </>
+          ) : null // should not happen
         }
       </Box>
       <Modal isOpened={modalVisible} onClose={hideQRCodeModal} centered width={460}>

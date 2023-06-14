@@ -17,10 +17,7 @@ const createTransaction = (_: Account): Transaction => {
   };
 };
 
-export const updateTransaction = (
-  t: Transaction,
-  patch: Partial<Transaction>
-): Transaction => {
+export const updateTransaction = (t: Transaction, patch: Partial<Transaction>): Transaction => {
   return { ...t, ...patch };
 };
 

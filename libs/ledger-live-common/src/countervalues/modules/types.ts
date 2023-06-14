@@ -12,11 +12,6 @@ export type Module = {
   aliasPair?: (arg0: Pair) => Pair;
   resolveTrackingPair?: (arg0: Pair) => Pair;
   handleAPI?: (arg0: Pair) => boolean;
-  fetchHistorical?: (
-    arg0: RateGranularity,
-    arg1: TrackingPair
-  ) => Promise<RateMapRaw>;
-  fetchLatest?: (
-    pairs: TrackingPair[]
-  ) => Promise<Array<number | null | undefined>>;
+  fetchHistorical?: (arg0: RateGranularity, arg1: TrackingPair) => Promise<RateMapRaw>;
+  fetchLatest?: (pairs: TrackingPair[]) => Promise<Array<number | null | undefined>>;
 };

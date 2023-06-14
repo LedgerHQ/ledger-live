@@ -61,8 +61,7 @@ const fields: Field[] = [
   },
   {
     title: "To account",
-    cell: ({ toAccount, toParentAccount }) =>
-      getMainAccount(toAccount, toParentAccount).name,
+    cell: ({ toAccount, toParentAccount }) => getMainAccount(toAccount, toParentAccount).name,
   },
   {
     title: "To account address",
@@ -72,9 +71,7 @@ const fields: Field[] = [
     },
   },
 ];
-export const mappedSwapOperationsToCSV = (
-  swapHistorySections: SwapHistorySection[]
-): string => {
+export const mappedSwapOperationsToCSV = (swapHistorySections: SwapHistorySection[]): string => {
   const mappedSwapOperations: MappedSwapOperation[] = [];
 
   for (const section of swapHistorySections) {
@@ -82,12 +79,10 @@ export const mappedSwapOperationsToCSV = (
   }
 
   return (
-    fields.map((field) => field.title).join(",") +
+    fields.map(field => field.title).join(",") +
     newLine +
     mappedSwapOperations
-      .map((op) =>
-        fields.map((field) => field.cell(op).replace(/[,\n\r]/g, "")).join(",")
-      )
+      .map(op => fields.map(field => field.cell(op).replace(/[,\n\r]/g, "")).join(","))
       .join(newLine)
   );
 };

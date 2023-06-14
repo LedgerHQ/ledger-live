@@ -16,8 +16,7 @@ interface Props {
 export function RequirementBanner({ provider, required }: Props) {
   const { t } = useTranslation();
   const { track } = useAnalytics();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
 
   const onPress = useCallback(() => {
     if (provider) {

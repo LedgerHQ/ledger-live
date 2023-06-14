@@ -3,15 +3,10 @@ import { Observable, concat, of, from, EMPTY, defer } from "rxjs";
 import { ConnectAppEvent } from "../hw/connectApp";
 import getDeviceInfo from "../hw/getDeviceInfo";
 import { listApps, execWithTransport } from "./hw";
-import {
-  reducer,
-  initState,
-  isOutOfMemoryState,
-  predictOptimisticState,
-} from "./logic";
+import { reducer, initState, isOutOfMemoryState, predictOptimisticState } from "./logic";
 import { runAllWithProgress } from "./runner";
 import { InlineAppInstallEvent } from "./types";
-import { mergeMap, map } from "rxjs/operators";
+import { mergeMap, map, throttleTime } from "rxjs/operators";
 
 /**
  * Tries to install a list of apps
@@ -39,13 +34,10 @@ const inlineAppInstall = ({
       type: "listing-apps",
     }),
     from(getDeviceInfo(transport)).pipe(
-      mergeMap((deviceInfo) => listApps(transport, deviceInfo)),
-      mergeMap((e) => {
+      mergeMap(deviceInfo => listApps(transport, deviceInfo)),
+      mergeMap(e => {
         // Bubble up events
-        if (
-          e.type === "device-permission-granted" ||
-          e.type === "device-permission-requested"
-        ) {
+        if (e.type === "device-permission-granted" || e.type === "device-permission-requested") {
           return of(e);
         }
 
@@ -58,13 +50,12 @@ const inlineAppInstall = ({
                 name,
                 allowPartialDependencies,
               }),
-            initState(e.result)
+            initState(e.result),
           );
 
           // Failed appOps in this flow will throw by default but if we're here
           // it means we didn't throw, so we wan't to notify the action about it.
-          const maybeSkippedEvent: Observable<InlineAppInstallEvent> = state
-            .skippedAppOps.length
+          const maybeSkippedEvent: Observable<InlineAppInstallEvent> = state.skippedAppOps.length
             ? of({
                 type: "some-apps-skipped",
                 skippedAppOps: state.skippedAppOps,
@@ -95,28 +86,22 @@ const inlineAppInstall = ({
             }),
             maybeSkippedEvent,
             runAllWithProgress(state, exec).pipe(
-              map(
-                ({
-                  globalProgress,
-                  itemProgress,
-                  installQueue,
-                  currentAppOp,
-                }) => ({
-                  type: "inline-install",
-                  progress: globalProgress,
-                  itemProgress,
-                  installQueue,
-                  currentAppOp,
-                })
-              )
+              throttleTime(100),
+              map(({ globalProgress, itemProgress, installQueue, currentAppOp }) => ({
+                type: "inline-install",
+                progress: globalProgress,
+                itemProgress,
+                installQueue,
+                currentAppOp,
+              })),
             ),
-            defer(onSuccessObs || (() => EMPTY))
+            defer(onSuccessObs || (() => EMPTY)),
           );
         }
 
         return EMPTY;
-      })
-    )
+      }),
+    ),
   );
 
 export default inlineAppInstall;

@@ -20,12 +20,12 @@ import { ThemeConfig } from "react-select/src/theme";
 export type Props<
   OptionType extends OptionTypeBase = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > = {
   onChange: (a?: ValueType<OptionType, IsMulti> | null) => void;
   // custom renders
-  renderOption?: (a: { data: OptionType }) => React.ReactNode;
-  renderValue?: (a: { data: OptionType }) => React.ReactNode;
+  renderOption?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
+  renderValue?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
   // optional
   async?: boolean;
   isRight?: boolean;
@@ -40,7 +40,7 @@ export type Props<
   // NB at least a different rendering for now
   stylesMap?: (a: ThemeConfig) => StylesConfig<OptionType, IsMulti, GroupType>;
   extraRenderers?: {
-    [x: string]: (props: any) => React.ReactNode;
+    [x: string]: (props: unknown) => React.ReactNode;
   };
   // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
@@ -54,7 +54,7 @@ const Row = styled.div`
 class MenuList<
   OptionType extends OptionTypeBase,
   IsMulti extends boolean,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > extends PureComponent<
   MenuListComponentProps<OptionType, IsMulti, GroupType> & Props<OptionType, IsMulti, GroupType>
 > {
@@ -151,11 +151,11 @@ class MenuList<
 class Select<
   OptionType extends OptionTypeBase = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > extends PureComponent<Props<OptionType, IsMulti, GroupType>> {
   componentDidMount() {
     if (this.ref && this.props.autoFocus) {
-      this.timeout = requestAnimationFrame(() => this.ref.focus());
+      this.timeout = requestAnimationFrame(() => this.ref?.focus());
     }
     window.addEventListener("resize", this.resizeHandler);
   }
@@ -190,8 +190,9 @@ class Select<
     }
   };
 
-  ref: any;
-  timeout: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ref: ReactSelect<any, IsMulti> | undefined | null;
+  timeout: number | undefined;
   render() {
     const {
       async,
@@ -234,6 +235,7 @@ class Select<
     // @ts-expect-error This is complicated to get it right
     styles = stylesMap ? stylesMap(styles) : styles;
     return (
+      // @ts-expect-error This is complicated to get it right
       <Comp
         {...props}
         ref={c => (this.ref = c)}
@@ -263,7 +265,6 @@ class Select<
                 ...(extraRenderers || {}),
               }
         }
-        // @ts-expect-error This is complicated to get it right
         styles={styles}
         placeholder={placeholder}
         isDisabled={isDisabled}
@@ -283,4 +284,4 @@ class Select<
     );
   }
 }
-export default (withTranslation()(withTheme(Select)) as unknown) as typeof Select;
+export default withTranslation()(withTheme(Select)) as unknown as typeof Select;

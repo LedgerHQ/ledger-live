@@ -14,18 +14,16 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { StepProps } from "../types";
 import AmountField from "../fields/AmountField";
 import RewardDestinationField from "../fields/RewardDestinationField";
+
 export default function StepAmount({
   account,
-  parentAccount,
   onChangeTransaction,
   transaction,
   status,
   error,
-  bridgePending,
-  t,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = getAccountBridge(account);
   const { rewardDestination } = transaction;
   const setRewardDestination = useCallback(
     (rewardDestination: string) => {
@@ -62,11 +60,8 @@ export default function StepAmount({
       <AmountField
         transaction={transaction}
         account={account}
-        parentAccount={parentAccount}
-        bridgePending={bridgePending}
         onChangeTransaction={onChangeTransaction}
         status={status}
-        t={t}
       />
     </Box>
   );
@@ -74,7 +69,6 @@ export default function StepAmount({
 export function StepAmountFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,
@@ -85,7 +79,7 @@ export function StepAmountFooter({
   const canNext = !bridgePending && !hasErrors;
   return (
     <>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter account={account} status={status} />
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

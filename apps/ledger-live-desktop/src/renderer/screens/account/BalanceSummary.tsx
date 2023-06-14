@@ -11,9 +11,9 @@ import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
-import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
-import { Data } from "~/renderer/components/Chart/types";
+import { Data, Item } from "~/renderer/components/Chart/types";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
@@ -39,18 +39,14 @@ export default function AccountBalanceSummary({
   const portfolio = usePortfolio();
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);
-  const {
-    history,
-    countervalueAvailable,
-    countervalueChange,
-    cryptoChange,
-  } = useBalanceHistoryWithCountervalue({
-    account,
-    range,
-  });
+  const { history, countervalueAvailable, countervalueChange, cryptoChange } =
+    useBalanceHistoryWithCountervalue({
+      account,
+      range,
+    });
   const discreetMode = useSelector(discreetModeSelector);
   const renderTooltip = useCallback(
-    (d: any) => {
+    (d: Item) => {
       const displayCountervalue = countervalueFirst && countervalueAvailable;
       const unit = getAccountUnit(account);
       const data = [
@@ -59,7 +55,7 @@ export default function AccountBalanceSummary({
           unit,
         },
         {
-          val: d.countervalue,
+          val: Number(d.countervalue),
           unit: counterValue.units[0],
         },
       ];
@@ -94,9 +90,7 @@ export default function AccountBalanceSummary({
   );
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const AccountBalanceSummaryFooter = mainAccount
-    ? perFamilyAccountBalanceSummaryFooter[
-        mainAccount.currency.family as keyof typeof perFamilyAccountBalanceSummaryFooter
-      ]
+    ? getLLDCoinFamily(mainAccount.currency.family).AccountBalanceSummaryFooter
     : null;
   const chartMagnitude = displayCountervalue
     ? counterValue.units[0].magnitude
@@ -151,7 +145,6 @@ export default function AccountBalanceSummary({
       {AccountBalanceSummaryFooter && (
         <AccountBalanceSummaryFooter
           account={account}
-          // @ts-expect-error Need to update prop in families
           counterValue={counterValue}
           discreetMode={discreetMode}
         />

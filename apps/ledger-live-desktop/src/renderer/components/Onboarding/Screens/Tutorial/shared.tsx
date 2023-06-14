@@ -20,7 +20,7 @@ export const AnimationContainer: StyledComponent<"div", DefaultTheme, BoxProps> 
   overflow-x: clip;
   width: 324px;
   > * {
-    transform: scale(1.7);
+    transform: scale(1.3);
     margin-left: 70px;
   }
 `;
@@ -30,7 +30,7 @@ export const IllustrationContainer: StyledComponent<
   DefaultTheme,
   BoxProps & { src: string }
 > = styled(Flex)<{ src: string }>`
-  background: url('${({ src }) => src}') no-repeat center;
+  background: url("${({ src }) => src}") no-repeat center;
   background-size: contain;
 `;
 

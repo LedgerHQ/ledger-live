@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { scan, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
@@ -26,11 +26,11 @@ type State = {
   progress?: number;
 };
 
-type InstallLanguageAction = Action<
-  InstallLanguageRequest,
-  State,
-  boolean | undefined
->;
+type ActionState = State & {
+  onRetry: () => void;
+};
+
+type InstallLanguageAction = Action<InstallLanguageRequest, ActionState, boolean | undefined>;
 
 const mapResult = ({ languageInstalled }: State) => languageInstalled;
 
@@ -106,22 +106,20 @@ const reducer = (state: State, e: Event): State => {
 };
 
 export const createAction = (
-  task: (arg0: InstallLanguageInput) => Observable<InstallLanguageEvent>
+  task: (arg0: InstallLanguageInput) => Observable<InstallLanguageEvent>,
 ): InstallLanguageAction => {
   const useHook = (
     device: Device | null | undefined,
-    request: InstallLanguageRequest
-  ): State => {
+    request: InstallLanguageRequest,
+  ): ActionState => {
     const [state, setState] = useState(() => getInitialState(device));
+    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
       if (state.languageInstalled) return;
 
-      const impl = getImplementation(currentMode)<
-        InstallLanguageEvent,
-        InstallLanguageRequest
-      >({
+      const impl = getImplementation(currentMode)<InstallLanguageEvent, InstallLanguageRequest>({
         deviceSubject,
         task,
         request,
@@ -130,16 +128,22 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-install-language-event", e.type, e)),
-          scan(reducer, getInitialState())
+          scan(reducer, getInitialState()),
         )
         .subscribe(setState);
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, request, state.languageInstalled]);
+    }, [deviceSubject, request, state.languageInstalled, resetIndex]);
+
+    const onRetry = useCallback(() => {
+      setResetIndex(currIndex => currIndex + 1);
+      setState(s => getInitialState(s.device));
+    }, []);
 
     return {
       ...state,
+      onRetry,
     };
   };
 

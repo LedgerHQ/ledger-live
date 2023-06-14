@@ -27,17 +27,14 @@ export const useFromState = ({
     ...selectorStateDefaultValues,
     currency: defaultCurrency ?? selectorStateDefaultValues.currency,
     account: defaultAccount ?? selectorStateDefaultValues.account,
-    parentAccount:
-      defaultParentAccount ?? selectorStateDefaultValues.parentAccount,
+    parentAccount: defaultParentAccount ?? selectorStateDefaultValues.parentAccount,
   });
 
   /* UPDATE from account */
   const setFromAccount: SwapTransactionType["setFromAccount"] = useCallback(
-    (account) => {
+    account => {
       const parentAccount =
-        account?.type !== "Account"
-          ? accounts?.find((a) => a.id === account?.parentId)
-          : undefined;
+        account?.type !== "Account" ? accounts?.find(a => a.id === account?.parentId) : undefined;
       const currency = getAccountCurrency(account as AccountLike);
 
       bridgeTransaction.setAccount(account as AccountLike, parentAccount);
@@ -52,25 +49,25 @@ export const useFromState = ({
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
       const recipient = getAbandonSeedAddress(mainCurrency.id);
-      bridgeTransaction.updateTransaction((transaction) => ({
+      bridgeTransaction.updateTransaction(transaction => ({
         ...transaction,
         recipient,
       }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [accounts, bridgeTransaction.updateTransaction]
+    [accounts, bridgeTransaction.updateTransaction],
   );
 
   const setFromAmount: SwapTransactionType["setFromAmount"] = useCallback(
-    (amount) => {
-      bridgeTransaction.updateTransaction((transaction) => ({
+    amount => {
+      bridgeTransaction.updateTransaction(transaction => ({
         ...transaction,
         amount,
       }));
-      setFromState((previousState) => ({ ...previousState, amount: amount }));
+      setFromState(previousState => ({ ...previousState, amount: amount }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [bridgeTransaction.updateTransaction]
+    [bridgeTransaction.updateTransaction],
   );
 
   return {

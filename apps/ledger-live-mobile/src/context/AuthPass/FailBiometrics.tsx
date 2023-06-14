@@ -16,8 +16,7 @@ function FailBiometrics({ privacy, lock }: Props) {
   const { t } = useTranslation();
 
   const biometricsType =
-    t(`auth.failed.biometrics.${privacy.biometricsType?.toLowerCase()}`) ??
-    privacy.biometricsType;
+    t(`auth.failed.biometrics.${privacy.biometricsType?.toLowerCase()}`) ?? privacy.biometricsType;
 
   return (
     <View>

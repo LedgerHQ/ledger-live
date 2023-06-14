@@ -11,7 +11,7 @@ type Props = {
   account: Account;
   collectionAddress: string;
   collectionName?: string;
-  children: any;
+  children: React.ReactNode;
   leftClick?: boolean;
   goBackToAccount?: boolean;
 };

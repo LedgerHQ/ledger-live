@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { scan, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
@@ -30,7 +30,11 @@ type State = {
   progress?: number;
 };
 
-type LoadImageAction = Action<LoadImageRequest, State, LoadimageResult>;
+type ActionState = State & {
+  onRetry: () => void;
+};
+
+type LoadImageAction = Action<LoadImageRequest, ActionState, LoadimageResult>;
 
 const mapResult = ({ imageHash, imageSize }: State) => ({
   imageHash,
@@ -48,7 +52,7 @@ type Event =
       device: Device | null | undefined;
     };
 
-const getInitialState = (device?: Device | null | undefined): State => ({
+export const getInitialState = (device?: Device | null | undefined): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   unresponsive: false,
@@ -59,7 +63,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   imageHash: "",
 });
 
-const reducer = (state: State, e: Event): State => {
+export const reducer = (state: State, e: Event): State => {
   switch (e.type) {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true, isLoading: false };
@@ -122,22 +126,17 @@ const reducer = (state: State, e: Event): State => {
 };
 
 export const createAction = (
-  task: (arg0: LoadImageInput) => Observable<LoadImageEvent>
+  task: (arg0: LoadImageInput) => Observable<LoadImageEvent>,
 ): LoadImageAction => {
-  const useHook = (
-    device: Device | null | undefined,
-    request: LoadImageRequest
-  ): State => {
+  const useHook = (device: Device | null | undefined, request: LoadImageRequest): ActionState => {
     const [state, setState] = useState(() => getInitialState(device));
+    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
       if (state.imageLoaded) return;
 
-      const impl = getImplementation(currentMode)<
-        LoadImageEvent,
-        LoadImageRequest
-      >({
+      const impl = getImplementation(currentMode)<LoadImageEvent, LoadImageRequest>({
         deviceSubject,
         task,
         request,
@@ -146,16 +145,22 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-load-stax-image-event", e.type, e)),
-          scan(reducer, getInitialState())
+          scan(reducer, getInitialState()),
         )
         .subscribe(setState);
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, request, state.imageLoaded]);
+    }, [deviceSubject, request, state.imageLoaded, resetIndex]);
+
+    const onRetry = useCallback(() => {
+      setResetIndex(currIndex => currIndex + 1);
+      setState(s => getInitialState(s.device));
+    }, []);
 
     return {
       ...state,
+      onRetry,
     };
   };
 

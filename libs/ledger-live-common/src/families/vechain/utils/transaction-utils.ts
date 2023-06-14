@@ -1,5 +1,5 @@
 import { getEnv } from "../../../env";
-import network from "../../../network";
+import network from "@ledgerhq/live-network/network";
 import { HEX_PREFIX } from "../constants";
 import crypto from "crypto";
 import BigNumber from "bignumber.js";
@@ -46,7 +46,7 @@ export const estimateGas = async (t: Transaction): Promise<number> => {
 
   const queryData: Query[] = [];
 
-  t.body.clauses.forEach((c) => {
+  t.body.clauses.forEach(c => {
     if (c.to) {
       queryData.push({
         to: c.to,
@@ -71,8 +71,7 @@ const getBaseGasPrice = async (): Promise<string> => {
   const response = await query([queryData]);
 
   // Expect 1 value
-  if (response && response.length != 1)
-    throw Error("Unexpected response received for query");
+  if (response && response.length != 1) throw Error("Unexpected response received for query");
 
   return response[0].data;
 };
@@ -83,10 +82,7 @@ const getBaseGasPrice = async (): Promise<string> => {
  * @param gasPriceCoef - the gas price coefficient
  * @returns the fee in VTHO
  */
-export const calculateFee = async (
-  gas: BigNumber,
-  gasPriceCoef: number
-): Promise<BigNumber> => {
+export const calculateFee = async (gas: BigNumber, gasPriceCoef: number): Promise<BigNumber> => {
   const baseGasPrice = await getBaseGasPrice();
   return new BigNumber(baseGasPrice)
     .times(gasPriceCoef)

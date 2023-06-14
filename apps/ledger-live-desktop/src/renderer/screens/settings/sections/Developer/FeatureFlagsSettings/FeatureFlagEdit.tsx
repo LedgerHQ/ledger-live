@@ -28,9 +28,10 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
     ...pureValue
   } = flagValue || {};
 
-  const stringifiedPureValue = useMemo(() => (pureValue ? JSON.stringify(pureValue) : undefined), [
-    pureValue,
-  ]);
+  const stringifiedPureValue = useMemo(
+    () => (pureValue ? JSON.stringify(pureValue) : undefined),
+    [pureValue],
+  );
 
   const inputValueDefaulted = inputValue || stringifiedPureValue;
 

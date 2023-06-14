@@ -6,7 +6,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
-import { track, page } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
@@ -15,6 +15,7 @@ type Props = {
   currencies?: string[];
   shouldRedirect?: boolean;
   alwaysShowNoFunds?: boolean;
+  source?: string;
 };
 
 const useStakeFlow = () => {
@@ -23,12 +24,12 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
 
   return useCallback(
-    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false }: Props = {}) => {
+    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false, source }: Props = {}) => {
       const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
         currencies: currencies || list,
       });
 
-      page("Stake", "Drawer - Choose Asset", {
+      trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
         page: history.location.pathname,
         type: "drawer",
@@ -52,7 +53,7 @@ const useStakeFlow = () => {
             if (alwaysShowNoFunds) {
               dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
             } else {
-              dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
+              dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
             }
 
             if (shouldRedirect) {

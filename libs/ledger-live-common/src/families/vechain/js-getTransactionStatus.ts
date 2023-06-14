@@ -10,10 +10,7 @@ import {
 import type { TransactionStatus } from "./types";
 import type { Transaction } from "./types";
 import { Account } from "@ledgerhq/types-live";
-import {
-  calculateTotalSpent,
-  calculateTransactionInfo,
-} from "./utils/calculateTransactionInfo";
+import { calculateTotalSpent, calculateTransactionInfo } from "./utils/calculateTransactionInfo";
 import { isValid } from "./utils/address-utils";
 import BigNumber from "bignumber.js";
 
@@ -23,14 +20,16 @@ const NotEnoughVTHO = createCustomErrorClass("NotEnoughVTHO");
 // use balance.minus(estimatedFees) instead
 const getTransactionStatus = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<TransactionStatus> => {
   const { freshAddress, currency, subAccounts } = account;
   const { body, recipient } = transaction;
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const { isTokenAccount, amount, spendableBalance } =
-    await calculateTransactionInfo(account, transaction);
+  const { isTokenAccount, amount, spendableBalance } = await calculateTransactionInfo(
+    account,
+    transaction,
+  );
 
   if (!body || !body.gas) {
     errors["body"] = new FeeNotLoaded();
@@ -67,9 +66,7 @@ const getTransactionStatus = async (
   return Promise.resolve({
     errors,
     warnings,
-    estimatedFees: Object.keys(errors).length
-      ? new BigNumber(0)
-      : transaction.estimatedFees,
+    estimatedFees: Object.keys(errors).length ? new BigNumber(0) : transaction.estimatedFees,
     amount: amount,
     totalSpent: Object.keys(errors).length ? new BigNumber(0) : totalSpent,
   });

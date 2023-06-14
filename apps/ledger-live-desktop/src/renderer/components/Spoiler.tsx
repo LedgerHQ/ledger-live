@@ -63,7 +63,7 @@ class Spoiler extends PureComponent<Props, State> {
   };
 
   render() {
-    const { title, opened, onOpen, children, ...p } = this.props;
+    const { title, opened, children, ...p } = this.props;
     return (
       <>
         <Box

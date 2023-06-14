@@ -13,23 +13,12 @@ import {
   utils as TyphonUtils,
 } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
-import {
-  getAccountStakeCredential,
-  getBaseAddress,
-  getTTL,
-  mergeTokens,
-} from "./logic";
+import { getAccountStakeCredential, getBaseAddress, getTTL, mergeTokens } from "./logic";
 import { getNetworkParameters } from "./networks";
-import {
-  decodeTokenAssetId,
-  decodeTokenCurrencyId,
-  getTokenAssetId,
-} from "./buildSubAccounts";
+import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
-  const address = TyphonUtils.getAddressFromHex(
-    utxo.address
-  ) as TyphonTypes.ShelleyAddress;
+  const address = TyphonUtils.getAddressFromHex(utxo.address) as TyphonTypes.ShelleyAddress;
   if (address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
     address.paymentCredential.bipPath = utxo.paymentCredential.path;
   }
@@ -73,20 +62,16 @@ const buildSendTokenTransaction = async ({
   const tokenUtxos: Array<CardanoOutput> = [];
   const otherUtxos: Array<CardanoOutput> = [];
 
-  cardanoResources.utxos.forEach((u) => {
-    if (u.tokens.some((t) => getTokenAssetId(t) === assetId)) {
+  cardanoResources.utxos.forEach(u => {
+    if (u.tokens.some(t => getTokenAssetId(t) === assetId)) {
       tokenUtxos.push(u);
     } else {
       otherUtxos.push(u);
     }
   });
   const sortedTokenUtxo = tokenUtxos.sort((a, b) => {
-    const sendingTokenA = a.tokens.find(
-      (t) => getTokenAssetId(t) === assetId
-    ) as Token;
-    const sendingTokenB = b.tokens.find(
-      (t) => getTokenAssetId(t) === assetId
-    ) as Token;
+    const sendingTokenA = a.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
+    const sendingTokenB = b.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
     const diff = sendingTokenB.amount.minus(sendingTokenA.amount);
     return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
   });
@@ -98,14 +83,12 @@ const buildSendTokenTransaction = async ({
   const totalAddedTokenAmount = new BigNumber(0);
   const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
     tokensToSend,
-    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord)
+    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
   );
   // Add enough utxo to cover token amount
   for (let i = 0; i < sortedTokenUtxo.length; i++) {
     const u = sortedTokenUtxo[i];
-    const sendingToken = u.tokens.find(
-      (t) => getTokenAssetId(t) === assetId
-    ) as Token;
+    const sendingToken = u.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
     typhonTx.addInput(getTyphonInputFromUtxo(u));
     totalAddedTokenAmount.plus(sendingToken.amount);
     if (totalAddedTokenAmount.gte(transactionAmount)) break;
@@ -149,13 +132,9 @@ const buildSendAdaTransaction = async ({
 
   if (t.useAllAmount) {
     // add all utxo as input
-    cardanoResources.utxos.forEach((u) =>
-      typhonTx.addInput(getTyphonInputFromUtxo(u))
-    );
+    cardanoResources.utxos.forEach(u => typhonTx.addInput(getTyphonInputFromUtxo(u)));
 
-    const tokenBalance = mergeTokens(
-      cardanoResources.utxos.map((u) => u.tokens).flat()
-    );
+    const tokenBalance = mergeTokens(cardanoResources.utxos.map(u => u.tokens).flat());
 
     // if account holds any tokens then add it to changeAddress,
     // with minimum required ADA to spend those tokens
@@ -163,7 +142,7 @@ const buildSendAdaTransaction = async ({
       const minAmountToSpendTokens = TyphonUtils.calculateMinUtxoAmount(
         tokenBalance,
         new BigNumber(protocolParams.lovelacePerUtxoWord),
-        false
+        false,
       );
       typhonTx.addOutput({
         address: changeAddress,
@@ -189,11 +168,7 @@ const buildSendAdaTransaction = async ({
   const usedUtxoAdaAmount = new BigNumber(0);
   // Add 5 ADA as buffer for utxo selection to cover the transaction fees.
   const requiredInputAmount = t.amount.plus(5e6);
-  for (
-    let i = 0;
-    i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount);
-    i++
-  ) {
+  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
     transactionInputs.push(transactionInput);
@@ -221,7 +196,7 @@ const buildSendAdaTransaction = async ({
  */
 export const buildTransaction = async (
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TyphonTransaction> => {
   const cardanoResources = a.cardanoResources as CardanoResources;
   const protocolParams = cardanoResources.protocolParams;
@@ -255,7 +230,7 @@ export const buildTransaction = async (
   const networkParams = getNetworkParameters(a.currency.id);
   const receiverAddress = TyphonUtils.getAddressFromBech32(t.recipient);
   const unusedInternalCred = cardanoResources.internalCredentials.find(
-    (cred) => !cred.isUsed
+    cred => !cred.isUsed,
   ) as PaymentCredential;
 
   const changeAddress = getBaseAddress({
@@ -266,7 +241,7 @@ export const buildTransaction = async (
 
   if (t.subAccountId) {
     const tokenAccount = a.subAccounts
-      ? a.subAccounts.find((a) => {
+      ? a.subAccounts.find(a => {
           return a.id === t.subAccountId;
         })
       : undefined;

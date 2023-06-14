@@ -5,8 +5,7 @@ import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
 
 function btcTrend(date: Date) {
-  const daysSinceGenesis =
-    (date.valueOf() - 1230937200000) / (24 * 60 * 60 * 1000);
+  const daysSinceGenesis = (date.valueOf() - 1230937200000) / (24 * 60 * 60 * 1000);
   return Math.pow(daysSinceGenesis / 693, 5.526);
 }
 
@@ -21,17 +20,13 @@ function temporalFactor(from, to, maybeDate) {
   const date = maybeDate || new Date();
   const r = fromToRandom(from); // make it varies between rates...
 
-  const wave1 = Math.cos(
-    r * 0.5 + date / (200 * 24 * 60 * 60 * 1000 * (0.5 + 0.5 * r))
-  );
+  const wave1 = Math.cos(r * 0.5 + date / (200 * 24 * 60 * 60 * 1000 * (0.5 + 0.5 * r)));
   // long term wave
   const wave2 = Math.sin(r + date / (30 * 24 * 60 * 60 * 1000)); // short term wave
 
   const wave3 = // random market perturbation
     Math.max(0, Math.sin(date / (66 * 24 * 60 * 60 * 1000))) *
-    Math.cos(
-      wave2 + Math.cos(r) + date / (3 * 24 * 60 * 60 * 1000 * (1 - 0.1 * r))
-    );
+    Math.cos(wave2 + Math.cos(r) + date / (3 * 24 * 60 * 60 * 1000 * (1 - 0.1 * r)));
 
   // This is essentially randomness!
   if (maybeDate && Math.cos(7 * r + date * 0.1) > 0.9 + 0.1 * r) {
@@ -95,7 +90,7 @@ const api: CounterValuesAPI = {
   fetchHistorical: (granularity, { from, to, startDate }) => {
     const r = {};
     const f = formatPerGranularity[granularity];
-    getDates(granularity, startDate).forEach((date) => {
+    getDates(granularity, startDate).forEach(date => {
       const v = rate(from.ticker, to.ticker, date);
 
       if (v) {
@@ -104,8 +99,7 @@ const api: CounterValuesAPI = {
     });
     return Promise.resolve(r);
   },
-  fetchLatest: (pairs) =>
-    Promise.resolve(pairs.map(({ from, to }) => rate(from.ticker, to.ticker))),
+  fetchLatest: pairs => Promise.resolve(pairs.map(({ from, to }) => rate(from.ticker, to.ticker))),
   fetchMarketcapTickers: () => Promise.resolve(Object.keys(getBTCValues())),
 };
 export default api;

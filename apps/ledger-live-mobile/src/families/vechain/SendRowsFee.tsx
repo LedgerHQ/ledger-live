@@ -1,11 +1,5 @@
-import {
-  getFeesCurrency,
-  getFeesUnit,
-} from "@ledgerhq/live-common/account/index";
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TransactionStatus as VechainTransactionStatus } from "@ledgerhq/live-common/families/vechain/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
@@ -29,14 +23,8 @@ type Props = {
   transaction: Transaction;
   status?: TransactionStatus;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;

@@ -31,8 +31,7 @@ export const vechain1: AccountRaw = {
     {
       type: "TokenAccountRaw",
       id: "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain+vechain%2Fvtho",
-      parentId:
-        "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain",
+      parentId: "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain",
       starred: false,
       tokenId: "vechain/vtho",
       balance: "3000054150000000000",
@@ -53,8 +52,7 @@ export const vechain1: AccountRaw = {
           recipients: ["0x82d984c42fc9d49e2d4cffdcad59301affca7e02"],
           accountId:
             "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain+vechain%2Fvtho",
-          blockHash:
-            "0x00e742f48ff7553a1b5276886ca7df27444cafa2086757393ce31ff68422a4b9",
+          blockHash: "0x00e742f48ff7553a1b5276886ca7df27444cafa2086757393ce31ff68422a4b9",
           blockHeight: 15155956,
           extra: {},
           date: "2023-04-21T13:23:00.000Z",

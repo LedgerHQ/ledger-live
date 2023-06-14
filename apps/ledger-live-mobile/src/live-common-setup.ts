@@ -10,8 +10,6 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
@@ -31,7 +29,6 @@ import logger from "./logger";
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
@@ -131,9 +128,7 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: new Observable<DescriptorEvent<string>>(o =>
-    HIDTransport.listen(o),
-  ).pipe(
+  discovery: new Observable<DescriptorEvent<string>>(o => HIDTransport.listen(o)).pipe(
     map(({ type, descriptor, deviceModel }) => {
       const name = deviceModel?.productName ?? "";
       return {
@@ -151,8 +146,7 @@ registerTransportModule({
 let DebugHttpProxy: ReturnType<typeof withStaticURLs>;
 const httpdebug: TransportModule = {
   id: "httpdebug",
-  open: id =>
-    id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null,
+  open: id => (id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null),
   disconnect: id =>
     id.startsWith("httpdebug|")
       ? Promise.resolve() // nothing to do
@@ -161,15 +155,11 @@ const httpdebug: TransportModule = {
 
 if (__DEV__ && Config.DEVICE_PROXY_URL) {
   DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
-  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
-    DebugHttpProxy.listen(o),
-  ).pipe(
+  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o => DebugHttpProxy.listen(o)).pipe(
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,
-      deviceModel: getDeviceModel(
-        (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX",
-      ),
+      deviceModel: getDeviceModel((Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX"),
       wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
       name: descriptor,
     })),

@@ -36,8 +36,7 @@ export type FeatureFloat = {
   maxValue?: number;
 };
 
-export type Feature = FeatureCommon &
-  (FeatureToggle | FeatureInteger | FeatureFloat);
+export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger | FeatureFloat);
 
 // comma-separated list of currencies that we want to enable as experimental, e.g:
 // const experimentalCurrencies = "solana,cardano";
@@ -56,9 +55,7 @@ export const experimentalFeatures: Feature[] = [
           type: "toggle",
           name: "EXPERIMENTAL_CURRENCIES",
           title: i18n.t(i18nKey("experimentalIntegrations", "title")),
-          description: i18n.t(
-            i18nKey("experimentalIntegrations", "description"),
-          ),
+          description: i18n.t(i18nKey("experimentalIntegrations", "description")),
           valueOn: experimentalCurrencies,
           valueOff: "",
         },
@@ -91,14 +88,6 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
-    name: "LEDGER_COUNTERVALUES_API",
-    title: i18n.t(i18nKey("experimentalCountervalues", "title")),
-    description: i18n.t(i18nKey("experimentalCountervalues", "description")),
-    valueOn: "https://countervalues-experimental.live.ledger.com",
-    valueOff: "https://countervalues.live.ledger.com",
-  },
-  {
-    type: "toggle",
     name: "EIP1559_MINIMUM_FEES_GATE",
     title: "Deactivate EIP-1559 minimum priority fee gate",
     description:
@@ -119,10 +108,15 @@ export const experimentalFeatures: Feature[] = [
     type: "float",
     name: "EIP1559_BASE_FEE_MULTIPLIER",
     title: "Custom multiplier for the base fee",
-    description:
-      "Customize the multiplier used for the base fee composing the maxFeePerGas",
+    description: "Customize the multiplier used for the base fee composing the maxFeePerGas",
     minValue: 0,
     maxValue: 10,
+  },
+  {
+    type: "toggle",
+    name: "ENABLE_NETWORK_LOGS",
+    title: i18n.t(i18nKey("experimentalEnableNetworkLogs", "title")),
+    description: i18n.t(i18nKey("experimentalEnableNetworkLogs", "description")),
   },
   ...(__DEV__
     ? [
@@ -182,9 +176,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
 export const isReadOnly = (key: EnvName) => key in Config;
 
 export const enabledExperimentalFeatures = (): string[] =>
-  [...experimentalFeatures, ...developerFeatures]
-    .map(e => e.name)
-    .filter(k => !isEnvDefault(k));
+  [...experimentalFeatures, ...developerFeatures].map(e => e.name).filter(k => !isEnvDefault(k));
 
 (async () => {
   const envs = await getStorageEnv();
@@ -201,24 +193,18 @@ export const enabledExperimentalFeatures = (): string[] =>
 
   const saveEnvs = async (name: EnvName, value: string) => {
     if (
-      [...experimentalFeatures, ...developerFeatures].find(
-        f => f.name === name,
-      ) &&
+      [...experimentalFeatures, ...developerFeatures].find(f => f.name === name) &&
       !isReadOnly(name)
     ) {
       await setStorageEnvs(name, value);
     }
   };
 
-  changes
-    .pipe(concatMap(({ name, value }) => saveEnvs(name, value)))
-    .subscribe();
+  changes.pipe(concatMap(({ name, value }) => saveEnvs(name, value))).subscribe();
 })();
 
 export function useExperimental(): boolean {
-  const [state, setState] = useState(
-    () => enabledExperimentalFeatures().length > 0,
-  );
+  const [state, setState] = useState(() => enabledExperimentalFeatures().length > 0);
 
   useEffect(() => {
     const sub = changes.subscribe(() => {

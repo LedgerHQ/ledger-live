@@ -30,15 +30,7 @@ const FilterButtonContainer = styled(Box).attrs({
   justifyContent: "center",
 })``;
 
-const AppFilter = ({
-  filter,
-  setFilter,
-  sort,
-  setSort,
-  order,
-  setOrder,
-  disabled,
-}: Props) => {
+const AppFilter = ({ filter, setFilter, sort, setSort, order, setOrder, disabled }: Props) => {
   const [isOpened, setOpenModal] = useState(false);
   const openModal = useCallback(() => setOpenModal(true), [setOpenModal]);
   const closeModal = useCallback(() => setOpenModal(false), [setOpenModal]);

@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "module": "commonjs",
+    "downlevelIteration": true,
+    "lib": ["es2020", "dom"],
+    "outDir": "lib"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/api/subscan.ts", "src/api/websocket.ts"]
+}

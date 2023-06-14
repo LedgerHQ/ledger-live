@@ -105,6 +105,7 @@ const ignoreErrors = [
   "530 undefined",
   "524 undefined",
   "Missing or invalid topic field", // wallet connect issue
+  "Bad status on response: 503", // cryptoorg node
 ];
 
 export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMainOptions>) {
@@ -139,7 +140,7 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
       if (typeof data !== "object" || !data) return data;
 
       delete data.server_name; // hides the user machine name
-      anonymizer.filepathRecursiveReplacer((data as unknown) as Record<string, unknown>);
+      anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
       console.log("SENTRY REPORT", data);
       return data;
     },

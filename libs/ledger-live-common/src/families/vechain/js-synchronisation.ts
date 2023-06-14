@@ -5,25 +5,18 @@ import { encodeAccountId } from "../../account";
 import eip55 from "eip55";
 import { emptyHistoryCache } from "../../account";
 
-import {
-  getAccount,
-  getLastBlock,
-  getOperations,
-  getTokenOperations,
-} from "./api";
+import { getAccount, getLastBlock, getOperations, getTokenOperations } from "./api";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 // import { Operation } from "@ledgerhq/types-live";
 // import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
-const getAccountShape: GetAccountShape = async (info) => {
+const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, derivationMode } = info;
   let { address } = info;
   address = eip55.encode(address);
 
   const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length
-    ? (oldOperations[0].blockHeight || 0) + 1
-    : 1;
+  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 1;
 
   const accountId = encodeAccountId({
     type: "js",
@@ -48,7 +41,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     vthoAccountId,
     address,
     "0x0000000000000000000000000000456e65726779",
-    1
+    1,
   );
 
   //Generate type "NONE" operations on main account for each token operation to run bot tests
@@ -75,8 +68,8 @@ const getAccountShape: GetAccountShape = async (info) => {
   //Account creation date set to now if there are no operation or at the first operation on the account
   let min_date = -1;
   if (operations.length != 0) {
-    const operationsDates = operations.map((c) => c.date.getTime());
-    operationsDates.concat(VTHOoperations.map((c) => c.date.getTime()));
+    const operationsDates = operations.map(c => c.date.getTime());
+    operationsDates.concat(VTHOoperations.map(c => c.date.getTime()));
     min_date = Math.min(...operationsDates);
   }
 
@@ -103,16 +96,10 @@ const getAccountShape: GetAccountShape = async (info) => {
         operations: VTHOoperations,
         blockHeight,
         pendingOperations:
-          (initialAccount?.subAccounts &&
-            initialAccount.subAccounts[0]?.pendingOperations) ||
-          [],
-        starred:
-          (initialAccount?.subAccounts &&
-            initialAccount.subAccounts[0]?.starred) ||
-          false,
+          (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.pendingOperations) || [],
+        starred: (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.starred) || false,
         balanceHistoryCache:
-          (initialAccount?.subAccounts &&
-            initialAccount.subAccounts[0]?.balanceHistoryCache) ||
+          (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.balanceHistoryCache) ||
           emptyHistoryCache,
         swapHistory: [],
       },

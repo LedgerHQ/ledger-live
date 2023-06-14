@@ -200,6 +200,7 @@ const BoxedIcon = ({
       {React.isValidElement(Icon) ? (
         Icon
       ) : (
+        /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
         <Icon size={iconSize || DEFAULT_ICON_SIZE} color={iconColor} />
       )}
     </IconBox>

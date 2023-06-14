@@ -19,18 +19,9 @@ const UnlockDeviceDrawer = ({ isOpen, device, onClose }: Props) => {
   const theme = colors.type as "dark" | "light";
 
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isOpen}
-      onClose={onClose}
-      preventBackdropClick
-    >
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} preventBackdropClick>
       <Flex mb={250} pt={120}>
-        <ConnectYourDevice
-          t={t}
-          device={device}
-          unresponsive={true}
-          theme={theme}
-        />
+        <ConnectYourDevice t={t} device={device} unresponsive={true} theme={theme} />
       </Flex>
     </QueuedDrawer>
   );

@@ -22,9 +22,7 @@ export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) =>
   importStoreAction(
     rawAccounts && Array.isArray(rawAccounts.active)
       ? implicitMigration(
-          rawAccounts.active.map(({ data }) =>
-            accountModel.decode({ data, version }),
-          ),
+          rawAccounts.active.map(({ data }) => accountModel.decode({ data, version })),
         )
       : [],
   );
@@ -40,13 +38,10 @@ export const replaceAccounts = createAction<AccountsReplaceAccountsPayload>(
 export const setAccounts = createAction<AccountsSetAccountsPayload>(
   AccountsActionTypes.SET_ACCOUNTS,
 );
-export const updateAccountWithUpdater =
-  createAction<AccountsUpdateAccountWithUpdaterPayload>(
-    AccountsActionTypes.UPDATE_ACCOUNT,
-  );
-export const updateAccount = (
-  payload: Pick<Account, "id"> & Partial<Account>,
-) =>
+export const updateAccountWithUpdater = createAction<AccountsUpdateAccountWithUpdaterPayload>(
+  AccountsActionTypes.UPDATE_ACCOUNT,
+);
+export const updateAccount = (payload: Pick<Account, "id"> & Partial<Account>) =>
   updateAccountWithUpdater({
     accountId: payload.id,
     updater: (account: Account) => ({

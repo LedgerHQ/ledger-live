@@ -18,10 +18,7 @@ import { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    PolkadotNominateFlowParamList,
-    ScreenName.PolkadotNominateValidationSuccess
-  >
+  StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -29,9 +26,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -56,12 +51,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="polkadot.nominate.steps.validation.success.title" />
-        }
-        description={
-          <Trans i18nKey="polkadot.nominate.steps.validation.success.description" />
-        }
+        title={<Trans i18nKey="polkadot.nominate.steps.validation.success.title" />}
+        description={<Trans i18nKey="polkadot.nominate.steps.validation.success.description" />}
       />
     </View>
   );

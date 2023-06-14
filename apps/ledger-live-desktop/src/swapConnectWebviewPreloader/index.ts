@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
-const postMessage = (message: any) => ipcRenderer.sendToHost("webviewToParent", message);
+const postMessage = (message: string) => ipcRenderer.sendToHost("webviewToParent", message);
 contextBridge.exposeInMainWorld("ledger", {
   setToken: (token: string) => {
     const message = JSON.stringify({

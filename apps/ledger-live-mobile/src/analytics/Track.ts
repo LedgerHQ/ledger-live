@@ -14,8 +14,7 @@ export default memo((props: Props): null => {
   const { event, onMount, onUnmount, onUpdate } = props;
 
   const doTrack = useCallback(() => {
-    const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } =
-      props;
+    const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } = props;
     track(event, properties, mandatory);
   }, [props]);
 

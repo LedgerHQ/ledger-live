@@ -60,7 +60,7 @@ const handlers: AccountsHandlers = {
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as AccountsHandlers<false>,
+  handlers as unknown as AccountsHandlers<false>,
   state,
 );
 
@@ -73,7 +73,7 @@ export const accountsSelector = (state: { accounts: AccountsState }): Account[] 
 const accountHash = (a: AccountLike) =>
   `${a.type === "Account" ? a.name : ""}-${a.id}${
     a.starred ? "-*" : ""
-  }-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
+  }-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );
@@ -159,15 +159,16 @@ export const accountSelector = createSelector(
   ) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
-export const getAccountById = createSelector(accountsSelector, accounts => (accountId: string) =>
-  accounts.find(a => a.id === accountId),
+export const getAccountById = createSelector(
+  accountsSelector,
+  accounts => (accountId: string) => accounts.find(a => a.id === accountId),
 );
 
 export const starredAccountsSelector = createSelector(shallowAccountsSelector, accounts =>
   flattenAccounts(accounts).filter(a => a.starred),
 );
 export const isStarredAccountSelector = (
-  s: any,
+  s: State,
   {
     accountId,
   }: {

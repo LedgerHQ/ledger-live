@@ -24,9 +24,7 @@ const removePrefix = (hex: string): string => {
  */
 const addPrefix = (hex: string): string => {
   validate(hex);
-  return PREFIX_REGEX.test(hex)
-    ? hex.replace(PREFIX_REGEX, PREFIX)
-    : `${PREFIX}${hex}`;
+  return PREFIX_REGEX.test(hex) ? hex.replace(PREFIX_REGEX, PREFIX) : `${PREFIX}${hex}`;
 };
 
 /**

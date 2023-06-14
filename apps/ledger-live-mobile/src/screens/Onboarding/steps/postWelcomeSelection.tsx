@@ -119,9 +119,9 @@ function PostWelcomeSelection({ route }: NavigationProps) {
   }, [dispatch, navigation]);
 
   const buyLedger = useCallback(() => {
-    (
-      navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>
-    ).navigate(NavigatorName.BuyDevice);
+    (navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>).navigate(
+      NavigatorName.BuyDevice,
+    );
   }, [navigation]);
 
   const exploreLedger = useCallback(() => {

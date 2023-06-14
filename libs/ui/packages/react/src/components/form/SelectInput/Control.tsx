@@ -9,7 +9,7 @@ export function getStyles<
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
 >(theme: DefaultTheme): NonNullable<StylesConfig<O, M, G>["control"]> {
-  return (provided) => ({
+  return provided => ({
     ...provided,
     display: "flex",
     alignItems: "center",

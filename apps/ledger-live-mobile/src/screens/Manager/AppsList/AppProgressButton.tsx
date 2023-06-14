@@ -13,13 +13,7 @@ type Props = {
   size?: number;
 };
 
-export default function AppProgressButton({
-  state,
-  name,
-  installing,
-  updating,
-  size = 48,
-}: Props) {
+export default function AppProgressButton({ state, name, installing, updating, size = 48 }: Props) {
   const { colors } = useTheme();
   const progress = useAppInstallProgress(state, name);
   const { currentAppOp } = state;

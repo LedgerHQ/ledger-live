@@ -55,6 +55,7 @@ export enum ScreenName {
   DebugPlayground = "DebugPlayground",
   DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
   DebugSettings = "DebugSettings",
+  DebugSnackbars = "DebugSnackbars",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",
@@ -82,11 +83,7 @@ export enum ScreenName {
   ExchangeSelectCurrency = "ExchangeSelectCurrency",
   ExchangeSell = "ExchangeSell",
   ExperimentalSettings = "ExperimentalSettings",
-  FirmwareUpdateCheckId = "FirmwareUpdateCheckId",
-  FirmwareUpdateConfirmation = "FirmwareUpdateConfirmation",
-  FirmwareUpdateFailure = "FirmwareUpdateFailure",
-  FirmwareUpdateMCU = "FirmwareUpdateMCU",
-  FirmwareUpdateReleaseNotes = "FirmwareUpdateReleaseNotes",
+  FirmwareUpdate = "FirmwareUpdate",
   FreezeAmount = "FreezeAmount",
   FreezeConnectDevice = "FreezeConnectDevice",
   FreezeInfo = "FreezeInfo",
@@ -484,6 +481,7 @@ export enum ScreenName {
   Stake = "Stake",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
+  RedirectToRecoverStaxFlow = "RedirectToRecoverStaxFlow",
 }
 export enum NavigatorName {
   // Stack
@@ -514,7 +512,6 @@ export enum NavigatorName {
   AlgorandClaimRewardsFlow = "AlgorandClaimRewardsFlow",
   AlgorandOptInFlow = "AlgorandOptInFlow",
   ClaimRewards = "ClaimRewards",
-  FirmwareUpdate = "FirmwareUpdate",
   Freeze = "Freeze",
   ImportAccounts = "ImportAccounts",
   Manager = "ManagerNavigator",

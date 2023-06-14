@@ -1,19 +1,10 @@
 import { Account, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { $Shape } from "utility-types";
-import {
-  DEFAULT_GAS_COEFFICIENT,
-  HEX_PREFIX,
-  MAINNET_CHAIN_TAG,
-} from "./constants";
+import { DEFAULT_GAS_COEFFICIENT, HEX_PREFIX, MAINNET_CHAIN_TAG } from "./constants";
 import { Transaction } from "./types";
 import { Transaction as ThorTransaction } from "thor-devkit";
-import {
-  calculateFee,
-  estimateGas,
-  generateNonce,
-  getBlockRef,
-} from "./utils/transaction-utils";
+import { calculateFee, estimateGas, generateNonce, getBlockRef } from "./utils/transaction-utils";
 import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { calculateTransactionInfo } from "./utils/calculateTransactionInfo";
@@ -57,7 +48,7 @@ export const createTransaction = (): Transaction => {
  */
 export const updateTransaction = (
   t: Transaction,
-  patch: $Shape<TransactionCommon>
+  patch: $Shape<TransactionCommon>,
 ): Transaction => {
   return { ...t, ...patch };
 };
@@ -70,12 +61,9 @@ export const updateTransaction = (
  */
 export const prepareTransaction = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<Transaction> => {
-  const { amount, isTokenAccount } = await calculateTransactionInfo(
-    account,
-    transaction
-  );
+  const { amount, isTokenAccount } = await calculateTransactionInfo(account, transaction);
 
   let blockRef = "";
 
@@ -94,10 +82,7 @@ export const prepareTransaction = async (
     body: { ...transaction.body, clauses: clauses },
   });
 
-  const estimatedFees = await calculateFee(
-    new BigNumber(gas),
-    transaction.body.gasPriceCoef
-  );
+  const estimatedFees = await calculateFee(new BigNumber(gas), transaction.body.gasPriceCoef);
 
   const body = { ...transaction.body, gas, blockRef, clauses };
 
@@ -106,7 +91,7 @@ export const prepareTransaction = async (
 
 export const calculateClausesVtho = async (
   transaction: Transaction,
-  amount: BigNumber
+  amount: BigNumber,
 ): Promise<ThorTransaction.Clause[]> => {
   const clauses: ThorTransaction.Clause[] = [];
 
@@ -122,10 +107,7 @@ export const calculateClausesVtho = async (
     amount: amount.toFixed(),
   };
 
-  updatedClause.data = VIP180.transfer.encode(
-    updatedValues.to,
-    updatedValues.amount
-  );
+  updatedClause.data = VIP180.transfer.encode(updatedValues.to, updatedValues.amount);
 
   clauses.push(updatedClause);
   return clauses;
@@ -133,7 +115,7 @@ export const calculateClausesVtho = async (
 
 const calculateClausesVet = async (
   transaction: Transaction,
-  amount: BigNumber
+  amount: BigNumber,
 ): Promise<ThorTransaction.Clause[]> => {
   const clauses: ThorTransaction.Clause[] = [];
 

@@ -15,29 +15,31 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
+
 import Stepper from "~/renderer/components/Stepper";
 import StepAsset, { StepAssetFooter } from "./steps/StepAsset";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+
+export type Data = {
+  account: AlgorandAccount;
+};
+
 type OwnProps = {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-  };
-  name: string;
+  params: Data;
 };
+
 type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (a: string) => void;
-  openModal: (a: string) => void;
+  openModal: OpenModal;
 };
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [
@@ -65,21 +67,11 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }: Props) => {
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -87,27 +79,23 @@ const Body = ({
     setTransaction,
     updateTransaction,
     account,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
     const { account } = params;
     invariant(account, "algorand: account required");
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "optIn",
     });
     return {
       account,
-      parentAccount: undefined,
       transaction,
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -144,7 +132,6 @@ const Body = ({
     title: t("algorand.optIn.flow.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,
@@ -154,7 +141,7 @@ const Body = ({
     hideBreadcrumb: !!error || !!warning,
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     warning,
     status,
@@ -175,8 +162,9 @@ const Body = ({
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);
+
 export default C;

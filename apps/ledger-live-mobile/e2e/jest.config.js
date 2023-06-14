@@ -2,11 +2,6 @@ module.exports = {
   rootDir: "..",
   maxWorkers: 1,
   preset: "ts-jest",
-  globals: {
-    "ts-jest": {
-      babelConfig: true,
-    },
-  },
   transform: {
     "^.+\\.[tj]sx?$": [
       "ts-jest",

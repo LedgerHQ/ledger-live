@@ -10,10 +10,7 @@ import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RightHeader } from "./RightHeader";
 import { BottomBar } from "./BottomBar";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../RootNavigator/types/helpers";
+import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import HeaderTitle from "../HeaderTitle";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
@@ -26,16 +23,11 @@ type Props = {
 
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
-  const [webviewState, setWebviewState] =
-    useState<WebviewState>(initialWebviewState);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
   const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -51,16 +43,10 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBackPress,
-      );
+      BackHandler.addEventListener("hardwareBackPress", handleHardwareBackPress);
 
       return () => {
-        BackHandler.removeEventListener(
-          "hardwareBackPress",
-          handleHardwareBackPress,
-        );
+        BackHandler.removeEventListener("hardwareBackPress", handleHardwareBackPress);
       };
     }
   }, [handleHardwareBackPress]);
@@ -94,11 +80,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         inputs={inputs}
         onStateChange={setWebviewState}
       />
-      <BottomBar
-        manifest={manifest}
-        webviewAPIRef={webviewAPIRef}
-        webviewState={webviewState}
-      />
+      <BottomBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
       <InfoPanel
         name={manifest.name}
         icon={manifest.icon}

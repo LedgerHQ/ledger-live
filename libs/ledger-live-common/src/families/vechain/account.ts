@@ -13,9 +13,7 @@ function formatAccountSpecifics(account: Account): string {
 
   let str = " ";
 
-  str +=
-    formatCurrencyUnit(unit, account.spendableBalance, formatConfig) +
-    " spendable. ";
+  str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
   return str;
 }
@@ -34,9 +32,7 @@ function formatOperationSpecifics(op: Operation, unit: Unit): string {
   str +=
     additionalField && !additionalField.isNaN()
       ? `\n    additionalField: ${
-          unit
-            ? formatCurrencyUnit(unit, additionalField, formatConfig)
-            : additionalField
+          unit ? formatCurrencyUnit(unit, additionalField, formatConfig) : additionalField
         }`
       : "";
 

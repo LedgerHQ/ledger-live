@@ -58,52 +58,54 @@ For a smooth and quick integration:
         *   [Parameters](#parameters-10)
     *   [createPaymentTransaction](#createpaymenttransaction-1)
         *   [Parameters](#parameters-11)
+    *   [signMessage](#signmessage-1)
+        *   [Parameters](#parameters-12)
 *   [BtcOld](#btcold)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-13)
     *   [Examples](#examples-7)
     *   [getWalletPublicKey](#getwalletpublickey-2)
-        *   [Parameters](#parameters-13)
+        *   [Parameters](#parameters-14)
         *   [Examples](#examples-8)
     *   [createPaymentTransaction](#createpaymenttransaction-2)
-        *   [Parameters](#parameters-14)
+        *   [Parameters](#parameters-15)
         *   [Examples](#examples-9)
 *   [CreateTransactionArg](#createtransactionarg)
     *   [Properties](#properties)
 *   [AddressFormat](#addressformat)
 *   [AccountType](#accounttype)
     *   [spendingCondition](#spendingcondition)
-        *   [Parameters](#parameters-15)
-    *   [setInput](#setinput)
         *   [Parameters](#parameters-16)
-    *   [setOwnOutput](#setownoutput)
+    *   [setInput](#setinput)
         *   [Parameters](#parameters-17)
+    *   [setOwnOutput](#setownoutput)
+        *   [Parameters](#parameters-18)
     *   [getDescriptorTemplate](#getdescriptortemplate)
 *   [SingleKeyAccount](#singlekeyaccount)
 *   [getTaprootOutputKey](#gettaprootoutputkey)
-    *   [Parameters](#parameters-18)
-*   [AppClient](#appclient)
     *   [Parameters](#parameters-19)
-*   [ClientCommandInterpreter](#clientcommandinterpreter)
+*   [AppClient](#appclient)
     *   [Parameters](#parameters-20)
-*   [MerkelizedPsbt](#merkelizedpsbt)
+*   [ClientCommandInterpreter](#clientcommandinterpreter)
     *   [Parameters](#parameters-21)
-*   [Merkle](#merkle)
+*   [MerkelizedPsbt](#merkelizedpsbt)
     *   [Parameters](#parameters-22)
-*   [MerkleMap](#merklemap)
+*   [Merkle](#merkle)
     *   [Parameters](#parameters-23)
-*   [WalletPolicy](#walletpolicy)
+*   [MerkleMap](#merklemap)
     *   [Parameters](#parameters-24)
-*   [extract](#extract)
+*   [WalletPolicy](#walletpolicy)
     *   [Parameters](#parameters-25)
-*   [finalize](#finalize)
+*   [extract](#extract)
     *   [Parameters](#parameters-26)
-*   [clearFinalizedInput](#clearfinalizedinput)
+*   [finalize](#finalize)
     *   [Parameters](#parameters-27)
-*   [writePush](#writepush)
+*   [clearFinalizedInput](#clearfinalizedinput)
     *   [Parameters](#parameters-28)
+*   [writePush](#writepush)
+    *   [Parameters](#parameters-29)
 *   [PsbtV2](#psbtv2)
 *   [serializeTransactionOutputs](#serializetransactionoutputs-1)
-    *   [Parameters](#parameters-29)
+    *   [Parameters](#parameters-30)
     *   [Examples](#examples-10)
 *   [SignP2SHTransactionArg](#signp2shtransactionarg)
     *   [Properties](#properties-1)
@@ -376,6 +378,21 @@ transaction is returned.
 *   `arg` **[CreateTransactionArg](#createtransactionarg)** 
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+
+#### signMessage
+
+Signs an arbitrary hex-formatted message with the private key at
+the provided derivation path according to the Bitcoin Signature format
+and returns v, r, s.
+
+##### Parameters
+
+*   `$0` **{path: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), messageHex: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}** 
+
+    *   `$0.path`  
+    *   `$0.messageHex`  
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
 ### BtcOld
 

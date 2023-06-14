@@ -52,11 +52,10 @@ export function useSortAccountsComparator() {
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);
   const comparator = useSortAccountsComparator();
-  return useMemo(() => flattenSortAccounts(accounts, comparator, options), [
-    accounts,
-    comparator,
-    options,
-  ]);
+  return useMemo(
+    () => flattenSortAccounts(accounts, comparator, options),
+    [accounts, comparator, options],
+  );
 }
 export const delegatableAccountsSelector = createSelector(activeAccountsSelector, accounts =>
   accounts.filter(acc => acc.currency.family === "tezos" && !isAccountDelegating(acc)),
@@ -130,8 +129,8 @@ export function useTrackingPairs(): TrackingPair[] {
   const countervalue = useSelector(counterValueCurrencySelector);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
   const extraSessionTrackingPairs = useExtraSessionTrackingPair();
-  return useMemo(() => extraSessionTrackingPairs.concat(trPairs), [
-    extraSessionTrackingPairs,
-    trPairs,
-  ]);
+  return useMemo(
+    () => extraSessionTrackingPairs.concat(trPairs),
+    [extraSessionTrackingPairs, trPairs],
+  );
 }

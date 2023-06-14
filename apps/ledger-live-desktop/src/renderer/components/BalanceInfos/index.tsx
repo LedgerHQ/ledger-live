@@ -34,7 +34,7 @@ type BalanceTotalProps = {
 type Props = {
   unit: Unit;
 } & BalanceSinceProps;
-export function BalanceDiff({ totalBalance, valueChange, unit, isAvailable, ...boxProps }: Props) {
+export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Props) {
   if (!isAvailable) return null;
   return (
     <Box horizontal {...boxProps}>

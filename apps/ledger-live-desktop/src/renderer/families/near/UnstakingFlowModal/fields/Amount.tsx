@@ -2,14 +2,18 @@ import React, { useMemo, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
+import { TransactionStatus } from "@ledgerhq/live-common/families/near/types";
 
 type Props = {
   amount: BigNumber;
-  validator: any;
+  validator: {
+    validatorAddress: string;
+    amount: BigNumber;
+  };
   account: Account;
   status: TransactionStatus;
   onChange: (amount: BigNumber) => void;
@@ -106,12 +110,12 @@ const InputRight = styled(Box).attrs(() => ({
 }))`
   padding: ${p => p.theme.space[2]}px;
 `;
-const AmountButton: ThemedComponent<{
+const AmountButton = styled.button.attrs(() => ({
+  type: "button",
+}))<{
   error: boolean;
   active: boolean;
-}> = styled.button.attrs(() => ({
-  type: "button",
-}))`
+}>`
   background-color: ${p =>
     p.error
       ? p.theme.colors.lightRed

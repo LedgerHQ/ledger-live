@@ -1,28 +1,20 @@
-import network from "../../../network";
-import * as ApiTypes from "./api-types";
-import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
-import { getEnv } from "../../../env";
-import {
-  getBipPath,
-  getCredentialKey,
-  getExtendedPublicKeyFromHex,
-  isTestnet,
-} from "../logic";
-import range from "lodash/range";
-import chunk from "lodash/chunk";
-import { APITransaction } from "./api-types";
-import {
-  CARDANO_API_ENDPOINT,
-  CARDANO_TESTNET_API_ENDPOINT,
-} from "../constants";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Bip32PublicKey } from "@stricahq/bip32ed25519";
+import chunk from "lodash/chunk";
+import range from "lodash/range";
+import { getEnv } from "../../../env";
+import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
+import { getBipPath, getCredentialKey, getExtendedPublicKeyFromHex, isTestnet } from "../logic";
+import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
+import * as ApiTypes from "./api-types";
+import { APITransaction } from "./api-types";
 
 async function fetchTransactions(
   paymentKeys: Array<string>,
   pageNo: number,
   blockHeight: number,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): Promise<{
   pageNo: number;
   limit: number;
@@ -46,7 +38,7 @@ async function fetchTransactions(
 async function getAllTransactionsByKeys(
   paymentKeys: Array<string>,
   blockHeight: number,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): Promise<{
   transactions: Array<ApiTypes.APITransaction>;
   blockHeight: number;
@@ -57,12 +49,7 @@ async function getAllTransactionsByKeys(
   let pageNo = 1;
 
   while (!isAllTrxFetched) {
-    const res = await fetchTransactions(
-      paymentKeys,
-      pageNo,
-      blockHeight,
-      currency
-    );
+    const res = await fetchTransactions(paymentKeys, pageNo, blockHeight, currency);
     transactions.push(...res.transactions);
     latestBlockHeight = Math.max(res.blockHeight, latestBlockHeight);
     isAllTrxFetched = res.transactions.length < res.limit;
@@ -80,7 +67,7 @@ async function getSyncedTransactionsByChain(
   chainType: PaymentChain,
   blockHeight: number,
   initialPaymentCredentials: Array<PaymentCredential>,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): Promise<{
   transactions: Array<ApiTypes.APITransaction>;
   latestBlockHeight: number;
@@ -91,7 +78,7 @@ async function getSyncedTransactionsByChain(
   // credentialsMap for efficient use
   const initialPaymentCredentialMap: Record<string, PaymentCredential> = {};
   let maxUsedKeyIndex = -1;
-  initialPaymentCredentials.forEach((cred) => {
+  initialPaymentCredentials.forEach(cred => {
     initialPaymentCredentialMap[cred.key] = cred;
     if (cred.isUsed) maxUsedKeyIndex = cred.path.index;
   });
@@ -101,11 +88,11 @@ async function getSyncedTransactionsByChain(
 
   // fetch transactions for existing keys
   const trxsRes = await Promise.all(
-    chunk(Object.keys(initialPaymentCredentialMap), keyChainRange).map((keys) =>
-      getAllTransactionsByKeys(keys, blockHeight, currency)
-    )
+    chunk(Object.keys(initialPaymentCredentialMap), keyChainRange).map(keys =>
+      getAllTransactionsByKeys(keys, blockHeight, currency),
+    ),
   );
-  trxsRes.forEach((txRes) => {
+  trxsRes.forEach(txRes => {
     transactions.push(...txRes.transactions);
     latestBlockHeight = Math.max(latestBlockHeight, txRes.blockHeight);
   });
@@ -118,14 +105,14 @@ async function getSyncedTransactionsByChain(
   let syncToKeyIndex = maxUsedKeyIndex + keyChainRange;
   while (syncToKeyIndex !== lastSyncedKeyIndex) {
     const currentPaymentKeysMap: Record<string, PaymentCredential> = {};
-    range(lastSyncedKeyIndex + 1, syncToKeyIndex + 1, 1).forEach((keyIndex) => {
+    range(lastSyncedKeyIndex + 1, syncToKeyIndex + 1, 1).forEach(keyIndex => {
       const keyPath = getCredentialKey(
         accountPubKey,
         getBipPath({
           account: accountIndex,
           chain: chainType,
           index: keyIndex,
-        })
+        }),
       );
       currentPaymentKeysMap[keyPath.key] = {
         isUsed: false,
@@ -136,28 +123,21 @@ async function getSyncedTransactionsByChain(
     const trxRes = await getAllTransactionsByKeys(
       Object.keys(currentPaymentKeysMap),
       blockHeight,
-      currency
+      currency,
     );
     transactions.push(...trxRes.transactions);
 
     lastSyncedKeyIndex = syncToKeyIndex;
     latestBlockHeight = Math.max(latestBlockHeight, trxRes.blockHeight);
-    newPaymentCredentialsMap = Object.assign(
-      {},
-      newPaymentCredentialsMap,
-      currentPaymentKeysMap
-    );
+    newPaymentCredentialsMap = Object.assign({}, newPaymentCredentialsMap, currentPaymentKeysMap);
     maxUsedKeyIndex = trxRes.transactions.reduce(
       (maxIndexA, { inputs, outputs }) =>
         [...inputs, ...outputs].reduce(
           (maxIndexB, io) =>
-            Math.max(
-              newPaymentCredentialsMap[io.paymentKey]?.path.index || -1,
-              maxIndexB
-            ),
-          maxIndexA
+            Math.max(newPaymentCredentialsMap[io.paymentKey]?.path.index || -1, maxIndexB),
+          maxIndexA,
         ),
-      maxUsedKeyIndex
+      maxUsedKeyIndex,
     );
     syncToKeyIndex = maxUsedKeyIndex + keyChainRange;
   }
@@ -166,8 +146,8 @@ async function getSyncedTransactionsByChain(
     ...initialPaymentCredentialMap,
     ...newPaymentCredentialsMap,
   };
-  transactions.forEach((trx) => {
-    [...trx.inputs, ...trx.outputs].forEach((io) => {
+  transactions.forEach(trx => {
+    [...trx.inputs, ...trx.outputs].forEach(io => {
       if (availablePaymentCredentialsMap[io.paymentKey]) {
         availablePaymentCredentialsMap[io.paymentKey].isUsed = true;
       }
@@ -178,7 +158,7 @@ async function getSyncedTransactionsByChain(
     transactions,
     latestBlockHeight,
     paymentCredentials: Object.values(availablePaymentCredentialsMap).sort(
-      (aCred, bCred) => aCred.path.index - bCred.path.index
+      (aCred, bCred) => aCred.path.index - bCred.path.index,
     ),
   };
 }
@@ -188,7 +168,7 @@ export async function getTransactions(
   accountIndex: number,
   initialAccount: CardanoAccount | undefined,
   blockHeight: number,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): Promise<{
   transactions: Array<ApiTypes.APITransaction>;
   blockHeight: number;
@@ -196,10 +176,8 @@ export async function getTransactions(
   internalCredentials: Array<PaymentCredential>;
 }> {
   const accountPubKey = getExtendedPublicKeyFromHex(xpub);
-  const oldExternalCredentials =
-    initialAccount?.cardanoResources?.externalCredentials || [];
-  const oldInternalCredentials =
-    initialAccount?.cardanoResources?.internalCredentials || [];
+  const oldExternalCredentials = initialAccount?.cardanoResources?.externalCredentials || [];
+  const oldInternalCredentials = initialAccount?.cardanoResources?.internalCredentials || [];
 
   const [
     {
@@ -219,7 +197,7 @@ export async function getTransactions(
       PaymentChain.external,
       blockHeight,
       oldExternalCredentials,
-      currency
+      currency,
     ),
     getSyncedTransactionsByChain(
       accountPubKey,
@@ -227,7 +205,7 @@ export async function getTransactions(
       PaymentChain.internal,
       blockHeight,
       oldInternalCredentials,
-      currency
+      currency,
     ),
   ]);
 

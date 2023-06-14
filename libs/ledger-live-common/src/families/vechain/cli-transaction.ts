@@ -25,13 +25,11 @@ function inferTransactions(
     transaction: Transaction;
     mainAccount: Account;
   }>,
-  opts: Record<string, any>
+  opts: Record<string, any>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     let subAccountId =
-      account.type == "Account" && account.subAccounts
-        ? account.subAccounts[0].id
-        : "";
+      account.type == "Account" && account.subAccounts ? account.subAccounts[0].id : "";
 
     if (account.type === "TokenAccount") {
       subAccountId = account.id;
@@ -49,10 +47,7 @@ function inferTransactions(
       clauses.push({
         value: 0,
         to: VTHO_ADDRESS,
-        data: VIP180.transfer.encode(
-          transaction.recipient,
-          transaction.amount.toFixed()
-        ),
+        data: VIP180.transfer.encode(transaction.recipient, transaction.amount.toFixed()),
       });
     }
 

@@ -15,7 +15,7 @@ import { InputInfo, OutputInfo, DerivationModes } from "../types";
 import { Merge } from "../pickingstrategies/Merge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // TODO Skipped because Praline required on CI
 describe.skip("testing xpub legacy transactions", () => {
@@ -24,22 +24,18 @@ describe.skip("testing xpub legacy transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     cryptoCurrency: getCryptoCurrencyById("bitcoin"),
     forcedExplorerURI: "http://localhost:20000/blockchain/v3",
-    disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
 
   const crypto = new Crypto({
     network,
   });
 
-  const xpubs = [1, 2, 3].map((i) => {
+  const xpubs = [1, 2, 3].map(i => {
     const storage = new BitcoinLikeStorage();
     const seed = bip39.mnemonicToSeedSync(`test${i} test${i} test${i}`);
     const node = bip32.fromSeed(seed, network);
     const signer = (account: number, index: number) =>
-      bitcoin.ECPair.fromWIF(
-        node.derive(account).derive(index).toWIF(),
-        network
-      );
+      bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
     const xpub = new Xpub({
       storage,
       explorer,
@@ -93,21 +89,16 @@ describe.skip("testing xpub legacy transactions", () => {
 
     const psbt = new bitcoin.Psbt({ network });
 
-    const utxoPickingStrategy = new Merge(
-      xpubs[0].xpub.crypto,
-      xpubs[0].xpub.derivationMode,
-      []
-    );
+    const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
-    const { inputs, associatedDerivations, outputs } =
-      await xpubs[0].xpub.buildTx({
-        destAddress: address,
-        amount: new BigNumber(100000000),
-        feePerByte: 100,
-        changeAddress,
-        utxoPickingStrategy,
-        sequence: 0,
-      });
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx({
+      destAddress: address,
+      amount: new BigNumber(100000000),
+      feePerByte: 100,
+      changeAddress,
+      utxoPickingStrategy,
+      sequence: 0,
+    });
 
     inputs.forEach((i: InputInfo) => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
@@ -127,13 +118,7 @@ describe.skip("testing xpub legacy transactions", () => {
     });
     expect(outputs.length).toEqual(2);
     inputs.forEach((_, i) => {
-      psbt.signInput(
-        i,
-        xpubs[0].signer(
-          associatedDerivations[i][0],
-          associatedDerivations[i][1]
-        )
-      );
+      psbt.signInput(i, xpubs[0].signer(associatedDerivations[i][0], associatedDerivations[i][1]));
       psbt.validateSignaturesOfInput(i);
     });
     psbt.finalizeAllInputs();
@@ -148,10 +133,10 @@ describe.skip("testing xpub legacy transactions", () => {
     expectedFee1 =
       utils.maxTxSizeCeil(
         inputs.length,
-        outputs.map((o) => o.script),
+        outputs.map(o => o.script),
         false,
         crypto,
-        DerivationModes.LEGACY
+        DerivationModes.LEGACY,
       ) * 100;
 
     // time for explorer to sync
@@ -168,11 +153,9 @@ describe.skip("testing xpub legacy transactions", () => {
 
     // pending is seen here
     expect((await xpubs[0].xpub.getXpubBalance()).toNumber()).toEqual(
-      5700000000 - 100000000 - expectedFee1
+      5700000000 - 100000000 - expectedFee1,
     );
-    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(
-      100000000
-    );
+    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(100000000);
     let pendings0 = await xpubs[0].xpub.storage.getLastUnconfirmedTx();
     let pendings1 = await xpubs[1].xpub.storage.getLastUnconfirmedTx();
     expect(pendings0).toBeTruthy();
@@ -193,11 +176,9 @@ describe.skip("testing xpub legacy transactions", () => {
     await xpubs[1].xpub.sync();
 
     expect((await xpubs[0].xpub.getXpubBalance()).toNumber()).toEqual(
-      5700000000 - 100000000 - expectedFee1
+      5700000000 - 100000000 - expectedFee1,
     );
-    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(
-      100000000
-    );
+    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(100000000);
     pendings0 = await xpubs[0].xpub.storage.getLastUnconfirmedTx();
     pendings1 = await xpubs[1].xpub.storage.getLastUnconfirmedTx();
     expect(pendings0).toBeFalsy();
@@ -211,24 +192,19 @@ describe.skip("testing xpub legacy transactions", () => {
 
     const psbt = new bitcoin.Psbt({ network });
 
-    const utxoPickingStrategy = new Merge(
-      xpubs[0].xpub.crypto,
-      xpubs[0].xpub.derivationMode,
-      []
-    );
+    const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
     xpubs[0].xpub.OUTPUT_VALUE_MAX = 70000000;
-    const { inputs, associatedDerivations, outputs } =
-      await xpubs[0].xpub.buildTx({
-        destAddress: address,
-        amount: new BigNumber(100000000),
-        feePerByte: 100,
-        changeAddress,
-        utxoPickingStrategy,
-        sequence: 0,
-      });
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx({
+      destAddress: address,
+      amount: new BigNumber(100000000),
+      feePerByte: 100,
+      changeAddress,
+      utxoPickingStrategy,
+      sequence: 0,
+    });
 
-    inputs.forEach((i) => {
+    inputs.forEach(i => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
@@ -238,7 +214,7 @@ describe.skip("testing xpub legacy transactions", () => {
       });
     });
 
-    outputs.forEach((output) => {
+    outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
         value: output.value.toNumber(),
@@ -247,13 +223,7 @@ describe.skip("testing xpub legacy transactions", () => {
 
     expect(outputs.length).toEqual(3);
     inputs.forEach((_, i) => {
-      psbt.signInput(
-        i,
-        xpubs[0].signer(
-          associatedDerivations[i][0],
-          associatedDerivations[i][1]
-        )
-      );
+      psbt.signInput(i, xpubs[0].signer(associatedDerivations[i][0], associatedDerivations[i][1]));
       psbt.validateSignaturesOfInput(i);
     });
     psbt.finalizeAllInputs();
@@ -283,17 +253,15 @@ describe.skip("testing xpub legacy transactions", () => {
     expectedFee2 =
       utils.maxTxSizeCeil(
         inputs.length,
-        outputs.map((o) => o.script),
+        outputs.map(o => o.script),
         false,
         crypto,
-        DerivationModes.LEGACY
+        DerivationModes.LEGACY,
       ) * 100;
     expect((await xpubs[0].xpub.getXpubBalance()).toNumber()).toEqual(
-      5700000000 - 100000000 - expectedFee1 - 100000000 - expectedFee2
+      5700000000 - 100000000 - expectedFee1 - 100000000 - expectedFee2,
     );
-    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(
-      200000000
-    );
+    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(200000000);
   }, 120000);
 });
 
@@ -304,14 +272,13 @@ describe.skip("Build transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     forcedExplorerURI: "http://localhost:20000/blockchain/v3",
     cryptoCurrency: getCryptoCurrencyById("bitcoin"),
-    disableBatchSize: true,
   });
 
   const crypto = new Crypto({
     network,
   });
 
-  const xpubs = [1, 2, 3].map((i) => {
+  const xpubs = [1, 2, 3].map(i => {
     const storage = new BitcoinLikeStorage();
     const seed = bip39.mnemonicToSeedSync(`test${i} test${i} test${i}`);
     const node = bip32.fromSeed(seed, network);
@@ -324,10 +291,7 @@ describe.skip("Build transactions", () => {
     });
 
     const signer = (account: number, index: number) =>
-      bitcoin.ECPair.fromWIF(
-        node.derive(account).derive(index).toWIF(),
-        network
-      );
+      bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
 
     return {
       storage,
@@ -344,11 +308,7 @@ describe.skip("Build transactions", () => {
 
     const psbt = new bitcoin.Psbt({ network });
 
-    const utxoPickingStrategy = new Merge(
-      xpubs[0].xpub.crypto,
-      xpubs[0].xpub.derivationMode,
-      []
-    );
+    const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
     const opReturnData = Buffer.from("charley loves heidi", "utf-8");
 
@@ -362,7 +322,7 @@ describe.skip("Build transactions", () => {
       opReturnData,
     });
 
-    inputs.forEach((i) => {
+    inputs.forEach(i => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
@@ -372,7 +332,7 @@ describe.skip("Build transactions", () => {
       });
     });
 
-    outputs.forEach((output) => {
+    outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
         value: output.value.toNumber(),

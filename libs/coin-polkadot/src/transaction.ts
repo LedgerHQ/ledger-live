@@ -12,7 +12,7 @@ import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 export const formatTransaction = (
   { mode, amount, recipient, validators, useAllAmount }: Transaction,
-  account: Account
+  account: Account,
 ): string => `
 ${mode.toUpperCase()} ${
   useAllAmount
@@ -24,9 +24,7 @@ ${mode.toUpperCase()} ${
         showCode: true,
         disableRounding: true,
       })
-}${recipient ? `\nTO ${recipient}` : ""}${
-  !validators ? "" : validators.join("\n")
-}`;
+}${recipient ? `\nTO ${recipient}` : ""}${!validators ? "" : validators.join("\n")}`;
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {

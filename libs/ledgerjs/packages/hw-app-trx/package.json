@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-trx",
-  "version": "6.27.13",
+  "version": "6.27.15",
   "description": "Ledger Hardware Wallet Tron Application API",
   "keywords": [
     "Ledger",
@@ -47,7 +47,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   },
