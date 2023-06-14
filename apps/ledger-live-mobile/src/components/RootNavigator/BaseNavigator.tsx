@@ -263,8 +263,7 @@ export default function BaseNavigator() {
               since this listener is on top of another navigator
             */
               const onError =
-                route.params?.onError ||
-                ((route.params as unknown) as typeof route)?.params?.onError;
+                route.params?.onError || (route.params as unknown as typeof route)?.params?.onError;
               // @TODO replace with correct error
               if (onError && typeof onError === "function")
                 onError(route.params.error || new Error("Request account interrupted by user"));
@@ -281,8 +280,7 @@ export default function BaseNavigator() {
           listeners={({ route }) => ({
             beforeRemove: () => {
               const onClose =
-                route.params?.onClose ||
-                ((route.params as unknown) as typeof route)?.params?.onClose;
+                route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
               if (onClose && typeof onClose === "function") {
                 onClose();
               }
@@ -534,8 +532,7 @@ export default function BaseNavigator() {
           listeners={({ route }) => ({
             beforeRemove: () => {
               const onClose =
-                route.params?.onClose ||
-                ((route.params as unknown) as typeof route)?.params?.onClose;
+                route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
               if (onClose && typeof onClose === "function") {
                 onClose();
               }
