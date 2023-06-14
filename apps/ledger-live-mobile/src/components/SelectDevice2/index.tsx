@@ -53,6 +53,8 @@ type Props = {
    * should react to a request from this component to set or to clean its header.
    */
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
+
+  isChoiceDrawerDisplayedOnAddDevice?: boolean;
 };
 
 export default function SelectDevice({
@@ -60,6 +62,7 @@ export default function SelectDevice({
   stopBleScanning,
   displayServicesWidget,
   requestToSetHeaderOptions,
+  isChoiceDrawerDisplayedOnAddDevice = true,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -322,7 +325,9 @@ export default function SelectDevice({
                   <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
                 ))
               ) : (
-                <Touchable onPress={onAddNewPress}>
+                <Touchable
+                  onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                >
                   <Flex
                     p={5}
                     mb={4}
