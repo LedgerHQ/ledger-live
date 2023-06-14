@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-next.1
+
+### Patch Changes
+
+- [#3683](https://github.com/LedgerHQ/ledger-live/pull/3683) [`02fce53652`](https://github.com/LedgerHQ/ledger-live/commit/02fce5365236966f7a2bd9ed388de19422a51e1f) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix continue button for disclaimer drawer in discover v2 page
+
 ## 2.62.0-next.0
 
 ### Minor Changes
