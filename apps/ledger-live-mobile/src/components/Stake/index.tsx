@@ -48,7 +48,7 @@ const StakeFlow = ({ route }: Props) => {
         screen: name,
         stakingDrawer: options?.stakingDrawer,
         params: {
-          screen: name,
+          screen: options.screen,
           params: {
             ...(options?.params || {}),
             account,
