@@ -11,7 +11,7 @@ export default {
   }: Partial<{
     device: string;
   }>) => {
-    return new Observable((o) => {
+    return new Observable(o => {
       return getBatteryStatusesAction({
         deviceId: device ?? "",
         statuses: [

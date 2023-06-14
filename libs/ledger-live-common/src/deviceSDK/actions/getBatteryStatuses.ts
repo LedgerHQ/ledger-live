@@ -2,15 +2,8 @@ import { BatteryStatusFlags } from "@ledgerhq/types-devices";
 import { DeviceId } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { scan } from "rxjs/operators";
-import {
-  FullActionState,
-  initialSharedActionState,
-  sharedReducer,
-} from "./core";
-import {
-  getBatteryStatusTask,
-  GetBatteryStatusesTaskError,
-} from "../tasks/getBatteryStatuses";
+import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
+import { getBatteryStatusTask, GetBatteryStatusesTaskError } from "../tasks/getBatteryStatuses";
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
 
 export type GetBatteryStatusesActionArgs = {
@@ -45,10 +38,7 @@ export function getBatteryStatusesAction({
             ...currentState,
             error: null,
             lockedDevice: false,
-            batteryStatuses: [
-              ...currentState.batteryStatuses,
-              event.batteryStatus,
-            ],
+            batteryStatuses: [...currentState.batteryStatuses, event.batteryStatus],
           };
         case "error":
           return {
@@ -58,6 +48,6 @@ export function getBatteryStatusesAction({
             }),
           };
       }
-    }, initialState)
+    }, initialState),
   );
 }

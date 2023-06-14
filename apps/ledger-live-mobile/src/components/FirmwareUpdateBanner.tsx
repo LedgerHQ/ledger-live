@@ -39,7 +39,6 @@ const requiredBatteryStatuses = [
 
 const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) => {
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
-
   const wiredDevice = useSelector(getWiredDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
@@ -48,8 +47,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
   const { dark } = useTheme();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const [disableUpdateButton, setDisableUpdateButton] = useState(false);
-  const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] =
-    useState<boolean>(false);
+  const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
 
   const [showUnsupportedUpdateDrawer, setShowUnsupportedUpdateDrawer] = useState<boolean>(false);
 
@@ -110,8 +108,10 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
   // in case the battery is too low and the device is not charging
   useEffect(() => {
     if (batteryRequestCompleted) {
-      const [percentage, statusFlags] =
-        batteryStatusesState.batteryStatuses as [number, BatteryStatusFlags];
+      const [percentage, statusFlags] = batteryStatusesState.batteryStatuses as [
+        number,
+        BatteryStatusFlags,
+      ];
 
       percentage < 20 && statusFlags.charging === 0
         ? setShowBatteryWarningDrawer(true)
@@ -119,11 +119,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
 
       setDisableUpdateButton(false);
     }
-  }, [
-    batteryRequestCompleted,
-    batteryStatusesState.batteryStatuses,
-    onExperimentalFirmwareUpdate,
-  ]);
+  }, [batteryRequestCompleted, batteryStatusesState.batteryStatuses, onExperimentalFirmwareUpdate]);
 
   const showBanner = Boolean(latestFirmware);
   const version = latestFirmware?.final?.name ?? "";
@@ -210,9 +206,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
                 onPress={onClickUpdate}
                 outline={false}
               >
-                {disableUpdateButton && (
-                  <ProgressLoader infinite radius={10} strokeWidth={2} />
-                )}
+                {disableUpdateButton && <ProgressLoader infinite radius={10} strokeWidth={2} />}
               </Button>
             </Flex>
           </InvertTheme>
