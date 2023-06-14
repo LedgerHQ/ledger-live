@@ -241,7 +241,7 @@ export class CosmosAPI {
   };
 
   private async fetchAllTransactions(address: string, filterOn: string, paginationSize: number) {
-    let txs: CosmosTx[] = [];
+    const txs: CosmosTx[] = [];
     try {
       let total: number;
       let previousTxCall: CosmosTx[] | null = null;

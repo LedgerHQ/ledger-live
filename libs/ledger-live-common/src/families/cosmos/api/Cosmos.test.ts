@@ -1,6 +1,5 @@
 import network from "@ledgerhq/live-network/network";
 import BigNumber from "bignumber.js";
-import { CosmosTx } from "../types";
 import { CosmosAPI } from "./Cosmos";
 jest.mock("@ledgerhq/live-network/network");
 
@@ -74,71 +73,63 @@ describe("CosmosApi", () => {
 
     it("should return both recipient and sender tx", async () => {
       // @ts-expect-error method is mocked
-      network.mockImplementation(
-        (networkOptions: { method: string; url: string }) => {
-          if (networkOptions.url.includes("recipient")) {
-            return Promise.resolve({
-              data: {
-                pagination: { total: 1 },
-                tx_responses: [
-                  {
-                    txhash: "recipienthash",
-                  },
-                ],
-              },
-            });
-          } else if (networkOptions.url.includes("sender")) {
-            return Promise.resolve({
-              data: {
-                pagination: { total: 1 },
-                tx_responses: [
-                  {
-                    txhash: "senderhash",
-                  },
-                ],
-              },
-            });
-          } else {
-            return Promise.resolve({
-              data: {
-                pagination: { total: 0 },
-                tx_responses: [],
-              },
-            });
-          }
+      network.mockImplementation((networkOptions: { method: string; url: string }) => {
+        if (networkOptions.url.includes("recipient")) {
+          return Promise.resolve({
+            data: {
+              pagination: { total: 1 },
+              tx_responses: [
+                {
+                  txhash: "recipienthash",
+                },
+              ],
+            },
+          });
+        } else if (networkOptions.url.includes("sender")) {
+          return Promise.resolve({
+            data: {
+              pagination: { total: 1 },
+              tx_responses: [
+                {
+                  txhash: "senderhash",
+                },
+              ],
+            },
+          });
+        } else {
+          return Promise.resolve({
+            data: {
+              pagination: { total: 0 },
+              tx_responses: [],
+            },
+          });
         }
-      );
+      });
       const txs = await cosmosApi.getTransactions("address", 50);
-      expect(txs.find((tx) => tx.txhash === "senderhash")).toBeDefined();
-      expect(txs.find((tx) => tx.txhash === "recipienthash")).toBeDefined();
+      expect(txs.find(tx => tx.txhash === "senderhash")).toBeDefined();
+      expect(txs.find(tx => tx.txhash === "recipienthash")).toBeDefined();
       expect(txs.length).toEqual(2);
     });
 
     it("should return every pages of transactions", async () => {
       const simulatedTotal = 500;
       // @ts-expect-error method is mocked
-      network.mockImplementation(
-        (networkOptions: { method: string; url: string }) => {
-          const pageOffset: string = networkOptions.url
-            .split("pagination.offset=")[1]
-            .split("&")[0];
+      network.mockImplementation((networkOptions: { method: string; url: string }) => {
+        const pageOffset: string = networkOptions.url.split("pagination.offset=")[1].split("&")[0];
 
-          const pageSize: number = Number(
-            networkOptions.url.split("pagination.limit=")[1].split("&")[0]
-          );
+        const pageSize = Number(networkOptions.url.split("pagination.limit=")[1].split("&")[0]);
 
-          return Promise.resolve({
-            data: {
-              pagination: { total: simulatedTotal },
-              tx_responses: Array(pageSize)
-                .fill({})
-                .map((_, i) => ({
-                  txhash: `${pageOffset}_${i}`,
-                })),
-            },
-          });
-        }
-      );
+        return Promise.resolve({
+          data: {
+            pagination: { total: simulatedTotal },
+            tx_responses: Array(pageSize)
+              .fill({})
+              .map((_, i) => ({
+                txhash: `${pageOffset}_${i}`,
+              })),
+          },
+        });
+      });
       const txs = await cosmosApi.getTransactions("address", 10);
       // sender + recipient
       expect(txs.length).toEqual(simulatedTotal * 2);
