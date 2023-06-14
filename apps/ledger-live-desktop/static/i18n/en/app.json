@@ -2370,7 +2370,8 @@
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Change device language",
-    "changeLanguage": "Change language",
+    "changeLanguage": "Change",
+    "dontChangeLanguage": "Don't change",
     "changeDeviceLanguage": "Change your device language?",
     "changeDeviceLanguagePrompt": {
       "title": "{{language}} is also available for your {{deviceName}}",
