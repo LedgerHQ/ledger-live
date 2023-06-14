@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-next.2
+
+### Patch Changes
+
+- [#3677](https://github.com/LedgerHQ/ledger-live/pull/3677) [`88d47820ae`](https://github.com/LedgerHQ/ledger-live/commit/88d47820ae070c4c93bb4488c86c901a349189a3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent render loop that dismisses app state in my ledger
+
 ## 2.62.0-next.1
 
 ### Patch Changes
