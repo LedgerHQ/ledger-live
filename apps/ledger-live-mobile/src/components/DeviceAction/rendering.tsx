@@ -1076,8 +1076,7 @@ export const renderImageLoadRequested = ({
       title={
         wording ??
         t("customImage.allowPreview", {
-          productName:
-            device.deviceName || getDeviceModel(device.modelId)?.productName,
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
         })
       }
       lottieSource={allowConnection}
@@ -1116,8 +1115,7 @@ export const renderImageCommitRequested = ({
       title={
         wording ??
         t("customImage.commitRequested", {
-          productName:
-            device.deviceName || getDeviceModel(device.modelId)?.productName,
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
         })
       }
       lottieSource={confirmLockscreen}
