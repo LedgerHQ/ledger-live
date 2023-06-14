@@ -1,5 +1,5 @@
 import { getEnv } from "../../../env";
-import network from "../../../network";
+import network from "@ledgerhq/live-network/network";
 import { AccountResponse, VetTxsQuery, TokenTxsQuery, Query, QueryResponse } from "./types";
 import type { Operation } from "@ledgerhq/types-live";
 import { mapVetTransfersToOperations, mapTokenTransfersToOperations } from "../utils/mapping-utils";

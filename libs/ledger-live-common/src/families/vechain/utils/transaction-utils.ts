@@ -1,5 +1,5 @@
 import { getEnv } from "../../../env";
-import network from "../../../network";
+import network from "@ledgerhq/live-network/network";
 import { HEX_PREFIX } from "../constants";
 import crypto from "crypto";
 import BigNumber from "bignumber.js";
@@ -84,7 +84,11 @@ const getBaseGasPrice = async (): Promise<string> => {
  */
 export const calculateFee = async (gas: BigNumber, gasPriceCoef: number): Promise<BigNumber> => {
   const baseGasPrice = await getBaseGasPrice();
-  return new BigNumber(baseGasPrice).times(gasPriceCoef).idiv(255).plus(baseGasPrice).times(gas);
+  return new BigNumber(baseGasPrice)
+    .times(gasPriceCoef)
+    .idiv(255)
+    .plus(baseGasPrice)
+    .times(gas);
 };
 
 /**
