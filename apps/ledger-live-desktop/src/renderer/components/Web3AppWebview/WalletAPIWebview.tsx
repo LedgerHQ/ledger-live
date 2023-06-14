@@ -323,7 +323,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           style={webviewStyle}
           // eslint-disable-next-line react/no-unknown-property
-          preload={`file://${remote.app.getAppPath()}/webviewPreloader.bundle.js`}
+          preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to

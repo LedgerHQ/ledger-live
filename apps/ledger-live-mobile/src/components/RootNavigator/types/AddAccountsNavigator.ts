@@ -15,6 +15,8 @@ export type AddAccountsNavigatorParamList = {
     inline?: boolean;
     returnToSwap?: boolean;
     analyticsPropertyFlow?: string;
+    onSuccess?: () => void;
+    onError?: (_: Error) => void;
   };
   [ScreenName.AddAccountsAccounts]: {
     currency: CryptoOrTokenCurrency;
@@ -37,5 +39,6 @@ export type AddAccountsNavigatorParamList = {
     | undefined;
   [ScreenName.AddAccountsTokenCurrencyDisclaimer]: {
     token: TokenCurrency;
+    analyticsPropertyFlow?: string;
   };
 };
