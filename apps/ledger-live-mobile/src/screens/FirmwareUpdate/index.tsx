@@ -571,10 +571,7 @@ export const FirmwareUpdate = ({
         t,
         device,
         fullScreen: false,
-        wording: t(
-          "FirmwareUpdate.steps.restoreSettings.imageCommitRequested",
-          { deviceName },
-        ),
+        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", { deviceName }),
       });
     }
 
@@ -582,10 +579,7 @@ export const FirmwareUpdate = ({
       return (
         <AllowManager
           device={device}
-          wording={t(
-            "FirmwareUpdate.steps.restoreSettings.allowAppsRestoration",
-            { deviceName },
-          )}
+          wording={t("FirmwareUpdate.steps.restoreSettings.allowAppsRestoration", { deviceName })}
         />
       );
     }
@@ -596,10 +590,9 @@ export const FirmwareUpdate = ({
         device,
         theme,
         fullScreen: false,
-        wording: t(
-          "FirmwareUpdate.steps.restoreSettings.allowLanguageInstallation",
-          { deviceName },
-        ),
+        wording: t("FirmwareUpdate.steps.restoreSettings.allowLanguageInstallation", {
+          deviceName,
+        }),
       });
     }
 
