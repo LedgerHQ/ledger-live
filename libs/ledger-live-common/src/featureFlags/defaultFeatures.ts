@@ -1,6 +1,6 @@
 import type { DefaultFeatures } from "@ledgerhq/types-live";
 
-export const defaultFeatures: DefaultFeatures = {
+export const defaultFeatures = {
   learn: {
     enabled: false,
   },
@@ -272,7 +272,7 @@ export const defaultFeatures: DefaultFeatures = {
         upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
-      login: {
+      account: {
         loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       protectId: "protect-simu",
@@ -298,4 +298,7 @@ export const defaultFeatures: DefaultFeatures = {
       networks: [{ ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 }],
     },
   },
-};
+  listAppsV2: {
+    enabled: false,
+  },
+} as const satisfies DefaultFeatures;
