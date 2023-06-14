@@ -614,7 +614,7 @@
         "swap" : {
           "title" : "Permutar",
           "label" : "Popular",
-          "body" : "Convierte de una cripto a otra de manera segura"
+          "body" : "Convierte una cripto en otra de manera segura"
         },
         "receive" : {
           "title" : "Recibir",
@@ -841,7 +841,7 @@
             "cta" : "Participar con Lido"
           },
           "kiln" : {
-            "title" : "No hagas solo HODL. Haz crecer tus ETH",
+            "title" : "No hagas solo HODL. Rentabiliza tus ETH",
             "description" : "¿Tienes más de 32 ETH? Consigue recompensas pasivas poniendo tu ETH de forma segura en participación con Kiln.",
             "cta" : "Participar con Kiln"
           }
@@ -1244,22 +1244,22 @@
         "info" : "Las aplicaciones el {{deviceName}} se usan para aprobar transacciones. Puedes añadirlas o eliminarlas cuando quieras."
       },
       "genuineCheckModal" : {
-        "title" : "Comprobación de autenticidad",
+        "title" : "Verificación de autenticidad",
         "paragraph1" : "Vamos a asegurarnos de que tu {{deviceName}} sea auténtico y seguro de usar",
         "paragraph2" : "Realizaremos una comprobación para asegurarnos de que el dispositivo no ha sido manipulado. Tendrás que aceptar la operación en tu {{deviceName}}.",
         "checkDeviceButton" : "Comprobar dispositivo"
       },
       "genuineCheckCancelModal" : {
-        "title" : "Comprobación de autenticidad",
+        "title" : "Verificación de autenticidad",
         "paragraph1" : "La verificación de autenticidad se ha cancelado",
         "paragraph2" : "Es importante que hagas esta comprobación para asegurarte de que es seguro usar tu {{deviceName}}.",
         "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
         "cancelButton" : "Quizás más tarde"
       },
       "genuineCheckNotGenuineModal" : {
-        "title" : "Comprobación de autenticidad",
+        "title" : "Verificación de autenticidad",
         "paragraph1" : "Tu dispositivo no es original",
-        "paragraph2" : "La comprobación de autenticidad ha fallado",
+        "paragraph2" : "La verificación de autenticidad ha fallado",
         "checkDeviceButton" : "Volver a ejecutar la verificación de autenticidad",
         "cancelButton" : "Quizás más tarde"
       },
@@ -1321,7 +1321,7 @@
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
-      "description" : "Todo lo que necesitas saber sobre cadena de bloques, seguridad, criptomonedas y tu dispositivo Ledger",
+      "description" : "Todo lo que debes saber sobre cadena de bloques, seguridad, cripto y tu dispositivo",
       "cta" : "Empieza a aprender"
     },
     "stakeCosmos" : {
@@ -1331,7 +1331,7 @@
     },
     "buyCrypto" : {
       "title" : "Comprar cripto",
-      "description" : "Compra activos cripto a través de nuestro socio y recíbelos directamente en tu cuenta de Ledger",
+      "description" : "Compra activos cripto a través de nuestros proveedores y recíbelos directamente en tu cuenta",
       "cta" : "Comprar ahora"
     },
     "familyPack" : {
@@ -1345,7 +1345,7 @@
     },
     "sell" : {
       "title" : "vender cripto",
-      "description" : "Vende Bitcoin con nuestro socio directamente desde Ledger Live"
+      "description" : "Vende Bitcoin con nuestro proovedor directamente desde Ledger Live"
     },
     "stakeAlgorand" : {
       "title" : "Participar con ALGORAND",
@@ -1353,7 +1353,7 @@
     },
     "swap" : {
       "title" : "Permutar cripto",
-      "description" : "Permuta una cripto por otra desde Ledger Live con nuestro socio."
+      "description" : "Permuta una cripto por otra desde Ledger Live con nuestro proveedor."
     },
     "lending" : {
       "title" : "Prestar cripto",
@@ -1364,8 +1364,8 @@
       "description" : "Disfruta un descuento del 40% en billeteras de hardware Ledger con el código de promoción BLACKFRIDAY20"
     },
     "referralProgram" : {
-      "title" : "Refiere y llévate 10 USD",
-      "description" : "Refiere con éxito a un amigo para recibir 10 USD de Bitcoin cada uno."
+      "title" : "Recomiéndanos y llévate $10 USD",
+      "description" : "Refiere con éxito a un amigo para recibir $10 USD en Bitcoin cada uno."
     }
   },
   "signmessage" : {
@@ -1422,16 +1422,16 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Comprar / Vender",
-        "description" : "Compra y vende con proveedores de confianza"
+        "description" : "Compra y vende con proveedores verificados"
       },
       "swap" : {
         "title" : "Permutar",
-        "description" : "Convierte de una cripto a otra de manera segura",
+        "description" : "Convierte una cripto en otra de manera segura",
         "label" : "Popular"
       },
       "earn" : {
         "title" : "Poner en participación",
-        "description" : "Haz crecer tus cripto con Ledger"
+        "description" : "Con Ledger tus cripto generan intereses"
       }
     }
   },
@@ -2120,19 +2120,19 @@
           "stake" : "Pon en participación con {{provider}}"
         },
         "cosmos" : {
-          "title" : "Haz crecer tus ATOM. Ponlos en participación con un validador de Ledger.",
-          "description" : "Pon tus ATOM en participación con el validador de confianza de Ledger. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
+          "title" : "Rentabiliza tus ATOM. Ponlos en participación con un validador de Ledger.",
+          "description" : "Pon tus ATOM en participación con el validador verificado de Ledger. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
         },
         "osmo" : {
           "title" : "Haz crecer tus OSMO. Ponlos en participación con Ledger by Figment.",
           "description" : "Pon tus OSMO en participación con el validador Ledger by Figment. Ofrece las comisiones más bajas y garantía contra penalizaciones."
         },
         "solana" : {
-          "title" : "Haz crecer tus SOL. Ponlos en participación con Ledger by Figment.",
+          "title" : "Rentabiliza tus SOL. Ponlos en participación con Ledger by Figment.",
           "description" : "Pon tus SOL en participación con el validador Ledger by Figment. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
         },
         "celo" : {
-          "title" : "Haz crecer tus CELO. Ponlos en participación con Ledger by Figment.",
+          "title" : "Rentabiliza tus CELO. Ponlos en participación con Ledger by Figment.",
           "description" : "Pon tus CELO en participación con el validador Ledger by Figment. Garantiza cobertura completa contra penalizaciones y está respaldado por la seguridad sin concesiones de Ledger."
         }
       }
@@ -4146,8 +4146,8 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "La billetera más segura para criptodivisas y NFTs",
-        "description" : "Gestiona, compra y haz crecer de forma segura tus criptomonedas y NFTs en Ledger Live.",
+        "title" : "La billetera más segura para tus criptomonedas y NFTs",
+        "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Live",
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
@@ -4162,19 +4162,19 @@
           },
           "1" : {
             "title" : "No compartas tu clave privada",
-            "desc" : "Tu clave privada se almacena dentro de tu Nano.\nPara tener el control de tu dinero, solo tú debes tenerlo en propiedad."
+            "desc" : "Tu clave privada se almacena dentro de tu Nano.\nSolo tú debes tener acceso a tu clave para nadie más pueda controlar tu dinero."
           },
           "2" : {
-            "title" : "Mantente sin conexión",
-            "desc" : "Tu Nano funciona como una billetera de “almacenamiento frío”.\nEsto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras está conectada a Internet."
+            "title" : "Úsalo sin conexión",
+            "desc" : "Tu Nano funciona como una billetera de “almacenamiento frío”.\nEsto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación con conexión a Internet."
           },
           "3" : {
             "title" : "Validar transacciones",
             "desc" : "Ledger Live te permite comprar, vender, gestionar, cambiar y ganar cripto con seguridad.\nDeberás validar cada transacción cripto con tu Nano."
           },
           "4" : {
-            "title" : "Vamos a configurar tu Nano.",
-            "desc" : "Empezaremos por configurar tu Nano."
+            "title" : "Configuremos tu Nano.",
+            "desc" : "Empecemos por la seguridad de tu Nano"
           }
         }
       },
@@ -4306,7 +4306,7 @@
           },
           "quizSuccess" : {
             "title" : "¡Ya tienes nivel de profesional!",
-            "paragraph" : "Ya puedes administrar de forma segura tus cripto. ¡Solo te queda un breve paso!",
+            "paragraph" : "Está todo listo para que administres de forma segura tus cripto. ¡Solo te queda un breve paso!",
             "buttons" : {
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
@@ -4314,8 +4314,8 @@
             }
           },
           "quizFailure" : {
-            "title" : "Pronto tendrás nivel de profesional...",
-            "paragraph" : "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto te sentirás con completa seguridad con respecto a la protección de tus criptomonedas.\n\nSolo te queda un breve paso.",
+            "title" : "Pronto tendrás nivel profesional...",
+            "paragraph" : "No te preocupes, Ledger está aquí para guiarte en este proceso. En breve protegerás tus cripto con total seguridad..\n\nSolo te queda un paso.",
             "buttons" : {
               "next" : "Siguiente paso",
               "prev" : "Paso anterior"
@@ -4443,8 +4443,8 @@
           },
           "genuineCheck" : {
             "success" : {
-              "title" : "¡Todo bien!",
-              "desc" : "Tu Ledger {{deviceName}} es auténtico y ya está listo para utilizar con la aplicación Ledger Live"
+              "title" : "¡Listo!",
+              "desc" : "Tu Ledger {{deviceName}} es auténtico y ya puedes utilizarlo con Ledger Live"
             },
             "buttons" : {
               "next" : "Continuar",
@@ -4496,16 +4496,16 @@
           "description" : "Tu clave privada se almacena dentro de tu Nano. Debes ser su único propietario para poder mantener el control sobre tu dinero."
         },
         "stayOffline" : {
-          "title" : "Mantente sin conexión",
-          "description" : "Tu Nano funciona como una billetera de “almacenamiento en frío”. Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras estás conectado a Internet."
+          "title" : "Úsalo sin conexión",
+          "description" : "Tu Nano funciona como una billetera de “almacenamiento en frío”. Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación con conexión a Internet."
         },
         "validateTransactions" : {
           "title" : "Validar transacciones",
           "description" : "Ledger Live te permite comprar, vender, administrar, intercambiar y ganar cripto con seguridad. Deberás validar cada transacción cripto con tu Nano."
         },
         "setUpNanoWallet" : {
-          "title" : "Vamos a configurar tu Nano.",
-          "description" : "Empezaremos por configurar la seguridad de tu Nano.",
+          "title" : "Configuremos tu Nano.",
+          "description" : "Empecemos por la seguridad de tu Nano",
           "CTA" : "Vamos."
         }
       }
@@ -4515,7 +4515,7 @@
       "title" : "¡Hora de jugar!",
       "descr" : "Responde a 3 sencillas preguntas para evitar algunos errores comunes acerca de tu billetera de hardware.",
       "buttons" : {
-        "start" : "Resuelve el cuestionario",
+        "start" : "Completa el cuestionario.",
         "next" : "Siguiente pregunta",
         "finish" : "Terminar cuestionario"
       },
