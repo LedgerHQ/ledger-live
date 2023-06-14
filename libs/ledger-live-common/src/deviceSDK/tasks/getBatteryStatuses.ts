@@ -3,11 +3,7 @@ import type { DeviceId } from "@ledgerhq/types-live";
 
 import { Observable, concat } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
-import {
-  SharedTaskEvent,
-  retryOnErrorsCommandWrapper,
-  sharedLogicTaskWrapper,
-} from "./core";
+import { SharedTaskEvent, retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { quitApp } from "../commands/quitApp";
 import { withTransport } from "../transports/core";
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
@@ -36,40 +32,36 @@ function internalGetBatteryStatusesTask({
   deviceId,
   statuses,
 }: GetBatteryStatusesTaskArgs): Observable<GetBatteryStatusesTaskEvent> {
-  return new Observable((subscriber) => {
+  return new Observable(subscriber => {
     return withTransport(deviceId)(({ transportRef }) =>
       quitApp(transportRef.current).pipe(
         switchMap(() => {
-          const statusesObservable = statuses.map((statusType) =>
+          const statusesObservable = statuses.map(statusType =>
             retryOnErrorsCommandWrapper({
               command: ({ transport }) =>
                 getBatteryStatus({ transport, statusType }).pipe(
                   filter(
                     (
-                      e
+                      e,
                     ): e is {
                       type: "data";
                       batteryStatus: number | BatteryStatusFlags;
-                    } => e.type === "data"
-                  )
+                    } => e.type === "data",
+                  ),
                 ),
-              allowedErrors: [
-                { maxRetries: 3, errorClass: DisconnectedDevice },
-              ],
-            })(transportRef, {})
+              allowedErrors: [{ maxRetries: 3, errorClass: DisconnectedDevice }],
+            })(transportRef, {}),
           );
           return concat(...statusesObservable);
         }),
-        map((value) => {
+        map(value => {
           const { batteryStatus } = value;
 
           return { type: "data" as const, batteryStatus };
-        })
-      )
+        }),
+      ),
     ).subscribe(subscriber);
   });
 }
 
-export const getBatteryStatusTask = sharedLogicTaskWrapper(
-  internalGetBatteryStatusesTask
-);
+export const getBatteryStatusTask = sharedLogicTaskWrapper(internalGetBatteryStatusesTask);

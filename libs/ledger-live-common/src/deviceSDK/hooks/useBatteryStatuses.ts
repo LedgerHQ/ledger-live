@@ -39,7 +39,7 @@ export const useBatteryStatuses = ({
         deviceId,
         statuses,
       }).subscribe({
-        next: (state) => setBatteryStatusesState(state),
+        next: state => setBatteryStatusesState(state),
         complete: () => {
           setRequestCompleted(true);
         },
@@ -60,7 +60,7 @@ export const useBatteryStatuses = ({
   const triggerRequest = useCallback(() => {
     setRequestCompleted(false);
     setBatteryStatusesState(initialState);
-    setNonce((nonce) => nonce + 1);
+    setNonce(nonce => nonce + 1);
   }, []);
 
   return {

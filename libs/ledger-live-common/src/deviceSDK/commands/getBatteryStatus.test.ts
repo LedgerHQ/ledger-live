@@ -3,9 +3,9 @@ import { ChargingModes } from "@ledgerhq/types-devices";
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
 import { getBatteryStatus } from "./getBatteryStatus";
 
-const mockTransportGenerator = (out) =>
+const mockTransportGenerator = out =>
   ({
-    send: () => new Promise((res) => res(out)),
+    send: () => new Promise(res => res(out)),
     on: () => {},
     off: () => {},
     setExchangeUnresponsiveTimeout: () => {},
@@ -120,9 +120,7 @@ describe("getBatteryStatus", () => {
 
   test("battery flags for USB charging", async () => {
     const statusType = BatteryStatusTypes.BATTERY_FLAGS;
-    const transport = mockTransportGenerator(
-      Buffer.from("0000000F9000", "hex")
-    );
+    const transport = mockTransportGenerator(Buffer.from("0000000F9000", "hex"));
 
     const response = await getBatteryStatus({
       transport,
@@ -142,9 +140,7 @@ describe("getBatteryStatus", () => {
 
   test("battery flags for not charging", async () => {
     const statusType = BatteryStatusTypes.BATTERY_FLAGS;
-    const transport = mockTransportGenerator(
-      Buffer.from("000000069000", "hex")
-    );
+    const transport = mockTransportGenerator(Buffer.from("000000069000", "hex"));
 
     const response = await getBatteryStatus({
       transport,
@@ -164,9 +160,7 @@ describe("getBatteryStatus", () => {
 
   test("battery flags for Qi charging without USB", async () => {
     const statusType = BatteryStatusTypes.BATTERY_FLAGS;
-    const transport = mockTransportGenerator(
-      Buffer.from("000000079000", "hex")
-    );
+    const transport = mockTransportGenerator(Buffer.from("000000079000", "hex"));
 
     const response = await getBatteryStatus({
       transport,

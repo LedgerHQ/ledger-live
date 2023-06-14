@@ -19,7 +19,7 @@ export function getBatteryStatus({
   transport,
   statusType,
 }: GetBatteryStatusCmdArgs): Observable<GetBatteryStatusCmdEvent> {
-  return new Observable((subscriber) => {
+  return new Observable(subscriber => {
     const oldTimeout = transport.unresponsiveTimeout;
     transport.setExchangeUnresponsiveTimeout(1000);
 
@@ -87,7 +87,7 @@ export function getBatteryStatus({
             }
           }
         }),
-        finalize(() => transport.setExchangeUnresponsiveTimeout(oldTimeout))
+        finalize(() => transport.setExchangeUnresponsiveTimeout(oldTimeout)),
       )
       .subscribe(subscriber);
   });
