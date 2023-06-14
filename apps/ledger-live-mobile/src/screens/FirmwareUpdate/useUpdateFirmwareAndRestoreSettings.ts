@@ -227,12 +227,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "languageRestore":
         unrecoverableError =
           installLanguageState.error &&
-          !reconnectDeviceErrors.some(
-            err => installLanguageState.error instanceof err,
-          ) &&
-          !(
-            installLanguageState.error instanceof LanguageInstallRefusedOnDevice
-          );
+          !reconnectDeviceErrors.some(err => installLanguageState.error instanceof err) &&
+          !(installLanguageState.error instanceof LanguageInstallRefusedOnDevice);
         if (installLanguageState.languageInstalled || unrecoverableError) {
           if (installLanguageState.error)
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
@@ -242,21 +238,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageRestore":
         unrecoverableError =
           staxLoadImageState.error &&
-          !reconnectDeviceErrors.some(
-            err => staxLoadImageState.error instanceof err,
-          ) &&
+          !reconnectDeviceErrors.some(err => staxLoadImageState.error instanceof err) &&
           !(staxLoadImageState.error instanceof ImageLoadRefusedOnDevice) &&
           // TypeScript doesn't work well with our custom error classes. It seems to think that if the error is not an
           // instance of ImageLoadRefusedOnDevice then it's of type "never", this is why we're casting it here to unkown
-          !(
-            (staxLoadImageState.error as unknown) instanceof
-            ImageCommitRefusedOnDevice
-          );
-        if (
-          staxLoadImageState.imageLoaded ||
-          unrecoverableError ||
-          !staxFetchImageState.hexImage
-        ) {
+          !((staxLoadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice);
+        if (staxLoadImageState.imageLoaded || unrecoverableError || !staxFetchImageState.hexImage) {
           if (staxLoadImageState.error) {
             log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
           }
@@ -266,9 +253,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsRestore":
         unrecoverableError =
           restoreAppsState.error &&
-          !reconnectDeviceErrors.some(
-            err => restoreAppsState.error instanceof err,
-          ) &&
+          !reconnectDeviceErrors.some(err => restoreAppsState.error instanceof err) &&
           !(restoreAppsState.error instanceof UserRefusedAllowManager);
         if (restoreAppsState.opened || unrecoverableError) {
           if (restoreAppsState.error) {
@@ -338,8 +323,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       updateStep === "imageRestore" &&
       staxLoadImageState.error &&
       (staxLoadImageState.error instanceof ImageLoadRefusedOnDevice ||
-        (staxLoadImageState.error as unknown) instanceof
-          ImageCommitRefusedOnDevice)
+        (staxLoadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice)
     ) {
       return staxLoadImageState.error;
     }
@@ -353,12 +337,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     }
 
     return undefined;
-  }, [
-    installLanguageState.error,
-    staxLoadImageState.error,
-    restoreAppsState.error,
-    updateStep,
-  ]);
+  }, [installLanguageState.error, staxLoadImageState.error, restoreAppsState.error, updateStep]);
 
   const deviceLockedOrUnresponsive = useMemo(
     () =>
@@ -425,12 +404,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       default:
         break;
     }
-  }, [
-    updateStep,
-    proceedToImageRestore,
-    proceedToAppsRestore,
-    proceedToUpdateCompleted,
-  ]);
+  }, [updateStep, proceedToImageRestore, proceedToAppsRestore, proceedToUpdateCompleted]);
 
   return {
     updateStep,

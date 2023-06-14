@@ -20,36 +20,19 @@ export const RestoreStepDenied = ({
 }) => {
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
-      <IconBadge
-        iconColor="primary.c100"
-        iconSize={32}
-        Icon={Icons.InfoAltFillMedium}
-      />
+      <IconBadge iconColor="primary.c100" iconSize={32} Icon={Icons.InfoAltFillMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
-        {t(
-          `FirmwareUpdate.steps.restoreSettings.errors.${stepDeniedError.name}`,
-          { deviceName: getDeviceModel(device.modelId).productName },
-        )}
+        {t(`FirmwareUpdate.steps.restoreSettings.errors.${stepDeniedError.name}`, {
+          deviceName: getDeviceModel(device.modelId).productName,
+        })}
       </Text>
       <Text fontSize={4} textAlign="center" color="neutral.c80" mt={6}>
         {t("FirmwareUpdate.steps.restoreSettings.errors.description")}
       </Text>
-      <Button
-        type="main"
-        outline={false}
-        onPress={onPressRetry}
-        mt={8}
-        alignSelf="stretch"
-      >
+      <Button type="main" outline={false} onPress={onPressRetry} mt={8} alignSelf="stretch">
         {t("common.retry")}
       </Button>
-      <Button
-        type="default"
-        outline={false}
-        onPress={onPressSkip}
-        mt={6}
-        alignSelf="stretch"
-      >
+      <Button type="default" outline={false} onPress={onPressSkip} mt={6} alignSelf="stretch">
         {t("common.skip")}
       </Button>
     </Flex>
