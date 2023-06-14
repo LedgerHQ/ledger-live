@@ -46,7 +46,7 @@ const StakeFlow = ({ route }: Props) => {
 
       navigation.navigate(NavigatorName.Base, {
         screen: name,
-        stakingDrawer: options?.stakingDrawer,
+        drawer: options?.drawer,
         params: {
           screen: options.screen,
           params: {

@@ -28,7 +28,7 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props) {
 
   const params = {
     screen: parentRoute.name,
-    stakingDrawer: {
+    drawer: {
       id: "EthStakingDrawer",
       props: {
         singleProviderRedirectMode: true,

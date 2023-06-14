@@ -87,8 +87,7 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
-import { StakingDrawerNavigationProps } from "../Stake/types";
-import { StakeDrawer } from "../Stake/StakeDrawer";
+import { RootDrawer, RootDrawerProps } from "../RootDrawer";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -97,7 +96,7 @@ export default function BaseNavigator() {
   const route = useRoute<
     RouteProp<{
       params: {
-        stakingDrawer?: StakingDrawerNavigationProps;
+        drawer?: RootDrawerProps;
       };
     }>
   >();
@@ -111,7 +110,7 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   return (
     <>
-      <StakeDrawer stakingDrawer={route.params?.stakingDrawer} />
+      <RootDrawer drawer={route.params?.drawer} />
       <Stack.Navigator
         screenOptions={{
           ...stackNavigationConfig,

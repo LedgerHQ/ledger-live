@@ -94,9 +94,9 @@ export const FabButtonBarProvider = ({
   const onNavigate = useCallback(
     (name: string, options?: object) => {
       const parent = navigation.getParent(NavigatorName.RootNavigator);
-      if (options && "stakingDrawer" in options) {
+      if (options && "drawer" in options) {
         return parent
-          ? parent.setParams({ stakingDrawer: options.stakingDrawer })
+          ? parent.setParams({ drawer: options.drawer })
           : navigation.navigate(NavigatorName.Base, options);
       }
       (

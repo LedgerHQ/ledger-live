@@ -13,10 +13,10 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "../../../const";
 
 type Props = {
-  stakingDrawer?: StakingDrawerNavigationProps;
+  drawer?: StakingDrawerNavigationProps;
 };
 
-export function EthereumStakingDrawer({ stakingDrawer }: Props) {
+export function EthereumStakingDrawer({ drawer }: Props) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
@@ -26,7 +26,7 @@ export function EthereumStakingDrawer({ stakingDrawer }: Props) {
     // once the modal is hidden remove from params
     const parent = navigation.getParent(NavigatorName.RootNavigator);
     if (parent) {
-      parent.setParams({ stakingDrawer: undefined });
+      parent.setParams({ drawer: undefined });
     }
   }, [navigation]);
 
@@ -35,11 +35,11 @@ export function EthereumStakingDrawer({ stakingDrawer }: Props) {
   }, [setIsOpen]);
 
   useEffect(() => {
-    setIsOpen(stakingDrawer?.id === "EthStakingDrawer");
-  }, [stakingDrawer]);
+    setIsOpen(drawer?.id === "EthStakingDrawer");
+  }, [drawer]);
 
   if (
-    !stakingDrawer ||
+    !drawer ||
     !ethStakingProviders?.enabled ||
     (ethStakingProviders.params?.listProvider ?? []).length < 1
   ) {
@@ -51,8 +51,8 @@ export function EthereumStakingDrawer({ stakingDrawer }: Props) {
       <Flex rowGap={52}>
         <Track onMount event="ETH Stake Modal" />
         <EthereumStakingDrawerBody
-          singleProviderRedirectMode={stakingDrawer.props.singleProviderRedirectMode ?? true}
-          accountId={stakingDrawer.props.accountId}
+          singleProviderRedirectMode={drawer.props.singleProviderRedirectMode ?? true}
+          accountId={drawer.props.accountId}
           providers={ethStakingProviders.params!.listProvider}
         />
         <Button onPress={onClose} type="main">
