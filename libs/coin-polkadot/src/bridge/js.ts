@@ -50,10 +50,7 @@ const broadcast =
   };
 
 export function buildCurrencyBridge(
-  signerContext: SignerContext<
-    PolkadotSigner,
-    PolkadotAddress | PolkadotSignature
-  >,
+  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ): CurrencyBridge {
@@ -75,10 +72,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<
-    PolkadotSigner,
-    PolkadotAddress | PolkadotSignature
-  >,
+  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ): AccountBridge<Transaction> {
@@ -106,10 +100,7 @@ export function buildAccountBridge(
 }
 
 export function createBridges(
-  signerContext: SignerContext<
-    PolkadotSigner,
-    PolkadotAddress | PolkadotSignature
-  >,
+  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ) {

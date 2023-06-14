@@ -26,14 +26,10 @@ type LedgerEthTransactionResolution = {
 };
 
 export interface EvmSigner {
-  getAddress(
-    path: string,
-    boolDisplay?: boolean,
-    boolChaincode?: boolean
-  ): Promise<EvmAddress>;
+  getAddress(path: string, boolDisplay?: boolean, boolChaincode?: boolean): Promise<EvmAddress>;
   signTransaction(
     path: string,
     rawTxHex: string,
-    resolution?: LedgerEthTransactionResolution | null
+    resolution?: LedgerEthTransactionResolution | null,
   ): Promise<EvmSignature>;
 }

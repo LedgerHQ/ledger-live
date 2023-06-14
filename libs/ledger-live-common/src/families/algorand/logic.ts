@@ -14,6 +14,6 @@ import algorandResolver from "@ledgerhq/coin-algorand/hw-getAddress";
 export const resolver: Resolver = createResolver<
   AlgorandSigner,
   AlgorandAddress | AlgorandSignature
->((transport) => {
+>(transport => {
   return new algorandSigner.default(transport);
 }, algorandResolver);

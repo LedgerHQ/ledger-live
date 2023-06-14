@@ -14,6 +14,6 @@ import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
 export const resolver: Resolver = createResolver<
   PolkadotSigner,
   PolkadotAddress | PolkadotSignature
->((transport) => {
+>(transport => {
   return new polkadotSigner.default(transport);
 }, polkadotResolver);

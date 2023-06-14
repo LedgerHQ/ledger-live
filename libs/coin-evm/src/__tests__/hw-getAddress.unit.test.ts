@@ -15,7 +15,7 @@ jest.mock(
 );
 const mockSignerFactory = (
   _: string,
-  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>
+  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
 ) =>
   fn({
     getAddress: async () => ({

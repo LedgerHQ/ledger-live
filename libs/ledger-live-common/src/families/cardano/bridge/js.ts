@@ -8,9 +8,7 @@ import broadcast from "../js-broadcast";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import Ada, {
-  ExtendedPublicKey,
-} from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { withDevice } from "../../../hw/deviceAccess";
 import { from } from "rxjs";
 
@@ -18,11 +16,9 @@ const receive = makeAccountBridgeReceive();
 
 const signerContext: SignerContext = (
   deviceId: string,
-  fn: (signer) => Promise<ExtendedPublicKey>
+  fn: (signer) => Promise<ExtendedPublicKey>,
 ): Promise<ExtendedPublicKey> => {
-  return withDevice(deviceId)((transport) =>
-    from(fn(new Ada(transport)))
-  ).toPromise();
+  return withDevice(deviceId)(transport => from(fn(new Ada(transport)))).toPromise();
 };
 
 const accountBridge: AccountBridge<Transaction> = {

@@ -67,11 +67,9 @@ export function makeAccountBridgeReceive({
 
 type CreateSigner<T> = (transport) => T;
 
-export function executeWithSigner<T, U>(
-  signerFactory: CreateSigner<T>
-): SignerContext<T, U> {
+export function executeWithSigner<T, U>(signerFactory: CreateSigner<T>): SignerContext<T, U> {
   return (deviceId: string, fn: (signer: T) => Promise<U>): Promise<U> =>
-    withDevice(deviceId)((transport) => {
+    withDevice(deviceId)(transport => {
       const signer = signerFactory(transport);
       return from(fn(signer));
     }).toPromise();
@@ -80,16 +78,10 @@ export function executeWithSigner<T, U>(
 type CoinResolver<T, U> = (signerContext: SignerContext<T, U>) => GetAddressFn;
 export function createResolver<T, U>(
   signer: CreateSigner<T>,
-  coinResolver: CoinResolver<T, U>
+  coinResolver: CoinResolver<T, U>,
 ): Resolver {
-  return async (
-    transport: Transport,
-    opts: GetAddressOptions
-  ): Promise<Result> => {
-    const signerContext = (
-      _: string,
-      fn: (signer: T) => Promise<U>
-    ): Promise<U> => {
+  return async (transport: Transport, opts: GetAddressOptions): Promise<Result> => {
+    const signerContext = (_: string, fn: (signer: T) => Promise<U>): Promise<U> => {
       return fn(signer(transport));
     };
     return coinResolver(signerContext)("", opts);

@@ -4,14 +4,11 @@ import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./signer";
 
 const resolver = (
-  signerContext: SignerContext<
-    PolkadotSigner,
-    PolkadotAddress | PolkadotSignature
-  >
+  signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
 ): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
-    const r = (await signerContext(deviceId, (signer) =>
-      signer.getAddress(path, verify)
+    const r = (await signerContext(deviceId, signer =>
+      signer.getAddress(path, verify),
     )) as PolkadotAddress;
     return {
       address: r.address,

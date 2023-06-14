@@ -41,10 +41,10 @@ const updateTransaction = (t, patch): any => {
 const signerContext: SignerContext = (
   deviceId: string,
   crypto: CryptoCurrency,
-  fn: (signer: Btc) => Promise<string>
+  fn: (signer: Btc) => Promise<string>,
 ): Promise<string> =>
-  withDevice(deviceId)((transport) =>
-    from(fn(new Btc({ transport, currency: crypto.id })))
+  withDevice(deviceId)(transport =>
+    from(fn(new Btc({ transport, currency: crypto.id }))),
   ).toPromise();
 
 const currencyBridge: CurrencyBridge = {

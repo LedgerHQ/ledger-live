@@ -280,7 +280,7 @@ const defaultIterateResultBuilder = (deviceId: string, getAddressFn: GetAddressF
       });
       let res = derivationsCache[freshAddressPath];
       if (!res) {
-        res = await getAddressWrapper(getAddressFn!)(deviceId, {
+        res = await getAddressWrapper(getAddressFn)(deviceId, {
           currency,
           path: freshAddressPath,
           derivationMode,
