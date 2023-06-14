@@ -3,16 +3,11 @@ import { makeSync } from "../../bridge/jsHelpers";
 import { encodeAccountId, inferSubOperations } from "../../account";
 
 import BigNumber from "bignumber.js";
-import Ada from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction } from "./api/api-types";
-import {
-  CardanoAccount,
-  CardanoOutput,
-  PaymentCredential,
-  Transaction,
-} from "./types";
+import { CardanoAccount, CardanoOutput, PaymentCredential, Transaction } from "./types";
 import {
   getAccountChange,
   getAccountStakeCredential,
@@ -29,12 +24,7 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
-import type {
-  AccountBridge,
-  CurrencyBridge,
-  Operation,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import type { AccountBridge, CurrencyBridge, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
 import { listTokensForCryptoCurrency } from "../../currencies";
@@ -123,10 +113,13 @@ function prepareUtxos(
   return utxos;
 }
 
-export type SignerFactory = (deviceId: string) => Promise<Ada>;
+export type SignerContext = (
+  deviceId: string,
+  fn: (signer: Ada) => Promise<ExtendedPublicKey>,
+) => Promise<ExtendedPublicKey>;
 
 const makeGetAccountShape =
-  (signerFactory: SignerFactory): GetAccountShape =>
+  (signerContext: SignerContext): GetAccountShape =>
   async (info, { blacklistedTokenIds }) => {
     const {
       currency,
@@ -143,14 +136,15 @@ const makeGetAccountShape =
     const paramXpub = initialAccount?.xpub;
     let extendedPubKeyRes;
     if (!paramXpub) {
-      if (!deviceId) {
+      if (deviceId === undefined || deviceId === null) {
         // deviceId not provided
         throw new Error("deviceId required to generate the xpub");
       }
-      const ada = await signerFactory(deviceId);
-      extendedPubKeyRes = await ada.getExtendedPublicKey({
-        path: str_to_path(accountPath),
-      });
+      extendedPubKeyRes = await signerContext(deviceId, signer =>
+        signer.getExtendedPublicKey({
+          path: str_to_path(accountPath),
+        }),
+      );
     }
     const xpub = paramXpub || `${extendedPubKeyRes.publicKeyHex}${extendedPubKeyRes.chainCodeHex}`;
     const accountId = encodeAccountId({
@@ -273,11 +267,11 @@ const makeGetAccountShape =
     };
   };
 
-export const scanAccounts = (signerFactory: SignerFactory): CurrencyBridge["scanAccounts"] =>
-  makeScanAccounts({ getAccountShape: makeGetAccountShape(signerFactory) });
+export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
+  makeScanAccounts({ getAccountShape: makeGetAccountShape(signerContext) });
 
-export const sync = (signerFactory: SignerFactory): AccountBridge<Transaction>["sync"] =>
+export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
   makeSync({
-    getAccountShape: makeGetAccountShape(signerFactory),
+    getAccountShape: makeGetAccountShape(signerContext),
     postSync: postSyncPatch,
   });

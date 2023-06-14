@@ -84,11 +84,7 @@ function genCoinFrameworkTarget(targetFile) {
   if (targetFile === "bridge/js.ts") {
     imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
     imports += `import network from "@ledgerhq/live-network/network";\n`;
-    imports += `import { signerFactory } from "../../bridge/jsHelpers";\n`;
-  }
-  if (targetFile === "hw-getAddress.ts") {
-    imports += `import { createResolver } from "../bridge/jsHelpers";\n`;
-    imports += `import { Resolver } from "../hw/getAddress/types";\n`;
+    imports += `import { executeWithSigner  } from "../../bridge/jsHelpers";\n`;
   }
 
   // Behavior for coin family with their own package
@@ -108,7 +104,6 @@ function genCoinFrameworkTarget(targetFile) {
     }
 
     const capitalizeFamily = family[0].toUpperCase() + family.slice(1);
-    const typeSigner = capitalizeFamily + "Signer";
     const signer = family + "Signer";
     const hwAppImport = family !== "evm" ? `hw-app-${family}` : "hw-app-eth";
     if (targetFile === "bridge/js.ts") {
@@ -119,7 +114,7 @@ function genCoinFrameworkTarget(targetFile) {
       imports += `  return new ${signer}.default(transport);\n`;
       imports += `};\n`;
       imports += `const ${family} = ${bridgeFn}(\n`;
-      imports += `  signerFactory(create${capitalizeFamily}Signer),\n`;
+      imports += `  executeWithSigner(create${capitalizeFamily}Signer),\n`;
       imports += `  network,\n`;
       imports += `  makeLRUCache\n`;
       imports += `);\n`;
@@ -131,12 +126,7 @@ function genCoinFrameworkTarget(targetFile) {
       exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
     }
     if (targetFile === "hw-getAddress.ts") {
-      imports += `import type { ${typeSigner} } from "@ledgerhq/coin-${family}/signer";\n`;
-      imports += `import * as ${signer} from "@ledgerhq/${hwAppImport}";\n`;
-      imports += `import ${family}Resolver from "${targetImportPath}";\n`;
-      imports += `const ${family}: Resolver = createResolver<${typeSigner}>((transport) => {\n`;
-      imports += `  return new ${signer}.default(transport);\n`;
-      imports += `}, ${family}Resolver);\n`;
+      imports += `import { resolver as ${family} } from "../families/${family}/logic";\n`;
       exprts += `\n  ${family},`;
     }
   }

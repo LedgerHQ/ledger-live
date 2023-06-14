@@ -1,4 +1,4 @@
-import { Observable, from, of } from "rxjs";
+import { Observable, from } from "rxjs";
 import {
   GetAccountShape,
   IterateResultBuilder,
@@ -6,11 +6,11 @@ import {
   makeScanAccounts as commonMakeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import { GetAddressOptions, Result } from "@ledgerhq/coin-framework/derivation";
 import Transport from "@ledgerhq/hw-transport";
-import { withDevice, withDevicePromise } from "../hw/deviceAccess";
+import { withDevice } from "../hw/deviceAccess";
 import getAddress from "../hw/getAddress";
 import { Resolver } from "../hw/getAddress/types";
 
@@ -67,24 +67,31 @@ export function makeAccountBridgeReceive({
 
 type CreateSigner<T> = (transport) => T;
 
-export function signerFactory<T>(signer: CreateSigner<T>): SignerFactory<T> {
-  return async (deviceId: string) => {
-    return await withDevicePromise(deviceId, (transport) =>
-      of(signer(transport))
-    );
-  };
+export function executeWithSigner<T, U>(
+  signerFactory: CreateSigner<T>
+): SignerContext<T, U> {
+  return (deviceId: string, fn: (signer: T) => Promise<U>): Promise<U> =>
+    withDevice(deviceId)((transport) => {
+      const signer = signerFactory(transport);
+      return from(fn(signer));
+    }).toPromise();
 }
 
-type CoinResolver<T> = (signerFactory: SignerFactory<T>) => GetAddressFn;
-export function createResolver<T>(
+type CoinResolver<T, U> = (signerContext: SignerContext<T, U>) => GetAddressFn;
+export function createResolver<T, U>(
   signer: CreateSigner<T>,
-  coinResolver: CoinResolver<T>
+  coinResolver: CoinResolver<T, U>
 ): Resolver {
   return async (
     transport: Transport,
     opts: GetAddressOptions
   ): Promise<Result> => {
-    const signerFactory = (_: string) => Promise.resolve(signer(transport));
-    return coinResolver(signerFactory)("", opts);
+    const signerContext = (
+      _: string,
+      fn: (signer: T) => Promise<U>
+    ): Promise<U> => {
+      return fn(signer(transport));
+    };
+    return coinResolver(signerContext)("", opts);
   };
 }

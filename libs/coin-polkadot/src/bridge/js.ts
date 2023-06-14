@@ -7,7 +7,7 @@ import {
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type {
   AccountBridge,
   CurrencyBridge,
@@ -26,7 +26,7 @@ import { loadPolkadotCrypto } from "../polkadot-crypto";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
 import type { Transaction } from "../types";
-import { PolkadotSigner } from "../signer";
+import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "../signer";
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,
@@ -50,12 +50,15 @@ const broadcast =
   };
 
 export function buildCurrencyBridge(
-  signerFactory: SignerFactory<PolkadotSigner>,
+  signerContext: SignerContext<
+    PolkadotSigner,
+    PolkadotAddress | PolkadotSignature
+  >,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ): CurrencyBridge {
   const polkadotAPI = new PolkadotAPI(network, cacheFn);
-  const getAddress = resolver(signerFactory);
+  const getAddress = resolver(signerContext);
 
   const getAccountShape = makeGetAccountShape(polkadotAPI);
   const scanAccounts = makeScanAccounts({
@@ -72,15 +75,18 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerFactory: SignerFactory<PolkadotSigner>,
+  signerContext: SignerContext<
+    PolkadotSigner,
+    PolkadotAddress | PolkadotSignature
+  >,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ): AccountBridge<Transaction> {
   const polkadotAPI = new PolkadotAPI(network, cacheFn);
-  const getAddress = resolver(signerFactory);
+  const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
-  const signOperation = buildSignOperation(signerFactory, polkadotAPI);
+  const signOperation = buildSignOperation(signerContext, polkadotAPI);
   const getAccountShape = makeGetAccountShape(polkadotAPI);
   const sync = makeSync({ getAccountShape });
 
@@ -100,12 +106,15 @@ export function buildAccountBridge(
 }
 
 export function createBridges(
-  signerFactory: SignerFactory<PolkadotSigner>,
+  signerContext: SignerContext<
+    PolkadotSigner,
+    PolkadotAddress | PolkadotSignature
+  >,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ) {
   return {
-    currencyBridge: buildCurrencyBridge(signerFactory, network, cacheFn),
-    accountBridge: buildAccountBridge(signerFactory, network, cacheFn),
+    currencyBridge: buildCurrencyBridge(signerContext, network, cacheFn),
+    accountBridge: buildAccountBridge(signerContext, network, cacheFn),
   };
 }

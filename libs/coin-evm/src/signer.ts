@@ -1,9 +1,14 @@
 import { DomainServiceResolution } from "@ledgerhq/domain-service/types";
 
-type EvmAddress = {
+export type EvmAddress = {
   publicKey: string;
   address: string;
   chainCode?: string;
+};
+export type EvmSignature = {
+  s: string;
+  v: string;
+  r: string;
 };
 
 // Duplicate type definition from hw-app-eth.
@@ -30,9 +35,5 @@ export interface EvmSigner {
     path: string,
     rawTxHex: string,
     resolution?: LedgerEthTransactionResolution | null
-  ): Promise<{
-    s: string;
-    v: string;
-    r: string;
-  }>;
+  ): Promise<EvmSignature>;
 }

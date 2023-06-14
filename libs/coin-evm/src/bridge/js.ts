@@ -3,7 +3,7 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
@@ -14,7 +14,7 @@ import { hydrate, preload } from "../preload";
 import { prepareTransaction } from "../prepareTransaction";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronization";
-import { EvmSigner } from "../signer";
+import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
 import type { Transaction as EvmTransaction, Transaction } from "../types";
 
 const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
@@ -24,8 +24,10 @@ const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   return { ...transaction, ...patch } as EvmTransaction;
 };
 
-export function buildCurrencyBridge(signerFactory: SignerFactory<EvmSigner>): CurrencyBridge {
-  const getAddress = resolver(signerFactory);
+export function buildCurrencyBridge(
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+): CurrencyBridge {
+  const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
     getAccountShape,
@@ -40,12 +42,12 @@ export function buildCurrencyBridge(signerFactory: SignerFactory<EvmSigner>): Cu
 }
 
 export function buildAccountBridge(
-  signerFactory: SignerFactory<EvmSigner>,
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
 ): AccountBridge<Transaction> {
-  const getAddress = resolver(signerFactory);
+  const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
-  const signOperation = buildSignOperation(signerFactory);
+  const signOperation = buildSignOperation(signerContext);
 
   return {
     createTransaction,
@@ -65,12 +67,12 @@ export function buildAccountBridge(
  * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
  */
 export function createBridges(
-  signerFactory: SignerFactory<EvmSigner>,
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
   _network: unknown,
   _cacheFn: unknown,
 ) {
   return {
-    currencyBridge: buildCurrencyBridge(signerFactory),
-    accountBridge: buildAccountBridge(signerFactory),
+    currencyBridge: buildCurrencyBridge(signerContext),
+    accountBridge: buildAccountBridge(signerContext),
   };
 }

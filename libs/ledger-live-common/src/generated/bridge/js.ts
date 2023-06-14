@@ -15,14 +15,14 @@ import tezos from "../../families/tezos/bridge/js";
 import tron from "../../families/tron/bridge/js";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
-import { signerFactory } from "../../bridge/jsHelpers";
+import { executeWithSigner  } from "../../bridge/jsHelpers";
 import { createBridges as algorandCreateBridges } from "@ledgerhq/coin-algorand/bridge/js";
 import * as algorandSigner from "@ledgerhq/hw-app-algorand";
 const createAlgorandSigner = (transport) => {
   return new algorandSigner.default(transport);
 };
 const algorand = algorandCreateBridges(
-  signerFactory(createAlgorandSigner),
+  executeWithSigner(createAlgorandSigner),
   network,
   makeLRUCache
 );
@@ -32,7 +32,7 @@ const createEvmSigner = (transport) => {
   return new evmSigner.default(transport);
 };
 const evm = evmCreateBridges(
-  signerFactory(createEvmSigner),
+  executeWithSigner(createEvmSigner),
   network,
   makeLRUCache
 );
@@ -42,7 +42,7 @@ const createPolkadotSigner = (transport) => {
   return new polkadotSigner.default(transport);
 };
 const polkadot = polkadotCreateBridges(
-  signerFactory(createPolkadotSigner),
+  executeWithSigner(createPolkadotSigner),
   network,
   makeLRUCache
 );

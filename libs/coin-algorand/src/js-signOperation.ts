@@ -7,12 +7,12 @@ import type {
   SignOperationFnSignature,
   SignedOperation,
 } from "@ledgerhq/types-live";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { AlgorandAPI } from "./api";
 import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
-import { AlgorandSigner } from "./signer";
+import type { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
 import type { Transaction } from "./types";
 
 /**
@@ -20,7 +20,7 @@ import type { Transaction } from "./types";
  */
 export const buildSignOperation =
   (
-    signerFactory: SignerFactory<AlgorandSigner>,
+    signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
     algorandAPI: AlgorandAPI,
   ): SignOperationFnSignature<Transaction> =>
   ({
@@ -48,8 +48,9 @@ export const buildSignOperation =
 
         o.next({ type: "device-signature-requested" });
 
-        const signer = await signerFactory(deviceId);
-        const { signature } = await signer.sign(freshAddressPath, toSign);
+        const { signature } = (await signerContext(deviceId, signer =>
+          signer.sign(freshAddressPath, toSign),
+        )) as AlgorandSignature;
 
         if (cancelled) return;
 

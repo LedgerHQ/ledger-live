@@ -7,12 +7,12 @@ import {
 } from "@ledgerhq/types-live";
 import { ledgerService } from "@ledgerhq/hw-app-eth";
 import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
-import { EvmSigner } from "./signer";
+import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -44,7 +44,9 @@ export const applyEIP155 = (vAsHex: string, chainId: number): number => {
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerFactory: SignerFactory<EvmSigner>): SignOperationFnSignature<Transaction> =>
+  (
+    signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  ): SignOperationFnSignature<Transaction> =>
   ({
     account,
     deviceId,
@@ -76,14 +78,10 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
-        // Instanciate Eth app bindings
-        const eth = await signerFactory(deviceId);
-        // Request signature on the nano
-        const sig = await eth.signTransaction(
-          account.freshAddressPath,
-          serializedTxHexString,
-          resolution,
-        );
+        const sig = (await signerContext(deviceId, signer =>
+          // Request signature on the nano
+          signer.signTransaction(account.freshAddressPath, serializedTxHexString, resolution),
+        )) as EvmSignature;
 
         o.next({ type: "device-signature-granted" }); // Signature is done
 

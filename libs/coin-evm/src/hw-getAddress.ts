@@ -1,14 +1,16 @@
 import eip55 from "eip55";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { EvmSigner } from "./signer";
+import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 
-const resolver = (signerFactory: SignerFactory<EvmSigner>): GetAddressFn => {
+const resolver = (
+  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
-    const signer = await signerFactory(deviceId);
-    const { address, publicKey, chainCode } = await signer.getAddress(path, verify, false);
-
+    const { address, publicKey, chainCode } = (await signerContext(deviceId, signer =>
+      signer.getAddress(path, verify, false),
+    )) as EvmAddress;
     return {
       address: eip55.encode(address),
       publicKey,

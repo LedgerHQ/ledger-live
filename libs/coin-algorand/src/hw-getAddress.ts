@@ -1,14 +1,18 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { AlgorandSigner } from "./signer";
+import { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
 
 const resolver = (
-  signerFactory: SignerFactory<AlgorandSigner>
+  signerContext: SignerContext<
+    AlgorandSigner,
+    AlgorandAddress | AlgorandSignature
+  >
 ): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
-    const signer = await signerFactory(deviceId);
-    const r = await signer.getAddress(path, verify || false);
+    const r = (await signerContext(deviceId, (signer) =>
+      signer.getAddress(path, verify || false)
+    )) as AlgorandAddress;
     return {
       address: r.address,
       publicKey: r.publicKey,

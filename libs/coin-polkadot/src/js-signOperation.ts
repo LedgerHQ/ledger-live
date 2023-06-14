@@ -13,11 +13,11 @@ import type {
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
 import { PolkadotAPI } from "./api";
-import { PolkadotSigner } from "./signer";
+import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./signer";
 
 const MODE_TO_TYPE = {
   send: "OUT",
@@ -145,7 +145,7 @@ export const fakeSignExtrinsic = async (
  */
 const buildSignOperation =
   (
-    signerFactory: SignerFactory<PolkadotSigner>,
+    signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
     polkadotAPI: PolkadotAPI,
   ): SignOperationFnSignature<Transaction> =>
   ({
@@ -178,7 +178,7 @@ const buildSignOperation =
         const { unsigned, registry } = await buildTransaction(polkadotAPI)(
           account as PolkadotAccount,
           transactionToSign,
-          true
+          true,
         );
         const payload = registry
           .createType("ExtrinsicPayload", unsigned, {
@@ -187,9 +187,12 @@ const buildSignOperation =
           .toU8a({
             method: true,
           });
-        const signer = await signerFactory(deviceId);
-        // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
-        const r = await signer.sign(account.freshAddressPath, payload as any);
+
+        const r = (await signerContext(deviceId, signer =>
+          // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
+          signer.sign(account.freshAddressPath, payload as any),
+        )) as PolkadotSignature;
+
         const signed = await signExtrinsic(unsigned, r.signature, registry);
         o.next({
           type: "device-signature-granted",
@@ -197,7 +200,7 @@ const buildSignOperation =
         const operation = buildOptimisticOperation(
           account as PolkadotAccount,
           transactionToSign,
-          transactionToSign.fees ?? new BigNumber(0)
+          transactionToSign.fees ?? new BigNumber(0),
         );
         o.next({
           type: "signed",

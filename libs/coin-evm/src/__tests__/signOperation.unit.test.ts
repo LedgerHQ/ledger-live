@@ -7,8 +7,8 @@ import { Transaction as EvmTransaction } from "../types";
 import * as rpcAPI from "../api/rpc.common";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
-import { EvmSigner } from "../signer";
-import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -39,8 +39,11 @@ const transactionEIP1559: EvmTransaction = {
 };
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
-const mockSignerFactory: SignerFactory<EvmSigner> = (_: string) => {
-  return Promise.resolve({
+const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
+  _: string,
+  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
+) => {
+  return fn({
     getAddress: jest.fn(),
     signTransaction: () =>
       Promise.resolve({
@@ -77,7 +80,7 @@ describe("EVM Family", () => {
       });
 
       it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", done => {
-        const signOperation = buildSignOperation(mockSignerFactory);
+        const signOperation = buildSignOperation(mockSignerContext);
 
         const signOpObservable = signOperation({
           account,

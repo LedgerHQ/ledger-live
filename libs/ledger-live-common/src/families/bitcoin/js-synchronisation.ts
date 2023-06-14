@@ -17,12 +17,7 @@ import { BitcoinAccount, BitcoinOutput, Transaction } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
-import {
-  Account,
-  AccountBridge,
-  CurrencyBridge,
-  Operation,
-} from "@ledgerhq/types-live";
+import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "../../account/index";
 import { startSpan } from "../../performance";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -78,10 +73,14 @@ const deduplicateOperations = (operations: (Operation | undefined)[]): Operation
   return out;
 };
 
-export type SignerFactory = (deviceId: string, crypto: CryptoCurrency) => Promise<Btc>;
+export type SignerContext = (
+  deviceId: string,
+  crypto: CryptoCurrency,
+  fn: (signer: Btc) => Promise<string>,
+) => Promise<string>;
 
 const makeGetAccountShape =
-  (signerFactory: SignerFactory): GetAccountShape =>
+  (signerContext: SignerContext): GetAccountShape =>
   async info => {
     let span;
     const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
@@ -97,20 +96,21 @@ const makeGetAccountShape =
     if (!paramXpub) {
       // Xpub not provided, generate it using the hwapp
 
-      if (!deviceId) {
+      if (deviceId === undefined || deviceId === null) {
         throw new Error("deviceId required to generate the xpub");
       }
       const { bitcoinLikeInfo } = currency;
-      const btc = await signerFactory(deviceId, currency);
       const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
         // FIXME It's supposed to be optional
         //XPUBVersion?: number;
         XPUBVersion: number;
       };
-      generatedXpub = await btc.getWalletXpub({
-        path: accountPath,
-        xpubVersion,
-      });
+      generatedXpub = await signerContext(deviceId, currency, signer =>
+        signer.getWalletXpub({
+          path: accountPath,
+          xpubVersion,
+        }),
+      );
     }
     const xpub = paramXpub || generatedXpub;
 
@@ -229,10 +229,10 @@ const postSync = (initial: Account, synced: Account) => {
   return syncedBtc;
 };
 
-export const scanAccounts = (signerFactory: SignerFactory): CurrencyBridge["scanAccounts"] =>
+export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
   makeScanAccounts({
-    getAccountShape: makeGetAccountShape(signerFactory),
+    getAccountShape: makeGetAccountShape(signerContext),
   });
 
-export const sync = (signerFactory: SignerFactory): AccountBridge<Transaction>["sync"] =>
-  makeSync({ getAccountShape: makeGetAccountShape(signerFactory), postSync });
+export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
+  makeSync({ getAccountShape: makeGetAccountShape(signerContext), postSync });

@@ -1,5 +1,6 @@
 import eip55 from "eip55";
 import resolver from "../hw-getAddress";
+import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
 
 const address = "0xc3f95102D5c8F2c83e49Ce3Acfb905eDfb7f37dE";
 jest.mock(
@@ -12,8 +13,11 @@ jest.mock(
       });
     },
 );
-const mockSignerFactory = (_: string) =>
-  Promise.resolve({
+const mockSignerFactory = (
+  _: string,
+  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>
+) =>
+  fn({
     getAddress: async () => ({
       publicKey: "",
       address: address.toLowerCase(),
