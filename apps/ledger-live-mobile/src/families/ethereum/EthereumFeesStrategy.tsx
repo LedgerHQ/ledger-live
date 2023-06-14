@@ -52,7 +52,8 @@ export default function EthereumFeesStrategy({
   const { operation } = route.params;
 
   let ethereumTransaction = transaction;
-  if (operation?.transactionRaw && isEditableOperation(account, operation)) {
+  const isEditable = operation && isEditableOperation(account, operation);
+  if (operation?.transactionRaw && isEditable) {
     ethereumTransaction = fromTransactionRaw(operation.transactionRaw as TransactionRaw);
   }
 
@@ -63,33 +64,31 @@ export default function EthereumFeesStrategy({
   );
 
   const strategies = useMemo(
-    () => (customStrategy ? [...defaultStrategies, customStrategy] : defaultStrategies),
-    [defaultStrategies, customStrategy],
+    () =>
+      customStrategy && !isEditable ? [...defaultStrategies, customStrategy] : defaultStrategies,
+    [defaultStrategies, customStrategy, isEditable],
   );
 
   const disabledStrategies = useMemo(() => {
-    if (operation && isEditableOperation(account, operation)) {
+    if (isEditable) {
       return strategies
         .filter(strategy => {
           if (EIP1559ShouldBeUsed(currency)) {
             const oldMaxPriorityFeePerGas = ethereumTransaction.maxPriorityFeePerGas;
             const oldMaxFeePerGas = ethereumTransaction.maxFeePerGas;
+            const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
+            const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
             const maxPriorityFeeGap: number = getEnv(
               "EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR",
             );
-            const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
-            const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
+            const feesGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
 
             const disabled =
               strategy.disabled ||
               strategyMaxPriorityFeePerGas?.isLessThan(
                 BigNumber(oldMaxPriorityFeePerGas || 0).times(1 + maxPriorityFeeGap),
               ) ||
-              strategyMaxFeePerGas?.isLessThan(
-                BigNumber(oldMaxFeePerGas || 0).plus(
-                  BigNumber(oldMaxPriorityFeePerGas || 0).times(maxPriorityFeeGap),
-                ),
-              );
+              strategyMaxFeePerGas?.isLessThan(BigNumber(oldMaxFeePerGas || 0).times(1 + feesGap));
 
             return disabled;
           }
@@ -109,13 +108,12 @@ export default function EthereumFeesStrategy({
 
     return [];
   }, [
-    account,
     currency,
-    operation,
     strategies,
     ethereumTransaction.gasPrice,
     ethereumTransaction.maxFeePerGas,
     ethereumTransaction.maxPriorityFeePerGas,
+    isEditable,
   ]);
 
   useEffect(() => {

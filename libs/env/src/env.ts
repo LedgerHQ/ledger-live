@@ -761,6 +761,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: floatParser,
     desc: "Cancel transaction max fee gap factor for EIP1559 for edit eth transaction feature",
   },
+  EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction fee gap for edit eth transaction",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | null | undefined => envDefinitions[name];
