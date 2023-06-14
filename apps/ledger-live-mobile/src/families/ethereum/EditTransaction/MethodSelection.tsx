@@ -74,7 +74,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const haveFundToSpeedup = mainAccount.balance.gt(
     estimatedFees
-      .times(1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))
+      .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
       .plus(account.type === "Account" ? transactionToEdit.amount : 0),
   );
 
@@ -100,25 +100,25 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               allowZeroAmount: true,
               mode: "send",
               recipient: mainAccount.freshAddress,
+              useAllAmount: false,
             };
 
             if (EIP1559ShouldBeUsed(mainAccount.currency)) {
               if (transactionToEdit.maxPriorityFeePerGas) {
-                updatedTransaction.maxPriorityFeePerGas =
-                  transactionToEdit.maxPriorityFeePerGas?.times(
-                    1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"),
-                  );
+                updatedTransaction.maxPriorityFeePerGas = transactionToEdit.maxPriorityFeePerGas
+                  ?.times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
+                  .integerValue();
               }
 
               if (transactionToEdit.maxFeePerGas) {
-                updatedTransaction.maxFeePerGas = transactionToEdit.maxFeePerGas?.times(
-                  1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"),
-                );
+                updatedTransaction.maxFeePerGas = transactionToEdit.maxFeePerGas
+                  ?.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
+                  .integerValue();
               }
             } else if (transactionToEdit.gasPrice) {
-              updatedTransaction.gasPrice = transactionToEdit.gasPrice.times(
-                1 + getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR"),
-              );
+              updatedTransaction.gasPrice = transactionToEdit.gasPrice
+                .times(1 + getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR"))
+                .integerValue();
             }
 
             setTransaction(bridge.updateTransaction(transaction, updatedTransaction));
@@ -142,6 +142,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               gasPrice: null,
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,
+              useAllAmount: false,
             };
 
             setTransaction(bridge.updateTransaction(transaction, updatedTransaction));

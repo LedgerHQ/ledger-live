@@ -79,9 +79,7 @@ export default function EthereumFeesStrategy({
             const oldMaxFeePerGas = ethereumTransaction.maxFeePerGas;
             const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
             const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
-            const maxPriorityFeeGap: number = getEnv(
-              "EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR",
-            );
+            const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
             const feesGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
 
             const disabled =

@@ -77,7 +77,7 @@ const Ethereum1559CustomFees = ({
 
   // give user a warning if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
   if (!maxFeeWarning && transactionRaw?.maxPriorityFeePerGas && transactionRaw?.maxFeePerGas) {
-    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
 
     const lowerLimitMaxFeePerGas = new BigNumber(transactionRaw.maxFeePerGas).plus(
       new BigNumber(transactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),
