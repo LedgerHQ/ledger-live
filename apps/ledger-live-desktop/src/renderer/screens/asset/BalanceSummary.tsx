@@ -12,8 +12,6 @@ import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data } from "~/renderer/components/Chart/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
-
-// import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
