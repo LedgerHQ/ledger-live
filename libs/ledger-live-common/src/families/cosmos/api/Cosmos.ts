@@ -241,7 +241,7 @@ export class CosmosAPI {
   };
 
   private async fetchAllTransactions(address: string, filterOn: string, paginationSize: number) {
-    const txs: CosmosTx[] = [];
+    let txs: CosmosTx[] = [];
     try {
       let total: number;
       let previousTxCall: CosmosTx[] | null = null;
@@ -271,7 +271,7 @@ export class CosmosAPI {
         paginationOffset += paginationSize;
         total = response.total;
         previousTxCall = response.txs;
-        txs.push.apply(txs, response.txs);
+        txs = [...txs, ...response.txs];
       } while (txs.length < total);
       // The right condition should be nextPageToken != null but next_key isn't returned by the node for some reason
     } catch (e) {
