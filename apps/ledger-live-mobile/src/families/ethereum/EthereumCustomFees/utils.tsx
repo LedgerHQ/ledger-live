@@ -1,9 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { Transaction, TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
-import { Account } from "@ledgerhq/types-live";
 
 const TWENTY_GWEI = new BigNumber(10e9);
 
@@ -11,12 +9,12 @@ const defaultMaxPriorityFeeRange = inferDynamicRange(TWENTY_GWEI); // 0 - 20 Gwe
 const defaultMaxFeePerGasRange = inferDynamicRange(TWENTY_GWEI); // 0 - 20 Gwei
 
 export const inferMaxPriorityFeeRange = (
-  mainAccount: Account,
   networkInfo: Transaction["networkInfo"],
   transactionRaw?: TransactionRaw,
 ): Range => {
-  if (!networkInfo?.maxPriorityFeePerGas || !networkInfo?.nextBaseFeePerGas)
+  if (!networkInfo?.maxPriorityFeePerGas || !networkInfo?.nextBaseFeePerGas) {
     return defaultMaxPriorityFeeRange;
+  }
 
   let minValue = getEnv("EIP1559_MINIMUM_FEES_GATE")
     ? networkInfo.maxPriorityFeePerGas.min.times(getEnv("EIP1559_PRIORITY_FEE_LOWER_GATE"))
@@ -30,7 +28,7 @@ export const inferMaxPriorityFeeRange = (
       1 + maxPriorityFeeGap,
     );
 
-    if (new BigNumber(newMaxPriorityFeePerGas).isGreaterThan(new BigNumber(minValue))) {
+    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(minValue))) {
       minValue = newMaxPriorityFeePerGas;
     }
 
