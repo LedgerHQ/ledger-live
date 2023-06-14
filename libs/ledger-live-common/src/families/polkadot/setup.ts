@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-polkadot/lib/bridge/js";
+import { createBridges } from "@ledgerhq/coin-polkadot/bridge/js";
 import makeCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
 import { Transaction } from "@ledgerhq/coin-polkadot/types";
