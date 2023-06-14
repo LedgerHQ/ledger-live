@@ -6,10 +6,10 @@ import { Buffer } from "buffer";
 
 import { VechainAppPleaseEnableContractDataAndMultiClause } from "./errors";
 
-const remapTransactionRelatedErrors = (e) => {
+const remapTransactionRelatedErrors = e => {
   if (e && e.statusCode === 0x6a80) {
     return new VechainAppPleaseEnableContractDataAndMultiClause(
-      "Please enable contract data in Vechain app settings"
+      "Please enable contract data in Vechain app settings",
     );
   }
 
@@ -32,19 +32,14 @@ export default class Vet {
     transport.decorateAppAPIMethods(
       this,
       ["getAppConfiguration", "getAddress", "signTransaction"],
-      scrambleKey
+      scrambleKey,
     );
   }
 
   async getAppConfiguration(): Promise<any> {
-    const response = await this.transport.send(
-      0xe0,
-      0x06,
-      0x00,
-      0x00,
-      Buffer.alloc(0),
-      [StatusCodes.OK]
-    );
+    const response = await this.transport.send(0xe0, 0x06, 0x00, 0x00, Buffer.alloc(0), [
+      StatusCodes.OK,
+    ]);
 
     return response.slice(0, 4);
   }
@@ -62,7 +57,7 @@ export default class Vet {
     path: string,
     display?: boolean,
     chainCode?: boolean,
-    statusCodes: StatusCodes[] = [StatusCodes.OK]
+    statusCodes: StatusCodes[] = [StatusCodes.OK],
   ): Promise<{
     publicKey: string;
     address: string;
@@ -80,7 +75,7 @@ export default class Vet {
       display ? 0x01 : 0x00,
       chainCode ? 0x01 : 0x00,
       buffer,
-      statusCodes
+      statusCodes,
     );
 
     const publicKeyLength = response[0];
@@ -90,10 +85,7 @@ export default class Vet {
       address:
         "0x" +
         response
-          .slice(
-            1 + publicKeyLength + 1,
-            1 + publicKeyLength + 1 + addressLength
-          )
+          .slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength)
           .toString("ascii")
           .toLowerCase(),
     };
@@ -101,7 +93,7 @@ export default class Vet {
       acc.chainCode = response
         .slice(
           1 + publicKeyLength + 1 + addressLength,
-          1 + publicKeyLength + 1 + addressLength + 32
+          1 + publicKeyLength + 1 + addressLength + 32,
         )
         .toString("hex");
     }
@@ -123,9 +115,9 @@ export default class Vet {
       responses.push(
         await this.transport
           .send(0xe0, 0x04, i === 0 ? 0x00 : 0x80, 0x00, data, [StatusCodes.OK])
-          .catch((e) => {
+          .catch(e => {
             throw remapTransactionRelatedErrors(e);
-          })
+          }),
       );
     }
 

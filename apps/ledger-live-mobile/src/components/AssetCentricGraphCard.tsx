@@ -209,8 +209,7 @@ function AssetCentricGraphCard({
       </Flex>
       {accountsEmpty ? null : (
         <>
-          {currency.type === "TokenCurrency" &&
-          tokensWithUnsupportedGraph.includes(currency.id) ? (
+          {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
             <GraphPlaceholder />
           ) : (
             <>

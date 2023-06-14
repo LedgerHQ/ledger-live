@@ -2,11 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 
 import type { Transaction } from "./types";
-import type {
-  Account,
-  Operation,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -15,7 +11,7 @@ import Vet from "@ledgerhq/hw-app-vet";
 
 const buildOptimisticOperation = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<Operation> => {
   const type = "OUT";
   const subAccountId = transaction.subAccountId;
@@ -68,8 +64,8 @@ const signOperation = ({
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         async function main() {
           o.next({
             type: "device-signature-requested",
@@ -81,15 +77,12 @@ const signOperation = ({
           const vechainApp = new Vet(transport);
           const signature = await vechainApp.signTransaction(
             account.freshAddressPath,
-            unsigned.encode().toString("hex")
+            unsigned.encode().toString("hex"),
           );
 
           o.next({ type: "device-signature-granted" });
 
-          const operation = await buildOptimisticOperation(
-            account,
-            transaction
-          );
+          const operation = await buildOptimisticOperation(account, transaction);
 
           o.next({
             type: "signed",
@@ -103,9 +96,9 @@ const signOperation = ({
 
         main().then(
           () => o.complete(),
-          (e) => o.error(e)
+          e => o.error(e),
         );
-      })
+      }),
   );
 
 export default signOperation;

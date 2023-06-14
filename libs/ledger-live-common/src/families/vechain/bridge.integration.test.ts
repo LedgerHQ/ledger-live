@@ -19,17 +19,13 @@ import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 const listSupported = listSupportedCurrencies();
 listSupported.push(getCryptoCurrencyById("vechain"));
-setSupportedCurrencies(listSupported.map((c) => c.id) as CryptoCurrencyId[]);
+setSupportedCurrencies(listSupported.map(c => c.id) as CryptoCurrencyId[]);
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     vechain: {
-      FIXME_ignoreAccountFields: [
-        "balance",
-        "spendableBalance",
-        "estimateMaxSpendable",
-      ],
+      FIXME_ignoreAccountFields: ["balance", "spendableBalance", "estimateMaxSpendable"],
       scanAccounts: vechainScanAccounts1,
       accounts: [
         {
@@ -87,7 +83,7 @@ const dataset: DatasetTest<Transaction> = {
                       value: 0,
                       data: VIP180.transfer.encode(
                         "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                        "9000000000000000000"
+                        "9000000000000000000",
                       ),
                     },
                   ],

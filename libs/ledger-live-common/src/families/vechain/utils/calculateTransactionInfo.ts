@@ -9,7 +9,7 @@ import { DEFAULT_GAS_COEFFICIENT } from "../constants";
 
 export const calculateTransactionInfo = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<TransactionInfo> => {
   const { subAccounts } = account;
   const { amount: oldAmount, useAllAmount, subAccountId } = transaction;
@@ -17,7 +17,7 @@ export const calculateTransactionInfo = async (
 
   const tokenAccount =
     subAccountId && subAccounts
-      ? (subAccounts.find((subAccount) => {
+      ? (subAccounts.find(subAccount => {
           return subAccount.id === subAccountId;
         }) as TokenAccount)
       : undefined;
@@ -79,10 +79,7 @@ export const calculateMaxFeesToken = async (): Promise<BigNumber> => {
   return fees;
 };
 
-export const calculateTotalSpent = (
-  isToken: boolean,
-  transaction: Transaction
-): BigNumber => {
+export const calculateTotalSpent = (isToken: boolean, transaction: Transaction): BigNumber => {
   if (isToken) {
     return transaction.amount.plus(transaction.estimatedFees);
   } else {
