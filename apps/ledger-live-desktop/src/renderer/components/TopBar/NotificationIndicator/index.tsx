@@ -43,7 +43,7 @@ export function NotificationIndicator() {
           isInteractive
           onClick={onClickNotificationCenter}
         >
-          <IconBell size={16} count={totalNotifCount} />
+          <IconBell size={18} count={totalNotifCount} />
         </ItemContainer>
       </Tooltip>
     </>

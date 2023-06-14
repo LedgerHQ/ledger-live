@@ -13,19 +13,13 @@ const tokenIDToMarketID = {
   "ethereum/erc20/usd__coin": "usd",
 };
 
-const AssetMarketSection = ({
-  currency,
-}: {
-  currency: CryptoOrTokenCurrency;
-}) => {
+const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
   const { t } = useTranslation();
-  const { selectedCoinData, selectCurrency, counterCurrency } =
-    useSingleCoinMarketData();
+  const { selectedCoinData, selectCurrency, counterCurrency } = useSingleCoinMarketData();
 
   useEffect(() => {
     selectCurrency(
-      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] ||
-        currency.id,
+      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] || currency.id,
       undefined,
       "24h",
     );

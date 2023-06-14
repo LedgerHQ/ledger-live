@@ -11,6 +11,7 @@ import { useDistribution } from "~/renderer/actions/general";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { DistributionItem } from "@ledgerhq/types-live";
 export default function AssetCrumb() {
   const { t } = useTranslation();
   const distribution = useDistribution();
@@ -46,7 +47,7 @@ export default function AssetCrumb() {
     [history],
   );
   const processItemsForDropdown = useCallback(
-    (items: any[]) =>
+    (items: DistributionItem[]) =>
       items.map(({ currency }) => ({
         key: currency.id,
         label: currency.name,
@@ -54,14 +55,14 @@ export default function AssetCrumb() {
       })),
     [],
   );
-  const processedItems = useMemo(() => processItemsForDropdown(distribution.list || []), [
-    distribution,
-    processItemsForDropdown,
-  ]);
-  const activeItem = useMemo(() => distribution.list.find(dist => dist.currency.id === assetId), [
-    assetId,
-    distribution.list,
-  ]);
+  const processedItems = useMemo(
+    () => processItemsForDropdown(distribution.list || []),
+    [distribution, processItemsForDropdown],
+  );
+  const activeItem = useMemo(
+    () => distribution.list.find(dist => dist.currency.id === assetId),
+    [assetId, distribution.list],
+  );
   if (!distribution || !distribution.list) return null;
   return (
     <>

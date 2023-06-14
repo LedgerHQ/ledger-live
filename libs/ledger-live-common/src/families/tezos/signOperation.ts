@@ -20,8 +20,8 @@ export const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
+  withDevice(deviceId)(transport =>
+    Observable.create(o => {
       let cancelled;
 
       async function main() {
@@ -36,7 +36,7 @@ export const signOperation = ({
           transport,
           freshAddressPath,
           false,
-          DerivationType.ED25519
+          DerivationType.ED25519,
         );
         tezos.setProvider({ signer: ledgerSigner });
 
@@ -63,7 +63,7 @@ export const signOperation = ({
           params.gasLimit = upperModulo(
             transaction.gasLimit || new BigNumber(0),
             new BigNumber(136),
-            new BigNumber(1000)
+            new BigNumber(1000),
           ).toNumber();
         }
 
@@ -141,11 +141,11 @@ export const signOperation = ({
 
       main().then(
         () => o.complete(),
-        (e) => o.error(e)
+        e => o.error(e),
       );
 
       return () => {
         cancelled = true;
       };
-    })
+    }),
   );

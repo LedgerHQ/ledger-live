@@ -7,9 +7,8 @@ import type { Transaction } from "./types";
 const calculateEIP1559NetworkFees = (
   maxFeePerGas: BigNumber,
   maxPriorityFeePerGas: BigNumber,
-  gasLimit: BigNumber
-): BigNumber =>
-  maxFeePerGas.plus(maxPriorityFeePerGas).multipliedBy(gasLimit).integerValue();
+  gasLimit: BigNumber,
+): BigNumber => maxFeePerGas.plus(maxPriorityFeePerGas).multipliedBy(gasLimit).integerValue();
 
 export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
   const { networkInfo } = tx;
@@ -24,30 +23,24 @@ export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
     return [
       {
         label: "slow",
-        amount: amplifiedBaseFee
-          .plus(networkInfo.maxPriorityFeePerGas.min)
-          .integerValue(),
+        amount: amplifiedBaseFee.plus(networkInfo.maxPriorityFeePerGas.min).integerValue(),
         displayedAmount: calculateEIP1559NetworkFees(
           amplifiedBaseFee,
           networkInfo.maxPriorityFeePerGas.min,
-          gasLimit
+          gasLimit,
         ),
         extra: {
-          maxFeePerGas: amplifiedBaseFee
-            .plus(networkInfo.maxPriorityFeePerGas.min)
-            .integerValue(),
+          maxFeePerGas: amplifiedBaseFee.plus(networkInfo.maxPriorityFeePerGas.min).integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.min,
         },
       },
       {
         label: "medium",
-        amount: amplifiedBaseFee
-          .plus(networkInfo.maxPriorityFeePerGas.initial)
-          .integerValue(),
+        amount: amplifiedBaseFee.plus(networkInfo.maxPriorityFeePerGas.initial).integerValue(),
         displayedAmount: calculateEIP1559NetworkFees(
           amplifiedBaseFee,
           networkInfo.maxPriorityFeePerGas.initial,
-          gasLimit
+          gasLimit,
         ),
         extra: {
           maxFeePerGas: amplifiedBaseFee
@@ -58,18 +51,14 @@ export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
       },
       {
         label: "fast",
-        amount: amplifiedBaseFee
-          .plus(networkInfo.maxPriorityFeePerGas?.max)
-          .integerValue(),
+        amount: amplifiedBaseFee.plus(networkInfo.maxPriorityFeePerGas?.max).integerValue(),
         displayedAmount: calculateEIP1559NetworkFees(
           amplifiedBaseFee,
           networkInfo.maxPriorityFeePerGas.max,
-          gasLimit
+          gasLimit,
         ),
         extra: {
-          maxFeePerGas: amplifiedBaseFee
-            .plus(networkInfo.maxPriorityFeePerGas.max)
-            .integerValue(),
+          maxFeePerGas: amplifiedBaseFee.plus(networkInfo.maxPriorityFeePerGas.max).integerValue(),
           maxPriorityFeePerGas: networkInfo.maxPriorityFeePerGas.max,
         },
       },

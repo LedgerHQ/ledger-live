@@ -7,9 +7,7 @@ import Animated, { Easing, Layout } from "react-native-reanimated";
 import { Storyly } from "storyly-react-native";
 import styled from "styled-components/native";
 import StoryGroupItem from "./StoryGroupItem";
-import StorylyLocalizedWrapper, {
-  Props as StorylyWrapperProps,
-} from "./StorylyWrapper";
+import StorylyLocalizedWrapper, { Props as StorylyWrapperProps } from "./StorylyWrapper";
 
 type Props = StorylyWrapperProps & {
   /**
@@ -82,11 +80,9 @@ const Stories: React.FC<Props> = props => {
   } = props;
 
   const storylyRef = useRef<Storyly>(null);
-  const [storyGroupList, setStoryGroupList] =
-    useState<StoryGroupInfo[]>(placeholderContent);
+  const [storyGroupList, setStoryGroupList] = useState<StoryGroupInfo[]>(placeholderContent);
 
-  const [refreshingStorylyState, setRefreshingStorylyState] =
-    useState<boolean>(false);
+  const [refreshingStorylyState, setRefreshingStorylyState] = useState<boolean>(false);
 
   const handleFail = useCallback(() => {
     setStoryGroupList(placeholderContent);
@@ -99,8 +95,7 @@ const Stories: React.FC<Props> = props => {
         ...group,
         stories: group.stories.map(s => ({ id: s.id, seen: s.seen })),
       }));
-      if (!isEqual(storyGroupList, newStoryGroupList))
-        setStoryGroupList(newStoryGroupList);
+      if (!isEqual(storyGroupList, newStoryGroupList)) setStoryGroupList(newStoryGroupList);
     },
     [storyGroupList, setStoryGroupList, setRefreshingStorylyState],
   );
@@ -138,8 +133,7 @@ const Stories: React.FC<Props> = props => {
         .sort((a, b) => (keepOriginalOrder ? a.index - b.index : 1)) // storyly reorders the array by default
         .map((storyGroup, index, arr) => {
           const nextStoryToShowId =
-            storyGroup.stories?.find(story => !story.seen)?.id ??
-            storyGroup.stories[0]?.id;
+            storyGroup.stories?.find(story => !story.seen)?.id ?? storyGroup.stories[0]?.id;
           return (
             <AnimatedStoryGroupWrapper
               key={storyGroup.id ?? index}
@@ -150,9 +144,7 @@ const Stories: React.FC<Props> = props => {
               <StoryGroupItem
                 {...storyGroup}
                 titlePosition={vertical ? "right" : "bottom"}
-                onPress={() =>
-                  handleStoryGroupPressed(storyGroup.id, nextStoryToShowId)
-                }
+                onPress={() => handleStoryGroupPressed(storyGroup.id, nextStoryToShowId)}
               />
             </AnimatedStoryGroupWrapper>
           );

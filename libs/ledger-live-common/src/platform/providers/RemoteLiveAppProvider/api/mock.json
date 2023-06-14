@@ -32,7 +32,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "ramp",
@@ -68,7 +69,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "paraswap",
@@ -136,7 +138,8 @@
         "method": "transaction.broadcast"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "paraswap v5",
@@ -204,7 +207,44 @@
         "method": "transaction.broadcast"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
+  },
+  {
+    "id": "kiln",
+    "name": "Kiln",
+    "url": "https://dapp-browser.apps.ledger.com",
+    "params": {
+      "dappUrl": "https://ledger-live-eth-dapp.kiln.fi/",
+      "nanoApp": "Kiln",
+      "dappName": "Kiln",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "https://eth-dapps.api.live.ledger.com"
+        }
+      ]
+    },
+    "homepageUrl": "https://kiln.fi",
+    "icon": "https://cdn.live.ledger.com/icons/platform/kiln.png",
+    "platforms": ["ios", "android", "desktop"],
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["staking/lending"],
+    "currencies": "*",
+    "content": {
+      "shortDescription": {
+        "en": "Kiln is Ledger’s native ETH staking partner. Stake ETH in a couple of clicks by becoming your own validator. Earn rewards for helping secure the Ethereum blockchain."
+      },
+      "description": {
+        "en": "Kiln is Ledger’s native ETH staking partner. Stake ETH in a couple of clicks by becoming your own validator. Earn rewards for helping secure the Ethereum blockchain."
+      }
+    },
+    "permissions": [],
+    "domains": ["http://", "https://"],
+    "visibility": "complete"
   },
   {
     "id": "lido",
@@ -239,7 +279,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "1inch",
@@ -284,7 +325,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "btcdirect",
@@ -307,7 +349,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "banxa",
@@ -330,7 +373,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "bitrefill",
@@ -353,7 +397,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "mercuryo",
@@ -414,7 +459,8 @@
         }
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "zerion",
@@ -449,7 +495,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "rainbow",
@@ -472,7 +519,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "poap",
@@ -495,7 +543,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "aave",
@@ -622,7 +671,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "changenow",
@@ -665,7 +715,8 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "mercuryo",
@@ -733,7 +784,8 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "debug",
@@ -760,6 +812,7 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   }
 ]

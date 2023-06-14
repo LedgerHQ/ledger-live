@@ -15,10 +15,16 @@ import Quit from "~/renderer/icons/Quit";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AppList from "./AppsList";
 import DeviceStorage from "../DeviceStorage/index";
+import ProviderWarning from "../ProviderWarning";
 import AppDepsInstallModal from "./AppDepsInstallModal";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
-import { setHasInstalledApps, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
+import {
+  addNewDevice,
+  clearLastSeenCustomImage,
+  setHasInstalledApps,
+  setLastSeenDeviceInfo,
+} from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "react-redux";
 import {
   hasInstalledAppsSelector,
@@ -106,12 +112,14 @@ const AppsList = ({
       : state;
     return distribute(newState);
   }, [state, installQueue]);
-  const onCloseDepsInstallModal = useCallback(() => setAppInstallDep(undefined), [
-    setAppInstallDep,
-  ]);
-  const onCloseDepsUninstallModal = useCallback(() => setAppUninstallDep(undefined), [
-    setAppUninstallDep,
-  ]);
+  const onCloseDepsInstallModal = useCallback(
+    () => setAppInstallDep(undefined),
+    [setAppInstallDep],
+  );
+  const onCloseDepsUninstallModal = useCallback(
+    () => setAppUninstallDep(undefined),
+    [setAppUninstallDep],
+  );
   const installState =
     installQueue.length > 0 ? (uninstallQueue.length > 0 ? "update" : "install") : "uninstall";
   const onCloseError = useCallback(() => {
@@ -141,7 +149,16 @@ const AppsList = ({
         latestFirmware: firmware,
       }),
     );
+    reduxDispatch(addNewDevice({ seenDevice: lastSeenDevice }));
   }, [device, state.installed, deviceInfo, reduxDispatch, firmware]);
+
+  useEffect(() => {
+    // Not ideal but we have no concept of device ids so we can consider
+    // an empty custom image size an indicator of not having an image set.
+    // If this is troublesome we'd have to react by asking the device directly.
+    if (state.customImageBlocks === 0) reduxDispatch(clearLastSeenCustomImage());
+  }, [reduxDispatch, state.customImageBlocks]);
+
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
   return (
     <>
@@ -182,8 +199,8 @@ const AppsList = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
-          firmware={firmware}
         />
+        <ProviderWarning />
         <AppList
           optimisticState={optimisticState}
           state={state}

@@ -20,11 +20,7 @@ const modules = {
   erc721,
   erc1155,
 };
-export type TransactionMode =
-  | ERC20Modes
-  | SendModes
-  | ERC721Modes
-  | ERC1155Modes;
+export type TransactionMode = ERC20Modes | SendModes | ERC721Modes | ERC1155Modes;
 
 /**
  * A ModeModule enable a new transaction mode in Ethereum family
@@ -40,11 +36,7 @@ export type ModeModule = {
    * typically to add status.errors and status.warnings in order to implement form validation
    * NB: the TransactionStatus is already filled with generic data in it
    */
-  fillTransactionStatus: (
-    arg0: Account,
-    arg1: Transaction,
-    arg2: TransactionStatus
-  ) => void;
+  fillTransactionStatus: (arg0: Account, arg1: Transaction, arg2: TransactionStatus) => void;
 
   /**
    * enable the possibility to complete an object "TxData" that is the INPUT of the library ethereumjs-tx
@@ -54,7 +46,7 @@ export type ModeModule = {
   fillTransactionData: (
     arg0: Account,
     arg1: Transaction,
-    arg2: TxData
+    arg2: TxData,
   ) => {
     erc20contracts?: string[];
   } | void;
@@ -70,39 +62,26 @@ export type ModeModule = {
       transaction: Transaction;
       status: TransactionStatus;
     },
-    fields: DeviceTransactionField[]
+    fields: DeviceTransactionField[],
   ) => void;
 
   /**
    * enable the possibility to complete the optimistic operation resulted of a broadcast
    * NB: the Operation is already filled with the generic part, a mode might typically change the type, add subOperations,...
    */
-  fillOptimisticOperation: (
-    arg0: Account,
-    arg1: Transaction,
-    arg2: Operation
-  ) => void;
+  fillOptimisticOperation: (arg0: Account, arg1: Transaction, arg2: Operation) => void;
 
   /**
    * hook to resolve a transaction like the prepareTransaction of the bridge
    */
-  prepareTransaction?: (
-    account: Account,
-    transaction: Transaction
-  ) => Promise<Transaction>;
+  prepareTransaction?: (account: Account, transaction: Transaction) => Promise<Transaction>;
 
   /**
    * tells what needs to be resolved in the transaction
    */
-  getResolutionConfig?: (
-    account: Account,
-    transaction: Transaction
-  ) => ResolutionConfig;
+  getResolutionConfig?: (account: Account, transaction: Transaction) => ResolutionConfig;
 };
-export const modes: Record<TransactionMode, ModeModule> = {} as Record<
-  TransactionMode,
-  ModeModule
->;
+export const modes: Record<TransactionMode, ModeModule> = {} as Record<TransactionMode, ModeModule>;
 
 function loadModes() {
   for (const k in modules) {
@@ -117,9 +96,7 @@ function loadModes() {
 }
 
 loadModes();
-export async function preload(
-  currency: CryptoCurrency
-): Promise<Record<string, any>> {
+export async function preload(currency: CryptoCurrency): Promise<Record<string, any>> {
   const value = {};
 
   for (const k in modules) {
@@ -147,16 +124,13 @@ export function hydrate(value: unknown, currency: CryptoCurrency): void {
 }
 export const prepareTransaction = (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<Transaction> =>
   values(modules)
     // @ts-expect-error some module implement it
-    .map((m) => m.prepareTransaction)
+    .map(m => m.prepareTransaction)
     .filter(Boolean)
-    .reduce(
-      (p, fn) => p.then((t) => fn(account, t)),
-      Promise.resolve(transaction)
-    );
+    .reduce((p, fn) => p.then(t => fn(account, t)), Promise.resolve(transaction));
 
 type BufferLike = Buffer | string | number;
 // this type is from transactionjs-tx

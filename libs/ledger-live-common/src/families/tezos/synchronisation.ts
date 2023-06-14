@@ -16,7 +16,7 @@ import { getEnv } from "../../env";
 
 function reconciliatePublicKey(
   publicKey: string | undefined,
-  initialAccount: Account | undefined
+  initialAccount: Account | undefined,
 ): string {
   if (publicKey) return publicKey;
   if (initialAccount) {
@@ -43,9 +43,7 @@ const encodeAddress = (publicKey: Buffer) => {
   let hash = blake2b(keyHashSize);
   hash.update(key);
   hash.digest((hash = Buffer.alloc(keyHashSize)));
-  const address = bs58check.encode(
-    Buffer.concat([curveData.pkhB58Prefix, hash])
-  );
+  const address = bs58check.encode(Buffer.concat([curveData.pkhB58Prefix, hash]));
   return address;
 };
 
@@ -60,7 +58,7 @@ function isStringHex(s: string): boolean {
   return true;
 }
 
-export const getAccountShape: GetAccountShape = async (infoInput) => {
+export const getAccountShape: GetAccountShape = async infoInput => {
   const { initialAccount, rest, currency, derivationMode } = infoInput;
   const publicKey = reconciliatePublicKey(rest?.publicKey, initialAccount);
   invariant(isStringHex(publicKey), "Please reimport your Tezos accounts");
@@ -76,27 +74,20 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
   });
 
   const initialStableOperations =
-    initialAccount && initialAccount.id === accountId
-      ? initialAccount.operations
-      : [];
+    initialAccount && initialAccount.id === accountId ? initialAccount.operations : [];
 
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
 
   const lastId =
-    initialAccount &&
-    areAllOperationsLoaded(initialAccount) &&
-    mostRecentStableOperation
+    initialAccount && areAllOperationsLoaded(initialAccount) && mostRecentStableOperation
       ? mostRecentStableOperation.extra.id || undefined
       : undefined;
 
   const apiAccountPromise = api.getAccountByAddress(address);
   const blocksCountPromise = api.getBlockCount();
 
-  const [apiAccount, blockHeight] = await Promise.all([
-    apiAccountPromise,
-    blocksCountPromise,
-  ]);
+  const [apiAccount, blockHeight] = await Promise.all([apiAccountPromise, blocksCountPromise]);
 
   if (apiAccount.type === "empty") {
     return {
@@ -114,9 +105,7 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
 
   const fullySupported = apiAccount.type === "user";
 
-  const apiOperations = fullySupported
-    ? await fetchAllTransactions(address, lastId)
-    : [];
+  const apiOperations = fullySupported ? await fetchAllTransactions(address, lastId) : [];
 
   const { revealed, counter } = apiAccount;
 
@@ -128,9 +117,7 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
   const balance = new BigNumber(apiAccount.balance);
   const subAccounts = [];
 
-  const newOps: any[] = apiOperations
-    .map(txToOp({ address, accountId }))
-    .filter(Boolean);
+  const newOps: any[] = apiOperations.map(txToOp({ address, accountId })).filter(Boolean);
 
   const operations = mergeOps(initialStableOperations, newOps);
 
@@ -275,7 +262,7 @@ const txToOp =
 
 export const fetchAllTransactions = async (
   address: string,
-  lastId?: number
+  lastId?: number,
 ): Promise<APIOperation[]> => {
   let txs: APIOperation[] = [];
   let maxIteration = getEnv("TEZOS_MAX_TX_QUERIES");

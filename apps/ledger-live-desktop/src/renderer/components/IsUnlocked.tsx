@@ -16,7 +16,8 @@ import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
 import Logo from "~/renderer/icons/Logo";
-export default function IsUnlocked({ children }: { children: any }) {
+
+export default function IsUnlocked({ children }: { children: React.ReactNode }): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const hardReset = useHardReset();
@@ -58,12 +59,14 @@ export default function IsUnlocked({ children }: { children: any }) {
     },
     [inputValue, dispatch],
   );
-  const handleOpenHardResetModal = useCallback(() => setIsHardResetModalOpened(true), [
-    setIsHardResetModalOpened,
-  ]);
-  const handleCloseHardResetModal = useCallback(() => setIsHardResetModalOpened(false), [
-    setIsHardResetModalOpened,
-  ]);
+  const handleOpenHardResetModal = useCallback(
+    () => setIsHardResetModalOpened(true),
+    [setIsHardResetModalOpened],
+  );
+  const handleCloseHardResetModal = useCallback(
+    () => setIsHardResetModalOpened(false),
+    [setIsHardResetModalOpened],
+  );
   const handleHardReset = useCallback(async () => {
     setIsHardResetting(true);
     try {
@@ -172,7 +175,7 @@ export default function IsUnlocked({ children }: { children: any }) {
       </Box>
     );
   }
-  return children;
+  return <>{children}</>;
 }
 type InputValue = {
   password: string;

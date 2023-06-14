@@ -19,9 +19,7 @@ async function injectMockAccountsInDB(count: number) {
         accountModel.encode(
           genAccount(String(Math.random()), {
             currency: sample(
-              listSupportedCurrencies().filter(c =>
-                CURRENCIES_FOR_NFT.includes(c.id),
-              ),
+              listSupportedCurrencies().filter(c => CURRENCIES_FOR_NFT.includes(c.id)),
             ),
             withNft: true,
           }),

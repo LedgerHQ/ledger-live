@@ -3,13 +3,11 @@ import { PromiseResult } from "../types";
 /**
  * Needed polyfill for Promise.allSettled as it doesn't exist on RN.
  */
-export const allSettled = <T>(
-  promises: Promise<T>[]
-): Promise<PromiseResult<T>[]> => {
+export const allSettled = <T>(promises: Promise<T>[]): Promise<PromiseResult<T>[]> => {
   return Promise.all(
-    promises.map((p) => {
+    promises.map(p => {
       return p
-        .then((value) => {
+        .then(value => {
           return {
             status: "fulfilled" as const,
             value,
@@ -21,7 +19,7 @@ export const allSettled = <T>(
             reason,
           };
         });
-    })
+    }),
   );
 };
 
@@ -37,9 +35,7 @@ export const validateDomain = (domain: string | undefined): boolean => {
   }
 
   const lengthIsValid = domain.length > 0 && Number(domain.length) < 30;
-  const containsOnlyValidChars = new RegExp("^[a-zA-Z0-9\\-\\_\\.]+$").test(
-    domain
-  );
+  const containsOnlyValidChars = new RegExp("^[a-zA-Z0-9\\-\\_\\.]+$").test(domain);
 
   return lengthIsValid && containsOnlyValidChars;
 };

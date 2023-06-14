@@ -4,10 +4,9 @@ export type FeatureId =
   | "brazePushNotifications"
   | "brazeLearn"
   | "llmNewDeviceSelection"
-  | "llmUsbFirmwareUpdate"
+  | "llmNewFirmwareUpdateUx"
   | "ratingsPrompt"
   | "counterValue"
-  | "deviceLocalization"
   | "deviceInitialApps"
   | "buyDeviceFromLive"
   | "ptxSmartRouting"
@@ -57,6 +56,7 @@ export type FeatureId =
   | "protectServicesMobile"
   | "protectServicesDesktop"
   | "swapShowDexQuotes"
+  | "swapWalletApiPartnerList"
   | "stakePrograms"
   | "portfolioExchangeBanner"
   | "objkt"
@@ -64,7 +64,8 @@ export type FeatureId =
   | "newsfeedPage"
   | "domainInputResolution"
   | "discover"
-  | "protectServicesDiscoverDesktop";
+  | "protectServicesDiscoverDesktop"
+  | "protectServicesDesktop";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

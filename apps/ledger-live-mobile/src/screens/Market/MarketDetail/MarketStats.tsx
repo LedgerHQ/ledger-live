@@ -48,13 +48,7 @@ const StatValue = styled(Flex).attrs({
   alignItems: "flex-end",
 })``;
 
-const StatRow = ({
-  label,
-  children,
-}: {
-  label: string;
-  children?: React.ReactNode;
-}) => (
+const StatRow = ({ label, children }: { label: string; children?: React.ReactNode }) => (
   <StatRowContainer>
     <Label>{label}</Label>
     <StatValue>{children}</StatValue>
@@ -192,13 +186,7 @@ export default function MarketStats({
         ) : null}
       </StatRow>
       <StatRow label={t("market.detailsPage.marketCapRank")}>
-        <TextLabel
-          bg="neutral.c40"
-          px={2}
-          py={1}
-          overflow="hidden"
-          borderRadius={4}
-        >
+        <TextLabel bg="neutral.c40" px={2} py={1} overflow="hidden" borderRadius={4}>
           {marketcapRank}
         </TextLabel>
       </StatRow>

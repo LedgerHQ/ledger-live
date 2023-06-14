@@ -17,10 +17,7 @@ import { UnfreezeNavigatorParamList } from "../../components/RootNavigator/types
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    UnfreezeNavigatorParamList,
-    ScreenName.UnfreezeValidationSuccess
-  >,
+  StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeValidationSuccess>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -30,9 +27,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const transaction = route.params.transaction;
   const resource = (transaction as TronTransaction).resource || "";
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

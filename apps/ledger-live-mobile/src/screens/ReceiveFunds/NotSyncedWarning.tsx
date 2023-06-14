@@ -13,18 +13,12 @@ class NotSyncedWarning extends PureComponent<{
   render() {
     return (
       <PendingContainer>
-        <SyncOneAccountOnMount
-          priority={100}
-          accountId={this.props.accountId}
-        />
+        <SyncOneAccountOnMount priority={100} accountId={this.props.accountId} />
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="transfer.receive.notSynced.text" />
         </LText>
         <LText style={styles.subtitle} color="smoke">
-          <Trans
-            i18nKey="transfer.receive.notSynced.desc"
-            values={deviceNames.nanoX}
-          />
+          <Trans i18nKey="transfer.receive.notSynced.desc" values={deviceNames.nanoX} />
         </LText>
       </PendingContainer>
     );

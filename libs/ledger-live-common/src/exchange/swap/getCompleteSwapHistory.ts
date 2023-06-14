@@ -1,9 +1,5 @@
 import { findTokenById } from "@ledgerhq/cryptoassets";
-import type {
-  SwapHistorySection,
-  SwapOperation,
-  MappedSwapOperation,
-} from "./types";
+import type { SwapHistorySection, SwapOperation, MappedSwapOperation } from "./types";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 import type { AccountLike } from "@ledgerhq/types-live";
 
@@ -20,14 +16,14 @@ const getSwapOperationMap =
       status,
       tokenId,
     } = swapOperation;
-    const operation = account.operations.find((o) => o.id === operationId);
+    const operation = account.operations.find(o => o.id === operationId);
     const optimisticOperation = !operation
-      ? account.pendingOperations.find((o) => o.id === operationId)
+      ? account.pendingOperations.find(o => o.id === operationId)
       : null;
     const op = operation || optimisticOperation;
 
     if (op) {
-      let toAccount = accounts.find((a) => a.id === receiverAccountId);
+      let toAccount = accounts.find(a => a.id === receiverAccountId);
       let toParentAccount;
       let toExists = !optimisticOperation;
 
@@ -37,9 +33,9 @@ const getSwapOperationMap =
         if (token && toAccount.type === "Account") {
           toParentAccount = toAccount;
           // Enhance the account with the given token in case we don't have funds yet.
-          toAccount = (
-            accountWithMandatoryTokens(toAccount, [token]).subAccounts || []
-          ).find((a) => getAccountCurrency(a).id === tokenId);
+          toAccount = (accountWithMandatoryTokens(toAccount, [token]).subAccounts || []).find(
+            a => getAccountCurrency(a).id === tokenId,
+          );
           toExists = (toParentAccount.subAccounts || []).includes(toAccount);
         }
       }
@@ -48,7 +44,7 @@ const getSwapOperationMap =
         let fromParentAccount;
 
         if (account.type !== "Account") {
-          fromParentAccount = accounts.find((a) => a.id === account.parentId);
+          fromParentAccount = accounts.find(a => a.id === account.parentId);
         }
 
         return {
@@ -58,10 +54,7 @@ const getSwapOperationMap =
           toAccount,
           toParentAccount,
           fromAccount: account,
-          fromParentAccount:
-            fromParentAccount?.type === "Account"
-              ? fromParentAccount
-              : undefined,
+          fromParentAccount: fromParentAccount?.type === "Account" ? fromParentAccount : undefined,
           operation: op,
           fromAmount,
           toAmount,
@@ -75,9 +68,7 @@ function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 
-const getCompleteSwapHistory = (
-  accounts: AccountLike[]
-): SwapHistorySection[] => {
+const getCompleteSwapHistory = (accounts: AccountLike[]): SwapHistorySection[] => {
   const swaps: MappedSwapOperation[] = [];
 
   for (const account of accounts) {
@@ -113,7 +104,7 @@ const getCompleteSwapHistory = (
       day = startOfDay(swap.operation.date);
       data = [swap];
       continue;
-    } else if (!skip && !data.find((d) => d.swapId === swap.swapId)) {
+    } else if (!skip && !data.find(d => d.swapId === swap.swapId)) {
       data.push(swap);
     }
 

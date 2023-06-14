@@ -313,7 +313,7 @@ describe("swap/getProviders", () => {
           params: expect.objectContaining({
             whitelist: expect.any(Array),
           }),
-        })
+        }),
       );
     });
 

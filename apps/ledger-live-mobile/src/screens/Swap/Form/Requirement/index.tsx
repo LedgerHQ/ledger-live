@@ -16,10 +16,7 @@ export function Requirement({ required, provider }: Props) {
   return (
     <RequirementBanner
       required={
-        required as unknown as
-          | ScreenName.SwapLogin
-          | ScreenName.SwapKYC
-          | ScreenName.SwapMFA
+        required as unknown as ScreenName.SwapLogin | ScreenName.SwapKYC | ScreenName.SwapMFA
       }
       provider={provider}
     />

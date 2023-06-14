@@ -14,16 +14,9 @@ import {
   listSupportedCurrencies,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
-import {
-  counterValueCurrencySelector,
-  hasOrderedNanoSelector,
-} from "../../../reducers/settings";
+import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";
 import { usePortfolioAllAccounts } from "../../../hooks/portfolio";
 
 import GraphCardContainer from "../GraphCardContainer";
@@ -34,9 +27,7 @@ import CheckLanguageAvailability from "../../../components/CheckLanguageAvailabi
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import BuyDeviceBanner, {
-  IMAGE_PROPS_BIG_NANO,
-} from "../../../components/BuyDeviceBanner";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
 import Assets from "../Assets";
 import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 import {
@@ -55,9 +46,7 @@ type NavigationProps = BaseComposite<
 
 function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const { t } = useTranslation();
-  const counterValueCurrency: Currency = useSelector(
-    counterValueCurrencySelector,
-  );
+  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
@@ -189,9 +178,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       <CollapsibleHeaderFlatList<JSX.Element>
         data={data}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-          item as JSX.Element
-        }
+        renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
       />

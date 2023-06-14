@@ -45,12 +45,7 @@ export default function ResetThirdPartyDataRow() {
         <Button type={"main"} mt={4} onPress={onConfirm} event="DoClearCache">
           {t("common.confirm")}
         </Button>
-        <Button
-          type={"default"}
-          mt={4}
-          onPress={onRequestClose}
-          event="CancelClearCache"
-        >
+        <Button type={"default"} mt={4} onPress={onRequestClose} event="CancelClearCache">
           {t("common.cancel")}
         </Button>
       </QueuedDrawer>

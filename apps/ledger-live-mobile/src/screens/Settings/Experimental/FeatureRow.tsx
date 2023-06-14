@@ -37,18 +37,12 @@ const FeatureRow = ({ feature }: Props) => {
 
   // we only display a feature as experimental if it is not enabled already via feature flag
   return (
-    <SettingsRow
-      event={`${feature.name}Row`}
-      title={feature.title}
-      desc={feature.description}
-    >
+    <SettingsRow event={`${feature.name}Row`} title={feature.title} desc={feature.description}>
       <Children
         checked={!isEnvDefault(feature.name)}
         readOnly={isReadOnly(feature.name)}
         onChange={setEnvUnsafe}
-        isDefault={
-          isEnvDefault(feature.name) || getEnv(feature.name) === undefined
-        }
+        isDefault={isEnvDefault(feature.name) || getEnv(feature.name) === undefined}
         {...rest}
         value={getEnv(feature.name)}
       />
@@ -58,10 +52,7 @@ const FeatureRow = ({ feature }: Props) => {
 
 const FeatureRowCommon = ({ feature }: Props) =>
   feature.rolloutFeatureFlag ? (
-    <FeatureRowWithFeatureFlag
-      feature={feature}
-      featureFlagId={feature.rolloutFeatureFlag}
-    />
+    <FeatureRowWithFeatureFlag feature={feature} featureFlagId={feature.rolloutFeatureFlag} />
   ) : (
     <FeatureRow feature={feature} />
   );

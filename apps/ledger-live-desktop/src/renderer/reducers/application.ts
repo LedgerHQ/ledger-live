@@ -69,6 +69,6 @@ export const isNavigationLocked = (state: { application: ApplicationState }) =>
 // Exporting reducer
 
 export default handleActions<ApplicationState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as ApplicationHandlers<false>,
+  handlers as unknown as ApplicationHandlers<false>,
   state,
 );

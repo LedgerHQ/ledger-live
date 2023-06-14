@@ -115,10 +115,22 @@ const fadeInUp = keyframes`
     }
   `;
 const animations = {
-  fadeIn: () => css`${fadeIn} ${animationLength} ${easings.outQuadratic} forwards`,
-  fadeOut: () => css`${fadeOut} ${animationLength} ${easings.outQuadratic} forwards`,
-  fadeInGrowX: () => css`${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards`,
-  fadeInUp: () => css`${fadeInUp} ${animationLength} ${easings.outQuadratic} forwards`,
+  fadeIn: () =>
+    css`
+      ${fadeIn} ${animationLength} ${easings.outQuadratic} forwards
+    `,
+  fadeOut: () =>
+    css`
+      ${fadeOut} ${animationLength} ${easings.outQuadratic} forwards
+    `,
+  fadeInGrowX: () =>
+    css`
+      ${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards
+    `,
+  fadeInUp: () =>
+    css`
+      ${fadeInUp} ${animationLength} ${easings.outQuadratic} forwards
+    `,
 };
 const overflow = {
   x: css`
@@ -196,10 +208,10 @@ export type Theme = {
     [x: string]: string;
   };
   animations: {
-    [x: string]: (props: never) => any;
+    [x: string]: (props: never) => unknown;
   };
   overflow: {
-    [x: string]: any;
+    [x: string]: unknown;
   };
 };
 

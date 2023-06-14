@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -35,7 +34,7 @@ const Dashboard = ({
   onRefreshDeviceInfo,
 }: Props) => {
   const { search } = useLocation();
-  const { t } = useTranslation();
+
   const currentDevice = useSelector(getCurrentDevice);
   const [firmwareUpdateOpened, setFirmwareUpdateOpened] = useState(false);
   const hasDisconnectedDuringFU = useRef(false);

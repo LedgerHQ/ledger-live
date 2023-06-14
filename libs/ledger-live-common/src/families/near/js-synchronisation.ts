@@ -4,7 +4,7 @@ import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 
-const getAccountShape: GetAccountShape = async (info) => {
+const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
 
@@ -16,8 +16,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
-  const { blockHeight, balance, spendableBalance, nearResources } =
-    await getAccount(address);
+  const { blockHeight, balance, spendableBalance, nearResources } = await getAccount(address);
 
   const newOperations = await getOperations(accountId, address);
   const operations = mergeOps(oldOperations, newOperations);
@@ -44,7 +43,7 @@ const postSync = (initial: Account, synced: Account): Account => {
   const { operations } = synced;
 
   synced.pendingOperations = pendingOperations.filter(
-    (po) => !operations.some((o) => o.hash === po.hash)
+    po => !operations.some(o => o.hash === po.hash),
   );
 
   return synced;

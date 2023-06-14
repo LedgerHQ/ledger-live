@@ -55,10 +55,10 @@ const illustrations = {
 const Illustration = styled.div<{
   modelId: string;
 }>`
-  background: url('${p =>
-    illustrations[p.modelId as keyof typeof illustrations][
-      p.theme.colors.palette.type || "light"
-    ]}')
+  background: url("${p =>
+      illustrations[p.modelId as keyof typeof illustrations][
+        p.theme.colors.palette.type || "light"
+      ]}")
     no-repeat top right;
   width: ${p => illustrations[p.modelId as keyof typeof illustrations].width}px;
   height: 50px;

@@ -83,11 +83,8 @@ export const DEFAULT_LANGUAGE_LOCALE = "en";
 /** This allows us to have the language set by default to the system language
  * if & only if that language is supported.
  */
-export const getDefaultLanguageLocale = (
-  fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE,
-) =>
-  RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag ||
-  fallbackLocale;
+export const getDefaultLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) =>
+  RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag || fallbackLocale;
 const languageLocaleToDefaultLocaleMap: {
   [k: string]: string;
 } = {
@@ -119,7 +116,5 @@ export const DEFAULT_LOCALE = "en-US";
  * to the system language if & only if that language is supported. */
 export const getDefaultLocale = () => {
   const defaultLanguageLocale = getDefaultLanguageLocale() as Locale;
-  return (
-    languageLocaleToDefaultLocaleMap[defaultLanguageLocale] || DEFAULT_LOCALE
-  );
+  return languageLocaleToDefaultLocaleMap[defaultLanguageLocale] || DEFAULT_LOCALE;
 };

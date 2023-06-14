@@ -3,19 +3,20 @@ import { useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-const MemoValueField = ({
-  onChange,
-  account,
-  transaction,
-  status,
-}: {
-  onChange: (a: string) => void;
-  account: Account;
+import {
+  TransactionStatus,
+  Transaction,
+  SolanaAccount,
+} from "@ledgerhq/live-common/families/solana/types";
+
+type Props = {
+  onChange: (t: Transaction) => void;
   transaction: Transaction;
   status: TransactionStatus;
-}) => {
+  account: SolanaAccount;
+};
+
+const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
   const { t } = useTranslation();
   invariant(transaction.family === "solana", "Memo: solana family expected");
   const bridge = getAccountBridge(account);
@@ -35,7 +36,7 @@ const MemoValueField = ({
     },
     [onChange, transaction, bridge],
   );
-  return (
+  return transaction.model.kind === "transfer" || transaction.model.kind === "token.transfer" ? (
     <Input
       warning={status.warnings.memo}
       error={status.errors.memo}
@@ -43,6 +44,6 @@ const MemoValueField = ({
       onChange={onMemoValueChange}
       placeholder={t("families.solana.memoPlaceholder")}
     />
-  );
+  ) : null;
 };
 export default MemoValueField;

@@ -1,10 +1,7 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { WebView } from "react-native-webview";
-import {
-  WebViewErrorEvent,
-  WebViewMessageEvent,
-} from "react-native-webview/lib/WebViewTypes";
+import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
 import { injectedCode } from "./injectedCode/resultDataTesting";
@@ -72,9 +69,7 @@ export default class ResultDataTester extends React.Component<Props> {
 
   processImage = () => {
     const { hexData, width, height } = this.props;
-    this.injectJavaScript(
-      `window.reconstructImage(${width}, ${height}, "${hexData}");`,
-    );
+    this.injectJavaScript(`window.reconstructImage(${width}, ${height}, "${hexData}");`);
   };
 
   computeResult = () => {

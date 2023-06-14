@@ -50,12 +50,7 @@ const Drawer = (props: DrawerPropsType) => {
           {ELROND_LEDGER_VALIDATOR_ADDRESS === data.validator.contract ? (
             <LedgerLogo size={size * 0.7} color={colors.text} />
           ) : (
-            <FirstLetterIcon
-              label={name || "-"}
-              round={true}
-              size={size}
-              fontSize={24}
-            />
+            <FirstLetterIcon label={name || "-"} round={true} size={size} fontSize={24} />
           )}
         </Circle>
       )}

@@ -3,8 +3,8 @@ import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 type Props = {
   name: string;
-  valueOn?: boolean;
-  valueOff?: boolean;
+  valueOn?: string | boolean;
+  valueOff?: string | boolean;
   isDefault: boolean;
   readOnly: boolean;
   onChange: (name: string, val: unknown) => void;

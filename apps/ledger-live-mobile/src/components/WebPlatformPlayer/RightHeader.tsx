@@ -18,23 +18,13 @@ export function RightHeader({ handlePressInfo }: RightHeaderProps) {
       <View style={styles.headerRight}>
         {handlePressInfo ? (
           <TouchableOpacity onPress={handlePressInfo}>
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              height={40}
-              width={40}
-            >
+            <Flex alignItems="center" justifyContent="center" height={40} width={40}>
               <Icon name="Info" color="neutral.c100" size={20} />
             </Flex>
           </TouchableOpacity>
         ) : null}
         <TouchableOpacity onPress={navigation.goBack}>
-          <Flex
-            alignItems="center"
-            justifyContent="center"
-            height={40}
-            width={40}
-          >
+          <Flex alignItems="center" justifyContent="center" height={40} width={40}>
             <Icon name="Close" color="neutral.c100" size={20} />
           </Flex>
         </TouchableOpacity>

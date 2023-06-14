@@ -1,6 +1,7 @@
 import "~/live-common-setup-base";
 import "~/live-common-set-supported-currencies";
-import "./generated/live-common-setup";
+import "./families"; // families may set up their own things
+
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
 import { listen as listenLogs } from "@ledgerhq/logs";
@@ -8,6 +9,7 @@ import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 listenLogs(({ id, date, ...log }) => {
   if (log.type === "hid-frame") return;
   logger.debug(log);

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { addAccounts } from "@ledgerhq/live-common/account/index";
 import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -15,23 +15,30 @@ import { closeModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Modal, { RenderProps } from "~/renderer/components/Modal";
+import Modal from "~/renderer/components/Modal";
 import StepChooseCurrency, { StepChooseCurrencyFooter } from "./steps/StepChooseCurrency";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepImport, { StepImportFooter } from "./steps/StepImport";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-type Props = {
+
+export type Props = {
+  // props from redux
   device: Device | undefined | null;
   existingAccounts: Account[];
   closeModal: (a: string) => void;
   replaceAccounts: (a: Account[]) => void;
   blacklistedTokenIds?: string[];
-  currency: CryptoOrTokenCurrency | undefined | null;
+} & UserProps;
+
+export type UserProps = {
+  // props from user
+  currency?: CryptoOrTokenCurrency | undefined | null;
   flow?: string | null;
   onClose?: () => void;
-  preventSkippingCurrencySelection: boolean | undefined | null;
+  preventSkippingCurrencySelection?: boolean | undefined | null;
 };
+
 type StepId = "chooseCurrency" | "connectDevice" | "import" | "finish";
 type ScanStatus = "idle" | "scanning" | "error" | "finished";
 export type StepProps = {
@@ -206,7 +213,7 @@ class AddAccounts extends PureComponent<Props, State> {
     });
   };
 
-  handleBeforeOpen = ({ data }: RenderProps<{ currency?: CryptoCurrency }>) => {
+  handleBeforeOpen = ({ data }: { data: UserProps | undefined }) => {
     const { currency } = this.state;
     if (!currency) {
       if (data && data.currency) {
@@ -232,15 +239,8 @@ class AddAccounts extends PureComponent<Props, State> {
       flow = "add account",
       preventSkippingCurrencySelection,
     } = this.props;
-    const {
-      currency,
-      scannedAccounts,
-      checkedAccountsIds,
-      scanStatus,
-      err,
-      editedNames,
-      reset,
-    } = this.state;
+    const { currency, scannedAccounts, checkedAccountsIds, scanStatus, err, editedNames, reset } =
+      this.state;
     let { stepId } = this.state;
     const stepperProps = {
       currency,
@@ -304,8 +304,10 @@ class AddAccounts extends PureComponent<Props, State> {
     );
   }
 }
+
 const m = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(AddAccounts) as typeof AddAccounts;
+)(AddAccounts) as React.ComponentType<UserProps>;
+
 export default m;

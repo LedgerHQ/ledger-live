@@ -11,9 +11,7 @@ type Props = {
 };
 
 const SupportLinkError = ({ error, type }: Props) => {
-  const maybeLink = error
-    ? urls.errors[error.name as keyof typeof urls.errors]
-    : null;
+  const maybeLink = error ? urls.errors[error.name as keyof typeof urls.errors] : null;
   const onOpen = useCallback(() => {
     maybeLink && Linking.openURL(maybeLink);
   }, [maybeLink]);

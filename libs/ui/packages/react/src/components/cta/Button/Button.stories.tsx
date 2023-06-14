@@ -65,9 +65,9 @@ export const Overview = ((args: ButtonProps) => {
               variant="{buttonType}"<br />
               outline={`{${outline.toString()}}`}
             </Text>
-            {propsArr.map((buttonProps) => (
+            {propsArr.map(buttonProps => (
               <Flex flex={1} columnGap={4}>
-                {[false, true].map((disabled) => (
+                {[false, true].map(disabled => (
                   <Button
                     size={args.size}
                     variant={buttonType}
@@ -85,11 +85,11 @@ export const Overview = ((args: ButtonProps) => {
   );
 }).bind({});
 
-export const Default: StoryTemplate<ButtonProps> = (args) => {
+export const Default: StoryTemplate<ButtonProps> = args => {
   return <Button {...args}>{args.children || "Regular button"}</Button>;
 };
 
-export const Inverted: StoryTemplate<ButtonProps> = (args) => {
+export const Inverted: StoryTemplate<ButtonProps> = args => {
   return (
     <Flex flexDirection="column">
       <Flex flex="0 0 1" p={4} alignItems="center" bg="background.main">
@@ -104,7 +104,7 @@ export const Inverted: StoryTemplate<ButtonProps> = (args) => {
   );
 };
 
-export const IconButton: StoryTemplate<ButtonProps> = (args) => {
+export const IconButton: StoryTemplate<ButtonProps> = args => {
   return <Button {...args}>{args.children || "Regular button"}</Button>;
 };
 IconButton.args = {

@@ -14,10 +14,7 @@ import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseBut
 export default function ImportAccountsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig }}>
       <Stack.Screen
@@ -31,9 +28,7 @@ export default function ImportAccountsNavigator() {
               {t("account.import.scan.title")}
             </Text>
           ),
-          headerRight: props => (
-            <NavigationHeaderCloseButtonAdvanced {...props} color={"#fff"} />
-          ),
+          headerRight: props => <NavigationHeaderCloseButtonAdvanced {...props} color={"#fff"} />,
           headerLeft: () => null,
         }}
       />

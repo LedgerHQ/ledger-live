@@ -5,7 +5,7 @@ import type { Observable, Subject } from "rxjs";
 export type Exec = (
   appOp: AppOp,
   targetId: string | number,
-  app: App
+  app: App,
 ) => Observable<{
   progress: number;
 }>;
@@ -128,37 +128,42 @@ export type SkippedAppOp = {
   appOp: AppOp;
 };
 
-export type Action =  // recover from an error
-  | {
-      type: "recover";
-    } // wipe will remove all apps of the device
-  | {
-      type: "wipe";
-    } // uninstall a specific app by name
-  | {
-      type: "uninstall";
-      name: string;
-      force?: boolean;
-    } // install or update a specific app by name
-  | {
-      type: "install";
-      name: string;
-      allowPartialDependencies?: boolean;
-    } // update all
-  | {
-      type: "updateAll";
-    } // action to run after an update was done on the device (uninstall/install)
-  | {
-      type: "setCustomImage";
-      lastSeenCustomImage: {
-        hash: string;
-        size: number;
+export type Action = // recover from an error
+
+    | {
+        type: "reset";
+        initialState: State;
+      }
+    | {
+        type: "recover";
+      } // wipe will remove all apps of the device
+    | {
+        type: "wipe";
+      } // uninstall a specific app by name
+    | {
+        type: "uninstall";
+        name: string;
+        force?: boolean;
+      } // install or update a specific app by name
+    | {
+        type: "install";
+        name: string;
+        allowPartialDependencies?: boolean;
+      } // update all
+    | {
+        type: "updateAll";
+      } // action to run after an update was done on the device (uninstall/install)
+    | {
+        type: "setCustomImage";
+        lastSeenCustomImage: {
+          hash: string;
+          size: number;
+        };
+      } // action to run after a successful custom image flow, to update the UI accordingly
+    | {
+        type: "onRunnerEvent";
+        event: RunnerEvent;
       };
-    } // action to run after a successful custom image flow, to update the UI accordingly
-  | {
-      type: "onRunnerEvent";
-      event: RunnerEvent;
-    };
 export type RunnerEvent =
   | {
       type: "runStart";

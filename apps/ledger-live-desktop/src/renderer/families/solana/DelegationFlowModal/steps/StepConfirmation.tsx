@@ -1,8 +1,11 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import React from "react";
+import { useValidators } from "@ledgerhq/live-common/families/solana/react";
+import { StakeCreateAccountTransaction } from "@ledgerhq/live-common/families/solana/types";
+import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -13,23 +16,42 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
+
 function StepConfirmation({
   t,
   optimisticOperation,
   error,
   signed,
-}: StepProps & {
-  theme: any;
-}) {
+  transaction,
+  source,
+  account,
+}: StepProps) {
+  const voteAccAddress = (transaction?.model?.uiState as StakeCreateAccountTransaction["uiState"])
+    ?.delegate?.voteAccAddress;
+  const validators = useValidators(account.currency);
+  useEffect(() => {
+    if (optimisticOperation && voteAccAddress && validators) {
+      const chosenValidator = validators.find(v => v.voteAccount === voteAccAddress);
+      track("staking_completed", {
+        currency: "SOL",
+        validator: chosenValidator?.name || voteAccAddress,
+        source,
+        delegation: "delegation",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, account.currency, voteAccAddress, validators, source]);
+
   if (optimisticOperation) {
     return (
       <Container>
@@ -61,7 +83,6 @@ function StepConfirmation({
 }
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -83,7 +104,6 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -96,4 +116,4 @@ export function StepConfirmationFooter({
     </Box>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

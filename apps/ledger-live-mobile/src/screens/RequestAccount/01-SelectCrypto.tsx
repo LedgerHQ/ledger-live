@@ -32,10 +32,7 @@ const renderEmptyList = () => (
   </View>
 );
 
-export default function RequestAccountsSelectCrypto({
-  navigation,
-  route,
-}: Props) {
+export default function RequestAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currencies } = route.params;
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);

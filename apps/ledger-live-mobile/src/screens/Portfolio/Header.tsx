@@ -1,11 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import {
-  CardMedium,
-  SettingsMedium,
-  WalletConnectMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -34,8 +30,7 @@ const NotificationsButton = () => {
   }, [navigation]);
 
   const notificationsCount = useMemo(
-    () =>
-      notificationCards.length - notificationCards.filter(n => n.viewed).length,
+    () => notificationCards.length - notificationCards.filter(n => n.viewed).length,
     [notificationCards],
   );
   return (
@@ -59,9 +54,10 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (
-        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
-      ).navigate(name, options);
+      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+        name,
+        options,
+      );
     },
     [navigation],
   );
@@ -90,19 +86,8 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   }, [navigation]);
 
   return (
-    <Flex
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-      py={3}
-    >
-      <Flex
-        flexDirection={"row"}
-        alignItems={"center"}
-        mr={3}
-        flexShrink={1}
-        flexGrow={1}
-      >
+    <Flex flexDirection="row" alignItems="center" justifyContent="space-between" py={3}>
+      <Flex flexDirection={"row"} alignItems={"center"} mr={3} flexShrink={1} flexGrow={1}>
         <Text
           variant={"h4"}
           fontWeight={"semiBold"}

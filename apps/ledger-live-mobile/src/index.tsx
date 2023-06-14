@@ -1,6 +1,5 @@
 import "./polyfill";
 import "./live-common-setup";
-import "../e2e/e2e-bridge-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
@@ -19,13 +18,10 @@ import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Config from "react-native-config";
-import {
-  LogLevel,
-  PerformanceProfiler,
-  RenderPassReport,
-} from "@shopify/react-native-performance";
+import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
+import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -107,10 +103,7 @@ function App() {
   useAppStateListener();
   useListenToHidDevices();
 
-  const getSettingsChanged = useCallback(
-    (a, b) => a.settings !== b.settings,
-    [],
-  );
+  const getSettingsChanged = useCallback((a, b) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
     (
       oldState: State,
@@ -143,10 +136,7 @@ function App() {
 
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
-  const pairIds = useMemo(
-    () => trackingPairs.map(p => pairId(p)),
-    [trackingPairs],
-  );
+  const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [trackingPairs]);
   useDBSaveEffect({
     save: saveCountervalues,
     throttle: 2000,
@@ -234,17 +224,14 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
     return () => sub.remove();
   }, [compareOsTheme]);
   const resolvedTheme = useMemo(
-    () =>
-      ((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark",
+    () => (((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark"),
     [theme, osTheme],
   );
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>
       <GeneralTermsContextProvider>
-        <DeeplinksProvider resolvedTheme={resolvedTheme}>
-          {children}
-        </DeeplinksProvider>
+        <DeeplinksProvider resolvedTheme={resolvedTheme}>{children}</DeeplinksProvider>
       </GeneralTermsContextProvider>
     </StyleProvider>
   );
@@ -262,8 +249,12 @@ export default class Root extends Component {
     throw e;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onInitFinished = () => {};
+  onInitFinished = () => {
+    if (Config.MOCK) {
+      init();
+    }
+  };
+
   onRebootStart = () => {
     clearTimeout(this.initTimeout);
     if (SplashScreen.show) SplashScreen.show(); // on iOS it seems to not be exposed
@@ -296,12 +287,8 @@ export default class Root extends Component {
                                   <I18nextProvider i18n={i18n}>
                                     <LocaleProvider>
                                       <BridgeSyncProvider>
-                                        <CounterValuesProvider
-                                          initialState={initialCountervalues}
-                                        >
-                                          <ButtonUseTouchable.Provider
-                                            value={true}
-                                          >
+                                        <CounterValuesProvider initialState={initialCountervalues}>
+                                          <ButtonUseTouchable.Provider value={true}>
                                             <OnboardingContextProvider>
                                               <PostOnboardingProviderWrapped>
                                                 <ToastProvider>

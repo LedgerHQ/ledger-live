@@ -20,15 +20,8 @@ import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
 import perFamilyAccount from "../../generated/account";
-import type {
-  Account,
-  DeviceInfo,
-  FirmwareUpdateContext,
-} from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
 
 export type State = {
@@ -138,10 +131,7 @@ const mapResult = ({
       }
     : null;
 
-const getInitialState = (
-  device?: Device | null | undefined,
-  request?: AppRequest
-): State => ({
+const getInitialState = (device?: Device | null | undefined, request?: AppRequest): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   requestOpenApp: null,
@@ -404,9 +394,7 @@ const reducer = (state: State, e: Event): State => {
         skippedAppOps: state.skippedAppOps,
         listedApps: state.listedApps,
         displayUpgradeWarning:
-          state.device && e.app
-            ? shouldUpgrade(e.app.name, e.app.version)
-            : false,
+          state.device && e.app ? shouldUpgrade(e.app.name, e.app.version) : false,
       };
   }
 
@@ -422,8 +410,7 @@ function inferCommandParams(appRequest: AppRequest) {
   let derivationMode;
   let derivationPath;
 
-  const { account, requireLatestFirmware, allowPartialDependencies } =
-    appRequest;
+  const { account, requireLatestFirmware, allowPartialDependencies } = appRequest;
   let { appName, currency, dependencies } = appRequest;
 
   if (!currency && account) {
@@ -437,7 +424,7 @@ function inferCommandParams(appRequest: AppRequest) {
   invariant(appName, "appName or currency or account is missing");
 
   if (dependencies) {
-    dependencies = dependencies.map((d) => inferCommandParams(d).appName);
+    dependencies = dependencies.map(d => inferCommandParams(d).appName);
   }
 
   if (!currency) {
@@ -467,7 +454,7 @@ function inferCommandParams(appRequest: AppRequest) {
         currency,
         derivationMode,
       }),
-      currency
+      currency,
     );
   }
 
@@ -491,12 +478,9 @@ export function setDeviceMode(mode: keyof typeof ImplementationType): void {
 }
 
 export const createAction = (
-  connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>
+  connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
 ): AppAction => {
-  const useHook = (
-    device: Device | null | undefined,
-    appRequest: AppRequest
-  ): AppState => {
+  const useHook = (device: Device | null | undefined, appRequest: AppRequest): AppState => {
     const dependenciesResolvedRef = useRef(false);
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
@@ -508,11 +492,12 @@ export const createAction = (
         appRequest.appName, // eslint-disable-next-line react-hooks/exhaustive-deps
         appRequest.account && appRequest.account.id, // eslint-disable-next-line react-hooks/exhaustive-deps
         appRequest.currency && appRequest.currency.id,
-      ]
+        appRequest.dependencies,
+      ],
     );
 
-    const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> =
-      useCallback(({ deviceId, request }: ConnectAppInput) => {
+    const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> = useCallback(
+      ({ deviceId, request }: ConnectAppInput) => {
         //To avoid redundant checks, we remove passed checks from the request.
         const { dependencies, requireLatestFirmware } = request;
 
@@ -520,16 +505,12 @@ export const createAction = (
           deviceId,
           request: {
             ...request,
-            dependencies: dependenciesResolvedRef.current
-              ? undefined
-              : dependencies,
-            requireLatestFirmware: firmwareResolvedRef.current
-              ? undefined
-              : requireLatestFirmware,
+            dependencies: dependenciesResolvedRef.current ? undefined : dependencies,
+            requireLatestFirmware: firmwareResolvedRef.current ? undefined : requireLatestFirmware,
             outdatedApp: outdatedAppRef.current,
           },
         }).pipe(
-          tap((e) => {
+          tap(e => {
             // These events signal the resolution of pending checks.
             if (e.type === "dependencies-resolved") {
               dependenciesResolvedRef.current = true;
@@ -538,9 +519,11 @@ export const createAction = (
             } else if (e.type === "has-outdated-app") {
               outdatedAppRef.current = e.outdatedApp as AppAndVersion;
             }
-          })
+          }),
         );
-      }, []);
+      },
+      [],
+    );
 
     // repair modal will interrupt everything and be rendered instead of the background content
     const [state, setState] = useState(() => getInitialState(device));
@@ -550,10 +533,7 @@ export const createAction = (
     useEffect(() => {
       if (state.opened) return;
 
-      const impl = getImplementation(currentMode)<
-        ConnectAppEvent,
-        ConnectAppRequest
-      >({
+      const impl = getImplementation(currentMode)<ConnectAppEvent, ConnectAppRequest>({
         deviceSubject,
         task,
         request,
@@ -562,11 +542,9 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-app-event", e.type, e)),
-          debounce((e: Event) =>
-            "replaceable" in e && e.replaceable ? interval(100) : EMPTY
-          ),
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : EMPTY)),
           scan(reducer, getInitialState()),
-          takeWhile((s: State) => !s.requiresAppInstallation && !s.error, true)
+          takeWhile((s: State) => !s.requiresAppInstallation && !s.error, true),
         )
         .subscribe(setState);
 
@@ -581,12 +559,12 @@ export const createAction = (
       firmwareResolvedRef.current = false;
 
       // The nonce change triggers a refresh.
-      setResetIndex((i) => i + 1);
+      setResetIndex(i => i + 1);
       setState(getInitialState(device));
     }, [device]);
 
     const passWarning = useCallback(() => {
-      setState((currState) => ({
+      setState(currState => ({
         ...currState,
         displayUpgradeWarning: false,
       }));

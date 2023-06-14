@@ -1,8 +1,5 @@
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../../const";
@@ -16,6 +13,8 @@ export type SignMessageNavigatorStackParamList = {
   [ScreenName.SignSummary]: {
     currentNavigation?: keyof SignMessageNavigatorStackParamList;
     nextNavigation?: keyof SignMessageNavigatorStackParamList;
+    onConfirmationHandler?: (_: string) => void;
+    onFailHandler?: (_: Error) => void;
   } & CommonParams;
   [ScreenName.SignSelectDevice]: CommonParams;
   [ScreenName.SignConnectDevice]: {

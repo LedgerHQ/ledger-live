@@ -124,9 +124,9 @@ describe("trackingWrapper", () => {
         {
           walletAPI: appManifest.name,
         },
-        null
+        null,
       );
-    }
+    },
   );
 });
 
@@ -152,5 +152,6 @@ function appManifestFixture(name = "live-app"): AppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }

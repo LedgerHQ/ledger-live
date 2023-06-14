@@ -1,17 +1,9 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { getAccountBridge } from "../../bridge";
-import {
-  decodeAccountId,
-  encodeAccountId,
-  fromAccountRaw,
-} from "../../account";
+import { decodeAccountId, encodeAccountId, fromAccountRaw } from "../../account";
 import { BigNumber } from "bignumber.js";
-import {
-  AmountRequired,
-  InvalidAddress,
-  NotEnoughBalance,
-} from "@ledgerhq/errors";
+import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
 
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";

@@ -41,7 +41,7 @@ export function CurrencyList({ currencies, onCurrencySelect }: Props) {
             itemSize={52}
             width="100%"
           >
-            {({ index, style }: any) => {
+            {({ index, style }) => {
               const currency = currencies[index];
               return (
                 <RowContainer

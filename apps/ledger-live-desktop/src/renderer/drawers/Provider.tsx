@@ -1,9 +1,11 @@
-import React, { useReducer, useEffect, useCallback } from "react";
+import React, { useReducer, useEffect, useCallback, useState, useContext } from "react";
 import { DrawerProps as SideDrawerProps } from "~/renderer/components/SideDrawer";
 
 export type State<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   C extends React.ComponentType<P> | undefined | null = React.ComponentType<any> | undefined | null,
-  P = any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  P = any,
 > = {
   Component: C;
   props?: P;
@@ -16,7 +18,7 @@ export let setDrawer: <
   P,
   C extends React.ComponentType<P> | undefined | null = P extends null
     ? null
-    : React.ComponentType<P>
+    : React.ComponentType<P>,
 >(
   Component?: C,
   props?: State<C, P>["props"],
@@ -44,17 +46,30 @@ export const context: React.Context<ContextValue> = React.createContext<ContextV
   state: initialState,
   setDrawer: () => null,
 });
+
+type AnalyticsContextValue = {
+  analyticsDrawerName?: string;
+  setAnalyticsDrawerName: (name?: string) => void;
+};
+export const analyticsDrawerContext = React.createContext<AnalyticsContextValue>({
+  analyticsDrawerName: undefined,
+  setAnalyticsDrawerName: () => null,
+});
+
 const DrawerProvider = ({ children }: { children: React.ReactNode }) => {
+  const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const _setDrawer: typeof setDrawer = useCallback(
-    (Component, props, options = {}) =>
+    (Component, props, options = {}) => {
+      setAnalyticsDrawerName(undefined);
       dispatch({
         Component,
         props,
         open: !!Component,
         options,
-      }),
-    [],
+      });
+    },
+    [setAnalyticsDrawerName],
   );
   useEffect(() => {
     setDrawer = _setDrawer;
@@ -70,4 +85,14 @@ const DrawerProvider = ({ children }: { children: React.ReactNode }) => {
     </context.Provider>
   );
 };
-export default DrawerProvider;
+
+const DrawerProviderWithAnalytics = ({ children }: { children: React.ReactNode }) => {
+  const [analyticsDrawerName, setAnalyticsDrawerName] = useState<string>();
+  return (
+    <analyticsDrawerContext.Provider value={{ analyticsDrawerName, setAnalyticsDrawerName }}>
+      <DrawerProvider>{children}</DrawerProvider>
+    </analyticsDrawerContext.Provider>
+  );
+};
+
+export default DrawerProviderWithAnalytics;

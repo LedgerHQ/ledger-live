@@ -61,8 +61,8 @@ export const Item = {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: ${(p) => p.theme.space[8]}px;
-    height: ${(p) => p.theme.space[8]}px;
+    width: ${p => p.theme.space[8]}px;
+    height: ${p => p.theme.space[8]}px;
     ${color}
     ${border}
     ${space}
@@ -83,9 +83,9 @@ export const Item = {
   Pending: styled.div.attrs({
     backgroundColor: "neutral.c70",
   })<ColorProps>`
-    width: ${(p) => p.theme.space[2]}px;
-    height: ${(p) => p.theme.space[2]}px;
-    border-radius: ${(p) => p.theme.space[2]}px;
+    width: ${p => p.theme.space[2]}px;
+    height: ${p => p.theme.space[2]}px;
+    border-radius: ${p => p.theme.space[2]}px;
     ${color}
   `,
   Completed: (): JSX.Element => <Icons.CheckAloneMedium size={16} />,
@@ -94,7 +94,7 @@ export const Item = {
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`
-  color: ${(p) => {
+  color: ${p => {
     if (p.state === "errored") {
       return p.theme.colors.error.c50;
     }
@@ -112,9 +112,9 @@ const BaseSeparator = styled.div<{ inactive?: boolean }>`
   flex: 1;
   position: relative;
   overflow-x: hidden;
-  background-color: ${(p) => p.theme.colors.neutral.c40};
+  background-color: ${p => p.theme.colors.neutral.c40};
   height: 1px;
-  top: ${(p) => p.theme.space[5]}px;
+  top: ${p => p.theme.space[5]}px;
 `;
 
 const Separator = {

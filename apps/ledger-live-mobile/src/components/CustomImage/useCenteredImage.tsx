@@ -35,20 +35,20 @@ function useCenteredImage(params: Params) {
       };
 
     const load = async () => {
-      const realImageDimensions = await loadImageSizeAsync(imageFileUri).catch(
-        e => {
-          console.error(e);
-          throw new ImageMetadataLoadingError();
-        },
-      );
+      let realImageDimensions;
+      try {
+        realImageDimensions = await loadImageSizeAsync(imageFileUri);
+      } catch (e) {
+        console.error(e);
+        throw new ImageMetadataLoadingError();
+      }
 
       const imageDimensions = {
         width: realImageDimensions.width / 2,
         height: realImageDimensions.height / 2,
       };
 
-      const getImageRatio = (dimensions: ImageDimensions) =>
-        dimensions.height / dimensions.width;
+      const getImageRatio = (dimensions: ImageDimensions) => dimensions.height / dimensions.width;
 
       const targetRatio = getImageRatio(targetDimensions);
       const imageRatio = getImageRatio(imageDimensions);
@@ -67,15 +67,9 @@ function useCenteredImage(params: Params) {
 
       const cropParams = {
         ...targetDimensions,
-        originX: Math.abs(
-          Math.floor(
-            (targetDimensions.width - resizedImageDimensions.width) / 2,
-          ),
-        ),
+        originX: Math.abs(Math.floor((targetDimensions.width - resizedImageDimensions.width) / 2)),
         originY: Math.abs(
-          Math.floor(
-            (targetDimensions.height - resizedImageDimensions.height) / 2,
-          ),
+          Math.floor((targetDimensions.height - resizedImageDimensions.height) / 2),
         ),
       };
 

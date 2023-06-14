@@ -28,377 +28,338 @@ import type { ModeModule } from "../types";
 
 export type Modes = "send";
 
-const inferDeviceTransactionConfigWalletApi: ModeModule["fillDeviceTransactionConfig"] =
-  ({ transaction, account, parentAccount }, fields) => {
-    if (!transaction.data) throw new Error();
+const inferDeviceTransactionConfigWalletApi: ModeModule["fillDeviceTransactionConfig"] = (
+  { transaction, account, parentAccount },
+  fields,
+) => {
+  if (!transaction.data) throw new Error();
 
-    const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
+  const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
 
-    const selector = `0x${transaction.data.toString("hex").substring(0, 8)}`;
-    const argumentsBuffer = transaction.data.slice(4);
-    const mainAccount = getMainAccount(account, parentAccount);
-    const knownNft = mainAccount.nfts?.find(
-      (nft) =>
-        nft.contract.toLowerCase() === transaction.recipient.toLowerCase()
-    );
-    const token = findTokenByAddress(transaction.recipient);
+  const selector = `0x${transaction.data.toString("hex").substring(0, 8)}`;
+  const argumentsBuffer = transaction.data.slice(4);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const knownNft = mainAccount.nfts?.find(
+    nft => nft.contract.toLowerCase() === transaction.recipient.toLowerCase(),
+  );
+  const token = findTokenByAddress(transaction.recipient);
 
-    // ERC20 fields
-    if (
-      token &&
-      Object.values<string>(ERC20_CLEAR_SIGNED_SELECTORS).includes(selector)
-    ) {
-      switch (selector) {
-        case ERC20_CLEAR_SIGNED_SELECTORS.TRANSFER: {
-          const [recipient, value] = abi.rawDecode(
-            ["address", "uint256"],
-            argumentsBuffer
-          );
+  // ERC20 fields
+  if (token && Object.values<string>(ERC20_CLEAR_SIGNED_SELECTORS).includes(selector)) {
+    switch (selector) {
+      case ERC20_CLEAR_SIGNED_SELECTORS.TRANSFER: {
+        const [recipient, value] = abi.rawDecode(["address", "uint256"], argumentsBuffer);
 
-          fields.push(
-            {
-              type: "text",
-              label: "Amount",
-              value: `${token.ticker} ${formatCurrencyUnit(
-                token.units[0],
-                new BigNumber(value)
-              )}`,
-            },
-            transaction.recipientDomain?.type === "forward" && hasValidDomain
-              ? {
-                  type: "text",
-                  label: "Domain",
-                  value: transaction.recipientDomain.domain,
-                }
-              : {
-                  type: "address",
-                  label: "Address",
-                  address: eip55.encode(`0x${recipient}`),
-                }
-          );
-          return;
-        }
-        case ERC20_CLEAR_SIGNED_SELECTORS.APPROVE: {
-          const [spender, value] = abi.rawDecode(
-            ["address", "uint256"],
-            argumentsBuffer
-          );
+        fields.push(
+          {
+            type: "text",
+            label: "Amount",
+            value: `${token.ticker} ${formatCurrencyUnit(token.units[0], new BigNumber(value))}`,
+          },
+          transaction.recipientDomain?.type === "forward" && hasValidDomain
+            ? {
+                type: "text",
+                label: "Domain",
+                value: transaction.recipientDomain.domain,
+              }
+            : {
+                type: "address",
+                label: "Address",
+                address: eip55.encode(`0x${recipient}`),
+              },
+        );
+        return;
+      }
+      case ERC20_CLEAR_SIGNED_SELECTORS.APPROVE: {
+        const [spender, value] = abi.rawDecode(["address", "uint256"], argumentsBuffer);
 
-          const valueAsBN = new BigNumber(value.toString());
-          fields.push(
-            { type: "text", label: "Type", value: "Approve" },
-            {
-              type: "text",
-              label: "Amount",
-              value: valueAsBN.eq(
-                "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" // uint256 max value
-              )
-                ? `Unlimited ${token.ticker}`
-                : `${token.ticker} ${formatCurrencyUnit(
-                    token.units[0],
-                    new BigNumber(value)
-                  )}`,
-            },
-            transaction.recipientDomain?.type === "forward" && hasValidDomain
-              ? {
-                  type: "text",
-                  label: "Domain",
-                  value: transaction.recipientDomain.domain,
-                }
-              : {
-                  type: "address",
-                  label: "Address",
-                  address: eip55.encode(`0x${spender}`),
-                }
-          );
-          return;
-        }
+        const valueAsBN = new BigNumber(value.toString());
+        fields.push(
+          { type: "text", label: "Type", value: "Approve" },
+          {
+            type: "text",
+            label: "Amount",
+            value: valueAsBN.eq(
+              "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", // uint256 max value
+            )
+              ? `Unlimited ${token.ticker}`
+              : `${token.ticker} ${formatCurrencyUnit(token.units[0], new BigNumber(value))}`,
+          },
+          transaction.recipientDomain?.type === "forward" && hasValidDomain
+            ? {
+                type: "text",
+                label: "Domain",
+                value: transaction.recipientDomain.domain,
+              }
+            : {
+                type: "address",
+                label: "Address",
+                address: eip55.encode(`0x${spender}`),
+              },
+        );
+        return;
       }
     }
+  }
 
-    // ERC721 fields
-    if (
-      knownNft &&
-      Object.values<string>(ERC721_CLEAR_SIGNED_SELECTORS).includes(selector)
-    ) {
-      const ERC721_METHODS_ARGUMENTS = {
-        [ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM]: [
-          "address",
-          "address",
-          "uint256",
-        ],
-        [ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA]: [
-          "address",
-          "address",
-          "uint256",
-          "bytes",
-        ],
-        [ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM]: [
-          "address",
-          "address",
-          "uint256",
-        ],
-        [ERC721_CLEAR_SIGNED_SELECTORS.APPROVE]: ["address", "uint256"],
-        [ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL]: [
-          "address",
-          "bool",
-        ],
-      };
+  // ERC721 fields
+  if (knownNft && Object.values<string>(ERC721_CLEAR_SIGNED_SELECTORS).includes(selector)) {
+    const ERC721_METHODS_ARGUMENTS = {
+      [ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM]: ["address", "address", "uint256"],
+      [ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA]: [
+        "address",
+        "address",
+        "uint256",
+        "bytes",
+      ],
+      [ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM]: ["address", "address", "uint256"],
+      [ERC721_CLEAR_SIGNED_SELECTORS.APPROVE]: ["address", "uint256"],
+      [ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL]: ["address", "bool"],
+    };
 
-      switch (selector) {
-        case ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM:
-        case ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA:
-        case ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM: {
-          const [, recipient, tokenId] = abi.rawDecode(
-            ERC721_METHODS_ARGUMENTS[selector],
-            argumentsBuffer
-          );
+    switch (selector) {
+      case ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM:
+      case ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA:
+      case ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM: {
+        const [, recipient, tokenId] = abi.rawDecode(
+          ERC721_METHODS_ARGUMENTS[selector],
+          argumentsBuffer,
+        );
 
-          fields.push(
-            {
-              type: "text",
-              label: "NFT",
-              value: "Transfer",
-            },
-            {
-              type: "text",
-              label: "To",
-              value: eip55.encode(`0x${recipient}`),
-            },
-            {
-              type: "text",
-              label: "Collection Name",
-              value: knownNft.metadata?.tokenName || "Collection Name",
-            },
-            {
-              type: "address",
-              label: "NFT Address",
-              address: eip55.encode(transaction.recipient),
-            },
-            {
-              type: "text",
-              label: "NFT ID",
-              value: tokenId.toString(),
-            }
-          );
-          return;
-        }
+        fields.push(
+          {
+            type: "text",
+            label: "NFT",
+            value: "Transfer",
+          },
+          {
+            type: "text",
+            label: "To",
+            value: eip55.encode(`0x${recipient}`),
+          },
+          {
+            type: "text",
+            label: "Collection Name",
+            value: knownNft.metadata?.tokenName || "Collection Name",
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: eip55.encode(transaction.recipient),
+          },
+          {
+            type: "text",
+            label: "NFT ID",
+            value: tokenId.toString(),
+          },
+        );
+        return;
+      }
 
-        case ERC721_CLEAR_SIGNED_SELECTORS.APPROVE: {
-          const [spender, tokenId] = abi.rawDecode(
-            ERC721_METHODS_ARGUMENTS[selector],
-            argumentsBuffer
-          );
+      case ERC721_CLEAR_SIGNED_SELECTORS.APPROVE: {
+        const [spender, tokenId] = abi.rawDecode(
+          ERC721_METHODS_ARGUMENTS[selector],
+          argumentsBuffer,
+        );
 
-          fields.push(
-            {
-              type: "text",
-              label: "NFT",
-              value: `Allowance`,
-            },
-            {
-              type: "text",
-              label: "Allow",
-              value: eip55.encode(`0x${spender}`),
-            },
-            {
-              type: "text",
-              label: "To Manage Your",
-              value: knownNft.metadata?.tokenName || "Collection Name",
-            },
-            {
-              type: "address",
-              label: "NFT Address",
-              address: eip55.encode(transaction.recipient),
-            },
-            {
-              type: "text",
-              label: "NFT ID",
-              value: tokenId.toString(),
-            }
-          );
-          return;
-        }
+        fields.push(
+          {
+            type: "text",
+            label: "NFT",
+            value: `Allowance`,
+          },
+          {
+            type: "text",
+            label: "Allow",
+            value: eip55.encode(`0x${spender}`),
+          },
+          {
+            type: "text",
+            label: "To Manage Your",
+            value: knownNft.metadata?.tokenName || "Collection Name",
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: eip55.encode(transaction.recipient),
+          },
+          {
+            type: "text",
+            label: "NFT ID",
+            value: tokenId.toString(),
+          },
+        );
+        return;
+      }
 
-        case ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL: {
-          const [spender, canManageAll] = abi.rawDecode(
-            ERC721_METHODS_ARGUMENTS[selector],
-            argumentsBuffer
-          );
+      case ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL: {
+        const [spender, canManageAll] = abi.rawDecode(
+          ERC721_METHODS_ARGUMENTS[selector],
+          argumentsBuffer,
+        );
 
-          fields.push(
-            {
-              type: "text",
-              label: "NFT",
-              value: `Allowance`,
-            },
-            {
-              type: "text",
-              label: canManageAll ? "Allow" : "Revoke",
-              value: eip55.encode(`0x${spender}`),
-            },
-            {
-              type: "text",
-              label: "To Manage ALL",
-              value: knownNft.metadata?.tokenName || "Collection Name",
-            },
-            {
-              type: "address",
-              label: "NFT Address",
-              address: eip55.encode(transaction.recipient),
-            }
-          );
-          return;
-        }
+        fields.push(
+          {
+            type: "text",
+            label: "NFT",
+            value: `Allowance`,
+          },
+          {
+            type: "text",
+            label: canManageAll ? "Allow" : "Revoke",
+            value: eip55.encode(`0x${spender}`),
+          },
+          {
+            type: "text",
+            label: "To Manage ALL",
+            value: knownNft.metadata?.tokenName || "Collection Name",
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: eip55.encode(transaction.recipient),
+          },
+        );
+        return;
       }
     }
+  }
 
-    // ERC1155 fields
-    if (
-      knownNft &&
-      Object.values<string>(ERC1155_CLEAR_SIGNED_SELECTORS).includes(selector)
-    ) {
-      const ERC1155_METHODS_ARGUMENTS = {
-        [ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM]: [
-          "address",
-          "address",
-          "uint256",
-          "uint256",
-          "bytes",
-        ],
-        [ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM]: [
-          "address",
-          "address",
-          "uint256[]",
-          "uint256[]",
-          "bytes",
-        ],
-        [ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL]: [
-          "address",
-          "bool",
-        ],
-      };
+  // ERC1155 fields
+  if (knownNft && Object.values<string>(ERC1155_CLEAR_SIGNED_SELECTORS).includes(selector)) {
+    const ERC1155_METHODS_ARGUMENTS = {
+      [ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM]: [
+        "address",
+        "address",
+        "uint256",
+        "uint256",
+        "bytes",
+      ],
+      [ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM]: [
+        "address",
+        "address",
+        "uint256[]",
+        "uint256[]",
+        "bytes",
+      ],
+      [ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL]: ["address", "bool"],
+    };
 
-      switch (selector) {
-        case ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM: {
-          const [, recipient, tokenId, quantity] = abi.rawDecode(
-            ERC1155_METHODS_ARGUMENTS[selector],
-            argumentsBuffer
-          );
+    switch (selector) {
+      case ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM: {
+        const [, recipient, tokenId, quantity] = abi.rawDecode(
+          ERC1155_METHODS_ARGUMENTS[selector],
+          argumentsBuffer,
+        );
 
-          fields.push(
-            {
-              type: "text",
-              label: "NFT",
-              value: `Transfer`,
-            },
-            {
-              type: "text",
-              label: "To",
-              value: eip55.encode(`0x${recipient}`),
-            },
-            {
-              type: "text",
-              label: "Collection Name",
-              value: knownNft.metadata?.tokenName || "Collection Name",
-            },
-            {
-              type: "address",
-              label: "NFT Address",
-              address: eip55.encode(transaction.recipient),
-            },
-            {
-              type: "text",
-              label: "NFT ID",
-              value: tokenId.toString(),
-            },
-            {
-              type: "text",
-              label: "Quantity",
-              value: quantity.toString(),
-            }
-          );
-          return;
-        }
+        fields.push(
+          {
+            type: "text",
+            label: "NFT",
+            value: `Transfer`,
+          },
+          {
+            type: "text",
+            label: "To",
+            value: eip55.encode(`0x${recipient}`),
+          },
+          {
+            type: "text",
+            label: "Collection Name",
+            value: knownNft.metadata?.tokenName || "Collection Name",
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: eip55.encode(transaction.recipient),
+          },
+          {
+            type: "text",
+            label: "NFT ID",
+            value: tokenId.toString(),
+          },
+          {
+            type: "text",
+            label: "Quantity",
+            value: quantity.toString(),
+          },
+        );
+        return;
+      }
 
-        case ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM: {
-          const [, recipient, tokenIds, quantities] = abi.rawDecode(
-            ERC1155_METHODS_ARGUMENTS[selector],
-            argumentsBuffer
-          );
+      case ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM: {
+        const [, recipient, tokenIds, quantities] = abi.rawDecode(
+          ERC1155_METHODS_ARGUMENTS[selector],
+          argumentsBuffer,
+        );
 
-          const totalQuantity = quantities.reduce(
-            (acc, curr) => acc.plus(curr),
-            new BigNumber(0)
-          );
+        const totalQuantity = quantities.reduce((acc, curr) => acc.plus(curr), new BigNumber(0));
 
-          fields.push(
-            {
-              type: "text",
-              label: "NFT",
-              value: `Batch Transfer`,
-            },
-            {
-              type: "text",
-              label: "To",
-              value: eip55.encode(`0x${recipient}`),
-            },
-            {
-              type: "text",
-              label: "Collection Name",
-              value: knownNft.metadata?.tokenName || "Collection Name",
-            },
-            {
-              type: "address",
-              label: "NFT Address",
-              address: eip55.encode(transaction.recipient),
-            },
-            {
-              type: "text",
-              label: "Total Quantity",
-              value: `${totalQuantity.toString()} from ${
-                tokenIds.length
-              } NFT IDs`,
-            }
-          );
-          return;
-        }
+        fields.push(
+          {
+            type: "text",
+            label: "NFT",
+            value: `Batch Transfer`,
+          },
+          {
+            type: "text",
+            label: "To",
+            value: eip55.encode(`0x${recipient}`),
+          },
+          {
+            type: "text",
+            label: "Collection Name",
+            value: knownNft.metadata?.tokenName || "Collection Name",
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: eip55.encode(transaction.recipient),
+          },
+          {
+            type: "text",
+            label: "Total Quantity",
+            value: `${totalQuantity.toString()} from ${tokenIds.length} NFT IDs`,
+          },
+        );
+        return;
+      }
 
-        case ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL: {
-          const [spender, canManageAll] = abi.rawDecode(
-            ERC1155_METHODS_ARGUMENTS[selector],
-            argumentsBuffer
-          );
+      case ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL: {
+        const [spender, canManageAll] = abi.rawDecode(
+          ERC1155_METHODS_ARGUMENTS[selector],
+          argumentsBuffer,
+        );
 
-          fields.push(
-            {
-              type: "text",
-              label: "NFT",
-              value: `Allowance`,
-            },
-            {
-              type: "text",
-              label: canManageAll ? "Allow" : "Revoke",
-              value: eip55.encode(`0x${spender}`),
-            },
-            {
-              type: "text",
-              label: "To Manage ALL",
-              value: knownNft.metadata?.tokenName || "Collection Name",
-            },
-            {
-              type: "address",
-              label: "NFT Address",
-              address: eip55.encode(transaction.recipient),
-            }
-          );
-          return;
-        }
+        fields.push(
+          {
+            type: "text",
+            label: "NFT",
+            value: `Allowance`,
+          },
+          {
+            type: "text",
+            label: canManageAll ? "Allow" : "Revoke",
+            value: eip55.encode(`0x${spender}`),
+          },
+          {
+            type: "text",
+            label: "To Manage ALL",
+            value: knownNft.metadata?.tokenName || "Collection Name",
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: eip55.encode(transaction.recipient),
+          },
+        );
+        return;
       }
     }
+  }
 
-    throw new Error("Fallback on Blind Signing");
-  };
+  throw new Error("Fallback on Blind Signing");
+};
 
 const send: ModeModule = {
   fillTransactionStatus(a, t, result) {
@@ -408,9 +369,7 @@ const send: ModeModule = {
     if (!result.errors.recipient) {
       if (tokenAccount) {
         // SEND TOKEN
-        result.totalSpent = t.useAllAmount
-          ? account.spendableBalance
-          : t.amount;
+        result.totalSpent = t.useAllAmount ? account.spendableBalance : t.amount;
         result.amount = t.useAllAmount ? account.spendableBalance : t.amount;
       } else {
         // SEND ETHEREUM
@@ -418,16 +377,11 @@ const send: ModeModule = {
           ? account.spendableBalance
           : t.amount.plus(result.estimatedFees);
         result.amount = BigNumber.max(
-          t.useAllAmount
-            ? account.spendableBalance.minus(result.estimatedFees)
-            : t.amount,
-          0
+          t.useAllAmount ? account.spendableBalance.minus(result.estimatedFees) : t.amount,
+          0,
         );
 
-        if (
-          result.amount.gt(0) &&
-          result.estimatedFees.times(10).gt(result.amount)
-        ) {
+        if (result.amount.gt(0) && result.estimatedFees.times(10).gt(result.amount)) {
           result.warnings.feeTooHigh = new FeeTooHigh();
         }
 
@@ -437,16 +391,9 @@ const send: ModeModule = {
       }
 
       if (!t.data) {
-        if (
-          !t.allowZeroAmount &&
-          !result.errors.amount &&
-          result.amount.eq(0)
-        ) {
+        if (!t.allowZeroAmount && !result.errors.amount && result.amount.eq(0)) {
           result.errors.amount = new AmountRequired();
-        } else if (
-          !result.totalSpent.gt(0) ||
-          result.totalSpent.gt(account.spendableBalance)
-        ) {
+        } else if (!result.totalSpent.gt(0) || result.totalSpent.gt(account.spendableBalance)) {
           result.errors.amount = new NotEnoughBalance();
         }
       }
@@ -468,14 +415,9 @@ const send: ModeModule = {
 
       if (t.useAllAmount) {
         const gasLimit = getGasLimit(t);
-        const feePerGas = EIP1559ShouldBeUsed(a.currency)
-          ? t.maxFeePerGas
-          : t.gasPrice;
+        const feePerGas = EIP1559ShouldBeUsed(a.currency) ? t.maxFeePerGas : t.gasPrice;
         // Prevents a send max with a negative amount
-        amount = BigNumber.maximum(
-          a.spendableBalance.minus(gasLimit.times(feePerGas || 0)),
-          0
-        );
+        amount = BigNumber.maximum(a.spendableBalance.minus(gasLimit.times(feePerGas || 0)), 0);
       } else {
         invariant(t.amount, "amount is missing");
         amount = t.amount;
@@ -490,10 +432,7 @@ const send: ModeModule = {
     }
   },
 
-  fillDeviceTransactionConfig(
-    { transaction, account, parentAccount, status },
-    fields
-  ) {
+  fillDeviceTransactionConfig({ transaction, account, parentAccount, status }, fields) {
     const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
 
     // For contract interactions
@@ -501,7 +440,7 @@ const send: ModeModule = {
       try {
         return inferDeviceTransactionConfigWalletApi(
           { transaction, account, parentAccount, status },
-          fields
+          fields,
         );
       } catch (e) {
         fields.push({
@@ -534,7 +473,7 @@ const send: ModeModule = {
             type: "address",
             label: "Address",
             address: transaction.recipient,
-          }
+          },
     );
   },
 
@@ -550,9 +489,7 @@ const send: ModeModule = {
           hash: op.hash,
           transactionSequenceNumber: op.transactionSequenceNumber,
           type: "OUT",
-          value: t.useAllAmount
-            ? subAccount.spendableBalance
-            : new BigNumber(t.amount || 0),
+          value: t.useAllAmount ? subAccount.spendableBalance : new BigNumber(t.amount || 0),
           fee: op.fee,
           blockHash: null,
           blockHeight: null,
@@ -575,10 +512,7 @@ const send: ModeModule = {
   }),
 };
 
-function serializeTransactionData(
-  account,
-  transaction
-): Buffer | null | undefined {
+function serializeTransactionData(account, transaction): Buffer | null | undefined {
   const tokenAccount = inferTokenAccount(account, transaction);
   if (!tokenAccount) return;
   const recipient = eip55.encode(transaction.recipient);
@@ -596,11 +530,7 @@ function serializeTransactionData(
     }
   }
 
-  return abi.simpleEncode(
-    "transfer(address,uint256)",
-    recipient,
-    amount.toString(10)
-  );
+  return abi.simpleEncode("transfer(address,uint256)", recipient, amount.toString(10));
 }
 
 export const modes: Record<Modes, ModeModule> = {

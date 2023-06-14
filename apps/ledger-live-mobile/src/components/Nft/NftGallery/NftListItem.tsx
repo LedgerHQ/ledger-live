@@ -26,7 +26,7 @@ type Props = {
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
-  margin-bottom: ${p => p.theme.space[3]}px;
+  margin-bottom: ${p => p.theme.space[7]}px;
   border-radius: ${p => p.theme.radii[1]}px;
   background-color: ${props => props.theme.colors.background.main};
 `;
@@ -53,11 +53,7 @@ const NftCardView = ({
   const loading = status === "loading";
 
   return (
-    <StyledTouchableOpacity
-      bg="background.main"
-      onPress={onPress}
-      onLongPress={onLongPress}
-    >
+    <StyledTouchableOpacity bg="background.main" onPress={onPress} onLongPress={onLongPress}>
       <NftMediaComponent
         status={status}
         metadata={metadata}
@@ -97,18 +93,8 @@ const NftCardView = ({
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({
-  nft,
-  onPress,
-  onLongPress,
-  isSelected,
-  selectable,
-}: Props) => {
-  const nftMetadata = useNftMetadata(
-    nft?.contract,
-    nft?.tokenId,
-    nft?.currencyId,
-  );
+const NftListItem = ({ nft, onPress, onLongPress, isSelected, selectable }: Props) => {
+  const nftMetadata = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
   // FIXME: wtf is this metadata property and where does it come from?
   const { status, metadata } = nftMetadata as NFTResource & {
     metadata: NFTMetadata;

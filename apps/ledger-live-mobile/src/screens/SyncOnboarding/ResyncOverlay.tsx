@@ -24,13 +24,13 @@ const Container = styled(Flex).attrs({
   zIndex: 100,
 })``;
 
-const DisplayWithDelay: React.FC<
-  DelayProps & { children?: React.ReactNode | null }
-> = ({ children, isOpen, delay = 0 }) => {
+const DisplayWithDelay: React.FC<DelayProps & { children?: React.ReactNode | null }> = ({
+  children,
+  isOpen,
+  delay = 0,
+}) => {
   const [showContent, setShowContent] = useState<boolean>(false);
-  const showContentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const showContentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -76,17 +76,8 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
   return (
     <DisplayWithDelay isOpen={isOpen} delay={delay}>
       <Container>
-        <TrackScreen
-          category="Stax BT Pairing Lost"
-          type="toast"
-          refreshSource={false}
-        />
-        <Flex
-          position="absolute"
-          width="100%"
-          bottom={safeAreaInsets.bottom}
-          padding={4}
-        >
+        <TrackScreen category="Stax BT Pairing Lost" type="toast" refreshSource={false} />
+        <Flex position="absolute" width="100%" bottom={safeAreaInsets.bottom} padding={4}>
           <Flex
             width="100%"
             backgroundColor="neutral.c100"
@@ -99,12 +90,7 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
             <Flex mr={4}>
               <Icons.WarningSolidMedium color="warning.c40" size={20} />
             </Flex>
-            <Text
-              variant="body"
-              flex={1}
-              textBreakStrategy="balanced"
-              color="neutral.c00"
-            >
+            <Text variant="body" flex={1} textBreakStrategy="balanced" color="neutral.c00">
               {t("syncOnboarding.resyncOverlay.content", { productName })}
             </Text>
             <InfiniteLoader color="neutral.c00" size={24} />

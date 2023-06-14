@@ -18,7 +18,7 @@ const icons = {
 };
 
 const StyledIconContainer = styled.div<{ type?: TipType }>`
-  ${(p) => {
+  ${p => {
     switch (p.type) {
       case "warning":
         return css`
@@ -39,8 +39,8 @@ const StyledIconContainer = styled.div<{ type?: TipType }>`
     }
   }}
 
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  margin-right: ${(p) => `${p.theme.space[6]}px`};
+  border-radius: ${p => `${p.theme.radii[1]}px`};
+  margin-right: ${p => `${p.theme.space[6]}px`};
   padding: 6px;
   display: flex;
   align-items: center;

@@ -13,10 +13,7 @@ import PoweredByLedger from "../PoweredByLedger";
 
 export default function DebugSettings({
   navigation: { navigate },
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.DebugSettings
->) {
+}: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugSettings>) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressCount = useRef(0);
 
@@ -26,9 +23,7 @@ export default function DebugSettings({
     groupedFeatures.stax.featureIds.forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
-    Alert.alert(
-      "I can only show you the door, you're the one that has to walk through it.",
-    );
+    Alert.alert("I can only show you the door, you're the one that has to walk through it.");
   }, [overrideFeature, getFeature]);
 
   const onDebugHiddenPress = useCallback(() => {
@@ -53,10 +48,7 @@ export default function DebugSettings({
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
       <Flex p={6} pt={0}>
-        <AlertBox
-          type={"warning"}
-          title={"Tools for development, debugging and QA."}
-        />
+        <AlertBox type={"warning"} title={"Tools for development, debugging and QA."} />
       </Flex>
       <SettingsRow
         hasBorderTop

@@ -29,8 +29,8 @@ import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
 
 export type Data = {
-  account: AccountLike | undefined | null;
-  parentAccount: Account | undefined | null;
+  account?: AccountLike | undefined | null;
+  parentAccount?: Account | undefined | null;
   startWithWarning?: boolean;
   recipient?: string;
   amount?: BigNumber;
@@ -40,8 +40,9 @@ export type Data = {
   nftId?: string;
   nftCollection?: string;
   transaction?: Transaction;
-  onConfirmationHandler: Function;
-  onFailHandler: Function;
+  onConfirmationHandler?: Function;
+  onFailHandler?: Function;
+  stepId?: StepId;
 };
 
 type OwnProps = {
@@ -55,7 +56,7 @@ type StateProps = {
   device: Device | undefined | null;
   accounts: Account[];
   closeModal: (a: string) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;

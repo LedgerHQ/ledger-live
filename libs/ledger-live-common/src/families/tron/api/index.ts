@@ -1,40 +1,40 @@
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
+import { log } from "@ledgerhq/logs";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import compact from "lodash/compact";
+import drop from "lodash/drop";
+import get from "lodash/get";
+import sumBy from "lodash/sumBy";
+import take from "lodash/take";
+import { getEnv } from "../../../env";
+import { TronTransactionExpired } from "../../../errors";
+import { promiseAllBatched } from "../../../promise";
 import type {
-  Transaction,
-  TrongridTxInfo,
+  BandwidthInfo,
+  FreezeTransactionData,
+  NetworkInfo,
   SendTransactionData,
   SendTransactionDataSuccess,
   SmartContractTransactionData,
-  FreezeTransactionData,
-  UnfreezeTransactionData,
-  NetworkInfo,
-  BandwidthInfo,
   SuperRepresentative,
   SuperRepresentativeData,
+  Transaction,
   TronResources,
   TronTransactionInfo,
+  TrongridTxInfo,
+  UnfreezeTransactionData,
 } from "../types";
 import {
-  decode58Check,
-  encode58Check,
   abiEncodeTrc20Transfer,
-  formatTrongridTxResponse,
-  formatTrongridTrc20TxResponse,
-  hexToAscii,
+  decode58Check,
   defaultTronResources,
+  encode58Check,
+  formatTrongridTrc20TxResponse,
+  formatTrongridTxResponse,
+  hexToAscii,
 } from "../utils";
-import { log } from "@ledgerhq/logs";
-import { TronTransactionExpired } from "../../../errors";
-import network from "../../../network";
-import { promiseAllBatched } from "../../../promise";
-import { makeLRUCache } from "../../../cache";
-import { getEnv } from "../../../env";
-import get from "lodash/get";
-import drop from "lodash/drop";
-import sumBy from "lodash/sumBy";
-import take from "lodash/take";
-import compact from "lodash/compact";
-import { Account, SubAccount } from "@ledgerhq/types-live";
 
 const getBaseApiUrl = () => getEnv("API_TRONGRID_PROXY");
 
@@ -76,7 +76,7 @@ async function fetch(url: string) {
 
 export const freezeTronTransaction = async (
   a: Account,
-  t: Transaction
+  t: Transaction,
 ): Promise<SendTransactionDataSuccess> => {
   const txData: FreezeTransactionData = {
     frozen_balance: t.amount.toNumber(),
@@ -92,7 +92,7 @@ export const freezeTronTransaction = async (
 
 export const unfreezeTronTransaction = async (
   a: Account,
-  t: Transaction
+  t: Transaction,
 ): Promise<SendTransactionDataSuccess> => {
   const txData: UnfreezeTransactionData = {
     resource: t.resource,
@@ -108,7 +108,7 @@ export const unfreezeTronTransaction = async (
 export const createTronTransaction = async (
   a: Account,
   t: Transaction,
-  subAccount: SubAccount | null | undefined
+  subAccount: SubAccount | null | undefined,
 ): Promise<SendTransactionDataSuccess> => {
   const [tokenType, tokenId] =
     subAccount && subAccount.type === "TokenAccount"
@@ -144,13 +144,8 @@ export const createTronTransaction = async (
   }
 };
 
-export const broadcastTron = async (
-  trxTransaction: SendTransactionDataSuccess
-) => {
-  const result = await post(
-    `${getBaseApiUrl()}/wallet/broadcasttransaction`,
-    trxTransaction
-  );
+export const broadcastTron = async (trxTransaction: SendTransactionDataSuccess) => {
+  const result = await post(`${getBaseApiUrl()}/wallet/broadcasttransaction`, trxTransaction);
 
   if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
     throw new TronTransactionExpired();
@@ -176,9 +171,7 @@ export async function fetchCurrentBlockHeight() {
 // For the moment, fetching transaction info is the only way to get fees from a transaction
 async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
   const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
-    `${getBaseApiUrl()}/wallet/gettransactioninfobyid?value=${encodeURIComponent(
-      txId
-    )}`
+    `${getBaseApiUrl()}/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
   );
   return {
     fee,
@@ -191,35 +184,26 @@ async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
 export async function fetchTronAccountTxs(
   addr: string,
   shouldFetchMoreTxs: (arg0: Record<string, any>[]) => boolean,
-  cacheTransactionInfoById: Record<string, TronTransactionInfo>
+  cacheTransactionInfoById: Record<string, TronTransactionInfo>,
 ): Promise<TrongridTxInfo[]> {
   const getTxs = async (url: string) =>
-    fetch(url).then((resp) => {
+    fetch(url).then(resp => {
       const nextUrl = get(resp, "meta.links.next");
-      const resultsWithTxInfo = promiseAllBatched(
-        3,
-        resp.data || [],
-        async (tx: any) => {
-          // It happened that Trongrid API had some rollback
-          // So they may not provide the fee on this api and we had to check detail.
-          // It just a backward compatibility in case of
-          const fee = get(
-            tx,
-            "ret[0].fee",
-            get(tx, "detail.ret[0].fee", undefined)
-          );
-          const txID = tx.txID || tx.transaction_id;
+      const resultsWithTxInfo = promiseAllBatched(3, resp.data || [], async (tx: any) => {
+        // It happened that Trongrid API had some rollback
+        // So they may not provide the fee on this api and we had to check detail.
+        // It just a backward compatibility in case of
+        const fee = get(tx, "ret[0].fee", get(tx, "detail.ret[0].fee", undefined));
+        const txID = tx.txID || tx.transaction_id;
 
-          if (!txID || fee !== undefined) {
-            return tx;
-          }
-
-          const detail =
-            cacheTransactionInfoById[txID] || (await fetchTronTxDetail(txID));
-          cacheTransactionInfoById[txID] = detail;
-          return { ...tx, detail };
+        if (!txID || fee !== undefined) {
+          return tx;
         }
-      ).then((results) => ({
+
+        const detail = cacheTransactionInfoById[txID] || (await fetchTronTxDetail(txID));
+        cacheTransactionInfoById[txID] = detail;
+        return { ...tx, detail };
+      }).then(results => ({
         results,
         nextUrl,
       }));
@@ -240,16 +224,12 @@ export async function fetchTronAccountTxs(
   };
 
   const entireTxs = (
-    await getEntireTxs(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions?limit=100`
-    )
+    await getEntireTxs(`${getBaseApiUrl()}/v1/accounts/${addr}/transactions?limit=100`)
   )
-    .filter((tx) => {
+    .filter(tx => {
       // custom smart contract tx has internal txs
       const hasInternalTxs =
-        tx.txID &&
-        tx.internal_transactions &&
-        tx.internal_transactions.length > 0;
+        tx.txID && tx.internal_transactions && tx.internal_transactions.length > 0;
       // and also a duplicated malformed tx that we have to ignore
       const isDuplicated = tx.tx_id;
       const type = get(tx, "raw_data.contract[0].type", "");
@@ -259,26 +239,20 @@ export async function fetchTronAccountTxs(
         log("tron-error", `unsupported transaction ${tx.txID}`);
       }
 
-      return (
-        !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract"
-      );
+      return !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract";
     })
-    .map((tx) => formatTrongridTxResponse(tx));
+    .map(tx => formatTrongridTxResponse(tx));
   // we need to fetch and filter trc20 transactions from another endpoint
   const entireTrc20Txs = (
-    await getEntireTxs(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`
-    )
-  ).map((tx) => formatTrongridTrc20TxResponse(tx));
-  const txInfos: TrongridTxInfo[] = compact(
-    entireTxs.concat(entireTrc20Txs)
-  ).sort((a, b) => b.date.getTime() - a.date.getTime());
+    await getEntireTxs(`${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`)
+  ).map(tx => formatTrongridTrc20TxResponse(tx));
+  const txInfos: TrongridTxInfo[] = compact(entireTxs.concat(entireTrc20Txs)).sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
+  );
   return txInfos;
 }
 
-export const getContractUserEnergyRatioConsumption = async (
-  address: string
-): Promise<number> => {
+export const getContractUserEnergyRatioConsumption = async (address: string): Promise<number> => {
   const result = await fetchTronContract(address);
   if (result) {
     const { consume_user_resource_percent } = result;
@@ -287,9 +261,7 @@ export const getContractUserEnergyRatioConsumption = async (
   return 0;
 };
 
-export const fetchTronContract = async (
-  addr: string
-): Promise<Record<string, any> | undefined> => {
+export const fetchTronContract = async (addr: string): Promise<Record<string, any> | undefined> => {
   try {
     const data = await post(`${getBaseApiUrl()}/wallet/getcontract`, {
       value: decode58Check(addr),
@@ -300,13 +272,11 @@ export const fetchTronContract = async (
   }
 };
 
-export const getTronAccountNetwork = async (
-  address: string
-): Promise<NetworkInfo> => {
+export const getTronAccountNetwork = async (address: string): Promise<NetworkInfo> => {
   const result = await fetch(
     `${getBaseApiUrl()}/wallet/getaccountresource?address=${encodeURIComponent(
-      decode58Check(address)
-    )}`
+      decode58Check(address),
+    )}`,
   );
   const {
     freeNetUsed = 0,
@@ -344,13 +314,12 @@ export const validateAddress = async (address: string): Promise<boolean> => {
 
 // cache for account names (name is unchanged over time)
 const accountNamesCache = makeLRUCache(
-  async (addr: string): Promise<string | null | undefined> =>
-    getAccountName(addr),
+  async (addr: string): Promise<string | null | undefined> => getAccountName(addr),
   (addr: string) => addr,
   {
     max: 300,
     ttl: 180 * 60 * 1000, // 3hours
-  }
+  },
 );
 
 // cache for super representative brokerages (brokerage is unchanged over time)
@@ -360,12 +329,10 @@ const srBrokeragesCache = makeLRUCache(
   {
     max: 300,
     ttl: 180 * 60 * 1000, // 3hours
-  }
+  },
 );
 
-export const getAccountName = async (
-  addr: string
-): Promise<string | null | undefined> => {
+export const getAccountName = async (addr: string): Promise<string | null | undefined> => {
   const tronAcc = await fetchTronAccount(addr);
   const acc = tronAcc[0];
   const accountName: string | null | undefined =
@@ -377,7 +344,7 @@ export const getAccountName = async (
 
 export const getBrokerage = async (addr: string): Promise<number> => {
   const { brokerage } = await fetch(
-    `${getBaseApiUrl()}/wallet/getBrokerage?address=${encodeURIComponent(addr)}`
+    `${getBaseApiUrl()}/wallet/getBrokerage?address=${encodeURIComponent(addr)}`,
   );
   srBrokeragesCache.hydrate(addr, brokerage); // put it in cache
 
@@ -389,7 +356,7 @@ const superRepresentativesCache = makeLRUCache(
     const superRepresentatives = await fetchSuperRepresentatives();
     log(
       "tron/superRepresentatives",
-      "loaded " + superRepresentatives.length + " super representatives"
+      "loaded " + superRepresentatives.length + " super representatives",
     );
     return superRepresentatives;
   },
@@ -397,57 +364,46 @@ const superRepresentativesCache = makeLRUCache(
   {
     max: 300,
     ttl: 60 * 60 * 1000, // 1hour
-  }
+  },
 );
 
-export const getTronSuperRepresentatives = async (): Promise<
-  SuperRepresentative[]
-> => {
+export const getTronSuperRepresentatives = async (): Promise<SuperRepresentative[]> => {
   return await superRepresentativesCache();
 };
 
 export const hydrateSuperRepresentatives = (list: SuperRepresentative[]) => {
-  log(
-    "tron/superRepresentatives",
-    "hydrate " + list.length + " super representatives"
-  );
+  log("tron/superRepresentatives", "hydrate " + list.length + " super representatives");
   superRepresentativesCache.hydrate("", list);
 };
 
 const fetchSuperRepresentatives = async (): Promise<SuperRepresentative[]> => {
   const result = await fetch(`${getBaseApiUrl()}/wallet/listwitnesses`);
   const sorted = result.witnesses.sort((a, b) => b.voteCount - a.voteCount);
-  const superRepresentatives = await promiseAllBatched(
-    3,
-    sorted,
-    async (w: any) => {
-      const encodedAddress = encode58Check(w.address);
-      const accountName = await accountNamesCache(encodedAddress);
-      const brokerage = await srBrokeragesCache(encodedAddress);
-      return {
-        ...w,
-        address: encodedAddress,
-        name: accountName,
-        brokerage,
-        voteCount: w.voteCount || 0,
-        isJobs: w.isJobs || false,
-      };
-    }
-  );
+  const superRepresentatives = await promiseAllBatched(3, sorted, async (w: any) => {
+    const encodedAddress = encode58Check(w.address);
+    const accountName = await accountNamesCache(encodedAddress);
+    const brokerage = await srBrokeragesCache(encodedAddress);
+    return {
+      ...w,
+      address: encodedAddress,
+      name: accountName,
+      brokerage,
+      voteCount: w.voteCount || 0,
+      isJobs: w.isJobs || false,
+    };
+  });
   hydrateSuperRepresentatives(superRepresentatives); // put it in cache
 
   return superRepresentatives;
 };
 
 export const getNextVotingDate = async (): Promise<Date> => {
-  const { num } = await fetch(
-    `${getBaseApiUrl()}/wallet/getnextmaintenancetime`
-  );
+  const { num } = await fetch(`${getBaseApiUrl()}/wallet/getnextmaintenancetime`);
   return new Date(num);
 };
 
 export const getTronSuperRepresentativeData = async (
-  max: number | null | undefined
+  max: number | null | undefined,
 ): Promise<SuperRepresentativeData> => {
   const list = await getTronSuperRepresentatives();
   const nextVotingDate = await getNextVotingDate();
@@ -460,11 +416,11 @@ export const getTronSuperRepresentativeData = async (
 
 export const voteTronSuperRepresentatives = async (
   a: Account,
-  t: Transaction
+  t: Transaction,
 ): Promise<SendTransactionDataSuccess> => {
   const payload = {
     owner_address: decode58Check(a.freshAddress),
-    votes: t.votes.map((v) => ({
+    votes: t.votes.map(v => ({
       vote_address: decode58Check(v.address),
       vote_count: v.voteCount,
     })),
@@ -473,7 +429,7 @@ export const voteTronSuperRepresentatives = async (
 };
 
 export const extractBandwidthInfo = (
-  networkInfo: NetworkInfo | null | undefined
+  networkInfo: NetworkInfo | null | undefined,
 ): BandwidthInfo => {
   // Calculate bandwidth info :
   if (networkInfo) {
@@ -498,31 +454,23 @@ export function getTronResources(): Promise<TronResources>;
 export function getTronResources(
   acc: Record<string, any>,
   txs: TrongridTxInfo[],
-  cacheTransactionInfoById: Record<string, TronTransactionInfo>
+  cacheTransactionInfoById: Record<string, TronTransactionInfo>,
 ): Promise<TronResources>;
 export async function getTronResources(
   acc?: Record<string, any>,
   txs?: TrongridTxInfo[],
-  cacheTransactionInfoById: Record<string, TronTransactionInfo> = {}
+  cacheTransactionInfoById: Record<string, TronTransactionInfo> = {},
 ): Promise<TronResources> {
   if (!acc) {
     return defaultTronResources;
   }
   const frozenBandwidth = get(acc, "frozen[0]", undefined);
-  const frozenEnergy = get(
-    acc,
-    "account_resource.frozen_balance_for_energy",
-    undefined
-  );
-  const delegatedFrozenBandwidth = get(
-    acc,
-    "delegated_frozen_balance_for_bandwidth",
-    undefined
-  );
+  const frozenEnergy = get(acc, "account_resource.frozen_balance_for_energy", undefined);
+  const delegatedFrozenBandwidth = get(acc, "delegated_frozen_balance_for_bandwidth", undefined);
   const delegatedFrozenEnergy = get(
     acc,
     "account_resource.delegated_frozen_balance_for_energy",
-    undefined
+    undefined,
   );
   const encodedAddress = encode58Check(acc.address);
   const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
@@ -562,7 +510,7 @@ export async function getTronResources(
     .dividedBy(1000000)
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
-  const votes = get(acc, "votes", []).map((v) => ({
+  const votes = get(acc, "votes", []).map(v => ({
     address: v.vote_address,
     voteCount: v.vote_count,
   }));
@@ -591,14 +539,10 @@ export async function getTronResources(
   };
 }
 
-export const getUnwithdrawnReward = async (
-  addr: string
-): Promise<BigNumber> => {
+export const getUnwithdrawnReward = async (addr: string): Promise<BigNumber> => {
   try {
     const { reward = 0 } = await fetch(
-      `${getBaseApiUrl()}/wallet/getReward?address=${encodeURIComponent(
-        decode58Check(addr)
-      )}`
+      `${getBaseApiUrl()}/wallet/getReward?address=${encodeURIComponent(decode58Check(addr))}`,
     );
     return new BigNumber(reward);
   } catch (e) {
@@ -607,7 +551,7 @@ export const getUnwithdrawnReward = async (
 };
 
 export const claimRewardTronTransaction = async (
-  account: Account
+  account: Account,
 ): Promise<SendTransactionDataSuccess> => {
   const url = `${getBaseApiUrl()}/wallet/withdrawbalance`;
   const data = {

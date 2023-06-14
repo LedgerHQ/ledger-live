@@ -1,7 +1,7 @@
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 export const aLatestFirmwareContextBuilder = (
-  props?: Partial<FirmwareUpdateContext>
+  props?: Partial<FirmwareUpdateContext>,
 ): FirmwareUpdateContext => {
   return {
     osu: {

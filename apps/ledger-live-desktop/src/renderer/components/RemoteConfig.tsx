@@ -10,7 +10,7 @@ export type RemoteConfig = {
       }
     | undefined
     | null;
-  error: any | undefined | null;
+  error: Error | undefined | null;
   lastUpdatedAt: Date | undefined | null;
 };
 const defaultValue: RemoteConfig = {

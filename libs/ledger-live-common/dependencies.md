@@ -26,7 +26,6 @@ yarn upgrade-interactive -i --latest
 | @ledgerhq/cryptoassets                      | crypto currencies and tokens                                      | weekly                                                               |
 | @ledgerhq/devices                           | devices data                                                      | weekly                                                               |
 | @ledgerhq/errors                            | errors defintion                                                  | weekly                                                               |
-| @ledgerhq/hw-app-algorand                   | Algorand coin integration                                         | weekly                                                               |
 | @ledgerhq/hw-app-btc                        | Bitcoin coin integration                                          | weekly                                                               |
 | @ledgerhq/hw-app-cosmos                     | Cosmos coin integration                                           | weekly                                                               |
 | @ledgerhq/hw-app-eth                        | Ethereum coin integration                                         | weekly                                                               |
@@ -57,7 +56,6 @@ yarn upgrade-interactive -i --latest
 | @walletconnect/client                       | Wallet connect feature                                            | monthly                                                              |
 | @xstate/react                               | used for some components                                          | TBD DEPRECATE?                                                       |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
-| algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
 | axios-retry                                 | network                                                           | monthly                                                              |
@@ -89,7 +87,6 @@ yarn upgrade-interactive -i --latest
 | leb128                                      | Filecoin coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
 | long                                        | Osmosis coin integration                                          | monthly                                                              |
-| lru-cache                                   | generic helper                                                    | monthly                                                              |
 | numeral                                     | for very concise amount display (on graph)                        | monthly – **TBD if can be dropped**                                  |
 | object-hash                                 | Solana coin integration                                           | monthly                                                              |
 | performance-now                             | bot                                                               | monthly – may not strongly need                                      |

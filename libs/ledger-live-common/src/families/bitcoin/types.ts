@@ -1,8 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type {
-  Account as WalletAccount,
-  SerializedAccount as WalletAccountRaw,
-} from "./wallet-btc";
+import type { Account as WalletAccount, SerializedAccount as WalletAccountRaw } from "./wallet-btc";
 import {
   Account,
   AccountRaw,
@@ -23,7 +20,7 @@ export type BitcoinInputRaw = [
   string | null | undefined,
   string | null | undefined,
   string | null | undefined,
-  number
+  number,
 ];
 
 export type BitcoinOutput = {
@@ -43,7 +40,7 @@ export type BitcoinOutputRaw = [
   string | null | undefined,
   string,
   number, // rbf 0/1 for compression
-  number
+  number,
 ];
 
 export type BitcoinResources = {
@@ -131,7 +128,7 @@ export const bitcoinPickingStrategy = {
   MERGE_OUTPUTS: 2,
 };
 export type BitcoinPickingStrategy =
-  typeof bitcoinPickingStrategy[keyof typeof bitcoinPickingStrategy];
+  (typeof bitcoinPickingStrategy)[keyof typeof bitcoinPickingStrategy];
 
 export type UtxoStrategy = {
   strategy: BitcoinPickingStrategy;

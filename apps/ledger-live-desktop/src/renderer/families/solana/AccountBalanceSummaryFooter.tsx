@@ -10,8 +10,10 @@ import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
+import { SubAccount } from "@ledgerhq/types-live";
+
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -46,13 +48,14 @@ const AmountValue = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
 }))``;
+
 type Props = {
-  account: Account;
+  account: SolanaAccount | SubAccount;
 };
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (!account.solanaResources) return null;
+  if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, solanaResources } = account;
   const { stakes } = solanaResources;
   const _delegatedBalance = new BigNumber(

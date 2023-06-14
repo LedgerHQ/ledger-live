@@ -1,8 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
-  PostOnboardingActionId,
-  PostOnboardingState,
-} from "@ledgerhq/types-live";
+import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/types-live";
 import reducer, {
   hubStateSelector,
   initialState,
@@ -184,7 +181,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.claimMock,
-      })
+      }),
     );
     expect(state).toEqual(stateA1);
   });
@@ -211,7 +208,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.claimMock,
-      })
+      }),
     );
     expect(state).toEqual(stateA1);
 
@@ -224,7 +221,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.personalizeMock,
-      })
+      }),
     );
     expect(state).toEqual(stateA3);
 
@@ -241,7 +238,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.claimMock,
-      })
+      }),
     );
     expect(state).toEqual(stateB1);
 

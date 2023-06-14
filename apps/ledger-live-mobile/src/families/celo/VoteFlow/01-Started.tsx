@@ -17,10 +17,7 @@ import EarnDark from "../../../images/illustration/Dark/_003.png";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CeloVoteFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloVoteFlowParamList,
-  ScreenName.CeloVoteStarted
->;
+type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteStarted>;
 
 export default function VoteStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -37,17 +34,10 @@ export default function VoteStarted({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="DelegationFlow" name="Started" />
         <Flex alignItems="center" mb={6}>
-          <Illustration
-            lightSource={EarnLight}
-            darkSource={EarnDark}
-            size={150}
-          />
+          <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
         <Text fontWeight="semiBold" style={styles.description}>
           <Trans i18nKey="celo.vote.flow.steps.starter.description" />
@@ -72,10 +62,7 @@ export default function VoteStarted({ navigation, route }: Props) {
       </NavigationScrollView>
       <View style={[styles.footer]}>
         <View>
-          <Alert
-            type="info"
-            title={t("celo.vote.flow.steps.starter.warning.description")}
-          />
+          <Alert type="info" title={t("celo.vote.flow.steps.starter.warning.description")} />
         </View>
         <Button onPress={onNext} type="main" mt={6}>
           <Trans i18nKey="celo.vote.flow.steps.starter.cta" />

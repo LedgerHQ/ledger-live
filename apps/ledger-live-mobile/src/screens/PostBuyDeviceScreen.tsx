@@ -21,10 +21,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 `;
 
 type NavigationProp = RootNavigationComposite<
-  StackNavigatorNavigation<
-    BaseNavigatorStackParamList,
-    ScreenName.PostBuyDeviceScreen
-  >
+  StackNavigatorNavigation<BaseNavigatorStackParamList, ScreenName.PostBuyDeviceScreen>
 >;
 
 export default function PostBuyDeviceScreen() {
@@ -65,11 +62,7 @@ export default function PostBuyDeviceScreen() {
           <Text textAlign="center" variant="h4" mb={5}>
             {t("postBuyDevice.title")}
           </Text>
-          <Text
-            textAlign="center"
-            variant="bodyLineHeight"
-            color={"neutral.c80"}
-          >
+          <Text textAlign="center" variant="bodyLineHeight" color={"neutral.c80"}>
             {t("postBuyDevice.desc")}
           </Text>
         </Flex>

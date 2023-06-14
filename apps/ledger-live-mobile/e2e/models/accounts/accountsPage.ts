@@ -1,12 +1,6 @@
-import {
-  currencyParam,
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  waitForElementByID,
-} from "../../helpers";
+import { getElementById, openDeeplink, waitForElementByID } from "../../helpers";
 
-let baseLink: string = "accounts";
+const baseLink = "accounts";
 
 export default class accountsPage {
   accountTitle = (coin: string) => getElementById(`accounts-title-${coin}`);

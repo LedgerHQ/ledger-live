@@ -1,3 +1,5 @@
+/* istanbul ignore file: this file can be ignored in tests as long as it's only for debugging purpose & not touching userland */
+
 /**
  * Helper designed to parse the APDU crafted by the Ledger backend to clear sign domains.
  * The APDU is encoded with a TLV scheme: https://en.wikipedia.org/wiki/Type%E2%80%93length%E2%80%93value
@@ -18,32 +20,28 @@ type TLV_TYPES =
   | "SIGNATURE";
 type TLV_IDS = "01" | "02" | "12" | "13" | "14" | "15" | "20" | "21" | "22";
 
-const TLVs: Record<
-  TLV_IDS,
-  { typeName: TLV_TYPES; parser: (input: string) => string | number }
-> = {
-  "01": { typeName: "STRUCTURE_TYPE", parser: (input) => parseInt(input, 16) },
-  "02": { typeName: "VERSION", parser: (input) => parseInt(input, 16) },
-  "12": { typeName: "CHALLENGE", parser: (input) => input },
-  "13": { typeName: "SIGNER_KEY_ID", parser: (input) => input },
-  "14": { typeName: "SIGNER_ALGO", parser: (input) => input },
+const TLVs: Record<TLV_IDS, { typeName: TLV_TYPES; parser: (input: string) => string | number }> = {
+  "01": { typeName: "STRUCTURE_TYPE", parser: input => parseInt(input, 16) },
+  "02": { typeName: "VERSION", parser: input => parseInt(input, 16) },
+  "12": { typeName: "CHALLENGE", parser: input => input },
+  "13": { typeName: "SIGNER_KEY_ID", parser: input => input },
+  "14": { typeName: "SIGNER_ALGO", parser: input => input },
   "20": {
     typeName: "TRUSTED_NAME",
-    parser: (input) => Buffer.from(input, "hex").toString(),
+    parser: input => Buffer.from(input, "hex").toString(),
   },
-  "21": { typeName: "COIN_TYPE", parser: (input) => parseInt(input, 16) },
-  "22": { typeName: "ADDRESS", parser: (input) => `0x${input}` },
-  "15": { typeName: "SIGNATURE", parser: (input) => input },
+  "21": { typeName: "COIN_TYPE", parser: input => parseInt(input, 16) },
+  "22": { typeName: "ADDRESS", parser: input => `0x${input}` },
+  "15": { typeName: "SIGNATURE", parser: input => input },
 };
 
 /**
  * Parser logic
  */
 export const tlvParser = (
-  apdu: string
+  apdu: string,
 ): { T: TLV_TYPES; L: string; V: string | number | null }[] => {
-  const parsedApdu: { T: TLV_TYPES; L: string; V: string | number | null }[] =
-    [];
+  const parsedApdu: { T: TLV_TYPES; L: string; V: string | number | null }[] = [];
 
   let apduLeft = apdu;
   while (apduLeft.length > 0) {

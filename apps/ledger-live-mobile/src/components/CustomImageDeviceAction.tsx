@@ -1,10 +1,4 @@
-import React, {
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Image } from "react-native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
@@ -13,16 +7,10 @@ import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWra
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
 import loadImage from "@ledgerhq/live-common/hw/staxLoadImage";
-import {
-  ImageLoadRefusedOnDevice,
-  ImageCommitRefusedOnDevice,
-} from "@ledgerhq/live-common/errors";
-import {
-  setLastSeenCustomImage,
-  clearLastSeenCustomImage,
-} from "../actions/settings";
+import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
+import { setLastSeenCustomImage, clearLastSeenCustomImage } from "../actions/settings";
 import { DeviceActionDefaultRendering } from "./DeviceAction";
-import { ImageSourceContext } from "./CustomImage/FramedImage";
+import { ImageSourceContext } from "./CustomImage/StaxFramedImage";
 import { renderError } from "./DeviceAction/rendering";
 import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
 import Button from "./wrappedUi/Button";
@@ -34,13 +22,7 @@ type Props = {
   hexImage: string;
   source?: ComponentProps<typeof Image>["source"];
   onStart?: () => void;
-  onResult?: ({
-    imageHash,
-    imageSize,
-  }: {
-    imageHash: string;
-    imageSize: number;
-  }) => void;
+  onResult?: ({ imageHash, imageSize }: { imageHash: string; imageSize: number }) => void;
   onSkip?: () => void;
 };
 
@@ -149,9 +131,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
                   : analyticsErrorTryAgainEventProps
               }
             >
-              {isRefusedOnStaxError
-                ? t("customImage.uploadAnotherImage")
-                : t("common.retry")}
+              {isRefusedOnStaxError ? t("customImage.uploadAnotherImage") : t("common.retry")}
             </Button>
             {isRefusedOnStaxError ? (
               <Flex py={7}>
@@ -176,11 +156,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
           />
         )}
       </Flex>
-      <CustomImageBottomModal
-        isOpened={isModalOpened}
-        onClose={closeModal}
-        device={device}
-      />
+      <CustomImageBottomModal isOpened={isModalOpened} onClose={closeModal} device={device} />
     </ImageSourceContext.Provider>
   );
 };

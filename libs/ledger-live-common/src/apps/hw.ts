@@ -27,10 +27,5 @@ export const execWithTransport =
  * - Remove the env definition and all the forks based on it here.
  */
 // Nb Written this way to respect runtime changes to the env.
-export const listApps = (
-  transport: Transport,
-  deviceInfo: DeviceInfo
-): Observable<ListAppsEvent> =>
-  getEnv("LIST_APPS_V2")
-    ? listAppsV2(transport, deviceInfo)
-    : listAppsV1(transport, deviceInfo);
+export const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> =>
+  getEnv("LIST_APPS_V2") ? listAppsV2(transport, deviceInfo) : listAppsV1(transport, deviceInfo);

@@ -27,16 +27,14 @@ import type { Transaction } from "./types";
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
 const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
-const expectedTokenAccount = (a) => {
+const expectedTokenAccount = a => {
   invariant(a && a.type === "TokenAccount", "expected token account");
   return a;
 };
 
 const getTokenAccountId = (account, id) =>
   expectedTokenAccount(
-    (account.subAccounts || []).find(
-      (a) => expectedTokenAccount(a).token.id === id
-    )
+    (account.subAccounts || []).find(a => expectedTokenAccount(a).token.id === id),
   ).id;
 
 const tron: CurrenciesData<Transaction> = {
@@ -107,7 +105,7 @@ const tron: CurrenciesData<Transaction> = {
             resource: undefined,
             votes: [],
           }),
-          expectedStatus: (account) => ({
+          expectedStatus: account => ({
             amount: account.spendableBalance,
             errors: {},
             warnings: {},
@@ -318,7 +316,7 @@ const tron: CurrenciesData<Transaction> = {
         },
         {
           name: "notEnoughBalance to unactivated",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: unactivatedAddress,
@@ -380,7 +378,7 @@ const tron: CurrenciesData<Transaction> = {
             // corresponds to a valid deposit contract address
             subAccountId: getTokenAccountId(
               account,
-              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             ),
             amount: new BigNumber("1000000"),
           }),
@@ -399,7 +397,7 @@ const tron: CurrenciesData<Transaction> = {
             recipient: unactivatedAddress,
             subAccountId: getTokenAccountId(
               account,
-              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             ),
             amount: new BigNumber("1000000"),
           }),
@@ -445,7 +443,7 @@ const tron: CurrenciesData<Transaction> = {
             recipient: activatedAddress1,
             subAccountId: getTokenAccountId(
               account,
-              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             ),
             amount: new BigNumber("1000000"),
           }),

@@ -33,8 +33,7 @@ const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
-  const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] =
-    useState(false);
+  const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] = useState(false);
 
   const theme = useTheme();
   const completePostOnboardingAction = useCompleteActionCallback();
@@ -85,9 +84,7 @@ const ClaimNftWelcome = () => {
           disableFocus
           paused={isFirstVideo}
           source={
-            theme.dark
-              ? videoSources.infinityPassPart02Dark
-              : videoSources.infinityPassPart02Light
+            theme.dark ? videoSources.infinityPassPart02Dark : videoSources.infinityPassPart02Light
           }
           muted
           repeat
@@ -115,13 +112,7 @@ const ClaimNftWelcome = () => {
       {firstVideoReadyForDisplay ? (
         <AnimatedFlex flex={2} px={6} justifyContent="space-evenly">
           <AnimatedFlex entering={SlideInLeft.delay(1800)}>
-            <Text
-              variant="h4"
-              fontWeight="semiBold"
-              mt={7}
-              mb={7}
-              textAlign="center"
-            >
+            <Text variant="h4" fontWeight="semiBold" mt={7} mb={7} textAlign="center">
               {t("claimNft.welcomePage.title")}
             </Text>
 
@@ -138,9 +129,7 @@ const ClaimNftWelcome = () => {
                 {t("claimNft.welcomePage.claimButton")}
               </Button>
 
-              <Link onPress={handleSkipQrScan}>
-                {t("claimNft.welcomePage.backButton")}
-              </Link>
+              <Link onPress={handleSkipQrScan}>{t("claimNft.welcomePage.backButton")}</Link>
             </Flex>
           </AnimatedFlex>
         </AnimatedFlex>

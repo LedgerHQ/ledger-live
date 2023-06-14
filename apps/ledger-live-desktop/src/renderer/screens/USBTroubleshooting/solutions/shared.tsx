@@ -49,7 +49,7 @@ export const Content = styled(Box).attrs({
   width: 100%;
 `;
 export const Illustration = styled.div<{ image: string; height?: string | number }>`
-  background-image: url('${p => p.image}');
+  background-image: url("${p => p.image}");
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
@@ -94,7 +94,13 @@ const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
   margin-left: 4px;
 `;
-export const TranslatedLink = ({ children, onClick }: any) => (
+export const TranslatedLink = ({
+  children,
+  onClick,
+}: {
+  children?: React.ReactNode;
+  onClick: () => void;
+}) => (
   <Container onClick={onClick}>
     {children}
     <ExternalLinkIconContainer>

@@ -8,7 +8,5 @@ export default function ForceTheme({
   children?: React.ReactNode;
   selectedPalette: "light" | "dark";
 }): React.ReactElement {
-  return (
-    <StyleProvider selectedPalette={selectedPalette}>{children}</StyleProvider>
-  );
+  return <StyleProvider selectedPalette={selectedPalette}>{children}</StyleProvider>;
 }
