@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.1.0-nightly.2
+
+### Patch Changes
+
+- [#3657](https://github.com/LedgerHQ/ledger-live/pull/3657) [`88063df9d6`](https://github.com/LedgerHQ/ledger-live/commit/88063df9d6046c78c32258ea95cd527cda9214d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Sanitize the bulk exchange payload from HSM before exchanging it with the device
+
 ## 31.1.0-nightly.1
 
 ### Minor Changes

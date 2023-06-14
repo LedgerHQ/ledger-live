@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.3
+
+### Patch Changes
+
+- [#3653](https://github.com/LedgerHQ/ledger-live/pull/3653) [`bf4fb8766f`](https://github.com/LedgerHQ/ledger-live/commit/bf4fb8766fdea4e4eddc4672cea7d4d352e2aea0) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix crash on searching crypto currency
+
+- [#3621](https://github.com/LedgerHQ/ledger-live/pull/3621) [`113a694a0e`](https://github.com/LedgerHQ/ledger-live/commit/113a694a0ebe4dc18eb5fbfd4c80887d34abf953) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: LLD new architecture of the sync onboarding for the ESC
+
+  This PR is implementing the new architecture on LLD for the sync onboarding:
+
+  - a new SyncOnboardingCompanion component getting (almost) all the logic that existed directly in the screen
+  - an empty EarlySecurityCheck component that directly notifies (for now) that everything is good
+  - a "screen" that orchestrate which of the 2 components should be rendered by checking the onboarding state of the device, and calling the new device action toggleOnboardingEarlyCheckAction when needed0k
+
+- Updated dependencies [[`88063df9d6`](https://github.com/LedgerHQ/ledger-live/commit/88063df9d6046c78c32258ea95cd527cda9214d5)]:
+  - @ledgerhq/live-common@31.1.0-nightly.2
+
 ## 2.62.0-nightly.2
 
 ### Patch Changes
