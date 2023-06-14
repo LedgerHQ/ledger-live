@@ -13,9 +13,9 @@ import solana from "../families/solana/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
-import { resolver as algorand } from "../families/algorand/logic";
-import { resolver as evm } from "../families/evm/logic";
-import { resolver as polkadot } from "../families/polkadot/logic";
+import { resolver as algorand } from "../families/algorand/setup";
+import { resolver as evm } from "../families/evm/setup";
+import { resolver as polkadot } from "../families/polkadot/setup";
 
 export default {
   bitcoin,

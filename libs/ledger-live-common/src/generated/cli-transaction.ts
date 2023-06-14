@@ -13,11 +13,9 @@ import solana from "../families/solana/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
-import algorandCreateCliTools from "@ledgerhq/coin-algorand/cli-transaction";
-import evmCreateCliTools from "@ledgerhq/coin-evm/cli-transaction";
-import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
+import { cliTools as algorand } from "../families/algorand/setup";
+import { cliTools as evm } from "../families/evm/setup";
+import { cliTools as polkadot } from "../families/polkadot/setup";
 
 export default {
   bitcoin,
@@ -35,7 +33,7 @@ export default {
   stellar,
   tezos,
   tron,
-  algorand: algorandCreateCliTools(network, makeLRUCache),
-  evm: evmCreateCliTools(network, makeLRUCache),
-  polkadot: polkadotCreateCliTools(network, makeLRUCache),
+  algorand,
+  evm,
+  polkadot,
 };

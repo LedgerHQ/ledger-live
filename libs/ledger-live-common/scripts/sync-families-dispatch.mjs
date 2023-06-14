@@ -76,57 +76,48 @@ function genCoinFrameworkTarget(targetFile) {
   let imports = "";
   let exprts = "";
 
-  // In case of cli-transaction, add special import
-  if (targetFile === "cli-transaction.ts") {
-    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
-    imports += `import network from "@ledgerhq/live-network/network";\n`;
-  }
-  if (targetFile === "bridge/js.ts") {
-    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
-    imports += `import network from "@ledgerhq/live-network/network";\n`;
-    imports += `import { executeWithSigner  } from "../../bridge/jsHelpers";\n`;
-  }
-
   // Behavior for coin family with their own package
   const libsDir = path.join(__dirname, "../..");
   for (const family of familiesWPackage) {
     const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
 
     // We still use bridge/js file inside "families" directory
-    if (
-      targetFile !== "bridge/js.ts" &&
-      targetFile !== "cli-transaction.ts" &&
-      targetFile !== "hw-getAddress.ts" &&
-      fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))
-    ) {
-      imports += `import ${family} from "${targetImportPath}";\n`;
-      exprts += `\n  ${family},`;
-    }
+    // if (
+    //   targetFile !== "bridge/js.ts" &&
+    //   targetFile !== "cli-transaction.ts" &&
+    //   targetFile !== "hw-getAddress.ts" &&
+    //   fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))
+    // ) {
+    //   imports += `import ${family} from "${targetImportPath}";\n`;
+    // }
 
-    const capitalizeFamily = family[0].toUpperCase() + family.slice(1);
-    const signer = family + "Signer";
-    const hwAppImport = family !== "evm" ? `hw-app-${family}` : "hw-app-eth";
-    if (targetFile === "bridge/js.ts") {
-      const bridgeFn = family + "CreateBridges";
-      imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      imports += `import * as ${signer} from "@ledgerhq/${hwAppImport}";\n`;
-      imports += `const create${capitalizeFamily}Signer = (transport) => {\n`;
-      imports += `  return new ${signer}.default(transport);\n`;
-      imports += `};\n`;
-      imports += `const ${family} = ${bridgeFn}(\n`;
-      imports += `  executeWithSigner(create${capitalizeFamily}Signer),\n`;
-      imports += `  network,\n`;
-      imports += `  makeLRUCache\n`;
-      imports += `);\n`;
-      exprts += `\n  ${family},`;
+    // if (targetFile === "bridge/js.ts") {
+    //   imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+    // }
+    // if (targetFile === "cli-transaction.ts") {
+    //   imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
+    // }
+    // if (targetFile === "hw-getAddress.ts") {
+    //   imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
+    // }
+    // exprts += `\n  ${family},`;
+    switch(targetFile) {
+      case "bridge/js.ts":
+        imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+        break;
+      case "cli-transaction.ts":
+        imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
+        break;
+      case "hw-getAddress.ts":
+        imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
+        break;
+      // We still use bridge/js file inside "families" directory
+      default:
+        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+          imports += `import ${family} from "${targetImportPath}";\n`;
+        }
     }
-    if (targetFile === "cli-transaction.ts") {
-      const cliToolsFn = family + "CreateCliTools";
-      imports += `import ${cliToolsFn} from "${targetImportPath}";\n`;
-      exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
-    }
-    if (targetFile === "hw-getAddress.ts") {
-      imports += `import { resolver as ${family} } from "../families/${family}/logic";\n`;
+    if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
       exprts += `\n  ${family},`;
     }
   }

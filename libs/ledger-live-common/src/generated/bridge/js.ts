@@ -13,39 +13,9 @@ import solana from "../../families/solana/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tezos from "../../families/tezos/bridge/js";
 import tron from "../../families/tron/bridge/js";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
-import { executeWithSigner  } from "../../bridge/jsHelpers";
-import { createBridges as algorandCreateBridges } from "@ledgerhq/coin-algorand/bridge/js";
-import * as algorandSigner from "@ledgerhq/hw-app-algorand";
-const createAlgorandSigner = (transport) => {
-  return new algorandSigner.default(transport);
-};
-const algorand = algorandCreateBridges(
-  executeWithSigner(createAlgorandSigner),
-  network,
-  makeLRUCache
-);
-import { createBridges as evmCreateBridges } from "@ledgerhq/coin-evm/bridge/js";
-import * as evmSigner from "@ledgerhq/hw-app-eth";
-const createEvmSigner = (transport) => {
-  return new evmSigner.default(transport);
-};
-const evm = evmCreateBridges(
-  executeWithSigner(createEvmSigner),
-  network,
-  makeLRUCache
-);
-import { createBridges as polkadotCreateBridges } from "@ledgerhq/coin-polkadot/bridge/js";
-import * as polkadotSigner from "@ledgerhq/hw-app-polkadot";
-const createPolkadotSigner = (transport) => {
-  return new polkadotSigner.default(transport);
-};
-const polkadot = polkadotCreateBridges(
-  executeWithSigner(createPolkadotSigner),
-  network,
-  makeLRUCache
-);
+import { bridge as algorand } from "../../families/algorand/setup";
+import { bridge as evm } from "../../families/evm/setup";
+import { bridge as polkadot } from "../../families/polkadot/setup";
 
 export default {
   bitcoin,
