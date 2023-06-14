@@ -11,8 +11,9 @@ type Props = {
   account: Account;
   singleProviderRedirectMode?: boolean;
   source?: string;
+  checkbox?: boolean;
 };
-const DelegationModal = ({ account, singleProviderRedirectMode, source }: Props) => {
+const DelegationModal = ({ account, checkbox, singleProviderRedirectMode, source }: Props) => {
   const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
 
   if (!ethStakingProviders?.enabled) return null;
@@ -32,6 +33,7 @@ const DelegationModal = ({ account, singleProviderRedirectMode, source }: Props)
               <EthStakingModalBody
                 onClose={onClose}
                 account={account}
+                checkbox={checkbox}
                 singleProviderRedirectMode={singleProviderRedirectMode}
                 source={source}
                 listProviders={ethStakingProviders.params?.listProvider}
