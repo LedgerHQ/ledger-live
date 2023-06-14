@@ -244,7 +244,10 @@ export const FirmwareUpdate = ({
         title: t("FirmwareUpdate.steps.installUpdate.titleInactive"),
         renderBody: () => (
           <>
-            <TrackScreen category={`Update ${productName} - Step 2: installing updates`} />
+            <TrackScreen
+              category={`Update ${productName} - Step 2: installing updates`}
+              avoidDuplicates
+            />
             <Text color="neutral.c80">
               {t("FirmwareUpdate.steps.installUpdate.description", {
                 deviceName: productName,
@@ -570,13 +573,17 @@ export const FirmwareUpdate = ({
         />
       </QueuedDrawer>
       {updateStep === "languageRestore" ? (
-        <TrackScreen category={`Update ${productName} - Step 3a: restore language`} />
+        <TrackScreen key="a" category={`Update ${productName} - Step 3a: restore language`} />
       ) : updateStep === "imageRestore" ? (
-        <TrackScreen category={`Update ${productName} - Step 3b: restore lock screen picture`} />
+        <TrackScreen
+          key="b"
+          category={`Update ${productName} - Step 3b: restore lock screen picture`}
+        />
       ) : updateStep === "appsRestore" ? (
-        <TrackScreen category={`Update ${productName} - Step 3c: reinstall apps`} />
+        <TrackScreen key="c" category={`Update ${productName} - Step 3c: reinstall apps`} />
       ) : updateStep === "completed" ? (
         <TrackScreen
+          key="d"
           category={`Update ${productName} - Step 3d: apps and settings successfully restored`}
         />
       ) : null}
