@@ -31,7 +31,6 @@ export const command = async (transport: Transport): Promise<boolean> => {
     StatusCodes.OK,
     StatusCodes.UNKNOWN_APDU,
     StatusCodes.USER_REFUSED_ON_DEVICE,
-    StatusCodes.CUSTOM_IMAGE_EMPTY,
     StatusCodes.UNKNOWN_APDU,
   ]);
 
