@@ -8,6 +8,7 @@ import drop from "lodash/drop";
 import get from "lodash/get";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
+import TronWeb from "tronweb";
 import { getEnv } from "../../../env";
 import { TronTransactionExpired } from "../../../errors";
 import { promiseAllBatched } from "../../../promise";
@@ -140,9 +141,25 @@ export const createTronTransaction = async (
       ? `${getBaseApiUrl()}/wallet/transferasset`
       : `${getBaseApiUrl()}/wallet/createtransaction`;
     const preparedTransaction = await post(url, txData);
-    return preparedTransaction;
+    // for the ledger Vault we need to increase the expiration
+    return extendTronTxExpirationTimeBy10mn(preparedTransaction);
   }
 };
+
+function extendTronTxExpirationTimeBy10mn(
+  preparedTransaction,
+): Promise<SendTransactionDataSuccess> {
+  const VAULT_EXPIRATION_TIME = 600;
+  const HttpProvider = TronWeb.providers.HttpProvider;
+  const fullNode = new HttpProvider(getBaseApiUrl());
+  const solidityNode = new HttpProvider(getBaseApiUrl());
+  const eventServer = new HttpProvider(getBaseApiUrl());
+  const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
+  // tronWeb.setHeader({
+  //   "TRON-PRO-API-KEY": "ec320f10-8bd8-4ac9-a6cf-eef9bd346e25",
+  // });
+  return tronWeb.transactionBuilder.extendExpiration(preparedTransaction, VAULT_EXPIRATION_TIME);
+}
 
 export const broadcastTron = async (trxTransaction: SendTransactionDataSuccess) => {
   const result = await post(`${getBaseApiUrl()}/wallet/broadcasttransaction`, trxTransaction);
