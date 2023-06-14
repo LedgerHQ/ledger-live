@@ -31,12 +31,8 @@ type FirmwareUpdateBannerProps = {
   onBackFromUpdate?: () => void;
 };
 
-const FirmwareUpdateBanner = ({
-  onBackFromUpdate,
-}: FirmwareUpdateBannerProps) => {
-  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
-    lastSeenDeviceSelector,
-  );
+const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) => {
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
@@ -138,8 +134,7 @@ const FirmwareUpdateBanner = ({
 
   const wiredDevice = lastConnectedDevice?.wired === true;
 
-  const usbFwUpdateActivated =
-    Platform.OS === "android" && isUsbFwVersionUpdateSupported;
+  const usbFwUpdateActivated = Platform.OS === "android" && isUsbFwVersionUpdateSupported;
 
   const fwUpdateActivatedButNotWired = usbFwUpdateActivated && !wiredDevice;
 

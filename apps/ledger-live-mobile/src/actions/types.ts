@@ -86,8 +86,7 @@ export enum AppStateActionTypes {
 }
 
 export type AppStateIsConnectedPayload = AppState["isConnected"];
-export type AppStateSetHasConnectedDevicePayload =
-  AppState["hasConnectedDevice"];
+export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
 export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;

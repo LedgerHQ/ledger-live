@@ -32,9 +32,7 @@ export const setModalLock = createAction<AppStateSetModalLockPayload>(
 export const addBackgroundEvent = createAction<AppStateAddBackgroundEventPayload>(
   AppStateActionTypes.QUEUE_BACKGROUND_EVENT,
 );
-export const clearBackgroundEvents = createAction(
-  AppStateActionTypes.CLEAR_BACKGROUND_EVENTS,
-);
+export const clearBackgroundEvents = createAction(AppStateActionTypes.CLEAR_BACKGROUND_EVENTS);
 export const updateMainNavigatorVisibility =
   createAction<AppStateUpdateMainNavigatorVisibilityPayload>(
     AppStateActionTypes.UPDATE_MAIN_NAVIGATOR_VISIBILITY,

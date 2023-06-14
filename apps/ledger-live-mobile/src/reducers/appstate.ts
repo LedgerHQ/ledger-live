@@ -87,8 +87,7 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
 export const isDebugMenuVisible = (state: State) => state.appstate.debugMenuVisible;
 export const isConnectedSelector = (state: State) => state.appstate.isConnected;
 export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
-export const hasConnectedDeviceSelector = (state: State) =>
-  state.appstate.hasConnectedDevice;
+export const hasConnectedDeviceSelector = (state: State) => state.appstate.hasConnectedDevice;
 
 export const backgroundEventsSelector = (state: State) => state.appstate.backgroundEvents;
 
