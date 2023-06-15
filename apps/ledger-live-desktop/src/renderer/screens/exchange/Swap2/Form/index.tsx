@@ -18,11 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
-import {
-  getMainAccount,
-  getParentAccount,
-  isTokenAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
   providersSelector,
   rateSelector,
@@ -121,7 +117,6 @@ const SwapForm = () => {
     },
     [dispatch],
   );
-  const showDexQuotes: Feature<boolean> | null = useFeature("swapShowDexQuotes");
   const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
     "swapWalletApiPartnerList",
   );
@@ -142,7 +137,6 @@ const SwapForm = () => {
     onNoRates,
     ...(locationState as object),
     providers: storedProviders || undefined,
-    includeDEX: showDexQuotes?.enabled || false,
   });
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
@@ -440,32 +434,8 @@ const SwapForm = () => {
   };
   const sourceAccount = swapTransaction.swap.from.account;
   const sourceCurrency = swapTransaction.swap.from.currency;
-  const sourceParentAccount = swapTransaction.swap.from.parentAccount;
-  const targetAccount = swapTransaction.swap.to.account;
-  const targetParentAccount = swapTransaction.swap.to.parentAccount;
   const targetCurrency = swapTransaction.swap.to.currency;
 
-  // We check if a decentralized swap is available to conditionnaly render an Alert below.
-  // All Ethereum, Binance and Polygon related currencies are considered available
-  const showNoQuoteDexRate = useMemo(() => {
-    // if we are showing DEX quotes, we don't want to show the link banners
-    if (showDexQuotes?.enabled) {
-      return false;
-    }
-    if (sourceAccount && targetAccount) {
-      const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
-      const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
-      const dexFamilyList = ["ethereum", "bsc", "polygon"];
-      if (
-        dexFamilyList.includes(targetMainAccount.currency.id) &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id &&
-        sourceMainAccount.currency.family === targetMainAccount.currency.family
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }, [showDexQuotes, sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
   useEffect(() => {
     if (!exchangeRate) {
       // @ts-expect-error This seems like a mistake? updateSelectedRate expects an ExchangeRate
@@ -554,7 +524,6 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!pauseRefreshing}
-              showNoQuoteDexRate={showNoQuoteDexRate}
             />
           </>
         )}
