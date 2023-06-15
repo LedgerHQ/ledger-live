@@ -16,7 +16,10 @@ export type Props = {
   lastKnownDeviceId: DeviceModelId;
 };
 
-const TroubleshootingDrawer = ({ isOpen, onClose, lastKnownDeviceId }: Props) => {
+/**
+ * Drawer when the device has connection issues
+ */
+const TroubleshootingDrawer: React.FC<Props> = ({ isOpen, onClose, lastKnownDeviceId }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const theme = useTheme();

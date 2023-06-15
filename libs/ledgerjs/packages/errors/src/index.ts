@@ -194,7 +194,7 @@ export class TransportError extends Error {
     super(message || name);
     this.name = name;
     this.message = message;
-    this.stack = new Error().stack;
+    this.stack = new Error(message).stack;
     this.id = id;
   }
 }
@@ -284,7 +284,7 @@ export function TransportStatusError(statusCode: number): void {
 
   this.name = "TransportStatusError";
   this.message = message;
-  this.stack = new Error().stack;
+  this.stack = new Error(message).stack;
   this.statusCode = statusCode;
   this.statusText = statusText;
 }

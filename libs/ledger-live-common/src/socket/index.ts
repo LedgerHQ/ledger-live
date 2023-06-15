@@ -189,17 +189,20 @@ export const createDeviceSocket = (
             await new Promise((resolve, reject) => {
               let i = 0;
               notify(0);
+              // if the bulk payload includes trailing empty strings we end up
+              // sending empty data to the device and causing a disconnect.
+              const cleanData = data
+                .map(d => (d !== "" ? Buffer.from(d, "hex") : null))
+                .filter(Boolean);
+
               // we also use a subscription to be able to cancel the bulk if the user unsubscribes
-              bulkSubscription = transport.exchangeBulk(
-                data.map(d => Buffer.from(d, "hex")),
-                {
-                  next: () => {
-                    notify(++i);
-                  },
-                  error: e => reject(e),
-                  complete: () => resolve(null),
+              bulkSubscription = transport.exchangeBulk(cleanData, {
+                next: () => {
+                  notify(++i);
                 },
-              );
+                error: e => reject(e),
+                complete: () => resolve(null),
+              });
             });
             if (unsubscribed) {
               log("socket", "unsubscribed before end of bulk");

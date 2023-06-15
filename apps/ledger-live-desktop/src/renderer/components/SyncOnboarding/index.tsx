@@ -5,11 +5,11 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import SyncOnboardingDeviceConnection, {
   SyncOnboardingDeviceConnectionProps,
 } from "./DeviceConnection";
-import SyncOnboardingManual, { SyncOnboardingManualProps } from "./Manual";
+import SyncOnboardingManual, { SyncOnboardingScreenProps } from "./Manual";
 import CompletionScreen from "./Manual/CompletionScreen";
 
 export type DeviceConnectionRouteProps = RouteComponentProps<SyncOnboardingDeviceConnectionProps>;
-export type ManualRouteProps = RouteComponentProps<SyncOnboardingManualProps>;
+export type ManualRouteProps = RouteComponentProps<SyncOnboardingScreenProps>;
 
 const SyncOnboarding = () => {
   const { path } = useRouteMatch();

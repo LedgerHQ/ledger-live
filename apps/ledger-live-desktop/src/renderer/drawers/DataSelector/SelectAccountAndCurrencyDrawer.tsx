@@ -21,8 +21,7 @@ const options = {
 };
 function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {
   const fuse = new Fuse(currencies, options);
-  const result = fuse.search(searchValue);
-  return result as Currency[];
+  return fuse.search(searchValue).map(res => res.item);
 }
 const SelectAccountAndCurrencyDrawerContainer = styled.div`
   display: flex;
