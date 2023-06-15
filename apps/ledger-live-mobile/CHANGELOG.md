@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.24.1-nightly.4
+
+### Patch Changes
+
+- [#3663](https://github.com/LedgerHQ/ledger-live/pull/3663) [`db6988ce18`](https://github.com/LedgerHQ/ledger-live/commit/db6988ce185673a3c4764d613b0455e1ab0d902a) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: revert update of babel/core
+
+  Reverting `babel/core` from v7.22.1 back to v7.21.0.
+  This created issues on animations.
+  For now a fixed version `babel/core` (`7.21.0`) is set.
+
+- Updated dependencies [[`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4)]:
+  - @ledgerhq/live-common@31.1.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.6-nightly.2
+  - @ledgerhq/domain-service@1.1.4-nightly.2
+
 ## 3.24.1-nightly.3
 
 ### Patch Changes

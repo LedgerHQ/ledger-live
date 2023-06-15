@@ -1,5 +1,13 @@
 # dummy-wallet-app
 
+## 0.1.15-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4)]:
+  - @ledgerhq/live-common@31.1.0-nightly.3
+  - @ledgerhq/hw-app-eth@6.33.6-nightly.2
+
 ## 0.1.15-nightly.2
 
 ### Patch Changes

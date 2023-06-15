@@ -1,5 +1,16 @@
 # live-common-tools
 
+## 0.5.1-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a), [`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4)]:
+  - @ledgerhq/cryptoassets@9.8.0-nightly.1
+  - @ledgerhq/live-common@31.1.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.6-nightly.2
+  - @ledgerhq/domain-service@1.1.4-nightly.2
+  - @ledgerhq/hw-app-eth@6.33.6-nightly.2
+
 ## 0.5.1-nightly.2
 
 ### Patch Changes

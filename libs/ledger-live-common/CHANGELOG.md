@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 31.1.0-nightly.3
+
+### Patch Changes
+
+- [#3661](https://github.com/LedgerHQ/ledger-live/pull/3661) [`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Logic implementation of the bulk uninstall apdu with test
+
+- Updated dependencies [[`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a)]:
+  - @ledgerhq/cryptoassets@9.8.0-nightly.1
+  - @ledgerhq/coin-algorand@0.2.2-nightly.2
+  - @ledgerhq/coin-evm@0.2.1-nightly.2
+  - @ledgerhq/coin-framework@0.3.6-nightly.2
+  - @ledgerhq/coin-polkadot@0.1.7-nightly.2
+  - @ledgerhq/domain-service@1.1.4-nightly.2
+  - @ledgerhq/hw-app-eth@6.33.6-nightly.2
+
 ## 31.1.0-nightly.2
 
 ### Patch Changes

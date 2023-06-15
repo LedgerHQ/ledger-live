@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.4
+
+### Patch Changes
+
+- [#3678](https://github.com/LedgerHQ/ledger-live/pull/3678) [`ed4b15ce49`](https://github.com/LedgerHQ/ledger-live/commit/ed4b15ce496a2d20e34da2daca0c5cb6de87ce3a) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix continue button for disclaimer drawer in discover v2 page
+
+- [#3671](https://github.com/LedgerHQ/ledger-live/pull/3671) [`71387b4a21`](https://github.com/LedgerHQ/ledger-live/commit/71387b4a2135cd98df2485b698de83e1c7b728e7) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent render loop that dismisses app state in my ledger
+
+- [#3620](https://github.com/LedgerHQ/ledger-live/pull/3620) [`ee27414c57`](https://github.com/LedgerHQ/ledger-live/commit/ee27414c57ab4feeef04018317f2c14f646ae528) Thanks [@juan-cortes](https://github.com/juan-cortes)! - fix fw update regression for unseeded devices LLD
+
+- Updated dependencies [[`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4)]:
+  - @ledgerhq/live-common@31.1.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.6-nightly.2
+  - @ledgerhq/domain-service@1.1.4-nightly.2
+
 ## 2.62.0-nightly.3
 
 ### Patch Changes
