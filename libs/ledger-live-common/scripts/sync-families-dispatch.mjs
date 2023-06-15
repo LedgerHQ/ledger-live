@@ -81,26 +81,6 @@ function genCoinFrameworkTarget(targetFile) {
   for (const family of familiesWPackage) {
     const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
 
-    // We still use bridge/js file inside "families" directory
-    // if (
-    //   targetFile !== "bridge/js.ts" &&
-    //   targetFile !== "cli-transaction.ts" &&
-    //   targetFile !== "hw-getAddress.ts" &&
-    //   fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))
-    // ) {
-    //   imports += `import ${family} from "${targetImportPath}";\n`;
-    // }
-
-    // if (targetFile === "bridge/js.ts") {
-    //   imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
-    // }
-    // if (targetFile === "cli-transaction.ts") {
-    //   imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
-    // }
-    // if (targetFile === "hw-getAddress.ts") {
-    //   imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
-    // }
-    // exprts += `\n  ${family},`;
     switch(targetFile) {
       case "bridge/js.ts":
         imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
