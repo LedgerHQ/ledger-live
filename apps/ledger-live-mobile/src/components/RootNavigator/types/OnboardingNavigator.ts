@@ -42,7 +42,7 @@ export type OnboardingNavigatorParamList = {
     sceneInfoKey: string;
   };
   [ScreenName.OnboardingPairNew]: {
-    deviceModelId: DeviceModelId;
+    deviceModelId?: DeviceModelId;
     next?: ScreenName.OnboardingProtectFlow;
     showSeedWarning?: boolean;
     isProtectFlow?: boolean;

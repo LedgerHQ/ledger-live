@@ -1637,6 +1637,11 @@
       }
     },
     "stepPairNew": {
+      "generic": {
+        "title": "Pair your Nano",
+        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
+        "cta": "Let’s pair my Nano"
+      },
       "nanoX": {
         "title": "Pair your Nano",
         "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
