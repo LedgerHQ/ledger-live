@@ -177,11 +177,6 @@ export const withDevice =
       };
     });
 
-export const withDevicePromise = <T>(
-  deviceId: string,
-  fn: (transport: Transport) => Observable<T>,
-): Promise<T> => withDevice(deviceId)(transport => fn(transport)).toPromise();
-
 export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof WrongAppForCurrency) return false;
   if (err instanceof WrongDeviceForAccount) return false;
