@@ -115,18 +115,16 @@ export function EthStakingModalBody({
       </Flex>
       <Flex flexDirection={"column"} mt={5} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
-          {listProviders.map((item, i) => {
-            return (
-              <Flex key={item.liveAppId} width="100%" flexDirection={"column"}>
-                <ProviderItem
-                  provider={item}
-                  infoOnClick={infoOnClick}
-                  stakeOnClick={stakeOnClick}
-                  redirectIfOnlyProvider={redirectIfOnlyProvider}
-                />
-              </Flex>
-            );
-          })}
+          {listProviders.map(item => (
+            <Flex key={item.liveAppId} width="100%" flexDirection={"column"}>
+              <ProviderItem
+                provider={item}
+                infoOnClick={infoOnClick}
+                stakeOnClick={stakeOnClick}
+                redirectIfOnlyProvider={redirectIfOnlyProvider}
+              />
+            </Flex>
+          ))}
         </Flex>
         {hasCheckbox && (
           <CheckBoxContainer
