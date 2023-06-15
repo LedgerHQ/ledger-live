@@ -22,6 +22,7 @@ describe("EVM Family", () => {
         gasPrice: new BigNumber(1),
         maxFeePerGas: new BigNumber(1),
         maxPriorityFeePerGas: new BigNumber(1),
+        nextBaseFee: new BigNumber(1),
       }));
       jest.spyOn(nftAPI, "getNftCollectionMetadata").mockImplementation(async input => {
         if (
@@ -114,6 +115,7 @@ describe("EVM Family", () => {
             gasPrice: new BigNumber(1),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
+            nextBaseFee: null,
           }));
 
           const tx = await prepareTransaction(account, { ...transaction });
@@ -316,6 +318,7 @@ describe("EVM Family", () => {
             gasPrice: new BigNumber(1),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
+            nextBaseFee: null,
           }));
 
           const tokenAccountWithBalance = {
@@ -406,16 +409,19 @@ describe("EVM Family", () => {
                 maxFeePerGas: new BigNumber(10),
                 maxPriorityFeePerGas: new BigNumber(1),
                 gasPrice: null,
+                nextBaseFee: new BigNumber(1),
               },
               medium: {
                 maxFeePerGas: new BigNumber(20),
                 maxPriorityFeePerGas: new BigNumber(2),
                 gasPrice: null,
+                nextBaseFee: new BigNumber(1),
               },
               fast: {
                 maxFeePerGas: new BigNumber(30),
                 maxPriorityFeePerGas: new BigNumber(3),
                 gasPrice: null,
+                nextBaseFee: new BigNumber(1),
               },
             };
             const tx = await prepareTransaction(account, {
@@ -516,6 +522,7 @@ describe("EVM Family", () => {
               gasPrice: new BigNumber(1),
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,
+              nextBaseFee: null,
             }));
             const tx = await prepareTransaction(account, {
               ...nftTransaction,
@@ -563,6 +570,7 @@ describe("EVM Family", () => {
               gasPrice: new BigNumber(1),
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,
+              nextBaseFee: null,
             }));
             const tx = await prepareTransaction(account, {
               ...nftTransaction,

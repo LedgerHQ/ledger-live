@@ -190,6 +190,7 @@ export const getFeesEstimation = (currency: CryptoCurrency): Promise<FeeData> =>
         return {
           maxPriorityFeePerGas,
           maxFeePerGas: nextBaseFee.multipliedBy(2).plus(maxPriorityFeePerGas),
+          nextBaseFee,
         };
       } else {
         const gasPrice = await api.getGasPrice();
@@ -206,6 +207,7 @@ export const getFeesEstimation = (currency: CryptoCurrency): Promise<FeeData> =>
         ? new BigNumber(feeData.maxPriorityFeePerGas.toString())
         : null,
       gasPrice: feeData.gasPrice ? new BigNumber(feeData.gasPrice.toString()) : null,
+      nextBaseFee: feeData.nextBaseFee ? new BigNumber(feeData.nextBaseFee.toString()) : null,
     };
   });
 

@@ -215,6 +215,8 @@ export type FeeData = {
   maxFeePerGas: null | BigNumber;
   maxPriorityFeePerGas: null | BigNumber;
   gasPrice: null | BigNumber;
+  // only used by UI send flow in advanced mode for EIP-1559
+  nextBaseFee: null | BigNumber;
 };
 
 export type GasOptions = {

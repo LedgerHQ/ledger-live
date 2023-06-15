@@ -2,7 +2,7 @@ import { isEqual } from "lodash";
 import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { EvmNftTransaction, Transaction as EvmTransaction } from "./types";
+import { EvmNftTransaction, Transaction as EvmTransaction, FeeData } from "./types";
 import { getTransactionData, getTypedTransaction } from "./transaction";
 import { validateRecipient } from "./getTransactionStatus";
 import { getNftCollectionMetadata } from "./api/nft";
@@ -177,12 +177,13 @@ export const prepareTransaction = async (
 ): Promise<EvmTransaction> => {
   const { currency } = account;
   // Get the current network status fees
-  const feeData = await (async () => {
+  const feeData: FeeData = await (async () => {
     if (transaction.feesStrategy === "custom") {
       return {
         gasPrice: transaction.gasPrice ?? null,
         maxFeePerGas: transaction.maxFeePerGas ?? null,
         maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+        nextBaseFee: transaction.gasOptions?.medium?.nextBaseFee ?? null,
       };
     }
 

@@ -69,16 +69,19 @@ export const getGasOptions = async ({
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(low),
         maxPriorityFeePerGas: low,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
       medium: {
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(medium),
         maxPriorityFeePerGas: medium,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
       fast: {
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(high),
         maxPriorityFeePerGas: high,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
     };
   }
@@ -88,16 +91,19 @@ export const getGasOptions = async ({
       gasPrice: low,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
     medium: {
       gasPrice: medium,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
     fast: {
       gasPrice: high,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
   };
 };
