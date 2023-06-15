@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 export type ModalsData = {
   MODAL_ETH_STAKE: {
     account: Account;
-    checkbox?: boolean;
+    hasCheckbox?: boolean;
     singleProviderRedirectMode?: boolean;
     source?: string;
   };

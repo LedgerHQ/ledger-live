@@ -23,7 +23,7 @@ type Props = {
   account: Account;
   singleProviderRedirectMode?: boolean;
   onClose?: () => void;
-  checkbox?: boolean;
+  hasCheckbox?: boolean;
   source?: string;
   listProviders?: ListProviders;
 };
@@ -34,7 +34,7 @@ export type StakeOnClickProps = {
 };
 
 export function EthStakingModalBody({
-  checkbox = false,
+  hasCheckbox = false,
   singleProviderRedirectMode = true,
   source,
   onClose,
@@ -128,7 +128,7 @@ export function EthStakingModalBody({
             );
           })}
         </Flex>
-        {checkbox && (
+        {hasCheckbox && (
           <CheckBoxContainer
             p={3}
             borderRadius={8}
