@@ -81,12 +81,9 @@ export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
 };
 
 export const fetchEstimatedFees = async (
-  request: EstimatedFeesRequest
+  request: EstimatedFeesRequest,
 ): Promise<EstimatedFeesResponse> => {
-  const feeRate = await send<EstimatedFeesResponse>(
-    `/v2/fees/transfer`,
-    request
-  );
+  const feeRate = await send<EstimatedFeesResponse>(`/v2/fees/transfer`, request);
   return feeRate; // TODO Validate if the response fits this interface
 };
 
@@ -95,19 +92,14 @@ export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
   return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
 };
 
-export const fetchTxs = async (
-  addr: string,
-  offset = 0
-): Promise<TransactionsResponse> => {
+export const fetchTxs = async (addr: string, offset = 0): Promise<TransactionsResponse> => {
   const response = await fetch<TransactionsResponse>(
-    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}`
+    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}`,
   );
   return response; // TODO Validate if the response fits this interface
 };
 
-export const fetchFullTxs = async (
-  addr: string
-): Promise<TransactionResponse[]> => {
+export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]> => {
   let qty,
     offset = 0;
   let txs: TransactionResponse[] = [];
@@ -124,30 +116,22 @@ export const fetchFullTxs = async (
 };
 
 export const broadcastTx = async (
-  message: BroadcastTransactionRequest
+  message: BroadcastTransactionRequest,
 ): Promise<BroadcastTransactionResponse> => {
-  let response = await sendRaw<BroadcastTransactionResponse>(
-    `/v2/transactions`,
-    message
-  );
+  let response = await sendRaw<BroadcastTransactionResponse>(`/v2/transactions`, message);
 
   if (response != "") response = `0x${response}`;
   return response; // TODO Validate if the response fits this interface
 };
 
-export const fetchMempoolTxs = async (
-  addr: string,
-  offset = 0
-): Promise<MempoolResponse> => {
+export const fetchMempoolTxs = async (addr: string, offset = 0): Promise<MempoolResponse> => {
   const response = await fetch<MempoolResponse>(
-    `/extended/v1/tx/mempool?sender_address=${addr}&offset=${offset}`
+    `/extended/v1/tx/mempool?sender_address=${addr}&offset=${offset}`,
   );
   return response; // TODO Validate if the response fits this interface
 };
 
-export const fetchFullMempoolTxs = async (
-  addr: string
-): Promise<MempoolTransaction[]> => {
+export const fetchFullMempoolTxs = async (addr: string): Promise<MempoolTransaction[]> => {
   let qty,
     offset = 0;
   let txs: MempoolTransaction[] = [];
@@ -164,8 +148,6 @@ export const fetchFullMempoolTxs = async (
 };
 
 export const fetchNonce = async (addr: string): Promise<GetNonceResponse> => {
-  const response = await fetch<GetNonceResponse>(
-    `/extended/v1/address/${addr}/nonces`
-  );
+  const response = await fetch<GetNonceResponse>(`/extended/v1/address/${addr}/nonces`);
   return response; // TODO Validate if the response fits this interface
 };

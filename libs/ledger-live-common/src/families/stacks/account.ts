@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
 export function fromOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
+  extra: Record<string, any> | null | undefined,
 ): Record<string, any> | null | undefined {
   if (!extra) return extra;
 
@@ -13,7 +13,7 @@ export function fromOperationExtraRaw(
 }
 
 export function toOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
+  extra: Record<string, any> | null | undefined,
 ): Record<string, any> | null | undefined {
   if (!extra) return extra;
 

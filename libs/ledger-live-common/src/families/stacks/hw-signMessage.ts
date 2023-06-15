@@ -3,10 +3,7 @@ import BlockstackApp from "@zondax/ledger-stacks";
 import type { SignMessage, Result } from "../../hw/signMessage/types";
 import { getBufferFromString, getPath, throwIfError } from "./utils";
 
-const signMessage: SignMessage = async (
-  transport,
-  { path, message }
-): Promise<Result> => {
+const signMessage: SignMessage = async (transport, { path, message }): Promise<Result> => {
   const blockstack = new BlockstackApp(transport);
 
   if (!message) throw new Error(`Message cannot be empty`);

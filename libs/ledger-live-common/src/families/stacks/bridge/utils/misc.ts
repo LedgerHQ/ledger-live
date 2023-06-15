@@ -6,20 +6,17 @@ import { log } from "@ledgerhq/logs";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
-  createMessageSignature
+  createMessageSignature,
 } from "@stacks/transactions";
 
-import {
-  GetAccountShape,
-  AccountShapeInfo
-} from "../../../../bridge/jsHelpers";
+import { GetAccountShape, AccountShapeInfo } from "../../../../bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "../../../../account";
 import {
   fetchBalances,
   fetchBlockHeight,
   fetchFullMempoolTxs,
   fetchFullTxs,
-  fetchNonce
+  fetchNonce,
 } from "../../bridge/utils/api";
 import { StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
@@ -27,13 +24,13 @@ import { encodeOperationId } from "../../../../operation";
 
 export const getTxToBroadcast = async (
   operation: Operation,
-  signature: string
+  signature: string,
 ): Promise<Buffer> => {
   const {
     value,
     recipients,
     fee,
-    extra: { xpub, nonce, anchorMode, network, memo }
+    extra: { xpub, nonce, anchorMode, network, memo },
   } = operation;
 
   const options: UnsignedTokenTransferOptions = {
@@ -44,7 +41,7 @@ export const getTxToBroadcast = async (
     network: StacksNetwork[network],
     publicKey: xpub,
     fee: new BN(fee.toFixed()),
-    nonce: new BN(nonce.toFixed())
+    nonce: new BN(nonce.toFixed()),
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -63,72 +60,64 @@ export const getAddress = (a: Account): Address =>
     ? a.freshAddresses[0]
     : { address: a.freshAddress, derivationPath: a.freshAddressPath };
 
-export const mapTxToOps = (accountID, { address }: AccountShapeInfo) => (
-  tx: TransactionResponse
-): Operation[] => {
-  const { sender, recipient, amount } = tx.stx_transfers[0];
-  const {
-    tx_id,
-    fee_rate,
-    block_height,
-    burn_block_time,
-    token_transfer
-  } = tx.tx;
-  const { memo: memoHex } = token_transfer;
+export const mapTxToOps =
+  (accountID, { address }: AccountShapeInfo) =>
+  (tx: TransactionResponse): Operation[] => {
+    const { sender, recipient, amount } = tx.stx_transfers[0];
+    const { tx_id, fee_rate, block_height, burn_block_time, token_transfer } = tx.tx;
+    const { memo: memoHex } = token_transfer;
 
-  const ops: Operation[] = [];
+    const ops: Operation[] = [];
 
-  const date = new Date(burn_block_time * 1000);
-  const value = new BigNumber(amount || "0");
-  const feeToUse = new BigNumber(fee_rate || "0");
+    const date = new Date(burn_block_time * 1000);
+    const value = new BigNumber(amount || "0");
+    const feeToUse = new BigNumber(fee_rate || "0");
 
-  const isSending = address === sender;
-  const isReceiving = address === recipient;
+    const isSending = address === sender;
+    const isReceiving = address === recipient;
 
-  const memo = Buffer.from(memoHex.substring(2), "hex")
-    .toString()
-    .replaceAll("\x00", "");
+    const memo = Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
 
-  if (isSending) {
-    ops.push({
-      id: encodeOperationId(accountID, tx_id, "OUT"),
-      hash: tx_id,
-      type: "OUT",
-      value: value.plus(feeToUse),
-      fee: feeToUse,
-      blockHeight: block_height,
-      blockHash: null,
-      accountId: accountID,
-      senders: [sender],
-      recipients: [recipient],
-      date,
-      extra: {
-        memo
-      }
-    });
-  }
+    if (isSending) {
+      ops.push({
+        id: encodeOperationId(accountID, tx_id, "OUT"),
+        hash: tx_id,
+        type: "OUT",
+        value: value.plus(feeToUse),
+        fee: feeToUse,
+        blockHeight: block_height,
+        blockHash: null,
+        accountId: accountID,
+        senders: [sender],
+        recipients: [recipient],
+        date,
+        extra: {
+          memo,
+        },
+      });
+    }
 
-  if (isReceiving) {
-    ops.push({
-      id: encodeOperationId(accountID, tx_id, "IN"),
-      hash: tx_id,
-      type: "IN",
-      value,
-      fee: feeToUse,
-      blockHeight: block_height,
-      blockHash: null,
-      accountId: accountID,
-      senders: [sender],
-      recipients: [recipient],
-      date,
-      extra: {
-        memo
-      }
-    });
-  }
+    if (isReceiving) {
+      ops.push({
+        id: encodeOperationId(accountID, tx_id, "IN"),
+        hash: tx_id,
+        type: "IN",
+        value,
+        fee: feeToUse,
+        blockHeight: block_height,
+        blockHash: null,
+        accountId: accountID,
+        senders: [sender],
+        recipients: [recipient],
+        date,
+        extra: {
+          memo,
+        },
+      });
+    }
 
-  return ops;
-};
+    return ops;
+  };
 
 export const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, address, currency, rest = {}, derivationMode } = info;
@@ -140,7 +129,7 @@ export const getAccountShape: GetAccountShape = async info => {
     version: "2",
     currencyId: currency.id,
     xpubOrAddress: publicKey,
-    derivationMode
+    derivationMode,
   });
 
   const blockHeight = await fetchBlockHeight();
@@ -163,7 +152,7 @@ export const getAccountShape: GetAccountShape = async info => {
     balance,
     spendableBalance,
     operations: flatMap(rawTxs, mapTxToOps(accountId, info)),
-    blockHeight: blockHeight.chain_tip.block_height
+    blockHeight: blockHeight.chain_tip.block_height,
   };
 
   return result;
@@ -171,7 +160,7 @@ export const getAccountShape: GetAccountShape = async info => {
 
 function reconciliatePublicKey(
   publicKey: string | undefined,
-  initialAccount: Account | undefined
+  initialAccount: Account | undefined,
 ): string {
   if (publicKey) return publicKey;
   if (initialAccount) {
@@ -183,14 +172,12 @@ function reconciliatePublicKey(
 
 export const findNextNonce = async (
   senderAddress: string,
-  pendingOps: Operation[]
+  pendingOps: Operation[],
 ): Promise<BigNumber> => {
   let nextNonce = BigNumber(0);
 
   for (const op of pendingOps) {
-    const nonce = op.extra.nonce
-      ? (op.extra.nonce as BigNumber)
-      : new BigNumber(0);
+    const nonce = op.extra.nonce ? (op.extra.nonce as BigNumber) : new BigNumber(0);
     if (nonce.gt(nextNonce)) {
       nextNonce = nonce;
     }

@@ -44,7 +44,6 @@ export interface TransactionResponse {
   }[];
 }
 
-
 export interface MempoolTransaction {
   tx_id: string;
   tx_status: string;

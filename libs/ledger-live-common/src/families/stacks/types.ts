@@ -7,10 +7,7 @@ import {
   TransactionCommon,
   TransactionCommonRaw,
 } from "@ledgerhq/types-live";
-import {
-  TransactionStatusCommon,
-  TransactionStatusCommonRaw,
-} from "@ledgerhq/types-live";
+import { TransactionStatusCommon, TransactionStatusCommonRaw } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./bridge/utils/api.types";
 

@@ -8,14 +8,8 @@ const resolver: Resolver = async (transport, { path, verify }) => {
   const blockstack = new BlockstackApp(transport);
 
   const r = verify
-    ? await blockstack.showAddressAndPubKey(
-        getPath(path),
-        AddressVersion.MainnetSingleSig
-      )
-    : await blockstack.getAddressAndPubKey(
-        getPath(path),
-        AddressVersion.MainnetSingleSig
-      );
+    ? await blockstack.showAddressAndPubKey(getPath(path), AddressVersion.MainnetSingleSig)
+    : await blockstack.getAddressAndPubKey(getPath(path), AddressVersion.MainnetSingleSig);
 
   throwIfError(r);
 
