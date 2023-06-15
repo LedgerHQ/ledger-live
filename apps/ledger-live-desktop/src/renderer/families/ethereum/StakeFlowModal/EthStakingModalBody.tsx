@@ -104,7 +104,7 @@ export function EthStakingModalBody({
         <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px">
           {t("ethereum.stake.title")}
         </Text>
-        {checkbox && (
+        {listProviders.length <= 1 && (
           <Flex justifyContent="center" py={20} width="100%">
             <EthStakeIllustration size={140} />
           </Flex>
