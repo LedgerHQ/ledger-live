@@ -32,15 +32,10 @@ const stacksSpecs: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
 
-        let amount = account.spendableBalance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        let amount = account.spendableBalance.div(1.9 + 0.2 * Math.random()).integerValue();
 
         if (!sibling.used && amount.lt(MIN_SAFE)) {
-          invariant(
-            account.spendableBalance.gt(MIN_SAFE),
-            "send is too low to activate account"
-          );
+          invariant(account.spendableBalance.gt(MIN_SAFE), "send is too low to activate account");
           amount = MIN_SAFE;
         }
 
@@ -55,8 +50,8 @@ const stacksSpecs: AppSpec<Transaction> = {
       test: ({ account, accountBeforeTransaction, operation }) => {
         botTest("account balance decreased with operation value", () =>
           expect(account.balance.toFixed()).toBe(
-            accountBeforeTransaction.balance.minus(operation.value).toFixed()
-          )
+            accountBeforeTransaction.balance.minus(operation.value).toFixed(),
+          ),
         );
       },
     },
@@ -76,9 +71,7 @@ const stacksSpecs: AppSpec<Transaction> = {
         };
       },
       test: ({ account }) => {
-        botTest("account balance is 0", () =>
-          expect(account.balance.toFixed()).toBe("0")
-        );
+        botTest("account balance is 0", () => expect(account.balance.toFixed()).toBe("0"));
       },
     },
   ],
