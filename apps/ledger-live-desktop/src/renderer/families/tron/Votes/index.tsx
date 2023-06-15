@@ -17,7 +17,8 @@ import { openURL } from "~/renderer/linking";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { Link as ExternalLink } from "@ledgerhq/react-ui";
+import { ExternalLinkMedium } from "@ledgerhq/react-ui/assets/icons";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import Vote from "~/renderer/icons/Vote";
 import Header from "./Header";
@@ -175,10 +176,14 @@ const Delegation = ({ account }: { account: TronAccount }) => {
               />
             </Text>
             <Box mt={2}>
-              <LinkWithExternalIcon
-                label={<Trans i18nKey="tron.voting.emptyState.info" />}
+              <ExternalLink
+                mt={0}
+                size={"small"}
+                Icon={ExternalLinkMedium}
                 onClick={() => openURL(urls.stakingTron)}
-              />
+              >
+                <Trans i18nKey="tron.voting.emptyState.info" />
+              </ExternalLink>
             </Box>
           </Box>
           <Box>

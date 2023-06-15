@@ -28,7 +28,6 @@ import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { urls } from "~/config/urls";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CounterValue from "~/renderer/components/CounterValue";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -68,6 +67,8 @@ import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { Link as ExternalLink } from "@ledgerhq/react-ui";
+import { ExternalLinkMedium } from "@ledgerhq/react-ui/assets/icons";
 
 const mapStateToProps = (
   state: State,
@@ -339,15 +340,19 @@ const OperationD = (props: Props) => {
       )}
       {url ? (
         <Box m={0} ff="Inter|SemiBold" horizontal justifyContent="center" fontSize={4} my={1}>
-          <LinkWithExternalIcon
-            fontSize={4}
+          <ExternalLink
+            mt={1}
+            size={"small"}
+            color="#8b80db"
+            Icon={ExternalLinkMedium}
             onClick={() =>
               openURL(url, "viewOperationInExplorer", {
                 currencyId: currencyName,
               })
             }
-            label={t("operationDetails.viewOperation")}
-          />
+          >
+            <Trans i18nKey="operationDetails.viewOperation" />
+          </ExternalLink>
         </Box>
       ) : null}
       {!isNftOperation ? (
