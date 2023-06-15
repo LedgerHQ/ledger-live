@@ -5,7 +5,7 @@ export default function EthStakeIllustration({
   color = "currentColor",
 }: {
   size: number;
-  color: string;
+  color?: string;
 }) {
   return (
     <svg

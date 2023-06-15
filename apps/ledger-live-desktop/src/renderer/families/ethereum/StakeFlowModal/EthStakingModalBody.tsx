@@ -90,7 +90,7 @@ export function EthStakingModalBody({
 
   const checkBoxOnChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`, value);
+    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`, `${value}`);
     setDoNotShowAgain(value);
     track("button_clicked", {
       button: "not_show",
