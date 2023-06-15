@@ -11,12 +11,13 @@ import { useEffect, useMemo, useState } from "react";
 export const useGasOptions = ({
   currency,
   transaction,
-  interval,
+  // interval is the time in milliseconds between each call to the gas tracker
+  interval = 60 * 1000,
 }: {
   currency: CryptoCurrency;
   transaction: Transaction;
-  interval?: number;
-}): GasOptions | Error | null => {
+  interval: number;
+}): [GasOptions | null, Error | null] => {
   const [gasOptions, setGasOptions] = useState<GasOptions | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
@@ -34,17 +35,15 @@ export const useGasOptions = ({
         .then(setGasOptions)
         .catch(setError);
 
-    if (!interval) {
-      getGasOptionsCallback();
-      return;
+    getGasOptionsCallback();
+    if (interval > 0) {
+      const intervalId = setInterval(() => getGasOptionsCallback(), interval);
+
+      return () => {
+        clearInterval(intervalId);
+      };
     }
-
-    const intervalId = setInterval(() => getGasOptionsCallback, interval * 1000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
   }, [gasTracker, interval, currency, shouldUseEip1559]);
 
-  return gasOptions ?? error;
+  return [gasOptions, error];
 };
