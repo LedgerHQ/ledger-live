@@ -12,19 +12,14 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TextInput from "../../components/FocusedTextInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
-    | SendFundsNavigatorStackParamList
-    | SignTransactionNavigatorParamList
-    | SwapNavigatorParamList,
+    SendFundsNavigatorStackParamList | SignTransactionNavigatorParamList | SwapNavigatorParamList,
     ScreenName.InternetComputerEditMemo
   >
 >;
@@ -62,10 +57,7 @@ function InternetComputerEditMemo({ navigation, route }: NavigationProps) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           {isFocused && (
             <TextInput
               allowFontScaling={false}
