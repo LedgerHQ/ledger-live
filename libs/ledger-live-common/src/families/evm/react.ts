@@ -16,8 +16,8 @@ export const useGasOptions = ({
 }: {
   currency: CryptoCurrency;
   transaction: Transaction;
-  interval?: number;
-}): GasOptions | Error | null => {
+  interval: number;
+}): [GasOptions | null, Error | null] => {
   const [gasOptions, setGasOptions] = useState<GasOptions | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
@@ -43,12 +43,6 @@ export const useGasOptions = ({
         clearInterval(intervalId);
       };
     }
-
-    const intervalId = setInterval(() => getGasOptionsCallback, interval * 1000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
   }, [gasTracker, interval, currency, shouldUseEip1559]);
 
   return [gasOptions, error];
