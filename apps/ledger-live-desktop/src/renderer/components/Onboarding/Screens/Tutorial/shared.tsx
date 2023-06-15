@@ -30,7 +30,8 @@ export const IllustrationContainer: StyledComponent<
   DefaultTheme,
   BoxProps & { src: string }
 > = styled(Flex)<{ src: string }>`
-  background: url("${({ src }) => src}") no-repeat center;
+  // prettier-ignore
+  background: url('${({ src }) => src}') no-repeat center;
   background-size: contain;
 `;
 
