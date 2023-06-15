@@ -11,18 +11,13 @@ import {
 } from "@ledgerhq/coin-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  Operation,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 export const makeAccount = (
   address: string,
   currency: CryptoCurrency,
-  subAccounts: SubAccount[] = []
+  subAccounts: SubAccount[] = [],
 ): Account => {
   const id = `js:2:${currency.id}:${address}:`;
   const { derivationMode, xpubOrAddress } = decodeAccountId(id);
@@ -40,11 +35,7 @@ export const makeAccount = (
   const account: Account = {
     type: "Account",
     name:
-      currency.name +
-      " " +
-      (derivationMode || "legacy") +
-      " " +
-      shortAddressPreview(xpubOrAddress),
+      currency.name + " " + (derivationMode || "legacy") + " " + shortAddressPreview(xpubOrAddress),
     xpub: xpubOrAddress,
     subAccounts,
     seedIdentifier: xpubOrAddress,
@@ -86,10 +77,7 @@ export const makeAccount = (
   return account;
 };
 
-export const makeTokenAccount = (
-  address: string,
-  tokenCurrency: TokenCurrency
-): TokenAccount => {
+export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency): TokenAccount => {
   const { parentCurrency: currency } = tokenCurrency;
   const account = makeAccount(address, currency);
 
@@ -128,9 +116,7 @@ export const makeTokenAccount = (
 export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
   const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
   const { xpubOrAddress } = decodeAccountId(
-    accountId.includes("+")
-      ? decodeTokenAccountId(accountId).accountId
-      : accountId
+    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "OUT";

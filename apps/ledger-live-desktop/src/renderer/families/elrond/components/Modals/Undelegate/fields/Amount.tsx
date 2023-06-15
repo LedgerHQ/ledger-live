@@ -123,10 +123,10 @@ const AmountField = (props: Props) => {
     [initialAmount],
   );
   const error = errors.amount || errors.unbonding;
-  const warning = useMemo(() => (focused && Object.values(warnings || {})[0]) || undefined, [
-    focused,
-    warnings,
-  ]);
+  const warning = useMemo(
+    () => (focused && Object.values(warnings || {})[0]) || undefined,
+    [focused, warnings],
+  );
   return (
     <Box>
       <Label>{label}</Label>

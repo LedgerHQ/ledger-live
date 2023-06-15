@@ -14,18 +14,13 @@ import type { BaseNavigatorStackParamList } from "../../../components/RootNaviga
 import type { NearWithdrawingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    NearWithdrawingFlowParamList,
-    ScreenName.NearWithdrawingValidationError
-  >
+  StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

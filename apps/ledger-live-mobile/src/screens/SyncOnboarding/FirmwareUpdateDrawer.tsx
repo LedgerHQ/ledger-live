@@ -13,13 +13,7 @@ export type Props = {
   productName: string;
 };
 
-const FirmwareUpdateDrawer = ({
-  isOpen,
-  onSkip,
-  onUpdate,
-  onClose,
-  productName,
-}: Props) => {
+const FirmwareUpdateDrawer = ({ isOpen, onSkip, onUpdate, onClose, productName }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -47,21 +41,11 @@ const FirmwareUpdateDrawer = ({
       <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
         {t("syncOnboarding.softwareChecksSteps.updateAvailableDrawer.title")}
       </Text>
-      <Text
-        textAlign="center"
-        variant="bodyLineHeight"
-        mb={8}
-        color="neutral.c80"
-      >
-        {t(
-          "syncOnboarding.softwareChecksSteps.updateAvailableDrawer.description",
-          { productName },
-        )}
+      <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
+        {t("syncOnboarding.softwareChecksSteps.updateAvailableDrawer.description", { productName })}
       </Text>
       <Button type="main" mb={6} onPress={onUpdate}>
-        {t(
-          "syncOnboarding.softwareChecksSteps.updateAvailableDrawer.updateCta",
-        )}
+        {t("syncOnboarding.softwareChecksSteps.updateAvailableDrawer.updateCta")}
       </Button>
     </QueuedDrawer>
   );

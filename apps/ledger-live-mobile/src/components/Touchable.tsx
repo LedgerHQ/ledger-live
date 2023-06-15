@@ -1,9 +1,5 @@
 import React, { Component } from "react";
-import {
-  GestureResponderEvent,
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "react-native";
+import { GestureResponderEvent, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { track } from "../analytics";
 
 const defaultHitSlop = {
@@ -90,14 +86,7 @@ export default class Touchable extends Component<
   };
 
   render() {
-    const {
-      onPress,
-      children,
-      event,
-      eventProperties,
-      touchableTestID,
-      ...rest
-    } = this.props;
+    const { onPress, children, event, eventProperties, touchableTestID, ...rest } = this.props;
     const { pending } = this.state;
     const disabled = !onPress || pending;
     return (

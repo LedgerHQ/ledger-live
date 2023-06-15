@@ -36,7 +36,7 @@ export const Item = styled.div<{
 export const TextLink = styled.div<{
   shrink?: boolean;
 }>`
-  font-family: 'Inter';
+  font-family: "Inter";
   font-size: 12px;
   align-items: center;
   display: flex;

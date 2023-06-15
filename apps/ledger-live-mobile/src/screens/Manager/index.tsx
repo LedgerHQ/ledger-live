@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import {
-  useIsFocused,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
@@ -16,9 +12,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName } from "../../const";
-import SelectDevice2, {
-  SetHeaderOptionsRequest,
-} from "../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -154,12 +148,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       <TrackScreen category="Manager" name="ChooseDevice" />
       {!isHeaderOverridden ? (
         <Flex px={16} mb={8}>
-          <Text
-            mt={3}
-            fontWeight="semiBold"
-            variant="h4"
-            testID="manager-title"
-          >
+          <Text mt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
             <Trans i18nKey="manager.title" />
           </Text>
         </Flex>

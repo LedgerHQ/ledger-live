@@ -22,10 +22,7 @@ const totalSteps = "3";
 function ClaimRewardsFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -60,9 +57,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.CosmosClaimRewardsMethod}
         component={ClaimRewardsMethod}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("cosmos.claimRewards.stepperHeader.method")} />
-          ),
+          headerTitle: () => <StepHeader title={t("cosmos.claimRewards.stepperHeader.method")} />,
         }}
       />
       <Stack.Screen

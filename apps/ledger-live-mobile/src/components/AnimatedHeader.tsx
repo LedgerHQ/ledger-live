@@ -71,12 +71,7 @@ export default function AnimatedHeaderView({
   const transformStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: interpolate(
-          scrollY.value,
-          [0, 76],
-          [0, -45],
-          Extrapolate.CLAMP,
-        ),
+        translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolate.CLAMP),
       },
       {
         translateX: interpolate(
@@ -114,21 +109,11 @@ export default function AnimatedHeaderView({
         <View style={styles.topHeader}>
           {hasBackButton && <NavigationHeaderBackButton onPress={backAction} />}
           <View style={styles.spacer} />
-          {hasCloseButton && (
-            <NavigationHeaderCloseButton onPress={closeAction} />
-          )}
+          {hasCloseButton && <NavigationHeaderCloseButton onPress={closeAction} />}
         </View>
 
-        <Animated.View
-          style={[styles.titleContainer, transformStyle]}
-          onLayout={onLayoutText}
-        >
-          <LText
-            variant="h1"
-            bold
-            style={[styles.title, titleStyle]}
-            numberOfLines={4}
-          >
+        <Animated.View style={[styles.titleContainer, transformStyle]} onLayout={onLayoutText}>
+          <LText variant="h1" bold style={[styles.title, titleStyle]} numberOfLines={4}>
             {title}
           </LText>
         </Animated.View>

@@ -5,11 +5,7 @@ import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
 import { PaymentCredential, Token } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { findTokenById } from "@ledgerhq/cryptoassets";
-import {
-  decodeTokenAccountId,
-  emptyHistoryCache,
-  encodeTokenAccountId,
-} from "../../account";
+import { decodeTokenAccountId, emptyHistoryCache, encodeTokenAccountId } from "../../account";
 import { groupBy, keyBy } from "lodash";
 import { mergeOps } from "../../bridge/jsHelpers";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -23,21 +19,17 @@ export const getTokenAssetId = ({
   assetName: string;
 }): string => `${policyId}${assetName}`;
 
-export const decodeTokenAssetId = (
-  id: string
-): { policyId: string; assetName: string } => {
+export const decodeTokenAssetId = (id: string): { policyId: string; assetName: string } => {
   const policyId = id.slice(0, 56);
   const assetName = id.slice(56);
   return { policyId, assetName };
 };
 
-const encodeTokenCurrencyId = (
-  parentCurrency: CryptoCurrency,
-  assetId: string
-): string => `${parentCurrency.id}/native/${assetId}`;
+const encodeTokenCurrencyId = (parentCurrency: CryptoCurrency, assetId: string): string =>
+  `${parentCurrency.id}/native/${assetId}`;
 
 export const decodeTokenCurrencyId = (
-  id: string
+  id: string,
 ): { parentCurrencyId: string; type: string; assetId: string } => {
   const [parentCurrencyId, type, assetId] = id.split("/");
   return {
@@ -63,9 +55,9 @@ const mapTxToTokenAccountOperation = ({
 }): Array<Operation> => {
   const operations: Array<Operation> = [];
 
-  newTransactions.forEach((tx) => {
+  newTransactions.forEach(tx => {
     const accountChange = getAccountChange(tx, accountCredentialsMap);
-    accountChange.tokens.forEach((token) => {
+    accountChange.tokens.forEach(token => {
       const assetId = getTokenAssetId({
         policyId: token.policyId,
         assetName: token.assetName,
@@ -77,10 +69,7 @@ const mapTxToTokenAccountOperation = ({
         return;
       }
 
-      const tokenAccountId = encodeTokenAccountId(
-        parentAccountId,
-        tokenCurrency
-      );
+      const tokenAccountId = encodeTokenAccountId(parentAccountId, tokenCurrency);
 
       const tokenOperationType = token.amount.lt(0) ? "OUT" : "IN";
       const memo = getMemoFromTx(tx);
@@ -95,15 +84,11 @@ const mapTxToTokenAccountOperation = ({
         type: tokenOperationType,
         fee: new BigNumber(tx.fees),
         value: token.amount.absoluteValue(),
-        senders: tx.inputs.map((i) =>
-          isHexString(i.address)
-            ? TyphonUtils.getAddressFromHex(i.address).getBech32()
-            : i.address
+        senders: tx.inputs.map(i =>
+          isHexString(i.address) ? TyphonUtils.getAddressFromHex(i.address).getBech32() : i.address,
         ),
-        recipients: tx.outputs.map((o) =>
-          isHexString(o.address)
-            ? TyphonUtils.getAddressFromHex(o.address).getBech32()
-            : o.address
+        recipients: tx.outputs.map(o =>
+          isHexString(o.address) ? TyphonUtils.getAddressFromHex(o.address).getBech32() : o.address,
         ),
         blockHeight: tx.blockHeight,
         date: new Date(tx.timestamp),
@@ -148,8 +133,8 @@ export function buildSubAccounts({
     newTransactions: newTransactions,
     accountCredentialsMap,
   });
-  const tokenOperationsByAccId = groupBy(tokenOperations, (o) => o.accountId);
-  const tokensBalanceByAssetId = keyBy(tokens, (t) => getTokenAssetId(t));
+  const tokenOperationsByAccId = groupBy(tokenOperations, o => o.accountId);
+  const tokensBalanceByAssetId = keyBy(tokens, t => getTokenAssetId(t));
   for (const tokenAccountId in tokenOperationsByAccId) {
     const initialTokenAccount = tokenAccountsById[tokenAccountId];
     const oldOperations = initialTokenAccount?.operations || [];
@@ -158,8 +143,7 @@ export function buildSubAccounts({
     const { token: tokenCurrency } = decodeTokenAccountId(tokenAccountId);
     if (tokenCurrency) {
       const accountBalance =
-        tokensBalanceByAssetId[tokenCurrency.contractAddress]?.amount ||
-        new BigNumber(0);
+        tokensBalanceByAssetId[tokenCurrency.contractAddress]?.amount || new BigNumber(0);
       const tokenAccount: TokenAccount = {
         type: "TokenAccount",
         id: tokenAccountId,
@@ -167,10 +151,7 @@ export function buildSubAccounts({
         token: tokenCurrency,
         balance: accountBalance,
         spendableBalance: accountBalance,
-        creationDate:
-          operations.length > 0
-            ? operations[operations.length - 1].date
-            : new Date(),
+        creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
         operationsCount: operations.length,
         operations,
         pendingOperations: [],

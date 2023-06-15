@@ -2,11 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import Stellar from "@ledgerhq/hw-app-str";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type {
-  Account,
-  Operation,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
@@ -15,7 +11,7 @@ import { getAmountValue } from "./logic";
 
 const buildOptimisticOperation = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<Operation> => {
   const transactionSequenceNumber = await fetchSequence(account);
   const fees = transaction.fees ?? new BigNumber(0);
@@ -25,9 +21,7 @@ const buildOptimisticOperation = async (
     id: `${account.id}--${type}`,
     hash: "",
     type,
-    value: transaction.subAccountId
-      ? fees
-      : getAmountValue(account, transaction, fees),
+    value: transaction.subAccountId ? fees : getAmountValue(account, transaction, fees),
     fee: fees,
     blockHash: null,
     blockHeight: null,
@@ -45,7 +39,7 @@ const buildOptimisticOperation = async (
 
   const tokenAccount = !subAccountId
     ? null
-    : subAccounts && subAccounts.find((ta) => ta.id === subAccountId);
+    : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
 
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
@@ -53,9 +47,7 @@ const buildOptimisticOperation = async (
         id: `${subAccountId}--OUT`,
         hash: "",
         type: "OUT",
-        value: transaction.useAllAmount
-          ? tokenAccount.balance
-          : transaction.amount,
+        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
         fee: new BigNumber(0),
         blockHash: null,
         blockHeight: null,
@@ -83,8 +75,8 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
+  withDevice(deviceId)(transport =>
+    Observable.create(o => {
       async function main() {
         o.next({
           type: "device-signature-requested",
@@ -101,12 +93,9 @@ const signOperation = ({
         const hwApp = new Stellar(transport);
         const { signature } = await hwApp.signTransaction(
           account.freshAddressPath,
-          unsignedPayload
+          unsignedPayload,
         );
-        unsigned.addSignature(
-          account.freshAddress,
-          signature.toString("base64")
-        );
+        unsigned.addSignature(account.freshAddress, signature.toString("base64"));
         o.next({
           type: "device-signature-granted",
         });
@@ -123,9 +112,9 @@ const signOperation = ({
 
       main().then(
         () => o.complete(),
-        (e) => o.error(e)
+        e => o.error(e),
       );
-    })
+    }),
   );
 
 export default signOperation;

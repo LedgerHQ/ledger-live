@@ -39,7 +39,7 @@ export type IconGetterProps = {
 
 const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
   const asLower = search.toLowerCase();
-  const key = Object.keys(object).find((key) => key.toLowerCase().replace(/^_/, "") === asLower);
+  const key = Object.keys(object).find(key => key.toLowerCase().replace(/^_/, "") === asLower);
   return key ? object[key] : null;
 };
 

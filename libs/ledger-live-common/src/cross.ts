@@ -6,10 +6,7 @@ import {
   getDerivationScheme,
   asDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import {
-  decodeAccountId,
-  emptyHistoryCache,
-} from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { getCryptoCurrencyById } from "./currencies";
 import type { Account, CryptoCurrencyIds } from "@ledgerhq/types-live";
 
@@ -59,12 +56,7 @@ export type Result = {
   meta: Meta;
 };
 
-export function encode({
-  accounts,
-  settings,
-  exporterName,
-  exporterVersion,
-}: DataIn): string {
+export function encode({ accounts, settings, exporterName, exporterVersion }: DataIn): string {
   return Buffer.from(
     compressjs.Bzip2.compressFile(
       Buffer.from(
@@ -75,9 +67,9 @@ export function encode({
           },
           accounts: accounts.map(accountToAccountData),
           settings,
-        })
-      )
-    )
+        }),
+      ),
+    ),
   ).toString("binary");
 }
 
@@ -107,16 +99,8 @@ const asResultAccount = (unsafe: Record<string, any>): AccountData => {
     throw new Error("invalid account data");
   }
 
-  const {
-    id,
-    currencyId,
-    freshAddress,
-    seedIdentifier,
-    derivationMode,
-    name,
-    index,
-    balance,
-  } = unsafe;
+  const { id, currencyId, freshAddress, seedIdentifier, derivationMode, name, index, balance } =
+    unsafe;
 
   if (typeof id !== "string") {
     throw new Error("invalid account.id");
@@ -249,9 +233,7 @@ const asResultSettings = (unsafe: Record<string, any>): Settings => {
 
 export function decode(bytes: string): Result {
   const unsafe: Record<string, any> = JSON.parse(
-    Buffer.from(
-      compressjs.Bzip2.decompressFile(Buffer.from(bytes, "binary"))
-    ).toString()
+    Buffer.from(compressjs.Bzip2.decompressFile(Buffer.from(bytes, "binary"))).toString(),
   );
 
   if (typeof unsafe !== "object" || !unsafe) {
@@ -332,7 +314,7 @@ export const accountDataToAccount = ({
       currency,
       {
         account: index,
-      }
+      },
     );
   }
 

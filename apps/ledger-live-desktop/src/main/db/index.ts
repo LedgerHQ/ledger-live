@@ -181,7 +181,6 @@ async function saveToDisk(ns: string) {
         if (!encryptionKey) continue; // eslint-disable-line no-continue
         const val = get(clone, keyPath);
         if (!val) continue; // eslint-disable-line no-continue
-        // eslint-disable-next-line node/no-deprecated-api
         const encrypted = encryptData(JSON.stringify(val), encryptionKey);
         set(clone as object, keyPath, encrypted);
       }

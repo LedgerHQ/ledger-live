@@ -84,9 +84,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }
 
   function onDone(): void {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      ?.pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.pop();
   }
 
   useEffect(() => {
@@ -254,11 +252,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             </View>
           </View>
         ) : null}
-        <Touchable
-          event="ReceiveClose"
-          style={styles.close}
-          onPress={onModalClose}
-        >
+        <Touchable event="ReceiveClose" style={styles.close} onPress={onModalClose}>
           <Close color={colors.fog} size={20} />
         </Touchable>
       </QueuedDrawer>

@@ -12,12 +12,8 @@ import Touchable from "../../../../components/Touchable";
 export default function DebugSwap() {
   const dispatch = useDispatch();
   const swapKYC = useSelector(swapKYCSelector);
-  const [configWrapper, setConfigWrapper] = useState(
-    Config.SWAP_DISABLED_PROVIDERS || "",
-  );
-  const [configIDWrapper, setConfigIDWrapper] = useState(
-    Config.SWAP_OVERRIDE_KYC_USER_ID || "",
-  );
+  const [configWrapper, setConfigWrapper] = useState(Config.SWAP_DISABLED_PROVIDERS || "");
+  const [configIDWrapper, setConfigIDWrapper] = useState(Config.SWAP_OVERRIDE_KYC_USER_ID || "");
   const onToggleWyreId = useCallback(() => {
     setConfigIDWrapper(configIDWrapper ? "" : "wadus");
   }, [configIDWrapper]);
@@ -28,16 +24,11 @@ export default function DebugSwap() {
       }),
     );
   }, [dispatch]);
-  const currentDisabledProviders = useMemo(
-    () => configWrapper.split(","),
-    [configWrapper],
-  );
+  const currentDisabledProviders = useMemo(() => configWrapper.split(","), [configWrapper]);
   const onToggleProvider = useCallback(
     provider => {
       if (currentDisabledProviders.includes(provider)) {
-        setConfigWrapper(
-          currentDisabledProviders.filter(p => p !== provider).join(","),
-        );
+        setConfigWrapper(currentDisabledProviders.filter(p => p !== provider).join(","));
       } else {
         setConfigWrapper([...currentDisabledProviders, provider].join(","));
       }
@@ -59,28 +50,19 @@ export default function DebugSwap() {
         title={"Flush KYC"}
         onPress={onFlushWyreKYC}
       />
-      <Touchable
-        onPress={() => onToggleProvider("changelly")}
-        style={styles.switchRow}
-      >
+      <Touchable onPress={() => onToggleProvider("changelly")} style={styles.switchRow}>
         <CheckBox isChecked={currentDisabledProviders.includes("changelly")} />
         <LText semiBold style={styles.switchLabel}>
           {"Disable Changelly"}
         </LText>
       </Touchable>
-      <Touchable
-        onPress={() => onToggleProvider("cic")}
-        style={styles.switchRow}
-      >
+      <Touchable onPress={() => onToggleProvider("cic")} style={styles.switchRow}>
         <CheckBox isChecked={currentDisabledProviders.includes("cic")} />
         <LText semiBold style={styles.switchLabel}>
           {"Disable CIC"}
         </LText>
       </Touchable>
-      <Touchable
-        onPress={() => onToggleProvider("wyre")}
-        style={styles.switchRow}
-      >
+      <Touchable onPress={() => onToggleProvider("wyre")} style={styles.switchRow}>
         <CheckBox isChecked={currentDisabledProviders.includes("wyre")} />
         <LText semiBold style={styles.switchLabel}>
           {"Disable Wyre"}

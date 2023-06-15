@@ -100,9 +100,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
         contentContainerStyle={styles.list}
         data={providers}
         keyExtractor={validator => validator.contract}
-        renderItem={props => (
-          <Item account={account} onSelect={onSelect} {...props} />
-        )}
+        renderItem={props => <Item account={account} onSelect={onSelect} {...props} />}
       />
     </View>
   );

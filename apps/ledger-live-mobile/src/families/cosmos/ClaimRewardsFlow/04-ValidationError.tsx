@@ -14,18 +14,13 @@ import type { CosmosClaimRewardsFlowParamList } from "./types";
 import { ScreenName } from "../../../const";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CosmosClaimRewardsFlowParamList,
-    ScreenName.CosmosClaimRewardsValidationError
-  >
+  StackNavigatorProps<CosmosClaimRewardsFlowParamList, ScreenName.CosmosClaimRewardsValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

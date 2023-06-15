@@ -593,14 +593,18 @@ export default function Tutorial({ useCase }: Props) {
     return stepList;
   }, [useCase]);
 
-  const currentScreenIndex = useMemo(() => screens.findIndex(s => s.id === currentStep), [
-    currentStep,
-    screens,
-  ]);
-  const { component, canContinue, next, previous, id: currentScreenId } = screens[
-    currentScreenIndex
-  ];
-  const CurrentScreen = (component as unknown) as {
+  const currentScreenIndex = useMemo(
+    () => screens.findIndex(s => s.id === currentStep),
+    [currentStep, screens],
+  );
+  const {
+    component,
+    canContinue,
+    next,
+    previous,
+    id: currentScreenId,
+  } = screens[currentScreenIndex];
+  const CurrentScreen = component as unknown as {
     Illustration: JSX.Element;
     Footer: React.ElementType;
     continueLabel: string;

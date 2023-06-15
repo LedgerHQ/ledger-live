@@ -11,11 +11,7 @@ import type {
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { AlgorandAPI } from "./api";
-import {
-  buildTransactionPayload,
-  encodeToBroadcast,
-  encodeToSign,
-} from "./buildTransaction";
+import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
 import type { Transaction } from "./types";
 
 /**
@@ -24,7 +20,7 @@ import type { Transaction } from "./types";
 export const buildSignOperation =
   (
     withDevice: DeviceCommunication,
-    algorandAPI: AlgorandAPI
+    algorandAPI: AlgorandAPI,
   ): SignOperationFnSignature<Transaction> =>
   ({
     account,
@@ -36,8 +32,8 @@ export const buildSignOperation =
     deviceId: any;
   }): Observable<SignOperationEvent> =>
     withDevice(deviceId)(
-      (transport) =>
-        new Observable((o) => {
+      transport =>
+        new Observable(o => {
           let cancelled = false;
 
           async function main() {
@@ -45,10 +41,7 @@ export const buildSignOperation =
               throw new FeeNotLoaded();
             }
 
-            const algoTx = await buildTransactionPayload(algorandAPI)(
-              account,
-              transaction
-            );
+            const algoTx = await buildTransactionPayload(algorandAPI)(account, transaction);
 
             const toSign = encodeToSign(algoTx);
 
@@ -83,19 +76,16 @@ export const buildSignOperation =
 
           main().then(
             () => o.complete(),
-            (e) => o.error(e)
+            e => o.error(e),
           );
 
           return () => {
             cancelled = true;
           };
-        })
+        }),
     );
 
-const buildOptimisticOperation = (
-  account: Account,
-  transaction: Transaction
-): Operation => {
+const buildOptimisticOperation = (account: Account, transaction: Transaction): Operation => {
   const { spendableBalance, id, freshAddress, subAccounts } = account;
 
   const senders = [freshAddress];
@@ -112,11 +102,7 @@ const buildOptimisticOperation = (
     ? spendableBalance
     : transaction.amount.plus(fees);
 
-  const type = subAccountId
-    ? "FEES"
-    : transaction.mode === "optIn"
-    ? "OPT_IN"
-    : "OUT";
+  const type = subAccountId ? "FEES" : transaction.mode === "optIn" ? "OPT_IN" : "OUT";
 
   const op: Operation = {
     id: `${id}--${type}`,
@@ -135,7 +121,7 @@ const buildOptimisticOperation = (
 
   const tokenAccount = !subAccountId
     ? null
-    : subAccounts && subAccounts.find((ta) => ta.id === subAccountId);
+    : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
 
   if (tokenAccount && subAccountId) {
     op.subOperations = [
@@ -143,9 +129,7 @@ const buildOptimisticOperation = (
         id: `${subAccountId}--OUT`,
         hash: "",
         type: "OUT",
-        value: transaction.useAllAmount
-          ? tokenAccount.balance
-          : transaction.amount,
+        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
         fee: new BigNumber(0),
         blockHash: null,
         blockHeight: null,

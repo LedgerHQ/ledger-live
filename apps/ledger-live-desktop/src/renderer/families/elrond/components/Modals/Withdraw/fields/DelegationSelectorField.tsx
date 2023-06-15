@@ -47,16 +47,8 @@ const renderItem = (item: { data: EnhancedUnbonding }) => {
   );
 };
 const DelegationSelectorField = (props: Props) => {
-  const {
-    unbondings,
-    amount,
-    contract,
-    t,
-    onChange,
-    bridge,
-    transaction,
-    onUpdateTransaction,
-  } = props;
+  const { unbondings, amount, contract, t, onChange, bridge, transaction, onUpdateTransaction } =
+    props;
   const options = useMemo(
     () =>
       unbondings?.reduce((total: Array<EnhancedUnbonding>, unbonding: UnbondingType) => {

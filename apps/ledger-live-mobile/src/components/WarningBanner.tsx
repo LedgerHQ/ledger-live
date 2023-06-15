@@ -5,9 +5,7 @@ import TranslatedError from "./TranslatedError";
 import Alert from "./Alert";
 
 const WarningBanner = ({ error }: { error: Error }) => {
-  const maybeUrl = error
-    ? urls.errors[error.name as keyof typeof urls.errors]
-    : undefined;
+  const maybeUrl = error ? urls.errors[error.name as keyof typeof urls.errors] : undefined;
   return (
     <View style={styles.root}>
       <Alert type="update" learnMoreUrl={maybeUrl}>

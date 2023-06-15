@@ -27,9 +27,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -62,9 +60,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
             }`}
           />
         }
-        description={
-          <Trans i18nKey="cosmos.claimRewards.flow.steps.verification.success.text" />
-        }
+        description={<Trans i18nKey="cosmos.claimRewards.flow.steps.verification.success.text" />}
       />
     </View>
   );

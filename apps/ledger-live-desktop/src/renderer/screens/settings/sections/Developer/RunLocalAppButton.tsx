@@ -24,7 +24,7 @@ const RunLocalAppButton = () => {
       .showOpenDialog({
         properties: ["openFile"],
       })
-      .then(function(response) {
+      .then(function (response) {
         if (!response.canceled) {
           const fileName = response.filePaths[0];
           readFile(fileName, (readError, data) => {

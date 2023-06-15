@@ -30,20 +30,14 @@ const device = {
 };
 
 type DeviceActionStep = "confirmLoad" | "loading" | "confirmCommit" | "preview";
-const steps: DeviceActionStep[] = [
-  "confirmLoad",
-  "loading",
-  "confirmCommit",
-  "preview",
-];
+const steps: DeviceActionStep[] = ["confirmLoad", "loading", "confirmCommit", "preview"];
 
 function getStepRenderFunction(
   step: DeviceActionStep,
 ): (t: TFunction, progress: number) => React.ReactNode {
   return {
     confirmLoad: (t: TFunction) => renderImageLoadRequested({ t, device }),
-    loading: (t: TFunction, progress: number) =>
-      renderLoadingImage({ t, device, progress }),
+    loading: (t: TFunction, progress: number) => renderLoadingImage({ t, device, progress }),
     confirmCommit: (t: TFunction) => renderImageCommitRequested({ t, device }),
     preview: () => <StaxFramedImageWithContext frameConfig={previewConfig} />,
   }[step];
@@ -51,8 +45,7 @@ function getStepRenderFunction(
 
 export default function DebugCustomImageGraphics() {
   const [showAllAssets, setShowAllAssets] = useState(false);
-  const [deviceActionStep, setDeviceActionStep] =
-    useState<DeviceActionStep>("confirmLoad");
+  const [deviceActionStep, setDeviceActionStep] = useState<DeviceActionStep>("confirmLoad");
   const [progress, setProgress] = useState(0);
 
   const { t } = useTranslation();
@@ -75,16 +68,10 @@ export default function DebugCustomImageGraphics() {
         <NavigationScrollView>
           <Flex style={styles.root}>
             <Text mb={3}>lottie: allowConnection</Text>
-            <StaxFramedLottieWithContext
-              loadingProgress={0}
-              lottieSource={allowConnection}
-            />
+            <StaxFramedLottieWithContext loadingProgress={0} lottieSource={allowConnection} />
             <Divider />
             <Text mb={3}>lottie: confirmLockscreen</Text>
-            <StaxFramedLottieWithContext
-              loadingProgress={0.89}
-              lottieSource={confirmLockscreen}
-            />
+            <StaxFramedLottieWithContext loadingProgress={0.89} lottieSource={confirmLockscreen} />
             <Divider />
             <Text>FramedImage component, transferConfig</Text>
             <Text mb={3}>progress={Math.round(progress * 100) / 100}</Text>
@@ -105,29 +92,16 @@ export default function DebugCustomImageGraphics() {
           {getStepRenderFunction(deviceActionStep)(t, progress)}
         </Flex>
       )}
-      <Flex
-        style={{ paddingBottom: insets.bottom }}
-        borderTopWidth={1}
-        borderColor="neutral.c100"
-      >
+      <Flex style={{ paddingBottom: insets.bottom }} borderTopWidth={1} borderColor="neutral.c100">
         <Flex p={4}>
-          <Switch
-            checked={showAllAssets}
-            label="Show all assets"
-            onChange={setShowAllAssets}
-          />
+          <Switch checked={showAllAssets} label="Show all assets" onChange={setShowAllAssets} />
           <Divider />
           <Flex
             mt={2}
             opacity={showAllAssets ? 0.3 : 1}
             pointerEvents={showAllAssets ? "none" : "auto"}
           >
-            <Flex
-              flexDirection={"row"}
-              flexGrow={1}
-              flexWrap={"wrap"}
-              style={{ rowGap: 3 }}
-            >
+            <Flex flexDirection={"row"} flexGrow={1} flexWrap={"wrap"} style={{ rowGap: 3 }}>
               {steps.map(val => (
                 <Button
                   key={val}

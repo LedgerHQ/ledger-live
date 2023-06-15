@@ -42,7 +42,7 @@ jest.mock("react-native-ble-plx", () => {
       };
 
       return {
-        onStateChange: (callback) => {
+        onStateChange: callback => {
           setTimeout(() => callback("PoweredOn"), 500);
           return new Subscription();
         },
@@ -77,12 +77,12 @@ jest.mock("react-native-ble-plx", () => {
               return dynamicProps.isConnected;
             },
 
-            onDisconnected: (callback) => {
+            onDisconnected: callback => {
               callbacks["onDisconnected"] = () => callback(null); // Disconnect without an error
               return new Subscription();
             },
             discoverAllServicesAndCharacteristics: () => {},
-            characteristicsForService: (uuid) => {
+            characteristicsForService: uuid => {
               if (uuid === "13d63400-2c97-6004-0000-4c6564676572") {
                 return [
                   {
@@ -96,11 +96,10 @@ jest.mock("react-native-ble-plx", () => {
                     isReadable: false,
                     deviceID: "20EDD96F-7430-6E33-AB22-DD8AAB857CD4",
                     isNotifying: false,
-                    value:
-                      "BQAAACMzIAAECTEuMC4wLXJjOQTuAAALBDUuMTUEMC4zNQEAAQCQAA==",
+                    value: "BQAAACMzIAAECTEuMC4wLXJjOQTuAAALBDUuMTUEMC4zNQEAAQCQAA==",
                     id: 105553399124864,
                     uuid: "13d63400-2c97-6004-0001-4c6564676572",
-                    monitor: (cb) => {
+                    monitor: cb => {
                       callbacks["onDeviceResponse"] = cb;
                       return new Subscription();
                     },
@@ -134,7 +133,7 @@ jest.mock("react-native-ble-plx", () => {
                     uuid: "13d63400-2c97-6004-0003-4c6564676572",
                     serviceUUID: "13d63400-2c97-6004-0000-4c6564676572",
                     serviceID: 105553179758272,
-                    writeWithoutResponse: async (raw) => {
+                    writeWithoutResponse: async raw => {
                       if (!dynamicProps.isConnected)
                         throw new BleError(22, "Device is not connected");
 
@@ -150,7 +149,7 @@ jest.mock("react-native-ble-plx", () => {
                         case "0500000005b010000000":
                           value = Buffer.from(
                             "05000000130105424f4c4f5309312e302e302d7263399000",
-                            "hex"
+                            "hex",
                           );
                           break;
                         // just used for a non resolving apdu
@@ -252,24 +251,18 @@ describe("BleTransport connectivity test coverage", () => {
       const transport = await BleTransport.open(deviceId);
       expect(transport.isConnected).toBe(true);
 
-      const response = await transport.exchange(
-        Buffer.from("b010000000", "hex")
-      );
-      expect(response.toString("hex")).toBe(
-        "0105424f4c4f5309312e302e302d7263399000"
-      );
+      const response = await transport.exchange(Buffer.from("b010000000", "hex"));
+      expect(response.toString("hex")).toBe("0105424f4c4f5309312e302e302d7263399000");
     });
 
     it("should throw on exchanges if disconnected", async () => {
       const transport = await BleTransport.open(deviceId);
       expect(transport.isConnected).toBe(true);
       await BleTransport.disconnect(deviceId);
-      await expect(
-        transport.exchange(Buffer.from("b010000000", "hex"))
-      ).rejects.toThrow(); // More specific errors some day.
+      await expect(transport.exchange(Buffer.from("b010000000", "hex"))).rejects.toThrow(); // More specific errors some day.
     });
 
-    it("should disconnect if close is called, even if pending response", (done) => {
+    it("should disconnect if close is called, even if pending response", done => {
       // This is actually a very important test, if we have an ongoing apdu response,
       // as in, the device never replied, but we expressed the intention of disconnecting
       // we will give it a few seconds and then disconnect regardless. Otherwise we fall

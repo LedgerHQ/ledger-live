@@ -8,18 +8,18 @@ export function getSpecsPerBots(
   filters: {
     currencies?: string | undefined;
     families?: string | undefined;
-  } = {}
+  } = {},
 ): SpecPerBot[] {
   const filterFamilies =
     filters.families
       ?.split(",")
-      .map((f) => f.trim())
+      .map(f => f.trim())
       .filter(Boolean) || [];
 
   const filterCurrencies =
     filters.currencies
       ?.split(",")
-      .map((f) => f.trim())
+      .map(f => f.trim())
       .filter(Boolean) || [];
 
   // allSpecs allows to know and infer what are the coins to sync
@@ -32,10 +32,7 @@ export function getSpecsPerBots(
       if (!isCurrencySupported(spec.currency) || spec.disabled) {
         continue;
       }
-      if (
-        filterCurrencies.length > 0 &&
-        !filterCurrencies.includes(spec.currency.id)
-      ) {
+      if (filterCurrencies.length > 0 && !filterCurrencies.includes(spec.currency.id)) {
         continue;
       }
       specs.push({ spec, family, key });

@@ -13,7 +13,7 @@ export class TransportReplayer extends Transport {
 
   static isSupported = () => Promise.resolve(true);
   static list = () => Promise.resolve([null]);
-  static listen = (o) => {
+  static listen = o => {
     let unsubscribed;
     setTimeout(() => {
       if (unsubscribed) return;
@@ -29,8 +29,7 @@ export class TransportReplayer extends Transport {
       },
     };
   };
-  static open = (recordStore: RecordStore) =>
-    Promise.resolve(new TransportReplayer(recordStore));
+  static open = (recordStore: RecordStore) => Promise.resolve(new TransportReplayer(recordStore));
 
   setArtificialExchangeDelay(delay: number): void {
     this.artificialExchangeDelay = delay;
@@ -50,7 +49,7 @@ export class TransportReplayer extends Transport {
       log("apdu", buffer.toString("hex"));
 
       if (this.artificialExchangeDelay) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           setTimeout(() => {
             resolve(buffer);
             this.setArtificialExchangeDelay(0);
@@ -70,9 +69,7 @@ export class TransportReplayer extends Transport {
  * create a transport replayer with a record store.
  * @param recordStore
  */
-const openTransportReplayer = (
-  recordStore: RecordStore
-): Promise<TransportReplayer> => {
+const openTransportReplayer = (recordStore: RecordStore): Promise<TransportReplayer> => {
   return TransportReplayer.open(recordStore);
 };
 

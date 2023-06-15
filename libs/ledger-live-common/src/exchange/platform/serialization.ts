@@ -6,22 +6,15 @@ import type {
   ExchangeSwap,
   ExchangeSwapRaw,
 } from "./types";
-import {
-  fromAccountLikeRaw,
-  fromAccountRaw,
-  toAccountLikeRaw,
-  toAccountRaw,
-} from "../../account";
+import { fromAccountLikeRaw, fromAccountRaw, toAccountLikeRaw, toAccountRaw } from "../../account";
 
 const isExchangeSwapRaw = (
-  exchangeRaw: ExchangeSwapRaw | ExchangeSellRaw
+  exchangeRaw: ExchangeSwapRaw | ExchangeSellRaw,
 ): exchangeRaw is ExchangeSwapRaw => {
   return (exchangeRaw as ExchangeSwapRaw).toAccount !== undefined;
 };
 
-const isExchangeSwap = (
-  exchange: ExchangeSwap | ExchangeSell
-): exchange is ExchangeSwap => {
+const isExchangeSwap = (exchange: ExchangeSwap | ExchangeSell): exchange is ExchangeSwap => {
   return (exchange as ExchangeSwap).toAccount !== undefined;
 };
 
@@ -65,9 +58,7 @@ export const toExchangeRaw = (exchange: Exchange): ExchangeRaw => {
   }
 
   const toAccount = toAccountLikeRaw(exchange.toAccount);
-  const toParentAccount = exchange.toParentAccount
-    ? toAccountRaw(exchange.toParentAccount)
-    : null;
+  const toParentAccount = exchange.toParentAccount ? toAccountRaw(exchange.toParentAccount) : null;
 
   return {
     fromAccount,

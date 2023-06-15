@@ -26,10 +26,10 @@ export const createTransaction = (): Transaction => ({
  * @param {*} t
  * @param {*} patch
  */
-export const updateTransaction = (
-  t: Transaction,
-  patch: Partial<Transaction>
-) => ({ ...t, ...patch });
+export const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
+  ...t,
+  ...patch,
+});
 
 /**
  * Prepare transaction before checking status

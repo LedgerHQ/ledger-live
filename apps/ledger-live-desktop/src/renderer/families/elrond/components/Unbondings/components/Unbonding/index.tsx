@@ -29,10 +29,10 @@ const Unbonding = (
 ) => {
   const { account, contract, seconds, validator, amount, unbondings } = props;
   const [counter, setCounter] = useState(seconds);
-  const name = useMemo(() => (validator ? validator.identity.name || contract : contract), [
-    contract,
-    validator,
-  ]);
+  const name = useMemo(
+    () => (validator ? validator.identity.name || contract : contract),
+    [contract, validator],
+  );
   const balance = useMemo(
     () =>
       denominate({

@@ -61,7 +61,7 @@ export type InstallFirmwareCommandEvent =
  */
 export function installFirmwareCommand(
   transport: Transport,
-  { targetId, firmware }: InstallFirmwareCommandRequest
+  { targetId, firmware }: InstallFirmwareCommandRequest,
 ): Observable<InstallFirmwareCommandEvent> {
   // TODO handle mock
 
@@ -85,11 +85,9 @@ export function installFirmwareCommand(
   }).pipe(
     catchError(remapSocketFirmwareError),
     filter<SocketEvent, FilteredSocketEvent>((e): e is FilteredSocketEvent => {
-      return (
-        e.type === "bulk-progress" || e.type === "device-permission-requested"
-      );
+      return e.type === "bulk-progress" || e.type === "device-permission-requested";
     }),
-    map<FilteredSocketEvent, InstallFirmwareCommandEvent>((e) => {
+    map<FilteredSocketEvent, InstallFirmwareCommandEvent>(e => {
       if (e.type === "bulk-progress") {
         return e.index === e.total - 1
           ? {
@@ -111,15 +109,13 @@ export function installFirmwareCommand(
       // then type is "device-permission-requested"
       return { type: "allowSecureChannelRequested" };
     }),
-    catchError(remapSocketUnresponsiveError)
+    catchError(remapSocketUnresponsiveError),
   );
 }
 
 const remapSocketUnresponsiveError: (
-  e: Error
-) => Observable<InstallFirmwareCommandEvent> | Observable<never> = (
-  e: Error
-) => {
+  e: Error,
+) => Observable<InstallFirmwareCommandEvent> | Observable<never> = (e: Error) => {
   if (e instanceof ManagerDeviceLockedError) {
     return of({ type: "unresponsive" });
   }
@@ -127,9 +123,7 @@ const remapSocketUnresponsiveError: (
   return throwError(e);
 };
 
-const remapSocketFirmwareError: (e: Error) => Observable<never> = (
-  e: Error
-) => {
+const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => {
   if (!e || !e.message) return throwError(e);
 
   if (e.message.startsWith("invalid literal")) {

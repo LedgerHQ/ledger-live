@@ -22,8 +22,7 @@ const dataset: CurrenciesData<Transaction> = {
     {
       raw: {
         id: "js:2:umee:umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm:",
-        seedIdentifier:
-          "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+        seedIdentifier: "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
         name: "Umee 1",
         starred: false,
         used: true,
@@ -45,9 +44,9 @@ const dataset: CurrenciesData<Transaction> = {
         balanceHistoryCache: {
           HOUR: {
             balances: [
-              0, 10000000, 10000000, 10000000, 10000000, 9899013, 9899013,
-              9899013, 9899013, 9899013, 9899013, 9899013, 9899013, 9899013,
-              9899013, 9899013, 9899013, 9899013, 9899013, 9899013, 9899013,
+              0, 10000000, 10000000, 10000000, 10000000, 9899013, 9899013, 9899013, 9899013,
+              9899013, 9899013, 9899013, 9899013, 9899013, 9899013, 9899013, 9899013, 9899013,
+              9899013, 9899013, 9899013,
             ],
             latestDate: 1681894800000,
           },

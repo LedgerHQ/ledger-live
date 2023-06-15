@@ -93,7 +93,7 @@ const winstonFormatConsole = combine(
     message: `${type}: ${message}`,
   }))(),
   format.colorize(),
-  simple()
+  simple(),
 );
 const levels = {
   error: 0,
@@ -112,7 +112,7 @@ if (VERBOSE_FILE) {
       format: winstonFormatJSON,
       filename: VERBOSE_FILE,
       level,
-    })
+    }),
   );
 }
 
@@ -123,7 +123,7 @@ if (VERBOSE && VERBOSE !== "json") {
       // FIXME: this option is not recognzed by winston API
       // colorize: true,
       level,
-    })
+    }),
   );
 } else {
   logger.add(
@@ -131,20 +131,15 @@ if (VERBOSE && VERBOSE !== "json") {
       format: winstonFormatJSON,
       silent: !VERBOSE,
       level,
-    })
+    }),
   );
 }
 
-listen((log) => {
+listen(log => {
   const { type } = log;
   let level = "info";
 
-  if (
-    type === "apdu" ||
-    type === "hw" ||
-    type === "speculos" ||
-    type.includes("debug")
-  ) {
+  if (type === "apdu" || type === "hw" || type === "speculos" || type.includes("debug")) {
     level = "debug";
   } else if (type.includes("warn")) {
     level = "warn";

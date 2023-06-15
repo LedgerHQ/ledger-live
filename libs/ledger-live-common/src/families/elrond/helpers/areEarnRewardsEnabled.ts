@@ -7,6 +7,6 @@ export const areEarnRewardsEnabled = (account: Account): boolean => {
     denominate({
       input: String(account.spendableBalance),
       showLastNonZeroDecimal: true,
-    })
+    }),
   ).gte(1);
 };

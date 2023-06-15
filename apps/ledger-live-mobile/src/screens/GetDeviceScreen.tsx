@@ -21,10 +21,7 @@ import { urls } from "../config/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
-import {
-  hasCompletedOnboardingSelector,
-  readOnlyModeEnabledSelector,
-} from "../reducers/settings";
+import { hasCompletedOnboardingSelector, readOnlyModeEnabledSelector } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
 import { AnalyticsContext } from "../analytics/AnalyticsContext";
 import type { Context } from "../analytics/AnalyticsContext";
@@ -173,13 +170,7 @@ export default function GetDeviceScreen() {
         )}
       </Flex>
       <ScrollListContainer>
-        <Flex
-          height={240}
-          my={-50}
-          width="100%"
-          position="relative"
-          overflow="hidden"
-        >
+        <Flex height={240} my={-50} width="100%" position="relative" overflow="hidden">
           {videoMounted && (
             <Video
               disableFocus

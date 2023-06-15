@@ -1,15 +1,9 @@
 // polyfill the unfinished support of apps logic
 import uniq from "lodash/uniq";
 import semver from "semver";
-import {
-  listCryptoCurrencies,
-  findCryptoCurrencyById,
-} from "@ledgerhq/cryptoassets";
+import { listCryptoCurrencies, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { App, AppType, Application, ApplicationV2 } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  CryptoCurrencyId,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
 const reverseDep = {};
 
@@ -82,10 +76,7 @@ const versionBasedWhitelistDependencies = {
   Bitcoin: "2.1.0",
 };
 
-export const getDependencies = (
-  appName: string,
-  appVersion?: string
-): string[] => {
+export const getDependencies = (appName: string, appVersion?: string): string[] => {
   const maybeDirectDep = directDep[appName] || [];
 
   if (!appVersion || !maybeDirectDep.length) {
@@ -100,16 +91,15 @@ export const getDependencies = (
   });
 };
 
-export const getDependents = (appName: string): string[] =>
-  reverseDep[appName] || [];
+export const getDependents = (appName: string): string[] => reverseDep[appName] || [];
 
 export const polyfillApplication = (app: Application): Application => {
   const crypto = listCryptoCurrencies(true, true).find(
-    (crypto) =>
+    crypto =>
       app.name.toLowerCase() === crypto.managerAppName.toLowerCase() &&
       (crypto.managerAppName !== "Ethereum" ||
         // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-        app.name === "Ethereum")
+        app.name === "Ethereum"),
   );
 
   if (crypto && !app.currencyId) {
@@ -120,14 +110,14 @@ export const polyfillApplication = (app: Application): Application => {
 };
 
 export const getCurrencyIdFromAppName = (
-  appName: string
+  appName: string,
 ): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
   const crypto = listCryptoCurrencies(true, true).find(
-    (crypto) =>
+    crypto =>
       appName.toLowerCase() === crypto.managerAppName.toLowerCase() &&
       (crypto.managerAppName !== "Ethereum" ||
         // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-        appName === "Ethereum")
+        appName === "Ethereum"),
   );
 
   return crypto?.id;
@@ -182,7 +172,7 @@ export const calculateDependencies = (): void => {
 
 export const parseCompatibleWallets = (
   compatibleWalletsJSON: string | undefined,
-  appName: string
+  appName: string,
 ): Array<{ name: string; url: string }> => {
   const compatibleWallets: Array<{ name: string; url: string }> = [];
   if (compatibleWalletsJSON) {
@@ -206,14 +196,10 @@ export const parseCompatibleWallets = (
 };
 
 export const polyfillApp = (app: App): App => {
-  const dependencies = whitelistDependencies.includes(app.name)
-    ? []
-    : app.dependencies;
+  const dependencies = whitelistDependencies.includes(app.name) ? [] : app.dependencies;
 
   return {
     ...app,
-    dependencies: uniq(
-      dependencies.concat(getDependencies(app.name, app.version))
-    ),
+    dependencies: uniq(dependencies.concat(getDependencies(app.name, app.version))),
   };
 };

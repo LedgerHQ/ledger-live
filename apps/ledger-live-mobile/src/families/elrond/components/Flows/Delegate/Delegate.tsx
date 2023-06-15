@@ -35,10 +35,7 @@ const Delegate = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   /*
    * Return the rendered component.
@@ -55,9 +52,7 @@ const Delegate = () => {
         name={ScreenName.ElrondDelegationStarted}
         component={EarnRewards}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("delegation.started.title")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
         }}
       />
 
@@ -83,9 +78,7 @@ const Delegate = () => {
         component={PickValidator}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("delegation.selectValidatorTitle")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
         }}
       />
 

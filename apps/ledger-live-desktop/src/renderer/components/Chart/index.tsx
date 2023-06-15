@@ -72,18 +72,8 @@ export function genericBackgroundColor(color: string | undefined) {
     const ctx = chart?.ctx;
     if (!ctx) return "";
     const gradient = ctx?.createLinearGradient(0, 0, 0, (chart.height || 0) / 1.2);
-    gradient?.addColorStop(
-      0,
-      Color(color)
-        .alpha(0.4)
-        .toString(),
-    );
-    gradient?.addColorStop(
-      1,
-      Color(color)
-        .alpha(0.0)
-        .toString(),
-    );
+    gradient?.addColorStop(0, Color(color).alpha(0.4).toString());
+    gradient?.addColorStop(1, Color(color).alpha(0.0).toString());
     return gradient;
   };
 }
@@ -118,16 +108,12 @@ export default function Chart({
               tickXScale === "week"
                 ? new Date(d.date)
                 : tickXScale === "day"
-                ? moment(new Date(d.date))
-                    .startOf("hour")
-                    .toDate()
+                ? moment(new Date(d.date)).startOf("hour").toDate()
                 : tickXScale === "minute"
                 ? moment()
                     .subtract(i * 5, "minutes")
                     .toDate()
-                : moment(new Date(d.date))
-                    .startOf("day")
-                    .toDate(),
+                : moment(new Date(d.date)).startOf("day").toDate(),
             y: d[valueKey],
           })),
         },

@@ -22,10 +22,7 @@ const totalSteps = "3";
 function StakingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -37,9 +34,7 @@ function StakingFlow() {
         name={ScreenName.NearStakingStarted}
         component={StakingStarted}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("delegation.started.title")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
         }}
       />
       <Stack.Screen
@@ -63,19 +58,13 @@ function StakingFlow() {
         component={SelectValidator}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("delegation.selectValidatorTitle")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
         }}
       />
       <Stack.Screen
         name={ScreenName.NearStakingAmount}
         component={StakingAmount}
-        options={({
-          route,
-        }: {
-          route: { params: { validator: NearValidatorItem } };
-        }) => ({
+        options={({ route }: { route: { params: { validator: NearValidatorItem } } }) => ({
           headerRight: undefined,
           headerTitle: () => (
             <StepHeader

@@ -5,12 +5,10 @@ import Button from "../../../../../components/PreventDoubleClickButton";
 
 const items = [
   {
-    title:
-      "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.0.title",
+    title: "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.0.title",
   },
   {
-    title:
-      "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.1.title",
+    title: "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.1.title",
     desc: `onboarding.stepRecoveryPhrase.existingRecoveryPhrase.bullets.1.label`,
   },
 ];

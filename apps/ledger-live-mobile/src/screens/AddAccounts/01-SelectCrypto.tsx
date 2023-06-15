@@ -44,8 +44,7 @@ const renderEmptyList = () => (
   </View>
 );
 
-const listSupportedTokens = () =>
-  listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -124,25 +123,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   const cryptoCurrencies = useMemo(() => {
-    const currencies = [
-      ...listSupportedCurrencies(),
-      ...listSupportedTokens(),
-    ].filter(
-      ({ id }) =>
-        filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
+    const currencies = [...listSupportedCurrencies(), ...listSupportedTokens()].filter(
+      ({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
     );
     const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
       .filter(([, feature]) => !feature?.enabled)
       .map(([name]) => name);
 
-    const currenciesFiltered = currencies.filter(
-      c => !deactivatedCurrencies.includes(c.id),
-    );
+    const currenciesFiltered = currencies.filter(c => !deactivatedCurrencies.includes(c.id));
 
     if (!devMode) {
-      return currenciesFiltered.filter(
-        c => c.type !== "CryptoCurrency" || !c.isTestnetFor,
-      );
+      return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);
     }
     return currenciesFiltered;
   }, [devMode, featureFlaggedCurrencies, filterCurrencyIds]);

@@ -21,11 +21,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         recipient: btcPlatformTx.recipient,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        btc.getWalletAPITransactionSignFlowInfos({
-          tx: btcPlatformTx,
-          account: dummyAccount,
-        });
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        tx: btcPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 
@@ -50,11 +49,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         feesStrategy: null,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        btc.getWalletAPITransactionSignFlowInfos({
-          tx: btcPlatformTx,
-          account: dummyAccount,
-        });
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        tx: btcPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 

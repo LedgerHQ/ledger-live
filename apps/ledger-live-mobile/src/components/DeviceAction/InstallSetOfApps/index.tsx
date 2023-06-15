@@ -6,12 +6,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import {
-  Alert,
-  Flex,
-  ProgressLoader,
-  VerticalTimeline,
-} from "@ledgerhq/native-ui";
+import { Alert, Flex, ProgressLoader, VerticalTimeline } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
@@ -55,11 +50,8 @@ const InstallSetOfApps = ({
   const { t } = useTranslation();
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
-  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
-    lastSeenDeviceSelector,
-  );
-  const lastSeenDeviceModelId =
-    debugLastSeenDeviceModelId || lastSeenDevice?.modelId;
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
+  const lastSeenDeviceModelId = debugLastSeenDeviceModelId || lastSeenDevice?.modelId;
 
   const shouldRestoreApps = restore && !!lastSeenDeviceModelId;
 
@@ -83,10 +75,7 @@ const InstallSetOfApps = ({
     [dependenciesToInstall],
   );
 
-  const status = action.useHook(
-    userConfirmed ? selectedDevice : undefined,
-    commandRequest,
-  );
+  const status = action.useHook(userConfirmed ? selectedDevice : undefined, commandRequest);
 
   const {
     allowManagerRequestedWording,
@@ -118,20 +107,13 @@ const InstallSetOfApps = ({
 
   if (opened) {
     onResult(true);
-    return error ? null : (
-      <TrackScreen category="Step 5: Install apps - successful" />
-    );
+    return error ? null : <TrackScreen category="Step 5: Install apps - successful" />;
   }
 
   return userConfirmed ? (
     <Flex height="100%">
       <Flex flex={1} alignItems="flex-start">
-        <Flex
-          style={{ width: "100%" }}
-          flexDirection="row"
-          justifyContent="space-between"
-          mb={6}
-        >
+        <Flex style={{ width: "100%" }} flexDirection="row" justifyContent="space-between" mb={6}>
           {installing ? (
             <VerticalTimeline.BodyText>
               {t("installSetOfApps.ongoing.progress")}
@@ -146,15 +128,11 @@ const InstallSetOfApps = ({
           )}
         </Flex>
         {missingApps ? (
-          <Alert
-            title={t("installSetOfApps.ongoing.skippedInfo", { productName })}
-          />
+          <Alert title={t("installSetOfApps.ongoing.skippedInfo", { productName })} />
         ) : null}
         {!!missingApps && <Flex mb={6} />}
         {dependenciesToInstall?.map((appName, i) => {
-          const skipped = skippedAppOps.find(
-            skippedAppOp => skippedAppOp.appOp.name === appName,
-          );
+          const skipped = skippedAppOps.find(skippedAppOp => skippedAppOp.appOp.name === appName);
 
           const state = !listedApps
             ? ItemState.Idle
@@ -162,8 +140,7 @@ const InstallSetOfApps = ({
             ? ItemState.Active
             : skipped?.reason === SkipReason.NoSuchAppOnProvider
             ? ItemState.Skipped
-            : !installQueue?.includes(appName) ||
-              skipped?.reason === SkipReason.AppAlreadyInstalled
+            : !installQueue?.includes(appName) || skipped?.reason === SkipReason.AppAlreadyInstalled
             ? ItemState.Installed
             : ItemState.Idle;
 
@@ -191,10 +168,7 @@ const InstallSetOfApps = ({
       >
         <Flex alignItems="center">
           <Flex flexDirection="row">
-            <DeviceActionDefaultRendering
-              status={status}
-              device={selectedDevice}
-            />
+            <DeviceActionDefaultRendering status={status} device={selectedDevice} />
           </Flex>
         </Flex>
       </QueuedDrawer>

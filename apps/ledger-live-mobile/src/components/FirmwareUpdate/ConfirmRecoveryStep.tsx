@@ -1,13 +1,4 @@
-import {
-  Divider,
-  Flex,
-  Text,
-  Link,
-  Icons,
-  Button,
-  Checkbox,
-  Alert,
-} from "@ledgerhq/native-ui";
+import { Divider, Flex, Text, Link, Icons, Button, Checkbox, Alert } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -24,15 +15,9 @@ type Props = {
   device: Device;
 };
 
-const ConfirmRecoveryStep = ({
-  firmwareVersion,
-  firmwareNotes,
-  onContinue,
-  device,
-}: Props) => {
+const ConfirmRecoveryStep = ({ firmwareVersion, firmwareNotes, onContinue, device }: Props) => {
   const { t } = useTranslation();
-  const [confirmRecoveryPhraseBackup, setConfirmRecoveryPhraseBackup] =
-    useState(false);
+  const [confirmRecoveryPhraseBackup, setConfirmRecoveryPhraseBackup] = useState(false);
 
   const toggleConfirmRecoveryPhraseBackup = useCallback(() => {
     track("FirmwareUpdateSeedDisclaimerChecked");
@@ -62,9 +47,7 @@ const ConfirmRecoveryStep = ({
           </Text>
           <Alert
             type="info"
-            title={t(
-              "FirmwareUpdateReleaseNotes.recoveryPhraseBackupInstructions",
-            )}
+            title={t("FirmwareUpdateReleaseNotes.recoveryPhraseBackupInstructions")}
           />
           <Flex mt={6}>
             <Link
@@ -74,9 +57,7 @@ const ConfirmRecoveryStep = ({
               type="color"
               style={{ justifyContent: "flex-start" }}
             >
-              {t(
-                "onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link",
-              )}
+              {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link")}
             </Link>
           </Flex>
           {firmwareNotes ? <SafeMarkdown markdown={firmwareNotes} /> : null}
@@ -90,12 +71,7 @@ const ConfirmRecoveryStep = ({
           label={t("FirmwareUpdateReleaseNotes.confirmRecoveryPhrase")}
         />
       </Flex>
-      <Button
-        onPress={onContinue}
-        type="main"
-        mt={6}
-        disabled={!confirmRecoveryPhraseBackup}
-      >
+      <Button onPress={onContinue} type="main" mt={6} disabled={!confirmRecoveryPhraseBackup}>
         {t("common.continue")}
       </Button>
     </Flex>

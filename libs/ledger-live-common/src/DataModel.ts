@@ -31,9 +31,7 @@ export type DataSchema<R, M> = {
 /**
  * @memberof DataModel
  */
-export function createDataModel<R, M>(
-  schema: DataSchema<R, M>
-): DataModel<R, M> {
+export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M> {
   const { migrations, encode, decode } = schema;
   const version = migrations.length;
 

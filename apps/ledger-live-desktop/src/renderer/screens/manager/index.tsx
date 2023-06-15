@@ -16,7 +16,7 @@ import { context } from "~/renderer/drawers/Provider";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
-  const [appsToRestore, setRestoreApps] = useState();
+  const [appsToRestore, setRestoreApps] = useState([]);
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
@@ -57,7 +57,7 @@ const Manager = () => {
         <Dashboard
           {...result}
           onReset={onReset}
-          appsToRestore={appsToRestore || []}
+          appsToRestore={appsToRestore}
           onRefreshDeviceInfo={refreshDeviceInfo}
         />
       ) : !hasReset ? (

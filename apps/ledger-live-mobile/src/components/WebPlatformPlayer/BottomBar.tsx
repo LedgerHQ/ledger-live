@@ -1,11 +1,7 @@
 import React, { RefObject, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import {
-  ArrowLeftMedium,
-  ArrowRightMedium,
-  ReverseMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
@@ -31,13 +27,7 @@ function IconButton({
 >) {
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
-      <Flex
-        justifyContent="center"
-        alignItems="center"
-        height={40}
-        width={40}
-        {...flexProps}
-      >
+      <Flex justifyContent="center" alignItems="center" height={40} width={40} {...flexProps}>
         {children}
       </Flex>
     </TouchableOpacity>
@@ -68,30 +58,17 @@ export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
   return (
     <Flex flexDirection="row" paddingY={4} paddingX={4}>
       <Flex flexDirection="row" flex={1}>
-        <IconButton
-          onPress={handleBack}
-          marginRight={4}
-          disabled={!webviewState.canGoBack}
-        >
+        <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
           <ArrowLeftMedium
             size={24}
-            color={
-              webviewState.canGoBack ? colors.neutral.c100 : colors.neutral.c50
-            }
+            color={webviewState.canGoBack ? colors.neutral.c100 : colors.neutral.c50}
           />
         </IconButton>
 
-        <IconButton
-          onPress={handleForward}
-          disabled={!webviewState.canGoForward}
-        >
+        <IconButton onPress={handleForward} disabled={!webviewState.canGoForward}>
           <ArrowRightMedium
             size={24}
-            color={
-              webviewState.canGoForward
-                ? colors.neutral.c100
-                : colors.neutral.c50
-            }
+            color={webviewState.canGoForward ? colors.neutral.c100 : colors.neutral.c50}
           />
         </IconButton>
       </Flex>

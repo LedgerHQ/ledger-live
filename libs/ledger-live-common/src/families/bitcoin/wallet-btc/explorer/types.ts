@@ -14,6 +14,6 @@ export interface IExplorer {
     batchSize: number,
     address: Address,
     startingBlockheight: number,
-    isPending: boolean
+    isPending: boolean,
   ): Promise<TX[]>;
 }

@@ -12,10 +12,7 @@ export default function ReceiveConfirmationPostAlert({ mainAccount }: Props) {
   return (
     <>
       {mainAccount.operationsCount === 0 ? (
-        <Alert
-          type="warning"
-          learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}
-        >
+        <Alert type="warning" learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}>
           <Trans i18nKey="tron.receive.newAddressTRC20" />
         </Alert>
       ) : null}

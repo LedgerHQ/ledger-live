@@ -12,9 +12,7 @@ export default {
   }: Partial<{
     device: string;
   }>) =>
-    withDevice(device || "")((t) =>
-      from(getDeviceInfo(t)).pipe(
-        mergeMap((deviceInfo) => genuineCheck(t, deviceInfo))
-      )
+    withDevice(device || "")(t =>
+      from(getDeviceInfo(t)).pipe(mergeMap(deviceInfo => genuineCheck(t, deviceInfo))),
     ),
 };

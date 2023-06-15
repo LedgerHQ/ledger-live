@@ -14,10 +14,9 @@ export const setRatingsModalOpen = createAction<RatingsSetModalOpenPayload>(
 export const setRatingsModalLocked = createAction<RatingsSetModalLockedPayload>(
   RatingsActionTypes.RATINGS_SET_MODAL_LOCKED,
 );
-export const setRatingsCurrentRouteName =
-  createAction<RatingsSetCurrentRouteNamePayload>(
-    RatingsActionTypes.RATINGS_SET_CURRENT_ROUTE_NAME,
-  );
+export const setRatingsCurrentRouteName = createAction<RatingsSetCurrentRouteNamePayload>(
+  RatingsActionTypes.RATINGS_SET_CURRENT_ROUTE_NAME,
+);
 export const setRatingsHappyMoment = createAction<RatingsSetHappyMomentPayload>(
   RatingsActionTypes.RATINGS_SET_HAPPY_MOMENT,
 );

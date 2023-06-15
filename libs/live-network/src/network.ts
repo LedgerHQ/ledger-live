@@ -9,9 +9,7 @@ import invariant from "invariant";
 type Metadata = { startTime: number };
 type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
 
-export const requestInterceptor = (
-  request: AxiosRequestConfig
-): ExtendedXHRConfig => {
+export const requestInterceptor = (request: AxiosRequestConfig): ExtendedXHRConfig => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
     return request;
   }
@@ -32,9 +30,7 @@ type InterceptedResponse = {
   config: ExtendedXHRConfig;
 } & AxiosResponse<any>;
 
-export const responseInterceptor = (
-  response: InterceptedResponse
-): InterceptedResponse => {
+export const responseInterceptor = (response: InterceptedResponse): InterceptedResponse => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
     return response;
   }
@@ -44,10 +40,10 @@ export const responseInterceptor = (
 
   log(
     "network-success",
-    `${response.status} ${method} ${baseURL || ""}${url} (${(
-      Date.now() - startTime
-    ).toFixed(0)}ms)`,
-    { data: response.data }
+    `${response.status} ${method} ${baseURL || ""}${url} (${(Date.now() - startTime).toFixed(
+      0,
+    )}ms)`,
+    { data: response.data },
   );
 
   return response;
@@ -89,10 +85,8 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
 
     log(
       "network-error",
-      `${status} ${method} ${baseURL || ""}${url} (${duration}): ${
-        errorToThrow.message
-      }`,
-      getEnv("DEBUG_HTTP_RESPONSE") ? { data: data } : {}
+      `${status} ${method} ${baseURL || ""}${url} (${duration}): ${errorToThrow.message}`,
+      getEnv("DEBUG_HTTP_RESPONSE") ? { data: data } : {},
     );
     throw errorToThrow;
   } else if (error.request) {
@@ -106,9 +100,7 @@ axios.interceptors.request.use(requestInterceptor);
 axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
 // not react native
-if (
-  !(typeof navigator !== "undefined" && navigator.product === "ReactNative")
-) {
+if (!(typeof navigator !== "undefined" && navigator.product === "ReactNative")) {
   // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
   // refer to https://stackoverflow.com/questions/63064393/getting-axios-error-connect-etimedout-when-making-high-volume-of-calls
   // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
@@ -116,12 +108,7 @@ if (
   axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
 }
 
-const makeError = (
-  msg: string,
-  status: number,
-  url: string | undefined,
-  method: Method | ""
-) => {
+const makeError = (msg: string, status: number, url: string | undefined, method: Method | "") => {
   const obj = {
     status,
     url,
@@ -132,9 +119,7 @@ const makeError = (
     : new LedgerAPI5xx(msg, obj);
 };
 
-const getErrorMessage = (
-  data: Record<string, any>
-): string | null | undefined => {
+const getErrorMessage = (data: Record<string, any>): string | null | undefined => {
   if (!data) return "";
   if (typeof data === "string") return data;
   if (data.errors) {
@@ -195,7 +180,7 @@ function setAxiosLedgerClientVersionHeader(value: string) {
   }
 }
 setAxiosLedgerClientVersionHeader(getEnv("LEDGER_CLIENT_VERSION"));
-changes.subscribe((e) => {
+changes.subscribe(e => {
   if (e.name === "LEDGER_CLIENT_VERSION") {
     setAxiosLedgerClientVersionHeader(e.value);
   }

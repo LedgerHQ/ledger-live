@@ -13,13 +13,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export function Selector({
-  currency,
-  title,
-  subTitle,
-  onPress,
-  disabled = false,
-}: Props) {
+export function Selector({ currency, title, subTitle, onPress, disabled = false }: Props) {
   const { t } = useTranslation();
 
   const Icon = currency ? (
@@ -36,12 +30,7 @@ export function Selector({
 
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-      >
+      <Flex flexDirection="row" alignItems="center" justifyContent="space-between" width="100%">
         <Flex flexDirection="row" alignItems="center" flex={1}>
           <Flex alignItems="center" justifyContent="center" marginRight={2}>
             {Icon}

@@ -13,16 +13,14 @@ import { GAS_PRICE, HASH_TRANSACTION } from "./constants";
  */
 export const buildTransactionToSign = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<string> => {
   const address = account.freshAddress;
   const nonce = await getAccountNonce(address);
   const networkConfig: INetworkConfig = await getNetworkConfig();
   const chainID = networkConfig.ChainID.valueOf();
 
-  const isTokenAccount = account.subAccounts?.some(
-    (ta) => ta.id === transaction.subAccountId
-  );
+  const isTokenAccount = account.subAccounts?.some(ta => ta.id === transaction.subAccountId);
   const value =
     !isTokenAccount && isAmountSpentFromBalance(transaction.mode)
       ? transaction.amount.toFixed()

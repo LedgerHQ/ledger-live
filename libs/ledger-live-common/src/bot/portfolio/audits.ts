@@ -1,7 +1,4 @@
-import {
-  PerformanceObserver,
-  PerformanceObserverCallback,
-} from "node:perf_hooks";
+import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
 import { AuditResult, NetworkAuditResult } from "./types";
 
 export class SlowFrameDetector {
@@ -145,8 +142,7 @@ export class NetworkAudit {
         if (res && req) {
           const { url } = req;
           if (this._urlsSeen.has(url)) {
-            this._totalDuplicateRequests =
-              (this._totalDuplicateRequests || 0) + 1;
+            this._totalDuplicateRequests = (this._totalDuplicateRequests || 0) + 1;
           } else {
             this._urlsSeen.add(url);
           }
@@ -155,8 +151,7 @@ export class NetworkAudit {
           if (headers) {
             const contentLength = headers["content-length"];
             if (contentLength) {
-              this._totalResponseSize =
-                (this._totalResponseSize || 0) + parseInt(contentLength);
+              this._totalResponseSize = (this._totalResponseSize || 0) + parseInt(contentLength);
             }
           }
         }
