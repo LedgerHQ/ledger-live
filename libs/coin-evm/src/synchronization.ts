@@ -199,10 +199,12 @@ export const getOperationStatus = async (
   op: Operation,
 ): Promise<Operation | null> => {
   try {
-    const { blockNumber: blockHeight, blockHash, timestamp, nonce } = await getTransaction(
-      currency,
-      op.hash,
-    );
+    const {
+      blockNumber: blockHeight,
+      blockHash,
+      timestamp,
+      nonce,
+    } = await getTransaction(currency, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
