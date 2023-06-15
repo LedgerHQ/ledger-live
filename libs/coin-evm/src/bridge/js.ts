@@ -62,9 +62,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
-) {
+export function createBridges(signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
