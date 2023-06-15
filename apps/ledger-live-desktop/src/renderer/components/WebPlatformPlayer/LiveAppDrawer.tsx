@@ -33,7 +33,7 @@ export const LiveAppDrawer = () => {
       type: string;
       manifest: AppManifest;
       disclaimerId: string;
-      next: () => void;
+      next: (manifest: AppManifest, isChecked: boolean) => void;
     };
   } = useSelector(platformAppDrawerStateSelector);
 
@@ -41,12 +41,12 @@ export const LiveAppDrawer = () => {
   const dispatch = useDispatch();
   const onContinue = useCallback(() => {
     if (payload && payload.type === "DAPP_DISCLAIMER") {
-      const { disclaimerId, next } = payload;
+      const { manifest, disclaimerId, next } = payload;
       if (dismissDisclaimerChecked && disclaimerId) {
         dispatch(dismissBanner(disclaimerId));
       }
       dispatch(closePlatformAppDrawer());
-      next();
+      next(manifest, dismissDisclaimerChecked);
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
   const drawerContent = useCallback(() => {
