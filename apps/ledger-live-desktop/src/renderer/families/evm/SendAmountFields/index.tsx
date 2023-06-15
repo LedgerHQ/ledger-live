@@ -1,31 +1,35 @@
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
+import { log } from "@ledgerhq/logs";
 import { AccountBridge } from "@ledgerhq/types-live";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
 import { ContextValue, context } from "~/renderer/drawers/Provider";
+import { EvmFamily } from "../types";
 import GasLimitField from "./GasLimitField";
 import GasPriceField from "./GasPriceField";
 import MaxFeeField from "./MaxFeeField";
 import PriorityFeeField from "./PriorityFeeField";
 import SelectFeeStrategy from "./SelectFeeStrategy";
-import { EvmFamily } from "../types";
-import { isError } from "lodash";
 
 const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const { account, updateTransaction, transaction } = props;
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
   const { state: drawerState, setDrawer } = React.useContext<ContextValue>(context);
 
-  console.log("interval", account.currency.blockAvgTime);
-
-  // FIXME: handle gasOptions is error
-  const gasOptions = useGasOptions({
+  const [gasOptions, error] = useGasOptions({
     currency: account.currency,
     transaction,
-    interval: account.currency.blockAvgTime,
+    interval: account.currency.blockAvgTime ? account.currency.blockAvgTime * 1000 : undefined,
   });
+
+  log("error", error);
+
+  useEffect(() => {
+    updateTransaction((tx: EvmTransaction) => bridge.updateTransaction(tx, { ...tx, gasOptions }));
+  }, [bridge, updateTransaction, gasOptions]);
+
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
 
   const shouldUseEip1559 = transaction.type === 2;
@@ -47,7 +51,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
    * If no gasOptions available, this means this currency does not have a
    * gasTracker. Hence, we do not display the fee fields.
    */
-  if (!gasOptions || isError(gasOptions)) {
+  if (!gasOptions) {
     return null;
   }
 
