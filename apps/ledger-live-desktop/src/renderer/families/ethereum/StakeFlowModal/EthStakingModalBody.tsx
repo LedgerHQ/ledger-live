@@ -12,7 +12,7 @@ import {
 } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import CheckBox from "~/renderer/components/CheckBox";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
-import EthStakeIllustration from "~/renderer/components";
+import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 
