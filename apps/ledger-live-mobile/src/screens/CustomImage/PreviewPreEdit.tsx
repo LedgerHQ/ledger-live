@@ -163,7 +163,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   useCenteredImage({
     targetDimensions: targetDisplayDimensions,
-    imageFileUri: loadedImage?.imageFileUri,
+    imageUri: imageUrl || loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,
   });
@@ -341,7 +341,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             <Link
               size="large"
               onPress={handleEditPicture}
-              disabled={previewLoading || isStaxEnabledImage}
+              disabled={!loadedImage || previewLoading || isStaxEnabledImage}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >
