@@ -3,7 +3,8 @@ import { Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import { TFunction } from "i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import Button from "../../components/Button";
+import Button from "../../components/wrappedUi/Button";
+import Link from "../../components/wrappedUi/Link";
 
 export const RestoreStepDenied = ({
   t,
@@ -32,9 +33,9 @@ export const RestoreStepDenied = ({
       <Button type="main" outline={false} onPress={onPressRetry} mt={8} alignSelf="stretch">
         {t("common.retry")}
       </Button>
-      <Button type="default" outline={false} onPress={onPressSkip} mt={6} alignSelf="stretch">
-        {t("common.skip")}
-      </Button>
+      <Flex mt={8} mb={6} alignSelf="stretch">
+        <Link onPress={onPressSkip}>{t("common.skip")}</Link>
+      </Flex>
     </Flex>
   );
 };
