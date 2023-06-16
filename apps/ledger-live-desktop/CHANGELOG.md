@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-next.3
+
+### Patch Changes
+
+- [#3698](https://github.com/LedgerHQ/ledger-live/pull/3698) [`e5117e5ee6`](https://github.com/LedgerHQ/ledger-live/commit/e5117e5ee6b170e3461ceaf2ecc5538d9d231f2e) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix double retry button on locked device for lang install from my ledger
+
 ## 2.62.0-next.2
 
 ### Patch Changes
