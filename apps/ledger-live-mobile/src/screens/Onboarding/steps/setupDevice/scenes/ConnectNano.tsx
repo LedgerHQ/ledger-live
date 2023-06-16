@@ -8,7 +8,7 @@ import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
 import SelectDevice2 from "../../../../../components/SelectDevice2";
-import { TrackScreen, updateIdentify } from "../../../../../analytics";
+import { TrackScreen } from "../../../../../analytics";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
 import {
@@ -17,7 +17,6 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../../../../actions/settings";
-import { updateUser } from "../../../../../user";
 import { readOnlyModeEnabledSelector } from "../../../../../reducers/settings";
 
 const action = createAction(connectManager);
@@ -41,30 +40,22 @@ const ConnectNanoScene = ({
 
   const onSetDevice = useCallback(
     async (device: Device) => {
-      if (readOnlyMode) {
-        await updateUser();
-        await updateIdentify();
-      }
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
     },
-    [dispatch, readOnlyMode],
+    [dispatch],
   );
 
   const directNext = useCallback(
     async device => {
-      if (readOnlyMode) {
-        await updateUser();
-        await updateIdentify();
-      }
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
       onNext();
     },
-    [dispatch, onNext, readOnlyMode],
+    [dispatch, onNext],
   );
 
   const onResult = useCallback(
