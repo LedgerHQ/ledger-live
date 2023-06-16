@@ -1481,9 +1481,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/hw-app-algorand':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-algorand
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -1654,9 +1651,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -1742,9 +1736,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/hw-app-polkadot':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-polkadot
       '@ledgerhq/live-app-sdk':
         specifier: ^0.8.1
         version: 0.8.1
@@ -1988,6 +1979,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-algorand':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-algorand
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-btc
