@@ -1557,9 +1557,6 @@ importers:
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
-      '@ledgerhq/live-app-sdk':
-        specifier: ^0.8.1
-        version: 0.8.1
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -1578,18 +1575,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
-      '@polkadot/types':
-        specifier: 9.8.1
-        version: 9.8.1
-      '@polkadot/types-known':
-        specifier: 9.8.1
-        version: 9.8.1
-      '@polkadot/util':
-        specifier: 10.3.1
-        version: 10.3.1
-      '@polkadot/util-crypto':
-        specifier: 10.3.1
-        version: 10.3.1(@polkadot/util@10.3.1)
       axios:
         specifier: 0.26.1
         version: 0.26.1
@@ -1623,7 +1608,7 @@ importers:
         version: 2.2.35
       '@types/jest':
         specifier: ^29.2.4
-        version: 29.5.0
+        version: 29.5.1
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.14.191
@@ -1651,9 +1636,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
-      '@ledgerhq/live-promise':
-        specifier: workspace:^
-        version: link:../promise
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -1687,9 +1669,6 @@ importers:
       rxjs:
         specifier: ^6.6.7
         version: 6.6.7
-      rxjs-compat:
-        specifier: ^6.6.7
-        version: 6.6.7(rxjs@6.6.7)
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2
@@ -1736,9 +1715,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
-      '@ledgerhq/live-promise':
-        specifier: workspace:^
-        version: link:../promise
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -1781,7 +1757,7 @@ importers:
         version: 2.2.35
       '@types/jest':
         specifier: ^29.2.4
-        version: 29.4.0
+        version: 29.5.1
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.14.191
@@ -49895,17 +49871,6 @@ packages:
     resolution: {integrity: sha512-ntymy489o0/QQplUDnpYAYUsO50K9SBrIVaKCWDOJzYJts0f9WH9RFJkyagebkw5+y1oi00R7ynNW/d12GBumg==}
     dependencies:
       aproba: 1.2.0
-
-  /rxjs-compat@6.6.7(rxjs@6.6.7):
-    resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
-    peerDependencies:
-      rxjs: '*'
-    peerDependenciesMeta:
-      rxjs:
-        optional: true
-    dependencies:
-      rxjs: 6.6.7
-    dev: false
 
   /rxjs-compat@6.6.7(rxjs@7.8.0):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
