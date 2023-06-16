@@ -31,9 +31,7 @@ export default function Benchmarking(props: Props) {
   const [start, setStart] = useState<Date | null>(null);
   const [startTransfer, setStartTransfer] = useState<Date | null>(null);
   const [end, setEnd] = useState<Date | null>(null);
-  const [lastSeenAppOp, setLastSeenAppOp] = useState<AppOp | null | undefined>(
-    null,
-  );
+  const [lastSeenAppOp, setLastSeenAppOp] = useState<AppOp | null | undefined>(null);
 
   const { state } = props;
   const { currentAppOp } = state;
@@ -59,9 +57,9 @@ export default function Benchmarking(props: Props) {
     if (start && end && startTransfer && lastSeenAppOp) {
       setList(list => [
         ...list,
-        `${lastSeenAppOp.name}: ${
-          end.getTime() - startTransfer.getTime()
-        }ms [+${startTransfer.getTime() - start.getTime()}ms]`,
+        `${lastSeenAppOp.name}: ${end.getTime() - startTransfer.getTime()}ms [+${
+          startTransfer.getTime() - start.getTime()
+        }ms]`,
       ]);
 
       setLastSeenAppOp(null);

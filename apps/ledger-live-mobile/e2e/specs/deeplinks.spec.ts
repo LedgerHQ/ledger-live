@@ -21,8 +21,8 @@ let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
 let receivePage: ReceivePage;
 
-const ethereumShort = "eth";
-const bitcoinShort = "btc";
+// const ethereumShort = "eth";
+// const bitcoinShort = "btc";
 const ethereumLong = "Ethereum";
 const bitcoinLong = "Bitcoin";
 
@@ -55,7 +55,7 @@ const openNCheckApp = (l10n: { name: string; url: string }) => {
 
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETH", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
     accountPage = new AccountPage();
     accountsPage = new AccountsPage();
     customLockscreenPage = new CustomLockscreenPage();
@@ -81,9 +81,7 @@ describe("DeepLinks Tests", () => {
   it("should open Custom Lock Screen page", async () => {
     await customLockscreenPage.openViaDeeplink();
     await customLockscreenPage.expectCustomLockscreenPage();
-    await expect(
-      customLockscreenPage.welcomeChoosePictureButton(),
-    ).toBeVisible();
+    await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
     await portfolioPage.openViaDeeplink();
   });
 

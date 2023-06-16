@@ -1,8 +1,5 @@
 import { RecipientRequired } from "@ledgerhq/errors";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   SyncOneAccountOnMount,
@@ -29,10 +26,7 @@ import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import RetryButton from "../../components/RetryButton";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -43,10 +37,7 @@ const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendSelectRecipient
-  >
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
 >;
 
 export default function SendSelectRecipient({ navigation, route }: Props) {
@@ -62,18 +53,16 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       supportedCurrencyIds: CryptoCurrencyId[];
     }>("domainInputResolution") || {};
   const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(
-      mainAccount.currency.id as CryptoCurrencyId,
-    ) || false;
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => ({
       account,
       parentAccount,
-    }));
+    }),
+  );
   const shouldSkipAmount =
-    transaction?.family === "ethereum" &&
-    transaction?.mode === "erc721.transfer";
+    transaction?.family === "ethereum" && transaction?.mode === "erc721.transfer";
   const [value, setValue] = useState<string>("");
 
   const isNftSend = isNftTransaction(transaction);
@@ -81,10 +70,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
   useEffect(() => {
-    if (
-      initialTransaction.current !== navigationTransaction &&
-      navigationTransaction
-    ) {
+    if (initialTransaction.current !== navigationTransaction && navigationTransaction) {
       setTransaction(navigationTransaction);
     }
   }, [setTransaction, navigationTransaction]);
@@ -179,11 +165,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           },
         ]}
       >
-        <TrackScreen
-          category="SendFunds"
-          name="SelectRecipient"
-          currencyName={currency.name}
-        />
+        <TrackScreen category="SendFunds" name="SelectRecipient" currencyName={currency.name} />
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount
           reason="transaction-flow-init"
@@ -257,9 +239,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             transaction.recipient &&
             !(error || warning) ? (
               <View style={styles.infoBox}>
-                <Alert type="primary">
-                  {t("send.recipient.verifyAddress")}
-                </Alert>
+                <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
             ) : null}
             <Button
@@ -279,10 +259,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}
@@ -294,13 +271,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 }
 
-const IconQRCode = ({
-  size = 16,
-  color,
-}: {
-  size?: number;
-  color?: string;
-}) => <Icon name="qrcode" size={size} color={color} />;
+const IconQRCode = ({ size = 16, color }: { size?: number; color?: string }) => (
+  <Icon name="qrcode" size={size} color={color} />
+);
 
 const styles = StyleSheet.create({
   root: {

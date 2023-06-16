@@ -10,16 +10,13 @@ import { UPDATE_PROVIDERS_TYPE } from "../reducers/swap";
 import { State } from "../reducers/types";
 
 /* ACTIONS */
-export const updateProvidersAction = createAction<
-  UPDATE_PROVIDERS_TYPE["payload"]
->("SWAP/UPDATE_PROVIDERS");
+export const updateProvidersAction =
+  createAction<UPDATE_PROVIDERS_TYPE["payload"]>("SWAP/UPDATE_PROVIDERS");
 
-export const updateTransactionAction = createAction<
-  Transaction | null | undefined
->("SWAP/UPDATE_TRANSACTION");
-export const updateRateAction = createAction<ExchangeRate | null | undefined>(
-  "SWAP/UPDATE_RATE",
+export const updateTransactionAction = createAction<Transaction | null | undefined>(
+  "SWAP/UPDATE_TRANSACTION",
 );
+export const updateRateAction = createAction<ExchangeRate | null | undefined>("SWAP/UPDATE_RATE");
 
 export type SwapAccount = AccountLike & { disabled: boolean };
 
@@ -30,23 +27,16 @@ export const providersSelector = (state: State) => state.swap.providers;
 export const pairsSelector = (state: State) => state.swap.pairs || [];
 export const transactionSelector = (state: State) => state.swap.transaction;
 export const rateSelector = (state: State) => state.swap.exchangeRate;
-export const rateExpirationSelector = (state: State) =>
-  state.swap.exchangeRateExpiration;
+export const rateExpirationSelector = (state: State) => state.swap.exchangeRateExpiration;
 
-export const toSelector = createSelector(
-  pairsSelector,
-  pairs => (fromId?: string) => {
-    if (!fromId || !pairs) return [];
-    const filteredAssets = filterAvailableToAssets(pairs, fromId);
-    const uniqueAssetList = [...new Set(filteredAssets)];
-    return uniqueAssetList;
-  },
-);
+export const toSelector = createSelector(pairsSelector, pairs => (fromId?: string) => {
+  if (!fromId || !pairs) return [];
+  const filteredAssets = filterAvailableToAssets(pairs, fromId);
+  const uniqueAssetList = [...new Set(filteredAssets)];
+  return uniqueAssetList;
+});
 
-function filterAvailableToAssets(
-  pairs: Pair[],
-  fromId?: string,
-): string[] | null {
+function filterAvailableToAssets(pairs: Pair[], fromId?: string): string[] | null {
   if (pairs === null || pairs === undefined) return null;
 
   if (fromId)
@@ -58,10 +48,7 @@ function filterAvailableToAssets(
   return pairs.reduce<string[]>((acc, pair) => [...acc, pair.to], []);
 }
 
-function filterAvailableFromAssets(
-  pairs: Pair[],
-  allAccounts: Account[],
-): SwapAccount[] {
+function filterAvailableFromAssets(pairs: Pair[], allAccounts: Account[]): SwapAccount[] {
   if (pairs === null || pairs === undefined) return [];
 
   return flattenAccounts(allAccounts).map(account => {
@@ -86,19 +73,10 @@ export function sortAccountsByStatus(accounts: SwapAccount[]) {
     if (account.type === "Account") {
       if (account.disabled && !subAccounts.length) {
         // When a disabled account has no active subAccount, add it to the disabledAccounts
-        disabledAccounts = [
-          account,
-          ...disabledSubAccounts,
-          ...disabledAccounts,
-        ];
+        disabledAccounts = [account, ...disabledSubAccounts, ...disabledAccounts];
       } else {
         // When an account has at least an active subAccount, add it to the activeAccounts
-        activeAccounts = [
-          account,
-          ...subAccounts,
-          ...disabledSubAccounts,
-          ...activeAccounts,
-        ];
+        activeAccounts = [account, ...subAccounts, ...disabledSubAccounts, ...activeAccounts];
       }
 
       // Clear subAccounts

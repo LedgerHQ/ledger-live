@@ -43,9 +43,8 @@ const Ethereum1559CustomFees = ({
 
   const { networkInfo } = originalTransaction;
   const [maxFeePerGas, setMaxFeePerGas] = useState(
-    networkInfo?.nextBaseFeePerGas?.plus(
-      networkInfo?.maxPriorityFeePerGas?.initial || 0,
-    ) || new BigNumber(0),
+    networkInfo?.nextBaseFeePerGas?.plus(networkInfo?.maxPriorityFeePerGas?.initial || 0) ||
+      new BigNumber(0),
   );
   const [maxPriorityFeePerGas, setMaxPriorityFeePerGas] = useState(
     networkInfo?.maxPriorityFeePerGas?.initial || new BigNumber(0),
@@ -55,20 +54,18 @@ const Ethereum1559CustomFees = ({
   // Creating a new transaction to simulate the bridge status response before updating
   // the original transaction
   const bridge = getAccountBridge<Transaction>(account, parentAccount);
-  const { transaction, setTransaction, status } =
-    useBridgeTransaction<Transaction>(() => ({
-      account,
-      parentAccount,
-      transaction: {
-        ...originalTransaction,
-        maxFeePerGas,
-        maxPriorityFeePerGas,
-      },
-    }));
+  const { transaction, setTransaction, status } = useBridgeTransaction<Transaction>(() => ({
+    account,
+    parentAccount,
+    transaction: {
+      ...originalTransaction,
+      maxFeePerGas,
+      maxPriorityFeePerGas,
+    },
+  }));
   const { errors, warnings } = status;
   const { maxPriorityFee: maxPriorityFeeError, maxFee: maxFeeError } = errors;
-  const { maxPriorityFee: maxPriorityFeeWarning, maxFee: maxFeeWarning } =
-    warnings;
+  const { maxPriorityFee: maxPriorityFeeWarning, maxFee: maxFeeWarning } = warnings;
 
   const maxPriorityFeeRange = useMemo(
     () => inferMaxPriorityFeeRange(transaction?.networkInfo),
@@ -91,12 +88,11 @@ const Ethereum1559CustomFees = ({
   );
 
   const onFeesChange = useCallback(
-    (setter: React.Dispatch<React.SetStateAction<BigNumber>>) =>
-      (value: BigNumber) => {
-        if (!transaction) return; // type guard
-        setter(value); // setMaxPriorityFeePerGas or setMaxFeePerGas
-        setTransaction(bridge.updateTransaction(transaction, transactionPatch));
-      },
+    (setter: React.Dispatch<React.SetStateAction<BigNumber>>) => (value: BigNumber) => {
+      if (!transaction) return; // type guard
+      setter(value); // setMaxPriorityFeePerGas or setMaxFeePerGas
+      setTransaction(bridge.updateTransaction(transaction, transactionPatch));
+    },
     [transaction, bridge, transactionPatch, setTransaction],
   );
 
@@ -137,10 +133,7 @@ const Ethereum1559CustomFees = ({
         </LText>
       ) : null}
 
-      <SectionSeparator
-        style={styles.sectionSeparator}
-        lineColor={"transparent"}
-      />
+      <SectionSeparator style={styles.sectionSeparator} lineColor={"transparent"} />
 
       <EditFeeUnitEthereum
         account={account}
@@ -154,13 +147,9 @@ const Ethereum1559CustomFees = ({
       <LText color="palette.neutral.c70">
         {`${t("send.summary.nextBlock")} : `}
         <LText color="palette.neutral.c90">
-          {formatCurrencyUnit(
-            feeUnit,
-            networkInfo?.nextBaseFeePerGas || new BigNumber(0),
-            {
-              showCode: true,
-            },
-          )}
+          {formatCurrencyUnit(feeUnit, networkInfo?.nextBaseFeePerGas || new BigNumber(0), {
+            showCode: true,
+          })}
         </LText>
       </LText>
       {maxFeeWarning ? (
@@ -174,10 +163,7 @@ const Ethereum1559CustomFees = ({
         </LText>
       ) : null}
 
-      <SectionSeparator
-        style={styles.sectionSeparator}
-        lineColor={colors.fog}
-      />
+      <SectionSeparator style={styles.sectionSeparator} lineColor={colors.fog} />
 
       <View style={styles.container}>
         <EthereumGasLimit

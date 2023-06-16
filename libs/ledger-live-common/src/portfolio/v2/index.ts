@@ -1,10 +1,6 @@
 import type { CounterValuesState } from "../../countervalues/types";
 import { calculate, calculateMany } from "../../countervalues/logic";
-import {
-  flattenAccounts,
-  getAccountCurrency,
-  getAccountHistoryBalances,
-} from "../../account";
+import { flattenAccounts, getAccountCurrency, getAccountHistoryBalances } from "../../account";
 import { getEnv } from "../../env";
 import type {
   Account,
@@ -19,11 +15,7 @@ import type {
   AssetsDistribution,
   ValueChange,
 } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const defaultAssetsDistribution = {
   minShowFirst: 1,
@@ -126,10 +118,7 @@ export function getPortfolioCount(
   return getPortfolioCountByDate(oldestDate, range);
 }
 
-export function getPortfolioCountByDate(
-  start: Date,
-  range: PortfolioRange
-): number {
+export function getPortfolioCountByDate(start: Date, range: PortfolioRange): number {
   const conf = getPortfolioRangeConfig(range);
   const now = Date.now();
   const count = Math.ceil((now - (start as any)) / conf.increment) + 2;
@@ -141,7 +130,7 @@ export function getPortfolioCountByDate(
 export function getBalanceHistory(
   account: AccountLike,
   range: PortfolioRange,
-  count: number
+  count: number,
 ): BalanceHistory {
   const conf = getPortfolioRangeConfig(range);
   const balances = getAccountHistoryBalances(account, conf.granularityId);
@@ -168,7 +157,7 @@ export function getBalanceHistoryWithCountervalue(
   range: PortfolioRange,
   count: number,
   cvState: CounterValuesState,
-  cvCurrency: Currency
+  cvCurrency: Currency,
 ): AccountPortfolio {
   const balanceHistory = getBalanceHistory(account, range, count);
   const currency = getAccountCurrency(account);
@@ -205,7 +194,7 @@ export function getBalanceHistoryWithCountervalue(
         value: (to.countervalue || 0) - (from.countervalue || 0),
         percentage: meaningfulPercentage(
           (to.countervalue || 0) - (from.countervalue || 0),
-          from.countervalue
+          from.countervalue,
         ),
       },
     };
@@ -221,7 +210,7 @@ export function getBalanceHistoryWithCountervalue(
 function meaningfulPercentage(
   deltaChange: number | null | undefined,
   balanceDivider: number | null | undefined,
-  percentageHighThreshold = 100000
+  percentageHighThreshold = 100000,
 ): number | null | undefined {
   if (deltaChange && balanceDivider && balanceDivider !== 0) {
     const percent = deltaChange / balanceDivider;
@@ -259,28 +248,20 @@ export function getPortfolio(
   range: PortfolioRange,
   cvState: CounterValuesState,
   cvCurrency: Currency,
-  options?: GetPortfolioOptionsType
+  options?: GetPortfolioOptionsType,
 ): Portfolio {
   const { flattenSourceAccounts } = {
     ...defaultGetPortfolioOptions,
     ...options,
   };
-  const accounts = flattenSourceAccounts
-    ? flattenAccounts(topAccounts)
-    : topAccounts;
+  const accounts = flattenSourceAccounts ? flattenAccounts(topAccounts) : topAccounts;
   const count = getPortfolioCount(accounts, range);
   const { availables, unavailableAccounts } = accounts.reduce<{
     availables: Available[];
     unavailableAccounts: AccountLike[];
   }>(
     (prev, account) => {
-      const p = getBalanceHistoryWithCountervalue(
-        account,
-        range,
-        count,
-        cvState,
-        cvCurrency
-      );
+      const p = getBalanceHistoryWithCountervalue(account, range, count, cvState, cvCurrency);
       return p.countervalueAvailable
         ? {
             ...prev,
@@ -303,22 +284,21 @@ export function getPortfolio(
     {
       availables: [],
       unavailableAccounts: [],
-    }
+    },
   );
-  const histories = availables.map((a) => a.history);
+  const histories = availables.map(a => a.history);
   const balanceHistory = getDates(range, count).map((date, i) => ({
     date,
     value: histories.reduce((sum, h) => sum + (h[i]?.countervalue ?? 0), 0),
   }));
-  const [countervalueChangeValue, countervalueReceiveSum, countervalueSendSum] =
-    availables.reduce(
-      (prev, a) => [
-        prev[0] + a.change.value, // TODO Portfolio: it'll always be 0, no? 🤔
-        prev[1] + a.countervalueReceiveSum,
-        prev[2] + a.countervalueSendSum,
-      ],
-      [0, 0, 0]
-    );
+  const [countervalueChangeValue, countervalueReceiveSum, countervalueSendSum] = availables.reduce(
+    (prev, a) => [
+      prev[0] + a.change.value, // TODO Portfolio: it'll always be 0, no? 🤔
+      prev[1] + a.countervalueReceiveSum,
+      prev[2] + a.countervalueSendSum,
+    ],
+    [0, 0, 0],
+  );
   // in case there were no receive, we just track the market change
   // weighted by the current balances
   const balanceDivider = getEnv("EXPERIMENTAL_ROI_CALCULATION")
@@ -329,10 +309,8 @@ export function getPortfolio(
   return {
     balanceHistory,
     balanceAvailable: accounts.length === 0 || availables.length > 0,
-    availableAccounts: availables.map((a) => a.account),
-    unavailableCurrencies: [
-      ...new Set(unavailableAccounts.map(getAccountCurrency)),
-    ] as any[],
+    availableAccounts: availables.map(a => a.account),
+    unavailableCurrencies: [...new Set(unavailableAccounts.map(getAccountCurrency))] as any[],
     accounts,
     range,
     histories,
@@ -349,14 +327,14 @@ export function getCurrencyPortfolio(
   accounts: AccountLike[],
   range: PortfolioRange,
   cvState: CounterValuesState,
-  cvCurrency: Currency
+  cvCurrency: Currency,
 ): CurrencyPortfolio {
   const count = getPortfolioCount(accounts, range);
-  const portfolios = accounts.map((a) =>
-    getBalanceHistoryWithCountervalue(a, range, count, cvState, cvCurrency)
+  const portfolios = accounts.map(a =>
+    getBalanceHistoryWithCountervalue(a, range, count, cvState, cvCurrency),
   );
   let countervalueAvailable = false;
-  const histories = portfolios.map((p) => {
+  const histories = portfolios.map(p => {
     if (p.countervalueAvailable) {
       countervalueAvailable = true;
     }
@@ -366,10 +344,7 @@ export function getCurrencyPortfolio(
   const history = getDates(range, count).map((date, i) => ({
     date,
     value: histories.reduce((sum, h) => sum + h[i]?.value, 0),
-    countervalue: histories.reduce(
-      (sum, h) => sum + (h[i]?.countervalue ?? 0),
-      0
-    ),
+    countervalue: histories.reduce((sum, h) => sum + (h[i]?.countervalue ?? 0), 0),
   }));
   const from = history[0];
   const to = history[history.length - 1];
@@ -381,7 +356,7 @@ export function getCurrencyPortfolio(
     value: (to.countervalue || 0) - (from.countervalue || 0),
     percentage: meaningfulPercentage(
       (to.countervalue || 0) - (from.countervalue || 0),
-      from.countervalue
+      from.countervalue,
     ),
   };
   return {
@@ -399,7 +374,7 @@ export function getAssetsDistribution(
   topAccounts: Account[],
   cvState: CounterValuesState,
   cvCurrency: Currency,
-  opts?: AssetsDistributionOpts
+  opts?: AssetsDistributionOpts,
 ): AssetsDistribution {
   const {
     minShowFirst,
@@ -458,7 +433,7 @@ export function getAssetsDistribution(
     {
       sum: 0,
       idCountervalues: {},
-    }
+    },
   );
   const idCurrenciesKeys = Object.keys(idCurrencies);
 
@@ -468,7 +443,7 @@ export function getAssetsDistribution(
 
   const isAvailable = sum !== 0 || showEmptyAccounts;
   const list = idCurrenciesKeys
-    .map((id) => {
+    .map(id => {
       const currency = idCurrencies[id];
       const amount = idBalances[id];
       const countervalue = idCountervalues[id] ?? 0;

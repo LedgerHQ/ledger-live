@@ -30,9 +30,9 @@ export const createDeviceSocket = (
   }: {
     url: string;
     unresponsiveExpectedDuringBulk?: boolean;
-  }
+  },
 ): Observable<SocketEvent> =>
-  new Observable((o) => {
+  new Observable(o => {
     let deviceError: Error | null = null; // error originating from device (connection/response/rejection...)
     let unsubscribed = false; // subscriber wants to stops everything
     let bulkSubscription: null | { unsubscribe: () => void } = null; // subscription to the bulk observable
@@ -48,14 +48,14 @@ export const createDeviceSocket = (
       });
     };
 
-    ws.onerror = (e) => {
+    ws.onerror = e => {
       log("socket-error", e.message);
       if (inBulkMode) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
 
       o.error(
         new WebsocketConnectionError(e.message, {
           url,
-        })
+        }),
       );
     };
 
@@ -177,7 +177,7 @@ export const createDeviceSocket = (
             ws.close();
             const { data } = input;
 
-            const notify = (index) =>
+            const notify = index =>
               o.next({
                 type: "bulk-progress",
                 progress: index / data.length,
@@ -189,17 +189,20 @@ export const createDeviceSocket = (
             await new Promise((resolve, reject) => {
               let i = 0;
               notify(0);
+              // if the bulk payload includes trailing empty strings we end up
+              // sending empty data to the device and causing a disconnect.
+              const cleanData = data
+                .map(d => (d !== "" ? Buffer.from(d, "hex") : null))
+                .filter(Boolean);
+
               // we also use a subscription to be able to cancel the bulk if the user unsubscribes
-              bulkSubscription = transport.exchangeBulk(
-                data.map((d) => Buffer.from(d, "hex")),
-                {
-                  next: () => {
-                    notify(++i);
-                  },
-                  error: (e) => reject(e),
-                  complete: () => resolve(null),
-                }
-              );
+              bulkSubscription = transport.exchangeBulk(cleanData, {
+                next: () => {
+                  notify(++i);
+                },
+                error: e => reject(e),
+                complete: () => resolve(null),
+              });
             });
             if (unsubscribed) {
               log("socket", "unsubscribed before end of bulk");
@@ -254,11 +257,9 @@ export const createDeviceSocket = (
       }
     };
 
-    const onDisconnect = (e) => {
+    const onDisconnect = e => {
       transport.off("disconnect", onDisconnect);
-      const error = new DisconnectedDeviceDuringOperation(
-        (e && e.message) || ""
-      );
+      const error = new DisconnectedDeviceDuringOperation((e && e.message) || "");
       deviceError = error;
       o.error(error);
     };

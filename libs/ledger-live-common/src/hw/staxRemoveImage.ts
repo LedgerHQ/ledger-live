@@ -24,7 +24,7 @@ export type RemoveImageEvent =
 
 export type Input = {
   deviceId: string;
-  request: {};
+  request: Record<string, unknown>;
 };
 
 /**
@@ -56,17 +56,15 @@ export const command = async (transport: Transport): Promise<void> => {
   throw new TransportStatusError(status);
 };
 
-export default function removeImage({
-  deviceId,
-}: Input): Observable<RemoveImageEvent> {
+export default function removeImage({ deviceId }: Input): Observable<RemoveImageEvent> {
   const sub = withDevice(deviceId)(
-    (transport) =>
-      new Observable((subscriber) => {
+    transport =>
+      new Observable(subscriber => {
         const timeoutSub = of<RemoveImageEvent>({
           type: "unresponsiveDevice",
         })
           .pipe(delay(1000))
-          .subscribe((e) => subscriber.next(e));
+          .subscribe(e => subscriber.next(e));
 
         const sub = from(getDeviceInfo(transport))
           .pipe(
@@ -75,7 +73,7 @@ export default function removeImage({
               subscriber.next({ type: "removeImagePermissionRequested" });
               await command(transport);
               subscriber.next({ type: "imageRemoved" });
-            })
+            }),
           )
           .subscribe(subscriber);
 
@@ -83,7 +81,7 @@ export default function removeImage({
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
   return sub as Observable<RemoveImageEvent>;

@@ -27,7 +27,7 @@ export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
  */
 export const formatTransaction = (
   { mode, amount, recipient, useAllAmount }: EvmTransaction,
-  account: Account
+  account: Account,
 ): string =>
   `
 ${mode.toUpperCase()} ${
@@ -45,9 +45,7 @@ ${mode.toUpperCase()} ${
 /**
  * Serializer raw to transaction
  */
-export const fromTransactionRaw = (
-  rawTx: EvmTransactionRaw
-): EvmTransaction => {
+export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => {
   const common = fromTransactionCommonRaw(rawTx);
   const tx: Partial<EvmTransaction> = {
     ...common,
@@ -126,9 +124,7 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
  * Returns the data necessary to execute smart contracts.
  * As of now, only used to create ERC20 transfers' data
  */
-export const getTransactionData = (
-  transaction: EvmTransaction
-): Buffer | undefined => {
+export const getTransactionData = (transaction: EvmTransaction): Buffer | undefined => {
   const contract = new ethers.utils.Interface(ERC20ABI);
   const data = contract.encodeFunctionData("transfer", [
     transaction.recipient,
@@ -144,7 +140,7 @@ export const getTransactionData = (
  */
 export const getTypedTransaction = (
   transaction: EvmTransaction,
-  feeData: FeeData
+  feeData: FeeData,
 ): EvmTransaction => {
   // If the blockchain is supporting EIP-1559, use maxFeePerGas & maxPriorityFeePerGas
   if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
@@ -172,13 +168,13 @@ export const getTypedTransaction = (
  */
 export const getSerializedTransaction = (
   tx: EvmTransaction,
-  signature?: Partial<ethers.Signature>
+  signature?: Partial<ethers.Signature>,
 ): string => {
   const unsignedEthersTransaction = transactionToEthersTransaction(tx);
 
   return ethers.utils.serializeTransaction(
     unsignedEthersTransaction,
-    signature as ethers.Signature
+    signature as ethers.Signature,
   );
 };
 

@@ -1,23 +1,10 @@
 import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 import { concat, Observable, of } from "rxjs";
 import { scan, switchMap } from "rxjs/operators";
-import {
-  updateFirmwareTask,
-  UpdateFirmwareTaskEvent,
-} from "../tasks/updateFirmware";
-import {
-  getDeviceInfoTask,
-  GetDeviceInfoTaskErrorEvent,
-} from "../tasks/getDeviceInfo";
-import {
-  FullActionState,
-  initialSharedActionState,
-  sharedReducer,
-} from "./core";
-import {
-  getLatestFirmwareTask,
-  GetLatestFirmwareTaskErrorEvent,
-} from "../tasks/getLatestFirmware";
+import { updateFirmwareTask, UpdateFirmwareTaskEvent } from "../tasks/updateFirmware";
+import { getDeviceInfoTask, GetDeviceInfoTaskErrorEvent } from "../tasks/getDeviceInfo";
+import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
+import { getLatestFirmwareTask, GetLatestFirmwareTaskErrorEvent } from "../tasks/getLatestFirmware";
 
 export type updateFirmwareActionArgs = {
   deviceId: DeviceId;
@@ -66,14 +53,14 @@ export function updateFirmwareAction({
   return concat(
     of(initialState),
     getDeviceInfoTask({ deviceId }).pipe(
-      switchMap((event) => {
+      switchMap(event => {
         if (event.type !== "data") {
           return of(event);
         }
         const { deviceInfo } = event;
         return getLatestFirmwareTask({ deviceId, deviceInfo });
       }),
-      switchMap((event) => {
+      switchMap(event => {
         if (event.type !== "data") {
           return of(event);
         } else {
@@ -84,9 +71,7 @@ export function updateFirmwareAction({
         }
       }),
       scan<
-        | UpdateFirmwareTaskEvent
-        | GetLatestFirmwareTaskErrorEvent
-        | GetDeviceInfoTaskErrorEvent,
+        UpdateFirmwareTaskEvent | GetLatestFirmwareTaskErrorEvent | GetDeviceInfoTaskErrorEvent,
         UpdateFirmwareActionState
       >((_, event) => {
         switch (event.type) {
@@ -125,7 +110,7 @@ export function updateFirmwareAction({
               }),
             };
         }
-      }, initialState)
-    )
+      }, initialState),
+    ),
   );
 }

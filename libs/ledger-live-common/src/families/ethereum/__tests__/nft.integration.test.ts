@@ -90,7 +90,7 @@ const cache = makeBridgeCacheSystem({
   },
 });
 
-ethTestingAccounts.forEach((a) => {
+ethTestingAccounts.forEach(a => {
   describe(a.name + " NFT on ethereum", () => {
     let account = fromAccountRaw(a);
 
@@ -101,7 +101,7 @@ ethTestingAccounts.forEach((a) => {
     });
 
     test("no nft should be on quantity 0 or negative", () => {
-      expect(account.nfts?.find((n) => !n.amount.gt(0))).toEqual(undefined);
+      expect(account.nfts?.find(n => !n.amount.gt(0))).toEqual(undefined);
     });
 
     test("remove half NFTs will restore them with half operations", async () => {

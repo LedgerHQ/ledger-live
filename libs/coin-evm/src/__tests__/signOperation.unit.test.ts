@@ -1,13 +1,14 @@
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { buildSignOperation, applyEIP155 } from "../signOperation";
 import { Transaction as EvmTransaction } from "../types";
-import * as rpcAPI from "../api/rpc.common";
+import * as rpcAPI from "../api/rpc/rpc.common";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
+import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -18,7 +19,7 @@ const currency: CryptoCurrency = {
 };
 const account: Account = makeAccount(
   "0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176", // trump.eth
-  currency
+  currency,
 );
 
 const transactionEIP1559: EvmTransaction = {
@@ -38,21 +39,24 @@ const transactionEIP1559: EvmTransaction = {
 };
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
-const mockWithDevice: DeviceCommunication =
-  () =>
-  (job: any): any =>
-    job({});
+const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
+  _: string,
+  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
+) => {
+  return fn({
+    getAddress: jest.fn(),
+    signTransaction: () =>
+      Promise.resolve({
+        r: "123",
+        s: "abc",
+        v: "27",
+      }),
+  });
+};
 
 // Mocking here in order to be ack by the signOperation.ts file
 jest.mock("@ledgerhq/hw-app-eth", () => ({
   __esModule: true,
-  default: class {
-    signTransaction = () => ({
-      r: "123",
-      s: "abc",
-      v: "27",
-    });
-  },
   ledgerService: {
     resolveTransaction: () =>
       Promise.resolve({
@@ -68,17 +72,15 @@ describe("EVM Family", () => {
   describe("signOperation.ts", () => {
     describe("signOperation", () => {
       beforeAll(() => {
-        jest
-          .spyOn(rpcAPI, "getTransactionCount")
-          .mockImplementation(async () => 1);
+        jest.spyOn(rpcAPI, "getTransactionCount").mockImplementation(async () => 1);
       });
 
       afterAll(() => {
         jest.restoreAllMocks();
       });
 
-      it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", (done) => {
-        const signOperation = buildSignOperation(mockWithDevice);
+      it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", done => {
+        const signOperation = buildSignOperation(mockSignerContext);
 
         const signOpObservable = signOperation({
           account,
@@ -86,7 +88,7 @@ describe("EVM Family", () => {
           deviceId: "",
         });
 
-        signOpObservable.subscribe((obs) => {
+        signOpObservable.subscribe(obs => {
           if (obs.type === "signed") {
             const {
               signedOperation: { signature, operation },
@@ -108,7 +110,7 @@ describe("EVM Family", () => {
               extra: {},
             });
             expect(signature).toBe(
-              "0x02e601016464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c080820123820abc"
+              "0x02e601016464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c080820123820abc",
             );
             done();
           }
@@ -135,15 +137,15 @@ describe("EVM Family", () => {
         "1c", // 28
       ];
 
-      chainIds.forEach((chainId) => {
-        possibleHexV.forEach((v) => {
+      chainIds.forEach(chainId => {
+        possibleHexV.forEach(v => {
           it(`should return an EIP155 compatible v for chain id ${chainId} with v = ${parseInt(
             v,
-            16
+            16,
           )}`, () => {
             const eip155Logic = chainId * 2 + 35;
             expect(
-              [eip155Logic, eip155Logic + 1] // eip155 + parity
+              [eip155Logic, eip155Logic + 1], // eip155 + parity
             ).toContain(applyEIP155(v, chainId));
           });
         });

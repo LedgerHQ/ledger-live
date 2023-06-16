@@ -49,12 +49,8 @@ const orderedSteps: Step[] = [
 const ErrorDisplayV2 = withV2StyleProvider(ErrorDisplay);
 
 const CustomImage: React.FC<Props> = props => {
-  const {
-    imageUri,
-    isFromNFTEntryPoint,
-    reopenPreviousDrawer,
-    isFromPostOnboardingEntryPoint,
-  } = props;
+  const { imageUri, isFromNFTEntryPoint, reopenPreviousDrawer, isFromPostOnboardingEntryPoint } =
+    props;
   const { t } = useTranslation();
   const track = useTrack();
   const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
@@ -123,27 +119,24 @@ const CustomImage: React.FC<Props> = props => {
     if (loadedImage) setSourceLoading(false);
   }, [loadedImage]);
 
-  const handleStepChooseImageResult: ComponentProps<
-    typeof StepChooseImage
-  >["onResult"] = useCallback(
-    res => {
-      setLoadedImage(res);
-      setStepWrapper(Step.adjustImage);
-    },
-    [setStepWrapper],
-  );
+  const handleStepChooseImageResult: ComponentProps<typeof StepChooseImage>["onResult"] =
+    useCallback(
+      res => {
+        setLoadedImage(res);
+        setStepWrapper(Step.adjustImage);
+      },
+      [setStepWrapper],
+    );
 
-  const handleStepAdjustImageResult: ComponentProps<
-    typeof StepAdjustImage
-  >["onResult"] = useCallback(res => {
-    setCroppedImage(res);
-  }, []);
+  const handleStepAdjustImageResult: ComponentProps<typeof StepAdjustImage>["onResult"] =
+    useCallback(res => {
+      setCroppedImage(res);
+    }, []);
 
-  const handleStepChooseContrastResult: ComponentProps<
-    typeof StepChooseContrast
-  >["onResult"] = useCallback(res => {
-    setFinalResult(res);
-  }, []);
+  const handleStepChooseContrastResult: ComponentProps<typeof StepChooseContrast>["onResult"] =
+    useCallback(res => {
+      setFinalResult(res);
+    }, []);
 
   const handleStepTransferResult = useCallback(() => {
     setTransferDone(true);

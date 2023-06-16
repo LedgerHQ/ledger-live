@@ -31,14 +31,8 @@ import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
-import {
-  swapAcceptedProvidersSelector,
-  swapKYCSelector,
-} from "../../../reducers/settings";
-import {
-  setSwapKYCStatus,
-  setSwapSelectableCurrencies,
-} from "../../../actions/settings";
+import { swapAcceptedProvidersSelector, swapKYCSelector } from "../../../reducers/settings";
+import { setSwapKYCStatus, setSwapSelectableCurrencies } from "../../../actions/settings";
 import {
   providersSelector,
   rateSelector,
@@ -71,9 +65,7 @@ export const useProviders = () => {
   useEffect(() => {
     if (providers) {
       dispatch(updateProvidersAction(providers));
-      dispatch(
-        setSwapSelectableCurrencies(getSwapSelectableCurrencies(providers)),
-      );
+      dispatch(setSwapSelectableCurrencies(getSwapSelectableCurrencies(providers)));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providers]);
@@ -91,18 +83,11 @@ export const useProviders = () => {
 
 export function SwapForm({
   route: { params },
-}: MaterialTopTabNavigatorProps<
-  SwapFormNavigatorParamList,
-  ScreenName.SwapForm
->) {
+}: MaterialTopTabNavigatorProps<SwapFormNavigatorParamList, ScreenName.SwapForm>) {
   const { track } = useAnalytics();
   const trackSwapError = useTrackSwapError();
-  const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
-    ActionRequired.None,
-  );
-  const [currentBanner, setCurrentBanner] = useState<ActionRequired>(
-    ActionRequired.None,
-  );
+  const [currentFlow, setCurrentFlow] = useState<ActionRequired>(ActionRequired.None);
+  const [currentBanner, setCurrentBanner] = useState<ActionRequired>(ActionRequired.None);
 
   const [error, setError] = useState<ValidCheckQuoteErrorCodes>();
   const { t } = useTranslation();
@@ -168,10 +153,7 @@ export function SwapForm({
 
     // we display the KYC banner component if partner requiers KYC and is not yet approved
     // we don't display it if user needs to login first
-    if (
-      currentBanner !== ActionRequired.Login &&
-      shouldShowKYCBanner({ provider, kycStatus })
-    ) {
+    if (currentBanner !== ActionRequired.Login && shouldShowKYCBanner({ provider, kycStatus })) {
       setCurrentBanner(ActionRequired.KYC);
     }
   }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
@@ -206,8 +188,7 @@ export function SwapForm({
     },
     [dispatch],
   );
-  const swapError =
-    swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   // Track errors
   useEffect(
@@ -373,14 +354,10 @@ export function SwapForm({
         params.target === "from"
           ? accounts
           : accounts.map(acc =>
-              accountWithMandatoryTokens(acc, [
-                (params?.currency as TokenCurrency) || [],
-              ]),
+              accountWithMandatoryTokens(acc, [(params?.currency as TokenCurrency) || []]),
             );
 
-      const account = flattenAccounts(enhancedAccounts).find(
-        a => a.id === params.accountId,
-      );
+      const account = flattenAccounts(enhancedAccounts).find(a => a.id === params.accountId);
 
       if (params.target === "from") {
         track(
@@ -398,9 +375,7 @@ export function SwapForm({
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,
-          isTokenAccount(account)
-            ? getParentAccount(account, accounts)
-            : undefined,
+          isTokenAccount(account) ? getParentAccount(account, accounts) : undefined,
         );
       }
     }
@@ -430,11 +405,7 @@ export function SwapForm({
       <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>
-            <TrackScreen
-              category="Swap"
-              providerName={provider}
-              {...sharedSwapTracking}
-            />
+            <TrackScreen category="Swap" providerName={provider} {...sharedSwapTracking} />
             <TxForm
               swapTx={swapTransaction}
               provider={provider}
@@ -452,18 +423,12 @@ export function SwapForm({
                 {exchangeRate &&
                   swapTransaction.swap.to.currency &&
                   swapTransaction.swap.from.currency && (
-                    <Summary
-                      provider={provider}
-                      swapTx={swapTransaction}
-                      kyc={kycStatus}
-                    />
+                    <Summary provider={provider} swapTx={swapTransaction} kyc={kycStatus} />
                   )}
 
                 <Requirement required={currentBanner} provider={provider} />
 
-                {error && provider && (
-                  <ErrorBanner provider={provider} errorCode={error} />
-                )}
+                {error && provider && <ErrorBanner provider={provider} errorCode={error} />}
               </>
             )}
           </Flex>

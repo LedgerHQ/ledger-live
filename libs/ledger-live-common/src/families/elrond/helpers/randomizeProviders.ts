@@ -15,9 +15,6 @@ export interface SortedValidatorType {
 
 export const randomizeProviders = (providers: ElrondProvider[]) =>
   providers
-    .map((provider) => ({ provider, sort: Math.random() }))
-    .sort(
-      (alpha: SortedValidatorType, beta: SortedValidatorType) =>
-        alpha.sort - beta.sort
-    )
+    .map(provider => ({ provider, sort: Math.random() }))
+    .sort((alpha: SortedValidatorType, beta: SortedValidatorType) => alpha.sort - beta.sort)
     .map((item: SortedValidatorType) => item.provider);

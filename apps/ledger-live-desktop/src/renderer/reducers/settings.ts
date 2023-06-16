@@ -24,6 +24,13 @@ import { Handlers } from "./types";
 
 /* Initial state */
 
+export type VaultSigner = {
+  enabled: boolean;
+  host: string;
+  workspace: string;
+  token: string;
+};
+
 export type SettingsState = {
   loaded: boolean;
   // is the settings loaded from db (it not we don't save them)
@@ -32,6 +39,7 @@ export type SettingsState = {
   preferredDeviceModel: DeviceModelId;
   hasInstalledApps: boolean;
   lastSeenDevice: DeviceModelInfo | undefined | null;
+  seenDevices: DeviceModelInfo[];
   latestFirmware: FirmwareUpdateContext | null;
   language: string | undefined | null;
   theme: string | undefined | null;
@@ -95,6 +103,7 @@ export type SettingsState = {
     [key in FeatureId]: Feature;
   };
   featureFlagsButtonVisible: boolean;
+  vaultSigner: VaultSigner;
 };
 
 const DEFAULT_LANGUAGE_LOCALE = "en";
@@ -141,6 +150,7 @@ const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   carouselVisibility: 0,
   lastSeenDevice: null,
+  seenDevices: [],
   lastSeenCustomImage: {
     size: 0,
     hash: "",
@@ -168,6 +178,9 @@ const INITIAL_STATE: SettingsState = {
   starredMarketCoins: [],
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
+
+  // Vault
+  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
 };
 
 /* Handlers */
@@ -190,6 +203,7 @@ type HandlersPayloads = {
     latestFirmware: FirmwareUpdateContext;
   };
   LAST_SEEN_DEVICE: DeviceModelInfo;
+  ADD_SEEN_DEVICE: DeviceModelInfo;
   SET_DEEPLINK_URL: string | null | undefined;
   SET_FIRST_TIME_LEND: never;
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
@@ -220,6 +234,7 @@ type HandlersPayloads = {
   SET_FEATURE_FLAGS_BUTTON_VISIBLE: {
     featureFlagsButtonVisible: boolean;
   };
+  SET_VAULT_SIGNER: VaultSigner;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -305,6 +320,11 @@ const handlers: SettingsHandlers = {
           deviceInfo: payload.deviceInfo,
         }
       : undefined,
+  }),
+
+  ADD_SEEN_DEVICE: (state, { payload }) => ({
+    ...state,
+    seenDevices: Array.from(new Set(state.seenDevices.concat(payload))),
   }),
   SET_DEEPLINK_URL: (state, { payload: deepLinkUrl }) => ({
     ...state,
@@ -399,9 +419,13 @@ const handlers: SettingsHandlers = {
     ...state,
     featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
   }),
+  SET_VAULT_SIGNER: (state: SettingsState, { payload }) => ({
+    ...state,
+    vaultSigner: payload,
+  }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as SettingsHandlers<false>,
+  handlers as unknown as SettingsHandlers<false>,
   INITIAL_STATE,
 );
 
@@ -660,6 +684,7 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
   }
   return state.settings.lastSeenDevice;
 };
+export const seenDevicesSelector = (state: State): DeviceModelInfo[] => state.settings.seenDevices;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
@@ -694,3 +719,4 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
   state.settings.featureFlagsButtonVisible;
+export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;

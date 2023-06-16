@@ -1,9 +1,6 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
@@ -22,9 +19,7 @@ import EmptyAccountCard from "../../Account/EmptyAccountCard";
 import CurrencyBackgroundGradient from "../../../components/CurrencyBackgroundGradient";
 import Header from "../Header";
 import { hasOrderedNanoSelector } from "../../../reducers/settings";
-import BuyDeviceBanner, {
-  IMAGE_PROPS_BIG_NANO,
-} from "../../../components/BuyDeviceBanner";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FabAssetActions } from "../../../components/FabActions/actionsList/asset";
 import { TrackScreen } from "../../../analytics";
@@ -80,10 +75,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
       </Flex>,
       currency.ticker === "BTC" ? <ReferralProgram /> : null,
       <SectionContainer px={6} isFirst>
-        <SectionTitle
-          title={t("account.quickActions")}
-          containerProps={{ mb: 6 }}
-        />
+        <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions currency={currency} />
         <Flex minHeight={220}>
           <EmptyAccountCard currencyTicker={currency.ticker} />
@@ -114,14 +106,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
         )}
       </SectionContainer>,
     ],
-    [
-      onAssetCardLayout,
-      currentPositionY,
-      graphCardEndPosition,
-      currency,
-      t,
-      hasOrderedNano,
-    ],
+    [onAssetCardLayout, currentPositionY, graphCardEndPosition, currency, t, hasOrderedNano],
   );
 
   return (

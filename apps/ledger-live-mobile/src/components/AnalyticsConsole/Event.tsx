@@ -18,17 +18,11 @@ const Event: React.FC<Props> = ({
 }) => {
   const [forceShowExtra, setForceShowExtra] = useState(false);
   const propertiesToDisplay =
-    showExtraProps || forceShowExtra
-      ? eventProperties
-      : eventPropertiesWithoutExtra;
+    showExtraProps || forceShowExtra ? eventProperties : eventPropertiesWithoutExtra;
   const propertiesText = useMemo(
     () =>
       propertiesToDisplay
-        ? JSON.stringify(
-            propertiesToDisplay,
-            Object.keys(propertiesToDisplay).sort(),
-            2,
-          )
+        ? JSON.stringify(propertiesToDisplay, Object.keys(propertiesToDisplay).sort(), 2)
             .split("\n")
             .slice(1, -1)
             .join("\n")

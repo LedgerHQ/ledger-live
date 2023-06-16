@@ -8,10 +8,7 @@ import type { NoFundsNavigatorParamList } from "./types/NoFundsNavigator";
 
 const NoFundsFlowNavigator = () => {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig} detachInactiveScreens>

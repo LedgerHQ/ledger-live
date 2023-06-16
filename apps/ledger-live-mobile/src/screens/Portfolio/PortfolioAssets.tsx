@@ -8,10 +8,7 @@ import { GestureResponderEvent } from "react-native";
 import { useDistribution } from "../../actions/general";
 import { TrackScreen } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
-import {
-  blacklistedTokenIdsSelector,
-  discreetModeSelector,
-} from "../../reducers/settings";
+import { blacklistedTokenIdsSelector, discreetModeSelector } from "../../reducers/settings";
 import Assets from "./Assets";
 
 type Props = {

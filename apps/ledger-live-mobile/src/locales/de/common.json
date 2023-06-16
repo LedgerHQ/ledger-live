@@ -587,6 +587,12 @@
       "title" : "Etwas ist schief gelaufen",
       "description" : "Bitte überprüfen Sie, ob Ihre Hardware-Wallet mit der Wiederherstellungsphrase oder Passphrase eingerichtet ist, die mit dem gewählten Konto verbunden ist."
     },
+    "WebPTXPlayerNetworkFail" : {
+      "title" : "Netzwerkfehler",
+      "description" : "Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es noch einmal. Wenden Sie sich an den Ledger-Kundenservice, falls das Problem fortbesteht.",
+      "contactSupport" : "Ledger-Kundenservice kontaktieren",
+      "primaryCTA" : "Wiederholen"
+    },
     "UnexpectedBootloader" : {
       "title" : "Entschuldigung, Ihr Gerät darf sich nicht im Bootloader-Modus befinden",
       "description" : "Bitte starten Sie Ihr Gerät neu, ohne die Schaltflächen zu berühren, wenn das Logo erscheint. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
@@ -1191,7 +1197,8 @@
       "terms" : "Durch Tippen auf \"Los geht's'\" erklären Sie sich einverstanden mit unseren",
       "termsLink" : "Nutzungsbedingungen",
       "privacyLink" : "Datenschutzrichtlinie",
-      "and" : "Hinzu kommt:"
+      "and" : "Hinzu kommt:",
+      "recoverLogIn" : "Für Ledger Recover anmelden"
     },
     "stepDoYouHaveALedgerDevice" : {
       "title" : "Besitzen Sie ein Ledger-Gerät?",
@@ -2668,6 +2675,10 @@
       "title" : "Experimentelle Funktionen",
       "desc" : "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
       "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
+      "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
+      "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
+      "devMode" : "Die experimentelle Einstellung „Developer mode“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
+      "providerCTA" : "Gehen Sie zu Einstellungen",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Experimentelle Integrationen",
@@ -2696,6 +2707,10 @@
         "experimentalSwap" : {
           "title" : "Neue SWAP-Schnittstelle",
           "description" : "Verwenden Sie die neue experimentelle Swap-Schnittstelle"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Netzwerklogs aktivieren",
+          "description" : "Netzwerklogs in der Konsole aktivieren (Fehlerprotokolle sind immer aktiviert)"
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3689,8 @@
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
     "allowManagerPermission" : "Erlauben Sie {{wording}} auf Ihrem {{productName}}",
+    "allowRemoveCustomLockscreen" : "Bestätigen Sie die Entfernung des Bildes auf Ihrem Ledger Stax",
+    "allowSecureConnection" : "Lassen eine sichere Verbindung mit Ledger zu",
     "loading" : "Lade Daten...",
     "turnOnAndUnlockDevice" : "Schalten Sie Ihr Gerät ein und entsperren Sie es",
     "connectAndUnlockDevice" : "Verbinden und entsperren Sie Ihr Gerät",
@@ -4025,16 +4042,34 @@
   },
   "FirmwareUpdate" : {
     "title" : "Firmware aktualisieren",
+    "updateDevice" : "Machen Sie ein Update für {{deviceName}}",
+    "updateDone" : "Fertig! Ihr Gerät {{deviceName}} ist auf dem neuesten Stand",
+    "updateDoneDescription" : "Neue Betriebssystemversion: {{firmwareVersion}}",
     "preparing" : "Das Firmware-Update wird vorbereitet. Bitte stellen Sie sicher, dass Ihr Gerät während des Updates entsperrt und verbunden ist. Wir informieren Sie über den Fortschritt des Vorgangs.",
     "confirmIdentifierText" : "Vergewissern Sie sich, dass die Kennung auf Ihrem Gerät mit der unten stehenden Kennung übereinstimmt. Bestätigen Sie und geben Sie Ihren PIN-Code ein, wenn Sie dazu aufgefordert werden.",
     "pleaseReinstallApps" : "Bitte installieren Sie die Apps erneut auf Ihrem Gerät.",
     "pleaseConfirmUpdate" : "Bestätigen Sie das Update auf Ihrem Gerät",
+    "pleaseConfirmUpdateOnYourDevice" : "Bestätigen Sie die Installation auf dem {{deviceName}}",
+    "finishUpdateCTA" : "Beenden",
     "finishUpdate" : "Schließen Sie das Update auf Ihrer {{deviceName}} ab",
     "identifierTitle" : "Kennung:",
     "pleaseWaitDownload" : "Bitte warten Sie, bis der Download des Installationsprogramms abgeschlossen ist",
+    "doNotLeaveLedgerLive" : "Verlassen Sie die Ledger Live-App nicht, bevor das Update abgeschlossen ist.",
     "preparingDevice" : "Ihr Gerät wird vorbereitet",
     "pleaseWaitUpdate" : "Bitte warten Sie, bis das Update beendet ist",
+    "viewUpdateChangelog" : "Update-Änderungsprotokoll anzeigen",
     "waitForFirmwareUpdate" : "Warten Sie, bis das Firmware-Update auf Ihrem Gerät abgeschlossen ist",
+    "waitForInstallationToFinish" : "Warten Sie, bis die Installation auf Ihrem {{deviceName}} abgeschlossen ist",
+    "staxBatteryLow" : "Ledger Stax Batterie zu schwach für Update",
+    "staxBatteryLowDescription" : "Damit Sie ein Betriebssystem-Update durchführen können, muss Ihr Ledger-Gerät einen Ladestand von mindestens 20 % aufweisen oder aufgeladen werden.",
+    "updateCancelled" : "Update wurde auf dem {{deviceName}} abgebrochen",
+    "updateCancelledDescription" : "Die Installation des BS-Updates {{newFirmwareVersion}} wurde auf dem {{deviceName}} abgelehnt. Wenn dies ein Fehler war, starten Sie das Update erneut",
+    "updateNotYetComplete" : "Update ist noch nicht vollständig",
+    "updateNotYetCompleteDescription" : "Wenn Sie das Update unterbrechen, werden Ihre Anwendungen, Ihre Sprache und das Bild auf dem Sperrbildschirm möglicherweise nicht korrekt wiederhergestellt.",
+    "restartUpdate" : "BS-Update erneut starten",
+    "quitUpdate" : "Update verlassen",
+    "continueUpdate" : "Update fortsetzen",
+    "unlockDeviceToComplete" : "Geben Sie das {{deviceName}} frei, um die Installation abzuschließen",
     "unlockDeviceWithPin" : "Entsperren Sie Ihr Gerät mit Ihrer PIN",
     "reinstallApps" : "Installieren Sie die Apps neu.",
     "currentVersionNumber" : "Aktuelle Version",
@@ -4056,7 +4091,23 @@
       "flash-bootloader" : "Bootloader-Aktualisierung",
       "flash" : "Flashen Ihres Geräts",
       "preparing" : "Update wird vorbereitet",
-      "firmware" : "Update wird heruntergeladen"
+      "firmware" : "Update wird heruntergeladen",
+      "prepareUpdate" : {
+        "titleActive" : "Update wird für Installation vorbereitet",
+        "description" : "Eine Sicherheitskopie Ihrer Konfiguration wird erstellt und das Update auf Ihr Gerät {{deviceName}} übertragen."
+      },
+      "installUpdate" : {
+        "titleInactive" : "Update installieren",
+        "titleActive" : "Installiert Update",
+        "description" : "{{deviceName}} wird mehrere Male neugestartet.\n\nNachdem die Installation auf Ihrem {{deviceName}} abgeschlossen ist, geben Sie Ihr Gerät frei, um die Installation zu beenden"
+      },
+      "restoreSettings" : {
+        "titleInactive" : "Apps und Einstellungen wiederherstellen",
+        "description" : "Ihre Einstellungen und Blockchain-Apps werden wiederhergestellt.",
+        "restoreLockScreenPicture" : "Bild für Sperrbildschirm wird wiederhergestellt",
+        "restoreLanguage" : "Sprache wird wiederhergestellt",
+        "installingApps" : "Apps werden installiert"
+      }
     },
     "newVersion" : "Update {{version}} steht für Ihre {{deviceName}} bereit",
     "drawerUpdate" : {
@@ -4064,6 +4115,12 @@
       "description" : "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden",
       "pleaseConnectUsbTitle" : "USB-Kabel erforderlich",
       "pleaseConnectUsbDescription" : "Um die Firmware-Aktualisierung zu starten, schließen Sie Ihr {{deviceName}} über ein USB-Kabel an Ihr Mobiltelefon an."
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "Update-Timeout",
+        "description" : "Das Update konnte nicht abgeschlossen werden, weil wir die Verbindung zum {{deviceName}} verloren haben."
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -5929,9 +5986,10 @@
       "txDetails" : "Transaktionsdetails"
     },
     "modalDisabled" : {
-      "title" : "Sendefunktion nicht verfügbar",
+      "title" : "Sendefunktion ist auf iOS nicht verfügbar",
       "body" : "Angesichts der aktuellen Aktualisierungen im App Store von Apple ist der Versand von NFTs vorübergehend nicht möglich. Sie können weiterhin Ledger Live auf Ihrem Desktop verwenden, um NFTs zu senden.",
-      "contactSupport" : "Lesen Sie bitte unseren Support-Artikel für weitere Informationen."
+      "learnMore" : "Weitere Informationen",
+      "continue" : "Verstanden!"
     }
   },
   "ApplicationVersion" : "v{{version}}",
@@ -5966,9 +6024,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
-        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen"
+        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen",
+        "remove" : "Aktuelles Bild entfernen"
       }
     },
+    "toastRemove" : "Bild für Sperrbildschirm entfernt",
     "cropImage" : "Bild zuschneiden",
     "chooseConstrast" : "Kontrast auswählen",
     "uploadAnotherImage" : "Ein weiteres Bild hochladen",
@@ -6060,8 +6120,8 @@
         "selectAndHide" : "Auswählen und ausblenden",
         "hide" : "{{count}} Sammlung ausblenden",
         "hide_plural" : "{{count}} Sammlungen ausblenden",
-        "alertHide" : "1 Sammlung ausgeblendet. Gehen Sie zu den Einstellungen, um sie jederzeit ein- und auszublenden",
-        "alertHide_plural" : "{{count}} Sammlungen ausgeblendet. Gehen Sie zu den Einstellungen, um sie jederzeit ein- und auszublenden"
+        "alertHide" : "1 Sammlung ausgeblendet. Sie können sie in den Einstellungen im Bereich „Konto“ jederzeit einblenden.",
+        "alertHide_plural" : "{{count}} Sammlungen ausgeblendet. Sie können sie in den Einstellungen im Bereich „Konto“ jederzeit einblenden."
       },
       "empty" : {
         "title" : "Noch keine NFTs zu zeigen",
@@ -6102,20 +6162,6 @@
             "alreadySubscribed" : "Bereits eingeloggt? <LinkAccount>Mein Abonnement ansehen</LinkAccount>"
           }
         }
-      }
-    }
-  },
-  "protect" : {
-    "login" : {
-      "title" : "Anmeldename",
-      "desc" : "Melden Sie sich mit Ihrem Ledger-Konto an, um Ihr Protect-Abonnement zu verwalten.",
-      "email" : "E-Mail",
-      "password" : "Passwort",
-      "cta" : "Anmeldename",
-      "forgotPassword" : "Passwort vergessen?",
-      "errors" : {
-        "emptyEmail" : "E-Mail darf nicht leer sein",
-        "emptyPassword" : "Passwort darf nicht leer sein"
       }
     }
   },

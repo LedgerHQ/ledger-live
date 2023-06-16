@@ -23,12 +23,7 @@ import { TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import Long from "long";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
 import BigNumber from "bignumber.js";
-import {
-  EncodeObject,
-  GeneratedType,
-  makeAuthInfoBytes,
-  Registry,
-} from "@cosmjs/proto-signing";
+import { EncodeObject, GeneratedType, makeAuthInfoBytes, Registry } from "@cosmjs/proto-signing";
 import { CosmosAPI } from "./api/Cosmos";
 
 type ProtoMsg = {
@@ -38,7 +33,7 @@ type ProtoMsg = {
 
 export const buildTransaction = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<{ aminoMsgs: AminoMsg[]; protoMsgs: ProtoMsg[] }> => {
   const aminoMsgs: Array<AminoMsg> = [];
   const protoMsgs: Array<ProtoMsg> = [];
@@ -263,7 +258,7 @@ export const buildTransaction = async (
 /* Build transaction with unsigned payload for simulation and gas estimation */
 export const buildUnsignedPayloadTransaction = async (
   account: CosmosAccount,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<{ typeUrl: string; value: EncodeObject }[]> => {
   const messages: Array<{ typeUrl: string; value: any }> = [];
 
@@ -427,7 +422,7 @@ export const buildUnsignedPayloadTransaction = async (
 
 export const postBuildTransaction = async (
   signResponse: AminoSignResponse,
-  protoMsgs: Array<ProtoMsg>
+  protoMsgs: Array<ProtoMsg>,
 ): Promise<Uint8Array> => {
   const signed_tx_bytes = TxRaw.encode({
     bodyBytes: TxBody.encode(
@@ -437,7 +432,7 @@ export const postBuildTransaction = async (
         timeoutHeight: undefined,
         extensionOptions: [],
         nonCriticalExtensionOptions: [],
-      })
+      }),
     ).finish(),
     authInfoBytes: AuthInfo.encode({
       signerInfos: [
@@ -475,7 +470,7 @@ export const postBuildUnsignedPayloadTransaction = async (
   transaction: Transaction,
   pubkey: EncodeObject,
   unsignedPayload: EncodeObject[],
-  signature: Uint8Array
+  signature: Uint8Array,
 ): Promise<number[]> => {
   const txBodyFields = {
     typeUrl: "/cosmos.tx.v1beta1.TxBody",
@@ -486,18 +481,9 @@ export const postBuildUnsignedPayloadTransaction = async (
   };
 
   const registry = new Registry([
-    [
-      "/cosmos.staking.v1beta1.MsgDelegate",
-      MsgDelegate as unknown as GeneratedType,
-    ],
-    [
-      "/cosmos.staking.v1beta1.MsgUndelegate",
-      MsgUndelegate as unknown as GeneratedType,
-    ],
-    [
-      "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-      MsgBeginRedelegate as unknown as GeneratedType,
-    ],
+    ["/cosmos.staking.v1beta1.MsgDelegate", MsgDelegate as unknown as GeneratedType],
+    ["/cosmos.staking.v1beta1.MsgUndelegate", MsgUndelegate as unknown as GeneratedType],
+    ["/cosmos.staking.v1beta1.MsgBeginRedelegate", MsgBeginRedelegate as unknown as GeneratedType],
     [
       "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
       MsgWithdrawDelegatorReward as unknown as GeneratedType,
@@ -518,7 +504,7 @@ export const postBuildUnsignedPayloadTransaction = async (
       },
     ],
     transaction.gas?.toNumber() || new BigNumber(250000).toNumber(),
-    SignMode.SIGN_MODE_LEGACY_AMINO_JSON
+    SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
   );
 
   const txRaw = TxRaw.fromPartial({

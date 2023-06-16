@@ -15,11 +15,7 @@ import { Transaction } from "../types";
 import { encodeERC1155OperationId } from "../../../nft/nftOperationId";
 
 describe("nft merging", () => {
-  const makeNFT = (
-    tokenId: string,
-    contract: string,
-    amount: number
-  ): ProtoNFT => ({
+  const makeNFT = (tokenId: string, contract: string, amount: number): ProtoNFT => ({
     id: encodeNftId("test", contract, tokenId, "ethereum"),
     tokenId,
     amount: new BigNumber(amount),
@@ -80,7 +76,7 @@ describe("nft merging", () => {
         makeNFT("1", "contract1", 10),
         makeNFT("2", "contract1", 1),
         makeNFT("3", "contract2", 6),
-      ].map(toNFTRaw)
+      ].map(toNFTRaw),
     );
     expect(oldNfts[0]).toBe(addToNft1[1]);
     expect(oldNfts[1]).toBe(addToNft1[2]);
@@ -91,10 +87,7 @@ describe("nft merging", () => {
 
 describe("OpenSea lazy minting bs", () => {
   test("should have a correct on-chain nft amount even with OpenSea lazy minting", () => {
-    const makeNftOperation = (
-      params: [Operation["type"], number],
-      index: number
-    ): Operation => {
+    const makeNftOperation = (params: [Operation["type"], number], index: number): Operation => {
       const [type, value] = params;
 
       if (!["NFT_IN", "NFT_OUT"].includes(type)) {
@@ -235,7 +228,7 @@ describe("nft helpers", () => {
       expect(getNftCapabilities(nft)).toEqual(
         expect.objectContaining({
           hasQuantity: true,
-        })
+        }),
       );
     });
 
@@ -252,7 +245,7 @@ describe("nft helpers", () => {
       expect(getNftCapabilities(nft)).toEqual(
         expect.objectContaining({
           hasQuantity: false,
-        })
+        }),
       );
     });
 

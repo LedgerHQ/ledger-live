@@ -3,7 +3,7 @@ import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import * as RPC_API from "../api/rpc.common";
+import * as RPC_API from "../api/rpc/rpc.common";
 import { GasEstimationError, InsufficientFunds } from "../errors";
 import { makeAccount } from "../testUtils";
 import { Transaction as EvmTransaction, EvmTransactionLegacy } from "../types";
@@ -25,7 +25,7 @@ const fakeCurrencyWithoutRPC: Partial<CryptoCurrency> = {
 };
 const account = makeAccount(
   "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-  fakeCurrency as CryptoCurrency
+  fakeCurrency as CryptoCurrency,
 );
 
 const mockedNetwork = {
@@ -35,7 +35,7 @@ const mockedNetwork = {
 
 jest.mock("@ledgerhq/live-promise");
 (delay as jest.Mock).mockImplementation(
-  () => new Promise((resolve) => setTimeout(resolve, 1)) // mocking the delay supposed to happen after each try
+  () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
 
 describe("EVM Family", () => {
@@ -52,7 +52,7 @@ describe("EVM Family", () => {
       .mockResolvedValue(null);
     jest
       .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "resolveName")
-      .mockImplementation(async (address) => address);
+      .mockImplementation(async address => address);
     jest
       .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "perform")
       .mockImplementation(async (method, params) => {
@@ -80,8 +80,7 @@ describe("EVM Family", () => {
             return ethers.BigNumber.from(5);
           case "getBlock":
             return {
-              parentHash:
-                "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+              parentHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
               number: 1,
               timestamp: 123,
               difficulty: null,
@@ -119,18 +118,13 @@ describe("EVM Family", () => {
     describe("withApi", () => {
       it("should throw if the currency doesn't have an RPC node", async () => {
         try {
-          await RPC_API.withApi(
-            fakeCurrencyWithoutRPC as CryptoCurrency,
-            (() => {}) as any
-          );
+          await RPC_API.withApi(fakeCurrencyWithoutRPC as CryptoCurrency, (() => {}) as any);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
             throw e;
           }
-          expect((e as Error).message).toEqual(
-            "Currency doesn't have an RPC node provided"
-          );
+          expect((e as Error).message).toEqual("Currency doesn't have an RPC node provided");
         }
       });
 
@@ -143,10 +137,7 @@ describe("EVM Family", () => {
           }
           return true;
         });
-        const response = await RPC_API.withApi(
-          fakeCurrency as CryptoCurrency,
-          spy
-        );
+        const response = await RPC_API.withApi(fakeCurrency as CryptoCurrency, spy);
 
         expect(response).toBe(true);
         // it should fail DEFAULT_RETRIES_RPC_METHODS times and succeed on the next try, therefore the +1
@@ -179,12 +170,7 @@ describe("EVM Family", () => {
 
     describe("getBalanceAndBlock", () => {
       it("should return the expected payload", async () => {
-        expect(
-          await RPC_API.getBalanceAndBlock(
-            fakeCurrency as CryptoCurrency,
-            "0xkvn"
-          )
-        ).toEqual({
+        expect(await RPC_API.getBalanceAndBlock(fakeCurrency as CryptoCurrency, "0xkvn")).toEqual({
           blockHeight: 69,
           balance: new BigNumber(420),
         });
@@ -196,8 +182,8 @@ describe("EVM Family", () => {
         expect(
           await RPC_API.getTransaction(
             fakeCurrency as CryptoCurrency,
-            "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59"
-          )
+            "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+          ),
         ).toEqual({
           accessList: null,
           blockHash: null,
@@ -224,8 +210,8 @@ describe("EVM Family", () => {
         expect(
           await RPC_API.getCoinBalance(
             fakeCurrency as CryptoCurrency,
-            "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59"
-          )
+            "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+          ),
         ).toEqual(new BigNumber(420));
       });
     });
@@ -237,8 +223,8 @@ describe("EVM Family", () => {
         await RPC_API.getTokenBalance(
           fakeCurrency as CryptoCurrency,
           "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-          "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-        )
+          "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        ),
       ).toEqual(new BigNumber(420));
     });
   });
@@ -248,8 +234,8 @@ describe("EVM Family", () => {
       expect(
         await RPC_API.getTransactionCount(
           fakeCurrency as CryptoCurrency,
-          "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"
-        )
+          "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        ),
       ).toEqual(5);
     });
   });
@@ -264,7 +250,7 @@ describe("EVM Family", () => {
           gasPrice: new BigNumber(0),
           data: Buffer.from(""),
           type: 0,
-        } as EvmTransactionLegacy)
+        } as EvmTransactionLegacy),
       ).toEqual(new BigNumber(5));
     });
 
@@ -292,7 +278,7 @@ describe("EVM Family", () => {
     it("should return the expected payload for an EIP1559 tx", async () => {
       jest
         .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "send")
-        .mockImplementationOnce(async (method) => {
+        .mockImplementationOnce(async method => {
           if (method === "eth_feeHistory") {
             return {
               reward: [
@@ -307,9 +293,7 @@ describe("EVM Family", () => {
           }
         });
 
-      expect(
-        await RPC_API.getFeesEstimation(fakeCurrency as CryptoCurrency)
-      ).toEqual({
+      expect(await RPC_API.getFeesEstimation(fakeCurrency as CryptoCurrency)).toEqual({
         maxFeePerGas: new BigNumber("6000000014"),
         maxPriorityFeePerGas: new BigNumber("5999999988"),
         gasPrice: null,
@@ -319,7 +303,7 @@ describe("EVM Family", () => {
     it("should return the expected payload for an EIP1559 tx when network returns 0 priority fee", async () => {
       jest
         .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "send")
-        .mockImplementationOnce(async (method) => {
+        .mockImplementationOnce(async method => {
           if (method === "eth_feeHistory") {
             return {
               reward: [
@@ -334,9 +318,7 @@ describe("EVM Family", () => {
           }
         });
 
-      expect(
-        await RPC_API.getFeesEstimation(fakeCurrency as CryptoCurrency)
-      ).toEqual({
+      expect(await RPC_API.getFeesEstimation(fakeCurrency as CryptoCurrency)).toEqual({
         maxFeePerGas: new BigNumber("1000000026"),
         maxPriorityFeePerGas: new BigNumber(1e9),
         gasPrice: null,
@@ -346,12 +328,11 @@ describe("EVM Family", () => {
     it("should return the expected payload for a legacy tx", async () => {
       jest
         .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "perform")
-        .mockImplementationOnce(async (method) => {
+        .mockImplementationOnce(async method => {
           switch (method) {
             case "getBlock":
               return {
-                parentHash:
-                  "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+                parentHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
                 number: 1,
                 timestamp: 123,
                 difficulty: null,
@@ -368,7 +349,7 @@ describe("EVM Family", () => {
         await RPC_API.getFeesEstimation({
           ...fakeCurrency,
           id: "optimism",
-        } as CryptoCurrency)
+        } as CryptoCurrency),
       ).toEqual({
         maxFeePerGas: null,
         maxPriorityFeePerGas: null,
@@ -382,10 +363,7 @@ describe("EVM Family", () => {
       const serializedTransaction =
         "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41629";
       expect(
-        await RPC_API.broadcastTransaction(
-          fakeCurrency as CryptoCurrency,
-          serializedTransaction
-        )
+        await RPC_API.broadcastTransaction(fakeCurrency as CryptoCurrency, serializedTransaction),
       ).toEqual({
         ...ethers.utils.parseTransaction(serializedTransaction),
         confirmations: 0,
@@ -398,10 +376,7 @@ describe("EVM Family", () => {
         "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41628";
 
       try {
-        await RPC_API.broadcastTransaction(
-          fakeCurrency as CryptoCurrency,
-          serializedTransaction
-        );
+        await RPC_API.broadcastTransaction(fakeCurrency as CryptoCurrency, serializedTransaction);
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -416,10 +391,7 @@ describe("EVM Family", () => {
         "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41625";
 
       try {
-        await RPC_API.broadcastTransaction(
-          fakeCurrency as CryptoCurrency,
-          serializedTransaction
-        );
+        await RPC_API.broadcastTransaction(fakeCurrency as CryptoCurrency, serializedTransaction);
         fail("Promise should have been rejected");
       } catch (e) {
         if (e instanceof AssertionError) {
@@ -432,30 +404,24 @@ describe("EVM Family", () => {
 
   describe("getBlock", () => {
     it("should return the expected payload", async () => {
-      expect(await RPC_API.getBlock(fakeCurrency as CryptoCurrency, 0)).toEqual(
-        {
-          parentHash:
-            "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-          number: 1,
-          timestamp: 123,
-          difficulty: null,
-          _difficulty: null,
-          gasLimit: ethers.BigNumber.from(1),
-          gasUsed: ethers.BigNumber.from(2),
-          extraData: "0x",
-          baseFeePerGas: ethers.BigNumber.from(123),
-        }
-      );
+      expect(await RPC_API.getBlock(fakeCurrency as CryptoCurrency, 0)).toEqual({
+        parentHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        number: 1,
+        timestamp: 123,
+        difficulty: null,
+        _difficulty: null,
+        gasLimit: ethers.BigNumber.from(1),
+        gasUsed: ethers.BigNumber.from(2),
+        extraData: "0x",
+        baseFeePerGas: ethers.BigNumber.from(123),
+      });
     });
   });
 
   describe("getSubAccount", () => {
     it("should return the expected payload", async () => {
       expect(
-        await RPC_API.getSubAccount(
-          fakeCurrency as CryptoCurrency,
-          account.freshAddress
-        )
+        await RPC_API.getSubAccount(fakeCurrency as CryptoCurrency, account.freshAddress),
       ).toEqual({
         balance: new BigNumber(420),
         blockHeight: 69,
@@ -482,8 +448,8 @@ describe("EVM Family", () => {
             type: 2,
             chainId: 1,
             nonce: 52,
-          } as EvmTransaction
-        )
+          } as EvmTransaction,
+        ),
       ).toEqual(new BigNumber(420));
     });
 
@@ -503,8 +469,8 @@ describe("EVM Family", () => {
             type: 2,
             chainId: 1,
             nonce: 52,
-          } as EvmTransaction
-        )
+          } as EvmTransaction,
+        ),
       ).toEqual(new BigNumber(0));
     });
 
@@ -524,8 +490,8 @@ describe("EVM Family", () => {
             type: 2,
             chainId: 1,
             nonce: 52,
-          } as EvmTransaction
-        )
+          } as EvmTransaction,
+        ),
       ).toEqual(new BigNumber(0));
     });
   });

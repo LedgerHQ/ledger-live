@@ -32,19 +32,19 @@ export type GetLatestAvailableFirmwareFromDeviceIdOutput =
 export const getLatestAvailableFirmwareFromDeviceId = ({
   deviceId,
 }: GetLatestAvailableFirmwareFromDeviceIdArgs): GetLatestAvailableFirmwareFromDeviceIdOutput => {
-  return new Observable((subscriber) => {
+  return new Observable(subscriber => {
     // Returns a Subscription that can be unsubscribed/cleaned
-    return withDevice(deviceId)((t) =>
+    return withDevice(deviceId)(t =>
       from(getDeviceInfo(t)).pipe(
-        mergeMap((deviceInfo) => {
+        mergeMap(deviceInfo => {
           subscriber.next({
             firmwareUpdateContext: null,
             lockedDevice: false,
             status: "started",
           });
           return from(manager.getLatestFirmwareForDevice(deviceInfo));
-        })
-      )
+        }),
+      ),
     ) // Needs to retry with withDevice
       .pipe(
         retryWhen(
@@ -59,8 +59,8 @@ export const getLatestAvailableFirmwareFromDeviceId = ({
             }
 
             return false;
-          })
-        )
+          }),
+        ),
       )
       .subscribe({
         next: (firmwareUpdateContext: FirmwareUpdateContext | null) =>
@@ -69,7 +69,7 @@ export const getLatestAvailableFirmwareFromDeviceId = ({
             status: "done",
             lockedDevice: false,
           }),
-        error: (e) => subscriber.error(e),
+        error: e => subscriber.error(e),
         complete: () => subscriber.complete(),
       });
   });

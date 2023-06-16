@@ -4,7 +4,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { getOptimismAdditionalFees } from "./api/rpc.common";
+import { getOptimismAdditionalFees } from "./api/rpc/rpc.common";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -39,15 +39,12 @@ export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
  */
 export const getAdditionalLayer2Fees = async (
   currency: CryptoCurrency,
-  transaction: EvmTransaction
+  transaction: EvmTransaction,
 ): Promise<BigNumber | undefined> => {
   switch (currency.id) {
     case "optimism":
     case "optimism_goerli": {
-      const additionalFees = await getOptimismAdditionalFees(
-        currency,
-        transaction
-      );
+      const additionalFees = await getOptimismAdditionalFees(currency, transaction);
       return additionalFees;
     }
     default:
@@ -72,7 +69,7 @@ const updatableSubAccountProperties: { name: string; isOps: boolean }[] = [
  */
 export const mergeSubAccounts = (
   initialAccount: Account | undefined,
-  newSubAccounts: Partial<SubAccount>[]
+  newSubAccounts: Partial<SubAccount>[],
 ): Array<Partial<SubAccount> | SubAccount> => {
   const oldSubAccounts: Array<Partial<SubAccount> | SubAccount> | undefined =
     initialAccount?.subAccounts;
@@ -135,14 +132,7 @@ export const mergeSubAccounts = (
 export const getSyncHash = (currency: CryptoCurrency): string => {
   const tokens = listTokensForCryptoCurrency(currency);
   const basicTokensListString = tokens
-    .map(
-      (token) =>
-        token.id +
-        token.contractAddress +
-        token.name +
-        token.ticker +
-        token.delisted
-    )
+    .map(token => token.id + token.contractAddress + token.name + token.ticker + token.delisted)
     .join("");
 
   return ethers.utils.sha256(Buffer.from(basicTokensListString));

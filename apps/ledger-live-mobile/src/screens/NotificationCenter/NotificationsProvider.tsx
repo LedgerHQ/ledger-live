@@ -97,11 +97,7 @@ export default function NotificationsProvider({ children }: Props) {
         utm_campaign: utmCampaign,
       });
       const publishedTime = new Date(publishedAt).getTime();
-      if (
-        publishedTime &&
-        initDateRef.current &&
-        publishedTime > initDateRef.current
-      )
+      if (publishedTime && initDateRef.current && publishedTime > initDateRef.current)
         pushToast({
           id: uuid,
           type: "announcement",
@@ -112,15 +108,12 @@ export default function NotificationsProvider({ children }: Props) {
     },
     [pushToast, initDateRef],
   );
-  const onAnnouncementRead = useCallback(
-    ({ uuid, utm_campaign: utmCampaign }) => {
-      track("Announcement Viewed", {
-        uuid,
-        utm_campaign: utmCampaign,
-      });
-    },
-    [],
-  );
+  const onAnnouncementRead = useCallback(({ uuid, utm_campaign: utmCampaign }) => {
+    track("Announcement Viewed", {
+      uuid,
+      utm_campaign: utmCampaign,
+    });
+  }, []);
   return (
     <AnnouncementProvider
       autoUpdateDelay={60000}

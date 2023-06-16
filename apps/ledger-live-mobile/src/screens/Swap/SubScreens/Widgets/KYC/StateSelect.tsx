@@ -18,18 +18,14 @@ const Cmp = makeGenericSelectScreen({
 });
 
 export function StateSelect() {
-  const navigation =
-    useNavigation<StackNavigationProp<{ [key: string]: object }>>();
-  const route =
-    useRoute<
-      StackNavigatorRoute<SwapNavigatorParamList, ScreenName.SwapKYCStates>
-    >();
-  const items: { value: string; label: string }[] = Object.entries(
-    USStates,
-  ).map(([key, value]) => ({
-    value: key,
-    label: value,
-  }));
+  const navigation = useNavigation<StackNavigationProp<{ [key: string]: object }>>();
+  const route = useRoute<StackNavigatorRoute<SwapNavigatorParamList, ScreenName.SwapKYCStates>>();
+  const items: { value: string; label: string }[] = Object.entries(USStates).map(
+    ([key, value]) => ({
+      value: key,
+      label: value,
+    }),
+  );
   return (
     <Cmp
       items={items}

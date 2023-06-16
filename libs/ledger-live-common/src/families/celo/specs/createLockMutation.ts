@@ -11,20 +11,11 @@ export const createLockMutation = (): MutationSpec<Transaction> => ({
   maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
     const { celoResources } = account as CeloAccount;
-    invariant(
-      celoResources?.registrationStatus,
-      "Celo: Lock Vote | Account is not registered"
-    );
+    invariant(celoResources?.registrationStatus, "Celo: Lock Vote | Account is not registered");
 
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo:  Lock | balance is too low"
-    );
+    invariant(maxSpendable.gt(minimalAmount), "Celo:  Lock | balance is too low");
 
-    const amount = minimalAmount
-      .times(Math.random())
-      .integerValue()
-      .precision(8);
+    const amount = minimalAmount.times(Math.random()).integerValue().precision(8);
 
     invariant(amount.gt(0), "Celo: Lock | Not enough funds to lock tokens");
 

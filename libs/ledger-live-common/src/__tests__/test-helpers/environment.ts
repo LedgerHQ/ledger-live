@@ -95,7 +95,7 @@ if (VERBOSE_FILE) {
       format: winstonFormat,
       filename: VERBOSE_FILE,
       level: "debug",
-    })
+    }),
   );
 }
 
@@ -103,7 +103,7 @@ logger.add(
   new winston.transports.Console({
     format: winstonFormat,
     silent: !VERBOSE,
-  })
+  }),
 );
 // eslint-disable-next-line no-unused-vars
 listen(({ type, message, ...rest }) => {

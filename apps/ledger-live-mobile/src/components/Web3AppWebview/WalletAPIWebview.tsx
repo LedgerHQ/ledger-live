@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-  RefObject,
-  forwardRef,
-} from "react";
+import React, { useState, useCallback, useEffect, useMemo, RefObject, forwardRef } from "react";
 import { useSelector } from "react-redux";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import VersionNumber from "react-native-version-number";
@@ -144,9 +137,8 @@ function useUiHook(): Partial<UiHook> {
                 onSuccess(signedOperation);
 
                 const n =
-                  navigation.getParent<
-                    StackNavigatorNavigation<BaseNavigatorStackParamList>
-                  >() || navigation;
+                  navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
+                  navigation;
                 n.pop();
               }
             },
@@ -183,9 +175,8 @@ function useUiHook(): Partial<UiHook> {
               }
 
               const n =
-                navigation.getParent<
-                  StackNavigatorNavigation<BaseNavigatorStackParamList>
-                >() || navigation;
+                navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
+                navigation;
               n.pop();
             },
           },
@@ -214,9 +205,8 @@ function useUiHook(): Partial<UiHook> {
               }
               setDevice(undefined);
               const n =
-                navigation.getParent<
-                  StackNavigatorNavigation<BaseNavigatorStackParamList>
-                >() || navigation;
+                navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
+                navigation;
               n.pop();
             },
           },
@@ -314,15 +304,7 @@ function renderLoading() {
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  (
-    {
-      manifest,
-      inputs = {},
-      onStateChange,
-      allowsBackForwardNavigationGestures = true,
-    },
-    ref,
-  ) => {
+  ({ manifest, inputs = {}, onStateChange, allowsBackForwardNavigationGestures = true }, ref) => {
     const { webviewProps, webviewState, webviewRef } = useWebviewState(
       {
         manifest: manifest as AppManifest,
@@ -350,9 +332,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         ref={webviewRef}
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
-        allowsBackForwardNavigationGestures={
-          allowsBackForwardNavigationGestures
-        }
+        allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
         showsVerticalScrollIndicator={false}
         renderLoading={renderLoading}
         originWhitelist={manifest.domains}
@@ -365,9 +345,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
-        renderError={() => (
-          <NetworkError handleTryAgain={() => webviewRef.current?.reload()} />
-        )}
+        renderError={() => <NetworkError handleTryAgain={() => webviewRef.current?.reload()} />}
         {...webviewProps}
       />
     );

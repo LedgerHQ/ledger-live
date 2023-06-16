@@ -14,10 +14,7 @@ const Icon = (props: Props) => {
 
   if (CeloIcon) {
     return (
-      <CeloIcon
-        color={props.isDisabled ? theme.colors.smoke : theme.colors.white}
-        size={18}
-      />
+      <CeloIcon color={props.isDisabled ? theme.colors.smoke : theme.colors.white} size={18} />
     );
   }
 

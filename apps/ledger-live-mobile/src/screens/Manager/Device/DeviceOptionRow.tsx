@@ -21,12 +21,7 @@ const DeviceOptionRow: React.FC<Props> = props => {
       </Text>
       <Flex flex={1} />
       {right || (
-        <Link
-          onPress={onPress}
-          disabled={!onPress}
-          type="color"
-          Icon={Icons.ChevronRightMedium}
-        >
+        <Link onPress={onPress} disabled={!onPress} type="color" Icon={Icons.ChevronRightMedium}>
           {linkLabel}
         </Link>
       )}

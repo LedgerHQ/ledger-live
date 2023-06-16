@@ -21,14 +21,9 @@
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
 
-import {
-  CryptoCurrency,
-  CoinType,
-  Unit,
-  CryptoCurrencyId,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CoinType, Unit, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
-const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
+const makeTestnetUnit = u => ({ ...u, code: `𝚝${u.code}` });
 
 const bitcoinUnits: Unit[] = [
   {
@@ -277,8 +272,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://cchain.explorer.avax.network/tx/$hash",
         address: "https://cchain.explorer.avax.network/address/$address",
-        token:
-          "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
+        token: "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
     keywords: ["avax", "avalanche", "c-chain"],
@@ -291,7 +285,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Axelar",
     managerAppName: "Cosmos",
     ticker: "AXL",
-    countervalueTicker: "axelar",
     scheme: "axelar",
     color: "#b2b6bc",
     family: "cosmos",
@@ -1117,8 +1110,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://blockscout.com/etc/mainnet/tx/$hash/internal-transactions",
-        address:
-          "https://blockscout.com/etc/mainnet/address/$address/transactions",
+        address: "https://blockscout.com/etc/mainnet/address/$address/transactions",
       },
     ],
     keywords: ["etc", "ethereum classic"],
@@ -2201,7 +2193,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Polkadot",
     managerAppName: "Polkadot",
     ticker: "DOT",
-    countervalueTicker: "PDOT",
     scheme: "polkadot",
     color: "#E6007A",
     family: "polkadot",
@@ -2647,7 +2638,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Stargaze",
     managerAppName: "Cosmos",
     ticker: "STARS",
-    countervalueTicker: "stargaze",
     scheme: "stargaze",
     color: "#e38cd4",
     family: "cosmos",
@@ -3752,8 +3742,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://flare-explorer.flare.network/tx/$hash/internal-transactions",
-        address:
-          "https://flare-explorer.flare.network/address/$address/transactions",
+        address: "https://flare-explorer.flare.network/address/$address/transactions",
       },
     ],
   },
@@ -3781,8 +3770,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://songbird-explorer.flare.network/tx/$hash/internal-transactions",
-        address:
-          "https://songbird-explorer.flare.network/address/$address/transactions",
+        address: "https://songbird-explorer.flare.network/address/$address/transactions",
       },
     ],
   },
@@ -3974,8 +3962,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://optimistic.etherscan.io/tx/$hash",
         address: "https://optimistic.etherscan.io/address/$address",
-        token:
-          "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
+        token: "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4006,8 +3993,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://goerli-optimism.etherscan.io/tx/$hash",
         address: "https://goerli-optimism.etherscan.io/address/$address",
-        token:
-          "https://goerli-optimism.etherscan.io/token/$contractAddress?a=$address",
+        token: "https://goerli-optimism.etherscan.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4035,8 +4021,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://explorer.energyweb.org/tx/$hash",
         address: "https://explorer.energyweb.org/address/$address",
-        token:
-          "https://explorer.energyweb.org/token/$contractAddress?a=$address",
+        token: "https://explorer.energyweb.org/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4092,8 +4077,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://andromeda-explorer.metis.io/tx/$hash",
         address: "https://andromeda-explorer.metis.io/address/$address",
-        token:
-          "https://andromeda-explorer.metis.io/token/$contractAddress?a=$address",
+        token: "https://andromeda-explorer.metis.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4155,8 +4139,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://moonriver.moonscan.io/tx/$hash",
         address: "https://moonriver.moonscan.io/address/$address",
-        token:
-          "https://moonriver.moonscan.io/token/$contractAddress?a=$address",
+        token: "https://moonriver.moonscan.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4190,8 +4173,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://evmexplorer.velas.com/tx/$hash",
         address: "https://evmexplorer.velas.com/address/$address",
-        token:
-          "https://evmexplorer.velas.com/token/$contractAddress?a=$address",
+        token: "https://evmexplorer.velas.com/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4247,9 +4229,7 @@ export function registerCryptoCurrency(currency: CryptoCurrency): void {
 
   if (!currency.isTestnetFor) {
     const currencyAlreadySet = cryptocurrenciesByTicker[currency.ticker];
-    const curencyHasTickerinKeywords = Boolean(
-      currency?.keywords?.includes(currency.ticker)
-    );
+    const curencyHasTickerinKeywords = Boolean(currency?.keywords?.includes(currency.ticker));
 
     if (
       !currencyAlreadySet ||
@@ -4279,7 +4259,7 @@ export function registerCryptoCurrency(currency: CryptoCurrency): void {
  */
 export function listCryptoCurrencies(
   withDevCrypto = false,
-  withTerminated = false
+  withTerminated = false,
 ): CryptoCurrency[] {
   return withTerminated
     ? withDevCrypto
@@ -4295,7 +4275,7 @@ export function listCryptoCurrencies(
  * @param {*} f
  */
 export function findCryptoCurrency(
-  f: (arg0: CryptoCurrency) => boolean
+  f: (arg0: CryptoCurrency) => boolean,
 ): CryptoCurrency | null | undefined {
   return cryptocurrenciesArray.find(f);
 }
@@ -4304,9 +4284,7 @@ export function findCryptoCurrency(
  *
  * @param {*} scheme
  */
-export function findCryptoCurrencyByScheme(
-  scheme: string
-): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | null | undefined {
   return cryptocurrenciesByScheme[scheme];
 }
 
@@ -4314,9 +4292,7 @@ export function findCryptoCurrencyByScheme(
  *
  * @param {*} ticker
  */
-export function findCryptoCurrencyByTicker(
-  ticker: string
-): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | null | undefined {
   return cryptocurrenciesByTicker[ticker];
 }
 
@@ -4324,24 +4300,19 @@ export function findCryptoCurrencyByTicker(
  *
  * @param {*} id
  */
-export function findCryptoCurrencyById(
-  id: string
-): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyById(id: string): CryptoCurrency | null | undefined {
   return cryptocurrenciesById[id];
 }
 
 const testsMap = {
-  keywords: (s) =>
-    findCryptoCurrency((c) =>
-      Boolean(
-        c?.keywords?.map((k) => k.replace(/ /, "").toLowerCase()).includes(s)
-      )
+  keywords: s =>
+    findCryptoCurrency(c =>
+      Boolean(c?.keywords?.map(k => k.replace(/ /, "").toLowerCase()).includes(s)),
     ),
-  name: (s) =>
-    findCryptoCurrency((c) => c.name.replace(/ /, "").toLowerCase() === s),
-  id: (s) => findCryptoCurrencyById(s.toLowerCase()),
-  ticker: (s) => findCryptoCurrencyByTicker(s.toUpperCase()),
-  manager: (s) => findCryptoCurrencyByManagerAppName(s),
+  name: s => findCryptoCurrency(c => c.name.replace(/ /, "").toLowerCase() === s),
+  id: s => findCryptoCurrencyById(s.toLowerCase()),
+  ticker: s => findCryptoCurrencyByTicker(s.toUpperCase()),
+  manager: s => findCryptoCurrencyByManagerAppName(s),
 };
 
 /**
@@ -4350,12 +4321,13 @@ const testsMap = {
  */
 export const findCryptoCurrencyByKeyword = (
   keyword: string,
-  tests = ["keywords", "name", "id", "ticker", "manager"]
+  tests = ["keywords", "name", "id", "ticker", "manager"],
 ): CryptoCurrency | null | undefined => {
   const search = keyword.replace(/ /, "").toLowerCase();
 
-  const conditions: Array<(string) => CryptoCurrency | null | undefined> =
-    tests.map((t) => testsMap[t]);
+  const conditions: Array<(string) => CryptoCurrency | null | undefined> = tests.map(
+    t => testsMap[t],
+  );
 
   for (const condition of conditions) {
     const currency = condition(search);
@@ -4367,17 +4339,14 @@ export const findCryptoCurrencyByKeyword = (
 };
 
 export const findCryptoCurrencyByManagerAppName = (
-  managerAppName: string
+  managerAppName: string,
 ): CryptoCurrency | null | undefined => {
   const search = managerAppName.replace(/ /, "").toLowerCase();
 
   return (
-    findCryptoCurrency((c) => c.managerAppName === managerAppName) ||
-    findCryptoCurrency((c) =>
-      Boolean(
-        c.managerAppName &&
-          c.managerAppName.replace(/ /, "").toLowerCase() === search
-      )
+    findCryptoCurrency(c => c.managerAppName === managerAppName) ||
+    findCryptoCurrency(c =>
+      Boolean(c.managerAppName && c.managerAppName.replace(/ /, "").toLowerCase() === search),
     )
   );
 };
@@ -4386,8 +4355,7 @@ export const findCryptoCurrencyByManagerAppName = (
  *
  * @param {*} id
  */
-export const hasCryptoCurrencyId = (id: string): boolean =>
-  id in cryptocurrenciesById;
+export const hasCryptoCurrencyId = (id: string): boolean => id in cryptocurrenciesById;
 
 // TODO: signature should be getCryptoCurrencyById(id: CryptoCurrencyId)
 /**

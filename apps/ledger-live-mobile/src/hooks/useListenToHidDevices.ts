@@ -33,9 +33,7 @@ export const useListenToHidDevices = () => {
   useEffect(() => {
     let sub: Subscription;
     if (isMounted()) {
-      sub = new Observable<DescriptorEvent<DeviceLike | null>>(o =>
-        HIDTransport.listen(o),
-      )
+      sub = new Observable<DescriptorEvent<DeviceLike | null>>(o => HIDTransport.listen(o))
         .pipe(
           map(({ type, descriptor, deviceModel }) =>
             type === "add"

@@ -45,15 +45,7 @@ type Props = {
   onChange: (_: unknown) => void;
 };
 
-function SortBadge({
-  label,
-  valueLabel,
-  value,
-  Icon,
-  options,
-  disabled,
-  onChange,
-}: Props) {
+function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange }: Props) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const openDrawer = useCallback(() => setIsDrawerOpen(true), []);
@@ -77,47 +69,37 @@ function SortBadge({
           ) : null}
         </Badge>
       </TouchableOpacity>
-      <QueuedDrawer
-        isRequestingToBeOpened={isDrawerOpen}
-        onClose={closeDrawer}
-        title={label}
-      >
-        {options.map(
-          ({ label, value: optValue, requestParam }: Option, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => {
-                onChange(requestParam);
-                closeDrawer();
-              }}
+      <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={closeDrawer} title={label}>
+        {options.map(({ label, value: optValue, requestParam }: Option, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => {
+              onChange(requestParam);
+              closeDrawer();
+            }}
+          >
+            <Flex
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+              height="48px"
+              my={2}
             >
-              <Flex
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-                height="48px"
-                my={2}
+              <Text
+                variant="body"
+                fontWeight="semiBold"
+                color={value === optValue ? "primary.c80" : "neutral.c100"}
               >
-                <Text
-                  variant="body"
-                  fontWeight="semiBold"
-                  color={value === optValue ? "primary.c80" : "neutral.c100"}
-                >
-                  {label}
-                </Text>
-                {value === optValue ? (
-                  <CheckIconContainer>
-                    <IconUI
-                      name="CheckAlone"
-                      size={12}
-                      color="background.main"
-                    />
-                  </CheckIconContainer>
-                ) : null}
-              </Flex>
-            </TouchableOpacity>
-          ),
-        )}
+                {label}
+              </Text>
+              {value === optValue ? (
+                <CheckIconContainer>
+                  <IconUI name="CheckAlone" size={12} color="background.main" />
+                </CheckIconContainer>
+              ) : null}
+            </Flex>
+          </TouchableOpacity>
+        ))}
       </QueuedDrawer>
     </>
   );

@@ -1,7 +1,4 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { toArray } from "rxjs/operators";
 import WS from "isomorphic-ws";
 import scenarios from "./scenarios.mock";
@@ -21,9 +18,7 @@ describe("Scriptrunner logic", () => {
   scenarios.forEach(({ describe, device, events }) => {
     it(describe, async () => {
       // Generate a transport replayer with the data from the test
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(device)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(device));
 
       WS.mockImplementation(() => {
         let msgIndex = 0;
@@ -36,7 +31,7 @@ describe("Scriptrunner logic", () => {
           close: () => undefined,
         };
 
-        const onReceiveMessage = (_) => {
+        const onReceiveMessage = _ => {
           // Nb get next message and invoke callback
           msgIndex++;
           const [callback, payload] = events[msgIndex];

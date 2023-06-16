@@ -19,10 +19,7 @@ const Stack = createStackNavigator<AccountSettingsNavigatorParamList>();
 export default function AccountSettingsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -54,10 +51,7 @@ export default function AccountSettingsNavigator() {
           title: t("account.settings.advanced.title"),
         }}
       />
-      <Stack.Screen
-        name={ScreenName.CurrencySettings}
-        component={CurrencySettings}
-      />
+      <Stack.Screen name={ScreenName.CurrencySettings} component={CurrencySettings} />
       <Stack.Screen
         name={ScreenName.Accounts}
         component={Accounts}

@@ -58,37 +58,27 @@ export function EthereumStakingDrawerProvider({
     <TouchableOpacity onPress={providerPress}>
       <Flex flexDirection="row" columnGap={16}>
         <EthereumStakingDrawerProviderIcon icon={provider.icon} />
-        <Flex rowGap={12} alignItems="flex-start" flex={1}>
-          <Flex rowGap={2}>
-            <Flex
-              flexDirection="row"
-              columnGap={8}
-              rowGap={8}
-              mb={2}
-              flexWrap="wrap"
-            >
-              <Text variant="body" fontWeight="semiBold">
-                {t(`stake.ethereum.providers.${provider.id}.title`)}
-              </Text>
-              {hasTag && (
-                <Tag type="color">
-                  {t(`stake.ethereum.providers.${provider.id}.tag`)}
-                </Tag>
-              )}
-            </Flex>
+        <Flex rowGap={2} alignItems="flex-start" flex={1}>
+          <Flex flexDirection="row" columnGap={8} rowGap={8} mb={2}>
+            <Text variant="body" fontWeight="semiBold">
+              {t(`stake.ethereum.providers.${provider.id}.title`)}
+            </Text>
+            {hasTag && <Tag type="color">{t(`stake.ethereum.providers.${provider.id}.tag`)}</Tag>}
+          </Flex>
+          <Flex rowGap={12}>
             <Text variant="paragraph" lineHeight="20px" color="neutral.c70">
               {t(`stake.ethereum.providers.${provider.id}.description`)}
             </Text>
+            <Link
+              size="medium"
+              type="color"
+              iconPosition="right"
+              onPress={supportLinkPress}
+              Icon={Icons.ExternalLinkMedium}
+            >
+              {t(`stake.ethereum.providers.${provider.id}.supportLink`)}
+            </Link>
           </Flex>
-          <Link
-            size="medium"
-            type="color"
-            iconPosition="right"
-            onPress={supportLinkPress}
-            Icon={Icons.ExternalLinkMedium}
-          >
-            {t(`stake.ethereum.providers.${provider.id}.supportLink`)}
-          </Link>
         </Flex>
         <Flex alignSelf="center">
           <Icon name="ChevronRight" size={32} color="neutral.c100" />

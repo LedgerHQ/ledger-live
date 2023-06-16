@@ -19,10 +19,7 @@ const action = createAction(connectApp);
 export default function ConnectDevice({
   route,
   navigation,
-}: StackNavigatorProps<
-  SignMessageNavigatorStackParamList,
-  ScreenName.SignConnectDevice
->) {
+}: StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const mainAccount = getMainAccount(account, parentAccount);

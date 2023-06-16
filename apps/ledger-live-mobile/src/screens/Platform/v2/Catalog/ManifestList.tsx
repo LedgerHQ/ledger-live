@@ -1,22 +1,19 @@
 import React from "react";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { AppCard } from "./AppCard";
+import { Disclaimer } from "../hooks";
 
 export function ManifestList({
   manifests,
   onSelect,
 }: {
-  manifests: LiveAppManifest[];
-  onSelect: (manifest: LiveAppManifest) => void;
+  manifests: AppManifest[];
+  onSelect: Disclaimer["onSelect"];
 }) {
   return (
     <>
-      {manifests.map((manifest: LiveAppManifest) => (
-        <AppCard
-          key={`${manifest.id}.${manifest.branch}`}
-          manifest={manifest}
-          onPress={onSelect}
-        />
+      {manifests.map(m => (
+        <AppCard key={`${m.id}.${m.branch}`} manifest={m} onPress={onSelect} />
       ))}
     </>
   );

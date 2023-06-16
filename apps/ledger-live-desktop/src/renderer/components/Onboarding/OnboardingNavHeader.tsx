@@ -22,7 +22,9 @@ const Logo = styled(Box).attrs({
   height: "25px",
   width: "75px",
 })`
+  // prettier-ignore
   -webkit-mask-image: url('${ledgerLogo}');
+  // prettier-ignore
   mask-image: url('${ledgerLogo}');
 `;
 

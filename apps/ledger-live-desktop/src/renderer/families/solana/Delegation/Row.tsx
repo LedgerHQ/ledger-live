@@ -170,9 +170,10 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
   );
 }
 
-function toStakeDropDownItem(
-  stakeAction: string,
-): { key: DelegateModalName; label: React.ReactNode } {
+function toStakeDropDownItem(stakeAction: string): {
+  key: DelegateModalName;
+  label: React.ReactNode;
+} {
   switch (stakeAction) {
     case "activate":
       return {

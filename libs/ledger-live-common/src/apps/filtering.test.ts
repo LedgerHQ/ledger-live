@@ -114,8 +114,7 @@ const scenarios: FilteringScenario[] = [
       type: ["supported"],
       installedApps: [],
     },
-    expectedApps:
-      "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, Litecoin, XRP",
+    expectedApps: "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, Litecoin, XRP",
   },
   {
     name: "Catalog - Only apps not supported by Live",
@@ -243,18 +242,18 @@ const scenarios: FilteringScenario[] = [
     expectedApps: "",
   },
 ];
-scenarios.forEach((scenario) => {
+scenarios.forEach(scenario => {
   test("Scenario: " + scenario.name, async () => {
     const { apps, installed: installedApps } = initState(
-      mockListAppsResult(scenario.apps, scenario.installed, deviceInfo155)
+      mockListAppsResult(scenario.apps, scenario.installed, deviceInfo155),
     );
     const sortedFilteredApps = sortFilterApps(
       apps,
       { ...scenario._filterOptions, installedApps },
-      scenario._sortOptions
+      scenario._sortOptions,
     );
-    expect(sortedFilteredApps.map((app) => app.name)).toEqual(
-      scenario.expectedApps ? scenario.expectedApps.split(", ") : []
+    expect(sortedFilteredApps.map(app => app.name)).toEqual(
+      scenario.expectedApps ? scenario.expectedApps.split(", ") : [],
     );
   });
 });

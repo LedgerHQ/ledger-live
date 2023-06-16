@@ -6,10 +6,7 @@ import { View } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
 import QueuedDrawer from "./QueuedDrawer";
 import ModalBottomAction from "./ModalBottomAction";
-import {
-  languageSelector,
-  languageIsSetByUserSelector,
-} from "../reducers/settings";
+import { languageSelector, languageIsSetByUserSelector } from "../reducers/settings";
 import { setLanguage } from "../actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
 import { useLanguageAvailableChecked } from "../context/Locale";
@@ -67,9 +64,7 @@ export default function CheckLanguageAvailability() {
             <Trans
               i18nKey="systemLanguageAvailable.description.newSupport"
               values={{
-                language: t(
-                  `systemLanguageAvailable.languages.${defaultLanguage}`,
-                ),
+                language: t(`systemLanguageAvailable.languages.${defaultLanguage}`),
               }}
             />
           }
@@ -84,9 +79,7 @@ export default function CheckLanguageAvailability() {
                 <Trans
                   i18nKey="systemLanguageAvailable.switchButton"
                   values={{
-                    language: t(
-                      `systemLanguageAvailable.languages.${defaultLanguage}`,
-                    ),
+                    language: t(`systemLanguageAvailable.languages.${defaultLanguage}`),
                   }}
                 />
               </Button>

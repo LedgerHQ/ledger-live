@@ -19,9 +19,7 @@ import LedgerRecoverCardTopImage from "../../images/ledger_recover_card_top.png"
 
 function ServicesWidget() {
   const { t } = useTranslation();
-  const servicesConfig = useFeature<ServicesConfigParams>(
-    "protectServicesMobile",
-  );
+  const servicesConfig = useFeature<ServicesConfigParams>("protectServicesMobile");
   const theme = useTheme();
 
   const learnMoreURI = useLearnMoreURI(servicesConfig);
@@ -29,9 +27,7 @@ function ServicesWidget() {
 
   const onCardPress = useCallback(() => {
     if (alreadySubscribedURI) {
-      Linking.canOpenURL(alreadySubscribedURI).then(() =>
-        Linking.openURL(alreadySubscribedURI),
-      );
+      Linking.canOpenURL(alreadySubscribedURI).then(() => Linking.openURL(alreadySubscribedURI));
     }
   }, [alreadySubscribedURI]);
 
@@ -48,17 +44,10 @@ function ServicesWidget() {
             style={{ width: "100%", height: 8 }}
           />
           <Flex p={7}>
-            <Flex
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={6}
-            >
+            <Flex flexDirection="row" justifyContent="space-between" alignItems="center" mb={6}>
               <Image
                 source={
-                  theme.colors.type === "light"
-                    ? LedgerRecoverLogoLight
-                    : LedgerRecoverLogoDark
+                  theme.colors.type === "light" ? LedgerRecoverLogoLight : LedgerRecoverLogoDark
                 }
                 style={{ width: 90, height: 26 }}
               />

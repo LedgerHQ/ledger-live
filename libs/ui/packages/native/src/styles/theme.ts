@@ -22,7 +22,7 @@ export const textVariants = [
   "tinyAlpha",
 ] as const;
 
-export type TextVariants = typeof textVariants[number];
+export type TextVariants = (typeof textVariants)[number];
 
 export type ThemeScale<Type, Aliases extends string> = Array<Type> & Record<Aliases, Type>;
 

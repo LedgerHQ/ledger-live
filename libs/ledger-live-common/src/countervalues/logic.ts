@@ -32,10 +32,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 // yield raw version of the countervalues state to be saved in a db
-export function exportCountervalues({
-  data,
-  status,
-}: CounterValuesState): CounterValuesStateRaw {
+export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
   const out = {
     status,
   };
@@ -56,7 +53,7 @@ export function exportCountervalues({
 // restore a countervalues state from the raw version
 export function importCountervalues(
   { status, ...rest }: CounterValuesStateRaw,
-  settings: CountervaluesSettings
+  settings: CountervaluesSettings,
 ): CounterValuesState {
   const data = {};
 
@@ -80,26 +77,27 @@ export function importCountervalues(
         // $FlowFixMe
         [key]: generateCache(key, <RateMap>val, settings),
       }),
-      {}
+      {},
     ),
   };
 }
 // infer the tracking pair from user accounts to know which pairs are concerned
 export function inferTrackingPairForAccounts(
   accounts: Account[],
-  countervalue: Currency
+  countervalue: Currency,
 ): TrackingPair[] {
   const yearAgo = new Date();
   yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+  yearAgo.setHours(0, 0, 0, 0);
   return resolveTrackingPairs(
-    flattenAccounts(accounts).map((a) => {
+    flattenAccounts(accounts).map(a => {
       const currency = getAccountCurrency(a);
       return {
         from: currency,
         to: countervalue,
         startDate: a.creationDate < yearAgo ? a.creationDate : yearAgo,
       };
-    })
+    }),
   );
 }
 export const initialState: CounterValuesState = {
@@ -111,7 +109,7 @@ const MAX_RETRY_DELAY = 7 * incrementPerGranularity.daily;
 // synchronize all countervalues incrementally (async update of the countervalues state)
 export async function loadCountervalues(
   state: CounterValuesState,
-  settings: CountervaluesSettings
+  settings: CountervaluesSettings,
 ): Promise<CounterValuesState> {
   const data = { ...state.data };
   const cache = { ...state.cache };
@@ -140,18 +138,15 @@ export async function loadCountervalues(
       // when there are too much http failures, slow down the rate to be actually re-fetched
       if (s?.failures && s.timestamp) {
         const { failures, timestamp } = s;
-        const secondsBetweenRetries = Math.min(
-          Math.exp(failures * 0.5),
-          MAX_RETRY_DELAY
-        );
+        const secondsBetweenRetries = Math.min(Math.exp(failures * 0.5), MAX_RETRY_DELAY);
         const nextTarget = timestamp + 1000 * secondsBetweenRetries;
 
         if (nowDate.valueOf() < nextTarget) {
           log(
             "countervalues",
             `${key}@${granularity} discarded: too much HTTP failures (${failures}) retry in ~${Math.round(
-              (nextTarget - nowDate.valueOf()) / 1000
-            )}s`
+              (nextTarget - nowDate.valueOf()) / 1000,
+            )}s`,
           );
           return;
         }
@@ -164,25 +159,20 @@ export async function loadCountervalues(
         start = new Date(limitDate);
       }
 
-      const needOlderReload =
-        s && s.oldestDateRequested && start < new Date(s.oldestDateRequested);
+      const needOlderReload = s && s.oldestDateRequested && start < new Date(s.oldestDateRequested);
 
       if (needOlderReload) {
         log(
           "countervalues",
           `${key}@${granularity} need older reload (${start.toISOString()} < ${String(
-            s && s.oldestDateRequested
-          )})`
+            s && s.oldestDateRequested,
+          )})`,
         );
       }
 
       if (!needOlderReload) {
         // we do not miss datapoints in the past so we can ask the only remaining part
-        if (
-          stats &&
-          stats.earliestStableDate &&
-          stats.earliestStableDate > start
-        ) {
+        if (stats && stats.earliestStableDate && stats.earliestStableDate > start) {
           start = stats.earliestStableDate;
         }
       }
@@ -202,22 +192,19 @@ export async function loadCountervalues(
   });
   log(
     "countervalues",
-    `${histoToFetch.length} historical value to fetch (${settings.trackingPairs.length} pairs)`
+    `${histoToFetch.length} historical value to fetch (${settings.trackingPairs.length} pairs)`,
   );
   // Fetch it all
   const [histo, latest] = await Promise.all([
     promiseAllBatched(10, histoToFetch, ([granularity, pair, key]) =>
       fetchHistorical(granularity, pair)
-        .then((rates) => {
+        .then(rates => {
           // Update status infos
           const id = pairId(pair);
           let oldestDateRequested = status[id]?.oldestDateRequested;
 
           if (pair.startDate) {
-            if (
-              !oldestDateRequested ||
-              pair.startDate < new Date(oldestDateRequested)
-            ) {
+            if (!oldestDateRequested || pair.startDate < new Date(oldestDateRequested)) {
               oldestDateRequested = pair.startDate.toISOString();
             }
           }
@@ -230,7 +217,7 @@ export async function loadCountervalues(
             [key]: rates,
           };
         })
-        .catch((e) => {
+        .catch(e => {
           if (settings.disableAutoRecoverErrors) throw e;
           // TODO work on the semantic of failure.
           // do we want to opt-in for the 404 cases and make other fails it all?
@@ -251,13 +238,13 @@ export async function loadCountervalues(
             "countervalues-error",
             `Failed to fetch ${granularity} history for ${pair.from.ticker}-${
               pair.to.ticker
-            } ${String(e)}`
+            } ${String(e)}`,
           );
           return null;
-        })
+        }),
     ),
     fetchLatest(latestToFetch, settings.disableAutoRecoverErrors)
-      .then((rates) => {
+      .then(rates => {
         const out = {};
         let hasData = false;
         latestToFetch.forEach((pair, i) => {
@@ -272,16 +259,14 @@ export async function loadCountervalues(
         if (!hasData) return null;
         return out;
       })
-      .catch((e) => {
+      .catch(e => {
         if (settings.disableAutoRecoverErrors) throw e;
         log(
           "countervalues-error",
           "Failed to fetch latest for " +
-            latestToFetch
-              .map((p) => `${p.from.ticker}-${p.to.ticker}`)
-              .join(",") +
+            latestToFetch.map(p => `${p.from.ticker}-${p.to.ticker}`).join(",") +
             " " +
-            String(e)
+            String(e),
         );
         return null;
       }),
@@ -289,8 +274,8 @@ export async function loadCountervalues(
   const updates: any[] = histo.concat(latest).filter(Boolean);
   log("countervalues", updates.length + " updates to apply");
   const changesKeys = {};
-  updates.forEach((patch) => {
-    Object.keys(patch).forEach((key) => {
+  updates.forEach(patch => {
+    Object.keys(patch).forEach(key => {
       changesKeys[key] = 1;
 
       if (!data[key]) {
@@ -303,7 +288,7 @@ export async function loadCountervalues(
     });
   });
   // synchronize the cache
-  Object.keys(changesKeys).forEach((pair) => {
+  Object.keys(changesKeys).forEach(pair => {
     cache[pair] = generateCache(pair, data[pair], settings);
   });
   return {
@@ -317,7 +302,7 @@ export function lenseRateMap(
   pair: {
     from: Currency;
     to: Currency;
-  }
+  },
 ): PairRateMapCache | null | undefined {
   if (!isCountervalueEnabled(pair.from) || !isCountervalueEnabled(pair.to)) {
     return;
@@ -332,7 +317,7 @@ export function lenseRate(
     from: Currency;
     to: Currency;
     date?: Date | null | undefined;
-  }
+  },
 ): number | null | undefined {
   const { date } = query;
   if (!date) return map.get("latest");
@@ -349,7 +334,7 @@ export function calculate(
     disableRounding?: boolean;
     date?: Date | null | undefined;
     reverse?: boolean;
-  }
+  },
 ): number | null | undefined {
   const { from, to } = aliasPair({
     from: initialQuery.from,
@@ -390,12 +375,12 @@ export function calculateMany(
     to: Currency;
     disableRounding?: boolean;
     reverse?: boolean;
-  }
+  },
 ): Array<number | null | undefined> {
   const { reverse, disableRounding } = initialQuery;
   const query = aliasPair(initialQuery);
   const { from, to } = query;
-  if (from === to) return dataPoints.map((d) => d.value);
+  if (from === to) return dataPoints.map(d => d.value);
   const map = lenseRateMap(state, query);
   if (!map) return Array(dataPoints.length).fill(undefined); // undefined array
 
@@ -424,12 +409,12 @@ export function calculateMany(
 function generateCache(
   pair: string,
   rateMap: RateMap,
-  settings: CountervaluesSettings
+  settings: CountervaluesSettings,
 ): PairRateMapCache {
   const map = new Map(rateMap);
   const sorted = Array.from(map.keys())
     .sort()
-    .filter((k) => k !== "latest");
+    .filter(k => k !== "latest");
   const oldest = sorted[0];
   const earliest = sorted[sorted.length - 1];
   const oldestDate = oldest ? parseFormattedDate(oldest) : null;
@@ -495,7 +480,7 @@ function generateCache(
 // apply dedup & aliasing logics
 export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
   const d: Record<string, TrackingPair> = {};
-  pairs.map((p) => {
+  pairs.map(p => {
     const { from, to } = resolveTrackingPair({
       from: p.from,
       to: p.to,

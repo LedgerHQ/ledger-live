@@ -4,22 +4,13 @@ import isEqual from "lodash/isEqual";
 import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
 import VersionNumber from "react-native-version-number";
-import {
-  FeatureFlagsProvider,
-  defaultFeatures,
-} from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureFlagsProvider, defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
-import {
-  languageSelector,
-  overriddenFeatureFlagsSelector,
-} from "../reducers/settings";
-import {
-  setOverriddenFeatureFlag,
-  setOverriddenFeatureFlags,
-} from "../actions/settings";
+import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
+import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 
 type Props = PropsWithChildren<unknown>;
 
@@ -69,9 +60,7 @@ const getFeature = (args: {
       return checkFeatureFlagVersion(localOverrides[key]);
     }
 
-    const envFlags = getEnv("FEATURE_FLAGS") as
-      | { [key in FeatureId]?: Feature }
-      | undefined;
+    const envFlags = getEnv("FEATURE_FLAGS") as { [key in FeatureId]?: Feature } | undefined;
 
     if (allowOverride && envFlags) {
       const feature = envFlags[key];
@@ -93,10 +82,8 @@ const getFeature = (args: {
 
     if (
       feature.enabled &&
-      ((feature.languages_whitelisted &&
-        !feature.languages_whitelisted.includes(appLanguage)) ||
-        (feature.languages_blacklisted &&
-          feature.languages_blacklisted.includes(appLanguage)))
+      ((feature.languages_whitelisted && !feature.languages_whitelisted.includes(appLanguage)) ||
+        (feature.languages_blacklisted && feature.languages_blacklisted.includes(appLanguage)))
     ) {
       return {
         enabledOverriddenForCurrentLanguage: true,
@@ -171,8 +158,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
-    (key: FeatureId): Feature =>
-      getFeature({ key, appLanguage, localOverrides }),
+    (key: FeatureId): Feature => getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
   );
 

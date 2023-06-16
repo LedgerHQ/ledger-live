@@ -25,10 +25,17 @@
     },
     "catalog": {
       "title": "Discover",
+      "section": {
+        "recentlyUsed": "Recently used",
+        "browse": "Browse"
+      },
+      "filter": {
+        "categories": "Categories"
+      },
       "branch": {
-        "soon": "coming soon",
-        "experimental": "experimental",
-        "debug": "debug"
+        "soon": "Coming soon",
+        "experimental": "Experimental",
+        "debug": "Debug"
       },
       "banner": {
         "title": "Discover our Live Apps Catalog",
@@ -47,6 +54,11 @@
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live.",
         "button": "Go to portal"
+      },
+      "warnings": {
+        "notFound": "Not found",
+        "retrySearchKeyword": "Please retry the search with another keyword.",
+        "retrySearchKeywordAndUrl": "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live."
       }
     },
     "disclaimer": {
@@ -129,7 +141,8 @@
     "info": "Info",
     "connectDevice": "Connect your device",
     "add": "Add",
-    "or": "OR"
+    "or": "OR",
+    "clearAll": "Clear all"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -635,6 +648,26 @@
   },
   "postOnboardingDebugger": {
     "buttonTitle": "Test"
+  },
+  "vaultSigner": {
+    "modal": {
+      "title": "Connect Vault",
+      "info": "Link your Ledger Vault workspace accounts and create transactions from Ledger Live by completing fields below. Locate info at Settings > External wallet signer.",
+      "info_link": "Learn more",
+      "host": {
+        "title": "URL Endpoint",
+        "placeholder": "ws://localhost:3030"
+      },
+      "workspace": {
+        "title": "Workspace name",
+        "placeholder": "workspace"
+      },
+      "token": {
+        "title": "Operator API Token",
+        "placeholder": "Token"
+      },
+      "submit": "Connect"
+    }
   },
   "fullNode": {
     "status": "Status",
@@ -1383,6 +1416,10 @@
     "referralProgram": {
       "title": "Refer and earn $10",
       "description": "Successfully refer a friend and you both earn $10 worth of Bitcoin."
+    },
+    "vaultSigner": {
+      "title": "Vault signer mode",
+      "link": "Vault Help Center"
     }
   },
   "signmessage": {
@@ -3521,19 +3558,19 @@
       "subTitle": "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
       "lido": {
         "title": "Earn with Lido",
-        "tag": "No minimum",
         "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum.",
         "supportLink": "Learn more about Lido"
       },
       "kiln": {
         "title": "Kiln dedicated staking",
         "tag": "Requires 32 ETH",
-        "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed.",
+        "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
         "supportLink": "Learn more about Kiln validator"
       },
       "kiln_pooling": {
         "title": "Kiln staking pool",
-        "description": "Join a staking pool. No minimum ETH is required. Rewards are automatically claimed.",
+        "tag": "No minimum",
+        "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
         "supportLink": "Learn more about Kiln pooling"
       }
     }
@@ -3922,10 +3959,6 @@
           "title": "Extended account search",
           "description": "Scan for accounts with erroneous derivation paths. Please send potentially found assets to a regular account."
         },
-        "experimentalCountervalues": {
-          "title": "Experimental countervalues API",
-          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
-        },
         "experimentalExplorers": {
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.\n(<0></0>)"
@@ -3953,6 +3986,10 @@
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
+        },
+        "vaultSigner": {
+          "title": "Vault Signer",
+          "description": "Use Ledger Vault as a signer with your operator API token"
         },
         "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",

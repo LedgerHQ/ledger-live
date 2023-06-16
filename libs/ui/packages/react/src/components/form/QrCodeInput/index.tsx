@@ -12,13 +12,13 @@ const QrCodeButton = styled.button`
   height: 32px;
   border-radius: 50%;
   border-width: 0;
-  color: ${(p) => p.theme.colors.neutral.c00};
-  background-color: ${(p) => p.theme.colors.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c00};
+  background-color: ${p => p.theme.colors.neutral.c100};
   cursor: pointer;
 
   &:disabled {
-    background-color: ${(p) => p.theme.colors.neutral.c30};
-    color: ${(p) => p.theme.colors.neutral.c50};
+    background-color: ${p => p.theme.colors.neutral.c30};
+    color: ${p => p.theme.colors.neutral.c50};
     cursor: unset;
   }
 `;

@@ -14,23 +14,13 @@ export const createVoteMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Vote",
   maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo:  Vote | balance is too low"
-    );
+    invariant(maxSpendable.gt(minimalAmount), "Celo:  Vote | balance is too low");
 
     const { celoResources } = account as CeloAccount;
-    invariant(
-      celoResources?.registrationStatus,
-      "Celo: Vote | Account is not registered"
-    );
+    invariant(celoResources?.registrationStatus, "Celo: Vote | Account is not registered");
 
-    const nonvotingLockedBalance =
-      celoResources?.nonvotingLockedBalance || new BigNumber(0);
-    invariant(
-      nonvotingLockedBalance.gt(0),
-      "Celo: Vote | No non voting locked balance"
-    );
+    const nonvotingLockedBalance = celoResources?.nonvotingLockedBalance || new BigNumber(0);
+    invariant(nonvotingLockedBalance.gt(0), "Celo: Vote | No non voting locked balance");
 
     const votes = (celoResources as CeloResources).votes || [];
     const { validatorGroups } = getCurrentCeloPreloadData();
@@ -38,13 +28,10 @@ export const createVoteMutation = (): MutationSpec<Transaction> => ({
     // Get a random validator group that the account does not have locked tokens for.
     const validatorGroupWithoutVotes = sampleSize(
       getValidatorGroupsWithoutVotes(validatorGroups, votes),
-      1
+      1,
     )[0];
 
-    const amount = nonvotingLockedBalance
-      .times(0.5)
-      .precision(8)
-      .integerValue();
+    const amount = nonvotingLockedBalance.times(0.5).precision(8).integerValue();
 
     invariant(amount.gt(0), "Celo: Vote | Not enough funds to vote");
 

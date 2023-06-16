@@ -19,7 +19,7 @@ import { log } from "@ledgerhq/logs";
 import { getEnv } from "../env";
 import { open, close, setAllowAutoDisconnect } from ".";
 
-const initialErrorRemapping = (error) =>
+const initialErrorRemapping = error =>
   throwError(
     error &&
       error instanceof TransportStatusError &&
@@ -28,14 +28,12 @@ const initialErrorRemapping = (error) =>
       ? new DeviceHalted(error.message)
       : error.statusCode === 0x6b00
       ? new FirmwareOrAppUpdateRequired(error.message)
-      : error
+      : error,
   );
 
-let errorRemapping = (e) => throwError(e);
+let errorRemapping = e => throwError(e);
 
-export const setErrorRemapping = (
-  f: (arg0: Error) => Observable<never>
-): void => {
+export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
 };
 const never = new Promise(() => {});
@@ -43,7 +41,7 @@ const never = new Promise(() => {});
 const transportFinally =
   (cleanup: () => Promise<void>) =>
   <T>(observable: Observable<T>): Observable<T> =>
-    Observable.create((o) => {
+    Observable.create(o => {
       let done = false;
 
       const finalize = () => {
@@ -53,11 +51,11 @@ const transportFinally =
       };
 
       const sub = observable.subscribe({
-        next: (e) => o.next(e),
+        next: e => o.next(e),
         complete: () => {
           finalize().then(() => o.complete());
         },
-        error: (e) => {
+        error: e => {
           finalize().then(() => o.error(e));
         },
       });
@@ -67,7 +65,7 @@ const transportFinally =
       };
     });
 
-const identifyTransport = (t) => (typeof t.id === "string" ? t.id : "");
+const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
 
 const needsCleanup = {};
 // When a series of APDUs are interrupted, this is called
@@ -89,7 +87,7 @@ let withDeviceNonce = 0;
 export const withDevice =
   (deviceId: string) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
-    new Observable((o) => {
+    new Observable(o => {
       const nonce = withDeviceNonce++;
       log("withDevice", `${nonce}: New job: deviceId=${deviceId || "USB"}`);
 
@@ -102,7 +100,7 @@ export const withDevice =
         return close(transport, deviceId)
           .catch(() => {})
           .then(() => {
-            cleanups.forEach((c) => c());
+            cleanups.forEach(c => c());
           });
       };
 
@@ -110,7 +108,7 @@ export const withDevice =
       let resolveQueuedDevice;
 
       // This new promise is the next exec queue
-      deviceQueues[deviceId] = new Promise((resolve) => {
+      deviceQueues[deviceId] = new Promise(resolve => {
         resolveQueuedDevice = resolve;
       });
 
@@ -120,7 +118,7 @@ export const withDevice =
       // For any new job, we'll now wait the exec queue to be available
       deviceQueue
         .then(() => open(deviceId)) // open the transport
-        .then(async (transport) => {
+        .then(async transport => {
           log("withDevice", `${nonce}: got a transport`);
 
           if (unsubscribed) {
@@ -138,7 +136,7 @@ export const withDevice =
           return transport;
         })
         // This catch is here only for errors that might happen at open or at clean up of the transport before doing the job
-        .catch((e) => {
+        .catch(e => {
           resolveQueuedDevice();
           if (e instanceof BluetoothRequired) throw e;
           if (e instanceof TransportWebUSBGestureRequired) throw e;
@@ -148,7 +146,7 @@ export const withDevice =
           throw new CantOpenDevice(e.message);
         })
         // Executes the job
-        .then((transport) => {
+        .then(transport => {
           if (!transport) return;
 
           if (unsubscribed) {
@@ -164,11 +162,11 @@ export const withDevice =
               transportFinally(() => {
                 log("withDevice", `${nonce}: job fully completed`);
                 return finalize(transport, [resolveQueuedDevice]);
-              })
+              }),
             )
             .subscribe(o);
         })
-        .catch((error) => o.error(error));
+        .catch(error => o.error(error));
 
       // Returns function to unsubscribe from the job if we don't need it anymore.
       // This will prevent us from executing the job unnecessarily later on
@@ -196,19 +194,19 @@ export const retryWhileErrors =
   (acceptError: (arg0: Error) => boolean) =>
   (attempts: Observable<any>): Observable<any> =>
     attempts.pipe(
-      mergeMap((error) => {
+      mergeMap(error => {
         if (!acceptError(error)) {
           return throwError(error);
         }
 
         return timer(getEnv("WITH_DEVICE_POLLING_DELAY"));
-      })
+      }),
     );
 
 export const withDevicePolling =
   (deviceId: string) =>
   <T>(
     job: (arg0: Transport) => Observable<T>,
-    acceptError: (arg0: Error) => boolean = genericCanRetryOnError
+    acceptError: (arg0: Error) => boolean = genericCanRetryOnError,
   ): Observable<T> =>
     withDevice(deviceId)(job).pipe(retryWhen(retryWhileErrors(acceptError)));

@@ -8,12 +8,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit, getCryptoCurrencyById } from "../../currencies";
-import type {
-  Transaction,
-  StatusErrorMap,
-  NearAccount,
-  TransactionStatus,
-} from "./types";
+import type { Transaction, StatusErrorMap, NearAccount, TransactionStatus } from "./types";
 import {
   isValidAddress,
   isImplicitAccount,
@@ -35,10 +30,7 @@ import {
 } from "./errors";
 import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 
-const getTransactionStatus = async (
-  a: NearAccount,
-  t: Transaction
-): Promise<TransactionStatus> => {
+const getTransactionStatus = async (a: NearAccount, t: Transaction): Promise<TransactionStatus> => {
   if (t.mode === "send") {
     return await getSendTransactionStatus(a, t);
   }
@@ -62,26 +54,21 @@ const getTransactionStatus = async (
   const amount = useAllAmount ? maxAmount : new BigNumber(t.amount);
 
   const isStakeAndNotEnoughBalance =
-    t.mode === "stake" &&
-    (totalSpent.gt(maxAmountWithFees) || maxAmountWithFees.lt(estimatedFees));
+    t.mode === "stake" && (totalSpent.gt(maxAmountWithFees) || maxAmountWithFees.lt(estimatedFees));
   const isUnstakeOrWithdrawAndNotEnoughBalance =
     ["unstake", "withdraw"].includes(t.mode) &&
-    (totalSpent.gt(spendableBalanceWithFees) ||
-      spendableBalanceWithFees.lt(estimatedFees));
+    (totalSpent.gt(spendableBalanceWithFees) || spendableBalanceWithFees.lt(estimatedFees));
 
   if (isStakeAndNotEnoughBalance || isUnstakeOrWithdrawAndNotEnoughBalance) {
     errors.amount = new NotEnoughBalance();
-  } else if (
-    ["stake", "unstake", "withdraw"].includes(t.mode) &&
-    amount.lt(stakingThreshold)
-  ) {
+  } else if (["stake", "unstake", "withdraw"].includes(t.mode) && amount.lt(stakingThreshold)) {
     const currency = getCryptoCurrencyById("near");
     const formattedStakingThreshold = formatCurrencyUnit(
       currency.units[0],
       stakingThreshold.plus(YOCTO_THRESHOLD_VARIATION),
       {
         showCode: true,
-      }
+      },
     );
     errors.amount = new NearStakingThresholdNotMet(undefined, {
       threshold: formattedStakingThreshold,
@@ -109,7 +96,7 @@ const getTransactionStatus = async (
 
 const getSendTransactionStatus = async (
   a: NearAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: StatusErrorMap = {};
   const warnings: StatusErrorMap = {};
@@ -124,7 +111,7 @@ const getSendTransactionStatus = async (
     newAccountStorageCost,
     {
       showCode: true,
-    }
+    },
   );
 
   let recipientIsNewAccount;

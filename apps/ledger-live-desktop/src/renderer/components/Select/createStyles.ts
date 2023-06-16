@@ -5,13 +5,13 @@ import { ff } from "~/renderer/styles/helpers";
 export type CreateStylesReturnType<
   OptionType extends OptionTypeBase,
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > = StylesConfig<OptionType, IsMulti, GroupType>;
 
 export default <
   OptionType extends OptionTypeBase,
   IsMulti extends boolean,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 >(
   theme: DefaultTheme,
   {

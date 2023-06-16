@@ -10,7 +10,5 @@ export default function InvertTheme({
   const { theme } = useTheme();
   const revertTheme = theme === "light" ? "dark" : "light";
 
-  return (
-    <StyleProvider selectedPalette={revertTheme}>{children}</StyleProvider>
-  );
+  return <StyleProvider selectedPalette={revertTheme}>{children}</StyleProvider>;
 }

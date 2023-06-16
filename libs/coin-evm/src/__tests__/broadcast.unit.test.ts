@@ -3,7 +3,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import * as API from "../api/rpc.common";
+import * as API from "../api/rpc/rpc.common";
 import broadcast from "../broadcast";
 import buildOptimisticOperation from "../buildOptimisticOperation";
 import { getEstimatedFees } from "../logic";
@@ -14,12 +14,12 @@ const currency: CryptoCurrency = getCryptoCurrencyById("ethereum");
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
 const tokenAccount: TokenAccount = makeTokenAccount(
   "0x055C1e159E345cB4197e3844a86A61E0a801d856", // jacquie.eth
-  tokenCurrency
+  tokenCurrency,
 );
 const account: Account = makeAccount(
   "0x055C1e159E345cB4197e3844a86A61E0a801d856", // jacquie.eth
   currency,
-  [tokenAccount]
+  [tokenAccount],
 );
 const mockedBroadcastResponse = {
   hash: "0xH4sH",
@@ -58,10 +58,7 @@ describe("EVM Family", () => {
           type: 2,
         };
         const estimatedFees = getEstimatedFees(coinTransaction);
-        const optimisticCoinOperation = buildOptimisticOperation(
-          account,
-          coinTransaction
-        );
+        const optimisticCoinOperation = buildOptimisticOperation(account, coinTransaction);
 
         const finalOperation = await broadcast({
           account,
@@ -74,11 +71,7 @@ describe("EVM Family", () => {
 
         expect(API.broadcastTransaction).toBeCalled();
         expect(finalOperation).toEqual({
-          id: encodeOperationId(
-            account.id,
-            mockedBroadcastResponse.hash,
-            "OUT"
-          ),
+          id: encodeOperationId(account.id, mockedBroadcastResponse.hash, "OUT"),
           hash: mockedBroadcastResponse.hash,
           blockNumber: mockedBroadcastResponse.blockNumber,
           blockHeight: mockedBroadcastResponse.blockNumber,
@@ -104,7 +97,7 @@ describe("EVM Family", () => {
           recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
           data: Buffer.from(
             "a9059cbb00000000000000000000000059569e96d0e3d9728dc07bf5c1443809e6f237fd0000000000000000000000000000000000000000000000000c06701668d322ac",
-            "hex"
+            "hex",
           ),
           feesStrategy: "custom",
           family: "evm",
@@ -117,10 +110,7 @@ describe("EVM Family", () => {
           type: 2,
         };
         const estimatedFees = getEstimatedFees(tokenTransaction);
-        const optimisticTokenOperation = buildOptimisticOperation(
-          account,
-          tokenTransaction
-        );
+        const optimisticTokenOperation = buildOptimisticOperation(account, tokenTransaction);
 
         const finalOperation = await broadcast({
           account,
@@ -133,11 +123,7 @@ describe("EVM Family", () => {
 
         expect(API.broadcastTransaction).toBeCalled();
         expect(finalOperation).toEqual({
-          id: encodeOperationId(
-            account.id,
-            mockedBroadcastResponse.hash,
-            "FEES"
-          ),
+          id: encodeOperationId(account.id, mockedBroadcastResponse.hash, "FEES"),
           hash: mockedBroadcastResponse.hash,
           blockNumber: mockedBroadcastResponse.blockNumber,
           blockHeight: mockedBroadcastResponse.blockNumber,
@@ -152,11 +138,7 @@ describe("EVM Family", () => {
           date: new Date(mockedBroadcastResponse.timestamp * 1000),
           subOperations: [
             {
-              id: encodeOperationId(
-                tokenAccount.id,
-                mockedBroadcastResponse.hash,
-                "OUT"
-              ),
+              id: encodeOperationId(tokenAccount.id, mockedBroadcastResponse.hash, "OUT"),
               hash: mockedBroadcastResponse.hash,
               blockNumber: mockedBroadcastResponse.blockNumber,
               blockHeight: mockedBroadcastResponse.blockNumber,

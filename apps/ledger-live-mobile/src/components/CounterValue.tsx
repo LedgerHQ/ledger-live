@@ -2,19 +2,13 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import {
-  useCalculate,
-  useCountervaluesPolling,
-} from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { counterValueCurrencySelector } from "../reducers/settings";
-import {
-  useTrackingPairs,
-  addExtraSessionTrackingPair,
-} from "../actions/general";
+import { useTrackingPairs, addExtraSessionTrackingPair } from "../actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
@@ -73,17 +67,12 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
-  const value = BigNumber.isBigNumber(valueProp)
-    ? valueProp.toNumber()
-    : valueProp;
+  const value = BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
   const cvPolling = useCountervaluesPolling();
   const hasTrackingPair = useMemo(
-    () =>
-      trackingPairs.some(
-        tp => tp.from === currency && tp.to === counterValueCurrency,
-      ),
+    () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
@@ -100,14 +89,7 @@ export default function CounterValue({
     return () => {
       if (t) clearTimeout(t);
     };
-  }, [
-    counterValueCurrency,
-    currency,
-    cvPolling,
-    cvPolling.poll,
-    hasTrackingPair,
-    trackingPairs,
-  ]);
+  }, [counterValueCurrency, currency, cvPolling, cvPolling.poll, hasTrackingPair, trackingPairs]);
   const countervalue = useCalculate({
     from: currency,
     to: counterValueCurrency,
@@ -121,11 +103,7 @@ export default function CounterValue({
   }
 
   const inner = (
-    <CurrencyUnitValue
-      {...props}
-      unit={counterValueCurrency.units[0]}
-      value={countervalue}
-    />
+    <CurrencyUnitValue {...props} unit={counterValueCurrency.units[0]} value={countervalue} />
   );
 
   if (Wrapper) {

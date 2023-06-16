@@ -185,9 +185,9 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
         "input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), *[tabindex]";
       const modalWrapper = document.getElementById("modals");
       if (!modalWrapper || !(target instanceof window.HTMLElement)) return;
-      const focusableElements = modalWrapper.querySelectorAll(focusableQuery) as NodeListOf<
-        HTMLElement
-      >;
+      const focusableElements = modalWrapper.querySelectorAll(
+        focusableQuery,
+      ) as NodeListOf<HTMLElement>;
       if (!focusableElements.length) return;
       const firstFocusable = focusableElements[0];
       const lastFocusable = focusableElements[focusableElements.length - 1];
@@ -233,17 +233,8 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
   };
 
   render() {
-    const {
-      children,
-      render,
-      centered,
-      onClose,
-      data,
-      isOpened,
-      width,
-      backdropColor,
-      bodyStyle,
-    } = this.props;
+    const { children, render, centered, onClose, data, isOpened, width, backdropColor, bodyStyle } =
+      this.props;
     const renderProps = {
       onClose: onClose!,
       data: data!,
@@ -297,4 +288,4 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
   }
 }
 
-export default (connect(mapStateToProps, mapDispatchToProps)(Modal) as unknown) as typeof Modal; // to preserve generics
+export default connect(mapStateToProps, mapDispatchToProps)(Modal) as unknown as typeof Modal; // to preserve generics

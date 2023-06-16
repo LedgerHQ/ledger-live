@@ -21,6 +21,7 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
+import { useCanShowStake } from "./useCanShowStake";
 
 type Props = {
   account: AccountLike;
@@ -32,11 +33,7 @@ const iconBuy = Icons.PlusMedium;
 const iconSell = Icons.MinusMedium;
 const iconSwap = Icons.BuyCryptoMedium;
 
-export default function useAccountActions({
-  account,
-  parentAccount,
-  colors,
-}: Props): {
+export default function useAccountActions({ account, parentAccount, colors }: Props): {
   mainActions: ActionButtonEvent[];
   secondaryActions: ActionButtonEvent[];
 } {
@@ -45,6 +42,7 @@ export default function useAccountActions({
   const { t } = useTranslation();
 
   const currency = getAccountCurrency(account);
+  const canShowStake = useCanShowStake(currency);
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -52,9 +50,7 @@ export default function useAccountActions({
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(
-    currency.id,
-  );
+  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(currency.id);
 
   const rampCatalog = useRampCatalog();
 
@@ -63,9 +59,7 @@ export default function useAccountActions({
       return [false, false];
     }
 
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.onRamp,
-    );
+    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
     const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
       rampCatalog.value.offRamp,
     );
@@ -76,9 +70,7 @@ export default function useAccountActions({
     ];
   }, [rampCatalog.value, currency]);
 
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
+  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
   const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
 
   const extraSendActionParams = useMemo(
@@ -199,7 +191,7 @@ export default function useAccountActions({
     ...extraReceiveActionParams,
   };
 
-  const familySpecificMainActions =
+  const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
       decorators.getMainActions &&
       decorators.getMainActions({
@@ -214,7 +206,9 @@ export default function useAccountActions({
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...(!readOnlyModeEnabled ? familySpecificMainActions : []),
+    ...(!readOnlyModeEnabled
+      ? familySpecificMainActions.filter(action => action.id !== "stake" || canShowStake)
+      : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];
