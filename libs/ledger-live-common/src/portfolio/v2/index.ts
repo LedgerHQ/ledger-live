@@ -92,16 +92,11 @@ export function getDates(r: PortfolioRange, count: number): Date[] {
   return dates;
 }
 
-export function getPortfolioRangeConfig(
-  r: PortfolioRange
-): PortfolioRangeConfig {
+export function getPortfolioRangeConfig(r: PortfolioRange): PortfolioRangeConfig {
   return ranges[r];
 }
 
-export function getPortfolioCount(
-  accounts: AccountLike[],
-  range: PortfolioRange
-): number {
+export function getPortfolioCount(accounts: AccountLike[], range: PortfolioRange): number {
   const conf = getPortfolioRangeConfig(range);
   if (typeof conf.count === "number") return conf.count;
   if (!accounts.length) return 0;
