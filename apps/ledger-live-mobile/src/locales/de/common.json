@@ -325,6 +325,10 @@
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
       "primaryCTA" : "Ein weiteres Bild hochladen"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Ihr Ledger Stax hat kein entfernbares Sperrbildschirm-Bild",
+      "description" : "Das benutzerdefinierte Sperrbildschirm-Bild wurde bereits entfernt."
+    },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
     },
@@ -407,6 +411,9 @@
     },
     "MaxFeeLow" : {
       "title" : "Ihre maximale Gebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "Prioritätsgebühr zu niedrig, bitte geben Sie einen Betrag ein, der höher ist als der Wert der Prioritätsgebühr bei der ersten Transaktion"
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
@@ -491,6 +498,9 @@
     "TimeoutTagged" : {
       "title" : "Entschuldigung, der Server hat zu lange gebraucht um zu antworten ({{tag}})",
       "description" : "Zeitüberschreitung aufgetreten."
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "Transaktion wurde bereits validiert"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Transaktion auf Gerät abgelehnt",
@@ -2700,10 +2710,6 @@
           "title" : "Experimentelle Apps-Liste für My Ledger",
           "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
         },
-        "experimentalCountervalues" : {
-          "title" : "Experimentelle Gegenwerte API",
-          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
-        },
         "experimentalSwap" : {
           "title" : "Neue SWAP-Schnittstelle",
           "description" : "Verwenden Sie die neue experimentelle Swap-Schnittstelle"
@@ -3480,6 +3486,39 @@
       "maxSpendable" : {
         "title" : "Maximal ausgabefähiger Betrag",
         "description" : "Der maximal ausgabefähige Betrag ist das gesamte Guthaben auf einem Konto, das zum Senden in einer Transaktion zur Verfügung steht."
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Beschleunigen oder Abbrechen",
+    "header" : "Transaktion bearbeiten",
+    "learnMore" : "Ich möchte mehr erfahren",
+    "panel" : {
+      "stuckMessage" : "Diese „Senden\"-Transaktion ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "speedupMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
+      "networkfee" : "Netzwerkgebühr: {{amount}} {{unit}}",
+      "maxFee" : "Max Gebühr: {{amount}} Gwei",
+      "maxPriorityFee" : "Max. Prioritätsgebühr: {{amount}} Gwei",
+      "gasPrice" : "Gaspreis: {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "Beschleunigen",
+      "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+    },
+    "cancel" : {
+      "title" : "Abbrechen",
+      "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 30 % höher als die Gebühr für die zu stornierende Transaktion."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "Kann nicht beschleunigt oder abgebrochen werden",
+        "description" : "Diese Transaktion wurde bereits validiert"
       }
     }
   },
@@ -5819,6 +5858,11 @@
       "developerCTA" : {
         "title" : "Für Entwickler",
         "description" : "Alle Informationen, die Sie benötigen, um Ihre Anwendungen in Ledger Live zu integrieren."
+      },
+      "warnings" : {
+        "notFound" : "Nicht gefunden",
+        "retrySearchKeyword" : "Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
+        "retrySearchKeywordAndUrl" : "Bitte wiederholen Sie die Suche mit einem anderen Suchbegriff oder öffnen Sie <Link>{{search}}</Link> außerhalb von Ledger Live."
       }
     },
     "disclaimer" : {
@@ -5934,13 +5978,10 @@
       "reload" : "Aktualisieren",
       "noCryptosFound" : "Keine Coins gefunden",
       "noCurrencyFound" : "Keine Währung gefunden",
-      "noAppFound" : "Keine App gefunden",
-      "notFound" : "Nicht gefunden",
       "noSearchResultsFor" : "Leider haben wir keine Coins für <0>{{search}}</0> gefunden. Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
       "noCurrencySearchResultsFor" : "Leider haben wir keine Coins für <0>{{search}}</0> gefunden. Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
       "noSearchResults" : "Sorry, wir haben keine Suchergebnisse gefunden.",
       "retrySearchKeyword" : "Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
-      "retrySearchKeywordAndUrl" : "Bitte wiederholen Sie die Suche mit einem anderen Suchbegriff oder öffnen Sie <Link>{{search}}</Link> außerhalb von Ledger Live.",
       "retrySearchParams" : "Bitte versuchen Sie die Suche mit anderen Parametern erneut.",
       "trackFavAssets" : "Verfolgen Sie Ihre Favoriten",
       "clickOnStarIcon" : "Klicken Sie auf das Sternsymbol neben einem Wert, um ihn zu Ihren Favoriten hinzuzufügen.",
@@ -6174,6 +6215,30 @@
     "title" : "Gerät verbinden"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Vermehren Sie Ihr ETH-Guthaben",
+      "subTitle" : "Staken Sie Ihre ETH und vermehren Sie Ihr Vermögen – durch tägliche Prämien direkt in Ledger Live.",
+      "close" : "Schließen",
+      "providers" : {
+        "lido" : {
+          "title" : "Verdienen mit Lido",
+          "description" : "Staken Sie Ihr Ethereum mit Lido und verdienen Sie täglich Belohnungen. Kein ETH-Minimum erforderlich. Keine Sperrfrist.",
+          "supportLink" : "Mehr über Lido lernen"
+        },
+        "kiln" : {
+          "title" : "Staking mit Kiln",
+          "tag" : "Benötigt 32 ETH",
+          "description" : "Staken Sie mit speziellen Validatoren. Hierfür wird ein Vielfaches von 32 ETH benötigt. Prämien werden manuell beansprucht. Kann jederzeit beendet werden.",
+          "supportLink" : "Mehr über Kiln-Validator erfahren"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln Staking Pool",
+          "description" : "Treten Sie einem Staking-Pool bei. Kein ETH-Minimum erforderlich. Prämien werden automatisch zusammengeführt. Kann jederzeit beendet werden.",
+          "supportLink" : "Mehr über Kiln Pooling erfahren.",
+          "tag" : "Kein Minimum"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "Kaufen, umtauschen oder empfangen",
       "text" : "Sie haben nicht genug {{coin}} verfügbar um am Staking teilzunehmen",
