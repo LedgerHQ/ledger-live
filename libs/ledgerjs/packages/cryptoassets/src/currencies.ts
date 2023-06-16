@@ -3619,6 +3619,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         uri: "https://api.etherscan.io",
         type: "etherscan",
       },
+      gasTracker: { uri: "", type: "ledger" },
     },
     explorerViews: [
       {

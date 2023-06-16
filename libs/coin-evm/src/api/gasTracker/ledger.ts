@@ -24,6 +24,8 @@ const currencyIdGasTrackerMap = new Map<CryptoCurrency["id"], GasTracker>([
   ["polygon", { explorerId: "matic", compatibilty: { eip1559: true } }],
   ["ethereum_ropsten", { explorerId: "eth_ropsten", compatibilty: { eip1559: true } }],
   ["ethereum_goerli", { explorerId: "eth_goerli", compatibilty: { eip1559: true } }],
+  // FIXME: for tests
+  ["ethereum_as_evm_test_only", { explorerId: "eth", compatibilty: { eip1559: true } }],
 ]);
 
 export const getGasOptions = async ({
