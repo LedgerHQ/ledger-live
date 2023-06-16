@@ -137,9 +137,8 @@ export default (
   const customImage = useMemo(() => {
     const img: ContextMenuItemType = {
       id: "custom-image",
-      label: "Custom image",
-      // TODO: get proper wording for this
-      Icon: Icons.ToolsMedium,
+      label: t("customImage.cta"),
+      Icon: Icons.PhotographMedium,
       callback: () => {
         if (customImageUri)
           setDrawer(
@@ -161,7 +160,7 @@ export default (
       },
     };
     return img;
-  }, [account, customImageUri, isInsideDrawer, nft.id]);
+  }, [account, customImageUri, isInsideDrawer, nft.id, t]);
 
   const customImageEnabled = useFeature("customImage")?.enabled;
   const links = useMemo(() => {
