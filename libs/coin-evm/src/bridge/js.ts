@@ -18,6 +18,7 @@ import { hydrate, preload } from "../preload";
 import nftResolvers from "../nftResolvers";
 import getAddress from "../hw-getAddress";
 import { broadcast } from "../broadcast";
+import resolver from "../hw-getAddress";
 
 const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   transaction,
