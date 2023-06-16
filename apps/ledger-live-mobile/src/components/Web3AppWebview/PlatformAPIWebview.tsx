@@ -14,7 +14,6 @@ import type {
 import { getEnv } from "@ledgerhq/live-common/env";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
@@ -146,7 +145,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           // if single currency available redirect to select account directly
           if (currenciesDiff.length === 1) {
-            const currency = findCryptoCurrencyById(currenciesDiff[0]);
+            const currency = allCurrencies.find(c => c.id === currenciesDiff[0]);
 
             if (!currency) {
               tracking.platformRequestAccountFail(manifest);
