@@ -38,10 +38,8 @@ This should NOT happen, it means that some data has been lost.`;
 
 const TestImage: React.FC<Props> = props => {
   const { rawData, previewData, onError } = props;
-  const [
-    reconstructedPreviewResult,
-    setReconstructedPreviewResult,
-  ] = useState<ProcessorPreviewResult | null>(null);
+  const [reconstructedPreviewResult, setReconstructedPreviewResult] =
+    useState<ProcessorPreviewResult | null>(null);
 
   const handlePreviewResult = useCallback((res: ProcessorPreviewResult) => {
     setReconstructedPreviewResult(res);

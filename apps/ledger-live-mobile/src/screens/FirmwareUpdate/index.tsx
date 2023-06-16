@@ -163,9 +163,8 @@ export const FirmwareUpdate = ({
     deviceInfo,
   });
 
-  const [staxImageSource, setStaxImageSource] = useState<
-    React.ComponentProps<typeof Image>["source"]
-  >();
+  const [staxImageSource, setStaxImageSource] =
+    useState<React.ComponentProps<typeof Image>["source"]>();
   const handleStaxImageSourceLoaded = useCallback((res: ProcessorPreviewResult) => {
     setStaxImageSource({ uri: res.imageBase64DataUri });
   }, []);
