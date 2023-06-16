@@ -193,7 +193,7 @@ export default class StepSummary extends PureComponent<StepProps> {
               </Box>
             </Box>
           ) : (
-            <NFTSummary transaction={transaction} />
+            <NFTSummary transaction={transaction} currency={mainAccount.currency} />
           )}
           <Box horizontal justifyContent="space-between">
             <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>

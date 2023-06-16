@@ -220,6 +220,9 @@ importers:
       '@electron/remote':
         specifier: ^2
         version: 2.0.8(electron@23.1.3)
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../../libs/coin-evm
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -14313,7 +14316,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       '@types/yargs': 15.0.14
       chalk: 4.1.2
 
@@ -14345,7 +14348,7 @@ packages:
       '@jest/schemas': 29.4.3
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       '@types/yargs': 17.0.10
       chalk: 4.1.2
 
@@ -14469,10 +14472,10 @@ packages:
       semver: 7.3.8
     dev: false
 
-  /@ledgerhq/devices@8.0.0:
-    resolution: {integrity: sha512-gSnRT0KPca+LIpaC6D/WZQjOAlSI5uCvK1dmxXtKhODLAj735rX5Z3SnGnLUavRCHNbUi44FzgvloF5BKTkh7A==}
+  /@ledgerhq/devices@8.0.3:
+    resolution: {integrity: sha512-Q7/vqkGELSBuwFafFoTqlHIRyOjw8JqbSgiQwe2R38xN0RKtKIh+5E6UfMKyoExiq+SrQg0IC8P2LS+XdjOHLw==}
     dependencies:
-      '@ledgerhq/errors': 6.12.3
+      '@ledgerhq/errors': 6.12.6
       '@ledgerhq/logs': 6.10.1
       rxjs: 6.6.7
       semver: 7.3.8
@@ -14497,8 +14500,8 @@ packages:
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
     dev: false
 
-  /@ledgerhq/errors@6.12.3:
-    resolution: {integrity: sha512-djiMSgB/7hnK3aLR/c5ZMMivxjcI7o2+y3VKcsZZpydPoVf9+FXqeJPRfOwmJ0JxbQ//LinUfWpIfHew8LkaVw==}
+  /@ledgerhq/errors@6.12.6:
+    resolution: {integrity: sha512-D+r2B09vaRO06wfGoss+rNgwqWSoK0bCtsaJWzlD2hv1zxTtucqVtSztbRFypIqxWTCb3ix5Nh2dWHEJVTp2Xw==}
     dev: false
 
   /@ledgerhq/hw-app-eth@5.11.0:
@@ -14543,11 +14546,11 @@ packages:
       events: 3.3.0
     dev: false
 
-  /@ledgerhq/hw-transport@6.28.1:
-    resolution: {integrity: sha512-RaZe+abn0zBIz82cE9tp7Y7aZkHWWbEaE2yJpfxT8AhFz3fx+BU0kLYzuRN9fmA7vKueNJ1MTVUCY+Ex9/CHSQ==}
+  /@ledgerhq/hw-transport@6.28.4:
+    resolution: {integrity: sha512-fB2H92YQjidmae2GFCmOGPwkZWk0lvTu0tlLlzfiY0wRheAG+DEgjnqhdU8wmydkPLIj0WUjRgldtnJtg/a2iQ==}
     dependencies:
-      '@ledgerhq/devices': 8.0.0
-      '@ledgerhq/errors': 6.12.3
+      '@ledgerhq/devices': 8.0.3
+      '@ledgerhq/errors': 6.12.6
       events: 3.3.0
     dev: false
 
@@ -14580,7 +14583,7 @@ packages:
   /@ledgerhq/wallet-api-client@0.15.2:
     resolution: {integrity: sha512-mjTOP7k0dETDPZuRKbaIJH6yHNZsDkwE6bwdZDFGyI2TlCly5HKmVUjHzePOF4VA+JgOmvL03YAh2NunrVICsA==}
     dependencies:
-      '@ledgerhq/hw-transport': 6.28.1
+      '@ledgerhq/hw-transport': 6.28.4
       '@ledgerhq/wallet-api-core': 0.16.0
       bignumber.js: 9.1.0
     dev: false
@@ -14588,7 +14591,7 @@ packages:
   /@ledgerhq/wallet-api-core@0.16.0:
     resolution: {integrity: sha512-UKlLE+46z4EQ3UcTcrkMvIkSYC9H9gwtpKxdTwbnI+tBnOusO6TvOg+qu5E0HZXG39f0xZF6OV7pdor8qmFryg==}
     dependencies:
-      '@ledgerhq/errors': 6.12.3
+      '@ledgerhq/errors': 6.12.6
       bignumber.js: 9.1.0
       uuid: 9.0.0
       zod: 3.19.1
@@ -14597,7 +14600,7 @@ packages:
   /@ledgerhq/wallet-api-core@0.17.1:
     resolution: {integrity: sha512-JiPhjthLJST1efqubouoTZYqeoiMnlsN2IEiei4oBZWgM0mrKGrVjMeGOGAfKaM+P3aIREvVIwsrIzYwNQALFw==}
     dependencies:
-      '@ledgerhq/errors': 6.12.3
+      '@ledgerhq/errors': 6.12.6
       bignumber.js: 9.1.0
       uuid: 9.0.0
       zod: 3.19.1
@@ -20845,7 +20848,7 @@ packages:
     resolution: {integrity: sha512-gyBO8FarBrItPGAfrnm4J7vrIWMsr9xqgfzgN4PAqY7eEmL8MDuZtdpk6B6DBuJ3hYbqxvOEa0QPhNzBxnGPeA==}
     engines: {node: '>=6.0.0'}
     dependencies:
-      '@ledgerhq/hw-transport': 6.28.1
+      '@ledgerhq/hw-transport': 6.28.4
       '@stablelib/blake2b': 1.0.1
       '@taquito/taquito': 13.0.1
       '@taquito/utils': 13.0.1
@@ -21175,7 +21178,7 @@ packages:
   /@types/bn.js@5.1.1:
     resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
     dependencies:
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
     dev: false
 
   /@types/body-parser@1.19.2:
@@ -21358,7 +21361,7 @@ packages:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 3.0.5
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
 
   /@types/graceful-fs@4.1.5:
     resolution: {integrity: sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==}
@@ -21547,7 +21550,7 @@ packages:
   /@types/keyv@3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
 
   /@types/ledgerhq__hw-transport@4.21.4:
     resolution: {integrity: sha512-vep+6yZnGv6owAthIY0w3f72w4dJIb4+yE5PCHveInTlZE9wukvU6Wc5Eig0OUUxcdhTazzeZx1xUaNVLqyQSg==}
@@ -21596,7 +21599,7 @@ packages:
   /@types/node-fetch@2.6.1:
     resolution: {integrity: sha512-oMqjURCaxoSIsHSr1E47QHzbmzNR5rK8McHuNb11BOM9cHcIK3Avy0s/b2JlXHoQGTYS3NsvWzV1M0iK7l0wbA==}
     dependencies:
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       form-data: 3.0.1
     dev: true
 
@@ -22256,7 +22259,7 @@ packages:
   /@types/webpack-sources@3.2.0:
     resolution: {integrity: sha512-Ft7YH3lEVRQ6ls8k4Ff1oB4jN6oy/XmU6tQISKdhfh+1mR+viZFphS6WL0IrtDOzvefmJg5a0s7ZQoRXwqTEFg==}
     dependencies:
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       '@types/source-list-map': 0.1.2
       source-map: 0.7.4
     dev: true
@@ -22264,7 +22267,7 @@ packages:
   /@types/webpack@4.41.32:
     resolution: {integrity: sha512-cb+0ioil/7oz5//7tZUSwbrSAN/NWHrQylz5cW8G0dWTcF/g+/dSdMlKVZspBYuMAN1+WnwHrkxiRrLcwd0Heg==}
     dependencies:
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       '@types/tapable': 1.0.8
       '@types/uglify-js': 3.13.2
       '@types/webpack-sources': 3.2.0
@@ -37683,7 +37686,7 @@ packages:
     dependencies:
       '@jest/types': 26.6.2
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.10
@@ -37707,7 +37710,7 @@ packages:
     dependencies:
       '@jest/types': 26.6.2
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.10
@@ -38458,7 +38461,7 @@ packages:
     resolution: {integrity: sha512-S5wqyz0DXnNJPd/xfIzZ5Xnp1HrJWBczg8mMfMpN78OJ5eDxXyf+Ygld9wX1DnUWbIbhM1YDY95NjR4CBXkb2g==}
     engines: {node: '>= 10.14.2'}
     dependencies:
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       graceful-fs: 4.2.10
     dev: true
 
@@ -38608,7 +38611,7 @@ packages:
     engines: {node: '>= 10.14.2'}
     dependencies:
       '@jest/types': 26.6.2
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       chalk: 4.1.2
       graceful-fs: 4.2.10
       is-ci: 2.0.0
@@ -38642,7 +38645,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.5.0
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       chalk: 4.1.2
       ci-info: 3.3.2
       graceful-fs: 4.2.10
@@ -46729,7 +46732,7 @@ packages:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 18.15.11
+      '@types/node': 20.2.5
       long: 4.0.0
     dev: false
 
