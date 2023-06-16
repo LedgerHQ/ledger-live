@@ -145,7 +145,7 @@
       "REVEAL" : "Révélé",
       "DELEGATE" : "Délégué",
       "REDELEGATE" : "Redélégué",
-      "UNDELEGATE" : "Délégation interrompue",
+      "UNDELEGATE" : "Délégation arrêtée",
       "APPROVE" : "Approuvé",
       "VOTE" : "Voté",
       "FREEZE" : "Gelé",
@@ -809,7 +809,7 @@
     "bandwidthTooltip" : "Gelez des actifs pour gagner de la Bande passante.",
     "energyTooltip" : "Gelez des actifs pour gagner de l’Énergie.",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
-    "undelegatingTooltip" : "Les actifs dont la délégation est interrompue sont disponibles après {{timelockInDays}} jours.",
+    "undelegatingTooltip" : "Les actifs retirés de la délégation sont disponibles après {{timelockInDays}} jours.",
     "banner" : {
       "redelegation" : {
         "title" : "Bon à savoir",
@@ -1714,9 +1714,9 @@
       "redelegatedFrom" : "Redéléguée de",
       "redelegatedTo" : "Redéléguée à",
       "redelegatedAmount" : "Montant redélégué",
-      "undelegated" : "Délégation interrompue",
-      "undelegatedFrom" : "Délégation interrompue de",
-      "undelegatedAmount" : "Montant de la délégation interrompue",
+      "undelegated" : "Délégation arrêtée",
+      "undelegatedFrom" : "Délégation arrêtée pour",
+      "undelegatedAmount" : "Montant retiré de la délégation",
       "withdrawnFrom" : "Retiré de",
       "withdrawnAmount" : "Montant retiré",
       "rewardFrom" : "Récompense de",
@@ -1832,8 +1832,8 @@
         "marketcap_desc" : "Capitalisation"
       },
       "installSuccess" : {
-        "title" : "Application bien installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
-        "title_plural" : "Applications bien installées. Vous pouvez ajouter vos comptes",
+        "title" : "Application installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
+        "title_plural" : "Applications installées. Vous pouvez ajouter vos comptes",
         "manageAccount" : "Gérer mes comptes"
       },
       "updatable" : {
@@ -2291,7 +2291,7 @@
       "availableBalance" : "Solde disponible",
       "delegatedAssetsTooltip" : "Les actifs délégués sont utilisés indirectement par le prestataire de service de staking pour faire fonctionner les nœuds de validation, traiter les transactions et sécuriser le réseau, participant ainsi au mécanisme de consensus.",
       "delegatedAssets" : "Actifs délégués",
-      "undelegatingTooltip" : "Les actifs dont la délégation a été interrompue sont soumis à une période de fin de liaison de 10 jours avant de pouvoir être retirés.",
+      "undelegatingTooltip" : "Les actifs retirés de la délégation sont disponibles au retrait après une période de 10 jours.",
       "undelegating" : "Retraits en attente"
     },
     "account" : {
@@ -2317,16 +2317,16 @@
       "header" : "Délégation(s)",
       "noRewards" : "Aucune récompense disponible",
       "delegate" : "Déléguer",
-      "undelegate" : "Interrompre la délégation",
+      "undelegate" : "Arrêter la délégation",
       "redelegateDisabledTooltip" : "Vous pouvez redéléguer dans <0>{{days}}</0>.",
       "redelegateMaxDisabledTooltip" : "Vous ne pouvez pas redéléguer à plus de <0>7</0> validateurs à la fois.",
-      "undelegateDisabledTooltip" : "Vous ne pouvez pas interrompre la délégation de plus de <0>7</0> validateurs à la fois.",
+      "undelegateDisabledTooltip" : "Vous ne pouvez pas arrêter la délégation de plus de <0>7</0> validateurs à la fois.",
       "reward" : "Demander les récompenses",
       "currentDelegation" : "Délégué : <0>{{amount}}</0>",
       "apr" : "APR",
       "totalStake" : "Stake total",
       "activeTooltip" : "Les montants délégués génèrent des récompenses.",
-      "inactiveTooltip" : "Les montants dont la délégation est interrompue ne génèrent plus de récompenses.",
+      "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
       "minSafeWarning" : "Fonds insuffisants. Vous devez avoir au moins 1 EGLD disponible.",
       "flow" : {
         "title" : "Déléguer",
@@ -2404,14 +2404,14 @@
       }
     },
     "undelegation" : {
-      "header" : "Délégation(s) interrompue(s)",
+      "header" : "Délégation(s) arrêtée(s)",
       "headerTooltip" : "Disponible au terme de la période de fin de liaison de 10 jours.",
-      "inactiveTooltip" : "Les montants dont la délégation est interrompue ne génèrent plus de récompenses.",
+      "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
       "withdraw" : {
         "cta" : "Finaliser le retrait"
       },
       "flow" : {
-        "title" : "Interrompre la délégation des actifs",
+        "title" : "Arrêter la délégation des actifs",
         "steps" : {
           "amount" : {
             "title" : "Montant",
@@ -2419,7 +2419,7 @@
             "warning" : "Les récompenses seront demandées automatiquement. L’interruption de délégation est un processus en 2 étapes : demande d’interruption, suivie d’une <0>période de fin de liaison de 10 jours</0> après laquelle vous pourrez finaliser le retrait. Ce montant sera alors transféré sur votre solde disponible.",
             "fields" : {
               "validator" : "Prestataire de staking",
-              "amount" : "Montant à interrompre"
+              "amount" : "Montant à arrêter"
             }
           },
           "device" : {
@@ -2428,7 +2428,7 @@
           "confirmation" : {
             "title" : "Confirmation",
             "success" : {
-              "title" : "Délégation des actifs bien interrompue",
+              "title" : "Délégation des actifs arrêtée",
               "description" : "<0>{{amount}}</0> ne sont plus délégués à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
@@ -2443,8 +2443,8 @@
         "steps" : {
           "withdraw" : {
             "title" : "Finaliser le retrait",
-            "description" : "Vous avez interrompu la délégation de vos <0>{{amount}}</0> EGLD à <0>{{validator}}</0>. En cliquant sur Continuer, ce montant sera immédiatement retiré et automatiquement ajouté à votre solde disponible.",
-            "selectLabel" : "Sélectionner une délégation interrompue"
+            "description" : "Vous avez arrêté la délégation de vos <0>{{amount}}</0> EGLD à <0>{{validator}}</0>. En cliquant sur Continuer, ce montant sera immédiatement retiré et automatiquement ajouté à votre solde disponible.",
+            "selectLabel" : "Sélectionner une délégation arrêtée"
           },
           "connectDevice" : {
             "title" : "Appareil"
@@ -2867,16 +2867,16 @@
       "header" : "Délégation(s)",
       "noRewards" : "Aucune récompense disponible",
       "delegate" : "Ajouter",
-      "undelegate" : "Interrompre la délégation",
+      "undelegate" : "Arrêter la délégation",
       "redelegate" : "Redéléguer",
       "redelegateDisabledTooltip" : "Vous pouvez redéléguer dans <0>{{days}}</0>.",
       "redelegateMaxDisabledTooltip" : "Vous ne pouvez pas redéléguer à plus de <0>7</0> validateurs à la fois.",
-      "undelegateDisabledTooltip" : "Vous ne pouvez pas interrompre la délégation de plus de <0>7</0> validateurs à la fois.",
+      "undelegateDisabledTooltip" : "Vous ne pouvez pas arrêter la délégation de plus de <0>7</0> validateurs à la fois.",
       "reward" : "Demander les récompenses",
       "currentDelegation" : "Délégué : <0>{{amount}}</0>",
       "estYield" : "rendement estimé",
       "activeTooltip" : "Les montants délégués génèrent des récompenses.",
-      "inactiveTooltip" : "Les montants dont la délégation est interrompue ne génèrent plus de récompenses.",
+      "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
       "minSafeWarning" : "Fonds insuffisants",
       "flow" : {
         "title" : "Déléguer",
@@ -2979,11 +2979,11 @@
       }
     },
     "undelegation" : {
-      "header" : "Délégation(s) interrompue(s)",
+      "header" : "Délégation(s) arrêtée(s)",
       "headerTooltip" : "Disponibles après le gel de 21 jours",
-      "inactiveTooltip" : "Les montants dont la délégation est interrompue ne génèrent plus de récompenses.",
+      "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
       "flow" : {
-        "title" : "Interrompre la délégation des actifs",
+        "title" : "Arrêter la délégation des actifs",
         "steps" : {
           "amount" : {
             "title" : "Montant",
@@ -2991,7 +2991,7 @@
             "warning" : "Les récompenses seront immédiatement encaissées. Le montant qui n’est plus délégué sera versé sur votre solde disponible après la période de <0>verrouillage de {{numberOfDays}} jours</0>.",
             "fields" : {
               "validator" : "Validateur",
-              "amount" : "Montant à interrompre"
+              "amount" : "Montant à arrêter"
             }
           },
           "device" : {
@@ -3000,7 +3000,7 @@
           "confirmation" : {
             "title" : "Confirmation",
             "success" : {
-              "title" : "Délégation des actifs bien interrompue",
+              "title" : "Délégation des actifs arrêtée",
               "description" : "<0>{{amount}}</0> ne sont plus délégués à <0>{{validator}}</0>.",
               "cta" : "Voir les détails"
             },
@@ -3660,7 +3660,7 @@
           "title" : "Déléguer le compte",
           "label" : "Récapitulatif",
           "toDelegate" : "Compte à déléguer",
-          "toUndelegate" : "Compte avec une délégation à interrompre",
+          "toUndelegate" : "Compte avec une délégation à arrêter",
           "validator" : "Validateur",
           "select" : "Sélectionner",
           "yield" : "Rendement estimé {{amount}}",
@@ -3679,14 +3679,14 @@
           "button" : "Utiliser ce validateur"
         },
         "undelegate" : {
-          "title" : "Interrompre la délégation du compte"
+          "title" : "Arrêter la délégation du compte"
         },
         "confirmation" : {
           "title" : "Confirmation",
           "label" : "Confirmation",
           "success" : {
             "title" : "Délégation envoyée",
-            "titleUndelegated" : "Interrompre la délégation",
+            "titleUndelegated" : "Arrêter la délégation",
             "text" : "Transaction de délégation bien émise. En fonction du validateur, vous devriez recevoir vos premières récompenses sous 40 jours environ.",
             "textUndelegated" : "La délégation de votre compte se terminera une fois l’opération confirmée. Vous pouvez à nouveau déléguer votre compte à tout moment."
           },
@@ -5095,7 +5095,7 @@
       "title" : "Le montant délégué doit être d’au moins {{formattedAmount}}."
     },
     "ElrondMinUndelegatedAmountError" : {
-      "title" : "La délégation interrompue doit être d’au moins {{formattedAmount}}."
+      "title" : "La délégation arrêtée doit être d’au moins {{formattedAmount}}."
     },
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Le montant restant à déléguer ne peut pas être inférieur à {{formattedAmount}}."
@@ -5299,7 +5299,7 @@
       "description" : "Cette fonctionnalité sera ajoutée ultérieurement suite aux changements introduits par la mise à jour Babylon."
     },
     "RecommendUndelegation" : {
-      "title" : "Interrompez la délégation du compte avant de le vider."
+      "title" : "Arrêtez la délégation du compte avant de le vider."
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Commencez par vider tous les sous-comptes."
@@ -5377,7 +5377,7 @@
       "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
     "PairingFailed" : {
-      "title" : "Échec du couplage",
+      "title" : "Échec de l’appairage",
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "GenuineCheckFailed" : {
