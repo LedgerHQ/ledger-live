@@ -1,3 +1,19 @@
+# 2.62.0
+
+### 🚀 Features
+
+Ledger Live now supports eight new Cardano tokens and twelve ESDT tokens, including WrappedUSDT (USDT). 
+
+We've made a few improvements to speed up synchronization between your Bitcoin account and the Bitcoin network. 
+
+### 🐛 Fixes
+
+Some users reported wrong countervalues for certain tokens. This has been fixed.
+
+We’ve resolved the bug that caused an error when adding Solana (SOL) accounts.
+
+A bug that caused the NEAR commission fee to be displayed incorrectly has been fixed.
+
 # 2.60.0
 
 ### 🚀 Features
