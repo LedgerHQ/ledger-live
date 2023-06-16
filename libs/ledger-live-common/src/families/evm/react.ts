@@ -16,9 +16,9 @@ export const useGasOptions = ({
 }: {
   currency: CryptoCurrency;
   transaction: Transaction;
-  interval: number;
-}): [GasOptions | null, Error | null] => {
-  const [gasOptions, setGasOptions] = useState<GasOptions | null>(null);
+  interval?: number;
+}): [GasOptions | undefined, Error | null] => {
+  const [gasOptions, setGasOptions] = useState<GasOptions | undefined>(undefined);
   const [error, setError] = useState<Error | null>(null);
   const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
 
