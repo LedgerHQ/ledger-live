@@ -206,3 +206,24 @@ export const erc1155Transaction: EvmTransaction = Object.freeze({
   maxPriorityFeePerGas: new BigNumber(100),
   type: 2,
 });
+
+export const erc1155TransactionNonFinite: EvmTransaction = Object.freeze({
+  family: "evm",
+  mode: "erc1155",
+  amount: new BigNumber(0),
+  useAllAmount: false,
+  recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
+  feesStrategy: "custom",
+  nonce: 0,
+  gasLimit: new BigNumber(60000),
+  chainId: 1,
+  nft: {
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    tokenId: "1",
+    quantity: new BigNumber(Infinity),
+    collectionName: "BAYC",
+  },
+  maxFeePerGas: new BigNumber(100),
+  maxPriorityFeePerGas: new BigNumber(100),
+  type: 2,
+});
