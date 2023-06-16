@@ -23,8 +23,9 @@ export const fetchERC20Tokens: (
     });
   if (dynamicTokens) return dynamicTokens;
 
-  // @ts-expect-error FIXME: fix typings
-  const tokens = tokensByChainId[ethereumLikeInfo?.chainId || ""];
+  const tokens = tokensByChainId[
+    ethereumLikeInfo?.chainId as keyof typeof tokensByChainId
+  ] as ERC20Token[];
   if (tokens) return tokens;
 
   log("warning", `EVM Family: No tokens found in CAL for currency: ${currency.id}`, currency);

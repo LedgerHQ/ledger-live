@@ -240,6 +240,131 @@ describe("EVM Family", () => {
           { type: "fees", label: "Max fees" },
         ]);
       });
+
+      it("should return the right fields and infos for an NFT transaction mode 'erc721'", async () => {
+        const nftTransaction: EvmTransaction = {
+          family: "evm",
+          mode: "erc721",
+          amount: new BigNumber(0),
+          useAllAmount: false,
+          recipient: "0x8E9eDe486d8208705C67095dd0b4839dEB127132", // pascalgauthier.eth
+          feesStrategy: "custom",
+          nonce: 0,
+          gasLimit: new BigNumber(21000),
+          chainId: 1,
+          nft: {
+            contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+            tokenId: "1",
+            quantity: new BigNumber(1),
+            collectionName: "BAYC",
+          },
+          maxFeePerGas: new BigNumber(100),
+          maxPriorityFeePerGas: new BigNumber(100),
+          type: 2,
+        };
+        const status = await getTransactionStatus(account, nftTransaction);
+
+        expect(
+          getDeviceTransactionConfig({
+            account: tokenAccount,
+            parentAccount: account,
+            transaction: nftTransaction,
+            status,
+          }),
+        ).toEqual([
+          {
+            type: "text",
+            label: "Type",
+            value: `NFT Transfer`,
+          },
+          {
+            type: "text",
+            label: "To",
+            value: nftTransaction.recipient,
+          },
+          {
+            type: "text",
+            label: "Collection Name",
+            value: nftTransaction.nft.collectionName,
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: nftTransaction.nft.contract,
+          },
+          {
+            type: "text",
+            label: "NFT ID",
+            value: nftTransaction.nft.tokenId,
+          },
+          { type: "fees", label: "Max fees" },
+        ]);
+      });
+
+      it("should return the right fields and infos for an NFT transaction mode 'erc1155'", async () => {
+        const nftTransaction: EvmTransaction = {
+          family: "evm",
+          mode: "erc1155",
+          amount: new BigNumber(0),
+          useAllAmount: false,
+          recipient: "0x8E9eDe486d8208705C67095dd0b4839dEB127132", // pascalgauthier.eth
+          feesStrategy: "custom",
+          nonce: 0,
+          gasLimit: new BigNumber(21000),
+          chainId: 1,
+          nft: {
+            contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+            tokenId: "1",
+            quantity: new BigNumber(10),
+            collectionName: "BAYC",
+          },
+          maxFeePerGas: new BigNumber(100),
+          maxPriorityFeePerGas: new BigNumber(100),
+          type: 2,
+        };
+        const status = await getTransactionStatus(account, nftTransaction);
+
+        expect(
+          getDeviceTransactionConfig({
+            account: tokenAccount,
+            parentAccount: account,
+            transaction: nftTransaction,
+            status,
+          }),
+        ).toEqual([
+          {
+            type: "text",
+            label: "Type",
+            value: `NFT Transfer`,
+          },
+          {
+            type: "text",
+            label: "To",
+            value: nftTransaction.recipient,
+          },
+          {
+            type: "text",
+            label: "Collection Name",
+            value: nftTransaction.nft.collectionName,
+          },
+          {
+            type: "text",
+            label: "Quantity",
+            value: nftTransaction.nft.quantity.toFixed(),
+          },
+          {
+            type: "address",
+            label: "NFT Address",
+            address: nftTransaction.nft.contract,
+          },
+          {
+            type: "text",
+            label: "NFT ID",
+            value: nftTransaction.nft.tokenId,
+          },
+          { type: "fees", label: "Max fees" },
+        ]);
+      });
     });
   });
 });

@@ -3,14 +3,9 @@ import {
   NFTCollectionMetadataResponse,
   NFTMetadataResponse,
 } from "@ledgerhq/types-live";
-import { metadataCallBatcher } from "@ledgerhq/coin-framework/nft/support";
-import { getCryptoCurrencyById } from "../../currencies";
-import { apiForCurrency } from "./api";
-
-const SUPPORTED_CHAIN_IDS = new Set([
-  1, // Ethereum
-  137, // Polygon
-]);
+import { isNFTActive, metadataCallBatcher } from "@ledgerhq/coin-framework/nft/support";
+import { getCryptoCurrencyById } from "@ledgerhq/coin-framework/currencies/index";
+import NftApi from "./api/nft";
 
 type NftResolvers = NonNullable<CurrencyBridge["nftResolvers"]>;
 
@@ -33,14 +28,11 @@ export const nftMetadata: NftResolvers["nftMetadata"] = async ({
   }
 
   const currency = getCryptoCurrencyById(currencyId);
-  const chainId = currency?.ethereumLikeInfo?.chainId;
-
-  if (!chainId || !SUPPORTED_CHAIN_IDS.has(chainId)) {
-    throw new Error("Ethereum Bridge NFT Resolver: Unsupported chainId");
+  if (!isNFTActive(currency)) {
+    throw new Error("Ethereum Bridge NFT Resolver: Unsupported currency");
   }
 
-  const api = apiForCurrency(currency);
-  const response = await metadataCallBatcher(currency, api).loadNft({
+  const response = await metadataCallBatcher(currency, NftApi).loadNft({
     contract,
     tokenId,
   });
@@ -65,14 +57,11 @@ export const collectionMetadata: NftResolvers["collectionMetadata"] = async ({
   }
 
   const currency = getCryptoCurrencyById(currencyId);
-  const chainId = currency?.ethereumLikeInfo?.chainId;
-
-  if (!chainId || !SUPPORTED_CHAIN_IDS.has(chainId)) {
-    throw new Error("Ethereum Bridge NFT Resolver: Unsupported chainId");
+  if (!isNFTActive(currency)) {
+    throw new Error("Ethereum Bridge NFT Resolver: Unsupported currency");
   }
 
-  const api = apiForCurrency(currency);
-  const response = await metadataCallBatcher(currency, api).loadCollection({
+  const response = await metadataCallBatcher(currency, NftApi).loadCollection({
     contract,
   });
 
