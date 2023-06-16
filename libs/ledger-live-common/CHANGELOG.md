@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 31.1.0-nightly.4
+
+### Minor Changes
+
+- [#3611](https://github.com/LedgerHQ/ledger-live/pull/3611) [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2) Thanks [@chabroA](https://github.com/chabroA)! - Create GasTracker abstraction for evm familly
+
+### Patch Changes
+
+- [#3628](https://github.com/LedgerHQ/ledger-live/pull/3628) [`42d99e6c65`](https://github.com/LedgerHQ/ledger-live/commit/42d99e6c659845b4893173af2ccbad4b098e2c15) Thanks [@grsoares21](https://github.com/grsoares21)! - Debounce device change events for longer than polling frequency on connect manager device action
+
+- Updated dependencies [[`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2)]:
+  - @ledgerhq/coin-evm@0.3.0-nightly.3
+  - @ledgerhq/coin-algorand@0.2.2-nightly.3
+  - @ledgerhq/coin-framework@0.3.6-nightly.3
+  - @ledgerhq/coin-polkadot@0.1.7-nightly.3
+  - @ledgerhq/domain-service@1.1.4-nightly.2
+  - @ledgerhq/cryptoassets@9.8.0-nightly.1
+
 ## 31.1.0-nightly.3
 
 ### Patch Changes

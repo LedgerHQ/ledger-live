@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.14.2-nightly.0
+
+### Patch Changes
+
+- [#3613](https://github.com/LedgerHQ/ledger-live/pull/3613) [`6b3b5e6e71`](https://github.com/LedgerHQ/ledger-live/commit/6b3b5e6e718c48f9a98c12ba8f803db8d31e68ba) Thanks [@juan-cortes](https://github.com/juan-cortes)! - ui text wraps on stepper + fw update restore polishes
+
 ## 0.14.1
 
 ### Patch Changes

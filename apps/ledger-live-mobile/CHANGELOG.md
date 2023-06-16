@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.24.1-nightly.5
+
+### Patch Changes
+
+- [#3596](https://github.com/LedgerHQ/ledger-live/pull/3596) [`731f111e08`](https://github.com/LedgerHQ/ledger-live/commit/731f111e08bc9c07b664226dda1968b28ea59cee) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the manager redirection after the new firmware update flow
+
+- Updated dependencies [[`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`500e36a789`](https://github.com/LedgerHQ/ledger-live/commit/500e36a789b34125164433fbd03c00305669ee4d), [`42d99e6c65`](https://github.com/LedgerHQ/ledger-live/commit/42d99e6c659845b4893173af2ccbad4b098e2c15)]:
+  - @ledgerhq/types-cryptoassets@7.3.0-nightly.1
+  - @ledgerhq/live-common@31.1.0-nightly.4
+  - @ledgerhq/hw-transport-http@6.28.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.6-nightly.3
+  - @ledgerhq/domain-service@1.1.4-nightly.2
+  - @ledgerhq/types-live@6.35.0
+
 ## 3.24.1-nightly.4
 
 ### Patch Changes

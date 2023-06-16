@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.5
+
+### Minor Changes
+
+- [#3523](https://github.com/LedgerHQ/ledger-live/pull/3523) [`500e36a789`](https://github.com/LedgerHQ/ledger-live/commit/500e36a789b34125164433fbd03c00305669ee4d) Thanks [@drakoFukayu](https://github.com/drakoFukayu)! - feat: LLD allow user to use vault as a signer
+
+### Patch Changes
+
+- [#3613](https://github.com/LedgerHQ/ledger-live/pull/3613) [`6b3b5e6e71`](https://github.com/LedgerHQ/ledger-live/commit/6b3b5e6e718c48f9a98c12ba8f803db8d31e68ba) Thanks [@juan-cortes](https://github.com/juan-cortes)! - ui text wraps on stepper + fw update restore polishes
+
+- Updated dependencies [[`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`6b3b5e6e71`](https://github.com/LedgerHQ/ledger-live/commit/6b3b5e6e718c48f9a98c12ba8f803db8d31e68ba), [`500e36a789`](https://github.com/LedgerHQ/ledger-live/commit/500e36a789b34125164433fbd03c00305669ee4d), [`42d99e6c65`](https://github.com/LedgerHQ/ledger-live/commit/42d99e6c659845b4893173af2ccbad4b098e2c15)]:
+  - @ledgerhq/types-cryptoassets@7.3.0-nightly.1
+  - @ledgerhq/live-common@31.1.0-nightly.4
+  - @ledgerhq/react-ui@0.14.2-nightly.0
+  - @ledgerhq/hw-transport-vault@1.1.0-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.6-nightly.3
+  - @ledgerhq/domain-service@1.1.4-nightly.2
+  - @ledgerhq/types-live@6.35.0
+
 ## 2.62.0-nightly.4
 
 ### Patch Changes
