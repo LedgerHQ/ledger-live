@@ -178,7 +178,7 @@ export const getTransactionData = (
         account.freshAddress,
         transaction.recipient,
         transaction.nft.tokenId,
-        transaction.nft.quantity.toFixed(),
+        transaction.nft.quantity.isFinite() ? transaction.nft.quantity.toFixed() : 0,
         "0x",
       ]);
 
