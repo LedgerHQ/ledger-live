@@ -432,7 +432,7 @@
       "title" : "Le montant délégué doit être d’au moins {{formattedAmount}}."
     },
     "ElrondMinUndelegatedAmountError" : {
-      "title" : "La délégation interrompue doit être d’au moins {{formattedAmount}}."
+      "title" : "La délégation arrêtée doit être d’au moins {{formattedAmount}}."
     },
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Le montant restant à déléguer ne peut pas être inférieur à {{formattedAmount}}."
@@ -469,7 +469,7 @@
       "title" : "Un minimum de {{minimalAmount}} est nécessaire pour activer l’adresse du bénéficiaire."
     },
     "PairingFailed" : {
-      "title" : "Échec du couplage",
+      "title" : "Échec de l’appairage",
       "description" : "Réessayez ou consultez notre article de dépannage Bluetooth."
     },
     "PasswordIncorrect" : {
@@ -1274,7 +1274,7 @@
       },
       "devicePairing" : {
         "title" : "Vous avez déjà une phrase de récupération ?",
-        "label" : "Couplage de l’appareil",
+        "label" : "Appairage de l’appareil",
         "subTitle" : "Connecter votre Nano",
         "desc" : "Si votre Nano est déjà configuré, connectez-le à l’app."
       },
@@ -1646,7 +1646,7 @@
             "label" : "<1>{{Os}}</1> : dans les paramètres de votre téléphone, assurez-vous que Ledger Live a l’autorisation d’accéder à votre localisation. Ledger Live n’utilise jamais vos informations de localisation : c’est nécessaire pour accéder au Bluetooth sur {{Os}}."
           },
           "2" : {
-            "label" : "En cas de problème de couplage Bluetooth, jetez un œil à cet article :",
+            "label" : "En cas de problème d’appairage Bluetooth, jetez un œil à cet article :",
             "link" : "Résoudre les problèmes de connexion"
           }
         }
@@ -1828,12 +1828,12 @@
         "title" : "Couplé avec votre {{deviceName}}"
       },
       "loading" : {
-        "title" : "Couplage avec votre {{deviceName}}...",
+        "title" : "Appairage avec votre {{deviceName}}...",
         "subtitle" : "Confirmez le code sur votre {{productName}}."
       },
       "error" : {
         "generic" : {
-          "title" : "Échec du couplage",
+          "title" : "Échec de l’appairage",
           "subtitle" : "Une erreur est survenue.\nVérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité."
         },
         "lockedDevice" : {
@@ -1861,11 +1861,11 @@
         "title" : "Couplé avec votre {{deviceName}}"
       },
       "loading" : {
-        "title" : "Couplage avec votre {{deviceName}}",
+        "title" : "Appairage avec votre {{deviceName}}",
         "subtitle" : "Confirmez le code sur votre {{productName}}."
       },
       "error" : {
-        "title" : "Échec du couplage",
+        "title" : "Échec de l’appairage",
         "subtitle" : "Une erreur est survenue. Vérifiez que le Bluetooth est activé et que votre {{productName}} est à proximité."
       }
     },
@@ -2115,7 +2115,7 @@
       "CREATE" : "Créé",
       "REVEAL" : "Révélé",
       "DELEGATE" : "Délégué",
-      "UNDELEGATE" : "Délégation interrompue",
+      "UNDELEGATE" : "Délégation arrêtée",
       "REDELEGATE" : "Redélégué",
       "VOTE" : "Voté",
       "FREEZE" : "Gelé",
@@ -2186,9 +2186,9 @@
       "redelegatedFrom" : "Redéléguée de",
       "redelegatedTo" : "Redéléguée à",
       "redelegatedAmount" : "Montant redélégué",
-      "undelegated" : "Délégation interrompue ({{amount}})",
-      "undelegatedFrom" : "Délégation interrompue de",
-      "undelegatedAmount" : "Montant de la délégation interrompue",
+      "undelegated" : "Délégation arrêtée ({{amount}})",
+      "undelegatedFrom" : "Délégation arrêtée pour",
+      "undelegatedAmount" : "Montant retiré de la délégation",
       "withdrawnFrom" : "Retiré de",
       "withdrawnAmount" : "Montant retiré",
       "rewardFrom" : "Récompense de",
@@ -3784,7 +3784,7 @@
   },
   "PairDevices" : {
     "Paired" : {
-      "title" : "Couplage réussi",
+      "title" : "Appairage réussi",
       "desc" : "Votre {{productName}} est prêt à être utilisé avec Ledger Live.",
       "action" : "Continuer"
     },
@@ -3896,9 +3896,9 @@
       "appsToUpdate_plural" : "<0>{{number}}</0> mises à jour"
     },
     "installSuccess" : {
-      "title" : "App bien installée",
-      "title_plural" : "Apps bien installées",
-      "notSupported" : "App bien installée. Pour plus d’informations sur les apps installées, consultez notre site Internet.",
+      "title" : "App installée",
+      "title_plural" : "Apps installées",
+      "notSupported" : "App installée. Pour plus d’informations sur les apps installées, consultez notre site Internet.",
       "manageAccount" : "Ajouter des comptes",
       "learnMore" : "En savoir plus",
       "later" : "Plus tard",
@@ -3933,7 +3933,7 @@
         "button_plural" : "Installation... {{progressPercentage}} %"
       },
       "done" : {
-        "title" : "App bien installée",
+        "title" : "App installée",
         "accounts" : "Accéder aux Comptes",
         "description" : "Vous pouvez maintenant ajouter votre compte {{app}}."
       },
@@ -4501,7 +4501,7 @@
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont disponibles après {{numberOfDays}} jours."
+        "description" : "Les actifs retirés de la délégation sont disponibles après {{numberOfDays}} jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -4517,7 +4517,7 @@
       "Amount" : "Montant",
       "noRewards" : "Aucune récompense disponible",
       "delegate" : "Déléguer",
-      "undelegate" : "Interrompre la délégation",
+      "undelegate" : "Arrêter la délégation",
       "redelegate" : "Redéléguer",
       "reward" : "Demander les récompenses",
       "estYield" : "Rendement estimé",
@@ -4628,7 +4628,7 @@
     },
     "undelegation" : {
       "stepperHeader" : {
-        "amountSubTitle" : "Montant à interrompre",
+        "amountSubTitle" : "Montant à arrêter",
         "summary" : "Récapitulatif",
         "selectDevice" : "Sélectionner votre appareil",
         "connectDevice" : "Connecter votre appareil",
@@ -4637,11 +4637,11 @@
       "flow" : {
         "steps" : {
           "amount" : {
-            "allAssetsUsed" : "Tous les actifs interrompus"
+            "allAssetsUsed" : "Toutes les délégations arrêtées"
           },
           "verification" : {
             "success" : {
-              "title" : "Délégation des actifs bien interrompue",
+              "title" : "Délégation des actifs arrêtée",
               "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
               "cta" : "Voir les détails"
             },
@@ -5454,8 +5454,8 @@
     "delegationSendWarnDesc" : "Le montant à envoyer sera déduit de votre compte délégué.",
     "delegationReceiveWarnDesc" : "Le montant reçu sur un compte délégué sera ajouté au montant total qui est en staking. Merci de choisir un autre compte si cela ne vous convient pas.",
     "iDelegateMy" : "Je délègue mon",
-    "undelegateMy" : "Interrompre la délégation de mon",
-    "warnUndelegation" : "Votre compte sera interrompu.",
+    "undelegateMy" : "Arrêter la délégation de mon",
+    "warnUndelegation" : "Votre compte sera retiré de la délégation.",
     "warnDelegation" : "Déléguer vos droits de vote ne garantit pas que vous recevrez des récompenses de la part du validateur.",
     "to" : "à",
     "from" : "de",
@@ -5505,8 +5505,8 @@
     "howDelegationWorks" : "Fonctionnement de la délégation",
     "actions" : {
       "redelegate" : "Redéléguer",
-      "collectRewards" : "Toucher les récompenses",
-      "undelegate" : "Interrompre la délégation",
+      "collectRewards" : "Recevoir récomp.",
+      "undelegate" : "Arrêter la délégation",
       "withdraw" : "Retirer"
     }
   },
@@ -5564,7 +5564,7 @@
     "validatorAddress" : "Adresse du validateur",
     "validatorName" : "Nom du validateur",
     "rewardAmount" : "Montant de la récompense",
-    "undelegatedAmount" : "Montant de la délégation interrompue",
+    "undelegatedAmount" : "Montant retiré de la délégation",
     "memo" : "Mémo"
   },
   "Terms" : {
