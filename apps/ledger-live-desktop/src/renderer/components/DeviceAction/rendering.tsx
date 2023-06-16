@@ -792,7 +792,7 @@ const renderFirmwareUpdatingBase = ({
               {"1"}
             </Text>
           </Circle>
-          <Title>
+          <Title flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
               values={{ productName: getDeviceModel(modelId).productName }}
@@ -805,7 +805,7 @@ const renderFirmwareUpdatingBase = ({
               {"2"}
             </Text>
           </Circle>
-          <Title>
+          <Title flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
               values={{ productName: getDeviceModel(modelId).productName }}

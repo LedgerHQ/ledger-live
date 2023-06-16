@@ -3,9 +3,9 @@ import { Operation } from "@ledgerhq/types-live";
 import axios, { AxiosRequestConfig } from "axios";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import { EtherscanERC20Event, EtherscanOperation } from "../types";
-import { EtherscanAPIError } from "../errors";
-import { etherscanERC20EventToOperation, etherscanOperationToOperation } from "../adapters";
+import { EtherscanERC20Event, EtherscanOperation } from "../../types";
+import { EtherscanAPIError } from "../../errors";
+import { etherscanERC20EventToOperation, etherscanOperationToOperation } from "../../adapters";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;

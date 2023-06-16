@@ -24,6 +24,13 @@ import { Handlers } from "./types";
 
 /* Initial state */
 
+export type VaultSigner = {
+  enabled: boolean;
+  host: string;
+  workspace: string;
+  token: string;
+};
+
 export type SettingsState = {
   loaded: boolean;
   // is the settings loaded from db (it not we don't save them)
@@ -96,6 +103,7 @@ export type SettingsState = {
     [key in FeatureId]: Feature;
   };
   featureFlagsButtonVisible: boolean;
+  vaultSigner: VaultSigner;
 };
 
 const DEFAULT_LANGUAGE_LOCALE = "en";
@@ -170,6 +178,9 @@ const INITIAL_STATE: SettingsState = {
   starredMarketCoins: [],
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
+
+  // Vault
+  vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
 };
 
 /* Handlers */
@@ -223,6 +234,7 @@ type HandlersPayloads = {
   SET_FEATURE_FLAGS_BUTTON_VISIBLE: {
     featureFlagsButtonVisible: boolean;
   };
+  SET_VAULT_SIGNER: VaultSigner;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -406,6 +418,10 @@ const handlers: SettingsHandlers = {
   SET_FEATURE_FLAGS_BUTTON_VISIBLE: (state: SettingsState, { payload }) => ({
     ...state,
     featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
+  }),
+  SET_VAULT_SIGNER: (state: SettingsState, { payload }) => ({
+    ...state,
+    vaultSigner: payload,
   }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
@@ -703,3 +719,4 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
   state.settings.featureFlagsButtonVisible;
+export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;

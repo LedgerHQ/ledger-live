@@ -57,7 +57,13 @@ const Item = ({
   );
   return (
     <View>
-      <AccountCard disabled={!match} account={account} style={styles.card} onPress={onPress} />
+      <AccountCard
+        disabled={!match}
+        account={account}
+        parentAccount={parentAccount}
+        style={styles.card}
+        onPress={onPress}
+      />
     </View>
   );
 };

@@ -1,15 +1,15 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  DeviceCommunication,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { AlgorandAPI } from "../api";
-import getAddress from "../hw-getAddress";
+import resolver from "../hw-getAddress";
 import { initAccount } from "../initAccount";
 import { broadcast } from "../js-broadcast";
 import createTransaction from "../js-createTransaction";
@@ -20,6 +20,7 @@ import { buildSignOperation } from "../js-signOperation";
 import { makeGetAccountShape } from "../js-synchronization";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { Transaction } from "../types";
+import { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "../signer";
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,
@@ -27,15 +28,15 @@ const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
 });
 
 export function buildCurrencyBridge(
-  deviceCommunication: DeviceCommunication,
+  signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
   network: NetworkRequestCall,
 ): CurrencyBridge {
   const algorandAPI = new AlgorandAPI(network);
+  const getAddress = resolver(signerContext);
 
   const getAccountShape = makeGetAccountShape(algorandAPI);
   const scanAccounts = makeScanAccounts({
     getAccountShape,
-    deviceCommunication,
     getAddressFn: getAddress,
   });
 
@@ -47,13 +48,14 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  deviceCommunication: DeviceCommunication,
+  signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
   network: NetworkRequestCall,
 ): AccountBridge<Transaction> {
   const algorandAPI = new AlgorandAPI(network);
+  const getAddress = resolver(signerContext);
 
-  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
-  const signOperation = buildSignOperation(deviceCommunication, algorandAPI);
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext, algorandAPI);
   const getAccountShape = makeGetAccountShape(algorandAPI);
   const sync = makeSync({ getAccountShape });
 
@@ -73,17 +75,12 @@ export function buildAccountBridge(
   };
 }
 
-/**
- * FIXME: an unsued cacheFn is passed to createBridges because of how the
- * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
- */
 export function createBridges(
-  deviceCommunication: DeviceCommunication,
+  signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
   network: NetworkRequestCall,
-  _cacheFn: unknown,
 ) {
   return {
-    currencyBridge: buildCurrencyBridge(deviceCommunication, network),
-    accountBridge: buildAccountBridge(deviceCommunication, network),
+    currencyBridge: buildCurrencyBridge(signerContext, network),
+    accountBridge: buildAccountBridge(signerContext, network),
   };
 }
