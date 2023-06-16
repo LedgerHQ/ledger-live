@@ -801,7 +801,7 @@
     "frozenAssets" : "Donmuş varlıklar",
     "bandwidth" : "Bant Genişliği",
     "energy" : "Enerji",
-    "stake" : "Stake edin",
+    "stake" : "Stake et",
     "delegatedAssets" : "Yetkisi devredilen varlıklar",
     "undelegating" : "Yetki iptali",
     "availableBalanceTooltip" : "Bu tutar, kullanabileceğiniz fondur.",
@@ -3389,7 +3389,7 @@
         "delegation" : "Ödüller kazanın"
       },
       "earnRewards" : {
-        "description" : "ATOM varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
+        "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
         "bullet" : {
           "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
           "1" : "Ledger cihazınızı kullanarak yetki devredin.",
