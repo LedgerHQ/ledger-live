@@ -31,8 +31,8 @@
         "debug" : "디버그"
       },
       "banner" : {
-        "title" : "라이브 앱 카탈로그 살펴보기",
-        "description" : "Ledger Live를 통해 디파이와 NFT 등을 더욱 안전하게 이용할 수 있도록 노력하고 있습니다!"
+        "title" : "Live 앱 카탈로그 살펴보기",
+        "description" : "Ledger Live를 통해 DeFi와 NFT 등을 더욱 안전하게 이용할 수 있도록 노력하고 있습니다!"
       },
       "twitterBanner" : {
         "description" : "Ledger Live에서 또 어떤 서비스를 만나고 싶은지 해시태그로 알려주세요",
@@ -213,7 +213,7 @@
     "accounts" : "계정",
     "manager" : "내 Ledger",
     "earn" : "수익",
-    "exchange" : "매수 / 매도",
+    "exchange" : "구매 / 판매",
     "swap" : "스왑",
     "lend" : "대출",
     "catalog" : "탐색",
@@ -614,7 +614,7 @@
         "swap" : {
           "title" : "스왑",
           "label" : "인기 있는",
-          "body" : "암호화폐 간 안전한 전환"
+          "body" : "안전하게 암호화폐 교환"
         },
         "receive" : {
           "title" : "수령",
@@ -1331,7 +1331,7 @@
     },
     "buyCrypto" : {
       "title" : "암호화폐 구매",
-      "description" : "본사 파트너를 통해 암호화폐를 구매하고 Ledger 계정으로 바로 받아보세요.",
+      "description" : "당사 파트너를 통해 암호화폐를 구매하고 Ledger 계정으로 바로 받아보세요",
       "cta" : "지금 구매하기"
     },
     "familyPack" : {
@@ -1353,7 +1353,7 @@
     },
     "swap" : {
       "title" : "암호화폐 스왑",
-      "description" : "본사 파트너와 함께 Ledger Live에서 한 가지 암호화폐를 다른 종류로 교환해보세요"
+      "description" : "당사 파트너와 함께 Ledger Live에서 한 가지 암호화폐를 다른 종류로 교환해보세요"
     },
     "lending" : {
       "title" : "암호화폐 대출",
@@ -1421,17 +1421,17 @@
     "transactionsPendingConfirmation" : "일부 트랜잭션이 아직 확인되지 않았습니다. 트랜잭션이 확인된 후 잔액에 반영되며 사용이 가능합니다.",
     "featuredButtons" : {
       "buySell" : {
-        "title" : "매수 / 매도",
+        "title" : "구매 / 판매",
         "description" : "신뢰할 수 있는 공급자와 거래"
       },
       "swap" : {
         "title" : "스왑",
-        "description" : "암호화폐 간 안전한 전환",
+        "description" : "안전하게 암호화폐 교환",
         "label" : "인기 있는"
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger와 함께 암호화폐 수익 실현"
+        "description" : "Ledger와 함께 암호화폐 수익 창출"
       }
     }
   },
@@ -2121,7 +2121,7 @@
         },
         "cosmos" : {
           "title" : "ATOM을 성장시켜보세요. Ledger 검증인을 통한 스테이킹.",
-          "description" : "신뢰할 수 있는 Ledger 검증인을 통해 ATOM을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
+          "description" : "신뢰할 수 있는 Ledger 검증인을 통해 ATOM을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 여러분의 자산을 안전하게 보호합니다."
         },
         "osmo" : {
           "title" : "OSMO를 성장시켜보세요. Ledger by Figment로 스테이킹.",
@@ -3767,7 +3767,7 @@
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
       "catalogUrl" : "카탈로그 앱 공급자 설정",
       "catalogUrlDesc" : "사용자 지정 카탈로그 제공자 URL를 입력하세요",
-      "catalogRampServer" : "구매 / 매도 공급자 설정",
+      "catalogRampServer" : "구매 / 판매 공급자 설정",
       "catalogRampServerDesc" : "다중 거래 공급자 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
@@ -4162,15 +4162,15 @@
           },
           "1" : {
             "title" : "나만의 개인 키를 보유하세요",
-            "desc" : "귀하의 개인 키는 Nano에 저장됩니다.\n자산을 통제하려면 귀하가 개인 키의 유일한 소유권자여야 합니다."
+            "desc" : "여러분의 개인 키는 Nano 에 저장됩니다.\n자산을 통제하려면 여러분이 개인 키의 유일한 소유권자여야 합니다."
           },
           "2" : {
             "title" : "오프라인 상태를 유지하세요",
-            "desc" : "Nano는 '콜드 스토리지' 지갑 역할을 합니다.\n즉, 앱을 사용할 때도 온라인에 개인 키를 노출하지 않습니다"
+            "desc" : "Nano는 '콜드 스토리지' 지갑 역할을 합니다.\n여러분의 개인 키는 앱을 사용할 때도 온라인에 노출되지 않습니다."
           },
           "3" : {
             "title" : "트랜잭션 검증",
-            "desc" : "Ledger Live로 암호화폐를 안전하게 구매, 판매, 교환, 취득할 수 있습니다.\nNano로 모든 암호화폐 트랜잭션을 검증하세요"
+            "desc" : "Ledger Live를 통해 안전하게 암호화폐를 구매, 판매, 관리, 교환 및 수익 창출을 할 수 있습니다.\n모든 암호화폐 트랜잭션은 Nano 장치를 통해 검증됩니다"
           },
           "4" : {
             "title" : "Nano 설정을 시작합니다",
@@ -4305,7 +4305,7 @@
             }
           },
           "quizSuccess" : {
-            "title" : "이미 전문가네요!",
+            "title" : "이미 전문가가 되었네요!",
             "paragraph" : "이제 안전하게 암호화폐를 관리할 준비가 되었습니다.\n\n간단한 단계 하나만 남았어요!",
             "buttons" : {
               "next" : "다음 단계",
@@ -4314,8 +4314,8 @@
             }
           },
           "quizFailure" : {
-            "title" : "금방 전문가처럼 사용하게 될 거예요...",
-            "paragraph" : "걱정 마세요, Ledger가 언제나 함께합니다. 암호화폐의 안전에 대해서라면, 곧 안심하게 될 거예요.\n\n이제 간단한 단계 하나만 남았네요!",
+            "title" : "금방 전문가처럼 사용할 수 있을 거예요…",
+            "paragraph" : "걱정하지 마세요, Ledger는 언제나 여러분과 함께합니다. 암호화폐의 안전에 대해서라면, 곧 안심하실거에요.\n\n이제 마지막 한 단계만 남았습니다!",
             "buttons" : {
               "next" : "다음 단계",
               "prev" : "이전 단계"
@@ -4443,7 +4443,7 @@
           },
           "genuineCheck" : {
             "success" : {
-              "title" : "좋습니다!",
+              "title" : "확인되었습니다!",
               "desc" : "사용자의 Ledger {{deviceName}}는 정품이며 Ledger Live와 바로 사용할 수 있습니다"
             },
             "buttons" : {
@@ -4470,7 +4470,7 @@
           },
           "pairMyNano" : {
             "title" : "정품 확인",
-            "paragraph" : "사용자 Nano 장치의 정품 여부를 확인하겠습니다. 빠르고 간단한 절차입니다!",
+            "paragraph" : "사용자의 Nano 장치의 정품 여부를 확인하겠습니다. 빠르고 간단하게 처리됩니다!",
             "buttons" : {
               "next" : "내 Nano 확인하기",
               "prev" : "이전 단계",
@@ -4489,19 +4489,19 @@
       "screens" : {
         "accessYourCoins" : {
           "title" : "내 암호화폐에 액세스 하세요",
-          "description" : "귀하의 암호화 자산은 블록체인에 저장됩니다. 암호화폐에 액세스하고 관리하려면 개인 키가 필요합니다."
+          "description" : "여러분의 암호화 자산은 블록체인에 저장됩니다. 확인하고 관리하려면 개인 키가 필요합니다."
         },
         "ownYourPrivateKey" : {
           "title" : "나만의 개인 키를 보유하세요",
-          "description" : "귀하의 개인 키는 Nano에 저장됩니다. 자산을 통제하려면 귀하가 개인 키의 유일한 소유권자여야 합니다."
+          "description" : "여러분의 개인 키는 Nano 에 저장됩니다. 자산을 통제하기 위해서 여러분은 개인 키의 유일한 소유권자가 되어야 합니다."
         },
         "stayOffline" : {
           "title" : "오프라인 상태를 유지하세요",
-          "description" : "Nano는 '콜드 스토리지' 지갑 역할을 합니다. 즉, 앱을 사용할 때도 온라인에 개인 키를 노출하지 않습니다."
+          "description" : "Nano는 ‘콜드 스토리지’ 역할을 합니다. 여러분의 개인 키는 앱을 사용할 때도 온라인에 노출되지 않습니다."
         },
         "validateTransactions" : {
           "title" : "트랜잭션 검증",
-          "description" : "Ledger Live로 암호화폐를 안전하게 구매, 판매, 교환, 취득할 수 있습니다. Nano로 모든 암호화폐 트랜잭션을 검증하세요."
+          "description" : "Ledger Live를 통해 안전하게 암호화폐를 구매, 판매, 관리, 교환 및 수익 창출을 할 수 있습니다. 모든 암호화폐 트랜잭션은 Nano 장치를 통해 검증됩니다."
         },
         "setUpNanoWallet" : {
           "title" : "Nano 설정을 시작합니다!",
@@ -4512,8 +4512,8 @@
     },
     "quizz" : {
       "heading" : "퀴즈",
-      "title" : "이제 게임을 시작합시다!",
-      "descr" : "3가지 간단한 질문에 답하며 사람들이 흔히 잘못 알고 있는 하드웨어 지갑 상식을 알아보세요.",
+      "title" : "이제 게임을 시작하겠습니다!",
+      "descr" : "세 가지 간단한 질문에 답하여 사람들이 흔히 잘못 알고 있는 하드웨어 지갑 상식에 대해 알아보세요.",
       "buttons" : {
         "start" : "퀴즈를 풀어보세요",
         "next" : "다음 문제",
