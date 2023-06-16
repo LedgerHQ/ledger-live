@@ -325,6 +325,10 @@
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "您的 Ledger Stax 没有可移除的锁屏图片",
+      "description" : "之前移除了自定义锁屏图片。"
+    },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
     },
@@ -407,6 +411,9 @@
     },
     "MaxFeeLow" : {
       "title" : "您的最高费用过低。您的交易可能会等待一段时间"
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "优先费用太低，请输入高于初始交易优先费用数值的金额"
     },
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
@@ -491,6 +498,9 @@
     "TimeoutTagged" : {
       "title" : "抱歉，服务器响应超时 ({{tag}})",
       "description" : "出现超时。"
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "交易已验证"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "交易被设备端拒绝",
@@ -2700,10 +2710,6 @@
           "title" : "我的 Ledger 的实验性应用程序列表",
           "description" : "我的 Ledger 访问和内部流程的性能改进。"
         },
-        "experimentalCountervalues" : {
-          "title" : "实验性对价 API",
-          "description" : "这可能会导致您的账户对价显示错误。"
-        },
         "experimentalSwap" : {
           "title" : "新的互换界面",
           "description" : "使用新的实验性互换界面"
@@ -3480,6 +3486,39 @@
       "maxSpendable" : {
         "title" : "最大可支出数额",
         "description" : "最大可支出数额指的是一个账户可通过一个交易发送的总余额。"
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "加速或取消",
+    "header" : "编辑交易",
+    "learnMore" : "我想进一步了解",
+    "panel" : {
+      "stuckMessage" : "此“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "speedupMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。"
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "待处理交易费用信息： ",
+      "networkfee" : "网络费用 = {{amount}} {{unit}}",
+      "maxFee" : "最高费用 = {{amount}} Gwei",
+      "maxPriorityFee" : "最高优先费用 = {{amount}} Gwei",
+      "gasPrice" : "Gas 价格 = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "加快速度",
+      "description" : "使用较高的网络费用重新提交交易。"
+    },
+    "cancel" : {
+      "title" : "取消",
+      "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
+      "notEnoughFundsToSpeedup" : "无法使用加速交易，因为您的账户中没有足够的资金。",
+      "notlowestNonceToSpeedup" : "无法使用加速功能。您的交易有待处理，因为之前的交易已停滞。您可以等待确认交易，加速交易和取消交易。",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "无法加速或取消",
+        "description" : "此交易已经过验证"
       }
     }
   },
@@ -5801,7 +5840,7 @@
       },
       "branch" : {
         "soon" : "敬请期待",
-        "experimental" : "实验性的",
+        "experimental" : "实验性功能",
         "debug" : "除错"
       },
       "banner" : {
@@ -5819,6 +5858,11 @@
       "developerCTA" : {
         "title" : "面向开发者",
         "description" : "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。"
+      },
+      "warnings" : {
+        "notFound" : "未能找到",
+        "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
+        "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。"
       }
     },
     "disclaimer" : {
@@ -5934,13 +5978,10 @@
       "reload" : "重新加载",
       "noCryptosFound" : "未找到币",
       "noCurrencyFound" : "没有找到货币",
-      "noAppFound" : "未找到应用程序",
-      "notFound" : "未能找到",
       "noSearchResultsFor" : "对不起，我们没有找到任何币， <0>{{search}}</0> 。请用另一个关键词重新进行搜索。",
       "noCurrencySearchResultsFor" : "对不起，我们没有为<0>{{search}}</0>找到任何货币。请用另一个关键词重新进行搜索。",
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
-      "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
       "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
@@ -6120,8 +6161,8 @@
         "selectAndHide" : "选择并隐藏",
         "hide" : "隐藏 {{count}} 件藏品",
         "hide_plural" : "隐藏 {{count}} 件藏品",
-        "alertHide" : "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
-        "alertHide_plural" : "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
+        "alertHide" : "已隐藏 1 件收藏。随时前往 “设置” 中的 “账户” 部分显示并取消隐藏",
+        "alertHide_plural" : "已隐藏 {{count}} 件收藏。随时前往 “设置” 中的 “账户” 部分显示并取消隐藏"
       },
       "empty" : {
         "title" : "暂时没有 NFT 可显示",
@@ -6174,6 +6215,30 @@
     "title" : "连接设备"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Grow your ETH holdings",
+      "subTitle" : "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "close" : "Close",
+      "providers" : {
+        "lido" : {
+          "title" : "Earn with Lido",
+          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无最低以太币数量要求。无锁定期。",
+          "supportLink" : "Learn more about Lido"
+        },
+        "kiln" : {
+          "title" : "Kiln dedicated staking",
+          "tag" : "Requires 32 ETH",
+          "description" : "使用专门的验证者进行权益质押。需要是 32 以太币的倍数。奖励需要手动领取。随时退出。",
+          "supportLink" : "Learn more about Kiln validator"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking pool",
+          "description" : "加入权益质押池。不要求最低以太币金额。奖励自动按复利计算。随时退出。",
+          "supportLink" : "Learn more about Kiln pooling",
+          "tag" : "无最低限制"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "买入、互换或接收",
       "text" : "您没有足够的 {{coin}} 可供权益质押",
