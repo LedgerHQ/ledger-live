@@ -3,13 +3,7 @@ import React, { useCallback, useMemo, useState, memo } from "react";
 import { useNftMetadata, getNftCapabilities } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import {
-  Account,
-  NFTCollectionMetadataResponse,
-  NFTMetadataResponse,
-  ProtoNFT,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { Account, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
@@ -31,10 +25,7 @@ const NftRow = memo(({ account, nft }: { account: Account | TokenAccount; nft: P
   const navigation =
     useNavigation<StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendNft>>();
   const { colors } = useTheme();
-  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId) as {
-    status: NFTResource["status"];
-    metadata?: NFTMetadataResponse["result"] & NFTCollectionMetadataResponse["result"];
-  };
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
 
   const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
 

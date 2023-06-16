@@ -4,13 +4,7 @@ import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type {
-  Account,
-  Operation,
-  AccountLike,
-  NFTMetadataResponse,
-  NFTCollectionMetadataResponse,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -152,16 +146,12 @@ export default function Content({ account, parentAccount, operation, disableAllL
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
     operation.contract,
     currency.id,
-  ) as NFTResource & {
-    metadata: NFTCollectionMetadataResponse["result"];
-  };
+  );
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,
     currency.id,
-  ) as NFTResource & {
-    metadata: NFTMetadataResponse["result"];
-  };
+  );
   return (
     <>
       <View style={styles.header}>
