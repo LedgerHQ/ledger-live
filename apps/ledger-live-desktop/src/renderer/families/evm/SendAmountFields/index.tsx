@@ -24,7 +24,9 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
     interval: account.currency.blockAvgTime ? account.currency.blockAvgTime * 1000 : undefined,
   });
 
-  log("error", error);
+  if (error) {
+    log("error", error.message);
+  }
 
   useEffect(() => {
     updateTransaction((tx: EvmTransaction) => bridge.updateTransaction(tx, { ...tx, gasOptions }));
