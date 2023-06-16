@@ -1,10 +1,12 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+/* istanbul ignore file: not reaching userland - bot only. */
+
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import type { Transaction } from "./types";
 
 // FIXME: fix types

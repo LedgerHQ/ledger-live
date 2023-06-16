@@ -21,7 +21,7 @@ import {
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
 
-async function fetchWithRetries<T>(
+export async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
   retries = DEFAULT_RETRIES_API,
 ): Promise<T> {
@@ -102,7 +102,28 @@ export const getLastTokenOperations = async (
     url,
   });
 
-  return ops.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)).flat();
+  // Why this thing ?
+  // Multiple events can be fired by the same transactions and
+  // those transfer events can go from anyone to anyone, which
+  // means that multiple events could be sent to or from the
+  // same address during the same transaction.
+  //
+  // To make sure every event (transformed into an operation here)
+  // has a unique id, we're groupping them by transaction hash
+  // and using the index for each event fired.
+  const opsByHash: Record<string, EtherscanERC20Event[]> = {};
+  for (const op of ops) {
+    if (!opsByHash[op.hash]) {
+      opsByHash[op.hash] = [];
+    }
+    opsByHash[op.hash].push(op);
+  }
+
+  return Object.values(opsByHash)
+    .map(events =>
+      events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
+    )
+    .flat(2);
 };
 
 /**

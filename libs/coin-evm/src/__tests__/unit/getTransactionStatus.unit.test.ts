@@ -14,6 +14,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
 import getTransactionStatus from "../../getTransactionStatus";
+import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../../errors";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
@@ -327,6 +328,122 @@ describe("EVM Family", () => {
             gasPrice: new NotEnoughGas(),
           }),
         );
+      });
+    });
+
+    describe("Nft", () => {
+      describe("ERC721", () => {
+        const nft = {
+          contract: "0xNftContract",
+          tokenId: "1",
+          amount: new BigNumber(1),
+          currencyId: account.currency.id,
+          id: "doesn't matter",
+          standard: "ERC721" as const,
+        };
+
+        it("should detect a transaction for an ERC721 nft not owned by the account and have an error", async () => {
+          const tx = {
+            ...eip1559Tx,
+            mode: "erc721" as const,
+            nft: {
+              collectionName: "",
+              contract: nft.contract,
+              tokenId: nft.tokenId,
+              quantity: new BigNumber(1),
+            },
+          };
+          const res = await getTransactionStatus(account, tx);
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              amount: new NotOwnedNft(),
+            }),
+          );
+        });
+      });
+
+      describe("ERC1155", () => {
+        const nft = {
+          contract: "0xAnotherNftContract",
+          tokenId: "2",
+          amount: new BigNumber(2),
+          currencyId: account.currency.id,
+          id: "still doesn't matter",
+          standard: "ERC1155" as const,
+        };
+
+        it("should detect a transaction for an ERC1155 nft not owned by the account and have an error", async () => {
+          const tx = {
+            ...eip1559Tx,
+            mode: "erc1155" as const,
+            nft: {
+              collectionName: "",
+              contract: nft.contract,
+              tokenId: nft.tokenId,
+              quantity: new BigNumber(1),
+            },
+          };
+          const res = await getTransactionStatus(account, tx);
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              amount: new NotOwnedNft(),
+            }),
+          );
+        });
+
+        it("should detect a transaction for an ERC1155 where the quantity is 0 or below and have an error", async () => {
+          const tx = {
+            ...eip1559Tx,
+            mode: "erc1155" as const,
+            nft: {
+              collectionName: "",
+              contract: nft.contract,
+              tokenId: nft.tokenId,
+              quantity: new BigNumber(0),
+            },
+          };
+          const res = await getTransactionStatus(
+            {
+              ...account,
+              nfts: [nft],
+            },
+            tx,
+          );
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              amount: new QuantityNeedsToBePositive(),
+            }),
+          );
+        });
+
+        it("should detect a transaction for an ERC1155 nft but the account doesn't own enough of it and have an error", async () => {
+          const tx = {
+            ...eip1559Tx,
+            mode: "erc1155" as const,
+            nft: {
+              collectionName: "",
+              contract: nft.contract,
+              tokenId: nft.tokenId,
+              quantity: new BigNumber(3),
+            },
+          };
+          const res = await getTransactionStatus(
+            {
+              ...account,
+              nfts: [nft],
+            },
+            tx,
+          );
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              amount: new NotEnoughNftOwned(),
+            }),
+          );
+        });
       });
     });
 

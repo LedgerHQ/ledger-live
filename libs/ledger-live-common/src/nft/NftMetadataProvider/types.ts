@@ -49,28 +49,3 @@ export type NFTMetadataContextAPI = {
 };
 
 export type NFTMetadataContextType = NFTMetadataContextState & NFTMetadataContextAPI;
-
-export type Batcher = {
-  load: (
-    element:
-      | {
-          contract: string;
-          tokenId: string;
-        }
-      | {
-          contract: string;
-        },
-  ) => Promise<NFTMetadataResponse | NFTCollectionMetadataResponse>;
-};
-
-export type BatchElement = {
-  element: any;
-  resolve: (value: NFTMetadataResponse) => void;
-  reject: (reason?: Error) => void;
-};
-
-export type Batch = {
-  elements: Array<BatchElement["element"]>;
-  resolvers: Array<BatchElement["resolve"]>;
-  rejecters: Array<BatchElement["reject"]>;
-};
