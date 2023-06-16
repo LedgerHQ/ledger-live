@@ -7,9 +7,7 @@ import { Icons } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
 import IconOpensea from "~/renderer/icons/Opensea";
 import IconRarible from "~/renderer/icons/Rarible";
-import IconGlobe from "~/renderer/icons/Globe";
 import { openURL } from "~/renderer/linking";
-import IconBan from "~/renderer/icons/Ban";
 import { getMetadataMediaTypes } from "~/helpers/nft";
 import { setDrawer } from "../drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
@@ -54,7 +52,7 @@ const linksPerCurrency: Record<
         label: t("NFT.viewer.actions.open", {
           viewer: "Explorer",
         }),
-        Icon: IconGlobe,
+        Icon: Icons.GlobeMedium,
         type: "external",
         callback: () => openURL(links.explorer),
       },
@@ -89,7 +87,7 @@ const linksPerCurrency: Record<
         label: t("NFT.viewer.actions.open", {
           viewer: "Explorer",
         }),
-        Icon: IconGlobe,
+        Icon: Icons.GlobeMedium,
         type: "external",
         callback: () => openURL(links.explorer),
       },
@@ -109,7 +107,7 @@ export default (
     () => ({
       id: "hide-collection",
       label: t("hideNftCollection.hideCTA"),
-      Icon: IconBan,
+      Icon: Icons.NoneMedium,
       callback: () => {
         return dispatch(
           openModal("MODAL_HIDE_NFT_COLLECTION", {
