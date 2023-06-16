@@ -3,8 +3,10 @@ import { PropsRaw } from "./types";
 
 export function useCard({ manifest, onClick: onClickProp }: PropsRaw) {
   const hostname = useMemo(
-    () => new URL(manifest.url).hostname.replace("www.", ""),
-    [manifest.url],
+    // @ts-expect-error not all params type has dappUrl field
+    () => new URL(manifest.params?.dappUrl ?? manifest.url).hostname.replace("www.", ""),
+    // @ts-expect-error not all params type has dappUrl field
+    [manifest.params?.dappUrl, manifest.url],
   );
 
   const onClick = useCallback(() => {
