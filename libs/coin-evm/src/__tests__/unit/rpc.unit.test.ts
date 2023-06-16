@@ -143,7 +143,7 @@ describe("EVM Family", () => {
         const response = await RPC_API.withApi(fakeCurrency as CryptoCurrency, spy, retries);
 
         expect(response).toBe(true);
-        // it should fail 1 time and succeed on the next try
+        // it should fail 2 times and succeed on the next try
         expect(spy).toBeCalledTimes(3);
       });
 

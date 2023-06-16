@@ -51,6 +51,71 @@ function getDeviceTransactionConfig({
         },
       );
       break;
+
+    case "erc721":
+      fields.push(
+        {
+          type: "text",
+          label: "Type",
+          value: `NFT Transfer`,
+        },
+        {
+          type: "text",
+          label: "To",
+          value: transaction.recipient,
+        },
+        {
+          type: "text",
+          label: "Collection Name",
+          value: transaction.nft.collectionName,
+        },
+        {
+          type: "address",
+          label: "NFT Address",
+          address: transaction.nft.contract,
+        },
+        {
+          type: "text",
+          label: "NFT ID",
+          value: transaction.nft.tokenId,
+        },
+      );
+      break;
+
+    case "erc1155":
+      fields.push(
+        {
+          type: "text",
+          label: "Type",
+          value: `NFT Transfer`,
+        },
+        {
+          type: "text",
+          label: "To",
+          value: transaction.recipient,
+        },
+        {
+          type: "text",
+          label: "Collection Name",
+          value: transaction.nft.collectionName,
+        },
+        {
+          type: "text",
+          label: "Quantity",
+          value: transaction.nft.quantity.toFixed(),
+        },
+        {
+          type: "address",
+          label: "NFT Address",
+          address: transaction.nft.contract,
+        },
+        {
+          type: "text",
+          label: "NFT ID",
+          value: transaction.nft.tokenId,
+        },
+      );
+      break;
   }
 
   fields.push({

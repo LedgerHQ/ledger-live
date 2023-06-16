@@ -4,10 +4,17 @@ import { transactionToEthersTransaction } from "../../adapters";
 import { Transaction as EvmTransaction } from "../../types";
 import * as rpcAPI from "../../api/rpc/rpc.common";
 import {
+  account,
   eip1559Tx,
+  erc1155Transaction,
+  erc721Transaction,
   legacyTx,
+  nftEip1559tx,
+  nftLegacyTx,
+  nftRawLegacyTx,
   rawEip1559Tx,
   rawLegacyTx,
+  rawNftEip1559Tx,
   testData,
   tokenTransaction,
 } from "../fixtures/transaction.fixtures";
@@ -29,13 +36,21 @@ describe("EVM Family", () => {
         expect(fromTransactionRaw(rawLegacyTx)).toEqual(legacyTx);
       });
 
-      it("should deserialize a legacy transaction without type into a ledger live transaction", () => {
+      it("should deserialize a raw legacy transaction without type into a ledger live transaction", () => {
         expect(
           fromTransactionRaw({
             ...rawLegacyTx,
             type: undefined,
           }),
         ).toEqual(legacyTx);
+      });
+
+      it("should deserialize an nft legacy transaction into a ledger live transaction", () => {
+        expect(fromTransactionRaw(nftRawLegacyTx)).toEqual(nftLegacyTx);
+      });
+
+      it("should deserialize an nft EIP1559 transaction into a ledger live transaction", () => {
+        expect(fromTransactionRaw(rawNftEip1559Tx)).toEqual(nftEip1559tx);
       });
     });
 
@@ -47,14 +62,38 @@ describe("EVM Family", () => {
       it("should serialize a ledger live legacy transaction into a raw transaction", () => {
         expect(toTransactionRaw(legacyTx)).toEqual(rawLegacyTx);
       });
+
+      it("should serialize an nft ledger live transaction without type into a raw live transaction", () => {
+        expect(toTransactionRaw(nftLegacyTx)).toEqual(nftRawLegacyTx);
+      });
     });
 
     describe("getTransactionData", () => {
       it("should return the data for an ERC20 transaction", () => {
-        expect(getTransactionData(tokenTransaction)).toEqual(
+        expect(getTransactionData(account, tokenTransaction)).toEqual(
           Buffer.from(
             // using transfer method to 0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168 & value is 0x64 (100)
             "a9059cbb00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d41680000000000000000000000000000000000000000000000000000000000000064",
+            "hex",
+          ),
+        );
+      });
+
+      it("should return the data for an ERC721 transaction", () => {
+        expect(getTransactionData(account, erc721Transaction)).toEqual(
+          Buffer.from(
+            // using safeTransferFrom method from 0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d to 0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168 & tokenId is 1 (0x01)
+            "b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d4168000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000",
+            "hex",
+          ),
+        );
+      });
+
+      it("should return the data for an ERC1155 transaction", () => {
+        expect(getTransactionData(account, erc1155Transaction)).toEqual(
+          Buffer.from(
+            // using safeTransferFrom method from 0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d to 0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168, tokenId is 1 (0x01) & quantity is 10 (0x0a)
+            "f242432a0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d41680000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000",
             "hex",
           ),
         );

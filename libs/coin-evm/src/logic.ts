@@ -9,6 +9,7 @@ import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getOptimismAdditionalFees } from "./api/rpc/rpc.common";
 import {
+  EvmNftTransaction,
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -244,3 +245,11 @@ export const attachOperations = (
 
   return coinOperations;
 };
+
+/**
+ * Type guard for NFT transactions
+ */
+export const isNftTransaction = (
+  transaction: EvmTransaction,
+): transaction is EvmTransaction & EvmNftTransaction =>
+  ["erc1155", "erc721"].includes(transaction.mode);

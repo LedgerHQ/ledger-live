@@ -1,3 +1,5 @@
+/* istanbul ignore file: pure exports, test unecessary */
+
 import { AccountRaw } from "@ledgerhq/types-live";
 
 export const ethereum1: AccountRaw = {

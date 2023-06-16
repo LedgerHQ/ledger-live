@@ -25,6 +25,7 @@
     "build:coin:polkadot": "pnpm turbo build --no-daemon --filter=coin-polkadot",
     "build:coin:evm": "pnpm turbo build --no-daemon --filter=coin-evm",
     "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
+    "build:network": "pnpm turbo build --no-daemon --filter=live-network",
     "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",

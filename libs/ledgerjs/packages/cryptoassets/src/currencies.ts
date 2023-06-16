@@ -3628,7 +3628,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "polygon_as_evm_test_only",
     coinType: CoinType.ETH,
     name: "Polygon EVM (TEST ONLY DO NOT USE)",
-    managerAppName: "Ethereum",
+    managerAppName: "Polygon",
     ticker: "MATIC",
     scheme: "polygon_as_evm_test_only",
     color: "#f7a363",

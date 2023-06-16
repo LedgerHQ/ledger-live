@@ -1,13 +1,9 @@
 import { Observable } from "rxjs";
-import {
-  Account,
-  SignOperationFnSignature,
-  SignOperationEvent,
-  DeviceId,
-} from "@ledgerhq/types-live";
 import { ledgerService } from "@ledgerhq/hw-app-eth";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { Account, SignOperationFnSignature, SignOperationEvent, DeviceId } from "@ledgerhq/types-live";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 import { prepareForSignOperation } from "./prepareTransaction";
@@ -65,6 +61,7 @@ export const buildSignOperation =
         const resolutionConfig: ResolutionConfig = {
           externalPlugins: true,
           erc20: true,
+          nft: isNFTActive(account.currency),
           domains: transaction.recipientDomain ? [transaction.recipientDomain] : [],
         };
         // Look for resolutions for external plugins and ERC20
