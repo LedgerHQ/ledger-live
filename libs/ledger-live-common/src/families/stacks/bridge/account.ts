@@ -37,7 +37,7 @@ import {
 import { StacksNetwork } from "./utils/api.types";
 import { Transaction, TransactionStatus } from "../types";
 import { findNextNonce, getAccountShape, getTxToBroadcast } from "./utils/misc";
-import { broadcastTx, fetchNonce } from "./utils/api";
+import { broadcastTx } from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import { getPath, throwIfError } from "../utils";

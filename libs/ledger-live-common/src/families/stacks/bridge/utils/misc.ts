@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import BN from "bn.js";
 import flatMap from "lodash/flatMap";
 import { Account, Address, Operation } from "@ledgerhq/types-live";
-import { log } from "@ledgerhq/logs";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
