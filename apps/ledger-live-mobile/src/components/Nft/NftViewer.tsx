@@ -21,12 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, Icons, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
-import {
-  FloorPrice,
-  Account,
-  NFTMetadataResponse,
-  NFTCollectionMetadataResponse,
-} from "@ledgerhq/types-live";
+import { FloorPrice, Account } from "@ledgerhq/types-live";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -36,7 +31,6 @@ import {
 } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import styled from "styled-components/native";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { accountSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import NftLinksPanel from "./NftLinksPanel";
@@ -59,6 +53,7 @@ import {
   knownDeviceModelIdsSelector,
 } from "../../reducers/settings";
 import { setHasSeenStaxEnabledNftsPopup } from "../../actions/settings";
+import invariant from "invariant";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -146,18 +141,12 @@ const NftViewer = ({ route }: Props) => {
     nft?.contract,
     nft?.tokenId,
     nft?.currencyId,
-  ) as {
-    status: NFTResource["status"];
-    metadata?: NFTMetadataResponse["result"] & NFTCollectionMetadataResponse["result"];
-  };
+  );
   const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [nft.currencyId]);
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
     nft?.contract,
     nft?.currencyId,
-  ) as {
-    status: NFTResource["status"];
-    metadata?: NFTMetadataResponse["result"] & NFTCollectionMetadataResponse["result"];
-  };
+  );
   const { t } = useTranslation();
   const navigation =
     useNavigation<
@@ -168,10 +157,10 @@ const NftViewer = ({ route }: Props) => {
     >();
 
   const { accountId } = decodeNftId(nft?.id);
-  // FIXME: account could be undefined :/
   const account = useSelector<State, Account | undefined>(state =>
     accountSelector(state, { accountId }),
   )!;
+  invariant(account, "account required");
 
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
   const hasSeenStaxEnabledNftsPopup = useSelector(hasSeenStaxEnabledNftsPopupSelector);
@@ -208,14 +197,27 @@ const NftViewer = ({ route }: Props) => {
   const goToRecipientSelection = useCallback(() => {
     const bridge = getAccountBridge(account);
 
-    let transaction = bridge.createTransaction(account);
-    transaction = bridge.updateTransaction(transaction, {
-      tokenIds: [nft?.tokenId],
-      // Quantity is set to null first to allow the user to change it on the amount page
-      quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
-      collection: nft?.contract,
-      mode: `${nft?.standard?.toLowerCase()}.transfer`,
-    });
+    const defaultTransaction = bridge.createTransaction(account);
+    let transaction;
+    if (defaultTransaction.family === "evm") {
+      transaction = bridge.updateTransaction(defaultTransaction, {
+        mode: nft?.standard?.toLowerCase(),
+        nft: {
+          tokenId: nft?.tokenId,
+          // Quantity is set to Infinity first to allow the user to change it on the amount page
+          quantity: new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1),
+          contract: nft?.contract,
+        },
+      });
+    } else if (defaultTransaction.family === "ethereum") {
+      transaction = bridge.updateTransaction(defaultTransaction, {
+        tokenIds: [nft?.tokenId],
+        // Quantity is set to Infinity first to allow the user to change it on the amount page
+        quantities: [new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1)],
+        collection: nft?.contract,
+        mode: `${nft?.standard?.toLowerCase()}.transfer`,
+      });
+    }
 
     track("button_clicked", {
       button: "Send NFT",
@@ -225,8 +227,6 @@ const NftViewer = ({ route }: Props) => {
       screen: ScreenName.SendSelectRecipient,
       params: {
         accountId: account.id,
-        // FIXME: does the parentAccount field actually exist?
-        parentId: (account as { parentAccount?: { id: string } })?.parentAccount?.id,
         transaction,
       },
     });

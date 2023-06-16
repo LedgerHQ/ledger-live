@@ -11,7 +11,7 @@ import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -61,11 +61,19 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       parentAccount,
     }),
   );
-  const shouldSkipAmount =
-    transaction?.family === "ethereum" && transaction?.mode === "erc721.transfer";
   const [value, setValue] = useState<string>("");
 
+  const shouldSkipAmount = useMemo(() => {
+    if (transaction?.family === "evm") {
+      return transaction.mode === "erc721";
+    } else if (transaction?.family === "ethereum") {
+      return transaction.mode === "erc721.transfer";
+    }
+
+    return true;
+  }, [transaction]);
   const isNftSend = isNftTransaction(transaction);
+
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
