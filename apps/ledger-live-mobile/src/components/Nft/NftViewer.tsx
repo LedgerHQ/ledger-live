@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleProp,
   ViewStyle,
+  ImageBackground,
 } from "react-native";
 import {
   useNftMetadata,
@@ -35,8 +36,9 @@ import {
   useNavigation,
 } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { accountSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import NftLinksPanel from "./NftLinksPanel";
@@ -141,6 +143,7 @@ const Section = ({
 const NftViewer = ({ route }: Props) => {
   const { params } = route;
   const { nft } = params;
+  const { colors, dark } = useTheme();
   const dispatch = useDispatch();
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     nft?.contract,
@@ -327,140 +330,194 @@ const NftViewer = ({ route }: Props) => {
         onClose={onCloseModal}
         data={notAvailableModalInfo(onCloseModal)}
       />
+
       <DesignedForStaxDrawer isOpen={isStaxDrawerOpen} onClose={handleStaxModalClose} />
-      <ScrollView contentContainerStyle={styles.scrollView} testID={"nft-viewer-page-scrollview"}>
-        <Box mx={6}>
-          <Flex flexDirection={"row"} alignItems={"center"}>
-            <CurrencyIcon currency={currency} size={20} />
-            <Skeleton
-              height={"19px"}
-              flex={1}
-              my={"2px"}
-              ml={2}
-              borderRadius={1}
-              loading={isLoading && !collectionMetadata?.tokenName}
-            >
-              <Text
-                variant={"large"}
-                color={"neutral.c80"}
-                fontWeight={"semiBold"}
-                numberOfLines={3}
-                flexShrink={1}
+      <Svg
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
+      >
+        <Defs>
+          <LinearGradient
+            id="myGradient"
+            x1="0%"
+            y1="0%"
+            x2="0%"
+            y2="100%"
+            gradientUnits="userSpaceOnUse"
+          >
+            <Stop key="0%" offset="0%" stopOpacity={0} stopColor="rgba(19, 18, 20, 0)" />
+            <Stop
+              key="50%"
+              offset="50%"
+              stopOpacity={0.5}
+              stopColor={!dark ? "#131214" : "white"}
+            />
+            <Stop key="100%" offset="100%" stopOpacity={1} stopColor="#131214" />
+          </LinearGradient>
+        </Defs>
+        <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
+      </Svg>
+
+      <ImageBackground
+        fadeDuration={0}
+        resizeMode="cover"
+        blurRadius={5}
+        style={{
+          height: 750, // Component height, not image height
+          flex: 1, // Component flex value, not image flex
+        }}
+        imageStyle={{
+          // Styles for the image itself
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          transform: [{ rotate: "180deg" }],
+        }}
+        source={{
+          uri: nftMetadata?.medias.preview.uri,
+        }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollView} testID={"nft-viewer-page-scrollview"}>
+          <Box mx={6}>
+            <Flex flexDirection={"row"} alignItems={"center"}>
+              <CurrencyIcon currency={currency} size={20} />
+              <Skeleton
+                height={"19px"}
+                flex={1}
+                my={"2px"}
                 ml={2}
+                borderRadius={1}
+                loading={isLoading && !collectionMetadata?.tokenName}
               >
-                {collectionMetadata?.tokenName || "-"}
-              </Text>
-            </Skeleton>
-          </Flex>
-          <Box mb={6}>
-            <Skeleton
-              height={"36px"}
-              width={"100%"}
-              my={"3px"}
-              borderRadius={1}
-              loading={isLoading && !nftMetadata?.nftName}
-            >
-              <Text
-                variant={"h1Inter"}
-                fontWeight={"semiBold"}
-                color={"neutral.c100"}
-                numberOfLines={3}
+                <Text
+                  variant={"large"}
+                  color={"neutral.c80"}
+                  fontWeight={"semiBold"}
+                  numberOfLines={3}
+                  flexShrink={1}
+                  ml={2}
+                >
+                  {collectionMetadata?.tokenName || "-"}
+                </Text>
+              </Skeleton>
+            </Flex>
+            <Box mb={6}>
+              <Skeleton
+                height={"36px"}
+                width={"100%"}
+                my={"3px"}
+                borderRadius={1}
+                loading={isLoading && !nftMetadata?.nftName}
               >
-                {nftMetadata?.nftName || "-"}
-              </Text>
-            </Skeleton>
-          </Box>
-
-          <Box style={styles.imageContainer} borderRadius={2} mb={8}>
-            {nftMetadata?.medias && mediaType !== "video" ? (
-              <TouchableOpacity
-                onPress={() => {
-                  track("NFT_clicked");
-                  navigation.navigate(NavigatorName.NftNavigator, {
-                    screen: ScreenName.NftImageViewer,
-                    params: {
-                      metadata: nftMetadata,
-                      mediaFormat: "original",
-                      status: nftStatus,
-                    },
-                  });
-                }}
-              >
-                <NftComponent />
-              </TouchableOpacity>
-            ) : (
-              <NftComponent />
-            )}
-          </Box>
-
-          <Box mb={8} flexWrap={"nowrap"} flexDirection={"row"} justifyContent={"center"}>
-            <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
-              <Button
-                type="main"
-                Icon={Icons.ArrowFromBottomMedium}
-                iconPosition="left"
-                onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
-              >
-                <Trans i18nKey="account.send" />
-              </Button>
+                <Text
+                  variant={"h1Inter"}
+                  fontWeight={"semiBold"}
+                  color={"neutral.c100"}
+                  numberOfLines={3}
+                >
+                  {nftMetadata?.nftName || "-"}
+                </Text>
+              </Skeleton>
             </Box>
-            {nftMetadata?.links && (
-              <Box style={styles.ellipsisButtonContainer} flexShrink={0} width={"48px"}>
+
+            <Box style={styles.imageContainer} borderRadius={2} mb={8}>
+              {nftMetadata?.medias && mediaType !== "video" ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    track("NFT_clicked");
+                    navigation.navigate(NavigatorName.NftNavigator, {
+                      screen: ScreenName.NftImageViewer,
+                      params: {
+                        metadata: nftMetadata,
+                        mediaFormat: "original",
+                        status: nftStatus,
+                      },
+                    });
+                  }}
+                >
+                  <NftComponent />
+                </TouchableOpacity>
+              ) : (
+                <NftComponent />
+              )}
+            </Box>
+
+            <Box mb={8} flexWrap={"nowrap"} flexDirection={"row"} justifyContent={"center"}>
+              <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
                 <Button
                   type="main"
-                  Icon={Icons.OthersMedium}
-                  onPress={() => {
-                    track("button_clicked", {
-                      button: "NFT Settings",
-                    });
-                    setBottomModalOpen(true);
-                  }}
-                />
+                  Icon={Icons.ArrowFromBottomMedium}
+                  iconPosition="left"
+                  onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
+                >
+                  <Trans i18nKey="account.send" />
+                </Button>
               </Box>
-            )}
+              {nftMetadata?.links && (
+                <Box style={styles.ellipsisButtonContainer} flexShrink={0} width={"48px"}>
+                  <Button
+                    type="main"
+                    Icon={Icons.OthersMedium}
+                    onPress={() => {
+                      track("button_clicked", {
+                        button: "NFT Settings",
+                      });
+                      setBottomModalOpen(true);
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
           </Box>
-        </Box>
 
-        {/* This weird thing is because we want a full width scrollView withtout the paddings */}
-        {properties && (
-          <SectionContainer px={0}>
-            <SectionTitle mx={6}>{t("nft.viewer.properties")}</SectionTitle>
-            {properties}
-          </SectionContainer>
-        )}
+          {/* This weird thing is because we want a full width scrollView withtout the paddings */}
+          {properties && (
+            <SectionContainer px={0}>
+              <SectionTitle mx={6}>{t("nft.viewer.properties")}</SectionTitle>
+              {properties}
+            </SectionContainer>
+          )}
 
-        {description && <Section title={t("nft.viewer.description")}>{description}</Section>}
+          {description && <Section title={t("nft.viewer.description")}>{description}</Section>}
 
-        <Section
-          title={t("nft.viewer.tokenContract")}
-          value={nft?.contract}
-          copyAvailable
-          copiedString={t("nft.viewer.tokenContractCopied")}
-        />
+          <Section
+            title={t("nft.viewer.tokenContract")}
+            value={nft?.contract}
+            copyAvailable
+            copiedString={t("nft.viewer.tokenContractCopied")}
+          />
 
-        <Section
-          title={t("nft.viewer.tokenId")}
-          value={nft?.tokenId}
-          copyAvailable
-          copiedString={t("nft.viewer.tokenIdCopied")}
-        />
+          <Section
+            title={t("nft.viewer.tokenId")}
+            value={nft?.tokenId}
+            copyAvailable
+            copiedString={t("nft.viewer.tokenIdCopied")}
+          />
 
-        {nft?.standard === "ERC1155" && (
-          <>
-            <TouchableOpacity onPress={closeModal}>
-              <Section title={t("nft.viewer.quantity")} value={nft?.amount?.toFixed()} />
-            </TouchableOpacity>
-          </>
-        )}
-        <FeatureToggle feature="counterValue">
-          {!floorPriceLoading && floorPrice ? (
-            <Section
-              title={t("nft.viewer.attributes.floorPrice")}
-              value={`${floorPrice} ${ticker}`}
-            />
-          ) : null}
-        </FeatureToggle>
-      </ScrollView>
+          {nft?.standard === "ERC1155" && (
+            <>
+              <TouchableOpacity onPress={closeModal}>
+                <Section title={t("nft.viewer.quantity")} value={nft?.amount?.toFixed()} />
+              </TouchableOpacity>
+            </>
+          )}
+          <FeatureToggle feature="counterValue">
+            {!floorPriceLoading && floorPrice ? (
+              <Section
+                title={t("nft.viewer.attributes.floorPrice")}
+                value={`${floorPrice} ${ticker}`}
+              />
+            ) : null}
+          </FeatureToggle>
+        </ScrollView>
+      </ImageBackground>
       <NftLinksPanel
         nftMetadata={nftMetadata || undefined}
         links={nftMetadata?.links}
@@ -475,8 +532,14 @@ const NftViewer = ({ route }: Props) => {
 
 const styles = StyleSheet.create({
   scrollView: {
-    paddingTop: 8,
+    paddingTop: 100,
     paddingBottom: 64,
+  },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
   },
   imageContainer: {
     ...Platform.select({
@@ -514,6 +577,9 @@ const styles = StyleSheet.create({
         },
       },
     }),
+  },
+  test: {
+    width: 100,
   },
   sendButton: {
     borderRadius: 100,
