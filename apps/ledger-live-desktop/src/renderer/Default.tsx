@@ -50,6 +50,7 @@ import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
+import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import Onboarding from "~/renderer/components/Onboarding";
 import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -220,6 +221,7 @@ export default function Default() {
                           <TopBannerContainer>
                             <UpdateBanner />
                             <FirmwareUpdateBanner />
+                            <VaultSignerBanner />
                           </TopBannerContainer>
                           <Switch>
                             <Route path="/" exact component={Dashboard} />
