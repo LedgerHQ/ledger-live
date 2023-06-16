@@ -1,3 +1,4 @@
+import { getNftTransactionProperties, injectNftIntoTransaction } from "./helpers";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import sendAmountFields from "./SendAmountFields";
 import StakeBanner from "./StakeBanner";
@@ -11,6 +12,10 @@ const family: EthereumFamily = {
   transactionConfirmFields,
   sendAmountFields,
   StakeBanner,
+  nft: {
+    getNftTransactionProperties,
+    injectNftIntoTransaction,
+  },
 };
 
 export default family;

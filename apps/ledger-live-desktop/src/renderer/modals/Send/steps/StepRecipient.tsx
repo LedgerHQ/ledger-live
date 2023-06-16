@@ -1,5 +1,7 @@
 import React, { PureComponent } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isNftTransaction, getNftCapabilities } from "@ledgerhq/live-common/nft/support";
+import { getNFT } from "@ledgerhq/live-common/nft/helpers";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -13,6 +15,7 @@ import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { Account } from "@ledgerhq/types-live";
+import { getLLDCoinFamily } from "~/renderer/families";
 const StepRecipient = ({
   t,
   account,
@@ -94,8 +97,12 @@ const StepRecipient = ({
 };
 export class StepRecipientFooter extends PureComponent<StepProps> {
   onNext = async () => {
-    const { transitionTo } = this.props;
-    transitionTo("amount");
+    const { transitionTo, shouldSkipAmount } = this.props;
+    if (shouldSkipAmount) {
+      transitionTo("summary");
+    } else {
+      transitionTo("amount");
+    }
   };
 
   render() {
