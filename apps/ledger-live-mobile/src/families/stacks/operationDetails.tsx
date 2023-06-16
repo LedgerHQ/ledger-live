@@ -12,12 +12,7 @@ function OperationDetailsExtra({ extra }: Props) {
   const { t } = useTranslation();
   return (
     <>
-      {extra.memo && (
-        <Section
-          title={t("operationDetails.extra.memo")}
-          value={extra.memo || ""}
-        />
-      )}
+      {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo || ""} />}
     </>
   );
 }

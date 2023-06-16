@@ -12,23 +12,14 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TextInput from "../../components/FocusedTextInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapFormNavigatorParamList } from "../../components/RootNavigator/types/SwapFormNavigator";
 
 type NavigationProps = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.StacksEditMemo
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.StacksEditMemo
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StacksEditMemo>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StacksEditMemo>
   | StackNavigatorProps<SwapFormNavigatorParamList, ScreenName.StacksEditMemo>
 >;
 
@@ -63,10 +54,7 @@ function StacksEditMemo({ navigation, route }: NavigationProps) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           {isFocused && (
             <TextInput
               allowFontScaling={false}
