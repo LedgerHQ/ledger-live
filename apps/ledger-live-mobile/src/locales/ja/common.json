@@ -325,6 +325,10 @@
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
       "primaryCTA" : "別の写真をアップロード"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "お持ちのLedger Staxには削除するロック画面の画像がありません",
+      "description" : "カスタマイズされたロック画面の画像は既に削除済みです。"
+    },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
     },
@@ -407,6 +411,9 @@
     },
     "MaxFeeLow" : {
       "title" : "最大手数料が低すぎます。トランザクションがしばらく保留状態になる場合があります"
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "優先手数料が低すぎるため、最初の取引の優先手数料の値以上の金額を入力してください"
     },
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
@@ -491,6 +498,9 @@
     "TimeoutTagged" : {
       "title" : "サーバーからの応答時間が長すぎます。({{tag}})",
       "description" : "タイムアウトが発生しました。"
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "トランザクション検証済み"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "トランザクションがデバイス上で拒否されました",
@@ -1232,13 +1242,13 @@
       "exploreWithoutADevice" : "デバイスなしで探索する",
       "buyALedgerNow" : "今すぐLedgerを購入する",
       "0" : {
-        "title" : "すべての暗号資産を安全に保護します。"
+        "title" : "すべての暗号資産を安全に保護。"
       },
       "1" : {
         "title" : "常にマーケットをチェック。"
       },
       "2" : {
-        "title" : "様々なアプリを見つけて、Web3について学びます。"
+        "title" : "様々なアプリとWeb3について学ぶ。"
       },
       "3" : {
         "title" : "暗号資産とNFTを安全に保管。"
@@ -1325,7 +1335,7 @@
       "3" : {
         "label" : "ベーシック",
         "title" : "トランザクションを検証する",
-        "desc" : "Nanoは、「コールドストレージ」のウォレットとして機能します。つまり、アプリを使用しても秘密鍵がオンラインで公開されることは絶対にありません。"
+        "desc" : "Nanoは、「コールドストレージ」として機能します。アプリを使用しても秘密鍵がオンラインで公開されることは絶対にありません。"
       },
       "4" : {
         "label" : "ベーシック",
@@ -2700,10 +2710,6 @@
           "title" : "My Ledger用アプリの試験的リスト",
           "description" : "My Ledgerアクセスとインラインフローのパフォーマンスの向上。"
         },
-        "experimentalCountervalues" : {
-          "title" : "試験的なカウンターバリューAPI",
-          "description" : "これにより、アカウントに表示されるカウンター値が不正確になる可能性があります。"
-        },
         "experimentalSwap" : {
           "title" : "新しいスワップインタフェース",
           "description" : "新しい試験的スワップインタフェースを使用する"
@@ -3480,6 +3486,39 @@
       "maxSpendable" : {
         "title" : "最大利用可能額",
         "description" : "最大利用可能額は、1回のトランザクションで送金できる、1つのアカウントの合計残高です。"
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "速度を上げる、またはキャンセルする",
+    "header" : "トランザクションを編集",
+    "learnMore" : "詳細が知りたいです",
+    "panel" : {
+      "stuckMessage" : "こちらの「送付」トランザクションが滞っています。より高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。",
+      "speedupMessage" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。"
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報： ",
+      "networkfee" : "ネットワーク手数料 = {{amount}} {{unit}}",
+      "maxFee" : "最大手数料 = {{amount}} Gwei",
+      "maxPriorityFee" : "最大優先手数料 = {{amount}} Gwei",
+      "gasPrice" : "ガス代 = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "スピードアップ",
+      "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
+    },
+    "cancel" : {
+      "title" : "キャンセル",
+      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルすることはできません。",
+      "notEnoughFundsToSpeedup" : "アカウントに十分な資金がないため、トランザクションの高速化は利用できません。",
+      "notlowestNonceToSpeedup" : "高速化機能は利用できません。以前のトランザクションが滞っているため、お客様のトランザクションは保留中です。承認されるのを待って、高速化してキャンセルすることができます。",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "速度を上げる、またはキャンセルすることはできません",
+        "description" : "このトランザクションはすでに検証済みです"
       }
     }
   },
@@ -5819,6 +5858,11 @@
       "developerCTA" : {
         "title" : "開発者向け",
         "description" : "Ledger Liveでのアプリケーション管理に必要な全ての情報。"
+      },
+      "warnings" : {
+        "notFound" : "検索結果が見つかりません",
+        "retrySearchKeyword" : "別のキーワードで検索を再試行してください。",
+        "retrySearchKeywordAndUrl" : "別のキーワードで検索をやり直すか、Ledger Liveの外で<Link>{{search}}</Link>を開いてください。"
       }
     },
     "disclaimer" : {
@@ -5934,13 +5978,10 @@
       "reload" : "再読み込み",
       "noCryptosFound" : "コインが見つかりません",
       "noCurrencyFound" : "通貨が見つかりません",
-      "noAppFound" : "アプリが見つかりません",
-      "notFound" : "検索結果が見つかりません",
       "noSearchResultsFor" : "申し訳ありませんが、 <0>{{search}}</0>のコインが見つかりませんでした。別のキーワードで検索を再試行してください。",
       "noCurrencySearchResultsFor" : "申し訳ありませんが、 <0>{{search}}</0>の暗号資産が見つかりませんでした。別のキーワードで検索を再試行してください。",
       "noSearchResults" : "申し訳ありませんが、検索結果が見つかりませんでした。",
       "retrySearchKeyword" : "別のキーワードで検索を再試行してください。",
-      "retrySearchKeywordAndUrl" : "別のキーワードで検索をやり直すか、Ledger Liveの外で<Link>{{search}}</Link>を開いてください。",
       "retrySearchParams" : "別のパラメータで再度検索してください。",
       "trackFavAssets" : "お気に入りを追跡する",
       "clickOnStarIcon" : "資産の横にある星アイコンをクリックすると、お気に入りに追加されます。",
@@ -6174,6 +6215,30 @@
     "title" : "デバイスを接続"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "所有するETHを運用",
+      "subTitle" : "ETHをステーキングし、日々の報酬をLedger Liveで直接獲得して資産を増やしましょう。",
+      "close" : "閉じる",
+      "providers" : {
+        "lido" : {
+          "title" : "Lidoで報酬を稼ぐ",
+          "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ETHの必要最低額の設定なし。ロックアップ（凍結）期間なし。",
+          "supportLink" : "Lidoの詳細を確認"
+        },
+        "kiln" : {
+          "title" : "Kiln専用ステーキング",
+          "tag" : "32ETHが必要",
+          "description" : "専用のバリデーターでステーキングできます。32ETHの倍数が必要です。報酬は手動で請求されます。いつでも終了できます。",
+          "supportLink" : "Kilnバリデーターの詳細を確認"
+        },
+        "kiln_pooling" : {
+          "title" : "Kilnステーキングプール",
+          "description" : "ステーキングプールに参加できます。ETHの必要最低額はありません。報酬は自動的に複利で計算されます。いつでも終了可能です。",
+          "supportLink" : "Kilnプールの詳細を確認",
+          "tag" : "最小数量なし"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "購入、スワップ、受け取り",
       "text" : "ステーキングに十分な{{coin}}がありません",
