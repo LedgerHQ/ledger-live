@@ -2244,6 +2244,8 @@
         "recipientAddress": "Recipient address",
         "amount": "Amount",
         "fees": "Network fees",
+        "maxFees": "Max Network fees",
+        "maxFeesInfo": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded.",
         "useMax": "Use Max",
         "sendMax": "Send Max",
         "rippleTag": "Tag",
