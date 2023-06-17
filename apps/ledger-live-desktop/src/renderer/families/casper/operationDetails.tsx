@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { Trans } from "react-i18next";
 import {
@@ -7,15 +6,11 @@ import {
   OpDetailsSection,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import type { Account } from "@ledgerhq/types-live";
+import type { OperationDetailsExtraProps } from "../types";
 
-type OperationDetailsExtraProps = {
-  extra: { [key: string]: any },
-  type: string,
-  account: Account,
-};
+import { CasperAccount } from "@ledgerhq/live-common/families/capser/types";
 
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps<CasperAccount>) => {
   return (
     <>
       {Object.keys(extra).map(key => {

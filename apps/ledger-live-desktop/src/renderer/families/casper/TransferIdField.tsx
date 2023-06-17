@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
@@ -14,10 +12,10 @@ const TranferIdField = ({
   transaction,
   status,
 }: {
-  onChange: string => void,
-  account: Account,
-  transaction: Transaction,
-  status: TransactionStatus,
+  onChange: (t: Transaction) => void;
+  account: Account;
+  transaction: Transaction;
+  status: TransactionStatus;
 }) => {
   invariant(transaction.family === "casper", "TransferIdField: casper family expected");
 
