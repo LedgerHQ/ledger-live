@@ -35,7 +35,6 @@ import { encodeOperationId } from "../../../operation";
 import CasperApp from "@zondax/ledger-casper";
 import {
   AmountRequired,
-  CasperInvalidTransferId,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   InvalidMinimumAmount,
@@ -43,6 +42,7 @@ import {
   RecipientRequired,
   MayBlockAccount,
 } from "@ledgerhq/errors";
+import { CasperInvalidTransferId } from "../errors";
 import { broadcastTx } from "./utils/network";
 import { getMainAccount } from "../../../account/helpers";
 import { createNewDeploy } from "./utils/txn";
@@ -67,10 +67,7 @@ const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
   return { ...t, ...patch };
 };
 
-const prepareTransaction = async (
-  a: Account,
-  t: Transaction
-): Promise<Transaction> => {
+const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   // log("debug", "[prepareTransaction] start fn");
 
   const { address } = getAddress(a);
@@ -97,10 +94,7 @@ const prepareTransaction = async (
   return t;
 };
 
-const getTransactionStatus = async (
-  a: Account,
-  t: Transaction
-): Promise<TransactionStatus> => {
+const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: TransactionStatus["errors"] = {};
   const warnings: TransactionStatus["warnings"] = {};
 
@@ -110,8 +104,7 @@ const getTransactionStatus = async (
   let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!validateAddress(recipient).isValid)
-    errors.recipient = new InvalidAddress();
+  else if (!validateAddress(recipient).isValid) errors.recipient = new InvalidAddress();
   else if (recipient.toLowerCase() === address.toLowerCase())
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
 
@@ -144,15 +137,9 @@ const getTransactionStatus = async (
     }
   }
 
-  if (amount.lt(MINIMUM_VALID_AMOUNT) && !errors.amount)
-    errors.amount = new InvalidMinimumAmount();
+  if (amount.lt(MINIMUM_VALID_AMOUNT) && !errors.amount) errors.amount = new InvalidMinimumAmount();
 
-  if (
-    spendableBalance
-      .minus(totalSpent)
-      .minus(estimatedFees)
-      .lt(MINIMUM_VALID_AMOUNT)
-  )
+  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(MINIMUM_VALID_AMOUNT))
     warnings.amount = new MayBlockAccount();
 
   // log("debug", "[getTransactionStatus] finish fn");
@@ -197,8 +184,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
   transaction,
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         async function main() {
           // log("debug", "[signOperation] start fn");
 
@@ -220,25 +207,19 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               recipient,
               transaction.amount,
               transaction.fees,
-              transaction.transferId
+              transaction.transferId,
             );
             // Serialize tx
             const deployBytes = DeployUtil.deployToBytes(deploy);
 
-            log(
-              "debug",
-              `[signOperation] serialized deploy: [${deployBytes.toString()}]`
-            );
+            log("debug", `[signOperation] serialized deploy: [${deployBytes.toString()}]`);
 
             o.next({
               type: "device-signature-requested",
             });
 
             // Sign by device
-            const result = await casper.sign(
-              getPath(derivationPath),
-              Buffer.from(deployBytes)
-            );
+            const result = await casper.sign(getPath(derivationPath), Buffer.from(deployBytes));
             isError(result);
 
             o.next({
@@ -249,15 +230,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             const deployHash = deployHashToString(deploy.hash, true);
             const signature = result.signatureRS;
 
-            const pkBuffer = Buffer.from(
-              getPublicKeyFromCasperAddress(address),
-              "hex"
-            );
+            const pkBuffer = Buffer.from(getPublicKeyFromCasperAddress(address), "hex");
             // sign deploy object
             const signedDeploy = DeployUtil.setSignature(
               deploy,
               signature,
-              new CLPublicKey(pkBuffer, getPubKeySignature(address))
+              new CLPublicKey(pkBuffer, getPubKeySignature(address)),
             );
 
             const operation: Operation = {
@@ -281,9 +259,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "signed",
               signedOperation: {
                 operation,
-                signature: JSON.stringify(
-                  DeployUtil.deployToJson(signedDeploy)
-                ),
+                signature: JSON.stringify(DeployUtil.deployToJson(signedDeploy)),
                 expirationDate: null,
               },
             });
@@ -296,14 +272,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
         main().then(
           () => o.complete(),
-          (e) => o.error(e)
+          e => o.error(e),
         );
-      })
+      }),
   );
 
-const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { signature, operation },
-}) => {
+const broadcast: BroadcastFnSignature = async ({ signedOperation: { signature, operation } }) => {
   // log("debug", "[broadcast] start fn");
 
   const tx = DeployUtil.deployFromJson(JSON.parse(signature)).unwrap();
