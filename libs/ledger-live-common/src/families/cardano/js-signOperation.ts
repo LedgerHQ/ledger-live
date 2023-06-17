@@ -38,6 +38,8 @@ import {
   SignedOperation,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
+import { formatCurrencyUnit } from "../../currencies";
+import { getAccountUnit } from "../../account";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
@@ -96,15 +98,28 @@ const buildOptimisticOperation = (
     }
   }
 
+  let operationValue = accountChange;
   const extra = {};
   if (memo) {
     extra["memo"] = memo;
   }
+  if (opType === "UNDELEGATE") {
+    operationValue = accountChange.minus(account.cardanoResources.protocolParams.stakeKeyDeposit);
+    extra["depositRefund"] = formatCurrencyUnit(
+      getAccountUnit(account),
+      new BigNumber(account.cardanoResources.protocolParams.stakeKeyDeposit),
+      {
+        showCode: true,
+        disableRounding: true,
+      },
+    );
+  }
+
   const op: Operation = {
     id: encodeOperationId(account.id, transactionHash, opType),
     hash: transactionHash,
     type: opType,
-    value: accountChange.absoluteValue(),
+    value: operationValue.absoluteValue(),
     fee: transaction.getFee(),
     blockHash: undefined,
     blockHeight: null,
