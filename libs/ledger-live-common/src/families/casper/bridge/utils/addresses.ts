@@ -17,7 +17,7 @@ export const getPubKeySignature = (pubKey: string): CLPublicKeyTag => {
 
   if (signature === "02") return CLPublicKeyTag.SECP256K1;
 
-  return 0;
+  throw new Error("casper pubkey signature not know");
 };
 
 function numberToBin(num: number) {
@@ -51,7 +51,7 @@ export function encode(inputBytes: Buffer): string {
   const nibbles = inputBytes
     .toString("hex")
     .split("")
-    .map((v) => parseInt(v, 16));
+    .map(v => parseInt(v, 16));
 
   const bitsArray = bytesToBitsString(blakeHash);
 
@@ -62,8 +62,7 @@ export function encode(inputBytes: Buffer): string {
     if (num < 10) res.push(num);
     else {
       steamIndex += 1;
-      if (parseInt(bitsArray[steamIndex], 10))
-        res.push(num.toString(16).toUpperCase());
+      if (parseInt(bitsArray[steamIndex], 10)) res.push(num.toString(16).toUpperCase());
       else res.push(num.toString(16).toLowerCase());
     }
   }
@@ -74,8 +73,7 @@ export function encode(inputBytes: Buffer): string {
 // Decodes a mixed-case hexadecimal string
 // Checksum hex encoding for casper docs: https://docs.casperlabs.io/design/checksummed-hex/
 function decode(inputString: string): string {
-  if (Buffer.from(inputString, "hex").length > SMALL_BYTES_COUNT)
-    return inputString;
+  if (Buffer.from(inputString, "hex").length > SMALL_BYTES_COUNT) return inputString;
 
   if (inputString.toLowerCase() === inputString) return inputString;
   if (inputString.toUpperCase() === inputString) return inputString;
@@ -102,7 +100,6 @@ export function validateAddress(address: string): { isValid: boolean } {
 }
 
 export function getPublicKeyFromCasperAddress(address: string): string {
-  if (address.length !== 68)
-    throw new InvalidAddress("Invalid address size, expected 34 bytes");
+  if (address.length !== 68) throw new InvalidAddress("Invalid address size, expected 34 bytes");
   return address.substring(2);
 }
