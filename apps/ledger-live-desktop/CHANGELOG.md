@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.6
+
+### Patch Changes
+
+- [#3697](https://github.com/LedgerHQ/ledger-live/pull/3697) [`f7fc87d7d8`](https://github.com/LedgerHQ/ledger-live/commit/f7fc87d7d80245bb1fb9df1c97a283d74062c286) Thanks [@gre](https://github.com/gre)! - fixes all cases where url(" was used instead of url('
+
 ## 2.62.0-nightly.5
 
 ### Minor Changes

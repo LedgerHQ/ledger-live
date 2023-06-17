@@ -96,6 +96,7 @@
     "@ledgerhq/hw-transport-vault": "1.0.0"
   },
   "changesets": [
+    "big-pugs-drum",
     "blue-apes-perform",
     "calm-glasses-design",
     "chilled-timers-remember",
@@ -113,6 +114,7 @@
     "few-sheep-press",
     "fifty-suits-sit",
     "five-ants-marry",
+    "four-cheetahs-lie",
     "fresh-carrots-perform",
     "friendly-goats-tickle",
     "gold-pumpkins-film",
@@ -128,6 +130,7 @@
     "lucky-roses-develop",
     "modern-bananas-pretend",
     "nasty-papayas-peel",
+    "old-wombats-remember",
     "plenty-stingrays-trade",
     "popular-rabbits-hug",
     "purple-bulldogs-suffer",

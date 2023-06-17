@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.24.1-nightly.6
+
+### Patch Changes
+
+- [#3700](https://github.com/LedgerHQ/ledger-live/pull/3700) [`0532575351`](https://github.com/LedgerHQ/ledger-live/commit/0532575351ac661442f1ae77f454bf2ef10e4b93) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Support token accounts in request account method on mobile
+
+- [#3694](https://github.com/LedgerHQ/ledger-live/pull/3694) [`67a937d143`](https://github.com/LedgerHQ/ledger-live/commit/67a937d1434afb59405ad41adf4f15ff6a493bcf) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lock screen: fix uncaught error in useCenteredImage
+  Custom lock screen: fix NFT picture preview not loading
+
 ## 3.24.1-nightly.5
 
 ### Patch Changes
