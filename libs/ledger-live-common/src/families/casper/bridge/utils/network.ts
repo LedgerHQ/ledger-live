@@ -13,7 +13,7 @@ import {
   NStateRootHashResponse,
 } from "./types";
 
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../../../env";
 import { AccessRights, CLURef, DeployUtil } from "casper-js-sdk";
 import { getEstimatedFees } from "../../utils";
@@ -102,7 +102,7 @@ const node = async <T>(payload: NodeRPCPayload) => {
 // };
 
 export const getAccountStateInfo = async (
-  publicKey: string
+  publicKey: string,
 ): Promise<{
   purseUref: CLURef | undefined;
   accountHash: string | undefined;
@@ -126,17 +126,12 @@ export const getAccountStateInfo = async (
   const accountHash = accountStateInfo.account.account_hash.split("-")[2];
   const purseURefString = accountStateInfo.account.main_purse.split("-")[1];
 
-  const uRef = new CLURef(
-    Buffer.from(purseURefString, "hex"),
-    AccessRights.READ_ADD_WRITE
-  );
+  const uRef = new CLURef(Buffer.from(purseURefString, "hex"), AccessRights.READ_ADD_WRITE);
 
   return { purseUref: uRef, accountHash };
 };
 
-export const fetchBalances = async (
-  purseUref: CLURef
-): Promise<NAccountBalance> => {
+export const fetchBalances = async (purseUref: CLURef): Promise<NAccountBalance> => {
   const stateRootInfo = await node<NStateRootHashResponse>({
     jsonrpc: "2.0",
     method: "chain_get_state_root_hash",
@@ -180,14 +175,12 @@ export const fetchBlockHeight = async (): Promise<NNetworkStatusResponse> => {
 };
 
 export const fetchTxs = async (addr: string): Promise<LTxnHistoryData[]> => {
-  const response = await live<LTxnHistoryData>(
-    `/accounts/${addr}/ledgerlive-deploys`
-  );
+  const response = await live<LTxnHistoryData>(`/accounts/${addr}/ledgerlive-deploys`);
   return response; // TODO Validate if the response fits this interface
 };
 
 export const broadcastTx = async (
-  deploy: DeployUtil.Deploy
+  deploy: DeployUtil.Deploy,
 ): Promise<NDeployMessagePutResponse> => {
   const response = await node<NDeployMessagePutResponse>({
     id: 1,
