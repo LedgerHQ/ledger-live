@@ -1,4 +1,5 @@
 import {
+  Account,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -7,6 +8,8 @@ import {
 import BigNumber from "bignumber.js";
 
 type FamilyType = "casper";
+
+export type CasperAccount = Account;
 
 export type Transaction = TransactionCommon & {
   family: FamilyType;
