@@ -10,17 +10,10 @@ import type {
 import type { Transaction, TransactionStatus } from "../types";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 
-import {
-  deployHashToString,
-  getAccountShape,
-  getEstimatedFees,
-  getPath,
-  isError,
-  validateTransferId,
-} from "../utils";
+import { getPath, isError } from "../utils";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import BigNumber from "bignumber.js";
-import { MINIMUM_VALID_AMOUNT } from "../consts";
+import { CASPER_MINIMUM_VALID_AMOUNT } from "../consts";
 import {
   getAddress,
   getPubKeySignature,
@@ -45,7 +38,10 @@ import {
 import { CasperInvalidTransferId } from "../errors";
 import { broadcastTx } from "./utils/network";
 import { getMainAccount } from "../../../account/helpers";
-import { createNewDeploy } from "./utils/txn";
+import { createNewDeploy, deployHashToString } from "./utils/txn";
+import { getAccountShape } from "./utils/accountShape";
+import { getEstimatedFees } from "./utils/fee";
+import { validateTransferId } from "./utils/transferId";
 
 const receive = makeAccountBridgeReceive();
 
@@ -137,9 +133,10 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     }
   }
 
-  if (amount.lt(MINIMUM_VALID_AMOUNT) && !errors.amount) errors.amount = new InvalidMinimumAmount();
+  if (amount.lt(CASPER_MINIMUM_VALID_AMOUNT) && !errors.amount)
+    errors.amount = new InvalidMinimumAmount();
 
-  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(MINIMUM_VALID_AMOUNT))
+  if (spendableBalance.minus(totalSpent).minus(estimatedFees).lt(CASPER_MINIMUM_VALID_AMOUNT))
     warnings.amount = new MayBlockAccount();
 
   // log("debug", "[getTransactionStatus] finish fn");

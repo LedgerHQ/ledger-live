@@ -2,7 +2,8 @@ import Capser from "@zondax/ledger-casper";
 import { log } from "@ledgerhq/logs";
 
 import type { Resolver } from "../../hw/getAddress/types";
-import { casperAddressFromPubKey, getPath, isError } from "./utils";
+import { getPath, isError } from "./utils";
+import { casperAddressFromPubKey } from "./bridge/utils/addresses";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   log("debug", "start getAddress process");
@@ -17,9 +18,7 @@ const resolver: Resolver = async (transport, { path, verify }) => {
 
   return {
     path,
-    address: r.Address.length
-      ? r.Address.toString()
-      : casperAddressFromPubKey(r.publicKey),
+    address: r.Address.length ? r.Address.toString() : casperAddressFromPubKey(r.publicKey),
     publicKey: r.publicKey.toString("hex"),
   };
 };

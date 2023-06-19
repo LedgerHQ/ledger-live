@@ -7,11 +7,12 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { MINIMUM_VALID_AMOUNT } from "./consts";
+import { CASPER_MINIMUM_VALID_AMOUNT } from "./consts";
 
-const MIN_SAFE = new BigNumber(MINIMUM_VALID_AMOUNT);
+const MIN_SAFE = new BigNumber(CASPER_MINIMUM_VALID_AMOUNT);
 const maxAccount = 6;
 
+// TODO Prateek: test and add test field
 const casperSpecs: AppSpec<Transaction> = {
   name: "Casper",
   currency: getCryptoCurrencyById("casper"),
@@ -27,19 +28,17 @@ const casperSpecs: AppSpec<Transaction> = {
   },
   mutations: [
     {
+      // TODO Prateek: Use 50% instead of minimum
       name: "Send Minimum",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, maxAccount);
         // let amount = account.spendableBalance.div(2).integerValue();
-        let amount = new BigNumber(MINIMUM_VALID_AMOUNT);
+        let amount = new BigNumber(CASPER_MINIMUM_VALID_AMOUNT);
 
         if (!sibling.used && amount.lt(MIN_SAFE)) {
-          invariant(
-            account.spendableBalance.gt(MIN_SAFE),
-            "send is too low to activate account"
-          );
+          invariant(account.spendableBalance.gt(MIN_SAFE), "send is too low to activate account");
           amount = MIN_SAFE;
         }
 
