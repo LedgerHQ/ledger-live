@@ -24,7 +24,13 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
-import type { AccountBridge, CurrencyBridge, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import type {
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
 import { listTokensForCryptoCurrency } from "../../currencies";
