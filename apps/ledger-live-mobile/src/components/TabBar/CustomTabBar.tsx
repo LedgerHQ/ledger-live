@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Svg, { Path, Stop } from "react-native-svg";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { TAB_BAR_HEIGHT, GRADIENT_HEIGHT } from "./shared";
 import BackgroundGradient from "./BackgroundGradient";
 
@@ -206,15 +206,13 @@ export default function CustomTabBar({
   return (
     <Animated.View>
       {!hideTabBar && (
-        <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-          <TabBar
-            state={state}
-            descriptors={descriptors}
-            navigation={navigation}
-            colors={colors}
-            insets={insets}
-          />
-        </Animated.View>
+        <TabBar
+          state={state}
+          descriptors={descriptors}
+          navigation={navigation}
+          colors={colors}
+          insets={insets}
+        />
       )}
     </Animated.View>
   );
