@@ -1,4 +1,4 @@
-import { CHECKSUM_HEX_LEN, SMALL_BYTES_COUNT } from "../../consts";
+import { CASPER_CHECKSUM_HEX_LEN, CASPER_SMALL_BYTES_COUNT } from "../../consts";
 
 import { Account, Address } from "@ledgerhq/types-live";
 import { CLPublicKey, CLPublicKeyTag } from "casper-js-sdk";
@@ -43,8 +43,8 @@ function bytesToBitsString(buf: Buffer | Uint8Array) {
  * Returns the bytes encoded as hexadecimal with mixed-case based checksums following a scheme
  * similar to [EIP-55](https://eips.ethereum.org/EIPS/eip-55).
  */
-export function encode(inputBytes: Buffer): string {
-  const context = blake2bInit(CHECKSUM_HEX_LEN);
+export function casperAddressEncode(inputBytes: Buffer): string {
+  const context = blake2bInit(CASPER_CHECKSUM_HEX_LEN);
   blake2bUpdate(context, inputBytes);
   const blakeHash = blake2bFinal(context);
 
@@ -72,13 +72,13 @@ export function encode(inputBytes: Buffer): string {
 
 // Decodes a mixed-case hexadecimal string
 // Checksum hex encoding for casper docs: https://docs.casperlabs.io/design/checksummed-hex/
-function decode(inputString: string): string {
-  if (Buffer.from(inputString, "hex").length > SMALL_BYTES_COUNT) return inputString;
+function casperAddressDecode(inputString: string): string {
+  if (Buffer.from(inputString, "hex").length > CASPER_SMALL_BYTES_COUNT) return inputString;
 
   if (inputString.toLowerCase() === inputString) return inputString;
   if (inputString.toUpperCase() === inputString) return inputString;
 
-  const encoded = encode(Buffer.from(inputString, "hex"));
+  const encoded = casperAddressEncode(Buffer.from(inputString, "hex"));
 
   for (let i = 0; i < encoded.length; i++) {
     if (encoded.charAt(i) !== inputString.charAt(i))
@@ -92,7 +92,7 @@ export function validateAddress(address: string): { isValid: boolean } {
   try {
     const pubKey = getPublicKeyFromCasperAddress(address);
     new CLPublicKey(Buffer.from(pubKey, "hex"), getPubKeySignature(address));
-    decode(pubKey);
+    casperAddressDecode(pubKey);
     return { isValid: true };
   } catch (err) {
     return { isValid: false };
@@ -102,4 +102,19 @@ export function validateAddress(address: string): { isValid: boolean } {
 export function getPublicKeyFromCasperAddress(address: string): string {
   if (address.length !== 68) throw new InvalidAddress("Invalid address size, expected 34 bytes");
   return address.substring(2);
+}
+
+export function casperAddressFromPubKey(pubkey: Buffer): string {
+  const checksumed = casperAddressEncode(pubkey);
+
+  return `02${checksumed}`;
+}
+
+export function casperPubKeyToAccountHash(pubKey: string): string {
+  const clPubKey = new CLPublicKey(
+    Buffer.from(pubKey.substring(2), "hex"),
+    getPubKeySignature(pubKey),
+  );
+
+  return casperAddressEncode(Buffer.from(clPubKey.toAccountRawHashStr(), "hex"));
 }

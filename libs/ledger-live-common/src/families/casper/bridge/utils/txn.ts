@@ -7,30 +7,22 @@ import BigNumber from "bignumber.js";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import { encodeOperationId } from "../../../../operation";
 import { CASPER_NETWORK } from "../../consts";
-import { casperPubKeyToAccountHash, getEstimatedFees } from "../../utils";
 import {
+  casperAddressEncode,
+  casperPubKeyToAccountHash,
   getPubKeySignature,
   getPublicKeyFromCasperAddress,
   validateAddress,
 } from "./addresses";
 import { LTxnHistoryData } from "./types";
+import { getEstimatedFees } from "./fee";
 
 export const getUnit = (): Unit => getCryptoCurrencyById("casper").units[0];
 
-export function mapTxToOps(
-  accountId: string,
-  addressHash: string,
-  fees = getEstimatedFees()
-) {
+export function mapTxToOps(accountId: string, addressHash: string, fees = getEstimatedFees()) {
   return (tx: LTxnHistoryData): Operation[] => {
     const ops: Operation[] = [];
-    const {
-      timestamp,
-      caller_public_key,
-      args: txArgs,
-      deploy_hash,
-      error_message,
-    } = tx;
+    const { timestamp, caller_public_key, args: txArgs, deploy_hash, error_message } = tx;
     const fromAccount = casperPubKeyToAccountHash(caller_public_key);
     const toAccount = txArgs.target.parsed;
 
@@ -91,7 +83,7 @@ export const createNewDeploy = (
   amount: BigNumber,
   fees: BigNumber,
   transferId?: string,
-  network = CASPER_NETWORK
+  network = CASPER_NETWORK,
 ): DeployUtil.Deploy => {
   log("debug", `Creating new Deploy: ${sender}, ${recipient}, ${network}`);
 
@@ -100,24 +92,17 @@ export const createNewDeploy = (
   }
 
   const deployParams = new DeployUtil.DeployParams(
-    new CLPublicKey(
-      Buffer.from(getPublicKeyFromCasperAddress(sender), "hex"),
-      2
-    ),
-    network
+    new CLPublicKey(Buffer.from(getPublicKeyFromCasperAddress(sender), "hex"), 2),
+    network,
   );
-  const recipientBuff = Buffer.from(
-    getPublicKeyFromCasperAddress(recipient),
-    "hex"
-  );
+  const recipientBuff = Buffer.from(getPublicKeyFromCasperAddress(recipient), "hex");
 
-  const session =
-    DeployUtil.ExecutableDeployItem.newTransferWithOptionalTransferId(
-      amount?.toNumber() ?? 0,
-      new CLPublicKey(recipientBuff, getPubKeySignature(recipient ?? sender)),
-      undefined,
-      transferId
-    );
+  const session = DeployUtil.ExecutableDeployItem.newTransferWithOptionalTransferId(
+    amount?.toNumber() ?? 0,
+    new CLPublicKey(recipientBuff, getPubKeySignature(recipient ?? sender)),
+    undefined,
+    transferId,
+  );
 
   const payment = DeployUtil.standardPayment(fees.toString());
   const deploy = DeployUtil.makeDeploy(deployParams, session, payment);
@@ -126,3 +111,10 @@ export const createNewDeploy = (
 
   return txnFromRaw;
 };
+
+export function deployHashToString(hash: Uint8Array, toLowerCase?: boolean): string {
+  const str = casperAddressEncode(Buffer.from(hash));
+
+  if (toLowerCase) return str.toLowerCase();
+  return str;
+}
