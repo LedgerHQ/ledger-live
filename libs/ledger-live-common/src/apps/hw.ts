@@ -19,6 +19,7 @@ export const execWithTransport =
 /**
  * The moment we deem the v2 as stable enough and we remove this fork in our
  * logic there will be some cleanup to do too.
+ * Refer to https://ledgerhq.atlassian.net/browse/LIVE-7945
  * - We no longer need the polyfill dependency resolution that is based on the
  *   currency and parent application. And therefor we no longer need the version
  *   check that broke that dependency after a certain version for ETH and BTC.
