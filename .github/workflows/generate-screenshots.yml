@@ -47,11 +47,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
       - name: Install gh
         run: |
           type -p curl >/dev/null || sudo apt install curl -y
@@ -69,6 +64,11 @@ jobs:
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_ruby: true
+          install_playwright: true
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
@@ -99,6 +99,11 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout PR
+        if: ${{ inputs.number != null && inputs.ref == null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -106,11 +111,6 @@ jobs:
           skip_ruby: true
           install_playwright: true
           upgrade_npm: true
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
@@ -143,6 +143,11 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout PR
+        if: ${{ inputs.number != null && inputs.ref == null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -150,11 +155,6 @@ jobs:
           skip_ruby: true
           install_playwright: true
           pnpm_dest: ${{ runner.temp }}/setup-pnpm
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"

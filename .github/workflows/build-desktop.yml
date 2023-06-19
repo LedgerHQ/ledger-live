@@ -68,15 +68,14 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
-      - uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 2.1.816
       - name: Set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          install_dotnet: true
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:

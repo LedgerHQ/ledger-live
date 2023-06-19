@@ -46,6 +46,7 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
+          install_dotnet: true
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
@@ -88,7 +89,6 @@ jobs:
       - name: Run unit tests
         run: pnpm desktop test:jest
 
-  # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
   e2e-tests-windows:
     name: "Live Desktop Tests (Windows)"
     outputs:
@@ -115,6 +115,7 @@ jobs:
           install_node_gyp: true
           install_playwright: true
           upgrade_npm: true
+          install_dotnet: true
       - name: Run playwright tests
         id: tests
         run: |
