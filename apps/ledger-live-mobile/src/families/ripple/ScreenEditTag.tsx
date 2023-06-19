@@ -47,9 +47,7 @@ function RippleEditTag({ route, navigation }: NavigationProps) {
   function onChangeTag(str: string): void {
     const tagNumeric = BigNumber(str.replace(/[^0-9]/g, ""));
     const newTag =
-      tagNumeric.isInteger() &&
-      tagNumeric.isPositive() &&
-      tagNumeric.lt(uint32maxPlus1)
+      tagNumeric.isInteger() && tagNumeric.isPositive() && tagNumeric.lt(uint32maxPlus1)
         ? tagNumeric
         : undefined;
     setTag(newTag);

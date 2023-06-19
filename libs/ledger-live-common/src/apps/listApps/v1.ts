@@ -1,9 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import {
-  DeviceModelId,
-  getDeviceModel,
-  identifyTargetId,
-} from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError } from "rxjs";
 import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
@@ -19,24 +15,16 @@ import {
 import ManagerAPI from "../../manager/api";
 import { getEnv } from "../../env";
 
-import {
-  calculateDependencies,
-  polyfillApp,
-  polyfillApplication,
-} from "../polyfill";
+import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import getDeviceName from "../../hw/getDeviceName";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
-const emptyHashData =
-  "0000000000000000000000000000000000000000000000000000000000000000";
+const emptyHashData = "0000000000000000000000000000000000000000000000000000000000000000";
 
 //TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
 //to simplify this a lot. Stay calm.
-const listApps = (
-  transport: Transport,
-  deviceInfo: DeviceInfo
-): Observable<ListAppsEvent> => {
+const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
   log("list-apps", "using legacy version");
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
@@ -48,79 +36,71 @@ const listApps = (
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
     getEnv("DEVICE_PROXY_MODEL");
 
-  return new Observable((o) => {
+  return new Observable(o => {
     let sub;
     async function main() {
-      const installedP: Promise<[{ name: string; hash: string }[], boolean]> =
-        new Promise<{ name: string; hash: string; hash_code_data: string }[]>(
-          (resolve, reject) => {
-            sub = ManagerAPI.listInstalledApps(transport, {
-              targetId: deviceInfo.targetId,
-              perso: "perso_11",
-            }).subscribe({
-              next: (e) => {
-                if (e.type === "result") {
-                  resolve(e.payload);
-                } else if (
-                  e.type === "device-permission-granted" ||
-                  e.type === "device-permission-requested"
-                ) {
-                  o.next(e);
-                }
-              },
-              error: reject,
-            });
-          }
+      const installedP: Promise<[{ name: string; hash: string }[], boolean]> = new Promise<
+        { name: string; hash: string; hash_code_data: string }[]
+      >((resolve, reject) => {
+        sub = ManagerAPI.listInstalledApps(transport, {
+          targetId: deviceInfo.targetId,
+          perso: "perso_11",
+        }).subscribe({
+          next: e => {
+            if (e.type === "result") {
+              resolve(e.payload);
+            } else if (
+              e.type === "device-permission-granted" ||
+              e.type === "device-permission-requested"
+            ) {
+              o.next(e);
+            }
+          },
+          error: reject,
+        });
+      })
+        .then(apps =>
+          apps
+            .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
+            .map(({ name, hash }) => ({
+              name,
+              hash,
+              blocks: 0,
+            })),
         )
-          .then((apps) =>
-            apps
-              .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
-              .map(({ name, hash }) => ({
-                name,
-                hash,
-                blocks: 0,
-              }))
-          )
-          .catch((e) => {
-            log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
-            throw e;
-          })
-          .then((apps) => [apps, true]);
+        .catch(e => {
+          log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
+          throw e;
+        })
+        .then(apps => [apps, true]);
 
       const provider = getProviderId(deviceInfo);
-      const deviceVersionP = ManagerAPI.getDeviceVersion(
-        deviceInfo.targetId,
-        provider
-      );
+      const deviceVersionP = ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
 
-      const firmwareDataP = deviceVersionP.then((deviceVersion) =>
+      const firmwareDataP = deviceVersionP.then(deviceVersion =>
         ManagerAPI.getCurrentFirmware({
           deviceId: deviceVersion.id,
           version: deviceInfo.version,
           provider,
-        })
+        }),
       );
 
-      const latestFirmwareForDeviceP =
-        manager.getLatestFirmwareForDevice(deviceInfo);
+      const latestFirmwareForDeviceP = manager.getLatestFirmwareForDevice(deviceInfo);
 
-      const firmwareP = Promise.all([
-        firmwareDataP,
-        latestFirmwareForDeviceP,
-      ]).then(([firmwareData, updateAvailable]) => ({
-        ...firmwareData,
-        updateAvailable,
-      }));
+      const firmwareP = Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
+        ([firmwareData, updateAvailable]) => ({
+          ...firmwareData,
+          updateAvailable,
+        }),
+      );
 
-      const applicationsByDeviceP = Promise.all([
-        deviceVersionP,
-        firmwareDataP,
-      ]).then(([deviceVersion, firmwareData]) =>
-        ManagerAPI.applicationsByDevice({
-          provider,
-          current_se_firmware_final_version: firmwareData.id,
-          device_version: deviceVersion.id,
-        })
+      const applicationsByDeviceP = Promise.all([deviceVersionP, firmwareDataP]).then(
+        ([deviceVersion, firmwareData]) =>
+          ManagerAPI.applicationsByDevice({
+            provider,
+            current_se_firmware_final_version: firmwareData.id,
+            device_version: deviceVersion.id,
+          }),
       );
 
       const [
@@ -131,12 +111,10 @@ const listApps = (
         sortedCryptoCurrencies,
       ] = await Promise.all([
         installedP,
-        ManagerAPI.listApps().then((apps) => apps.map(polyfillApplication)),
+        ManagerAPI.listApps().then(apps => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareP,
-        currenciesByMarketcap(
-          listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
-        ),
+        currenciesByMarketcap(listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)),
       ]);
       calculateDependencies();
 
@@ -149,16 +127,14 @@ const listApps = (
         blocks?: number;
       }[] = partialInstalledList;
 
-      const shouldCompleteInstalledList = partialInstalledList.some(
-        (a) => !a.name
-      );
+      const shouldCompleteInstalledList = partialInstalledList.some(a => !a.name);
 
       if (shouldCompleteInstalledList) {
-        installedList = installedList.map((a) => {
+        installedList = installedList.map(a => {
           if (a.name) return a; // already present
 
-          const application = applicationsList.find((e) =>
-            e.application_versions.some((v) => v.hash === a.hash)
+          const application = applicationsList.find(e =>
+            e.application_versions.some(v => v.hash === a.hash),
           );
           if (!application) return a; // still no luck with our api
 
@@ -167,10 +143,8 @@ const listApps = (
       }
 
       const apps = compatibleAppVersionsList
-        .map((version) => {
-          const application = applicationsList.find(
-            (e) => e.id === version.app
-          );
+        .map(version => {
+          const application = applicationsList.find(e => e.id === version.app);
           if (!application) return;
           const isDevTools = application.category === 2;
           let currencyId = application.currencyId;
@@ -180,9 +154,7 @@ const listApps = (
             currencyId = undefined;
           }
 
-          const indexOfMarketCap = crypto
-            ? sortedCryptoCurrencies.indexOf(crypto)
-            : -1;
+          const indexOfMarketCap = crypto ? sortedCryptoCurrencies.indexOf(crypto) : -1;
           const compatibleWallets: { name: string; url: string }[] = [];
 
           if (application.compatibleWalletsJSON) {
@@ -190,7 +162,7 @@ const listApps = (
               const parsed = JSON.parse(application.compatibleWalletsJSON);
 
               if (parsed && Array.isArray(parsed)) {
-                parsed.forEach((w) => {
+                parsed.forEach(w => {
                   if (w && typeof w === "object" && w.name) {
                     compatibleWallets.push({
                       name: w.name,
@@ -200,10 +172,7 @@ const listApps = (
                 });
               }
             } catch (e) {
-              console.error(
-                "invalid compatibleWalletsJSON for " + version.name,
-                e
-              );
+              console.error("invalid compatibleWalletsJSON for " + version.name, e);
             }
           }
 
@@ -249,22 +218,20 @@ const listApps = (
         `${installedList.length} apps installed. ${applicationsList.length} apps store total. ${apps.length} available.`,
         {
           installedList,
-        }
+        },
       );
       const deviceModel = getDeviceModel(deviceModelId);
       const bytesPerBlock = deviceModel.getBlockSize(deviceInfo.version);
 
       const appByName = {};
-      apps.forEach((app) => {
+      apps.forEach(app => {
         if (app) appByName[app.name] = app;
       });
       // Infer more data on the app installed
       const installed = installedList.map(({ name, hash, blocks }) => {
-        const app = applicationsList.find((a) => a.name === name);
+        const app = applicationsList.find(a => a.name === name);
         const installedAppVersion =
-          app && hash
-            ? app.application_versions.find((v) => v.hash === hash)
-            : null;
+          app && hash ? app.application_versions.find(v => v.hash === hash) : null;
         const availableAppVersion = appByName[name];
         const blocksSize =
           blocks ||
@@ -274,15 +241,13 @@ const listApps = (
               availableAppVersion || {
                 bytes: 0,
               }
-            ).bytes || 0) / bytesPerBlock
+            ).bytes || 0) / bytesPerBlock,
           );
         const updated =
           appsThatKeepChangingHashes.includes(name) ||
           (availableAppVersion ? availableAppVersion.hash === hash : false);
         const version = installedAppVersion ? installedAppVersion.version : "";
-        const availableVersion = availableAppVersion
-          ? availableAppVersion.version
-          : "";
+        const availableVersion = availableAppVersion ? availableAppVersion.version : "";
         return {
           name,
           updated,
@@ -295,12 +260,9 @@ const listApps = (
       const appsListNames = (
         getEnv("MANAGER_DEV_MODE")
           ? apps
-          : apps.filter(
-              (a) =>
-                !a?.isDevTools || installed.some(({ name }) => name === a.name)
-            )
+          : apps.filter(a => !a?.isDevTools || installed.some(({ name }) => name === a.name))
       )
-        .map((a) => a?.name ?? "")
+        .map(a => a?.name ?? "")
         .filter(Boolean);
 
       let customImageBlocks = 0;
@@ -336,9 +298,9 @@ const listApps = (
       () => {
         o.complete();
       },
-      (e) => {
+      e => {
         o.error(e);
-      }
+      },
     );
     return () => {
       if (sub) sub.unsubscribe();

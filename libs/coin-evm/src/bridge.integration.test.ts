@@ -1,9 +1,5 @@
 import { FeeTooHigh } from "@ledgerhq/errors";
-import type {
-  AccountRaw,
-  CurrenciesData,
-  DatasetTest,
-} from "@ledgerhq/types-live";
+import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import ethereumScanAccounts1 from "./datasets/ethereum.scanAccounts.1";
 import { ethereum1 } from "./datasets/ethereum1";
@@ -54,10 +50,7 @@ const ethereum: CurrenciesData<Transaction> = {
           }),
           expectedStatus: (account, _, status) => {
             return {
-              amount: BigNumber.max(
-                account.balance.minus(status.estimatedFees),
-                0
-              ),
+              amount: BigNumber.max(account.balance.minus(status.estimatedFees), 0),
               errors: {},
               warnings: {},
             };
@@ -77,7 +70,7 @@ export const dataset: DatasetTest<Transaction> = {
 
 describe("EVM bridge", () => {
   test.todo(
-    "This is an empty test to make jest command pass. Remove it once there is a real test."
+    "This is an empty test to make jest command pass. Remove it once there is a real test.",
   );
 });
 

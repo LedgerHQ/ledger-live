@@ -91,11 +91,7 @@ function DistributionCard({ item: { currency, amount, distribution } }: Props) {
             justifyContent={"center"}
             borderRadius={32}
           >
-            <CurrencyIcon
-              currency={currency}
-              size={20}
-              color={colors.constant.white}
-            />
+            <CurrencyIcon currency={currency} size={20} color={colors.constant.white} />
           </Flex>
         </IconContainer>
         <CoinInfoContainer>

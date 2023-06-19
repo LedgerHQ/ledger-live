@@ -23,10 +23,7 @@ export type UseBleDevicesScanningResult = {
 
 export type UseBleDevicesScanningDependencies = {
   bleTransportListen: (
-    observer: TransportObserver<
-      DescriptorEvent<TransportBleDevice | null>,
-      HwTransportError
-    >
+    observer: TransportObserver<DescriptorEvent<TransportBleDevice | null>, HwTransportError>,
   ) => TransportSubscription;
 };
 
@@ -77,8 +74,7 @@ export const useBleDevicesScanning = ({
   restartScanningTimeoutMs = DEFAULT_RESTART_SCANNING_TIMEOUT_MS,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
-  const [scanningBleError, setScanningBleError] =
-    useState<ScanningBleError>(null);
+  const [scanningBleError, setScanningBleError] = useState<ScanningBleError>(null);
   const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
   // To check for duplicates. The ref will persist for the full lifetime of the component
   // in which the hook is called, and does not re-trigger the hook when being updated.
@@ -99,10 +95,7 @@ export const useBleDevicesScanning = ({
     const sub = of(bleScanningSource)
       .pipe(concatAll())
       .subscribe({
-        next: (event: {
-          type: DescriptorEventType;
-          descriptor: TransportBleDevice | null;
-        }) => {
+        next: (event: { type: DescriptorEventType; descriptor: TransportBleDevice | null }) => {
           setScanningBleError(null);
           const { type, descriptor } = event;
 
@@ -110,7 +103,7 @@ export const useBleDevicesScanning = ({
             const transportDevice = descriptor;
 
             const isScannedDeviceDuplicate = scannedDevicesRef.current.some(
-              (d) => d.deviceId === transportDevice.id
+              d => d.deviceId === transportDevice.id,
             );
 
             // Avoiding duplicates
@@ -118,22 +111,16 @@ export const useBleDevicesScanning = ({
               return;
             }
 
-            const shouldScannedDeviceBeFilteredOut =
-              filterOutDevicesByDeviceIds?.some(
-                (deviceId) => deviceId === transportDevice.id
-              );
+            const shouldScannedDeviceBeFilteredOut = filterOutDevicesByDeviceIds?.some(
+              deviceId => deviceId === transportDevice.id,
+            );
 
             if (shouldScannedDeviceBeFilteredOut) {
               return;
             }
 
-            if (
-              transportDevice.serviceUUIDs &&
-              transportDevice.serviceUUIDs.length > 0
-            ) {
-              const bleInfo = getInfosForServiceUuid(
-                transportDevice.serviceUUIDs[0]
-              );
+            if (transportDevice.serviceUUIDs && transportDevice.serviceUUIDs.length > 0) {
+              const bleInfo = getInfosForServiceUuid(transportDevice.serviceUUIDs[0]);
 
               if (!bleInfo) {
                 return;
@@ -150,17 +137,12 @@ export const useBleDevicesScanning = ({
               const newScannedDevice = {
                 deviceModel: bleInfo.deviceModel,
                 deviceName:
-                  transportDevice.localName ??
-                  transportDevice.name ??
-                  DEFAULT_DEVICE_NAME,
+                  transportDevice.localName ?? transportDevice.name ?? DEFAULT_DEVICE_NAME,
                 deviceId: transportDevice.id,
                 bleRssi: transportDevice.rssi,
               };
 
-              setScannedDevices((scannedDevices) => [
-                ...scannedDevices,
-                newScannedDevice,
-              ]);
+              setScannedDevices(scannedDevices => [...scannedDevices, newScannedDevice]);
               scannedDevicesRef.current.push(newScannedDevice);
             }
           }
@@ -195,7 +177,7 @@ export const useBleDevicesScanning = ({
     let timer;
     if (isRestartNeeded && !stopBleScanning) {
       timer = setTimeout(() => {
-        setRestartScanningNonce((prev) => prev + 1);
+        setRestartScanningNonce(prev => prev + 1);
         setIsRestartNeeded(false);
       }, restartScanningTimeoutMs);
     }

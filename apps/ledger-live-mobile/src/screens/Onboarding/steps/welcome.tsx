@@ -38,10 +38,7 @@ const SafeFlex = styled(SafeAreaView)`
 `;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingWelcome
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingWelcome>
 >;
 
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
@@ -54,18 +51,14 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   } = useTranslation();
 
   const onTermsLink = useCallback(
-    () =>
-      Linking.openURL(
-        (urls.terms as Record<string, string>)[locale] || urls.terms.en,
-      ),
+    () => Linking.openURL((urls.terms as Record<string, string>)[locale] || urls.terms.en),
     [locale],
   );
 
   const onPrivacyLink = useCallback(
     () =>
       Linking.openURL(
-        (urls.privacyPolicy as Record<string, string>)[locale] ||
-          urls.privacyPolicy.en,
+        (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
       ),
     [locale],
   );
@@ -166,20 +159,9 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
               <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
             </LinearGradient>
           </Defs>
-          <Rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            fill="url(#myGradient)"
-          />
+          <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
         </Svg>
-        <Flex
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-          overflow="hidden"
-        >
+        <Flex justifyContent="center" alignItems="center" flex={1} overflow="hidden">
           {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
             <Flex pr={4}>
@@ -210,26 +192,11 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
-          <Button
-            type="main"
-            size="large"
-            event="Onboarding - Start"
-            onPress={next}
-            mt={0}
-            mb={7}
-          >
+          <Button type="main" size="large" event="Onboarding - Start" onPress={next} mt={0} mb={7}>
             {t("onboarding.stepWelcome.start")}
           </Button>
-          {recoverFeature?.enabled &&
-          recoverFeature?.params?.onboardingLogin ? (
-            <Button
-              outline
-              type="main"
-              size="large"
-              onPress={recoverLogIn}
-              mt={0}
-              mb={7}
-            >
+          {recoverFeature?.enabled && recoverFeature?.params?.onboardingLogin ? (
+            <Button outline type="main" size="large" onPress={recoverLogIn} mt={0} mb={7}>
               {t("onboarding.stepWelcome.recoverLogIn")}
             </Button>
           ) : null}

@@ -12,10 +12,7 @@ import Button from "../../../components/wrappedUi/Button";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { TezosDelegationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  TezosDelegationFlowParamList,
-  ScreenName.DelegationStarted
->;
+type Props = StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationStarted>;
 const Check = <Icons.CheckAloneMedium size={20} color={"success.c50"} />;
 
 export default function DelegationStarted({ navigation, route }: Props) {
@@ -35,11 +32,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <Flex m={6}>
           <TrackScreen category="DelegationFlow" name="Started" />
           <Flex alignItems="center">
-            <Illustration
-              lightSource={EarnLight}
-              darkSource={EarnDark}
-              size={150}
-            />
+            <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
           </Flex>
           <Flex py={8} alignItems="center">
             <Log>

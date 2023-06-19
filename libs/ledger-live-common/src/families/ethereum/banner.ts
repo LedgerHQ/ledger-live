@@ -8,8 +8,7 @@ export interface AccountBannerState {
 const ETH_REQUIRED_FOR_KILN = new BigNumber("32000000000000000000");
 export function getAccountBannerState(account: Account): AccountBannerState {
   const stakeProvider =
-    account.currency.id === "ethereum" &&
-    account.balance.gte(ETH_REQUIRED_FOR_KILN)
+    account.currency.id === "ethereum" && account.balance.gte(ETH_REQUIRED_FOR_KILN)
       ? "kiln"
       : "lido";
 

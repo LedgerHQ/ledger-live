@@ -2,10 +2,7 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -36,12 +33,7 @@ export default class SummaryAmountSection extends PureComponent<Props> {
                 <CurrencyUnitValue unit={unit} value={amount} disableRounding />
               </LText>
               <LText style={styles.counterValueText} color="grey" semiBold>
-                <CounterValue
-                  before="≈ "
-                  value={amount}
-                  currency={currency}
-                  showCode
-                />
+                <CounterValue before="≈ " value={amount} currency={currency} showCode />
               </LText>
             </>
           )}

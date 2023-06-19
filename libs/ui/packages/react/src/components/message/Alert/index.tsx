@@ -90,7 +90,7 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
 };
 
 const StyledAlertContainer = styled(Flex)<{ background?: string; color?: string }>`
-  border-radius: ${(p) => `${p.theme.radii[2]}px`};
+  border-radius: ${p => `${p.theme.radii[2]}px`};
   align-items: start;
 `;
 

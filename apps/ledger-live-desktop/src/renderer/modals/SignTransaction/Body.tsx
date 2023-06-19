@@ -56,9 +56,7 @@ function useSteps(canEditFees = false): St[] {
           <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
             {t("common.adjustFees")}
           </Text>
-        ) : (
-          undefined
-        ),
+        ) : undefined,
       },
       {
         id: "device",

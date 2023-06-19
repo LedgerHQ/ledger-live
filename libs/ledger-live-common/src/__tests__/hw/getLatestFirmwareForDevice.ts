@@ -1,7 +1,4 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 import manager from "../../manager";
 import { fetchNextFirmware } from "../../hw/installFinalFirmware";
@@ -135,7 +132,7 @@ test("OSU 1.4.2", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000309312e342e322d6f7375042000000004312e37002000000000000000000000000000000000000000000000000000000000000000009000
-    `)
+    `),
   );
   const deviceInfo = await getDeviceInfo(t);
   const next = await fetchNextFirmware(deviceInfo).toPromise();
@@ -149,7 +146,7 @@ test("OSU 1.5.5", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000409312e352e352d6f7375042400000004312e35002000000000000000000000000000000000000000000000000000000000000000009000
-    `)
+    `),
   );
   const deviceInfo = await getDeviceInfo(t);
   const next = await fetchNextFirmware(deviceInfo).toPromise();

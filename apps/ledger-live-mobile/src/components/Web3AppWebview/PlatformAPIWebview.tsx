@@ -1,22 +1,11 @@
-import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-  forwardRef,
-} from "react";
+import React, { useState, useCallback, useEffect, useMemo, forwardRef } from "react";
 import { useSelector } from "react-redux";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import {
-  Account,
-  AccountLike,
-  Operation,
-  SignedOperation,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -25,7 +14,6 @@ import type {
 import { getEnv } from "@ledgerhq/live-common/env";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
@@ -53,10 +41,7 @@ import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../RootNavigator/types/helpers";
+import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
@@ -89,9 +74,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const accounts = useSelector(flattenAccountsSelector);
     const navigation =
       useNavigation<
-        RootNavigationComposite<
-          StackNavigatorNavigation<BaseNavigatorStackParamList>
-        >
+        RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>
       >();
     const [device, setDevice] = useState<Device>();
     const listAccounts = useListPlatformAccounts(accounts);
@@ -118,8 +101,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * works at build time and the `currencies` array is received at runtime from
            * JSONRPC requests. So we need to make sure the array is properly typed.
            */
-          const safeCurrencyIds =
-            currencyIds?.filter(c => typeof c === "string") ?? undefined;
+          const safeCurrencyIds = currencyIds?.filter(c => typeof c === "string") ?? undefined;
 
           const allCurrencies = listAndFilterCurrencies({
             currencies: safeCurrencyIds,
@@ -133,9 +115,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           const foundAccounts = cryptoCurrencyIds?.length
             ? accounts.filter(a =>
-                cryptoCurrencyIds.includes(
-                  isTokenAccount(a) ? a.token.id : a.currency.id,
-                ),
+                cryptoCurrencyIds.includes(isTokenAccount(a) ? a.token.id : a.currency.id),
               )
             : accounts;
 
@@ -151,18 +131,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             ? cryptoCurrencyIds
             : foundAccounts
                 .map(a => (isTokenAccount(a) ? a.token.id : a.currency.id))
-                .filter(
-                  (c, i, arr) =>
-                    cryptoCurrencyIds.includes(c) && i === arr.indexOf(c),
-                );
+                .filter((c, i, arr) => cryptoCurrencyIds.includes(c) && i === arr.indexOf(c));
 
           const onSuccess = (account: AccountLike, parentAccount?: Account) => {
             tracking.platformRequestAccountSuccess(manifest);
-            resolve(
-              serializePlatformAccount(
-                accountToPlatformAccount(account, parentAccount),
-              ),
-            );
+            resolve(serializePlatformAccount(accountToPlatformAccount(account, parentAccount)));
           };
 
           const onError = (error: Error) => {
@@ -172,7 +145,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           // if single currency available redirect to select account directly
           if (currenciesDiff.length === 1) {
-            const currency = findCryptoCurrencyById(currenciesDiff[0]);
+            const currency = allCurrencies.find(c => c.id === currenciesDiff[0]);
 
             if (!currency) {
               tracking.platformRequestAccountFail(manifest);
@@ -264,45 +237,44 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
 
             return new Promise((resolve, reject) => {
-              (
-                navigation as StackNavigatorNavigation<BaseNavigatorStackParamList>
-              ).navigate(NavigatorName.SignTransaction, {
-                screen: ScreenName.SignTransactionSummary,
-                params: {
-                  currentNavigation: ScreenName.SignTransactionSummary,
-                  nextNavigation: ScreenName.SignTransactionSelectDevice,
-                  transaction: tx as Transaction,
-                  accountId,
-                  parentId: parentAccount?.id,
-                  appName: params?.useApp,
-                  onSuccess: ({
-                    signedOperation,
-                    transactionSignError,
-                  }: {
-                    signedOperation: SignedOperation;
-                    transactionSignError: Error;
-                  }) => {
-                    if (transactionSignError) {
+              (navigation as StackNavigatorNavigation<BaseNavigatorStackParamList>).navigate(
+                NavigatorName.SignTransaction,
+                {
+                  screen: ScreenName.SignTransactionSummary,
+                  params: {
+                    currentNavigation: ScreenName.SignTransactionSummary,
+                    nextNavigation: ScreenName.SignTransactionSelectDevice,
+                    transaction: tx as Transaction,
+                    accountId,
+                    parentId: parentAccount?.id,
+                    appName: params?.useApp,
+                    onSuccess: ({
+                      signedOperation,
+                      transactionSignError,
+                    }: {
+                      signedOperation: SignedOperation;
+                      transactionSignError: Error;
+                    }) => {
+                      if (transactionSignError) {
+                        tracking.platformSignTransactionFail(manifest);
+                        reject(transactionSignError);
+                      } else {
+                        tracking.platformSignTransactionSuccess(manifest);
+                        resolve(serializePlatformSignedTransaction(signedOperation));
+                        const n =
+                          navigation.getParent<
+                            StackNavigatorNavigation<BaseNavigatorStackParamList>
+                          >() || navigation;
+                        n.pop();
+                      }
+                    },
+                    onError: (error: Error) => {
                       tracking.platformSignTransactionFail(manifest);
-                      reject(transactionSignError);
-                    } else {
-                      tracking.platformSignTransactionSuccess(manifest);
-                      resolve(
-                        serializePlatformSignedTransaction(signedOperation),
-                      );
-                      const n =
-                        navigation.getParent<
-                          StackNavigatorNavigation<BaseNavigatorStackParamList>
-                        >() || navigation;
-                      n.pop();
-                    }
-                  },
-                  onError: (error: Error) => {
-                    tracking.platformSignTransactionFail(manifest);
-                    reject(error);
+                      reject(error);
+                    },
                   },
                 },
-              });
+              );
             });
           },
         ),
@@ -372,9 +344,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 }
 
                 const n =
-                  navigation.getParent<
-                    StackNavigatorNavigation<BaseNavigatorStackParamList>
-                  >() || navigation;
+                  navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() ||
+                  navigation;
                 n.pop();
               },
             },
@@ -421,10 +392,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                     feesStrategy,
                   },
                   device,
-                  onResult: (result: {
-                    operation?: Operation;
-                    error?: Error;
-                  }) => {
+                  onResult: (result: { operation?: Operation; error?: Error }) => {
                     if (result.error) {
                       tracking.platformStartExchangeFail(manifest);
                       reject(result.error);
@@ -554,9 +522,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
-        javaScriptCanOpenWindowsAutomatically={
-          javaScriptCanOpenWindowsAutomatically
-        }
+        javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         {...webviewProps}
       />
     );

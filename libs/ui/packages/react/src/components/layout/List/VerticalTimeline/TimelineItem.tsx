@@ -39,9 +39,9 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
-  border-radius: ${(p) => p.theme.radii[2]}px;
-  background: ${(p) => getContainerBackground(p.theme, p.status)};
-  border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
+  border-radius: ${p => p.theme.radii[2]}px;
+  background: ${p => getContainerBackground(p.theme, p.status)};
+  border: 1px solid ${p => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
 `;
 

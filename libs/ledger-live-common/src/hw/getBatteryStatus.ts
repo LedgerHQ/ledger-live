@@ -31,11 +31,9 @@ type BatteryStatusTuple<Statuses extends ReadonlyArray<BatteryStatusTypes>> = {
     : number;
 };
 
-const getBatteryStatus = async <
-  StatusesType extends ReadonlyArray<BatteryStatusTypes>
->(
+const getBatteryStatus = async <StatusesType extends ReadonlyArray<BatteryStatusTypes>>(
   transport: Transport,
-  statuses: StatusesType
+  statuses: StatusesType,
 ): Promise<BatteryStatusTuple<StatusesType>> => {
   const result: (BatteryStatusFlags | number)[] = [];
 

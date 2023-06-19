@@ -26,7 +26,7 @@ describe("getMainMessage", () => {
           type: "transfer",
           attributes: [],
         },
-      ]).type
+      ]).type,
     ).toEqual("unbond");
   });
 
@@ -42,7 +42,7 @@ describe("getMainMessage", () => {
           type: "transfer",
           attributes: [],
         },
-      ])
+      ]),
     ).toEqual(firstTransfer);
   });
 
@@ -57,7 +57,7 @@ describe("getMainMessage", () => {
           type: "redelegate",
           attributes: [],
         },
-      ]).type
+      ]).type,
     ).toEqual("redelegate");
   });
 });

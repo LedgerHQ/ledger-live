@@ -31,20 +31,10 @@ export function getFTXLogo(isUS = false) {
         </G>
         <Defs>
           <ClipPath id="clip0_1694_20090">
-            <Rect
-              width="24"
-              height="24"
-              fill="white"
-              transform="translate(0.000488281)"
-            />
+            <Rect width="24" height="24" fill="white" transform="translate(0.000488281)" />
           </ClipPath>
           <ClipPath id="clip1_1694_20090">
-            <Rect
-              width="24"
-              height="20.8709"
-              fill="white"
-              transform="translate(0.000488281 2.5)"
-            />
+            <Rect width="24" height="20.8709" fill="white" transform="translate(0.000488281 2.5)" />
           </ClipPath>
         </Defs>
       </Svg>

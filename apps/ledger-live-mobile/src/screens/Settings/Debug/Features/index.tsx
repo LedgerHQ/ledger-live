@@ -11,8 +11,7 @@ import { StackNavigatorNavigation } from "../../../../components/RootNavigator/t
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 
 export default function Features() {
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   return (
     <SettingsNavigationScrollView>
       <SettingsRow
@@ -53,9 +52,7 @@ export default function Features() {
         title="Post Onboarding"
         desc="Entry to the post onboarding flow"
         iconLeft={<Icons.UserMedium size={32} color="black" />}
-        onPress={() =>
-          navigation.navigate(ScreenName.PostOnboardingDebugScreen)
-        }
+        onPress={() => navigation.navigate(ScreenName.PostOnboardingDebugScreen)}
       />
       <SettingsRow
         title="Lotties"

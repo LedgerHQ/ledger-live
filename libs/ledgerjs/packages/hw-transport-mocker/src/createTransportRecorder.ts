@@ -8,18 +8,17 @@ import type { RecordStore } from "./RecordStore";
  */
 const createTransportRecorder = (
   DecoratedTransport: Transport,
-  recordStore: RecordStore
+  recordStore: RecordStore,
 ): new (T) => Transport => {
   class TransportRecorder extends Transport {
     static recordStore = recordStore;
-    static isSupported = (DecoratedTransport.constructor as typeof Transport)
-      .isSupported;
+    static isSupported = (DecoratedTransport.constructor as typeof Transport).isSupported;
     static list = (DecoratedTransport.constructor as typeof Transport).list;
     static listen = (DecoratedTransport.constructor as typeof Transport).listen;
     static open = (descriptor: any, ...args) =>
       (DecoratedTransport.constructor as typeof Transport)
         .open(descriptor, ...args)
-        .then((t) => new TransportRecorder(t));
+        .then(t => new TransportRecorder(t));
 
     setScrambleKey() {}
 
@@ -36,7 +35,7 @@ const createTransportRecorder = (
 
     exchange(apdu: Buffer): Promise<Buffer> {
       const output = this.transport.exchange(apdu);
-      output.then((out) => {
+      output.then(out => {
         recordStore.recordExchange(apdu, out);
       });
       return output;

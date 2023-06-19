@@ -48,7 +48,4 @@ export const protectSelector = (s: State): ProtectState => {
   return s.protect;
 };
 
-export default handleActions<ProtectState, ProtectPayload>(
-  handlers,
-  INITIAL_STATE,
-);
+export default handleActions<ProtectState, ProtectPayload>(handlers, INITIAL_STATE);

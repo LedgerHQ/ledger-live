@@ -149,12 +149,7 @@ export default function Alert(props: Props) {
 
   const hasLearnMore = !!onLearnMore || !!learnMoreUrl;
   const handleLearnMore = useCallback(
-    () =>
-      onLearnMore
-        ? onLearnMore()
-        : learnMoreUrl
-        ? Linking.openURL(learnMoreUrl)
-        : undefined,
+    () => (onLearnMore ? onLearnMore() : learnMoreUrl ? Linking.openURL(learnMoreUrl) : undefined),
     [onLearnMore, learnMoreUrl],
   );
 
@@ -168,10 +163,7 @@ export default function Alert(props: Props) {
       <Container>
         {title && <BaseAlert.BodyText>{title}</BaseAlert.BodyText>}
         {description && (
-          <BaseAlert.BodyText
-            mt={title ? 2 : undefined}
-            mb={hasLearnMore ? 2 : undefined}
-          >
+          <BaseAlert.BodyText mt={title ? 2 : undefined} mb={hasLearnMore ? 2 : undefined}>
             {description}
           </BaseAlert.BodyText>
         )}

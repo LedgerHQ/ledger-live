@@ -25,13 +25,7 @@ function DeltaVariation({ value, percent, ...props }: Props) {
   return (
     <Flex flexDirection="row" alignItems="center">
       {percent && ArrowIcon ? <ArrowIcon size={20} color={color} /> : null}
-      <Text
-        variant="body"
-        ml={2}
-        fontWeight="semiBold"
-        color={color}
-        {...props}
-      >
+      <Text variant="body" ml={2} fontWeight="semiBold" color={color} {...props}>
         {percent ? `${absDelta.toFixed(2)}%` : `${sign}${absDelta}`}
       </Text>
     </Flex>

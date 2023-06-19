@@ -7,9 +7,7 @@ import { StyleSheet, View } from "react-native";
 
 // Type predicate function because AnimationObject is only defined as an interface
 // and cannot be checked with `maybeAnimation instanceof AnimationObject` for ex.
-function isAnimationObject(
-  maybeAnimation: unknown,
-): maybeAnimation is AnimationObject {
+function isAnimationObject(maybeAnimation: unknown): maybeAnimation is AnimationObject {
   return (
     (maybeAnimation as AnimationObject).w !== undefined &&
     (maybeAnimation as AnimationObject).h !== undefined

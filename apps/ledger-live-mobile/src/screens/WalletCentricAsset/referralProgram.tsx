@@ -2,10 +2,7 @@ import React, { useCallback } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import {
-  ChevronRightMedium,
-  GiftMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { ChevronRightMedium, GiftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Linking, TouchableOpacity } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "../../analytics";
@@ -32,13 +29,7 @@ export function ReferralProgram() {
 
   return (
     <TouchableOpacity onPress={accessReferralProgram}>
-      <ReferralContainer
-        mx={5}
-        mt={4}
-        p={5}
-        flexDirection="row"
-        justifyContent="space-between"
-      >
+      <ReferralContainer mx={5} mt={4} p={5} flexDirection="row" justifyContent="space-between">
         <Flex flexDirection="row">
           <GiftMedium />
           <Text variant="paragraphLineHeight" fontWeight="medium" ml={4}>

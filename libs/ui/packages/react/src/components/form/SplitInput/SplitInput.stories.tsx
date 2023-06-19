@@ -58,7 +58,7 @@ const selectStyles: StylesConfig<Option> = {
   }),
 };
 
-type Option = typeof options[0];
+type Option = (typeof options)[0];
 export const Split = (args: Props): React.ReactNode => {
   const [leftValue1, setLeftValue1] = React.useState<Option | null>(null);
   const [rightValue1, setRightValue1] = React.useState<string>("");
@@ -88,7 +88,7 @@ export const Split = (args: Props): React.ReactNode => {
             {...props}
           />
         )}
-        renderRight={(props) => (
+        renderRight={props => (
           <Input
             value={rightValue1}
             placeholder="Right"
@@ -116,7 +116,7 @@ export const Split = (args: Props): React.ReactNode => {
             {...props}
           />
         )}
-        renderRight={(props) => (
+        renderRight={props => (
           <QuantityInput
             value={rightValue2}
             placeholder="Right"
@@ -144,7 +144,7 @@ export const Split = (args: Props): React.ReactNode => {
             {...props}
           />
         )}
-        renderRight={(props) => (
+        renderRight={props => (
           <QrCodeInput
             value={rightValue3}
             placeholder="Right"
@@ -158,7 +158,7 @@ export const Split = (args: Props): React.ReactNode => {
       <Label left="Input" right="Input" />
       <SplitInput
         {...args}
-        renderLeft={(props) => (
+        renderLeft={props => (
           <Input
             value={leftValue4}
             placeholder="Left"
@@ -167,7 +167,7 @@ export const Split = (args: Props): React.ReactNode => {
             {...props}
           />
         )}
-        renderRight={(props) => (
+        renderRight={props => (
           <Input
             value={rightValue4}
             placeholder="Right"

@@ -33,9 +33,7 @@ export function logged(api: ChainAPI, file: string): ChainAPI {
                 args[0].recentBlockhash = LATEST_BLOCKHASH_MOCK;
                 (args as any) = [args[0].serialize().toString("base64")];
               } else {
-                throw new Error(
-                  "unexpected getFeeForMessage function signature"
-                );
+                throw new Error("unexpected getFeeForMessage function signature");
               }
             }
             const paramsJson = JSON.stringify(args);
@@ -44,14 +42,14 @@ export function logged(api: ChainAPI, file: string): ChainAPI {
             delete PublicKey.prototype.toJSON;
             const answerJson = JSON.stringify(answer).replace(
               /{"_bn":(".*?")}/g,
-              "new PublicKey(Buffer.from($1, 'hex'))"
+              "new PublicKey(Buffer.from($1, 'hex'))",
             );
             PublicKey.prototype.toJSON = publicKeytoJSON;
             const summaryJson = `{"method":"${method}", "params":${paramsJson},"answer":${answerJson}}`;
             write(file, summaryJson + ",\n");
           };
           if (result instanceof Promise) {
-            return result.then((answer) => {
+            return result.then(answer => {
               log(answer);
               return answer;
             });

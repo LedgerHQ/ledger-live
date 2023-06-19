@@ -23,12 +23,7 @@ export type Props = {
   description: string;
 };
 
-const WebViewError = ({
-  screenName,
-  Illustration,
-  title,
-  description,
-}: Props) => {
+const WebViewError = ({ screenName, Illustration, title, description }: Props) => {
   const { colors } = useTheme();
 
   return (
@@ -41,13 +36,7 @@ const WebViewError = ({
         <Text mt="16px" variant="h2">
           {title}
         </Text>
-        <Text
-          mt="12px"
-          textAlign="center"
-          variant="paragraph"
-          fontSize="13px"
-          lineHeight="22.1px"
-        >
+        <Text mt="12px" textAlign="center" variant="paragraph" fontSize="13px" lineHeight="22.1px">
           {description}
         </Text>
       </InnerContainer>

@@ -4,10 +4,7 @@ import BigNumber from "bignumber.js";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import {
-  decodeAccountId,
-  encodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   Transaction as EvmTransaction,
@@ -20,9 +17,7 @@ import {
 /**
  * Adapter to convert a Ledger Live transaction to an Ethers transaction
  */
-export const transactionToEthersTransaction = (
-  tx: EvmTransaction
-): ethers.Transaction => {
+export const transactionToEthersTransaction = (tx: EvmTransaction): ethers.Transaction => {
   const ethersTx = {
     to: tx.recipient,
     value: ethers.BigNumber.from(tx.amount.toFixed()),
@@ -36,16 +31,14 @@ export const transactionToEthersTransaction = (
   // is EIP-1559 transaction (type 2)
   if (tx.type === 2) {
     ethersTx.maxFeePerGas = ethers.BigNumber.from(
-      (tx as EvmTransactionEIP1559).maxFeePerGas.toFixed()
+      (tx as EvmTransactionEIP1559).maxFeePerGas.toFixed(),
     );
     ethersTx.maxPriorityFeePerGas = ethers.BigNumber.from(
-      (tx as EvmTransactionEIP1559).maxPriorityFeePerGas.toFixed()
+      (tx as EvmTransactionEIP1559).maxPriorityFeePerGas.toFixed(),
     );
   } else {
     // is Legacy transaction (type 0)
-    ethersTx.gasPrice = ethers.BigNumber.from(
-      (tx as EvmTransactionLegacy).gasPrice.toFixed()
-    );
+    ethersTx.gasPrice = ethers.BigNumber.from((tx as EvmTransactionLegacy).gasPrice.toFixed());
   }
 
   return ethersTx as ethers.Transaction;
@@ -56,7 +49,7 @@ export const transactionToEthersTransaction = (
  */
 export const etherscanOperationToOperation = (
   accountId: string,
-  tx: EtherscanOperation
+  tx: EtherscanOperation,
 ): Operation => {
   const { xpubOrAddress: address } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
@@ -99,13 +92,10 @@ export const etherscanOperationToOperation = (
  */
 export const etherscanERC20EventToOperation = (
   accountId: string,
-  event: EtherscanERC20Event
+  event: EtherscanERC20Event,
 ): { tokenCurrency: TokenCurrency; operation: Operation } | null => {
   const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
-  const tokenCurrency = findTokenByAddressInCurrency(
-    event.contractAddress,
-    currencyId
-  );
+  const tokenCurrency = findTokenByAddressInCurrency(event.contractAddress, currencyId);
   if (!tokenCurrency) return null;
 
   const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);

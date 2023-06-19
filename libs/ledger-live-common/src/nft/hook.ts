@@ -7,7 +7,7 @@ const FLOOR_PRICE_CURRENCIES = new Set(["ethereum"]);
 
 export const getFloorPrice = async (
   nft: ProtoNFT,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): Promise<FloorPrice | null> => {
   if (!FLOOR_PRICE_CURRENCIES.has(nft.currencyId)) {
     return null;
@@ -16,11 +16,9 @@ export const getFloorPrice = async (
   try {
     const { data } = await network({
       method: "GET",
-      url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/marketdata/${
-        nft.currencyId
-      }/${currency?.ethereumLikeInfo?.chainId}/contract/${
-        nft.contract
-      }/floor-price`,
+      url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/marketdata/${nft.currencyId}/${
+        currency?.ethereumLikeInfo?.chainId
+      }/contract/${nft.contract}/floor-price`,
     });
 
     return data;

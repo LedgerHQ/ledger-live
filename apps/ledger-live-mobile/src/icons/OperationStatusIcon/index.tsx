@@ -58,8 +58,7 @@ const OperationStatusIcon = ({
   Badge?: React.ComponentType<{ size?: number; color?: string }>;
   failed?: boolean;
 }) => {
-  const Icon =
-    iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
+  const Icon = iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
   const BadgeIcon =
     Badge ||
     (failed

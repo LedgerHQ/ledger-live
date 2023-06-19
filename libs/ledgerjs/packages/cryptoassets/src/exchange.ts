@@ -16,7 +16,7 @@ for (const [id, config, signature] of all) {
  *
  */
 export const findExchangeCurrencyConfig = (
-  id: string
+  id: string,
 ):
   | {
       config: string;

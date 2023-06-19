@@ -67,10 +67,7 @@ export function Pending({
           style={[
             styles.iconWrapper,
             {
-              backgroundColor: rgba(
-                rejected ? colors.alert : colors.green,
-                0.1,
-              ),
+              backgroundColor: rgba(rejected ? colors.alert : colors.green, 0.1),
             },
           ]}
         >

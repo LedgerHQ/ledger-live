@@ -38,7 +38,7 @@ describe("EVM Family", () => {
             parentAccount: undefined,
             transaction: coinTransaction,
             status,
-          })
+          }),
         ).toEqual([
           { type: "amount", label: "Amount" },
           {
@@ -80,7 +80,7 @@ describe("EVM Family", () => {
             parentAccount: undefined,
             transaction: coinTransaction,
             status,
-          })
+          }),
         ).toEqual([
           { type: "amount", label: "Amount" },
           {
@@ -128,7 +128,7 @@ describe("EVM Family", () => {
             parentAccount: undefined,
             transaction: coinTransaction,
             status,
-          })
+          }),
         ).toEqual([
           { type: "amount", label: "Amount" },
           {
@@ -153,7 +153,7 @@ describe("EVM Family", () => {
           recipient: "0x997e135e96114c0E84FFc58754552368E4abf329", // celinedion.eth
           data: Buffer.from(
             "a9059cbb00000000000000000000000059569e96d0e3d9728dc07bf5c1443809e6f237fd0000000000000000000000000000000000000000000000000c06701668d322ac",
-            "hex"
+            "hex",
           ),
           feesStrategy: "custom",
           family: "evm",
@@ -173,7 +173,7 @@ describe("EVM Family", () => {
             parentAccount: account,
             transaction: tokenTransaction,
             status,
-          })
+          }),
         ).toEqual([
           { type: "amount", label: "Amount" },
           {
@@ -198,7 +198,7 @@ describe("EVM Family", () => {
           recipient: "0x997e135e96114c0E84FFc58754552368E4abf329", // celinedion.eth
           data: Buffer.from(
             "a9059cbb00000000000000000000000059569e96d0e3d9728dc07bf5c1443809e6f237fd0000000000000000000000000000000000000000000000000c06701668d322ac",
-            "hex"
+            "hex",
           ),
           feesStrategy: "custom",
           family: "evm",
@@ -224,7 +224,7 @@ describe("EVM Family", () => {
             parentAccount: account,
             transaction: tokenTransaction,
             status,
-          })
+          }),
         ).toEqual([
           { type: "amount", label: "Amount" },
           {

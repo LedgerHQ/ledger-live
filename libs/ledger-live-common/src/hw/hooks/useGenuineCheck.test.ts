@@ -1,18 +1,13 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { of, throwError } from "rxjs";
-import {
-  UserRefusedAllowManager,
-  DisconnectedDeviceDuringOperation,
-} from "@ledgerhq/errors";
+import { UserRefusedAllowManager, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import { useGenuineCheck } from "./useGenuineCheck";
 import { getGenuineCheckFromDeviceId } from "../getGenuineCheckFromDeviceId";
 
 jest.mock("../getGenuineCheckFromDeviceId");
 jest.useFakeTimers();
 
-const mockedGetGenuineCheckFromDeviceId = jest.mocked(
-  getGenuineCheckFromDeviceId
-);
+const mockedGetGenuineCheckFromDeviceId = jest.mocked(getGenuineCheckFromDeviceId);
 
 describe("useGenuineCheck", () => {
   afterEach(() => {
@@ -26,13 +21,13 @@ describe("useGenuineCheck", () => {
         of({
           socketEvent: { type: "device-permission-requested", wording: "" },
           lockedDevice: false,
-        })
+        }),
       );
       const { result } = renderHook(() =>
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {
@@ -49,13 +44,13 @@ describe("useGenuineCheck", () => {
         of({
           socketEvent: { type: "device-permission-granted" },
           lockedDevice: false,
-        })
+        }),
       );
       const { result } = renderHook(() =>
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {
@@ -68,14 +63,12 @@ describe("useGenuineCheck", () => {
     });
 
     it("should notify the hook consumer if the device permission is refused", async () => {
-      mockedGetGenuineCheckFromDeviceId.mockReturnValue(
-        throwError(new UserRefusedAllowManager())
-      );
+      mockedGetGenuineCheckFromDeviceId.mockReturnValue(throwError(new UserRefusedAllowManager()));
       const { result } = renderHook(() =>
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {
@@ -91,13 +84,13 @@ describe("useGenuineCheck", () => {
   describe("When an error occurred during the genuine check", () => {
     it("should notify the hook consumer that an error occurred", async () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
-        throwError(new DisconnectedDeviceDuringOperation())
+        throwError(new DisconnectedDeviceDuringOperation()),
       );
       const { result } = renderHook(() =>
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {
@@ -105,9 +98,7 @@ describe("useGenuineCheck", () => {
       });
 
       expect(result.current.genuineState).toEqual("unchecked");
-      expect(result.current.error).toBeInstanceOf(
-        DisconnectedDeviceDuringOperation
-      );
+      expect(result.current.error).toBeInstanceOf(DisconnectedDeviceDuringOperation);
     });
   });
 
@@ -118,13 +109,13 @@ describe("useGenuineCheck", () => {
           of({
             socketEvent: { type: "result", payload: "0000" },
             lockedDevice: false,
-          })
+          }),
         );
         const { result } = renderHook(() =>
           useGenuineCheck({
             getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
             deviceId: "A_DEVICE_ID",
-          })
+          }),
         );
 
         await act(async () => {
@@ -142,13 +133,13 @@ describe("useGenuineCheck", () => {
           of({
             socketEvent: { type: "result", payload: "1111" },
             lockedDevice: false,
-          })
+          }),
         );
         const { result } = renderHook(() =>
           useGenuineCheck({
             getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
             deviceId: "A_DEVICE_ID",
-          })
+          }),
         );
 
         await act(async () => {
@@ -173,8 +164,8 @@ describe("useGenuineCheck", () => {
           {
             socketEvent: { type: "result", payload: "1111" },
             lockedDevice: false,
-          }
-        )
+          },
+        ),
       );
 
       const { result } = renderHook(() =>
@@ -182,7 +173,7 @@ describe("useGenuineCheck", () => {
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           isHookEnabled: true,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {
@@ -210,14 +201,14 @@ describe("useGenuineCheck", () => {
         of({
           socketEvent: null,
           lockedDevice: true,
-        })
+        }),
       );
 
       const { result } = renderHook(() =>
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {

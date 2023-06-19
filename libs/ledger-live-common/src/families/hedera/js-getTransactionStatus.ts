@@ -12,7 +12,7 @@ import { calculateAmount, getEstimatedFees } from "./utils";
 
 export default async function getTransactionStatus(
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<TransactionStatus> {
   const errors: Record<string, Error> = {};
 

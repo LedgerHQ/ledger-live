@@ -29,12 +29,7 @@ export default function BalanceSummaryInfoItem({
         borderRightWidth={isLast ? 0 : 1}
       >
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text
-            variant={"small"}
-            fontWeight={"medium"}
-            color={"neutral.c70"}
-            mr={2}
-          >
+          <Text variant={"small"} fontWeight={"medium"} color={"neutral.c70"} mr={2}>
             {title}
           </Text>
           {onPress && (

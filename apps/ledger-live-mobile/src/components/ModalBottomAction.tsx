@@ -10,24 +10,12 @@ export default class ModalBottomAction extends Component<{
   shouldWrapDesc?: boolean;
 }> {
   render() {
-    const {
-      icon,
-      title,
-      uppercase,
-      description,
-      footer,
-      shouldWrapDesc = true,
-    } = this.props;
+    const { icon, title, uppercase, description, footer, shouldWrapDesc = true } = this.props;
     return (
       <Flex alignItems="center">
         {icon && <Flex mb={24}>{icon}</Flex>}
         {title ? (
-          <Text
-            mb={6}
-            uppercase={uppercase !== false}
-            fontWeight="semiBold"
-            variant="h3"
-          >
+          <Text mb={6} uppercase={uppercase !== false} fontWeight="semiBold" variant="h3">
             {title}
           </Text>
         ) : null}

@@ -16,17 +16,14 @@ import {
   VersionedTransaction as OnChainTransaction,
   TransactionInstruction,
   TransactionMessage,
-  VersionedTransaction,
 } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 
 export const buildTransactionWithAPI = async (
   account: Account,
   transaction: Transaction,
-  api: ChainAPI
-): Promise<
-  readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]
-> => {
+  api: ChainAPI,
+): Promise<readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]> => {
   const instructions = buildInstructions(transaction);
 
   const recentBlockhash = await api.getLatestBlockhash();
@@ -39,7 +36,7 @@ export const buildTransactionWithAPI = async (
     instructions,
   });
 
-  const tx = new VersionedTransaction(tm.compileToV0Message());
+  const tx = new OnChainTransaction(tm.compileToLegacyMessage());
 
   return [
     tx,
@@ -61,9 +58,7 @@ function buildInstructions(tx: Transaction): TransactionInstruction[] {
   return buildInstructionsForCommand(commandDescriptor.command);
 }
 
-function buildInstructionsForCommand(
-  command: Command
-): TransactionInstruction[] {
+function buildInstructionsForCommand(command: Command): TransactionInstruction[] {
   switch (command.kind) {
     case "transfer":
       return buildTransferInstructions(command);

@@ -68,8 +68,7 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
     LedgerAPIErrorWithMessage:
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
-    StratisDown2021Warning:
-      "https://support.ledger.com/hc/en-us/articles/115005175329",
+    StratisDown2021Warning: "https://support.ledger.com/hc/en-us/articles/115005175329",
     TronSendTrc20ToNewAccountForbidden:
       "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
   },
@@ -85,8 +84,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/4404389482641?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=add_account",
   tronStaking:
     "https://www.ledger.com/staking-tron?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tron",
-  TronStakingDisable:
-    "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
+  TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
   supportLinkByTokenType: {
     erc20:
       "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
@@ -106,8 +104,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
     "https://support.ledger.com/hc/en-us/articles/360018131260-Earning-Polkadot-DOT-bonding-rewards?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
-  elrondStaking:
-    "https://support.ledger.com/hc/en-us/articles/360016750819-Elrond-EGLD-?docs=true",
+  elrondStaking: "https://support.ledger.com/hc/en-us/articles/360016750819-Elrond-EGLD-?docs=true",
   nearStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
   swap: {
@@ -167,8 +164,7 @@ export const urls = {
   otgCable:
     "https://support.ledger.com/hc/en-us/articles/115005463729-OTG-Kit-adapters-for-your-Ledger-devices",
   ledgerStatus: "https://status.ledger.com/",
-  bitcoinAddressType:
-    "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
+  bitcoinAddressType: "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
   supportPage:
     "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
   maxSpendable:
@@ -183,8 +179,7 @@ export const urls = {
   },
   solana: {
     supportPage: "https://support.ledger.com",
-    stakingPage:
-      "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
+    stakingPage: "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
   },
   resources: {
     gettingStarted:
@@ -218,8 +213,7 @@ export const urls = {
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
   },
   nft: {
-    supportDisableIos:
-      "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
+    supportDisableIos: "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
   fwUpdateReleaseNotes: {
@@ -232,11 +226,9 @@ export const urls = {
     stax: "https://support.ledger.com/hc/en-us/articles/9950654827293?docs=true",
     blue: "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
   },
-  lnxFirmwareUpdate:
-    "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
+  lnxFirmwareUpdate: "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
   recoverSources: {
     myLedger: "ledgerlive://myledger",
   },
-  domainService:
-    "https://support.ledger.com/hc/articles/9710787581469?docs=true",
+  domainService: "https://support.ledger.com/hc/articles/9710787581469?docs=true",
 };

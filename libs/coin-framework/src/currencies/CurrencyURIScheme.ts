@@ -46,9 +46,7 @@ export function decodeURIScheme(str: string): Data {
   }
 
   const [, , scheme, address, , queryStr] = m;
-  const query: Record<string, any> = queryStr
-    ? querystring.parse(queryStr)
-    : {};
+  const query: Record<string, any> = queryStr ? querystring.parse(queryStr) : {};
   const currency = findCryptoCurrencyByScheme(scheme);
 
   if (!currency) {

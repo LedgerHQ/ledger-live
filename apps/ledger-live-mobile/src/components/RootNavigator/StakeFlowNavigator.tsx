@@ -8,10 +8,7 @@ import type { StakeNavigatorParamList } from "./types/StakeNavigator";
 
 const StakeFlowNavigator = () => {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig} detachInactiveScreens>

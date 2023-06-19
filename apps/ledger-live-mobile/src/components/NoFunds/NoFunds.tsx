@@ -57,8 +57,7 @@ export default function NoFunds({ route }: Props) {
 
   const currency = parentAccount?.currency || account?.currency;
   const availableOnReceive = true;
-  const availableOnBuy =
-    currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+  const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
   const availableOnSwap = useMemo(() => {
     return currency && swapAvailableIds.includes(currency.id);
   }, [currency, swapAvailableIds]);
@@ -66,9 +65,10 @@ export default function NoFunds({ route }: Props) {
   const { page, track } = useAnalytics();
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (
-        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
-      ).navigate(name, options);
+      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+        name,
+        options,
+      );
     },
     [navigation],
   );
@@ -152,10 +152,7 @@ export default function NoFunds({ route }: Props) {
         {buttonsList
           .filter(button => !button.disabled)
           .map((button, index) => (
-            <Box
-              mb={index === buttonsList.length - 1 ? 0 : 8}
-              key={button.title}
-            >
+            <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
               <TransferButton {...button} />
             </Box>
           ))}

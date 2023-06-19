@@ -12,11 +12,7 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
-import {
-  ParamListBase,
-  useNavigation,
-  useTheme,
-} from "@react-navigation/native";
+import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
@@ -24,11 +20,7 @@ import type { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, DeviceInfo } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  Exchange,
-  ExchangeRate,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
@@ -67,9 +59,7 @@ import DeviceActionProgress from "../DeviceActionProgress";
 import { PartialNullable } from "../../types/helpers";
 import ModalLock from "../ModalLock";
 
-type LedgerError = InstanceType<
-  LedgerErrorConstructor<{ [key: string]: unknown }>
->;
+type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -344,8 +334,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   if (imageRemoveRequested) {
     if (error) {
       const refused = (error as Status["error"]) instanceof UserRefusedOnDevice;
-      const noImage =
-        (error as Status["error"]) instanceof ImageDoesNotExistOnDevice;
+      const noImage = (error as Status["error"]) instanceof ImageDoesNotExistOnDevice;
       if (refused || noImage) {
         return renderError({
           t,
@@ -356,9 +345,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           theme,
           hasExportLogButton: false,
           iconColor: palette.neutral.c20,
-          Icon: () => (
-            <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />
-          ),
+          Icon: () => <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />,
           device: device ?? undefined,
         });
       }
@@ -380,11 +367,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     });
   }
 
-  if (
-    completeExchangeStarted &&
-    !completeExchangeResult &&
-    !completeExchangeError
-  ) {
+  if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
     return renderExchange({
       exchangeType: (request as { exchangeType: number })?.exchangeType,
       t,
@@ -430,8 +413,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       navigation,
       device: selectedDevice,
       wording: wording!,
-      tokenContext: (request as { tokenCurrency?: TokenCurrency })
-        ?.tokenCurrency,
+      tokenContext: (request as { tokenCurrency?: TokenCurrency })?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
       colors,
       theme,
@@ -474,13 +456,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
 
     if (error instanceof LatestFirmwareVersionRequired) {
-      return (
-        <RequiredFirmwareUpdate
-          t={t}
-          navigation={navigation}
-          device={selectedDevice}
-        />
-      );
+      return <RequiredFirmwareUpdate t={t} navigation={navigation} device={selectedDevice} />;
     }
 
     if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
@@ -492,9 +468,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         colors,
         theme,
         iconColor: palette.opacityDefault.c10,
-        Icon: () => (
-          <Icons.WarningSolidMedium size={28} color={colors.warning} />
-        ),
+        Icon: () => <Icons.WarningSolidMedium size={28} color={colors.warning} />,
         device: device ?? undefined,
       });
     }
@@ -573,11 +547,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       <>
         <PreventNativeBack />
         <SkipLock />
-        <ValidateMessageOnDevice
-          device={device}
-          account={account}
-          message={signMessageRequested}
-        />
+        <ValidateMessageOnDevice device={device} account={account} message={signMessageRequested} />
       </>
     );
   }

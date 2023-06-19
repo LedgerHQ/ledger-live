@@ -1,12 +1,8 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { transactionToEthersTransaction } from "../adapters";
-import * as rpcAPI from "../api/rpc.common";
-import {
-  fromTransactionRaw,
-  getSerializedTransaction,
-  toTransactionRaw,
-} from "../transaction";
+import * as rpcAPI from "../api/rpc/rpc.common";
+import { fromTransactionRaw, getSerializedTransaction, toTransactionRaw } from "../transaction";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -134,17 +130,13 @@ describe("EVM Family", () => {
           gasPrice: ethers.BigNumber.from(10000),
         };
 
-        expect(transactionToEthersTransaction(legacyTx)).toEqual(
-          legacyEthersTx
-        );
+        expect(transactionToEthersTransaction(legacyTx)).toEqual(legacyEthersTx);
       });
     });
 
     describe("getSerializedTransaction", () => {
       beforeAll(() => {
-        jest
-          .spyOn(rpcAPI, "getTransactionCount")
-          .mockImplementation(() => Promise.resolve(0));
+        jest.spyOn(rpcAPI, "getTransactionCount").mockImplementation(() => Promise.resolve(0));
       });
 
       it("should serialize a type 0 transaction", async () => {
@@ -165,7 +157,7 @@ describe("EVM Family", () => {
         const serializedTx = await getSerializedTransaction(transactionLegacy);
 
         expect(serializedTx).toBe(
-          "0xdf8064825208946775e49108cb77cda06fc3bef51bcd497602ad886480018080"
+          "0xdf8064825208946775e49108cb77cda06fc3bef51bcd497602ad886480018080",
         );
       });
 
@@ -188,7 +180,7 @@ describe("EVM Family", () => {
         const serializedTx = await getSerializedTransaction(transactionEIP1559);
 
         expect(serializedTx).toBe(
-          "0x02df01806464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c0"
+          "0x02df01806464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c0",
         );
       });
     });

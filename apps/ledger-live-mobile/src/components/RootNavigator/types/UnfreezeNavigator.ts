@@ -1,7 +1,4 @@
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Device } from "@ledgerhq/types-devices";
 import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";

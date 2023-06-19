@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import * as remote from "@electron/remote";
-import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "react";
+import React, { forwardRef, RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -15,7 +15,6 @@ import {
 } from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { flattenAccountsSelector } from "../../reducers/accounts";
@@ -30,6 +29,7 @@ import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { useWebviewState } from "./helpers";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { NetworkErrorScreen } from "./NetworkError";
+import getUser from "~/helpers/user";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
@@ -175,14 +175,31 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
   );
 }
 
+const useGetUserId = () => {
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    getUser().then(({ id }) => {
+      if (mounted) setUserId(id);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return userId;
+};
+
 function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject<WebviewTag>) {
   const accounts = useSelector(flattenAccountsSelector);
 
   const uiHook = useUiHook(manifest);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const userId = useGetUserId();
   const config = useConfig({
     appId: manifest.id,
-    userId: getEnv("USER_ID"),
+    userId,
     tracking: shareAnalytics,
     wallet,
   });
@@ -194,7 +211,6 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
-          // @ts-expect-error Electron webview type issue
           webview.contentWindow?.postMessage(message, origin);
         }
       },
@@ -306,6 +322,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * seem to be set
            */
           style={webviewStyle}
+          // eslint-disable-next-line react/no-unknown-property
           preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
@@ -314,6 +331,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * cf. https://github.com/electron/electron/issues/6046
            */
           // @ts-expect-error: see above comment
+          // eslint-disable-next-line react/no-unknown-property
           allowpopups="true"
           {...webviewProps}
         />

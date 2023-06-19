@@ -8,10 +8,7 @@ import { EIP1559ShouldBeUsed } from "../transaction";
 import { blockchainBaseURL } from "../../../explorer";
 import { FeeEstimationFailed } from "../../../errors";
 import { getEnv } from "../../../env";
-import {
-  NFTCollectionMetadataResponse,
-  NFTMetadataResponse,
-} from "@ledgerhq/types-live";
+import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Block = {
@@ -118,24 +115,22 @@ export type API = {
     address: string,
     blockHeight?: number | null,
     batchSize?: number,
-    token?: string
+    token?: string,
   ) => Promise<{ txs: Tx[]; nextPageToken: string | undefined }>;
+  getTransactionByHash: (hash: string) => Promise<Tx>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
   getERC20Balances: (input: ERC20BalancesInput) => Promise<ERC20BalanceOutput>;
-  getNFTMetadata: (
-    input: NFTMetadataInput,
-    chainId: string
-  ) => Promise<NFTMetadataResponse[]>;
+  getNFTMetadata: (input: NFTMetadataInput, chainId: string) => Promise<NFTMetadataResponse[]>;
   getNFTCollectionMetadata: (
     input: NFTCollectionMetadataInput,
-    chainId: string
+    chainId: string,
   ) => Promise<NFTCollectionMetadataResponse[]>;
   getAccountBalance: (address: string) => Promise<BigNumber>;
   getERC20ApprovalsPerContract: (
     owner: string,
-    contract: string
+    contract: string,
   ) => Promise<
     Array<{
       sender: string;
@@ -155,9 +150,7 @@ export type API = {
     high: BigNumber;
     next_base: BigNumber;
   }>;
-  getBlockByHash: (
-    blockHash: string | null | undefined
-  ) => Promise<BlockByHashOutput | undefined>;
+  getBlockByHash: (blockHash: string | null | undefined) => Promise<BlockByHashOutput | undefined>;
 };
 
 export const apiForCurrency = (currency: CryptoCurrency): API => {
@@ -174,7 +167,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       address,
       blockHeight,
       batchSize = 2000,
-      token
+      token,
     ): Promise<{ txs: Tx[]; nextPageToken: string | undefined }> {
       const query: any = {
         batch_size: batchSize,
@@ -196,6 +189,14 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         }),
       });
       return { txs: txData.data.data, nextPageToken: txData.data.token };
+    },
+
+    async getTransactionByHash(hash): Promise<Tx> {
+      const { data } = await network({
+        method: "GET",
+        url: `${baseURL}/tx/${hash}`,
+      });
+      return data;
     },
 
     async getCurrentBlock(): Promise<Block> {
@@ -255,35 +256,26 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getNFTMetadata(input, chainId): Promise<NFTMetadataResponse[]> {
       const { data }: { data: NFTMetadataResponse[] } = await network({
         method: "POST",
-        url: `${getEnv(
-          "NFT_ETH_METADATA_SERVICE"
-        )}/v1/ethereum/${chainId}/contracts/tokens/infos`,
+        url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${chainId}/contracts/tokens/infos`,
         data: input,
       });
 
       return data;
     },
 
-    async getNFTCollectionMetadata(
-      input,
-      chainId
-    ): Promise<NFTCollectionMetadataResponse[]> {
-      const { data }: { data: NFTCollectionMetadataResponse[] } = await network(
-        {
-          method: "POST",
-          url: `${getEnv(
-            "NFT_ETH_METADATA_SERVICE"
-          )}/v1/ethereum/${chainId}/contracts/infos`,
-          data: input,
-        }
-      );
+    async getNFTCollectionMetadata(input, chainId): Promise<NFTCollectionMetadataResponse[]> {
+      const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
+        method: "POST",
+        url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${chainId}/contracts/infos`,
+        data: input,
+      });
 
       return data;
     },
 
     async getERC20ApprovalsPerContract(
       owner,
-      contract
+      contract,
     ): Promise<
       {
         sender: string;
@@ -305,8 +297,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           .map((m: any) => {
             if (!m || typeof m !== "object") return;
             const { spender, count: value } = m;
-            if (typeof spender !== "string" || typeof value !== "string")
-              return;
+            if (typeof spender !== "string" || typeof value !== "string") return;
             return {
               sender: spender,
               value,
@@ -326,10 +317,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getFallbackGasLimit(address: string): Promise<BigNumber> {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL.replace(
-          "v4",
-          "v3"
-        )}/addresses/${address}/estimate-gas-limit`,
+        url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limit`,
       });
       return new BigNumber(data.estimated_gas_limit);
     },
@@ -351,7 +339,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     },
 
     getGasTrackerBarometer: makeLRUCache(
-      async (currency) => {
+      async currency => {
         const { data } = await network({
           method: "GET",
           url: `${baseURL}/gastracker/barometer${
@@ -365,10 +353,10 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           next_base: new BigNumber(data.next_base),
         };
       },
-      (currency) => currency.id,
+      currency => currency.id,
       {
         ttl: 30 * 1000,
-      }
+      },
     ),
 
     async getBlockByHash(blockHash): Promise<BlockByHashOutput | undefined> {

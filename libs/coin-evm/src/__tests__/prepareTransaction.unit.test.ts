@@ -2,26 +2,20 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import ERC20ABI from "../abis/erc20.abi.json";
-import * as rpcAPI from "../api/rpc.common";
-import {
-  prepareForSignOperation,
-  prepareTransaction,
-} from "../prepareTransaction";
+import * as rpcAPI from "../api/rpc/rpc.common";
+import { prepareForSignOperation, prepareTransaction } from "../prepareTransaction";
 import { makeAccount, makeTokenAccount } from "../testUtils";
-import { Transaction as EvmTransaction } from "../types";
+import { Transaction as EvmTransaction, GasOptions } from "../types";
 
 const currency = getCryptoCurrencyById("ethereum");
-const tokenAccount = makeTokenAccount(
-  "0xkvn",
-  getTokenById("ethereum/erc20/usd__coin")
-);
+const tokenAccount = makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin"));
 const account = makeAccount("0xkvn", currency, [tokenAccount]);
 const transaction: EvmTransaction = {
   amount: new BigNumber(100),
   useAllAmount: false,
   subAccountId: "id",
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  feesStrategy: "custom",
+  feesStrategy: "medium",
   family: "evm",
   mode: "send",
   gasPrice: new BigNumber(0),
@@ -38,16 +32,14 @@ const expectedData = (recipient: string, amount: BigNumber): Buffer =>
     new ethers.utils.Interface(ERC20ABI)
       .encodeFunctionData("transfer", [recipient, amount.toFixed()])
       .slice(2),
-    "hex"
+    "hex",
   );
 
 describe("EVM Family", () => {
   describe("prepareTransaction.ts", () => {
     beforeEach(() => {
       // These mocks will be overriden in some tests
-      jest
-        .spyOn(rpcAPI, "getGasEstimation")
-        .mockImplementation(async () => new BigNumber(21000));
+      jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => new BigNumber(21000));
       // These mocks will be overriden in some tests
       jest.spyOn(rpcAPI, "getFeesEstimation").mockImplementation(async () => ({
         gasPrice: new BigNumber(1),
@@ -63,11 +55,9 @@ describe("EVM Family", () => {
     describe("prepareTransaction", () => {
       describe("Coins", () => {
         it("should have a gasLimit = 0 when recipient has an error", async () => {
-          jest
-            .spyOn(rpcAPI, "getGasEstimation")
-            .mockImplementation(async () => {
-              throw new Error();
-            });
+          jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => {
+            throw new Error();
+          });
 
           const tx = await prepareTransaction(account, {
             ...transaction,
@@ -86,11 +76,9 @@ describe("EVM Family", () => {
         });
 
         it("should have a gasLimit = 0 when amount has an error", async () => {
-          jest
-            .spyOn(rpcAPI, "getGasEstimation")
-            .mockImplementation(async () => {
-              throw new Error();
-            });
+          jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => {
+            throw new Error();
+          });
 
           const tx = await prepareTransaction(account, {
             ...transaction,
@@ -120,13 +108,11 @@ describe("EVM Family", () => {
         });
 
         it("should return a legacy coin transaction", async () => {
-          jest
-            .spyOn(rpcAPI, "getFeesEstimation")
-            .mockImplementationOnce(async () => ({
-              gasPrice: new BigNumber(1),
-              maxFeePerGas: null,
-              maxPriorityFeePerGas: null,
-            }));
+          jest.spyOn(rpcAPI, "getFeesEstimation").mockImplementationOnce(async () => ({
+            gasPrice: new BigNumber(1),
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+          }));
 
           const tx = await prepareTransaction(account, transaction);
 
@@ -147,10 +133,7 @@ describe("EVM Family", () => {
             useAllAmount: true,
           };
 
-          const tx = await prepareTransaction(
-            accountWithBalance,
-            transactionWithUseAllAmount
-          );
+          const tx = await prepareTransaction(accountWithBalance, transactionWithUseAllAmount);
           const estimatedFees = new BigNumber(21000); // 21000 gasLimit * 1 maxFeePerGas
 
           expect(tx).toEqual({
@@ -189,11 +172,9 @@ describe("EVM Family", () => {
 
       describe("Tokens", () => {
         it("should have a gasLimit = 0 and no data when recipient has an error", async () => {
-          jest
-            .spyOn(rpcAPI, "getGasEstimation")
-            .mockImplementation(async () => {
-              throw new Error();
-            });
+          jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => {
+            throw new Error();
+          });
 
           const tx = await prepareTransaction(account, {
             ...tokenTransaction,
@@ -213,11 +194,9 @@ describe("EVM Family", () => {
         });
 
         it("should have a gasLimit = 0 when amount has an error", async () => {
-          jest
-            .spyOn(rpcAPI, "getGasEstimation")
-            .mockImplementation(async () => {
-              throw new Error();
-            });
+          jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => {
+            throw new Error();
+          });
 
           const tx = await prepareTransaction(account, {
             ...tokenTransaction,
@@ -262,10 +241,7 @@ describe("EVM Family", () => {
             amount: tokenAccountWithBalance.balance,
             useAllAmount: true,
             subAccountId: tokenAccountWithBalance.id,
-            data: expectedData(
-              tokenTransaction.recipient,
-              tokenAccountWithBalance.balance
-            ),
+            data: expectedData(tokenTransaction.recipient, tokenAccountWithBalance.balance),
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             gasPrice: undefined,
@@ -299,11 +275,8 @@ describe("EVM Family", () => {
             expect.objectContaining({
               recipient: tokenAccount.token.contractAddress,
               amount: new BigNumber(0),
-              data: expectedData(
-                tokenTransaction.recipient,
-                tokenAccountWithBalance.balance
-              ),
-            })
+              data: expectedData(tokenTransaction.recipient, tokenAccountWithBalance.balance),
+            }),
           );
         });
 
@@ -320,10 +293,7 @@ describe("EVM Family", () => {
 
           expect(tx).toEqual({
             ...tokenTransaction,
-            data: expectedData(
-              tokenTransaction.recipient,
-              tokenTransaction.amount
-            ),
+            data: expectedData(tokenTransaction.recipient, tokenTransaction.amount),
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             type: 2,
@@ -331,13 +301,11 @@ describe("EVM Family", () => {
         });
 
         it("should return a legacy token transaction", async () => {
-          jest
-            .spyOn(rpcAPI, "getFeesEstimation")
-            .mockImplementationOnce(async () => ({
-              gasPrice: new BigNumber(1),
-              maxFeePerGas: null,
-              maxPriorityFeePerGas: null,
-            }));
+          jest.spyOn(rpcAPI, "getFeesEstimation").mockImplementationOnce(async () => ({
+            gasPrice: new BigNumber(1),
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+          }));
 
           const tokenAccountWithBalance = {
             ...tokenAccount,
@@ -351,12 +319,103 @@ describe("EVM Family", () => {
 
           expect(tx).toEqual({
             ...tokenTransaction,
-            data: expectedData(
-              tokenTransaction.recipient,
-              tokenTransaction.amount
-            ),
+            data: expectedData(tokenTransaction.recipient, tokenTransaction.amount),
             gasPrice: new BigNumber(1),
             type: 0,
+          });
+        });
+      });
+
+      describe("When feesStrategy provided", () => {
+        it("should call getFeesEstimation once", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            feesStrategy: undefined,
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(1);
+
+          expect(tx).toEqual({
+            ...transaction,
+            feesStrategy: undefined,
+            additionalFees: undefined,
+            maxFeePerGas: new BigNumber(1),
+            maxPriorityFeePerGas: new BigNumber(1),
+            type: 2,
+          });
+        });
+      });
+
+      describe("When custom feesStrategy provided", () => {
+        it("should use transaction provided data for fees", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            feesStrategy: "custom",
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(0);
+
+          expect(tx).toEqual({
+            ...transaction,
+            additionalFees: undefined,
+            feesStrategy: "custom",
+            gasPrice: new BigNumber(0),
+            type: 0,
+          });
+        });
+      });
+
+      describe("When gasOptions provided", () => {
+        it("should call getFeesEstimation once", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            gasOptions: undefined,
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(1);
+
+          expect(tx).toEqual({
+            ...transaction,
+            maxFeePerGas: new BigNumber(1),
+            maxPriorityFeePerGas: new BigNumber(1),
+            type: 2,
+          });
+        });
+      });
+
+      describe("When gasOptions provided", () => {
+        const gasOptions: GasOptions = {
+          slow: {
+            maxFeePerGas: new BigNumber(10),
+            maxPriorityFeePerGas: new BigNumber(1),
+            gasPrice: null,
+          },
+          medium: {
+            maxFeePerGas: new BigNumber(20),
+            maxPriorityFeePerGas: new BigNumber(2),
+            gasPrice: null,
+          },
+          fast: {
+            maxFeePerGas: new BigNumber(30),
+            maxPriorityFeePerGas: new BigNumber(3),
+            gasPrice: null,
+          },
+        };
+        it("should use gasOptions values for fee data", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            gasOptions,
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(0);
+
+          expect(tx).toEqual({
+            ...transaction,
+            gasOptions,
+            additionalFees: undefined,
+            maxFeePerGas: new BigNumber(20),
+            maxPriorityFeePerGas: new BigNumber(2),
+            type: 2,
           });
         });
       });
@@ -364,9 +423,7 @@ describe("EVM Family", () => {
 
     describe("prepareForSignOperation", () => {
       beforeEach(() => {
-        jest
-          .spyOn(rpcAPI, "getTransactionCount")
-          .mockImplementation(() => Promise.resolve(10));
+        jest.spyOn(rpcAPI, "getTransactionCount").mockImplementation(() => Promise.resolve(10));
       });
       afterEach(() => {
         jest.restoreAllMocks();
@@ -380,9 +437,7 @@ describe("EVM Family", () => {
       });
 
       it("should update a token transaction with the correct recipient", async () => {
-        expect(
-          await prepareForSignOperation(account, tokenTransaction)
-        ).toEqual({
+        expect(await prepareForSignOperation(account, tokenTransaction)).toEqual({
           ...tokenTransaction,
           amount: new BigNumber(0),
           recipient: tokenAccount.token.contractAddress,

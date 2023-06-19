@@ -1,7 +1,4 @@
-import Transport, {
-  StatusCodes,
-  TransportStatusError,
-} from "@ledgerhq/hw-transport";
+import Transport, { StatusCodes, TransportStatusError } from "@ledgerhq/hw-transport";
 
 export default async (transport: Transport): Promise<string> => {
   // NB Prevents bad apdu response for LNX

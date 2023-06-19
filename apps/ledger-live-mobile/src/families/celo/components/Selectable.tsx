@@ -8,12 +8,7 @@ import { rgba } from "../../../colors";
 const Selectable = ({ name }: { name: string }) => {
   const { colors } = useTheme();
   return (
-    <View
-      style={[
-        styles.validatorSelection,
-        { backgroundColor: rgba(colors.primary, 0.2) },
-      ]}
-    >
+    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
       <Text
         fontWeight="bold"
         numberOfLines={1}
@@ -23,12 +18,7 @@ const Selectable = ({ name }: { name: string }) => {
         {name}
       </Text>
 
-      <View
-        style={[
-          styles.validatorSelectionIcon,
-          { backgroundColor: colors.primary },
-        ]}
-      >
+      <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
         <Icon size={16} name="edit-2" color={colors.text} />
       </View>
     </View>

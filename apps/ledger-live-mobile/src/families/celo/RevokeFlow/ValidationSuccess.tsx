@@ -17,19 +17,14 @@ import type { CeloRevokeFlowFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CeloRevokeFlowFlowParamList,
-    ScreenName.CeloRevokeValidationSuccess
-  >
+  StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeValidationSuccess>
 >;
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {
@@ -51,12 +46,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="celo.revoke.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="celo.revoke.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="celo.revoke.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="celo.revoke.flow.steps.verification.success.text" />}
       />
     </View>
   );

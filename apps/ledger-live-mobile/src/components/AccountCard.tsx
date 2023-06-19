@@ -1,17 +1,8 @@
 import React, { ReactNode } from "react";
-import {
-  getAccountName,
-  getAccountSpendableBalance,
-} from "@ledgerhq/live-common/account/index";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/helpers";
-import {
-  DerivationMode,
-  getTagDerivationMode,
-} from "@ledgerhq/coin-framework/derivation";
-import { AccountLike } from "@ledgerhq/types-live";
+import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/helpers";
+import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -23,6 +14,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 
 export type Props = CardProps & {
   account?: AccountLike | null;
+  parentAccount?: Account;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
   useFullBalance?: boolean;
@@ -32,6 +24,7 @@ export type Props = CardProps & {
 const AccountCard = ({
   onPress,
   account,
+  parentAccount,
   style,
   disabled,
   useFullBalance,
@@ -66,13 +59,7 @@ const AccountCard = ({
           size={32}
           circle
         />
-        <Flex
-          flexGrow={1}
-          flexShrink={1}
-          marginLeft={3}
-          flexDirection="row"
-          alignItems="center"
-        >
+        <Flex flexGrow={1} flexShrink={1} marginLeft={3} flexDirection="row" alignItems="center">
           <Flex minWidth={20} flexShrink={1}>
             <Text
               variant="paragraph"
@@ -81,7 +68,9 @@ const AccountCard = ({
               color={disabled ? "neutral.c50" : "neutral.c100"}
               flexShrink={1}
             >
-              {getAccountName(account)}
+              {account.type === "TokenAccount"
+                ? `${parentAccount!.name} (${currency.ticker})`
+                : account.name}
             </Text>
             {AccountSubTitle}
           </Flex>
@@ -92,11 +81,7 @@ const AccountCard = ({
             <CurrencyUnitValue
               showCode
               unit={unit}
-              value={
-                useFullBalance
-                  ? account.balance
-                  : getAccountSpendableBalance(account)
-              }
+              value={useFullBalance ? account.balance : getAccountSpendableBalance(account)}
             />
           </Text>
         </Flex>

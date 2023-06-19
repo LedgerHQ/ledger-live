@@ -65,44 +65,24 @@ const AppRow = ({
   const { installed, deviceInfo } = state;
   const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
 
-  const isInstalled = useMemo(
-    () => installed.find(i => i.name === name),
-    [installed, name],
-  );
+  const isInstalled = useMemo(() => installed.find(i => i.name === name), [installed, name]);
 
   const version = (isInstalled && isInstalled.version) || appVersion;
-  const availableVersion =
-    (isInstalled && isInstalled.availableVersion) || appVersion;
+  const availableVersion = (isInstalled && isInstalled.availableVersion) || appVersion;
 
-  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(
-    optimisticState,
-    name,
-  );
+  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
 
-  const onSizePress = useCallback(
-    () => setStorageWarning(name),
-    [setStorageWarning, name],
-  );
+  const onSizePress = useCallback(() => setStorageWarning(name), [setStorageWarning, name]);
 
   return (
     <RowContainer disabled={!isInstalled && !canBeInstalled}>
       <AppIcon app={app} size={48} />
       <LabelContainer>
-        <Text
-          numberOfLines={1}
-          variant="body"
-          fontWeight="semiBold"
-          color="neutral.c100"
-        >
+        <Text numberOfLines={1} variant="body" fontWeight="semiBold" color="neutral.c100">
           {displayName}
         </Text>
         <VersionContainer borderColor="neutral.c40">
-          <Text
-            numberOfLines={1}
-            variant="tiny"
-            color="neutral.c80"
-            fontWeight="semiBold"
-          >
+          <Text numberOfLines={1} variant="tiny" color="neutral.c80" fontWeight="semiBold">
             <Trans i18nKey="ApplicationVersion" values={{ version }} />
             {isInstalled && !isInstalled.updated && (
               <>
@@ -110,10 +90,7 @@ const AppRow = ({
                 <Trans
                   i18nKey="manager.appList.versionNew"
                   values={{
-                    newVersion:
-                      availableVersion !== version
-                        ? ` ${availableVersion}`
-                        : "",
+                    newVersion: availableVersion !== version ? ` ${availableVersion}` : "",
                   }}
                 />
               </>

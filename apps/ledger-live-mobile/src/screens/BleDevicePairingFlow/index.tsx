@@ -17,10 +17,7 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
 
 export type Props = RootComposite<
-  StackNavigatorProps<
-    BaseNavigatorStackParamList,
-    ScreenName.BleDevicePairingFlow
-  >
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.BleDevicePairingFlow>
 >;
 
 // Defines here some of the header options for this screen to be able to reset back to them.
@@ -108,8 +105,7 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
   } = onSuccessNavigateToConfig;
 
   // Makes sure the pairing components are reset when navigating back to this screen
-  const keyToReset =
-    useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
+  const keyToReset = useIncrementOnNavigationFocusState<Props["navigation"]>(navigation);
 
   const onPairingSuccess = useCallback(
     (device: Device) => {

@@ -25,10 +25,7 @@ const TransactionsPendingConfirmationWarningContent = () => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity
-        hitSlop={hitSlop}
-        onPress={() => setIsModalOpened(true)}
-      >
+      <TouchableOpacity hitSlop={hitSlop} onPress={() => setIsModalOpened(true)}>
         <ClockIcon color={colors.grey} size={12} />
       </TouchableOpacity>
       <QueuedDrawer
@@ -61,9 +58,7 @@ export const TransactionsPendingConfirmationWarningForAccount = ({
 };
 
 export const TransactionsPendingConfirmationWarningAllAccounts = () => {
-  const areSomeAccountsBalanceUnconfirmed = useSelector(
-    areSomeAccountsBalanceUnconfirmedSelector,
-  );
+  const areSomeAccountsBalanceUnconfirmed = useSelector(areSomeAccountsBalanceUnconfirmedSelector);
   return areSomeAccountsBalanceUnconfirmed ? (
     <TransactionsPendingConfirmationWarningContent />
   ) : null;

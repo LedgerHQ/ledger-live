@@ -20,10 +20,7 @@ import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/t
 import { getTrackingDelegationType } from "../../helpers";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SolanaDelegationFlowParamList,
-    ScreenName.DelegationValidationSuccess
-  >
+  StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -38,9 +35,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
 
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   useEffect(() => {
@@ -76,9 +71,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         onClose={onClose}
         onViewDetails={goToOperationDetails}
         title={<Trans i18nKey={"solana.delegation.broadcastSuccessTitle"} />}
-        description={
-          <Trans i18nKey={"solana.delegation.broadcastSuccessDescription"} />
-        }
+        description={<Trans i18nKey={"solana.delegation.broadcastSuccessDescription"} />}
       />
     </View>
   );

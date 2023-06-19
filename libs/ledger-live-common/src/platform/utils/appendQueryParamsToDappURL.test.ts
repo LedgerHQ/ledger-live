@@ -17,7 +17,7 @@ describe("appendQueryParamsToDappURL", () => {
 
     expect(url).toBeInstanceOf(URL);
     expect(url?.toString()).toEqual(
-      "https://example.com/?param1=value1&param2=value2&param2=value3"
+      "https://example.com/?param1=value1&param2=value2&param2=value3",
     );
   });
 

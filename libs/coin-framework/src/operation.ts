@@ -1,10 +1,12 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
+import { findSubAccountById, getMainAccount } from "./account/helpers";
+import invariant from "invariant";
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
-  operationId: string
+  operationId: string,
 ): Operation | null | undefined {
   for (let i = 0; i < operations.length; i++) {
     const op = operations[i];
@@ -48,11 +50,7 @@ export function findOperationInAccount(
   return null;
 }
 
-export function encodeOperationId(
-  accountId: string,
-  hash: string,
-  type: string
-): string {
+export function encodeOperationId(accountId: string, hash: string, type: string): string {
   return `${accountId}-${hash}-${type}`;
 }
 
@@ -73,7 +71,7 @@ export function encodeSubOperationId(
   accountId: string,
   hash: string,
   type: string,
-  index: string | number
+  index: string | number,
 ): string {
   return `${accountId}-${hash}-${type}-i${index}`;
 }
@@ -93,17 +91,14 @@ export function decodeSubOperationId(id: string): {
   };
 }
 
-export function patchOperationWithHash(
-  operation: Operation,
-  hash: string
-): Operation {
+export function patchOperationWithHash(operation: Operation, hash: string): Operation {
   return {
     ...operation,
     hash,
     id: encodeOperationId(operation.accountId, hash, operation.type),
     subOperations:
       operation.subOperations &&
-      operation.subOperations.map((op) => ({
+      operation.subOperations.map(op => ({
         ...op,
         hash,
         id: encodeOperationId(op.accountId, hash, op.type),
@@ -111,9 +106,7 @@ export function patchOperationWithHash(
   };
 }
 
-export function flattenOperationWithInternalsAndNfts(
-  op: Operation
-): Operation[] {
+export function flattenOperationWithInternalsAndNfts(op: Operation): Operation[] {
   let ops: Operation[] = [];
 
   // ops of type NONE does not appear in lists
@@ -178,24 +171,19 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
   }
 }
 
-export function getOperationAmountNumberWithInternals(
-  op: Operation
-): BigNumber {
+export function getOperationAmountNumberWithInternals(op: Operation): BigNumber {
   return flattenOperationWithInternalsAndNfts(op).reduce(
     (amount: BigNumber, op) => amount.plus(getOperationAmountNumber(op)),
-    new BigNumber(0)
+    new BigNumber(0),
   );
 }
 
-export const getOperationConfirmationNumber = (
-  operation: Operation,
-  account: Account
-): number =>
+export const getOperationConfirmationNumber = (operation: Operation, account: Account): number =>
   operation.blockHeight ? account.blockHeight - operation.blockHeight + 1 : 0;
 
 export const getOperationConfirmationDisplayableNumber = (
   operation: Operation,
-  account: Account
+  account: Account,
 ): string =>
   account.blockHeight && operation.blockHeight && account.currency.blockAvgTime
     ? String(account.blockHeight - operation.blockHeight + 1)
@@ -204,7 +192,7 @@ export const getOperationConfirmationDisplayableNumber = (
 export const isConfirmedOperation = (
   operation: Operation,
   account: Account,
-  confirmationsNb: number
+  confirmationsNb: number,
 ): boolean =>
   operation.blockHeight
     ? account.blockHeight - operation.blockHeight + 1 >= confirmationsNb
@@ -212,7 +200,7 @@ export const isConfirmedOperation = (
 
 export const isAddressPoisoningOperation = (
   operation: Operation,
-  account: AccountLike
+  account: AccountLike,
 ): boolean => {
   const impactedFamilies = getEnv("ADDRESS_POISONING_FAMILIES").split(",");
   const isTokenAccount = account.type === "TokenAccount";
@@ -223,3 +211,63 @@ export const isAddressPoisoningOperation = (
     operation.value.isZero()
   );
 };
+
+export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
+  let isEthFamily = false;
+  if (account.type === "Account") {
+    isEthFamily = account.currency.family === "ethereum";
+  } else if (account.type === "TokenAccount") {
+    isEthFamily = account.token.parentCurrency.family === "ethereum";
+  }
+  return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
+}
+
+// return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
+export function getStuckAccountAndOperation(
+  account: AccountLike,
+  parentAccount: Account | undefined | null,
+):
+  | {
+      account: AccountLike;
+      parentAccount: Account | undefined;
+      operation: Operation;
+    }
+  | undefined {
+  let stuckAccount;
+  let stuckParentAccount;
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  const SUPPORTED_FAMILIES = ["ethereum"];
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) return undefined;
+  const now = new Date().getTime();
+  const stuckOperations = mainAccount.pendingOperations.filter(
+    pendingOp =>
+      isEditableOperation(mainAccount, pendingOp) &&
+      now - pendingOp.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
+  );
+  if (stuckOperations.length === 0) return undefined;
+  const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
+    if (!oldestOp) return currentOp;
+    return oldestOp.transactionSequenceNumber !== undefined &&
+      currentOp.transactionSequenceNumber !== undefined &&
+      oldestOp.transactionSequenceNumber > currentOp.transactionSequenceNumber
+      ? currentOp
+      : oldestOp;
+  });
+  if (oldestStuckOperation?.transactionRaw?.subAccountId) {
+    stuckAccount = findSubAccountById(
+      mainAccount,
+      oldestStuckOperation.transactionRaw.subAccountId,
+    );
+    stuckParentAccount = mainAccount;
+  } else {
+    stuckAccount = mainAccount;
+    stuckParentAccount = undefined;
+  }
+  invariant(stuckAccount, "stuckAccount required");
+  return {
+    account: stuckAccount,
+    parentAccount: stuckParentAccount,
+    operation: oldestStuckOperation,
+  };
+}

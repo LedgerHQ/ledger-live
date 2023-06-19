@@ -12,18 +12,11 @@ import Touchable from "../../../../components/Touchable";
 import LText from "../../../../components/LText";
 
 const formatInputValue = (inputValue: string): string[] | null | undefined => {
-  const val: string[] = inputValue
-    .replace(/\s/g, "")
-    .split(",")
-    .filter(Boolean);
+  const val: string[] = inputValue.replace(/\s/g, "").split(",").filter(Boolean);
   return val.length > 0 ? val : undefined;
 };
 
-export default function AddMockAnnouncementButton({
-  title,
-}: {
-  title: string;
-}) {
+export default function AddMockAnnouncementButton({ title }: { title: string }) {
   const { colors } = useTheme();
   const { updateCache } = useAnnouncements();
   const [open, setIsopen] = useState(false);
@@ -48,10 +41,7 @@ export default function AddMockAnnouncementButton({
     };
     const formattedParams = (Object.keys(params) as Array<keyof typeof params>)
       .filter(k => !!params[k] && params[k]!.length && params[k]!.length > 0)
-      .reduce<Partial<typeof params>>(
-        (sum, k) => ({ ...sum, [k]: params[k] }),
-        {},
-      );
+      .reduce<Partial<typeof params>>((sum, k) => ({ ...sum, [k]: params[k] }), {});
     const extra: Partial<{
       content: {
         [k: string]: {
@@ -111,11 +101,7 @@ export default function AddMockAnnouncementButton({
         iconLeft={<Icons.NewsMedium size={24} color="black" />}
         onPress={onOpen}
       />
-      <QueuedDrawer
-        isRequestingToBeOpened={open}
-        onClose={onClose}
-        style={styles.root}
-      >
+      <QueuedDrawer isRequestingToBeOpened={open} onClose={onClose} style={styles.root}>
         <TextInput
           placeholder="platform separated by ','"
           value={notifPlatform}
@@ -161,11 +147,7 @@ export default function AddMockAnnouncementButton({
           onChangeText={setNotifLiveCommonVersions}
         />
 
-        <TextInput
-          placeholder="link"
-          value={announcementLink}
-          onChangeText={setAnnouncementLink}
-        />
+        <TextInput placeholder="link" value={announcementLink} onChangeText={setAnnouncementLink} />
         <Touchable
           onPress={onConfirm}
           style={[

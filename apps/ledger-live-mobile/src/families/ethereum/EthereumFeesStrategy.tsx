@@ -44,14 +44,9 @@ export default function EthereumFeesStrategy({
   const { currency } = getMainAccount(account, parentAccount);
 
   const defaultStrategies = useFeesStrategy(transaction);
-  const [customStrategy, setCustomStrategy] = useState(
-    getCustomStrategy(transaction, currency),
-  );
+  const [customStrategy, setCustomStrategy] = useState(getCustomStrategy(transaction, currency));
   const strategies = useMemo(
-    () =>
-      customStrategy
-        ? [...defaultStrategies, customStrategy]
-        : defaultStrategies,
+    () => (customStrategy ? [...defaultStrategies, customStrategy] : defaultStrategies),
     [defaultStrategies, customStrategy],
   );
 
@@ -89,14 +84,7 @@ export default function EthereumFeesStrategy({
       nextNavigation: ScreenName.SendSelectDevice,
       setTransaction,
     });
-  }, [
-    navigation,
-    route.params,
-    account.id,
-    parentAccount,
-    transaction,
-    setTransaction,
-  ]);
+  }, [navigation, route.params, account.id, parentAccount, transaction, setTransaction]);
 
   return (
     <SelectFeesStrategy

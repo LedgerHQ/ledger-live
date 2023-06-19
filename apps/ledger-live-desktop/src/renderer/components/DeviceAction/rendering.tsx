@@ -667,15 +667,15 @@ export const renderError = ({
         size={64}
       />
       <ErrorTitle>
-        <TranslatedError error={(error as unknown) as Error} noLink />
+        <TranslatedError error={error as unknown as Error} noLink />
       </ErrorTitle>
       <ErrorDescription>
-        <TranslatedError error={(error as unknown) as Error} field="description" />
+        <TranslatedError error={error as unknown as Error} field="description" />
       </ErrorDescription>
       {list ? (
         <ErrorDescription>
           <ol style={{ textAlign: "justify" }}>
-            <TranslatedError error={(error as unknown) as Error} field="list" />
+            <TranslatedError error={error as unknown as Error} field="list" />
           </ol>
         </ErrorDescription>
       ) : null}
@@ -792,7 +792,7 @@ const renderFirmwareUpdatingBase = ({
               {"1"}
             </Text>
           </Circle>
-          <Title>
+          <Title flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
               values={{ productName: getDeviceModel(modelId).productName }}
@@ -805,7 +805,7 @@ const renderFirmwareUpdatingBase = ({
               {"2"}
             </Text>
           </Circle>
-          <Title>
+          <Title flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
               values={{ productName: getDeviceModel(modelId).productName }}

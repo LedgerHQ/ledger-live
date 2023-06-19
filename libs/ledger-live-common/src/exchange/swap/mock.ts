@@ -3,10 +3,7 @@ import { Observable, of } from "rxjs";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
-import {
-  SwapExchangeRateAmountTooHigh,
-  SwapExchangeRateAmountTooLow,
-} from "../../errors";
+import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
 import type {
   CheckQuote,
   Exchange,
@@ -20,10 +17,7 @@ import type {
   ValidKYCStatus,
 } from "./types";
 import type { Transaction } from "../../generated/types";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const getMockExchangeRate = ({
   provider = "ftx",
@@ -46,13 +40,12 @@ export const getMockExchangeRate = ({
 export const mockGetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction,
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
 ): Promise<(ExchangeRate & { expirationDate?: Date })[]> => {
   const { fromAccount, toAccount } = exchange;
   const amount = transaction.amount;
   const unitFrom = getAccountUnit(fromAccount);
-  const unitTo =
-    (currencyTo && currencyTo.units[0]) ?? getAccountUnit(toAccount);
+  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountUnit(toAccount);
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const amountFrom = amount.div(tenPowMagnitude);
   const minAmountFrom = new BigNumber(0.0001);
@@ -67,7 +60,7 @@ export const mockGetExchangeRates = async (
           alwaysShowSign: false,
           disableRounding: true,
           showCode: true,
-        }
+        },
       ),
     });
   }
@@ -81,13 +74,13 @@ export const mockGetExchangeRates = async (
           alwaysShowSign: false,
           disableRounding: true,
           showCode: true,
-        }
+        },
       ),
     });
   }
 
   //Fake delay to show loading UI
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise(r => setTimeout(r, 800));
   const magnitudeAwareRate = new BigNumber(1)
     .div(new BigNumber(10).pow(unitFrom.magnitude))
     .times(new BigNumber(10).pow(unitTo.magnitude));
@@ -139,7 +132,7 @@ export const mockGetExchangeRates = async (
 export const mockInitSwap = (
   exchange: Exchange,
   exchangeRate: ExchangeRate,
-  transaction: Transaction
+  transaction: Transaction,
 ): Observable<SwapRequestEvent> => {
   return of({
     type: "init-swap-result",
@@ -153,7 +146,7 @@ export const mockInitSwap = (
 // Need to understand how and why this gets used
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise(r => setTimeout(r, 800));
 
   return [
     {
@@ -228,18 +221,15 @@ export const mockGetProviders: GetProviders = async () => {
 //   },
 // };
 
-export const mockGetStatus: GetMultipleStatus = async (statusList) => {
+export const mockGetStatus: GetMultipleStatus = async statusList => {
   //Fake delay to show loading UI
-  await new Promise((r) => setTimeout(r, 800));
-  return statusList.map((s) => ({ ...s, status: "finished" }));
+  await new Promise(r => setTimeout(r, 800));
+  return statusList.map(s => ({ ...s, status: "finished" }));
 };
 
-export const mockGetKYCStatus = async (
-  id: string,
-  status: ValidKYCStatus
-): Promise<KYCStatus> => {
+export const mockGetKYCStatus = async (id: string, status: ValidKYCStatus): Promise<KYCStatus> => {
   //Fake delay to show the pending state in the UI
-  await new Promise((r) => setTimeout(r, 2000));
+  await new Promise(r => setTimeout(r, 2000));
   return { id, status };
 };
 
@@ -251,7 +241,7 @@ export const mockCheckQuote: CheckQuote = async ({
   bearerToken: _bearerToken,
 }) => {
   //Fake delay to show the pending state in the UI
-  await new Promise((r) => setTimeout(r, 2000));
+  await new Promise(r => setTimeout(r, 2000));
 
   switch (mockedCheckQuoteStatusCode) {
     case "RATE_VALID":
@@ -337,7 +327,7 @@ export const mockPostSwapAccepted: PostSwapAccepted = async ({
   /* eslint-enable */
 }) => {
   //Fake delay to simulate network
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise(r => setTimeout(r, 800));
 
   return null;
 };
@@ -349,7 +339,7 @@ export const mockPostSwapCancelled: PostSwapCancelled = async ({
   /* eslint-enable */
 }) => {
   //Fake delay to simulate network
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise(r => setTimeout(r, 800));
 
   return null;
 };

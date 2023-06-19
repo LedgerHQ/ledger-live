@@ -6,10 +6,7 @@ import type { LiveAppManifest } from "../../../types";
 import mockData from "./mock.json";
 
 const api = {
-  fetchLiveAppManifests: async (
-    url: string,
-    params?: FilterParams
-  ): Promise<LiveAppManifest[]> => {
+  fetchLiveAppManifests: async (url: string, params?: FilterParams): Promise<LiveAppManifest[]> => {
     if (getEnv("MOCK")) {
       if (getEnv("MOCK_REMOTE_LIVE_MANIFEST")) {
         return [
@@ -23,7 +20,7 @@ const api = {
       const { data }: { data: LiveAppManifest[] } = await network({
         method: "GET",
         params,
-        paramsSerializer: (params) => {
+        paramsSerializer: params => {
           return qs.stringify(params, { arrayFormat: "repeat" });
         },
         url,

@@ -65,12 +65,7 @@ function ExperimentalHeader() {
 
   // Animated style updating the height depending on the opening animation state
   const heightStyle = useAnimatedStyle(() => ({
-    height: interpolate(
-      openState.value,
-      [0, 1],
-      [0, HEIGHT],
-      Extrapolate.CLAMP,
-    ),
+    height: interpolate(openState.value, [0, 1], [0, HEIGHT], Extrapolate.CLAMP),
   }));
 
   const onPressMock = useCallback(() => {

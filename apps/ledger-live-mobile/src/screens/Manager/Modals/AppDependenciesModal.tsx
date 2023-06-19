@@ -116,11 +116,7 @@ function AppDependenciesModal({
                 <Trans i18nKey="AppAction.install.continueInstall" />
               </Button>
               <CancelButton onPress={onClose}>
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                >
+                <Text variant="large" fontWeight="semiBold" color="neutral.c100">
                   <Trans i18nKey="common.cancel" />
                 </Text>
               </CancelButton>

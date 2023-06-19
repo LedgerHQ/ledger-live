@@ -25,9 +25,7 @@ export default class OnboardingSteps {
   }
 
   async DoIOwnDevice(answer = true) {
-    answer
-      ? await tapByElement(this.yesIDoButton())
-      : await tapByElement(this.notYetButton());
+    answer ? await tapByElement(this.yesIDoButton()) : await tapByElement(this.notYetButton());
   }
 
   async chooseToSetupLedger() {
