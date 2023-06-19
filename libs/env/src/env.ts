@@ -731,6 +731,31 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
+  EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_CANCEL_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Cancel transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction max fee gap factor for EIP1559 for edit eth transaction feature",
+  },
   ENABLE_NETWORK_LOGS: {
     def: false,
     parser: boolParser,
