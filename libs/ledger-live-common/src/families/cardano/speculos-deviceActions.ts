@@ -7,9 +7,14 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
   steps: [
     {
       title: "New ordinary",
+      button: SpeculosButton.BOTH,
     },
     {
       title: "transaction?",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "New ordinarytransaction?",
       button: SpeculosButton.BOTH,
     },
     {
@@ -24,17 +29,13 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Send to address (1/2)",
       button: SpeculosButton.RIGHT,
-      // FIXME Correctly handle value for NanoSP app
-      //expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
       title: "Send to address (2/2)",
       button: SpeculosButton.BOTH,
-      // FIXME Correctly handle value for NanoSP app
-      //expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "end", // FIXME: Should be Send but in some case cardano OCR doesn't recognize S : https://github.com/LedgerHQ/speculos/issues/204
+      title: "end", // FIXME: Should be "Send" but in some cases speculos OCR doesn't recognize 'S' : https://github.com/LedgerHQ/speculos/issues/204
       button: SpeculosButton.BOTH,
       ignoreAssertionFailure: true,
       expectedValue: ({ account, status }) => formatDeviceAmount(account.currency, status.amount),
