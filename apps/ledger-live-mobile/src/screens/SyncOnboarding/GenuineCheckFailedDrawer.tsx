@@ -1,22 +1,44 @@
 import React from "react";
 import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
-import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import { InfoAltFillMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen } from "../../analytics";
 import GenericErrorView from "../../components/GenericErrorView";
 
 export type Props = {
+  /**
+   * State to trigger the opening/closing of the drawer
+   */
   isOpen: boolean;
+
+  /**
+   * Callback when the user wants to retry the genuine check and presses on the retry button
+   */
   onRetry?: () => void;
+
+  /**
+   * Callback when the user wants to skip the genuine check step and presses on the skip button
+   */
   onSkip?: () => void;
+
+  /**
+   * Callback when the drawer is closed
+   *
+   * As the drawer has no close button (`noCloseButton`), the drawer is closed only when `isOpen === false`
+   */
   onClose?: () => void;
+
   productName: string;
+
+  /**
+   * Error instance coming from the genuine check hook
+   */
   error?: Error | null;
 };
 
 /**
- * Drawer displayed on a failed genuine check during the sync onboarding
+ * Drawer displayed on a failed genuine check during the early security check
  *
  * The failed genuine check can come from an error that happened during the genuine check
  * or if the user cancelled/did not allow the genuine check.
@@ -25,14 +47,14 @@ export type Props = {
  *
  * Otherwise displays an error message informing the user that they cancelled the genuine check
  */
-const GenuineCheckFailedDrawer = ({
+const GenuineCheckFailedDrawer: React.FC<Props> = ({
   isOpen,
   onRetry,
   onSkip,
   onClose,
   productName,
   error,
-}: Props) => {
+}) => {
   const { t } = useTranslation();
 
   return (
@@ -57,7 +79,7 @@ const GenuineCheckFailedDrawer = ({
         <>
           <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
             <BoxedIcon
-              Icon={<WarningSolidMedium color="warning.c70" size={32} />}
+              Icon={<InfoAltFillMedium color="primary.c70" size={32} />}
               variant="circle"
               backgroundColor="neutral.c30"
               borderColor="transparent"
@@ -65,18 +87,18 @@ const GenuineCheckFailedDrawer = ({
             />
           </Flex>
           <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.title")}
+            {t("earlySecurityCheck.genuineCheckFailedDrawer.title")}
           </Text>
           <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
-            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.description", {
+            {t("earlySecurityCheck.genuineCheckFailedDrawer.description", {
               productName,
             })}
           </Text>
           <Button type="main" mb={4} onPress={onRetry}>
-            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.retryCta")}
+            {t("earlySecurityCheck.genuineCheckFailedDrawer.retryCta")}
           </Button>
           <Button onPress={onSkip}>
-            {t("syncOnboarding.softwareChecksSteps.genuineCheckCancelledDrawer.skipCta")}
+            {t("earlySecurityCheck.genuineCheckFailedDrawer.skipCta")}
           </Button>
         </>
       )}
