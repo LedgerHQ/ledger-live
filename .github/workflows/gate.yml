@@ -122,8 +122,8 @@ jobs:
         run: pnpm i
       - name: Git commit
         run: |
+          git status
           git add .
           git commit -m "chore(lockfile) update lockfile for dependabot"
-          git restore . &&
-          git pull --rebase &&
+          git pull --rebase
           git push
