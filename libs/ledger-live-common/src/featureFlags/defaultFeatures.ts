@@ -220,6 +220,9 @@ export const defaultFeatures: DefaultFeatures = {
   objkt: {
     enabled: false,
   },
+  editEthTx: {
+    enabled: false,
+  },
   protectServicesMobile: {
     enabled: false,
     params: {

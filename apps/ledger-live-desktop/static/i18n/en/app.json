@@ -187,7 +187,55 @@
       "REGISTER": "Registered",
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
-      "WITHDRAW_UNSTAKED": "Withdrawn"
+      "WITHDRAW_UNSTAKED": "Withdrawn",
+      "SENDING": "Sending"
+    },
+    "edit": {
+      "title": "Speed up or Cancel",
+      "description": "Your transaction is ongoing. You can speed it up with a higher network fee, or cancel it.",
+      "stuckDescription": "Your transaction is stuck. Speed it up with a higher network fee, or cancel it.",
+      "previousFeesInfo": {
+        "pendingTransactionFeesInfo": "Pending transaction fees info: ",
+        "networkfee": "Network fee = ",
+        "maxFee": "Max fee = ",
+        "maxPriorityFee": "Max Priority fee = ",
+        "gasPrice": "GasPrice = "
+      },
+      "learnMore": "I want to learn more",
+      "panel": {
+        "title": "Speed up or Cancel",
+        "description": "One of your most recent 'send' transactions is stuck. Speed up the transaction with a higher network fee, or cancel it."
+      },
+      "speedUp": {
+        "title": "Speed Up",
+        "description": "Re-submit the transaction with a higher network fee."
+      },
+      "cancel": {
+        "title": "Cancel",
+        "description": "Sending 0 {{ticker}} to your own address. To ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+      },
+      "steps": {
+        "method": {
+          "title": "Method"
+        },
+        "fees": {
+          "title": "Fees"
+        },
+        "summary": {
+          "title": "Summary"
+        },
+        "device": {
+          "title": "Device"
+        },
+        "confirmation": {
+          "title": "Confirmation"
+        }
+      },
+      "error": {
+        "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
+        "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
+        "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it."
+      }
     }
   },
   "byteSize": {
@@ -5401,6 +5449,10 @@
     "EthAppNftNotSupported": {
       "title": "Operation not available for this device",
       "description": "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
+    "TransactionHasBeenValidatedError": {
+      "title": "Can't be speed up or cancel",
+      "description": "This transaction has already been validated"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"

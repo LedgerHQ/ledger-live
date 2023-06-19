@@ -52,27 +52,27 @@ exports[`finalMarkdownReport sample 1`] = `
 | Stellar | ⚠️ | ? |
 | Tezos | ❌ | ? |
 | Tron | [🙏](https://tronscan.org/#/address/tz1TGUYUhWujaab8LfmrA55rfDzn5zvyBJUe) | ? |
-| Polkadot | [🙏](https://polkadot.subscan.io/account/THG6XGRn2B4vjPUA46KGv5f4dvv6LTXfr9) | ? |
-| Algorand | ⚠️ | ? |
-| Arbitrum Goerli | [🙏](https://goerli.arbiscan.io/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
-| Cronos | ❌ | ? |
-| Fantom | ✅ | ? |
-| Flare | [🙏](https://flare-explorer.flare.network/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt/transactions) | ? |
-| Songbird | [🙏](https://songbird-explorer.flare.network/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r/transactions) | ? |
-| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ? |
-| RSK | ✅ | ? |
-| Bittorent Chain | [🙏](https://bttcscan.com/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
-| Kava EVM | [🙏](https://explorer.kava.io/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
-| Evmos EVM | [🙏](https://blockscout.evmos.org/address/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
-| Optimism | [🙏](https://optimistic.etherscan.io/address/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
-| Optimism Goerli | [🙏](https://goerli-optimism.etherscan.io/address/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
-| Energy Web | [🙏](https://explorer.energyweb.org/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
-| Astar | [🙏](https://blockscout.com/astar/address/EZjc4W42JjgYyGt5YUGV4W2eGYD63vbYtw) | ? |
-| Metis | ✅ | ? |
-| Boba | [🙏](https://bobascan.com/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | ? |
-| Moonriver | [🙏](https://moonriver.moonscan.io/address/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | ? |
-| Velas EVM | ❌ | ? |
-| Syscoin | [🙏](https://explorer.syscoin.org/address/0x9De2c901184f274d9Ae65B6d4192Ced7Ff5e051C) | ? |
+| Algorand | ✅ | ? |
+| Arbitrum Goerli | [🙏](https://goerli.arbiscan.io/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
+| Cronos | [🙏](https://cronoscan.com/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
+| Fantom | ❌ | ? |
+| Flare | ✅ | ? |
+| Songbird | [🙏](https://songbird-explorer.flare.network/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt/transactions) | ? |
+| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r) | ? |
+| RSK | [🙏](https://explorer.rsk.co/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ? |
+| Bittorent Chain | ✅ | ? |
+| Kava EVM | [🙏](https://explorer.kava.io/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
+| Evmos EVM | [🙏](https://blockscout.evmos.org/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
+| Optimism | [🙏](https://optimistic.etherscan.io/address/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
+| Optimism Goerli | [🙏](https://goerli-optimism.etherscan.io/address/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
+| Energy Web | [🙏](https://explorer.energyweb.org/address/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
+| Astar | [🙏](https://blockscout.com/astar/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
+| Metis | [🙏](https://andromeda-explorer.metis.io/address/EZjc4W42JjgYyGt5YUGV4W2eGYD63vbYtw) | ? |
+| Boba | ✅ | ? |
+| Moonriver | [🙏](https://moonriver.moonscan.io/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | ? |
+| Velas EVM | [🙏](https://evmexplorer.velas.com/address/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | ? |
+| Syscoin | ❌ | ? |
+| Polkadot | [🙏](https://polkadot.subscan.io/account/0x9De2c901184f274d9Ae65B6d4192Ced7Ff5e051C) | ? |
 
 </details>
 
@@ -124,11 +124,10 @@ exports[`finalMarkdownReport sample 1`] = `
 | Stellar | 0 XLM | ? |0 XLM |
 | Tezos | ❌ | ? |0 XTZ |
 | Tron | 0.206466 TRX | ? |0.206466 TRX |
-| Polkadot | 0.00164056 DOT | ? |0.00164056 DOT |
-| Algorand | 0 ALGO | ? |0 ALGO |
+| Algorand | 16.4056 ALGO | ? |16.4056 ALGO |
 | Arbitrum Goerli | 0 𝚝ETH | ? |0 𝚝ETH |
-| Cronos | ❌ | ? |0 CRO |
-| Fantom | 0 FTM | ? |0 FTM |
+| Cronos | 0 CRO | ? |0 CRO |
+| Fantom | ❌ | ? |0 FTM |
 | Flare | 0 FLR | ? |0 FLR |
 | Songbird | 0 SGB | ? |0 SGB |
 | Moonbeam | 0 GLMR | ? |0 GLMR |
@@ -143,8 +142,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis | 0 METIS | ? |0 METIS |
 | Boba | 0 ETH | ? |0 ETH |
 | Moonriver | 0 MOVR | ? |0 MOVR |
-| Velas EVM | ❌ | ? |0 VLX |
-| Syscoin | 0 SYS | ? |0 SYS |
+| Velas EVM | 0 VLX | ? |0 VLX |
+| Syscoin | ❌ | ? |0 SYS |
+| Polkadot | 0 DOT | ? |0 DOT |
 
 </details>
 
@@ -199,28 +199,28 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** | 1 | ? |1 |
 | **Tezos** | ❌ | ? |0 |
 | **Tron** | 5 | ? |5 |
-| **Polkadot** | 8 | ? |8 |
-| **Algorand** | 1 | ? |1 |
+| **Algorand** | 8 | ? |8 |
 | **evm** family | 44 |0 |44 |
-| Arbitrum Goerli | 4 | ? |4 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 7 | ? |7 |
-| Flare | 2 | ? |2 |
-| Songbird | 1 | ? |1 |
-| Moonbeam | 3 | ? |3 |
-| RSK | 7 | ? |7 |
-| Bittorent Chain | 1 | ? |1 |
-| Kava EVM | 3 | ? |3 |
-| Evmos EVM | 1 | ? |1 |
+| Arbitrum Goerli | 1 | ? |1 |
+| Cronos | 4 | ? |4 |
+| Fantom | ❌ | ? |0 |
+| Flare | 7 | ? |7 |
+| Songbird | 2 | ? |2 |
+| Moonbeam | 1 | ? |1 |
+| RSK | 3 | ? |3 |
+| Bittorent Chain | 7 | ? |7 |
+| Kava EVM | 1 | ? |1 |
+| Evmos EVM | 3 | ? |3 |
 | Optimism | 1 | ? |1 |
-| Optimism Goerli | 2 | ? |2 |
+| Optimism Goerli | 1 | ? |1 |
 | Energy Web | 2 | ? |2 |
 | Astar | 2 | ? |2 |
-| Metis | 5 | ? |5 |
-| Boba | 1 | ? |1 |
+| Metis | 2 | ? |2 |
+| Boba | 5 | ? |5 |
 | Moonriver | 1 | ? |1 |
-| Velas EVM | ❌ | ? |0 |
-| Syscoin | 1 | ? |1 |
+| Velas EVM | 1 | ? |1 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 1 | ? |1 |
 | **Total** | 156 |66 |222 |
 
 </details>
@@ -276,28 +276,28 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** | 0 | ? |0 |
 | **Tezos** | ❌ | ? |0 |
 | **Tron** | 48 | ? |48 |
-| **Polkadot** | 205 | ? |205 |
-| **Algorand** | 0 | ? |0 |
+| **Algorand** | 205 | ? |205 |
 | **evm** family | 744 |0 |744 |
 | Arbitrum Goerli | 0 | ? |0 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 172 | ? |172 |
-| Flare | 0 | ? |0 |
+| Cronos | 0 | ? |0 |
+| Fantom | ❌ | ? |0 |
+| Flare | 172 | ? |172 |
 | Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
-| RSK | 312 | ? |312 |
-| Bittorent Chain | 0 | ? |0 |
+| RSK | 0 | ? |0 |
+| Bittorent Chain | 312 | ? |312 |
 | Kava EVM | 0 | ? |0 |
 | Evmos EVM | 0 | ? |0 |
 | Optimism | 0 | ? |0 |
 | Optimism Goerli | 0 | ? |0 |
 | Energy Web | 0 | ? |0 |
 | Astar | 0 | ? |0 |
-| Metis | 260 | ? |260 |
-| Boba | 0 | ? |0 |
+| Metis | 0 | ? |0 |
+| Boba | 260 | ? |260 |
 | Moonriver | 0 | ? |0 |
-| Velas EVM | ❌ | ? |0 |
-| Syscoin | 0 | ? |0 |
+| Velas EVM | 0 | ? |0 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
 | **Total** | 2150 |662 |2812 |
 
 </details>
@@ -356,28 +356,28 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** | 22s | ? |22s |
 | **Tezos** | ❌ | ? | |
 | **Tron** | 14s | ? |14s |
-| **Polkadot** | 175s | ? |175s |
-| **Algorand** | 4.68s | ? |4.68s |
+| **Algorand** | 175s | ? |175s |
 | **evm** family |  | | |
-| Arbitrum Goerli | 31s | ? |31s |
-| Cronos | ❌ | ? | |
-| Fantom | 550s | ? |550s |
-| Flare | 25s | ? |25s |
-| Songbird | 17s | ? |17s |
-| Moonbeam | 22s | ? |22s |
-| RSK | 120s | ? |120s |
-| Bittorent Chain | 7.01s | ? |7.01s |
-| Kava EVM | 124s | ? |124s |
-| Evmos EVM | 8.39s | ? |8.39s |
-| Optimism | 3.48s | ? |3.48s |
-| Optimism Goerli | 23s | ? |23s |
-| Energy Web | 30s | ? |30s |
-| Astar | 13s | ? |13s |
-| Metis | 317s | ? |317s |
-| Boba | 31s | ? |31s |
-| Moonriver | 91s | ? |91s |
-| Velas EVM | ❌ | ? | |
-| Syscoin | 8.28s | ? |8.28s |
+| Arbitrum Goerli | 4.68s | ? |4.68s |
+| Cronos | 31s | ? |31s |
+| Fantom | ❌ | ? | |
+| Flare | 550s | ? |550s |
+| Songbird | 25s | ? |25s |
+| Moonbeam | 17s | ? |17s |
+| RSK | 22s | ? |22s |
+| Bittorent Chain | 120s | ? |120s |
+| Kava EVM | 7.01s | ? |7.01s |
+| Evmos EVM | 124s | ? |124s |
+| Optimism | 8.39s | ? |8.39s |
+| Optimism Goerli | 3.48s | ? |3.48s |
+| Energy Web | 23s | ? |23s |
+| Astar | 30s | ? |30s |
+| Metis | 13s | ? |13s |
+| Boba | 317s | ? |317s |
+| Moonriver | 31s | ? |31s |
+| Velas EVM | 91s | ? |91s |
+| Syscoin | ❌ | ? | |
+| **Polkadot** | 8.28s | ? |8.28s |
 | **Total** |  | | |
 
 </details>
@@ -433,12 +433,11 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** | 0 | ? |0 |
 | **Tezos** | ❌ | ? |0 |
 | **Tron** | 0 | ? |0 |
-| **Polkadot** | 0 | ? |0 |
 | **Algorand** | 0 | ? |0 |
 | **evm** family | 0 |0 |0 |
 | Arbitrum Goerli | 0 | ? |0 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 0 | ? |0 |
+| Cronos | 0 | ? |0 |
+| Fantom | ❌ | ? |0 |
 | Flare | 0 | ? |0 |
 | Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
@@ -453,8 +452,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis | 0 | ? |0 |
 | Boba | 0 | ? |0 |
 | Moonriver | 0 | ? |0 |
-| Velas EVM | ❌ | ? |0 |
-| Syscoin | 0 | ? |0 |
+| Velas EVM | 0 | ? |0 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
 | **Total** | 0 |0 |0 |
 
 </details>
@@ -510,12 +510,11 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** |  | ? | |
 | **Tezos** | ❌ | ? | |
 | **Tron** |  | ? | |
-| **Polkadot** |  | ? | |
 | **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
-| Cronos | ❌ | ? | |
-| Fantom |  | ? | |
+| Cronos |  | ? | |
+| Fantom | ❌ | ? | |
 | Flare |  | ? | |
 | Songbird |  | ? | |
 | Moonbeam |  | ? | |
@@ -530,8 +529,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis |  | ? | |
 | Boba |  | ? | |
 | Moonriver |  | ? | |
-| Velas EVM | ❌ | ? | |
-| Syscoin |  | ? | |
+| Velas EVM |  | ? | |
+| Syscoin | ❌ | ? | |
+| **Polkadot** |  | ? | |
 | **Total** |  | | |
 
 </details>
@@ -587,12 +587,11 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** | 0 | ? |0 |
 | **Tezos** | ❌ | ? |0 |
 | **Tron** | 0 | ? |0 |
-| **Polkadot** | 0 | ? |0 |
 | **Algorand** | 0 | ? |0 |
 | **evm** family | 0 |0 |0 |
 | Arbitrum Goerli | 0 | ? |0 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 0 | ? |0 |
+| Cronos | 0 | ? |0 |
+| Fantom | ❌ | ? |0 |
 | Flare | 0 | ? |0 |
 | Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
@@ -607,8 +606,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis | 0 | ? |0 |
 | Boba | 0 | ? |0 |
 | Moonriver | 0 | ? |0 |
-| Velas EVM | ❌ | ? |0 |
-| Syscoin | 0 | ? |0 |
+| Velas EVM | 0 | ? |0 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
 | **Total** | 0 |0 |0 |
 
 </details>
@@ -664,17 +664,16 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** |  | ? | |
 | **Tezos** | ❌ | ? | |
 | **Tron** |  | ? | |
-| **Polkadot** |  | ? | |
 | **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
-| Cronos | ❌ | ? | |
-| Fantom |  | ? | |
+| Cronos |  | ? | |
+| Fantom | ❌ | ? | |
 | Flare |  | ? | |
 | Songbird |  | ? | |
 | Moonbeam |  | ? | |
-| RSK | 827kb | ? |827kb |
-| Bittorent Chain |  | ? | |
+| RSK |  | ? | |
+| Bittorent Chain | 827kb | ? |827kb |
 | Kava EVM |  | ? | |
 | Evmos EVM |  | ? | |
 | Optimism |  | ? | |
@@ -684,8 +683,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis |  | ? | |
 | Boba |  | ? | |
 | Moonriver |  | ? | |
-| Velas EVM | ❌ | ? | |
-| Syscoin |  | ? | |
+| Velas EVM |  | ? | |
+| Syscoin | ❌ | ? | |
+| **Polkadot** |  | ? | |
 | **Total** |  | | |
 
 </details>
@@ -741,17 +741,16 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** |  | ? | |
 | **Tezos** | ❌ | ? | |
 | **Tron** |  | ? | |
-| **Polkadot** |  | ? | |
 | **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
-| Cronos | ❌ | ? | |
-| Fantom |  | ? | |
+| Cronos |  | ? | |
+| Fantom | ❌ | ? | |
 | Flare |  | ? | |
 | Songbird |  | ? | |
 | Moonbeam |  | ? | |
-| RSK | 0kb | ? |0kb |
-| Bittorent Chain |  | ? | |
+| RSK |  | ? | |
+| Bittorent Chain | 0kb | ? |0kb |
 | Kava EVM |  | ? | |
 | Evmos EVM |  | ? | |
 | Optimism |  | ? | |
@@ -761,8 +760,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis |  | ? | |
 | Boba |  | ? | |
 | Moonriver |  | ? | |
-| Velas EVM | ❌ | ? | |
-| Syscoin |  | ? | |
+| Velas EVM |  | ? | |
+| Syscoin | ❌ | ? | |
+| **Polkadot** |  | ? | |
 | **Total** |  | | |
 
 </details>
@@ -818,28 +818,28 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** | 0.37s | ? |0.37s |
 | **Tezos** | ❌ | ? | |
 | **Tron** | 0.15s | ? |0.15s |
-| **Polkadot** | 4.20s | ? |4.20s |
-| **Algorand** | 0.04s | ? |0.04s |
+| **Algorand** | 4.20s | ? |4.20s |
 | **evm** family |  | | |
-| Arbitrum Goerli | 1.14s | ? |1.14s |
-| Cronos | ❌ | ? | |
-| Fantom | 2.67s | ? |2.67s |
-| Flare | 1.14s | ? |1.14s |
-| Songbird | 0.16s | ? |0.16s |
-| Moonbeam | 0.51s | ? |0.51s |
-| RSK | 3.34s | ? |3.34s |
-| Bittorent Chain | 0.15s | ? |0.15s |
-| Kava EVM | 1.16s | ? |1.16s |
-| Evmos EVM | 0.15s | ? |0.15s |
-| Optimism | 0.14s | ? |0.14s |
-| Optimism Goerli | 0.76s | ? |0.76s |
-| Energy Web | 1.06s | ? |1.06s |
-| Astar | 0.20s | ? |0.20s |
-| Metis | 1.84s | ? |1.84s |
-| Boba | 0.99s | ? |0.99s |
-| Moonriver | 0.98s | ? |0.98s |
-| Velas EVM | ❌ | ? | |
-| Syscoin | 0.11s | ? |0.11s |
+| Arbitrum Goerli | 0.04s | ? |0.04s |
+| Cronos | 1.14s | ? |1.14s |
+| Fantom | ❌ | ? | |
+| Flare | 2.67s | ? |2.67s |
+| Songbird | 1.14s | ? |1.14s |
+| Moonbeam | 0.16s | ? |0.16s |
+| RSK | 0.51s | ? |0.51s |
+| Bittorent Chain | 3.34s | ? |3.34s |
+| Kava EVM | 0.15s | ? |0.15s |
+| Evmos EVM | 1.16s | ? |1.16s |
+| Optimism | 0.15s | ? |0.15s |
+| Optimism Goerli | 0.14s | ? |0.14s |
+| Energy Web | 0.76s | ? |0.76s |
+| Astar | 1.06s | ? |1.06s |
+| Metis | 0.20s | ? |0.20s |
+| Boba | 1.84s | ? |1.84s |
+| Moonriver | 0.99s | ? |0.99s |
+| Velas EVM | 0.98s | ? |0.98s |
+| Syscoin | ❌ | ? | |
+| **Polkadot** | 0.11s | ? |0.11s |
 | **Total** |  | | |
 
 </details>
@@ -892,27 +892,27 @@ exports[`finalMarkdownReport sample 1`] = `
 | Stellar | 288mb | ? |
 | Tezos | ❌ | ? |
 | Tron | 265mb | ? |
-| Polkadot | 239mb | ? |
-| Algorand | 279mb | ? |
-| Arbitrum Goerli | 226mb | ? |
-| Cronos | ❌ | ? |
-| Fantom | 223mb | ? |
-| Flare | 224mb | ? |
-| Songbird | 279mb | ? |
-| Moonbeam | 230mb | ? |
-| RSK | 241mb | ? |
-| Bittorent Chain | 271mb | ? |
-| Kava EVM | 182mb | ? |
-| Evmos EVM | 273mb | ? |
-| Optimism | 279mb | ? |
-| Optimism Goerli | 224mb | ? |
+| Algorand | 239mb | ? |
+| Arbitrum Goerli | 279mb | ? |
+| Cronos | 226mb | ? |
+| Fantom | ❌ | ? |
+| Flare | 223mb | ? |
+| Songbird | 224mb | ? |
+| Moonbeam | 279mb | ? |
+| RSK | 230mb | ? |
+| Bittorent Chain | 241mb | ? |
+| Kava EVM | 271mb | ? |
+| Evmos EVM | 182mb | ? |
+| Optimism | 273mb | ? |
+| Optimism Goerli | 279mb | ? |
 | Energy Web | 224mb | ? |
-| Astar | 269mb | ? |
-| Metis | 231mb | ? |
-| Boba | 224mb | ? |
-| Moonriver | 222mb | ? |
-| Velas EVM | ❌ | ? |
-| Syscoin | 278mb | ? |
+| Astar | 224mb | ? |
+| Metis | 269mb | ? |
+| Boba | 231mb | ? |
+| Moonriver | 224mb | ? |
+| Velas EVM | 222mb | ? |
+| Syscoin | ❌ | ? |
+| Polkadot | 278mb | ? |
 
 </details>
 
@@ -964,11 +964,10 @@ exports[`finalMarkdownReport sample 1`] = `
 | Stellar |  | ? |
 | Tezos | ❌ | ? |
 | Tron |  | ? |
-| Polkadot |  | ? |
 | Algorand |  | ? |
 | Arbitrum Goerli |  | ? |
-| Cronos | ❌ | ? |
-| Fantom |  | ? |
+| Cronos |  | ? |
+| Fantom | ❌ | ? |
 | Flare |  | ? |
 | Songbird |  | ? |
 | Moonbeam |  | ? |
@@ -983,8 +982,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis |  | ? |
 | Boba |  | ? |
 | Moonriver |  | ? |
-| Velas EVM | ❌ | ? |
-| Syscoin |  | ? |
+| Velas EVM |  | ? |
+| Syscoin | ❌ | ? |
+| Polkadot |  | ? |
 
 </details>
 
@@ -1039,12 +1039,11 @@ exports[`finalMarkdownReport sample 1`] = `
 | **Stellar** |  | ? |✅ |
 | **Tezos** | ❌ | ? |✅ |
 | **Tron** |  | ? |✅ |
-| **Polkadot** |  | ? |✅ |
 | **Algorand** |  | ? |✅ |
 | **evm** family | ✅ |✅ |✅ |
 | Arbitrum Goerli |  | ? |✅ |
-| Cronos | ❌ | ? |✅ |
-| Fantom |  | ? |✅ |
+| Cronos |  | ? |✅ |
+| Fantom | ❌ | ? |✅ |
 | Flare |  | ? |✅ |
 | Songbird |  | ? |✅ |
 | Moonbeam |  | ? |✅ |
@@ -1059,8 +1058,9 @@ exports[`finalMarkdownReport sample 1`] = `
 | Metis |  | ? |✅ |
 | Boba |  | ? |✅ |
 | Moonriver |  | ? |✅ |
-| Velas EVM | ❌ | ? |✅ |
-| Syscoin |  | ? |✅ |
+| Velas EVM |  | ? |✅ |
+| Syscoin | ❌ | ? |✅ |
+| **Polkadot** |  | ? |✅ |
 | **Total** | ✅ |✅ |✅ |
 
 </details>
@@ -1072,10 +1072,10 @@ exports[`finalMarkdownReport sample 1`] = `
 - SEED2: cardano: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
 - SEED1: Celo: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
 - SEED2: cosmos: TypeError: Cannot read properties of undefined (reading 'length')
-- SEED1: Cronos: Error: scan accounts timeout for currency Bitcoin Testnet
+- SEED1: Fantom: Error: scan accounts timeout for currency Bitcoin Testnet
 - SEED1: Hedera: LedgerAPI5xx: API HTTP 503
 - SEED1: Solana: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
+- SEED1: Syscoin: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
 - SEED1: Tezos: TypeError: Cannot read properties of undefined (reading 'length')
-- SEED1: Velas EVM: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
 - SEED2: ZCash: LedgerAPI5xx: API HTTP 503"
 `;

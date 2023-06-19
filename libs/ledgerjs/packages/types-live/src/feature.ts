@@ -61,6 +61,7 @@ export type FeatureId =
   | "stakePrograms"
   | "portfolioExchangeBanner"
   | "objkt"
+  | "editEthTx"
   | "stakeAccountBanner"
   | "newsfeedPage"
   | "domainInputResolution"

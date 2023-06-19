@@ -15,7 +15,8 @@ const Layer = styled(animated.div)<{
   width: number;
   height: number;
 }>`
-  background-image: url("${p => p.image}");
+  // prettier-ignore
+  background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;

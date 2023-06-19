@@ -14,9 +14,9 @@ import stacks from "../families/stacks/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
-import polkadot from "@ledgerhq/coin-polkadot/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
 import evm from "@ledgerhq/coin-evm/specs";
+import polkadot from "@ledgerhq/coin-polkadot/specs";
 
 export default {
   bitcoin,
@@ -35,7 +35,7 @@ export default {
   stellar,
   tezos,
   tron,
-  polkadot,
   algorand,
   evm,
+  polkadot,
 };

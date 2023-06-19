@@ -49,7 +49,6 @@ jobs:
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
 
-
   test-common-tools:
     name: "Test common-tools"
     env:
@@ -158,11 +157,6 @@ jobs:
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
-      - uses: codecov/codecov-action@v3
-        if: always()
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          flags: test
       - uses: actions/github-script@v6
         if: always()
         with:

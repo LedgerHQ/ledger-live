@@ -1,4 +1,5 @@
 import accountHeaderManageActions from "./AccountHeaderManageActions";
+import AccountBodyHeader from "./AccountBodyHeader";
 import sendAmountFields from "./SendAmountFields";
 import StakeBanner from "./StakeBanner";
 import transactionConfirmFields from "./TransactionConfirmFields";
@@ -9,6 +10,7 @@ const family: EthereumFamily = {
   operationDetails,
   accountHeaderManageActions,
   transactionConfirmFields,
+  AccountBodyHeader,
   sendAmountFields,
   StakeBanner,
 };

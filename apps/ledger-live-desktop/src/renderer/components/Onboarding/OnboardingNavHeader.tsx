@@ -22,8 +22,10 @@ const Logo = styled(Box).attrs({
   height: "25px",
   width: "75px",
 })`
-  -webkit-mask-image: url("${ledgerLogo}");
-  mask-image: url("${ledgerLogo}");
+  // prettier-ignore
+  -webkit-mask-image: url('${ledgerLogo}');
+  // prettier-ignore
+  mask-image: url('${ledgerLogo}');
 `;
 
 interface Props {

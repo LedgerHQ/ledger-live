@@ -14,9 +14,9 @@ import stacks from "../families/stacks/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
-import polkadot from "@ledgerhq/coin-polkadot/hw-getAddress";
-import algorand from "@ledgerhq/coin-algorand/hw-getAddress";
-import evm from "@ledgerhq/coin-evm/hw-getAddress";
+import { resolver as algorand } from "../families/algorand/setup";
+import { resolver as evm } from "../families/evm/setup";
+import { resolver as polkadot } from "../families/polkadot/setup";
 
 export default {
   bitcoin,
@@ -35,7 +35,7 @@ export default {
   stellar,
   tezos,
   tron,
-  polkadot,
   algorand,
   evm,
+  polkadot,
 };
