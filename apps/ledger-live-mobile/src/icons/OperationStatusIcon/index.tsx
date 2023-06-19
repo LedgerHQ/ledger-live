@@ -60,22 +60,9 @@ const OperationStatusIcon = ({
 }) => {
   const Icon = iconsComponent[type as keyof typeof iconsComponent] || iconsComponent.NONE;
   const BadgeIcon =
-    Badge ||
-    (failed
-      ? Icons.CircledCrossSolidMedium
-      : confirmed
-      ? undefined
-      : Icons.HistoryMedium);
-  const borderColor = failed
-    ? "error.c40"
-    : confirmed
-    ? "neutral.c40"
-    : "warning.c40";
-  const iconColor = failed
-    ? "error.c50"
-    : confirmed
-    ? "neutral.c100"
-    : "warning.c50";
+    Badge || (failed ? Icons.CircledCrossSolidMedium : confirmed ? undefined : Icons.HistoryMedium);
+  const borderColor = failed ? "error.c40" : confirmed ? "neutral.c40" : "warning.c40";
+  const iconColor = failed ? "error.c50" : confirmed ? "neutral.c100" : "warning.c50";
   const badgeColor = failed ? "error.c50" : "neutral.c70";
   return (
     <BoxedIcon

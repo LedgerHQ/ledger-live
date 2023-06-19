@@ -3,10 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import {
-  getOperationAmountNumber,
-  isConfirmedOperation,
-} from "@ledgerhq/live-common/operation";
+import { getOperationAmountNumber, isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,

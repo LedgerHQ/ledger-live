@@ -38,11 +38,7 @@ const Title = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const isNegative = amount.isNegative();
-  const valueColor = isNegative
-    ? colors.smoke
-    : isConfirmed
-    ? colors.green
-    : colors.warning;
+  const valueColor = isNegative ? colors.smoke : isConfirmed ? colors.green : colors.warning;
 
   if (isNftOperation) {
     return (

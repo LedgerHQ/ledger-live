@@ -9,6 +9,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -155,7 +156,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   if (!account || !transaction) return null;
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
-  const isSomeTxPending = account.pendingOperations?.length > 0;
+  const isSomeIncomingTxPending =
+    account.pendingOperations?.filter((op: Operation) => op.type === "IN" || op.type === "NFT_IN")
+      ?.length > 0;
 
   return (
     <>
@@ -237,11 +240,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             )}
           </NavigationScrollView>
           <View style={styles.container}>
-            {isSomeTxPending ? (
+            {isSomeIncomingTxPending ? (
               <View style={styles.infoBox}>
-                <Alert type="warning">
-                  {t("send.pendingTxWarning")}
-                </Alert>
+                <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
