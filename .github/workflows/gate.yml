@@ -112,10 +112,16 @@ jobs:
             core.exportVariable("base_branch", newBaseBranch);
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+      - name: checkout PR
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          gh pr checkout ${{ env.number }}
       - name: Install dependencies
         run: pnpm i
       - name: Git commit
         run: |
           git add .
           git commit -m "chore(lockfile) update lockfile for dependabot"
-          git push origin ${{ env.head_branch }}
+          git restore . &&
+          git pull --rebase &&
+          git push
