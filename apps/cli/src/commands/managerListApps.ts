@@ -55,8 +55,8 @@ export default {
           format === "raw"
             ? r
             : format === "json"
-              ? JSON.stringify(r)
-              : r.appsListNames
+            ? JSON.stringify(r)
+            : r.appsListNames
                 .map(name => {
                   const item = r.appByName[name];
                   const ins = r.installed.find(i => i.name === item.name);
