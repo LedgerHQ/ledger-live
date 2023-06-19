@@ -14,6 +14,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   number: ${{ github.event.pull_request.number || -1 }}
   head_sha: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
@@ -25,9 +29,6 @@ env:
 
 jobs:
   setup:
-    permissions:
-      contents: read
-      pull-requests: write
     name: "Setup"
     runs-on: ubuntu-latest
     outputs:
@@ -47,8 +48,8 @@ jobs:
             const newHeadBranch = head_branch.replace("refs/heads/", "");
             const newBaseBranch = base_branch.replace("refs/heads/", "");
 
-            core.exportVariable("head_branch", newHeadBranch)
-            core.exportVariable("base_branch", newBaseBranch)
+            core.exportVariable("head_branch", newHeadBranch);
+            core.exportVariable("base_branch", newBaseBranch);
 
       - uses: ./tools/actions/turbo-affected
         id: affected
@@ -83,3 +84,38 @@ jobs:
         with:
           name: pr_metadata.json
           path: pr_metadata.json
+
+  setup-dependabot:
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    name: "Setup Dependabot"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set git user
+        run: |
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+
+      - uses: actions/github-script@v6
+        id: clean-refs
+        with:
+          script: |
+            const head_branch = "${{ env.head_branch }}";
+            const base_branch = "${{ env.base_branch }}";
+
+            const newHeadBranch = head_branch.replace("refs/heads/", "");
+            const newBaseBranch = base_branch.replace("refs/heads/", "");
+
+            core.exportVariable("head_branch", newHeadBranch);
+            core.exportVariable("base_branch", newBaseBranch);
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      - name: Install dependencies
+        run: pnpm i
+      - name: Git commit
+        run: |
+          git add .
+          git commit -m "chore(lockfile) update lockfile for dependabot"
+          git push origin ${{ env.head_branch }}
