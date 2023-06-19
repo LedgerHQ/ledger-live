@@ -11,6 +11,7 @@ export type Props = {
   productName: string;
 };
 
+// TODO: to remove
 const GenuineCheckDrawer = ({ isOpen, onPress, productName, onClose }: Props) => {
   const { t } = useTranslation();
 

@@ -1899,6 +1899,22 @@
       }
     }
   },
+  "earlySecurityCheck": {
+    "title": "Genuine Check and OS update check",
+    "idle": {
+      "description": "Genuine Check makes sure your Ledger Stax is an official Ledger. OS update check makes sure Ledger Stax OS is up to date.",
+      "checkCta": "Check Ledger Stax"
+    },
+    "genuineCheckFailedDrawer": {
+      "title": "Genuine Check is mandatory",
+      "description": "You cannot setup your {{productName}} without allowing this Check.",
+      "retryCta": "Resume Check",
+      "skipCta": "Cancel Check"
+    },
+    "allowManagerDrawer": {
+      "title": "Tap 'Allow' to enable Genuine Check and OS update check"
+    }
+  },
   "syncOnboarding": {
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
@@ -1990,15 +2006,6 @@
         "iconText": "Genuine Check",
         "title": "This check assures that your Ledger Stax is an official Ledger.",
         "checkCta": "Start Genuine Check"
-      },
-      "allowManagerDrawer": {
-        "wording": "Genuine Check"
-      },
-      "genuineCheckCancelledDrawer": {
-        "title": "Genuine Check canceled",
-        "description": "This check is important to make sure your {{productName}} is an official Ledger.",
-        "retryCta": "Run Genuine Check again",
-        "skipCta": "I'll do it later"
       },
       "updateAvailableDrawer": {
         "title": "New software found",
