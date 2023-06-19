@@ -63,6 +63,8 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "@ledgerhq/live-common/env";
+
 const Wrapper = styled(Box).attrs({
   p: 20,
   mt: 12,
@@ -396,39 +398,41 @@ const SwapForm = () => {
         },
       });
     } else {
-      const { to, from } = swapTransaction.swap;
-      const transaction = swapTransaction.transaction;
-      const { account: fromAccount, parentAccount: fromParentAccount } = from;
-      const { account: toAccount, parentAccount: toParentAccount } = to;
-      const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-      const fromMagnitude = fromAccount.currency.units[0].magnitude;
-      const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
-      const rateId = encodeURIComponent(exchangeRate?.rateId);
-
-      const feeStrategy = transaction?.feesStrategy.toUpperCase();
-
-      history.push({
-        pathname: "/swap-web",
-        state: {
-          provider,
-          fromAccountId,
-          toAccountId,
-          fromAmount,
-          quoteId: rateId,
-          feeStrategy, // Custom fee is not supported yet
-        },
-      });
-      // setDrawer(
-      //   ExchangeDrawer,
-      //   {
-      //     swapTransaction,
-      //     exchangeRate,
-      //   },
-      //   {
-      //     preventBackdropClick: true,
-      //   },
-      // );
+      const swapWebApp = !!process.env.SWAP_WEB_APP;
+      if (swapWebApp) {
+        const { to, from } = swapTransaction.swap;
+        const transaction = swapTransaction.transaction;
+        const { account: fromAccount, parentAccount: fromParentAccount } = from;
+        const { account: toAccount, parentAccount: toParentAccount } = to;
+        const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+        const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+        const fromMagnitude = fromAccount.currency.units[0].magnitude;
+        const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
+        const rateId = encodeURIComponent(exchangeRate?.rateId);
+        const feeStrategy = transaction?.feesStrategy.toUpperCase();
+        history.push({
+          pathname: "/swap-web",
+          state: {
+            provider,
+            fromAccountId,
+            toAccountId,
+            fromAmount,
+            quoteId: rateId,
+            feeStrategy, // Custom fee is not supported yet
+          },
+        });
+      } else {
+        setDrawer(
+          ExchangeDrawer,
+          {
+            swapTransaction,
+            exchangeRate,
+          },
+          {
+            preventBackdropClick: true,
+          },
+        );
+      }
     }
   };
   const sourceAccount = swapTransaction.swap.from.account;
