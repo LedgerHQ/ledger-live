@@ -26,6 +26,7 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
   height: 32px;
