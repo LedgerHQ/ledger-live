@@ -26,6 +26,10 @@ const defaultConfig = {
         minGasPrice: 0.003,
         ledgerValidator: "onomyvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxu9mtmf",
       },
+      injective: {
+        lcd: "https://injective-api.polkachu.com",
+        minGasPrice: 0.02,
+      },
       osmo: {
         lcd: "https://osmosis-api.polkachu.com",
         ledgerValidator: "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",

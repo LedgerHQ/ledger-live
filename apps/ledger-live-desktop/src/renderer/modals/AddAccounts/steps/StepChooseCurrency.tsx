@@ -56,6 +56,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
+  const injective = useFeature("currencyInjective");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -66,6 +67,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       desmos,
       onomy,
       quicksilver,
+      injective,
       persistence,
       avalanche_c_chain: avaxCChain,
       stacks,
@@ -97,6 +99,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       rsk,
       bittorrent,
       kavaEvm,
+      injective,
       evmosEvm,
       energyWeb,
       astar,

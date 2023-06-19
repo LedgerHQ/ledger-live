@@ -13,6 +13,7 @@ import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Umee from "./Umee";
 import BinanceBeaconChain from "./BinanceBeaconChain";
+import Injective from "./Injective";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -37,6 +38,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "nyx":
         cosmosChainParams[currencyId] = new Nyx();
+        break;
+      case "injective":
+        cosmosChainParams[currencyId] = new Injective();
         break;
       case "onomy":
         cosmosChainParams[currencyId] = new Onomy();

@@ -1472,6 +1472,59 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  icp: {
+    type: "CryptoCurrency",
+    id: "icp",
+    coinType: CoinType.ICP,
+    family: "icp",
+    ticker: "ICP",
+    scheme: "icp",
+    color: "#000",
+    managerAppName: "InternetComputer",
+    name: "Internet Computer (ICP)",
+    units: [
+      {
+        name: "ICP",
+        code: "ICP",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://dashboard.internetcomputer.org/account/$address",
+        tx: "https://dashboard.internetcomputer.org/transaction/$hash",
+      },
+    ],
+  },
+  injective: {
+    type: "CryptoCurrency",
+    id: "injective",
+    coinType: 60,
+    name: "Injective",
+    managerAppName: "Cosmos",
+    ticker: "INJ",
+    scheme: "injective",
+    color: "#0bd",
+    family: "cosmos",
+    units: [
+      {
+        name: "Injective",
+        code: "INJ",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-Injective",
+        code: "inj",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/injective/txs/$hash",
+        address: "https://www.mintscan.io/injective/validators/$address",
+      },
+    ],
+  },
   iota: {
     type: "CryptoCurrency",
     id: "iota",

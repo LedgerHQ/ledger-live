@@ -22,6 +22,8 @@ export const defaultFeatures = {
   },
   currencyStacks: {
     enabled: false,
+  currencyInjective: {
+    enabled: true,
   },
   currencyOptimism: {
     enabled: false,

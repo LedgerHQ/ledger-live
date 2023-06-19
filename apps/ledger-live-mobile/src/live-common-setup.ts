@@ -105,6 +105,7 @@ setSupportedCurrencies([
   "polygon_as_evm_test_only",
   "stacks",
   "telos_evm",
+  "injective",
 ]);
 
 if (Config.VERBOSE) {

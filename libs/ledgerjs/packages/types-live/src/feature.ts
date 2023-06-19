@@ -21,6 +21,7 @@ export type FeatureId =
   | "currencyBittorrent"
   | "currencyKavaEvm"
   | "currencyEvmosEvm"
+  | "currencyInjective"
   | "currencyEnergyWeb"
   | "currencyAstar"
   | "currencyMetis"
