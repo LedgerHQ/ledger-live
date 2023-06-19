@@ -210,19 +210,7 @@ export default function GetDeviceScreen() {
         </Flex>
       </ScrollListContainer>
       <Flex borderTopColor="neutral.c40" borderTopWidth={1}>
-        <Button
-          mx={6}
-          my={6}
-          type="main"
-          outline={false}
-          event="button_clicked"
-          eventProperties={{
-            button: "Buy your Ledger now",
-            screen: ScreenName.GetDevice,
-          }}
-          onPress={buyLedger}
-          size="large"
-        >
+        <Button mx={6} my={6} type="main" outline={false} onPress={buyLedger} size="large">
           {t("buyDevice.cta")}
         </Button>
         <Flex px={6} pt={0} pb={5}>

@@ -97,7 +97,6 @@ const OnboardingStepUseCaseSelection = () => {
         event="button_clicked"
         eventProperties={{
           button: "Create a new wallet",
-          page: "Onboarding setup new options",
         }}
         testID={`Onboarding UseCase - Selection|New Wallet`}
         onPress={onPressNew}
@@ -111,7 +110,6 @@ const OnboardingStepUseCaseSelection = () => {
           event="button_clicked"
           eventProperties={{
             button: "Restore with your secret phrase",
-            page: "Onboarding setup new options",
           }}
           testID={`Onboarding UseCase - Selection|Recovery phrase`}
           onPress={onPressRecoveryPhrase}
@@ -127,7 +125,6 @@ const OnboardingStepUseCaseSelection = () => {
             event="button_clicked"
             eventProperties={{
               button: "Restore with ledger recover",
-              page: "Onboarding setup new options",
             }}
             testID={`Onboarding UseCase - Selection|Ledger Recover`}
             onPress={onPressProtect}
