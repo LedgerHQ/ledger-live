@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-next.4
+
+### Patch Changes
+
+- [#3660](https://github.com/LedgerHQ/ledger-live/pull/3660) [`00a71f0be9`](https://github.com/LedgerHQ/ledger-live/commit/00a71f0be94d6e58f41c9a326a1cac6fcf28c2e3) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fixes all cases where url(" was used instead of url('
+
 ## 2.62.0-next.3
 
 ### Patch Changes
