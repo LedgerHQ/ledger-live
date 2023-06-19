@@ -42,20 +42,17 @@ describe("Onboarding", () => {
     await onboardingSteps.selectPairWithBluetooth();
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("adds device via Bluetooth", async () => {
+  it("adds device via Bluetooth", async () => {
     await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("opens Ledger Live", async () => {
+  it("opens Ledger Live", async () => {
     await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("should see an empty portfolio page", async () => {
+  it("should see an empty portfolio page", async () => {
     await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
   });
 });
