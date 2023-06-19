@@ -1,9 +1,9 @@
 # Live DX Team
 
-.github/              @ledgerhq/live-devx
-scripts/              @ledgerhq/live-devx
-tools/                @ledgerhq/live-devx
-fastlane/             @ledgerhq/live-devx
+.github/              @ledgerhq/live-eng-core
+scripts/              @ledgerhq/live-eng-core
+tools/                @ledgerhq/live-eng-core
+fastlane/             @ledgerhq/live-eng-core
 
 # Live Blockchain Support Team
 
