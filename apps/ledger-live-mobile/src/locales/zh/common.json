@@ -325,6 +325,10 @@
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "您的 Ledger Stax 没有可移除的锁屏图片",
+      "description" : "之前移除了自定义锁屏图片。"
+    },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
     },
@@ -407,6 +411,9 @@
     },
     "MaxFeeLow" : {
       "title" : "您的最高费用过低。您的交易可能会等待一段时间"
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "优先费用太低，请输入高于初始交易优先费用数值的金额"
     },
     "NetworkDown" : {
       "title" : "抱歉，网络连接似乎已断开",
@@ -491,6 +498,9 @@
     "TimeoutTagged" : {
       "title" : "抱歉，服务器响应超时 ({{tag}})",
       "description" : "出现超时。"
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "交易已验证"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "交易被设备端拒绝",
@@ -691,10 +701,10 @@
       "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
     },
     "SolanaUseAllAmountStakeWarning" : {
-      "title" : "确保您有足够的余额剩余，用作未来的交易费"
+      "title" : "Ensure you have enough balance left for future transactions fees"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
-      "title" : "您之前的交易尚未处理。请稍等片刻后检查交易记录，然后重试。"
+      "title" : "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
@@ -779,7 +789,7 @@
       "title" : "您的账户尚未添加。请再次尝试。"
     },
     "NearNewAccountWarning" : {
-      "title" : "尚未创建接收人账户。 该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
+      "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
     "NearNewNamedAccountError" : {
       "title" : "尚未创建接收人账户。需要在 NEAR 钱包中创建账户。"
@@ -1064,7 +1074,7 @@
       "title" : "感谢您的反馈",
       "description" : "如果您想提供更多反馈或需要我们的帮助，请发送电子邮件至 ",
       "cta" : {
-        "done" : "完成"
+        "done" : "Done"
       }
     }
   },
@@ -1110,7 +1120,7 @@
       "url" : {
         "title" : "更新 iframe 网址",
         "subtitle" : "调试设置",
-        "cta" : "保存"
+        "cta" : "Save"
       },
       "message" : {
         "successTitle" : "交易完成",
@@ -2277,7 +2287,7 @@
     "receive" : "接收",
     "buy" : "买入",
     "walletconnect" : "WalletConnect",
-    "stake" : "权益质押",
+    "stake" : "质押",
     "sell" : "卖出",
     "swap" : "互换",
     "manage" : "管理",
@@ -2602,7 +2612,7 @@
       "privacyPolicy" : "隐私政策",
       "privacyPolicyDesc" : "查看我们会收集哪些个人资料以及收集的原因和用途。",
       "liveReview" : {
-        "title" : "反馈",
+        "title" : "Feedback",
         "desc" : "请告诉我们您对应用程序的反馈",
         "ios" : "在 App Store（苹果应用商店）内评论",
         "android" : "在 Google Play（谷歌应用商店）内评论"
@@ -2699,10 +2709,6 @@
         "experimentalListAppsV2" : {
           "title" : "我的 Ledger 的实验性应用程序列表",
           "description" : "我的 Ledger 访问和内部流程的性能改进。"
-        },
-        "experimentalCountervalues" : {
-          "title" : "实验性对价 API",
-          "description" : "这可能会导致您的账户对价显示错误。"
         },
         "experimentalSwap" : {
           "title" : "新的互换界面",
@@ -2864,11 +2870,11 @@
       "noResultsDesc" : "请检查拼写后重试。"
     },
     "buy" : {
-      "title" : "买入",
+      "title" : "Buy",
       "description" : "用现金安全购买加密货币。"
     },
     "sell" : {
-      "title" : "卖出",
+      "title" : "Sell",
       "description" : "安全出售加密货币以换取现金。"
     },
     "exchange" : {
@@ -3157,7 +3163,7 @@
     },
     "lending" : {
       "title" : "借出加密货币",
-      "titleTransferTab" : "赚取",
+      "titleTransferTab" : "Earn",
       "descriptionTransferTab" : "赚取被动收入。",
       "actionTitle" : "借出",
       "accountActions" : {
@@ -3480,6 +3486,39 @@
       "maxSpendable" : {
         "title" : "最大可支出数额",
         "description" : "最大可支出数额指的是一个账户可通过一个交易发送的总余额。"
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "加速或取消",
+    "header" : "编辑交易",
+    "learnMore" : "我想进一步了解",
+    "panel" : {
+      "stuckMessage" : "此“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "speedupMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。"
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "待处理交易费用信息： ",
+      "networkfee" : "网络费用 = {{amount}} {{unit}}",
+      "maxFee" : "最高费用 = {{amount}} Gwei",
+      "maxPriorityFee" : "最高优先费用 = {{amount}} Gwei",
+      "gasPrice" : "Gas 价格 = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "加快速度",
+      "description" : "使用较高的网络费用重新提交交易。"
+    },
+    "cancel" : {
+      "title" : "取消",
+      "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
+      "notEnoughFundsToSpeedup" : "无法使用加速交易，因为您的账户中没有足够的资金。",
+      "notlowestNonceToSpeedup" : "无法使用加速功能。您的交易有待处理，因为之前的交易已停滞。您可以等待确认交易，加速交易和取消交易。",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "无法加速或取消",
+        "description" : "此交易已经过验证"
       }
     }
   },
@@ -4046,7 +4085,7 @@
     "updateDone" : "操作完成！您的 {{deviceName}} 是最新的",
     "updateDoneDescription" : "新操作系统版本：{{firmwareVersion}}",
     "preparing" : "正在准备固件更新，请确保设备处于唤醒状态并保持连接。我们会通知您更新进度",
-    "confirmIdentifierText" : "请确认您设备上的标识符和下方的标识符一致。如果需要，请确认并输入您的 PIN 识别密码。",
+    "confirmIdentifierText" : "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps" : "请在设备上重新安装应用程序。",
     "pleaseConfirmUpdate" : "在您的设备上确认更新",
     "pleaseConfirmUpdateOnYourDevice" : "在 {{deviceName}} 上确认安装",
@@ -4056,7 +4095,7 @@
     "pleaseWaitDownload" : "请等待安装程序下载完成",
     "doNotLeaveLedgerLive" : "在更新完成之前，请勿退出 Ledger Live 应用程序。",
     "preparingDevice" : "正在准备您的设备",
-    "pleaseWaitUpdate" : "请等待更新完成",
+    "pleaseWaitUpdate" : "Please wait for the update to finish",
     "viewUpdateChangelog" : "查看更新变更日志",
     "waitForFirmwareUpdate" : "等待设备上的固件更新完成",
     "waitForInstallationToFinish" : "等待在 {{deviceName}} 上完成安装",
@@ -4074,8 +4113,8 @@
     "reinstallApps" : "重新安装应用程序。",
     "currentVersionNumber" : "当前版本",
     "newVersionNumber" : "新版本",
-    "success" : "固件已更新",
-    "update" : "更新",
+    "success" : "Firmware updated",
+    "update" : "Update",
     "Notifications" : {
       "confirmOnDevice" : "您需要在设备上进行确认",
       "preparingUpdate" : "正在传输更新，完成后我们会通知您",
@@ -4091,7 +4130,7 @@
       "flash-bootloader" : "Bootloader 启动装载程序正在更新",
       "flash" : "正在刷机",
       "preparing" : "正在准备更新",
-      "firmware" : "正在下载更新",
+      "firmware" : "Downloading update",
       "prepareUpdate" : {
         "titleActive" : "正在准备安装更新",
         "description" : "备份您的配置并将更新传输到 {{deviceName}}。"
@@ -4136,8 +4175,8 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "更新 {{deviceName}} 到版本 {{version}}",
-    "recoveryPhraseBackupInstructions" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
-    "confirmRecoveryPhrase" : "我有自己的恢复短语",
+    "recoveryPhraseBackupInstructions" : "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
+    "confirmRecoveryPhrase" : "I have my recovery phrase",
     "introDescription1" : "请注意，您设备上的所有应用程序都会被删除。您可以在固件更新后重新安装这些应用程序。",
     "introDescription2" : "该操作不会影响您的加密资产。",
     "action" : "继续更新"
@@ -5168,7 +5207,7 @@
       },
       "minBondWarning" : {
         "title" : "绑定量不足",
-        "description" : "您的绑定余额低于当前允许提名的最小值{0}。您的提名有可能被删除。"
+        "description" : "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
       }
     },
     "nomination" : {
@@ -5396,7 +5435,7 @@
       "iReactivate" : "我重新激活",
       "iDeactivate" : "我取消委托",
       "iWithdraw" : "我提取",
-      "totalStake" : "质押总额",
+      "totalStake" : "Total stake",
       "commission" : "佣金",
       "stakeActivationState" : "状态",
       "delegationEarn" : "您可以通过委托资产赚取 SOL 奖励。",
@@ -5661,7 +5700,7 @@
   "exchange" : {
     "count" : "+ 另外 {{count}} 个",
     "buy" : {
-      "screenTitle" : "买入加密货币",
+      "screenTitle" : "BUY CRYPTO",
       "tabTitle" : "买入",
       "selectCurrency" : "选择一种货币",
       "selectAccount" : "选择账户",
@@ -5801,7 +5840,7 @@
       },
       "branch" : {
         "soon" : "敬请期待",
-        "experimental" : "实验性的",
+        "experimental" : "实验性功能",
         "debug" : "除错"
       },
       "banner" : {
@@ -5819,6 +5858,11 @@
       "developerCTA" : {
         "title" : "面向开发者",
         "description" : "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。"
+      },
+      "warnings" : {
+        "notFound" : "未能找到",
+        "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
+        "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。"
       }
     },
     "disclaimer" : {
@@ -5934,13 +5978,10 @@
       "reload" : "重新加载",
       "noCryptosFound" : "未找到币",
       "noCurrencyFound" : "没有找到货币",
-      "noAppFound" : "未找到应用程序",
-      "notFound" : "未能找到",
       "noSearchResultsFor" : "对不起，我们没有找到任何币， <0>{{search}}</0> 。请用另一个关键词重新进行搜索。",
       "noCurrencySearchResultsFor" : "对不起，我们没有为<0>{{search}}</0>找到任何货币。请用另一个关键词重新进行搜索。",
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
-      "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
       "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
@@ -6120,8 +6161,8 @@
         "selectAndHide" : "选择并隐藏",
         "hide" : "隐藏 {{count}} 件藏品",
         "hide_plural" : "隐藏 {{count}} 件藏品",
-        "alertHide" : "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
-        "alertHide_plural" : "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
+        "alertHide" : "已隐藏 1 件收藏。随时前往 “设置” 中的 “账户” 部分显示并取消隐藏",
+        "alertHide_plural" : "已隐藏 {{count}} 件收藏。随时前往 “设置” 中的 “账户” 部分显示并取消隐藏"
       },
       "empty" : {
         "title" : "暂时没有 NFT 可显示",
@@ -6174,6 +6215,30 @@
     "title" : "连接设备"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Grow your ETH holdings",
+      "subTitle" : "将每日收益直接存入您的 Ledger Live，质押您的以太币并增加您的持仓。",
+      "close" : "Close",
+      "providers" : {
+        "lido" : {
+          "title" : "Earn with Lido",
+          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无最低以太币数量要求。无锁定期。",
+          "supportLink" : "Learn more about Lido"
+        },
+        "kiln" : {
+          "title" : "Kiln dedicated staking",
+          "tag" : "Requires 32 ETH",
+          "description" : "使用专门的验证者进行权益质押。需要是 32 以太币的倍数。奖励需要手动领取。随时退出。",
+          "supportLink" : "Learn more about Kiln validator"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking pool",
+          "description" : "加入权益质押池。不要求最低以太币金额。奖励自动按复利计算。随时退出。",
+          "supportLink" : "Learn more about Kiln pooling",
+          "tag" : "无最低限制"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "买入、互换或接收",
       "text" : "您没有足够的 {{coin}} 可供权益质押",
