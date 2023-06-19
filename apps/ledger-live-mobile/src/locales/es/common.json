@@ -325,6 +325,10 @@
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
       "primaryCTA" : "Cargar otra imagen"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Tu Ledger Stax no tiene una imagen de pantalla de bloqueo que quitar",
+      "description" : "La imagen de pantalla de bloqueo personalizada ya se ha quitado."
+    },
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
     },
@@ -407,6 +411,9 @@
     },
     "MaxFeeLow" : {
       "title" : "La tarifa máxima es demasiado baja. Es posible que tu transacción permanezca pendiente durante un tiempo."
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "Tarifa prioritaria demasiado baja. Ingresa una cantidad superior al valor de la tarifa prioritaria de la transacción inicial."
     },
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
@@ -491,6 +498,9 @@
     "TimeoutTagged" : {
       "title" : "El servidor ha tardado demasiado en responder ({{tag}})",
       "description" : "Se ha agotado el tiempo."
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "Transacción ya validada"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Transacción rechazada en el dispositivo",
@@ -1014,7 +1024,7 @@
       "lido" : {
         "title" : "Participar con ETH mediante Lido",
         "description" : "Gana recompensas al poner en participación ETH de forma segura con Lido",
-        "cta" : "Poner en participación ahora"
+        "cta" : "Comienza a poner en participación ahora"
       },
       "market" : {
         "title" : "Mercados cripto",
@@ -1071,11 +1081,11 @@
   "buyDevice" : {
     "0" : {
       "title" : "Es tu dinero. Toma el control.",
-      "desc" : "Toma el mando y desbloquea la libertad de administrar tus cripto por tu cuenta."
+      "desc" : "Toma el control y conquista la libertad de administrar tus cripto por tu cuenta."
     },
     "1" : {
       "title" : "Accede a DeFi y NFTs",
-      "desc" : "Interactúa de forma segura con nuestras aplicaciones DeFi confiables directamente desde la aplicación."
+      "desc" : "Interactúa de forma segura con nuestras aplicaciones DeFi verificadas, directamente desde la aplicación."
     },
     "2" : {
       "title" : "Tu acceso a la Web3",
@@ -1083,7 +1093,7 @@
     },
     "3" : {
       "title" : "Seguridad certificada",
-      "desc" : "Nuestros productos son las únicas billeteras de hardware con seguridad certificada por agencias nacionales de seguridad cibernética."
+      "desc" : "Nuestros productos son las únicas billeteras de hardware con seguridad certificada por agencias internacionales de seguridad cibernética."
     },
     "title" : "Necesitas un Ledger",
     "desc" : "Por motivos de seguridad, Ledger Live solo se puede usar en conjunto con un dispositivo físico. Necesitas un dispositivo para poder continuar.",
@@ -1152,15 +1162,15 @@
       },
       "earn" : {
         "title" : "Gana",
-        "desc" : "Haz crecer tus cripto a través de la puesta en participación y los préstamos."
+        "desc" : "Rentabiliza tus cripto a través de la puesta en participación y los préstamos."
       },
       "mint" : {
         "title" : "Acuña",
-        "desc" : "Acuña NFTs de campañas exclusivas de [ L ] Market."
+        "desc" : "Puedes mintear NFTs de campañas exclusivas de [ L ] Market."
       },
       "referralProgram" : {
         "title" : "Recomiéndanos a un amigo",
-        "desc" : "Si tu amigo compra un Ledger, ambos ganarán 10 USD en BTC."
+        "desc" : "Si tu amigo compra un Ledger, ambos recibirán $10 USD en BTC"
       }
     },
     "comingSoon" : "próximamente",
@@ -1171,14 +1181,14 @@
       "title" : "¿Quieres instalar las mismas aplicaciones que tenías en el {{deviceName}}?",
       "titleNoDeviceName" : "¿Quieres instalar las mismas aplicaciones que tenías en tu dispositivo Ledger anterior?",
       "installCTA" : "Restaurar ahora",
-      "skipCTA" : "Lo haré más tarde"
+      "skipCTA" : "Lo haré más adelante"
     },
     "landing" : {
       "estimatedTime" : "{{ minutes }} min",
       "title" : "El {{ productName }} usa aplicaciones para posibilitar transacciones seguras en la cadena de bloques",
       "subtitle" : "Te recomendamos descargar un conjunto de aplicaciones por defecto. Puedes descargar otras más adelante.",
       "installCTA" : "Instalar aplicaciones",
-      "skipCTA" : "Lo haré más tarde"
+      "skipCTA" : "Lo haré más adelante"
     },
     "ongoing" : {
       "resolving" : "Resolviendo dependencias",
@@ -1220,8 +1230,8 @@
         "subtitle" : "Una billetera de hardware es la única forma de garantizar que tus activos estén protegidos "
       },
       "discoverLedger" : {
-        "title" : "Explora Ledger Live",
-        "subtitle" : "Explora la aplicación y conoce sus ventajas "
+        "title" : "Descubre Ledger Live",
+        "subtitle" : "Recorre la aplicación y conoce sus ventajas "
       },
       "desktopSync" : {
         "title" : "Sincronizar con aplicación Desktop",
@@ -1235,13 +1245,13 @@
         "title" : "Protege todos tus activos cripto."
       },
       "1" : {
-        "title" : "Presta atención a los mercados."
+        "title" : "Sigue de cerca los mercados."
       },
       "2" : {
         "title" : "Descubre aplicaciones y aprende más sobre la Web3."
       },
       "3" : {
-        "title" : "Mantén tus cripto y NFTs a buen recaudo."
+        "title" : "Protege tus cripto y NFTs."
       }
     },
     "stepLanguage" : {
@@ -1319,18 +1329,18 @@
       },
       "2" : {
         "label" : "Nociones básicas",
-        "title" : "Mantente sin conexión",
+        "title" : "Úsalo sin conexión",
         "desc" : "Ledger Live te permite comprar, vender, administrar, intercambiar y ganar cripto con seguridad. Deberás validar cada transacción cripto con tu Nano."
       },
       "3" : {
         "label" : "Nociones básicas",
         "title" : "Validar transacciones",
-        "desc" : "Tu Nano funciona como una billetera de “almacenamiento en frío”. Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras estás conectado a Internet."
+        "desc" : "Tu Nano funciona como una billetera de “almacenamiento en frío”. Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación con conexión a Internet."
       },
       "4" : {
         "label" : "Nociones básicas",
         "title" : "¡Vamos a configurar tu Nano!",
-        "desc" : "Empezaremos por configurar la seguridad de tu Nano."
+        "desc" : "Empecemos por la seguridad de tu Nano"
       },
       "cta" : "¡Vamos!",
       "title" : "Nociones básicas"
@@ -1599,7 +1609,7 @@
           },
           "1" : {
             "title" : "Selecciona la cantidad de Palabras de la Frase de recuperación",
-            "label" : "Tus Frases de recuperación pueden tener 12, 18 o 24 Palabras. Debes ingresar todas las Palabras para acceder a tus cripto."
+            "label" : "Tus frases de recuperación pueden tener 12, 18 o 24 Palabras. Debes ingresar todas las palabras para acceder a tus cripto."
           },
           "2" : {
             "title" : "Ingresa la Word #1...",
@@ -1794,8 +1804,8 @@
       "final" : {
         "successTitle" : "¡Ya tienes nivel de profesional!",
         "successText" : "Está todo listo para que administres de forma segura tus cripto. ¡Solo te queda un breve paso!",
-        "failTitle" : "Pronto tendrás nivel de profesional...",
-        "failText" : "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto te sentirás con completa seguridad con respecto a la protección de tus criptomonedas. ¡Solo te queda un breve paso!",
+        "failTitle" : "Pronto tendrás nivel profesional...",
+        "failText" : "No te preocupes, Ledger está aquí para guiarte en este proceso. En breve protegerás tus cripto con total seguridad. ¡Solo te queda un paso!",
         "cta" : "Siguiente paso"
       },
       "nextQuestion" : "Siguiente pregunta",
@@ -1953,7 +1963,7 @@
       },
       "genuineCheckStep" : {
         "inactive" : {
-          "title" : "Comprobación de autenticidad"
+          "title" : "Verificación de autenticidad"
         },
         "active" : {
           "title" : "Verificación de autenticidad en curso..."
@@ -2037,7 +2047,7 @@
         "title" : "Comenzar",
         "description" : "Puedes comprar criptomonedas a nuestros socios o configurar tu billetera"
       },
-      "title" : "Para empezar, agrega tus activos favoritos a tu billetera",
+      "title" : "Para empezar, agrega tus cripto favoritas a tu billetera",
       "subtitle" : "Ledger es compatible con más de 6000 monedas y tokens",
       "addAccount" : "o agrega una cuenta"
     },
@@ -2700,10 +2710,6 @@
           "title" : "Aplicaciones experimentales de lista para Mi Ledger",
           "description" : "Mejora de rendimiento en el acceso y los flujos en línea de Mi Ledger."
         },
-        "experimentalCountervalues" : {
-          "title" : "API experimental de contrapartes",
-          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
-        },
         "experimentalSwap" : {
           "title" : "Nueva interfaz de PERMUTA",
           "description" : "Usa la nueva interfaz experimental de permuta"
@@ -2876,7 +2882,7 @@
     },
     "stake" : {
       "title" : "Poner en participación",
-      "description" : "Haz crecer tus cripto."
+      "description" : "Rentabiliza tus cripto."
     },
     "swap" : {
       "title" : "Permutar",
@@ -3483,6 +3489,39 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "Acelerar o cancelar",
+    "header" : "Editar transacción",
+    "learnMore" : "Quiero saber más",
+    "panel" : {
+      "stuckMessage" : "Esta transacción de envío se ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala.",
+      "speedupMessage" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "Información sobre las tarifas de transacciones pendientes: ",
+      "networkfee" : "Tarifa de red = {{amount}} {{unit}}",
+      "maxFee" : "Tarifa máxima = {{amount}} Gweis",
+      "maxPriorityFee" : "Tarifa de prioridad máxima = {{amount}} Gweis",
+      "gasPrice" : "Precio del gas = {{amount}} Gweis"
+    },
+    "speedUp" : {
+      "title" : "Acelerar",
+      "description" : "Vuelve a enviar la transacción con una tarifa de red mayor."
+    },
+    "cancel" : {
+      "title" : "Cancelar",
+      "description" : "Enviando 0 {{ticker}} a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 30% más alta que la tarifa de la transacción que se pretende cancelar."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "La cancelación de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notEnoughFundsToSpeedup" : "La aceleración de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notlowestNonceToSpeedup" : "La función de aceleración no está disponible. Tu transacción está pendiente porque hay una transacción anterior atascada. Puedes esperar a que se confirme, acelerarla o cancelarla.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "No es posible acelerarla ni cancelarla",
+        "description" : "Esta transacción ya se ha validado"
+      }
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Seleccionar cripto",
@@ -3816,7 +3855,7 @@
   "PairDevices" : {
     "Paired" : {
       "title" : "Emparejamiento correcto",
-      "desc" : "Tu {{productName}} está listo para usar con Ledger Live.",
+      "desc" : "Ya puedes utilizar tu {{productName}} con Ledger Live.",
       "action" : "Continuar"
     },
     "Pairing" : {
@@ -3826,9 +3865,9 @@
       "title2" : "Validar"
     },
     "GenuineCheck" : {
-      "title" : "Comprobación de la autenticación del dispositivo",
+      "title" : "Verificación de autenticidad del dispositivo",
       "accept" : "No apagues tu Nano X. Asegúrate de permitir una <1>Conexión Segura con Ledger</1>.",
-      "info" : "Este paso está pensado para garantizar que tu Nano sea auténtico."
+      "info" : "Este paso confirma que tu Nano es auténtico."
     },
     "ScanningHeader" : {
       "title" : "Buscando dispositivos",
@@ -4172,8 +4211,8 @@
     "allowLanguageInstallation" : "Aprueba la instalación del idioma en {{deviceName}}",
     "languageInstalled" : "Idioma cambiado al {{language}}",
     "firmwareUpdatePrompt" : {
-      "title" : "¿Establecer tu {{deviceName}} en {{language}}?",
-      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes establecerlo ahora o cambiar el idioma de tu dispositivo en cualquier momento desde My Ledger."
+      "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
     },
     "installingLanguage" : "Instalando idioma",
     "languages" : {
@@ -5718,7 +5757,7 @@
     },
     "swap" : {
       "title" : "PERMUTAR CRIPTO",
-      "description" : "Permuta activos cripto directamente desde tus cuentas de Ledger mediante nuestro socio."
+      "description" : "Permuta activos cripto directamente desde tus cuentas de Ledger mediante nuestro proveedor."
     }
   },
   "walletconnect" : {
@@ -5800,9 +5839,9 @@
         "clearAll" : "Borrar todo"
       },
       "branch" : {
-        "soon" : "próximamente",
-        "experimental" : "experimental",
-        "debug" : "depuración"
+        "soon" : "Próximamente",
+        "experimental" : "Experimental",
+        "debug" : "Depuración"
       },
       "banner" : {
         "title" : "Descubre nuestro catálogo de Live",
@@ -5819,6 +5858,11 @@
       "developerCTA" : {
         "title" : "Para desarrolladores",
         "description" : "Toda la información que necesitas para integrar tus aplicaciones en Ledger Live."
+      },
+      "warnings" : {
+        "notFound" : "No hay coincidencias",
+        "retrySearchKeyword" : "Por favor, intenta de nuevo con otra palabra clave.",
+        "retrySearchKeywordAndUrl" : "Intenta realizar la búsqueda con otra palabra clave o abre <Link>{{search}}</Link> fuera de Ledger Live."
       }
     },
     "disclaimer" : {
@@ -5934,13 +5978,10 @@
       "reload" : "Volver a cargar",
       "noCryptosFound" : "No se han encontrado monedas",
       "noCurrencyFound" : "No se encontraron divisas",
-      "noAppFound" : "No se han encontrado aplicaciones",
-      "notFound" : "No hay coincidencias",
       "noSearchResultsFor" : "Lo sentimos, no hemos encontrado ningún resultado para <0>{{search}}</0>. Por favor, intenta de nuevo con otra palabra clave.",
       "noCurrencySearchResultsFor" : "Lo sentimos, no hemos encontrado ninguna divisa para <0>{{search}}</0>. Por favor, intenta de nuevo con otra palabra clave.",
       "noSearchResults" : "Lo sentimos, no hemos encontrado ningún resultado.",
       "retrySearchKeyword" : "Por favor, intenta de nuevo con otra palabra clave.",
-      "retrySearchKeywordAndUrl" : "Intenta realizar la búsqueda con otra palabra clave o abre <Link>{{search}}</Link> de Ledger Live.",
       "retrySearchParams" : "Por favor, intenta de nuevo con otros parámetros.",
       "trackFavAssets" : "Sigue a tus favoritas",
       "clickOnStarIcon" : "Al hacer clic en el ícono de la estrella junto a un activo se añadirá automáticamente a tus destacados.",
@@ -6023,7 +6064,7 @@
     "replace" : "Sustituir",
     "drawer" : {
       "options" : {
-        "uploadFromPhone" : "Elegir de mi galería de fotos",
+        "uploadFromPhone" : "Elegir de la galería de imágenes",
         "selectFromNFTGallery" : "Elegir de la galería de NFTs",
         "remove" : "Eliminar imagen actual"
       }
@@ -6174,6 +6215,30 @@
     "title" : "Conectar dispositivo"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Rentabiliza tus tenencias en ETH",
+      "subTitle" : "Pon en participación ETH y genera ganancias con recompensas diarias directamente desde Ledger Live.",
+      "close" : "Cerrar",
+      "providers" : {
+        "lido" : {
+          "title" : "Gana con Lido",
+          "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. No es necesario un mínimo de ETH. Sin periodo de inmovilización.",
+          "supportLink" : "Obtén más información acerca de Lido"
+        },
+        "kiln" : {
+          "title" : "Puesta en participación dedicada de Kiln",
+          "tag" : "Requiere 32 ETH",
+          "description" : "Pon en participación con validadores dedicados. Requiere múltiplos de 32 ETH. Las recompensas se reclaman manualmente. Cancela la puesta en participación cuando quieras.",
+          "supportLink" : "Obtener más información acerca del validador Kiln"
+        },
+        "kiln_pooling" : {
+          "title" : "Pool de puesta en participación de Kiln",
+          "description" : "Únete a un Pool de puesta en participación. No es necesario un mínimo de ETH. Las recompensas generan interés compuesto automáticamente. Cancela la puesta en participación cuando quieras.",
+          "supportLink" : "Obtener más información acerca de pooling con Kiln",
+          "tag" : "Sin mínimos"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "Compra, permuta o recibe",
       "text" : "No tienes suficientes {{coin}} disponibles para poner en participación",
@@ -6186,7 +6251,7 @@
         "swap" : {
           "title" : "Permutar",
           "label" : "Popular",
-          "body" : "Convierte de una cripto a otra de manera segura"
+          "body" : "Convierte una cripto en otra de manera segura"
         },
         "receive" : {
           "title" : "Recibir",
