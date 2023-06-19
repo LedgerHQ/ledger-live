@@ -149,7 +149,6 @@ const dataset: CurrenciesData<Transaction> = {
             warnings: {
               amount: new CeloAllFundsWarning(),
             },
-            totalSpent: account.spendableBalance,
           }),
         },
         {
