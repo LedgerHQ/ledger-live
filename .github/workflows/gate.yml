@@ -116,6 +116,8 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           gh pr checkout ${{ env.number }}
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Install dependencies
         run: pnpm i
       - name: Git commit
