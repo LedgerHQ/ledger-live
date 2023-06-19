@@ -120,7 +120,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Install dependencies
         run: pnpm i
+      - name: status
+        id: check-status
+        run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT
       - name: Git commit
+        if: steps.check-status.outputs.status != 0
         run: |
           git status
           git add .
