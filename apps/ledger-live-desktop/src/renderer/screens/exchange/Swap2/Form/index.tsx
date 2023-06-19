@@ -67,7 +67,6 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-common/env";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
