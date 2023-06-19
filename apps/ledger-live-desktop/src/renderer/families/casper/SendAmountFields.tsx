@@ -20,12 +20,7 @@ type Props = {
 const Root = (props: Props) => {
   return (
     <Box flow={1}>
-      <Box
-        horizontal
-        alignItems="center"
-        justifyContent="space-between"
-        style={{ width: "50%", paddingRight: 28 }}
-      >
+      <Box mb={10}>
         <Label>
           <LabelInfoTooltip text={<Trans i18nKey="families.casper.transferIdWarningText" />}>
             <span>
@@ -34,7 +29,7 @@ const Root = (props: Props) => {
           </LabelInfoTooltip>
         </Label>
       </Box>
-      <Box pr={2} pl={2} mb={15} horizontal alignItems="center" justifyContent="space-between">
+      <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
         <Box grow={1}>
           <TransferIdField
             onChange={props.onChange}
