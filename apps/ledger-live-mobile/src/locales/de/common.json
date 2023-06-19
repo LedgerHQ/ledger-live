@@ -325,8 +325,15 @@
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
       "primaryCTA" : "Ein weiteres Bild hochladen"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Ihr Ledger Stax hat kein entfernbares Sperrbildschirm-Bild",
+      "description" : "Das benutzerdefinierte Sperrbildschirm-Bild wurde bereits entfernt."
+    },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
+    },
+    "InvalidNonce" : {
+      "title" : "Nonce ist erforderlich"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Ihr Konto wurde bereits an diesen Validator delegiert"
@@ -705,6 +712,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
     },
+    "StacksMemoTooLong" : {
+      "title" : "Memo ist zu lang"
+    },
     "StellarWrongMemoFormat" : {
       "title" : "Memo-Format ist falsch"
     },
@@ -1029,7 +1039,7 @@
       "discoverWeb3" : {
         "title" : "Web 3.0 entdecken",
         "description" : "Machen Sie sich bis zum Eintreffen Ihres Geräts mit allem vertraut, was das Web 3.0 zu bieten hat.",
-        "cta" : "Entdecken"
+        "cta" : "Neues entdecken"
       }
     }
   },
@@ -1064,7 +1074,7 @@
       "title" : "Vielen Dank für Ihr Feedback",
       "description" : "Wenn Sie weiteres Feedback übermitteln möchten oder Hilfe benötigen, schreiben Sie uns eine E-Mail an ",
       "cta" : {
-        "done" : "Fertig"
+        "done" : "Done"
       }
     }
   },
@@ -1075,7 +1085,7 @@
     },
     "1" : {
       "title" : "Zugriff auf DeFi- und NFTs",
-      "desc" : "Interagieren Sie sicher mit unseren vertrauenswürdigen DeFi-Anwendungen direkt aus der App."
+      "desc" : "Sichere Interaktion mit unseren bewährten DeFi-Anwendungen direkt über die App."
     },
     "2" : {
       "title" : "Ihr Zugang zu Web3",
@@ -1083,9 +1093,9 @@
     },
     "3" : {
       "title" : "Zertifizierte Sicherheit",
-      "desc" : "Unsere Produkte sind die einzigen Hardware-Wallets, die für ihre Sicherheit von nationalen Cyber-Sicherheitsbehörden zertifiziert sind."
+      "desc" : "Unsere Produkte sind die einzigen von nationalen Cyber-Sicherheitsbehörden zertifizierten Hardware-Wallets - für Ihre Sicherheit."
     },
-    "title" : "Sie benötigen einen Ledger.",
+    "title" : "Jeder sollte einen Ledger haben",
     "desc" : "Aus Sicherheitsgründen funktioniert Ledger Live nur mit einem Gerät. Sie benötigen ein Gerät, um fortzufahren.",
     "cta" : "Ledger jetzt kaufen",
     "footer" : "Ich habe bereits ein Gerät, jetzt einrichten",
@@ -1130,7 +1140,7 @@
     "desc" : "Ihre Bestellung wird bearbeitet.\nSie erhalten Ihr Ledger-Gerät in Kürze. Bitte überprüfen Sie Ihre E-Mails auf Ihre Auftragsbestätigung."
   },
   "discover" : {
-    "title" : "Entdecken",
+    "title" : "Neues entdecken",
     "desc" : "Die Welt des Web3 sicher entdecken",
     "link" : "Weitere Infos",
     "sections" : {
@@ -1152,7 +1162,7 @@
       },
       "earn" : {
         "title" : "Verdienen",
-        "desc" : "Vermehren Sie Ihre Kryptos durch Staking und Verleihen."
+        "desc" : "Kryptos durch Staken und Verleihen vermehren."
       },
       "mint" : {
         "title" : "Mint",
@@ -1160,7 +1170,7 @@
       },
       "referralProgram" : {
         "title" : "Freunde werben",
-        "desc" : "Wenn Ihr Freund einen Ledger kauft, verdienen Sie beide BTC im Wert von 10 $."
+        "desc" : "Kaufen Ihre Freunde einen Ledger, bekommen Sie alle Bitcoin im Wert von 10 $ geschenkt."
       }
     },
     "comingSoon" : "In Kürze verfügbar",
@@ -1216,11 +1226,11 @@
         "subtitle" : "Wir begleiten Sie bei jedem Schritt zur Sicherung Ihrer Kryptowährungen und NFTs"
       },
       "buyNano" : {
-        "title" : "Kaufen Sie ein Ledger Nano X",
+        "title" : "Ledger Nano X kaufen",
         "subtitle" : "Eine Hardware-Wallet ist die einzige Möglichkeit, um sicherzustellen, dass Ihre Vermögenswerte sicher sind "
       },
       "discoverLedger" : {
-        "title" : "Erkunden Sie Ledger Live",
+        "title" : "Ledger Live kennenlernen",
         "subtitle" : "Erkunden Sie die App und erfahren Sie mehr über ihre Vorteile "
       },
       "desktopSync" : {
@@ -1232,13 +1242,13 @@
       "exploreWithoutADevice" : "Erkunden Sie ohne ein Gerät",
       "buyALedgerNow" : "Jetzt Ledger kaufen",
       "0" : {
-        "title" : "Sichern Sie alle Ihre Krypto-Werte"
+        "title" : "Alle Krypto-Werte sichern"
       },
       "1" : {
         "title" : "Behalten Sie die Märkte im Auge."
       },
       "2" : {
-        "title" : "Entdecken Sie Apps und erfahren Sie mehr über web3."
+        "title" : "Unsere Apps kennenlernen & mehr über Web3 erfahren."
       },
       "3" : {
         "title" : "Sichern Sie Ihre Krypto & NFTs."
@@ -1309,7 +1319,7 @@
       "0" : {
         "label" : "Grundlagen",
         "title" : "Zugriff auf Ihre Kryptos",
-        "desc" : "Ihre Krypto-Vermögenswerte werden auf der Blockchain gespeichert. Sie benötigen einen privaten Schlüssel, um darauf zuzugreifen und sie zu verwalten.",
+        "desc" : "Ihre Krypto-Werte werden auf der Blockchain gespeichert. Mithilfe eines privaten Schlüssels können Sie darauf zugreifen und sie verwalten.",
         "action" : "Haben Sie noch keinen Nano? Entdecken Sie die App"
       },
       "1" : {
@@ -1320,12 +1330,12 @@
       "2" : {
         "label" : "Grundlagen",
         "title" : "Offline bleiben",
-        "desc" : "Mit Ledger Live können Sie Krypto kaufen, verkaufen, verwalten, tauschen und verdienen und bleiben dabei geschützt. Sie werden jede Krypto-Transaktion mit Ihrem Nano validieren."
+        "desc" : "Da Sie jede Krypto-Transaktion mit Ihrem Nano bestätigen, sind Sie beim Kaufen, Verkaufen, Verwalten, Tauschen und Verdienen von Kryptos immer bestens geschützt."
       },
       "3" : {
         "label" : "Grundlagen",
         "title" : "Transaktionen validieren",
-        "desc" : "Ihr Nano arbeitet als „Cold Storage“-Wallet. Das bedeutet, dass er Ihren privaten Schlüssel niemals online preisgibt, selbst wenn Sie die App verwenden."
+        "desc" : "Ihr Nano fungiert als \"Cold Storage\"-Wallet. Er gibt Ihren privaten Schlüssel niemals online preis. Auch nicht bei Verwendung der App."
       },
       "4" : {
         "label" : "Grundlagen",
@@ -1795,7 +1805,7 @@
         "successTitle" : "Schon ein Profi!",
         "successText" : "Sie sind bereit, Ihre Kryptos sicher zu verwalten. Nur noch ein kleiner Schritt!",
         "failTitle" : "Sie werden bald zum Profi ...",
-        "failText" : "Keine Sorge, Ledger steht bereit, um Sie auf Ihrer Reise zu begleiten. Sie werden sich bald besonders sicher fühlen, was Ihre Krypto-Sicherheit angeht. Nur noch ein kleiner Schritt!",
+        "failText" : "Ledger ist der perfekte Begleiter was Ihre Krypto-Sicherheit betrifft. Es fehlt nur noch ein kleiner Schritt!",
         "cta" : "Nächster Schritt"
       },
       "nextQuestion" : "Nächste Frage",
@@ -2000,7 +2010,7 @@
     "manager" : "My Ledger",
     "settings" : "Einstellungen",
     "platform" : "Live-Apps",
-    "discover" : "Entdecken",
+    "discover" : "Neues entdecken",
     "nanoX" : "Nano X",
     "market" : "Market",
     "learn" : "Lernen"
@@ -2285,7 +2295,7 @@
     "emptyState" : {
       "title" : "Noch keine Krypto-Werte?",
       "desc" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang von",
-      "descWithBuy" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang von",
+      "descWithBuy" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
       "descToken" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>App installiert ist und empfangen Sie <3><0>{{currencyTicker}}</0></3>und <5><0>{{tokenType}}</0>Tokens</5>",
       "buttons" : {
         "receiveFunds" : "Empfangen",
@@ -2700,10 +2710,6 @@
           "title" : "Experimentelle Apps-Liste für My Ledger",
           "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
         },
-        "experimentalCountervalues" : {
-          "title" : "Experimentelle Gegenwerte API",
-          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
-        },
         "experimentalSwap" : {
           "title" : "Neue SWAP-Schnittstelle",
           "description" : "Verwenden Sie die neue experimentelle Swap-Schnittstelle"
@@ -2864,15 +2870,15 @@
       "noResultsDesc" : "Bitte überprüfen Sie die Schreibweise und versuchen Sie es erneut"
     },
     "buy" : {
-      "title" : "Kaufen",
+      "title" : "Buy",
       "description" : "Kaufen Sie Kryptos sicher mit Bargeld."
     },
     "sell" : {
-      "title" : "Verkaufen",
+      "title" : "Sell",
       "description" : "Verkaufen Sie Kryptos sicher gegen Bargeld."
     },
     "exchange" : {
-      "title" : "Kaufen / Verkaufen"
+      "title" : "Kaufen & Verkaufen"
     },
     "stake" : {
       "title" : "Staken",
@@ -3157,7 +3163,7 @@
     },
     "lending" : {
       "title" : "Kryptowährungen verleihen",
-      "titleTransferTab" : "Verdienen",
+      "titleTransferTab" : "Earn",
       "descriptionTransferTab" : "Verdienen Sie ein passives Einkommen.",
       "actionTitle" : "Leihen",
       "accountActions" : {
@@ -3521,7 +3527,7 @@
       "message" : "Vergewissern Sie sich immer, dass Ihr Gerät die Adresse genau so anzeigt, wie sie Ihnen ursprünglich mitgeteilt wurde.",
       "success" : "Vermögenswerte gesperrt",
       "amount" : "Betrag",
-      "info" : "Sie beginnen mit dem Verdienen von Energie, sobald das Netzwerk das Sperren bestätigt hat. Sie können in Kürze für Super-Repräsentanten stimmen, um ebenfalls Prämien zu verdienen.",
+      "info" : "You will start earning {{resource}} once the network has confirmed the freeze. You can shortly vote for Super Representatives to also earn rewards.",
       "button" : {
         "pending" : "Die Transaktion wird validiert.",
         "pendingDesc" : "Bitte warten Sie einen Moment, bevor Sie abstimmen.",
@@ -3770,7 +3776,7 @@
       },
       "genuineCheck" : {
         "title" : "Ledger Manager auf Ihrem {{productName}} aktivieren",
-        "accept" : "Bitte schalten Sie Ihren Nano X nicht aus. Stellen Sie sicher, dass Sie <1>Ledger Manager</1> zulassen."
+        "accept" : "Bitte schalten Sie Ihren Nano X nicht aus und stellen Sie sicher, dass der <1>Ledger Manager<1> freigegeben ist."
       },
       "genuineCheckPending" : {
         "title" : "Prüft, ob das Gerät echt ist..."
@@ -3826,8 +3832,8 @@
       "title2" : "Validieren"
     },
     "GenuineCheck" : {
-      "title" : "Überprüfung der Geräteauthentifizierung",
-      "accept" : "Bitte schalten Sie Ihren Nano X nicht aus. Stellen Sie sicher, dass Sie <1>Ledger Manager</1> zulassen.",
+      "title" : "Geräteauthentifizierung",
+      "accept" : "Bitte schalten Sie Ihren Nano X nicht aus und stellen Sie sicher, dass der <1>Ledger Manager<1> freigegeben ist.",
       "info" : "Dieser Schritt soll sicherstellen, dass Ihr Nano authentisch ist."
     },
     "ScanningHeader" : {
@@ -4046,7 +4052,7 @@
     "updateDone" : "Fertig! Ihr Gerät {{deviceName}} ist auf dem neuesten Stand",
     "updateDoneDescription" : "Neue Betriebssystemversion: {{firmwareVersion}}",
     "preparing" : "Das Firmware-Update wird vorbereitet. Bitte stellen Sie sicher, dass Ihr Gerät während des Updates entsperrt und verbunden ist. Wir informieren Sie über den Fortschritt des Vorgangs.",
-    "confirmIdentifierText" : "Vergewissern Sie sich, dass die Kennung auf Ihrem Gerät mit der unten stehenden Kennung übereinstimmt. Bestätigen Sie und geben Sie Ihren PIN-Code ein, wenn Sie dazu aufgefordert werden.",
+    "confirmIdentifierText" : "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps" : "Bitte installieren Sie die Apps erneut auf Ihrem Gerät.",
     "pleaseConfirmUpdate" : "Bestätigen Sie das Update auf Ihrem Gerät",
     "pleaseConfirmUpdateOnYourDevice" : "Bestätigen Sie die Installation auf dem {{deviceName}}",
@@ -4056,7 +4062,7 @@
     "pleaseWaitDownload" : "Bitte warten Sie, bis der Download des Installationsprogramms abgeschlossen ist",
     "doNotLeaveLedgerLive" : "Verlassen Sie die Ledger Live-App nicht, bevor das Update abgeschlossen ist.",
     "preparingDevice" : "Ihr Gerät wird vorbereitet",
-    "pleaseWaitUpdate" : "Bitte warten Sie, bis das Update beendet ist",
+    "pleaseWaitUpdate" : "Please wait for the update to finish",
     "viewUpdateChangelog" : "Update-Änderungsprotokoll anzeigen",
     "waitForFirmwareUpdate" : "Warten Sie, bis das Firmware-Update auf Ihrem Gerät abgeschlossen ist",
     "waitForInstallationToFinish" : "Warten Sie, bis die Installation auf Ihrem {{deviceName}} abgeschlossen ist",
@@ -4074,8 +4080,8 @@
     "reinstallApps" : "Installieren Sie die Apps neu.",
     "currentVersionNumber" : "Aktuelle Version",
     "newVersionNumber" : "Neue Version",
-    "success" : "Firmware aktualisiert",
-    "update" : "Aktualisieren",
+    "success" : "Firmware updated",
+    "update" : "Update",
     "Notifications" : {
       "confirmOnDevice" : "Wir benötigen Ihre Bestätigung auf dem Gerät",
       "preparingUpdate" : "Das Update wird übertragen. Wir benachrichtigen Sie, wenn der Vorgang abgeschlossen ist.",
@@ -4091,7 +4097,7 @@
       "flash-bootloader" : "Bootloader-Aktualisierung",
       "flash" : "Flashen Ihres Geräts",
       "preparing" : "Update wird vorbereitet",
-      "firmware" : "Update wird heruntergeladen",
+      "firmware" : "Downloading update",
       "prepareUpdate" : {
         "titleActive" : "Update wird für Installation vorbereitet",
         "description" : "Eine Sicherheitskopie Ihrer Konfiguration wird erstellt und das Update auf Ihr Gerät {{deviceName}} übertragen."
@@ -5661,7 +5667,7 @@
   "exchange" : {
     "count" : "+ {{count}} mehr",
     "buy" : {
-      "screenTitle" : "Krypto kaufen",
+      "screenTitle" : "BUY CRYPTO",
       "tabTitle" : "Kaufen",
       "selectCurrency" : "Wählen Sie eine Währung",
       "selectAccount" : "Wählen Sie ein Konto",
@@ -5689,7 +5695,7 @@
       }
     },
     "sell" : {
-      "screenTitle" : "Krypto verkaufen",
+      "screenTitle" : "SELL CRYPTO",
       "tabTitle" : "Verkaufen",
       "selectCurrency" : "Wählen Sie eine Währung",
       "selectAccount" : "Wählen Sie ein Konto",
@@ -5819,6 +5825,11 @@
       "developerCTA" : {
         "title" : "Für Entwickler",
         "description" : "Alle Informationen, die Sie benötigen, um Ihre Anwendungen in Ledger Live zu integrieren."
+      },
+      "warnings" : {
+        "notFound" : "Nicht gefunden",
+        "retrySearchKeyword" : "Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
+        "retrySearchKeywordAndUrl" : "Bitte wiederholen Sie die Suche mit einem anderen Suchbegriff oder öffnen Sie <Link>{{search}}</Link> außerhalb von Ledger Live."
       }
     },
     "disclaimer" : {
@@ -5934,13 +5945,10 @@
       "reload" : "Aktualisieren",
       "noCryptosFound" : "Keine Coins gefunden",
       "noCurrencyFound" : "Keine Währung gefunden",
-      "noAppFound" : "Keine App gefunden",
-      "notFound" : "Nicht gefunden",
       "noSearchResultsFor" : "Leider haben wir keine Coins für <0>{{search}}</0> gefunden. Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
       "noCurrencySearchResultsFor" : "Leider haben wir keine Coins für <0>{{search}}</0> gefunden. Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
       "noSearchResults" : "Sorry, wir haben keine Suchergebnisse gefunden.",
       "retrySearchKeyword" : "Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
-      "retrySearchKeywordAndUrl" : "Bitte wiederholen Sie die Suche mit einem anderen Suchbegriff oder öffnen Sie <Link>{{search}}</Link> außerhalb von Ledger Live.",
       "retrySearchParams" : "Bitte versuchen Sie die Suche mit anderen Parametern erneut.",
       "trackFavAssets" : "Verfolgen Sie Ihre Favoriten",
       "clickOnStarIcon" : "Klicken Sie auf das Sternsymbol neben einem Wert, um ihn zu Ihren Favoriten hinzuzufügen.",
@@ -6005,8 +6013,8 @@
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
-      "text" : "In diesem Support-Artikel erhalten Sie weitere Informationen zur",
-      "link" : "Erstellung eines Hedera-Kontos"
+      "text" : "In diesem Supportartikel erhalten Sie weitere Informationen zum Thema",
+      "link" : "Erstellen eines Hedera-Kontos"
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
@@ -6174,6 +6182,30 @@
     "title" : "Gerät verbinden"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Vermehren Sie Ihr ETH-Guthaben",
+      "subTitle" : "Staken Sie Ihre ETH und vermehren Sie Ihr Vermögen – durch tägliche Prämien direkt in Ledger Live.",
+      "close" : "Schließen",
+      "providers" : {
+        "lido" : {
+          "title" : "Verdienen mit Lido",
+          "description" : "Staken Sie Ihr Ethereum mit Lido und verdienen Sie täglich Belohnungen. Kein ETH-Minimum erforderlich. Keine Sperrfrist.",
+          "supportLink" : "Mehr über Lido lernen"
+        },
+        "kiln" : {
+          "title" : "Staking mit Kiln",
+          "tag" : "Benötigt 32 ETH",
+          "description" : "Staken Sie mit speziellen Validatoren. Hierfür wird ein Vielfaches von 32 ETH benötigt. Prämien werden manuell beansprucht. Kann jederzeit beendet werden.",
+          "supportLink" : "Mehr über Kiln-Validator erfahren"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln Staking Pool",
+          "description" : "Treten Sie einem Staking-Pool bei. Kein ETH-Minimum erforderlich. Prämien werden automatisch zusammengeführt. Kann jederzeit beendet werden.",
+          "supportLink" : "Mehr über Kiln Pooling erfahren.",
+          "tag" : "Kein Minimum"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "Kaufen, umtauschen oder empfangen",
       "text" : "Sie haben nicht genug {{coin}} verfügbar um am Staking teilzunehmen",
