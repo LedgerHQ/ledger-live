@@ -60,13 +60,10 @@ jobs:
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
-    runs-on: [ledger-live, windows]
+    runs-on: [ledger-live-4xlarge-windows-2022]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: Update path
-        run: |
-          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
@@ -127,12 +124,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
 
   report:
-    needs:
-      [
-        build-desktop-app-linux,
-        build-desktop-app-macos,
-        build-desktop-app-windows,
-      ]
+    needs: [build-desktop-app-linux, build-desktop-app-macos, build-desktop-app-windows]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:

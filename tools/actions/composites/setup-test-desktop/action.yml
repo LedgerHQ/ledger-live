@@ -51,7 +51,7 @@ runs:
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
-      run: pnpm desktop exec playwright install --with-deps chromium
+      run: pnpm desktop test:playwright:setup
       shell: bash
     - name: TurboRepo local caching server
       id: turborepo-cache-server
