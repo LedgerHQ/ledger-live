@@ -13,6 +13,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { StacksMemoTooLong } from "../errors";
 import {
   AddressVersion,
@@ -127,9 +128,9 @@ const estimateMaxSpendable = async ({
   const dummyTx = {
     ...createTransaction(),
     ...transaction,
+    recipient: getAbandonSeedAddress(a.currency.id),
     useAllAmount: true,
   };
-
   // Compute fees
   const { recipient, anchorMode, memo, amount } = dummyTx;
   const network = StacksNetwork[dummyTx.network] || new StacksMainnet();
