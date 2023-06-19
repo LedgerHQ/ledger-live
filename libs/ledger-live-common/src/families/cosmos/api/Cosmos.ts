@@ -240,7 +240,11 @@ export class CosmosAPI {
     return [...senderTxs, ...recipientTxs];
   };
 
-  private async fetchAllTransactions(address: string, filterOn: string, paginationSize: number) {
+  private async fetchAllTransactions(
+    address: string,
+    filterOn: "message.sender" | "transfer.recipient",
+    paginationSize: number,
+  ) {
     let txs: CosmosTx[] = [];
     try {
       let total: number;
@@ -283,7 +287,7 @@ export class CosmosAPI {
 
   private async fetchTransactions(
     nodeUrl: string,
-    filterOn: string,
+    filterOn: "message.sender" | "transfer.recipient",
     address: string,
     options: {
       "pagination.limit"?: number;
