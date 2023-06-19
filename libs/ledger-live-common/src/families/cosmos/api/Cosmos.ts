@@ -39,7 +39,7 @@ export class CosmosAPI {
         await Promise.all([
           this.getAllBalances(address, currency),
           this.getHeight(),
-          this.getTransactions(address, 50),
+          this.getTransactions(address, 100),
           this.getDelegations(address, currency),
           this.getRedelegations(address),
           this.getUnbondings(address),
