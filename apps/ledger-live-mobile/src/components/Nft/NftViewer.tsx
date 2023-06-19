@@ -59,6 +59,8 @@ import {
   knownDeviceModelIdsSelector,
 } from "../../reducers/settings";
 import { setHasSeenStaxEnabledNftsPopup } from "../../actions/settings";
+import { useHeaderHeight } from "@react-navigation/elements";
+import NftViewerBackground from "./NftViewerBackground";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -319,6 +321,8 @@ const NftViewer = ({ route }: Props) => {
   }, []);
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
+  const headerHeight = useHeaderHeight();
+
   return (
     <>
       <TrackScreen category="NFT" />
@@ -328,7 +332,16 @@ const NftViewer = ({ route }: Props) => {
         data={notAvailableModalInfo(onCloseModal)}
       />
       <DesignedForStaxDrawer isOpen={isStaxDrawerOpen} onClose={handleStaxModalClose} />
-      <ScrollView contentContainerStyle={styles.scrollView} testID={"nft-viewer-page-scrollview"}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollView,
+          {
+            paddingTop: headerHeight + 8,
+          },
+        ]}
+        testID={"nft-viewer-page-scrollview"}
+      >
+        {nftMetadata ? <NftViewerBackground src={nftMetadata.medias.preview.uri} /> : null}
         <Box mx={6}>
           <Flex flexDirection={"row"} alignItems={"center"}>
             <CurrencyIcon currency={currency} size={20} />
@@ -342,7 +355,7 @@ const NftViewer = ({ route }: Props) => {
             >
               <Text
                 variant={"large"}
-                color={"neutral.c80"}
+                color="opacityDefault.c60"
                 fontWeight={"semiBold"}
                 numberOfLines={3}
                 flexShrink={1}
@@ -475,7 +488,6 @@ const NftViewer = ({ route }: Props) => {
 
 const styles = StyleSheet.create({
   scrollView: {
-    paddingTop: 8,
     paddingBottom: 64,
   },
   imageContainer: {
