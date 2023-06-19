@@ -23,6 +23,8 @@ import OperationC from "./Operation";
 import TableContainer, { TableHeader } from "../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
+
 const ShowMore = styled(Box).attrs(() => ({
   horizontal: true,
   flow: 1,
@@ -157,6 +159,7 @@ export class OperationsList extends PureComponent<Props, State> {
                       onOperationClick={this.handleClickOperation}
                       t={t}
                       withAccount={withAccount}
+                      editable={account && isEditableOperation(account, operation)}
                     />
                   );
                 })}

@@ -13,27 +13,23 @@ import {
   DynamicContentSetNotificationCardsPayload,
 } from "./types";
 
-const setDynamicContentWalletCardsAction =
-  createAction<DynamicContentSetWalletCardsPayload>(
-    DynamicContentActionTypes.DYNAMIC_CONTENT_SET_WALLET_CARDS,
-  );
+const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_SET_WALLET_CARDS,
+);
 
-export const setDynamicContentWalletCards = (
-  walletCards: WalletContentCard[],
-) => setDynamicContentWalletCardsAction(walletCards);
+export const setDynamicContentWalletCards = (walletCards: WalletContentCard[]) =>
+  setDynamicContentWalletCardsAction(walletCards);
 
-const setDynamicContentAssetsCardsAction =
-  createAction<DynamicContentSetAssetCardsPayload>(
-    DynamicContentActionTypes.DYNAMIC_CONTENT_SET_ASSET_CARDS,
-  );
+const setDynamicContentAssetsCardsAction = createAction<DynamicContentSetAssetCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_SET_ASSET_CARDS,
+);
 
 export const setDynamicContentAssetsCards = (assetsCards: AssetContentCard[]) =>
   setDynamicContentAssetsCardsAction(assetsCards);
 
-const setDynamicContentLearnCardsAction =
-  createAction<DynamicContentSetLearnCardsPayload>(
-    DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LEARN_CARDS,
-  );
+const setDynamicContentLearnCardsAction = createAction<DynamicContentSetLearnCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LEARN_CARDS,
+);
 
 export const setDynamicContentLearnCards = (learnCards: LearnContentCard[]) =>
   setDynamicContentLearnCardsAction(learnCards);
@@ -43,6 +39,5 @@ const setDynamicContentNotificationCardsAction =
     DynamicContentActionTypes.DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS,
   );
 
-export const setDynamicContentNotificationCards = (
-  notificationCards: NotificationContentCard[],
-) => setDynamicContentNotificationCardsAction(notificationCards);
+export const setDynamicContentNotificationCards = (notificationCards: NotificationContentCard[]) =>
+  setDynamicContentNotificationCardsAction(notificationCards);

@@ -13,6 +13,9 @@ import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { Account } from "@ledgerhq/types-live";
+import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
+import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+
 const StepRecipient = ({
   t,
   account,
@@ -31,8 +34,11 @@ const StepRecipient = ({
   onChangeNFT,
   maybeNFTCollection,
 }: StepProps) => {
-  if (!status) return null;
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  if (!status || !account) return null;
+  const mainAccount = getMainAccount(account, parentAccount);
+  // for ethereum family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
+
   return (
     <Box flow={4}>
       <TrackPage
@@ -67,6 +73,13 @@ const StepRecipient = ({
           />
         </Box>
       )}
+      {stuckAccountAndOperation ? (
+        <EditOperationPanel
+          operation={stuckAccountAndOperation.operation}
+          account={stuckAccountAndOperation.account}
+          parentAccount={stuckAccountAndOperation.parentAccount}
+        />
+      ) : null}
       <StepRecipientSeparator />
       {account && transaction && mainAccount && (
         <>
@@ -82,6 +95,7 @@ const StepRecipient = ({
           />
           <SendRecipientFields
             account={mainAccount}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={onChangeTransaction}

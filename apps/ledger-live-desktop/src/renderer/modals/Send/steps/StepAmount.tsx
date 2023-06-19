@@ -90,6 +90,7 @@ const StepAmount = (props: StepProps) => {
           )}
           <SendAmountFields
             account={mainAccount}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={onChangeTransaction}

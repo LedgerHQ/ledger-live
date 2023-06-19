@@ -1,9 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Operation, OperationRaw, SubAccount } from "@ledgerhq/types-live";
 
-export type ExtractExtraFn = (
-  extra: Record<string, any>
-) => Record<string, any>;
+export type ExtractExtraFn = (extra: Record<string, any>) => Record<string, any>;
 
 export const toOperationRaw = (
   {
@@ -30,7 +28,7 @@ export const toOperationRaw = (
     tokenId,
     transactionRaw,
   }: Operation,
-  preserveSubOperation?: boolean
+  preserveSubOperation?: boolean,
 ): OperationRaw => {
   const copy: OperationRaw = {
     id,
@@ -64,9 +62,7 @@ export const toOperationRaw = (
   }
 
   if (internalOperations) {
-    copy.internalOperations = internalOperations.map((o: Operation) =>
-      toOperationRaw(o)
-    );
+    copy.internalOperations = internalOperations.map((o: Operation) => toOperationRaw(o));
   }
 
   if (nftOperations) {
@@ -79,10 +75,7 @@ export const toOperationRaw = (
 
   return copy;
 };
-export const inferSubOperations = (
-  txHash: string,
-  subAccounts: SubAccount[]
-): Operation[] => {
+export const inferSubOperations = (txHash: string, subAccounts: SubAccount[]): Operation[] => {
   const all: Operation[] = [];
 
   for (let i = 0; i < subAccounts.length; i++) {
@@ -132,7 +125,7 @@ export const fromOperationRaw = (
     transactionRaw,
   }: OperationRaw,
   accountId: string,
-  subAccounts?: SubAccount[] | null | undefined
+  subAccounts?: SubAccount[] | null | undefined,
 ): Operation => {
   const res: Operation = {
     id,
@@ -164,21 +157,17 @@ export const fromOperationRaw = (
   if (subAccounts) {
     res.subOperations = inferSubOperations(hash, subAccounts);
   } else if (subOperations) {
-    res.subOperations = subOperations.map((o: OperationRaw) =>
-      fromOperationRaw(o, o.accountId)
-    );
+    res.subOperations = subOperations.map((o: OperationRaw) => fromOperationRaw(o, o.accountId));
   }
 
   if (internalOperations) {
     res.internalOperations = internalOperations.map((o: OperationRaw) =>
-      fromOperationRaw(o, o.accountId)
+      fromOperationRaw(o, o.accountId),
     );
   }
 
   if (nftOperations) {
-    res.nftOperations = nftOperations.map((o: OperationRaw) =>
-      fromOperationRaw(o, o.accountId)
-    );
+    res.nftOperations = nftOperations.map((o: OperationRaw) => fromOperationRaw(o, o.accountId));
   }
 
   if (transactionRaw !== undefined) {

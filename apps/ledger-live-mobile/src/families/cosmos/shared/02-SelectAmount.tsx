@@ -32,28 +32,19 @@ import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types"
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 
 type Props =
-  | StackNavigatorProps<
-      CosmosDelegationFlowParamList,
-      ScreenName.CosmosDelegationAmount
-    >
+  | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationAmount>
   | StackNavigatorProps<
       CosmosRedelegationFlowParamList,
-      | ScreenName.CosmosDefaultRedelegationAmount
-      | ScreenName.CosmosRedelegationAmount
+      ScreenName.CosmosDefaultRedelegationAmount | ScreenName.CosmosRedelegationAmount
     >
-  | StackNavigatorProps<
-      CosmosUndelegationFlowParamList,
-      ScreenName.CosmosUndelegationAmount
-    >;
+  | StackNavigatorProps<CosmosUndelegationFlowParamList, ScreenName.CosmosUndelegationAmount>;
 
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
   invariant(
-    account &&
-      (account as CosmosAccount).cosmosResources &&
-      route.params.transaction,
+    account && (account as CosmosAccount).cosmosResources && route.params.transaction,
     "account and cosmos transaction required",
   );
   const tx = route.params.transaction;
@@ -64,10 +55,7 @@ function DelegationAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-  const initialValue = useMemo(
-    () => route?.params?.value ?? BigNumber(0),
-    [route],
-  );
+  const initialValue = useMemo(() => route?.params?.value ?? BigNumber(0), [route]);
   const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);
   const mode = route?.params?.mode ?? "delegation";
   const [value, setValue] = useState(() => initialValue);
@@ -80,9 +68,7 @@ function DelegationAmount({ navigation, route }: Props) {
   const onNext = useCallback(() => {
     const validators = tx.validators;
     const validatorAddress = route.params.validator.validatorAddress;
-    const i = validators.findIndex(
-      ({ address }) => address === validatorAddress,
-    );
+    const i = validators.findIndex(({ address }) => address === validatorAddress);
 
     if (i >= 0) {
       validators[i].amount = value;
@@ -94,9 +80,7 @@ function DelegationAmount({ navigation, route }: Props) {
     }
 
     const filteredValidators =
-      tx.mode === "delegate"
-        ? validators.filter(v => !v.amount.eq(0))
-        : validators;
+      tx.mode === "delegate" ? validators.filter(v => !v.amount.eq(0)) : validators;
     const transaction = bridge.updateTransaction(
       tx,
       tx.mode === "delegate"
@@ -111,6 +95,7 @@ function DelegationAmount({ navigation, route }: Props) {
     // @ts-expect-error navigate cannot infer the correct navigator + route
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
+      validatorName: route.params.validator.name,
       transaction,
       fromSelectAmount: true,
     });
@@ -176,9 +161,7 @@ function DelegationAmount({ navigation, route }: Props) {
                   >
                     <LText
                       style={[styles.ratioLabel]}
-                      color={
-                        value.eq(v) ? colors.neutral.c100 : colors.neutral.c60
-                      }
+                      color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
                     >
                       {label}
                     </LText>
@@ -198,10 +181,7 @@ function DelegationAmount({ navigation, route }: Props) {
               {error && !value.eq(0) && (
                 <View style={styles.labelContainer}>
                   <Warning size={16} color={colors.error.c50} />
-                  <LText
-                    style={[styles.assetsRemaining]}
-                    color={colors.error.c50}
-                  >
+                  <LText style={[styles.assetsRemaining]} color={colors.error.c50}>
                     <Trans
                       i18nKey={
                         value.gte(min)
@@ -229,13 +209,8 @@ function DelegationAmount({ navigation, route }: Props) {
               {max.isZero() && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />
-                  <LText
-                    style={[styles.assetsRemaining]}
-                    color={colors.success.c50}
-                  >
-                    <Trans
-                      i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}
-                    />
+                  <LText style={[styles.assetsRemaining]} color={colors.success.c50}>
+                    <Trans i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`} />
                   </LText>
                 </View>
               )}
@@ -262,14 +237,10 @@ function DelegationAmount({ navigation, route }: Props) {
                     <Trans
                       i18nKey="cosmos.redelegation.flow.steps.amount.newRedelegatedBalance"
                       values={{
-                        amount: formatCurrencyUnit(
-                          unit,
-                          redelegatedBalance.plus(value),
-                          {
-                            showCode: true,
-                            locale,
-                          },
-                        ),
+                        amount: formatCurrencyUnit(unit, redelegatedBalance.plus(value), {
+                          showCode: true,
+                          locale,
+                        }),
                         name: route.params.validator?.name ?? "",
                       }}
                     >
@@ -282,9 +253,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 disabled={error}
                 event="Cosmos DelegationAmountContinueBtn"
                 onPress={onNext}
-                title={
-                  <Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />
-                }
+                title={<Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />}
                 type="primary"
               />
             </View>

@@ -3,22 +3,25 @@ import ModalContent from "./ModalContent";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
 import { RenderProps } from ".";
-type Props<Data> = {
+import { ModalData } from "~/renderer/modals/types";
+
+type Props<Name extends keyof ModalData> = {
   title?: React.ReactNode;
   subTitle?: React.ReactNode;
   headerStyle?: React.CSSProperties;
   onBack?: (() => void) | undefined;
   onClose?: (() => void) | undefined;
-  render?: (a?: RenderProps<Data> | null) => React.ReactNode;
-  renderFooter?: (a?: RenderProps<Data> | null) => React.ReactNode;
+  render?: (a?: RenderProps<Name> | null) => React.ReactNode;
+  renderFooter?: (a?: RenderProps<Name> | null) => React.ReactNode;
   modalFooterStyle?: React.CSSProperties;
-  renderProps?: RenderProps<Data>;
+  renderProps?: RenderProps<Name>;
   noScroll?: boolean;
   refocusWhenChange?: unknown;
   backButtonComponent?: React.ReactNode;
+  pt?: number;
 };
-class ModalBody<Data> extends PureComponent<Props<Data>> {
-  componentDidUpdate(prevProps: Props<Data>) {
+class ModalBody<Name extends keyof ModalData> extends PureComponent<Props<Name>> {
+  componentDidUpdate(prevProps: Props<Name>) {
     const shouldFocus = prevProps.refocusWhenChange !== this.props.refocusWhenChange;
     if (shouldFocus && this._content.current) {
       this._content.current?.focus();
@@ -39,6 +42,7 @@ class ModalBody<Data> extends PureComponent<Props<Data>> {
       renderProps,
       noScroll,
       modalFooterStyle,
+      pt,
     } = this.props;
 
     // For `renderFooter` returning falsy values, we need to resolve first.
@@ -54,7 +58,7 @@ class ModalBody<Data> extends PureComponent<Props<Data>> {
         >
           {title || null}
         </ModalHeader>
-        <ModalContent ref={this._content} noScroll={noScroll}>
+        <ModalContent pt={pt} ref={this._content} noScroll={noScroll}>
           {render && render(renderProps)}
         </ModalContent>
         {renderedFooter && <ModalFooter style={modalFooterStyle}>{renderedFooter}</ModalFooter>}

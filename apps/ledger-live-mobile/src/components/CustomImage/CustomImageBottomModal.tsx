@@ -6,6 +6,7 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import removeImage from "@ledgerhq/live-common/hw/staxRemoveImage";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { NavigatorName, ScreenName } from "../../const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import ModalChoice from "./ModalChoice";
@@ -40,13 +41,11 @@ type Props = {
 const CustomImageBottomModal: React.FC<Props> = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRemovingCustomImage, setIsRemovingCustomImage] = useState(false);
-  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } =
-    props;
+  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } = props;
   const { t } = useTranslation();
   const { pushToast } = useToasts();
 
-  const navigation =
-    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const handleUploadFromPhone = useCallback(async () => {
     try {
@@ -81,10 +80,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     onClose && onClose();
   }, [navigation, device, onClose]);
 
-  const request = useMemo(
-    () => ({ deviceId: device?.deviceId || "", request: {} }),
-    [device],
-  );
+  const request = useMemo(() => ({ deviceId: device?.deviceId || "", request: {} }), [device]);
 
   useEffect(() => {
     return () => {
@@ -111,17 +107,24 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     });
   }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
 
+  const onError = useCallback(
+    error => {
+      if (error instanceof ImageDoesNotExistOnDevice) {
+        if (setDeviceHasImage) {
+          setDeviceHasImage(false);
+        }
+      }
+    },
+    [setDeviceHasImage],
+  );
+
   return (
     <QueuedDrawer
       isRequestingToBeOpened={!!isOpened}
       onClose={wrappedOnClose}
       preventBackdropClick={isRemovingCustomImage}
     >
-      <TrackScreen
-        category={analyticsDrawerName}
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category={analyticsDrawerName} type="drawer" refreshSource={false} />
       {isRemovingCustomImage && device ? (
         <Flex alignItems="center">
           <Flex flexDirection="row">
@@ -130,6 +133,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
               request={request}
               action={action}
               onResult={onSuccess}
+              onError={onError}
             />
           </Flex>
         </Flex>

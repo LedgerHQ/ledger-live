@@ -13,30 +13,30 @@ import {
 import { assertUnreachable } from "./utils";
 import {
   PublicKey,
-  Transaction as OnChainTransaction,
+  VersionedTransaction as OnChainTransaction,
   TransactionInstruction,
+  TransactionMessage,
 } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 
 export const buildTransactionWithAPI = async (
   account: Account,
   transaction: Transaction,
-  api: ChainAPI
-): Promise<
-  readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]
-> => {
+  api: ChainAPI,
+): Promise<readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]> => {
   const instructions = buildInstructions(transaction);
 
   const recentBlockhash = await api.getLatestBlockhash();
 
   const feePayer = new PublicKey(account.freshAddress);
 
-  const tx = new OnChainTransaction({
-    feePayer,
+  const tm = new TransactionMessage({
+    payerKey: feePayer,
     recentBlockhash,
+    instructions,
   });
 
-  tx.add(...instructions);
+  const tx = new OnChainTransaction(tm.compileToLegacyMessage());
 
   return [
     tx,
@@ -58,9 +58,7 @@ function buildInstructions(tx: Transaction): TransactionInstruction[] {
   return buildInstructionsForCommand(commandDescriptor.command);
 }
 
-function buildInstructionsForCommand(
-  command: Command
-): TransactionInstruction[] {
+function buildInstructionsForCommand(command: Command): TransactionInstruction[] {
   switch (command.kind) {
     case "transfer":
       return buildTransferInstructions(command);

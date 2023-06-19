@@ -27,31 +27,23 @@ const NftGalleryEmptyState = () => {
   }, []);
 
   return (
-    <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
+    <Flex testID="wallet-nft-gallery-empty" flex={1} alignItems="center" justifyContent="center">
       <TrackScreen
-        category={
-          readOnlyModeEnabled
-            ? "NFT Gallery Start Read-only"
-            : "NFT Gallery Start"
-        }
+        category={readOnlyModeEnabled ? "NFT Gallery Start Read-only" : "NFT Gallery Start"}
       />
-      <Text
-        variant={"h1Inter"}
-        fontWeight={"semiBold"}
-        color={"neutral.c100"}
-        mb={6}
-      >
+      <Text variant={"h1Inter"} fontWeight={"semiBold"} color={"neutral.c100"} mb={6}>
         {t("wallet.nftGallery.empty.title")}
       </Text>
-      <Text
-        variant={"bodyLineHeight"}
-        fontWeight={"semiBold"}
-        color={"neutral.c80"}
-        mb={8}
-      >
+      <Text variant={"bodyLineHeight"} fontWeight={"semiBold"} color={"neutral.c80"} mb={8}>
         {t("wallet.nftGallery.empty.subtitle")}
       </Text>
-      <Button onPress={openModal} size={"large"} type={"main"} mb={8}>
+      <Button
+        testID="wallet-nft-gallery-receive-nft-button"
+        onPress={openModal}
+        size={"large"}
+        type={"main"}
+        mb={8}
+      >
         {t("wallet.nftGallery.empty.receive")}
       </Button>
       <Link

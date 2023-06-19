@@ -1,17 +1,16 @@
+import network from "@ledgerhq/live-network/network";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import network from "../../../network";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
-import { Operation, OperationType } from "@ledgerhq/types-live";
 import { NearTransaction } from "./sdk.types";
 
 const DEFAULT_TRANSACTIONS_LIMIT = 100;
-const getIndexerUrl = (route: string): string =>
-  `${getEnv("API_NEAR_INDEXER")}${route || ""}`;
+const getIndexerUrl = (route: string): string => `${getEnv("API_NEAR_INDEXER")}${route || ""}`;
 
 const fetchTransactions = async (
   address: string,
-  limit: number = DEFAULT_TRANSACTIONS_LIMIT
+  limit: number = DEFAULT_TRANSACTIONS_LIMIT,
 ): Promise<NearTransaction[]> => {
   const route = `/transactions?limit=${limit}&account=${address}&date=${new Date().getTime()}`;
 
@@ -27,10 +26,7 @@ function isSender(transaction: NearTransaction, address: string): boolean {
   return transaction.sender === address;
 }
 
-function getOperationType(
-  transaction: NearTransaction,
-  address: string
-): OperationType {
+function getOperationType(transaction: NearTransaction, address: string): OperationType {
   switch (transaction.actions[0]?.data?.method_name) {
     case "deposit_and_stake":
       return "STAKE";
@@ -45,10 +41,7 @@ function getOperationType(
   }
 }
 
-function getOperationValue(
-  transaction: NearTransaction,
-  type: OperationType
-): BigNumber {
+function getOperationValue(transaction: NearTransaction, type: OperationType): BigNumber {
   const amount = transaction.actions[0].data.deposit || 0;
 
   if (type === "OUT") {
@@ -61,7 +54,7 @@ function getOperationValue(
 async function transactionToOperation(
   accountId: string,
   address: string,
-  transaction: NearTransaction
+  transaction: NearTransaction,
 ): Promise<Operation> {
   const type = getOperationType(transaction, address);
 
@@ -82,15 +75,10 @@ async function transactionToOperation(
   };
 }
 
-export const getOperations = async (
-  accountId: string,
-  address: string
-): Promise<Operation[]> => {
+export const getOperations = async (accountId: string, address: string): Promise<Operation[]> => {
   const rawTransactions = await fetchTransactions(address);
 
   return await Promise.all(
-    rawTransactions.map((transaction) =>
-      transactionToOperation(accountId, address, transaction)
-    )
+    rawTransactions.map(transaction => transactionToOperation(accountId, address, transaction)),
   );
 };

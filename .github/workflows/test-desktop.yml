@@ -18,6 +18,11 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        required: false
+      draft:
+        description: true if the PR is in draft
+        required: false
+        default: "false"
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
@@ -109,7 +114,13 @@ jobs:
           upgrade_npm: true
       - name: Run playwright tests
         id: tests
-        run: pnpm desktop test:playwright
+        run: |
+          if [[ "${{ inputs.draft }}" == true ]]; then
+            pnpm desktop test:playwright
+          else
+            pnpm desktop test:playwright
+          fi
+        shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -124,6 +135,12 @@ jobs:
         with:
           name: images
           path: images-windows.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-network-responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -168,7 +185,12 @@ jobs:
           install_playwright: true
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+        run: |
+          if [[ "${{ inputs.draft }}" == true ]]; then
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+          else
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+          fi
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -183,6 +205,12 @@ jobs:
         with:
           name: images
           path: images-linux.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-network-responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -227,7 +255,12 @@ jobs:
           pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Run playwright tests
         id: tests
-        run: pnpm desktop test:playwright
+        run: |
+          if [[ "${{ inputs.draft }}" == true ]]; then
+            pnpm desktop test:playwright
+          else
+            pnpm desktop test:playwright
+          fi
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -242,6 +275,12 @@ jobs:
         with:
           name: images
           path: images-macos.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-network-responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()

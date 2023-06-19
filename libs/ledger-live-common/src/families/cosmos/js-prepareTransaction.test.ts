@@ -1,10 +1,10 @@
-import BigNumber from "bignumber.js";
-import { CosmosAccount, Transaction } from "./types";
-import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
-import network from "../../network";
-jest.mock("../../network");
-import * as jsPrepareTransaction from "./js-prepareTransaction";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import * as jsPrepareTransaction from "./js-prepareTransaction";
+import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
+import { CosmosAccount, Transaction } from "./types";
+jest.mock("@ledgerhq/live-network/network");
 
 const account = {
   id: "accountId",
@@ -44,10 +44,7 @@ describe("getEstimatedFees", () => {
         },
       },
     });
-    const { estimatedFees, estimatedGas } = await getEstimatedFees(
-      account,
-      transaction
-    );
+    const { estimatedFees, estimatedGas } = await getEstimatedFees(account, transaction);
     expect(estimatedFees.gt(0)).toEqual(true);
     expect(estimatedGas.gt(0)).toEqual(true);
   });
@@ -57,9 +54,7 @@ describe("calculateFees", () => {
   let getEstimatedFeesSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    getEstimatedFeesSpy = jest
-      .spyOn(jsPrepareTransaction, "getEstimatedFees")
-      .mockImplementation();
+    getEstimatedFeesSpy = jest.spyOn(jsPrepareTransaction, "getEstimatedFees").mockImplementation();
   });
 
   afterEach(() => {
@@ -84,8 +79,7 @@ describe("calculateFees", () => {
 
   it("should estimate fees again if account currency changed", async () => {
     await calculateFees({ account, transaction });
-    account.currency.id =
-      "i am a currency that changed hehe" as CryptoCurrencyId;
+    account.currency.id = "i am a currency that changed hehe" as CryptoCurrencyId;
     await calculateFees({ account, transaction });
     expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
   });
@@ -124,9 +118,7 @@ describe("calculateFees", () => {
     transaction.validators = [{ address: "toto", amount: new BigNumber(1) }];
     await calculateFees({ account, transaction });
     transaction.mode = "delegate";
-    transaction.validators = [
-      { address: "totoleretour", amount: new BigNumber(1) },
-    ];
+    transaction.validators = [{ address: "totoleretour", amount: new BigNumber(1) }];
     await calculateFees({ account, transaction });
     expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
   });

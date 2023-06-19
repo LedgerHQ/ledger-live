@@ -1,18 +1,20 @@
 import {
   CantOpenDevice,
   DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
   LockedDeviceError,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type {
   DeviceId,
+  DeviceInfo,
   FirmwareInfo,
   FirmwareUpdateContext,
 } from "@ledgerhq/types-live";
 import Transport from "@ledgerhq/hw-transport";
 
-import { Observable, concat, of } from "rxjs";
+import { Observable, concat, of, EMPTY } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
 
 import { getVersion, GetVersionCmdArgs } from "../commands/getVersion";
@@ -22,17 +24,13 @@ import { quitApp } from "../commands/quitApp";
 
 import ManagerAPI from "../../manager/api";
 
-import {
-  SharedTaskEvent,
-  sharedLogicTaskWrapper,
-  retryOnErrorsCommandWrapper,
-} from "./core";
+import { SharedTaskEvent, sharedLogicTaskWrapper, retryOnErrorsCommandWrapper } from "./core";
 import { TransportRef, withTransport } from "../transports/core";
+import { parseDeviceInfo } from "./getDeviceInfo";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
   updateContext: FirmwareUpdateContext;
-  // TODO: check if we should receive this here or rather retrieve it from the api in the task
 };
 
 export type UpdateFirmwareTaskError =
@@ -45,7 +43,7 @@ export type UpdateFirmwareTaskEvent =
   | { type: "installingOsu"; progress: number }
   | { type: "flashingMcu"; progress: number }
   | { type: "flashingBootloader"; progress: number }
-  | { type: "firmwareUpdateCompleted" }
+  | { type: "firmwareUpdateCompleted"; updatedDeviceInfo: DeviceInfo }
   | { type: "installOsuDevicePermissionRequested" }
   | { type: "installOsuDevicePermissionGranted" }
   | { type: "installOsuDevicePermissionDenied" }
@@ -59,12 +57,10 @@ export type UpdateFirmwareTaskEvent =
 const waitForGetVersion = retryOnErrorsCommandWrapper({
   command: ({ transport }: GetVersionCmdArgs) =>
     getVersion({ transport }).pipe(
-      filter(
-        (e): e is { type: "data"; firmwareInfo: FirmwareInfo } =>
-          e.type === "data"
-      )
+      filter((e): e is { type: "data"; firmwareInfo: FirmwareInfo } => e.type === "data"),
     ),
   allowedErrors: [
+    { maxRetries: "infinite", errorClass: DisconnectedDeviceDuringOperation },
     { maxRetries: "infinite", errorClass: DisconnectedDevice },
     { maxRetries: "infinite", errorClass: CantOpenDevice },
   ],
@@ -74,49 +70,44 @@ function internalUpdateFirmwareTask({
   deviceId,
   updateContext,
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
-  return new Observable((subscriber) => {
-    withTransport(deviceId)(({ transportRef }) =>
+  return new Observable(subscriber => {
+    const sub = withTransport(deviceId)(({ transportRef }) =>
       concat(
         quitApp(transportRef.current).pipe(
           switchMap(() => waitForGetVersion(transportRef, {})),
-          switchMap((value) => {
+          switchMap(value => {
             const { firmwareInfo } = value;
 
-            // TODO: we're repeating the handling of the unresponsive event here... is there a way to make this better
-            // the problem that if we want to change multiple commands that may have unresponsive events
-            // and only continue with the next command if the event is not unresponsive we might have to handle multiple times
-            // the unresponsive event :/
-            return installOsuFirmware({
-              firmwareInfo,
-              updateContext,
-              transport: transportRef.current,
-            }).pipe(
-              map((e) => {
-                if (e.type === "unresponsive") {
-                  return {
-                    type: "error" as const,
-                    error: new LockedDeviceError(),
-                  };
-                }
+            return subscriber.closed
+              ? EMPTY
+              : installOsuFirmware({
+                  firmwareInfo,
+                  updateContext,
+                  transport: transportRef.current,
+                }).pipe(
+                  map(e => {
+                    if (e.type === "unresponsive") {
+                      return {
+                        type: "error" as const,
+                        error: new LockedDeviceError(),
+                      };
+                    }
 
-                return e;
-              })
-            );
-          })
+                    return e;
+                  }),
+                );
+          }),
         ),
         waitForGetVersion(transportRef, {}).pipe(
-          switchMap(({ firmwareInfo }) =>
-            flashMcuOrBootloader(
-              updateContext,
-              firmwareInfo,
-              transportRef,
-              deviceId
-            )
-          )
-        )
-      )
+          switchMap(({ firmwareInfo }) => {
+            return subscriber.closed
+              ? EMPTY
+              : flashMcuOrBootloader(updateContext, firmwareInfo, transportRef, deviceId);
+          }),
+        ),
+      ),
     ).subscribe({
-      next: (event) => {
+      next: event => {
         switch (event.type) {
           case "allowSecureChannelRequested":
             subscriber.next(event);
@@ -138,7 +129,7 @@ function internalUpdateFirmwareTask({
         }
       },
       complete: () => subscriber.complete(),
-      error: (error) => {
+      error: error => {
         if (error instanceof UserRefusedFirmwareUpdate) {
           subscriber.next({ type: "installOsuDevicePermissionDenied" });
         } else {
@@ -147,6 +138,10 @@ function internalUpdateFirmwareTask({
         }
       },
     });
+
+    return {
+      unsubscribe: () => sub.unsubscribe(),
+    };
   });
 }
 
@@ -165,13 +160,10 @@ function internalUpdateFirmwareTask({
  */
 export function getFlashMcuOrBootloaderDetails(
   deviceMajMin: string,
-  mcuFromBootloaderVersion: string
+  mcuFromBootloaderVersion: string,
 ): { bootloaderVersion: string; isMcuUpdate: boolean } {
   // converts the version into the majMin format
-  const bootloaderVersion = (mcuFromBootloaderVersion || "")
-    .split(".")
-    .slice(0, 2)
-    .join(".");
+  const bootloaderVersion = (mcuFromBootloaderVersion || "").split(".").slice(0, 2).join(".");
 
   const isMcuUpdate = deviceMajMin === bootloaderVersion;
 
@@ -187,14 +179,15 @@ const flashMcuOrBootloader = (
   firmwareInfo: FirmwareInfo,
   transportRef: TransportRef,
   deviceId: string,
-  repetitions = 0
+  repetitions = 0,
 ) => {
-  return new Observable<UpdateFirmwareTaskEvent>((subscriber) => {
+  return new Observable<UpdateFirmwareTaskEvent>(subscriber => {
     if (!updateContext.shouldFlashMCU) {
       // if we don't need to flash the MCU then OSU install was all that was needed
       // that means that only the Secure Element firmware has been updated, the update is complete
       subscriber.next({
         type: "firmwareUpdateCompleted",
+        updatedDeviceInfo: parseDeviceInfo(firmwareInfo),
       });
       subscriber.complete();
       return;
@@ -208,18 +201,15 @@ const flashMcuOrBootloader = (
       subscriber.complete();
     }
 
-    ManagerAPI.retrieveMcuVersion(updateContext.final).then((mcuVersion) => {
-      if (mcuVersion) {
-        const majMinRegexMatch = firmwareInfo.rawVersion.match(
-          /([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/
-        );
+    ManagerAPI.retrieveMcuVersion(updateContext.final).then(mcuVersion => {
+      if (mcuVersion && !subscriber.closed) {
+        const majMinRegexMatch = firmwareInfo.rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
         const [, majMin] = majMinRegexMatch ?? [];
 
-        const { bootloaderVersion, isMcuUpdate } =
-          getFlashMcuOrBootloaderDetails(
-            majMin,
-            mcuVersion.from_bootloader_version
-          );
+        const { bootloaderVersion, isMcuUpdate } = getFlashMcuOrBootloaderDetails(
+          majMin,
+          mcuVersion.from_bootloader_version,
+        );
 
         flashMcuOrBootloaderCommand(transportRef.current, {
           targetId: firmwareInfo.targetId,
@@ -227,7 +217,7 @@ const flashMcuOrBootloader = (
           // whether this is an mcu update or a bootloader one is decided by the isMcuUpdate variable
           // we only need to use the correct version here to flash the right thing
         }).subscribe({
-          next: (event) =>
+          next: event =>
             subscriber.next({
               type: isMcuUpdate ? "flashingMcu" : "flashingBootloader",
               progress: event.progress,
@@ -252,16 +242,17 @@ const flashMcuOrBootloader = (
                         firmwareInfo,
                         transportRef,
                         deviceId,
-                        repetitions + 1
+                        repetitions + 1,
                       );
                     }
                   } else {
                     // if we're not in the bootloader anymore, it means that the update has been completed
                     return of<UpdateFirmwareTaskEvent>({
                       type: "firmwareUpdateCompleted",
+                      updatedDeviceInfo: parseDeviceInfo(firmwareInfo),
                     });
                   }
-                })
+                }),
               )
               .subscribe(subscriber);
           },
@@ -300,6 +291,10 @@ const installOsuFirmware = ({
   });
 };
 
+const FIRMWARE_UPDATE_TIMEOUT = 60000;
+// 60 seconds since firmware update has lots of places where a wait is normal
+
 export const updateFirmwareTask = sharedLogicTaskWrapper(
-  internalUpdateFirmwareTask
+  internalUpdateFirmwareTask,
+  FIRMWARE_UPDATE_TIMEOUT,
 );

@@ -8,8 +8,7 @@ export type PerformanceEventRenderable = {
   date: Date;
 };
 
-export const performanceReportSubject =
-  new ReplaySubject<PerformanceEventRenderable>(30);
+export const performanceReportSubject = new ReplaySubject<PerformanceEventRenderable>(30);
 
 // Values based on "Creating React Native Vitals" https://www.coinbase.com/blog/performance-vitals-a-unified-scoring-system-to-guide-performance-health-and-prioritization
 const navigationVitalsPoorThreshold = 600;

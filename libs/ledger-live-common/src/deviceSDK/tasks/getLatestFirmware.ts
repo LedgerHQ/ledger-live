@@ -1,8 +1,4 @@
-import type {
-  DeviceId,
-  DeviceInfo,
-  FirmwareUpdateContext,
-} from "@ledgerhq/types-live";
+import type { DeviceId, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 import { quitApp } from "../commands/quitApp";
 
@@ -17,9 +13,7 @@ export type GetLatestFirmwareTaskArgs = {
   deviceInfo: DeviceInfo;
 };
 
-export type GetLatestFirmwareTaskError =
-  | "FailedToRetrieveFirmwareUpdateInfo"
-  | "FirmwareUpToDate";
+export type GetLatestFirmwareTaskError = "FailedToRetrieveFirmwareUpdateInfo" | "FirmwareUpToDate";
 
 export type GetLatestFirmwareTaskErrorEvent = {
   type: "taskError";
@@ -35,13 +29,13 @@ function internalGetLatestFirmwareTask({
   deviceId,
   deviceInfo,
 }: GetLatestFirmwareTaskArgs): Observable<GetLatestFirmwareTaskEvent> {
-  return new Observable((subscriber) => {
-    return withDevice(deviceId)((transport) =>
+  return new Observable(subscriber => {
+    return withDevice(deviceId)(transport =>
       quitApp(transport).pipe(
         switchMap(() => {
           return from(manager.getLatestFirmwareForDevice(deviceInfo));
         }),
-        switchMap((firmwareUpdateContext) => {
+        switchMap(firmwareUpdateContext => {
           if (firmwareUpdateContext) {
             return of<GetLatestFirmwareTaskEvent>({
               type: "data",
@@ -59,12 +53,10 @@ function internalGetLatestFirmwareTask({
             type: "taskError",
             error: "FailedToRetrieveFirmwareUpdateInfo",
           });
-        })
-      )
+        }),
+      ),
     ).subscribe(subscriber);
   });
 }
 
-export const getLatestFirmwareTask = sharedLogicTaskWrapper(
-  internalGetLatestFirmwareTask
-);
+export const getLatestFirmwareTask = sharedLogicTaskWrapper(internalGetLatestFirmwareTask);

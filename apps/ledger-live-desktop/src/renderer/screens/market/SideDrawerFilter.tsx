@@ -15,9 +15,10 @@ export default function SideDrawerFilter({
   t: TFunction;
 }) {
   const { starred, liveCompatible } = filters;
-  const resetFilters = useCallback(() => refresh({ starred: [], liveCompatible: false }), [
-    refresh,
-  ]);
+  const resetFilters = useCallback(
+    () => refresh({ starred: [], liveCompatible: false }),
+    [refresh],
+  );
   const onChange = useCallback(
     option => {
       if (!option) return;

@@ -1,23 +1,10 @@
-import { DeviceId } from "@ledgerhq/types-live";
-import { Observable, of } from "rxjs";
+import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
+import { concat, Observable, of } from "rxjs";
 import { scan, switchMap } from "rxjs/operators";
-import {
-  updateFirmwareTask,
-  UpdateFirmwareTaskEvent,
-} from "../tasks/updateFirmware";
-import {
-  getDeviceInfoTask,
-  GetDeviceInfoTaskErrorEvent,
-} from "../tasks/getDeviceInfo";
-import {
-  FullActionState,
-  initialSharedActionState,
-  sharedReducer,
-} from "./core";
-import {
-  getLatestFirmwareTask,
-  GetLatestFirmwareTaskErrorEvent,
-} from "../tasks/getLatestFirmware";
+import { updateFirmwareTask, UpdateFirmwareTaskEvent } from "../tasks/updateFirmware";
+import { getDeviceInfoTask, GetDeviceInfoTaskErrorEvent } from "../tasks/getDeviceInfo";
+import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
+import { getLatestFirmwareTask, GetLatestFirmwareTaskErrorEvent } from "../tasks/getLatestFirmware";
 
 export type updateFirmwareActionArgs = {
   deviceId: DeviceId;
@@ -45,7 +32,8 @@ export type UpdateFirmwareActionState = FullActionState<{
   // final step when the device has reconnected after the firwmare update has been completed
 
   progress: number;
-  error: { type: "UpdateFirmwareError"; message?: string };
+  updatedDeviceInfo?: DeviceInfo;
+  error: { type: "UpdateFirmwareError"; name: string };
 }>;
 
 export const initialState: UpdateFirmwareActionState = {
@@ -62,16 +50,17 @@ export const initialState: UpdateFirmwareActionState = {
 export function updateFirmwareAction({
   deviceId,
 }: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState> {
-  return getDeviceInfoTask({ deviceId })
-    .pipe(
-      switchMap((event) => {
+  return concat(
+    of(initialState),
+    getDeviceInfoTask({ deviceId }).pipe(
+      switchMap(event => {
         if (event.type !== "data") {
           return of(event);
         }
         const { deviceInfo } = event;
         return getLatestFirmwareTask({ deviceId, deviceInfo });
       }),
-      switchMap((event) => {
+      switchMap(event => {
         if (event.type !== "data") {
           return of(event);
         } else {
@@ -80,29 +69,25 @@ export function updateFirmwareAction({
             updateContext: event.firmwareUpdateContext,
           });
         }
-      })
-    )
-    .pipe(
+      }),
       scan<
-        | UpdateFirmwareTaskEvent
-        | GetLatestFirmwareTaskErrorEvent
-        | GetDeviceInfoTaskErrorEvent,
+        UpdateFirmwareTaskEvent | GetLatestFirmwareTaskErrorEvent | GetDeviceInfoTaskErrorEvent,
         UpdateFirmwareActionState
-      >((currentState, event) => {
+      >((_, event) => {
         switch (event.type) {
           case "taskError":
             return {
               ...initialState,
               error: {
                 type: "UpdateFirmwareError",
-                error: event.error,
+                name: event.error,
               },
             };
           case "installingOsu":
           case "flashingMcu":
           case "flashingBootloader":
             return {
-              ...currentState,
+              ...initialState,
               step: event.type,
               progress: event.progress,
             };
@@ -110,16 +95,22 @@ export function updateFirmwareAction({
           case "installOsuDevicePermissionRequested":
           case "installOsuDevicePermissionGranted":
           case "installOsuDevicePermissionDenied":
+            return { ...initialState, step: event.type };
           case "firmwareUpdateCompleted":
-            return { ...currentState, step: event.type };
+            return {
+              ...initialState,
+              step: event.type,
+              updatedDeviceInfo: event.updatedDeviceInfo,
+            };
           default:
             return {
-              ...currentState,
+              ...initialState,
               ...sharedReducer({
                 event,
               }),
             };
         }
-      }, initialState)
-    );
+      }, initialState),
+    ),
+  );
 }

@@ -19,10 +19,7 @@ function LockFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigatorConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator screenOptions={stackNavigatorConfig}>

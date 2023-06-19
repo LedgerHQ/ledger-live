@@ -1,11 +1,15 @@
 import React, { useState, useCallback, useMemo, memo } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
+import { listTokens, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import {
-  listTokens,
-  isCurrencySupported,
-} from "@ledgerhq/live-common/currencies/index";
-import { distribute, Action, State } from "@ledgerhq/live-common/apps/index";
+  distribute,
+  Action,
+  State,
+  predictOptimisticState,
+  reducer,
+} from "@ledgerhq/live-common/apps/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
@@ -65,6 +69,7 @@ type Props = {
   optimisticState: State;
   result: ListAppsResult;
   onLanguageChange: () => void;
+  onBackFromUpdate: () => void;
 };
 
 const AppsScreen = ({
@@ -84,16 +89,23 @@ const AppsScreen = ({
   optimisticState,
   result,
   onLanguageChange,
+  onBackFromUpdate,
 }: Props) => {
-  const distribution = distribute(state);
+  const distribution = useMemo(() => {
+    const newState = state.installQueue.length
+      ? predictOptimisticState(
+          reducer(state, {
+            type: "install",
+            name: state.installQueue[0],
+          }),
+        )
+      : state;
+    return distribute(newState);
+  }, [state]);
 
   const [appFilter, setFilter] = useState<AppType | null | undefined>("all");
-  const [sort, setSort] = useState<SortOptions["type"] | null | undefined>(
-    "marketcap",
-  );
-  const [order, setOrder] = useState<SortOptions["order"] | null | undefined>(
-    "desc",
-  );
+  const [sort, setSort] = useState<SortOptions["type"] | null | undefined>("marketcap");
+  const [order, setOrder] = useState<SortOptions["order"] | null | undefined>("desc");
 
   const sortOptions = useMemo(
     () => ({
@@ -138,10 +150,7 @@ const AppsScreen = ({
     () =>
       found &&
       found.parentCurrency &&
-      installed.find(
-        ({ name }) =>
-          name.toLowerCase() === found.parentCurrency.name.toLowerCase(),
-      ),
+      installed.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, installed],
   );
 
@@ -149,10 +158,7 @@ const AppsScreen = ({
     () =>
       found &&
       found.parentCurrency &&
-      apps.find(
-        ({ name }) =>
-          name.toLowerCase() === found.parentCurrency.name.toLowerCase(),
-      ),
+      apps.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, apps],
   );
 
@@ -173,13 +179,7 @@ const AppsScreen = ({
               <AppIcon app={parent} size={18} radius={100} />
             </Flex>
           </Flex>
-          <Text
-            color="neutral.c100"
-            fontWeight="medium"
-            variant="h2"
-            mt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
             <Trans
               i18nKey="manager.token.title"
               values={{
@@ -188,13 +188,7 @@ const AppsScreen = ({
             />
           </Text>
           <Flex>
-            <Text
-              color="neutral.c80"
-              fontWeight="medium"
-              variant="body"
-              pt={6}
-              textAlign="center"
-            >
+            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
               {parentInstalled ? (
                 <Trans
                   i18nKey="manager.token.noAppNeeded"
@@ -218,23 +212,11 @@ const AppsScreen = ({
       ) : (
         <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
           <NoResultsFound />
-          <Text
-            color="neutral.c100"
-            fontWeight="medium"
-            variant="h2"
-            mt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
             <Trans i18nKey="manager.appList.noResultsFound" />
           </Text>
           <Flex>
-            <Text
-              color="neutral.c80"
-              fontWeight="medium"
-              variant="body"
-              pt={6}
-              textAlign="center"
-            >
+            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
               <Trans i18nKey="manager.appList.noResultsDesc" />
             </Text>
           </Flex>
@@ -268,6 +250,7 @@ const AppsScreen = ({
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
   const showFwUpdateBanner = Boolean(latestFirmware);
+  const newFwUpdateUxFeatureFlag = useFeature("llmNewFirmwareUpdateUx");
 
   const renderList = useCallback(
     (items?: App[]) => (
@@ -275,6 +258,11 @@ const AppsScreen = ({
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>
+            {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
+              <Flex mb={5}>
+                <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+              </Flex>
+            ) : null}
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -291,8 +279,8 @@ const AppsScreen = ({
             />
             <ProviderWarning />
             <Benchmarking state={state} />
-            {showFwUpdateBanner ? (
-              <FirmwareUpdateBanner />
+            {showFwUpdateBanner && !newFwUpdateUxFeatureFlag?.enabled ? (
+              <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
             ) : (
               <AppUpdateAll
                 state={state}
@@ -301,12 +289,7 @@ const AppsScreen = ({
                 isModalOpened={updateModalOpened}
               />
             )}
-            <Flex
-              flexDirection="row"
-              mt={8}
-              mb={6}
-              backgroundColor="background.main"
-            >
+            <Flex flexDirection="row" mt={8} mb={6} backgroundColor="background.main">
               <Searchbar searchQuery={query} onQueryUpdate={setQuery} />
               <Flex ml={6}>
                 <AppFilter
@@ -330,6 +313,9 @@ const AppsScreen = ({
     ),
 
     [
+      showFwUpdateBanner,
+      newFwUpdateUxFeatureFlag?.enabled,
+      onBackFromUpdate,
       distribution,
       state,
       result,
@@ -342,7 +328,6 @@ const AppsScreen = ({
       device,
       deviceApps,
       onLanguageChange,
-      showFwUpdateBanner,
       update,
       updateModalOpened,
       query,

@@ -14,15 +14,12 @@ export const createTransaction = (): Transaction => ({
   fees: new BigNumber(0),
 });
 
-export const updateTransaction = (
-  t: Transaction,
-  patch: $Shape<Transaction>
-): Transaction => ({ ...t, ...patch });
+export const updateTransaction = (t: Transaction, patch: $Shape<Transaction>): Transaction => ({
+  ...t,
+  ...patch,
+});
 
-export const prepareTransaction = async (
-  a: Account,
-  t: Transaction
-): Promise<Transaction> => {
+export const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   const fees = await getEstimatedFees(t);
 
   const amount = t.useAllAmount

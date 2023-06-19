@@ -31,12 +31,9 @@ describe("useReverseAccounts", () => {
   };
 
   it("should tell if the accounts are swappable", () => {
-    const { result, rerender } = renderHook(
-      (props) => useReverseAccounts(props),
-      {
-        initialProps: defaultProps,
-      }
-    );
+    const { result, rerender } = renderHook(props => useReverseAccounts(props), {
+      initialProps: defaultProps,
+    });
 
     expect(result.current.isSwapReversable).toBe(true);
 
@@ -73,11 +70,7 @@ describe("useReverseAccounts", () => {
     expect(result.current.isSwapReversable).toBe(true);
     act(() => result.current.reverseSwap());
     expect(setToAccount).toHaveBeenCalledTimes(1);
-    expect(setToAccount.mock.calls[0]).toMatchObject([
-      USDT,
-      fromAccount,
-      fromParentAccount,
-    ]);
+    expect(setToAccount.mock.calls[0]).toMatchObject([USDT, fromAccount, fromParentAccount]);
     expect(setFromAccount).toHaveBeenCalledTimes(1);
     expect(setFromAccount.mock.calls[0]).toMatchObject([toAccount]);
   });

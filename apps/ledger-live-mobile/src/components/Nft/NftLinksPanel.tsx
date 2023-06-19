@@ -2,13 +2,7 @@ import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NFTMetadata } from "@ledgerhq/types-live";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Linking,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
@@ -59,11 +53,7 @@ const NftLink = ({
     <Flex flexDirection="row" alignItems="center">
       <Box mr={16}>{leftIcon}</Box>
       <Flex flexDirection="column">
-        <Text
-          fontWeight="semiBold"
-          fontSize={16}
-          color={primary ? "primary.c90" : "neutral.c100"}
-        >
+        <Text fontWeight="semiBold" fontSize={16} color={primary ? "primary.c90" : "neutral.c100"}>
           {title}
         </Text>
         {subtitle && (
@@ -77,20 +67,12 @@ const NftLink = ({
   </LinkTouchable>
 );
 
-const NftLinksPanel = ({
-  nftContract,
-  nftId,
-  links,
-  isOpen,
-  onClose,
-  nftMetadata,
-}: Props) => {
+const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const customImage = useFeature("customImage");
-  const [bottomHideCollectionOpen, setBottomHideCollectionOpen] =
-    useState(false);
+  const [bottomHideCollectionOpen, setBottomHideCollectionOpen] = useState(false);
   const areRaribleOpenseaDisabled =
     useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
 
@@ -157,9 +139,7 @@ const NftLinksPanel = ({
             <NftLink
               leftIcon={<OpenSeaIcon size={36} />}
               title={`${t("nft.viewerModal.viewOn")} OpenSea`}
-              rightIcon={
-                <ExternalLinkIcon size={20} color={colors.neutral.c100} />
-              }
+              rightIcon={<ExternalLinkIcon size={20} color={colors.neutral.c100} />}
               onPress={handleOpenOpenSea}
             />,
           ]
@@ -170,9 +150,7 @@ const NftLinksPanel = ({
               style={styles.sectionMargin}
               leftIcon={<RaribleIcon size={36} />}
               title={`${t("nft.viewerModal.viewOn")} Rarible`}
-              rightIcon={
-                <ExternalLinkIcon size={20} color={colors.neutral.c100} />
-              }
+              rightIcon={<ExternalLinkIcon size={20} color={colors.neutral.c100} />}
               onPress={handleOpenRarible}
             />,
           ]
@@ -241,9 +219,7 @@ const NftLinksPanel = ({
       section.map((item, index, arr) => (
         <React.Fragment key={keyPrefix + index}>
           {item}
-          {index !== arr.length - 1 ? (
-            <View style={styles.sectionMargin} />
-          ) : null}
+          {index !== arr.length - 1 ? <View style={styles.sectionMargin} /> : null}
         </React.Fragment>
       ));
 
@@ -251,11 +227,7 @@ const NftLinksPanel = ({
       <>
         {renderSection(topSection, "top")}
         {topSection.length > 0 && bottomSection.length > 0 ? (
-          <Box
-            borderBottomWidth={"1px"}
-            borderBottomColor={"neutral.c30"}
-            mb={7}
-          />
+          <Box borderBottomWidth={"1px"} borderBottomColor={"neutral.c30"} mb={7} />
         ) : null}
         {renderSection(bottomSection, "bottom")}
       </>
@@ -292,11 +264,7 @@ const NftLinksPanel = ({
         isRequestingToBeOpened={isOpen && !bottomHideCollectionOpen}
         onClose={onClose}
       >
-        <TrackScreen
-          category="NFT settings"
-          refreshSource={false}
-          type="drawer"
-        />
+        <TrackScreen category="NFT settings" refreshSource={false} type="drawer" />
         {content}
       </QueuedDrawer>
       <HideNftDrawer

@@ -6,13 +6,10 @@ import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { ListAppsResult } from "../../apps/types";
 import { useReplaySubject } from "../../observable";
 import manager from "../../manager";
-import type {
-  Input as ConnectManagerInput,
-  ConnectManagerEvent,
-} from "../connectManager";
+import type { Input as ConnectManagerInput, ConnectManagerEvent } from "../connectManager";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
-import { getImplementation } from "./implementations";
+import { defaultConfig, getImplementation } from "./implementations";
 
 type State = {
   isLoading: boolean;
@@ -43,6 +40,7 @@ type ManagerState = State & {
 export type ManagerRequest =
   | {
       autoQuitAppDisabled?: boolean;
+      cancelExecution?: boolean;
     }
   | null
   | undefined;
@@ -167,11 +165,11 @@ const reducer = (state: State, e: Event): State => {
 };
 
 export const createAction = (
-  task: (arg0: ConnectManagerInput) => Observable<ConnectManagerEvent>
+  task: (arg0: ConnectManagerInput) => Observable<ConnectManagerEvent>,
 ): ConnectManagerAction => {
   const useHook = (
     device: Device | null | undefined,
-    request: ManagerRequest = {}
+    request: ManagerRequest = {},
   ): ManagerState => {
     const [state, setState] = useState(() => getInitialState());
     const [resetIndex, setResetIndex] = useState(0);
@@ -183,10 +181,9 @@ export const createAction = (
     } | null>(null);
 
     useEffect(() => {
-      const impl = getImplementation(currentMode)<
-        ConnectManagerEvent,
-        ManagerRequest
-      >({
+      if (request?.cancelExecution) return;
+
+      const impl = getImplementation(currentMode)<ConnectManagerEvent, ManagerRequest>({
         deviceSubject,
         task,
         request,
@@ -197,9 +194,13 @@ export const createAction = (
         .pipe(
           tap((e: any) => log("actions-manager-event", e.type, e)),
           debounce((e: Event) =>
-            "replaceable" in e && e.replaceable ? interval(100) : EMPTY
+            "replaceable" in e && e.replaceable
+              ? e.type === "deviceChange" && currentMode === "polling"
+                ? interval(defaultConfig.pollingFrequency + 50)
+                : interval(100)
+              : EMPTY,
           ),
-          scan(reducer, getInitialState())
+          scan(reducer, getInitialState()),
         )
         .subscribe(setState);
       return () => {
@@ -216,20 +217,20 @@ export const createAction = (
       });
     }, [deviceInfo]);
 
-    const onRepairModal = useCallback((open) => {
+    const onRepairModal = useCallback(open => {
       setRepairModalOpened(
         open
           ? {
               auto: false,
             }
-          : null
+          : null,
       );
     }, []);
 
     const closeRepairModal = useCallback(() => {
       // Sets isBootloader to true to avoid having the renderBootloaderStep rendered,
       // on which the user could re-trigger a bootloader repairing scenario that is not needed
-      setState((prevState) => {
+      setState(prevState => {
         return {
           ...prevState,
           deviceInfo: prevState.deviceInfo
@@ -241,8 +242,8 @@ export const createAction = (
     }, []);
 
     const onRetry = useCallback(() => {
-      setResetIndex((currIndex) => currIndex + 1);
-      setState((s) => getInitialState(s.device));
+      setResetIndex(currIndex => currIndex + 1);
+      setState(s => getInitialState(s.device));
     }, []);
 
     const onAutoRepair = useCallback(() => {

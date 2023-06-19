@@ -80,10 +80,9 @@ const OnboardingStepUseCaseSelection = () => {
               data: [
                 {
                   onPress: () =>
-                    navigation.navigate(
-                      ScreenName.OnboardingModalSetupNewDevice,
-                      { deviceModelId: route.params.deviceModelId },
-                    ),
+                    navigation.navigate(ScreenName.OnboardingModalSetupNewDevice, {
+                      deviceModelId: route.params.deviceModelId,
+                    }),
                   Image: (
                     <Illustration
                       size={130}
@@ -168,13 +167,7 @@ const OnboardingStepUseCaseSelection = () => {
               ],
             },
           ],
-    [
-      deviceModelId,
-      navigation,
-      route.params.deviceModelId,
-      servicesConfig?.enabled,
-      t,
-    ],
+    [deviceModelId, navigation, route.params.deviceModelId, servicesConfig?.enabled, t],
   );
 
   const onCloseProtectDrawer = useCallback(() => {
@@ -205,17 +198,12 @@ const OnboardingStepUseCaseSelection = () => {
             {...item}
           />
         )}
-        SectionSeparatorComponent={({ leadingItem }) => (
-          <Flex mt={leadingItem ? "9" : "8"} />
-        )}
+        SectionSeparatorComponent={({ leadingItem }) => <Flex mt={leadingItem ? "9" : "8"} />}
         stickySectionHeadersEnabled={false}
       />
       <TrackScreen category="Onboarding" name="UseCase" />
 
-      <QueuedDrawer
-        isRequestingToBeOpened={isProtectDrawerOpen}
-        onClose={onCloseProtectDrawer}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isProtectDrawerOpen} onClose={onCloseProtectDrawer}>
         <Flex>
           <Text variant="h4" textAlign="center" mb={6}>
             {t("onboarding.stepUseCase.protect.drawer.title")}

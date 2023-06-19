@@ -1,11 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   StyleSheet,
   SafeAreaView,
@@ -24,14 +18,12 @@ import { useTranslation } from "react-i18next";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
 import { Web3AppWebview } from "../Web3AppWebview";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "../RootNavigator/types/helpers";
+import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
+import { NavigatorName } from "../../const";
 
 type BackToWhitelistedDomainProps = {
   manifest: AppManifest;
@@ -46,11 +38,7 @@ function BackToWhitelistedDomain({
 }: BackToWhitelistedDomainProps) {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const getButtonLabel = () => {
     if (manifest.id === "multibuy" && lastMatchingURL) {
@@ -71,10 +59,7 @@ function BackToWhitelistedDomain({
       const flowName = urlParams.get("liveAppFlow")!;
 
       track("button_clicked", {
-        button:
-          flowName === "compare_providers"
-            ? "back to quote"
-            : "back to liveapp",
+        button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
         provider: currentHostname,
         flow: flowName,
       });
@@ -97,10 +82,10 @@ function BackToWhitelistedDomain({
   );
 }
 
-function HeaderRight() {
+function HeaderRight({ onClose }: { onClose?: () => void }) {
   const { colors } = useTheme();
 
-  return <NavigationHeaderCloseButtonAdvanced color={colors.neutral.c100} />;
+  return <NavigationHeaderCloseButtonAdvanced onClose={onClose} color={colors.neutral.c100} />;
 }
 
 type Props = {
@@ -112,8 +97,7 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
 
   const webviewAPIRef = useRef<WebviewAPI>(null);
-  const [webviewState, setWebviewState] =
-    useState<WebviewState>(initialWebviewState);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
   const isWhitelistedDomain = useMemo(() => {
     if (!lastMatchingURL || !webviewState.url) {
@@ -133,11 +117,7 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
   }, [isWhitelistedDomain, webviewState.url]);
 
   const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -153,19 +133,19 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
   // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        handleHardwareBackPress,
-      );
+      BackHandler.addEventListener("hardwareBackPress", handleHardwareBackPress);
 
       return () => {
-        BackHandler.removeEventListener(
-          "hardwareBackPress",
-          handleHardwareBackPress,
-        );
+        BackHandler.removeEventListener("hardwareBackPress", handleHardwareBackPress);
       };
     }
   }, [handleHardwareBackPress]);
+
+  const onClose = () => {
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  };
 
   useEffect(() => {
     const handler = (e: { preventDefault: () => void }) => {
@@ -184,7 +164,7 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <HeaderRight />,
+      headerRight: () => <HeaderRight onClose={onClose} />,
       headerLeft: () =>
         isWhitelistedDomain ? null : (
           <BackToWhitelistedDomain

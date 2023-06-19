@@ -201,7 +201,7 @@ const Template = () => {
       </Flex>
 
       <Flex width={432} mt={10}>
-        <VerticalTimeline steps={items} onClickIndex={(index) => setCurrentIndex(index)} />
+        <VerticalTimeline steps={items} onClickIndex={index => setCurrentIndex(index)} />
       </Flex>
     </Flex>
   );

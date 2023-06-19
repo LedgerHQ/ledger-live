@@ -16,10 +16,7 @@ import type { ClaimRewardsNavigatorParamList } from "../../components/RootNaviga
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    ClaimRewardsNavigatorParamList,
-    ScreenName.ClaimRewardsValidationSuccess
-  >,
+  StackNavigatorProps<ClaimRewardsNavigatorParamList, ScreenName.ClaimRewardsValidationSuccess>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -27,9 +24,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

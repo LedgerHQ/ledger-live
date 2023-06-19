@@ -11,22 +11,12 @@ export const createUnlockMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Unlock",
   maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(minimalAmount),
-      "Celo:  Unlock | balance is too low"
-    );
+    invariant(maxSpendable.gt(minimalAmount), "Celo:  Unlock | balance is too low");
 
     const { celoResources } = account as CeloAccount;
-    invariant(
-      celoResources?.registrationStatus,
-      "Celo: Unlock | Account is not registered"
-    );
-    const nonvotingLockedBalance =
-      celoResources?.nonvotingLockedBalance || new BigNumber(0);
-    invariant(
-      nonvotingLockedBalance.gt(0),
-      "Celo: Unlock | No non voting locked balance"
-    );
+    invariant(celoResources?.registrationStatus, "Celo: Unlock | Account is not registered");
+    const nonvotingLockedBalance = celoResources?.nonvotingLockedBalance || new BigNumber(0);
+    invariant(nonvotingLockedBalance.gt(0), "Celo: Unlock | No non voting locked balance");
 
     return {
       transaction: bridge.createTransaction(account),

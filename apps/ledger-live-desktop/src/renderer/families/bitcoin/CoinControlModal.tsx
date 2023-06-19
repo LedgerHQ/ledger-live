@@ -1,9 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -17,13 +14,19 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { PickingStrategy } from "./PickingStrategy";
 import { CoinControlRow } from "./CoinControlRow";
+import {
+  BitcoinAccount as Account,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/bitcoin/types";
+
 type Props = {
   isOpened?: boolean;
   onClose: () => void;
   account: Account;
   transaction: Transaction;
-  onChange: (a: Transaction) => void;
-  updateTransaction: (updater: any) => void;
+  onChange: (a: (t: Transaction, p: Partial<Transaction>) => void) => void;
+  updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   status: TransactionStatus;
 };
 const Separator = styled.div`
@@ -51,29 +54,23 @@ const CoinControlModal = ({
   const bridge = getAccountBridge(account);
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
-  const returning = (status.txOutputs || []).find(output => !!output.path || !!output.isChange);
+  const returning = (status.txOutputs || []).find(output => !!output.isChange);
   return (
     <Modal width={700} isOpened={isOpened} centered onClose={onClose}>
       <TrackPage category="Modal" name="BitcoinCoinControl" />
       <ModalBody
-        width={700}
         title={<Trans i18nKey="bitcoin.modalTitle" />}
         onClose={onClose}
         render={() => (
           <Box flow={2}>
-            <PickingStrategy
-              transaction={transaction}
-              account={account}
-              onChange={onChange}
-              status={status}
-            />
+            <PickingStrategy transaction={transaction} account={account} onChange={onChange} />
 
             <Separator />
-            <Box mt={0} mb={4} horizontal alignItem="center" justifyContent="space-between">
+            <Box mt={0} mb={4} horizontal justifyContent="space-between">
               <Text color="palette.text.shade50" ff="Inter|Regular" fontSize={13}>
                 <Trans i18nKey="bitcoin.selected" />
               </Text>
-              <Box horizontal alignItem="center">
+              <Box horizontal>
                 <Text
                   color="palette.text.shade50"
                   ff="Inter|Medium"

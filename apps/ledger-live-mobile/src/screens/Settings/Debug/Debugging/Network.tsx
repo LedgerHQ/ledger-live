@@ -37,11 +37,7 @@ export default function Network() {
         />
         {state.map(({ title, status }) => (
           <Flex flexDirection="row" key={title} alignItems="center" mt={4}>
-            <Bullet
-              backgroundColor={
-                status === "success" ? colors.success : colors.alert
-              }
-            />
+            <Bullet backgroundColor={status === "success" ? colors.success : colors.alert} />
             <Text variant="body">{title}</Text>
           </Flex>
         ))}

@@ -19,7 +19,7 @@ import { splitPath, foreach, decodeVarint } from "./utils";
 //import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 
-const remapTransactionRelatedErrors = (e) => {
+const remapTransactionRelatedErrors = e => {
   if (e && e.statusCode === 0x6a80) {
     // TODO:
   }
@@ -60,7 +60,7 @@ export default class Trx {
         "signPersonalMessage",
         "getAppConfiguration",
       ],
-      scrambleKey
+      scrambleKey,
     );
   }
 
@@ -74,7 +74,7 @@ export default class Trx {
    */
   getAddress(
     path: string,
-    boolDisplay?: boolean
+    boolDisplay?: boolean,
   ): Promise<{
     publicKey: string;
     address: string;
@@ -87,17 +87,14 @@ export default class Trx {
     });
     return this.transport
       .send(CLA, ADDRESS, boolDisplay ? 0x01 : 0x00, 0x00, buffer)
-      .then((response) => {
+      .then(response => {
         const publicKeyLength = response[0];
         const addressLength = response[1 + publicKeyLength];
 
         return {
           publicKey: response.slice(1, 1 + publicKeyLength).toString("hex"),
           address: response
-            .slice(
-              1 + publicKeyLength + 1,
-              1 + publicKeyLength + 1 + addressLength
-            )
+            .slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength)
             .toString("ascii"),
         };
       });
@@ -122,11 +119,7 @@ export default class Trx {
    * @example
    * const signature = await tron.signTransaction("44'/195'/0'/0/0", "0a02f5942208704dda506d59dceb40f0f4978f802e5a69080112650a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412340a1541978dbd103cfe59c35e753d09dd44ae1ae64621c7121541e2ae49db6a70b9b4757d2137a43b69b24a445780188ef8b5ba0470cbb5948f802e", [], 105);
    */
-  signTransaction(
-    path: string,
-    rawTxHex: string,
-    tokenSignatures: string[]
-  ): Promise<string> {
+  signTransaction(path: string, rawTxHex: string, tokenSignatures: string[]): Promise<string> {
     const paths = splitPath(path);
     let rawTx = Buffer.from(rawTxHex, "hex");
     const toSend: Buffer[] = [];
@@ -187,18 +180,16 @@ export default class Trx {
     }
 
     return foreach(toSend, (data, i) => {
-      return this.transport
-        .send(CLA, SIGN, startBytes[i], 0x00, data)
-        .then((apduResponse) => {
-          response = apduResponse;
-        });
+      return this.transport.send(CLA, SIGN, startBytes[i], 0x00, data).then(apduResponse => {
+        response = apduResponse;
+      });
     }).then(
       () => {
         return response.slice(0, 65).toString("hex");
       },
-      (e) => {
+      e => {
         throw remapTransactionRelatedErrors(e);
-      }
+      },
     );
   }
 
@@ -219,11 +210,9 @@ export default class Trx {
       data.writeUInt32BE(element, 1 + 4 * index);
     });
     data = Buffer.concat([data, Buffer.from(rawTxHashHex, "hex")]);
-    return this.transport
-      .send(CLA, SIGN_HASH, 0x00, 0x00, data)
-      .then((response) => {
-        return response.slice(0, 65).toString("hex");
-      });
+    return this.transport.send(CLA, SIGN_HASH, 0x00, 0x00, data).then(response => {
+      return response.slice(0, 65).toString("hex");
+    });
   }
 
   /**
@@ -249,7 +238,7 @@ export default class Trx {
     version: string;
     versionN: number;
   }> {
-    return this.transport.send(CLA, VERSION, 0x00, 0x00).then((response) => {
+    return this.transport.send(CLA, VERSION, 0x00, 0x00).then(response => {
       // eslint-disable-next-line no-bitwise
       const signByHash = (response[0] & (1 << 3)) > 0;
       // eslint-disable-next-line no-bitwise
@@ -300,15 +289,10 @@ export default class Trx {
 
     while (offset < packed.length) {
       // Use small buffer to be compatible with old and new protocol
-      const maxChunkSize =
-        offset === 0 ? CHUNK_SIZE - 1 - paths.length * 4 : CHUNK_SIZE;
+      const maxChunkSize = offset === 0 ? CHUNK_SIZE - 1 - paths.length * 4 : CHUNK_SIZE;
       const chunkSize =
-        offset + maxChunkSize > packed.length
-          ? packed.length - offset
-          : maxChunkSize;
-      const buffer = Buffer.alloc(
-        offset === 0 ? 1 + paths.length * 4 + chunkSize : chunkSize
-      );
+        offset + maxChunkSize > packed.length ? packed.length - offset : maxChunkSize;
+      const buffer = Buffer.alloc(offset === 0 ? 1 + paths.length * 4 + chunkSize : chunkSize);
 
       if (offset === 0) {
         buffer[0] = paths.length;
@@ -328,7 +312,7 @@ export default class Trx {
     return foreach(toSend, (data, i) => {
       return this.transport
         .send(CLA, SIGN_MESSAGE, i === 0 ? 0x00 : 0x80, 0x00, data)
-        .then((apduResponse) => {
+        .then(apduResponse => {
           response = apduResponse;
         });
     }).then(() => {
@@ -355,6 +339,6 @@ export default class Trx {
     data.copy(buffer, 1 + 4 * paths.length, 0, data.length);
     return this.transport
       .send(CLA, ECDH_SECRET, 0x00, 0x01, buffer)
-      .then((response) => response.slice(0, 65).toString("hex"));
+      .then(response => response.slice(0, 65).toString("hex"));
   }
 }

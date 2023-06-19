@@ -19,4 +19,8 @@ export type StakeAccountBannerParams = {
     redelegate: boolean;
     delegate: boolean;
   };
+  near?: {
+    redelegate: boolean;
+    delegate: boolean;
+  };
 };

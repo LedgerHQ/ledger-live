@@ -33,10 +33,8 @@ const OnboardingAppInstallDebugScreen = () => {
   const [componentKey, setComponentKey] = useState<number>(1);
   const [installDone, setInstallDone] = useState<boolean>(false);
   const [deviceToRestore, setDeviceToRestore] = useState<DeviceModelInfo>(defaultDeviceToRestore);
-  const [
-    selectedDeviceToRestoreOption,
-    setSelectedDeviceToRestoreOption,
-  ] = useState<SelectRestoreDeviceItem | null>(deviceToRestoreOptions[0]);
+  const [selectedDeviceToRestoreOption, setSelectedDeviceToRestoreOption] =
+    useState<SelectRestoreDeviceItem | null>(deviceToRestoreOptions[0]);
   const [appsToRestore, setAppsToRestore] = useState<string[]>(
     defaultDeviceToRestore.apps.map(app => app.name),
   );

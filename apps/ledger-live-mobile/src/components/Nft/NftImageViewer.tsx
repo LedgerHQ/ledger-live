@@ -5,10 +5,7 @@ import { ScreenName } from "../../const";
 import type { NftNavigatorParamList } from "../RootNavigator/types/NftNavigator";
 import type { StackNavigatorProps } from "../RootNavigator/types/helpers";
 
-type Props = StackNavigatorProps<
-  NftNavigatorParamList,
-  ScreenName.NftImageViewer
->;
+type Props = StackNavigatorProps<NftNavigatorParamList, ScreenName.NftImageViewer>;
 
 const NftImageViewer = ({ route }: Props) => {
   const { params } = route;

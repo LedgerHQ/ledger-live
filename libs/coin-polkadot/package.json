@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "0.1.3",
+  "version": "0.1.6",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -48,11 +48,8 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-portfolio": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
@@ -70,16 +67,7 @@
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-typescript": "^3.0.0",
-    "eslint-formatter-pretty": "^3.0.1",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-typescript": "^0.14.0",
     "jest": "^28.1.1",
-    "prettier": "^2.8.1",
     "ts-jest": "^28.0.5"
   },
   "scripts": {
@@ -88,7 +76,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   }

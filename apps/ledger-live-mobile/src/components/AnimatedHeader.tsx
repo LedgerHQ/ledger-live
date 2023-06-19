@@ -11,7 +11,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import Animated from "react-native-reanimated";
+import Animated, {
+  interpolate,
+  Extrapolate,
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
 import { space } from "@ledgerhq/native-ui/styles/theme";
 import Styles from "../navigation/styles";
@@ -20,7 +26,6 @@ import { width } from "../helpers/normalizeSize";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
 
-const { interpolateNode, Extrapolate } = Animated;
 const AnimatedView = Animatable.View;
 
 type Props = {
@@ -55,36 +60,33 @@ export default function AnimatedHeaderView({
     setTextHeight(event.nativeEvent.layout.height);
     setReady(true);
   }, []);
-  const [scrollY] = useState(new Animated.Value(0));
+  const scrollY = useSharedValue(0);
   const isFocused = useIsFocused();
-  const eventArgs = [
-    {
-      nativeEvent: {
-        contentOffset: {
-          y: scrollY,
-        },
+
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    scrollY.value = event.contentOffset.y;
+  });
+
+  // Animated style moving and scaling the header title depending on the scroll y value
+  const transformStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolate.CLAMP),
       },
-    },
-    {
-      useNativeDriver: true,
-    },
-  ];
-  const event = Animated.event<typeof eventArgs>(eventArgs);
-  const translateY = interpolateNode(scrollY, {
-    inputRange: [0, 76],
-    outputRange: [0, -45],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  const translateX = interpolateNode(scrollY, {
-    inputRange: [0, 76],
-    outputRange: [space[6], space[6] + (hasBackButton ? -5 : -40)],
-    extrapolate: Extrapolate.CLAMP,
-  });
-  const scale = interpolateNode(scrollY, {
-    inputRange: [0, 76],
-    outputRange: [1, 0.8],
-    extrapolate: Extrapolate.CLAMP,
-  });
+      {
+        translateX: interpolate(
+          scrollY.value,
+          [0, 76],
+          [space[6], space[6] + (hasBackButton ? -5 : -40)],
+          Extrapolate.CLAMP,
+        ),
+      },
+      {
+        scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolate.CLAMP),
+      },
+    ],
+  }));
+
   return (
     <SafeAreaView
       edges={edges}
@@ -107,34 +109,11 @@ export default function AnimatedHeaderView({
         <View style={styles.topHeader}>
           {hasBackButton && <NavigationHeaderBackButton onPress={backAction} />}
           <View style={styles.spacer} />
-          {hasCloseButton && (
-            <NavigationHeaderCloseButton onPress={closeAction} />
-          )}
+          {hasCloseButton && <NavigationHeaderCloseButton onPress={closeAction} />}
         </View>
 
-        <Animated.View
-          style={[
-            styles.titleContainer,
-            {
-              transform: [
-                {
-                  translateY,
-                  translateX,
-                },
-                {
-                  scale,
-                },
-              ],
-            },
-          ]}
-          onLayout={onLayoutText}
-        >
-          <LText
-            variant="h1"
-            bold
-            style={[styles.title, titleStyle]}
-            numberOfLines={4}
-          >
+        <Animated.View style={[styles.titleContainer, transformStyle]} onLayout={onLayoutText}>
+          <LText variant="h1" bold style={[styles.title, titleStyle]} numberOfLines={4}>
             {title}
           </LText>
         </Animated.View>
@@ -142,7 +121,7 @@ export default function AnimatedHeaderView({
       {children && isReady && (
         <AnimatedView animation="fadeInUp" delay={50} duration={300}>
           <AnimatedFlatList
-            onScroll={event}
+            onScroll={scrollHandler}
             scrollEventThrottle={10}
             contentContainerStyle={[styles.scrollArea]}
             testID={isFocused ? "ScrollView" : undefined}

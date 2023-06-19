@@ -1,8 +1,4 @@
-import {
-  getElementById,
-  tapByElement,
-  waitForElementByID,
-} from "../../helpers";
+import { getElementById, tapByElement, waitForElementByID } from "../../helpers";
 
 export default class SettingsPage {
   generalSettingsButton = () => getElementById("general-settings-card");

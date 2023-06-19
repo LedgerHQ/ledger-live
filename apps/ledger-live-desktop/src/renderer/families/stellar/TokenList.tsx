@@ -6,14 +6,11 @@ import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
 import Button from "~/renderer/components/Button";
+
 const ReceiveButton = ({ account }: { account: Account }) => {
   const dispatch = useDispatch();
   const onReceiveClick = () => {
-    dispatch(
-      openModal("MODAL_STELLAR_ADD_ASSET", {
-        account,
-      }),
-    );
+    dispatch(openModal("MODAL_STELLAR_ADD_ASSET", { account }));
   };
   return (
     <Button small color="palette.primary.main" onClick={onReceiveClick}>

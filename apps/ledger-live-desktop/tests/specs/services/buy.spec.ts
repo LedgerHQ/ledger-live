@@ -117,16 +117,13 @@ test("Buy / Sell", async ({ page }) => {
     await expect(await liveApp.waitForCorrectTextInWebview("mode: sell")).toBe(true);
   });
 
-  await test.step(
-    "Navigate to Buy app from sidebar with light theme and French Language",
-    async () => {
-      await layout.goToSettings();
-      await settingsPage.changeLanguage("English", "Français");
-      await settingsPage.changeTheme();
-      await await layout.goToBuyCrypto();
+  await test.step("Navigate to Buy app from sidebar with light theme and French Language", async () => {
+    await layout.goToSettings();
+    await settingsPage.changeLanguage("English", "Français");
+    await settingsPage.changeTheme();
+    await await layout.goToBuyCrypto();
 
-      await expect(await liveApp.waitForCorrectTextInWebview("theme: light")).toBe(true);
-      await expect(await liveApp.waitForCorrectTextInWebview("lang: fr")).toBe(true);
-    },
-  );
+    await expect(await liveApp.waitForCorrectTextInWebview("theme: light")).toBe(true);
+    await expect(await liveApp.waitForCorrectTextInWebview("lang: fr")).toBe(true);
+  });
 });

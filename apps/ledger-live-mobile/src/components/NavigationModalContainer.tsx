@@ -61,10 +61,7 @@ export default function NavigationModalContainer({
         />
       </Flex>
 
-      <ScreenContainer
-        backgroundColor={backgroundColor}
-        {...contentContainerProps}
-      >
+      <ScreenContainer backgroundColor={backgroundColor} {...contentContainerProps}>
         <InnerContainer>{children}</InnerContainer>
       </ScreenContainer>
     </SafeContainer>

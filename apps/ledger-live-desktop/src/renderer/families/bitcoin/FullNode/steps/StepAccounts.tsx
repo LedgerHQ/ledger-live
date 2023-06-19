@@ -87,7 +87,7 @@ const Accounts = ({
           placeholder="10"
           maxLength={3}
           onChange={onUpdateNumberOfAccountsToScan}
-          value={numberOfAccountsToScan}
+          value={numberOfAccountsToScan?.toString()}
         />
       </Box>
 
@@ -150,7 +150,7 @@ export const StepAccountsFooter = ({
   const goToDeviceStep = useCallback(() => onStepChange("device"), [onStepChange]);
   return (
     <>
-      <CurrencyBadge mr="auto" currency={currency} />
+      <CurrencyBadge currency={currency} />
       <Button disabled={!numberOfAccountsToScan} primary onClick={goToDeviceStep}>
         <Trans i18nKey="common.continue" />
       </Button>

@@ -33,10 +33,7 @@ export default function WalletConnectLiveAppNavigator() {
   const { colors } = useTheme();
   const route = useRoute<Navigation["route"]>();
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   const uri = useSelector(uriSelector);
 
@@ -71,10 +68,7 @@ export default function WalletConnectLiveAppNavigator() {
           />
         )}
       </Stack.Screen>
-      <Stack.Screen
-        name={ScreenName.WalletConnectDeeplinkingSelectAccount}
-        options={options}
-      >
+      <Stack.Screen name={ScreenName.WalletConnectDeeplinkingSelectAccount} options={options}>
         {_props => (
           <LiveApp
             {..._props}

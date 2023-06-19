@@ -54,19 +54,23 @@ const Progression = styled(Bar).attrs<{
     : {
         transformOrigin: p.infinite ? "center" : "left",
         animation: css`
-      ${p.timing}ms ${p.infinite ? infiniteAnimation : fillInAnimation} ${
-          p.infinite ? "infinite" : "ease-out forwards"
-        }
-    `,
+          ${p.timing}ms ${p.infinite ? infiniteAnimation : fillInAnimation} ${p.infinite
+            ? "infinite"
+            : "ease-out forwards"}
+        `,
       },
 )<{
   infinite?: boolean;
   timing: number;
   progress?: number;
+  transformOrigin?: string;
+  animation?: string;
 }>`
   position: absolute;
   top: 0;
   left: 0;
+  transform-origin: ${p => p.transformOrigin};
+  animation: ${p => p.animation};
   will-change: transform;
 `;
 

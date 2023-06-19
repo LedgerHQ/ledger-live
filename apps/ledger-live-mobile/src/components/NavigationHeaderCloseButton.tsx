@@ -28,21 +28,19 @@ type Props = {
  * For more advanced configuration (for ex: a confirmation modal) and legacy usage,
  * use `NavigationHeaderCloseButtonAdvanced` defined below.
  */
-export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(
-  ({ onPress, color }) => {
-    const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
-    return (
-      <Touchable
-        event="HeaderRightClose"
-        onPress={() => (onPress ? onPress() : navigation.popToTop())}
-      >
-        <Flex p={6}>
-          <Icons.CloseMedium size={24} color={color || "neutral.c100"} />
-        </Flex>
-      </Touchable>
-    );
-  },
-);
+export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPress, color }) => {
+  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  return (
+    <Touchable
+      event="HeaderRightClose"
+      onPress={() => (onPress ? onPress() : navigation.popToTop())}
+    >
+      <Flex p={6}>
+        <Icons.CloseMedium size={24} color={color || "neutral.c100"} />
+      </Flex>
+    </Touchable>
+  );
+});
 
 type AdvancedProps = {
   preferDismiss?: boolean;
@@ -60,77 +58,76 @@ type AdvancedProps = {
  *
  * Enables a confirmation modal, and some legacy configuration.
  */
-export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> =
-  React.memo(
-    ({
-      color,
-      preferDismiss = true,
-      skipNavigation,
-      withConfirmation,
-      confirmationTitle,
-      confirmationDesc,
-      onClose = emptyFunction,
-    }) => {
-      const navigation = useNavigation();
-      const [isConfirmationModalOpened, setIsConfirmationModalOpened] =
-        useState(false);
-      const [onModalHide, setOnModalHide] =
-        useState<BottomModalProps["onModalHide"]>();
-      const close = useCallback(() => {
-        if (skipNavigation) {
-          // onClose should always be called at the end of the close method,
-          // so the callback will not interfere with the expected behavior of this component
-          onClose && onClose();
-          return;
-        }
+export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = React.memo(
+  ({
+    color,
+    preferDismiss = true,
+    skipNavigation,
+    withConfirmation,
+    confirmationTitle,
+    confirmationDesc,
+    onClose = emptyFunction,
+  }) => {
+    const navigation = useNavigation();
+    const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
+    const [onModalHide, setOnModalHide] = useState<BottomModalProps["onModalHide"]>();
 
-        if (
-          (navigation.getParent() as { pop?: unknown }).pop &&
-          preferDismiss
-        ) {
-          navigation
-            .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-            .pop();
-          onClose && onClose();
-          return;
-        }
+    const close = useCallback(() => {
+      if (skipNavigation) {
+        // onClose should always be called at the end of the close method,
+        // so the callback will not interfere with the expected behavior of this component
+        onClose && onClose();
+        return;
+      }
 
-        if ((navigation as { closeDrawer?: unknown }).closeDrawer)
-          (navigation as unknown as { closeDrawer: () => void }).closeDrawer();
-        navigation.goBack();
-        onClose();
-      }, [navigation, onClose, preferDismiss, skipNavigation]);
-      const openConfirmationModal = useCallback(() => {
-        setIsConfirmationModalOpened(true);
-      }, []);
-      const onPress = useCallback(() => {
-        if (withConfirmation) {
-          openConfirmationModal();
-        } else {
-          close();
-        }
-      }, [close, openConfirmationModal, withConfirmation]);
-      const closeConfirmationModal = useCallback(() => {
-        setIsConfirmationModalOpened(false);
-      }, []);
-      const onConfirm = useCallback(() => {
-        setOnModalHide(close);
-        setIsConfirmationModalOpened(false);
-      }, [close]);
-      return (
-        <>
-          <NavigationHeaderCloseButton onPress={onPress} color={color} />
-          {withConfirmation && (
-            <ConfirmationModal
-              isOpened={isConfirmationModalOpened}
-              onClose={closeConfirmationModal}
-              onConfirm={onConfirm}
-              confirmationTitle={confirmationTitle}
-              confirmationDesc={confirmationDesc}
-              onModalHide={onModalHide}
-            />
-          )}
-        </>
-      );
-    },
-  );
+      if ((navigation.getParent() as { pop?: unknown }).pop && preferDismiss) {
+        navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
+
+        onClose && onClose();
+        return;
+      }
+
+      if ((navigation as { closeDrawer?: unknown }).closeDrawer)
+        (navigation as unknown as { closeDrawer: () => void }).closeDrawer();
+      navigation.goBack();
+      onClose();
+    }, [navigation, onClose, preferDismiss, skipNavigation]);
+
+    const openConfirmationModal = useCallback(() => {
+      setIsConfirmationModalOpened(true);
+    }, []);
+
+    const onPress = useCallback(() => {
+      if (withConfirmation) {
+        openConfirmationModal();
+      } else {
+        close();
+      }
+    }, [close, openConfirmationModal, withConfirmation]);
+
+    const closeConfirmationModal = useCallback(() => {
+      setIsConfirmationModalOpened(false);
+    }, []);
+
+    const onConfirm = useCallback(() => {
+      setOnModalHide(close);
+      setIsConfirmationModalOpened(false);
+    }, [close]);
+
+    return (
+      <>
+        <NavigationHeaderCloseButton onPress={onPress} color={color} />
+        {withConfirmation && (
+          <ConfirmationModal
+            isOpened={isConfirmationModalOpened}
+            onClose={closeConfirmationModal}
+            onConfirm={onConfirm}
+            confirmationTitle={confirmationTitle}
+            confirmationDesc={confirmationDesc}
+            onModalHide={onModalHide}
+          />
+        )}
+      </>
+    );
+  },
+);

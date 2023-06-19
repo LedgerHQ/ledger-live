@@ -35,11 +35,7 @@ function NavigationHeader({
       mb={5}
       {...containerProps}
     >
-      {back && !hideBack ? (
-        <NavigationHeaderBackButton onPress={onPressBack} />
-      ) : (
-        <View />
-      )}
+      {back && !hideBack ? <NavigationHeaderBackButton onPress={onPressBack} /> : <View />}
       {title.length ? (
         <Text variant="large" fontWeight="semiBold">
           {title}
@@ -50,6 +46,4 @@ function NavigationHeader({
   );
 }
 
-export default (props: NavigationHeaderProps) => (
-  <NavigationHeader {...props} />
-);
+export default (props: NavigationHeaderProps) => <NavigationHeader {...props} />;

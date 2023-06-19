@@ -139,9 +139,9 @@ React Native integration seems pretty bleeding edge right now, so don't expect e
 
 It is possible to run Ledger Live Mobile on an emulator and connect to a Nano that is plugged in via USB.
 
-- Install the [ledger-live cli](https://github.com/LedgerHQ/ledger-live/wiki/LLC:cli).
+- Install the [ledger-live cli](https://developers.ledger.com/docs/coin/ledger-live-cli/).
 - Plug in your Nano to your computer.
-- Run `ledger-live proxy`. A server starts and displays variable environments that can be used to build Ledger-Live Mobile. For example:
+- Run `ledger-live proxy` or `pnpm run:cli proxy`. A server starts and displays variable environments that can be used to build Ledger-Live Mobile. For example:
   ```
   DEVICE_PROXY_URL=ws://localhost:8435
   DEVICE_PROXY_URL=ws://192.168.1.14:8435

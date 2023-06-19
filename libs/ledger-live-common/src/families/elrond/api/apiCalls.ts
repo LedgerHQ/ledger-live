@@ -1,15 +1,15 @@
-import network from "../../../network";
-import { METACHAIN_SHARD, MAX_PAGINATION_SIZE } from "../constants";
+import network from "@ledgerhq/live-network/network";
+import { SignedOperation } from "@ledgerhq/types-live";
+import { MAX_PAGINATION_SIZE, METACHAIN_SHARD } from "../constants";
 import {
+  ESDTToken,
   ElrondApiTransaction,
   ElrondDelegation,
   ElrondProvider,
   ElrondTransactionAction,
   ElrondTransferOptions,
-  ESDTToken,
   NetworkInfo,
 } from "../types";
-import { SignedOperation } from "@ledgerhq/types-live";
 
 const decodeTransactionMode = (action: ElrondTransactionAction): string => {
   if (!action) {
@@ -109,10 +109,7 @@ export default class ElrondApi {
     return hash;
   }
 
-  async getHistory(
-    addr: string,
-    startAt: number
-  ): Promise<ElrondApiTransaction[]> {
+  async getHistory(addr: string, startAt: number): Promise<ElrondApiTransaction[]> {
     const { data: transactionsCount } = await network({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${startAt}`,
@@ -150,7 +147,7 @@ export default class ElrondApi {
   async getESDTTransactionsForAddress(
     addr: string,
     token: string,
-    startAt: number
+    startAt: number,
   ): Promise<ElrondApiTransaction[]> {
     const { data: tokenTransactionsCount } = await network({
       method: "GET",

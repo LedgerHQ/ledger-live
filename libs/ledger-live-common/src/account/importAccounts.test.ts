@@ -1,16 +1,9 @@
 import type { AccountRaw } from "@ledgerhq/types-live";
-import {
-  importAccountsMakeItems,
-  importAccountsReduce,
-  fromAccountRaw,
-} from ".";
+import { importAccountsMakeItems, importAccountsReduce, fromAccountRaw } from ".";
 import { setSupportedCurrencies } from "../currencies";
-import { PLATFORM_VERSION } from "../platform/constants";
-import { setPlatformVersion } from "../platform/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setWalletAPIVersion } from "../wallet-api/version";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies(["ethereum"]);
@@ -173,16 +166,12 @@ describe("importAccountsMakeItems", () => {
       failed: {},
       synchronized: {},
     };
-    result.accounts.forEach((a) => {
+    result.accounts.forEach(a => {
       syncResult.synchronized[a.id] = a;
     });
     const reduced = importAccountsReduce(accounts, {
       items,
-      selectedAccounts: [
-        "js:1:ethereum:0x03:",
-        "js:1:ethereum:0x02:",
-        "js:1:ethereum:0x05:",
-      ],
+      selectedAccounts: ["js:1:ethereum:0x03:", "js:1:ethereum:0x02:", "js:1:ethereum:0x05:"],
       syncResult,
     });
     expect(reduced).toMatchObject([

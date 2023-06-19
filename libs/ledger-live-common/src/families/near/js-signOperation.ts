@@ -3,11 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Transaction } from "./types";
-import type {
-  Operation,
-  SignOperationEvent,
-  Account,
-} from "@ledgerhq/types-live";
+import type { Operation, SignOperationEvent, Account } from "@ledgerhq/types-live";
 import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
 import Near from "@ledgerhq/hw-app-near";
@@ -16,7 +12,7 @@ import { buildTransaction } from "./js-buildTransaction";
 const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  fee: BigNumber
+  fee: BigNumber,
 ): Operation => {
   let type;
   let value = new BigNumber(transaction.amount);
@@ -63,7 +59,7 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  new Observable((o) => {
+  new Observable(o => {
     async function main() {
       const transport = await open(deviceId);
       try {
@@ -75,16 +71,9 @@ const signOperation = ({
 
         const near = new Near(transport);
         const { publicKey } = await near.getAddress(account.freshAddressPath);
-        const unsigned = await buildTransaction(
-          account,
-          transaction,
-          publicKey
-        );
+        const unsigned = await buildTransaction(account, transaction, publicKey);
 
-        const response = await near.signTransaction(
-          unsigned.encode(),
-          account.freshAddressPath
-        );
+        const response = await near.signTransaction(unsigned.encode(), account.freshAddressPath);
         const signedTransaction = new nearAPI.transactions.SignedTransaction({
           transaction: unsigned,
           signature: new nearAPI.transactions.Signature({
@@ -98,7 +87,7 @@ const signOperation = ({
         const operation = buildOptimisticOperation(
           account,
           transaction,
-          transaction.fees ?? new BigNumber(0)
+          transaction.fees ?? new BigNumber(0),
         );
         const signedSerializedTx = signedTransaction.encode();
 
@@ -116,7 +105,7 @@ const signOperation = ({
     }
     main().then(
       () => o.complete(),
-      (e) => o.error(e)
+      e => o.error(e),
     );
   });
 

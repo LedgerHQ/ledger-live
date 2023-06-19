@@ -1,14 +1,8 @@
-import React, {
-  ComponentType,
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useState,
-} from "react";
+import React, { ComponentType, ReactElement, ReactNode, useCallback, useState } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -16,6 +10,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import InfoModal from "../InfoModal";
 import { useAnalytics } from "../../analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
+import { NavigatorName } from "../../const";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -85,22 +80,29 @@ export const FabButtonBarProvider = ({
   children: (value: { quickActions: ActionButtonProps[] }) => ReactNode;
 }) => {
   const { track } = useAnalytics();
-  const [pressedDisabledAction, setPressedDisabledAction] = useState<
-    ActionButtonEvent | undefined
-  >(undefined);
-  const [isDisabledActionModalOpened, setIsDisabledActionModalOpened] =
-    useState(false);
-  const [infoModalProps, setInfoModalProps] = useState<
-    ActionButtonEventProps | undefined
-  >(undefined);
+  const [pressedDisabledAction, setPressedDisabledAction] = useState<ActionButtonEvent | undefined>(
+    undefined,
+  );
+  const [isDisabledActionModalOpened, setIsDisabledActionModalOpened] = useState(false);
+  const [infoModalProps, setInfoModalProps] = useState<ActionButtonEventProps | undefined>(
+    undefined,
+  );
   const [isModalInfoOpened, setIsModalInfoOpened] = useState<boolean>();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
+      const parent = navigation.getParent(NavigatorName.RootNavigator);
+      if (options && "drawer" in options) {
+        return parent
+          ? parent.setParams({ drawer: options.drawer })
+          : navigation.navigate(NavigatorName.Base, options);
+      }
       (
-        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+        navigation as StackNavigationProp<{
+          [key: string]: object | undefined;
+        }>
       ).navigate(name, {
         ...options,
         params: {
@@ -114,14 +116,7 @@ export const FabButtonBarProvider = ({
 
   const onPress = useCallback(
     (data: Omit<ActionButtonEvent, "label" | "Icon">) => {
-      const {
-        navigationParams,
-        confirmModalProps,
-        linkUrl,
-        event,
-        eventProperties,
-        id,
-      } = data;
+      const { navigationParams, confirmModalProps, linkUrl, event, eventProperties, id } = data;
 
       if (!confirmModalProps) {
         if (event) {
@@ -183,9 +178,7 @@ export const FabButtonBarProvider = ({
       )}
       {isModalInfoOpened && infoModalProps && (
         <InfoModal
-          {...(infoModalProps.confirmModalProps
-            ? infoModalProps.confirmModalProps
-            : {})}
+          {...(infoModalProps.confirmModalProps ? infoModalProps.confirmModalProps : {})}
           onContinue={onContinue}
           onClose={onClose}
           isOpened={isModalInfoOpened}

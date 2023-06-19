@@ -9,8 +9,7 @@ export const cryptopanicAvailableRegions = [
   "ru",
 ] as const;
 
-export type CryptopanicAvailableRegionsType =
-  typeof cryptopanicAvailableRegions[number];
+export type CryptopanicAvailableRegionsType = (typeof cryptopanicAvailableRegions)[number];
 
 export type CryptopanicNews = {
   kind: "news";
@@ -55,14 +54,7 @@ type CryptopanicPostsResponse = {
 };
 
 export type CryptopanicGetParams = {
-  filter?:
-    | "rising"
-    | "hot"
-    | "bullish"
-    | "bearish"
-    | "important"
-    | "saved"
-    | "lol";
+  filter?: "rising" | "hot" | "bullish" | "bearish" | "important" | "saved" | "lol";
   public?: boolean;
   currencies?: [string];
   regions?: [CryptopanicAvailableRegionsType];
@@ -87,18 +79,16 @@ function createSearchParams(params: CryptopanicGetParams) {
   return searchParams;
 }
 
-export async function getPosts(
-  params: CryptopanicGetParams,
-): Promise<CryptopanicPostsResponse> {
+export async function getPosts(params: CryptopanicGetParams): Promise<CryptopanicPostsResponse> {
   const formattedParams = createSearchParams(params).toString();
 
-  const response = await fetch(
-    `https://cryptopanic.com/api/v1/posts/?${formattedParams}`,
-  ).then(response => {
-    if (!response.ok) {
-      throw new Error("Network response was not OK");
-    }
-    return response.json();
-  });
+  const response = await fetch(`https://cryptopanic.com/api/v1/posts/?${formattedParams}`).then(
+    response => {
+      if (!response.ok) {
+        throw new Error("Network response was not OK");
+      }
+      return response.json();
+    },
+  );
   return response;
 }

@@ -17,19 +17,14 @@ import type { BaseNavigatorStackParamList } from "../../../components/RootNaviga
 import type { NearWithdrawingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    NearWithdrawingFlowParamList,
-    ScreenName.NearWithdrawingValidationSuccess
-  >
+  StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -54,12 +49,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="near.withdrawing.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="near.staking.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="near.withdrawing.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="near.staking.flow.steps.verification.success.text" />}
       />
     </View>
   );

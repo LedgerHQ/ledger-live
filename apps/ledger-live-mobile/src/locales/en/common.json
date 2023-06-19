@@ -325,6 +325,10 @@
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
+    "ImageDoesNotExistOnDevice": {
+      "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description": "The customized lock screen picture was previously removed."
+    },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
@@ -586,6 +590,12 @@
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
+    },
+    "WebPTXPlayerNetworkFail": {
+      "title": "Network error",
+      "description": "Check your internet connection and try again. Contact Ledger Support if the problem continues.",
+      "contactSupport": "Contact Ledger support",
+      "primaryCTA": "Try again"
     },
     "UnexpectedBootloader": {
       "title": "Sorry, your device must not be in Bootloader mode",
@@ -1191,7 +1201,8 @@
       "terms": "By tapping “Get Started” you consent and agree to our",
       "termsLink": "Terms of Service",
       "privacyLink": "Privacy Policy",
-      "and": "and"
+      "and": "and",
+      "recoverLogIn": "Log in for Ledger Recover"
     },
     "stepDoYouHaveALedgerDevice": {
       "title": "Do you own a Ledger?",
@@ -2695,10 +2706,6 @@
           "title": "Experimental list apps for My Ledger",
           "description": "Performance improvement for My Ledger access and inline flows."
         },
-        "experimentalCountervalues": {
-          "title": "Experimental countervalues API",
-          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
-        },
         "experimentalSwap": {
           "title": "New SWAP interface",
           "description": "Use the new experimental swap interface"
@@ -3683,6 +3690,7 @@
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
     "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
+    "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -4034,16 +4042,34 @@
   },
   "FirmwareUpdate": {
     "title": "Update firmware",
+    "updateDevice": "Update {{deviceName}}",
+    "updateDone": "All done! Your {{deviceName}} is up to date",
+    "updateDoneDescription": "New OS Version: {{firmwareVersion}}",
     "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
     "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps": "Please reinstall the apps on your device.",
     "pleaseConfirmUpdate": "Confirm the update on your device",
+    "pleaseConfirmUpdateOnYourDevice": "Confirm installation on {{deviceName}}",
+    "finishUpdateCTA": "Finish",
     "finishUpdate": "Finish the update on your {{deviceName}}",
     "identifierTitle": "Identifier:",
     "pleaseWaitDownload": "Please wait for the installer to be downloaded",
+    "doNotLeaveLedgerLive": "Do not leave the Ledger Live app until the update is complete.",
     "preparingDevice": "Preparing your device",
     "pleaseWaitUpdate": "Please wait for the update to finish",
+    "viewUpdateChangelog": "View update changelog",
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
+    "waitForInstallationToFinish": "Wait for installation to finish on your {{deviceName}}",
+    "staxBatteryLow": "Ledger Stax battery too low to update",
+    "staxBatteryLowDescription": "To perform an OS update, your Ledger must have a minimum of 20% charge, or be charging.",
+    "updateCancelled": "Update was cancelled on {{deviceName}}",
+    "updateCancelledDescription": "The installation of OS update {{newFirmwareVersion}} was refused on {{deviceName}}. If this was a mistake, restart the update",
+    "updateNotYetComplete": "Update is not complete yet",
+    "updateNotYetCompleteDescription": "If you interrupt the update, your apps, language, and lock screen picture may not be restored correctly.",
+    "restartUpdate": "Restart OS update",
+    "quitUpdate": "Exit Update",
+    "continueUpdate": "Continue Update",
+    "unlockDeviceToComplete": "Unlock {{deviceName}} to complete installation",
     "unlockDeviceWithPin": "Unlock your device with your PIN",
     "reinstallApps": "Reinstall apps.",
     "currentVersionNumber": "Current version",
@@ -4065,7 +4091,23 @@
       "flash-bootloader": "Bootloader updating",
       "flash": "Flashing your device",
       "preparing": "Preparing update",
-      "firmware": "Downloading update"
+      "firmware": "Downloading update",
+      "prepareUpdate":  {
+        "titleActive": "Preparing update for install",
+        "description": "Backing up your configuration and transferring the update to {{deviceName}}."
+      },
+      "installUpdate":  {
+        "titleInactive": "Install update",
+        "titleActive": "Installing update",
+        "description": "{{deviceName}} will restart multiple times.\n\nAfter installation is finished on your {{deviceName}}, unlock your device to complete installation"
+      },
+      "restoreSettings":  {
+        "titleInactive": "Restore apps and settings",
+        "description": "Your settings and blockchain apps will be restored.",
+        "restoreLockScreenPicture": "Restoring lock screen picture",
+        "restoreLanguage": "Restoring language",
+        "installingApps": "Installing apps"
+      }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
@@ -4073,6 +4115,12 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "errors": {
+      "TimeoutError": {
+        "title": "Update timeout",
+        "description": "The update was unable to complete because we lost connection to {{deviceName}}"
+      }
     }
   },
   "firmwareUpdateRequired": {
@@ -5760,9 +5808,9 @@
         "clearAll": "Clear All"
       },
       "branch": {
-        "soon": "coming soon",
-        "experimental": "experimental",
-        "debug": "debug"
+        "soon": "Coming soon",
+        "experimental": "Experimental",
+        "debug": "Debug"
       },
       "banner": {
         "title": "Discover our Live Catalog",
@@ -5779,6 +5827,11 @@
       "developerCTA": {
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live."
+      },
+      "warnings": {
+        "notFound": "Not found",
+        "retrySearchKeyword": "Please retry the search with another keyword.",
+        "retrySearchKeywordAndUrl": "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live."
       }
     },
     "disclaimer": {
@@ -5894,13 +5947,10 @@
       "reload": "Reload",
       "noCryptosFound": "No coins found",
       "noCurrencyFound": "No currency found",
-      "noAppFound": "No app found",
-      "notFound": "Not found",
       "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
       "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
       "noSearchResults": "Sorry, we did not find any search results.",
       "retrySearchKeyword": "Please retry the search with another keyword.",
-      "retrySearchKeywordAndUrl": "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
       "retrySearchParams": "Please retry the search with another parameters.",
       "trackFavAssets": "Track your favourite",
       "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
@@ -5946,9 +5996,10 @@
       "txDetails": "Transaction details"
     },
     "modalDisabled": {
-      "title": "Send function not available",
+      "title": "Send function is not available on iOS",
       "body": "In order to comply with Apple's recent updates on their App Store, sending NFTs is temporary unavailable. You can still use Ledger Live on Desktop to send NFTs.",
-      "contactSupport": "Please read our support article for more information."
+      "learnMore": "Learn more",
+      "continue": "Got it!"
     }
   },
   "ApplicationVersion": "v{{version}}",
@@ -6079,8 +6130,8 @@
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} collection",
         "hide_plural": "Hide {{count}} collections",
-        "alertHide": "1 Collection hidden. Go to the settings to display and unhide it at any time",
-        "alertHide_plural": "{{count}} Collections hidden. Go to the settings to display and unhide them at any time"
+        "alertHide": "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
+        "alertHide_plural": "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
       },
       "empty": {
         "title": "No NFTs to show, yet",
@@ -6124,20 +6175,6 @@
       }
     }
   },
-  "protect": {
-    "login": {
-      "title": "Log In",
-      "desc": "Log in with your Ledger account to manage your Protect subscription.",
-      "email": "Email",
-      "password": "Password",
-      "cta": "Login",
-      "forgotPassword": "Forgot password?",
-      "errors": {
-        "emptyEmail": "Email cannot be empty",
-        "emptyPassword": "Password cannot be empty"
-      }
-    }
-  },
   "newsfeed": {
     "title": "Newsfeed",
     "poweredByCryptopanic": "Powered by Cryptopanic",
@@ -6147,6 +6184,30 @@
     "title": "Connect device"
   },
   "stake": {
+    "ethereum": {
+      "title": "Grow your ETH holdings",
+      "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "close": "Close",
+      "providers": {
+        "lido": {
+          "title": "Earn with Lido",
+          "description": "Stake your Ethereum with Lido and earn rewards daily. No minimum ETH is required. No lock-up period.",
+          "supportLink": "Learn more about Lido"
+        },
+        "kiln": {
+          "title": "Kiln dedicated staking",
+          "tag": "Requires 32 ETH",
+          "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+          "supportLink": "Learn more about Kiln validator"
+        },
+        "kiln_pooling": {
+          "title": "Kiln staking pool",
+          "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
+          "supportLink": "Learn more about Kiln pooling",
+          "tag": "No minimum"
+        }
+      }
+    },
     "noFundsModal": {
       "title": "Buy, swap or receive",
       "text": "You do not have enough {{coin}} available to stake",

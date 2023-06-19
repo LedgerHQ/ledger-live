@@ -10,13 +10,10 @@ import {
 
 export { shouldShowNewAccount, getReceiveFlowError, checkAccountSupported };
 
-export function canSend(
-  account: AccountLike,
-  parentAccount: Account | null | undefined
-): boolean {
+export function canSend(account: AccountLike, parentAccount: Account | null | undefined): boolean {
   try {
     getAccountBridge(account, parentAccount).createTransaction(
-      getMainAccount(account, parentAccount)
+      getMainAccount(account, parentAccount),
     );
     return true;
   } catch (e) {

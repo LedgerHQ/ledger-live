@@ -20,13 +20,14 @@ export const NavigationHeaderBackImage = () => (
 /**
  * Back arrow button that should be used as the back arrow on the left of the react-navigation header.
  */
-export const NavigationHeaderBackButton: React.FC<Props> = React.memo(
-  ({ onPress }) => {
-    const navigation = useNavigation();
-    return (
-      <Touchable onPress={() => (onPress ? onPress() : navigation.goBack())}>
-        <NavigationHeaderBackImage />
-      </Touchable>
-    );
-  },
-);
+export const NavigationHeaderBackButton: React.FC<Props> = React.memo(({ onPress }) => {
+  const navigation = useNavigation();
+  return (
+    <Touchable
+      testID="navigation-header-back-button"
+      onPress={() => (onPress ? onPress() : navigation.goBack())}
+    >
+      <NavigationHeaderBackImage />
+    </Touchable>
+  );
+});

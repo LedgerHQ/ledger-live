@@ -14,7 +14,6 @@ describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();
   const explorer = new BitcoinLikeExplorer({
     cryptoCurrency: getCryptoCurrencyById("dogecoin"),
-    disableBatchSize: true,
   });
 
   const network = coininfo.dogecoin.main.toBitcoinJS();
@@ -40,8 +39,7 @@ describe("testing dogecoin transactions", () => {
             output_index: 0,
             value: "500000000000000000", // huge utxo
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            output_hash:
-              "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
+            output_hash: "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
             block_height: 1,
             rbf: false,
           },
@@ -49,8 +47,7 @@ describe("testing dogecoin transactions", () => {
             output_index: 1,
             value: "0",
             address: "<unknown>",
-            output_hash:
-              "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
+            output_hash: "c4ee70c30b9c5c5fed60c37ce86046156af3623f32aa5be94556b35dcf0af147",
             block_height: 1,
             rbf: false,
           },
@@ -84,7 +81,7 @@ describe("testing dogecoin transactions", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      getCryptoCurrencyById("dogecoin")
+      getCryptoCurrencyById("dogecoin"),
     );
     await wallet.signAccountTx({
       btc: new MockBtc(),

@@ -27,14 +27,14 @@ const InputWrapper = styled(Box)`
 export default <
   OptionType extends OptionTypeBase = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 >({
   renderOption,
   renderValue,
   selectProps,
 }: {
-  renderOption?: (a: { data: OptionType }) => React.ReactNode;
-  renderValue?: (a: { data: OptionType }) => React.ReactNode;
+  renderOption?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
+  renderValue?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
   selectProps: SelectProps<OptionType, IsMulti, GroupType>;
 }) => ({
   ...STYLES_OVERRIDE,

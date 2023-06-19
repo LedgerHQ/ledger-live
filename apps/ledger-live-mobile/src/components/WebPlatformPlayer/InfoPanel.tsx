@@ -2,13 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Linking,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity, Linking, ScrollView } from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
 import { languageSelector } from "../../reducers/settings";
@@ -27,15 +21,7 @@ type Props = {
   setIsOpened: (_: boolean) => void;
 };
 
-export function InfoPanel({
-  name,
-  icon,
-  description,
-  url,
-  uri,
-  isOpened,
-  setIsOpened,
-}: Props) {
+export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOpened }: Props) {
   const settingsLocale = useSelector(languageSelector);
   const { colors } = useTheme();
   const onClose = useCallback(() => {
@@ -76,14 +62,8 @@ export function InfoPanel({
             <LText semiBold style={styles.subSectionTitle}>
               <Trans i18nKey="platform.webPlatformPlayer.infoPanel.website" />
             </LText>
-            <TouchableOpacity
-              style={styles.flexRow}
-              onPress={() => onLinkPress(url)}
-            >
-              <LText
-                semiBold
-                style={{ ...styles.basicFontStyle, color: colors.live }}
-              >
+            <TouchableOpacity style={styles.flexRow} onPress={() => onLinkPress(url)}>
+              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.live }}>
                 {url}
               </LText>
               <View style={styles.externalLinkIcon}>
@@ -98,14 +78,8 @@ export function InfoPanel({
             <LText semiBold style={styles.subSectionTitle}>
               URI:
             </LText>
-            <TouchableOpacity
-              style={styles.flexRow}
-              onPress={() => onLinkPress(uri)}
-            >
-              <LText
-                semiBold
-                style={{ ...styles.basicFontStyle, color: colors.live }}
-              >
+            <TouchableOpacity style={styles.flexRow} onPress={() => onLinkPress(uri)}>
+              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.live }}>
                 {uri}
               </LText>
               <View style={styles.externalLinkIcon}>

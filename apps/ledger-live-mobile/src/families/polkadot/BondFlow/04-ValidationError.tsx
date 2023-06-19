@@ -21,9 +21,7 @@ type RouteParams = {
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigationProp<Record<string, object | undefined>>>()
-      .pop();
+    navigation.getParent<StackNavigationProp<Record<string, object | undefined>>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();
@@ -38,11 +36,7 @@ export default function ValidationError({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen category="BondFlow" name="ValidationError" />
-      <ValidateError
-        error={route.params.error}
-        onRetry={retry}
-        onClose={onClose}
-      />
+      <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

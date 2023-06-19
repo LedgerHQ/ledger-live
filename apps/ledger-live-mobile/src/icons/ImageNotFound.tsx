@@ -8,12 +8,7 @@ type Props = {
 };
 
 const ImageNotFound = ({ height, width, color }: Props) => (
-  <Svg
-    width={width ?? 52}
-    height={height ?? 52}
-    viewBox="0 0 52 52"
-    fill="none"
-  >
+  <Svg width={width ?? 52} height={height ?? 52} viewBox="0 0 52 52" fill="none">
     <Path
       d="M46.5 19.912v22.102A2 2 0 0144.516 44H8.484A1.986 1.986 0 016.5 42.014V9.986A2 2 0 018.484 8h25.732a10.106 10.106 0 00.409 4H10.5v28l18.584-18.588a2 2 0 012.828 0L42.5 32.02V19.64a10.01 10.01 0 004 .272z"
       fill={color ?? "#D6D8D9"}

@@ -5,7 +5,7 @@ import ManagerAPI from "../manager/api";
 export default (
   transport: Transport,
   targetId: string | number,
-  firmware: OsuFirmware
+  firmware: OsuFirmware,
 ): Observable<any> => {
   const params = {
     targetId,

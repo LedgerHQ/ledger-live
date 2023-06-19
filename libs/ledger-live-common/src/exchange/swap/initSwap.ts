@@ -1,30 +1,26 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
+import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { from, Observable } from "rxjs";
+import { Observable, from } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "../../account";
+import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "../../env";
 import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
-import network from "../../network";
 import { delay } from "../../promise";
-import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import { getProviderConfig, getSwapAPIBaseURL } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
+  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
 
 // init a swap with the Exchange app
 // throw if TransactionStatus have errors
@@ -35,17 +31,15 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
   const { exchange, exchangeRate, deviceId, userId } = input;
 
   if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, transaction);
-  return new Observable((o) => {
+  return new Observable(o => {
     let unsubscribed = false;
 
     const confirmSwap = async () => {
       let ignoreTransportError;
       log("swap", `attempt to connect to ${deviceId}`);
-      await withDevicePromise(deviceId, async (transport) => {
+      await withDevicePromise(deviceId, async transport => {
         const ratesFlag =
-          exchangeRate.tradeMethod === "fixed"
-            ? RateTypes.Fixed
-            : RateTypes.Floating;
+          exchangeRate.tradeMethod === "fixed" ? RateTypes.Fixed : RateTypes.Floating;
         const swap = new Exchange(transport, ExchangeTypes.Swap, ratesFlag);
         // NB this id is crucial to prevent replay attacks, if it changes
         // we need to start the flow again.
@@ -53,8 +47,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (unsubscribed) return;
 
         const { provider, rateId, payoutNetworkFees } = exchangeRate;
-        const { fromParentAccount, fromAccount, toParentAccount, toAccount } =
-          exchange;
+        const { fromParentAccount, fromAccount, toParentAccount, toAccount } = exchange;
         const { amount } = transaction;
         const refundCurrency = getAccountCurrency(fromAccount);
         const unitFrom = getAccountUnit(exchange.fromAccount);
@@ -62,9 +55,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
-        const apiAmount = new BigNumber(amount).div(
-          new BigNumber(10).pow(unitFrom.magnitude)
-        );
+        const apiAmount = new BigNumber(amount).div(new BigNumber(10).pow(unitFrom.magnitude));
         // Request a swap, this locks the rates for fixed trade method only.
         // NB Added the try/catch because of the API stability issues.
         let res;
@@ -125,19 +116,13 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           transaction = accountBridge.updateTransaction(transaction, {
             tag: new BigNumber(swapResult.payinExtraId).toNumber(),
           });
-          invariant(
-            transaction.tag,
-            "Refusing to swap xrp without a destination tag"
-          );
+          invariant(transaction.tag, "Refusing to swap xrp without a destination tag");
         } else if (refundCurrency.id === "stellar") {
           transaction = accountBridge.updateTransaction(transaction, {
             memoValue: swapResult.payinExtraId,
             memoType: "MEMO_TEXT",
           });
-          invariant(
-            transaction.memoValue,
-            "Refusing to swap xlm without a destination memo"
-          );
+          invariant(transaction.memoValue, "Refusing to swap xlm without a destination memo");
         }
 
         // Triplecheck we're not working with an abandonseed recipient anymore
@@ -146,17 +131,16 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
             getAbandonSeedAddress(
               refundCurrency.type === "TokenCurrency"
                 ? refundCurrency.parentCurrency.id
-                : refundCurrency.id
+                : refundCurrency.id,
             ),
-          "Recipient address should never be the abandonseed address"
+          "Recipient address should never be the abandonseed address",
         );
-        transaction = await accountBridge.prepareTransaction(
-          refundAccount,
-          transaction
-        );
+        transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
         if (unsubscribed) return;
-        const { errors, estimatedFees } =
-          await accountBridge.getTransactionStatus(refundAccount, transaction);
+        const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
+          refundAccount,
+          transaction,
+        );
         if (unsubscribed) return;
         const errorsKeys = Object.keys(errors);
 
@@ -165,9 +149,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         }
 
         if (swapProviderConfig.type !== "CEX") {
-          throw new Error(
-            `Unsupported provider type ${swapProviderConfig.type}`
-          );
+          throw new Error(`Unsupported provider type ${swapProviderConfig.type}`);
         }
 
         // Prepare swap app to receive the tx to forward.
@@ -177,10 +159,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         await swap.checkPartner(swapProviderConfig.signature);
         if (unsubscribed) return;
 
-        await swap.processTransaction(
-          Buffer.from(swapResult.binaryPayload, "hex"),
-          estimatedFees
-        );
+        await swap.processTransaction(Buffer.from(swapResult.binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
         const goodSign = <Buffer>(
           secp256k1.signatureExport(Buffer.from(swapResult.signature, "hex"))
@@ -188,10 +167,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         await swap.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);
-        invariant(
-          mainPayoutCurrency.type === "CryptoCurrency",
-          "This should be a cryptocurrency"
-        );
+        invariant(mainPayoutCurrency.type === "CryptoCurrency", "This should be a cryptocurrency");
         // FIXME: invariant not triggering typescriptp type guard
         if (mainPayoutCurrency.type !== "CryptoCurrency") {
           throw new Error("This should be a cryptocurrency");
@@ -201,19 +177,17 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         ].getSerializedAddressParameters(
           payoutAccount.freshAddressPath,
           payoutAccount.derivationMode,
-          mainPayoutCurrency.id
+          mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
-        const {
-          config: payoutAddressConfig,
-          signature: payoutAddressConfigSignature,
-        } = getCurrencyExchangeConfig(payoutCurrency);
+        const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
+          getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           await swap.checkPayoutAddress(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters
+            payoutAddressParameters.addressParameters,
           );
         } catch (e) {
           // @ts-expect-error TransportStatusError to be typed on ledgerjs
@@ -228,10 +202,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         if (unsubscribed) return;
         const mainRefundCurrency = getAccountCurrency(refundAccount);
-        invariant(
-          mainRefundCurrency.type === "CryptoCurrency",
-          "This should be a cryptocurrency"
-        );
+        invariant(mainRefundCurrency.type === "CryptoCurrency", "This should be a cryptocurrency");
         // FIXME: invariant not triggering typescriptp type guard
         if (mainRefundCurrency.type !== "CryptoCurrency") {
           throw new Error("This should be a cryptocurrency");
@@ -241,13 +212,11 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         ].getSerializedAddressParameters(
           refundAccount.freshAddressPath,
           refundAccount.derivationMode,
-          mainRefundCurrency.id
+          mainRefundCurrency.id,
         );
         if (unsubscribed) return;
-        const {
-          config: refundAddressConfig,
-          signature: refundAddressConfigSignature,
-        } = getCurrencyExchangeConfig(refundCurrency);
+        const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
+          getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
         // NB Floating rates may change the original amountTo so we can pass an override
         // to properly render the amount on the device confirmation steps. Although changelly
@@ -272,7 +241,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           await swap.checkRefundAddress(
             refundAddressConfig,
             refundAddressConfigSignature,
-            refundAddressParameters.addressParameters
+            refundAddressParameters.addressParameters,
           );
         } catch (e) {
           // @ts-expect-error TransportStatusError to be typed on ledgerjs
@@ -288,7 +257,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (unsubscribed) return;
         ignoreTransportError = true;
         await swap.signCoinTransaction();
-      }).catch((e) => {
+      }).catch(e => {
         if (ignoreTransportError) return;
 
         // @ts-expect-error TransportStatusError to be typed on ledgerjs
@@ -316,7 +285,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         o.complete();
         unsubscribed = true;
       },
-      (e) => {
+      e => {
         o.next({
           type: "init-swap-error",
           error: e,
@@ -324,7 +293,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         });
         o.complete();
         unsubscribed = true;
-      }
+      },
     );
     return () => {
       unsubscribed = true;

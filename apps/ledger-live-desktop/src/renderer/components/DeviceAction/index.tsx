@@ -8,10 +8,16 @@ import {
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
   EConnResetError,
+  LanguageInstallRefusedOnDevice,
+  ImageDoesNotExistOnDevice,
 } from "@ledgerhq/live-common/errors";
 import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
+import {
+  setPreferredDeviceModel,
+  setLastSeenDeviceInfo,
+  addNewDevice,
+} from "~/renderer/actions/settings";
 import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
@@ -22,7 +28,11 @@ import {
   ManagerNotEnoughSpaceError,
   UpdateYourApp,
   TransportStatusError,
+  UserRefusedAddress,
+  UserRefusedAllowManager,
+  UserRefusedFirmwareUpdate,
   UserRefusedOnDevice,
+  UserRefusedDeviceNameChange,
 } from "@ledgerhq/errors";
 import {
   InstallingApp,
@@ -131,6 +141,7 @@ type InnerProps<P> = {
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
+  inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -157,6 +168,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   onResult,
   onError,
   overridesPreferredDeviceModel,
+  inlineRetry = true,
   analyticsPropertyFlow,
 }: Props<H, P> & {
   request?: R;
@@ -233,6 +245,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         apps: [],
       };
       dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware }));
+      dispatch(addNewDevice({ seenDevice: lastSeenDevice }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
@@ -283,12 +296,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (imageRemoveRequested) {
+    const refused = error instanceof UserRefusedOnDevice;
+    const noImage = error instanceof ImageDoesNotExistOnDevice;
     if (error) {
-      if (error instanceof UserRefusedOnDevice) {
+      if (refused || noImage) {
         return renderError({
           t,
+          inlineRetry,
           error,
-          onRetry,
+          onRetry: refused ? onRetry : undefined,
           info: true,
         });
       }
@@ -411,7 +427,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
-    // workarround to catch ECONNRESET error and show better message
+    // workaround to catch ECONNRESET error and show better message
     if (error?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
@@ -421,18 +437,37 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
+    let withExportLogs = true;
+    let warning = false;
+    // User rejections, should be rendered as warnings and not export logs.
+    // All the error rendering needs to be unified, the same way we do for ErrorIcon
+    // not handled here.
+    if (
+      error instanceof UserRefusedFirmwareUpdate ||
+      (error as unknown) instanceof UserRefusedAllowManager ||
+      (error as unknown) instanceof UserRefusedOnDevice ||
+      (error as unknown) instanceof UserRefusedAddress ||
+      (error as unknown) instanceof UserRefusedDeviceNameChange ||
+      (error as unknown) instanceof LanguageInstallRefusedOnDevice
+    ) {
+      withExportLogs = false;
+      warning = true;
+    }
+
     return renderError({
       t,
       error,
+      warning,
       onRetry,
-      withExportLogs: true,
+      withExportLogs,
       device: device ?? undefined,
+      inlineRetry,
     });
   }
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
-    return renderLockedDeviceError({ t, device, onRetry });
+    return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {
@@ -454,7 +489,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
-    const { account, parentAccount, status, transaction } = (request as unknown) as {
+    const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
       status: TransactionStatus;
@@ -474,7 +509,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && signMessageRequested) {
-    const { account, parentAccount } = (request as unknown) as {
+    const { account, parentAccount } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
     };

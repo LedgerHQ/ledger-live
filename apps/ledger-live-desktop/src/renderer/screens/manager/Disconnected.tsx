@@ -55,6 +55,7 @@ const illustrations = {
 const Illustration = styled.div<{
   modelId: string;
 }>`
+  // prettier-ignore
   background: url('${p =>
     illustrations[p.modelId as keyof typeof illustrations][
       p.theme.colors.palette.type || "light"

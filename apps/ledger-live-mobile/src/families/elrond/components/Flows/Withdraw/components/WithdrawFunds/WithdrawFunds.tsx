@@ -44,14 +44,11 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
 
   const { transaction, status } = useBridgeTransaction(() => ({
     account,
-    transaction: bridge.updateTransaction(
-      bridge.createTransaction(mainAccount),
-      {
-        mode: "withdraw",
-        recipient: validator.contract,
-        amount,
-      },
-    ),
+    transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+      mode: "withdraw",
+      recipient: validator.contract,
+      amount,
+    }),
   }));
 
   /*
@@ -74,10 +71,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
    * Handle the possible warnings and errors of the transaction status and return the first of each.
    */
 
-  const { warning, error } = useMemo(
-    () => handleTransactionStatus(status),
-    [status],
-  );
+  const { warning, error } = useMemo(() => handleTransactionStatus(status), [status]);
 
   /*
    * Return the rendered component.
@@ -96,11 +90,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
           </LText>
 
           <LText semiBold={true} style={styles.subLabel} color="grey">
-            <CounterValue
-              currency={currency}
-              value={amount}
-              withPlaceholder={true}
-            />
+            <CounterValue currency={currency} value={amount} withPlaceholder={true} />
           </LText>
         </View>
 

@@ -16,11 +16,7 @@ type Props = {
   onSelect: () => void;
 };
 
-const BleDeviceItem = ({
-  deviceMeta,
-  onSelect,
-  areKnownDevicesPairable,
-}: Props) => {
+const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props) => {
   const { t } = useTranslation();
   const { deviceName, isAlreadyKnown } = deviceMeta;
 

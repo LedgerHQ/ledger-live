@@ -26,7 +26,7 @@ const TroubleshootNetworkBtn = ({ primary = true, small = true, title, ...rest }
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const troubleshootNetwork = useCallback(async () => {
-    dispatch(openModal("MODAL_TROUBLESHOOT_NETWORK", null));
+    dispatch(openModal("MODAL_TROUBLESHOOT_NETWORK", undefined));
   }, [dispatch]);
 
   const text = title || t("settings.troubleshootNetwork.btn");

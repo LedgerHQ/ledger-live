@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
@@ -10,14 +10,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../const";
-import {
-  accountsCountSelector,
-  areAccountsEmptySelector,
-} from "../../reducers/accounts";
-import {
-  hasOrderedNanoSelector,
-  readOnlyModeEnabledSelector,
-} from "../../reducers/settings";
+import { accountsCountSelector, areAccountsEmptySelector } from "../../reducers/accounts";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "../TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
@@ -37,10 +31,9 @@ type ButtonItem = {
   style?: StyleProp<ViewStyle>;
 };
 
-export default function TransferDrawer({
-  onClose,
-}: Omit<ModalProps, "isRequestingToBeOpened">) {
+export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
+  const route = useRoute();
   const { t } = useTranslation();
 
   const { page, track } = useAnalytics();
@@ -55,9 +48,10 @@ export default function TransferDrawer({
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (
-        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
-      ).navigate(name, options);
+      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+        name,
+        options,
+      );
 
       if (onClose) {
         onClose();
@@ -73,10 +67,7 @@ export default function TransferDrawer({
       }),
     [onNavigate],
   );
-  const onReceiveFunds = useCallback(
-    () => onNavigate(NavigatorName.ReceiveFunds),
-    [onNavigate],
-  );
+  const onReceiveFunds = useCallback(() => onNavigate(NavigatorName.ReceiveFunds), [onNavigate]);
 
   const onStake = useCallback(() => {
     track("button_clicked", {
@@ -84,8 +75,11 @@ export default function TransferDrawer({
       page,
       flow: "stake",
     });
-    onNavigate(NavigatorName.StakeFlow);
-  }, [onNavigate, page, track]);
+    onNavigate(NavigatorName.StakeFlow, {
+      screen: ScreenName.Stake,
+      params: { parentRoute: route },
+    });
+  }, [onNavigate, page, track, route]);
 
   const onWalletConnect = useCallback(
     () =>
@@ -106,13 +100,11 @@ export default function TransferDrawer({
     });
   }, [onNavigate, page, track]);
   const onBuy = useCallback(
-    () =>
-      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
+    () => onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
     [onNavigate],
   );
   const onSell = useCallback(
-    () =>
-      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
+    () => onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
     [onNavigate],
   );
 
@@ -125,10 +117,7 @@ export default function TransferDrawer({
       },
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
-      onPress:
-        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-          ? onSendFunds
-          : null,
+      onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSendFunds : null,
       Icon: Icons.ArrowTopMedium,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
     },
@@ -166,10 +155,7 @@ export default function TransferDrawer({
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
       Icon: Icons.MinusMedium,
-      onPress:
-        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-          ? onSell
-          : null,
+      onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSell : null,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
     },
 
@@ -198,10 +184,7 @@ export default function TransferDrawer({
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
       Icon: Icons.BuyCryptoMedium,
-      onPress:
-        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-          ? onSwap
-          : null,
+      onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSwap : null,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
     },
 
@@ -267,13 +250,7 @@ export default function TransferDrawer({
       {readOnlyModeEnabled && !hasOrderedNano && (
         <BuyDeviceBanner
           topLeft={
-            <Text
-              color="primary.c40"
-              uppercase
-              mb={3}
-              fontSize="11px"
-              fontWeight="semiBold"
-            >
+            <Text color="primary.c40" uppercase mb={3} fontSize="11px" fontWeight="semiBold">
               {t("buyDevice.bannerTitle2")}
             </Text>
           }

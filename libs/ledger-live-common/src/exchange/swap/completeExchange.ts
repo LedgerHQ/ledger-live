@@ -9,17 +9,12 @@ import { TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import ExchangeTransport, {
-  getExchageErrorMessage,
-} from "@ledgerhq/hw-app-exchange";
-import type {
-  CompleteExchangeInputSwap,
-  CompleteExchangeRequestEvent,
-} from "../platform/types";
+import ExchangeTransport, { getExchageErrorMessage } from "@ledgerhq/hw-app-exchange";
+import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
+  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -56,36 +51,24 @@ function convertTransportError(
 }
 
 const completeExchange = (
-  input: CompleteExchangeInputSwap
+  input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
-  const {
-    deviceId,
-    exchange,
-    provider,
-    binaryPayload,
-    signature,
-    exchangeType,
-    rateType,
-  } = input;
+  const { deviceId, exchange, provider, binaryPayload, signature, exchangeType, rateType } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
   const { toAccount, toParentAccount } = exchange;
 
-  return new Observable((o) => {
+  return new Observable(o => {
     let unsubscribed = false;
     let ignoreTransportError = false;
     let currentStep: CompleteExchangeStep = "INIT";
 
     const confirmExchange = async () => {
-      await withDevicePromise(deviceId, async (transport) => {
+      await withDevicePromise(deviceId, async transport => {
         const providerConfig = getProviderConfig(provider);
-        const exchange = new ExchangeTransport(
-          transport,
-          exchangeType,
-          rateType
-        );
+        const exchange = new ExchangeTransport(transport, exchangeType, rateType);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
@@ -98,17 +81,17 @@ const completeExchange = (
           throw new Error("This should be a cryptocurrency");
 
         log(COMPLETE_EXCHANGE_LOG, "Prepare transaction");
-        transaction = await accountBridge.prepareTransaction(
-          refundAccount,
-          transaction
-        );
+        transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
         log(COMPLETE_EXCHANGE_LOG, "Complete transaction:", transaction);
 
         if (unsubscribed) return;
 
-        const { errors, estimatedFees } =
-          await accountBridge.getTransactionStatus(refundAccount, transaction);
+        const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
+          refundAccount,
+          transaction,
+        );
         log(COMPLETE_EXCHANGE_LOG, "Estimated fees", estimatedFees);
+        
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
@@ -127,16 +110,12 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
-        await exchange.processTransaction(
-          Buffer.from(binaryPayload, "hex"),
-          estimatedFees
-        );
+        await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
 
-        const goodSign = <Buffer>(
-          secp256k1.signatureExport(Buffer.from(signature, "hex"))
-        );
+        const goodSign = <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
+
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
@@ -145,21 +124,19 @@ const completeExchange = (
         ].getSerializedAddressParameters(
           payoutAccount.freshAddressPath,
           payoutAccount.derivationMode,
-          mainPayoutCurrency.id
+          mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
 
-        const {
-          config: payoutAddressConfig,
-          signature: payoutAddressConfigSignature,
-        } = getCurrencyExchangeConfig(mainPayoutCurrency);
+        const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
+          getCurrencyExchangeConfig(mainPayoutCurrency);
 
         try {
           currentStep = "CHECK_PAYOUT_ADDRESS";
           await exchange.checkPayoutAddress(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters
+            payoutAddressParameters.addressParameters,
           );
         } catch (e) {
           // @ts-expect-error TransportStatusError to be typed on ledgerjs
@@ -179,14 +156,12 @@ const completeExchange = (
         ].getSerializedAddressParameters(
           refundAccount.freshAddressPath,
           refundAccount.derivationMode,
-          mainRefundCurrency.id
+          mainRefundCurrency.id,
         );
         if (unsubscribed) return;
 
-        const {
-          config: refundAddressConfig,
-          signature: refundAddressConfigSignature,
-        } = getCurrencyExchangeConfig(refundCurrency);
+        const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
+          getCurrencyExchangeConfig(refundCurrency);
         if (unsubscribed) return;
 
         try {
@@ -194,7 +169,7 @@ const completeExchange = (
           await exchange.checkRefundAddress(
             refundAddressConfig,
             refundAddressConfigSignature,
-            refundAddressParameters.addressParameters
+            refundAddressParameters.addressParameters,
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
@@ -218,7 +193,7 @@ const completeExchange = (
         ignoreTransportError = true;
         currentStep = "SIGN_COIN_TRANSACTION";
         await exchange.signCoinTransaction();
-      }).catch((e) => {
+      }).catch(e => {
         if (ignoreTransportError) return;
 
         // @ts-expect-error TransportStatusError to be typed on ledgerjs
@@ -241,14 +216,14 @@ const completeExchange = (
         o.complete();
         unsubscribed = true;
       },
-      (e) => {
+      e => {
         o.next({
           type: "complete-exchange-error",
           error: e,
         });
         o.complete();
         unsubscribed = true;
-      }
+      },
     );
     return () => {
       unsubscribed = true;

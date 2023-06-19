@@ -3,15 +3,15 @@ import React from "react";
 import StepperItem from "./StepperItem";
 import { Flex } from "../..";
 import { BaseStyledProps } from "src/components/styled";
-import { Item, ItemStatus } from "../types";
+import { Item } from "../types";
 
 export type Props = BaseStyledProps & {
   steps?: Item[];
-  setActiveIndex?: (arg0: number) => void;
+  onTapIndex?: (arg0: number) => void;
   nested?: boolean;
 };
 
-export default function VerticalStepper({ steps, setActiveIndex, nested, ...props }: Props) {
+export default React.memo(function VerticalStepper({ steps, onTapIndex, nested, ...props }: Props) {
   return (
     <Flex {...props} flexDirection="column">
       {nested && <Flex mt={7} mb={4} borderBottomWidth={1} borderBottomColor="neutral.c40" />}
@@ -22,12 +22,10 @@ export default function VerticalStepper({ steps, setActiveIndex, nested, ...prop
           progress={step.progress}
           nested={nested}
           isLastItem={index === steps.length - 1}
-          setActiveIndex={setActiveIndex}
+          onTapIndex={onTapIndex}
           index={index}
         />
       ))}
     </Flex>
   );
-}
-
-VerticalStepper.ItemStatus = ItemStatus;
+});

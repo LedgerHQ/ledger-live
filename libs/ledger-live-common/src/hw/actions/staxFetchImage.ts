@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { scan, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
@@ -29,7 +29,11 @@ type State = {
   imageAlreadyBackedUp?: boolean;
 };
 
-type FetchImageAction = Action<FetchImageRequest, State, boolean>;
+type ActionState = State & {
+  onRetry: () => void;
+};
+
+type FetchImageAction = Action<FetchImageRequest, ActionState, boolean>;
 
 const mapResult = ({ completed, imageFetched, imageAlreadyBackedUp }: State) =>
   completed || imageFetched || imageAlreadyBackedUp || null;
@@ -73,6 +77,7 @@ const reducer = (state: State, e: Event): State => {
     case "appDetected":
       return {
         ...state,
+        error: null,
         unresponsive: false,
         requestQuitApp: true,
         isLoading: false,
@@ -80,6 +85,7 @@ const reducer = (state: State, e: Event): State => {
     case "imageFetched":
       return {
         ...state,
+        error: null,
         unresponsive: false,
         isLoading: false,
         fetchingImage: false,
@@ -89,6 +95,7 @@ const reducer = (state: State, e: Event): State => {
     case "currentImageHash":
       return {
         ...state,
+        error: null,
         unresponsive: false,
         isLoading: false,
         fetchingImage: true,
@@ -97,6 +104,7 @@ const reducer = (state: State, e: Event): State => {
     case "imageAlreadyBackedUp":
       return {
         ...state,
+        error: null,
         unresponsive: false,
         isLoading: false,
         fetchingImage: false,
@@ -107,6 +115,7 @@ const reducer = (state: State, e: Event): State => {
     case "progress":
       return {
         ...state,
+        error: null,
         unresponsive: false,
         isLoading: false,
         fetchingImage: true,
@@ -117,22 +126,16 @@ const reducer = (state: State, e: Event): State => {
 };
 
 export const createAction = (
-  task: (arg0: FetchImageInput) => Observable<FetchImageEvent>
+  task: (arg0: FetchImageInput) => Observable<FetchImageEvent>,
 ): FetchImageAction => {
-  const useHook = (
-    device: Device | null | undefined,
-    request: FetchImageRequest
-  ): State => {
+  const useHook = (device: Device | null | undefined, request: FetchImageRequest): ActionState => {
     const [state, setState] = useState(() => getInitialState(device));
+    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
-      if (state.imageFetched || state.imageAlreadyBackedUp || state.completed)
-        return;
-      const impl = getImplementation(currentMode)<
-        FetchImageEvent,
-        FetchImageRequest
-      >({
+      if (state.imageFetched || state.imageAlreadyBackedUp || state.completed) return;
+      const impl = getImplementation(currentMode)<FetchImageEvent, FetchImageRequest>({
         deviceSubject,
         task,
         request,
@@ -141,7 +144,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-fetch-stax-image-event", e.type, e)),
-          scan(reducer, getInitialState())
+          scan(reducer, getInitialState()),
         )
         .subscribe(setState);
       return () => {
@@ -153,10 +156,17 @@ export const createAction = (
       state.completed,
       state.imageAlreadyBackedUp,
       state.imageFetched,
+      resetIndex,
     ]);
+
+    const onRetry = useCallback(() => {
+      setResetIndex(currIndex => currIndex + 1);
+      setState(s => getInitialState(s.device));
+    }, []);
 
     return {
       ...state,
+      onRetry,
     };
   };
 

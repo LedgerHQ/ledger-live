@@ -8,9 +8,7 @@ import { ScreenName, NavigatorName } from "../../../../const";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
 import ExternalLink from "../../../../components/ExternalLink";
-import BulletList, {
-  BulletGreenCheck,
-} from "../../../../components/BulletList";
+import BulletList, { BulletGreenCheck } from "../../../../components/BulletList";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import { urls } from "../../../../config/urls";
 import { TrackScreen } from "../../../../analytics";
@@ -22,10 +20,7 @@ import {
 import { AlgorandClaimRewardsFlowParamList } from "./type";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    AlgorandClaimRewardsFlowParamList,
-    ScreenName.AlgorandClaimRewardsInfo
-  >
+  StackNavigatorProps<AlgorandClaimRewardsFlowParamList, ScreenName.AlgorandClaimRewardsInfo>
 >;
 
 export default function ClaimRewardsStarted({ navigation, route }: Props) {
@@ -49,10 +44,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         },
       ]}
     >
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="ClaimRewardsFlow" name="Started" />
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
@@ -87,9 +79,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           <ExternalLink
             event="AlgorandHowRewardsWork"
             onPress={howClaimRewardsWorks}
-            text={
-              <Trans i18nKey="algorand.claimRewards.flow.steps.info.howItWorks" />
-            }
+            text={<Trans i18nKey="algorand.claimRewards.flow.steps.info.howItWorks" />}
           />
         </View>
       </NavigationScrollView>
@@ -97,9 +87,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         <Button
           event="ClaimRewardsStartedBtn"
           onPress={onNext}
-          title={
-            <Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />
-          }
+          title={<Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />}
           type="primary"
         />
       </View>

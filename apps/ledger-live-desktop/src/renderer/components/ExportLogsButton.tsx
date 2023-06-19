@@ -41,6 +41,7 @@ type Props = {
   title?: React.ReactNode;
   withoutAppData?: boolean;
   accounts?: Account[];
+  customComponent?: React.FC<() => Promise<void>>;
 } & RestProps;
 const ExportLogsBtnWrapper = (args: Props) => {
   if (args.withoutAppData) {
@@ -59,6 +60,7 @@ const ExportLogsBtn = ({
   small = true,
   title,
   accounts = [],
+  customComponent,
   ...rest
 }: Props) => {
   const { t } = useTranslation();
@@ -80,8 +82,9 @@ const ExportLogsBtn = ({
     });
     const path = await remote.dialog.showSaveDialog({
       title: "Export logs",
-      defaultPath: `ledgerlive-logs-${moment().format("YYYY.MM.DD-HH.mm.ss")}-${__GIT_REVISION__ ||
-        "unversioned"}.json`,
+      defaultPath: `ledgerlive-logs-${moment().format("YYYY.MM.DD-HH.mm.ss")}-${
+        __GIT_REVISION__ || "unversioned"
+      }.json`,
       filters: [
         {
           name: "All Files",
@@ -113,6 +116,9 @@ const ExportLogsBtn = ({
     [handleExportLogs],
   );
   const text = title || t("settings.exportLogs.btn");
+  if (customComponent) {
+    return customComponent(handleExportLogs);
+  }
   return hookToShortcut ? (
     <KeyHandler keyValue="e" onKeyHandle={onKeyHandle} />
   ) : (

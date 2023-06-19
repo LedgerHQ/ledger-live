@@ -12,9 +12,10 @@ type FabAccountActionsProps = {
   parentAccount?: Account;
 };
 
-export const FabAccountMainActionsComponent: React.FC<
-  FabAccountActionsProps
-> = ({ account, parentAccount }: FabAccountActionsProps) => {
+export const FabAccountMainActionsComponent: React.FC<FabAccountActionsProps> = ({
+  account,
+  parentAccount,
+}: FabAccountActionsProps) => {
   const { colors } = useTheme();
 
   const { mainActions } = useAccountActions({ account, parentAccount, colors });

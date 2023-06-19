@@ -15,7 +15,7 @@ import Label from "~/renderer/components/Label";
 import CounterValue from "~/renderer/components/CounterValue";
 type Props = {
   account: AccountLike;
-  parentAccount: Account | undefined | null;
+  parentAccount?: Account | undefined | null;
   status: TransactionStatus;
 };
 const AccountFooter = ({ account, parentAccount, status }: Props) => {

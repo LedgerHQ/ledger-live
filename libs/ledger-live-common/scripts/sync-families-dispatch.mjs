@@ -3,7 +3,6 @@ import "zx/globals";
 import rimraf from "rimraf";
 
 const targets = [
-  "customAddressValidation.ts",
   "hw-getAddress.ts",
   "hw-signMessage.ts",
   "transaction.ts",
@@ -21,7 +20,7 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["polkadot"];
+const familiesWPackage = ["algorand", "evm", "polkadot"];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
@@ -77,41 +76,29 @@ function genCoinFrameworkTarget(targetFile) {
   let imports = "";
   let exprts = "";
 
-  // In case of cli-transaction, add special import
-  if (targetFile === "cli-transaction.ts") {
-    imports += `import { makeLRUCache } from "../cache";\n`;
-    imports += `import network from "../network";\n`;
-  }
-  if (targetFile === "bridge/js.ts") {
-    imports += `import { makeLRUCache } from "../../cache";\n`;
-    imports += `import network from "../../network";\n`;
-    imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
-  }
-
   // Behavior for coin family with their own package
   const libsDir = path.join(__dirname, "../..");
   for (const family of familiesWPackage) {
     const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
 
-    // We still use bridge/js file inside "families" directory
-    if (
-      targetFile !== "bridge/js.ts" &&
-      targetFile !== "cli-transaction.ts" &&
-      fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))
-    ) {
-      imports += `import ${family} from "${targetImportPath}";\n`;
+    switch(targetFile) {
+      case "bridge/js.ts":
+        imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+        break;
+      case "cli-transaction.ts":
+        imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
+        break;
+      case "hw-getAddress.ts":
+        imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
+        break;
+      // We still use bridge/js file inside "families" directory
+      default:
+        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+          imports += `import ${family} from "${targetImportPath}";\n`;
+        }
+    }
+    if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
       exprts += `\n  ${family},`;
-    }
-
-    if (targetFile === "bridge/js.ts") {
-      const bridgeFn = family + "CreateBridges";
-      imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      exprts += `\n  ${family}: ${bridgeFn}(withDevice, network, makeLRUCache),`;
-    }
-    if (targetFile === "cli-transaction.ts") {
-      const cliToolsFn = family + "CreateCliTools";
-      imports += `import ${cliToolsFn} from "${targetImportPath}";\n`;
-      exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
     }
   }
 

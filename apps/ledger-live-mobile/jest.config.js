@@ -21,15 +21,11 @@ module.exports = {
     "@testing-library/jest-native/extend-expect",
     "./jest-setup.js",
   ],
-  globals: {
-    "ts-jest": {
-      babelConfig: true,
-    },
-  },
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
     "^.+\\.js?$": "babel-jest",
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.tsx?$": ["ts-jest", { babelConfig: true,}]
+    },
   },
   transformIgnorePatterns: [
     `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,

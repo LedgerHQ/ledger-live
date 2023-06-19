@@ -18,7 +18,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getMainAccount,
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import {
   providersSelector,
   rateSelector,
@@ -64,6 +68,7 @@ import {
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -119,6 +124,9 @@ const SwapForm = () => {
     [dispatch],
   );
   const showDexQuotes: Feature<boolean> | null = useFeature("swapShowDexQuotes");
+  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
+    "swapWalletApiPartnerList",
+  );
   const onNoRates = useCallback(
     ({ toState }) => {
       track("error_message", {
@@ -377,7 +385,7 @@ const SwapForm = () => {
     });
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
-      const fromAddress = from.parentAccount?.id || from.account?.id;
+      const fromAccountId = from.parentAccount?.id || from.account?.id;
       const customParams = {
         provider,
         providerURL: providerURL || undefined,
@@ -386,6 +394,28 @@ const SwapForm = () => {
         ...customParams,
       });
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
+      const getAccountId = ({
+        accountId,
+        provider,
+      }: {
+        accountId: string | undefined;
+        provider: string;
+      }) => {
+        if (
+          !walletApiPartnerList?.enabled ||
+          !walletApiPartnerList?.params?.list.includes(provider)
+        ) {
+          return accountId;
+        }
+        const account = accounts.find(a => a.id === accountId);
+        if (!account) return accountId;
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
+        return walletApiId || accountId;
+      };
+      const accountId = getAccountId({ accountId: fromAccountId, provider });
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
         // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
@@ -394,7 +424,7 @@ const SwapForm = () => {
         pathname,
         state: {
           returnTo: "/swap",
-          accountId: fromAddress,
+          accountId,
         },
       });
     } else {
