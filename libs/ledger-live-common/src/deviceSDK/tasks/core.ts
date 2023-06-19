@@ -49,7 +49,11 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
                   error instanceof TransportRaceCondition
                 ) {
                   // Emits to the action a locked device error event so it is aware of it before retrying
-                  subscriber.next({ type: "error" as const, error });
+                  const event: SharedTaskEvent = {
+                    type: "error",
+                    error,
+                  };
+                  subscriber.next(event);
                   acceptedError = true;
                 }
 

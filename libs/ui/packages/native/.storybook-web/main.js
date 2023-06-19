@@ -8,6 +8,9 @@ module.exports = {
     "@storybook/addon-essentials",
     "@storybook/addon-react-native-web",
   ],
+  typescript: {
+    reactDocgen: false, // FIXME: this is disabled for now due to incompatibilities with TS 5. re-enable when upgrading storybook.
+  },
   core: {
     builder: "webpack5",
   },

@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import { CryptoCurrency, CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  CoinType,
+  CryptoCurrency,
+  CryptoCurrencyId,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 
@@ -59,7 +64,7 @@ function createEtherumTransaction(): Partial<Transaction & { gasLimit: BigNumber
 const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
   id: "testCoinId" as CryptoCurrencyId,
-  coinType: 8008,
+  coinType: 8008 as CoinType,
   name: "ethereum",
   managerAppName: "ethereum",
   ticker: "MYC",
