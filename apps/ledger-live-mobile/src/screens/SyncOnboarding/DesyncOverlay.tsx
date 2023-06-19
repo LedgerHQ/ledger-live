@@ -66,7 +66,7 @@ export const PlainOverlay = ({ isOpen, delay }: DelayProps) => (
   </DisplayWithDelay>
 );
 
-const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
+const DesyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
   const { t } = useTranslation();
 
   const { radii } = useTheme();
@@ -101,4 +101,4 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
   );
 };
 
-export default ResyncOverlay;
+export default DesyncOverlay;

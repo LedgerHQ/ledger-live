@@ -12,11 +12,11 @@ import { RootStackParamList } from "../../components/RootNavigator/types/RootNav
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import {
   SyncOnboardingCompanion,
-  NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
+  NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
 } from "./SyncOnboardingCompanion";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
-import { PlainOverlay } from "./ResyncOverlay";
+import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
 
@@ -50,11 +50,11 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
 
-  // States handling a UI trick to hide the header while the resync alert overlay
+  // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
   const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] = useState<boolean>(false);
   const [headerOverlayDelayMs, setHeaderOverlayDelayMs] = useState<number>(
-    NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
+    NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
 
   // Updates dynamically the screen header to handle a possible overlay

@@ -25,7 +25,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
-import ResyncOverlay from "./ResyncOverlay";
+import DesyncOverlay from "./DesyncOverlay";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 import {
   completeOnboarding,
@@ -89,8 +89,8 @@ const POLLING_PERIOD_MS = 1000;
 const NORMAL_DESYNC_TIMEOUT_MS = 60000;
 const LONG_DESYNC_TIMEOUT_MS = 120000;
 
-export const NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS = 10000;
-const LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS = 60000;
+export const NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS = 10000;
+const LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS = 60000;
 const READY_REDIRECT_DELAY_MS = 2500;
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
@@ -125,7 +125,7 @@ const ContinueOnDeviceWithAnim: React.FC<{
  * Component representing the synchronous companion step, which polls the current device state
  * to display correctly information about the onboarding to the user
  *
- * The resync alert message overlay is rendered from this component to better handle relative position
+ * The desync alert message overlay is rendered from this component to better handle relative position
  * with the vertical timeline.
  */
 export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
@@ -191,9 +191,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
 
-  const [isResyncOverlayOpen, setIsResyncOverlayOpen] = useState<boolean>(false);
-  const [resyncOverlayDisplayDelayMs, setResyncOverlayDisplayDelayMs] = useState<number>(
-    NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
+  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
+  const [desyncOverlayDisplayDelayMs, setDesyncOverlayDisplayDelayMs] = useState<number>(
+    NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
 
   const [desyncTimeoutMs, setDesyncTimeoutMs] = useState<number>(NORMAL_DESYNC_TIMEOUT_MS);
@@ -227,7 +227,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     setIsPollingOn(false);
 
     onShouldHeaderBeOverlaid(false);
-    setIsResyncOverlayOpen(false);
+    setIsDesyncOverlayOpen(false);
 
     onLostDevice();
   }, [onShouldHeaderBeOverlaid, onLostDevice]);
@@ -263,11 +263,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       desyncTimerRef.current = setTimeout(handleDesyncTimedOut, desyncTimeoutMs);
 
       // Displays an overlay to alert the user. This overlay should also hide the screen header
-      setIsResyncOverlayOpen(true);
+      setIsDesyncOverlayOpen(true);
       onShouldHeaderBeOverlaid(true);
     } else if (!allowedError) {
       // desyncTimer is cleared in the useEffect cleanup function
-      setIsResyncOverlayOpen(false);
+      setIsDesyncOverlayOpen(false);
       onShouldHeaderBeOverlaid(false);
     }
 
@@ -423,8 +423,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       );
 
       if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
-        setResyncOverlayDisplayDelayMs(LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS);
-        updateHeaderOverlayDelay(LONG_RESYNC_OVERLAY_DISPLAY_DELAY_MS);
+        setDesyncOverlayDisplayDelayMs(LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS);
+        updateHeaderOverlayDelay(LONG_DESYNC_OVERLAY_DISPLAY_DELAY_MS);
         setDesyncTimeoutMs(LONG_DESYNC_TIMEOUT_MS);
       }
     }
@@ -641,9 +641,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     <>
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <Flex position="relative" flex={1} px={6}>
-        <ResyncOverlay
-          isOpen={isResyncOverlayOpen}
-          delay={resyncOverlayDisplayDelayMs}
+        <DesyncOverlay
+          isOpen={isDesyncOverlayOpen}
+          delay={desyncOverlayDisplayDelayMs}
           productName={productName}
         />
         <Flex>
