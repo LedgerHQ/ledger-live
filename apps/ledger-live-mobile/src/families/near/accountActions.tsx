@@ -6,6 +6,7 @@ import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "../../const";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 const getMainActions = ({
   account,
@@ -14,7 +15,7 @@ const getMainActions = ({
 }: {
   account: NearAccount;
   parentAccount: Account;
-  parentRoute: ScreenName.NearStakingStarted;
+  parentRoute: RouteProp<ParamListBase, ScreenName>;
 }) => {
   const stakingDisabled = !canStake(account);
   const navigationParams = stakingDisabled
