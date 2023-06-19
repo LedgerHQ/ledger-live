@@ -3363,8 +3363,8 @@ importers:
         specifier: ^2.1.2
         version: 2.1.2
       usb:
-        specifier: ^1.7.0
-        version: 1.9.2
+        specifier: ^2.9.0
+        version: 2.9.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3461,8 +3461,8 @@ importers:
         specifier: ^2.1.2
         version: 2.1.2
       usb:
-        specifier: 2.5.1
-        version: 2.5.1
+        specifier: ^2.9.0
+        version: 2.9.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -26090,7 +26090,7 @@ packages:
     engines: {node: '>=6.14.2'}
     requiresBuild: true
     dependencies:
-      node-gyp-build: 4.4.0
+      node-gyp-build: 4.6.0
     dev: false
 
   /builder-util-runtime@8.6.0:
@@ -39781,7 +39781,7 @@ packages:
     requiresBuild: true
     dependencies:
       node-addon-api: 2.0.2
-      node-gyp-build: 4.4.0
+      node-gyp-build: 4.6.0
       readable-stream: 3.6.2
     dev: false
 
@@ -43164,6 +43164,12 @@ packages:
 
   /node-addon-api@4.3.0:
     resolution: {integrity: sha512-73sE9+3UaLYYFmDsFZnqCInzPyh3MqIwZO9cw58yIqAZhONrrabrYyYe3TuIqtIiOuTXVhsGau8hcrhhwSsDIQ==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /node-addon-api@6.1.0:
+    resolution: {integrity: sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==}
     dev: false
 
   /node-dir@0.1.17:
@@ -43218,6 +43224,11 @@ packages:
 
   /node-gyp-build@4.4.0:
     resolution: {integrity: sha512-amJnQCcgtRVw9SvoebO3BKGESClrfXGCUTX9hSn1OuGQTQBOZmVd0Z0OlecpuRksKvbsUqALE8jls/ErClAPuQ==}
+    hasBin: true
+    dev: false
+
+  /node-gyp-build@4.6.0:
+    resolution: {integrity: sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==}
     hasBin: true
     dev: false
 
@@ -50141,7 +50152,7 @@ packages:
     dependencies:
       elliptic: 6.5.4
       node-addon-api: 2.0.2
-      node-gyp-build: 4.4.0
+      node-gyp-build: 4.6.0
     dev: false
 
   /secp256k1@4.0.3:
@@ -50810,7 +50821,7 @@ packages:
     resolution: {integrity: sha512-rg6lCDM/qa3p07YGqaVD+ciAbUqm6SoO4xmlcfkbU5r1zIGrguXztLiEtaLYTV5U6k8KSIUFmnU3yQUSKmf6DA==}
     requiresBuild: true
     dependencies:
-      node-gyp-build: 4.4.0
+      node-gyp-build: 4.6.0
     dev: false
     optional: true
 
@@ -54285,17 +54296,18 @@ packages:
     requiresBuild: true
     dependencies:
       node-addon-api: 4.3.0
-      node-gyp-build: 4.4.0
+      node-gyp-build: 4.6.0
     dev: false
+    optional: true
 
-  /usb@2.5.1:
-    resolution: {integrity: sha512-/VNr4wUL32KVqyrVJ1HGBhDEvklhouVh+8ehIGKv6FsOKz6MWlkYLLAEyXbRo72HXhhiFNj6bwz6L+bIk8F0Yw==}
+  /usb@2.9.0:
+    resolution: {integrity: sha512-G0I/fPgfHUzWH8xo2KkDxTTFruUWfppgSFJ+bQxz/kVY2x15EQ/XDB7dqD1G432G4gBG4jYQuF3U7j/orSs5nw==}
     engines: {node: '>=10.20.0 <11.x || >=12.17.0 <13.0 || >=14.0.0'}
     requiresBuild: true
     dependencies:
       '@types/w3c-web-usb': 1.0.6
-      node-addon-api: 4.3.0
-      node-gyp-build: 4.4.0
+      node-addon-api: 6.1.0
+      node-gyp-build: 4.6.0
     dev: false
 
   /use-composed-ref@1.3.0(react@17.0.2):
@@ -54381,7 +54393,7 @@ packages:
     engines: {node: '>=6.14.2'}
     requiresBuild: true
     dependencies:
-      node-gyp-build: 4.4.0
+      node-gyp-build: 4.6.0
     dev: false
 
   /utf8-byte-length@1.0.4:
