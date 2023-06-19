@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-next.5
+
+### Patch Changes
+
+- [#3660](https://github.com/LedgerHQ/ledger-live/pull/3660) [`12d3acc76a`](https://github.com/LedgerHQ/ledger-live/commit/12d3acc76ae38ef31981281eca17a62bdb194e04) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix stellar memo ui
+
 ## 2.62.0-next.4
 
 ### Patch Changes
