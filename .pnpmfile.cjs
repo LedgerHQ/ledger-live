@@ -33,10 +33,6 @@ function readPackage(pkg, context) {
       "@types/react": { optional: true },
     };
   }
-  
-  if(pkg.name === "@casperlabs/ts-results") {
-    pkg.dependencies['tslib'] = '^1.14.1';
-  }
 
   process(
     [
