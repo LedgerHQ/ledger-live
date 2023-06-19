@@ -252,6 +252,9 @@ function readPackage(pkg, context) {
         "@ethersproject/strings": "*",
         "@ethersproject/logger": "*",
       }),
+      addDependencies("casper-js-sdk", {
+        "@noble/curves": "*",
+      }),
     ],
     pkg,
     context,
