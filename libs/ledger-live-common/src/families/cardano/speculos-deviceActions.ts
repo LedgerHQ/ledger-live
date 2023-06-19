@@ -86,6 +86,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       },
     },
     {
+      title: "Registerstaking key",
+      button: SpeculosButton.BOTH,
+    },
+    {
       title: "Transaction TTL",
       button: SpeculosButton.BOTH,
     },
