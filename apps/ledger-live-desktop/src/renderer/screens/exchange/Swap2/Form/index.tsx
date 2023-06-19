@@ -68,7 +68,6 @@ import {
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
