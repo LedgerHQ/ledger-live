@@ -4,10 +4,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
 import type { CardanoAccount, Transaction } from "./types";
 import { createTransaction } from "./js-transaction";
-import {
-  address as TyphonAddress,
-  types as TyphonTypes,
-} from "@stricahq/typhonjs";
+import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
 import { buildTransaction } from "./js-buildTransaction";
 
 /**
@@ -49,10 +46,10 @@ const estimateMaxSpendable = async ({
   const transactionAmount = typhonTransaction
     .getOutputs()
     .filter(
-      (o) =>
+      o =>
         !(o.address instanceof TyphonAddress.BaseAddress) ||
         !(o.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) ||
-        o.address.paymentCredential.bipPath === undefined
+        o.address.paymentCredential.bipPath === undefined,
     )
     .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
 

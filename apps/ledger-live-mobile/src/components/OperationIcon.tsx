@@ -1,11 +1,6 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import type {
-  Account,
-  Operation,
-  OperationType,
-  AccountLike,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import OperationStatusIcon from "../icons/OperationStatusIcon";
@@ -26,7 +21,7 @@ type Props = OwnProps & {
 };
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
-  typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
+  (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
 >;
 
 class OperationIcon extends PureComponent<Props> {
@@ -52,9 +47,7 @@ class OperationIcon extends PureComponent<Props> {
       : null;
     const SpecificOperationStatusIcon =
       specific && specific.operationStatusIcon
-        ? specific.operationStatusIcon[
-            type as keyof typeof specific.operationStatusIcon
-          ]
+        ? specific.operationStatusIcon[type as keyof typeof specific.operationStatusIcon]
         : null;
     return SpecificOperationStatusIcon ? (
       <SpecificOperationStatusIcon
@@ -65,12 +58,7 @@ class OperationIcon extends PureComponent<Props> {
         size={size}
       />
     ) : (
-      <OperationStatusIcon
-        confirmed={confirmed}
-        type={type}
-        failed={hasFailed}
-        size={size}
-      />
+      <OperationStatusIcon confirmed={confirmed} type={type} failed={hasFailed} size={size} />
     );
   }
 }

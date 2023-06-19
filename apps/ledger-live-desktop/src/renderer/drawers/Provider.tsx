@@ -5,7 +5,7 @@ export type State<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   C extends React.ComponentType<P> | undefined | null = React.ComponentType<any> | undefined | null,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  P = any
+  P = any,
 > = {
   Component: C;
   props?: P;
@@ -18,7 +18,7 @@ export let setDrawer: <
   P,
   C extends React.ComponentType<P> | undefined | null = P extends null
     ? null
-    : React.ComponentType<P>
+    : React.ComponentType<P>,
 >(
   Component?: C,
   props?: State<C, P>["props"],

@@ -45,7 +45,9 @@ const exportOperations = async (
     if (res && callback) {
       callback();
     }
-  } catch (error) {}
+  } catch (error) {
+    // ignore
+  }
 };
 const History = () => {
   const accounts = useSelector(accountsSelector);

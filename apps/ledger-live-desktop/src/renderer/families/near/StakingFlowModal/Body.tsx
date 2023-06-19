@@ -82,25 +82,19 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { account, source = "Account Page" } = params;
-  const {
-    transaction,
-    setTransaction,
-    updateTransaction,
-    status,
-    bridgeError,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account);
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "stake",
+  const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
+    useBridgeTransaction(() => {
+      const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+      const t = bridge.createTransaction(account);
+      const transaction = bridge.updateTransaction(t, {
+        mode: "stake",
+      });
+      return {
+        account,
+        parentAccount: undefined,
+        transaction,
+      };
     });
-    return {
-      account,
-      parentAccount: undefined,
-      transaction,
-    };
-  });
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {

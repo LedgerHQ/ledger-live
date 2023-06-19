@@ -113,10 +113,8 @@ export function Welcome() {
 
   const countTitle = useRef(0);
   const countSubtitle = useRef(0);
-  const [
-    isFeatureFlagsSettingsButtonDisplayed,
-    setIsFeatureFlagsSettingsButtonDisplayed,
-  ] = useState<boolean>(false);
+  const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
+    useState<boolean>(false);
 
   const timeout = useRef<ReturnType<typeof setTimeout>>();
 

@@ -89,6 +89,6 @@ export const getModalData = <Name extends keyof ModalData>(
 // Exporting reducer
 
 export default handleActions<ModalsState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as ModalsHandlers<false>,
+  handlers as unknown as ModalsHandlers<false>,
   state,
 );

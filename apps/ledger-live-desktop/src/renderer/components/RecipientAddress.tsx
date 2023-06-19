@@ -113,7 +113,7 @@ class RecipientAddress extends PureComponent<Props, State> {
       <Box relative justifyContent="center">
         <Input
           {...rest}
-          error={(error as unknown) as Error}
+          error={error as unknown as Error}
           spellCheck={false}
           value={value}
           onChange={preOnChange}

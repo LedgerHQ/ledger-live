@@ -12,10 +12,7 @@ import { WalletConnectNavigatorParamList } from "../../components/RootNavigator/
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    WalletConnectNavigatorParamList,
-    ScreenName.WalletConnectScan
-  >,
+  StackNavigatorProps<WalletConnectNavigatorParamList, ScreenName.WalletConnectScan>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -51,10 +48,7 @@ const ScanWalletConnect = ({ navigation, route }: Props) => {
   return (
     <>
       <TrackScreen category="WalletConnect" screen="Scan" />
-      <Scanner
-        onResult={onResult}
-        instruction={<Trans i18nKey="walletconnect.scan" />}
-      />
+      <Scanner onResult={onResult} instruction={<Trans i18nKey="walletconnect.scan" />} />
     </>
   );
 };

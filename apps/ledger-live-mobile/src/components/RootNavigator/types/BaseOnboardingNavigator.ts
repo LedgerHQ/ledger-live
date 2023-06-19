@@ -12,9 +12,7 @@ import { SyncOnboardingStackParamList } from "./SyncOnboardingNavigator";
 export type BaseOnboardingNavigatorParamList = {
   [NavigatorName.Onboarding]: NavigatorScreenParams<OnboardingNavigatorParamList>;
   [NavigatorName.ImportAccounts]: NavigatorScreenParams<ImportAccountsNavigatorParamList>;
-  [NavigatorName.BuyDevice]:
-    | NavigatorScreenParams<BuyDeviceNavigatorParamList>
-    | undefined;
+  [NavigatorName.BuyDevice]: NavigatorScreenParams<BuyDeviceNavigatorParamList> | undefined;
   [ScreenName.PairDevices]: {
     onDone?: (_: Device) => void;
     hasError?: boolean;

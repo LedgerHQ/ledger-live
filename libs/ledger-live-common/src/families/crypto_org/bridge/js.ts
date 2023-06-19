@@ -3,11 +3,7 @@ import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { sync, scanAccounts } from "../js-synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import {
-  createTransaction,
-  updateTransaction,
-  prepareTransaction,
-} from "../js-transaction";
+import { createTransaction, updateTransaction, prepareTransaction } from "../js-transaction";
 import getTransactionStatus from "../js-getTransactionStatus";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import signOperation from "../js-signOperation";

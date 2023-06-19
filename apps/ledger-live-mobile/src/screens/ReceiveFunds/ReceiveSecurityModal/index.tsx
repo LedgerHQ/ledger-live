@@ -1,9 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import InitMessage from "./InitMessage";
@@ -12,20 +8,14 @@ import ConfirmUnverified from "./ConfirmUnverified";
 const shouldNotRemindUserAgainToVerifyAddressOnReceive =
   "shouldNotRemindUserAgainToVerifyAddressOnReceive";
 
-const ReceiveSecurityModal = ({
-  onVerifyAddress,
-}: {
-  onVerifyAddress: () => void;
-}) => {
+const ReceiveSecurityModal = ({ onVerifyAddress }: { onVerifyAddress: () => void }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function getShouldNotRemindUserAgain() {
     const shouldNotRemindUserAgain = await AsyncStorage.getItem(
       shouldNotRemindUserAgainToVerifyAddressOnReceive,
     );
-    return shouldNotRemindUserAgain
-      ? JSON.parse(shouldNotRemindUserAgain)
-      : false;
+    return shouldNotRemindUserAgain ? JSON.parse(shouldNotRemindUserAgain) : false;
   }
 
   async function setShouldNotRemindUserAgain() {

@@ -36,10 +36,7 @@ const stringifyPairs = <T>(pairs: [string, T][]): [string, string][] =>
       return [
         ...acc,
         [current[0], CHUNKED_KEY + numberOfChunks],
-        ...chunks.map<[string, string]>((chunk, index) => [
-          key + CHUNKED_KEY + index,
-          chunk,
-        ]),
+        ...chunks.map<[string, string]>((chunk, index) => [key + CHUNKED_KEY + index, chunk]),
       ];
     }
 
@@ -64,16 +61,10 @@ const getCompressedValue = async <T = unknown>(
       // multiget will failed when you got keys with a tons of data
       // it crash with 13 CHUNKS of 1MB string so we had splice it.
       while (keys.length) {
-        values = [
-          ...values,
-          ...(await AsyncStorage.multiGet(keys.splice(0, 5))),
-        ];
+        values = [...values, ...(await AsyncStorage.multiGet(keys.splice(0, 5)))];
       }
 
-      const concatString = values.reduce(
-        (acc, current) => acc + current[1],
-        "",
-      );
+      const concatString = values.reduce((acc, current) => acc + current[1], "");
       return JSON.parse(concatString);
     }
 
@@ -89,9 +80,7 @@ const deviceStorage = {
    * @param {String|Array} key A key or array of keys
    * @return {Promise}
    */
-  async get<T>(
-    key: string | string[],
-  ): Promise<T | (T | undefined)[] | undefined> {
+  async get<T>(key: string | string[]): Promise<T | (T | undefined)[] | undefined> {
     if (!Array.isArray(key)) {
       const value = await AsyncStorage.getItem(key);
       return getCompressedValue(key, value);
@@ -132,10 +121,7 @@ const deviceStorage = {
     return deviceStorage
       .get(key)
       .then(item =>
-        deviceStorage.save(
-          key,
-          typeof value === "string" ? value : merge({}, item, value),
-        ),
+        deviceStorage.save(key, typeof value === "string" ? value : merge({}, item, value)),
       );
   },
 
@@ -164,9 +150,7 @@ const deviceStorage = {
    * @return {Promise} A promise which when it resolves gets passed the saved keys in AsyncStorage.
    */
   keys() {
-    return AsyncStorage.getAllKeys().then(keys =>
-      keys.filter(key => !key.includes(CHUNKED_KEY)),
-    );
+    return AsyncStorage.getAllKeys().then(keys => keys.filter(key => !key.includes(CHUNKED_KEY)));
   },
 
   /**

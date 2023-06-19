@@ -1,7 +1,4 @@
-import {
-  getRegistriesForAddress,
-  getRegistriesForDomain,
-} from "../../registries";
+import { getRegistriesForAddress, getRegistriesForDomain } from "../../registries";
 
 describe("Domain Service", () => {
   describe("Registries", () => {
@@ -11,9 +8,7 @@ describe("Domain Service", () => {
       });
 
       it("should return an empty array for an unsupported domain", async () => {
-        expect(await getRegistriesForDomain("vitalik.notsupport")).toHaveLength(
-          0
-        );
+        expect(await getRegistriesForDomain("vitalik.notsupport")).toHaveLength(0);
         expect(await getRegistriesForDomain("vitaliketh")).toHaveLength(0);
       });
     });
@@ -21,9 +16,7 @@ describe("Domain Service", () => {
     describe("getRegistriesForAddress", () => {
       it("should return a registry for a supported domain (ENS)", async () => {
         expect(
-          await getRegistriesForAddress(
-            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-          )
+          await getRegistriesForAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"),
         ).toHaveLength(1);
       });
 

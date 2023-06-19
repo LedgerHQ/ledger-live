@@ -30,13 +30,7 @@ const boolParser = (v: unknown): boolean | null | undefined => {
 const stringParser = (v: unknown): string | null | undefined =>
   typeof v === "string" ? v : undefined;
 
-type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | { [x: string]: JSONValue }
-  | Array<JSONValue>;
+type JSONValue = string | number | boolean | null | { [x: string]: JSONValue } | Array<JSONValue>;
 
 const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
@@ -52,10 +46,7 @@ const stringArrayParser = (v: any): string[] | null | undefined => {
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
-const envDefinitions: Record<
-  string,
-  EnvDef<boolean | string | number | string[] | unknown>
-> = {
+const envDefinitions: Record<string, EnvDef<boolean | string | number | string[] | unknown>> = {
   ADDRESS_POISONING_FAMILIES: {
     def: "ethereum,evm,tron",
     parser: stringParser,
@@ -740,6 +731,31 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
+  EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_CANCEL_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Cancel transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction max fee gap factor for EIP1559 for edit eth transaction feature",
+  },
   ENABLE_NETWORK_LOGS: {
     def: false,
     parser: boolParser,
@@ -747,29 +763,23 @@ const envDefinitions: Record<
   },
 };
 
-export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
-  envDefinitions[name];
+export const getDefinition = (name: string): EnvDef<any> | null | undefined => envDefinitions[name];
 
 envDefinitions as Record<EnvName, EnvDef<any>>;
-const defaults: Record<EnvName, any> = mapValues(
-  envDefinitions,
-  (o) => o.def
-) as unknown as Record<EnvName, any>;
+const defaults: Record<EnvName, any> = mapValues(envDefinitions, o => o.def) as unknown as Record<
+  EnvName,
+  any
+>;
 // private local state
 const env: Record<EnvName, any> = { ...defaults };
-export const getAllEnvNames = (): EnvName[] =>
-  Object.keys(envDefinitions) as EnvName[];
+export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions) as EnvName[];
 export const getAllEnvs = (): Env => ({ ...env });
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
-export const getEnv = <Name extends EnvName>(name: Name): EnvValue<Name> =>
-  env[name];
-export const getEnvDefault = <Name extends EnvName>(
-  name: Name
-): EnvValue<Name> => defaults[name];
+export const getEnv = <Name extends EnvName>(name: Name): EnvValue<Name> => env[name];
+export const getEnvDefault = <Name extends EnvName>(name: Name): EnvValue<Name> => defaults[name];
 export const isEnvDefault = <Name extends EnvName>(name: Name): boolean =>
   env[name] === defaults[name];
-export const getEnvDesc = <Name extends EnvName>(name: Name): string =>
-  envDefinitions[name].desc;
+export const getEnvDesc = <Name extends EnvName>(name: Name): string => envDefinitions[name].desc;
 type ChangeValue<T extends EnvName> = {
   name: EnvName;
   value: EnvValue<T>;
@@ -777,10 +787,7 @@ type ChangeValue<T extends EnvName> = {
 };
 export const changes: Subject<ChangeValue<any>> = new Subject();
 // change one environment
-export const setEnv = <Name extends EnvName>(
-  name: Name,
-  value: EnvValue<Name>
-): void => {
+export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>): void => {
   const oldValue = env[name];
 
   if (oldValue !== value) {

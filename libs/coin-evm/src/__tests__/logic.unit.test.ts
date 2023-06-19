@@ -2,7 +2,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import * as RPC_API from "../api/rpc.common";
+import * as RPC_API from "../api/rpc/rpc.common";
 import {
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
@@ -147,18 +147,14 @@ describe("EVM Family", () => {
       });
 
       it("should try to get additionalFees for a valid layer 2", async () => {
-        const spy = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
+        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(optimism, {} as any);
         expect(spy).toBeCalled();
       });
 
       it("should not try to get additionalFees for an invalid layer 2", async () => {
-        const spy = jest
-          .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
+        const spy = jest.spyOn(RPC_API, "getOptimismAdditionalFees").mockImplementation(jest.fn());
 
         await getAdditionalLayer2Fees(ethereum, {} as any);
         expect(spy).not.toBeCalled();
@@ -168,10 +164,7 @@ describe("EVM Family", () => {
     describe("mergeSubAccounts", () => {
       it("should merge 2 different sub accounts", () => {
         const tokenAccount1 = {
-          ...makeTokenAccount(
-            "0xkvn",
-            getTokenById("ethereum/erc20/usd__coin")
-          ),
+          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
           balance: new BigNumber(1),
           operations: [],
         };
@@ -180,11 +173,7 @@ describe("EVM Family", () => {
           balance: new BigNumber(2),
           operations: [],
         };
-        const account = makeAccount(
-          "0xkvn",
-          getCryptoCurrencyById("ethereum"),
-          [tokenAccount1]
-        );
+        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount1]);
 
         const newSubAccounts = mergeSubAccounts(account, [tokenAccount2]);
         expect(newSubAccounts).toEqual([tokenAccount1, tokenAccount2]);
@@ -195,10 +184,7 @@ describe("EVM Family", () => {
 
       it("should merge 2 different sub accounts and update the first one", () => {
         const tokenAccount1 = {
-          ...makeTokenAccount(
-            "0xkvn",
-            getTokenById("ethereum/erc20/usd__coin")
-          ),
+          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
           balance: new BigNumber(1),
           operations: [],
         };
@@ -228,16 +214,9 @@ describe("EVM Family", () => {
           balance: new BigNumber(2),
           operations: [],
         };
-        const account = makeAccount(
-          "0xkvn",
-          getCryptoCurrencyById("ethereum"),
-          [tokenAccount1]
-        );
+        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount1]);
 
-        const newSubAccounts = mergeSubAccounts(account, [
-          tokenAccount1Bis,
-          tokenAccount2,
-        ]);
+        const newSubAccounts = mergeSubAccounts(account, [tokenAccount1Bis, tokenAccount2]);
         expect(newSubAccounts).toEqual([tokenAccount1Bis, tokenAccount2]);
         expect(newSubAccounts).not.toBe(account.subAccounts); // shouldn't mutate original account
         expect(account.subAccounts).toEqual([tokenAccount1]); // shouldn't mutate original account
@@ -253,10 +232,7 @@ describe("EVM Family", () => {
           hash: "0xAgAinAnotHeRH4sh",
         });
         const tokenAccount1 = {
-          ...makeTokenAccount(
-            "0xkvn",
-            getTokenById("ethereum/erc20/usd__coin")
-          ),
+          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
           balance: new BigNumber(1),
           operations: [op1, op2],
           operationsCount: 2,
@@ -266,31 +242,20 @@ describe("EVM Family", () => {
           operations: [op3, op1, op2],
           operationsCount: 3,
         };
-        const account = makeAccount(
-          "0xkvn",
-          getCryptoCurrencyById("ethereum"),
-          [tokenAccount1]
-        );
+        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount1]);
 
         const newSubAccounts = mergeSubAccounts(account, [tokenAccount1Bis]);
         expect(newSubAccounts).not.toBe(account.subAccounts); // shouldn't mutate original account
         expect(account.subAccounts).toEqual([tokenAccount1]); // shouldn't mutate original account
         expect(newSubAccounts[0]).not.toBe(account.subAccounts?.[0]); // changing the ref as change happened
-        expect(newSubAccounts[0]?.operations?.[1]).toBe(
-          account.subAccounts?.[0]?.operations?.[0]
-        ); // keeping the reference for the ops though
-        expect(newSubAccounts[0]?.operations?.[2]).toBe(
-          account.subAccounts?.[0]?.operations?.[1]
-        ); // keeping the reference for the ops though
+        expect(newSubAccounts[0]?.operations?.[1]).toBe(account.subAccounts?.[0]?.operations?.[0]); // keeping the reference for the ops though
+        expect(newSubAccounts[0]?.operations?.[2]).toBe(account.subAccounts?.[0]?.operations?.[1]); // keeping the reference for the ops though
         expect(newSubAccounts).toEqual([tokenAccount1Bis]);
       });
 
       it("should return only new sub accounts", () => {
         const tokenAccount = {
-          ...makeTokenAccount(
-            "0xkvn",
-            getTokenById("ethereum/erc20/usd__coin")
-          ),
+          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
           balance: new BigNumber(1),
         };
         const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"));
@@ -303,17 +268,10 @@ describe("EVM Family", () => {
 
       it("should dedup sub accounts", () => {
         const tokenAccount = {
-          ...makeTokenAccount(
-            "0xkvn",
-            getTokenById("ethereum/erc20/usd__coin")
-          ),
+          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
           balance: new BigNumber(1),
         };
-        const account = makeAccount(
-          "0xkvn",
-          getCryptoCurrencyById("ethereum"),
-          [tokenAccount]
-        );
+        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 
         const newSubAccounts = mergeSubAccounts(account, [
           tokenAccount,
@@ -332,9 +290,7 @@ describe("EVM Family", () => {
       });
 
       it("should provide a valid sha256 hash", () => {
-        expect(getSyncHash(currency)).toStrictEqual(
-          expect.stringMatching(/^0x[A-Fa-f0-9]{64}$/)
-        );
+        expect(getSyncHash(currency)).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{64}$/));
       });
 
       it("should provide a hash not dependent on reference", () => {
@@ -342,11 +298,9 @@ describe("EVM Family", () => {
           .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
           .mockImplementationOnce((currency): TokenCurrency[] => {
             const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens"
+              "@ledgerhq/cryptoassets/tokens",
             );
-            return listTokensForCryptoCurrency(currency).map(
-              (t: TokenCurrency) => ({ ...t })
-            );
+            return listTokensForCryptoCurrency(currency).map((t: TokenCurrency) => ({ ...t }));
           });
         expect(getSyncHash(currency)).toEqual(getSyncHash(currency));
       });
@@ -354,9 +308,9 @@ describe("EVM Family", () => {
       it("should provide a new hash if a token is removed", () => {
         jest
           .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce((currency) => {
+          .mockImplementationOnce(currency => {
             const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens"
+              "@ledgerhq/cryptoassets/tokens",
             );
             const list: TokenCurrency[] = listTokensForCryptoCurrency(currency);
             return list.slice(0, list.length - 2);
@@ -367,12 +321,11 @@ describe("EVM Family", () => {
       it("should provide a new hash if a token is modified", () => {
         jest
           .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce((currency) => {
+          .mockImplementationOnce(currency => {
             const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens"
+              "@ledgerhq/cryptoassets/tokens",
             );
-            const [first, ...rest]: TokenCurrency[] =
-              listTokensForCryptoCurrency(currency);
+            const [first, ...rest]: TokenCurrency[] = listTokensForCryptoCurrency(currency);
             const modifedFirst = { ...first, delisted: !first.delisted };
             return [modifedFirst, ...rest];
           });
@@ -383,9 +336,9 @@ describe("EVM Family", () => {
       it("should provide a new hash if a token is added", () => {
         jest
           .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce((currency) => {
+          .mockImplementationOnce(currency => {
             const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens"
+              "@ledgerhq/cryptoassets/tokens",
             );
             return [
               ...listTokensForCryptoCurrency(currency),

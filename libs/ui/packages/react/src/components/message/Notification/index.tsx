@@ -29,11 +29,11 @@ const Container = styled(FlexBox).attrs<ContainerProps>({
   columnGap: 8,
   alignItems: "center",
 })<ContainerProps>`
-  --notification-badge-border: ${(p) => {
+  --notification-badge-border: ${p => {
     /* Set a CSS variable that will be consumed by the Badge component */
     return p.hasBackground ? p.theme.colors.neutral.c30 : p.theme.colors.background.main;
   }};
-  background-color: ${(p) => (p.hasBackground ? p.theme.colors.neutral.c30 : "transparent")};
+  background-color: ${p => (p.hasBackground ? p.theme.colors.neutral.c30 : "transparent")};
 
   border-radius: 8px;
 `;
@@ -61,7 +61,7 @@ function Notification({
         )}
         {link && (
           <FlexBox justifyContent={"flex-start"}>
-            <Link onClick={(event) => onLinkClick && onLinkClick(event)} Icon={ExternalLinkMedium}>
+            <Link onClick={event => onLinkClick && onLinkClick(event)} Icon={ExternalLinkMedium}>
               {link}
             </Link>
           </FlexBox>

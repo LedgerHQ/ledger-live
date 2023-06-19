@@ -1,11 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  createContext,
-  useMemo,
-  useState,
-  useCallback,
-} from "react";
+import React, { useContext, useEffect, createContext, useMemo, useState, useCallback } from "react";
 import { LiveAppRegistry } from "./types";
 import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
@@ -53,9 +46,7 @@ type LiveAppProviderProps = {
   updateFrequency: number;
 };
 
-export function useRemoteLiveAppManifest(
-  appId?: string
-): LiveAppManifest | undefined {
+export function useRemoteLiveAppManifest(appId?: string): LiveAppManifest | undefined {
   const liveAppRegistry = useContext(liveAppContext).state;
 
   if (!liveAppRegistry.value || !appId) {
@@ -69,20 +60,19 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
   return useContext(liveAppContext);
 }
 
-export function useManifests(
-  options: Partial<LiveAppManifest> = {}
-): LiveAppManifest[] {
-  const liveAppFiltered =
-    useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? [];
+export function useManifests(options: Partial<LiveAppManifest> = {}): LiveAppManifest[] {
+  const ctx = useRemoteLiveAppContext();
 
   const filteredList = useMemo(() => {
+    const liveAppFiltered = ctx.state?.value?.liveAppFiltered ?? [];
     if (Object.keys(options).length === 0) {
       return liveAppFiltered;
     }
-    return liveAppFiltered.filter((manifest) =>
-      Object.keys(options).some((key) => manifest[key] === options[key])
+
+    return liveAppFiltered.filter(manifest =>
+      Object.keys(options).some(key => manifest[key] === options[key]),
     );
-  }, [options, liveAppFiltered]);
+  }, [options, ctx]);
   return filteredList;
 }
 
@@ -95,8 +85,7 @@ export function RemoteLiveAppProvider({
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);
 
-  const { allowExperimentalApps, allowDebugApps, apiVersions, platform } =
-    parameters;
+  const { allowExperimentalApps, allowDebugApps, apiVersions, platform } = parameters;
 
   // apiVersion renamed without (s) because param
   const apiVersion = apiVersions ? apiVersions : ["1.0.0", "2.0.0"];
@@ -105,7 +94,7 @@ export function RemoteLiveAppProvider({
     provider === "production" ? getEnv("PLATFORM_MANIFEST_API_URL") : provider;
 
   const updateManifests = useCallback(async () => {
-    setState((currentState) => ({
+    setState(currentState => ({
       ...currentState,
       isLoading: true,
       error: null,
@@ -140,7 +129,7 @@ export function RemoteLiveAppProvider({
       }));
     } catch (error) {
       if (!isMounted()) return;
-      setState((currentState) => ({
+      setState(currentState => ({
         ...currentState,
         isLoading: false,
         error,
@@ -156,7 +145,7 @@ export function RemoteLiveAppProvider({
       setProvider,
       updateManifests,
     }),
-    [state, provider, setProvider, updateManifests]
+    [state, provider, setProvider, updateManifests],
   );
 
   useEffect(() => {
@@ -169,7 +158,5 @@ export function RemoteLiveAppProvider({
     };
   }, [updateFrequency, updateManifests]);
 
-  return (
-    <liveAppContext.Provider value={value}>{children}</liveAppContext.Provider>
-  );
+  return <liveAppContext.Provider value={value}>{children}</liveAppContext.Provider>;
 }

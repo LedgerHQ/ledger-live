@@ -63,26 +63,22 @@ export function EthereumStakingDrawerProvider({
             <Text variant="body" fontWeight="semiBold">
               {t(`stake.ethereum.providers.${provider.id}.title`)}
             </Text>
-            {hasTag && (
-              <Tag type="color">
-                {t(`stake.ethereum.providers.${provider.id}.tag`)}
-              </Tag>
-            )}
+            {hasTag && <Tag type="color">{t(`stake.ethereum.providers.${provider.id}.tag`)}</Tag>}
           </Flex>
           <Flex rowGap={12}>
             <Text variant="paragraph" lineHeight="20px" color="neutral.c70">
               {t(`stake.ethereum.providers.${provider.id}.description`)}
             </Text>
-            <Link
-              size="medium"
-              type="color"
-              iconPosition="right"
-              onPress={supportLinkPress}
-              Icon={Icons.ExternalLinkMedium}
-            >
-              {t(`stake.ethereum.providers.${provider.id}.supportLink`)}
-            </Link>
           </Flex>
+          <Link
+            size="medium"
+            type="color"
+            iconPosition="right"
+            onPress={supportLinkPress}
+            Icon={Icons.ExternalLinkMedium}
+          >
+            {t(`stake.ethereum.providers.${provider.id}.supportLink`)}
+          </Link>
         </Flex>
         <Flex alignSelf="center">
           <Icon name="ChevronRight" size={32} color="neutral.c100" />

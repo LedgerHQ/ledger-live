@@ -1,19 +1,8 @@
-import React, {
-  useRef,
-  useEffect,
-  memo,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { useRef, useEffect, memo, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
-import {
-  State,
-  AppsDistribution,
-  Action,
-} from "@ledgerhq/live-common/apps/index";
+import { State, AppsDistribution, Action } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
 import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
@@ -54,10 +43,7 @@ type Props = {
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  setAppUninstallWithDependencies: (params: { dependents: App[]; app: App }) => void;
   dispatch: (action: Action) => void;
   appList: App[];
   onLanguageChange: () => void;
@@ -116,8 +102,7 @@ const DeviceCard = ({
     [deviceInfo.seVersion, deviceModel.id],
   );
 
-  const showDeviceLanguage =
-    isLocalizationSupported && deviceInfo.languageId !== undefined;
+  const showDeviceLanguage = isLocalizationSupported && deviceInfo.languageId !== undefined;
 
   const hasCustomImage =
     useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
@@ -141,18 +126,8 @@ const DeviceCard = ({
             initialDeviceName={initialDeviceName}
             disabled={disableFlows}
           />
-          <Flex
-            backgroundColor={"neutral.c30"}
-            py={1}
-            px={3}
-            borderRadius={4}
-            my={2}
-          >
-            <Text
-              variant={"subtitle"}
-              fontWeight={"semiBold"}
-              color={"neutral.c80"}
-            >
+          <Flex backgroundColor={"neutral.c30"} py={1} px={3} borderRadius={4} my={2}>
+            <Text variant={"subtitle"} fontWeight={"semiBold"} color={"neutral.c80"}>
               <Trans
                 i18nKey="FirmwareVersionRow.subtitle"
                 values={{ version: deviceInfo.version }}
@@ -176,17 +151,13 @@ const DeviceCard = ({
       {hasCustomImage || showDeviceLanguage ? (
         <>
           <Flex px={6}>
-            {hasCustomImage && (
-              <CustomLockScreen disabled={disableFlows} device={device} />
-            )}
+            {hasCustomImage && <CustomLockScreen disabled={disableFlows} device={device} />}
             {showDeviceLanguage && (
               <Flex mt={hasCustomImage ? 6 : 0}>
                 <DeviceLanguage
                   disabled={disableFlows}
                   currentDeviceLanguage={
-                    idsToLanguage[
-                      deviceInfo.languageId as keyof typeof idsToLanguage
-                    ]
+                    idsToLanguage[deviceInfo.languageId as keyof typeof idsToLanguage]
                   }
                   deviceInfo={deviceInfo}
                   device={device}

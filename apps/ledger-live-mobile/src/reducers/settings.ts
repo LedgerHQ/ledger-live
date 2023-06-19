@@ -84,10 +84,7 @@ import { ScreenName } from "../const";
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
-export const supportedCountervalues = [
-  ...listSupportedFiats(),
-  ...possibleIntermediaries,
-];
+export const supportedCountervalues = [...listSupportedFiats(), ...possibleIntermediaries];
 export const intermediaryCurrency = (from: Currency, _to: Currency) => {
   if (from === ethereum || from.type === "TokenCurrency") return ethereum;
   return bitcoin;
@@ -194,15 +191,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const {
       payload: { developerModeEnabled, ...rest },
     } = action as Action<SettingsImportDesktopPayload>;
-    if (developerModeEnabled !== undefined)
-      setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
+    if (developerModeEnabled !== undefined) setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
     return {
       ...state,
       ...rest,
-      currenciesSettings: merge(
-        state.currenciesSettings,
-        rest.currenciesSettings,
-      ),
+      currenciesSettings: merge(state.currenciesSettings, rest.currenciesSettings),
     };
   },
 
@@ -234,8 +227,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     privacy: {
       ...state.privacy,
-      biometricsEnabled: (action as Action<SettingsSetPrivacyBiometricsPayload>)
-        .payload,
+      biometricsEnabled: (action as Action<SettingsSetPrivacyBiometricsPayload>).payload,
     },
   }),
 
@@ -246,8 +238,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS]: (state, action) => ({
     ...state,
-    reportErrorsEnabled: (action as Action<SettingsSetReportErrorsPayload>)
-      .payload,
+    reportErrorsEnabled: (action as Action<SettingsSetReportErrorsPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_ANALYTICS]: (state, action) => ({
@@ -281,8 +272,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SETTINGS_SET_SELECTED_TIME_RANGE]: (state, action) => ({
     ...state,
-    selectedTimeRange: (action as Action<SettingsSetSelectedTimeRangePayload>)
-      .payload,
+    selectedTimeRange: (action as Action<SettingsSetSelectedTimeRangePayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW]: state => ({
@@ -293,16 +283,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_LAST_SEEN_CUSTOM_IMAGE]: (state, action) => ({
     ...state,
     lastSeenCustomImage: {
-      size: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
-        .imageSize,
-      hash: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload
-        .imageHash,
+      size: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload.imageSize,
+      hash: (action as Action<SettingsSetLastSeenCustomImagePayload>).payload.imageHash,
     },
   }),
 
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => {
-    const payload = (action as Action<SettingsCompleteOnboardingPayload>)
-      .payload;
+    const payload = (action as Action<SettingsCompleteOnboardingPayload>).payload;
     return {
       ...state,
       hasCompletedOnboarding: payload === false ? payload : true,
@@ -311,14 +298,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
     ...state,
-    hasInstalledAnyApp: (action as Action<SettingsInstallAppFirstTimePayload>)
-      .payload,
+    hasInstalledAnyApp: (action as Action<SettingsInstallAppFirstTimePayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_READONLY_MODE]: (state, action) => ({
     ...state,
-    readOnlyModeEnabled: (action as Action<SettingsSetReadOnlyModePayload>)
-      .payload,
+    readOnlyModeEnabled: (action as Action<SettingsSetReadOnlyModePayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST]: state => ({
@@ -326,20 +311,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     graphCountervalueFirst: !state.graphCountervalueFirst,
   }),
 
-  [SettingsActionTypes.SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS]: (
-    state,
-    action,
-  ) => ({
+  [SettingsActionTypes.SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS]: (state, action) => ({
     ...state,
-    hideEmptyTokenAccounts: (
-      action as Action<SettingsHideEmptyTokenAccountsPayload>
-    ).payload,
+    hideEmptyTokenAccounts: (action as Action<SettingsHideEmptyTokenAccountsPayload>).payload,
   }),
 
-  [SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT]: (
-    state,
-    action,
-  ) => ({
+  [SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT]: (state, action) => ({
     ...state,
     filterTokenOperationsZeroAmount: (
       action as Action<SettingsFilterTokenOperationsZeroAmountPayload>
@@ -360,10 +337,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const ids = state.blacklistedTokenIds;
     return {
       ...state,
-      blacklistedTokenIds: [
-        ...ids,
-        (action as Action<SettingsBlacklistTokenPayload>).payload,
-      ],
+      blacklistedTokenIds: [...ids, (action as Action<SettingsBlacklistTokenPayload>).payload],
     };
   },
 
@@ -371,10 +345,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     const ids = state.hiddenNftCollections;
     return {
       ...state,
-      hiddenNftCollections: [
-        ...ids,
-        (action as Action<SettingsHideNftCollectionPayload>).payload,
-      ],
+      hiddenNftCollections: [...ids, (action as Action<SettingsHideNftCollectionPayload>).payload],
     };
   },
 
@@ -383,8 +354,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       hiddenNftCollections: ids.filter(
-        id =>
-          id !== (action as Action<SettingsUnhideNftCollectionPayload>).payload,
+        id => id !== (action as Action<SettingsUnhideNftCollectionPayload>).payload,
       ),
     };
   },
@@ -399,14 +369,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SETTINGS_SET_AVAILABLE_UPDATE]: (state, action) => ({
     ...state,
-    hasAvailableUpdate: (action as Action<SettingsSetAvailableUpdatePayload>)
-      .payload,
+    hasAvailableUpdate: (action as Action<SettingsSetAvailableUpdatePayload>).payload,
   }),
 
-  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
-    state,
-    action,
-  ): SettingsState => ({
+  [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state, action): SettingsState => ({
     ...state,
     ...(action as Action<DangerouslyOverrideStatePayload>).payload.settings,
   }),
@@ -421,14 +387,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     osTheme: (action as Action<SettingsSetOsThemePayload>).payload,
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
-    state,
-    action,
-  ) => ({
+  [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (state, action) => ({
     ...state,
-    dismissedDynamicCards: (
-      action as Action<SettingsSetDismissedDynamicCardsPayload>
-    ).payload,
+    dismissedDynamicCards: (action as Action<SettingsSetDismissedDynamicCardsPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
@@ -451,16 +412,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     swap: {
       ...state.swap,
-      selectableCurrencies: (
-        action as Action<SettingsSetSwapSelectableCurrenciesPayload>
-      ).payload,
+      selectableCurrencies: (action as Action<SettingsSetSwapSelectableCurrenciesPayload>).payload,
     },
   }),
 
   [SettingsActionTypes.SET_SWAP_KYC]: (state, action) => {
-    const { provider, id, status } = (
-      action as Action<SettingsSetSwapKycPayload>
-    ).payload;
+    const { provider, id, status } = (action as Action<SettingsSetSwapKycPayload>).payload;
     const KYC = { ...state.swap.KYC };
 
     // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
@@ -497,25 +454,19 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
     knownDeviceModelIds: {
       ...state.knownDeviceModelIds,
-      [(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.modelId]:
-        true,
+      [(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.modelId]: true,
     },
   }),
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE]: (state, action) => ({
     ...state,
-    customImageType: (action as Action<SettingsSetCustomImageTypePayload>)
-      .payload.customImageType,
+    customImageType: (action as Action<SettingsSetCustomImageTypePayload>).payload.customImageType,
   }),
 
-  [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (
-    state,
-    action,
-  ) => ({
+  [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (state, action) => ({
     ...state,
-    hasSeenStaxEnabledNftsPopup: (
-      action as Action<SettingsSetHasSeenStaxEnabledNftsPopupPayload>
-    ).payload.hasSeenStaxEnabledNftsPopup,
+    hasSeenStaxEnabledNftsPopup: (action as Action<SettingsSetHasSeenStaxEnabledNftsPopupPayload>)
+      .payload.hasSeenStaxEnabledNftsPopup,
   }),
 
   [SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID]: (state, action) => {
@@ -526,8 +477,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
         ...state.lastSeenDevice,
         deviceInfo: {
           ...state.lastSeenDevice.deviceInfo,
-          languageId: (action as Action<SettingsLastSeenDeviceLanguagePayload>)
-            .payload,
+          languageId: (action as Action<SettingsLastSeenDeviceLanguagePayload>).payload,
         },
       },
     };
@@ -544,34 +494,27 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(
-      id =>
-        id !==
-        (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
+      id => id !== (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
     ),
   }),
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
     ...state,
-    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>)
-      .payload,
+    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
-    lastConnectedDevice: (
-      action as Action<SettingsSetLastConnectedDevicePayload>
-    ).payload,
+    lastConnectedDevice: (action as Action<SettingsSetLastConnectedDevicePayload>).payload,
     knownDeviceModelIds: {
       ...state.knownDeviceModelIds,
-      [(action as Action<SettingsSetLastConnectedDevicePayload>).payload
-        .modelId]: true,
+      [(action as Action<SettingsSetLastConnectedDevicePayload>).payload.modelId]: true,
     },
   }),
 
   [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (state, action) => ({
     ...state,
-    hasOrderedNano: (action as Action<SettingsSetHasOrderedNanoPayload>)
-      .payload,
+    hasOrderedNano: (action as Action<SettingsSetHasOrderedNanoPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_MARKET_REQUEST_PARAMS]: (state, action) => ({
@@ -584,15 +527,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY]: (state, action) => ({
     ...state,
-    marketCounterCurrency: (
-      action as Action<SettingsSetMarketCounterCurrencyPayload>
-    ).payload,
+    marketCounterCurrency: (action as Action<SettingsSetMarketCounterCurrencyPayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (
-    state,
-    action,
-  ) => ({
+  [SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (state, action) => ({
     ...state,
     marketFilterByStarredAccounts: (
       action as Action<SettingsSetMarketFilterByStarredAccountsPayload>
@@ -601,15 +539,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_SENSITIVE_ANALYTICS]: (state, action) => ({
     ...state,
-    sensitiveAnalytics: (action as Action<SettingsSetSensitiveAnalyticsPayload>)
-      .payload,
+    sensitiveAnalytics: (action as Action<SettingsSetSensitiveAnalyticsPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE]: (state, action) => ({
     ...state,
-    firstConnectHasDeviceUpdated: (
-      action as Action<SettingsSetFirstConnectHasDeviceUpdatedPayload>
-    ).payload,
+    firstConnectHasDeviceUpdated: (action as Action<SettingsSetFirstConnectHasDeviceUpdatedPayload>)
+      .payload,
   }),
 
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
@@ -620,9 +556,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.RESET_SWAP_LOGIN_AND_KYC_DATA]: (
-    state: SettingsState,
-  ) => ({
+  [SettingsActionTypes.RESET_SWAP_LOGIN_AND_KYC_DATA]: (state: SettingsState) => ({
     ...state,
     swap: {
       ...state.swap,
@@ -630,10 +564,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (
-    state,
-    action,
-  ) => ({
+  [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
     ...state,
     walletTabNavigatorLastVisitedTab: (
       action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
@@ -646,9 +577,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   }),
 
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
-    const { id, value } = (
-      action as Action<SettingsSetOverriddenFeatureFlagPlayload>
-    ).payload;
+    const { id, value } = (action as Action<SettingsSetOverriddenFeatureFlagPlayload>).payload;
     return {
       ...state,
       overriddenFeatureFlags: {
@@ -660,46 +589,32 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => ({
     ...state,
-    overriddenFeatureFlags: (
-      action as Action<SettingsSetOverriddenFeatureFlagsPlayload>
-    ).payload,
+    overriddenFeatureFlags: (action as Action<SettingsSetOverriddenFeatureFlagsPlayload>).payload,
   }),
 
   [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => ({
     ...state,
-    featureFlagsBannerVisible: (
-      action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>
-    ).payload,
+    featureFlagsBannerVisible: (action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>)
+      .payload,
   }),
 
   [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => ({
     ...state,
-    debugAppLevelDrawerOpened: (
-      action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>
-    ).payload,
+    debugAppLevelDrawerOpened: (action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>)
+      .payload,
   }),
 
   [SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT]: (state, action) => ({
     ...state,
-    hasBeenUpsoldProtect: (
-      action as Action<SettingsSetHasBeenUpsoldProtectPayload>
-    ).payload,
+    hasBeenUpsoldProtect: (action as Action<SettingsSetHasBeenUpsoldProtectPayload>).payload,
   }),
-  [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (
-    state,
-    action,
-  ) => ({
+  [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (state, action) => ({
     ...state,
-    generalTermsVersionAccepted: (
-      action as Action<SettingsSetGeneralTermsVersionAccepted>
-    ).payload,
+    generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
   }),
 };
 
-export default handleActions<SettingsState, SettingsPayload>(
-  handlers,
-  INITIAL_STATE,
-);
+export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
 
 const storeSelector = (state: State): SettingsState => state.settings;
 
@@ -713,22 +628,17 @@ export const counterValueCurrencySelector = createSelector(
   counterValueCurrencyLocalSelector,
 );
 
-const counterValueExchangeLocalSelector = (s: SettingsState) =>
-  s.counterValueExchange;
+const counterValueExchangeLocalSelector = (s: SettingsState) => s.counterValueExchange;
 
 export const counterValueExchangeSelector = createSelector(
   storeSelector,
   counterValueExchangeLocalSelector,
 );
 
-const defaultCurrencySettingsForCurrency: (
-  _: Currency,
-) => CurrencySettings = crypto => {
+const defaultCurrencySettingsForCurrency: (_: Currency) => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
-    confirmationsNb: defaults.confirmationsNb
-      ? defaults.confirmationsNb.def
-      : 0,
+    confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
     exchange: null,
   };
 };
@@ -748,10 +658,7 @@ export const reportErrorsEnabledSelector = createSelector(
   storeSelector,
   s => s.reportErrorsEnabled,
 );
-export const analyticsEnabledSelector = createSelector(
-  storeSelector,
-  s => s.analyticsEnabled,
-);
+export const analyticsEnabledSelector = createSelector(storeSelector, s => s.analyticsEnabled);
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
   s => s.lastSeenCustomImage,
@@ -776,8 +683,7 @@ export const exchangeSettingsForPairSelector = (
     from: Currency;
     to: Currency;
   },
-): string | null | undefined =>
-  state.settings.pairExchanges[pairHash(from, to)];
+): string | null | undefined => state.settings.pairExchanges[pairHash(from, to)];
 export const confirmationsNbForCurrencySelector = (
   state: State,
   {
@@ -791,35 +697,23 @@ export const confirmationsNbForCurrencySelector = (
   const defs = currencySettingsDefaults(currency);
   return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
 };
-export const selectedTimeRangeSelector = (state: State) =>
-  state.settings.selectedTimeRange;
-export const orderAccountsSelector = (state: State) =>
-  state.settings.orderAccounts;
+export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
+export const orderAccountsSelector = (state: State) => state.settings.orderAccounts;
 export const hasCompletedCustomImageFlowSelector = (state: State) =>
   state.settings.hasCompletedCustomImageFlow;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
-export const hasInstalledAnyAppSelector = (state: State) =>
-  state.settings.hasInstalledAnyApp;
-export const countervalueFirstSelector = (state: State) =>
-  state.settings.graphCountervalueFirst;
-export const readOnlyModeEnabledSelector = (state: State) =>
-  state.settings.readOnlyModeEnabled;
-export const blacklistedTokenIdsSelector = (state: State) =>
-  state.settings.blacklistedTokenIds;
-export const hiddenNftCollectionsSelector = (state: State) =>
-  state.settings.hiddenNftCollections;
+export const hasInstalledAnyAppSelector = (state: State) => state.settings.hasInstalledAnyApp;
+export const countervalueFirstSelector = (state: State) => state.settings.graphCountervalueFirst;
+export const readOnlyModeEnabledSelector = (state: State) => state.settings.readOnlyModeEnabled;
+export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
+export const hiddenNftCollectionsSelector = (state: State) => state.settings.hiddenNftCollections;
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
   () => getEnv("MANAGER_DEV_MODE"),
   state => state.settings.currenciesSettings,
   state => state.settings.pairExchanges,
-  (
-    counterValueCurrency,
-    developerModeEnabled,
-    currenciesSettings,
-    pairExchanges,
-  ) => ({
+  (counterValueCurrency, developerModeEnabled, currenciesSettings, pairExchanges) => ({
     counterValue: counterValueCurrency.ticker,
     currenciesSettings,
     pairExchanges,
@@ -830,14 +724,10 @@ export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountEnabledSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
-export const dismissedBannersSelector = (state: State) =>
-  state.settings.dismissedBanners;
-export const hasAvailableUpdateSelector = (state: State) =>
-  state.settings.hasAvailableUpdate;
-export const dismissedDynamicCardsSelector = (state: State) =>
-  state.settings.dismissedDynamicCards;
-export const discreetModeSelector = (state: State): boolean =>
-  state.settings.discreetMode === true;
+export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners;
+export const hasAvailableUpdateSelector = (state: State) => state.settings.hasAvailableUpdate;
+export const dismissedDynamicCardsSelector = (state: State) => state.settings.dismissedDynamicCards;
+export const discreetModeSelector = (state: State): boolean => state.settings.discreetMode === true;
 
 export const themeSelector = (state: State) => {
   const val = state.settings.theme;
@@ -846,10 +736,8 @@ export const themeSelector = (state: State) => {
 export const osThemeSelector = (state: State) => state.settings.osTheme;
 export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
-export const languageIsSetByUserSelector = (state: State) =>
-  state.settings.languageIsSetByUser;
-export const localeSelector = (state: State) =>
-  state.settings.locale || getDefaultLocale();
+export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
+export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
 export const swapSelectableCurrenciesSelector = (state: State) =>
@@ -867,14 +755,11 @@ export const lastSeenDeviceSelector = (state: State) => {
   }
   return state.settings.lastSeenDevice;
 };
-export const knownDeviceModelIdsSelector = (state: State) =>
-  state.settings.knownDeviceModelIds;
+export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
-export const customImageTypeSelector = (state: State) =>
-  state.settings.customImageType;
-export const starredMarketCoinsSelector = (state: State) =>
-  state.settings.starredMarketCoins;
+export const customImageTypeSelector = (state: State) => state.settings.customImageType;
+export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const lastConnectedDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
   // to be removed in a while.
@@ -889,24 +774,18 @@ export const lastConnectedDeviceSelector = (state: State) => {
 
   return state.settings.lastConnectedDevice;
 };
-export const hasOrderedNanoSelector = (state: State) =>
-  state.settings.hasOrderedNano;
-export const marketRequestParamsSelector = (state: State) =>
-  state.settings.marketRequestParams;
-export const marketCounterCurrencySelector = (state: State) =>
-  state.settings.marketCounterCurrency;
+export const hasOrderedNanoSelector = (state: State) => state.settings.hasOrderedNano;
+export const marketRequestParamsSelector = (state: State) => state.settings.marketRequestParams;
+export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
-export const customImageBackupSelector = (state: State) =>
-  state.settings.customImageBackup;
-export const sensitiveAnalyticsSelector = (state: State) =>
-  state.settings.sensitiveAnalytics;
+export const customImageBackupSelector = (state: State) => state.settings.customImageBackup;
+export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const firstConnectionHasDeviceSelector = (state: State) =>
   state.settings.firstConnectionHasDevice;
 export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
   state.settings.firstConnectHasDeviceUpdated;
-export const notificationsSelector = (state: State) =>
-  state.settings.notifications;
+export const notificationsSelector = (state: State) => state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
@@ -916,7 +795,6 @@ export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
-export const hasBeenUpsoldProtectSelector = (state: State) =>
-  state.settings.hasBeenUpsoldProtect;
+export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.hasBeenUpsoldProtect;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;

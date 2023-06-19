@@ -21,23 +21,15 @@ describe("fetchAllTransactions", () => {
   });
 
   it("should keep calling getTransactions until token is null", async () => {
-    getTransactionsSpy.mockReturnValueOnce(
-      Promise.resolve({ txs: [], nextPageToken: "token1" })
-    );
-    getTransactionsSpy.mockReturnValueOnce(
-      Promise.resolve({ txs: [], nextPageToken: "token2" })
-    );
-    getTransactionsSpy.mockReturnValueOnce(
-      Promise.resolve({ txs: [], nextPageToken: null })
-    );
+    getTransactionsSpy.mockReturnValueOnce(Promise.resolve({ txs: [], nextPageToken: "token1" }));
+    getTransactionsSpy.mockReturnValueOnce(Promise.resolve({ txs: [], nextPageToken: "token2" }));
+    getTransactionsSpy.mockReturnValueOnce(Promise.resolve({ txs: [], nextPageToken: null }));
     await fetchAllTransactions(apiMock, sampleAddress, sampleBlockHeight);
     expect(getTransactionsSpy).toHaveBeenCalledTimes(3);
   });
 
   it("should call getTransactions once if token is null", async () => {
-    getTransactionsSpy.mockReturnValueOnce(
-      Promise.resolve({ txs: [], nextPageToken: null })
-    );
+    getTransactionsSpy.mockReturnValueOnce(Promise.resolve({ txs: [], nextPageToken: null }));
     await fetchAllTransactions(apiMock, sampleAddress, sampleBlockHeight);
     expect(getTransactionsSpy).toHaveBeenCalledTimes(1);
   });
@@ -47,16 +39,12 @@ describe("fetchAllTransactions", () => {
       Promise.resolve({
         txs: [{ hash: "1" }, { hash: "2" }],
         nextPageToken: "token1",
-      })
+      }),
     );
     getTransactionsSpy.mockReturnValueOnce(
-      Promise.resolve({ txs: [{ hash: "3" }], nextPageToken: null })
+      Promise.resolve({ txs: [{ hash: "3" }], nextPageToken: null }),
     );
-    const txs = await fetchAllTransactions(
-      apiMock,
-      sampleAddress,
-      sampleBlockHeight
-    );
+    const txs = await fetchAllTransactions(apiMock, sampleAddress, sampleBlockHeight);
     expect(txs.length).toEqual(3);
   });
 });

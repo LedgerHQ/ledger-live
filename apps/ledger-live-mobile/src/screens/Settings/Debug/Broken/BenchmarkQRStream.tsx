@@ -10,10 +10,7 @@ import { StackNavigatorProps } from "../../../../components/RootNavigator/types/
 
 type Props = {
   colors: Theme["colors"];
-} & StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.BenchmarkQRStream
->;
+} & StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.BenchmarkQRStream>;
 
 type Benchmark = {
   count: number;
@@ -65,17 +62,13 @@ class BenchmarkQRStream extends PureComponent<Props, State> {
   render() {
     const { colors } = this.props;
     const { benchmarks, end } = this.state;
-    const summary = benchmarks
-      .map((b: Benchmark) => `${b.dataSize}:${b.count}`)
-      .join(" ");
+    const summary = benchmarks.map((b: Benchmark) => `${b.dataSize}:${b.count}`).join(" ");
 
     if (end) {
       return (
         <View style={styles.resultRoot}>
           <LText selectable>
-            {benchmarks
-              .map((b: Benchmark) => `${b.dataSize} ${b.count}`)
-              .join("\n")}
+            {benchmarks.map((b: Benchmark) => `${b.dataSize} ${b.count}`).join("\n")}
           </LText>
         </View>
       );

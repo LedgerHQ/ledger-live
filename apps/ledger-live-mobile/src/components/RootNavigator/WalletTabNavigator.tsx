@@ -24,12 +24,9 @@ import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTab
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName } from "../../const/navigation";
 
-const WalletTab =
-  createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
+const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
-const tabBarOptions = (props: MaterialTopTabBarProps) => (
-  <WalletTabNavigatorTabBar {...props} />
-);
+const tabBarOptions = (props: MaterialTopTabBarProps) => <WalletTabNavigatorTabBar {...props} />;
 
 const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
   <WalletTabNavigatorTabBarDisabled {...props} />
@@ -42,24 +39,16 @@ export default function WalletTabNavigator() {
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
   const lastVisitedTab = useSelector(walletTabNavigatorLastVisitedTabSelector);
   const { t } = useTranslation();
-  const [currentRouteName, setCurrentRouteName] = useState<
-    string | undefined
-  >();
+  const [currentRouteName, setCurrentRouteName] = useState<string | undefined>();
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
       <Box flexGrow={1} bg={"background.main"}>
         <WalletTab.Navigator
           initialRouteName={
-            walletNftGalleryFeature?.enabled
-              ? lastVisitedTab
-              : ScreenName.Portfolio
+            walletNftGalleryFeature?.enabled ? lastVisitedTab : ScreenName.Portfolio
           }
-          tabBar={
-            walletNftGalleryFeature?.enabled
-              ? tabBarOptions
-              : tabBarDisabledOptions
-          }
+          tabBar={walletNftGalleryFeature?.enabled ? tabBarOptions : tabBarDisabledOptions}
           style={{ backgroundColor: "transparent" }}
           sceneContainerStyle={{ backgroundColor: "transparent" }}
           screenOptions={{
@@ -68,12 +57,8 @@ export default function WalletTabNavigator() {
           }}
           screenListeners={{
             state: e => {
-              const data =
-                e.data as NavigationContainerEventMap["state"]["data"];
-              if (
-                data?.state?.routeNames &&
-                (data?.state?.index || data?.state?.index === 0)
-              ) {
+              const data = e.data as NavigationContainerEventMap["state"]["data"];
+              if (data?.state?.routeNames && (data?.state?.index || data?.state?.index === 0)) {
                 setCurrentRouteName(data.state.routeNames[data.state.index]);
                 dispatch(
                   setWalletTabNavigatorLastVisitedTab(
@@ -88,11 +73,7 @@ export default function WalletTabNavigator() {
         >
           <WalletTab.Screen
             name={ScreenName.Portfolio}
-            component={
-              readOnlyModeEnabled && hasNoAccounts
-                ? ReadOnlyPortfolio
-                : Portfolio
-            }
+            component={readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio}
             options={{
               title: t("wallet.tabs.crypto"),
             }}

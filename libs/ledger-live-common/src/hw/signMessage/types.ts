@@ -20,5 +20,5 @@ export type MessageData = {
 };
 export type SignMessage = (
   transport: Transport,
-  message: MessageData | TypedMessageData
+  message: MessageData | TypedMessageData,
 ) => Promise<Result>;

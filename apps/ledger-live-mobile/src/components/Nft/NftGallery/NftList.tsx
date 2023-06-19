@@ -14,9 +14,10 @@ import { TrackScreen } from "../../../analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../../TabBar/BackgroundGradient";
 
-const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
-  FlatListProps<ProtoNFT>
->(CollapsibleHeaderFlatList, { progressViewOffset: 64 });
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
+  CollapsibleHeaderFlatList,
+  { progressViewOffset: 64 },
+);
 
 type Props = {
   data: ProtoNFT[];
@@ -56,35 +57,16 @@ export function NftList({ data }: Props) {
     height: 145,
     opacity: 1,
     stops: [
-      <Stop
-        key="0%"
-        offset="0%"
-        stopOpacity={0}
-        stopColor={colors.background.main}
-      />,
-      <Stop
-        key="25%"
-        offset="25%"
-        stopOpacity={0.5}
-        stopColor={colors.background.main}
-      />,
-      <Stop
-        key="50%"
-        offset="50%"
-        stopOpacity={1}
-        stopColor={colors.background.main}
-      />,
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor={colors.background.main} />,
+      <Stop key="25%" offset="25%" stopOpacity={0.5} stopColor={colors.background.main} />,
+      <Stop key="50%" offset="50%" stopOpacity={1} stopColor={colors.background.main} />,
     ],
   };
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
       <Flex
-        flex={
-          item.id === ADD_NEW.id && (index + 1) % NB_COLUMNS !== 0
-            ? 1 / NB_COLUMNS
-            : 1
-        }
+        flex={item.id === ADD_NEW.id && (index + 1) % NB_COLUMNS !== 0 ? 1 / NB_COLUMNS : 1}
         mr={(index + 1) % NB_COLUMNS > 0 ? 6 : 0}
         testID={`wallet-nft-gallery-list-item-${index}`}
       >
@@ -94,9 +76,7 @@ export function NftList({ data }: Props) {
           <NftListItem
             nft={item}
             onPress={() =>
-              multiSelectModeEnabled
-                ? handleSelectableNftPressed(item)
-                : navigateToNftViewer(item)
+              multiSelectModeEnabled ? handleSelectableNftPressed(item) : navigateToNftViewer(item)
             }
             onLongPress={() => {
               triggerMultiSelectMode();
@@ -117,10 +97,7 @@ export function NftList({ data }: Props) {
     ],
   );
 
-  const total = useMemo(
-    () => [...new Set(nftsToHide.map(n => n.contract))].length,
-    [nftsToHide],
-  );
+  const total = useMemo(() => [...new Set(nftsToHide.map(n => n.contract))].length, [nftsToHide]);
 
   return (
     <>

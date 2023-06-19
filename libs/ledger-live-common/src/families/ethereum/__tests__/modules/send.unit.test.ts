@@ -70,7 +70,7 @@ describe("Ethereum Send module", () => {
 
           fillDeviceTransactionConfig(
             { account: account, parentAccount: undefined, transaction, status },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -102,7 +102,7 @@ describe("Ethereum Send module", () => {
 
           fillDeviceTransactionConfig(
             { account: account, parentAccount: undefined, transaction, status },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -135,7 +135,7 @@ describe("Ethereum Send module", () => {
               transaction,
               status,
             },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -167,7 +167,7 @@ describe("Ethereum Send module", () => {
 
           fillDeviceTransactionConfig(
             { account: account, parentAccount: undefined, transaction, status },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -207,7 +207,7 @@ describe("Ethereum Send module", () => {
 
           fillDeviceTransactionConfig(
             { account: account, parentAccount: undefined, transaction, status },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -233,7 +233,7 @@ describe("Ethereum Send module", () => {
             recipient: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             data: Buffer.from(
               "a9059cbb0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001",
-              "hex"
+              "hex",
             ),
           };
 
@@ -244,7 +244,7 @@ describe("Ethereum Send module", () => {
               transaction,
               status,
             },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -256,9 +256,7 @@ describe("Ethereum Send module", () => {
             {
               type: "address",
               label: "Address",
-              address: eip55.encode(
-                `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-              ),
+              address: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
             },
           ]);
         });
@@ -271,7 +269,7 @@ describe("Ethereum Send module", () => {
             recipient: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             data: Buffer.from(
               "095ea7b30000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001",
-              "hex"
+              "hex",
             ),
           };
 
@@ -282,7 +280,7 @@ describe("Ethereum Send module", () => {
               transaction,
               status,
             },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -295,9 +293,7 @@ describe("Ethereum Send module", () => {
             {
               type: "address",
               label: "Address",
-              address: eip55.encode(
-                `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-              ),
+              address: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
             },
           ]);
         });
@@ -310,7 +306,7 @@ describe("Ethereum Send module", () => {
             recipient: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             data: Buffer.from(
               "095ea7b30000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-              "hex"
+              "hex",
             ),
           };
 
@@ -321,7 +317,7 @@ describe("Ethereum Send module", () => {
               transaction,
               status,
             },
-            fields
+            fields,
           );
 
           expect(fields).toEqual([
@@ -334,9 +330,7 @@ describe("Ethereum Send module", () => {
             {
               type: "address",
               label: "Address",
-              address: eip55.encode(
-                `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-              ),
+              address: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
             },
           ]);
         });
@@ -352,7 +346,7 @@ describe("Ethereum Send module", () => {
               recipient: "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
               data: Buffer.from(
                 "23b872dd0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001",
-                "hex"
+                "hex",
               ),
             };
 
@@ -363,7 +357,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -375,9 +369,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "To",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -405,7 +397,7 @@ describe("Ethereum Send module", () => {
               recipient: "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
               data: Buffer.from(
                 "42842e0e0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001",
-                "hex"
+                "hex",
               ),
             };
 
@@ -416,7 +408,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -428,9 +420,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "To",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -458,7 +448,7 @@ describe("Ethereum Send module", () => {
               recipient: "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
               data: Buffer.from(
                 "b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000",
-                "hex"
+                "hex",
               ),
             };
 
@@ -469,7 +459,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -481,9 +471,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "To",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -511,7 +499,7 @@ describe("Ethereum Send module", () => {
               recipient: "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
               data: Buffer.from(
                 "095ea7b30000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001",
-                "hex"
+                "hex",
               ),
             };
 
@@ -522,7 +510,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -534,9 +522,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "Allow",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -564,7 +550,7 @@ describe("Ethereum Send module", () => {
               recipient: "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
               data: Buffer.from(
                 "a22cb4650000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001",
-                "hex"
+                "hex",
               ),
             };
 
@@ -575,7 +561,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -587,9 +573,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "Allow",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -612,7 +596,7 @@ describe("Ethereum Send module", () => {
               recipient: "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
               data: Buffer.from(
                 "a22cb4650000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000000",
-                "hex"
+                "hex",
               ),
             };
 
@@ -623,7 +607,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -635,9 +619,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "Revoke",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -662,7 +644,7 @@ describe("Ethereum Send module", () => {
               recipient: "0xd07dc4262bcdbf85190c01c996b4c06a461d2430",
               data: Buffer.from(
                 "f242432a0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000",
-                "hex"
+                "hex",
               ),
             };
 
@@ -673,7 +655,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -685,9 +667,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "To",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -720,7 +700,7 @@ describe("Ethereum Send module", () => {
               recipient: "0xd07dc4262bcdbf85190c01c996b4c06a461d2430",
               data: Buffer.from(
                 "2eb2c2d60000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000",
-                "hex"
+                "hex",
               ),
             };
 
@@ -731,7 +711,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -743,9 +723,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "To",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -773,7 +751,7 @@ describe("Ethereum Send module", () => {
               recipient: "0xd07dc4262bcdbf85190c01c996b4c06a461d2430",
               data: Buffer.from(
                 "a22cb4650000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000001",
-                "hex"
+                "hex",
               ),
             };
 
@@ -784,7 +762,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -796,9 +774,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "Allow",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -821,7 +797,7 @@ describe("Ethereum Send module", () => {
               recipient: "0xd07dc4262bcdbf85190c01c996b4c06a461d2430",
               data: Buffer.from(
                 "a22cb4650000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d0000000000000000000000000000000000000000000000000000000000000000",
-                "hex"
+                "hex",
               ),
             };
 
@@ -832,7 +808,7 @@ describe("Ethereum Send module", () => {
                 transaction,
                 status,
               },
-              fields
+              fields,
             );
 
             expect(fields).toEqual([
@@ -844,9 +820,7 @@ describe("Ethereum Send module", () => {
               {
                 type: "text",
                 label: "Revoke",
-                value: eip55.encode(
-                  `0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`
-                ),
+                value: eip55.encode(`0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d`),
               },
               {
                 type: "text",
@@ -879,7 +853,7 @@ describe("Ethereum Send module", () => {
             transaction,
             status,
           },
-          fields
+          fields,
         );
 
         expect(fields).toEqual([
@@ -907,7 +881,7 @@ describe("Ethereum Send module", () => {
             transaction,
             status,
           },
-          fields
+          fields,
         );
 
         expect(fields).toEqual([

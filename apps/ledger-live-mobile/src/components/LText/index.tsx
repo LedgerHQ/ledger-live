@@ -36,10 +36,7 @@ export type Res = {
     | "900";
 };
 
-const inferFontWeight = ({
-  semiBold,
-  bold,
-}: Partial<Opts>): FontWeightTypes => {
+const inferFontWeight = ({ semiBold, bold }: Partial<Opts>): FontWeightTypes => {
   if (bold) {
     return "bold";
   }
@@ -56,10 +53,7 @@ const inferFontWeight = ({
  * @deprecated Please, prefer using the Text component from our design-system if possible.
  */
 function LText({ color, children, semiBold, bold, ...props }: Opts) {
-  const fontWeight = useMemo(
-    () => inferFontWeight({ semiBold, bold }),
-    [semiBold, bold],
-  );
+  const fontWeight = useMemo(() => inferFontWeight({ semiBold, bold }), [semiBold, bold]);
 
   return (
     <Text {...props} fontWeight={fontWeight} color={color}>

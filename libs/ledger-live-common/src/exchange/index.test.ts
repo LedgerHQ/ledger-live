@@ -21,7 +21,7 @@ describe("createExchangeProviderNameAndSignature", () => {
     expect(res.signature).toBeInstanceOf(Buffer);
 
     expect(res.nameAndPubkey.toString("hex")).toEqual(
-      "054261616e7804551878b446b6a711949fa51cc5a8685602f8ffb1dfd08f6ab869019d7c125d7737a79e8b5022d860ec7dfbe062d510fec3b5fe0f6ebb1f5e55a074bb7e5dbc4e"
+      "054261616e7804551878b446b6a711949fa51cc5a8685602f8ffb1dfd08f6ab869019d7c125d7737a79e8b5022d860ec7dfbe062d510fec3b5fe0f6ebb1f5e55a074bb7e5dbc4e",
     );
     expect(res.signature.toString("hex")).toEqual(signature);
   });

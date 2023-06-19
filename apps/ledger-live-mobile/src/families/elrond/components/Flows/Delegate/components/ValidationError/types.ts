@@ -6,8 +6,5 @@ import type { ElrondDelegationFlowParamList } from "../../types";
 import type { ScreenName } from "../../../../../../../const";
 
 export type ValidationErrorPropsType = BaseComposite<
-  StackNavigatorProps<
-    ElrondDelegationFlowParamList,
-    ScreenName.ElrondDelegationValidationError
-  >
+  StackNavigatorProps<ElrondDelegationFlowParamList, ScreenName.ElrondDelegationValidationError>
 >;

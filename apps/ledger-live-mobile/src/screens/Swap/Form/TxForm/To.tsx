@@ -2,10 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import {
-  ExchangeRate,
-  SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";
 import {
   usePickDefaultCurrency,
@@ -37,11 +34,7 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({ allCurrencies });
 
-  usePickDefaultCurrency(
-    currencies,
-    swapTx.swap.to.currency,
-    swapTx.setToCurrency,
-  );
+  usePickDefaultCurrency(currencies, swapTx.swap.to.currency, swapTx.setToCurrency);
 
   const onPress = useCallback(() => {
     track("button_clicked", {

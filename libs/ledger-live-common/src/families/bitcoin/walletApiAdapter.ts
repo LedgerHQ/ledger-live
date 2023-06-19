@@ -8,8 +8,7 @@ import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
-const areFeesProvided: AreFeesProvided<WalletAPIBitcoinTransaction> = (tx) =>
-  !!tx.feePerByte;
+const areFeesProvided: AreFeesProvided<WalletAPIBitcoinTransaction> = tx => !!tx.feePerByte;
 
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIBitcoinTransaction,
@@ -30,7 +29,7 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIBitcoinTransaction,
   Transaction
-> = (params) => {
+> = params => {
   return {
     canEditFees: CAN_EDIT_FEES,
     liveTx: convertToLiveTransaction(params),

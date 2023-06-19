@@ -11,6 +11,7 @@ import {
   OperationType,
   SubAccount,
   TransactionCommon,
+  TransactionCommonRaw,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
@@ -65,7 +66,7 @@ export type OperationDetailsExtraProps<A> = {
 export type LLDCoinFamily<
   A extends Account,
   T extends TransactionCommon,
-  TS extends TransactionStatus
+  TS extends TransactionStatus,
 > = {
   operationDetails?: {
     /**
@@ -192,6 +193,7 @@ export type LLDCoinFamily<
       mapStrategies?: (a: FeeStrategy) => FeeStrategy;
       bridgePending?: boolean;
       trackProperties?: Record<string, unknown>;
+      transactionRaw?: TransactionCommonRaw;
     }>;
     fields?: string[];
   };
@@ -279,7 +281,7 @@ export type LLDCoinFamily<
 export type FieldComponentProps<
   A extends Account,
   T extends TransactionCommon,
-  TS extends TransactionStatus
+  TS extends TransactionStatus,
 > = {
   account: A | SubAccount;
   parentAccount: A | undefined | null;

@@ -14,9 +14,8 @@ type UPDATE_PROVIDERS_TYPE = {
 };
 
 /* ACTIONS */
-export const updateProvidersAction = createAction<UPDATE_PROVIDERS_TYPE["payload"]>(
-  "SWAP/UPDATE_PROVIDERS",
-);
+export const updateProvidersAction =
+  createAction<UPDATE_PROVIDERS_TYPE["payload"]>("SWAP/UPDATE_PROVIDERS");
 export const updateTransactionAction = createAction<Transaction | undefined | null>(
   "SWAP/UPDATE_TRANSACTION",
 );

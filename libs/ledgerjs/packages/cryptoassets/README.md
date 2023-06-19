@@ -49,20 +49,26 @@ There are two modes of usage of this library.
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
     *   [Parameters](#parameters-13)
 *   [listFiatCurrencies](#listfiatcurrencies)
-*   [listTokens](#listtokens)
+*   [\__clearObject](#\__clearobject)
     *   [Parameters](#parameters-14)
-*   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
+*   [\__clearAllLists](#\__clearalllists)
+*   [listTokens](#listtokens)
     *   [Parameters](#parameters-15)
-*   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
+*   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
     *   [Parameters](#parameters-16)
-*   [findTokenByTicker](#findtokenbyticker)
+*   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
     *   [Parameters](#parameters-17)
-*   [findTokenById](#findtokenbyid)
+*   [findTokenByTicker](#findtokenbyticker)
     *   [Parameters](#parameters-18)
-*   [hasTokenId](#hastokenid)
+*   [findTokenById](#findtokenbyid)
     *   [Parameters](#parameters-19)
-*   [getTokenById](#gettokenbyid)
+*   [hasTokenId](#hastokenid)
     *   [Parameters](#parameters-20)
+*   [getTokenById](#gettokenbyid)
+    *   [Parameters](#parameters-21)
+*   [removeTokenFromAllLists](#removetokenfromalllists)
+    *   [Parameters](#parameters-22)
+*   [id](#id)
 
 ### abandonSeedAddresses
 
@@ -197,6 +203,22 @@ Returns **FiatCurrency**
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<FiatCurrency>** 
 
+### \__clearObject
+
+Only for jest purpose, clean object to be empty
+
+#### Parameters
+
+*   `obj` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), (TokenCurrency | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>)>** 
+
+Returns **void** 
+
+### \__clearAllLists
+
+Only for jest purpose, clear all the init list
+
+Returns **void** 
+
 ### listTokens
 
 #### Parameters
@@ -253,6 +275,20 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 Returns **TokenCurrency** 
+
+### removeTokenFromAllLists
+
+Delete previous token entry to all array
+
+#### Parameters
+
+*   `token` **TokenCurrency** 
+
+### id
+
+We clean all the reference of an existing token, if an hash doesn't  match.
+Like this we can update any change from a already added token coming from Dynamic CAL
+and maintain it up to date without having to release a new version of LLD or LLM
 
 ## Maintainance notes
 

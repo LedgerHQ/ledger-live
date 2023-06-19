@@ -6,10 +6,7 @@ type Props = {
   error: Error | null | undefined;
   field?: "title" | "description";
 };
-export default function TranslatedError({
-  error,
-  field = "title",
-}: Props): JSX.Element | null {
+export default function TranslatedError({ error, field = "title" }: Props): JSX.Element | null {
   const { t } = useTranslation();
   if (!error) return null;
 

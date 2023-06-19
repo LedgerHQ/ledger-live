@@ -11,10 +11,7 @@ type Props = {
   selectedPalette: "light" | "dark";
 };
 
-export default function StyleProvider({
-  children,
-  selectedPalette,
-}: Props): React.ReactElement {
+export default function StyleProvider({ children, selectedPalette }: Props): React.ReactElement {
   const defaultTheme = themes[selectedPalette];
   const t = useMemo(
     () => ({

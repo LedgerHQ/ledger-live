@@ -9,10 +9,7 @@ export const getMainMessage = (messages: CosmosMessage[]): CosmosMessage => {
     "transfer",
   ];
   const sortedTypes = messages
-    .filter((m) => messagePriorities.includes(m.type))
-    .sort(
-      (a, b) =>
-        messagePriorities.indexOf(a.type) - messagePriorities.indexOf(b.type)
-    );
+    .filter(m => messagePriorities.includes(m.type))
+    .sort((a, b) => messagePriorities.indexOf(a.type) - messagePriorities.indexOf(b.type));
   return sortedTypes[0];
 };

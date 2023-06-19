@@ -7,9 +7,7 @@ import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import { getEnv } from "@ledgerhq/live-common/env";
 
-export type NanoDisplayedInfoFor712 = Awaited<
-  ReturnType<typeof getNanoDisplayedInfosFor712>
->;
+export type NanoDisplayedInfoFor712 = Awaited<ReturnType<typeof getNanoDisplayedInfosFor712>>;
 
 export const getMessageProperties = async (
   currency: CryptoCurrency,

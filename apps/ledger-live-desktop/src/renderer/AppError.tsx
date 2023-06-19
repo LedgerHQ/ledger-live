@@ -10,13 +10,13 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 // Like App except it just render an error
 
 const themePalette = palette.light;
-const lightLiveTheme: DefaultTheme = ({
+const lightLiveTheme: DefaultTheme = {
   ...theme,
   colors: {
     ...colors,
     palette: themePalette,
   },
-} as unknown) as DefaultTheme;
+} as unknown as DefaultTheme;
 const App = ({ error }: { error: Error }) => (
   <LiveStyleSheetManager>
     <ThemeProvider theme={lightLiveTheme}>

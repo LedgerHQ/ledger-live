@@ -24,25 +24,22 @@ export default function GridBody({
 }: Props) {
   return (
     <GridBox {...rest}>
-      {[
-        ...visibleAccounts,
-        ...(showNewAccount ? [null] : []),
-        ...hiddenAccounts,
-      ].map((account, i) =>
-        !account ? (
-          <AccountCardPlaceholder key="placeholder" />
-        ) : (
-          <AccountCard
-            hidden={i >= visibleAccounts.length}
-            key={account.id}
-            account={account}
-            parentAccount={
-              account.type !== "Account" ? lookupParentAccount(account.parentId) : null
-            }
-            range={range}
-            onClick={onAccountClick}
-          />
-        ),
+      {[...visibleAccounts, ...(showNewAccount ? [null] : []), ...hiddenAccounts].map(
+        (account, i) =>
+          !account ? (
+            <AccountCardPlaceholder key="placeholder" />
+          ) : (
+            <AccountCard
+              hidden={i >= visibleAccounts.length}
+              key={account.id}
+              account={account}
+              parentAccount={
+                account.type !== "Account" ? lookupParentAccount(account.parentId) : null
+              }
+              range={range}
+              onClick={onAccountClick}
+            />
+          ),
       )}
     </GridBox>
   );

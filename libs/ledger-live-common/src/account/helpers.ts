@@ -1,8 +1,5 @@
 import { isAccountDelegating } from "../families/tezos/bakers";
-import {
-  BitcoinAccount,
-  initialBitcoinResourcesValue,
-} from "../families/bitcoin/types";
+import { BitcoinAccount, initialBitcoinResourcesValue } from "../families/bitcoin/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { TronAccount } from "../families/tron/types";
 import { CosmosAccount } from "../families/cosmos/types";
@@ -69,9 +66,7 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
   if (a.type === "Account" && a.currency.family === "tron") {
     const tronAcc = a as TronAccount;
     // FIXME: here we compared a BigNumber to a number, would always return false
-    return (
-      tronAcc.tronResources && tronAcc.tronResources.bandwidth.freeLimit.eq(0)
-    );
+    return tronAcc.tronResources && tronAcc.tronResources.bandwidth.freeLimit.eq(0);
   }
 
   return commonIsAccountEmpty(a);
@@ -90,15 +85,14 @@ export function clearAccount<T extends AccountLike>(account: T): T {
       };
     }
     if (account.currency.family === "bitcoin") {
-      (account as BitcoinAccount).bitcoinResources =
-        initialBitcoinResourcesValue;
+      (account as BitcoinAccount).bitcoinResources = initialBitcoinResourcesValue;
     }
   });
 }
 
 export const getVotesCount = (
   account: AccountLike,
-  parentAccount?: Account | null | undefined
+  parentAccount?: Account | null | undefined,
 ): number => {
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -122,9 +116,7 @@ export const getVotesCount = (
     case "binance_beacon_chain":
     case "osmosis":
     case "cosmos":
-      return (
-        (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0
-      );
+      return (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0;
     default:
       return 0;
   }

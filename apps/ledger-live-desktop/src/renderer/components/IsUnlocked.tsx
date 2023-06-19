@@ -59,12 +59,14 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
     },
     [inputValue, dispatch],
   );
-  const handleOpenHardResetModal = useCallback(() => setIsHardResetModalOpened(true), [
-    setIsHardResetModalOpened,
-  ]);
-  const handleCloseHardResetModal = useCallback(() => setIsHardResetModalOpened(false), [
-    setIsHardResetModalOpened,
-  ]);
+  const handleOpenHardResetModal = useCallback(
+    () => setIsHardResetModalOpened(true),
+    [setIsHardResetModalOpened],
+  );
+  const handleCloseHardResetModal = useCallback(
+    () => setIsHardResetModalOpened(false),
+    [setIsHardResetModalOpened],
+  );
   const handleHardReset = useCallback(async () => {
     setIsHardResetting(true);
     try {

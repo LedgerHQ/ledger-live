@@ -3,6 +3,8 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
+import { SettingsState } from "./settings";
+
 export type DevicesState = {
   currentDevice: Device | undefined | null;
   devices: Device[];
@@ -50,8 +52,24 @@ function setCurrentDevice(state: DevicesState) {
     currentDevice,
   };
 }
+export function getCurrentDevice(state: { devices: DevicesState; settings: SettingsState }) {
+  const isVaultSigner = state.settings.vaultSigner.enabled;
 
-export function getCurrentDevice(state: { devices: DevicesState }) {
+  if (isVaultSigner) {
+    const transportParams = new URLSearchParams();
+    transportParams.append("host", state.settings.vaultSigner.host);
+    transportParams.append("token", state.settings.vaultSigner.token);
+    transportParams.append("workspace", state.settings.vaultSigner.workspace);
+
+    const deviceId = `vault-transport:${transportParams.toString()}`;
+
+    return {
+      deviceId,
+      wired: true,
+      modelId: DeviceModelId.nanoS,
+    };
+  }
+
   if (getEnv("DEVICE_PROXY_URL") || getEnv("MOCK")) {
     // bypass the listen devices (we should remove modelId here by instead get it at open time if needed)
     return {
@@ -76,6 +94,6 @@ export function getDevices(state: { devices: DevicesState }) {
   return state.devices.devices;
 }
 export default handleActions<DevicesState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as DevicesHandlers<false>,
+  handlers as unknown as DevicesHandlers<false>,
   initialState,
 );

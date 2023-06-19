@@ -46,19 +46,16 @@ export function toggleOnboardingEarlyCheckTask({
   deviceId,
   toggleType,
 }: ToggleOnboardingEarlyCheckTaskArgs): Observable<ToggleOnboardingEarlyCheckTaskEvent> {
-  const p2 =
-    toggleType === "enter"
-      ? ToggleTypeP2.EnterChecking
-      : ToggleTypeP2.ExitChecking;
+  const p2 = toggleType === "enter" ? ToggleTypeP2.EnterChecking : ToggleTypeP2.ExitChecking;
 
-  return new Observable((subscriber) => {
+  return new Observable(subscriber => {
     withTransport(deviceId)(({ transportRef }) =>
       toggleOnboardingEarlyCheckCmd({
         transport: transportRef.current,
         p2,
-      })
+      }),
     ).subscribe({
-      next: (_) => subscriber.next({ type: "success" }),
+      next: _ => subscriber.next({ type: "success" }),
       error: (error: unknown) => {
         if (error instanceof TransportStatusError) {
           // @ts-expect-error TransportStatusError not typed correctly

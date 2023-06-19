@@ -33,10 +33,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   return null;
 };
 
-export const postSwapCancelled: PostSwapCancelled = async ({
-  provider,
-  swapId = "",
-}) => {
+export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = "" }) => {
   if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
     return mockPostSwapCancelled({ provider, swapId });
 

@@ -1,22 +1,12 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import {
-  PostOnboardingAction,
-  PostOnboardingActionId,
-} from "@ledgerhq/types-live";
+import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { claimMock, migrateAssetsMock, personalizeMock } from "./mockActions";
-import {
-  assetsTransferAction,
-  claimNftAction,
-  customImageAction,
-} from "./actions";
+import { assetsTransferAction, claimNftAction, customImageAction } from "./actions";
 
 /**
  * All implemented post onboarding actions.
  */
-const postOnboardingActions: Record<
-  PostOnboardingActionId,
-  PostOnboardingAction
-> = {
+const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction> = {
   claimMock,
   migrateAssetsMock,
   personalizeMock,
@@ -40,9 +30,7 @@ const staxPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
 ];
 
-export function getPostOnboardingAction(
-  id: PostOnboardingActionId,
-): PostOnboardingAction {
+export function getPostOnboardingAction(id: PostOnboardingActionId): PostOnboardingAction {
   return postOnboardingActions[id];
 }
 

@@ -24,10 +24,7 @@ const flattenStructuredSearchResults = (
     [],
   );
 
-export const formatSearchResults = (
-  searchResults: AccountLike[],
-  accounts: Account[],
-) => {
+export const formatSearchResults = (searchResults: AccountLike[], accounts: Account[]) => {
   const formated = reduce<AccountLike, { [key: string]: SearchResult }>(
     searchResults,
     (acc, account) => {
@@ -77,16 +74,12 @@ export const formatSearchResultsTuples = (
   const formated = reduce(
     searchResults,
     (acc: Record<string, SearchResult>, tuple) => {
-      const accountId = tuple.subAccount
-        ? tuple.subAccount.id
-        : tuple.account.id;
+      const accountId = tuple.subAccount ? tuple.subAccount.id : tuple.account.id;
 
       if (!acc[accountId]) {
         acc[accountId] = {
           account: tuple.subAccount || tuple.account,
-          parentAccount: tuple.subAccount
-            ? (tuple.account as Account)
-            : undefined,
+          parentAccount: tuple.subAccount ? (tuple.account as Account) : undefined,
           tokenAccounts: [],
         };
       }

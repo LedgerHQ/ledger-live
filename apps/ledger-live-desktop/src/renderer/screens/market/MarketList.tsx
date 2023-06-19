@@ -121,8 +121,6 @@ export const TableRow: StyledComponent<
 
   cursor: ${p => (p.disabled ? "default" : "pointer")};
 
-
-
   ${TableCellBase}:nth-child(1) {
     flex: 0 0 40px;
     justify-content: flex-start;

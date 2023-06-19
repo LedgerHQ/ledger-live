@@ -27,16 +27,11 @@ const Stack = createStackNavigator<SwapNavigatorParamList>();
 export default function SwapNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
-    <Stack.Navigator
-      screenOptions={{ ...stackNavigationConfig, headerShown: true }}
-    >
+    <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: true }}>
       <Stack.Screen
         name={ScreenName.SwapTab}
         component={SwapFormNavigator}
@@ -56,11 +51,7 @@ export default function SwapNavigator() {
             params: { target },
           },
         }) => ({
-          headerTitle: () => (
-            <StepHeader
-              title={t(`transfer.swap2.form.select.${target}.title`)}
-            />
-          ),
+          headerTitle: () => <StepHeader title={t(`transfer.swap2.form.select.${target}.title`)} />,
           headerRight: () => null,
         })}
       />
@@ -69,9 +60,7 @@ export default function SwapNavigator() {
         name={ScreenName.SwapSelectCurrency}
         component={SelectCurrency}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("transfer.swap2.form.select.to.title")} />
-          ),
+          headerTitle: () => <StepHeader title={t("transfer.swap2.form.select.to.title")} />,
           headerRight: () => null,
         }}
       />
@@ -80,11 +69,7 @@ export default function SwapNavigator() {
         name={ScreenName.SwapSelectProvider}
         component={SelectProvider}
         options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("transfer.swap2.form.details.label.provider")}
-            />
-          ),
+          headerTitle: () => <StepHeader title={t("transfer.swap2.form.details.label.provider")} />,
           headerRight: () => null,
         }}
       />
@@ -93,9 +78,7 @@ export default function SwapNavigator() {
         name={ScreenName.SwapSelectFees}
         component={SelectFees}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("transfer.swap2.form.details.label.fees")} />
-          ),
+          headerTitle: () => <StepHeader title={t("transfer.swap2.form.details.label.fees")} />,
           headerRight: () => null,
         }}
       />
@@ -122,9 +105,7 @@ export default function SwapNavigator() {
         name={ScreenName.SwapKYCStates}
         component={StateSelect}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("transfer.swap.kyc.states")} />
-          ),
+          headerTitle: () => <StepHeader title={t("transfer.swap.kyc.states")} />,
           headerRight: () => null,
         }}
       />
@@ -152,9 +133,7 @@ export default function SwapNavigator() {
         component={OperationDetails}
         options={({ route }) => ({
           headerTitle: t("transfer.swap.title"),
-          headerLeft: route.params?.fromPendingOperation
-            ? () => null
-            : undefined,
+          headerLeft: route.params?.fromPendingOperation ? () => null : undefined,
         })}
       />
     </Stack.Navigator>

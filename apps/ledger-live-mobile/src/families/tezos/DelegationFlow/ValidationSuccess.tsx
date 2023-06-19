@@ -17,18 +17,13 @@ import type { TezosDelegationFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    TezosDelegationFlowParamList,
-    ScreenName.DelegationValidationSuccess
-  >
+  StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationValidationSuccess>
 >;
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -55,17 +50,9 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans
-            i18nKey={"delegation.broadcastSuccessTitle." + transaction.mode}
-          />
-        }
+        title={<Trans i18nKey={"delegation.broadcastSuccessTitle." + transaction.mode} />}
         description={
-          <Trans
-            i18nKey={
-              "delegation.broadcastSuccessDescription." + transaction.mode
-            }
-          />
+          <Trans i18nKey={"delegation.broadcastSuccessDescription." + transaction.mode} />
         }
       />
     </View>

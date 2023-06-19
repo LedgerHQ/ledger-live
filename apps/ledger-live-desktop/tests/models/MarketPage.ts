@@ -39,7 +39,7 @@ export class MarketPage {
     await this.filterDrawerButton.click();
   }
 
-  async switchCountervalue(ticker: string) {
+  async switchCountervalue(_ticker: string) {
     await this.counterValueSelect.click();
     // TODO: For some reason need to hack selects like that
     await this.page.click('#react-select-2-listbox div div:has-text("Thai Baht - THB")');

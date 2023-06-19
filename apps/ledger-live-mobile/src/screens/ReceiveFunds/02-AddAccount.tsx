@@ -30,10 +30,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 
-type Props = StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveAddAccount
->;
+type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccount>;
 
 function AddAccountsAccounts({ navigation, route }: Props) {
   const dispatch = useDispatch();
@@ -59,8 +56,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   }, []);
 
   const startSubscription = useCallback(() => {
-    const c =
-      currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
     const bridge = getCurrencyBridge(c);
     const syncConfig = {
       paginationConfig: {
@@ -85,9 +81,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
           if (
             !pa.subAccounts ||
-            !pa.subAccounts.find(
-              a => (a as TokenAccount)?.token?.id === currency.id,
-            ) // in case we dont already have one we create an empty token account
+            !pa.subAccounts.find(a => (a as TokenAccount)?.token?.id === currency.id) // in case we dont already have one we create an empty token account
           ) {
             const tokenAcc = makeEmptyTokenAccount(pa, currency);
             const tokenA = {
@@ -137,9 +131,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
   const onModalHide = useCallback(() => {
     if (cancelled) {
-      navigation
-        .getParent<StackNavigatorNavigation<RootStackParamList>>()
-        ?.pop();
+      navigation.getParent<StackNavigatorNavigation<RootStackParamList>>()?.pop();
     }
   }, [cancelled, navigation]);
 
@@ -167,9 +159,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     ({ item: account }: { item: Account }) => {
       const acc =
         currency.type === "TokenCurrency"
-          ? account.subAccounts?.find(
-              a => (a as TokenAccount).token.id === currency.id,
-            )
+          ? account.subAccounts?.find(a => (a as TokenAccount).token.id === currency.id)
           : account;
 
       return acc ? (
@@ -209,11 +199,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen
-        category="AddAccounts"
-        name="Accounts"
-        currencyName={currency.name}
-      />
+      <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
       <PreventNativeBack />
       {scanning ? (
         <ScanLoading

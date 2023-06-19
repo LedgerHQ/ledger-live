@@ -9,17 +9,11 @@ import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.HederaEditMemo
-  >
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.HederaEditMemo>
 >;
 
 function HederaEditMemo({ navigation, route }: NavigationProps) {
@@ -48,10 +42,7 @@ function HederaEditMemo({ navigation, route }: NavigationProps) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus

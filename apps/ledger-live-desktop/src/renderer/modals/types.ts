@@ -2,12 +2,12 @@ import React from "react";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 
-import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Data as SendData } from "./Send/Body";
 import { Data as ReceiveData } from "./Receive/Body";
 import { Data as SignMessageData } from "./SignMessage/Body";
 import { DataProp as ExchangeCryptoDeviceDataProp } from "./ExchangeDeviceConfirm/index";
 import { Data as PlatformExchangeCompleteData } from "./Platform/Exchange/CompleteExchange/Body";
+import { Data as ConnectDeviceData } from "./ConnectDevice/index";
 import { Params as SignTransactionData } from "./SignTransaction/Body";
 import { Props as ConfirmProps } from "./ConfirmModal";
 import { Props as ErrorProps } from "./ErrorModal";
@@ -70,11 +70,7 @@ export type GlobalModalData = {
     exchangeType: unknown;
     onResult: (startExchangeResult: string) => void;
   };
-  MODAL_CONNECT_DEVICE: {
-    onCancel?: (reason: string) => void;
-    appName?: string;
-    onResult: (result: AppResult) => void;
-  };
+  MODAL_CONNECT_DEVICE: ConnectDeviceData;
   MODAL_EXCHANGE_CRYPTO_DEVICE: ExchangeCryptoDeviceDataProp;
   MODAL_HIDE_NFT_COLLECTION: {
     collectionId: string;
@@ -87,6 +83,7 @@ export type GlobalModalData = {
   };
   MODAL_CONFIRM: ConfirmProps;
   MODAL_ERROR: ErrorProps;
+  MODAL_VAULT_SIGNER: undefined;
 };
 
 /**

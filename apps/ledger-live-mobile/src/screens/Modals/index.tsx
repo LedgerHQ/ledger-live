@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { NavigationState, useNavigation } from "@react-navigation/native";
-import {
-  FeatureToggle,
-  useFeature,
-} from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
 import useRatings from "../../logic/ratings";
@@ -39,10 +36,7 @@ const Modals = () => {
         const currentRouteName = getCurrentRouteName(navState);
         let isModalOpened = false;
         if (pushNotificationsFeature?.enabled) {
-          isModalOpened = onPushNotificationsRouteChange(
-            currentRouteName,
-            isModalOpened,
-          );
+          isModalOpened = onPushNotificationsRouteChange(currentRouteName, isModalOpened);
         }
         if (ratingsFeature?.enabled) {
           onRatingsRouteChange(currentRouteName, isModalOpened);
@@ -58,19 +52,13 @@ const Modals = () => {
   );
 
   useEffect(() => {
-    if (!pushNotificationsFeature?.enabled && !ratingsFeature?.enabled)
-      return undefined;
+    if (!pushNotificationsFeature?.enabled && !ratingsFeature?.enabled) return undefined;
 
     navigation.removeListener("state", onRouteChange);
     navigation.addListener("state", onRouteChange);
 
     return () => navigation.removeListener("state", onRouteChange);
-  }, [
-    navigation,
-    onRouteChange,
-    pushNotificationsFeature?.enabled,
-    ratingsFeature?.enabled,
-  ]);
+  }, [navigation, onRouteChange, pushNotificationsFeature?.enabled, ratingsFeature?.enabled]);
 
   return (
     <>

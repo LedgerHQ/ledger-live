@@ -13,10 +13,7 @@ export const encodeCurrencyAsLedgerId = (currency: Currency): string => {
   }
 };
 
-export const encodePairAsLedgerIdPair = (
-  from: Currency,
-  to: Currency
-): string => {
+export const encodePairAsLedgerIdPair = (from: Currency, to: Currency): string => {
   // at the moment, the "to" uses the .ticker in the countervalues API
   return `${encodeCurrencyAsLedgerId(from)}:${to.ticker}`;
 };
@@ -38,22 +35,18 @@ export const datapointLimits: Record<RateGranularity, number> = {
  * efficient implementation of YYYY-MM-DD formatter
  * @memberof countervalue
  */
-export const formatCounterValueDay = (d: Date): string =>
-  d.toISOString().slice(0, 10);
+export const formatCounterValueDay = (d: Date): string => d.toISOString().slice(0, 10);
 
 /**
  * efficient implementation of YYYY-MM-DDTHH formatter
  * @memberof countervalue
  */
-export const formatCounterValueHour = (d: Date): string =>
-  d.toISOString().slice(0, 13);
+export const formatCounterValueHour = (d: Date): string => d.toISOString().slice(0, 13);
 
 /**
  * full version of formatCounterValue*
  */
-export const formatCounterValueHashes = (
-  d: Date
-): { iso: string; day: string; hour: string } => {
+export const formatCounterValueHashes = (d: Date): { iso: string; day: string; hour: string } => {
   const iso = d.toISOString();
   return {
     iso,
@@ -79,10 +72,7 @@ export const parseFormattedDate = (str: string): Date => {
   return new Date(full);
 };
 
-export const formatPerGranularity: Record<
-  RateGranularity,
-  (arg0: Date) => string
-> = {
+export const formatPerGranularity: Record<RateGranularity, (arg0: Date) => string> = {
   daily: formatCounterValueDay,
   hourly: formatCounterValueHour,
 };

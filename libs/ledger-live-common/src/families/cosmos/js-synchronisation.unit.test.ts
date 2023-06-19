@@ -45,13 +45,11 @@ function mockAccountInfo(
     unbondings: any;
     balances: BigNumber;
     txs: any[];
-  }>
+  }>,
 ) {
   // @ts-expect-error mocked
   CosmosAPI.mockReturnValueOnce({
-    getAccountInfo: jest
-      .fn()
-      .mockResolvedValue({ ...baseAccountInfoMock, ...partialMock }),
+    getAccountInfo: jest.fn().mockResolvedValue({ ...baseAccountInfoMock, ...partialMock }),
   });
 }
 
@@ -97,12 +95,10 @@ describe("getAccountShape", () => {
     CosmosAPI.mockClear();
     mergeOpsSpy = jest
       .spyOn(jsHelpers, "mergeOps")
-      .mockImplementation(
-        (existing: Operation[], newlyFetched: Operation[]): Operation[] => [
-          ...existing,
-          ...newlyFetched,
-        ]
-      );
+      .mockImplementation((existing: Operation[], newlyFetched: Operation[]): Operation[] => [
+        ...existing,
+        ...newlyFetched,
+      ]);
   });
 
   afterEach(() => {
@@ -123,9 +119,7 @@ describe("getAccountShape", () => {
       delegations: [{ amount: new BigNumber(1) }, { amount: new BigNumber(2) }],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account as CosmosAccount).cosmosResources.delegatedBalance).toEqual(
-      new BigNumber(3)
-    );
+    expect((account as CosmosAccount).cosmosResources.delegatedBalance).toEqual(new BigNumber(3));
   });
 
   it("should sum up unbondings to balance", async () => {
@@ -168,9 +162,9 @@ describe("getAccountShape", () => {
       ],
     });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect(
-      (account as CosmosAccount).cosmosResources.pendingRewardsBalance
-    ).toEqual(new BigNumber(3));
+    expect((account as CosmosAccount).cosmosResources.pendingRewardsBalance).toEqual(
+      new BigNumber(3),
+    );
   });
 
   it("set spendable balance to 0 if spendable balance is negative in initial account", async () => {
@@ -182,7 +176,7 @@ describe("getAccountShape", () => {
           spendableBalance: new BigNumber(-10),
         } as CosmosAccount,
       },
-      syncConfig
+      syncConfig,
     );
     expect(account.spendableBalance).toEqual(new BigNumber(0));
   });
@@ -196,7 +190,7 @@ describe("getAccountShape", () => {
           operations: [{}, {}],
         } as CosmosAccount,
       },
-      syncConfig
+      syncConfig,
     );
     expect(account.operationsCount).toEqual(2);
   });
@@ -211,7 +205,7 @@ describe("getAccountShape", () => {
           operations: existingOperations,
         } as CosmosAccount,
       },
-      syncConfig
+      syncConfig,
     );
     expect(mergeOpsSpy.mock.calls[0][0]).toEqual(existingOperations);
   });
@@ -268,9 +262,7 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(
-      new BigNumber(3)
-    );
+    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(3));
     expect((account.operations as Operation[])[0].extra.validators).toEqual([
       {
         address: "validatorAddressNumeroUno",
@@ -322,9 +314,7 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as Operation[])[0].value).toEqual(
-      new BigNumber(15)
-    );
+    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(15));
     expect((account.operations as Operation[])[0].extra.validators).toEqual([
       {
         address: "validatorAddressHehe",

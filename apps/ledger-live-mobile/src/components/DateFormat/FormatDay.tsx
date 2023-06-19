@@ -5,20 +5,14 @@ import { createSelector } from "reselect";
 import { useTranslation } from "react-i18next";
 import compareDate from "../../logic/compareDate";
 import { dateFormatSelector, languageSelector } from "../../reducers/settings";
-import {
-  ddmmyyyyFormatter,
-  Format,
-  genericFormatter,
-  mmddyyyyFormatter,
-} from "./formatter.util";
+import { ddmmyyyyFormatter, Format, genericFormatter, mmddyyyyFormatter } from "./formatter.util";
 
 type Props = {
   day: Date;
 };
 
-const localeDateTimeFormatSelector = createSelector(
-  languageSelector,
-  language => genericFormatter(language),
+const localeDateTimeFormatSelector = createSelector(languageSelector, language =>
+  genericFormatter(language),
 );
 
 const FormatDay = ({ day }: Props) => {
@@ -36,11 +30,7 @@ const FormatDay = ({ day }: Props) => {
 
   const dayDiff = differenceInCalendarDays(Date.now(), day);
   const suffix =
-    dayDiff === 0
-      ? ` - ${t("common.today")}`
-      : dayDiff === 1
-      ? ` - ${t("common.yesterday")}`
-      : "";
+    dayDiff === 0 ? ` - ${t("common.today")}` : dayDiff === 1 ? ` - ${t("common.yesterday")}` : "";
   const formattedDate = dateFormatOptions.format(day);
   return (
     <>

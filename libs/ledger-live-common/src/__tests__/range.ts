@@ -33,9 +33,7 @@ test("inferDynamicRange", () => {
 });
 
 test("projectRangeIndex", () => {
-  expect(
-    asString(projectRangeIndex(inferDynamicRange(new BigNumber(0.4)), 2))
-  ).toMatchSnapshot();
+  expect(asString(projectRangeIndex(inferDynamicRange(new BigNumber(0.4)), 2))).toMatchSnapshot();
 });
 
 test("reverseRangeIndex", () => {
@@ -48,7 +46,7 @@ test("reverseRangeIndex", () => {
 });
 
 describe("RangeRaw", () => {
-  [0.4, 1, 10, 111, 666, 99999].forEach((v) => {
+  [0.4, 1, 10, 111, 666, 99999].forEach(v => {
     test("fromRangeRaw(toRangeRaw(x)) is identity for inferred " + v, () => {
       const range = inferDynamicRange(new BigNumber(v));
       expect(fromRangeRaw(toRangeRaw(range))).toEqual(range);

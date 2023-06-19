@@ -24,10 +24,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import FeatureFlagDetails, {
-  TagDisabled,
-  TagEnabled,
-} from "./FeatureFlagDetails";
+import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
 import Alert from "../../components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
 import { featureFlagsBannerVisibleSelector } from "../../reducers/settings";
@@ -41,9 +38,7 @@ the search field.`;
 export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
-  const [focusedGroupName, setFocusedGroupName] = useState<
-    string | undefined
-  >();
+  const [focusedGroupName, setFocusedGroupName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState<string>("");
   const searchInputTrimmed = trim(searchInput);
   const [activeTab, setActiveTab] = useState(0);
@@ -71,10 +66,7 @@ export default function DebugFeatureFlags() {
   const filteredFlags = useMemo(() => {
     return featureFlags
       .sort()
-      .filter(
-        name =>
-          !searchInput || includes(lowerCase(name), lowerCase(searchInput)),
-      );
+      .filter(name => !searchInput || includes(lowerCase(name), lowerCase(searchInput)));
   }, [featureFlags, searchInput]);
 
   const filteredGroups = useMemo(() => {
@@ -129,12 +121,8 @@ export default function DebugFeatureFlags() {
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   useEffect(() => {
-    const listenerShow = Keyboard.addListener("keyboardDidShow", () =>
-      setKeyboardVisible(true),
-    );
-    const listenerHide = Keyboard.addListener("keyboardDidHide", () =>
-      setKeyboardVisible(false),
-    );
+    const listenerShow = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
+    const listenerHide = Keyboard.addListener("keyboardDidHide", () => setKeyboardVisible(false));
     return () => {
       listenerShow.remove();
       listenerHide.remove();
@@ -144,9 +132,7 @@ export default function DebugFeatureFlags() {
   const additionalInfo = <Alert title={addFlagHint} type="hint" noIcon />;
 
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
-  const featureFlagsBannerVisible = useSelector(
-    featureFlagsBannerVisibleSelector,
-  );
+  const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
   const dispatch = useDispatch();
   const setFeatureFlagBannerVisible = useCallback(
     newVal => {
@@ -173,10 +159,7 @@ export default function DebugFeatureFlags() {
           </Tag>
           <Flex flexDirection="row" justifyContent="space-between">
             <Text mt={3}>{t("settings.debug.showBannerDesc")}</Text>
-            <Switch
-              checked={featureFlagsBannerVisible}
-              onChange={setFeatureFlagBannerVisible}
-            />
+            <Switch checked={featureFlagsBannerVisible} onChange={setFeatureFlagBannerVisible} />
           </Flex>
           <Divider />
           <ChipTabs

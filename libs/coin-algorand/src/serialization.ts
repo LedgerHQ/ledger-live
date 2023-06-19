@@ -22,25 +22,16 @@ function fromResourcesRaw(r: AlgorandResourcesRaw): AlgorandResources {
   };
 }
 
-export function assignToAccountRaw(
-  account: Account,
-  accountRaw: AccountRaw
-): void {
+export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
   const algorandAccount = account as AlgorandAccount;
   const algorandAccountRaw = accountRaw as AlgorandAccountRaw;
   if (algorandAccount.algorandResources) {
-    algorandAccountRaw.algorandResources = toResourcesRaw(
-      algorandAccount.algorandResources
-    );
+    algorandAccountRaw.algorandResources = toResourcesRaw(algorandAccount.algorandResources);
   }
 }
 
-export function assignFromAccountRaw(
-  accountRaw: AccountRaw,
-  account: Account
-): void {
-  const algorandResourcesRaw = (accountRaw as AlgorandAccountRaw)
-    .algorandResources;
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
+  const algorandResourcesRaw = (accountRaw as AlgorandAccountRaw).algorandResources;
   const algorandAccount = account as AlgorandAccount;
   if (algorandResourcesRaw) {
     algorandAccount.algorandResources = fromResourcesRaw(algorandResourcesRaw);

@@ -12,27 +12,14 @@ import { getEnv } from "../../env";
 
 type EthSignMessage = (
   transport: Transport,
-  message: Pick<
-    MessageData | TypedMessageData,
-    "path" | "message" | "rawMessage"
-  >
+  message: Pick<MessageData | TypedMessageData, "path" | "message" | "rawMessage">,
 ) => Promise<Result>;
 
 export const domainHash = (message: EIP712Message): Buffer => {
-  return TypedDataUtils.hashStruct(
-    "EIP712Domain",
-    message.domain,
-    message.types,
-    true
-  );
+  return TypedDataUtils.hashStruct("EIP712Domain", message.domain, message.types, true);
 };
 export const messageHash = (message: EIP712Message): Buffer => {
-  return TypedDataUtils.hashStruct(
-    message.primaryType,
-    message.message,
-    message.types,
-    true
-  );
+  return TypedDataUtils.hashStruct(message.primaryType, message.message, message.types, true);
 };
 
 function tryConvertToJSON(message: string): string | EIP712Message {
@@ -51,7 +38,7 @@ const prepareMessageToSign = (
   currency: CryptoCurrency,
   path: string,
   derivationMode: DerivationMode,
-  message: string
+  message: string,
 ): MessageData | TypedMessageData => {
   const hexToStringMessage = Buffer.from(message, "hex").toString();
   const parsedMessage = tryConvertToJSON(hexToStringMessage);
@@ -87,7 +74,7 @@ type PartialMessageData = {
 };
 const signMessage: EthSignMessage = async (
   transport: Transport,
-  { path, message, rawMessage }: PartialMessageData
+  { path, message, rawMessage }: PartialMessageData,
 ) => {
   const eth = new Eth(transport);
   let parsedMessage = message;
@@ -99,9 +86,7 @@ const signMessage: EthSignMessage = async (
   if (typeof parsedMessage === "string") {
     result = await eth.signPersonalMessage(
       path,
-      rawMessage
-        ? rawMessage?.slice(2)
-        : Buffer.from(parsedMessage).toString("hex") || ""
+      rawMessage ? rawMessage?.slice(2) : Buffer.from(parsedMessage).toString("hex") || "",
     );
   } else {
     try {
@@ -115,7 +100,7 @@ const signMessage: EthSignMessage = async (
         result = await eth.signEIP712HashedMessage(
           path,
           bufferToHex(domainHash(parsedMessage)),
-          bufferToHex(messageHash(parsedMessage))
+          bufferToHex(messageHash(parsedMessage)),
         );
       } else {
         throw e;
@@ -143,11 +128,11 @@ const signMessage: EthSignMessage = async (
  */
 const getValue = (
   path: string,
-  value: Record<string, any> | Array<any> | string
+  value: Record<string, any> | Array<any> | string,
 ): Record<string, any> | Array<any> | string => {
   if (typeof value === "object") {
     if (Array.isArray(value)) {
-      return value.map((v) => getValue(path, v)).flat();
+      return value.map(v => getValue(path, v)).flat();
     }
 
     if (!Object.prototype.hasOwnProperty.call(value, path)) {
@@ -164,10 +149,7 @@ const getValue = (
  * Using a path as a string, returns the value(s) of a json key without worrying about depth or arrays
  * (e.g: 'to.wallets.[]' => ["0x123", "0x456"])
  */
-const getValueFromPath = (
-  path: string,
-  eip721Message: EIP712Message
-): string | string[] => {
+const getValueFromPath = (path: string, eip721Message: EIP712Message): string | string[] => {
   const splittedPath = path.split(".");
   const { message } = eip721Message;
 
@@ -192,17 +174,14 @@ const getValueFromPath = (
  */
 export const getNanoDisplayedInfosFor712 = async (
   message: Record<string, any>,
-  remoteCryptoAssetsListURI: string = getEnv("DYNAMIC_CAL_BASE_URL")
+  remoteCryptoAssetsListURI: string = getEnv("DYNAMIC_CAL_BASE_URL"),
 ): Promise<{ label: string; value: string | string[] }[] | null> => {
   if (!isEIP712Message(message)) {
     return null;
   }
 
   const displayedInfos: { label: string; value: string | string[] }[] = [];
-  const filters = await getFiltersForMessage(
-    message,
-    remoteCryptoAssetsListURI
-  );
+  const filters = await getFiltersForMessage(message, remoteCryptoAssetsListURI);
 
   if (!filters) {
     const { types } = message;
@@ -229,10 +208,7 @@ export const getNanoDisplayedInfosFor712 = async (
       });
     }
 
-    if (
-      domainFields.includes("verifyingContract") &&
-      message.domain.verifyingContract
-    ) {
+    if (domainFields.includes("verifyingContract") && message.domain.verifyingContract) {
       displayedInfos.push({
         label: "verifyingContract",
         value: message.domain.verifyingContract.toString(),

@@ -1,0 +1,56 @@
+{
+  "name": "@ledgerhq/hw-transport-vault",
+  "version": "1.0.0",
+  "description": "Ledger Vault transport",
+  "keywords": [
+    "Ledger",
+	"Vault",
+    "LedgerWallet",
+    "proxy",
+    "http",
+	"wss",
+	"sockets"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-vault",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport-http": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "axios": "^0.26.1",
+    "ws": "^7.5.2"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.3",
+    "documentation": "13.2.4",
+    "jest": "^28.1.1",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.4.0"
+  }
+}

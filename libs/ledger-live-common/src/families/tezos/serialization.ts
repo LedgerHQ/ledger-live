@@ -1,9 +1,4 @@
-import type {
-  TezosAccount,
-  TezosAccountRaw,
-  TezosResources,
-  TezosResourcesRaw,
-} from "./types";
+import type { TezosAccount, TezosAccountRaw, TezosResources, TezosResourcesRaw } from "./types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toTezosResourcesRaw(r: TezosResources): TezosResourcesRaw {
@@ -20,7 +15,7 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   const tezosAccount = account as TezosAccount;
   if (tezosAccount.tezosResources) {
     (accountRaw as TezosAccountRaw).tezosResources = toTezosResourcesRaw(
-      tezosAccount.tezosResources
+      tezosAccount.tezosResources,
     );
   }
 }
@@ -28,6 +23,5 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const tezosResourcesRaw = (accountRaw as TezosAccountRaw).tezosResources;
   if (tezosResourcesRaw)
-    (account as TezosAccount).tezosResources =
-      fromTezosResourcesRaw(tezosResourcesRaw);
+    (account as TezosAccount).tezosResources = fromTezosResourcesRaw(tezosResourcesRaw);
 }

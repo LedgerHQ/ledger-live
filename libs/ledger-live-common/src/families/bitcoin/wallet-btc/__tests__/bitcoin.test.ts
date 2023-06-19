@@ -24,10 +24,7 @@ describe("Unit tests for various bitcoin functions", () => {
         "5128751e76e8199196d454941c45d1b3a323f1433bd6751e76e8199196d454941c45d1b3a323f1433bd6",
       ],
       ["BC1SW50QGDZ25J", "6002751e"],
-      [
-        "bc1zw508d6qejxtdg4y5r3zarvaryvaxxpcs",
-        "5210751e76e8199196d454941c45d1b3a323",
-      ],
+      ["bc1zw508d6qejxtdg4y5r3zarvaryvaxxpcs", "5210751e76e8199196d454941c45d1b3a323"],
       [
         "bc1p0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vqzk5jj0",
         "512079be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
@@ -53,31 +50,19 @@ describe("Unit tests for various bitcoin functions", () => {
 
   it("toOutputScript p2sh and p2pkh work as expected", () => {
     const p2pkh = [
-      [
-        "13wuYubzsKiGHm6su5BJQ1PdWUitkJV3kE",
-        "76a91420529483bd2a346c0e09b032b7a31a574f2a0d5688ac",
-      ],
+      ["13wuYubzsKiGHm6su5BJQ1PdWUitkJV3kE", "76a91420529483bd2a346c0e09b032b7a31a574f2a0d5688ac"],
     ];
     testAddresses(p2pkh, "bitcoin");
     const p2sh = [
-      [
-        "3P2B3M3R33mAYX3o2ic7PdT4MM6McL2anh",
-        "a914e9fa27cc45abc468e59bb54c66143099dbe4d3cf87",
-      ],
+      ["3P2B3M3R33mAYX3o2ic7PdT4MM6McL2anh", "a914e9fa27cc45abc468e59bb54c66143099dbe4d3cf87"],
     ];
     testAddresses(p2sh, "bitcoin");
     const p2pkhTestnet = [
-      [
-        "mxVFsFW5N4mu1HPkxPttorvocvzeZ7KZyk",
-        "76a914ba27f99e007c7f605a8305e318c1abde3cd220ac88ac",
-      ],
+      ["mxVFsFW5N4mu1HPkxPttorvocvzeZ7KZyk", "76a914ba27f99e007c7f605a8305e318c1abde3cd220ac88ac"],
     ];
     testAddresses(p2pkhTestnet, "bitcoin_testnet");
     const p2shTestnet = [
-      [
-        "2Mwp1inKcSNWSmai2giKV4YBvYiA3253cky",
-        "a9143213fd5b1fa0d58e0a9be31fd5095a749c186aa787",
-      ],
+      ["2Mwp1inKcSNWSmai2giKV4YBvYiA3253cky", "a9143213fd5b1fa0d58e0a9be31fd5095a749c186aa787"],
     ];
     testAddresses(p2shTestnet, "bitcoin_testnet");
   });
@@ -301,26 +286,16 @@ describe("Unit tests for various bitcoin functions", () => {
     const xpub =
       "tpubDDKYE6BREvDsSWMazgHoyQWiJwYaDDYPbCFjYxN3HFXJP5fokeiK4hwK5tTLBNEDBwrDXn8cQ4v9b2xdW62Xr5yxoQdMu1v6c7UDXYVH27U";
     extAddrs.forEach(async (expected, index) => {
-      expect(
-        await bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 0, index)
-      ).toEqual(expected);
+      expect(await bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 0, index)).toEqual(expected);
     });
     changeAddrs.forEach(async (expected, index) => {
-      expect(
-        await bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 1, index)
-      ).toEqual(expected);
+      expect(await bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 1, index)).toEqual(expected);
     });
-    let prefix = (
-      await bitcoin.getAddress(DerivationModes.NATIVE_SEGWIT, xpub, 0, 0)
-    ).slice(0, 4);
+    let prefix = (await bitcoin.getAddress(DerivationModes.NATIVE_SEGWIT, xpub, 0, 0)).slice(0, 4);
     expect(prefix).toEqual("tb1q");
-    prefix = (
-      await bitcoin.getAddress(DerivationModes.LEGACY, xpub, 0, 0)
-    ).slice(0, 1);
+    prefix = (await bitcoin.getAddress(DerivationModes.LEGACY, xpub, 0, 0)).slice(0, 1);
     expect(prefix).toMatch(new RegExp("[mn]"));
-    prefix = (
-      await bitcoin.getAddress(DerivationModes.SEGWIT, xpub, 0, 0)
-    ).slice(0, 1);
+    prefix = (await bitcoin.getAddress(DerivationModes.SEGWIT, xpub, 0, 0)).slice(0, 1);
     expect(prefix).toEqual("2");
   });
 });

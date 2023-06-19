@@ -14,36 +14,16 @@ import {
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
-import etherscanLikeApi from "./api/etherscan";
-import {
-  getBalanceAndBlock,
-  getBlock,
-  getTokenBalance,
-  getTransaction,
-} from "./api/rpc";
+
+import { getBalanceAndBlock, getBlock, getTokenBalance, getTransaction } from "./api/rpc";
 import { getSyncHash, mergeSubAccounts } from "./logic";
-
-/**
- * Switch to select one of the compatible explorer
- */
-const getExplorerApi = (currency: CryptoCurrency) => {
-  const apiType = currency.ethereumLikeInfo?.explorer?.type;
-
-  switch (apiType) {
-    case "etherscan":
-    case "blockscout":
-      return etherscanLikeApi;
-
-    default:
-      throw new Error("API type not supported");
-  }
-};
+import { getExplorerApi } from "./api/explorer";
 
 /**
  * Main synchronization process
  * Get the main Account and the potential TokenAccounts linked to it
  */
-export const getAccountShape: GetAccountShape = async (infos) => {
+export const getAccountShape: GetAccountShape = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
   const { blockHeight, balance } = await getBalanceAndBlock(currency, address);
   const accountId = encodeAccountId({
@@ -75,7 +55,7 @@ export const getAccountShape: GetAccountShape = async (infos) => {
         currency,
         address,
         accountId,
-        latestSyncedOperation?.blockHeight || 0
+        latestSyncedOperation?.blockHeight || 0,
       );
     } catch (e) {
       log("EVM Family", "Failed to get latest transactions", {
@@ -87,11 +67,7 @@ export const getAccountShape: GetAccountShape = async (infos) => {
     }
   })();
 
-  const newSubAccounts = await getSubAccounts(
-    infos,
-    accountId,
-    shouldSyncFromScratch
-  );
+  const newSubAccounts = await getSubAccounts(infos, accountId, shouldSyncFromScratch);
   // Merging potential new subAccouns while preserving the reference (returned value will be initialAccount.subAccounts)
   const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts);
 
@@ -99,11 +75,9 @@ export const getAccountShape: GetAccountShape = async (infos) => {
   // because they were made in the live
   // Useful for integrations without explorers
   const confirmPendingOperations =
-    initialAccount?.pendingOperations?.map((op) =>
-      getOperationStatus(currency, op)
-    ) || [];
-  const confirmedOperations = await Promise.all(confirmPendingOperations).then(
-    (ops) => ops.filter((op): op is Operation => !!op)
+    initialAccount?.pendingOperations?.map(op => getOperationStatus(currency, op)) || [];
+  const confirmedOperations = await Promise.all(confirmPendingOperations).then(ops =>
+    ops.filter((op): op is Operation => !!op),
   );
   const newOperations = [...confirmedOperations, ...lastCoinOperations];
   const operations = mergeOps(initialAccount?.operations || [], newOperations);
@@ -129,7 +103,7 @@ export const getAccountShape: GetAccountShape = async (infos) => {
 export const getSubAccounts = async (
   infos: AccountShapeInfo,
   accountId: string,
-  shouldSyncFromScratch = false
+  shouldSyncFromScratch = false,
 ): Promise<Partial<SubAccount>[]> => {
   const { initialAccount, address, currency } = infos;
 
@@ -142,9 +116,7 @@ export const getSubAccounts = async (
           if (!acc) {
             return curr;
           }
-          return (acc?.blockHeight || 0) > (curr?.blockHeight || 0)
-            ? acc
-            : curr;
+          return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
         }, null);
 
   // This method could not be working if the integration doesn't have an API to retreive the operations
@@ -155,7 +127,7 @@ export const getSubAccounts = async (
         currency,
         address,
         accountId,
-        latestSyncedOperation?.blockHeight || 0
+        latestSyncedOperation?.blockHeight || 0,
       );
     } catch (e) {
       log("EVM Family", "Failed to get latest ERC20 transactions", {
@@ -184,9 +156,7 @@ export const getSubAccounts = async (
   // Fetching all TokenAccounts possible and providing already filtered operations
   const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
   for (const [token, ops] of erc20OperationsByToken.entries()) {
-    subAccountsPromises.push(
-      getSubAccountShape(currency, accountId, token, ops)
-    );
+    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops));
   }
 
   return Promise.all(subAccountsPromises);
@@ -199,15 +169,11 @@ export const getSubAccountShape = async (
   currency: CryptoCurrency,
   parentId: string,
   token: TokenCurrency,
-  operations: Operation[]
+  operations: Operation[],
 ): Promise<Partial<SubAccount>> => {
   const { xpubOrAddress: address } = decodeAccountId(parentId);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
-  const balance = await getTokenBalance(
-    currency,
-    address,
-    token.contractAddress
-  );
+  const balance = await getTokenBalance(currency, address, token.contractAddress);
 
   return {
     type: "TokenAccount",
@@ -230,7 +196,7 @@ export const getSubAccountShape = async (
  */
 export const getOperationStatus = async (
   currency: CryptoCurrency,
-  op: Operation
+  op: Operation,
 ): Promise<Operation | null> => {
   try {
     const {
@@ -251,10 +217,7 @@ export const getOperationStatus = async (
       }
 
       // Without timestamp, we directly look for the block
-      const { timestamp: blockTimestamp } = await getBlock(
-        currency,
-        blockHeight
-      );
+      const { timestamp: blockTimestamp } = await getBlock(currency, blockHeight);
       return new Date(blockTimestamp * 1000);
     })();
 
@@ -288,22 +251,20 @@ export const postSync = (initial: Account, synced: Account): Account => {
 
   return {
     ...synced,
-    subAccounts: synced.subAccounts?.map((subAccount) => {
+    subAccounts: synced.subAccounts?.map(subAccount => {
       // If the subAccount is new, just return the freshly synced subAccount
       if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
 
       return {
         ...subAccount,
         pendingOperations: subAccount.pendingOperations.filter(
-          (tokenPendingOperation) =>
+          tokenPendingOperation =>
             // if the pending operation got removed from the main account, remove it as well
             coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
             // if the transaction has been confirmed, remove it
-            !subAccount.operations.some(
-              (op) => op.hash === tokenPendingOperation.hash
-            ) &&
+            !subAccount.operations.some(op => op.hash === tokenPendingOperation.hash) &&
             // common rule for pending operations retention in the live
-            shouldRetainPendingOperation(synced, tokenPendingOperation)
+            shouldRetainPendingOperation(synced, tokenPendingOperation),
         ),
       };
     }),

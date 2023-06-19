@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -19,15 +19,19 @@ export default function StepConnectDevice({
 }: StepProps) {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || token;
+  const request = useMemo(
+    () => ({
+      account: mainAccount || undefined,
+      tokenCurrency: tokenCurrency || undefined,
+    }),
+    [mainAccount, tokenCurrency],
+  );
   return (
     <>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       <DeviceAction
         action={action}
-        request={{
-          account: mainAccount || undefined,
-          tokenCurrency: tokenCurrency || undefined,
-        }}
+        request={request}
         onResult={() => transitionTo("receive")}
         analyticsPropertyFlow="receive"
       />

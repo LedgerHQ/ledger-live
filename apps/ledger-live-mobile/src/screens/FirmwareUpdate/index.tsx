@@ -17,11 +17,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
-import {
-  DeviceInfo,
-  FirmwareUpdateContext,
-  languageIds,
-} from "@ledgerhq/types-live";
+import { DeviceInfo, FirmwareUpdateContext, languageIds } from "@ledgerhq/types-live";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,10 +32,7 @@ import {
   DeviceActionError,
 } from "../../components/DeviceAction/common";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { ScreenName } from "../../const";
 import {
@@ -56,9 +49,7 @@ type FirmwareUpdateProps = {
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
   onBackFromUpdate?: () => void;
-  updateFirmwareAction?: (
-    args: updateFirmwareActionArgs,
-  ) => Observable<UpdateFirmwareActionState>;
+  updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
 };
 
 type NavigationProps = BaseComposite<
@@ -82,33 +73,17 @@ const CloseWarning = ({
 
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
-      <IconBadge
-        iconColor="warning.c100"
-        iconSize={32}
-        Icon={Icons.WarningSolidMedium}
-      />
+      <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateNotYetComplete")}
       </Text>
       <Text fontSize={14} textAlign="center" color="neutral.c80" mt={6}>
         {t("FirmwareUpdate.updateNotYetCompleteDescription")}
       </Text>
-      <Button
-        type="main"
-        outline={false}
-        onPress={onPressContinue}
-        mt={8}
-        alignSelf="stretch"
-      >
+      <Button type="main" outline={false} onPress={onPressContinue} mt={8} alignSelf="stretch">
         {t("FirmwareUpdate.continueUpdate")}
       </Button>
-      <Button
-        type="default"
-        outline={false}
-        onPress={onPressQuit}
-        mt={6}
-        alignSelf="stretch"
-      >
+      <Button type="default" outline={false} onPress={onPressQuit} mt={6} alignSelf="stretch">
         {t("FirmwareUpdate.quitUpdate")}
       </Button>
     </Flex>
@@ -129,18 +104,18 @@ export const FirmwareUpdate = ({
   const dispatch = useDispatch();
 
   const quitUpdate = useCallback(() => {
-    if (onBackFromUpdate) onBackFromUpdate();
-    navigation.goBack();
+    if (onBackFromUpdate) {
+      onBackFromUpdate();
+    } else {
+      navigation.goBack();
+    }
   }, [navigation, onBackFromUpdate]);
 
   const onOpenReleaseNotes = useCallback(() => {
     Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
   }, [device.modelId]);
 
-  const deviceName = useMemo(
-    () => getDeviceModel(device.modelId).productName,
-    [device.modelId],
-  );
+  const deviceName = useMemo(() => getDeviceModel(device.modelId).productName, [device.modelId]);
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
@@ -163,10 +138,7 @@ export const FirmwareUpdate = ({
 
   useEffect(() => {
     if (updateStep === "completed") {
-      const completeTimeout = setTimeout(
-        () => setFullUpdateComplete(true),
-        3000,
-      );
+      const completeTimeout = setTimeout(() => setFullUpdateComplete(true), 3000);
 
       return () => clearTimeout(completeTimeout);
     }
@@ -207,9 +179,7 @@ export const FirmwareUpdate = ({
           completed: ItemStatus.completed,
         }[updateStep],
         progress: staxLoadImageState.progress,
-        title: t(
-          "FirmwareUpdate.steps.restoreSettings.restoreLockScreenPicture",
-        ),
+        title: t("FirmwareUpdate.steps.restoreSettings.restoreLockScreenPicture"),
       });
     }
 
@@ -282,12 +252,8 @@ export const FirmwareUpdate = ({
         title: t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
-            <Text color="neutral.c80">
-              {t("FirmwareUpdate.steps.restoreSettings.description")}
-            </Text>
-            {restoreSteps.length > 0 && (
-              <VerticalStepper nested steps={restoreSteps} />
-            )}
+            <Text color="neutral.c80">{t("FirmwareUpdate.steps.restoreSettings.description")}</Text>
+            {restoreSteps.length > 0 && <VerticalStepper nested steps={restoreSteps} />}
           </Flex>
         ),
       },
@@ -388,8 +354,7 @@ export const FirmwareUpdate = ({
         setTotalNumberOfSteps(3);
         updateInstallStepProgress();
         newSteps.installUpdate.title =
-          t("FirmwareUpdate.steps.installUpdate.titleActive") +
-          ` 1/${totalNumberOfSteps}`;
+          t("FirmwareUpdate.steps.installUpdate.titleActive") + ` 1/${totalNumberOfSteps}`;
         break;
       case "flashingMcu":
         setInstallStepActive();
@@ -443,13 +408,7 @@ export const FirmwareUpdate = ({
           errorName={error.name}
           translationContext="FirmwareUpdate"
         >
-          <Button
-            type="main"
-            outline={false}
-            onPress={quitUpdate}
-            mt={6}
-            alignSelf="stretch"
-          >
+          <Button type="main" outline={false} onPress={quitUpdate} mt={6} alignSelf="stretch">
             {t("FirmwareUpdate.quitUpdate")}
           </Button>
         </DeviceActionError>
@@ -458,12 +417,7 @@ export const FirmwareUpdate = ({
 
     switch (updateActionState.step) {
       case "allowSecureChannelRequested":
-        return (
-          <AllowManager
-            device={device}
-            wording={t("DeviceAction.allowSecureConnection")}
-          />
-        );
+        return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
       case "installOsuDevicePermissionRequested":
         return (
           <ConfirmFirmwareUpdate
@@ -506,13 +460,7 @@ export const FirmwareUpdate = ({
             theme,
             fullScreen: false,
           })}
-          <Button
-            type="main"
-            outline={false}
-            onPress={retryCurrentStep}
-            mt={6}
-            alignSelf="stretch"
-          >
+          <Button type="main" outline={false} onPress={retryCurrentStep} mt={6} alignSelf="stretch">
             {t("common.retry")}
           </Button>
           <Button type="default" outline={false} onPress={quitUpdate} mt={6}>
@@ -531,12 +479,7 @@ export const FirmwareUpdate = ({
     }
 
     if (restoreAppsState.allowManagerRequestedWording) {
-      return (
-        <AllowManager
-          device={device}
-          wording={t("DeviceAction.allowSecureConnection")}
-        />
-      );
+      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
     }
 
     if (installLanguageState.languageInstallationRequested) {
@@ -590,13 +533,7 @@ export const FirmwareUpdate = ({
             <Button type="main" outline={false} onPress={quitUpdate}>
               {t("FirmwareUpdate.finishUpdateCTA")}
             </Button>
-            <Button
-              type="default"
-              mt={5}
-              mb={9}
-              outline={false}
-              onPress={onOpenReleaseNotes}
-            >
+            <Button type="default" mt={5} mb={9} outline={false} onPress={onOpenReleaseNotes}>
               {t("FirmwareUpdate.viewUpdateChangelog")}
             </Button>
           </Flex>
@@ -610,18 +547,12 @@ export const FirmwareUpdate = ({
             <VerticalStepper steps={steps} />
           </Flex>
           <Flex mx={6} mb={8}>
-            <Alert
-              type="info"
-              title={t("FirmwareUpdate.doNotLeaveLedgerLive")}
-            />
+            <Alert type="info" title={t("FirmwareUpdate.doNotLeaveLedgerLive")} />
           </Flex>
         </Flex>
       )}
 
-      <QueuedDrawer
-        isRequestingToBeOpened={Boolean(deviceInteractionDisplay)}
-        noCloseButton
-      >
+      <QueuedDrawer isRequestingToBeOpened={Boolean(deviceInteractionDisplay)} noCloseButton>
         {deviceInteractionDisplay}
       </QueuedDrawer>
       <QueuedDrawer isRequestingToBeOpened={isCloseWarningOpen} noCloseButton>
@@ -637,8 +568,7 @@ export const FirmwareUpdate = ({
 const FirmwareUpdateScreen = () => {
   const { params } = useRoute<NavigationProps["route"]>();
 
-  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo)
-    return null;
+  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) return null;
 
   return (
     <Flex flex={1}>
