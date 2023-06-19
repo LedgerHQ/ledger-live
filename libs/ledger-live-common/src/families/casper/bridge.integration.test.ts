@@ -9,14 +9,13 @@ import {
   InvalidAddress,
   InvalidMinimumAmount,
   NotEnoughBalance,
-  CasperInvalidTransferId,
 } from "@ledgerhq/errors";
-import { getEstimatedFees } from "./utils";
 
-const SEED_IDENTIFIER =
-  "0202ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b01581";
-const ACCOUNT_2 =
-  "0203A17118eC0e64c4e4FdbDbEe0eA14D118C9aAf08C6c81bbB776Cae607cEB84EcB";
+import { getEstimatedFees } from "./utils";
+import { CasperInvalidTransferId } from "./errors";
+
+const SEED_IDENTIFIER = "0202ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b01581";
+const ACCOUNT_2 = "0203A17118eC0e64c4e4FdbDbEe0eA14D118C9aAf08C6c81bbB776Cae607cEB84EcB";
 
 const casper: CurrenciesData<Transaction> = {
   scanAccounts: [
