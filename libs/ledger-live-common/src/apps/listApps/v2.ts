@@ -138,6 +138,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           return;
         }
 
+        // If the hash is not static (ex: Fido app) we need to find the app by its name using the catalog
         const matchFromCatalog = catalogForDevice.find(({ name }) => name === localName);
         log("list-apps", `falling back to catalog for ${localName}`);
         if (matchFromCatalog) {
