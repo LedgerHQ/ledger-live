@@ -210,7 +210,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
                     { backgroundColor: rgba(colors.primary.c90, 0.1) },
                   ]}
                 >
-                  <Icons.BracketsMedium size={16} color={colors.primary.c90} />
+                  <Icons.PhotographMedium size={16} color={colors.primary.c90} />
                 </View>
               }
               onPress={handlePressCustomImage}
