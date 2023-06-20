@@ -80,9 +80,7 @@ const completeExchange = (
         if (mainRefundCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
 
-        log(COMPLETE_EXCHANGE_LOG, "Prepare transaction");
         transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
-        log(COMPLETE_EXCHANGE_LOG, "Complete transaction:", transaction);
 
         if (unsubscribed) return;
 
@@ -90,8 +88,7 @@ const completeExchange = (
           refundAccount,
           transaction,
         );
-        log(COMPLETE_EXCHANGE_LOG, "Estimated fees", estimatedFees);
-        
+
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
