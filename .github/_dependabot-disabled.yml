@@ -12,13 +12,3 @@ updates:
     labels:
       - "dependabot"
       - "dependencies"
-
-  # Do we need to declare each package.json :scream: ?
-  # - package-ecosystem: "npm"
-  #   directory: "apps/ledger-live-desktop"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #   labels:
-  #     - "dependabot"
-  #     - "dependencies"
