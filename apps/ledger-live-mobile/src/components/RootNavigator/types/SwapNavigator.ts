@@ -56,7 +56,7 @@ export type SwapNavigatorParamList = {
   };
   [ScreenName.SwapSelectCurrency]: {
     currencies: Currency[];
-    provider: string;
+    provider?: string;
   };
   [ScreenName.SwapSelectProvider]: {
     provider?: string;
