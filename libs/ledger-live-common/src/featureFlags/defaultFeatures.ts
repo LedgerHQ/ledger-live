@@ -295,4 +295,7 @@ export const defaultFeatures: DefaultFeatures = {
       path: "/discover/refer-a-friend",
     },
   },
+  listAppsV2: {
+    enabled: false,
+  },
 };
