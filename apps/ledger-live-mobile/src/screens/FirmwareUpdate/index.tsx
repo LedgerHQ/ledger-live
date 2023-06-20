@@ -273,7 +273,7 @@ export const FirmwareUpdate = ({
     () => ({
       prepareUpdate: {
         status: ItemStatus.inactive,
-        title: t("FirmwareUpdate.steps.prepareUpdate.titleActive"),
+        title: t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
         renderBody: () => (
           <>
             <TrackScreen
@@ -400,6 +400,7 @@ export const FirmwareUpdate = ({
     switch (updateActionState.step) {
       case "installingOsu":
         updatePrepareStepProgress();
+        newSteps.prepareUpdate.title = t("FirmwareUpdate.steps.prepareUpdate.titleTransferring");
         newSteps.prepareUpdate.status = ItemStatus.active;
         break;
       case "preparingUpdate":

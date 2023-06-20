@@ -4164,8 +4164,9 @@
       "flash": "Flashing your device",
       "preparing": "Preparing update",
       "firmware": "Downloading update",
-      "prepareUpdate": {
-        "titleActive": "Preparing update for install",
+      "prepareUpdate":  {
+        "titleBackingUp": "Backing up apps and settings",
+        "titleTransferring": "Transferring update",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
       },
       "installUpdate": {

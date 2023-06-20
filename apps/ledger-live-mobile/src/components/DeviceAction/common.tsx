@@ -40,7 +40,7 @@ export const ConfirmFirmwareUpdate = ({
 }) => {
   const { theme } = useTheme();
   return (
-    <Flex pb={6} pt={6}>
+    <Flex pb={6} pt={6} alignItems="center">
       <Flex mb={6}>
         <Text fontWeight="semiBold" fontSize={7} textAlign="center">
           {t("FirmwareUpdate.pleaseConfirmUpdateOnYourDevice", {
@@ -91,7 +91,9 @@ export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Devi
           </Text>
         </Flex>
       </Flex>
-      <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
+      <Flex alignItems="center">
+        <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
+      </Flex>
     </Flex>
   );
 };
