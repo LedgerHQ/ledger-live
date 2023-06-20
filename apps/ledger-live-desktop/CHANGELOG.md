@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.7
+
+### Minor Changes
+
+- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+
+### Patch Changes
+
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+
+- [#3730](https://github.com/LedgerHQ/ledger-live/pull/3730) [`5f98d19ebf`](https://github.com/LedgerHQ/ledger-live/commit/5f98d19ebfcd40c3a9bfd355d0678865648382e9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix stellar memo ui
+
+- Updated dependencies [[`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc), [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9), [`f37494ae0c`](https://github.com/LedgerHQ/ledger-live/commit/f37494ae0cb5a14a83969615d58466126704cb6d), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a), [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc)]:
+  - @ledgerhq/live-common@31.1.0-nightly.5
+  - @ledgerhq/domain-service@1.1.4-nightly.3
+  - @ledgerhq/types-live@6.36.0-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.13-nightly.1
+  - @ledgerhq/live-env@0.3.1-nightly.0
+  - @ledgerhq/coin-framework@0.3.6-nightly.4
+  - @ledgerhq/live-network@1.1.1-nightly.1
+
 ## 2.62.0-nightly.6
 
 ### Patch Changes
