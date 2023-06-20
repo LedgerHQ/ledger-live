@@ -7,7 +7,7 @@ import { isValidBody, isValidBranchName, isValidUser } from "./tools";
  * @param app The Probot application.
  */
 export function autoClose(app: Probot) {
-  app.on(["pull_request.opened", "pull_request.reopened"], async (context) => {
+  app.on(["pull_request.opened", "pull_request.reopened"], async context => {
     const { payload, octokit } = context;
     const repository = context.repo();
 
@@ -19,9 +19,7 @@ export function autoClose(app: Probot) {
     if (
       !isValidUser(login) &&
       // Close automatic PRs from smartling - except the ones triggered manually
-      !/^(smartling-content-updated|smartling-translation-completed)-.+/.test(
-        branch
-      )
+      !/^(smartling-content-updated|smartling-translation-completed)-.+/.test(branch)
     )
       return;
 
