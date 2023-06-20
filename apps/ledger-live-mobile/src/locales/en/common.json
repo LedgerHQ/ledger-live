@@ -2674,7 +2674,7 @@
         "title": "Large Mover",
         "desc": "You'll be notified of important price movements for BTC and ETH"
       },
-      "transactionAlerts": {
+      "transactionsAlerts": {
         "title": "Transaction Alerts",
         "desc": "Be notified on your transactions for Ethereum, Polygon and Avalanche"
       },

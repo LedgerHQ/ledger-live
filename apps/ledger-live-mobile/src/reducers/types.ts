@@ -244,7 +244,7 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
   largeMoverCategory: boolean;
-  transactionAlertsCategory: boolean;
+  transactionsAlertsCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===
