@@ -18,7 +18,7 @@ const notificationsMapping = {
   announcementsCategory: "announcements",
   recommendationsCategory: "recommendations",
   largeMoverCategory: "largeMover",
-  transactionAlertsCategory: "transactionAlerts",
+  transactionsAlertsCategory: "transactionsAlerts",
 };
 
 type NotificationRowProps = {
@@ -180,9 +180,9 @@ function NotificationsSettings() {
               />
             ) : null}
             {!notificationsCategoriesHidden ||
-            !notificationsCategoriesHidden.includes("transactionAlertsCategory") ? (
+            !notificationsCategoriesHidden.includes("transactionsAlertsCategory") ? (
               <NotificationSettingsRow
-                notificationKey={"transactionAlertsCategory"}
+                notificationKey={"transactionsAlertsCategory"}
                 disabled={disableSubSettings}
               />
             ) : null}

@@ -251,7 +251,7 @@ const useNotifications = () => {
           announcementsCategory: true,
           recommendationsCategory: true,
           largeMoverCategory: true,
-          transactionAlertsCategory: true,
+          transactionsAlertsCategory: true,
         }),
       );
     }

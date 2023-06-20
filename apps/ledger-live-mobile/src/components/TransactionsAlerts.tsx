@@ -44,7 +44,7 @@ const TransactionsAlerts = () => {
     return accountsByCurrencies;
   };
 
-  const updateTransactionAlertsAddresses = async (
+  const updateTransactionsAlertsAddresses = async (
     newAccounts: Account[],
     removedAccounts: Account[],
   ) => {
@@ -77,7 +77,7 @@ const TransactionsAlerts = () => {
     );
 
     if (newAccounts.length > 0 || removedAccounts.length > 0) {
-      updateTransactionAlertsAddresses(newAccounts, removedAccounts);
+      updateTransactionsAlertsAddresses(newAccounts, removedAccounts);
     }
     refAccounts.current = accountsFilteredBySupportedChains;
   }, [chainwatchBaseUrl, accountsFilteredBySupportedChains]);
