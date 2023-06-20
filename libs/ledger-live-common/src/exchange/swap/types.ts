@@ -286,6 +286,8 @@ export type OnNoRatesCallback = (arg: {
   toState: SwapSelectorStateType;
 }) => void;
 
+export type OnBeforeTransaction = () => void;
+
 export type RatesReducerState = {
   status?: string | null;
   value?: ExchangeRate[];
