@@ -30,12 +30,10 @@ export const AllowManager = ({ wording, device }: { wording: string; device: Dev
 export const ConfirmFirmwareUpdate = ({
   t,
   device,
-  oldFirmwareVersion,
   newFirmwareVersion,
 }: {
   t: TFunction;
   device: Device;
-  oldFirmwareVersion: string;
   newFirmwareVersion: string;
 }) => {
   const { theme } = useTheme();
@@ -49,11 +47,7 @@ export const ConfirmFirmwareUpdate = ({
         </Text>
       </Flex>
       <Flex flexDirection="row" justifyContent="center">
-        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40" mr={3}>
-          <Text>{oldFirmwareVersion}</Text>
-        </Flex>
-        <Icons.ArrowRightMedium />
-        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40" ml={3}>
+        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40">
           <Text>{newFirmwareVersion}</Text>
         </Flex>
       </Flex>

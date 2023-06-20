@@ -251,7 +251,10 @@ export const FirmwareUpdate = ({
                 restoreAppsState.installQueue.length > 0
               ? noOfAppsToReinstall - (restoreAppsState.installQueue.length - 1)
               : noOfAppsToReinstall
-          }/${noOfAppsToReinstall}`,
+          }/${noOfAppsToReinstall}` +
+          (restoreAppsState.installQueue !== undefined && restoreAppsState.installQueue.length > 0
+            ? ` - ${restoreAppsState.installQueue[0]}`
+            : ""),
       });
     }
 
@@ -508,7 +511,6 @@ export const FirmwareUpdate = ({
         return (
           <ConfirmFirmwareUpdate
             device={device}
-            oldFirmwareVersion={deviceInfo.seVersion ?? ""}
             newFirmwareVersion={firmwareUpdateContext.final.name}
             t={t}
           />
@@ -629,7 +631,6 @@ export const FirmwareUpdate = ({
     t,
     retryCurrentStep,
     quitUpdate,
-    deviceInfo.seVersion,
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
     theme,
