@@ -88,16 +88,19 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
     i18n.changeLanguage(language);
   }, [i18n, language]);
 
-  const openDrawer = useCallback(() => {
-    setDrawer(
-      ChangeDeviceLanguagePromptDrawer,
-      {
-        deviceModelId: lastSeenDevice?.modelId ?? DeviceModelId.nanoX,
-        currentLanguage: (currentLanguage.value ?? getInitialLanguageLocale()) as Locale,
-      },
-      {},
-    );
-  }, [currentLanguage.value, lastSeenDevice?.modelId]);
+  const openDrawer = useCallback(
+    language => {
+      setDrawer(
+        ChangeDeviceLanguagePromptDrawer,
+        {
+          deviceModelId: lastSeenDevice?.modelId ?? DeviceModelId.nanoX,
+          currentLanguage: (language ?? getInitialLanguageLocale()) as Locale,
+        },
+        {},
+      );
+    },
+    [lastSeenDevice?.modelId],
+  );
 
   const avoidEmptyValue = (language?: ChangeLangArgs | null) =>
     language && handleChangeLanguage(language);
@@ -123,7 +126,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         track("Page LiveLanguageChange DeviceLanguagePrompt", {
           selectedLanguage: potentialDeviceLanguage,
         });
-        openDrawer();
+        openDrawer(language?.value);
       }
 
       dispatch(setLanguage(language?.value));
