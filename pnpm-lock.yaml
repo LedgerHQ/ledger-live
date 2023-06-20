@@ -39,8 +39,8 @@ importers:
         specifier: ^17.4.2
         version: 17.4.2
       '@commitlint/config-conventional':
-        specifier: ^17.4.2
-        version: 17.4.2
+        specifier: ^17.6.5
+        version: 17.6.5
       '@commitlint/prompt-cli':
         specifier: ^17.4.2
         version: 17.4.2
@@ -9626,8 +9626,8 @@ packages:
       - source-map-support
     dev: true
 
-  /@commitlint/config-conventional@17.4.2:
-    resolution: {integrity: sha512-JVo1moSj5eDMoql159q8zKCU8lkOhQ+b23Vl3LVVrS6PXDLQIELnJ34ChQmFVbBdSSRNAbbXnRDhosFU+wnuHw==}
+  /@commitlint/config-conventional@17.6.5:
+    resolution: {integrity: sha512-Xl9H9KLl86NZm5CYNTNF9dcz1xelE/EbvhWIWcYxG/rn3UWYWdWmmnX2q6ZduNdLFSGbOxzUpIx61j5zxbeXxg==}
     engines: {node: '>=v14'}
     dependencies:
       conventional-changelog-conventionalcommits: 5.0.0
