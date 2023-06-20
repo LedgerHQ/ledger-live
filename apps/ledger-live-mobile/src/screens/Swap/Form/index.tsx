@@ -108,13 +108,22 @@ export function SwapForm({
         message: "no_rates",
         sourceCurrency: toState.currency?.name,
       });
+      setError("RATE_NOT_FOUND");
     },
     [track],
   );
+
+  const onBeforeTransaction = useCallback(() => {
+    setCurrentBanner(ActionRequired.None);
+    setCurrentFlow(ActionRequired.None);
+    setError(undefined);
+  }, []);
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     onNoRates,
+    onBeforeTransaction,
     excludeFixedRates: true,
     providers,
     includeDEX: false,
@@ -125,13 +134,6 @@ export function SwapForm({
   const provider = exchangeRate?.provider;
   const providerKYC = provider ? swapKYC?.[provider] : undefined;
   const kycStatus = providerKYC?.status as ValidKYCStatus | "rejected";
-
-  // On provider change, reset banner and flow
-  useEffect(() => {
-    setCurrentBanner(ActionRequired.None);
-    setCurrentFlow(ActionRequired.None);
-    setError(undefined);
-  }, [provider]);
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
@@ -428,7 +430,7 @@ export function SwapForm({
 
                 <Requirement required={currentBanner} provider={provider} />
 
-                {error && provider && <ErrorBanner provider={provider} errorCode={error} />}
+                {error && <ErrorBanner provider={provider} errorCode={error} />}
               </>
             )}
           </Flex>
