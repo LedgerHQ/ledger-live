@@ -15,7 +15,7 @@ import NavigationScrollView from "../../../../components/NavigationScrollView";
 import SelectDevice from "../../../../components/SelectDevice";
 import SelectDevice2, { SetHeaderOptionsRequest } from "../../../../components/SelectDevice2";
 import CustomImageDeviceAction from "../../../../components/CustomImageDeviceAction";
-import ResultDataTester from "../../../../components/CustomImage/ResultDataTester";
+import ImageHexProcessor from "../../../../components/CustomImage/ImageHexProcessor";
 import { ProcessorPreviewResult } from "../../../../components/CustomImage/ImageProcessor";
 import StaxFramedImage, {
   transferConfig,
@@ -179,7 +179,7 @@ export default function DebugFetchCustomImage() {
         </Flex>
         {hex ? (
           <>
-            <ResultDataTester
+            <ImageHexProcessor
               hexData={hex as string}
               {...targetDisplayDimensions}
               onPreviewResult={handleImageSourceLoaded}

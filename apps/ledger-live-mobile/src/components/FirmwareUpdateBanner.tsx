@@ -190,7 +190,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
               <Button
                 flex={1}
                 outline
-                event="FirmwareUpdateBannerClick"
+                event="button_clicked"
+                eventProperties={{ button: "Learn more" }}
                 type="main"
                 title={t("common.learnMore")}
                 onPress={onOpenReleaseNotes}
@@ -198,7 +199,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
               <Button
                 ml={3}
                 flex={1}
-                event="FirmwareUpdateBannerClick"
+                event="button_clicked"
+                eventProperties={{ button: "Update" }}
                 type="main"
                 title={t("FirmwareUpdate.update")}
                 onPress={onClickUpdate}
@@ -218,7 +220,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
             </Text>
             <Button
               ml={5}
-              event="FirmwareUpdateBannerClick"
+              event="button_clicked"
+              eventProperties={{ button: "Update" }}
               type="color"
               title={t("FirmwareUpdate.update")}
               onPress={onClickUpdate}

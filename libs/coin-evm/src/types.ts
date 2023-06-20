@@ -8,6 +8,10 @@ import {
 
 export type EvmTransactionMode = "send";
 
+export type GasOptions = {
+  [key in "slow" | "medium" | "fast"]: FeeData;
+};
+
 export type EvmTransactionBase = TransactionCommon & {
   family: "evm";
   mode: EvmTransactionMode;
@@ -24,6 +28,8 @@ export type EvmTransactionBase = TransactionCommon & {
   // additional fees can be expected on some Layer 2 chains.
   // It's an additional cost to take into account while estimating the cost of the tx.
   additionalFees?: BigNumber;
+  // available gas options for the transaction, used to display sensible default fees choices to the user
+  gasOptions?: GasOptions;
 };
 
 export type EvmTransactionLegacy = EvmTransactionBase & {
