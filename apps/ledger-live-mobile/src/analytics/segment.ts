@@ -15,7 +15,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
-import { useCallback } from "react";
+import React, { MutableRefObject, useCallback } from "react";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
@@ -309,6 +309,8 @@ export const useAnalytics = () => {
   };
 };
 
+const lastScreenEventName: MutableRefObject<string | null | undefined> = React.createRef();
+
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
  * Extra logic to update the route names used in "screen" and "source"
@@ -344,15 +346,23 @@ export const screen = async (
    * any effect.
    */
   refreshSource?: boolean,
+  /**
+   * When true, event will not be emitted if it's a duplicate (if the last
+   * screen event emitted was the same screen event).
+   * This is practical in case a TrackScreen component gets remounted.
+   */
+  avoidDuplicates?: boolean,
 ) => {
   const fullScreenName = category + (name ? ` ${name}` : "");
+  const eventName = `Page ${fullScreenName}`;
+  if (avoidDuplicates && eventName === lastScreenEventName.current) return;
+  lastScreenEventName.current = eventName;
   if (updateRoutes) {
     previousRouteNameRef.current = currentRouteNameRef.current;
     if (refreshSource) {
       currentRouteNameRef.current = fullScreenName;
     }
   }
-  const eventName = `Page ${fullScreenName}`;
   Sentry.addBreadcrumb({
     message: eventName,
     category: "screen",

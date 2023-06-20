@@ -16,7 +16,8 @@ let nftViewerPage: NftViewerPage;
 let managerPage: ManagerPage;
 let receivePage: ReceivePage;
 
-describe("NFT Gallery screen", () => {
+//FIXME Fix device action mocks B2CQA-1834
+describe.skip("NFT Gallery screen", () => {
   beforeAll(async () => {
     portfolioPage = new PortfolioPage();
     walletTabNavigatorPage = new WalletTabNavigatorPage();
