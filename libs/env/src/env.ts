@@ -501,6 +501,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
   },
+  MOCK_NO_BYPASS: {
+    def: false,
+    parser: boolParser,
+    desc: "if defined, avoids bypass of the currentDevice in the store.",
+  },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
     parser: stringParser,
