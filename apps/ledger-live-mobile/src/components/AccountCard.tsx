@@ -1,6 +1,10 @@
 import React, { ReactNode } from "react";
 import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/helpers";
+import {
+  getAccountCurrency,
+  getAccountName,
+  getAccountUnit,
+} from "@ledgerhq/live-common/account/helpers";
 import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
@@ -68,11 +72,7 @@ const AccountCard = ({
               color={disabled ? "neutral.c50" : "neutral.c100"}
               flexShrink={1}
             >
-              {account.type === "TokenAccount"
-                ? parentAccount
-                  ? `${parentAccount!.name} (${currency.ticker})`
-                  : currency.ticker
-                : account.name}
+              {getAccountName(account)}
             </Text>
             {AccountSubTitle}
           </Flex>
