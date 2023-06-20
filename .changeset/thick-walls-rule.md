@@ -1,6 +1,7 @@
 ---
 "ledger-live-desktop": minor
 "@ledgerhq/live-common": minor
+"@ledgerhq/live-env": minor
 ---
 
 feat: recover on LLD
