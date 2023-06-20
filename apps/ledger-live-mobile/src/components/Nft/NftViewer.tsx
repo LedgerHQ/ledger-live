@@ -434,6 +434,15 @@ const NftViewer = ({ route }: Props) => {
           </Box>
         </Box>
 
+        <FeatureToggle feature="counterValue">
+          {!floorPriceLoading && floorPrice ? (
+            <Section
+              title={t("nft.viewer.attributes.floorPrice")}
+              value={`${floorPrice} ${ticker}`}
+            />
+          ) : null}
+        </FeatureToggle>
+
         {/* This weird thing is because we want a full width scrollView withtout the paddings */}
         {properties && (
           <SectionContainer px={0}>
@@ -465,14 +474,6 @@ const NftViewer = ({ route }: Props) => {
             </TouchableOpacity>
           </>
         )}
-        <FeatureToggle feature="counterValue">
-          {!floorPriceLoading && floorPrice ? (
-            <Section
-              title={t("nft.viewer.attributes.floorPrice")}
-              value={`${floorPrice} ${ticker}`}
-            />
-          ) : null}
-        </FeatureToggle>
       </ScrollView>
       <NftLinksPanel
         nftMetadata={nftMetadata || undefined}
