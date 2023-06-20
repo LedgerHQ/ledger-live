@@ -277,7 +277,11 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
         </Flex>
       </QueuedDrawer>
       <QueuedDrawer
-        isRequestingToBeOpened={batteryStatusesState.lockedDevice}
+        isRequestingToBeOpened={
+          (batteryStatusesState.error &&
+            batteryStatusesState.error.message === "DisconnectedDevice") ||
+          batteryStatusesState.lockedDevice
+        }
         onClose={() => {
           cancelBatteryCheck();
           setDisableUpdateButton(false);
