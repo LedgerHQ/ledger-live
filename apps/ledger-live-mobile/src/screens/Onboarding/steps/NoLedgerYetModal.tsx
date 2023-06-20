@@ -64,6 +64,11 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
 
   const buyLedger = useCallback(() => {
     setFromBuy(true);
+    track("button_clicked", {
+      button: "Explore the app",
+      page: "Onboarding Get Started",
+      drawer: "Get Started Upsell",
+    });
     (navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>).navigate(
       NavigatorName.BuyDevice,
     );
