@@ -1,23 +1,27 @@
 export type ChainwatchNetwork = {
-    ledgerLiveId: string;
-    chainwatchId: string;
-    nbConfirmations: number;
+  ledgerLiveId: string;
+  chainwatchId: string;
+  nbConfirmations: number;
 };
+
+export type ChainwatchTargetType = "braze";
 
 export type ChainwatchTarget = {
-    equipment: string;
-    type: "braze";
-    id: number;
+  equipment: string;
+  type: ChainwatchTargetType;
+  id: number;
 };
 
+export type ChainwatchMonitorType = "send" | "receive";
+
 export type ChainwatchMonitor = {
-    confirmations: number;
-    type: "send" | "receive";
-    id: number;
+  confirmations: number;
+  type: ChainwatchMonitorType;
+  id: number;
 };
 
 export type ChainwatchAccount = {
-    suffixes: string[];
-    targets: ChainwatchTarget[];
-    monitors: ChainwatchMonitor[];
-}
+  suffixes: string[];
+  targets: ChainwatchTarget[];
+  monitors: ChainwatchMonitor[];
+};
