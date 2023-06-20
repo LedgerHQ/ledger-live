@@ -14,6 +14,7 @@ import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/reac
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
@@ -175,7 +176,9 @@ function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
-      <TransactionsAlerts />
+      <FeatureToggle feature="transactionsAlerts">
+        <TransactionsAlerts />
+      </FeatureToggle>
       <ExperimentalHeader />
       <RootNavigator />
       <AnalyticsConsole />

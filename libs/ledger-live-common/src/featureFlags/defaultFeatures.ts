@@ -295,10 +295,8 @@ export const defaultFeatures: DefaultFeatures = {
   transactionsAlerts: {
     enabled: false,
     params: {
-     chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
-     networks: [
-       { ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 },
-     ],
+      chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
+      networks: [{ ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 }],
     },
   },
 };
