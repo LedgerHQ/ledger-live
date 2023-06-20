@@ -35,7 +35,12 @@ const RecoverRestore = () => {
       <Flex position="relative" height="100%" width="100%" flexDirection="column">
         <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
         <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
-          <Text variant="h3Inter" color="neutral.c100" mt={16}>
+          <Text
+            variant="h3Inter"
+            color="neutral.c100"
+            mt={16}
+            data-test-id="recover-restore-connect-text"
+          >
             {t("recoverRestore.title")}
           </Text>
         </Flex>
