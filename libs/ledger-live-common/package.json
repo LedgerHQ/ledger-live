@@ -196,7 +196,7 @@
     "create-hmac": "^1.1.7",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.23.0",
-    "eip55": "^2.1.0",
+    "eip55": "^2.1.1",
     "eth-sig-util": "3.0.1",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.4",

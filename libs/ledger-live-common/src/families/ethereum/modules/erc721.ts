@@ -7,7 +7,7 @@ import type { ModeModule, Transaction } from "../types";
 import type { Account } from "@ledgerhq/types-live";
 import { apiForCurrency } from "../api";
 
-const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
+export const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 
 export type Modes = "erc721.transfer";
 
