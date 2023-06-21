@@ -64,130 +64,114 @@ const App = () => {
   useE2EInjection();
 
   // Define the Ledger Live API variable used to call api methods
-  const api = useRef<WalletAPIClient>();
-  const transport = useRef<HWTransport>();
+  // const api = useRef<WalletAPIClient>();
+  // const transport = useRef<HWTransport>();
 
-  const [output, setOutput] = useState<any>(null);
+  // const getAccounts = async () => {
+  //   if (!api.current) {
+  //     return;
+  //   }
+  //   try {
+  //     const action = await api.current.account.list({ currencyIds: ["bitcoin", "ethereum"] });
+  //     setOutput(action);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  // // Instantiate the Ledger Live API on component mount
-  // useEffect(() => {
-  //   const windowTransport = new WindowMessageTransport();
-  //   const client = new WalletAPIClient(windowTransport);
-  //   windowTransport.connect();
-  //   api.current = client;
+  // const requestAccount = async () => {
+  //   if (!api.current) {
+  //     return;
+  //   }
+  //   try {
+  //     const action = await api.current.account.request({ currencyIds: ["bitcoin", "ethereum"] });
+  //     setOutput(action);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  //   // Cleanup the Ledger Live API on component unmount
-  //   return () => {
-  //     api.current = undefined;
-  //     windowTransport.disconnect();
+  // const signTransaction = async () => {
+  //   if (!api.current) {
+  //     return;
+  //   }
+  //   const transaction: Transaction = {
+  //     amount: new BigNumber(1230),
+  //     recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
+  //     family: "bitcoin",
+  //     feePerByte: new BigNumber(1),
   //   };
-  // }, []);
 
-  const getAccounts = async () => {
-    if (!api.current) {
-      return;
-    }
-    try {
-      const action = await api.current.account.list({ currencyIds: ["bitcoin", "ethereum"] });
-      setOutput(action);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //   const params: TransactionSign["params"]["options"] = { hwAppId: undefined };
 
-  const requestAccount = async () => {
-    if (!api.current) {
-      return;
-    }
-    try {
-      const action = await api.current.account.request({ currencyIds: ["bitcoin", "ethereum"] });
-      setOutput(action);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //   const action = await api.current.transaction.sign(
+  //     "mock:1:bitcoin:true_bitcoin_0:",
+  //     transaction,
+  //     params,
+  //   );
+  //   setOutput(action.toString());
+  // };
 
-  const signTransaction = async () => {
-    if (!api.current) {
-      return;
-    }
-    const transaction: Transaction = {
-      amount: new BigNumber(1230),
-      recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
-      family: "bitcoin",
-      feePerByte: new BigNumber(1),
-    };
+  // const signAndBroadcastTransaction = async () => {
+  //   // if (!api.current) {
+  //   //   return;
+  //   // }
+  //   // const action = await api.current.broadcastSignedTransaction("mock:1:bitcoin:true_bitcoin_0:", signed tx);
+  //   // setOutput(action)
+  // };
 
-    const params: TransactionSign["params"]["options"] = { hwAppId: undefined };
+  // const listCurrencies = async () => {
+  //   if (!api.current) {
+  //     return;
+  //   }
+  //   try {
+  //     const action = await api.current.currency.list({ currencyIds: ["bitcoin", "ethereum"] });
+  //     setOutput(action);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-    const action = await api.current.transaction.sign(
-      "mock:1:bitcoin:true_bitcoin_0:",
-      transaction,
-      params,
-    );
-    setOutput(action.toString());
-  };
+  // const getTransport = (appName?: string) => async () => {
+  //   if (!api.current) {
+  //     return;
+  //   }
+  //   try {
+  //     transport.current = await api.current.device.transport({ appName });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  const signAndBroadcastTransaction = async () => {
-    // if (!api.current) {
-    //   return;
-    // }
-    // const action = await api.current.broadcastSignedTransaction("mock:1:bitcoin:true_bitcoin_0:", signed tx);
-    // setOutput(action)
-  };
+  // const getDeviceInfo = async () => {
+  //   if (!transport.current) {
+  //     return;
+  //   }
+  //   try {
+  //     const res = await hwGetDeviceInfo(transport.current);
+  //     setOutput(res);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  const listCurrencies = async () => {
-    if (!api.current) {
-      return;
-    }
-    try {
-      const action = await api.current.currency.list({ currencyIds: ["bitcoin", "ethereum"] });
-      setOutput(action);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const ethGetAppConfiguration = async () => {
+  //   if (!transport.current) {
+  //     return;
+  //   }
+  //   try {
+  //     const eth = new Eth(transport.current);
+  //     const res = await eth.getAppConfiguration();
+  //     setOutput(res);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
-  const getTransport = (appName?: string) => async () => {
-    if (!api.current) {
-      return;
-    }
-    try {
-      transport.current = await api.current.device.transport({ appName });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getDeviceInfo = async () => {
-    if (!transport.current) {
-      return;
-    }
-    try {
-      const res = await hwGetDeviceInfo(transport.current);
-      setOutput(res);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const ethGetAppConfiguration = async () => {
-    if (!transport.current) {
-      return;
-    }
-    try {
-      const eth = new Eth(transport.current);
-      const res = await eth.getAppConfiguration();
-      setOutput(res);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const closeTransport = () => {
-    transport.current?.close();
-    transport.current = undefined;
-  };
+  // const closeTransport = () => {
+  //   transport.current?.close();
+  //   transport.current = undefined;
+  // };
 
   return (
     <div className="App">
@@ -195,7 +179,7 @@ const App = () => {
         <img src={logo} className="App-logo" alt="logo" />
         <h3>Ledger Live Dummy Wallet API App</h3>
         <p>App for testing the Ledger Live Wallet API manually and in Automated tests</p>
-        <div className="button-container">
+        {/* <div className="button-container">
           <button onClick={getAccounts} data-test-id="get-all-accounts-button">
             Get all accounts
           </button>
@@ -230,7 +214,7 @@ const App = () => {
             closeTransport
           </button>
         </div>
-        <pre className="output-container">{output ? prettyJSON(output) : ""}</pre>
+        <pre className="output-container">{output ? prettyJSON(output) : ""}</pre> */}
       </header>
     </div>
   );
