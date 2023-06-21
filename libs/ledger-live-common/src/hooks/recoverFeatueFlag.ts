@@ -35,3 +35,10 @@ export function useAlreadySubscribedURI(servicesConfig: Feature<any> | null): st
 
   return useReplacedURI(uri, id);
 }
+
+export function useAccountURI(servicesConfig: Feature<any> | null): string | undefined {
+  const uri = servicesConfig?.params?.account?.homeURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}

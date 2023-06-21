@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -23,6 +23,9 @@ import {
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
+import { useAccountURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { Linking } from "react-native";
+import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 
 const images = {
   light: {
@@ -49,6 +52,9 @@ function OnboardingStepPairNew() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { theme } = useTheme();
   const route = useRoute<NavigationProps["route"]>();
+  const recoverConfig = useFeature("protectServicesMobile");
+  const accountURI = useAccountURI(recoverConfig);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const dispatch = useDispatch();
   const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
@@ -142,11 +148,20 @@ function OnboardingStepPairNew() {
     onFinish();
   }, [onFinish]);
 
+  const onBackRecover = useCallback(async () => {
+    if (accountURI) {
+      const canOpenRecoverLink = await Linking.canOpenURL(accountURI);
+
+      if (canOpenRecoverLink) Linking.openURL(accountURI);
+    }
+  }, [accountURI]);
+
   return (
     <>
       <TrackScreen category="Onboarding" name="PairNew" />
       <BaseStepperView
         onNext={nextPage}
+        onBackOverride={hasCompletedOnboarding && isProtectFlow ? onBackRecover : undefined}
         steps={scenes}
         metadata={metadata}
         deviceModelId={deviceModelId}

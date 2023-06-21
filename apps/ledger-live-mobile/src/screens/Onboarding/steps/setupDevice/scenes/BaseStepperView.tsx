@@ -111,6 +111,7 @@ export type Step = {
 
 export function BaseStepperView({
   onNext,
+  onBackOverride,
   steps,
   metadata,
   deviceModelId,
@@ -120,6 +121,7 @@ export function BaseStepperView({
   steps: Step[];
   metadata: Metadata[];
   deviceModelId?: DeviceModelId;
+  onBackOverride?: () => void;
   params?: object;
 }) {
   const [index, setIndex] = React.useState(0);
@@ -146,7 +148,7 @@ export function BaseStepperView({
         renderTransition={renderTransitionSlide}
         transitionDuration={transitionDuration}
         progressBarProps={{ opacity: 0 }}
-        extraProps={{ onBack: handleBack, metadata }}
+        extraProps={{ onBack: onBackOverride || handleBack, metadata }}
       >
         {steps.map((Children, i) => (
           <Scene key={Children.id + i}>
