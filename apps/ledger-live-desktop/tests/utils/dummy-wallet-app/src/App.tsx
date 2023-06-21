@@ -1,8 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import HWTransport from "@ledgerhq/hw-transport";
-import Eth from "@ledgerhq/hw-app-eth";
+import React, { useCallback, useEffect, useRef } from "react";
 import { WindowMessageTransport, RpcResponse } from "@ledgerhq/wallet-api-client";
-// import { getSimulatorTransport, profiles } from "@ledgerhq/wallet-api-simulator";
 import { Buffer } from "buffer";
 import logo from "./ledger-logo.png";
 import "./App.css";
