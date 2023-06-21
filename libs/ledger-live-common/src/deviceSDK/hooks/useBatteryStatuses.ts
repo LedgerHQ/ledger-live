@@ -5,6 +5,7 @@ import {
   initialState,
 } from "../actions/getBatteryStatuses";
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
+import { log } from "@ledgerhq/logs";
 
 export type UseBateryStatusesArgs = {
   deviceId?: string;
@@ -43,6 +44,7 @@ export const useBatteryStatuses = ({
         complete: () => {
           setRequestCompleted(true);
         },
+        error: err => log("error", "error while retrieving the battery statuses", err),
       });
 
       setCancelRequest(() => () => {
