@@ -3,8 +3,8 @@ import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
-// import { Modal } from "../../models/Modal";
-// import { DeviceAction } from "../../models/DeviceAction";
+import { Modal } from "../../models/Modal";
+import { DeviceAction } from "../../models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 import { randomUUID } from "crypto";
 
@@ -41,17 +41,15 @@ test("Wallet API methods", async ({ page }) => {
 
   const discoverPage = new DiscoverPage(page);
   const drawer = new Drawer(page);
-  // const modal = new Modal(page);
+  const modal = new Modal(page);
   const layout = new Layout(page);
-  // const deviceAction = new DeviceAction(page);
+  const deviceAction = new DeviceAction(page);
 
   await test.step("account.request", async () => {
     await layout.goToDiscover();
     await discoverPage.openTestApp();
     await drawer.continue();
-    await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
-
-    // await page.pause();
+    await drawer.waitForDrawerToDisappear();
 
     const id = randomUUID();
     const resPromise = discoverPage.send({
@@ -66,9 +64,6 @@ test("Wallet API methods", async ({ page }) => {
     await drawer.selectCurrency("bitcoin");
     await drawer.selectAccount("bitcoin");
 
-    // TODO: Select account on LL CC @ggilchrist-ledger
-
-    // await page.pause();
     const res = await resPromise;
 
     expect(res).toStrictEqual({
@@ -85,16 +80,28 @@ test("Wallet API methods", async ({ page }) => {
         spendableBalance: "35688397",
       },
     });
+  });
 
-    // +   "result": Object {
-    //   +     "address": "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-    //   +     "balance": "35688397",
-    //   +     "blockHeight": 194870,
-    //   +     "currency": "bitcoin",
-    //   +     "id": "mock:1:bitcoin:true_bitcoin_0:",
-    //   +     "lastSyncDate": "2020-03-14T13:34:42.000Z",
-    //   +     "name": "Bitcoin 1 (legacy)",
-    //   +     "spendableBalance": "35688397",
-    //   +   },
+  await test.step("account.receive", async () => {
+    const id = randomUUID();
+    const resPromise = discoverPage.send({
+      jsonrpc: "2.0",
+      id,
+      method: "account.receive",
+      params: {
+        accountId: "mock:1:bitcoin:true_bitcoin_0:",
+      },
+    });
+
+    await deviceAction.openApp();
+    await modal.waitForModalToDisappear();
+
+    const res = await resPromise;
+
+    expect(res).toEqual({
+      jsonrpc: "2.0",
+      id,
+      result: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+    });
   });
 });
