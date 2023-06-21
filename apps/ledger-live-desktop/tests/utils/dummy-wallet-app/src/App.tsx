@@ -193,8 +193,8 @@ const App = () => {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <h3>Ledger Live Dummy Test App</h3>
-        <p>App for testing the Ledger Live SDK manually and in Automated tests</p>
+        <h3>Ledger Live Dummy Wallet API App</h3>
+        <p>App for testing the Ledger Live Wallet API manually and in Automated tests</p>
         <div className="button-container">
           <button onClick={getAccounts} data-test-id="get-all-accounts-button">
             Get all accounts

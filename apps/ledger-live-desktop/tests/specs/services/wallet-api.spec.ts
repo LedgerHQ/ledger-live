@@ -51,8 +51,10 @@ test("Wallet API methods", async ({ page }) => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
 
+    // await page.pause();
+
     const id = randomUUID();
-    const res = await discoverPage.send({
+    const resPromise = discoverPage.send({
       jsonrpc: "2.0",
       id,
       method: "account.request",
@@ -61,13 +63,38 @@ test("Wallet API methods", async ({ page }) => {
       },
     });
 
+    await drawer.selectCurrency("bitcoin");
+    await drawer.selectAccount("bitcoin");
+
     // TODO: Select account on LL CC @ggilchrist-ledger
 
     // await page.pause();
+    const res = await resPromise;
 
-    expect(res).toBe({
+    expect(res).toStrictEqual({
       jsonrpc: "2.0",
       id,
+      result: {
+        address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+        balance: "35688397",
+        blockHeight: 194870,
+        currency: "bitcoin",
+        id: "mock:1:bitcoin:true_bitcoin_0:",
+        lastSyncDate: "2020-03-14T13:34:42.000Z",
+        name: "Bitcoin 1 (legacy)",
+        spendableBalance: "35688397",
+      },
     });
+
+    // +   "result": Object {
+    //   +     "address": "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+    //   +     "balance": "35688397",
+    //   +     "blockHeight": 194870,
+    //   +     "currency": "bitcoin",
+    //   +     "id": "mock:1:bitcoin:true_bitcoin_0:",
+    //   +     "lastSyncDate": "2020-03-14T13:34:42.000Z",
+    //   +     "name": "Bitcoin 1 (legacy)",
+    //   +     "spendableBalance": "35688397",
+    //   +   },
   });
 });

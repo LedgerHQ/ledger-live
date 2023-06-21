@@ -159,15 +159,9 @@ export class DiscoverPage {
   send(request: Record<string, unknown>) {
     const code = `
       (function() {
-        try {
-          alert(window.ledger);
-          return window.ledger.e2e.walletApi.send('${JSON.stringify(request)}');
-        } catch (e) {
-          alert(e);
-        }
+        return window.ledger.e2e.walletApi.send('${JSON.stringify(request)}');
       })()
     `;
-    console.log(code);
 
     return this.page.evaluate(
       // Keep method and params. The reference is used by the generated code
