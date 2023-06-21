@@ -1,9 +1,9 @@
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { GasOptions } from "../../types";
+import { GasOptions } from "../../../../types";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { getGasOptions } from "../../api/gasTracker/ledger";
+import { getGasOptions } from "../../../../api/gasTracker/ledger";
 jest.mock("@ledgerhq/live-network/network");
 
 const fakeCurrency: Partial<CryptoCurrency> = {
@@ -19,7 +19,7 @@ const fakeCurrency: Partial<CryptoCurrency> = {
 };
 
 describe("EVM Family", () => {
-  describe("gasTracker", () => {
+  describe("api/gasTracker/index.ts", () => {
     const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
 
     beforeAll(() => {

@@ -3,10 +3,10 @@ import BigNumber from "bignumber.js";
 import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../types";
-import { GasEstimationError, InsufficientFunds } from "../../errors";
-import { makeAccount } from "../fixtures/common.fixtures";
-import * as RPC_API from "../../api/rpc/rpc.common";
+import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../../types";
+import { GasEstimationError, InsufficientFunds } from "../../../../errors";
+import { makeAccount } from "../../../fixtures/common.fixtures";
+import * as RPC_API from "../../../../api/rpc/rpc.common";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
@@ -114,7 +114,7 @@ describe("EVM Family", () => {
       });
   });
 
-  describe("api/rpc.common.ts", () => {
+  describe("api/rpc/rpc.common.ts", () => {
     describe("withApi", () => {
       it("should throw if the currency doesn't have an RPC node", async () => {
         try {

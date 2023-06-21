@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@ledgerhq/cryptoassets";
 import { buildSignOperation, applyEIP155 } from "../../signOperation";
 import { EvmAddress, EvmSignature, EvmSigner } from "../../signer";
 import { Transaction as EvmTransaction } from "../../types";
@@ -119,17 +119,10 @@ describe("EVM Family", () => {
     });
 
     describe("applyEIP155", () => {
-      const chainIds = [
-        1, //ethereum
-        5, // goerli
-        10, // optimism
-        14, // flare
-        19, // songbird
-        56, // bsc
-        137, // polygon
-        250, // fantom
-        1284, // moonbeam
-      ];
+      const chainIds = listCryptoCurrencies(true)
+        .filter(c => c.family === "evm")
+        .map(c => c.ethereumLikeInfo!.chainId)
+        .sort((a, b) => a - b);
       const possibleHexV = [
         "00", // 0 - ethereum + testnets should always retrun 0/1 from hw-app-eth
         "01", // 1
