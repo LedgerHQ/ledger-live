@@ -65,7 +65,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const buyLedger = useCallback(() => {
     setFromBuy(true);
     track("button_clicked", {
-      button: "Explore the app",
+      button: "Buy a Ledger",
       page: "Onboarding Get Started",
       drawer: "Get Started Upsell",
     });
@@ -80,7 +80,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
       onClose={isFromBuy ? onClose : onCloseAndTrack}
       CustomHeader={CustomHeader}
     >
-      <TrackScreen category="Onboard" name="Start Upsell" />
+      <TrackScreen category="Onboard" name="Start Upsell" drawer="Get Started Upsell" />
       <Flex alignItems="center" mt={7}>
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("onboarding.postWelcomeStep.noLedgerYetModal.title")}

@@ -41,7 +41,6 @@ function PostWelcomeSelection() {
     setOpen(true);
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
-      drawer: "Get Started Upsell",
     });
   }, []);
 
