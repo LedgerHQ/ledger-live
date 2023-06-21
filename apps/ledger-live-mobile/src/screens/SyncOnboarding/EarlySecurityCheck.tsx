@@ -11,9 +11,6 @@ import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 
-// Only while the ESC implementation is missing
-/* eslint-disable i18next/no-literal-string */
-
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
 // Represents the UI status of each check step
@@ -76,6 +73,20 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
+  console.log(`🦖 
+    Genuine check input: ${JSON.stringify({
+      isHookEnabled: genuineCheckStatus === "ongoing",
+      deviceId: device.deviceId,
+      lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
+    })}
+    \n\n
+    Genuine check output: ${JSON.stringify({
+      genuineState,
+      devicePermissionState,
+      error: genuineCheckError,
+    })}  
+  `);
+
   // For now short circuiting the ESC step
   // useEffect(() => {
   //   notifyOnboardingEarlyCheckEnded();
@@ -105,6 +116,16 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   let genuineCheckUiStepStatus: UiCheckStatus = "inactive";
   // let firmwareUpdateUiStepStatus: FirmwareUpdateUiStepStatus = "inactive";
 
+  console.log(
+    `🍕 UI logic: ${JSON.stringify({
+      currentStep,
+      genuineCheckStatus,
+      genuineCheckError,
+      genuineState,
+      devicePermissionState,
+    })}`,
+  );
+
   // Handle genuine check UI logic
   if (currentStep === "genuine-check") {
     if (genuineCheckStatus === "ongoing") {
@@ -122,6 +143,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
       // Updates the UI
       if (devicePermissionState === "unlock-needed") {
+        // As the PIN has not been set before the ESC, the "unlock-needed" happens if the device is powered off.
+        // But an error `CantOpenDevice` should be triggered quickly after.
         currentDisplayedDrawer = "unlock-needed";
       } else if (devicePermissionState === "requested") {
         currentDisplayedDrawer = "allow-manager";
@@ -231,12 +254,15 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         isOpen={currentDisplayedDrawer === "unlock-needed"}
         onClose={() => {
           // Closing because the user pressed on close button, and the genuine check is ongoing
-          if (genuineCheckStatus === "ongoing") {
+          if (genuineCheckStatus === "ongoing" && currentDisplayedDrawer === "unlock-needed") {
             // Fails the genuine check entirely - not "skipped" so the GenuineCheckFailedDrawer is displayed
             setGenuineCheckStatus("failed");
           }
           // Closing because the user pressed on close button, and the firmware check is ongoing
-          else if (firmwareUpdateStatus === "ongoing") {
+          else if (
+            firmwareUpdateStatus === "ongoing" &&
+            currentDisplayedDrawer === "unlock-needed"
+          ) {
             setFirmwareUpdateStatus("failed");
           }
         }}
