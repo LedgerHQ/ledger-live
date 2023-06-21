@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 0.2.0-next.1
+
+### Minor Changes
+
+- [#3660](https://github.com/LedgerHQ/ledger-live/pull/3660) [`895205e898`](https://github.com/LedgerHQ/ledger-live/commit/895205e8981612616d3147de9261d19051dbc0b2) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update lockedbalance retrieval polkadot
+
 ## 0.1.7-next.0
 
 ### Patch Changes

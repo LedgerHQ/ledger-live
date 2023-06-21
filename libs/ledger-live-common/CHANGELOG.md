@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 31.1.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`895205e898`](https://github.com/LedgerHQ/ledger-live/commit/895205e8981612616d3147de9261d19051dbc0b2)]:
+  - @ledgerhq/coin-polkadot@0.2.0-next.1
+
 ## 31.1.0-next.0
 
 ### Minor Changes
