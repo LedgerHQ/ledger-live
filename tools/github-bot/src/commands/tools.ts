@@ -20,7 +20,7 @@ export const commands = (
 ) => {
   const matcher = /^\/([\w-]+)\b *(.*)?$/m;
 
-  // @ts-expect-error weird typings
+  // @ts-expect-error complicated typings
   app.on(["issue_comment.created" /*, "issues.opened" */], async context => {
     if (context.isBot) return;
 
