@@ -3,20 +3,20 @@ import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import * as ETHERSCAN_API from "../../api/explorer/etherscan";
-import { makeAccount } from "../fixtures/common.fixtures";
+import * as ETHERSCAN_API from "../../../../api/explorer/etherscan";
+import { makeAccount } from "../../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
   etherscanERC1155Operations,
   etherscanERC721Operations,
   etherscanTokenOperations,
-} from "../fixtures/etherscan.fixtures";
+} from "../../../fixtures/etherscan.fixtures";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
   etherscanERC721EventToOperations,
   etherscanOperationToOperations,
-} from "../../adapters";
+} from "../../../../adapters";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -37,7 +37,7 @@ const currency: CryptoCurrency = {
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
 describe("EVM Family", () => {
-  describe("api/etherscan.ts", () => {
+  describe("api/explorer/etherscan.ts", () => {
     afterAll(() => {
       jest.restoreAllMocks();
     });

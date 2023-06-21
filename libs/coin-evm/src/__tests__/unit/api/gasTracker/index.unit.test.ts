@@ -1,6 +1,6 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { getGasTracker } from "../../api/gasTracker";
-import { getGasOptions as ledgerGetGasOptions } from "../../api/gasTracker/ledger";
+import { getGasTracker } from "../../../../api/gasTracker";
+import { getGasOptions as ledgerGetGasOptions } from "../../../../api/gasTracker/ledger";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
@@ -22,7 +22,7 @@ const fakeCurrencyWithoutGasTracker: Partial<CryptoCurrency> = {
 };
 
 describe("EVM Family", () => {
-  describe("gasTracker", () => {
+  describe("api/gasTracker/index.ts", () => {
     it("should return null if no gas tracker is found", () => {
       expect(getGasTracker(fakeCurrencyWithoutGasTracker as CryptoCurrency)).toBeNull();
     });
