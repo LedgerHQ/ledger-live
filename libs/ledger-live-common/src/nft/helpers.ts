@@ -1,3 +1,4 @@
+import { getEnv } from "@ledgerhq/live-env";
 import { groupAccountsOperationsByDay } from "../account";
 import type { Operation, ProtoNFT, NFT, Account } from "@ledgerhq/types-live";
 
@@ -37,9 +38,9 @@ export const getNftCollectionKey = (contract: string, currencyId: string): strin
 };
 
 export const getNFT = (
-  contract?: string,
-  tokenId?: string,
-  nfts?: ProtoNFT[],
+  contract?: string | null | undefined,
+  tokenId?: string | null | undefined,
+  nfts?: ProtoNFT[] | null | undefined,
 ): ProtoNFT | undefined => nfts?.find(nft => nft.contract === contract && nft.tokenId === tokenId);
 
 const SUPPORTED_CURRENCIES = ["ethereum", "polygon"];
