@@ -14,6 +14,7 @@ import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwar
 import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
 import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
 import { BatteryStatusFlags } from "@ledgerhq/types-devices";
+import { log } from "@ledgerhq/logs";
 
 import { ScreenName, NavigatorName } from "../const";
 import {
@@ -104,6 +105,14 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     deviceId: lastConnectedDevice?.deviceId,
     statuses: requiredBatteryStatuses,
   });
+
+  // TODO: to remove this, it is temporary for debugging
+  useEffect(() => {
+    if (batteryStatusesState.error) {
+      log("error", "error when retrieving the battery statuses", batteryStatusesState.error);
+    }
+  }, [batteryStatusesState.error]);
+
   // Effect that will check the battery of stax before triggering the update and display a warning preventing the update
   // in case the battery is too low and the device is not charging
   useEffect(() => {
@@ -278,8 +287,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
       </QueuedDrawer>
       <QueuedDrawer
         isRequestingToBeOpened={
-          (batteryStatusesState.error &&
-            batteryStatusesState.error.message === "DisconnectedDevice") ||
+          batteryStatusesState.error?.message === "DisconnectedDevice" ||
+          batteryStatusesState.error?.message === "ConnectManagerTimeout" ||
           batteryStatusesState.lockedDevice
         }
         onClose={() => {
