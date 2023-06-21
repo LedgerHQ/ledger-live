@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.8
+
+### Patch Changes
+
+- [#3740](https://github.com/LedgerHQ/ledger-live/pull/3740) [`b6fcf349e6`](https://github.com/LedgerHQ/ledger-live/commit/b6fcf349e6c454f59846cbf24c2e813990e62ebe) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - firmware update analytics: track custom lock screen restoration
+
+- [#3732](https://github.com/LedgerHQ/ledger-live/pull/3732) [`034e7a39af`](https://github.com/LedgerHQ/ledger-live/commit/034e7a39af301d9eae7bceb1cdc5b4b831ffbe27) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Prevents Recover modal to affect the app performances
+
+- [#3684](https://github.com/LedgerHQ/ledger-live/pull/3684) [`6234d0d4ee`](https://github.com/LedgerHQ/ledger-live/commit/6234d0d4eeab801d3e394afb9424f9d766705cae) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improvements to the UI of the language change prompt on LLD
+
+- [#3707](https://github.com/LedgerHQ/ledger-live/pull/3707) [`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Align icons for contextual menu and use correct one for CLS
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.14.2-nightly.1
+
 ## 2.62.0-nightly.7
 
 ### Minor Changes
