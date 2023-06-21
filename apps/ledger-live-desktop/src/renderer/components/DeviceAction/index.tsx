@@ -13,11 +13,7 @@ import {
 } from "@ledgerhq/live-common/errors";
 import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import {
-  setPreferredDeviceModel,
-  setLastSeenDeviceInfo,
-  addNewDevice,
-} from "~/renderer/actions/settings";
+import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
 import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
@@ -245,7 +241,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         apps: [],
       };
       dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware }));
-      dispatch(addNewDevice({ seenDevice: lastSeenDevice }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
