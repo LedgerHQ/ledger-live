@@ -59,6 +59,7 @@ export const getLastCoinOperations = async (
   address: string,
   accountId: string,
   fromBlock: number,
+  toBlock?: number,
 ): Promise<Operation[]> => {
   const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
   if (!apiDomain) {
@@ -68,6 +69,9 @@ export const getLastCoinOperations = async (
   let url = `${apiDomain}/api?module=account&action=txlist&address=${address}&tag=latest&page=1&sort=desc`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
+  }
+  if (toBlock) {
+    url += `&endBlock=${toBlock}`;
   }
 
   const ops = await fetchWithRetries<EtherscanOperation[]>({
@@ -86,6 +90,7 @@ export const getLastTokenOperations = async (
   address: string,
   accountId: string,
   fromBlock: number,
+  toBlock?: number,
 ): Promise<Operation[]> => {
   const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
   if (!apiDomain) {
@@ -95,6 +100,9 @@ export const getLastTokenOperations = async (
   let url = `${apiDomain}/api?module=account&action=tokentx&address=${address}&tag=latest&page=1&sort=desc`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
+  }
+  if (toBlock) {
+    url += `&endBlock=${toBlock}`;
   }
 
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
@@ -134,6 +142,7 @@ export const getLastERC721Operations = async (
   address: string,
   accountId: string,
   fromBlock: number,
+  toBlock?: number,
 ): Promise<Operation[]> => {
   const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
   if (!apiDomain) {
@@ -143,6 +152,9 @@ export const getLastERC721Operations = async (
   let url = `${apiDomain}/api?module=account&action=tokennfttx&address=${address}&tag=latest&page=1&sort=desc`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
+  }
+  if (toBlock) {
+    url += `&endBlock=${toBlock}`;
   }
 
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
@@ -182,6 +194,7 @@ export const getLastERC1155Operations = async (
   address: string,
   accountId: string,
   fromBlock: number,
+  toBlock?: number,
 ): Promise<Operation[]> => {
   const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
   if (!apiDomain) {
@@ -191,6 +204,9 @@ export const getLastERC1155Operations = async (
   let url = `${apiDomain}/api?module=account&action=token1155tx&address=${address}&tag=latest&page=1&sort=desc`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
+  }
+  if (toBlock) {
+    url += `&endBlock=${toBlock}`;
   }
 
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
@@ -230,9 +246,16 @@ export const getLastNftOperations = async (
   address: string,
   accountId: string,
   fromBlock: number,
+  toBlock?: number,
 ): Promise<Operation[]> => {
-  const erc721Ops = await getLastERC721Operations(currency, address, accountId, fromBlock);
-  const erc1155Ops = await getLastERC1155Operations(currency, address, accountId, fromBlock);
+  const erc721Ops = await getLastERC721Operations(currency, address, accountId, fromBlock, toBlock);
+  const erc1155Ops = await getLastERC1155Operations(
+    currency,
+    address,
+    accountId,
+    fromBlock,
+    toBlock,
+  );
 
   return [...erc721Ops, ...erc1155Ops].sort(
     // sorting DESC order
@@ -248,25 +271,38 @@ export const getLastNftOperations = async (
  * break because of the rate limits
  */
 export const getLastOperations = makeLRUCache<
-  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
+  [
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+    fromBlock: number,
+    toBlock?: number,
+  ],
   {
     lastCoinOperations: Operation[];
     lastTokenOperations: Operation[];
     lastNftOperations: Operation[];
   }
 >(
-  async (currency, address, accountId, fromBlock) => {
-    const lastCoinOperations = await getLastCoinOperations(currency, address, accountId, fromBlock);
+  async (currency, address, accountId, fromBlock, toBlock) => {
+    const lastCoinOperations = await getLastCoinOperations(
+      currency,
+      address,
+      accountId,
+      fromBlock,
+      toBlock,
+    );
 
     const lastTokenOperations = await getLastTokenOperations(
       currency,
       address,
       accountId,
       fromBlock,
+      toBlock,
     );
 
     const lastNftOperations = isNFTActive(currency)
-      ? await getLastNftOperations(currency, address, accountId, fromBlock)
+      ? await getLastNftOperations(currency, address, accountId, fromBlock, toBlock)
       : [];
 
     return {
@@ -275,7 +311,7 @@ export const getLastOperations = makeLRUCache<
       lastNftOperations,
     };
   },
-  (currency, address, accountId, fromBlock) => accountId + fromBlock,
+  (currency, address, accountId, fromBlock, toBlock) => accountId + fromBlock + toBlock,
   { ttl: ETHERSCAN_TIMEOUT },
 );
 

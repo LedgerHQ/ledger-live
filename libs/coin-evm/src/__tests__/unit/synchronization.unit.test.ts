@@ -39,7 +39,7 @@ describe("EVM Family", () => {
         // Mocking getAccount to prevent network calls
         jest.spyOn(rpcAPI, "getBalanceAndBlock").mockImplementation(() =>
           Promise.resolve({
-            blockHeight: 10,
+            blockHeight: 6969,
             balance: new BigNumber(100),
           }),
         );
@@ -161,7 +161,7 @@ describe("EVM Family", () => {
             getAccountShapeParameters,
             {} as any,
           );
-          expect(account.blockHeight).toBe(10);
+          expect(account.blockHeight).toBe(6969);
         });
 
         it("should keep the operations from a sync to another", async () => {
@@ -202,6 +202,7 @@ describe("EVM Family", () => {
             getAccountShapeParameters.address,
             account.id,
             0,
+            6969,
           );
         });
 
@@ -223,6 +224,7 @@ describe("EVM Family", () => {
             getAccountShapeParameters.address,
             account.id,
             coinOperations[2].blockHeight! - synchronization.SAFE_REORG_THRESHOLD,
+            6969,
           );
         });
       });
@@ -349,7 +351,7 @@ describe("EVM Family", () => {
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
             nfts: [nfts[0], nfts[1]],
-            blockHeight: 10,
+            blockHeight: 6969,
             operations: [coinOperations[2], ...operations],
             operationsCount: 3,
             subAccounts: account.subAccounts,
@@ -496,7 +498,11 @@ describe("EVM Family", () => {
           throw new Error();
         });
 
-        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toBe(null);
+        const operationStatus = await synchronization.getOperationStatus(
+          currency,
+          coinOperations[0],
+        );
+        expect(operationStatus).toBe(null);
       });
 
       it("should return null if retrieved transaction has no blockHeight", async () => {
@@ -509,7 +515,11 @@ describe("EVM Family", () => {
             } as any),
         );
 
-        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toBe(null);
+        const operationStatus = await synchronization.getOperationStatus(
+          currency,
+          coinOperations[0],
+        );
+        expect(operationStatus).toBe(null);
       });
 
       it("should return the retrieved operation with network properties", async () => {
@@ -523,12 +533,31 @@ describe("EVM Family", () => {
             } as any),
         );
 
-        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toEqual({
-          ...coinOperations[0],
+        const expectedAddition = {
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
           transactionSequenceNumber: 123,
+        };
+
+        const operationStatus = await synchronization.getOperationStatus(currency, {
+          ...coinOperations[0],
+          subOperations: [tokenOperations[0]],
+          nftOperations: [erc721Operations[0], erc1155Operations[0]],
+        });
+        expect(operationStatus).toEqual({
+          ...coinOperations[0],
+          ...expectedAddition,
+          subOperations: [
+            {
+              ...tokenOperations[0],
+              ...expectedAddition,
+            },
+          ],
+          nftOperations: [
+            { ...erc721Operations[0], ...expectedAddition },
+            { ...erc1155Operations[0], ...expectedAddition },
+          ],
         });
       });
 
@@ -545,12 +574,31 @@ describe("EVM Family", () => {
           .spyOn(rpcAPI, "getBlock")
           .mockImplementationOnce(async () => ({ timestamp: Date.now() / 1000 } as any));
 
-        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toEqual({
-          ...coinOperations[0],
+        const expectedAddition = {
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
           transactionSequenceNumber: 123,
+        };
+
+        const operationStatus = await synchronization.getOperationStatus(currency, {
+          ...coinOperations[0],
+          subOperations: [tokenOperations[0]],
+          nftOperations: [erc721Operations[0], erc1155Operations[0]],
+        });
+        expect(operationStatus).toEqual({
+          ...coinOperations[0],
+          ...expectedAddition,
+          subOperations: [
+            {
+              ...tokenOperations[0],
+              ...expectedAddition,
+            },
+          ],
+          nftOperations: [
+            { ...erc721Operations[0], ...expectedAddition },
+            { ...erc1155Operations[0], ...expectedAddition },
+          ],
         });
       });
     });

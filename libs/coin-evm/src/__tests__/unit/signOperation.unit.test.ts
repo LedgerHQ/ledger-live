@@ -124,6 +124,7 @@ describe("EVM Family", () => {
         .filter(c => c.family === "evm")
         .map(c => c.ethereumLikeInfo!.chainId)
         .sort((a, b) => a - b);
+
       const possibleHexV = [
         "00", // 0 - ethereum + testnets should always retrun 0/1 from hw-app-eth
         "01", // 1
