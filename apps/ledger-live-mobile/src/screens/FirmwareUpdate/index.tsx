@@ -482,7 +482,7 @@ export const FirmwareUpdate = ({
           >
             {t("common.retry")}
           </Button>
-          <Flex mt={6} alignSelf="stretch">
+          <Flex mt={7} alignSelf="stretch">
             <Link
               event="button_clicked"
               eventProperties={{
