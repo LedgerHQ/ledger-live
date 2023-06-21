@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
-import { Flex, Drawer, Button, Divider } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, Divider } from "@ledgerhq/react-ui";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 import { useDispatch, useSelector } from "react-redux";
+
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
@@ -17,20 +18,14 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import isEqual from "lodash/isEqual";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 type Props = {
-  onClose: () => void;
   currentLanguage: Locale;
-  isOpen: boolean;
   deviceModelId: DeviceModelId;
 };
 
-const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
-  onClose,
-  isOpen,
-  currentLanguage,
-  deviceModelId,
-}) => {
+const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({ currentLanguage, deviceModelId }) => {
   const [installingLanguage, setInstallingLanguage] = useState(false);
   const [languageInstalled, setLanguageInstalled] = useState(false);
 
@@ -43,8 +38,8 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   const onCloseDrawer = useCallback(() => {
     setInstallingLanguage(false);
     setLanguageInstalled(false);
-    onClose();
-  }, [onClose]);
+    setDrawer(undefined);
+  }, []);
 
   const refreshDeviceInfo = useCallback(() => {
     if (currentDevice) {
@@ -76,71 +71,67 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   );
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      onClose={onCloseDrawer}
-      title={t("deviceLocalization.deviceLanguage")}
-      extraContainerProps={{ p: 0 }}
-      big
+    <Flex
+      flexDirection="column"
+      rowGap={5}
+      height="100%"
+      overflowY="hidden"
+      width="100%"
+      flex={1}
+      data-test-id="device-rename-container"
     >
-      <Flex
-        flex={1}
-        flexDirection="column"
-        justifyContent="space-evenly"
-        alignItems="center"
-        pt={2}
-      >
-        {installingLanguage ? (
-          <>
-            <ChangeDeviceLanguageAction
-              language={
-                localeIdToDeviceLanguage[
-                  currentLanguage as keyof typeof localeIdToDeviceLanguage
-                ] ?? (localeIdToDeviceLanguage.en as Language)
-              }
-              onSuccess={handleSuccess}
-              onError={handleError}
-            />
-            {languageInstalled && (
-              <Flex flexDirection="column" rowGap={8} alignSelf="stretch">
-                <Divider />
-                <Flex alignSelf="end" pb={8} px={12}>
-                  <Button
-                    variant="main"
-                    onClick={onCloseDrawer}
-                    data-test-id="close-language-installation-button"
-                  >
-                    {t("common.close")}
-                  </Button>
-                </Flex>
-              </Flex>
-            )}
-          </>
-        ) : (
-          <ChangeDeviceLanguagePrompt
-            deviceModelId={deviceModelId}
-            onSkip={onCloseDrawer}
-            onConfirm={() => {
-              track("Page LiveLanguageChange LanguageInstallTriggered", {
-                selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
-              });
-              setInstallingLanguage(true);
-            }}
-            titleWording={t("deviceLocalization.changeDeviceLanguagePrompt.title", {
-              language: t(
-                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
-              ),
-              deviceName,
-            })}
-            descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
-              language: t(
-                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
-              ),
-            })}
+      <Text alignSelf="center" variant="h5Inter" mb={3}>
+        {t("deviceLocalization.deviceLanguage")}
+      </Text>
+      {installingLanguage ? (
+        <>
+          <ChangeDeviceLanguageAction
+            language={
+              localeIdToDeviceLanguage[currentLanguage as keyof typeof localeIdToDeviceLanguage] ??
+              (localeIdToDeviceLanguage.en as Language)
+            }
+            onSuccess={handleSuccess}
+            onError={handleError}
           />
-        )}
-      </Flex>
-    </Drawer>
+          {languageInstalled && (
+            <Flex flexDirection="column" rowGap={8} alignSelf="stretch">
+              <Divider />
+              <Flex alignSelf="end" pb={8} px={12}>
+                <Button
+                  variant="main"
+                  onClick={onCloseDrawer}
+                  data-test-id="close-language-installation-button"
+                >
+                  {t("common.close")}
+                </Button>
+              </Flex>
+            </Flex>
+          )}
+        </>
+      ) : (
+        <ChangeDeviceLanguagePrompt
+          deviceModelId={deviceModelId}
+          onSkip={onCloseDrawer}
+          onConfirm={() => {
+            track("Page LiveLanguageChange LanguageInstallTriggered", {
+              selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
+            });
+            setInstallingLanguage(true);
+          }}
+          titleWording={t("deviceLocalization.changeDeviceLanguagePrompt.title", {
+            language: t(
+              `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
+            ),
+            deviceName,
+          })}
+          descriptionWording={t("deviceLocalization.changeDeviceLanguagePrompt.description", {
+            language: t(
+              `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLanguage]}`,
+            ),
+          })}
+        />
+      )}
+    </Flex>
   );
 };
 

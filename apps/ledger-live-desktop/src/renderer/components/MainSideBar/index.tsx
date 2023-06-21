@@ -483,7 +483,7 @@ const MainSideBar = () => {
                 />
                 <FeatureToggle feature="protectServicesDesktop">
                   <SideBarListItem
-                    id={"send"}
+                    id={"recover"}
                     label={t("sidebar.recover")}
                     icon={Icons.ShieldCheckMedium}
                     iconSize={20}

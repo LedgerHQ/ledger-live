@@ -260,7 +260,7 @@ const prepareTransaction = async (
       const incr = increasedFee(gasBuffer, Number(out.opSize));
       t.fees = new BigNumber(out.suggestedFeeMutez + incr);
       t.gasLimit = new BigNumber(out.gasLimit + gasBuffer);
-      t.amount = new BigNumber(maxAmount - incr);
+      t.amount = maxAmount - incr > 0 ? new BigNumber(maxAmount - incr) : new BigNumber(0);
     } else {
       t.fees = new BigNumber(out.suggestedFeeMutez);
       t.gasLimit = new BigNumber(out.gasLimit);
