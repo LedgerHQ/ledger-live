@@ -28,11 +28,11 @@ export const start = (appPath: string, port = 0): Promise<number> => {
   });
 };
 
-export const dummyLiveAppManifest = (port: number) => [
+export const dummyLiveAppManifest = (url: string) => [
   {
     id: "dummy-live-app",
     name: "Dummy Live App",
-    url: `http://localhost:${port}`,
+    url,
     homepageUrl: "https://developers.ledger.com/",
     icon: "",
     platforms: ["ios", "android", "desktop"],

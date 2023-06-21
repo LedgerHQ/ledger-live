@@ -1,4 +1,5 @@
 import { Page, Locator } from "@playwright/test";
+import { WebviewTag } from "../../src/renderer/components/Web3AppWebview/types";
 import { waitFor } from "../utils/waitFor";
 
 export class DiscoverPage {
@@ -144,5 +145,51 @@ export class DiscoverPage {
     }, textToCheck);
 
     return result;
+  }
+
+  executeJavaScript<T>(fn: () => T): Promise<T> {
+    const code = this.toJsString(fn);
+
+    return this.page.evaluate(code => {
+      const webview = document.querySelector("webview") as WebviewTag;
+      return webview.executeJavaScript(code);
+    }, code);
+  }
+
+  send(request: Record<string, unknown>) {
+    const code = `
+      (function() {
+        try {
+          alert(window.ledger);
+          return window.ledger.e2e.walletApi.send('${JSON.stringify(request)}');
+        } catch (e) {
+          alert(e);
+        }
+      })()
+    `;
+    console.log(code);
+
+    return this.page.evaluate(
+      // Keep method and params. The reference is used by the generated code
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      code => {
+        const webview = document.querySelector("webview") as WebviewTag;
+        return webview.executeJavaScript(code);
+      },
+      code,
+    );
+  }
+
+  private toJsString<T>(fn: () => T) {
+    return fn.name
+      ? `
+      (function() {
+        ${fn.toString()}
+        return ${fn.name}();
+      })();
+    `
+      : `
+      (${fn.toString()})();
+    `;
   }
 }

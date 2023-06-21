@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import HWTransport from "@ledgerhq/hw-transport";
 import Eth from "@ledgerhq/hw-app-eth";
 import hwGetDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -7,7 +7,9 @@ import {
   TransactionSign,
   WalletAPIClient,
   WindowMessageTransport,
+  RpcResponse,
 } from "@ledgerhq/wallet-api-client";
+// import { getSimulatorTransport, profiles } from "@ledgerhq/wallet-api-simulator";
 import BigNumber from "bignumber.js";
 import { Buffer } from "buffer";
 import logo from "./ledger-logo.png";
@@ -15,28 +17,71 @@ import "./App.css";
 
 global.Buffer = Buffer;
 
+type PendingRequests = Record<string, (response: RpcResponse) => void>;
+
+function useE2EInjection() {
+  const queue = useRef<PendingRequests>({});
+  const transport = useRef(new WindowMessageTransport());
+
+  const send = useCallback(jsonStr => {
+    const { id } = JSON.parse(jsonStr);
+
+    return new Promise(resolve => {
+      queue.current[id] = resolve;
+      transport.current.send(jsonStr);
+    });
+  }, []);
+
+  useEffect(() => {
+    transport.current.connect();
+    transport.current.onMessage = (msgStr: string) => {
+      const msg = JSON.parse(msgStr);
+      if (!msg.id) return;
+
+      const resolve = queue.current[msg.id];
+      if (!resolve) return;
+
+      resolve(msg);
+      delete queue.current[msg.id];
+    };
+
+    window.ledger = {
+      // to avoid overriding other fields
+      ...window.ledger,
+      e2e: {
+        ...window.ledger?.e2e,
+        walletApi: {
+          send,
+        },
+      },
+    };
+  }, [send]);
+}
+
 const prettyJSON = (payload: any) => JSON.stringify(payload, null, 2);
 
 const App = () => {
+  useE2EInjection();
+
   // Define the Ledger Live API variable used to call api methods
   const api = useRef<WalletAPIClient>();
   const transport = useRef<HWTransport>();
 
   const [output, setOutput] = useState<any>(null);
 
-  // Instantiate the Ledger Live API on component mount
-  useEffect(() => {
-    const windowTransport = new WindowMessageTransport();
-    const client = new WalletAPIClient(windowTransport);
-    windowTransport.connect();
-    api.current = client;
+  // // Instantiate the Ledger Live API on component mount
+  // useEffect(() => {
+  //   const windowTransport = new WindowMessageTransport();
+  //   const client = new WalletAPIClient(windowTransport);
+  //   windowTransport.connect();
+  //   api.current = client;
 
-    // Cleanup the Ledger Live API on component unmount
-    return () => {
-      api.current = undefined;
-      windowTransport.disconnect();
-    };
-  }, []);
+  //   // Cleanup the Ledger Live API on component unmount
+  //   return () => {
+  //     api.current = undefined;
+  //     windowTransport.disconnect();
+  //   };
+  // }, []);
 
   const getAccounts = async () => {
     if (!api.current) {
