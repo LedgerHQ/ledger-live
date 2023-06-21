@@ -11,7 +11,6 @@ import {
   lastSeenDeviceSelector,
   localeSelector,
   languageSelector,
-  seenDevicesSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, idsToLanguage } from "@ledgerhq/types-live";
@@ -51,7 +50,6 @@ const extraProperties = (store: ReduxStore) => {
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
   const systemLocale = getParsedSystemLocale();
   const device = lastSeenDeviceSelector(state);
-  const devices = seenDevicesSelector(state);
   const accounts = accountsSelector(state);
   const deviceInfo = device
     ? {
@@ -100,7 +98,6 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
-    modelIdList: devices.map(d => d.modelId),
     ...deviceInfo,
   };
 };

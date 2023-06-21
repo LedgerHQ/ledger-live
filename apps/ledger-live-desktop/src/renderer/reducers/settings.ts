@@ -676,7 +676,7 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
   }
   return state.settings.lastSeenDevice;
 };
-export const seenDevicesSelector = (state: State): DeviceModelInfo[] => state.settings.seenDevices;
+
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
