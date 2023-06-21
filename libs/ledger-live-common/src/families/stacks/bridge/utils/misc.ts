@@ -24,13 +24,16 @@ import { encodeOperationId } from "../../../../operation";
 export const getTxToBroadcast = async (
   operation: Operation,
   signature: string,
+  signatureRaw: Record<string, any>,
 ): Promise<Buffer> => {
   const {
     value,
     recipients,
     fee,
-    extra: { xpub, nonce, anchorMode, network, memo },
+    extra: { memo },
   } = operation;
+
+  const { anchorMode, network, xpub } = signatureRaw;
 
   const options: UnsignedTokenTransferOptions = {
     amount: new BN(BigNumber(value).minus(fee).toFixed()),
@@ -40,7 +43,7 @@ export const getTxToBroadcast = async (
     network: StacksNetwork[network],
     publicKey: xpub,
     fee: new BN(BigNumber(fee).toFixed()),
-    nonce: new BN(BigNumber(nonce).toFixed()),
+    nonce: new BN(operation.transactionSequenceNumber ?? 0),
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -98,10 +101,10 @@ export const mapTxToOps =
         accountId: accountID,
         senders: [sender_address],
         recipients: [recipient_address],
+        transactionSequenceNumber: nonce,
         date,
         extra: {
           memo,
-          nonce: BigNumber(nonce),
         },
       });
     }
@@ -118,10 +121,10 @@ export const mapTxToOps =
         accountId: accountID,
         senders: [sender_address],
         recipients: [recipient_address],
+        transactionSequenceNumber: nonce,
         date,
         extra: {
           memo,
-          nonce: BigNumber(nonce),
         },
       });
     }
@@ -156,7 +159,7 @@ export const getAccountShape: GetAccountShape = async info => {
       .minus(new BigNumber(tx.token_transfer.amount));
 
     if (tx.tx_status === "pending") {
-      pendingTxs.concat(tx);
+      pendingTxs.push(tx);
     }
   }
 
@@ -193,7 +196,10 @@ export const findNextNonce = async (
   let nextNonce = BigNumber(0);
 
   for (const op of pendingOps) {
-    const nonce = op.extra.nonce ? (op.extra.nonce as BigNumber) : new BigNumber(0);
+    const nonce = op.transactionSequenceNumber
+      ? new BigNumber(op.transactionSequenceNumber)
+      : new BigNumber(0);
+
     if (nonce.gt(nextNonce)) {
       nextNonce = nonce;
     }
