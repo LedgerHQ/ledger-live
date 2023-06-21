@@ -2,7 +2,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "../../../types";
 import ICP from "@zondax/ledger-icp";
-import { constructionInvoke, getICPRosettaNetworkIdentifier } from "../network";
+import { constructionInvoke, getICPRosettaNetworkIdentifier } from "../api";
 import {
   ICPRosettaConstructionCombineRequest,
   ICPRosettaConstructionCombineResponse,

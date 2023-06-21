@@ -65,12 +65,13 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
     if ((await validateAddress(recipient)).isValid && (await validateAddress(address)).isValid) {
       if (t.useAllAmount) {
         amount = a.spendableBalance.minus(t.fees);
+        return { ...t, amount };
       }
     }
   }
 
   // log("debug", "[prepareTransaction] finish fn");
-  return { ...t, amount };
+  return t;
 };
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {

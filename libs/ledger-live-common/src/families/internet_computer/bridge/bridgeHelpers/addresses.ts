@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 import { Account, Address } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { MAX_MEMO_VALUE } from "../../consts";
-import { fetchBalances } from "./network";
+import { fetchBalances } from "./api";
 
 export const getAddress = (a: Account): Address =>
   a.freshAddresses.length > 0
