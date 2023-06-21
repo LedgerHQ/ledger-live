@@ -65,8 +65,10 @@ const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
 
 const sync = makeSync({ getAccountShape });
 
-const broadcast: BroadcastFnSignature = async ({ signedOperation: { operation, signature } }) => {
-  const tx = await getTxToBroadcast(operation, signature);
+const broadcast: BroadcastFnSignature = async ({
+  signedOperation: { operation, signature, signatureRaw },
+}) => {
+  const tx = await getTxToBroadcast(operation, signature, signatureRaw ?? {});
 
   const hash = await broadcastTx(tx);
   const result = patchOperationWithHash(operation, hash);
@@ -267,13 +269,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             blockHash: null,
             blockHeight: null,
             date: new Date(),
+            transactionSequenceNumber: nonce.toNumber(),
             extra: {
-              nonce,
               memo,
-              xpub,
-              network,
-              anchorMode,
-              signatureType: 1,
             },
           };
 
@@ -282,6 +280,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             signedOperation: {
               operation,
               signature,
+              signatureRaw: {
+                xpub,
+                network,
+                anchorMode,
+              },
               expirationDate: null,
             },
           });
