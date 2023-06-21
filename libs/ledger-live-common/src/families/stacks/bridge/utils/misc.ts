@@ -17,7 +17,7 @@ import {
   fetchFullTxs,
   fetchNonce,
 } from "../../bridge/utils/api";
-import { StacksNetwork, TransactionResponse } from "./api.types";
+import { MempoolTransaction, StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId } from "../../../../operation";
 
@@ -33,14 +33,14 @@ export const getTxToBroadcast = async (
   } = operation;
 
   const options: UnsignedTokenTransferOptions = {
-    amount: new BN(value.minus(fee).toFixed()),
+    amount: new BN(BigNumber(value).minus(fee).toFixed()),
     recipient: recipients[0],
     anchorMode,
     memo,
     network: StacksNetwork[network],
     publicKey: xpub,
-    fee: new BN(fee.toFixed()),
-    nonce: new BN(nonce.toFixed()),
+    fee: new BN(BigNumber(fee).toFixed()),
+    nonce: new BN(BigNumber(nonce).toFixed()),
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -61,19 +61,28 @@ export const getAddress = (a: Account): Address =>
 
 export const mapTxToOps =
   (accountID, { address }: AccountShapeInfo) =>
-  (tx: TransactionResponse): Operation[] => {
-    const { sender, recipient, amount } = tx.stx_transfers[0];
-    const { tx_id, fee_rate, block_height, burn_block_time, token_transfer } = tx.tx;
+  (tx: TransactionResponse["tx"] | MempoolTransaction): Operation[] => {
+    const { recipient_address, amount } = tx.token_transfer;
+    const {
+      sender_address,
+      tx_id,
+      fee_rate,
+      block_height,
+      burn_block_time,
+      receipt_time,
+      token_transfer,
+      nonce,
+    } = tx;
     const { memo: memoHex } = token_transfer;
 
     const ops: Operation[] = [];
 
-    const date = new Date(burn_block_time * 1000);
+    const date = new Date((burn_block_time ?? receipt_time) * 1000);
     const value = new BigNumber(amount || "0");
     const feeToUse = new BigNumber(fee_rate || "0");
 
-    const isSending = address === sender;
-    const isReceiving = address === recipient;
+    const isSending = address === sender_address;
+    const isReceiving = address === recipient_address;
 
     const memo = Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
 
@@ -87,11 +96,12 @@ export const mapTxToOps =
         blockHeight: block_height,
         blockHash: null,
         accountId: accountID,
-        senders: [sender],
-        recipients: [recipient],
+        senders: [sender_address],
+        recipients: [recipient_address],
         date,
         extra: {
           memo,
+          nonce: BigNumber(nonce),
         },
       });
     }
@@ -106,11 +116,12 @@ export const mapTxToOps =
         blockHeight: block_height,
         blockHash: null,
         accountId: accountID,
-        senders: [sender],
-        recipients: [recipient],
+        senders: [sender_address],
+        recipients: [recipient_address],
         date,
         extra: {
           memo,
+          nonce: BigNumber(nonce),
         },
       });
     }
@@ -135,6 +146,7 @@ export const getAccountShape: GetAccountShape = async info => {
   const balanceResp = await fetchBalances(address);
   const rawTxs = await fetchFullTxs(address);
   const mempoolTxs = await fetchFullMempoolTxs(address);
+  const pendingTxs: MempoolTransaction[] = [];
 
   const balance = new BigNumber(balanceResp.balance);
   let spendableBalance = new BigNumber(balanceResp.balance);
@@ -142,15 +154,20 @@ export const getAccountShape: GetAccountShape = async info => {
     spendableBalance = spendableBalance
       .minus(new BigNumber(tx.fee_rate))
       .minus(new BigNumber(tx.token_transfer.amount));
+
+    if (tx.tx_status === "pending") {
+      pendingTxs.concat(tx);
+    }
   }
 
-  const result = {
+  const result: Partial<Account> = {
     id: accountId,
     xpub: publicKey,
     freshAddress: address,
     balance,
     spendableBalance,
     operations: flatMap(rawTxs, mapTxToOps(accountId, info)),
+    pendingOperations: flatMap(pendingTxs, mapTxToOps(accountId, info)),
     blockHeight: blockHeight.chain_tip.block_height,
   };
 
