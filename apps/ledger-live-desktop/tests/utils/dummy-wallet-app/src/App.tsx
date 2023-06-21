@@ -1,16 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import HWTransport from "@ledgerhq/hw-transport";
 import Eth from "@ledgerhq/hw-app-eth";
-import hwGetDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import {
-  Transaction,
-  TransactionSign,
-  WalletAPIClient,
-  WindowMessageTransport,
-  RpcResponse,
-} from "@ledgerhq/wallet-api-client";
+import { WindowMessageTransport, RpcResponse } from "@ledgerhq/wallet-api-client";
 // import { getSimulatorTransport, profiles } from "@ledgerhq/wallet-api-simulator";
-import BigNumber from "bignumber.js";
 import { Buffer } from "buffer";
 import logo from "./ledger-logo.png";
 import "./App.css";
@@ -58,7 +50,7 @@ function useE2EInjection() {
   }, [send]);
 }
 
-const prettyJSON = (payload: any) => JSON.stringify(payload, null, 2);
+// const prettyJSON = (payload: any) => JSON.stringify(payload, null, 2);
 
 const App = () => {
   useE2EInjection();
