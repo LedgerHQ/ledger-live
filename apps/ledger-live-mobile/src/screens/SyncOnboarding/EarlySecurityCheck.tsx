@@ -6,10 +6,13 @@ import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { CircledCheckSolidMedium, WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { log } from "@ledgerhq/logs";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
+import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -47,7 +50,7 @@ export type EarlySecurityCheckProps = {
  */
 export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   device,
-  // notifyOnboardingEarlyCheckEnded,
+  notifyOnboardingEarlyCheckEnded,
 }) => {
   const { t } = useTranslation();
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
@@ -58,7 +61,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<GenuineCheckStatus>("unchecked");
 
-  const [firmwareUpdateStatus, setFirmwareUpdateStatus] =
+  const [firmwareUpdateCheckStatus, setFirmwareUpdateCheckStatus] =
     useState<FirmwareUpdateStatus>("unchecked");
 
   // Not a real "device action" but we get: permission requested, granted and result.
@@ -79,7 +82,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       deviceId: device.deviceId,
       lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
     })}
-    \n\n
+    \n
     Genuine check output: ${JSON.stringify({
       genuineState,
       devicePermissionState,
@@ -87,10 +90,37 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     })}  
   `);
 
-  // For now short circuiting the ESC step
-  // useEffect(() => {
-  //   notifyOnboardingEarlyCheckEnded();
-  // }, [notifyOnboardingEarlyCheckEnded]);
+  const {
+    latestFirmware,
+    error: latestFirmwareGettingError,
+    status: latestFirmwareGettingStatus,
+    lockedDevice: latestFirmwareGettingLockedDevice,
+  } = useGetLatestAvailableFirmware({
+    isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
+    deviceId: device.deviceId,
+  });
+
+  console.log(`🦕 
+    Firmware update check input: ${JSON.stringify({
+      isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
+      deviceId: device.deviceId,
+    })}
+    \n
+    Firmware update check output: ${JSON.stringify({
+      error: latestFirmwareGettingError,
+      status: latestFirmwareGettingStatus,
+      lockedDevice: latestFirmwareGettingLockedDevice,
+      latestFirmware,
+    })}  
+  `);
+
+  // Exit point
+  useEffect(() => {
+    // FIXME: to adapt with skip and real fw update
+    if (firmwareUpdateCheckStatus === "completed") {
+      notifyOnboardingEarlyCheckEnded();
+    }
+  }, [firmwareUpdateCheckStatus, notifyOnboardingEarlyCheckEnded]);
 
   const onStartChecks = useCallback(() => {
     setCurrentStep("genuine-check");
@@ -102,23 +132,24 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     if (currentStep === "genuine-check" && genuineCheckStatus === "unchecked") {
       setGenuineCheckStatus("ongoing");
     }
-    // // First time doing the firmware check
-    // else if (
-    //   ["completed", "skipped"].includes(genuineCheckStatus) &&
-    //   currentSoftwareChecksStep === "genuine-check"
-    // ) {
-    //   setCurrentSoftwareChecksStep("firmware-update");
-    //   setFirmwareUpdateStatus("ongoing");
-    // }
+    // Firmware update check start point
+    else if (
+      ["completed", "skipped"].includes(genuineCheckStatus) &&
+      currentStep === "genuine-check"
+    ) {
+      setCurrentStep("firmware-update-check");
+      setFirmwareUpdateCheckStatus("ongoing");
+    }
   }, [currentStep, genuineCheckStatus]);
 
   let currentDisplayedDrawer: GenuineCheckUiDrawerStatus | FirmwareUpdateUiDrawerStatus = "none";
   let genuineCheckUiStepStatus: UiCheckStatus = "inactive";
-  // let firmwareUpdateUiStepStatus: FirmwareUpdateUiStepStatus = "inactive";
+  let firmwareUpdateUiStepStatus: UiCheckStatus = "inactive";
 
   console.log(
     `🍕 UI logic: ${JSON.stringify({
       currentStep,
+      currentDisplayedDrawer,
       genuineCheckStatus,
       genuineCheckError,
       genuineState,
@@ -126,7 +157,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     })}`,
   );
 
-  // Handle genuine check UI logic
+  // Handles genuine check UI logic
   if (currentStep === "genuine-check") {
     if (genuineCheckStatus === "ongoing") {
       genuineCheckUiStepStatus = "active";
@@ -134,6 +165,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
       // Updates the genuineCheckStatus
       if (genuineCheckError) {
+        log("EarlySecurityCheck", "Failed to run genuine check:", genuineCheckError.message);
         setGenuineCheckStatus("failed");
       } else if (genuineState === "genuine") {
         setGenuineCheckStatus("completed");
@@ -164,61 +196,89 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     genuineCheckUiStepStatus = "failed";
   }
 
-  // // Handle firmware update UI logic
-  // if (currentSoftwareChecksStep === "firmware-update") {
-  //   if (firmwareUpdateStatus === "ongoing") {
-  //     firmwareUpdateUiStepStatus = "active";
-  //     nextDrawerToDisplay = "none";
+  // Handles firmware update check UI logic
+  if (currentStep === "firmware-update-check") {
+    console.log(`🥦 fw update check UI logic: ${JSON.stringify({ latestFirmwareGettingStatus })}`);
+    if (firmwareUpdateCheckStatus === "ongoing") {
+      firmwareUpdateUiStepStatus = "active";
+      currentDisplayedDrawer = "none";
 
-  //     // Updates the firmwareUpdateStatus
-  //     if (latestFirmwareGettingError) {
-  //       console.error(
-  //         "Failed to retrieve latest firmware version with error:",
-  //         latestFirmwareGettingError.message,
-  //       );
-  //       setFirmwareUpdateStatus("failed");
-  //     } else if (latestFirmwareGettingStatus === "no-available-firmware") {
-  //       setFirmwareUpdateStatus("completed");
-  //     }
+      // Updates the firmwareUpdateCheckStatus
+      if (latestFirmwareGettingError) {
+        log(
+          "EarlySecurityCheck",
+          "Failed to retrieve latest firmware version with error:",
+          latestFirmwareGettingError.message,
+        );
+        setFirmwareUpdateCheckStatus("failed");
+      } else if (latestFirmwareGettingStatus === "no-available-firmware") {
+        setFirmwareUpdateCheckStatus("completed");
+      }
 
-  //     // Updates the UI
-  //     if (latestFirmwareGettingLockedDevice) {
-  //       nextDrawerToDisplay = "unlock-needed";
-  //     } else if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
-  //       nextDrawerToDisplay = "new-firmware-available";
-  //     } else {
-  //       nextDrawerToDisplay = "none";
-  //     }
-  //   }
-  //   // currentSoftwareChecksStep can be any value for those UI updates
-  //   if (firmwareUpdateStatus === "completed") {
-  //     firmwareUpdateUiStepStatus = "completed";
-  //   } else if (firmwareUpdateStatus === "failed") {
-  //     firmwareUpdateUiStepStatus = "failed";
-  //   }
-  // }
+      // Updates the UI
+      if (latestFirmwareGettingLockedDevice) {
+        currentDisplayedDrawer = "unlock-needed";
+      } else if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
+        currentDisplayedDrawer = "new-firmware-available";
+      } else {
+        currentDisplayedDrawer = "none";
+      }
+
+      console.log(`🥦 fw update check UI logic end: ${JSON.stringify({ currentDisplayedDrawer })}`);
+    }
+    // currentSoftwareChecksStep can be any value for those UI updates
+    if (firmwareUpdateCheckStatus === "completed") {
+      firmwareUpdateUiStepStatus = "completed";
+    } else if (firmwareUpdateCheckStatus === "failed") {
+      firmwareUpdateUiStepStatus = "failed";
+    }
+  }
 
   // Handles the genuine check UI step title
   let genuineCheckStepTitle;
   switch (genuineCheckUiStepStatus) {
     case "active":
-      genuineCheckStepTitle = t("syncOnboarding.softwareChecksSteps.genuineCheckStep.active.title");
+      genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.active.title");
       break;
     case "completed":
-      genuineCheckStepTitle = t(
-        "syncOnboarding.softwareChecksSteps.genuineCheckStep.completed.title",
-        {
-          productName,
-        },
-      );
+      genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.completed.title", {
+        productName,
+      });
       break;
     case "failed":
-      genuineCheckStepTitle = t("syncOnboarding.softwareChecksSteps.genuineCheckStep.failed.title");
+      genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.failed.title");
       break;
     default:
-      genuineCheckStepTitle = t(
-        "syncOnboarding.softwareChecksSteps.genuineCheckStep.inactive.title",
-      );
+      genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.inactive.title");
+      break;
+  }
+
+  // Handles the firmware update UI step title
+  let firmwareUpdatecheckStepTitle;
+  switch (firmwareUpdateUiStepStatus) {
+    case "active":
+      firmwareUpdatecheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
+      break;
+    case "completed":
+      if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
+        firmwareUpdatecheckStepTitle = t(
+          "earlySecurityCheck.firmwareUpdateCheckStep.completed.updateAvailable.title",
+          {
+            firmwareVersion: JSON.stringify(latestFirmware.final.name),
+          },
+        );
+      } else {
+        firmwareUpdatecheckStepTitle = t(
+          "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
+          { productName },
+        );
+      }
+      break;
+    case "failed":
+      firmwareUpdatecheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.failed.title");
+      break;
+    default:
+      firmwareUpdatecheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
       break;
   }
 
@@ -226,7 +286,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
       <Text>{t("earlySecurityCheck.genuineCheck.description")}</Text>
       <CheckCard title={genuineCheckStepTitle} status={genuineCheckUiStepStatus} index={1} mb={4} />
-      {/* <CheckCard title={firmwareUpdateStepTitle} status={firmwareUpdateUiStepStatus} index={2} /> */}
+      <CheckCard
+        title={firmwareUpdatecheckStepTitle}
+        status={firmwareUpdateUiStepStatus}
+        index={2}
+      />
     </Flex>
   );
 
@@ -260,10 +324,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           }
           // Closing because the user pressed on close button, and the firmware check is ongoing
           else if (
-            firmwareUpdateStatus === "ongoing" &&
+            firmwareUpdateCheckStatus === "ongoing" &&
             currentDisplayedDrawer === "unlock-needed"
           ) {
-            setFirmwareUpdateStatus("failed");
+            setFirmwareUpdateCheckStatus("failed");
           }
         }}
         device={device}
@@ -287,6 +351,25 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
             drawer: "Failed Stax hardware check",
           });
           setGenuineCheckStatus("skipped");
+        }}
+      />
+      <FirmwareUpdateDrawer
+        productName={productName}
+        isOpen={currentDisplayedDrawer === "new-firmware-available"}
+        onSkip={() => {
+          track("button_clicked", {
+            button: "skip software update",
+            drawer: `Set up ${productName}: Step 4: Software update available`,
+          });
+          setFirmwareUpdateCheckStatus("completed");
+        }}
+        onUpdate={() => {
+          track("button_clicked", {
+            button: "download software update",
+            drawer: `Set up ${productName}: Step 4: Software update available`,
+          });
+          // TODO: actual fw update
+          setFirmwareUpdateCheckStatus("completed");
         }}
       />
       <Text>{t("earlySecurityCheck.title")}</Text>
