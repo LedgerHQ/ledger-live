@@ -66,6 +66,7 @@ export const getAccountShape: GetAccountShape = async infos => {
         latestSyncedOperation?.blockHeight
           ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
           : 0,
+        blockHeight,
       );
     } catch (e) {
       log("EVM Family", "Failed to get latest transactions", {
@@ -226,6 +227,20 @@ export const getOperationStatus = async (
       blockHash,
       blockHeight,
       date,
+      subOperations: op.subOperations?.map(subOp => ({
+        ...subOp,
+        transactionSequenceNumber: nonce,
+        blockHash,
+        blockHeight,
+        date,
+      })),
+      nftOperations: op.nftOperations?.map(nftOp => ({
+        ...nftOp,
+        transactionSequenceNumber: nonce,
+        blockHash,
+        blockHeight,
+        date,
+      })),
     } as Operation;
   } catch (e) {
     return null;

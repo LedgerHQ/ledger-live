@@ -177,6 +177,31 @@ describe("EVM Family", () => {
           url: `mock/api?module=account&action=txlist&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
         });
       });
+
+      it("should return a flat list of coin transactions from block 50 to block 100", async () => {
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanCoinOperations,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastCoinOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          50,
+          100,
+        );
+
+        expect(response).toEqual(
+          etherscanCoinOperations.map(op => etherscanOperationToOperations(account.id, op)).flat(),
+        );
+        expect(response.length).toBe(4);
+        expect(spy).toBeCalledWith({
+          method: "GET",
+          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
+        });
+      });
     });
 
     describe("getLastTokenOperations", () => {
@@ -258,6 +283,34 @@ describe("EVM Family", () => {
         expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
+        });
+      });
+
+      it("should return a flat list of token transactions from block 50 to block 100", async () => {
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanTokenOperations,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastTokenOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          50,
+          100,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
+            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
+            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
+          ].flat(),
+        );
+        expect(spy).toBeCalledWith({
+          method: "GET",
+          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
         });
       });
     });
@@ -343,6 +396,34 @@ describe("EVM Family", () => {
           url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
         });
       });
+
+      it("should return a flat list of erc721 transactions from block 50 to block 100", async () => {
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanERC721Operations,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastERC721Operations(
+          currency,
+          account.freshAddress,
+          account.id,
+          50,
+          100,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanERC721EventToOperations(account.id, etherscanERC721Operations[0], 0),
+            etherscanERC721EventToOperations(account.id, etherscanERC721Operations[1], 0),
+            etherscanERC721EventToOperations(account.id, etherscanERC721Operations[2], 1),
+          ].flat(),
+        );
+        expect(spy).toBeCalledWith({
+          method: "GET",
+          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
+        });
+      });
     });
 
     describe("getLastERC1155Operations", () => {
@@ -424,6 +505,34 @@ describe("EVM Family", () => {
         expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
+        });
+      });
+
+      it("should return a flat list of erc1155 transactions from block 50 to block 100", async () => {
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanERC1155Operations,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastERC1155Operations(
+          currency,
+          account.freshAddress,
+          account.id,
+          50,
+          100,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[0], 0),
+            etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[1], 0),
+            etherscanERC1155EventToOperations(account.id, etherscanERC1155Operations[2], 1),
+          ].flat(),
+        );
+        expect(spy).toBeCalledWith({
+          method: "GET",
+          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
         });
       });
     });
