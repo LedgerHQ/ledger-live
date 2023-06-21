@@ -20,7 +20,21 @@ test.beforeAll(async ({ request }) => {
     if (response.ok()) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.dummyLiveAppManifest(url));
+      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
+        server.liveAppManifest({
+          id: "dummy-live-app",
+          url,
+          permissions: [{ method: "*" }],
+          content: {
+            shortDescription: {
+              en: "App to test the Live App SDK",
+            },
+            description: {
+              en: "App to test the Live App SDK with Playwright",
+            },
+          },
+        }),
+      );
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }

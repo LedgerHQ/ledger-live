@@ -15,14 +15,30 @@ let continueTest = false;
 test.beforeAll(async ({ request }) => {
   // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
-    // const port = await server.start("dummy-live-app/build");
-    const port = 3000;
+    const port = await server.start("dummy-wallet-app/build");
     const url = `http://localhost:${port}`;
     const response = await request.get(url);
     if (response.ok()) {
       continueTest = true;
-      console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.dummyLiveAppManifest(url));
+      console.info(
+        `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
+      );
+      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
+        server.liveAppManifest({
+          id: "dummy-live-app",
+          url,
+          name: "Dummy Wallet API Live App",
+          apiVersion: "2.0.0",
+          content: {
+            shortDescription: {
+              en: "App to test the Wallet API",
+            },
+            description: {
+              en: "App to test the Wallet API with Playwright",
+            },
+          },
+        }),
+      );
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }
@@ -70,14 +86,16 @@ test("Wallet API methods", async ({ page }) => {
       jsonrpc: "2.0",
       id,
       result: {
-        address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
-        balance: "35688397",
-        blockHeight: 194870,
-        currency: "bitcoin",
-        id: "mock:1:bitcoin:true_bitcoin_0:",
-        lastSyncDate: "2020-03-14T13:34:42.000Z",
-        name: "Bitcoin 1 (legacy)",
-        spendableBalance: "35688397",
+        rawAccount: {
+          id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+          address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+          balance: "35688397",
+          blockHeight: 194870,
+          currency: "bitcoin",
+          lastSyncDate: "2020-03-14T13:34:42.000Z",
+          name: "Bitcoin 1 (legacy)",
+          spendableBalance: "35688397",
+        },
       },
     });
   });
@@ -89,7 +107,7 @@ test("Wallet API methods", async ({ page }) => {
       id,
       method: "account.receive",
       params: {
-        accountId: "mock:1:bitcoin:true_bitcoin_0:",
+        accountId: "2d23ca2a-069e-579f-b13d-05bc706c7583",
       },
     });
 
@@ -98,10 +116,12 @@ test("Wallet API methods", async ({ page }) => {
 
     const res = await resPromise;
 
-    expect(res).toEqual({
+    expect(res).toStrictEqual({
       jsonrpc: "2.0",
       id,
-      result: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      result: {
+        address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+      },
     });
   });
 });

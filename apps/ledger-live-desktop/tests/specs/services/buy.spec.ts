@@ -32,7 +32,29 @@ test.beforeAll(async ({ request }) => {
     if (response.ok() && port) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.dummyLiveAppManifest(url));
+      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
+        server.liveAppManifest({
+          id: "multibuy",
+          url,
+          name: "Dummy Buy / Sell App",
+          content: {
+            shortDescription: {
+              en: "Dummy app for testing the Buy app is accessed correctly",
+            },
+            description: {
+              en: "Dummy app for testing the Buy app is accessed correctly",
+            },
+          },
+          permissions: [
+            {
+              method: "account.request",
+              params: {
+                currencies: ["ethereum", "bitcoin", "algorand"],
+              },
+            },
+          ],
+        }),
+      );
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }

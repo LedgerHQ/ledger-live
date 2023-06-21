@@ -520,6 +520,9 @@ importers:
       "@babel/preset-typescript":
         specifier: ^7.15.0
         version: 7.16.7(@babel/core@7.21.0)
+      "@ledgerhq/wallet-api-core":
+        specifier: ^0.17.0
+        version: 0.17.1
       "@mapbox/node-pre-gyp":
         specifier: ^1.0.8
         version: 1.0.9
@@ -17084,7 +17087,6 @@ packages:
       {
         integrity: sha512-D+r2B09vaRO06wfGoss+rNgwqWSoK0bCtsaJWzlD2hv1zxTtucqVtSztbRFypIqxWTCb3ix5Nh2dWHEJVTp2Xw==,
       }
-    dev: false
 
   /@ledgerhq/hw-app-eth@5.11.0:
     resolution:
@@ -17262,11 +17264,10 @@ packages:
         integrity: sha512-JiPhjthLJST1efqubouoTZYqeoiMnlsN2IEiei4oBZWgM0mrKGrVjMeGOGAfKaM+P3aIREvVIwsrIzYwNQALFw==,
       }
     dependencies:
-      "@ledgerhq/errors": 6.12.3
+      "@ledgerhq/errors": 6.12.6
       bignumber.js: 9.1.0
       uuid: 9.0.0
       zod: 3.19.1
-    dev: false
 
   /@ledgerhq/wallet-api-core@0.18.0:
     resolution:
@@ -18131,7 +18132,7 @@ packages:
     dependencies:
       "@babel/runtime": 7.20.13
       "@polkadot/util": 10.3.1
-      "@polkadot/util-crypto": 10.3.1(@polkadot/util@10.3.1)
+      "@polkadot/util-crypto": 10.3.1
     dev: false
 
   /@polkadot/networks@10.3.1:
@@ -18162,7 +18163,7 @@ packages:
       "@polkadot/ui-settings": 2.11.1
       "@polkadot/ui-shared": 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       "@polkadot/util": 10.3.1
-      "@polkadot/util-crypto": 10.3.1(@polkadot/util@10.3.1)
+      "@polkadot/util-crypto": 10.3.1
       color: 3.2.1
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
@@ -18284,8 +18285,28 @@ packages:
     dependencies:
       "@babel/runtime": 7.20.13
       "@polkadot/util": 10.3.1
-      "@polkadot/util-crypto": 10.3.1(@polkadot/util@10.3.1)
+      "@polkadot/util-crypto": 10.3.1
       color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto@10.3.1:
+    resolution:
+      {
+        integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==,
+      }
+    engines: { node: ">=14.0.0" }
+    dependencies:
+      "@babel/runtime": 7.20.13
+      "@noble/hashes": 1.1.5
+      "@noble/secp256k1": 1.7.1
+      "@polkadot/networks": 10.3.1
+      "@polkadot/util": 10.3.1
+      "@polkadot/wasm-crypto": 6.4.1(@polkadot/util@10.3.1)(@polkadot/x-randomvalues@10.3.1)
+      "@polkadot/x-bigint": 10.3.1
+      "@polkadot/x-randomvalues": 10.3.1
+      "@scure/base": 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto@10.3.1(@polkadot/util@10.3.1):
@@ -31387,7 +31408,6 @@ packages:
       {
         integrity: sha512-4LwHK4nfDOraBCtst+wOWIHbu1vhvAPJK8g8nROd4iuc3PSEjWif/qwbkh8jwCJz6yDBvtU4KPynETgrfh7y3A==,
       }
-    dev: false
 
   /binary-extensions@1.13.1:
     resolution:
@@ -70744,7 +70764,6 @@ packages:
         integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==,
       }
     hasBin: true
-    dev: false
 
   /v8-compile-cache-lib@3.0.1:
     resolution:
@@ -74520,7 +74539,6 @@ packages:
       {
         integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==,
       }
-    dev: false
 
   /zwitch@1.0.5:
     resolution:
