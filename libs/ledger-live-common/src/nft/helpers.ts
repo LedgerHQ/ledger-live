@@ -43,10 +43,9 @@ export const getNFT = (
   nfts?: ProtoNFT[] | null | undefined,
 ): ProtoNFT | undefined => nfts?.find(nft => nft.contract === contract && nft.tokenId === tokenId);
 
-const SUPPORTED_CURRENCIES = ["ethereum", "polygon"];
-
 export const groupByCurrency = (nfts: ProtoNFT[]): ProtoNFT[] => {
   const groupMap = new Map<string, ProtoNFT[]>();
+  const SUPPORTED_CURRENCIES = getEnv("NFT_CURRENCIES").split(",");
   SUPPORTED_CURRENCIES.forEach(elem => groupMap.set(elem, []));
 
   // GROUPING
