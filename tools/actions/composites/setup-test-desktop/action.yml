@@ -67,7 +67,7 @@ runs:
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       shell: bash
-    - name: Build LLD app for testing
+    - name: Build desktop and dummy live apps for testing
       env:
         GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
@@ -77,4 +77,8 @@ runs:
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
       run: pnpm desktop build:dummy-apps
+      shell: bash
+    - name: Build Dummy Wallet API app for testing
+      if: ${{ !inputs.skip_builds }}
+      run: pnpm --filter="dummy-wallet-app" build
       shell: bash

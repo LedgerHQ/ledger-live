@@ -1,13 +1,26 @@
 import { Platform } from "react-native";
-import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import invariant from "invariant";
 import { Subject } from "rxjs";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { setAccounts } from "../../src/actions/accounts";
 import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
+
+type SubjectData =
+  | {
+      type: "add";
+      payload: { id: string; name: string; serviceUUID: string };
+    }
+  | { type: "openNano" }
+  | {
+      type: "loadLocalManifest";
+      payload: LiveAppManifest;
+    };
+
+export const e2eBridgeSubject = new Subject<SubjectData>();
 
 let ws: WebSocket;
 
@@ -27,10 +40,7 @@ export function init(port = 8099) {
 }
 
 async function onMessage(event: { data: unknown }) {
-  invariant(
-    typeof event.data === "string",
-    "[E2E Bridge Client]: Message data must be string",
-  );
+  invariant(typeof event.data === "string", "[E2E Bridge Client]: Message data must be string");
   const msg = JSON.parse(event.data);
   invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
@@ -39,7 +49,8 @@ async function onMessage(event: { data: unknown }) {
 
   switch (msg.type) {
     case "add":
-    case "open":
+    case "openNano":
+    case "loadLocalManifest":
       e2eBridgeSubject.next(msg);
       break;
     case "setGlobals":
@@ -67,16 +78,7 @@ async function onMessage(event: { data: unknown }) {
   }
 }
 
-type SubjectData =
-  | {
-      type: DescriptorEventType;
-      payload: { id: string; name: string; serviceUUID: string };
-    }
-  | { type: "open" };
-
-export const e2eBridgeSubject = new Subject<SubjectData>();
-
 function log(message: string) {
   // eslint-disable-next-line no-console
-  console.log(`[E2E Bridge Client]: ${message}`);
+  // console.log(`[E2E Bridge Client]: ${message}`);
 }
