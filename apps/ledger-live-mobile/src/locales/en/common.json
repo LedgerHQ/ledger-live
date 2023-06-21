@@ -1913,6 +1913,36 @@
     },
     "allowManagerDrawer": {
       "title": "Tap 'Allow' to enable Genuine Check and OS update check"
+    },
+    "genuineCheckStep": {
+      "inactive": {
+        "title": "Authenticity check"
+      },
+      "active": {
+        "title": "Genuine Check in progress..."
+      },
+      "completed": {
+        "title": "{{productName}} is genuine"
+      },
+      "failed": {
+        "title": "Genuine Check skipped"
+      }
+    },
+    "firmwareUpdateCheckStep": {
+      "active": {
+        "title": "Check for OS update"
+      },
+      "completed": {
+        "updateAvailable": {
+          "title": "Software version {{firmwareVersion}} available"
+        },
+        "noUpdateAvailable": {
+          "title": "{{productName}} is up to date"
+        }
+      },
+      "failed": {
+        "title": "Software update failed"
+      }
     }
   },
   "syncOnboarding": {
@@ -2011,36 +2041,6 @@
         "title": "New software found",
         "description": "To access the latest security features, we highly recommend updating your {{productName}}",
         "updateCta": "Update"
-      },
-      "genuineCheckStep": {
-        "inactive": {
-          "title": "Authenticity check"
-        },
-        "active": {
-          "title": "Genuine Check in progress..."
-        },
-        "completed": {
-          "title": "{{productName}} is genuine"
-        },
-        "failed": {
-          "title": "Genuine Check skipped"
-        }
-      },
-      "firmwareUpdateStep": {
-        "active": {
-          "title": "Check for OS update"
-        },
-        "completed": {
-          "updateAvailable": {
-            "title": "Software version {{firmwareVersion}} available"
-          },
-          "noUpdateAvailable": {
-            "title": "{{productName}} is up to date"
-          }
-        },
-        "failed": {
-          "title": "Software update failed"
-        }
       }
     },
     "appsStep": {
