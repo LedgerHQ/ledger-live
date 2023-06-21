@@ -9,7 +9,7 @@ test("Send flow", async ({ page }) => {
   const layout = new Layout(page);
   const sendModal = new SendModal(page);
 
-  await test.step("can open send modal and label should be Max network fees", async () => {
+  await test.step("can open send modal and max network fees label is shown", async () => {
     await layout.openSendModal();
     await sendModal.container.waitFor({ state: "visible" });
     const sendButtonLoader = sendModal.container
@@ -24,7 +24,7 @@ test("Send flow", async ({ page }) => {
     expect(sendModal.container.getByText("Max Network fees").isVisible()).toBeTruthy();
     await sendModal.back();
     await sendModal.selectAccount("Bitcoin 1 (legacy)");
-    await sendModal.fillRecipient("randomvalue2");
+    await sendModal.fillRecipient("randomvalidvalue2");
     await page.getByRole("button", { name: "Continue" }).click();
     await expect
       .soft(sendModal.container)
