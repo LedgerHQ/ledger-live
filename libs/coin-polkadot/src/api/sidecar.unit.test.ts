@@ -11,7 +11,7 @@ describe("getAccount", () => {
         locks: [
           {
             amount: "60000000000",
-            reason: "All",
+            reasons: "All",
           },
         ],
         targets: [],
@@ -28,15 +28,15 @@ describe("getAccount", () => {
         locks: [
           {
             amount: "1",
-            reason: "reason 1",
+            reasons: "reason 1",
           },
           {
             amount: "5",
-            reason: "reason 2",
+            reasons: "reason 2",
           },
           {
             amount: "3",
-            reason: "reason 3",
+            reasons: "reason 3",
           },
         ],
         targets: [],
