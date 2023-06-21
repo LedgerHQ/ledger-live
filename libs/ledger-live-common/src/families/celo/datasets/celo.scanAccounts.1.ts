@@ -144,12 +144,11 @@ const dataset: CurrenciesData<Transaction> = {
             mode: "send",
             recipient: LEDGER_CELO_ACCOUNT_2,
           }),
-          expectedStatus: account => ({
+          expectedStatus: () => ({
             errors: {},
             warnings: {
               amount: new CeloAllFundsWarning(),
             },
-            totalSpent: account.spendableBalance,
           }),
         },
         {

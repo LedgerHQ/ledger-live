@@ -63,6 +63,8 @@ import SyncOnboarding from "./components/SyncOnboarding";
 import RecoverPlayer from "~/renderer/screens/recover/Player";
 import { updateIdentify } from "./analytics/segment";
 import { useDiscoverDB } from "./screens/platform/v2/hooks";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -145,6 +147,12 @@ export default function Default() {
   useUSBTroubleshooting();
   useProviders(); // prefetch data from swap providers here
   const discoverDB = useDiscoverDB();
+
+  const listAppsV2 = useFeature("listAppsV2");
+  useEffect(() => {
+    if (!listAppsV2) return;
+    enableListAppsV2(listAppsV2.enabled);
+  }, [listAppsV2]);
 
   useEffect(() => {
     if (!hasCompletedOnboarding) {
