@@ -215,8 +215,8 @@ export function getIsTracking(
   const analyticsEnabled = state && analyticsEnabledSelector(state);
   if (readOnlyMode && hasOrderedNano)
     return {
-      enabled: false,
-      reason: "not tracking anything in the reborn state post purchase pre device setup",
+      enabled: true,
+      //reason: "not tracking anything in the reborn state post purchase pre device setup",
     };
   if (!mandatory && !analyticsEnabled) {
     return {
