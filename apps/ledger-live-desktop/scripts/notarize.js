@@ -1,9 +1,9 @@
 const platform = require("os").platform();
-const { notarize } = require("electron-notarize");
+const { notarize } = require("@electron/notarize");
 const chalk = require("chalk");
 
 require("dotenv").config();
-require("debug").enable("electron-notarize");
+require("debug").enable("@electron/notarize");
 
 const info = str => {
   console.log(chalk.blue(str));

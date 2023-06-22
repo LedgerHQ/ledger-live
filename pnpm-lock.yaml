@@ -515,6 +515,9 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.15.0
         version: 7.16.7(@babel/core@7.21.0)
+      '@electron/notarize':
+        specifier: ^1.2.4
+        version: 1.2.4
       '@octokit/rest':
         specifier: ^18.12.0
         version: 18.12.0
@@ -641,6 +644,9 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      debug:
+        specifier: ^4.3.4
+        version: 4.3.4
       electron:
         specifier: ^23.1.3
         version: 23.1.3
@@ -650,9 +656,6 @@ importers:
       electron-devtools-installer:
         specifier: ^3.2.0
         version: 3.2.0
-      electron-notarize:
-        specifier: ^1.2.2
-        version: 1.2.2
       esbuild-utils:
         specifier: workspace:*
         version: link:../../tools/esbuild-utils
@@ -10549,6 +10552,16 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
+  /@electron/notarize@1.2.4:
+    resolution: {integrity: sha512-W5GQhJEosFNafewnS28d3bpQ37/s91CDWqxVchHfmv2dQSTWpOzNlUVQwYzC1ay5bChRV/A9BTL68yj0Pa+TSg==}
+    engines: {node: '>= 10.0.0'}
+    dependencies:
+      debug: 4.3.4
+      fs-extra: 9.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@electron/remote@2.0.8(electron@23.1.3):
     resolution: {integrity: sha512-P10v3+iFCIvEPeYzTWWGwwHmqWnjoh8RYnbtZAb3RlQefy4guagzIwcWtfftABIfm6JJTNQf4WPSKWZOpLmHXw==}
     peerDependencies:
@@ -15120,7 +15133,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+      '@polkadot/util-crypto': 10.3.1
     dev: false
 
   /@polkadot/networks@10.3.1:
@@ -15145,7 +15158,7 @@ packages:
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+      '@polkadot/util-crypto': 10.3.1
       color: 3.2.1
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
@@ -15243,8 +15256,25 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+      '@polkadot/util-crypto': 10.3.1
       color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto@10.3.1:
+    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@polkadot/networks': 10.3.1
+      '@polkadot/util': 10.3.1
+      '@polkadot/wasm-crypto': 6.4.1(@polkadot/util@10.3.1)(@polkadot/x-randomvalues@10.3.1)
+      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-randomvalues': 10.3.1
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto@10.3.1(@polkadot/util@10.3.1):
@@ -20985,6 +21015,7 @@ packages:
 
   /@types/glob@7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
+    requiresBuild: true
     dependencies:
       '@types/minimatch': 3.0.5
       '@types/node': 18.15.11
@@ -29299,17 +29330,6 @@ packages:
   /electron-is-dev@2.0.0:
     resolution: {integrity: sha512-3X99K852Yoqu9AcW50qz3ibYBWY79/pBhlMCab8ToEWS48R0T9tyxRiQhwylE7zQdXrMnx2JKqUJyMPmt5FBqA==}
     dev: false
-
-  /electron-notarize@1.2.2:
-    resolution: {integrity: sha512-ZStVWYcWI7g87/PgjPJSIIhwQXOaw4/XeXU+pWqMMktSLHaGMLHdyPPN7Cmao7+Cr7fYufA16npdtMndYciHNw==}
-    engines: {node: '>= 10.0.0'}
-    deprecated: Please use @electron/notarize moving forward.  There is no API change, just a package name change
-    dependencies:
-      debug: 4.3.4
-      fs-extra: 9.1.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /electron-osx-sign@0.6.0:
     resolution: {integrity: sha512-+hiIEb2Xxk6eDKJ2FFlpofCnemCbjbT5jz+BKGpVBrRNT3kWTGs4DfNX6IzGwgi33hUcXF+kFs9JW+r6Wc1LRg==}
