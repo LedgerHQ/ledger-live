@@ -11,7 +11,7 @@ export class SendModal extends Modal {
     super(page);
     this.page = page;
     this.drowdownAccount = this.page.locator('[data-test-id="modal-content"] svg').nth(1);
-    this.recipientInput = this.page.getByPlaceholder('Enter');
+    this.recipientInput = this.page.getByPlaceholder("Enter");
   }
 
   async selectAccount(name: string) {
