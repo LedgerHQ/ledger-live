@@ -3,25 +3,23 @@ import { from } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import { withDevice } from "../../hw/deviceAccess";
-import getVersion from "../../hw/getVersion";
+import getAppAndVersion from "../../hw/getAppAndVersion";
 import { useBleDevicePairing } from "./useBleDevicePairing";
 
 jest.mock("../../hw/deviceAccess");
-jest.mock("../../hw/getVersion");
+jest.mock("../../hw/getAppAndVersion");
 jest.mock("@ledgerhq/hw-transport");
 jest.useFakeTimers();
 
-const mockedGetVersion = jest.mocked(getVersion);
+const mockedGetAppAndVersion = jest.mocked(getAppAndVersion);
 const mockedWithDevice = jest.mocked(withDevice);
 
 mockedWithDevice.mockReturnValue(job => from(job(new Transport())));
 
-const aFirmwareInfo = {
-  isBootloader: false,
-  rawVersion: "",
-  targetId: 0,
-  mcuVersion: "",
-  flags: Buffer.from([]),
+const anAppAndVersion = {
+  name: "Bitcoin",
+  version: "1.0.0",
+  flags: 1,
 };
 
 const aDevice = {
@@ -42,13 +40,13 @@ class BleError extends Error {
 
 describe("useBleDevicePairing", () => {
   afterEach(() => {
-    mockedGetVersion.mockClear();
+    mockedGetAppAndVersion.mockClear();
     jest.clearAllTimers();
   });
 
   describe("When the request sent with the BLE transport to the device gets a success response", () => {
     beforeEach(() => {
-      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+      mockedGetAppAndVersion.mockResolvedValue(anAppAndVersion);
     });
 
     it("should inform the hook consumer that the device is paired", async () => {
@@ -70,7 +68,7 @@ describe("useBleDevicePairing", () => {
   describe("When the request sent with the BLE transport is rejected with an error", () => {
     beforeEach(() => {
       const bleError = new BleError("An error during pairing", 201);
-      mockedGetVersion.mockRejectedValue(bleError);
+      mockedGetAppAndVersion.mockRejectedValue(bleError);
     });
 
     it("should inform the hook consumer an error occurred", async () => {
