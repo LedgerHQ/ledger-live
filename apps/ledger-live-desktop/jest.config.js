@@ -20,8 +20,8 @@ const defaultConfig = {
   },
   testEnvironment: "node",
   testPathIgnorePatterns,
-  globalSetup: "<rootDir>/tests/setup.js",
-  setupFiles: ["<rootDir>/tests/jestSetup.js"],
+  globalSetup: "<rootDir>/tests/setup.ts",
+  setupFiles: ["<rootDir>/tests/jestSetup.ts"],
   moduleDirectories: ["node_modules"],
 };
 
