@@ -2649,7 +2649,7 @@
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts",
-        "desc": "Be notified on your transactions for Ethereum, Polygon and Avalanche"
+        "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
       },
       "price": {
         "title": "Price Alerts",

@@ -1,145 +1,51 @@
-import network from "@ledgerhq/live-network/network";
-import type {
-  ChainwatchNetwork,
-  ChainwatchAccount,
-  ChainwatchTargetType,
-  ChainwatchMonitorType,
-  Account,
-} from "@ledgerhq/types-live";
+import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
+import ChainwatchAccountManager from "./ChainwatchAccountManager";
 
-class ChainwatchAccountManager {
-  chainwatchBaseUrl: string;
-  userId: string;
-  network: ChainwatchNetwork;
-  suffixes: string[];
+const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Account[]) => {
+  const accountsByCurrencies: Record<
+    string,
+    { newAccounts: Account[]; removedAccounts: Account[] }
+  > = {};
 
-  constructor(chainwatchBaseUrl: string, userId: string, network: ChainwatchNetwork) {
-    this.chainwatchBaseUrl = chainwatchBaseUrl;
-    this.userId = userId;
-    this.network = network;
-    this.suffixes = [];
-  }
-
-  async getChainwatchAccount(): Promise<ChainwatchAccount | undefined> {
-    try {
-      const { data } = await network({
-        method: "GET",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
-      });
-      return data;
-    } catch (err) {
-      console.log("err get account", err, JSON.stringify(err));
+  for (const newAccount of newAccounts) {
+    if (!accountsByCurrencies[newAccount.currency.id]) {
+      accountsByCurrencies[newAccount.currency.id] = { newAccounts: [], removedAccounts: [] };
     }
+    accountsByCurrencies[newAccount.currency.id].newAccounts.push(newAccount);
   }
-
-  async registerNewChainwatchAccount() {
-    try {
-      await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
-      });
-    } catch (err) {
-      console.log("err put account", err, JSON.stringify(err));
+  for (const removedAccount of removedAccounts) {
+    if (!accountsByCurrencies[removedAccount.currency.id]) {
+      accountsByCurrencies[removedAccount.currency.id] = { newAccounts: [], removedAccounts: [] };
     }
+    accountsByCurrencies[removedAccount.currency.id].removedAccounts.push(removedAccount);
   }
 
-  getAccountAddress(account: Account) {
-      return account.freshAddresses.length > 0 && account.freshAddresses[0]?.address;
-  }
+  return accountsByCurrencies;
+};
 
-  accountAlreadySubscribed(account: Account) {
-    const address = this.getAccountAddress(account);
-    return address && this.suffixes.some(suffix =>
-      address?.toLowerCase()?.endsWith(suffix.toLowerCase()),
+const updateTransactionsAlertsAddresses = async (
+  userId: string,
+  chainwatchBaseUrl: string,
+  supportedChains: ChainwatchNetwork[],
+  newAccounts: Account[],
+  removedAccounts: Account[],
+) => {
+  const accountsByCurrencies = formatAccountsByCurrencies(newAccounts, removedAccounts);
+
+  for (const [currencyId, accounts] of Object.entries(accountsByCurrencies)) {
+    const network = supportedChains.find(
+      (chain: ChainwatchNetwork) => chain.ledgerLiveId === currencyId,
     );
-  }
+    if (network) {
+      const accountManager = new ChainwatchAccountManager(chainwatchBaseUrl, userId, network);
 
-  async registerNewAccountsAddresses(accountsToRegister: Account[]) {
-    try {
-      const addresses = accountsToRegister
-        .filter(account => this.getAccountAddress(account) && !this.accountAlreadySubscribed(account))
-        .map(account => this.getAccountAddress(account));
-      if (addresses.length > 0) {
-        await network({
-          method: "PUT",
-          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-          data: addresses,
-        });
-      }
-    } catch (err) {
-      console.log("err put new addresses", err, JSON.stringify(err));
+      await accountManager.setupChainwatchAccount();
+      await Promise.all([
+        accountManager.registerNewAccountsAddresses(accounts.newAccounts),
+        accountManager.removeAccountsAddresses(accounts.removedAccounts),
+      ]);
     }
   }
+};
 
-  async removeAccountsAddresses(accountsToRemove: Account[]) {
-    try {
-      const addresses = accountsToRemove
-        .filter(account => this.getAccountAddress(account) && this.accountAlreadySubscribed(account))
-        .map(account => this.getAccountAddress(account));
-      if (addresses.length > 0) {
-        await network({
-          method: "DELETE",
-          url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-          data: addresses,
-        });
-      }
-    } catch (err) {
-      console.log("err delete addresses", err, JSON.stringify(err));
-    }
-  }
-
-  async registerNewMonitor(monitor: ChainwatchMonitorType) {
-    try {
-      await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/monitor/`,
-        data: {
-          confirmations: this.network.nbConfirmations,
-          type: monitor,
-        },
-      });
-    } catch (err) {
-      console.log("err put monitor", err, JSON.stringify(err));
-    }
-  }
-
-  async registerNewTarget(target: ChainwatchTargetType) {
-    try {
-      await network({
-        method: "PUT",
-        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/target/`,
-        data: {
-          equipment: this.userId,
-          type: target,
-        },
-      });
-    } catch (err) {
-      console.log("err put target", err, JSON.stringify(err));
-    }
-  }
-
-  async setupChainwatchAccount() {
-    // Get or set Chainwatch Account
-    let chainwatchAccount = await this.getChainwatchAccount();
-    if (!chainwatchAccount) {
-      await this.registerNewChainwatchAccount();
-      chainwatchAccount = await this.getChainwatchAccount();
-    }
-    this.suffixes = chainwatchAccount?.suffixes || [];
-
-    // Set Chainwatch account's monitors (receive and send) if they don't exist yet
-    if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "send")) {
-      await this.registerNewMonitor("send");
-    }
-    if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "receive")) {
-      await this.registerNewMonitor("receive");
-    }
-
-    // Set Chainwatch account's target (braze) if it doesn't exist yet
-    if (!chainwatchAccount?.targets?.find(target => target.type === "braze")) {
-      await this.registerNewTarget("braze");
-    }
-  }
-}
-
-export default ChainwatchAccountManager;
+export default updateTransactionsAlertsAddresses;
