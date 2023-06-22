@@ -40,7 +40,7 @@ export class SwapCompleteExchangeError extends Error {
 
 function convertTransportError(
   step: CompleteExchangeStep,
-  err: unknown
+  err: unknown,
 ): SwapCompleteExchangeError | unknown {
   if (err instanceof TransportStatusError) {
     // @ts-expect-error TransportStatusError to be typed on ledgerjs

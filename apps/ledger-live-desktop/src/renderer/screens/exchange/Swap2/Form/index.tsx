@@ -206,6 +206,30 @@ const SwapForm = () => {
       setIdleState(true);
     }, idleTime);
   }, [idleState]);
+  const swapWebAppRedirection = useCallback(() => {
+    debugger;
+    const { to, from } = swapTransaction.swap;
+    const transaction = swapTransaction.transaction;
+    const { account: fromAccount, parentAccount: fromParentAccount } = from;
+    const { account: toAccount, parentAccount: toParentAccount } = to;
+    const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+    const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+    const fromMagnitude = fromAccount.currency.units[0].magnitude;
+    const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
+    const rateId = encodeURIComponent(exchangeRate?.rateId);
+    const feeStrategy = transaction?.feesStrategy.toUpperCase();
+    history.push({
+      pathname: "/swap-web",
+      state: {
+        provider,
+        fromAccountId,
+        toAccountId,
+        fromAmount,
+        quoteId: rateId,
+        feeStrategy, // Custom fee is not supported yet
+      },
+    });
+  }, [history, swapTransaction, provider]);
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
@@ -381,6 +405,7 @@ const SwapForm = () => {
       targetCurrency: targetCurrency?.name,
       partner: provider,
     });
+
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
       const fromAccountId = from.parentAccount?.id || from.account?.id;
@@ -428,27 +453,7 @@ const SwapForm = () => {
     } else {
       const swapWebApp = !!process.env.SWAP_WEB_APP;
       if (swapWebApp) {
-        const { to, from } = swapTransaction.swap;
-        const transaction = swapTransaction.transaction;
-        const { account: fromAccount, parentAccount: fromParentAccount } = from;
-        const { account: toAccount, parentAccount: toParentAccount } = to;
-        const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-        const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-        const fromMagnitude = fromAccount.currency.units[0].magnitude;
-        const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
-        const rateId = encodeURIComponent(exchangeRate?.rateId);
-        const feeStrategy = transaction?.feesStrategy.toUpperCase();
-        history.push({
-          pathname: "/swap-web",
-          state: {
-            provider,
-            fromAccountId,
-            toAccountId,
-            fromAmount,
-            quoteId: rateId,
-            feeStrategy, // Custom fee is not supported yet
-          },
-        });
+        swapWebAppRedirection();
       } else {
         setDrawer(
           ExchangeDrawer,
