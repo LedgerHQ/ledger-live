@@ -74,6 +74,19 @@ export type SignOperationFnSignature<T> = (
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
 
+export type Bridge<T extends TransactionCommon> = {
+  currencyBridge: CurrencyBridge;
+  accountBridge: AccountBridge<T>;
+};
+
+export type ScanInfo = {
+  currency: CryptoCurrency;
+  deviceId: DeviceId;
+  scheme?: DerivationMode | null | undefined;
+  syncConfig: SyncConfig;
+  preferredNewAccountScheme?: DerivationMode;
+};
+
 /**
  * Abstraction related to a currency
  */
@@ -87,13 +100,7 @@ export interface CurrencyBridge {
   // method need to treat the data object as unsafe and validate all fields / be backward compatible.
   hydrate(data: unknown, currency: CryptoCurrency): void;
   // Scan all available accounts with a device
-  scanAccounts(arg0: {
-    currency: CryptoCurrency;
-    deviceId: DeviceId;
-    scheme?: DerivationMode | null | undefined;
-    syncConfig: SyncConfig;
-    preferredNewAccountScheme?: DerivationMode;
-  }): Observable<ScanAccountEvent>;
+  scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
   nftResolvers?: {
     nftMetadata: (arg: {

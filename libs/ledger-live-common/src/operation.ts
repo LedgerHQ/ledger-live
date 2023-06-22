@@ -18,6 +18,8 @@ import {
   isConfirmedOperation,
   patchOperationWithHash as commonPatchOperationWithHash,
   isAddressPoisoningOperation,
+  isEditableOperation,
+  getStuckAccountAndOperation,
 } from "@ledgerhq/coin-framework/operation";
 
 const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
@@ -38,6 +40,8 @@ export {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   isAddressPoisoningOperation,
+  isEditableOperation,
+  getStuckAccountAndOperation,
 };
 
 export function patchOperationWithHash(operation: Operation, hash: string): Operation {

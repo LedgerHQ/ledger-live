@@ -1,7 +1,7 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { findSubAccountById, getMainAccount } from "./account";
+import { findSubAccountById, getMainAccount } from "./account/helpers";
 import invariant from "invariant";
 
 export function findOperationInAccount(
@@ -229,6 +229,7 @@ export function isStuckOperation(account: AccountLike, operation: Operation): bo
   );
 }
 
+// return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
 export function getStuckAccountAndOperation(
   account: AccountLike,
   parentAccount: Account | undefined | null,
@@ -244,9 +245,7 @@ export function getStuckAccountAndOperation(
   const mainAccount = getMainAccount(account, parentAccount);
 
   const SUPPORTED_FAMILIES = ["ethereum"];
-  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
-    return undefined;
-  }
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) return undefined;
   const now = new Date().getTime();
   const stuckOperations = mainAccount.pendingOperations.filter(
     pendingOp =>
@@ -274,9 +273,7 @@ export function getStuckAccountAndOperation(
     stuckAccount = mainAccount;
     stuckParentAccount = undefined;
   }
-
   invariant(stuckAccount, "stuckAccount required");
-
   return {
     account: stuckAccount,
     parentAccount: stuckParentAccount,

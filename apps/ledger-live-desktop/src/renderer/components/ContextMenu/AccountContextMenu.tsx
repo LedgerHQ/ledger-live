@@ -9,7 +9,6 @@ import IconSend from "~/renderer/icons/Send";
 import IconStar from "~/renderer/icons/Star";
 import IconBuy from "~/renderer/icons/Exchange";
 import IconSwap from "~/renderer/icons/Swap";
-import IconBan from "~/renderer/icons/Ban";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import ContextMenuItem from "./ContextMenuItem";
 import { toggleStarAction } from "~/renderer/actions/accounts";
@@ -19,6 +18,8 @@ import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ContextMenuItemType } from "./ContextMenuWrapper";
+import { Icons } from "@ledgerhq/react-ui";
+
 type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
@@ -158,7 +159,7 @@ export default function AccountContextMenu({
     if (account.type === "TokenAccount") {
       items.push({
         label: "accounts.contextMenu.hideToken",
-        Icon: IconBan,
+        Icon: Icons.NoneMedium,
         id: "token-menu-hide",
         callback: () =>
           dispatch(

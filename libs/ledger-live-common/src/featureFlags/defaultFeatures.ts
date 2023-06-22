@@ -220,6 +220,9 @@ export const defaultFeatures: DefaultFeatures = {
   objkt: {
     enabled: false,
   },
+  editEthTx: {
+    enabled: false,
+  },
   protectServicesMobile: {
     enabled: false,
     params: {
@@ -291,5 +294,8 @@ export const defaultFeatures: DefaultFeatures = {
     params: {
       path: "/discover/refer-a-friend",
     },
+  },
+  listAppsV2: {
+    enabled: false,
   },
 };

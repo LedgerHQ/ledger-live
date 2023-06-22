@@ -122,6 +122,9 @@ export const TransportRaceCondition = createCustomErrorClass("TransportRaceCondi
 export const TransportWebUSBGestureRequired = createCustomErrorClass(
   "TransportWebUSBGestureRequired",
 );
+export const TransactionHasBeenValidatedError = createCustomErrorClass(
+  "TransactionHasBeenValidatedError",
+);
 export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInApp");
 export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
