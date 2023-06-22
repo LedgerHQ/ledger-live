@@ -22,17 +22,19 @@ const TransactionsAlerts = () => {
   );
   const refAccounts = useRef<Account[]>([]);
 
-
-  const syncTransactionsAlerts = async (
-    newAccounts: Account[],
-    removedAccounts: Account[],
-  ) => {
+  const syncTransactionsAlerts = async (newAccounts: Account[], removedAccounts: Account[]) => {
     const { user } = await getOrCreateUser();
-    updateTransactionsAlertsAddresses(user.id, chainwatchBaseUrl, supportedChains, newAccounts, removedAccounts);
+    updateTransactionsAlertsAddresses(
+      user.id,
+      chainwatchBaseUrl,
+      supportedChains,
+      newAccounts,
+      removedAccounts,
+    );
   };
 
   useEffect(() => {
-    if (!chainwatchBaseUrl) return
+    if (!chainwatchBaseUrl) return;
 
     const newAccounts = accountsFilteredBySupportedChains.filter(
       account => !refAccounts.current.find(refAccount => refAccount.id === account.id),

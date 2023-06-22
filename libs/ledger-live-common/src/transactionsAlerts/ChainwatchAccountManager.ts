@@ -28,7 +28,7 @@ class ChainwatchAccountManager {
       });
       return data;
     } catch (err) {
-      console.log("err get account", err, JSON.stringify(err));
+      console.error("err get account", err);
     }
   }
 
@@ -39,7 +39,7 @@ class ChainwatchAccountManager {
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
     } catch (err) {
-      console.log("err put account", err, JSON.stringify(err));
+      console.error("err put account", err);
     }
   }
 
@@ -70,7 +70,7 @@ class ChainwatchAccountManager {
         });
       }
     } catch (err) {
-      console.log("err put new addresses", err, JSON.stringify(err));
+      console.error("err put new addresses", err);
     }
   }
 
@@ -89,7 +89,7 @@ class ChainwatchAccountManager {
         });
       }
     } catch (err) {
-      console.log("err delete addresses", err, JSON.stringify(err));
+      console.error("err delete addresses", err);
     }
   }
 
@@ -104,7 +104,7 @@ class ChainwatchAccountManager {
         },
       });
     } catch (err) {
-      console.log("err put monitor", err, JSON.stringify(err));
+      console.error("err put monitor", err);
     }
   }
 
@@ -119,7 +119,7 @@ class ChainwatchAccountManager {
         },
       });
     } catch (err) {
-      console.log("err put target", err, JSON.stringify(err));
+      console.error("err put target", err);
     }
   }
 
