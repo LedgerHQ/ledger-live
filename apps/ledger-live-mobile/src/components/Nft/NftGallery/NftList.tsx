@@ -108,7 +108,7 @@ export function NftList({ data }: Props) {
         ListHeaderComponent={
           <Animated.View>
             {!multiSelectModeEnabled && (
-              <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+              <Animated.View entering={FadeInDown}>
                 <Flex
                   width="100%"
                   flexDirection="row"

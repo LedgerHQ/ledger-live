@@ -437,11 +437,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
   },
-  LIST_APPS_V2: {
-    def: false,
-    parser: boolParser,
-    desc: "use new version of list apps for My Ledger",
-  },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",
     parser: stringParser,

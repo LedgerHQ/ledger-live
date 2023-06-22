@@ -1,6 +1,12 @@
 import React from "react";
-const Opensea = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const Opensea = ({ size = 24 }: { size: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <rect width="24" height="24" rx="4" fill="#2081E2" />
     <path
       d="M24 12C24 18.627 18.627 24 12 24C5.37295 24 0 18.627 0 12C0 5.37295 5.37295 0 12 0C18.6284 0 24 5.37295 24 12Z"

@@ -299,4 +299,7 @@ export const defaultFeatures: DefaultFeatures = {
       networks: [{ ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 }],
     },
   },
+  listAppsV2: {
+    enabled: false,
+  },
 };
