@@ -99,7 +99,7 @@ export const fetchTxs = async (addr: string, offset = 0): Promise<TransactionsRe
   return response; // TODO Validate if the response fits this interface
 };
 
-export const fetchFullTxs = async (addr: string): Promise<TransactionResponse["tx"][]> => {
+export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]> => {
   let qty,
     offset = 0;
   let txs: TransactionResponse[] = [];
@@ -112,7 +112,7 @@ export const fetchFullTxs = async (addr: string): Promise<TransactionResponse["t
     qty = total;
   } while (offset < qty);
 
-  return txs.map(t => t.tx); // TODO Validate if the response fits this interface
+  return txs; // TODO Validate if the response fits this interface
 };
 
 export const broadcastTx = async (
