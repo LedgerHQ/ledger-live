@@ -40,7 +40,6 @@ module.exports = {
       testEnvironment: "jsdom",
       transform: {
         "^.+\\.(ts|tsx)?$": "ts-jest",
-        "^.+\\.(js|jsx)$": "babel-jest",
       },
       testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       testPathIgnorePatterns,
