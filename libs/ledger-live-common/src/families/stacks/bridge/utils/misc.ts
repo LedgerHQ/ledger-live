@@ -17,7 +17,7 @@ import {
   fetchFullTxs,
   fetchNonce,
 } from "../../bridge/utils/api";
-import { MempoolTransaction, StacksNetwork, TransactionResponse } from "./api.types";
+import { StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId } from "../../../../operation";
 
@@ -64,28 +64,19 @@ export const getAddress = (a: Account): Address =>
 
 export const mapTxToOps =
   (accountID, { address }: AccountShapeInfo) =>
-  (tx: TransactionResponse["tx"] | MempoolTransaction): Operation[] => {
-    const { recipient_address, amount } = tx.token_transfer;
-    const {
-      sender_address,
-      tx_id,
-      fee_rate,
-      block_height,
-      burn_block_time,
-      receipt_time,
-      token_transfer,
-      nonce,
-    } = tx;
+  (tx: TransactionResponse): Operation[] => {
+    const { sender, recipient, amount } = tx.stx_transfers[0];
+    const { tx_id, fee_rate, nonce, block_height, burn_block_time, token_transfer } = tx.tx;
     const { memo: memoHex } = token_transfer;
 
     const ops: Operation[] = [];
 
-    const date = new Date((burn_block_time ?? receipt_time) * 1000);
+    const date = new Date(burn_block_time * 1000);
     const value = new BigNumber(amount || "0");
     const feeToUse = new BigNumber(fee_rate || "0");
 
-    const isSending = address === sender_address;
-    const isReceiving = address === recipient_address;
+    const isSending = address === sender;
+    const isReceiving = address === recipient;
 
     const memo = Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
 
@@ -99,8 +90,8 @@ export const mapTxToOps =
         blockHeight: block_height,
         blockHash: null,
         accountId: accountID,
-        senders: [sender_address],
-        recipients: [recipient_address],
+        senders: [sender],
+        recipients: [recipient],
         transactionSequenceNumber: nonce,
         date,
         extra: {
@@ -119,8 +110,8 @@ export const mapTxToOps =
         blockHeight: block_height,
         blockHash: null,
         accountId: accountID,
-        senders: [sender_address],
-        recipients: [recipient_address],
+        senders: [sender],
+        recipients: [recipient],
         transactionSequenceNumber: nonce,
         date,
         extra: {
@@ -149,7 +140,6 @@ export const getAccountShape: GetAccountShape = async info => {
   const balanceResp = await fetchBalances(address);
   const rawTxs = await fetchFullTxs(address);
   const mempoolTxs = await fetchFullMempoolTxs(address);
-  const pendingTxs: MempoolTransaction[] = [];
 
   const balance = new BigNumber(balanceResp.balance);
   let spendableBalance = new BigNumber(balanceResp.balance);
@@ -157,10 +147,6 @@ export const getAccountShape: GetAccountShape = async info => {
     spendableBalance = spendableBalance
       .minus(new BigNumber(tx.fee_rate))
       .minus(new BigNumber(tx.token_transfer.amount));
-
-    if (tx.tx_status === "pending") {
-      pendingTxs.push(tx);
-    }
   }
 
   const result: Partial<Account> = {
@@ -170,7 +156,6 @@ export const getAccountShape: GetAccountShape = async info => {
     balance,
     spendableBalance,
     operations: flatMap(rawTxs, mapTxToOps(accountId, info)),
-    pendingOperations: flatMap(pendingTxs, mapTxToOps(accountId, info)),
     blockHeight: blockHeight.chain_tip.block_height,
   };
 
@@ -200,6 +185,14 @@ export const findNextNonce = async (
       ? new BigNumber(op.transactionSequenceNumber)
       : new BigNumber(0);
 
+    if (nonce.gt(nextNonce)) {
+      nextNonce = nonce;
+    }
+  }
+
+  const allMempoolTxns = await fetchFullMempoolTxs(senderAddress);
+  for (const tx of allMempoolTxns) {
+    const nonce = BigNumber(tx.nonce);
     if (nonce.gt(nextNonce)) {
       nextNonce = nonce;
     }
