@@ -10,7 +10,7 @@ import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDev
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { track } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import Touchable from "../Touchable";
@@ -55,6 +55,7 @@ type Props = {
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
 
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
+  withMyLedgerTracking?: boolean;
 };
 
 export default function SelectDevice({
@@ -63,6 +64,7 @@ export default function SelectDevice({
   displayServicesWidget,
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
+  withMyLedgerTracking,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -276,8 +278,31 @@ export default function SelectDevice({
     });
   }, [navigation]);
 
+  const addNewButtonEventProps = useMemo(
+    () =>
+      withMyLedgerTracking
+        ? {
+            event: "button_clicked",
+            eventProperties: {
+              button: "Add new device",
+            },
+          }
+        : {},
+    [withMyLedgerTracking],
+  );
+
+  const trackScreenProps = useMemo(
+    () => ({
+      category: "My Ledger",
+      "number of devices connected": deviceList.length,
+      "model of devices connected": deviceList.map(d => d.modelId).sort(),
+    }),
+    [deviceList],
+  );
+
   return (
     <>
+      {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <RequiresBluetoothDrawer
         isOpenedOnIssue={isBleRequired}
         onUserClose={onUserCloseRequireBluetoothDrawer}
@@ -305,7 +330,7 @@ export default function SelectDevice({
                 <Trans i18nKey="manager.selectDevice.title" />
               </Text>
               {deviceList.length > 0 && (
-                <Touchable onPress={onAddNewPress}>
+                <Touchable onPress={onAddNewPress} {...addNewButtonEventProps}>
                   <Flex flexDirection="row" alignItems="center">
                     <Text color="primary.c90" mr={3} fontWeight="semiBold">
                       <Trans
@@ -327,6 +352,7 @@ export default function SelectDevice({
               ) : (
                 <Touchable
                   onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                  {...addNewButtonEventProps}
                 >
                   <Flex
                     p={5}
@@ -372,7 +398,25 @@ export default function SelectDevice({
               onClose={() => setIsAddNewDrawerOpen(false)}
             >
               <Flex>
-                <Touchable onPress={onSetUpNewDevice}>
+                {withMyLedgerTracking ? (
+                  <TrackScreen
+                    category={"Add a Ledger device"}
+                    type="drawer"
+                    refreshSource={false}
+                  />
+                ) : null}
+                <Touchable
+                  onPress={onSetUpNewDevice}
+                  {...(withMyLedgerTracking
+                    ? {
+                        event: "button_clicked",
+                        eventProperties: {
+                          button: "Set up a new Ledger",
+                          drawer: "Add a Ledger device",
+                        },
+                      }
+                    : {})}
+                >
                   <Flex backgroundColor="neutral.c30" mb={4} px={6} py={7} borderRadius={8}>
                     <Flex flexDirection="row" justifyContent="space-between">
                       <Flex flexShrink={1}>
@@ -391,7 +435,18 @@ export default function SelectDevice({
                     </Flex>
                   </Flex>
                 </Touchable>
-                <Touchable onPress={openBlePairingFlow}>
+                <Touchable
+                  onPress={openBlePairingFlow}
+                  {...(withMyLedgerTracking
+                    ? {
+                        event: "button_clicked",
+                        eventProperties: {
+                          button: "Connect with Bluetooth",
+                          drawer: "Add a Ledger device",
+                        },
+                      }
+                    : {})}
+                >
                   <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>
                     <Flex flexDirection="row" justifyContent="space-between">
                       <Flex flexShrink={1}>

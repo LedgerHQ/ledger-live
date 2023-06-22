@@ -49,7 +49,6 @@ jobs:
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
 
-
   test-common-tools:
     name: "Test common-tools"
     env:
@@ -141,7 +140,7 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
@@ -158,11 +157,6 @@ jobs:
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
-      - uses: codecov/codecov-action@v3
-        if: always()
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          flags: test
       - uses: actions/github-script@v6
         if: always()
         with:

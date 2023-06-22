@@ -76286,10 +76286,7 @@ var asyncHandler_default = (fn) => (req, res, next) => Promise.resolve(fn(req, r
 var path = __toESM(require("path"));
 var rootDirectory = process.env.GITHUB_WORKSPACE;
 var cacheDirectory = "node_modules/.cache/turbo";
-var absoluteCacheDirectory = path.resolve(
-  rootDirectory,
-  cacheDirectory
-);
+var absoluteCacheDirectory = path.resolve(rootDirectory, cacheDirectory);
 var portFileName = "__turbo_port.txt";
 
 // src/server.ts
@@ -76340,9 +76337,7 @@ async function startServer() {
     asyncHandler_default(async (req, res) => {
       const artifactId = req.params.artifactId;
       const filename = `${artifactId}.gz`;
-      const writeStream = fs2.createWriteStream(
-        path2.join(cacheDirectory, filename)
-      );
+      const writeStream = fs2.createWriteStream(path2.join(cacheDirectory, filename));
       try {
         await new Promise((resolve3, reject) => {
           req.pipe(writeStream);

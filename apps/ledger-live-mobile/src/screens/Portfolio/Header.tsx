@@ -103,6 +103,18 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         {!hidePortfolio && <DiscreetModeButton size={20} />}
       </Flex>
       <Flex flexDirection="row">
+        <Flex mr={7}>
+          <Touchable
+            onPress={onSideImageCardButtonPress}
+            event="button_clicked"
+            eventProperties={{
+              button: "card",
+              screen: ScreenName.Portfolio,
+            }}
+          >
+            <CardMedium size={24} color={"neutral.c100"} />
+          </Touchable>
+        </Flex>
         {!!walletConnectEntryPoint?.enabled && (
           <Flex mr={7}>
             <Touchable
@@ -117,18 +129,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
             </Touchable>
           </Flex>
         )}
-        <Flex mr={7}>
-          <Touchable
-            onPress={onSideImageCardButtonPress}
-            event="button_clicked"
-            eventProperties={{
-              button: "card",
-              screen: ScreenName.Portfolio,
-            }}
-          >
-            <CardMedium size={24} color={"neutral.c100"} />
-          </Touchable>
-        </Flex>
         <Flex mr={7}>
           <NotificationsButton />
         </Flex>
