@@ -17,8 +17,8 @@ const Swap = () => {
   const localManifest = useLocalLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const manifest = localManifest || remoteManifest;
-  const themeType = useTheme("colors.palette.type");
-  const params = location.state;
+  const themeType = useTheme().colors.palette.type;
+  const params = location.state || {};
 
   return (
     // TODO: Remove @ts-ignore after Card component be compatible with TS

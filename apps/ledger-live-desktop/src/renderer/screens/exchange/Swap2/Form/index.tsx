@@ -67,6 +67,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -207,29 +208,32 @@ const SwapForm = () => {
     }, idleTime);
   }, [idleState]);
   const swapWebAppRedirection = useCallback(() => {
-    debugger;
     const { to, from } = swapTransaction.swap;
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
-    const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-    const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-    const fromMagnitude = fromAccount.currency.units[0].magnitude;
-    const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
-    const rateId = encodeURIComponent(exchangeRate?.rateId);
-    const feeStrategy = transaction?.feesStrategy.toUpperCase();
-    history.push({
-      pathname: "/swap-web",
-      state: {
-        provider,
-        fromAccountId,
-        toAccountId,
-        fromAmount,
-        quoteId: rateId,
-        feeStrategy, // Custom fee is not supported yet
-      },
-    });
-  }, [history, swapTransaction, provider]);
+    const feesStrategy = transaction?.feesStrategy;
+    const rateId = exchangeRate?.rateId || "1234";
+    if (fromAccount && toAccount && feesStrategy) {
+      const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+      const fromMagnitude =
+        (fromAccount as unknown as SwapSelectorStateType)?.currency?.units[0].magnitude || 0;
+      const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
+
+      history.push({
+        pathname: "/swap-web",
+        state: {
+          provider,
+          fromAccountId,
+          toAccountId,
+          fromAmount,
+          quoteId: encodeURIComponent(rateId),
+          feeStrategy: feesStrategy.toUpperCase(), // Custom fee is not supported yet
+        },
+      });
+    }
+  }, [history, swapTransaction, provider, exchangeRate?.rateId]);
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
