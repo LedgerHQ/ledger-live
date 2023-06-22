@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-next.7
+
+### Minor Changes
+
+- [#3775](https://github.com/LedgerHQ/ledger-live/pull/3775) [`4ef31c8005`](https://github.com/LedgerHQ/ledger-live/commit/4ef31c8005907d80ef2eb41075207eed0deb250c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update release notes
+
 ## 2.62.0-next.6
 
 ### Patch Changes
