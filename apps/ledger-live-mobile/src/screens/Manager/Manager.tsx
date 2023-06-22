@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { from } from "rxjs";
 import type { App } from "@ledgerhq/types-live";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
@@ -23,6 +23,7 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { lastConnectedDeviceSelector } from "../../reducers/settings";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -43,6 +44,17 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
+
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  useEffect(() => {
+    // refresh the manager if a new device gets connected
+    // (happes only when we plug a new device via USB)
+    if (lastConnectedDevice?.deviceId !== device.deviceId) {
+      navigation.replace(ScreenName.Manager, {
+        device: lastConnectedDevice,
+      });
+    }
+  }, [device.deviceId, lastConnectedDevice, navigation]);
 
   const refreshDeviceInfo = useCallback(() => {
     withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
