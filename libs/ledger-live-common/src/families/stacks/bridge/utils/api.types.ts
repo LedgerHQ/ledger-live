@@ -32,7 +32,6 @@ export interface TransactionResponse {
     block_height: number;
     tx_index: number;
     burn_block_time: number;
-    receipt_time: undefined;
     token_transfer: {
       recipient_address: string;
       amount: string;
@@ -52,8 +51,6 @@ export interface MempoolTransaction {
   tx_status: string;
   tx_type: string;
   receipt_time: number;
-  block_height: undefined;
-  burn_block_time: undefined;
   receipt_time_iso: string;
   fee_rate: string;
   sender_address: string;
