@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { from } from "rxjs";
 import { first } from "rxjs/operators";
-import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
-import getVersion from "../../hw/getVersion";
+import getAppAndVersion from "../../hw/getAppAndVersion";
 import { BleError } from "../types";
 
 export type useBleDevicePairingArgs = {
@@ -31,10 +30,10 @@ export const useBleDevicePairing = ({
   const [pairingError, setPairingError] = useState<PairingError>(null);
 
   useEffect(() => {
-    const requestObservable = withDevice(deviceId)(t => from(getVersion(t))).pipe(first());
+    const requestObservable = withDevice(deviceId)(t => from(getAppAndVersion(t))).pipe(first());
 
     const sub = requestObservable.subscribe({
-      next: (_value: FirmwareInfo) => {
+      next: (_value: unknown) => {
         setIsPaired(true);
         setPairingError(null);
       },
