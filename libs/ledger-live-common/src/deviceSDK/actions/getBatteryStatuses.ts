@@ -16,7 +16,7 @@ export type GetBatteryStatusesActionErrorType = GetBatteryStatusesTaskError;
 
 export type GetBatteryStatusesActionState = FullActionState<{
   batteryStatuses: (number | BatteryStatusFlags)[];
-  error: { type: GetBatteryStatusesActionErrorType; message?: string } | null;
+  error: { type: GetBatteryStatusesActionErrorType; message?: string; name?: string } | null;
 }>;
 
 export const initialState: GetBatteryStatusesActionState = {

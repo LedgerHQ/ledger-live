@@ -288,7 +288,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
       <QueuedDrawer
         isRequestingToBeOpened={
           batteryStatusesState.error?.message === "DisconnectedDevice" ||
-          batteryStatusesState.error?.message === "ConnectManagerTimeout" ||
+          batteryStatusesState.error?.name === "TimeoutError" ||
           batteryStatusesState.lockedDevice
         }
         onClose={() => {
