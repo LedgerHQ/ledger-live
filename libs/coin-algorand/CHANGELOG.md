@@ -1,5 +1,18 @@
 # @ledgerhq/coin-algorand
 
+## 0.2.2-notarizer.0
+
+### Patch Changes
+
+- Updated dependencies [[`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9), [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a), [`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a), [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25), [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47)]:
+  - @ledgerhq/types-live@6.36.0-notarizer.0
+  - @ledgerhq/cryptoassets@9.8.0-notarizer.0
+  - @ledgerhq/errors@6.12.7-notarizer.0
+  - @ledgerhq/types-cryptoassets@7.3.0-notarizer.0
+  - @ledgerhq/live-env@0.3.1-notarizer.0
+  - @ledgerhq/coin-framework@0.3.6-notarizer.0
+  - @ledgerhq/devices@8.0.4-notarizer.0
+
 ## 0.2.1
 
 ### Patch Changes

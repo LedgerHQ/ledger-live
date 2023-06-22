@@ -1,5 +1,13 @@
 # @ledgerhq/live-network
 
+## 1.1.1-notarizer.0
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a)]:
+  - @ledgerhq/errors@6.12.7-notarizer.0
+  - @ledgerhq/live-env@0.3.1-notarizer.0
+
 ## 1.1.0
 
 ### Minor Changes

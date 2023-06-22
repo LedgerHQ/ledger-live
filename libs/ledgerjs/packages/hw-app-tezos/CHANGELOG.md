@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-tezos
 
+## 6.27.16-notarizer.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.5-notarizer.0
+
 ## 6.27.15
 
 ### Patch Changes

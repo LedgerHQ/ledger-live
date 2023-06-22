@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-helium",
-  "version": "6.29.10",
+  "version": "6.29.11-notarizer.0",
   "description": "Ledger Hardware Wallet Helium Application API",
   "keywords": [
     "Ledger",

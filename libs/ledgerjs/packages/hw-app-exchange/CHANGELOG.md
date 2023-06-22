@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.1.3-notarizer.0
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7-notarizer.0
+  - @ledgerhq/hw-transport@6.28.5-notarizer.0
+
 ## 0.1.2
 
 ### Patch Changes
