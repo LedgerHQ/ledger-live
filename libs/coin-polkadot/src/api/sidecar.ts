@@ -419,7 +419,7 @@ const getBalances = (network: NetworkRequestCall) => async (addr: string) => {
     balance,
     spendableBalance,
     nonce: Number(balanceInfo.nonce),
-    lockedBalance: new BigNumber(balanceInfo.miscFrozen),
+    lockedBalance: new BigNumber(totalLocked),
   };
 };
 

@@ -70,7 +70,7 @@ const GenericErrorView = ({
             backgroundColor={colors.opacityDefault.c05}
             size={64}
             variant="circle"
-            borderColor="none"
+            borderColor="transparent"
             iconSize={32}
             iconColor={iconColor}
           />

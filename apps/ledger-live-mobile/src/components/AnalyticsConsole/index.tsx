@@ -78,6 +78,7 @@ const AnalyticsConsole = () => {
             : 0
         }
         pointerEvents={visibility === Visibility.opaque ? "auto" : "none"}
+        zIndex={1}
       >
         <Flex
           style={StyleSheet.absoluteFillObject}

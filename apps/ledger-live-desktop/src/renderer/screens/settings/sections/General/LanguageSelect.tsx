@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect, useState } from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -22,6 +22,7 @@ import Track from "~/renderer/analytics/Track";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
+import { setDrawer } from "~/renderer/drawers/Provider";
 
 export const languageLabels: { [key in Locale]: string } = {
   de: "Deutsch",
@@ -58,8 +59,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
 
-  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
-
   const { availableLanguages: availableDeviceLanguages } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
   );
@@ -89,6 +88,20 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
     i18n.changeLanguage(language);
   }, [i18n, language]);
 
+  const openDrawer = useCallback(
+    language => {
+      setDrawer(
+        ChangeDeviceLanguagePromptDrawer,
+        {
+          deviceModelId: lastSeenDevice?.modelId ?? DeviceModelId.nanoX,
+          currentLanguage: (language ?? getInitialLanguageLocale()) as Locale,
+        },
+        {},
+      );
+    },
+    [lastSeenDevice?.modelId],
+  );
+
   const avoidEmptyValue = (language?: ChangeLangArgs | null) =>
     language && handleChangeLanguage(language);
 
@@ -113,7 +126,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         track("Page LiveLanguageChange DeviceLanguagePrompt", {
           selectedLanguage: potentialDeviceLanguage,
         });
-        setIsDeviceLanguagePromptOpen(true);
+        openDrawer(language?.value);
       }
 
       dispatch(setLanguage(language?.value));
@@ -123,12 +136,9 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
       availableDeviceLanguages,
       disableLanguagePrompt,
       dispatch,
+      openDrawer,
     ],
   );
-
-  const onClosePrompt = useCallback(() => {
-    setIsDeviceLanguagePromptOpen(false);
-  }, []);
 
   return (
     <>
@@ -143,13 +153,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         renderSelected={(item: { name: unknown } | undefined) => item && item.name}
         value={currentLanguage}
         options={languages}
-      />
-
-      <ChangeDeviceLanguagePromptDrawer
-        deviceModelId={lastSeenDevice?.modelId ?? DeviceModelId.nanoX}
-        isOpen={isDeviceLanguagePromptOpen}
-        onClose={onClosePrompt}
-        currentLanguage={(currentLanguage.value ?? getInitialLanguageLocale()) as Locale}
       />
     </>
   );
