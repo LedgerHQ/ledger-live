@@ -77,6 +77,27 @@ export const getAccountShape: GetAccountShape = async (infoInput, { blacklistedT
 
   // transform transactions into operations
   let newOps = flatMap(txs, txToOps({ address, id: accountId, currency }));
+
+  // keep the date of the pending operations that appears in newOps
+  const pendingOperationsDate = {};
+
+  (initialAccount?.pendingOperations || []).concat(initialAccount?.operations || []).forEach(op => {
+    pendingOperationsDate[op.hash] = op.date;
+  });
+  if (Object.keys(pendingOperationsDate).length > 0) {
+    newOps = newOps.map(op => {
+      const date = pendingOperationsDate[op.hash];
+      if (date) {
+        const updatedOp = { ...op, date };
+        updatedOp.nftOperations?.forEach(nftOp => {
+          nftOp.date = date;
+        });
+        return updatedOp;
+      }
+      return op;
+    });
+  }
+
   // extracting out the sub operations by token account
   const perTokenAccountIdOperations = {};
   newOps.forEach(op => {
