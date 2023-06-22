@@ -9,7 +9,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { Platform } from "react-native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Config from "react-native-config";
-import { e2eBridgeSubject } from "../e2e/bridge/client";
+// import { e2eBridgeSubject } from "../e2e/bridge/client";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -22,10 +22,6 @@ const PLATFORM = Platform.OS === "ios" ? "ios" : "android";
 export default function PlatformAppProviderWrapper({
   children,
 }: PlatformAppProviderWrapperProps) {
-  // const [mockedLocalLiveAppState, setMockedLocalLiveAppState] = useState<
-  //   LiveAppManifest[] | []
-  // >([]);
-
   const isExperimentalAppEnabled = useEnv<"PLATFORM_EXPERIMENTAL_APPS">(
     "PLATFORM_EXPERIMENTAL_APPS",
   ) as boolean;
@@ -34,37 +30,9 @@ export default function PlatformAppProviderWrapper({
     "PLATFORM_DEBUG",
   ) as boolean;
 
-  const liveAppContext = useLocalLiveAppContext();
-
-  useEffect(() => {
-    if (Config.MOCK) {
-      console.log("IN THE PLATFORM APP PROVIDER WRAPPER");
-
-      e2eBridgeSubject.subscribe(message => {
-        if (message.type === "loadLocalManifest") {
-          // setMockedLocalLiveAppState([
-          //   ...mockedLocalLiveAppState,
-          //   message.payload,
-          // ]);
-          // eslint-disable-next-line no-console
-          console.log("Manifest to add:", message.payload);
-          liveAppContext.addLocalManifest(message.payload);
-
-          // setTimeout(() => {
-          //   setKey(key + 1);
-          //   // eslint-disable-next-line no-console
-          //   console.log(liveAppContext.state);
-          // }, 100);
-        }
-      });
-    }
-  });
-
   // There is no more staging since migration to manifest API. Everything points to prod by default.
   // const provider = __DEV__ ? "staging" : "production";
   const provider = "production";
-
-  // const [key, setKey] = useState(0);
 
   return (
     <RemoteLiveAppProvider
@@ -75,9 +43,7 @@ export default function PlatformAppProviderWrapper({
         allowExperimentalApps: isExperimentalAppEnabled,
       }}
     >
-      <LocalLiveAppProvider
-      // mockedLocalLiveAppState={mockedLocalLiveAppState}
-      >
+      <LocalLiveAppProvider>
         <RampCatalogProvider
           provider={provider}
           updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}

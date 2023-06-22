@@ -8,7 +8,8 @@ import React, {
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
-import { getEnv } from "../../../env";
+import Config from "react-native-config";
+import { e2eBridgeSubject } from "../../../e2e/bridge/client";
 
 const initialState: LiveAppRegistry = {
   liveAppById: {},
@@ -46,15 +47,37 @@ export function useLocalLiveAppContext(): LiveAppContextType {
 
 export function LocalLiveAppProvider({
   children,
-}: // localLiveAppManifest,
-LiveAppProviderProps): JSX.Element {
+}: LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<LiveAppRegistry>(initialState);
 
-  console.log("THE LOCAL LIVE APP PROVIDER HAS BEEN LOADED OMGGGGG");
+  console.log("local live app provdier loaded");
+
+  if (Config.MOCK) {
+    console.log("IN THE PLATFORM APP PROVIDER WRAPPER");
+
+    e2eBridgeSubject.subscribe((message) => {
+      if (message.type === "loadLocalManifest") {
+        // setMockedLocalLiveAppState([
+        //   ...mockedLocalLiveAppState,
+        //   message.payload,
+        // ]);
+        // eslint-disable-next-line no-console
+        console.log(
+          "Manifest to add:",
+          JSON.stringify(message.payload, null, 2)
+        );
+        addLocalManifest(message.payload);
+
+        // setTimeout(() => {
+        //   setKey(key + 1);
+        //   // eslint-disable-next-line no-console
+        //   console.log(liveAppContext.state);
+        // }, 100);
+      }
+    });
+  }
 
   const addLocalManifest = useCallback((newManifest: LiveAppManifest) => {
-    // eslint-disable-next-line no-console
-    console.log("WE ARE IN ADD LOCAL MANIFEST");
     setState((oldState) => {
       // eslint-disable-next-line no-console
       console.log("Here we go: ADDING MANIFEST", newManifest);
@@ -92,14 +115,6 @@ LiveAppProviderProps): JSX.Element {
     });
   }, []);
 
-  // const mockedState: LiveAppRegistry = getEnv("MOCK") &&
-  //   localLiveAppManifest && {
-  //     liveAppById: {
-  //       [localLiveAppManifest.id]: localLiveAppManifest,
-  //     },
-  //     liveAppByIndex: [localLiveAppManifest],
-  //   };
-
   const value: LiveAppContextType = useMemo(
     () => ({
       state,
@@ -108,15 +123,6 @@ LiveAppProviderProps): JSX.Element {
     }),
     [state, addLocalManifest, removeLocalManifestById]
   );
-
-  // const mockedValue: LiveAppContextType = useMemo(
-  //   () => ({
-  //     mockedState,
-  //     addLocalManifest,
-  //     removeLocalManifestById,
-  //   }),
-  //   [mockedState, addLocalManifest, removeLocalManifestById]
-  // );
 
   return (
     <liveAppContext.Provider value={value}>{children}</liveAppContext.Provider>

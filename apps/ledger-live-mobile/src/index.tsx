@@ -29,7 +29,7 @@ import {
   addLocalManifest,
   useLocalLiveAppContext,
 } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { init, e2eBridgeSubject } from "../e2e/bridge/client";
+import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import {
   saveAccounts,
