@@ -121,7 +121,7 @@ export const getInitialLocale = () => {
 };
 
 const INITIAL_STATE: SettingsState = {
-  hasCompletedOnboarding: false,
+  hasCompletedOnboarding: true,
   counterValue: "USD",
   language: getInitialLanguageLocale(),
   theme: null,
