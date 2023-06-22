@@ -1,15 +1,12 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode } from "react";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import {
-  LocalLiveAppProvider,
-  useLocalLiveAppContext,
-} from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { Platform } from "react-native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import Config from "react-native-config";
-// import { e2eBridgeSubject } from "../e2e/bridge/client";
+import { getEnv } from "@ledgerhq/live-env";
+import { e2eBridgeSubject } from "../e2e/bridge/client";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -30,6 +27,10 @@ export default function PlatformAppProviderWrapper({
     "PLATFORM_DEBUG",
   ) as boolean;
 
+  const mockEnabled = getEnv("MOCK") as boolean;
+
+  console.log("mockEnabled");
+
   // There is no more staging since migration to manifest API. Everything points to prod by default.
   // const provider = __DEV__ ? "staging" : "production";
   const provider = "production";
@@ -43,7 +44,9 @@ export default function PlatformAppProviderWrapper({
         allowExperimentalApps: isExperimentalAppEnabled,
       }}
     >
-      <LocalLiveAppProvider>
+      <LocalLiveAppProvider
+        mockModeObserver={mockEnabled ? e2eBridgeSubject : null}
+      >
         <RampCatalogProvider
           provider={provider}
           updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}

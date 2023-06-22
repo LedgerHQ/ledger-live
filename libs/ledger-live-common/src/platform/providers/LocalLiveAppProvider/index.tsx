@@ -4,12 +4,10 @@ import React, {
   useMemo,
   useState,
   useCallback,
-  useEffect,
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
-import Config from "react-native-config";
-import { e2eBridgeSubject } from "../../../e2e/bridge/client";
+import { Subject } from "rxjs";
 
 const initialState: LiveAppRegistry = {
   liveAppById: {},
@@ -28,9 +26,20 @@ export const liveAppContext = createContext<LiveAppContextType>({
   removeLocalManifestById: () => {},
 });
 
+type MockSubjectData =
+  | {
+      type: "add";
+      payload: { id: string; name: string; serviceUUID: string };
+    }
+  | { type: "openNano" }
+  | {
+      type: "loadLocalManifest";
+      payload: LiveAppManifest;
+    };
+
 type LiveAppProviderProps = {
   children: React.ReactNode;
-  localLiveAppManifest?: LiveAppManifest;
+  mockModeObserver?: Subject<MockSubjectData>;
 };
 
 export function useLocalLiveAppManifest(
@@ -47,15 +56,16 @@ export function useLocalLiveAppContext(): LiveAppContextType {
 
 export function LocalLiveAppProvider({
   children,
+  mockModeObserver,
 }: LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<LiveAppRegistry>(initialState);
 
   console.log("local live app provdier loaded");
 
-  if (Config.MOCK) {
+  if (mockModeObserver) {
     console.log("IN THE PLATFORM APP PROVIDER WRAPPER");
 
-    e2eBridgeSubject.subscribe((message) => {
+    mockModeObserver.subscribe((message) => {
       if (message.type === "loadLocalManifest") {
         // setMockedLocalLiveAppState([
         //   ...mockedLocalLiveAppState,
