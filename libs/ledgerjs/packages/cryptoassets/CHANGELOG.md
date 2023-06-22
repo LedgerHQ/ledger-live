@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.8.0-nightly.2
+
+### Patch Changes
+
+- [#3701](https://github.com/LedgerHQ/ledger-live/pull/3701) [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fixed exchange app signatures for BSC coin and tokens
+
 ## 9.8.0-nightly.1
 
 ### Minor Changes

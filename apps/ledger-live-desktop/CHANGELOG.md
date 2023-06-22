@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.9
+
+### Patch Changes
+
+- [#3763](https://github.com/LedgerHQ/ledger-live/pull/3763) [`067f9e0c70`](https://github.com/LedgerHQ/ledger-live/commit/067f9e0c70de145a3e913ff6603a382506af8936) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update icns for osx
+
+- Updated dependencies [[`e8b94aab79`](https://github.com/LedgerHQ/ledger-live/commit/e8b94aab79736d1ca4e81005ae9a8978e23cf0d5)]:
+  - @ledgerhq/live-common@31.1.0-nightly.6
+  - @ledgerhq/coin-framework@0.3.6-nightly.5
+  - @ledgerhq/domain-service@1.1.4-nightly.4
+
 ## 2.62.0-nightly.8
 
 ### Patch Changes

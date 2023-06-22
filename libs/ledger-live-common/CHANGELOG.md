@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 31.1.0-nightly.6
+
+### Patch Changes
+
+- [#3752](https://github.com/LedgerHQ/ledger-live/pull/3752) [`e8b94aab79`](https://github.com/LedgerHQ/ledger-live/commit/e8b94aab79736d1ca4e81005ae9a8978e23cf0d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add support for "Fido U2F", "Security Key" on v2 listApps as well as maintaining the order of installation in the storage bar
+
+- Updated dependencies [[`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`abd673dc7c`](https://github.com/LedgerHQ/ledger-live/commit/abd673dc7c994ad7efc8dd3199995a99add677c6)]:
+  - @ledgerhq/cryptoassets@9.8.0-nightly.2
+  - @ledgerhq/coin-polkadot@0.2.0-nightly.5
+  - @ledgerhq/coin-algorand@0.2.2-nightly.5
+  - @ledgerhq/coin-evm@0.3.0-nightly.5
+  - @ledgerhq/coin-framework@0.3.6-nightly.5
+  - @ledgerhq/domain-service@1.1.4-nightly.4
+  - @ledgerhq/hw-app-eth@6.33.6-nightly.4
+
 ## 31.1.0-nightly.5
 
 ### Minor Changes

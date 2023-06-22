@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.24.1-nightly.9
+
+### Patch Changes
+
+- [#3693](https://github.com/LedgerHQ/ledger-live/pull/3693) [`bd2c412c30`](https://github.com/LedgerHQ/ledger-live/commit/bd2c412c3017170bed477cac5e667b923c3b786e) Thanks [@mderrick](https://github.com/mderrick)! - fix android crashing when using navigation on nft gallery page
+
+- Updated dependencies [[`e8b94aab79`](https://github.com/LedgerHQ/ledger-live/commit/e8b94aab79736d1ca4e81005ae9a8978e23cf0d5)]:
+  - @ledgerhq/live-common@31.1.0-nightly.6
+  - @ledgerhq/coin-framework@0.3.6-nightly.5
+  - @ledgerhq/domain-service@1.1.4-nightly.4
+
 ## 3.24.1-nightly.8
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @ledgerhq/coin-polkadot
 
+## 0.2.0-nightly.5
+
+### Minor Changes
+
+- [#3755](https://github.com/LedgerHQ/ledger-live/pull/3755) [`abd673dc7c`](https://github.com/LedgerHQ/ledger-live/commit/abd673dc7c994ad7efc8dd3199995a99add677c6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update lockedbalance retrieval polkadot
+
+### Patch Changes
+
+- Updated dependencies [[`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92)]:
+  - @ledgerhq/cryptoassets@9.8.0-nightly.2
+  - @ledgerhq/coin-framework@0.3.6-nightly.5
+
 ## 0.1.7-nightly.4
 
 ### Patch Changes
