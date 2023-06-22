@@ -79,7 +79,7 @@ const CloseWarning = ({
   const { t } = useTranslation();
 
   return (
-    <Flex alignItems="center" justifyContent="center" px={1}>
+    <Flex alignItems="center" justifyContent="center" px={1} mt={7}>
       <TrackScreen category="Error: update not complete yet" type="drawer" refreshSource={false} />
       <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
@@ -481,7 +481,7 @@ export const FirmwareUpdate = ({
             type="main"
             outline={false}
             onPress={retryCurrentStep}
-            mt={6}
+            my={6}
             alignSelf="stretch"
           >
             {t("common.retry")}
@@ -680,9 +680,11 @@ export const FirmwareUpdate = ({
       )}
 
       <QueuedDrawer isRequestingToBeOpened={Boolean(deviceInteractionDisplay)} noCloseButton>
-        <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
-          {deviceInteractionDisplay}
-        </ImageSourceContext.Provider>
+        <Flex mt={7}>
+          <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
+            {deviceInteractionDisplay}
+          </ImageSourceContext.Provider>
+        </Flex>
       </QueuedDrawer>
       <QueuedDrawer isRequestingToBeOpened={isCloseWarningOpen} noCloseButton>
         <CloseWarning
