@@ -57,10 +57,10 @@ export function useDynamicRange({
   onChange: (a: BigNumber) => void;
 }) {
   const index = reverseRangeIndex(range, value);
-  const setValueIndex = useCallback((i: number) => onChange(projectRangeIndex(range, i)), [
-    range,
-    onChange,
-  ]);
+  const setValueIndex = useCallback(
+    (i: number) => onChange(projectRangeIndex(range, i)),
+    [range, onChange],
+  );
   const constraintValue = projectRangeIndex(range, index);
   return {
     range,

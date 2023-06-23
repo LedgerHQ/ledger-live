@@ -7,12 +7,7 @@ const dark = require("../images/illustration/Dark/_051.png");
 const light = require("../images/illustration/Light/_051.png");
 
 export default function NoResultsFound(
-  props: Omit<
-    React.ComponentProps<typeof Illustration>,
-    "darkSource" | "lightSource"
-  >,
+  props: Omit<React.ComponentProps<typeof Illustration>, "darkSource" | "lightSource">,
 ) {
-  return (
-    <Illustration darkSource={dark} lightSource={light} size={140} {...props} />
-  );
+  return <Illustration darkSource={dark} lightSource={light} size={140} {...props} />;
 }

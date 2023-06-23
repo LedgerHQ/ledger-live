@@ -14,8 +14,7 @@ const Carousel = () => {
 
   const onScrollEnd = useCallback(event => {
     setCurrentPositionX(
-      event.nativeEvent.contentOffset.x +
-        event.nativeEvent.layoutMeasurement.width,
+      event.nativeEvent.contentOffset.x + event.nativeEvent.layoutMeasurement.width,
     );
   }, []);
 

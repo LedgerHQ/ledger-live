@@ -11,12 +11,7 @@ export type Props = {
   productName: string;
 };
 
-const GenuineCheckDrawer = ({
-  isOpen,
-  onPress,
-  productName,
-  onClose,
-}: Props) => {
+const GenuineCheckDrawer = ({ isOpen, onPress, productName, onClose }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -26,29 +21,18 @@ const GenuineCheckDrawer = ({
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen
-        category="Start Stax hardware check"
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category="Start Stax hardware check" type="drawer" refreshSource={false} />
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
         <Icons.LedgerLogoMedium size={28} color="primary.c80" />
       </Flex>
       <Text variant="paragraph" color="primary.c80" textAlign="center">
-        {t(
-          "syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.iconText",
-        )}
+        {t("syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.iconText")}
       </Text>
       <Text textAlign="center" variant="h4" mb={8} mt={8}>
-        {t(
-          "syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.title",
-          { productName },
-        )}
+        {t("syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.title", { productName })}
       </Text>
       <Button type="main" mb={6} onPress={onPress}>
-        {t(
-          "syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.checkCta",
-        )}
+        {t("syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.checkCta")}
       </Button>
     </QueuedDrawer>
   );

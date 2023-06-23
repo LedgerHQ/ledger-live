@@ -15,12 +15,8 @@ type CarouselCardProps = {
 
 const CarouselCard = ({ id, cardProps, index, width }: CarouselCardProps) => {
   const { theme } = useTheme();
-  const {
-    logClickCard,
-    logImpressionCard,
-    dismissCard,
-    trackContentCardEvent,
-  } = useDynamicContent();
+  const { logClickCard, logImpressionCard, dismissCard, trackContentCardEvent } =
+    useDynamicContent();
 
   useEffect(() => {
     if (cardProps) {

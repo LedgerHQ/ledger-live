@@ -2,10 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
@@ -22,10 +19,7 @@ import { ExchangeStackNavigatorParamList } from "../../components/RootNavigator/
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    ExchangeStackNavigatorParamList,
-    ScreenName.ExchangeSelectCurrency
-  >,
+  StackNavigatorProps<ExchangeStackNavigatorParamList, ScreenName.ExchangeSelectCurrency>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -45,11 +39,7 @@ const renderEmptyList = () => (
 export default function ExchangeSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { params } = route;
-  const {
-    currency: initialCurrencySelected,
-    mode = "buy",
-    onCurrencyChange,
-  } = params;
+  const { currency: initialCurrencySelected, mode = "buy", onCurrencyChange } = params;
   const rampCatalog = useRampCatalog();
   const cryptoCurrencies = useRampCatalogCurrencies(
     mode === "buy" ? rampCatalog!.value!.onRamp : rampCatalog!.value!.offRamp,
@@ -61,8 +51,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
         onCurrencyChange(currency);
       }
 
-      const destinationScreen =
-        mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell;
+      const destinationScreen = mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell;
       navigation.navigate(NavigatorName.Exchange, {
         screen: destinationScreen,
       });
@@ -75,8 +64,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
         onCurrencyChange(token);
       }
 
-      const destinationScreen =
-        mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell;
+      const destinationScreen = mode === "buy" ? ScreenName.ExchangeBuy : ScreenName.ExchangeSell;
       navigation.navigate(NavigatorName.Exchange, {
         screen: destinationScreen,
       });
@@ -102,9 +90,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
     <FlatList
       contentContainerStyle={styles.list}
       data={items}
-      renderItem={({ item }) => (
-        <CurrencyRow currency={item} onPress={onPressItem} />
-      )}
+      renderItem={({ item }) => <CurrencyRow currency={item} onPress={onPressItem} />}
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
       keyboardDismissMode="on-drag"

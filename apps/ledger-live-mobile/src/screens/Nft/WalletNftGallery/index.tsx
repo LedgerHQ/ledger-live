@@ -16,7 +16,7 @@ const WalletNftGallery = () => {
   const hasNFTs = nftsOrdered.length > 0;
 
   return (
-    <Flex flex={1}>
+    <Flex flex={1} testID="wallet-nft-gallery-screen">
       {hasNFTs ? (
         <NftList data={nftsOrdered} />
       ) : (

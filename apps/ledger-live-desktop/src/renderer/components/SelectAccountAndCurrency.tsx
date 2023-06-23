@@ -57,19 +57,13 @@ const SelectAccountAndCurrency = ({
 }: Props) => {
   const { t } = useTranslation();
   const allAccounts = useSelector(accountsSelector);
-  const {
-    availableAccounts,
-    currency,
-    account,
-    subAccount,
-    setAccount,
-    setCurrency,
-  } = useCurrencyAccountSelect({
-    allCurrencies,
-    allAccounts,
-    defaultCurrencyId,
-    defaultAccountId,
-  });
+  const { availableAccounts, currency, account, subAccount, setAccount, setCurrency } =
+    useCurrencyAccountSelect({
+      allCurrencies,
+      allAccounts,
+      defaultCurrencyId,
+      defaultAccountId,
+    });
   const dispatch = useDispatch();
   const openAddAccounts = useCallback(() => {
     dispatch(

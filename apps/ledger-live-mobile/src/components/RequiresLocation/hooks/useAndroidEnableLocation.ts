@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  EmitterSubscription,
-  NativeEventEmitter,
-  NativeModules,
-  Platform,
-} from "react-native";
+import { EmitterSubscription, NativeEventEmitter, NativeModules, Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
 import LocationHelperModule, {
   CheckAndRequestResponse,
@@ -21,13 +16,10 @@ import LocationHelperModule, {
  * @returns the callback
  */
 export function useAndroidPromptEnableLocationCallback() {
-  return useCallback(async (): Promise<
-    CheckAndRequestResponse | "LOCATION_MODULE_THREW_ERROR"
-  > => {
+  return useCallback(async (): Promise<CheckAndRequestResponse | "LOCATION_MODULE_THREW_ERROR"> => {
     try {
       if (Platform.OS === "android") {
-        const response =
-          await LocationHelperModule.checkAndRequestEnablingLocationServices();
+        const response = await LocationHelperModule.checkAndRequestEnablingLocationServices();
         return response;
       }
 
@@ -109,19 +101,14 @@ export function useAndroidEnableLocation(
     let eventListener: null | EmitterSubscription;
 
     if (isHookEnabled) {
-      const eventEmitter = new NativeEventEmitter(
-        NativeModules.LocationHelperModule,
-      );
-      eventListener = eventEmitter.addListener(
-        "LocationServiceUpdated",
-        event => {
-          if (event?.service === "enabled") {
-            setLocationServicesState("enabled");
-          } else if (event?.service === "disabled") {
-            setLocationServicesState("disabled");
-          }
-        },
-      );
+      const eventEmitter = new NativeEventEmitter(NativeModules.LocationHelperModule);
+      eventListener = eventEmitter.addListener("LocationServiceUpdated", event => {
+        if (event?.service === "enabled") {
+          setLocationServicesState("enabled");
+        } else if (event?.service === "disabled") {
+          setLocationServicesState("disabled");
+        }
+      });
     }
 
     return () => {

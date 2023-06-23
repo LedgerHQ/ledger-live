@@ -2,14 +2,19 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
-import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
 import { OperationDetailsValidators } from "./operationDetails";
 import Alert from "~/renderer/components/Alert";
+import { FieldComponentProps } from "../types";
+import {
+  PolkadotAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/polkadot/types";
+
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
@@ -24,9 +29,8 @@ const PolkadotValidatorsField = ({
   parentAccount,
   transaction,
   field,
-}: FieldComponentProps) => {
+}: FieldComponentProps<PolkadotAccount, Transaction, TransactionStatus>) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  invariant(transaction.family === "polkadot", "polkadot transaction");
   const { validators } = transaction;
   if (!validators) return null;
   return (

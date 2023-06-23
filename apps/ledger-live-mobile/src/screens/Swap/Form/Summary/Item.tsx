@@ -18,13 +18,7 @@ export function Item({ title, children, onEdit }: RowProps) {
 
         {onEdit && (
           <TouchableOpacity onPress={onEdit}>
-            <Flex
-              marginLeft={2}
-              width={20}
-              height={20}
-              alignItems="center"
-              justifyContent="center"
-            >
+            <Flex marginLeft={2} width={20} height={20} alignItems="center" justifyContent="center">
               <Icon name="Pen" color="primary.c70" />
             </Flex>
           </TouchableOpacity>

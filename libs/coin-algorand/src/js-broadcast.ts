@@ -8,14 +8,8 @@ import { AlgorandAPI } from "./api";
  */
 export const broadcast =
   (algorandAPI: AlgorandAPI) =>
-  async ({
-    signedOperation,
-  }: {
-    signedOperation: SignedOperation;
-  }): Promise<Operation> => {
+  async ({ signedOperation }: { signedOperation: SignedOperation }): Promise<Operation> => {
     const { signature, operation } = signedOperation;
-    const hash = await algorandAPI.broadcastTransaction(
-      Buffer.from(signature, "hex")
-    );
+    const hash = await algorandAPI.broadcastTransaction(Buffer.from(signature, "hex"));
     return patchOperationWithHash(operation, hash);
   };

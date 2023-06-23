@@ -14,38 +14,27 @@ function formatAccountSpecifics(account: CryptoOrgAccount): string {
     showCode: true,
   };
   let str = " ";
-  str +=
-    formatCurrencyUnit(unit, account.spendableBalance, formatConfig) +
-    " spendable. ";
+  str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
   if (cryptoOrgResources.bondedBalance.gt(0)) {
-    str +=
-      formatCurrencyUnit(unit, cryptoOrgResources.bondedBalance, formatConfig) +
-      " bonded. ";
+    str += formatCurrencyUnit(unit, cryptoOrgResources.bondedBalance, formatConfig) + " bonded. ";
   }
 
   if (cryptoOrgResources.redelegatingBalance.gt(0)) {
     str +=
-      formatCurrencyUnit(
-        unit,
-        cryptoOrgResources.redelegatingBalance,
-        formatConfig
-      ) + " redelegatingBalance. ";
+      formatCurrencyUnit(unit, cryptoOrgResources.redelegatingBalance, formatConfig) +
+      " redelegatingBalance. ";
   }
 
   if (cryptoOrgResources.unbondingBalance.gt(0)) {
     str +=
-      formatCurrencyUnit(
-        unit,
-        cryptoOrgResources.unbondingBalance,
-        formatConfig
-      ) + " unbondingBalance. ";
+      formatCurrencyUnit(unit, cryptoOrgResources.unbondingBalance, formatConfig) +
+      " unbondingBalance. ";
   }
 
   if (cryptoOrgResources.commissions.gt(0)) {
     str +=
-      formatCurrencyUnit(unit, cryptoOrgResources.commissions, formatConfig) +
-      " commissions. ";
+      formatCurrencyUnit(unit, cryptoOrgResources.commissions, formatConfig) + " commissions. ";
   }
 
   return str;

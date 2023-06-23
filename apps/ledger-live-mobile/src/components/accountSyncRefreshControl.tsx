@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import {
-  useBridgeSync,
-  useAccountSyncState,
-} from "@ledgerhq/live-common/bridge/react/index";
+import { useBridgeSync, useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { SYNC_DELAY } from "../constants";
 
@@ -16,13 +13,7 @@ export interface Props {
 }
 
 export default <P,>(ScrollListLike: React.ComponentType<P>) => {
-  function Inner({
-    accountId,
-    error,
-    isError,
-    forwardedRef,
-    ...scrollListLikeProps
-  }: P & Props) {
+  function Inner({ accountId, error, isError, forwardedRef, ...scrollListLikeProps }: P & Props) {
     const { pending: isPending } = useAccountSyncState({
       accountId,
     });
@@ -58,10 +49,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
         clearTimeout(timer);
       };
     }, [refreshing]);
-    const isUserClick = useMemo(
-      () => Date.now() - lastClickTime < 1000,
-      [lastClickTime],
-    );
+    const isUserClick = useMemo(() => Date.now() - lastClickTime < 1000, [lastClickTime]);
     const isLoading = (isPending && isUserClick) || refreshing;
     return (
       <ScrollListLike
@@ -80,7 +68,5 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
     );
   }
 
-  return React.forwardRef((prop: P & Props, ref) => (
-    <Inner {...prop} forwardedRef={ref} />
-  ));
+  return React.forwardRef((prop: P & Props, ref) => <Inner {...prop} forwardedRef={ref} />);
 };

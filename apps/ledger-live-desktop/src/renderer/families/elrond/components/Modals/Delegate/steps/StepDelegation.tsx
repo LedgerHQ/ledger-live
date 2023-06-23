@@ -8,14 +8,15 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { ValidatorList } from "../fields";
-import { Transaction } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/lib/families/elrond/types";
 import { StepProps } from "../types";
+
 const StepDelegation = (props: StepProps) => {
-  const { account, parentAccount, onUpdateTransaction, transaction, error, validators } = props;
+  const { account, onUpdateTransaction, transaction, error, validators } = props;
   invariant(account && transaction, "account and transaction required");
   const { elrondResources } = account;
   invariant(elrondResources, "elrondResources required");
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+  const bridge = getAccountBridge(account);
   const onSelectValidator = (recipient: string) =>
     onUpdateTransaction(
       (transaction: Transaction): Transaction =>
@@ -39,13 +40,14 @@ const StepDelegation = (props: StepProps) => {
   );
 };
 const StepDelegationFooter = (props: StepProps) => {
-  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
+  const { transitionTo, account, onClose, status, bridgePending } = props;
   const { recipient: recipientError, fees: feesError } = status.errors;
   const hasErrors = recipientError || feesError;
   const canNext = !bridgePending && !hasErrors;
+  if (!account) return null;
   return (
     <Fragment>
-      <AccountFooter account={account} status={status} parentAccount={parentAccount} />
+      <AccountFooter account={account} status={status} />
 
       <Box horizontal={true}>
         <Button mr={1} secondary={true} onClick={onClose}>

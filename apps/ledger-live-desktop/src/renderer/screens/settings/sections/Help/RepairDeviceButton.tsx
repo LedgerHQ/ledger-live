@@ -7,6 +7,7 @@ import logger from "~/renderer/logger";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { Subscription } from "rxjs";
 
 type OwnProps = {
   buttonProps?: ButtonProps;
@@ -43,7 +44,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
       error: null,
     });
 
-  sub: any;
+  sub: Subscription | undefined;
   timeout: NodeJS.Timeout | undefined;
   close = () => {
     const { onRepair } = this.props;

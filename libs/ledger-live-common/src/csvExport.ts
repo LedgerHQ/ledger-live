@@ -14,7 +14,7 @@ type Field = {
     arg1: Account | null | undefined,
     arg2: Operation,
     arg3: Currency | null | undefined,
-    arg4: CounterValuesState | null | undefined
+    arg4: CounterValuesState | null | undefined,
   ) => string;
 };
 
@@ -27,7 +27,7 @@ const fields: Field[] = [
   },
   {
     title: "Currency Ticker",
-    cell: (account) => getAccountCurrency(account).ticker,
+    cell: account => getAccountCurrency(account).ticker,
   },
   {
     title: "Operation Type",
@@ -57,8 +57,7 @@ const fields: Field[] = [
   },
   {
     title: "Account Name",
-    cell: (account, parentAccount) =>
-      getMainAccount(account, parentAccount).name,
+    cell: (account, parentAccount) => getMainAccount(account, parentAccount).name,
   },
   {
     title: "Account xpub",
@@ -75,13 +74,7 @@ const fields: Field[] = [
   },
   {
     title: "Countervalue at Operation Date",
-    cell: (
-      account,
-      parentAccount,
-      op,
-      counterValueCurrency,
-      countervalueState
-    ) => {
+    cell: (account, parentAccount, op, counterValueCurrency, countervalueState) => {
       const value =
         counterValueCurrency && countervalueState
           ? calculate(countervalueState, {
@@ -93,26 +86,16 @@ const fields: Field[] = [
             })
           : null;
       return value && counterValueCurrency
-        ? formatCurrencyUnit(
-            counterValueCurrency.units[0],
-            new BigNumber(value),
-            {
-              disableRounding: true,
-              useGrouping: false,
-            }
-          )
+        ? formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(value), {
+            disableRounding: true,
+            useGrouping: false,
+          })
         : "";
     },
   },
   {
     title: "Countervalue at CSV Export",
-    cell: (
-      account,
-      parentAccount,
-      op,
-      counterValueCurrency,
-      countervalueState
-    ) => {
+    cell: (account, parentAccount, op, counterValueCurrency, countervalueState) => {
       const value =
         counterValueCurrency && countervalueState
           ? calculate(countervalueState, {
@@ -123,14 +106,10 @@ const fields: Field[] = [
             })
           : null;
       return value && counterValueCurrency
-        ? formatCurrencyUnit(
-            counterValueCurrency.units[0],
-            new BigNumber(value),
-            {
-              disableRounding: true,
-              useGrouping: false,
-            }
-          )
+        ? formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(value), {
+            disableRounding: true,
+            useGrouping: false,
+          })
         : "";
     },
   },
@@ -140,53 +119,34 @@ const accountRows = (
   account: AccountLike,
   parentAccount: Account | null | undefined,
   counterValueCurrency?: Currency,
-  countervalueState?: CounterValuesState
+  countervalueState?: CounterValuesState,
 ): Array<string[]> =>
   account.operations
-    .reduce(
-      (ops: Operation[], op) =>
-        ops.concat(flattenOperationWithInternalsAndNfts(op)),
-      []
-    )
-    .map((operation) =>
-      fields.map((field) =>
-        field.cell(
-          account,
-          parentAccount,
-          operation,
-          counterValueCurrency,
-          countervalueState
-        )
-      )
+    .reduce((ops: Operation[], op) => ops.concat(flattenOperationWithInternalsAndNfts(op)), [])
+    .map(operation =>
+      fields.map(field =>
+        field.cell(account, parentAccount, operation, counterValueCurrency, countervalueState),
+      ),
     );
 
 const accountsRows = (
   accounts: Account[],
   counterValueCurrency?: Currency,
-  countervalueState?: CounterValuesState
+  countervalueState?: CounterValuesState,
 ): Array<string[]> =>
   flattenAccounts(accounts).reduce((all: Array<string[]>, account) => {
     const parentAccount =
-      account.type !== "Account"
-        ? accounts.find((a) => a.id === account.parentId)
-        : null;
-    return all.concat(
-      accountRows(
-        account,
-        parentAccount,
-        counterValueCurrency,
-        countervalueState
-      )
-    );
+      account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
+    return all.concat(accountRows(account, parentAccount, counterValueCurrency, countervalueState));
   }, []);
 
 export const accountsOpToCSV = (
   accounts: Account[],
   counterValueCurrency?: Currency,
-  countervalueState?: CounterValuesState // cvs state required for countervalues export
+  countervalueState?: CounterValuesState, // cvs state required for countervalues export
 ): string =>
-  fields.map((field) => field.title).join(",") +
+  fields.map(field => field.title).join(",") +
   newLine +
   accountsRows(accounts, counterValueCurrency, countervalueState)
-    .map((row) => row.map((value) => value.replace(/[,\n\r]/g, "")).join(","))
+    .map(row => row.map(value => value.replace(/[,\n\r]/g, "")).join(","))
     .join(newLine);

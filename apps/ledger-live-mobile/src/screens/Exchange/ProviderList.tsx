@@ -40,11 +40,7 @@ const assetMap: Partial<Record<PaymentServiceProvider, JSX.Element>> = {
 };
 type ProviderItemProps = {
   provider: RampLiveAppCatalogEntry;
-  onClick: (
-    provider: RampLiveAppCatalogEntry,
-    icon?: string | null,
-    name?: string | null,
-  ) => void;
+  onClick: (provider: RampLiveAppCatalogEntry, icon?: string | null, name?: string | null) => void;
 };
 
 const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
@@ -126,10 +122,7 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
   );
 };
 
-type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.ProviderList
->;
+type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.ProviderList>;
 
 export default function ProviderList({ route, navigation }: Props) {
   const { t } = useTranslation();
@@ -137,18 +130,11 @@ export default function ProviderList({ route, navigation }: Props) {
   const rampCatalog = useRampCatalog();
   const { currency, type, accountId, accountAddress } = route.params;
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const filteredProviders = filterRampCatalogEntries(
-    rampCatalog.value?.[type] || [],
-    {
-      cryptoCurrencies: currency.id ? [currency.id] : undefined,
-    },
-  );
+  const filteredProviders = filterRampCatalogEntries(rampCatalog.value?.[type] || [], {
+    cryptoCurrencies: currency.id ? [currency.id] : undefined,
+  });
   const onProviderClick = useCallback(
-    (
-      provider: RampCatalogEntry,
-      icon?: string | null,
-      name?: string | null,
-    ) => {
+    (provider: RampCatalogEntry, icon?: string | null, name?: string | null) => {
       navigation.navigate(ScreenName.ProviderView, {
         provider,
         accountId,
@@ -163,14 +149,7 @@ export default function ProviderList({ route, navigation }: Props) {
         name,
       });
     },
-    [
-      navigation,
-      accountId,
-      accountAddress,
-      type,
-      currency.id,
-      fiatCurrency.ticker,
-    ],
+    [navigation, accountId, accountAddress, type, currency.id, fiatCurrency.ticker],
   );
   return (
     <SafeAreaView
@@ -185,11 +164,7 @@ export default function ProviderList({ route, navigation }: Props) {
       <LText style={styles.title}>{t("exchange.providerList.title")}</LText>
       {filteredProviders.map(provider =>
         provider.type === "LIVE_APP" ? (
-          <ProviderItem
-            provider={provider}
-            key={provider.name}
-            onClick={onProviderClick}
-          />
+          <ProviderItem provider={provider} key={provider.name} onClick={onProviderClick} />
         ) : null,
       )}
     </SafeAreaView>

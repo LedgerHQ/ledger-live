@@ -1,10 +1,6 @@
 /** mocks for unit tests */
 
-import {
-  FeatureId,
-  PostOnboardingAction,
-  PostOnboardingActionId,
-} from "@ledgerhq/types-live";
+import { FeatureId, PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 
 const MockIcon = (): null => null;
 
@@ -42,9 +38,7 @@ export const migrateAssetsTestMock: PostOnboardingAction = {
   navigationParams: [],
 };
 
-export function getPostOnboardingAction(
-  id: PostOnboardingActionId
-): PostOnboardingAction {
+export function getPostOnboardingAction(id: PostOnboardingActionId): PostOnboardingAction {
   return {
     [PostOnboardingActionId.claimMock]: claimTestMock,
     [PostOnboardingActionId.personalizeMock]: personalizeTestMock,

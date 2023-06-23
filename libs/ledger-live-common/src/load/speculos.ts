@@ -81,23 +81,23 @@ export async function createSpeculosDevice(
     // Folder where we have app binaries
     coinapps: string;
   },
-  maxRetry = 3
+  maxRetry = 3,
 ): Promise<{
   transport: SpeculosTransport;
   id: string;
   appPath: string;
 }> {
-  const { model, firmware, appName, appVersion, seed, coinapps, dependency } =
-    arg;
+  const { model, firmware, appName, appVersion, seed, coinapps, dependency } = arg;
   const speculosID = `speculosID-${++idCounter}`;
   const apiPort = 30000 + idCounter;
   const vncPort = 35000 + idCounter;
 
   const sdk = inferSDK(firmware, model);
 
-  const appPath = `./apps/${
-    reverseModelMap[model]
-  }/${firmware}/${appName.replace(/ /g, "")}/app_${appVersion}.elf`;
+  const appPath = `./apps/${reverseModelMap[model]}/${firmware}/${appName.replace(
+    / /g,
+    "",
+  )}/app_${appVersion}.elf`;
 
   const params = [
     "run",
@@ -118,11 +118,9 @@ export async function createSpeculosDevice(
     ...(dependency
       ? [
           "-l",
-          `${dependency}:${`./apps/${
-            reverseModelMap[model]
-          }/${firmware}/${dependency.replace(
+          `${dependency}:${`./apps/${reverseModelMap[model]}/${firmware}/${dependency.replace(
             / /g,
-            ""
+            "",
           )}/app_${appVersion}.elf`}`,
         ]
       : []),
@@ -157,10 +155,7 @@ export async function createSpeculosDevice(
       delete data[speculosID];
       exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
         if (error) {
-          log(
-            "speculos-error",
-            `${speculosID} not destroyed ${error} ${stderr}`
-          );
+          log("speculos-error", `${speculosID} not destroyed ${error} ${stderr}`);
           reject(error);
         } else {
           log("speculos", `destroyed ${speculosID}`);
@@ -170,13 +165,13 @@ export async function createSpeculosDevice(
     });
   };
 
-  p.stdout.on("data", (data) => {
+  p.stdout.on("data", data => {
     if (data) {
       log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
     }
   });
   let latestStderr;
-  p.stderr.on("data", (data) => {
+  p.stderr.on("data", data => {
     if (!data) return;
     latestStderr = data;
 
@@ -188,9 +183,7 @@ export async function createSpeculosDevice(
       setTimeout(() => resolveReady(true), 500);
     } else if (data.includes("is already in use by container")) {
       rejectReady(
-        new Error(
-          "speculos already in use! Try `ledger-live cleanSpeculos` or check logs"
-        )
+        new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
@@ -247,18 +240,16 @@ function hackBadSemver(str) {
 export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
   let candidates: AppCandidate[] = [];
   const models = <string[]>(await fsp.readdir(cwd))
-    .map((modelName) => [modelName, modelMapPriority[modelName.toLowerCase()]])
+    .map(modelName => [modelName, modelMapPriority[modelName.toLowerCase()]])
     .filter(([, priority]) => priority)
     .sort((a, b) => <number>b[1] - <number>a[1])
-    .map((a) => a[0]);
+    .map(a => a[0]);
 
   for (const modelName of models) {
     const model = modelMap[modelName.toLowerCase()];
     const p1 = path.join(cwd, modelName);
     const firmwares = await fsp.readdir(p1);
-    firmwares.sort((a, b) =>
-      semver.compare(hackBadSemver(a), hackBadSemver(b))
-    );
+    firmwares.sort((a, b) => semver.compare(hackBadSemver(a), hackBadSemver(b)));
     firmwares.reverse();
 
     for (const firmware of firmwares) {
@@ -306,10 +297,7 @@ export type AppSearch = {
   appVersion?: string;
 };
 
-export function appCandidatesMatches(
-  appCandidate: AppCandidate,
-  search: AppSearch
-): boolean {
+export function appCandidatesMatches(appCandidate: AppCandidate, search: AppSearch): boolean {
   const searchFirmware = search.firmware || defaultFirmware[appCandidate.model];
   return !!(
     (!search.model || search.model === appCandidate.model) &&
@@ -318,27 +306,22 @@ export function appCandidatesMatches(
         appCandidate.appName.replace(/ /g, "").toLowerCase()) &&
     ((!searchFirmware && !appCandidate.firmware.includes("rc")) ||
       appCandidate.firmware === searchFirmware ||
-      (searchFirmware &&
-        semver.satisfies(
-          hackBadSemver(appCandidate.firmware),
-          searchFirmware
-        ))) &&
+      (searchFirmware && semver.satisfies(hackBadSemver(appCandidate.firmware), searchFirmware))) &&
     (appCandidate.appVersion === search.appVersion ||
       (!search.appVersion && !appCandidate.appVersion.includes("-")) ||
-      (search.appVersion &&
-        semver.satisfies(appCandidate.appVersion, search.appVersion)))
+      (search.appVersion && semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );
 }
 export const findAppCandidate = (
   appCandidates: AppCandidate[],
   search: AppSearch,
-  picker: (arg0: AppCandidate[]) => AppCandidate = sample
+  picker: (arg0: AppCandidate[]) => AppCandidate = sample,
 ): AppCandidate | null | undefined => {
-  let apps = appCandidates.filter((c) => appCandidatesMatches(c, search));
+  let apps = appCandidates.filter(c => appCandidatesMatches(c, search));
 
   if (!search.appVersion && apps.length > 0) {
     const appVersion = apps[0].appVersion;
-    apps = apps.filter((a) => a.appVersion === appVersion);
+    apps = apps.filter(a => a.appVersion === appVersion);
   }
 
   const app = picker(apps);
@@ -350,7 +333,7 @@ export const findAppCandidate = (
         " app candidates (out of " +
         appCandidates.length +
         "):\n" +
-        apps.map((a, i) => " [" + i + "] " + formatAppCandidate(a)).join("\n")
+        apps.map((a, i) => " [" + i + "] " + formatAppCandidate(a)).join("\n"),
     );
   }
 
@@ -433,7 +416,7 @@ export async function createImplicitSpeculos(query: string): Promise<{
   invariant(
     match,
     "speculos: invalid format of '%s'. Usage example: speculos:nanoS:bitcoin@1.3.x",
-    query
+    query,
   );
   const { search, dependency, appName } = <
     {
@@ -445,10 +428,7 @@ export async function createImplicitSpeculos(query: string): Promise<{
 
   const appCandidate = findAppCandidate(apps, search);
   invariant(appCandidate, "could not find an app that matches '%s'", query);
-  log(
-    "speculos",
-    "using app " + formatAppCandidate(appCandidate as AppCandidate)
-  );
+  log("speculos", "using app " + formatAppCandidate(appCandidate as AppCandidate));
   return appCandidate
     ? {
         device: await createSpeculosDevice({

@@ -15,15 +15,13 @@ test("importAccounts with a set of real data", async () => {
   const accounts = [
     {
       id: "js:2:algorand:32PI2C5HLHMVUF5KMNURLGCTYVIOVJJ2NLHLZ2PIMK567MKMS4RXBSVWQI:",
-      seedIdentifier:
-        "32PI2C5HLHMVUF5KMNURLGCTYVIOVJJ2NLHLZ2PIMK567MKMS4RXBSVWQI",
+      seedIdentifier: "32PI2C5HLHMVUF5KMNURLGCTYVIOVJJ2NLHLZ2PIMK567MKMS4RXBSVWQI",
       name: "Algorand legacy 32PI2C5H...RXBSVWQI",
       starred: true,
       used: true,
       derivationMode: "",
       index: 0,
-      freshAddress:
-        "32PI2C5HLHMVUF5KMNURLGCTYVIOVJJ2NLHLZ2PIMK567MKMS4RXBSVWQI",
+      freshAddress: "32PI2C5HLHMVUF5KMNURLGCTYVIOVJJ2NLHLZ2PIMK567MKMS4RXBSVWQI",
       freshAddressPath: "44'/283'/0'/0/0",
       freshAddresses: [],
       blockHeight: 23066613,
@@ -168,11 +166,8 @@ test("importAccounts with a set of real data", async () => {
     result,
     accounts: accountsState,
   });
-  const selectedAccounts = accounts.map((a) => a.id);
-  const syncResult = await syncNewAccountsToImport(
-    { items, selectedAccounts },
-    bridgeCache
-  );
+  const selectedAccounts = accounts.map(a => a.id);
+  const syncResult = await syncNewAccountsToImport({ items, selectedAccounts }, bridgeCache);
   const reduced = importAccountsReduce(accountsState, {
     items,
     selectedAccounts,

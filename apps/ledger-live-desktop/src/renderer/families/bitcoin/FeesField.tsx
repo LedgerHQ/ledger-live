@@ -2,12 +2,13 @@ import invariant from "invariant";
 import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
+import BigNumber from "bignumber.js";
 type Props = {
   account: Account;
   transaction: Transaction;
@@ -25,13 +26,11 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
   invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
   const bridge = getAccountBridge(account);
   const { feePerByte, networkInfo } = transaction;
-  const inputRef: {
-    current: any;
-  } = useRef();
+  const inputRef = useRef();
   const { units } = account.currency;
   const satoshi = units[units.length - 1];
   const onSelectChange = useCallback(
-    (item: any) => {
+    (item: { feePerByte: BigNumber }) => {
       onChange(
         bridge.updateTransaction(transaction, {
           feePerByte: item.feePerByte,
@@ -41,7 +40,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
     },
     [onChange, transaction, bridge],
   );
-  const onInputChange = feePerByte =>
+  const onInputChange = (feePerByte: BigNumber) =>
     onSelectChange({
       feePerByte,
     });

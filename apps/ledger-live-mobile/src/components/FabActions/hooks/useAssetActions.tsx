@@ -7,6 +7,7 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import {
   readOnlyModeEnabledSelector,
@@ -29,12 +30,11 @@ const iconSend = Icons.ArrowTopMedium;
 const iconAddAccount = Icons.WalletMedium;
 const iconStake = Icons.ClaimRewardsMedium;
 
-export default function useAssetActions({
-  currency,
-  accounts,
-}: useAssetActionsProps): {
+export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
+  const route = useRoute();
+
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
@@ -47,16 +47,10 @@ export default function useAssetActions({
     [accounts],
   );
 
-  const hasMultipleAccounts = useMemo(
-    () => !!(accounts && accounts.length > 1),
-    [accounts],
-  );
+  const hasMultipleAccounts = useMemo(() => !!(accounts && accounts.length > 1), [accounts]);
 
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
-  const availableOnSwap =
-    currency && swapSelectableCurrencies.includes(currency.id);
+  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
+  const availableOnSwap = currency && swapSelectableCurrencies.includes(currency.id);
 
   const rampCatalog = useRampCatalog();
   const [canBeBought, canBeSold] = useMemo(() => {
@@ -67,12 +61,9 @@ export default function useAssetActions({
     const onRampProviders = filterRampCatalogEntries(rampCatalog.value.onRamp, {
       tickers: [currency.ticker],
     });
-    const offRampProviders = filterRampCatalogEntries(
-      rampCatalog.value.offRamp,
-      {
-        tickers: [currency.ticker],
-      },
-    );
+    const offRampProviders = filterRampCatalogEntries(rampCatalog.value.offRamp, {
+      tickers: [currency.ticker],
+    });
 
     return [onRampProviders.length > 0, offRampProviders.length > 0];
   }, [rampCatalog.value, currency]);
@@ -168,7 +159,10 @@ export default function useAssetActions({
                       NavigatorName.StakeFlow,
                       {
                         screen: ScreenName.Stake,
-                        params: { currencies: [currency?.id] },
+                        params: {
+                          currencies: [currency?.id],
+                          parentRoute: route,
+                        },
                       },
                     ] as const,
                   },
@@ -247,9 +241,7 @@ export default function useAssetActions({
                       {
                         screen: ScreenName.AddAccountsSelectCrypto,
                         params: {
-                          filterCurrencyIds: currency
-                            ? [currency.id]
-                            : undefined,
+                          filterCurrencyIds: currency ? [currency.id] : undefined,
                         },
                       },
                     ] as const,
@@ -270,6 +262,7 @@ export default function useAssetActions({
       hasMultipleAccounts,
       readOnlyModeEnabled,
       t,
+      route,
     ],
   );
 

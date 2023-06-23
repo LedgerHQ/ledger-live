@@ -112,12 +112,12 @@ export function maxTxSize(
   outputScripts: Buffer[],
   includeChange: boolean,
   currency: ICrypto,
-  derivationMode: string
+  derivationMode: string,
 ): number {
   const fixed = fixedWeight(currency, derivationMode);
 
   let outputsWeight = byteSize(outputScripts.length) * baseByte; // Number of outputs;
-  outputScripts.forEach((script) => {
+  outputScripts.forEach(script => {
     outputsWeight += outputSize(currency, script) * baseByte;
   });
 
@@ -142,15 +142,9 @@ export function maxTxSizeCeil(
   outputScripts: Buffer[],
   includeChange: boolean,
   currency: ICrypto,
-  derivationMode: string
+  derivationMode: string,
 ): number {
-  const s = maxTxSize(
-    inputCount,
-    outputScripts,
-    includeChange,
-    currency,
-    derivationMode
-  );
+  const s = maxTxSize(inputCount, outputScripts, includeChange, currency, derivationMode);
 
   return Math.ceil(s);
 }
@@ -183,10 +177,7 @@ export function isValidAddress(address: string, currency?: Currency): boolean {
   return crypto.validateAddress(address);
 }
 
-export function isTaprootAddress(
-  address: string,
-  currency?: Currency
-): boolean {
+export function isTaprootAddress(address: string, currency?: Currency): boolean {
   if (currency === "bitcoin") {
     return cryptoFactory("bitcoin").isTaprootAddress(address);
   } else if (currency === "bitcoin_testnet") {

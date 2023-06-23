@@ -35,9 +35,7 @@ export type CommonDeviceTransactionField =
       tooltipI18nArgs?: tooltipArgs;
     };
 
-export const fromTransactionCommonRaw = (
-  raw: TransactionCommonRaw
-): TransactionCommon => {
+export const fromTransactionCommonRaw = (raw: TransactionCommonRaw): TransactionCommon => {
   const common: TransactionCommon = {
     amount: new BigNumber(raw.amount),
     recipient: raw.recipient,
@@ -58,9 +56,7 @@ export const fromTransactionCommonRaw = (
   return common;
 };
 
-export const toTransactionCommonRaw = (
-  raw: TransactionCommon
-): TransactionCommonRaw => {
+export const toTransactionCommonRaw = (raw: TransactionCommon): TransactionCommonRaw => {
   const common: TransactionCommonRaw = {
     amount: raw.amount.toString(),
     recipient: raw.recipient,
@@ -85,11 +81,10 @@ const fromErrorRaw = (raw: string): Error => {
   return deserializeError(JSON.parse(raw)) || new Error("unknown reason");
 };
 
-const toErrorRaw = (raw: Error): string =>
-  JSON.stringify(serializeError(raw)) || "{}";
+const toErrorRaw = (raw: Error): string => JSON.stringify(serializeError(raw)) || "{}";
 
 export const fromTransactionStatusRawCommon = (
-  ts: TransactionStatusCommonRaw
+  ts: TransactionStatusCommonRaw,
 ): TransactionStatusCommon => ({
   errors: mapValues(ts.errors, fromErrorRaw),
   warnings: mapValues(ts.warnings, fromErrorRaw),
@@ -100,7 +95,7 @@ export const fromTransactionStatusRawCommon = (
 });
 
 export const toTransactionStatusRawCommon = (
-  ts: TransactionStatusCommon
+  ts: TransactionStatusCommon,
 ): TransactionStatusCommonRaw => ({
   errors: mapValues<Record<string, Error>, string>(ts.errors, toErrorRaw),
   warnings: mapValues<Record<string, Error>, string>(ts.warnings, toErrorRaw),
@@ -110,24 +105,16 @@ export const toTransactionStatusRawCommon = (
   recipientIsReadOnly: ts.recipientIsReadOnly,
 });
 
-const formatErrorSmall = (e: Error): string =>
-  e.name === "Error" ? e.message : e.name;
+const formatErrorSmall = (e: Error): string => (e.name === "Error" ? e.message : e.name);
 
 export const formatTransactionStatusCommon = (
   t: TransactionCommon,
-  {
-    errors,
-    warnings,
-    estimatedFees,
-    amount,
-    totalSpent,
-  }: TransactionStatusCommon,
-  mainAccount: Account
+  { errors, warnings, estimatedFees, amount, totalSpent }: TransactionStatusCommon,
+  mainAccount: Account,
 ): string => {
   let str = "";
   const account =
-    (t.subAccountId &&
-      (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
+    (t.subAccountId && (mainAccount.subAccounts || []).find(a => a.id === t.subAccountId)) ||
     mainAccount;
 
   str +=

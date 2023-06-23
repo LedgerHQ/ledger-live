@@ -44,10 +44,7 @@ const FlowErrorBottomModal = ({
       onClose={onBridgeErrorRetry}
       footerButtons={
         <>
-          <CancelButton
-            containerStyle={styles.button}
-            onPress={onBridgeErrorCancel}
-          />
+          <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
           <RetryButton
             containerStyle={[styles.button, styles.buttonRight]}
             onPress={onBridgeErrorRetry}

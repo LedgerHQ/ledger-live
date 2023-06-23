@@ -1,9 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
-import {
-  toTransactionRaw,
-  toSignedOperationRaw,
-} from "@ledgerhq/live-common/transaction/index";
+import { toTransactionRaw, toSignedOperationRaw } from "@ledgerhq/live-common/transaction/index";
 import { listen } from "@ledgerhq/logs";
 import { from, defer, concat, EMPTY, Observable } from "rxjs";
 import { map, reduce, filter, switchMap, concatMap } from "rxjs/operators";
@@ -14,10 +11,10 @@ import type { InferTransactionsOpts } from "../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../transaction";
 import type { SignedOperation } from "@ledgerhq/types-live";
 
-const toJS = (obj) => {
+const toJS = obj => {
   if (typeof obj === "object" && obj) {
     if (Array.isArray(obj)) {
-      return "[" + obj.map((o) => toJS(o)).join(", ") + "]";
+      return "[" + obj.map(o => toJS(o)).join(", ") + "]";
     }
 
     if (obj instanceof Error) {
@@ -33,7 +30,7 @@ const toJS = (obj) => {
     return (
       "{\n" +
       keys
-        .map((key) => {
+        .map(key => {
           return `  ${key}: ${toJS(obj[key])}`;
         })
         .join(",\n") +
@@ -45,16 +42,16 @@ const toJS = (obj) => {
   return String(obj);
 };
 
-const toTransactionStatusJS = (status) => toJS(status);
+const toTransactionStatusJS = status => toJS(status);
 
 export default {
   description: "Generate a test for transaction (live-common dataset)",
   args: [...scanCommonOpts, ...inferTransactionsOpts],
   job: (opts: ScanCommonOpts & InferTransactionsOpts) =>
     scan(opts).pipe(
-      switchMap((account) =>
+      switchMap(account =>
         from(inferTransactions(account, opts)).pipe(
-          concatMap((inferred) =>
+          concatMap(inferred =>
             inferred.reduce(
               (acc, [t]) =>
                 concat(
@@ -62,7 +59,7 @@ export default {
                   from(
                     defer(() => {
                       const apdus: string[] = [];
-                      const unsubscribe = listen((log) => {
+                      const unsubscribe = listen(log => {
                         if (log.type === "apdu" && log.message) {
                           apdus.push(log.message);
                         }
@@ -75,20 +72,20 @@ export default {
                           deviceId: opts.device || "",
                         })
                         .pipe(
-                          filter((e) => e.type === "signed"),
-                          map((e) => {
+                          filter(e => e.type === "signed"),
+                          map(e => {
                             // FIXME: will always be true because of filter above
                             // but ts can't infer the right type for SignOperationEvent
                             if (e.type === "signed") {
                               return e.signedOperation;
                             }
                           }),
-                          concatMap((signedOperation) =>
+                          concatMap(signedOperation =>
                             from(
                               bridge
                                 .getTransactionStatus(account, t)
-                                .then((s) => [signedOperation, s])
-                            )
+                                .then(s => [signedOperation, s]),
+                            ),
                           ),
                           map(([signedOperation, status]) => {
                             unsubscribe();
@@ -103,38 +100,38 @@ export default {
   // WARNING: DO NOT commit this test publicly unless you're ok with possibility tx could leak out. (do self txs)
   testSignedOperation: (expect, signedOperation) => {
     expect(toSignedOperationRaw(signedOperation)).toMatchObject(${JSON.stringify(
-      toSignedOperationRaw(signedOperation as SignedOperation)
+      toSignedOperationRaw(signedOperation as SignedOperation),
     )})
   },
   apdus: \`
-${apdus.map((a) => "  " + a).join("\n")}
+${apdus.map(a => "  " + a).join("\n")}
   \`
 }`;
-                          })
+                          }),
                         );
-                    })
-                  )
+                    }),
+                  ),
                 ),
-              EMPTY as Observable<any>
-            )
+              EMPTY as Observable<any>,
+            ),
           ),
           reduce((jsCodes, code) => jsCodes.concat(code), []),
           map(
-            (codes) => `{
+            codes => `{
   name: "${account.name}",
   raw: ${JSON.stringify(
     toAccountRaw({
       ...account,
       operations: [],
       freshAddresses: [],
-    })
+    }),
   )},
   transactions: [
     ${codes.join(",")}
   ]
-  }`
-          )
-        )
-      )
+  }`,
+          ),
+        ),
+      ),
     ),
 };

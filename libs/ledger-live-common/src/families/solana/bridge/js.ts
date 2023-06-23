@@ -14,22 +14,21 @@ const httpRequestLogger = (url: string, options: any) => {
 };
 
 const getAPI = makeLRUCache(
-  (config: Config) =>
-    Promise.resolve(traced(getChainAPI(config, httpRequestLogger))),
-  (config) => config.endpoint,
-  minutes(1000)
+  (config: Config) => Promise.resolve(traced(getChainAPI(config, httpRequestLogger))),
+  config => config.endpoint,
+  minutes(1000),
 );
 
 const getQueuedAPI = makeLRUCache(
-  (config: Config) => getAPI(config).then((api) => queued(api, 500)),
-  (config) => config.endpoint,
-  minutes(1000)
+  (config: Config) => getAPI(config).then(api => queued(api, 500)),
+  config => config.endpoint,
+  minutes(1000),
 );
 
 const getQueuedAndCachedAPI = makeLRUCache(
   (config: Config) => getQueuedAPI(config).then(cached),
-  (config) => config.endpoint,
-  minutes(1000)
+  config => config.endpoint,
+  minutes(1000),
 );
 
 export default makeBridges({

@@ -28,7 +28,7 @@ const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
 
 export function buildCurrencyBridge(
   deviceCommunication: DeviceCommunication,
-  network: NetworkRequestCall
+  network: NetworkRequestCall,
 ): CurrencyBridge {
   const algorandAPI = new AlgorandAPI(network);
 
@@ -48,14 +48,11 @@ export function buildCurrencyBridge(
 
 export function buildAccountBridge(
   deviceCommunication: DeviceCommunication,
-  network: NetworkRequestCall
+  network: NetworkRequestCall,
 ): AccountBridge<Transaction> {
   const algorandAPI = new AlgorandAPI(network);
 
-  const receive = makeAccountBridgeReceive(
-    getAddressWrapper(getAddress),
-    deviceCommunication
-  );
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
   const signOperation = buildSignOperation(deviceCommunication, algorandAPI);
   const getAccountShape = makeGetAccountShape(algorandAPI);
   const sync = makeSync({ getAccountShape });
@@ -83,7 +80,7 @@ export function buildAccountBridge(
 export function createBridges(
   deviceCommunication: DeviceCommunication,
   network: NetworkRequestCall,
-  _cacheFn: unknown
+  _cacheFn: unknown,
 ) {
   return {
     currencyBridge: buildCurrencyBridge(deviceCommunication, network),

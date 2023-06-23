@@ -82,6 +82,7 @@ const StepRecipient = ({
           />
           <SendRecipientFields
             account={mainAccount}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={onChangeTransaction}

@@ -32,6 +32,7 @@ export type SettingsState = {
   preferredDeviceModel: DeviceModelId;
   hasInstalledApps: boolean;
   lastSeenDevice: DeviceModelInfo | undefined | null;
+  devicesModelList: DeviceModelId[];
   latestFirmware: FirmwareUpdateContext | null;
   language: string | undefined | null;
   theme: string | undefined | null;
@@ -141,6 +142,7 @@ const INITIAL_STATE: SettingsState = {
   hasInstalledApps: true,
   carouselVisibility: 0,
   lastSeenDevice: null,
+  devicesModelList: [],
   lastSeenCustomImage: {
     size: 0,
     hash: "",
@@ -190,6 +192,7 @@ type HandlersPayloads = {
     latestFirmware: FirmwareUpdateContext;
   };
   LAST_SEEN_DEVICE: DeviceModelInfo;
+  ADD_NEW_DEVICE_MODEL: DeviceModelId;
   SET_DEEPLINK_URL: string | null | undefined;
   SET_FIRST_TIME_LEND: never;
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
@@ -306,6 +309,12 @@ const handlers: SettingsHandlers = {
         }
       : undefined,
   }),
+
+  ADD_NEW_DEVICE_MODEL: (state, { payload }) => ({
+    ...state,
+    devicesModelList: [...new Set(state.devicesModelList.concat(payload))],
+  }),
+
   SET_DEEPLINK_URL: (state, { payload: deepLinkUrl }) => ({
     ...state,
     deepLinkUrl,
@@ -401,7 +410,7 @@ const handlers: SettingsHandlers = {
   }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as SettingsHandlers<false>,
+  handlers as unknown as SettingsHandlers<false>,
   INITIAL_STATE,
 );
 
@@ -660,6 +669,8 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
   }
   return state.settings.lastSeenDevice;
 };
+export const devicesModelListSelector = (state: State): DeviceModelId[] =>
+  state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;

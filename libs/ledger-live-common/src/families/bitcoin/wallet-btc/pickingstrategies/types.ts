@@ -21,7 +21,7 @@ export abstract class PickingStrategy {
     excludedUTXOs: Array<{
       hash: string;
       outputIndex: number;
-    }>
+    }>,
   ) {
     this.crypto = crypto;
     this.derivationMode = derivationMode;
@@ -31,7 +31,7 @@ export abstract class PickingStrategy {
   abstract selectUnspentUtxosToUse(
     xpub: Xpub,
     outputs: OutputInfo[],
-    feePerByte: number
+    feePerByte: number,
   ): Promise<{
     unspentUtxos: Output[];
     totalValue: BigNumber;

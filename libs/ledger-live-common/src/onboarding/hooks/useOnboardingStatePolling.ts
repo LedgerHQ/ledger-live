@@ -18,16 +18,15 @@ export type UseOnboardingStatePollingResult = OnboardingStatePollingResult & {
 
 export type UseOnboardingStatePollingDependencies = {
   getOnboardingStatePolling?: (
-    args: GetOnboardingStatePollingArgs
+    args: GetOnboardingStatePollingArgs,
   ) => GetOnboardingStatePollingResult;
 };
 
-export type UseOnboardingStatePollingArgs =
-  UseOnboardingStatePollingDependencies & {
-    device: Device | null;
-    pollingPeriodMs: number;
-    stopPolling?: boolean;
-  };
+export type UseOnboardingStatePollingArgs = UseOnboardingStatePollingDependencies & {
+  device: Device | null;
+  pollingPeriodMs: number;
+  stopPolling?: boolean;
+};
 
 /**
  * Polls the current device onboarding state, and notify the hook consumer of
@@ -49,8 +48,7 @@ export const useOnboardingStatePolling = ({
   pollingPeriodMs,
   stopPolling = false,
 }: UseOnboardingStatePollingArgs): UseOnboardingStatePollingResult => {
-  const [onboardingState, setOnboardingState] =
-    useState<OnboardingState | null>(null);
+  const [onboardingState, setOnboardingState] = useState<OnboardingState | null>(null);
   const [allowedError, setAllowedError] = useState<Error | null>(null);
   const [fatalError, setFatalError] = useState<Error | null>(null);
   const [lockedDevice, setLockedDevice] = useState<boolean>(false);
@@ -71,34 +69,34 @@ export const useOnboardingStatePolling = ({
             setLockedDevice(onboardingStatePollingResult.lockedDevice);
 
             // Only updates if the new allowedError is different
-            setAllowedError((prevAllowedError) =>
+            setAllowedError(prevAllowedError =>
               getNewAllowedErrorIfChanged(
                 prevAllowedError,
-                onboardingStatePollingResult.allowedError
-              )
+                onboardingStatePollingResult.allowedError,
+              ),
             );
 
             // Does not update the onboarding state if an allowed error occurred
             if (!onboardingStatePollingResult.allowedError) {
               // Only updates if the new onboardingState is different
-              setOnboardingState((prevOnboardingState) =>
+              setOnboardingState(prevOnboardingState =>
                 getNewOnboardingStateIfChanged(
                   prevOnboardingState,
-                  onboardingStatePollingResult.onboardingState
-                )
+                  onboardingStatePollingResult.onboardingState,
+                ),
               );
             }
           }
         },
-        error: (error) => {
+        error: error => {
           setAllowedError(null);
           setLockedDevice(false);
           setFatalError(
             error instanceof Error
               ? error
               : new DeviceOnboardingStatePollingError(
-                  `Error from: ${error?.name ?? error} ${error?.message}`
-                )
+                  `Error from: ${error?.name ?? error} ${error?.message}`,
+                ),
           );
         },
       });
@@ -122,7 +120,7 @@ export const useOnboardingStatePolling = ({
 
 const getNewOnboardingStateIfChanged = (
   prevOnboardingState: OnboardingState | null,
-  newOnboardingState: OnboardingState | null
+  newOnboardingState: OnboardingState | null,
 ): OnboardingState | null => {
   return isEqual(prevOnboardingState, newOnboardingState)
     ? prevOnboardingState
@@ -131,10 +129,8 @@ const getNewOnboardingStateIfChanged = (
 
 const getNewAllowedErrorIfChanged = (
   prevError: Error | null,
-  newError: Error | null
+  newError: Error | null,
 ): Error | null => {
   // Only interested if the errors are instances of the same Error class
-  return prevError?.constructor === newError?.constructor
-    ? prevError
-    : newError;
+  return prevError?.constructor === newError?.constructor ? prevError : newError;
 };

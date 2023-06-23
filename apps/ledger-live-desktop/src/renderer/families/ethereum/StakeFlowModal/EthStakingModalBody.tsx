@@ -1,32 +1,40 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
-
 import { Flex, Text } from "@ledgerhq/react-ui";
+
 import { track } from "~/renderer/analytics/segment";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
+import {
+  LOCAL_STORAGE_KEY_PREFIX,
+  CheckBoxContainer,
+} from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
+import CheckBox from "~/renderer/components/CheckBox";
+import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
-import { generateValidDappURLWithParams } from "~/helpers/generateValidDappURLWithParams";
-import { Manifest } from "~/types/manifest";
+
 import ProviderItem from "./component/ProviderItem";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 type Props = {
   account: Account;
   singleProviderRedirectMode?: boolean;
   onClose?: () => void;
-  checkbox?: boolean;
+  hasCheckbox?: boolean;
   source?: string;
   listProviders?: ListProviders;
 };
 
 export type StakeOnClickProps = {
   provider: ListProvider;
-  manifest: Manifest;
+  manifest: LiveAppManifest;
 };
 
 export function EthStakingModalBody({
+  hasCheckbox = false,
   singleProviderRedirectMode = true,
   source,
   onClose,
@@ -35,6 +43,7 @@ export function EthStakingModalBody({
 }: Props) {
   const { t } = useTranslation();
   const history = useHistory();
+  const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
 
   const stakeOnClick = useCallback(
     ({
@@ -42,7 +51,7 @@ export function EthStakingModalBody({
       manifest,
     }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
-      const customDappUrl = queryParams && generateValidDappURLWithParams(manifest, queryParams);
+      const customDappUrl = queryParams && appendQueryParamsToDappURL(manifest, queryParams);
       track("button_clicked", {
         button: providerConfigID,
         ...getTrackProperties({ value, modal: source }),
@@ -79,12 +88,27 @@ export function EthStakingModalBody({
     [singleProviderRedirectMode, listProviders.length, stakeOnClick],
   );
 
+  const checkBoxOnChange = useCallback(() => {
+    const value = !doNotShowAgain;
+    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`, `${value}`);
+    setDoNotShowAgain(value);
+    track("button_clicked", {
+      button: "not_show",
+      ...getTrackProperties({ value, modal: source }),
+    });
+  }, [doNotShowAgain, account?.currency?.id, source]);
+
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
       <Flex flexDirection="column" alignItems="center" rowGap={16}>
         <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px">
           {t("ethereum.stake.title")}
         </Text>
+        {listProviders.length <= 1 && (
+          <Flex justifyContent="center" py={20} width="100%">
+            <EthStakeIllustration size={140} />
+          </Flex>
+        )}
         <Text textAlign="center" color="neutral.c70" fontSize={14} maxWidth={360}>
           {t("ethereum.stake.subTitle")}
         </Text>
@@ -102,6 +126,18 @@ export function EthStakingModalBody({
             </Flex>
           ))}
         </Flex>
+        {hasCheckbox && (
+          <CheckBoxContainer
+            p={3}
+            borderRadius={8}
+            borderWidth={0}
+            width={"100%"}
+            onClick={checkBoxOnChange}
+            mt={15}
+          >
+            <CheckBox isChecked={doNotShowAgain} label={t("receive.steps.staking.notShow")} />
+          </CheckBoxContainer>
+        )}
       </Flex>
     </Flex>
   );

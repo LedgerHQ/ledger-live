@@ -16,6 +16,7 @@ import {
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
   LanguageInstallRefusedOnDevice,
+  ImageDoesNotExistOnDevice,
 } from "@ledgerhq/live-common/errors";
 import { Icons } from "@ledgerhq/react-ui";
 
@@ -37,6 +38,7 @@ const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
     error instanceof UserRefusedOnDevice ||
     error instanceof UserRefusedAddress ||
     error instanceof LanguageInstallRefusedOnDevice ||
+    error instanceof ImageDoesNotExistOnDevice ||
     error instanceof UserRefusedDeviceNameChange
   ) {
     return <Icons.InfoMedium size={size} />;

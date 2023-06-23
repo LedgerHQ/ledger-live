@@ -8,19 +8,19 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { EthStakingModalBody } from "./EthStakingModalBody";
 
 type Props = {
-  name: string;
   account: Account;
   singleProviderRedirectMode?: boolean;
   source?: string;
+  hasCheckbox?: boolean;
 };
-const DelegationModal = ({ name, account, singleProviderRedirectMode, source }: Props) => {
+const DelegationModal = ({ account, hasCheckbox, singleProviderRedirectMode, source }: Props) => {
   const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
 
   if (!ethStakingProviders?.enabled) return null;
 
   return (
     <Modal
-      name={name}
+      name="MODAL_ETH_STAKE"
       centered
       width={500}
       render={({ onClose }) => (
@@ -33,6 +33,7 @@ const DelegationModal = ({ name, account, singleProviderRedirectMode, source }: 
               <EthStakingModalBody
                 onClose={onClose}
                 account={account}
+                hasCheckbox={hasCheckbox}
                 singleProviderRedirectMode={singleProviderRedirectMode}
                 source={source}
                 listProviders={ethStakingProviders.params?.listProvider}

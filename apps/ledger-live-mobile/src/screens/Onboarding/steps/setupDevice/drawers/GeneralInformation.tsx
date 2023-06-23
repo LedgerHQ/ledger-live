@@ -34,17 +34,13 @@ const OnboardingGeneralInformation = () => {
       <ScrollListContainer>
         <Flex p={6} backgroundColor="background.main">
           <Text variant="h1" color="neutral.c100" uppercase mb={6}>
-            {t(
-              "onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title",
-            )}
+            {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title")}
           </Text>
           <Text variant="paragraph" color="neutral.c80" mb={6}>
             {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc")}
           </Text>
           <Text variant="paragraph" color="neutral.c80" mb={6}>
-            {t(
-              "onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc_1",
-            )}
+            {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc_1")}
           </Text>
           <TextLink
             onPress={handlePress}
@@ -57,9 +53,7 @@ const OnboardingGeneralInformation = () => {
           </TextLink>
           <Flex my={10} borderBottomColor="neutral.c40" borderBottomWidth={1} />
           <Text variant="h1" color="neutral.c100" uppercase mb={6}>
-            {t(
-              "onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title_1",
-            )}
+            {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title_1")}
           </Text>
           <NumberedList items={bullets.map(item => ({ title: t(item) }))} />
         </Flex>

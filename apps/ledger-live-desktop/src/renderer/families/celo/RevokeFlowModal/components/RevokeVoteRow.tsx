@@ -12,12 +12,13 @@ import { isDefaultValidatorGroup } from "@ledgerhq/live-common/families/celo/log
 import { Trans } from "react-i18next";
 import * as S from "./RevokeVoteRow.styles";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-live";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+
 type Props = {
   currency: CryptoCurrency;
   validatorGroup: CeloValidatorGroup;
   active?: boolean;
-  onClick?: (v: CeloValidatorGroup) => void;
+  onClick?: () => void;
   unit: Unit;
   amount: BigNumber;
   type: string;
@@ -82,7 +83,7 @@ function CeloRevokeVoteRow({
             </Text>
           </Box>
           <Box ml={3}>
-            <S.ChosenMark active={active ?? false} />
+            <S.ChosenMark active={active ?? false} size={14} />
           </Box>
         </Box>
       }

@@ -109,10 +109,7 @@ export default class ElrondApi {
     return hash;
   }
 
-  async getHistory(
-    addr: string,
-    startAt: number
-  ): Promise<ElrondApiTransaction[]> {
+  async getHistory(addr: string, startAt: number): Promise<ElrondApiTransaction[]> {
     const { data: transactionsCount } = await network({
       method: "GET",
       url: `${this.API_URL}/accounts/${addr}/transactions/count?after=${startAt}`,
@@ -150,7 +147,7 @@ export default class ElrondApi {
   async getESDTTransactionsForAddress(
     addr: string,
     token: string,
-    startAt: number
+    startAt: number,
   ): Promise<ElrondApiTransaction[]> {
     const { data: tokenTransactionsCount } = await network({
       method: "GET",

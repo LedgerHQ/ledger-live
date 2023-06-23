@@ -19,9 +19,7 @@ describe("stringToDeviceModelId", () => {
   ];
 
   tests.forEach(({ input, expectedOutput }) => {
-    test(`Input: ${JSON.stringify(
-      input
-    )} -> Expected output: ${expectedOutput}`, () => {
+    test(`Input: ${JSON.stringify(input)} -> Expected output: ${expectedOutput}`, () => {
       const result = stringToDeviceModelId(...input);
       expect(result).toEqual(expectedOutput);
     });

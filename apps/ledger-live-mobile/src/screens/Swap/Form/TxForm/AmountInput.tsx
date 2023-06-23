@@ -15,15 +15,7 @@ interface Props {
   onFocus?: (_: boolean) => void;
 }
 
-export function AmountInput({
-  value,
-  onChange,
-  onFocus,
-  editable,
-  unit,
-  error,
-  loading,
-}: Props) {
+export function AmountInput({ value, onChange, onFocus, editable, unit, error, loading }: Props) {
   return (
     <Flex justifyContent="flex-end" alignItems="flex-end">
       {loading ? (

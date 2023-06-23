@@ -2,7 +2,7 @@ import invariant from "invariant";
 import { useSelector } from "react-redux";
 import React, { useCallback, useRef } from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -19,13 +19,16 @@ import Text from "~/renderer/components/Text";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { State } from "~/renderer/reducers";
+
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
@@ -89,11 +92,11 @@ export function StepConfirmationFooter({
 }: StepProps) {
   invariant(initialAccount && initialAccount.polkadotResources, "polkadot account required");
   const wasFirstBond = useRef(initialAccount && isFirstBond(initialAccount));
-  const account = useSelector(s =>
+  const account = useSelector((s: State) =>
     accountSelector(s, {
       accountId: initialAccount.id,
     }),
-  );
+  ) as PolkadotAccount;
   invariant(account, "polkadot account still exists");
   const isLoading = usePolkadotBondLoading(account);
   const openNominate = useCallback(() => {
@@ -146,4 +149,4 @@ export function StepConfirmationFooter({
     </Box>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

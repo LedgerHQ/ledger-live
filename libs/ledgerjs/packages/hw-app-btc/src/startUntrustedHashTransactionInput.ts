@@ -9,7 +9,7 @@ export function startUntrustedHashTransactionInputRaw(
   transactionData: Buffer,
   bip143 = false,
   overwinter = false,
-  additionals: Array<string> = []
+  additionals: Array<string> = [],
 ): Promise<Buffer> {
   const p2 = additionals.includes("cashaddr")
     ? 0x03
@@ -25,7 +25,7 @@ export function startUntrustedHashTransactionInputRaw(
     0x44,
     firstRound ? 0x00 : 0x80,
     newTransaction ? p2 : 0x80,
-    transactionData
+    transactionData,
   );
 }
 export async function startUntrustedHashTransactionInput(
@@ -39,7 +39,7 @@ export async function startUntrustedHashTransactionInput(
   bip143 = false,
   overwinter = false,
   additionals: Array<string> = [],
-  useTrustedInputForSegwit = false
+  useTrustedInputForSegwit = false,
 ): Promise<any> {
   let data = Buffer.concat([
     transaction.version,
@@ -54,7 +54,7 @@ export async function startUntrustedHashTransactionInput(
     data,
     bip143,
     overwinter,
-    additionals
+    additionals,
   );
   let i = 0;
   const isDecred = additionals.includes("decred");
@@ -90,7 +90,7 @@ export async function startUntrustedHashTransactionInput(
       data,
       bip143,
       overwinter,
-      additionals
+      additionals,
     );
     const scriptBlocks: Buffer[] = [];
     let offset = 0;
@@ -108,10 +108,7 @@ export async function startUntrustedHashTransactionInput(
           scriptBlocks.push(input.script.slice(offset, offset + blockSize));
         } else {
           scriptBlocks.push(
-            Buffer.concat([
-              input.script.slice(offset, offset + blockSize),
-              input.sequence,
-            ])
+            Buffer.concat([input.script.slice(offset, offset + blockSize), input.sequence]),
           );
         }
 
@@ -127,7 +124,7 @@ export async function startUntrustedHashTransactionInput(
         scriptBlock,
         bip143,
         overwinter,
-        additionals
+        additionals,
       );
     }
 

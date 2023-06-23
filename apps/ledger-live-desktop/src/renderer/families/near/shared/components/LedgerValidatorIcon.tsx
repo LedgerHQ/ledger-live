@@ -9,8 +9,8 @@ const LedgerValidatorIcon = ({
   validator,
   validatorId,
 }: {
-  validator: NearValidatorItem;
-  validatorId: string;
+  validator?: NearValidatorItem | null;
+  validatorId?: string;
 }) => {
   const address = (validator && validator.validatorAddress) || validatorId;
   return (

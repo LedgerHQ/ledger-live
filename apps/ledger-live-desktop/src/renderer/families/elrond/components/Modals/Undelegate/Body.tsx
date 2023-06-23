@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { withTranslation } from "react-i18next";
+import { TFunction, withTranslation } from "react-i18next";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -10,39 +10,49 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import {
+  Transaction,
+  ElrondAccount,
+  ElrondProvider,
+} from "@ledgerhq/live-common/families/elrond/types";
+import { StepId } from "./types";
+import { Device } from "@ledgerhq/types-devices";
+import { DelegationType } from "../../../types";
+
+export type Data = {
+  account: ElrondAccount;
+  contract: string;
+  validators: Array<ElrondProvider>;
+  amount: string;
+  delegations: Array<DelegationType>;
+};
 interface OwnProps {
-  account: Account;
+  account: ElrondAccount;
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (step: StepId) => void;
   contract: string;
   validators: Array<ElrondProvider>;
-  name: string;
   amount: string;
-  delegations: Array<{ validator: string; amount: string }>;
+  delegations: Array<DelegationType>;
 }
 interface StateProps {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (name: string) => void;
-  openModal: (name: string) => void;
+  openModal: OpenModal;
 }
 type Props = OwnProps & StateProps;
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
 const Body = (props: Props) => {
@@ -51,18 +61,17 @@ const Body = (props: Props) => {
     account: accountProp,
     stepId,
     onChangeStepId,
-    closeModal,
     openModal,
     device,
-    name,
     contract,
     validators,
     amount,
     delegations,
+    onClose,
   } = props;
   const dispatch = useDispatch();
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const {
     account,
@@ -90,9 +99,7 @@ const Body = (props: Props) => {
     onChangeStepId("amount");
   }, [onChangeStepId]);
   const handleStepChange = useCallback(({ id }) => onChangeStepId(id), [onChangeStepId]);
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [name, closeModal]);
+
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {
       if (!account) return;
@@ -131,7 +138,7 @@ const Body = (props: Props) => {
     hideBreadcrumb: !!error && ["amount"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     status,
     optimisticOperation,
@@ -154,7 +161,7 @@ const Body = (props: Props) => {
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

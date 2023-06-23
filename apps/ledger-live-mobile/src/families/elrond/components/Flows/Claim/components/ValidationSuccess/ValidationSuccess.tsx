@@ -77,9 +77,7 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
             i18nKey={`elrond.claimRewards.flow.steps.verification.success.${transaction.mode}Success`}
           />
         }
-        description={
-          <Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />
-        }
+        description={<Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />}
       />
     </View>
   );

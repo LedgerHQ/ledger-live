@@ -15,13 +15,7 @@ const ErrorAndWarning = ({
     <View style={styles.errorSection}>
       {error ? (
         <>
-          <LText
-            selectable
-            secondary
-            semiBold
-            style={styles.error}
-            color="alert"
-          >
+          <LText selectable secondary semiBold style={styles.error} color="alert">
             <TranslatedError error={error} field="title" />
           </LText>
           <LText selectable secondary style={styles.error} color="alert">
@@ -30,13 +24,7 @@ const ErrorAndWarning = ({
         </>
       ) : warning ? (
         <>
-          <LText
-            selectable
-            secondary
-            semiBold
-            style={styles.error}
-            color="orange"
-          >
+          <LText selectable secondary semiBold style={styles.error} color="orange">
             <TranslatedError error={warning} field="title" />
           </LText>
           <LText selectable secondary style={styles.error} color="orange">

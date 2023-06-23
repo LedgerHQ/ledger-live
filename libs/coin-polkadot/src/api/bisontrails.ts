@@ -30,7 +30,7 @@ const getAccountOperationUrl = (
   addr: string,
   offset: number,
   startAt: number,
-  limit: number = LIMIT
+  limit: number = LIMIT,
 ): string =>
   `${getBaseApiUrl()}/accounts/${addr}/operations?${querystring.stringify({
     limit,
@@ -41,9 +41,7 @@ const getAccountOperationUrl = (
 const getWithdrawUnbondedAmount = (extrinsic: any) => {
   return (
     extrinsic?.staking?.eventStaking.reduce((acc: any, curr: any) => {
-      return curr.method === "Withdrawn"
-        ? new BigNumber(acc).plus(curr.value)
-        : new BigNumber(0);
+      return curr.method === "Withdrawn" ? new BigNumber(acc).plus(curr.value) : new BigNumber(0);
     }, new BigNumber(0)) || new BigNumber(0)
   );
 };
@@ -146,9 +144,7 @@ const getExtra = (type: OperationType, extrinsic: any): Record<string, any> => {
  */
 const getValue = (extrinsic: any, type: OperationType): BigNumber => {
   if (!extrinsic.isSuccess) {
-    return type === "IN"
-      ? new BigNumber(0)
-      : new BigNumber(extrinsic.partialFee || 0);
+    return type === "IN" ? new BigNumber(0) : new BigNumber(extrinsic.partialFee || 0);
   }
 
   switch (type) {
@@ -178,15 +174,11 @@ const getValue = (extrinsic: any, type: OperationType): BigNumber => {
 const extrinsicToOperation = (
   addr: string,
   accountId: string,
-  extrinsic: any
+  extrinsic: any,
 ): Partial<Operation> | null => {
   let type = getOperationType(extrinsic.section, extrinsic.method);
 
-  if (
-    type === "OUT" &&
-    extrinsic.affectedAddress1 === addr &&
-    extrinsic.signer !== addr
-  ) {
+  if (type === "OUT" && extrinsic.affectedAddress1 === addr && extrinsic.signer !== addr) {
     type = "IN";
   }
 
@@ -208,8 +200,7 @@ const extrinsicToOperation = (
     recipients: [extrinsic.affectedAddress1, extrinsic.affectedAddress2]
       .filter(Boolean)
       .filter(isValidAddress),
-    transactionSequenceNumber:
-      extrinsic.signer === addr ? extrinsic.nonce : undefined,
+    transactionSequenceNumber: extrinsic.signer === addr ? extrinsic.nonce : undefined,
     hasFailed: !extrinsic.isSuccess,
   };
 };
@@ -223,11 +214,7 @@ const extrinsicToOperation = (
  *
  * @returns {Operation | null}
  */
-const rewardToOperation = (
-  addr: string,
-  accountId: string,
-  reward: any
-): Partial<Operation> => {
+const rewardToOperation = (addr: string, accountId: string, reward: any): Partial<Operation> => {
   const hash = reward.extrinsicHash;
   const type = "REWARD_PAYOUT";
   return {
@@ -254,11 +241,7 @@ const rewardToOperation = (
  *
  * @returns {Operation | null}
  */
-const slashToOperation = (
-  addr: string,
-  accountId: string,
-  slash: any
-): Partial<Operation> => {
+const slashToOperation = (addr: string, accountId: string, slash: any): Partial<Operation> => {
   const hash = `${slash.blockNumber}`;
   const type = "SLASH";
   return {
@@ -293,38 +276,24 @@ const fetchOperationList =
     addr: string,
     startAt: number,
     offset = 0,
-    prevOperations: Operation[] = []
+    prevOperations: Operation[] = [],
   ): Promise<Operation[]> => {
     const { data } = await network({
       method: "GET",
       url: getAccountOperationUrl(addr, offset, startAt),
     });
     const operations = data.extrinsics.map((extrinsic: any) =>
-      extrinsicToOperation(addr, accountId, extrinsic)
+      extrinsicToOperation(addr, accountId, extrinsic),
     );
-    const rewards = data.rewards.map((reward: any) =>
-      rewardToOperation(addr, accountId, reward)
-    );
-    const slashes = data.slashes.map((slash: any) =>
-      slashToOperation(addr, accountId, slash)
-    );
+    const rewards = data.rewards.map((reward: any) => rewardToOperation(addr, accountId, reward));
+    const slashes = data.slashes.map((slash: any) => slashToOperation(addr, accountId, slash));
     const mergedOp = [...prevOperations, ...operations, ...rewards, ...slashes];
 
-    if (
-      operations.length < LIMIT &&
-      rewards.length < LIMIT &&
-      slashes.length < LIMIT
-    ) {
+    if (operations.length < LIMIT && rewards.length < LIMIT && slashes.length < LIMIT) {
       return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
     }
 
-    return await fetchOperationList(network)(
-      accountId,
-      addr,
-      startAt,
-      offset + LIMIT,
-      mergedOp
-    );
+    return await fetchOperationList(network)(accountId, addr, startAt, offset + LIMIT, mergedOp);
   };
 
 /**

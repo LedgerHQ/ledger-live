@@ -72,12 +72,8 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
         iconSize={24}
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="elrond.undelegation.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="elrond.undelegation.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="elrond.undelegation.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="elrond.undelegation.flow.steps.verification.success.text" />}
       />
     </View>
   );

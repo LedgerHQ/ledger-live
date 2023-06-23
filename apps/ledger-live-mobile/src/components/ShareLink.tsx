@@ -20,11 +20,7 @@ class ShareLink extends PureComponent<Props> {
   render() {
     const { children } = this.props;
     return (
-      <Touchable
-        event="ShareLink"
-        style={styles.linkContainer}
-        onPress={this.onPress}
-      >
+      <Touchable event="ShareLink" style={styles.linkContainer} onPress={this.onPress}>
         <Icons.ShareMedium size={16} color="primary.c80" />
         <Text variant="body" fontWeight="semiBold" color="primary.c80" ml={3}>
           {children}

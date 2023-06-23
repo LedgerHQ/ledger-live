@@ -31,15 +31,10 @@ const filecoinSpecs: AppSpec<Transaction> = {
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, maxAccount);
-        let amount = account.spendableBalance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        let amount = account.spendableBalance.div(1.9 + 0.2 * Math.random()).integerValue();
 
         if (!sibling.used && amount.lt(MIN_SAFE)) {
-          invariant(
-            account.spendableBalance.gt(MIN_SAFE),
-            "send is too low to activate account"
-          );
+          invariant(account.spendableBalance.gt(MIN_SAFE), "send is too low to activate account");
           amount = MIN_SAFE;
         }
 

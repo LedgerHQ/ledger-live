@@ -18,9 +18,8 @@ import styles from "./styles";
  * Create a higher order component that will return null if balance is zero (thus unable to delegate).
  */
 
-const withSummary =
-  (Component: FC<SummaryPropsType>) => (props: SummaryPropsType) =>
-    props.account.balance.isGreaterThan(0) ? <Component {...props} /> : null;
+const withSummary = (Component: FC<SummaryPropsType>) => (props: SummaryPropsType) =>
+  props.account.balance.isGreaterThan(0) ? <Component {...props} /> : null;
 
 /*
  * Handle the component declaration.
@@ -38,9 +37,9 @@ const Summary = (props: SummaryPropsType) => {
 
   const [data, setData] = useState<ItemType["modal"][]>([]);
   const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
-  const [delegationsResources, setDelegationResources] = useState<
-    DelegationType[]
-  >(account.elrondResources ? account.elrondResources.delegations : []);
+  const [delegationsResources, setDelegationResources] = useState<DelegationType[]>(
+    account.elrondResources ? account.elrondResources.delegations : [],
+  );
 
   /*
    * Track delegations array updates and trigger state changes accordingly.
@@ -48,15 +47,11 @@ const Summary = (props: SummaryPropsType) => {
 
   const fetchDelegations = useCallback(() => {
     setBalance(account.spendableBalance);
-    setDelegationResources(
-      account.elrondResources ? account.elrondResources.delegations : [],
-    );
+    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
 
     return () => {
       setBalance(account.spendableBalance);
-      setDelegationResources(
-        account.elrondResources ? account.elrondResources.delegations : [],
-      );
+      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
     };
   }, [account.elrondResources, account.spendableBalance]);
 
@@ -94,8 +89,7 @@ const Summary = (props: SummaryPropsType) => {
   const delegations = useMemo(
     () =>
       delegationsResources.reduce(
-        (total: BigNumber, delegation) =>
-          total.plus(delegation.userActiveStake),
+        (total: BigNumber, delegation) => total.plus(delegation.userActiveStake),
         new BigNumber(0),
       ),
     [delegationsResources],
@@ -163,16 +157,8 @@ const Summary = (props: SummaryPropsType) => {
    */
 
   return (
-    <ScrollView
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      style={styles.root}
-    >
-      <InfoModal
-        isOpened={data.length > 0}
-        onClose={onCloseModal}
-        data={data}
-      />
+    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.root}>
+      <InfoModal isOpened={data.length > 0} onClose={onCloseModal} data={data} />
 
       {items.map((item, index) => (
         <InfoItem
@@ -180,9 +166,7 @@ const Summary = (props: SummaryPropsType) => {
           title={t(item.title)}
           onPress={() => setData([item.modal])}
           isLast={index === items.length - 1}
-          value={
-            <CurrencyUnitValue unit={unit} value={new BigNumber(item.value)} />
-          }
+          value={<CurrencyUnitValue unit={unit} value={new BigNumber(item.value)} />}
         />
       ))}
     </ScrollView>

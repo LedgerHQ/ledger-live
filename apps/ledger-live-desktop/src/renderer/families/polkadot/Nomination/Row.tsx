@@ -117,6 +117,7 @@ export function Row({
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
         <Box mr={2}>
+          {/* @ts-expect-error issue in the underlying lib that unexpectedly have publicKey prop */}
           <PolkadotIdenticon address={address} size={24} />
         </Box>
         <ToolTip content={validator?.identity ? address : null}>
@@ -182,9 +183,10 @@ export function UnlockingRow({
   account,
   unlocking: { amount, completionDate },
 }: UnlockingRowProps) {
-  const date = useMemo(() => (completionDate ? moment(completionDate).fromNow() : "N/A"), [
-    completionDate,
-  ]);
+  const date = useMemo(
+    () => (completionDate ? moment(completionDate).fromNow() : "N/A"),
+    [completionDate],
+  );
   const isUnbonded = useMemo(() => moment(completionDate).isBefore(moment()), [completionDate]);
   const unit = getAccountUnit(account);
   const formattedAmount = useMemo(

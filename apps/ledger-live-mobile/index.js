@@ -102,6 +102,7 @@ const excludedErrorDescription = [
   "530 undefined",
   "524 undefined",
   "Missing or invalid topic field", // wallet connect issue
+  "Bad status on response: 503", // cryptoorg node
 ];
 
 if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {

@@ -1,9 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import {
-  DeviceModelId,
-  getDeviceModel,
-  identifyTargetId,
-} from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
 import { DeviceInfo } from "@ledgerhq/types-live";
@@ -29,10 +25,7 @@ const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
 // Empty hash data means we won't have information on the app.
 const emptyHashData = "0".repeat(64);
 
-const listApps = (
-  transport: Transport,
-  deviceInfo: DeviceInfo
-): Observable<ListAppsEvent> => {
+const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
   log("list-apps", "using new version");
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
@@ -44,7 +37,7 @@ const listApps = (
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
     getEnv("DEVICE_PROXY_MODEL");
 
-  return new Observable((o) => {
+  return new Observable(o => {
     let sub: Subscription;
     async function main() {
       const isDevMode = getEnv("MANAGER_DEV_MODE");
@@ -63,51 +56,42 @@ const listApps = (
       } else {
         // Fallback to original web-socket list apps
         log("hw", "using scriptrunner listapps");
-        installedAppHashesPromise = new Promise<ListAppResponse>(
-          (resolve, reject) => {
-            sub = ManagerAPI.listInstalledApps(transport, {
-              targetId: deviceInfo.targetId,
-              perso: "perso_11",
-            }).subscribe({
-              next: (e) => {
-                switch (e.type) {
-                  case "result":
-                    resolve(e.payload);
-                    break;
-                  case "device-permission-granted":
-                  case "device-permission-requested":
-                    o.next(e);
-                    break;
-                }
-              },
-              error: reject,
-            });
-          }
-        );
+        installedAppHashesPromise = new Promise<ListAppResponse>((resolve, reject) => {
+          sub = ManagerAPI.listInstalledApps(transport, {
+            targetId: deviceInfo.targetId,
+            perso: "perso_11",
+          }).subscribe({
+            next: e => {
+              switch (e.type) {
+                case "result":
+                  resolve(e.payload);
+                  break;
+                case "device-permission-granted":
+                case "device-permission-requested":
+                  o.next(e);
+                  break;
+              }
+            },
+            error: reject,
+          });
+        });
       }
 
-      const deviceVersionPromise = ManagerAPI.getDeviceVersion(
-        deviceInfo.targetId,
-        provider
+      const deviceVersionPromise = ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
+
+      const currentFirmwarePromise = deviceVersionPromise.then(deviceVersion =>
+        ManagerAPI.getCurrentFirmware({
+          deviceId: deviceVersion.id,
+          version: deviceInfo.version,
+          provider,
+        }),
       );
 
-      const currentFirmwarePromise = deviceVersionPromise.then(
-        (deviceVersion) =>
-          ManagerAPI.getCurrentFirmware({
-            deviceId: deviceVersion.id,
-            version: deviceInfo.version,
-            provider,
-          })
-      );
-
-      const latestFirmwarePromise = currentFirmwarePromise.then(
-        (currentFirmware) =>
-          manager
-            .getLatestFirmwareForDevice(deviceInfo)
-            .then((updateAvailable) => ({
-              ...currentFirmware,
-              updateAvailable,
-            }))
+      const latestFirmwarePromise = currentFirmwarePromise.then(currentFirmware =>
+        manager.getLatestFirmwareForDevice(deviceInfo).then(updateAvailable => ({
+          ...currentFirmware,
+          updateAvailable,
+        })),
       );
 
       const catalogForDevicesPromise = ManagerAPI.catalogForDevice({
@@ -117,34 +101,29 @@ const listApps = (
       });
 
       const sortedCryptoCurrenciesPromise = currenciesByMarketcap(
-        listCryptoCurrencies(isDevMode, true)
+        listCryptoCurrencies(isDevMode, true),
       );
 
-      const installedAppsPromise = installedAppHashesPromise.then((hashes) => {
+      const installedAppsPromise = installedAppHashesPromise.then(hashes => {
         // Empty HashData can come from apps that are not real apps (such as langauge packs)
         // or custom applications that have been sideloaded.
         const filteredHashes = hashes
           .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
           .map(({ hash }) => hash);
 
-        return filteredHashes.length
-          ? ManagerAPI.getAppsByHash(filteredHashes)
-          : [];
+        return filteredHashes.length ? ManagerAPI.getAppsByHash(filteredHashes) : [];
       });
 
-      const [
-        installedList,
-        catalogForDevice,
-        firmware,
-        sortedCryptoCurrencies,
-      ] = await Promise.all([
-        installedAppsPromise,
-        catalogForDevicesPromise,
-        latestFirmwarePromise,
-        sortedCryptoCurrenciesPromise,
-      ]);
+      const [installedList, catalogForDevice, firmware, sortedCryptoCurrencies] = await Promise.all(
+        [
+          installedAppsPromise,
+          catalogForDevicesPromise,
+          latestFirmwarePromise,
+          sortedCryptoCurrenciesPromise,
+        ],
+      );
 
-      catalogForDevice.forEach((app) => {
+      catalogForDevice.forEach(app => {
         const crypto = app.currencyId && findCryptoCurrencyById(app.currencyId);
         if (crypto) {
           app.indexOfMarketCap = sortedCryptoCurrencies.indexOf(crypto);
@@ -170,9 +149,7 @@ const listApps = (
         const updated = ignoreUpdate || !updateAvailable;
         const availableVersion = appInCatalog?.version || "";
 
-        const blocks = Math.ceil(
-          (bytes || appInCatalog.bytes || 0) / bytesPerBlock
-        );
+        const blocks = Math.ceil((bytes || appInCatalog.bytes || 0) / bytesPerBlock);
 
         return {
           name,
@@ -186,10 +163,7 @@ const listApps = (
 
       // Used to hide apps that are dev tools if user didn't opt-in.
       const appsListNames = catalogForDevice
-        .filter(
-          ({ isDevTools, name }) =>
-            isDevMode || !isDevTools || name in installedAppNames
-        )
+        .filter(({ isDevTools, name }) => isDevMode || !isDevTools || name in installedAppNames)
         .map(({ name }) => name);
 
       // Stax specific, account for the size of the CLS for the storage bar.
@@ -230,7 +204,7 @@ const listApps = (
       },
       function onrejected(e) {
         o.error(e);
-      }
+      },
     );
 
     return () => {

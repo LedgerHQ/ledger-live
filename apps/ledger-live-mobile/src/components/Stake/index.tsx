@@ -3,29 +3,21 @@ import { useMemo, useLayoutEffect, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
-import {
-  listCurrencies,
-  filterCurrencies,
-} from "@ledgerhq/live-common/currencies/helpers";
+import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import logger from "../../logger";
-import type {
-  StackNavigatorProps,
-  BaseComposite,
-} from "../RootNavigator/types/helpers";
+import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
 
-type Props = BaseComposite<
-  StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>
->;
+type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
 
 const StakeFlow = ({ route }: Props) => {
   const featureFlag = useFeature("stakePrograms");
   const currencies = route?.params?.currencies || featureFlag?.params?.list;
-  const navigation =
-    useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
+  const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
+  const parentRoute = route?.params?.parentRoute;
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
       currencies: currencies || [],
@@ -43,6 +35,7 @@ const StakeFlow = ({ route }: Props) => {
             account,
             parentAccount,
             colors: {},
+            parentRoute,
           })) ||
         [];
       const stakeFlow = familySpecificMainActions.find(
@@ -50,35 +43,16 @@ const StakeFlow = ({ route }: Props) => {
       )?.navigationParams;
       if (!stakeFlow) return null;
       const [name, options] = stakeFlow;
-
-      // TODO: Remove after Kiln stake implementation was be done
-      if (
-        account?.currency?.family === "ethereum" &&
-        name === NavigatorName.Base
-      ) {
-        navigation.navigate(name, {
-          screen: options.screen,
-          params: {
-            ...(options?.params || {}),
-            accountId: account?.id,
-            parentId: parentAccount?.id,
-          },
-        });
-      } else {
-        navigation.navigate(NavigatorName.Base, {
-          screen: name,
-          params: {
-            screen: options.screen,
-            params: {
-              ...(options?.params || {}),
-              account,
-              parentAccount,
-            },
-          },
-        });
-      }
+      navigation.navigate(name, {
+        screen: options?.screen,
+        params: {
+          ...(options?.params ?? {}),
+          account,
+          parentAccount,
+        },
+      });
     },
-    [navigation],
+    [navigation, parentRoute],
   );
   const onError = (error: Error) => {
     logger.critical(error);

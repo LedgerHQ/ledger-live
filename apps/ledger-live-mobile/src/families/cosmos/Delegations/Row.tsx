@@ -21,12 +21,7 @@ type Props = {
   isLast?: boolean;
 };
 
-export default function DelegationRow({
-  delegation,
-  currency,
-  onPress,
-  isLast = false,
-}: Props) {
+export default function DelegationRow({ delegation, currency, onPress, isLast = false }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { validator, validatorAddress, formattedAmount, amount } = delegation;
@@ -36,18 +31,14 @@ export default function DelegationRow({
       style={[
         styles.row,
         styles.wrapper,
-        !isLast
-          ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey }
-          : undefined,
+        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
       ]}
       onPress={() => onPress(delegation)}
     >
       <View style={[styles.icon]}>
         <ValidatorImage
           size={42}
-          isLedger={
-            validatorAddress === cryptoFactory(currency.id).ledgerValidator
-          }
+          isLedger={validatorAddress === cryptoFactory(currency.id).ledgerValidator}
           name={validator?.name ?? validatorAddress ?? ""}
         />
       </View>

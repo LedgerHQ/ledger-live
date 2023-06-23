@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { summarize } from "./summarize";
 describe("circular reference protection", () => {
   test("object circular reference", () => {
