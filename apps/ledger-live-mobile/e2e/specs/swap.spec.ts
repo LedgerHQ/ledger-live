@@ -15,9 +15,9 @@ describe("Swap", () => {
 
   it("should load the Swap page from the Transfer menu", async () => {
     await portfolioPage.waitForPortfolioPageToLoad();
+    loadLocalManifest();
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToSwapFromTransferMenu();
-    await loadLocalManifest();
   });
 
   it("should be able to select a different source account", async () => {

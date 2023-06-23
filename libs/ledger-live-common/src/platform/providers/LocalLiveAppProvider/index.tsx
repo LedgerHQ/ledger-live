@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useState,
   useCallback,
+  useEffect,
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
@@ -67,44 +68,36 @@ export function LocalLiveAppProvider({
 
     mockModeObserver.subscribe((message) => {
       if (message.type === "loadLocalManifest") {
-        // setMockedLocalLiveAppState([
-        //   ...mockedLocalLiveAppState,
-        //   message.payload,
-        // ]);
-        // eslint-disable-next-line no-console
         console.log(
           "Manifest to add:",
           JSON.stringify(message.payload, null, 2)
         );
         addLocalManifest(message.payload);
-
-        // setTimeout(() => {
-        //   setKey(key + 1);
-        //   // eslint-disable-next-line no-console
-        //   console.log(liveAppContext.state);
-        // }, 100);
       }
     });
   }
 
-  const addLocalManifest = useCallback((newManifest: LiveAppManifest) => {
-    setState((oldState) => {
-      // eslint-disable-next-line no-console
-      console.log("Here we go: ADDING MANIFEST", newManifest);
-      const liveAppByIndex = oldState.liveAppByIndex.filter(
-        (manifest) => manifest.id !== newManifest.id
-      );
+  const addLocalManifest = useCallback(
+    (newManifest: LiveAppManifest) => {
+      setState((oldState) => {
+        // eslint-disable-next-line no-console
+        console.log("Here we go: ADDING MANIFEST", newManifest);
+        const liveAppByIndex = oldState.liveAppByIndex.filter(
+          (manifest) => manifest.id !== newManifest.id
+        );
 
-      liveAppByIndex.push(newManifest);
-      return {
-        liveAppById: {
-          ...oldState.liveAppById,
-          [newManifest.id]: newManifest,
-        },
-        liveAppByIndex,
-      };
-    });
-  }, []);
+        liveAppByIndex.push(newManifest);
+        return {
+          liveAppById: {
+            ...oldState.liveAppById,
+            [newManifest.id]: newManifest,
+          },
+          liveAppByIndex,
+        };
+      });
+    },
+    [state]
+  );
 
   const removeLocalManifestById = useCallback((manifestId: string) => {
     setState((oldState) => {
@@ -124,6 +117,10 @@ export function LocalLiveAppProvider({
       };
     });
   }, []);
+
+  useEffect(() => {
+    console.log({ state });
+  }, [state]);
 
   const value: LiveAppContextType = useMemo(
     () => ({

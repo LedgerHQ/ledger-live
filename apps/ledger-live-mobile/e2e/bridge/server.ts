@@ -81,7 +81,8 @@ export function openNano() {
 }
 
 // in future pass the manifest in as an argument
-export async function loadLocalManifest(): Promise<void> {
+export function loadLocalManifest(): void {
+  console.log("passing in manifest");
   const manifest = getTestManifest();
   postMessage({ type: "loadLocalManifest", payload: manifest });
 }

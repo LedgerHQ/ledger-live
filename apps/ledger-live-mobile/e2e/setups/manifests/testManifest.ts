@@ -4,7 +4,7 @@ export function getTestManifest(): LiveAppManifest {
   return {
     id: "multibuy",
     name: "Test App",
-    url: "http://localhost:3000?sandboxMode=true",
+    url: "http://localhost:3000",
     homepageUrl: "https://dev.ledger.com",
     platforms: ["ios", "android", "desktop"],
     apiVersion: "0.0.1",
