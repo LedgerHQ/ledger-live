@@ -283,3 +283,8 @@ export const urls = {
   },
   howToUpdateNewLedger: "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
 };
+
+
+export const vaultSigner = {
+  help: "https://help.vault.ledger.com/developer-portal/content/signer/overview"
+}
