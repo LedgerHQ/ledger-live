@@ -12,7 +12,7 @@
     }
   ],
   "prConcurrentLimit": 10,
-  "schedule": ["before 9am every monday"],
+  "schedule": ["before 9am every weekday"],
   "separateMinorPatch": true,
   "timezone": "Europe/Paris"
 }
