@@ -31,8 +31,6 @@ import {
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   onboardingHasDeviceSelector,
-  readOnlyModeEnabledSelector,
-  hasOrderedNanoSelector,
   notificationsSelector,
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
@@ -212,14 +210,8 @@ export function getIsTracking(
   mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
-  const hasOrderedNano = state && hasOrderedNanoSelector(state);
   const analyticsEnabled = state && analyticsEnabledSelector(state);
-  if (readOnlyMode && hasOrderedNano)
-    return {
-      enabled: true,
-      //reason: "not tracking anything in the reborn state post purchase pre device setup",
-    };
+
   if (!mandatory && !analyticsEnabled) {
     return {
       enabled: false,
