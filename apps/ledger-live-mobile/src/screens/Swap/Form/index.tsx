@@ -332,7 +332,6 @@ export function SwapForm({
 
   const onSubmit = useCallback(() => {
     if (!exchangeRate) return;
-
     const { provider, providerURL, providerType } = exchangeRate;
     track(
       "button_clicked",
@@ -352,7 +351,6 @@ export function SwapForm({
         provider,
         providerURL: providerURL || undefined,
       };
-      const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
       const getAccountId = ({
         accountId,
         provider,
@@ -425,15 +423,17 @@ export function SwapForm({
       }
     }
 
-    if (params?.rate) {
-      setExchangeRate(params.rate);
-    }
-
     if (params?.transaction) {
       swapTransaction.setTransaction(params.transaction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
+
+  useEffect(() => {
+    if (params?.rate) {
+      setExchangeRate(params.rate);
+    }
+  }, [params, swapTransaction]);
 
   const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");

@@ -14,16 +14,14 @@ import { TrackScreen, useAnalytics } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { sharedSwapTracking, SWAP_VERSION } from "../utils";
 
-export function SelectProvider({
-  navigation,
-  route: {
+export function SelectProvider({ navigation, route }: SelectProviderParamList) {
+  const {
     params: {
       provider,
       swap: { from, to, rates },
       selectedRate,
     },
-  },
-}: SelectProviderParamList) {
+  } = route;
   const { track } = useAnalytics();
   const { t } = useTranslation();
   const fromUnit = useMemo(() => from.account && getAccountUnit(from.account), [from.account]);
@@ -38,7 +36,10 @@ export function SelectProvider({
         totalPartners: rates.value?.length ?? "missing",
       });
       // @ts-expect-error navigation type is only partially declared
-      navigation.navigate(ScreenName.SwapForm, { rate });
+      navigation.navigate(ScreenName.SwapForm, {
+        ...route.params,
+        rate,
+      });
     },
     [navigation, track, selectedRate, rates],
   );
