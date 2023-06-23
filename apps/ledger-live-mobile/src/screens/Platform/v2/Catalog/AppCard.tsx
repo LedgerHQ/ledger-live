@@ -63,7 +63,11 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
 
   const url = useMemo(() => manifest.homepageUrl, [manifest.homepageUrl]);
   return (
-    <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
+    <TouchableOpacity
+      disabled={isDisabled}
+      onPress={handlePress}
+      testID={`${manifest.id}-app-card`}
+    >
       <View style={[styles.wrapper]}>
         <AppIcon isDisabled={isDisabled} size={52} name={manifest.name} icon={manifest.icon} />
         <View style={styles.content}>

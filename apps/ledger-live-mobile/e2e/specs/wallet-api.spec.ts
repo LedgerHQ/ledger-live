@@ -2,9 +2,11 @@ import { loadConfig, loadLocalManifest } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import { delay } from "../helpers";
 import * as server from "../../../ledger-live-desktop/tests/utils/serve-dummy-app";
-import { setEnv } from "@ledgerhq/live-common/env";
+import discoveryPage from "../models/discovery/discoveryPage";
+import DiscoveryPage from "../models/discovery/discoveryPage";
 
 let portfolioPage: PortfolioPage;
+let discoverPage: DiscoveryPage;
 
 describe("Swap", () => {
   // let continueTest = false;
@@ -53,25 +55,7 @@ describe("Swap", () => {
       // console.info(
       // `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
       // );
-      setEnv(
-        "MOCK_REMOTE_LIVE_MANIFEST",
-        JSON.stringify(
-          server.liveAppManifest({
-            id: "dummy-live-app",
-            url,
-            name: "Dummy Wallet API Live App",
-            apiVersion: "2.0.0",
-            content: {
-              shortDescription: {
-                en: "App to test the Wallet API",
-              },
-              description: {
-                en: "App to test the Wallet API with Playwright",
-              },
-            },
-          }),
-        ),
-      );
+      // JSON
       // } else {
       //   throw new Error("Ping response != 200, got: " + response.status);
       // }
@@ -83,13 +67,23 @@ describe("Swap", () => {
     //start navigation
 
     portfolioPage = new PortfolioPage();
+    discoverPage = new DiscoveryPage();
 
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
     // loadLocalManifest();
   });
 
-  it("should load the Swap page from the Transfer menu", async () => {
+  it("should load LLM", async () => {
     await portfolioPage.waitForPortfolioPageToLoad();
+  });
+
+  it("should navigate to discover", async () => {
+    await portfolioPage.navigateToDiscoverTab();
+  });
+
+  it("should navigate to dummy app", async () => {
+    // await discoverPage.navigateToLiveApp("dummy-live-app");
+    await discoverPage.navigateToLiveApp("ramp");
     await delay(100000000);
   });
 });

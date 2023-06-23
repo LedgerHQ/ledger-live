@@ -84,6 +84,7 @@ export default function MainNavigator() {
           headerShown: false,
           unmountOnBlur: true,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
+          tabBarTestID: "portfolio-tab-button",
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -105,6 +106,7 @@ export default function MainNavigator() {
           tabBarIcon: props => (
             <TabIcon Icon={Icons.GraphGrowMedium} i18nKey="tabs.market" {...props} />
           ),
+          tabBarTestID: "market-tab-button",
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -134,6 +136,7 @@ export default function MainNavigator() {
           tabBarIcon: props => (
             <TabIcon Icon={Icons.PlanetMedium} i18nKey="tabs.discover" {...props} />
           ),
+          tabBarTestID: "discover-tab-button",
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -151,7 +154,7 @@ export default function MainNavigator() {
         component={ManagerNavigator}
         options={{
           tabBarIcon: props => <ManagerTabIcon {...props} />,
-          tabBarTestID: "TabBarManager",
+          tabBarTestID: "my-ledger-tab-button",
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
