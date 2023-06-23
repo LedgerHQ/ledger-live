@@ -61,12 +61,11 @@ export function LocalLiveAppProvider({
 }: LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<LiveAppRegistry>(initialState);
 
-  console.log("local live app provdier loaded");
-
   if (mockModeObserver) {
-    console.log("IN THE PLATFORM APP PROVIDER WRAPPER");
+    console.log("LOCAL LIVE APP PROVIDER NOW IN MOCK MODE");
 
     mockModeObserver.subscribe((message) => {
+      console.log("Message received");
       if (message.type === "loadLocalManifest") {
         console.log(
           "Manifest to add:",
@@ -117,10 +116,6 @@ export function LocalLiveAppProvider({
       };
     });
   }, []);
-
-  useEffect(() => {
-    console.log({ state });
-  }, [state]);
 
   const value: LiveAppContextType = useMemo(
     () => ({

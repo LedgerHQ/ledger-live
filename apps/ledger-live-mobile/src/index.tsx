@@ -274,18 +274,6 @@ export default class Root extends Component {
   onInitFinished = () => {
     if (Config.MOCK) {
       init();
-
-      // // e2eBridgeSubject.subscribe(message => {
-      // //   if (message.type === "loadLocalManifest") {
-      // //     // eslint-disable-next-line no-console
-      // //     console.log("Manifest to add:", message.payload);
-      // //     addLocalManifest(message);
-      // //   }
-      // // });
-      // const manifest = getTestManifest();
-      // console.log("Manifest to add:", manifest);
-      // // addLocalManifest(manifest);
-      // this.setState({ initialLocalManifest: manifest.payload });
     }
   };
 

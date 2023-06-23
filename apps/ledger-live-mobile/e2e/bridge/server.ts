@@ -22,10 +22,7 @@ export function close() {
   wss?.close();
 }
 
-export async function loadConfig(
-  fileName: string,
-  agreed: true = true,
-): Promise<void> {
+export function loadConfig(fileName: string, agreed: true = true): void {
   if (agreed) {
     acceptTerms();
   }

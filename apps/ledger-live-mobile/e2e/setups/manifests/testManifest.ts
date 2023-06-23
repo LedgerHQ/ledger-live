@@ -2,20 +2,20 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export function getTestManifest(): LiveAppManifest {
   return {
-    id: "multibuy",
-    name: "Test App",
+    id: "dummy-wallet-app",
+    name: "Dummy test App",
     url: "http://localhost:3000",
     homepageUrl: "https://dev.ledger.com",
     platforms: ["ios", "android", "desktop"],
-    apiVersion: "0.0.1",
+    apiVersion: "2.0.0",
     manifestVersion: "1",
-    branch: "stable",
+    branch: "debug",
     permissions: [
       {
         method: "*",
       },
     ],
-    domains: ["https://*"],
+    domains: ["http://*"],
     categories: ["tools"],
     currencies: "*",
     content: {
