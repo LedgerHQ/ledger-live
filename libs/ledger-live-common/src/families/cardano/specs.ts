@@ -11,6 +11,7 @@ import { mergeTokens } from "./logic";
 import { parseCurrencyUnit } from "../../currencies";
 import { SubAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { FIVE_MINUTES_IN_MS } from "../../date-time/constants";
 
 const maxAccounts = 5;
 const currency = getCryptoCurrencyById("cardano");
@@ -30,7 +31,7 @@ const cardano: AppSpec<Transaction> = {
   },
   minViableAmount: minBalanceRequired,
   genericDeviceAction: acceptTransaction,
-  testTimeout: 5 * 60 * 1000,
+  testTimeout: FIVE_MINUTES_IN_MS,
   mutations: [
     {
       testDestination: genericTestDestination,

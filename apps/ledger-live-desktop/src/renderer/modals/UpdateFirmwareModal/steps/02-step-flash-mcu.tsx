@@ -17,6 +17,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import Installing from "../Installing";
 import { Body as StepUpdatingBody } from "./02-step-updating";
 import { StepProps } from "..";
+import { FIVE_MINUTES_IN_MS } from "@ledgerhq/live-common/date-time/constants";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -88,7 +89,7 @@ const StepFlashMcu = ({
               () => true,
             )
       )
-        .pipe(timeout(5 * 60 * 1000))
+        .pipe(timeout(FIVE_MINUTES_IN_MS))
         .subscribe({
           next: setUpdatedDeviceInfo,
           complete: () => {

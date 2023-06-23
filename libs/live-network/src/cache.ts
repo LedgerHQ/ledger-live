@@ -1,4 +1,5 @@
 import LRU from "lru-cache";
+const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 
 export type CacheRes<A extends Array<any>, T> = {
   (...args: A): Promise<T>;
@@ -24,7 +25,7 @@ export const makeLRUCache = <A extends Array<any>, T>(
   keyExtractor: (...args: A) => string = () => "",
   lruOpts: LRU.Options<string, any> = {
     max: 100,
-    ttl: 5 * 60 * 1000,
+    ttl: FIVE_MINUTES_IN_MS,
   },
 ): CacheRes<A, T> => {
   // LRU-Cache is written in JS and do not enforce in its code the type checking.

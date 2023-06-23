@@ -11,8 +11,7 @@ import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { store } from "../src/context/LedgerStore";
 import type { FwUpdateBackgroundEvent } from "../src/reducers/types";
 import { addBackgroundEvent } from "../src/actions/appstate";
-
-const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+import { FIVE_MINUTES_IN_MS } from "@ledgerhq/live-common/date-time/constants";
 
 /**
  * This task is not able to touch UI, but it will allow us to complete tasks
@@ -86,7 +85,7 @@ const BackgroundRunnerService = async ({
           error: onError,
           complete: () => {
             emitEvent({ type: "confirmPin" });
-            waitForOnlineDevice(5 * 60 * 1000).subscribe({
+            waitForOnlineDevice(FIVE_MINUTES_IN_MS).subscribe({
               error: onError,
               next: updatedDeviceInfo =>
                 emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),

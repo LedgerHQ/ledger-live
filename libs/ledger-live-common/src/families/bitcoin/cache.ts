@@ -6,6 +6,7 @@ import getFeesForTransaction from "./js-getFeesForTransaction";
 import { isValidRecipient } from "./logic";
 import type { Transaction } from "./types";
 import { Currency, isTaprootAddress } from "./wallet-btc";
+import { FIVE_MINUTES_IN_MS } from "../../date-time/constants";
 
 const getCacheKeyForCalculateFees = ({ a, t }: { a: Account; t: Transaction }) =>
   `${a.id}_${a.blockHeight || 0}_${t.amount.toString()}_${String(t.useAllAmount)}_${t.recipient}_${
@@ -26,7 +27,7 @@ export const calculateFees = makeLRUCache(
       t: transaction,
     }),
   {
-    ttl: 5 * 60 * 1000, // 5 minutes
+    ttl: FIVE_MINUTES_IN_MS,
   },
 );
 

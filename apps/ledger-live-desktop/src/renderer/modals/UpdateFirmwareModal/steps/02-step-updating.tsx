@@ -12,6 +12,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import { StepProps } from "..";
+import { FIVE_MINUTES_IN_MS } from "@ledgerhq/live-common/date-time/constants";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -44,7 +45,7 @@ const StepUpdating = ({
             () => true,
           )
     )
-      .pipe(timeout(5 * 60 * 1000))
+      .pipe(timeout(FIVE_MINUTES_IN_MS))
       .subscribe({
         next: setUpdatedDeviceInfo,
         complete: () => {

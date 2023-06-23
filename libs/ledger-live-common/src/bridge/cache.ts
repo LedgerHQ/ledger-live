@@ -1,12 +1,14 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "./";
+import { FIVE_MINUTES_IN_MS } from "../date-time/constants";
+
 export type BridgeCacheSystem = {
   hydrateCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
   prepareCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
 };
 const defaultCacheStrategy = {
-  preloadMaxAge: 5 * 60 * 1000,
+  preloadMaxAge: FIVE_MINUTES_IN_MS,
 };
 export function makeBridgeCacheSystem({
   saveData,

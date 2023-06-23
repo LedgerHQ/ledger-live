@@ -14,6 +14,9 @@ type Env = typeof env;
 export type EnvName = keyof EnvDefs;
 export type EnvValue<Name extends EnvName> = $ElementType<Env, Name>;
 
+// TODO after moving reexport from @ledgerhq/live-common/date-time/constants
+const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+
 const intParser = (v: any): number | null | undefined => {
   if (!Number.isNaN(v)) return parseInt(v, 10);
 };
@@ -722,7 +725,7 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     desc: "Show a performance overlay on the app UI",
   },
   ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
-    def: 5 * 60 * 1000,
+    def: FIVE_MINUTES_IN_MS,
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },

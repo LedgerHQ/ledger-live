@@ -53,6 +53,7 @@ import type {
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
+import { FIVE_MINUTES_IN_MS } from "../date-time/constants";
 
 let appCandidates;
 const localCache = {};
@@ -601,7 +602,7 @@ export async function runOnAccount<T extends Transaction>({
     // wait the condition are good (operation confirmed)
     // test() is run over and over until either timeout is reach OR success
     const testBefore = now();
-    const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
+    const timeOut = mutation.testTimeout || spec.testTimeout || FIVE_MINUTES_IN_MS;
     const step = account => {
       const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(o => o.id === optimisticOperation.id);
