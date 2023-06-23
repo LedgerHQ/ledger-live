@@ -48,7 +48,7 @@ import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
-import { aggregateData } from "../logic/modelIdList";
+import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -119,7 +119,7 @@ const extraProperties = async (store: AppStore) => {
     sessionId,
     devicesCount: devices.length,
     modelIdQtyList: aggregateData(devices),
-    modelIdList: [...new Set(devices.map(d => d.modelId))],
+    modelIdList: getUniqueModelIdList(devices),
     onboardingHasDevice,
     ...(satisfaction
       ? {

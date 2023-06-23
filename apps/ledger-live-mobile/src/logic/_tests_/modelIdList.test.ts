@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { aggregateData } from "../modelIdList";
+import { aggregateData, getUniqueModelIdList } from "../modelIdList";
 
 const nanoS = {
   id: "nanoS1",
@@ -31,7 +31,7 @@ const stax = {
   modelId: DeviceModelId.stax,
 };
 
-describe("modelIdList", () => {
+describe("modelQtyIdList", () => {
   it("should excecute properly with one device model", () => {
     const data = aggregateData([nanoS, nanoX, stax]);
 
@@ -50,5 +50,19 @@ describe("modelIdList", () => {
       [DeviceModelId.nanoX]: 2,
       [DeviceModelId.stax]: 1,
     });
+  });
+});
+
+describe("modelIdList", () => {
+  it("should excecute properly with one device model", () => {
+    const data = getUniqueModelIdList([nanoS, nanoX, nanoS2]);
+
+    expect(data).toEqual([DeviceModelId.nanoS, DeviceModelId.nanoX]);
+  });
+
+  it("should excecute properly with multiple device model", () => {
+    const data = getUniqueModelIdList([nanoS, nanoX, stax, nanoS2, nanoX2]);
+
+    expect(data).toEqual([DeviceModelId.nanoS, DeviceModelId.nanoX, DeviceModelId.stax]);
   });
 });

@@ -13,3 +13,7 @@ export const aggregateData = (devices: DeviceLike[]) => {
 
   return Object.fromEntries(aggregatedData.entries());
 };
+
+export const getUniqueModelIdList = (devices: DeviceLike[]) => [
+  ...new Set(devices.map(d => d.modelId)),
+];
