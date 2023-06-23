@@ -8,6 +8,7 @@ import {
   deleteUserChainwatchAccounts,
 } from "@ledgerhq/live-common/transactionsAlerts/index";
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
+import { notificationsSelector } from "../reducers/settings";
 
 const TransactionsAlerts = () => {
   const featureTransactionsAlerts = useFeature<{
@@ -18,6 +19,7 @@ const TransactionsAlerts = () => {
   const supportedChains = featureTransactionsAlerts?.params?.networks || [];
   const supportedChainsIds = supportedChains.map((chain: ChainwatchNetwork) => chain.ledgerLiveId);
 
+  const notifications = useSelector(notificationsSelector);
   const accounts = useSelector(accountsSelector);
   const accountsFilteredBySupportedChains = useMemo(
     () => accounts.filter(account => supportedChainsIds.includes(account?.currency?.id)),
@@ -39,17 +41,17 @@ const TransactionsAlerts = () => {
   };
 
   useEffect(() => {
-    // If the FF is disabled we stop tracking all addresses for this user
-    if (!featureTransactionsAlerts?.enabled && chainwatchBaseUrl) {
+    // If the FF is disabled or if the transactionsAlerts toggle is turned off in the settings we stop tracking all addresses for this user
+    if ((!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) && chainwatchBaseUrl) {
       getOrCreateUser().then(({ user }) => {
         deleteUserChainwatchAccounts(user.id, chainwatchBaseUrl, supportedChains);
       });
       return;
     }
-  }, [featureTransactionsAlerts?.enabled, chainwatchBaseUrl]);
+  }, [featureTransactionsAlerts?.enabled, notifications.transactionsAlertsCategory, chainwatchBaseUrl]);
 
   useEffect(() => {
-    if (!featureTransactionsAlerts?.enabled || !chainwatchBaseUrl) return;
+    if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory || !chainwatchBaseUrl) return;
 
     const newAccounts = accountsFilteredBySupportedChains.filter(
       account => !refAccounts.current.find(refAccount => refAccount.id === account.id),
