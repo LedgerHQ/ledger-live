@@ -23,7 +23,7 @@ const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Acc
   return accountsByCurrencies;
 };
 
-const updateTransactionsAlertsAddresses = async (
+export const updateTransactionsAlertsAddresses = async (
   userId: string,
   chainwatchBaseUrl: string,
   supportedChains: ChainwatchNetwork[],
@@ -48,4 +48,17 @@ const updateTransactionsAlertsAddresses = async (
   }
 };
 
-export default updateTransactionsAlertsAddresses;
+export const deleteUserChainwatchAccounts = async (
+  userId: string,
+  chainwatchBaseUrl: string,
+  supportedChains: ChainwatchNetwork[],
+) => {
+  for (const supportedChain of supportedChains) {
+    const accountManager = new ChainwatchAccountManager(chainwatchBaseUrl, userId, supportedChain);
+
+    const chainwatchAccount = await accountManager.getChainwatchAccount();
+    if (chainwatchAccount) {
+      await accountManager.removeChainwatchAccount();
+    }
+  }
+};
