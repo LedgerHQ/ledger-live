@@ -38,7 +38,7 @@ const SafeFlex = styled(SafeAreaView)`
 `;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingPostWelcomeSelection>
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingWelcome>
 >;
 
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
