@@ -32,6 +32,17 @@ class ChainwatchAccountManager {
     }
   }
 
+  async removeChainwatchAccount() {
+    try {
+      await network({
+        method: "DELETE",
+        url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
+      });
+    } catch (err) {
+      console.error("err remove account", err);
+    }
+  }
+
   async registerNewChainwatchAccount() {
     try {
       await network({

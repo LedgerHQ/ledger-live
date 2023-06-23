@@ -3,7 +3,10 @@ import { useSelector } from "react-redux";
 import { accountsSelector } from "../reducers/accounts";
 import getOrCreateUser from "../user";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import updateTransactionsAlertsAddresses from "@ledgerhq/live-common/transactionsAlerts/index";
+import {
+  updateTransactionsAlertsAddresses,
+  deleteUserChainwatchAccounts,
+} from "@ledgerhq/live-common/transactionsAlerts/index";
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
 
 const TransactionsAlerts = () => {
@@ -23,18 +26,30 @@ const TransactionsAlerts = () => {
   const refAccounts = useRef<Account[]>([]);
 
   const syncTransactionsAlerts = async (newAccounts: Account[], removedAccounts: Account[]) => {
-    const { user } = await getOrCreateUser();
-    updateTransactionsAlertsAddresses(
-      user.id,
-      chainwatchBaseUrl,
-      supportedChains,
-      newAccounts,
-      removedAccounts,
-    );
+    if (chainwatchBaseUrl) {
+      const { user } = await getOrCreateUser();
+      updateTransactionsAlertsAddresses(
+        user.id,
+        chainwatchBaseUrl,
+        supportedChains,
+        newAccounts,
+        removedAccounts,
+      );
+    }
   };
 
   useEffect(() => {
-    if (!chainwatchBaseUrl) return;
+    // If the FF is disabled we stop tracking all addresses for this user
+    if (!featureTransactionsAlerts?.enabled && chainwatchBaseUrl) {
+      getOrCreateUser().then(({ user }) => {
+        deleteUserChainwatchAccounts(user.id, chainwatchBaseUrl, supportedChains);
+      });
+      return;
+    }
+  }, [featureTransactionsAlerts?.enabled, chainwatchBaseUrl]);
+
+  useEffect(() => {
+    if (!featureTransactionsAlerts?.enabled || !chainwatchBaseUrl) return;
 
     const newAccounts = accountsFilteredBySupportedChains.filter(
       account => !refAccounts.current.find(refAccount => refAccount.id === account.id),
@@ -48,7 +63,7 @@ const TransactionsAlerts = () => {
       syncTransactionsAlerts(newAccounts, removedAccounts);
     }
     refAccounts.current = accountsFilteredBySupportedChains;
-  }, [chainwatchBaseUrl, accountsFilteredBySupportedChains]);
+  }, [featureTransactionsAlerts?.enabled, chainwatchBaseUrl, accountsFilteredBySupportedChains]);
 
   return null;
 };
