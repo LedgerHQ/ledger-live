@@ -335,11 +335,17 @@ const NftViewer = ({ route }: Props) => {
         data={notAvailableModalInfo(onCloseModal)}
       />
       <DesignedForStaxDrawer isOpen={isStaxDrawerOpen} onClose={handleStaxModalClose} />
-      {nftMetadata ? <NftViewerBackground scrollY={scrollY} src={nftMetadata.medias.preview.uri} /> : null}
+      {nftMetadata ? (
+        <NftViewerBackground scrollY={scrollY} src={nftMetadata.medias.preview.uri} />
+      ) : null}
       <Animated.ScrollView
-        onScroll={isFocused ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-          useNativeDriver: true,
-        }) : undefined}
+        onScroll={
+          isFocused
+            ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+                useNativeDriver: true,
+              })
+            : undefined
+        }
         contentContainerStyle={[
           styles.scrollView,
           {
@@ -351,7 +357,7 @@ const NftViewer = ({ route }: Props) => {
         <Box mx={6}>
           <Flex flexDirection={"row"} alignItems={"center"}>
             <View style={styles.currencyIcon}>
-              <CurrencyIcon circle color="#fff" currency={currency} size={16}  />
+              <CurrencyIcon circle color="#fff" currency={currency} size={16} />
             </View>
             <Skeleton
               height={"19px"}
@@ -501,7 +507,7 @@ const styles = StyleSheet.create({
     paddingBottom: 64,
   },
   currencyIcon: {
-    marginRight: 5
+    marginRight: 5,
   },
   imageContainer: {
     ...Platform.select({
