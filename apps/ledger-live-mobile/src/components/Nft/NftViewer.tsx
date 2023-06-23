@@ -1,13 +1,13 @@
-import React, { useMemo, useState, useCallback, useEffect, ReactNode } from "react";
+import React, { useMemo, useState, useCallback, useEffect, ReactNode, useRef } from "react";
 
 import {
-  ScrollView,
   View,
   StyleSheet,
   Platform,
   TouchableOpacity,
   StyleProp,
   ViewStyle,
+  Animated,
 } from "react-native";
 import {
   useNftMetadata,
@@ -32,6 +32,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   CompositeNavigationProp,
   CompositeScreenProps,
+  useIsFocused,
   useNavigation,
 } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -61,6 +62,7 @@ import {
 import { setHasSeenStaxEnabledNftsPopup } from "../../actions/settings";
 import { useHeaderHeight } from "@react-navigation/elements";
 import NftViewerBackground from "./NftViewerBackground";
+import NftViewerScreenHeader from "./NftViewerScreenHeader";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -322,7 +324,8 @@ const NftViewer = ({ route }: Props) => {
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   const headerHeight = useHeaderHeight();
-
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const isFocused = useIsFocused();
   return (
     <>
       <TrackScreen category="NFT" />
@@ -332,7 +335,11 @@ const NftViewer = ({ route }: Props) => {
         data={notAvailableModalInfo(onCloseModal)}
       />
       <DesignedForStaxDrawer isOpen={isStaxDrawerOpen} onClose={handleStaxModalClose} />
-      <ScrollView
+      {nftMetadata ? <NftViewerBackground scrollY={scrollY} src={nftMetadata.medias.preview.uri} /> : null}
+      <Animated.ScrollView
+        onScroll={isFocused ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+          useNativeDriver: true,
+        }) : undefined}
         contentContainerStyle={[
           styles.scrollView,
           {
@@ -341,10 +348,11 @@ const NftViewer = ({ route }: Props) => {
         ]}
         testID={"nft-viewer-page-scrollview"}
       >
-        {nftMetadata ? <NftViewerBackground src={nftMetadata.medias.preview.uri} /> : null}
         <Box mx={6}>
           <Flex flexDirection={"row"} alignItems={"center"}>
-            <CurrencyIcon currency={currency} size={20} />
+            <View style={styles.currencyIcon}>
+              <CurrencyIcon circle color="#fff" currency={currency} size={16}  />
+            </View>
             <Skeleton
               height={"19px"}
               flex={1}
@@ -474,7 +482,7 @@ const NftViewer = ({ route }: Props) => {
             </TouchableOpacity>
           </>
         )}
-      </ScrollView>
+      </Animated.ScrollView>
       <NftLinksPanel
         nftMetadata={nftMetadata || undefined}
         links={nftMetadata?.links}
@@ -483,6 +491,7 @@ const NftViewer = ({ route }: Props) => {
         nftContract={nft.contract}
         nftId={nft.id}
       />
+      <NftViewerScreenHeader title={nftMetadata?.nftName || undefined} scrollY={scrollY} />
     </>
   );
 };
@@ -490,6 +499,9 @@ const NftViewer = ({ route }: Props) => {
 const styles = StyleSheet.create({
   scrollView: {
     paddingBottom: 64,
+  },
+  currencyIcon: {
+    marginRight: 5
   },
   imageContainer: {
     ...Platform.select({
