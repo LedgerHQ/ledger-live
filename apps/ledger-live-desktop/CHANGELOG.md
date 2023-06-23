@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.10
+
+### Patch Changes
+
+- [#3710](https://github.com/LedgerHQ/ledger-live/pull/3710) [`7b42461191`](https://github.com/LedgerHQ/ledger-live/commit/7b424611914563dd0281e0dc9500903cdcb2878e) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Display dappUrl instead of url when the live app is dapp.
+
 ## 2.62.0-nightly.9
 
 ### Patch Changes

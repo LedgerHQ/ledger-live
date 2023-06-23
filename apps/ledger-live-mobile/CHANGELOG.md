@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.24.1-nightly.10
+
+### Patch Changes
+
+- [#3570](https://github.com/LedgerHQ/ledger-live/pull/3570) [`c50592bd22`](https://github.com/LedgerHQ/ledger-live/commit/c50592bd22a8c8a4fe026b83e2207c670ab38a1f) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix potential USB-only restriction bypass for firmware update on unsupported devices.
+
 ## 3.24.1-nightly.9
 
 ### Patch Changes
