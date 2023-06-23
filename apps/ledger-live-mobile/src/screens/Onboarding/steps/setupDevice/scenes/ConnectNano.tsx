@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -17,7 +17,6 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../../../../actions/settings";
-import { readOnlyModeEnabledSelector } from "../../../../../reducers/settings";
 
 const action = createAction(connectManager);
 
@@ -29,7 +28,6 @@ const ConnectNanoScene = ({
   deviceModelId: string;
 }) => {
   const dispatch = useDispatch();
-  const readOnlyMode = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
