@@ -17,6 +17,7 @@
     "sortBy": "Sort by",
     "signOut": "Sign out",
     "search": "Search",
+    "searchProvider": "Search for a provider...",
     "contactUs": "Contact Ledger Support",
     "device": "Device",
     "cryptoAsset": "Crypto asset",
@@ -4094,16 +4095,16 @@
       "flash": "Flashing your device",
       "preparing": "Preparing update",
       "firmware": "Downloading update",
-      "prepareUpdate":  {
+      "prepareUpdate": {
         "titleActive": "Preparing update for install",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
       },
-      "installUpdate":  {
+      "installUpdate": {
         "titleInactive": "Install update",
         "titleActive": "Installing update",
         "description": "{{deviceName}} will restart multiple times.\n\nAfter installation is finished on your {{deviceName}}, unlock your device to complete installation"
       },
-      "restoreSettings":  {
+      "restoreSettings": {
         "titleInactive": "Restore apps and settings",
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",
@@ -5802,7 +5803,7 @@
   },
   "browseWeb3": {
     "catalog": {
-      "title": "Browse Web3",
+      "title": "Discover",
       "subtitle": "Explore Web3 fully integrated with Ledger",
       "section": {
         "recentlyUsed": "Recently Used",

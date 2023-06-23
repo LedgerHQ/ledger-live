@@ -4,6 +4,7 @@ import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
@@ -45,6 +46,7 @@ const currencyBalanceBigNumber = BigNumber(0);
 const accounts: AccountLike[] = [];
 
 const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
+  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const currency = route?.params?.currency;
   const { colors } = useTheme();
@@ -73,7 +75,11 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty
         />
       </Flex>,
-      currency.ticker === "BTC" ? <ReferralProgram /> : null,
+      featureReferralProgramMobile?.enabled &&
+      featureReferralProgramMobile?.params?.path &&
+      currency.ticker === "BTC" ? (
+        <ReferralProgram />
+      ) : null,
       <SectionContainer px={6} isFirst>
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions currency={currency} />
