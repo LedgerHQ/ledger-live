@@ -14,7 +14,6 @@ import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwar
 import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
 import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
 import { BatteryStatusFlags } from "@ledgerhq/types-devices";
-import { log } from "@ledgerhq/logs";
 
 import { ScreenName, NavigatorName } from "../const";
 import {
@@ -28,6 +27,7 @@ import QueuedDrawer from "./QueuedDrawer";
 import InvertTheme from "./theme/InvertTheme";
 import { urls } from "../config/urls";
 import { renderConnectYourDevice } from "./DeviceAction/rendering";
+import { DeviceActionError } from "./DeviceAction/common";
 
 type FirmwareUpdateBannerProps = {
   onBackFromUpdate?: () => void;
@@ -106,17 +106,10 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     statuses: requiredBatteryStatuses,
   });
 
-  // TODO: to remove this, it is temporary for debugging
-  useEffect(() => {
-    if (batteryStatusesState.error) {
-      log("error", "error when retrieving the battery statuses", batteryStatusesState.error);
-    }
-  }, [batteryStatusesState.error]);
-
   // Effect that will check the battery of stax before triggering the update and display a warning preventing the update
   // in case the battery is too low and the device is not charging
   useEffect(() => {
-    if (batteryRequestCompleted) {
+    if (batteryRequestCompleted && batteryStatusesState.error === null) {
       const [percentage, statusFlags] = batteryStatusesState.batteryStatuses as [
         number,
         BatteryStatusFlags,
@@ -128,7 +121,12 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
 
       setDisableUpdateButton(false);
     }
-  }, [batteryRequestCompleted, batteryStatusesState.batteryStatuses, onExperimentalFirmwareUpdate]);
+  }, [
+    batteryRequestCompleted,
+    batteryStatusesState.batteryStatuses,
+    batteryStatusesState.error,
+    onExperimentalFirmwareUpdate,
+  ]);
 
   const showBanner = Boolean(latestFirmware);
   const version = latestFirmware?.final?.name ?? "";
@@ -287,9 +285,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
       </QueuedDrawer>
       <QueuedDrawer
         isRequestingToBeOpened={
-          batteryStatusesState.error?.message === "DisconnectedDevice" ||
-          batteryStatusesState.error?.name === "TimeoutError" ||
-          batteryStatusesState.lockedDevice
+          batteryStatusesState.error !== null || batteryStatusesState.lockedDevice
         }
         onClose={() => {
           cancelBatteryCheck();
@@ -298,12 +294,22 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
       >
         {lastConnectedDevice && (
           <Flex alignItems="center" justifyContent="center" px={1}>
-            {renderConnectYourDevice({
-              t,
-              device: lastConnectedDevice,
-              theme,
-              fullScreen: false,
-            })}
+            {batteryStatusesState.error?.name === "CantOpenDevice" ||
+            batteryStatusesState.lockedDevice ? (
+              renderConnectYourDevice({
+                t,
+                device: lastConnectedDevice,
+                theme,
+                fullScreen: false,
+              })
+            ) : (
+              <DeviceActionError
+                device={lastConnectedDevice}
+                t={t}
+                errorName={batteryStatusesState.error?.name ?? "BatteryStatusNotRetrieved"}
+                translationContext="FirmwareUpdate.batteryStatusErrors"
+              />
+            )}
           </Flex>
         )}
       </QueuedDrawer>
