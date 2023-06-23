@@ -69,7 +69,9 @@ const AccountCard = ({
               flexShrink={1}
             >
               {account.type === "TokenAccount"
-                ? `${parentAccount!.name} (${currency.ticker})`
+                ? parentAccount
+                  ? `${parentAccount!.name} (${currency.ticker})`
+                  : currency.ticker
                 : account.name}
             </Text>
             {AccountSubTitle}

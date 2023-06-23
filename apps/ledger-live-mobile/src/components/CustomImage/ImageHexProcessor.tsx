@@ -4,7 +4,7 @@ import { WebView } from "react-native-webview";
 import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
-import { injectedCode } from "./injectedCode/resultDataTesting";
+import { injectedCode } from "./injectedCode/imageHexToBase64Processing";
 import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
 
 export type Props = ProcessorRawResult & {
@@ -27,7 +27,7 @@ export type Props = ProcessorRawResult & {
  * it as it gives access to some web APIs (Canvas & Image) to do the processing.
  *
  * */
-export default class ResultDataTester extends React.Component<Props> {
+export default class ImageHexProcessor extends React.Component<Props> {
   webViewRef: WebView | null = null;
 
   componentDidUpdate(prevProps: Props) {
@@ -97,7 +97,7 @@ export default class ResultDataTester extends React.Component<Props> {
         <InjectedCodeDebugger
           debug={debug}
           injectedCode={injectedCode}
-          filename="resultDataTesting.ts"
+          filename="imageHexToBase64Processing.ts"
         />
         <Flex flex={0}>
           <WebView

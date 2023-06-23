@@ -71,7 +71,8 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("should open My Ledger page and add a device", async () => {
+  //FIXME Fix device action mocks B2CQA-1834
+  it.skip("should open My Ledger page and add a device", async () => {
     await managerPage.openViaDeeplink();
     await managerPage.expectManagerPage();
     await managerPage.addDevice(deviceName);
@@ -116,7 +117,8 @@ describe("DeepLinks Tests", () => {
     await swapFormPage.expectSwapFormPage();
   });
 
-  it("should open Send pages", async () => {
+  //FIXME Fix device action mocks B2CQA-1834
+  it.skip("should open Send pages", async () => {
     await sendPage.openViaDeeplink();
     await expect(sendPage.getStep1HeaderTitle()).toBeVisible();
     await portfolioPage.openViaDeeplink();
@@ -126,7 +128,8 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.openViaDeeplink();
   });
 
-  it("should open Receive pages", async () => {
+  //FIXME Fix device action mocks B2CQA-1834
+  it.skip("should open Receive pages", async () => {
     await receivePage.openViaDeeplink();
     await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
     await portfolioPage.openViaDeeplink();
