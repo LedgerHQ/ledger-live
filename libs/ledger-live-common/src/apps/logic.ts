@@ -191,7 +191,12 @@ export const reducer = (state: State, action: Action): State => {
 
     case "recover":
       return { ...state, currentError: null };
-
+    case "wiped":
+      // Reconciliate an already achieved wipe via single uninstall apdu
+      return {
+        ...state,
+        installed: [],
+      };
     case "wipe":
       return {
         ...state,

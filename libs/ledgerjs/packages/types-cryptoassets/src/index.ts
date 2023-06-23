@@ -263,6 +263,7 @@ export type CryptoCurrency = CurrencyCommon & {
       uri: string;
       type: "etherscan" | "blockscout";
     };
+    gasTracker?: { uri: string; type: "ledger" };
   };
   explorerViews: ExplorerView[];
   terminated?: {

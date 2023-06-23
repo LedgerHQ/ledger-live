@@ -85,6 +85,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
+  // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
     setToggleOnboardingEarlyCheckType("exit");
   }, []);
@@ -151,6 +152,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     };
   }, [allowedError]);
 
+  // Handles onboarding early check toggle result
   useEffect(() => {
     if (toggleOnboardingEarlyCheckState.toggleStatus === "none") return;
 

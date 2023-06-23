@@ -21,7 +21,7 @@ import {
   hasCompletedOnboardingSelector,
   lastConnectedDeviceSelector,
 } from "../reducers/settings";
-import { getWiredDeviceSelector, hasConnectedDeviceSelector } from "../reducers/appstate";
+import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import QueuedDrawer from "./QueuedDrawer";
 import InvertTheme from "./theme/InvertTheme";
@@ -33,7 +33,6 @@ type FirmwareUpdateBannerProps = {
 
 const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) => {
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
-  const wiredDevice = useSelector(getWiredDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
@@ -133,6 +132,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     lastSeenDevice &&
     isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, lastSeenDevice.modelId);
 
+  const wiredDevice = lastConnectedDevice?.wired === true;
+
   const usbFwUpdateActivated = Platform.OS === "android" && isUsbFwVersionUpdateSupported;
 
   const fwUpdateActivatedButNotWired = usbFwUpdateActivated && !wiredDevice;
@@ -190,7 +191,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
               <Button
                 flex={1}
                 outline
-                event="FirmwareUpdateBannerClick"
+                event="button_clicked"
+                eventProperties={{ button: "Learn more" }}
                 type="main"
                 title={t("common.learnMore")}
                 onPress={onOpenReleaseNotes}
@@ -198,7 +200,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
               <Button
                 ml={3}
                 flex={1}
-                event="FirmwareUpdateBannerClick"
+                event="button_clicked"
+                eventProperties={{ button: "Update" }}
                 type="main"
                 title={t("FirmwareUpdate.update")}
                 onPress={onClickUpdate}
@@ -218,7 +221,8 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
             </Text>
             <Button
               ml={5}
-              event="FirmwareUpdateBannerClick"
+              event="button_clicked"
+              eventProperties={{ button: "Update" }}
               type="color"
               title={t("FirmwareUpdate.update")}
               onPress={onClickUpdate}

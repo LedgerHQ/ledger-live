@@ -22,7 +22,7 @@ export function SearchBar({
           ref={inputRef}
           value={input}
           onChange={onChange}
-          placeholder={t("common.search")}
+          placeholder={t("common.searchProvider")}
           onFocus={onFocus}
         />
       </Flex>

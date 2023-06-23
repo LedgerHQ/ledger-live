@@ -163,6 +163,9 @@ export type Action = // recover from an error
     | {
         type: "onRunnerEvent";
         event: RunnerEvent;
+      }
+    | {
+        type: "wiped";
       };
 export type RunnerEvent =
   | {
