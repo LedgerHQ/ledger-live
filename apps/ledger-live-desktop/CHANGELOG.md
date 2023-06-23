@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-next.8
+
+### Patch Changes
+
+- [#3660](https://github.com/LedgerHQ/ledger-live/pull/3660) [`62b24ad1a5`](https://github.com/LedgerHQ/ledger-live/commit/62b24ad1a5be491a0180918f050938f24f3fc6d6) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix macOS release and update Windows signing key
+
 ## 2.62.0-next.7
 
 ### Minor Changes
