@@ -1,5 +1,22 @@
 # @ledgerhq/live-common
 
+## 31.2.0-nightly.0
+
+### Minor Changes
+
+- [#3686](https://github.com/LedgerHQ/ledger-live/pull/3686) [`e4bd3297cf`](https://github.com/LedgerHQ/ledger-live/commit/e4bd3297cf1064faa04935c2e35455e06ed88e9e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add pagination support for transaction history retrieved from cosmos nodes
+
+- [#3389](https://github.com/LedgerHQ/ledger-live/pull/3389) [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to address type 4 and general improvements
+
+- [#3389](https://github.com/LedgerHQ/ledger-live/pull/3389) [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - change tag values for alternative derivation schemes on filecoin
+
+- [#3742](https://github.com/LedgerHQ/ledger-live/pull/3742) [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d) Thanks [@sarneijim](https://github.com/sarneijim)! - fix errors in exchangeComplete
+
+### Patch Changes
+
+- Updated dependencies [[`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d)]:
+  - @ledgerhq/hw-app-exchange@0.2.0-nightly.0
+
 ## 31.1.0
 
 ### Minor Changes

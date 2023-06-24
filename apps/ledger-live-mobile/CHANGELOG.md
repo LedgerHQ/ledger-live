@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.26.0-nightly.0
+
+### Minor Changes
+
+- [#3682](https://github.com/LedgerHQ/ledger-live/pull/3682) [`4f77456c28`](https://github.com/LedgerHQ/ledger-live/commit/4f77456c2841972e924dd9cc667abca4f31771b4) Thanks [@RamyEB](https://github.com/RamyEB)! - rewording llm discoverv2
+
+### Patch Changes
+
+- [#3739](https://github.com/LedgerHQ/ledger-live/pull/3739) [`1d54060e13`](https://github.com/LedgerHQ/ledger-live/commit/1d54060e13c2d5e0e65e92c2563130119eb9b6ff) Thanks [@cksanders](https://github.com/cksanders)! - Fix flickering in header by removing buggy onLoadProgress hook
+
+- [#3777](https://github.com/LedgerHQ/ledger-live/pull/3777) [`2e025f84d1`](https://github.com/LedgerHQ/ledger-live/commit/2e025f84d18d21a5cf1b9af1f3574230e2cdcdbb) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - hide referral banner when feature flag is disabled
+
+- [#3780](https://github.com/LedgerHQ/ledger-live/pull/3780) [`edbe50ccff`](https://github.com/LedgerHQ/ledger-live/commit/edbe50ccffe4f569d408818707dc3311d77cbb25) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix crash on selecting from account in swap form
+
+- [#3739](https://github.com/LedgerHQ/ledger-live/pull/3739) [`1d54060e13`](https://github.com/LedgerHQ/ledger-live/commit/1d54060e13c2d5e0e65e92c2563130119eb9b6ff) Thanks [@cksanders](https://github.com/cksanders)! - Add loading spinner when navigating between web pages in WebPTXPLayer
+
+- Updated dependencies [[`e4bd3297cf`](https://github.com/LedgerHQ/ledger-live/commit/e4bd3297cf1064faa04935c2e35455e06ed88e9e), [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39), [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39), [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d)]:
+  - @ledgerhq/live-common@31.2.0-nightly.0
+
 ## 3.25.0
 
 ### Minor Changes

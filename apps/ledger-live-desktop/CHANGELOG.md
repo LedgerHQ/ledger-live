@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.63.0-nightly.0
+
+### Minor Changes
+
+- [#3742](https://github.com/LedgerHQ/ledger-live/pull/3742) [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swapWebApp
+
+### Patch Changes
+
+- [#3782](https://github.com/LedgerHQ/ledger-live/pull/3782) [`c62fbdf499`](https://github.com/LedgerHQ/ledger-live/commit/c62fbdf499e76b13a520ea5cc7fc3edf45b75f9c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove a duplicate of the date in DateCell due to a wrong rebase
+
+- Updated dependencies [[`e4bd3297cf`](https://github.com/LedgerHQ/ledger-live/commit/e4bd3297cf1064faa04935c2e35455e06ed88e9e), [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39), [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39), [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d)]:
+  - @ledgerhq/live-common@31.2.0-nightly.0
+
 ## 2.62.0
 
 ### Minor Changes
