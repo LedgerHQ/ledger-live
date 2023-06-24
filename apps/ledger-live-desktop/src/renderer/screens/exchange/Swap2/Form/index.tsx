@@ -53,6 +53,7 @@ import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import debounce from "lodash/debounce";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
@@ -66,7 +67,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -206,6 +207,33 @@ const SwapForm = () => {
       setIdleState(true);
     }, idleTime);
   }, [idleState]);
+  const swapWebAppRedirection = useCallback(() => {
+    const { to, from } = swapTransaction.swap;
+    const transaction = swapTransaction.transaction;
+    const { account: fromAccount, parentAccount: fromParentAccount } = from;
+    const { account: toAccount, parentAccount: toParentAccount } = to;
+    const feesStrategy = transaction?.feesStrategy;
+    const rateId = exchangeRate?.rateId || "1234";
+    if (fromAccount && toAccount && feesStrategy) {
+      const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+      const fromMagnitude =
+        (fromAccount as unknown as SwapSelectorStateType)?.currency?.units[0].magnitude || 0;
+      const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
+
+      history.push({
+        pathname: "/swap-web",
+        state: {
+          provider,
+          fromAccountId,
+          toAccountId,
+          fromAmount,
+          quoteId: encodeURIComponent(rateId),
+          feeStrategy: feesStrategy.toUpperCase(), // Custom fee is not supported yet
+        },
+      });
+    }
+  }, [history, swapTransaction, provider, exchangeRate?.rateId]);
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
@@ -381,6 +409,7 @@ const SwapForm = () => {
       targetCurrency: targetCurrency?.name,
       partner: provider,
     });
+
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
       const fromAccountId = from.parentAccount?.id || from.account?.id;
@@ -426,16 +455,21 @@ const SwapForm = () => {
         },
       });
     } else {
-      setDrawer(
-        ExchangeDrawer,
-        {
-          swapTransaction,
-          exchangeRate,
-        },
-        {
-          preventBackdropClick: true,
-        },
-      );
+      const swapWebApp = !!process.env.SWAP_WEB_APP;
+      if (swapWebApp) {
+        swapWebAppRedirection();
+      } else {
+        setDrawer(
+          ExchangeDrawer,
+          {
+            swapTransaction,
+            exchangeRate,
+          },
+          {
+            preventBackdropClick: true,
+          },
+        );
+      }
     }
   };
   const sourceAccount = swapTransaction.swap.from.account;

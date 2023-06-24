@@ -1,127 +1,139 @@
 # @ledgerhq/live-common
 
-## 31.1.0-nightly.6
-
-### Patch Changes
-
-- [#3752](https://github.com/LedgerHQ/ledger-live/pull/3752) [`e8b94aab79`](https://github.com/LedgerHQ/ledger-live/commit/e8b94aab79736d1ca4e81005ae9a8978e23cf0d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add support for "Fido U2F", "Security Key" on v2 listApps as well as maintaining the order of installation in the storage bar
-
-- Updated dependencies [[`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`abd673dc7c`](https://github.com/LedgerHQ/ledger-live/commit/abd673dc7c994ad7efc8dd3199995a99add677c6)]:
-  - @ledgerhq/cryptoassets@9.8.0-nightly.2
-  - @ledgerhq/coin-polkadot@0.2.0-nightly.5
-  - @ledgerhq/coin-algorand@0.2.2-nightly.5
-  - @ledgerhq/coin-evm@0.3.0-nightly.5
-  - @ledgerhq/coin-framework@0.3.6-nightly.5
-  - @ledgerhq/domain-service@1.1.4-nightly.4
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.4
-
-## 31.1.0-nightly.5
+## 31.1.0
 
 ### Minor Changes
 
-- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+- [#3497](https://github.com/LedgerHQ/ledger-live/pull/3497) [`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new toggleOnboardingEarlyCheckAction device action
 
-### Patch Changes
+  Introducing a new device action (implemented in the device SDK): toggleOnboardingEarlyCheckAction with
 
-- [#3741](https://github.com/LedgerHQ/ledger-live/pull/3741) [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update eip55 dependency
+  - its associated new command and task
+  - its associated new onboarding state
+  - a hook useToggleOnboardingEarlyCheck for simple usage on LLM and LLD
+  - unit tests
+  - its associated cli command deviceSDKToggleOnboardingEarlyCheck
 
-- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+  This new action uses a new APDU to enter and exit the "early security check" blocking step during the onboarding of Stax.
 
-- [#3741](https://github.com/LedgerHQ/ledger-live/pull/3741) [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update eip55 dependency to 2.1.1 fixing browser context usage
-
-- Updated dependencies [[`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a), [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc)]:
-  - @ledgerhq/domain-service@1.1.4-nightly.3
-  - @ledgerhq/coin-evm@0.3.0-nightly.4
-  - @ledgerhq/live-env@0.3.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.3
-  - @ledgerhq/coin-algorand@0.2.2-nightly.4
-  - @ledgerhq/coin-framework@0.3.6-nightly.4
-  - @ledgerhq/coin-polkadot@0.1.7-nightly.4
-  - @ledgerhq/live-network@1.1.1-nightly.1
-
-## 31.1.0-nightly.4
-
-### Minor Changes
-
-- [#3611](https://github.com/LedgerHQ/ledger-live/pull/3611) [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2) Thanks [@chabroA](https://github.com/chabroA)! - Create GasTracker abstraction for evm familly
-
-### Patch Changes
-
-- [#3628](https://github.com/LedgerHQ/ledger-live/pull/3628) [`42d99e6c65`](https://github.com/LedgerHQ/ledger-live/commit/42d99e6c659845b4893173af2ccbad4b098e2c15) Thanks [@grsoares21](https://github.com/grsoares21)! - Debounce device change events for longer than polling frequency on connect manager device action
-
-- Updated dependencies [[`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2)]:
-  - @ledgerhq/coin-evm@0.3.0-nightly.3
-  - @ledgerhq/coin-algorand@0.2.2-nightly.3
-  - @ledgerhq/coin-framework@0.3.6-nightly.3
-  - @ledgerhq/coin-polkadot@0.1.7-nightly.3
-  - @ledgerhq/domain-service@1.1.4-nightly.2
-  - @ledgerhq/cryptoassets@9.8.0-nightly.1
-
-## 31.1.0-nightly.3
-
-### Patch Changes
-
-- [#3661](https://github.com/LedgerHQ/ledger-live/pull/3661) [`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Logic implementation of the bulk uninstall apdu with test
-
-- Updated dependencies [[`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a)]:
-  - @ledgerhq/cryptoassets@9.8.0-nightly.1
-  - @ledgerhq/coin-algorand@0.2.2-nightly.2
-  - @ledgerhq/coin-evm@0.2.1-nightly.2
-  - @ledgerhq/coin-framework@0.3.6-nightly.2
-  - @ledgerhq/coin-polkadot@0.1.7-nightly.2
-  - @ledgerhq/domain-service@1.1.4-nightly.2
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.2
-
-## 31.1.0-nightly.2
-
-### Patch Changes
-
-- [#3657](https://github.com/LedgerHQ/ledger-live/pull/3657) [`88063df9d6`](https://github.com/LedgerHQ/ledger-live/commit/88063df9d6046c78c32258ea95cd527cda9214d5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Sanitize the bulk exchange payload from HSM before exchanging it with the device
-
-## 31.1.0-nightly.1
-
-### Minor Changes
+- [#3618](https://github.com/LedgerHQ/ledger-live/pull/3618) [`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1) Thanks [@jnwng](https://github.com/jnwng)! - Updated `@solana/web3.js`, enabled versioned transactions
 
 - [#3640](https://github.com/LedgerHQ/ledger-live/pull/3640) [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change unbonding period for onomy
 
 ### Patch Changes
 
-- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
-  - @ledgerhq/errors@6.12.7-nightly.0
-  - @ledgerhq/coin-algorand@0.2.2-nightly.1
-  - @ledgerhq/coin-evm@0.2.1-nightly.1
-  - @ledgerhq/coin-framework@0.3.6-nightly.1
-  - @ledgerhq/coin-polkadot@0.1.7-nightly.1
-  - @ledgerhq/domain-service@1.1.4-nightly.1
-  - @ledgerhq/devices@8.0.4-nightly.0
-  - @ledgerhq/hw-app-cosmos@6.28.2-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.1
-  - @ledgerhq/hw-app-exchange@0.1.3-nightly.0
-  - @ledgerhq/hw-app-near@6.27.11-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.27.16-nightly.0
-  - @ledgerhq/hw-app-solana@7.0.10-nightly.0
-  - @ledgerhq/hw-app-trx@6.27.16-nightly.0
-  - @ledgerhq/hw-transport@6.28.5-nightly.0
-  - @ledgerhq/hw-transport-node-speculos-http@6.27.16-nightly.0
-  - @ledgerhq/live-network@1.1.1-nightly.0
-  - @ledgerhq/hw-app-btc@10.0.5-nightly.0
-  - @ledgerhq/hw-app-str@6.27.16-nightly.0
-  - @ledgerhq/hw-app-tezos@6.27.16-nightly.0
-  - @ledgerhq/hw-app-xrp@6.27.16-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.16-nightly.0
+- [#3528](https://github.com/LedgerHQ/ledger-live/pull/3528) [`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve the image removal flow for Stax
 
-## 31.0.1-nightly.0
+- [#3329](https://github.com/LedgerHQ/ledger-live/pull/3329) [`b93f543a20`](https://github.com/LedgerHQ/ledger-live/commit/b93f543a207f35edbe25f3d609533120c9babbe1) Thanks [@loouis-t](https://github.com/loouis-t)! - Add icon for EUROC ERC20 token
+
+- [#3400](https://github.com/LedgerHQ/ledger-live/pull/3400) [`3cf4397b60`](https://github.com/LedgerHQ/ledger-live/commit/3cf4397b60a2da5c1ee92cff42e9f979e30ad489) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos rewards value
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
+- [#3542](https://github.com/LedgerHQ/ledger-live/pull/3542) [`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add fake delay before device action failures for better UX
+
+- [#3545](https://github.com/LedgerHQ/ledger-live/pull/3545) [`5bc987cd8f`](https://github.com/LedgerHQ/ledger-live/commit/5bc987cd8f850bb63e4ced62c28218d7c75744e8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a wallet-api message signature issue
+
+- [#3617](https://github.com/LedgerHQ/ledger-live/pull/3617) [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Adjusting the commission calculation for NEAR validators as the value from the API has changed.
+
+- [#3590](https://github.com/LedgerHQ/ledger-live/pull/3590) [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent endless loop in swap request
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47), [`895205e898`](https://github.com/LedgerHQ/ledger-live/commit/895205e8981612616d3147de9261d19051dbc0b2)]:
+  - @ledgerhq/errors@6.12.7
+  - @ledgerhq/cryptoassets@9.8.0
+  - @ledgerhq/coin-polkadot@0.2.0
+  - @ledgerhq/coin-algorand@0.2.2
+  - @ledgerhq/coin-evm@0.2.1
+  - @ledgerhq/coin-framework@0.3.6
+  - @ledgerhq/domain-service@1.1.4
+  - @ledgerhq/devices@8.0.4
+  - @ledgerhq/hw-app-cosmos@6.28.2
+  - @ledgerhq/hw-app-eth@6.33.6
+  - @ledgerhq/hw-app-exchange@0.1.3
+  - @ledgerhq/hw-app-near@6.27.11
+  - @ledgerhq/hw-app-polkadot@6.27.16
+  - @ledgerhq/hw-app-solana@7.0.10
+  - @ledgerhq/hw-app-trx@6.27.16
+  - @ledgerhq/hw-transport@6.28.5
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.16
+  - @ledgerhq/live-network@1.1.1
+  - @ledgerhq/live-portfolio@0.0.8
+  - @ledgerhq/hw-app-btc@10.0.5
+  - @ledgerhq/hw-app-str@6.27.16
+  - @ledgerhq/hw-app-tezos@6.27.16
+  - @ledgerhq/hw-app-xrp@6.27.16
+  - @ledgerhq/hw-transport-mocker@6.27.16
+
+## 31.1.0-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47)]:
-  - @ledgerhq/cryptoassets@9.8.0-nightly.0
-  - @ledgerhq/coin-algorand@0.2.2-nightly.0
-  - @ledgerhq/coin-evm@0.2.1-nightly.0
-  - @ledgerhq/coin-framework@0.3.6-nightly.0
-  - @ledgerhq/coin-polkadot@0.1.7-nightly.0
-  - @ledgerhq/domain-service@1.1.4-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.0
+- Updated dependencies [[`895205e898`](https://github.com/LedgerHQ/ledger-live/commit/895205e8981612616d3147de9261d19051dbc0b2)]:
+  - @ledgerhq/coin-polkadot@0.2.0-next.1
+
+## 31.1.0-next.0
+
+### Minor Changes
+
+- [#3497](https://github.com/LedgerHQ/ledger-live/pull/3497) [`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new toggleOnboardingEarlyCheckAction device action
+
+  Introducing a new device action (implemented in the device SDK): toggleOnboardingEarlyCheckAction with
+
+  - its associated new command and task
+  - its associated new onboarding state
+  - a hook useToggleOnboardingEarlyCheck for simple usage on LLM and LLD
+  - unit tests
+  - its associated cli command deviceSDKToggleOnboardingEarlyCheck
+
+  This new action uses a new APDU to enter and exit the "early security check" blocking step during the onboarding of Stax.
+
+- [#3618](https://github.com/LedgerHQ/ledger-live/pull/3618) [`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1) Thanks [@jnwng](https://github.com/jnwng)! - Updated `@solana/web3.js`, enabled versioned transactions
+
+- [#3640](https://github.com/LedgerHQ/ledger-live/pull/3640) [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change unbonding period for onomy
+
+### Patch Changes
+
+- [#3528](https://github.com/LedgerHQ/ledger-live/pull/3528) [`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve the image removal flow for Stax
+
+- [#3329](https://github.com/LedgerHQ/ledger-live/pull/3329) [`b93f543a20`](https://github.com/LedgerHQ/ledger-live/commit/b93f543a207f35edbe25f3d609533120c9babbe1) Thanks [@loouis-t](https://github.com/loouis-t)! - Add icon for EUROC ERC20 token
+
+- [#3400](https://github.com/LedgerHQ/ledger-live/pull/3400) [`3cf4397b60`](https://github.com/LedgerHQ/ledger-live/commit/3cf4397b60a2da5c1ee92cff42e9f979e30ad489) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos rewards value
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
+- [#3542](https://github.com/LedgerHQ/ledger-live/pull/3542) [`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add fake delay before device action failures for better UX
+
+- [#3545](https://github.com/LedgerHQ/ledger-live/pull/3545) [`5bc987cd8f`](https://github.com/LedgerHQ/ledger-live/commit/5bc987cd8f850bb63e4ced62c28218d7c75744e8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a wallet-api message signature issue
+
+- [#3617](https://github.com/LedgerHQ/ledger-live/pull/3617) [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Adjusting the commission calculation for NEAR validators as the value from the API has changed.
+
+- [#3590](https://github.com/LedgerHQ/ledger-live/pull/3590) [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent endless loop in swap request
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47)]:
+  - @ledgerhq/errors@6.12.7-next.0
+  - @ledgerhq/cryptoassets@9.8.0-next.0
+  - @ledgerhq/coin-algorand@0.2.2-next.0
+  - @ledgerhq/coin-evm@0.2.1-next.0
+  - @ledgerhq/coin-framework@0.3.6-next.0
+  - @ledgerhq/coin-polkadot@0.1.7-next.0
+  - @ledgerhq/domain-service@1.1.4-next.0
+  - @ledgerhq/devices@8.0.4-next.0
+  - @ledgerhq/hw-app-cosmos@6.28.2-next.0
+  - @ledgerhq/hw-app-eth@6.33.6-next.0
+  - @ledgerhq/hw-app-exchange@0.1.3-next.0
+  - @ledgerhq/hw-app-near@6.27.11-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.16-next.0
+  - @ledgerhq/hw-app-solana@7.0.10-next.0
+  - @ledgerhq/hw-app-trx@6.27.16-next.0
+  - @ledgerhq/hw-transport@6.28.5-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.16-next.0
+  - @ledgerhq/live-network@1.1.1-next.0
+  - @ledgerhq/live-portfolio@0.0.8-next.0
+  - @ledgerhq/hw-app-btc@10.0.5-next.0
+  - @ledgerhq/hw-app-str@6.27.16-next.0
+  - @ledgerhq/hw-app-tezos@6.27.16-next.0
+  - @ledgerhq/hw-app-xrp@6.27.16-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.16-next.0
 
 ## 31.0.0
 

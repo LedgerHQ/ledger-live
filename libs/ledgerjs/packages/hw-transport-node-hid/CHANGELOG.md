@@ -1,22 +1,24 @@
 # @ledgerhq/hw-transport-node-hid
 
-## 6.27.16-nightly.1
-
-### Patch Changes
-
-- [#3625](https://github.com/LedgerHQ/ledger-live/pull/3625) [`f37494ae0c`](https://github.com/LedgerHQ/ledger-live/commit/f37494ae0cb5a14a83969615d58466126704cb6d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumping `usb` to 2.9.0
-
-  For both `hw-transport-node-hid` and `hw-transport-node-hid-singleton`
-
-## 6.27.16-nightly.0
+## 6.27.16
 
 ### Patch Changes
 
 - Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
-  - @ledgerhq/errors@6.12.7-nightly.0
-  - @ledgerhq/devices@8.0.4-nightly.0
-  - @ledgerhq/hw-transport@6.28.5-nightly.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.16-nightly.0
+  - @ledgerhq/errors@6.12.7
+  - @ledgerhq/devices@8.0.4
+  - @ledgerhq/hw-transport@6.28.5
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.16
+
+## 6.27.16-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7-next.0
+  - @ledgerhq/devices@8.0.4-next.0
+  - @ledgerhq/hw-transport@6.28.5-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.27.16-next.0
 
 ## 6.27.15
 

@@ -49,7 +49,7 @@ export function Search({ title, disclaimer, search }: Props) {
         {t("browseWeb3.catalog.warnings.notFound")}
       </Text>
       <Text textAlign="center" variant="body" color="neutral.c70">
-        {input.match(HTTP_REGEX) ? (
+        {input.match(HTTP_REGEX) && (
           <Trans
             i18nKey="browseWeb3.catalog.warnings.retrySearchKeywordAndUrl"
             values={{
@@ -66,8 +66,6 @@ export function Search({ title, disclaimer, search }: Props) {
               ),
             }}
           />
-        ) : (
-          t("browseWeb3.category.warnings.retrySearchKeyword")
         )}
       </Text>
     </Flex>

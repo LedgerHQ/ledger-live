@@ -1,82 +1,47 @@
 # live-common-tools
 
-## 0.5.1-nightly.6
+## 0.5.1
 
 ### Patch Changes
 
-- Updated dependencies [[`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`e8b94aab79`](https://github.com/LedgerHQ/ledger-live/commit/e8b94aab79736d1ca4e81005ae9a8978e23cf0d5)]:
-  - @ledgerhq/cryptoassets@9.8.0-nightly.2
-  - @ledgerhq/live-common@31.1.0-nightly.6
-  - @ledgerhq/coin-framework@0.3.6-nightly.5
-  - @ledgerhq/domain-service@1.1.4-nightly.4
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.4
+- Updated dependencies [[`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492), [`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c), [`b93f543a20`](https://github.com/LedgerHQ/ledger-live/commit/b93f543a207f35edbe25f3d609533120c9babbe1), [`3cf4397b60`](https://github.com/LedgerHQ/ledger-live/commit/3cf4397b60a2da5c1ee92cff42e9f979e30ad489), [`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1), [`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5), [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241), [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7), [`5bc987cd8f`](https://github.com/LedgerHQ/ledger-live/commit/5bc987cd8f850bb63e4ced62c28218d7c75744e8), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47), [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb), [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2)]:
+  - @ledgerhq/live-common@31.1.0
+  - @ledgerhq/errors@6.12.7
+  - @ledgerhq/cryptoassets@9.8.0
+  - @ledgerhq/coin-framework@0.3.6
+  - @ledgerhq/domain-service@1.1.4
+  - @ledgerhq/devices@8.0.4
+  - @ledgerhq/hw-app-eth@6.33.6
+  - @ledgerhq/hw-transport@6.28.5
+  - @ledgerhq/hw-transport-http@6.27.16
+  - @ledgerhq/hw-transport-web-ble@6.27.16
+  - @ledgerhq/hw-transport-webhid@6.27.16
+  - @ledgerhq/hw-transport-webusb@6.27.16
 
-## 0.5.1-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc), [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a), [`6194db3178`](https://github.com/LedgerHQ/ledger-live/commit/6194db3178cf90b26f4f6c7f049b7eafafdf7bfc)]:
-  - @ledgerhq/live-common@31.1.0-nightly.5
-  - @ledgerhq/domain-service@1.1.4-nightly.3
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.3
-  - @ledgerhq/coin-framework@0.3.6-nightly.4
-
-## 0.5.1-nightly.4
+## 0.5.1-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`500e36a789`](https://github.com/LedgerHQ/ledger-live/commit/500e36a789b34125164433fbd03c00305669ee4d), [`42d99e6c65`](https://github.com/LedgerHQ/ledger-live/commit/42d99e6c659845b4893173af2ccbad4b098e2c15)]:
-  - @ledgerhq/live-common@31.1.0-nightly.4
-  - @ledgerhq/hw-transport-http@6.28.0-nightly.1
-  - @ledgerhq/coin-framework@0.3.6-nightly.3
-  - @ledgerhq/domain-service@1.1.4-nightly.2
-  - @ledgerhq/cryptoassets@9.8.0-nightly.1
+- Updated dependencies []:
+  - @ledgerhq/live-common@31.1.0-next.1
 
-## 0.5.1-nightly.3
+## 0.5.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a), [`ea8e24732f`](https://github.com/LedgerHQ/ledger-live/commit/ea8e24732f44a9315eb5a27077cd9d34b6c408b4)]:
-  - @ledgerhq/cryptoassets@9.8.0-nightly.1
-  - @ledgerhq/live-common@31.1.0-nightly.3
-  - @ledgerhq/coin-framework@0.3.6-nightly.2
-  - @ledgerhq/domain-service@1.1.4-nightly.2
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.2
-
-## 0.5.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`88063df9d6`](https://github.com/LedgerHQ/ledger-live/commit/88063df9d6046c78c32258ea95cd527cda9214d5)]:
-  - @ledgerhq/live-common@31.1.0-nightly.2
-
-## 0.5.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241)]:
-  - @ledgerhq/errors@6.12.7-nightly.0
-  - @ledgerhq/live-common@31.1.0-nightly.1
-  - @ledgerhq/coin-framework@0.3.6-nightly.1
-  - @ledgerhq/domain-service@1.1.4-nightly.1
-  - @ledgerhq/devices@8.0.4-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.1
-  - @ledgerhq/hw-transport@6.28.5-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.16-nightly.0
-  - @ledgerhq/hw-transport-web-ble@6.27.16-nightly.0
-  - @ledgerhq/hw-transport-webhid@6.27.16-nightly.0
-  - @ledgerhq/hw-transport-webusb@6.27.16-nightly.0
-
-## 0.5.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47)]:
-  - @ledgerhq/cryptoassets@9.8.0-nightly.0
-  - @ledgerhq/coin-framework@0.3.6-nightly.0
-  - @ledgerhq/domain-service@1.1.4-nightly.0
-  - @ledgerhq/live-common@31.0.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.6-nightly.0
+- Updated dependencies [[`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492), [`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c), [`b93f543a20`](https://github.com/LedgerHQ/ledger-live/commit/b93f543a207f35edbe25f3d609533120c9babbe1), [`3cf4397b60`](https://github.com/LedgerHQ/ledger-live/commit/3cf4397b60a2da5c1ee92cff42e9f979e30ad489), [`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1), [`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914), [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5), [`66fdfef314`](https://github.com/LedgerHQ/ledger-live/commit/66fdfef314b6dd63cfd74f00c579138b900ee241), [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7), [`5bc987cd8f`](https://github.com/LedgerHQ/ledger-live/commit/5bc987cd8f850bb63e4ced62c28218d7c75744e8), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47), [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb), [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2)]:
+  - @ledgerhq/live-common@31.1.0-next.0
+  - @ledgerhq/errors@6.12.7-next.0
+  - @ledgerhq/cryptoassets@9.8.0-next.0
+  - @ledgerhq/coin-framework@0.3.6-next.0
+  - @ledgerhq/domain-service@1.1.4-next.0
+  - @ledgerhq/devices@8.0.4-next.0
+  - @ledgerhq/hw-app-eth@6.33.6-next.0
+  - @ledgerhq/hw-transport@6.28.5-next.0
+  - @ledgerhq/hw-transport-http@6.27.16-next.0
+  - @ledgerhq/hw-transport-web-ble@6.27.16-next.0
+  - @ledgerhq/hw-transport-webhid@6.27.16-next.0
+  - @ledgerhq/hw-transport-webusb@6.27.16-next.0
 
 ## 0.5.0
 

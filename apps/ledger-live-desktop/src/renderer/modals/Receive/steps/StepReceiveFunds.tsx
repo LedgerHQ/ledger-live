@@ -215,7 +215,7 @@ const StepReceiveFunds = (props: StepProps) => {
         dispatch(
           openModal("MODAL_ETH_STAKE", {
             account: mainAccount,
-            checkbox: true,
+            hasCheckbox: true,
             singleProviderRedirectMode: false,
             source: "receive",
           }),
