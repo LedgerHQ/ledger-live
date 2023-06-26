@@ -27,6 +27,7 @@ export type BaseModalProps = {
   subtitle?: string;
   children?: React.ReactNode;
   noCloseButton?: boolean;
+  CustomHeader?: React.ComponentType;
 } & Partial<ModalProps>;
 
 const SafeContainer = styled.SafeAreaView`
@@ -49,6 +50,7 @@ const CloseContainer = styled.View`
   display: flex;
   align-items: flex-end;
   margin-bottom: ${(p) => p.theme.space[6]}px;
+  z-index: 10;
 `;
 
 const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
@@ -137,6 +139,7 @@ export default function BaseModal({
   subtitle,
   children,
   onModalHide,
+  CustomHeader,
   ...rest
 }: BaseModalProps): React.ReactElement {
   const backDropProps = preventBackdropClick
@@ -169,8 +172,13 @@ export default function BaseModal({
       style={[defaultModalStyle, modalStyle]}
     >
       <SafeContainer style={safeContainerStyle}>
+        {CustomHeader && (
+          <CustomHeader>
+            {!noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
+          </CustomHeader>
+        )}
         <Container style={containerStyle}>
-          {!noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
+          {!CustomHeader && !noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
           <ModalHeader
             Icon={Icon}
             iconColor={iconColor}

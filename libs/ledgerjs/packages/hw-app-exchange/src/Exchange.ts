@@ -24,14 +24,57 @@ const CHECK_ASSET_IN = 0x08;
 const CHECK_REFUND_ADDRESS = 0x09;
 const SIGN_COIN_TRANSACTION = 0x0a;
 
+const OkStatus = 0x9000;
+const ErrorStatus = {
+  INCORRECT_COMMAND_DATA: 0x6a80,
+  DESERIALIZATION_FAILED: 0x6a81,
+  WRONG_TRANSACTION_ID: 0x6a82,
+  INVALID_ADDRESS: 0x6a83,
+  USER_REFUSED: 0x6a84,
+  INTERNAL_ERROR: 0x6a85,
+  WRONG_P1: 0x6a86,
+  WRONG_P2: 0x6a87,
+  CLASS_NOT_SUPPORTED: 0x6e00,
+  INVALID_INSTRUCTION: 0x6d00,
+  SIGN_VERIFICATION_FAIL: 0x9d1a,
+} as const;
+
 const maybeThrowProtocolError = (result: Buffer): void => {
   invariant(result.length >= 2, "ExchangeTransport: Unexpected result length");
   const resultCode = result.readUInt16BE(result.length - 2);
 
-  if (resultCode !== 0x9000) {
+  if (resultCode !== OkStatus) {
     throw new TransportStatusError(resultCode);
   }
 };
+
+export function getExchageErrorMessage(errorCode: number): string | undefined {
+  switch (errorCode) {
+    case ErrorStatus.INCORRECT_COMMAND_DATA:
+      return "Incorrect command data";
+    case ErrorStatus.DESERIALIZATION_FAILED:
+      return "Payload deserialzation failed";
+    case ErrorStatus.WRONG_TRANSACTION_ID:
+      return "Wrond transaction id";
+    case ErrorStatus.INVALID_ADDRESS:
+      return "Invalid address";
+    case ErrorStatus.USER_REFUSED:
+      return "User refused";
+    case ErrorStatus.INTERNAL_ERROR:
+      return "Internal error";
+    case ErrorStatus.WRONG_P1:
+      return "Wrong P1";
+    case ErrorStatus.WRONG_P2:
+      return "Wrong P2";
+    case ErrorStatus.CLASS_NOT_SUPPORTED:
+      return "Class not supported";
+    case ErrorStatus.INVALID_INSTRUCTION:
+      return "Invalid instruction";
+    case ErrorStatus.SIGN_VERIFICATION_FAIL:
+      return "Signature verification failed";
+  }
+  return undefined;
+}
 
 export default class Exchange {
   transport: Transport;

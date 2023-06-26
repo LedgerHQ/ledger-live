@@ -1,9 +1,10 @@
 const platform = require("os").platform();
-const { notarize } = require("electron-notarize");
+const { notarize } = require("@electron/notarize");
 const chalk = require("chalk");
+const { spawn } = require("child_process");
 
 require("dotenv").config();
-require("debug").enable("electron-notarize");
+require("debug").enable("@electron/notarize");
 
 const info = str => {
   console.log(chalk.blue(str));
@@ -38,15 +39,25 @@ async function notarizeApp(context) {
       appleIdPassword: APPLEID_PASSWORD,
     });
   } else {
-    await notarize({
-      tool: "notarytool",
-      appBundleId: "com.ledger.live",
-      appPath: path,
-      ascProvider: "EpicDreamSAS",
-      appleId: APPLEID,
-      teamId: DEVELOPER_TEAM_ID,
-      appleIdPassword: APPLEID_PASSWORD,
-    });
+    try {
+      await notarize({
+        tool: "notarytool",
+        appBundleId: "com.ledger.live",
+        appPath: path,
+        ascProvider: "EpicDreamSAS",
+        appleId: APPLEID,
+        teamId: DEVELOPER_TEAM_ID,
+        appleIdPassword: APPLEID_PASSWORD,
+      });
+    } catch (error) {
+      // Issue with staple
+      // https://github.com/electron/notarize/issues/109#issuecomment-1213359106
+      if (error.message?.includes("Failed to staple")) {
+        spawn(`xcrun`, ["stapler", "staple", path]);
+      } else {
+        throw error;
+      }
+    }
   }
 }
 

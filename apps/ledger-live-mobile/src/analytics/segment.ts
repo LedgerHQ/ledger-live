@@ -30,10 +30,7 @@ import {
   localeSelector,
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
-  firstConnectionHasDeviceSelector,
-  firstConnectHasDeviceUpdatedSelector,
-  readOnlyModeEnabledSelector,
-  hasOrderedNanoSelector,
+  onboardingHasDeviceSelector,
   notificationsSelector,
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
@@ -49,6 +46,7 @@ import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
+import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -79,13 +77,12 @@ const extraProperties = async (store: AppStore) => {
         modelId: lastDevice.modelId,
       }
     : {};
-  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
   const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
-  const firstConnectHasDeviceUpdated = firstConnectHasDeviceUpdatedSelector(state);
   const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
@@ -119,8 +116,9 @@ const extraProperties = async (store: AppStore) => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
-    firstConnectionHasDevice,
-    firstConnectHasDeviceUpdated,
+    modelIdQtyList: aggregateData(devices),
+    modelIdList: getUniqueModelIdList(devices),
+    onboardingHasDevice,
     ...(satisfaction
       ? {
           satisfaction,
@@ -212,14 +210,8 @@ export function getIsTracking(
   mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
-  const hasOrderedNano = state && hasOrderedNanoSelector(state);
   const analyticsEnabled = state && analyticsEnabledSelector(state);
-  if (readOnlyMode && hasOrderedNano)
-    return {
-      enabled: false,
-      reason: "not tracking anything in the reborn state post purchase pre device setup",
-    };
+
   if (!mandatory && !analyticsEnabled) {
     return {
       enabled: false,
