@@ -56,7 +56,7 @@ class ChainwatchAccountManager {
   }
 
   getAccountAddress(account: Account) {
-    return account.freshAddresses.length > 0 && account.freshAddresses[0]?.address;
+    return account.freshAddress;
   }
 
   accountAlreadySubscribed(account: Account) {

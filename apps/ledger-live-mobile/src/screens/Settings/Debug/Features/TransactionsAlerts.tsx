@@ -33,22 +33,24 @@ export default function DebugTransactionsAlerts() {
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
   const supportedChains: ChainwatchNetwork[] = featureTransactionsAlerts?.params?.networks || [];
 
-  const [chainsData, setChainsData] = useState<Record<string, ChainwatchAccount>>({});
+  const [chainsData, setChainsData] = useState<Record<string, ChainwatchAccount | undefined>>({});
 
   useEffect(() => {
-    getOrCreateUser().then(({ user }) => {
-      getSupportedChainsAccounts(user.id, chainwatchBaseUrl, supportedChains).then(
-        (results: ChainwatchAccount[]) => {
-          const data: Record<string, ChainwatchAccount> = {};
-          for (let i = 0; i < results.length; i++) {
-            const chainId = supportedChains[i].ledgerLiveId;
-            data[chainId] = results[i];
-          }
-          setChainsData(data);
-        },
-      );
-    });
-  }, [supportedChains]);
+    if (chainwatchBaseUrl) {
+      getOrCreateUser().then(({ user }) => {
+        getSupportedChainsAccounts(user.id, chainwatchBaseUrl, supportedChains).then(
+          (results: (ChainwatchAccount | undefined)[]) => {
+            const data: Record<string, ChainwatchAccount | undefined> = {};
+            for (let i = 0; i < results.length; i++) {
+              const chainId = supportedChains[i].ledgerLiveId;
+              data[chainId] = results[i];
+            }
+            setChainsData(data);
+          },
+        );
+      });
+    }
+  }, [chainwatchBaseUrl, supportedChains]);
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
@@ -80,7 +82,7 @@ export default function DebugTransactionsAlerts() {
           <Divider />
           <Text my={3}>Supported chains :</Text>
           {Object.entries(chainsData).map(([chainId, chainData]) => (
-            <Flex mt={3}>
+            <Flex mt={3} key={chainId}>
               <Text fontWeight="bold">{chainId}</Text>
               <Flex mt={3} backgroundColor="neutral.c30" p={2}>
                 {chainData ? (
