@@ -7,7 +7,6 @@ import type {
   AppStateIsConnectedPayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
-  AppStateSetWiredDevicePayload,
   AppStateUpdateMainNavigatorVisibilityPayload,
 } from "./types";
 import { AppStateActionTypes } from "./types";
@@ -34,9 +33,6 @@ export const addBackgroundEvent = createAction<AppStateAddBackgroundEventPayload
   AppStateActionTypes.QUEUE_BACKGROUND_EVENT,
 );
 export const dequeueBackgroundEvent = createAction(AppStateActionTypes.DEQUEUE_BACKGROUND_EVENT);
-export const setWiredDevice = createAction<AppStateSetWiredDevicePayload>(
-  AppStateActionTypes.SET_WIRED_DEVICE,
-);
 export const clearBackgroundEvents = createAction(AppStateActionTypes.CLEAR_BACKGROUND_EVENTS);
 export const updateMainNavigatorVisibility =
   createAction<AppStateUpdateMainNavigatorVisibilityPayload>(

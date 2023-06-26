@@ -80,7 +80,6 @@ class DateCell extends PureComponent<Props> {
         ) : (
           <OperationDate date={operation.date} />
         )}
-        <OperationDate date={operation.date} />
       </Cell>
     );
   }

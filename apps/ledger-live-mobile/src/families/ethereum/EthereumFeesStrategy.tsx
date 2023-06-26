@@ -13,6 +13,7 @@ import BigNumber from "bignumber.js";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
 import { ScreenName } from "../../const";
+import { EthereumNetworkFeeInfo } from "./EthereumNetworkFeesInfo";
 
 const getCustomStrategy = (
   transaction: EthereumTransaction,
@@ -95,6 +96,7 @@ export default function EthereumFeesStrategy({
       account={account}
       parentAccount={parentAccount}
       transaction={transaction}
+      NetworkFeesInfoComponent={EthereumNetworkFeeInfo}
     />
   );
 }

@@ -1,6 +1,10 @@
 import cbor from "@zondax/cbor";
-import { Transaction } from "../../types";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+
+import { Transaction } from "../../types";
+import { getAddress } from "./utils";
+import { validateAddress } from "./addresses";
 
 const bigNumberToArray = (v: BigNumber) => {
   let tmp;
@@ -23,18 +27,25 @@ const bigNumberToArray = (v: BigNumber) => {
   return Buffer.concat([Buffer.from(signByte, "hex"), Buffer.from(tmp, "hex")]);
 };
 
-export const toCBOR = (from: Buffer, recipient: Buffer, tx: Transaction): Buffer => {
-  const { method, version, nonce, gasLimit, gasPremium, gasFeeCap, params, amount } = tx;
+export const toCBOR = (account: Account, tx: Transaction): Buffer => {
+  const { address: from } = getAddress(account);
+  const { method, version, nonce, gasLimit, gasPremium, gasFeeCap, params, amount, recipient } = tx;
   const answer: any[] = [];
+
+  const recipientBytes = validateAddress(recipient);
+  const fromBytes = validateAddress(from);
+
+  if (!recipientBytes.isValid || !fromBytes.isValid)
+    throw new Error("recipient and/or from address are not valid");
 
   // "version" field
   answer.push(version);
 
   // "to" field
-  answer.push(recipient);
+  answer.push(recipientBytes.bytes);
 
   // "from" field
-  answer.push(from);
+  answer.push(fromBytes.bytes);
 
   // "nonce" field
   answer.push(nonce);

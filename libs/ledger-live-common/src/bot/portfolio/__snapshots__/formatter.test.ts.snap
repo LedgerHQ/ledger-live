@@ -43,7 +43,7 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | [🙏](https://etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | Ethereum Classic | [🙏](https://blockscout.com/etc/mainnet/address/0x932E8214E25AceC996aD7d195339AF5139625065/transactions) | ? |
 | Ethereum Goerli | [🙏](https://goerli.etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
-| Filecoin | [🙏](https://filfox.info/en/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
+| Filecoin | [🙏](https://beryx.io/v1/explore/fil/mainnet/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | Hedera | ❌ | ? |
 | Internet Computer | ⚠️ | ? |
 | NEAR | [🙏](https://explorer.near.org/accounts/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ? |

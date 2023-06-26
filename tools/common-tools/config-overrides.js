@@ -39,5 +39,8 @@ module.exports = function override(webpackConfig) {
   webpackConfig.resolve.alias["@dfinity/agent"] = "@dfinity/agent/lib/cjs";
   webpackConfig.resolve.alias["@dfinity/candid"] = "@dfinity/candid/lib/cjs";
 
+  webpackConfig.resolve.alias["@zondax/izari-filecoin"] =
+    "@zondax/izari-filecoin/dist/cjs";
+
   return webpackConfig;
 };

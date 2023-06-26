@@ -23,7 +23,7 @@ import {
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetFirstConnectionHasDevicePayload,
+  SettingsSetOnboardingHasDevicePayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
@@ -62,6 +62,7 @@ import {
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
+  SettingsSetOnboardingTypePayload,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -218,8 +219,11 @@ export const setMarketFilterByStarredAccounts =
 export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsPayload>(
   SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
 );
-export const setFirstConnectionHasDevice = createAction<SettingsSetFirstConnectionHasDevicePayload>(
-  SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE,
+export const setOnboardingHasDevice = createAction<SettingsSetOnboardingHasDevicePayload>(
+  SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
+);
+export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
+  SettingsActionTypes.SET_ONBOARDING_TYPE,
 );
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,

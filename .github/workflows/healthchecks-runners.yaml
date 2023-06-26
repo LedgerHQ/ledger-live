@@ -52,7 +52,7 @@ jobs:
           java-version: "11"
       - name: setup Android SDK
         if: always()
-        uses: android-actions/setup-android@v2.0.6
+        uses: android-actions/setup-android@v2.0.10
       - name: check java
         if: always()
         id: check-java
@@ -145,7 +145,7 @@ jobs:
           ref: main
           token: ${{ github.token }}
   checks-windows:
-    runs-on: [ledger-live, windows]
+    runs-on: [ledger-live-4xlarge-windows-2022]
     outputs:
       check-git: ${{ steps.check-git.outputs.result }}
       check-node: ${{ steps.check-node.outputs.result }}
