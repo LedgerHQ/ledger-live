@@ -52,7 +52,10 @@ export const useUpdateFirmware = ({
     }
   }, [deviceId, updateFirmwareAction, nonce]);
 
-  const triggerUpdate = useCallback(() => setNonce(nonce => nonce + 1), []);
+  const triggerUpdate = useCallback(() => {
+    setUpdateState(initialState);
+    setNonce(nonce => nonce + 1);
+  }, []);
 
   return { updateState, triggerUpdate };
 };
