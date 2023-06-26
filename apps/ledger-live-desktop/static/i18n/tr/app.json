@@ -187,7 +187,55 @@
       "REGISTER" : "Kaydedildi",
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake iptali",
-      "WITHDRAW_UNSTAKED" : "Çekildi"
+      "WITHDRAW_UNSTAKED" : "Çekildi",
+      "SENDING" : "Gönderiliyor"
+    },
+    "edit" : {
+      "title" : "Hızlandırın veya İptal Edin",
+      "description" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz.",
+      "stuckDescription" : "İşleminiz takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Bekleyen işlem ücreti bilgileri: ",
+        "networkfee" : "Ağ ücreti = ",
+        "maxFee" : "Ücret üst limiti = ",
+        "maxPriorityFee" : "Öncelik ücreti üst limiti = ",
+        "gasPrice" : "Gas ücreti = "
+      },
+      "learnMore" : "Daha fazla bilgi almak istiyorum",
+      "panel" : {
+        "title" : "Hızlandırın veya İptal Edin",
+        "description" : "En son başlattığınız gönderme işlemlerinden biri takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin."
+      },
+      "speedUp" : {
+        "title" : "Hızlandır",
+        "description" : "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
+      },
+      "cancel" : {
+        "title" : "İptal et",
+        "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin işlem ücretinden %30 daha yüksek olacaktır."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Yöntem"
+        },
+        "fees" : {
+          "title" : "Ücretler"
+        },
+        "summary" : {
+          "title" : "Özet"
+        },
+        "device" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
+        "notEnoughFundsToSpeedup" : "Hesabınızda yeterince fon olmadığı için işlem hızlandırılamıyor.",
+        "notlowestNonceToSpeedup" : "Hızlandırma özelliği kullanılamıyor. Önceki bir işlem takıldığı için işleminiz beklemede. Onaylanmasını bekleyebilir, hızlandırabilir veya iptal edebilirsiniz."
+      }
     }
   },
   "byteSize" : {
@@ -324,7 +372,7 @@
         },
         "login" : {
           "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
-          "complete" : "Login"
+          "complete" : "Oturum aç"
         },
         "mfa" : {
           "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
@@ -554,7 +602,7 @@
     "resetThirdPartyDataModal" : {
       "title" : "Yerel üçüncü taraf verilerinizi silin",
       "subtitle" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sunulan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
-      "cta" : "Confirm"
+      "cta" : "Onayla"
     },
     "modal" : {
       "title" : "Takas edin",
@@ -648,6 +696,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "Test"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "Vault'u bağlayın",
+      "info" : "Aşağıdaki alanları doldurarak Ledger Vault çalışma alanı hesaplarınızı bağlayın ve Ledger Live kaynaklı işlemler oluşturun. Bilgilere “Ayarlar” > “Üçüncü taraf cüzdanı imzalayıcısı” kısmından ulaşabilirsiniz.",
+      "info_link" : "Daha fazla bilgi",
+      "host" : {
+        "title" : "URL Uç Noktası",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "Çalışma alanı adı",
+        "placeholder" : "çalışma alanı"
+      },
+      "token" : {
+        "title" : "Operatör API Belirteci",
+        "placeholder" : "Token"
+      },
+      "submit" : "Bağlan"
+    }
   },
   "fullNode" : {
     "status" : "Durum",
@@ -1396,6 +1464,10 @@
     "referralProgram" : {
       "title" : "Referans olup $10 kazanın",
       "description" : "Bir arkadaşınızla referans programına katılın, ikiniz de $10 değerinde Bitcoin kazanın."
+    },
+    "vaultSigner" : {
+      "title" : "Vault imzalayıcı modu",
+      "link" : "Vault Yardım Merkezi"
     }
   },
   "signmessage" : {
@@ -2219,6 +2291,8 @@
         "recipientAddress" : "Alıcı adresi",
         "amount" : "Tutar",
         "fees" : "Ağ ücretleri",
+        "maxFees" : "Maks. Ağ ücretleri",
+        "maxFeesInfo" : "Bu ücret, bu işlem için ödeyebileceğiniz azami tutardır. Maks. ağ ücretleri ile gerçek ücretler arasındaki fark iade edilecektir.",
         "useMax" : "Tümünü kullan",
         "sendMax" : "Tamamını Gönder",
         "rippleTag" : "Etiket",
@@ -2297,7 +2371,8 @@
   "deviceLocalization" : {
     "language" : "Dil",
     "deviceLanguage" : "Cihaz dilini değiştirin",
-    "changeLanguage" : "Dili değiştir",
+    "changeLanguage" : "Değiştir",
+    "dontChangeLanguage" : "Değiştirme",
     "changeDeviceLanguage" : "Cihazınızın dili değiştirilsin mi?",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
@@ -2937,7 +3012,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "Tutar"
           },
           "validator" : {
             "title" : "Doğrulayıcılar"
@@ -3009,7 +3084,7 @@
             "newDelegation" : "Yeni yetkili",
             "chooseValidator" : "Doğrulayıcı seçin",
             "warning" : "Fikrinizin tekrar değişmesi durumunda, yeni doğrulayıcının yetkisini başkasına devretmek için <0>{{numberOfDays}} gün</0> beklemeniz gerekir",
-            "amountLabel" : "Amount to redelegate"
+            "amountLabel" : "Yetkisi devredilecek tutar"
           },
           "device" : {
             "title" : "Cihaz"
@@ -3945,6 +4020,10 @@
         "1559DeactivateGate" : {
           "title" : "EIP1559 minimum öncelik ücreti kapısını devre dışı bırakın",
           "description" : "Bu, bir işlemin herhangi bir minimum öncelik ücreti beklenmeden gönderilmesini sağlar. İşlemin mempool'da sonsuza dek takılı kalmasına da yol açabilir."
+        },
+        "vaultSigner" : {
+          "title" : "Vault İmzalayıcısı",
+          "description" : "Operatör API belirteciyle Ledger Vault'u bir imzalayıcı olarak kullanın"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Özel öncelik ücreti kapısı",
@@ -5346,6 +5425,10 @@
       "title" : "Bu işlem bu cihaz için mevcut değil",
       "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "Hızlandırılamıyor veya iptal edilemiyor",
+      "description" : "Bu işlem zaten doğrulanmış"
+    },
     "CantScanQRCode" : {
       "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
     },
@@ -5760,6 +5843,7 @@
   },
   "customImage" : {
     "title" : "Özel kilitli ekran",
+    "cta" : "Özel kilitli ekran",
     "managerCTA" : "Kilit ekranı resmi",
     "managerCTARemove" : "Kaldır",
     "steps" : {
