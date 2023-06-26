@@ -4135,7 +4135,14 @@
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
-        "installingApps": "Installing apps"
+        "installingApps": "Installing apps",
+        "errors": {
+          "description": "If this was a mistake you can retry the restoration, or you may skip this step",
+          "LanguageInstallRefusedOnDevice": "Language change was cancelled on {{deviceName}}",
+          "ImageLoadRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
+          "ImageCommitRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
+          "UserRefusedAllowManager": "Restoration of apps was cancelled on {{deviceName}}"
+        }
       }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
