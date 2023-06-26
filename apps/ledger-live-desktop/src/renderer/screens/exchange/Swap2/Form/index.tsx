@@ -9,6 +9,7 @@ import {
   getProviderName,
   KYC_STATUS,
   KYCStatus,
+  getCustomDappUrl,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -54,7 +55,6 @@ import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import usePageState from "./hooks/usePageState";
-import { getCustomDappUrl } from "./utils";
 import { AccountLike, Feature } from "@ledgerhq/types-live";
 import {
   ValidCheckQuoteErrorCodes,

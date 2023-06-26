@@ -17,6 +17,7 @@ import {
 import {
   getKYCStatusFromCheckQuoteStatus,
   KYC_STATUS,
+  getCustomDappUrl,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -351,6 +352,11 @@ export function SwapForm({
         provider,
         providerURL: providerURL || undefined,
       };
+
+      const customDappUrl = getCustomDappUrl({
+        ...customParams,
+      });
+
       const getAccountId = ({
         accountId,
         provider,
@@ -375,11 +381,23 @@ export function SwapForm({
       const accountId = getAccountId({ accountId: fromAccountId, provider });
       navigation.navigate(ScreenName.PlatformApp, {
         platform: getProviderName(provider).toLowerCase(),
+        name: getProviderName(provider),
+        accountId,
+        customDappURL: customDappUrl,
       });
     } else {
       setConfirmed(true);
     }
-  }, [swapTransaction, provider, track]);
+  }, [
+    exchangeRate,
+    track,
+    swapTransaction.swap.from,
+    swapTransaction.swap.to.currency?.name,
+    navigation,
+    walletApiPartnerList?.enabled,
+    walletApiPartnerList?.params?.list,
+    accounts,
+  ]);
 
   const onCloseModal = useCallback(() => {
     setConfirmed(false);
