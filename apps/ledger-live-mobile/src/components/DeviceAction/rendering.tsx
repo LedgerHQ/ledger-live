@@ -398,7 +398,7 @@ export function renderAllowLanguageInstallation({
       alignSelf="stretch"
       flex={fullScreen ? 1 : undefined}
     >
-      <TrackScreen category="Allow language installation on Stax" />
+      <TrackScreen category="Allow language installation on Stax" refreshSource={false} />
       <Text variant="h4" textAlign="center">
         {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
       </Text>
