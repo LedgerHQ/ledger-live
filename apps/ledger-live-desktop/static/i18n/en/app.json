@@ -4976,6 +4976,11 @@
       "memoPlaceholder": "Optional",
       "memo": "Memo"
     },
+    "internet_computer": {
+      "memoPlaceholder": "Optional, Default: 0",
+      "memo": "Memo",
+      "memoWarningText": "The value of memo can be a number between 0 and 9223372036854775807"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -5432,6 +5437,9 @@
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Recipient address is the same as the sender address"
+    },
+    "InvalidMemoICP": {
+      "title": "Memo is required to be a number"
     },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",

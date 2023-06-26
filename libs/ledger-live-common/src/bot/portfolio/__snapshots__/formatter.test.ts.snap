@@ -10,30 +10,30 @@ exports[`finalMarkdownReport sample 1`] = `
 
 | Currency |SEED1 | SEED2|
 |--|--|--|
-| Bitcoin | [🙏](https://blockstream.info/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | [🙏](https://blockstream.info/address/0x9De2c901184f274d9Ae65B6d4192Ced7Ff5e051C) |
-| Bitcoin Testnet | [🙏](https://live.blockcypher.com/btc-testnet/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ✅ |
-| Bitcoin Cash | ❌ | [🙏](https://blockchair.com/bitcoin-cash/address/osmo13lshcl9qcv63ryc03zpw8lngnvyah2l67slpdr) |
-| Bitcoin Gold | ✅ | [🙏](https://btgexplorer.com/address/cro1nqy7500hrvxeu4wmffq4zr8gwgnff2evevhg40) |
-| Dash | [🙏](https://explorer.dash.org/insight/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt) | ✅ |
+| Bitcoin | [🙏](https://blockstream.info/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ✅ |
+| Bitcoin Testnet | [🙏](https://live.blockcypher.com/btc-testnet/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | [🙏](https://live.blockcypher.com/btc-testnet/address/osmo13lshcl9qcv63ryc03zpw8lngnvyah2l67slpdr) |
+| Bitcoin Cash | ❌ | [🙏](https://blockchair.com/bitcoin-cash/address/cro1nqy7500hrvxeu4wmffq4zr8gwgnff2evevhg40) |
+| Bitcoin Gold | ✅ | ✅ |
+| Dash | [🙏](https://explorer.dash.org/insight/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt) | [🙏](https://explorer.dash.org/insight/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
 | DigiByte | [🙏](https://digiexplorer.info/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r) | [🙏](https://digiexplorer.info/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
-| Dogecoin | [🙏](https://dogechain.info/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | [🙏](https://dogechain.info/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
-| Komodo | ✅ | ✅ |
-| Litecoin | [🙏](https://live.blockcypher.com/ltc/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | [🙏](https://live.blockcypher.com/ltc/address/0x6999fB16d0bEccB7908A0C133441eC6A50c1deD2) |
+| Dogecoin | [🙏](https://dogechain.info/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ✅ |
+| Komodo | ✅ | [🙏](https://kmdexplorer.io/address/0x6999fB16d0bEccB7908A0C133441eC6A50c1deD2) |
+| Litecoin | [🙏](https://live.blockcypher.com/ltc/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | [🙏](https://live.blockcypher.com/ltc/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
 | Peercoin | [🙏](https://blockbook.peercoin.net/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | [🙏](https://blockbook.peercoin.net/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
 | PivX | [🙏](https://chainz.cryptoid.info/pivx/address.dws?P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2.htm) | [🙏](https://chainz.cryptoid.info/pivx/address.dws?0x932E8214E25AceC996aD7d195339AF5139625065.htm) |
 | Qtum | [🙏](https://explorer.qtum.org/address/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | [🙏](https://explorer.qtum.org/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
 | Vertcoin | [🙏](https://vtcblocks.com/address/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | [🙏](https://vtcblocks.com/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
 | Viacoin | [🙏](https://explorer.viacoin.org/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | [🙏](https://explorer.viacoin.org/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
-| Zcash | [🙏](https://chain.so/address/ZEC/EZjc4W42JjgYyGt5YUGV4W2eGYD63vbYtw) | [🙏](https://chain.so/address/ZEC/0x932E8214E25AceC996aD7d195339AF5139625065) |
-| Horizen | [🙏](https://explorer.zensystem.io/address/t1LkBfbXEmTwYtg6EYcLajMKND4H5ayZueq) | ❌ |
-| Decred | [🙏](https://mainnet.decred.org/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | ⚠️ |
-| Cardano | [🙏](https://cardanoscan.io/address/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | [🙏](https://cardanoscan.io/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) |
-| Celo | ❌ | ❌ |
-| Axelar | [🙏](https://www.mintscan.io/axelar/validators/0x9De2c901184f274d9Ae65B6d4192Ced7Ff5e051C) | [🙏](https://www.mintscan.io/axelar/validators/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) |
-| Cosmos | ✅ | [🙏](https://www.mintscan.io/cosmos/validators/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) |
-| Osmosis | [🙏](https://www.mintscan.io/osmosis/validators/osmo13lshcl9qcv63ryc03zpw8lngnvyah2l67slpdr) | ❌ |
+| Zcash | [🙏](https://chain.so/address/ZEC/EZjc4W42JjgYyGt5YUGV4W2eGYD63vbYtw) | ❌ |
+| Horizen | [🙏](https://explorer.zensystem.io/address/t1LkBfbXEmTwYtg6EYcLajMKND4H5ayZueq) | ⚠️ |
+| Decred | [🙏](https://mainnet.decred.org/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | [🙏](https://mainnet.decred.org/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) |
+| Cardano | [🙏](https://cardanoscan.io/address/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | ❌ |
+| Celo | ❌ | [🙏](https://explorer.celo.org/address/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) |
+| Axelar | [🙏](https://www.mintscan.io/axelar/validators/0x9De2c901184f274d9Ae65B6d4192Ced7Ff5e051C) | [🙏](https://www.mintscan.io/axelar/validators/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) |
+| Cosmos | ✅ | ❌ |
+| Osmosis | [🙏](https://www.mintscan.io/osmosis/validators/osmo13lshcl9qcv63ryc03zpw8lngnvyah2l67slpdr) | ✅ |
 | Persistence | [🙏](https://www.mintscan.io/persistence/validators/cro1nqy7500hrvxeu4wmffq4zr8gwgnff2evevhg40) | ✅ |
-| Quicksilver | ✅ | ✅ |
+| Quicksilver | ✅ | ? |
 | Onomy | [🙏](https://www.mintscan.io/onomy-protocl/validators/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | Crypto.org | [🙏](https://crypto.org/explorer/account/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | MultiversX | ✅ | ? |
@@ -45,33 +45,34 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | [🙏](https://goerli.etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | Filecoin | [🙏](https://beryx.io/v1/explore/fil/mainnet/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | Hedera | ❌ | ? |
-| NEAR | ⚠️ | ? |
-| XRP | [🙏](https://bithomp.com/explorer/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ? |
-| Solana | ❌ | ? |
+| Internet Computer | ⚠️ | ? |
+| NEAR | [🙏](https://explorer.near.org/accounts/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ? |
+| XRP | ❌ | ? |
+| Solana | [🙏](https://explorer.solana.com/address/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) | ? |
 | Stellar | ⚠️ | ? |
-| Tezos | [🙏](https://tzkt.io/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ? |
-| Tron | ❌ | ? |
+| Tezos | ❌ | ? |
+| Tron | [🙏](https://tronscan.org/#/address/tz1TGUYUhWujaab8LfmrA55rfDzn5zvyBJUe) | ? |
 | Algorand | ✅ | ? |
-| Arbitrum Goerli | ✅ | ? |
-| Cronos | [🙏](https://cronoscan.com/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
-| Fantom | [🙏](https://ftmscan.com/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
-| Flare | ❌ | ? |
-| Songbird | ✅ | ? |
-| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt) | ? |
-| RSK | [🙏](https://explorer.rsk.co/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r) | ? |
-| Bittorent Chain | [🙏](https://bttcscan.com/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ? |
-| Kava EVM | ✅ | ? |
-| Evmos EVM | [🙏](https://blockscout.evmos.org/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
-| Optimism | [🙏](https://optimistic.etherscan.io/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
-| Optimism Goerli | [🙏](https://goerli-optimism.etherscan.io/address/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
-| Energy Web | [🙏](https://explorer.energyweb.org/address/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
-| Astar | [🙏](https://blockscout.com/astar/address/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
-| Metis | [🙏](https://andromeda-explorer.metis.io/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
-| Boba | [🙏](https://bobascan.com/address/EZjc4W42JjgYyGt5YUGV4W2eGYD63vbYtw) | ? |
-| Moonriver | ✅ | ? |
-| Velas EVM | [🙏](https://evmexplorer.velas.com/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | ? |
-| Syscoin | [🙏](https://explorer.syscoin.org/address/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | ? |
-| Polkadot | ❌ | ? |
+| Arbitrum Goerli | [🙏](https://goerli.arbiscan.io/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
+| Cronos | [🙏](https://cronoscan.com/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
+| Fantom | ❌ | ? |
+| Flare | ✅ | ? |
+| Songbird | [🙏](https://songbird-explorer.flare.network/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt/transactions) | ? |
+| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r) | ? |
+| RSK | [🙏](https://explorer.rsk.co/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ? |
+| Bittorent Chain | ✅ | ? |
+| Kava EVM | [🙏](https://explorer.kava.io/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
+| Evmos EVM | [🙏](https://blockscout.evmos.org/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
+| Optimism | [🙏](https://optimistic.etherscan.io/address/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
+| Optimism Goerli | [🙏](https://goerli-optimism.etherscan.io/address/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
+| Energy Web | [🙏](https://explorer.energyweb.org/address/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
+| Astar | [🙏](https://blockscout.com/astar/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
+| Metis | [🙏](https://andromeda-explorer.metis.io/address/EZjc4W42JjgYyGt5YUGV4W2eGYD63vbYtw) | ? |
+| Boba | ✅ | ? |
+| Moonriver | [🙏](https://moonriver.moonscan.io/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | ? |
+| Velas EVM | [🙏](https://evmexplorer.velas.com/address/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | ? |
+| Syscoin | ❌ | ? |
+| Polkadot | [🙏](https://polkadot.subscan.io/account/0x9De2c901184f274d9Ae65B6d4192Ced7Ff5e051C) | ? |
 
 </details>
 
@@ -81,30 +82,30 @@ exports[`finalMarkdownReport sample 1`] = `
 
 | Currency |SEED1 | SEED2| Total |
 |--|--|--|--|
-| Bitcoin | 0 BTC | 0 BTC |0 BTC |
-| Bitcoin Testnet | 0 𝚝BTC | 0.0109641 𝚝BTC |0.0109641 𝚝BTC |
+| Bitcoin | 0 BTC | 0.0109641 BTC |0.0109641 BTC |
+| Bitcoin Testnet | 0 𝚝BTC | 0 𝚝BTC |0 𝚝BTC |
 | Bitcoin Cash | ❌ | 0 BCH |0 BCH |
-| Bitcoin Gold | 0.00594326 BTG | 0 BTG |0.00594326 BTG |
-| Dash | 0 DASH | 2,000,000 DASH |2,000,000 DASH |
+| Bitcoin Gold | 0.00594326 BTG | 2,000,000 BTG |2,000,000 BTG |
+| Dash | 0 DASH | 0 DASH |0 DASH |
 | DigiByte | 0 DGB | 0 DGB |0 DGB |
-| Dogecoin | 0 DOGE | 0 DOGE |0 DOGE |
-| Komodo | 7.47896 KMD | 264,410,212 KMD |264,410,220 KMD |
+| Dogecoin | 0 DOGE | 264,410,212 DOGE |264,410,212 DOGE |
+| Komodo | 7.47896 KMD | 0 KMD |7.47896 KMD |
 | Litecoin | 0 LTC | 0 LTC |0 LTC |
 | Peercoin | 0 PPC | 0 PPC |0 PPC |
 | PivX | 0 PIVX | 0 PIVX |0 PIVX |
 | Qtum | 0 QTUM | 0 QTUM |0 QTUM |
 | Vertcoin | 0 VTC | 0 VTC |0 VTC |
 | Viacoin | 0 VIA | 0 VIA |0 VIA |
-| Zcash | 0 ZEC | 0 ZEC |0 ZEC |
-| Horizen | 0.00656479 ZEN | ❌ |0.00656479 ZEN |
+| Zcash | 0 ZEC | ❌ |0 ZEC |
+| Horizen | 0.00656479 ZEN | 0 ZEN |0.00656479 ZEN |
 | Decred | 0 DCR | 0 DCR |0 DCR |
-| Cardano | 0 ADA | 0 ADA |0 ADA |
-| Celo | ❌ | ❌ |0 CELO |
+| Cardano | 0 ADA | ❌ |0 ADA |
+| Celo | ❌ | 0 CELO |0 CELO |
 | Axelar | 0 AXL | 0 AXL |0 AXL |
-| Cosmos | 1.09641 ATOM | 0 ATOM |1.09641 ATOM |
-| Osmosis | 0 OSMO | ❌ |0 OSMO |
-| Persistence | 0 XPRT | 0.206466 XPRT |0.206466 XPRT |
-| Quicksilver | 200,000,000 QCK | 16.4056 QCK |200,000,016 QCK |
+| Cosmos | 1.09641 ATOM | ❌ |1.09641 ATOM |
+| Osmosis | 0 OSMO | 0.206466 OSMO |0.206466 OSMO |
+| Persistence | 0 XPRT | 16.4056 XPRT |16.4056 XPRT |
+| Quicksilver | 200,000,000 QCK | ? |200,000,000 QCK |
 | Onomy | 0 NOM | ? |0 NOM |
 | Crypto.org | 0 CRO | ? |0 CRO |
 | MultiversX | 0.026441 EGLD | ? |0.026441 EGLD |
@@ -116,17 +117,18 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 0 𝚝ETH | ? |0 𝚝ETH |
 | Filecoin | 0 FIL | ? |0 FIL |
 | Hedera | ❌ | ? |0 HBAR |
+| Internet Computer | 0 ICP | ? |0 ICP |
 | NEAR | 0 NEAR | ? |0 NEAR |
-| XRP | 0 XRP | ? |0 XRP |
-| Solana | ❌ | ? |0 SOL |
+| XRP | ❌ | ? |0 XRP |
+| Solana | 0 SOL | ? |0 SOL |
 | Stellar | 0 XLM | ? |0 XLM |
-| Tezos | 0 XTZ | ? |0 XTZ |
-| Tron | ❌ | ? |0 TRX |
-| Algorand | 0.206466 ALGO | ? |0.206466 ALGO |
+| Tezos | ❌ | ? |0 XTZ |
+| Tron | 0.206466 TRX | ? |0.206466 TRX |
+| Algorand | 16.4056 ALGO | ? |16.4056 ALGO |
 | Arbitrum Goerli | 0 𝚝ETH | ? |0 𝚝ETH |
 | Cronos | 0 CRO | ? |0 CRO |
-| Fantom | 0 FTM | ? |0 FTM |
-| Flare | ❌ | ? |0 FLR |
+| Fantom | ❌ | ? |0 FTM |
+| Flare | 0 FLR | ? |0 FLR |
 | Songbird | 0 SGB | ? |0 SGB |
 | Moonbeam | 0 GLMR | ? |0 GLMR |
 | RSK | 0 RBTC | ? |0 RBTC |
@@ -141,8 +143,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba | 0 ETH | ? |0 ETH |
 | Moonriver | 0 MOVR | ? |0 MOVR |
 | Velas EVM | 0 VLX | ? |0 VLX |
-| Syscoin | 0 SYS | ? |0 SYS |
-| Polkadot | ❌ | ? |0 DOT |
+| Syscoin | ❌ | ? |0 SYS |
+| Polkadot | 0 DOT | ? |0 DOT |
 
 </details>
 
@@ -152,32 +154,32 @@ exports[`finalMarkdownReport sample 1`] = `
 
 | Currency |SEED1 | SEED2| Total |
 |--|--|--|--|
-| **Bitcoin** family | 43 |50 |93 |
-| Bitcoin | 1 | 1 |2 |
-| Bitcoin Testnet | 4 | 27 |31 |
+| **Bitcoin** family | 43 |51 |94 |
+| Bitcoin | 1 | 27 |28 |
+| Bitcoin Testnet | 4 | 1 |5 |
 | Bitcoin Cash | ❌ | 1 |1 |
-| Bitcoin Gold | 7 | 1 |8 |
-| Dash | 2 | 6 |8 |
+| Bitcoin Gold | 7 | 6 |13 |
+| Dash | 2 | 1 |3 |
 | DigiByte | 1 | 1 |2 |
-| Dogecoin | 3 | 1 |4 |
-| Komodo | 7 | 5 |12 |
+| Dogecoin | 3 | 5 |8 |
+| Komodo | 7 | 1 |8 |
 | Litecoin | 1 | 1 |2 |
 | Peercoin | 3 | 1 |4 |
 | PivX | 1 | 1 |2 |
 | Qtum | 1 | 1 |2 |
 | Vertcoin | 2 | 1 |3 |
 | Viacoin | 2 | 1 |3 |
-| Zcash | 2 | 1 |3 |
-| Horizen | 5 | ❌ |5 |
-| Decred | 1 | 0 |1 |
-| **Cardano** | 1 | 2 |3 |
-| **Celo** | ❌ | ❌ |0 |
-| **Cosmos** family | 37 |15 |52 |
+| Zcash | 2 | ❌ |2 |
+| Horizen | 5 | 0 |5 |
+| Decred | 1 | 2 |3 |
+| **Cardano** | 1 | ❌ |1 |
+| **Celo** | ❌ | 1 |1 |
+| **Cosmos** family | 37 |14 |51 |
 | Axelar | 1 | 1 |2 |
-| Cosmos | 27 | 1 |28 |
-| Osmosis | 1 | ❌ |1 |
-| Persistence | 1 | 5 |6 |
-| Quicksilver | 6 | 8 |14 |
+| Cosmos | 27 | ❌ |27 |
+| Osmosis | 1 | 5 |6 |
+| Persistence | 1 | 8 |9 |
+| Quicksilver | 6 | ? |6 |
 | Onomy | 1 | ? |1 |
 | **Crypto.org** | 1 | ? |1 |
 | **MultiversX** | 5 | ? |5 |
@@ -190,35 +192,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 1 | ? |1 |
 | **Filecoin** | 1 | ? |1 |
 | **Hedera** | ❌ | ? |0 |
-| **NEAR** | 0 | ? |0 |
-| **XRP** | 2 | ? |2 |
-| **Solana** | ❌ | ? |0 |
+| **Internet Computer** | 0 | ? |0 |
+| **NEAR** | 2 | ? |2 |
+| **XRP** | ❌ | ? |0 |
+| **Solana** | 1 | ? |1 |
 | **Stellar** | 1 | ? |1 |
-| **Tezos** | 1 | ? |1 |
-| **Tron** | ❌ | ? |0 |
-| **Algorand** | 5 | ? |5 |
-| **evm** family | 52 |0 |52 |
-| Arbitrum Goerli | 8 | ? |8 |
-| Cronos | 1 | ? |1 |
-| Fantom | 4 | ? |4 |
-| Flare | ❌ | ? |0 |
-| Songbird | 7 | ? |7 |
-| Moonbeam | 2 | ? |2 |
-| RSK | 1 | ? |1 |
-| Bittorent Chain | 3 | ? |3 |
-| Kava EVM | 7 | ? |7 |
-| Evmos EVM | 1 | ? |1 |
-| Optimism | 3 | ? |3 |
+| **Tezos** | ❌ | ? |0 |
+| **Tron** | 5 | ? |5 |
+| **Algorand** | 8 | ? |8 |
+| **evm** family | 44 |0 |44 |
+| Arbitrum Goerli | 1 | ? |1 |
+| Cronos | 4 | ? |4 |
+| Fantom | ❌ | ? |0 |
+| Flare | 7 | ? |7 |
+| Songbird | 2 | ? |2 |
+| Moonbeam | 1 | ? |1 |
+| RSK | 3 | ? |3 |
+| Bittorent Chain | 7 | ? |7 |
+| Kava EVM | 1 | ? |1 |
+| Evmos EVM | 3 | ? |3 |
+| Optimism | 1 | ? |1 |
 | Optimism Goerli | 1 | ? |1 |
-| Energy Web | 1 | ? |1 |
+| Energy Web | 2 | ? |2 |
 | Astar | 2 | ? |2 |
 | Metis | 2 | ? |2 |
-| Boba | 2 | ? |2 |
-| Moonriver | 5 | ? |5 |
+| Boba | 5 | ? |5 |
+| Moonriver | 1 | ? |1 |
 | Velas EVM | 1 | ? |1 |
-| Syscoin | 1 | ? |1 |
-| **Polkadot** | ❌ | ? |0 |
-| **Total** | 155 |67 |222 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 1 | ? |1 |
+| **Total** | 156 |66 |222 |
 
 </details>
 
@@ -229,31 +232,31 @@ exports[`finalMarkdownReport sample 1`] = `
 | Currency |SEED1 | SEED2| Total |
 |--|--|--|--|
 | **Bitcoin** family | 744 |409 |1153 |
-| Bitcoin | 0 | 0 |0 |
-| Bitcoin Testnet | 0 | 326 |326 |
+| Bitcoin | 0 | 326 |326 |
+| Bitcoin Testnet | 0 | 0 |0 |
 | Bitcoin Cash | ❌ | 0 |0 |
-| Bitcoin Gold | 172 | 0 |172 |
-| Dash | 0 | 33 |33 |
+| Bitcoin Gold | 172 | 33 |205 |
+| Dash | 0 | 0 |0 |
 | DigiByte | 0 | 0 |0 |
-| Dogecoin | 0 | 0 |0 |
-| Komodo | 312 | 50 |362 |
+| Dogecoin | 0 | 50 |50 |
+| Komodo | 312 | 0 |312 |
 | Litecoin | 0 | 0 |0 |
 | Peercoin | 0 | 0 |0 |
 | PivX | 0 | 0 |0 |
 | Qtum | 0 | 0 |0 |
 | Vertcoin | 0 | 0 |0 |
 | Viacoin | 0 | 0 |0 |
-| Zcash | 0 | 0 |0 |
-| Horizen | 260 | ❌ |260 |
+| Zcash | 0 | ❌ |0 |
+| Horizen | 260 | 0 |260 |
 | Decred | 0 | 0 |0 |
-| **Cardano** | 0 | 0 |0 |
-| **Celo** | ❌ | ❌ |0 |
+| **Cardano** | 0 | ❌ |0 |
+| **Celo** | ❌ | 0 |0 |
 | **Cosmos** family | 359 |253 |612 |
 | Axelar | 0 | 0 |0 |
-| Cosmos | 326 | 0 |326 |
-| Osmosis | 0 | ❌ |0 |
-| Persistence | 0 | 48 |48 |
-| Quicksilver | 33 | 205 |238 |
+| Cosmos | 326 | ❌ |326 |
+| Osmosis | 0 | 48 |48 |
+| Persistence | 0 | 205 |205 |
+| Quicksilver | 33 | ? |33 |
 | Onomy | 0 | ? |0 |
 | **Crypto.org** | 0 | ? |0 |
 | **MultiversX** | 50 | ? |50 |
@@ -266,34 +269,35 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 0 | ? |0 |
 | **Filecoin** | 0 | ? |0 |
 | **Hedera** | ❌ | ? |0 |
+| **Internet Computer** | 0 | ? |0 |
 | **NEAR** | 0 | ? |0 |
-| **XRP** | 0 | ? |0 |
-| **Solana** | ❌ | ? |0 |
+| **XRP** | ❌ | ? |0 |
+| **Solana** | 0 | ? |0 |
 | **Stellar** | 0 | ? |0 |
-| **Tezos** | 0 | ? |0 |
-| **Tron** | ❌ | ? |0 |
-| **Algorand** | 48 | ? |48 |
-| **evm** family | 949 |0 |949 |
-| Arbitrum Goerli | 205 | ? |205 |
+| **Tezos** | ❌ | ? |0 |
+| **Tron** | 48 | ? |48 |
+| **Algorand** | 205 | ? |205 |
+| **evm** family | 744 |0 |744 |
+| Arbitrum Goerli | 0 | ? |0 |
 | Cronos | 0 | ? |0 |
-| Fantom | 0 | ? |0 |
-| Flare | ❌ | ? |0 |
-| Songbird | 172 | ? |172 |
+| Fantom | ❌ | ? |0 |
+| Flare | 172 | ? |172 |
+| Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
 | RSK | 0 | ? |0 |
-| Bittorent Chain | 0 | ? |0 |
-| Kava EVM | 312 | ? |312 |
+| Bittorent Chain | 312 | ? |312 |
+| Kava EVM | 0 | ? |0 |
 | Evmos EVM | 0 | ? |0 |
 | Optimism | 0 | ? |0 |
 | Optimism Goerli | 0 | ? |0 |
 | Energy Web | 0 | ? |0 |
 | Astar | 0 | ? |0 |
 | Metis | 0 | ? |0 |
-| Boba | 0 | ? |0 |
-| Moonriver | 260 | ? |260 |
+| Boba | 260 | ? |260 |
+| Moonriver | 0 | ? |0 |
 | Velas EVM | 0 | ? |0 |
-| Syscoin | 0 | ? |0 |
-| **Polkadot** | ❌ | ? |0 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
 | **Total** | 2150 |662 |2812 |
 
 </details>
@@ -308,31 +312,31 @@ exports[`finalMarkdownReport sample 1`] = `
 | Currency |SEED1 | SEED2| Total |
 |--|--|--|--|
 | **Bitcoin** family |  | | |
-| Bitcoin | 4.68s | 8.28s |13s |
-| Bitcoin Testnet | 31s | 171s |202s |
-| Bitcoin Cash | ❌ | 7.35s | |
-| Bitcoin Gold | 550s | 11s |561s |
-| Dash | 25s | 24s |49s |
-| DigiByte | 17s | 38s |55s |
-| Dogecoin | 22s | 11s |33s |
-| Komodo | 120s | 102s |222s |
-| Litecoin | 7.01s | 31s |38s |
-| Peercoin | 124s | 16s |140s |
-| PivX | 8.39s | 1.78s |10s |
-| Qtum | 3.48s | 1.09s |4.57s |
-| Vertcoin | 23s | 1.20s |24s |
-| Viacoin | 30s | 0.93s |31s |
-| Zcash | 13s | 0.98s |14s |
-| Horizen | 317s | ❌ | |
-| Decred | 31s | 0.69s |32s |
-| **Cardano** | 91s | 15s |106s |
-| **Celo** | ❌ | ❌ | |
+| Bitcoin | 4.68s | 171s |175s |
+| Bitcoin Testnet | 31s | 7.35s |38s |
+| Bitcoin Cash | ❌ | 11s | |
+| Bitcoin Gold | 550s | 24s |574s |
+| Dash | 25s | 38s |63s |
+| DigiByte | 17s | 11s |28s |
+| Dogecoin | 22s | 102s |124s |
+| Komodo | 120s | 31s |151s |
+| Litecoin | 7.01s | 16s |23s |
+| Peercoin | 124s | 1.78s |126s |
+| PivX | 8.39s | 1.09s |9s |
+| Qtum | 3.48s | 1.20s |4.67s |
+| Vertcoin | 23s | 0.93s |24s |
+| Viacoin | 30s | 0.98s |31s |
+| Zcash | 13s | ❌ | |
+| Horizen | 317s | 0.69s |318s |
+| Decred | 31s | 15s |45s |
+| **Cardano** | 91s | ❌ | |
+| **Celo** | ❌ | 0.53s | |
 | **Cosmos** family | 259s | | |
-| Axelar | 8.28s | 0.53s |8.81s |
-| Cosmos | 171s | 22s |193s |
-| Osmosis | 7.35s | ❌ | |
-| Persistence | 11s | 14s |25s |
-| Quicksilver | 24s | 175s |199s |
+| Axelar | 8.28s | 22s |30s |
+| Cosmos | 171s | ❌ | |
+| Osmosis | 7.35s | 14s |21s |
+| Persistence | 11s | 175s |185s |
+| Quicksilver | 24s | ? |24s |
 | Onomy | 38s | ? |38s |
 | **Crypto.org** | 11s | ? |11s |
 | **MultiversX** | 102s | ? |102s |
@@ -345,34 +349,35 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 0.93s | ? |0.93s |
 | **Filecoin** | 0.98s | ? |0.98s |
 | **Hedera** | ❌ | ? | |
-| **NEAR** | 0.69s | ? |0.69s |
-| **XRP** | 15s | ? |15s |
-| **Solana** | ❌ | ? | |
-| **Stellar** | 0.53s | ? |0.53s |
-| **Tezos** | 22s | ? |22s |
-| **Tron** | ❌ | ? | |
-| **Algorand** | 14s | ? |14s |
+| **Internet Computer** | 0.69s | ? |0.69s |
+| **NEAR** | 15s | ? |15s |
+| **XRP** | ❌ | ? | |
+| **Solana** | 0.53s | ? |0.53s |
+| **Stellar** | 22s | ? |22s |
+| **Tezos** | ❌ | ? | |
+| **Tron** | 14s | ? |14s |
+| **Algorand** | 175s | ? |175s |
 | **evm** family |  | | |
-| Arbitrum Goerli | 175s | ? |175s |
-| Cronos | 4.68s | ? |4.68s |
-| Fantom | 31s | ? |31s |
-| Flare | ❌ | ? | |
-| Songbird | 550s | ? |550s |
-| Moonbeam | 25s | ? |25s |
-| RSK | 17s | ? |17s |
-| Bittorent Chain | 22s | ? |22s |
-| Kava EVM | 120s | ? |120s |
-| Evmos EVM | 7.01s | ? |7.01s |
-| Optimism | 124s | ? |124s |
-| Optimism Goerli | 8.39s | ? |8.39s |
-| Energy Web | 3.48s | ? |3.48s |
-| Astar | 23s | ? |23s |
-| Metis | 30s | ? |30s |
-| Boba | 13s | ? |13s |
-| Moonriver | 317s | ? |317s |
-| Velas EVM | 31s | ? |31s |
-| Syscoin | 91s | ? |91s |
-| **Polkadot** | ❌ | ? | |
+| Arbitrum Goerli | 4.68s | ? |4.68s |
+| Cronos | 31s | ? |31s |
+| Fantom | ❌ | ? | |
+| Flare | 550s | ? |550s |
+| Songbird | 25s | ? |25s |
+| Moonbeam | 17s | ? |17s |
+| RSK | 22s | ? |22s |
+| Bittorent Chain | 120s | ? |120s |
+| Kava EVM | 7.01s | ? |7.01s |
+| Evmos EVM | 124s | ? |124s |
+| Optimism | 8.39s | ? |8.39s |
+| Optimism Goerli | 3.48s | ? |3.48s |
+| Energy Web | 23s | ? |23s |
+| Astar | 30s | ? |30s |
+| Metis | 13s | ? |13s |
+| Boba | 317s | ? |317s |
+| Moonriver | 31s | ? |31s |
+| Velas EVM | 91s | ? |91s |
+| Syscoin | ❌ | ? | |
+| **Polkadot** | 8.28s | ? |8.28s |
 | **Total** |  | | |
 
 </details>
@@ -398,17 +403,17 @@ exports[`finalMarkdownReport sample 1`] = `
 | Qtum | 0 | 0 |0 |
 | Vertcoin | 0 | 0 |0 |
 | Viacoin | 0 | 0 |0 |
-| Zcash | 0 | 0 |0 |
-| Horizen | 0 | ❌ |0 |
+| Zcash | 0 | ❌ |0 |
+| Horizen | 0 | 0 |0 |
 | Decred | 0 | 0 |0 |
-| **Cardano** | 0 | 0 |0 |
-| **Celo** | ❌ | ❌ |0 |
+| **Cardano** | 0 | ❌ |0 |
+| **Celo** | ❌ | 0 |0 |
 | **Cosmos** family | 0 |0 |0 |
 | Axelar | 0 | 0 |0 |
-| Cosmos | 0 | 0 |0 |
-| Osmosis | 0 | ❌ |0 |
+| Cosmos | 0 | ❌ |0 |
+| Osmosis | 0 | 0 |0 |
 | Persistence | 0 | 0 |0 |
-| Quicksilver | 0 | 0 |0 |
+| Quicksilver | 0 | ? |0 |
 | Onomy | 0 | ? |0 |
 | **Crypto.org** | 0 | ? |0 |
 | **MultiversX** | 0 | ? |0 |
@@ -421,18 +426,19 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 0 | ? |0 |
 | **Filecoin** | 0 | ? |0 |
 | **Hedera** | ❌ | ? |0 |
+| **Internet Computer** | 0 | ? |0 |
 | **NEAR** | 0 | ? |0 |
-| **XRP** | 0 | ? |0 |
-| **Solana** | ❌ | ? |0 |
+| **XRP** | ❌ | ? |0 |
+| **Solana** | 0 | ? |0 |
 | **Stellar** | 0 | ? |0 |
-| **Tezos** | 0 | ? |0 |
-| **Tron** | ❌ | ? |0 |
+| **Tezos** | ❌ | ? |0 |
+| **Tron** | 0 | ? |0 |
 | **Algorand** | 0 | ? |0 |
 | **evm** family | 0 |0 |0 |
 | Arbitrum Goerli | 0 | ? |0 |
 | Cronos | 0 | ? |0 |
-| Fantom | 0 | ? |0 |
-| Flare | ❌ | ? |0 |
+| Fantom | ❌ | ? |0 |
+| Flare | 0 | ? |0 |
 | Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
 | RSK | 0 | ? |0 |
@@ -447,8 +453,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba | 0 | ? |0 |
 | Moonriver | 0 | ? |0 |
 | Velas EVM | 0 | ? |0 |
-| Syscoin | 0 | ? |0 |
-| **Polkadot** | ❌ | ? |0 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
 | **Total** | 0 |0 |0 |
 
 </details>
@@ -474,17 +480,17 @@ exports[`finalMarkdownReport sample 1`] = `
 | Qtum |  |  | |
 | Vertcoin |  |  | |
 | Viacoin |  |  | |
-| Zcash |  |  | |
-| Horizen |  | ❌ | |
+| Zcash |  | ❌ | |
+| Horizen |  |  | |
 | Decred |  |  | |
-| **Cardano** |  |  | |
-| **Celo** | ❌ | ❌ | |
+| **Cardano** |  | ❌ | |
+| **Celo** | ❌ |  | |
 | **Cosmos** family |  | | |
 | Axelar |  |  | |
-| Cosmos |  |  | |
-| Osmosis |  | ❌ | |
+| Cosmos |  | ❌ | |
+| Osmosis |  |  | |
 | Persistence |  |  | |
-| Quicksilver |  |  | |
+| Quicksilver |  | ? | |
 | Onomy |  | ? | |
 | **Crypto.org** |  | ? | |
 | **MultiversX** |  | ? | |
@@ -497,18 +503,19 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli |  | ? | |
 | **Filecoin** |  | ? | |
 | **Hedera** | ❌ | ? | |
+| **Internet Computer** |  | ? | |
 | **NEAR** |  | ? | |
-| **XRP** |  | ? | |
-| **Solana** | ❌ | ? | |
+| **XRP** | ❌ | ? | |
+| **Solana** |  | ? | |
 | **Stellar** |  | ? | |
-| **Tezos** |  | ? | |
-| **Tron** | ❌ | ? | |
+| **Tezos** | ❌ | ? | |
+| **Tron** |  | ? | |
 | **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
 | Cronos |  | ? | |
-| Fantom |  | ? | |
-| Flare | ❌ | ? | |
+| Fantom | ❌ | ? | |
+| Flare |  | ? | |
 | Songbird |  | ? | |
 | Moonbeam |  | ? | |
 | RSK |  | ? | |
@@ -523,8 +530,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba |  | ? | |
 | Moonriver |  | ? | |
 | Velas EVM |  | ? | |
-| Syscoin |  | ? | |
-| **Polkadot** | ❌ | ? | |
+| Syscoin | ❌ | ? | |
+| **Polkadot** |  | ? | |
 | **Total** |  | | |
 
 </details>
@@ -550,17 +557,17 @@ exports[`finalMarkdownReport sample 1`] = `
 | Qtum | 0 | 0 |0 |
 | Vertcoin | 0 | 0 |0 |
 | Viacoin | 0 | 0 |0 |
-| Zcash | 0 | 0 |0 |
-| Horizen | 0 | ❌ |0 |
+| Zcash | 0 | ❌ |0 |
+| Horizen | 0 | 0 |0 |
 | Decred | 0 | 0 |0 |
-| **Cardano** | 0 | 0 |0 |
-| **Celo** | ❌ | ❌ |0 |
+| **Cardano** | 0 | ❌ |0 |
+| **Celo** | ❌ | 0 |0 |
 | **Cosmos** family | 0 |0 |0 |
 | Axelar | 0 | 0 |0 |
-| Cosmos | 0 | 0 |0 |
-| Osmosis | 0 | ❌ |0 |
+| Cosmos | 0 | ❌ |0 |
+| Osmosis | 0 | 0 |0 |
 | Persistence | 0 | 0 |0 |
-| Quicksilver | 0 | 0 |0 |
+| Quicksilver | 0 | ? |0 |
 | Onomy | 0 | ? |0 |
 | **Crypto.org** | 0 | ? |0 |
 | **MultiversX** | 0 | ? |0 |
@@ -573,18 +580,19 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 0 | ? |0 |
 | **Filecoin** | 0 | ? |0 |
 | **Hedera** | ❌ | ? |0 |
+| **Internet Computer** | 0 | ? |0 |
 | **NEAR** | 0 | ? |0 |
-| **XRP** | 0 | ? |0 |
-| **Solana** | ❌ | ? |0 |
+| **XRP** | ❌ | ? |0 |
+| **Solana** | 0 | ? |0 |
 | **Stellar** | 0 | ? |0 |
-| **Tezos** | 0 | ? |0 |
-| **Tron** | ❌ | ? |0 |
+| **Tezos** | ❌ | ? |0 |
+| **Tron** | 0 | ? |0 |
 | **Algorand** | 0 | ? |0 |
 | **evm** family | 0 |0 |0 |
 | Arbitrum Goerli | 0 | ? |0 |
 | Cronos | 0 | ? |0 |
-| Fantom | 0 | ? |0 |
-| Flare | ❌ | ? |0 |
+| Fantom | ❌ | ? |0 |
+| Flare | 0 | ? |0 |
 | Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
 | RSK | 0 | ? |0 |
@@ -599,8 +607,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba | 0 | ? |0 |
 | Moonriver | 0 | ? |0 |
 | Velas EVM | 0 | ? |0 |
-| Syscoin | 0 | ? |0 |
-| **Polkadot** | ❌ | ? |0 |
+| Syscoin | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
 | **Total** | 0 |0 |0 |
 
 </details>
@@ -626,17 +634,17 @@ exports[`finalMarkdownReport sample 1`] = `
 | Qtum |  |  | |
 | Vertcoin |  |  | |
 | Viacoin |  |  | |
-| Zcash |  |  | |
-| Horizen |  | ❌ | |
+| Zcash |  | ❌ | |
+| Horizen |  |  | |
 | Decred |  |  | |
-| **Cardano** |  |  | |
-| **Celo** | ❌ | ❌ | |
+| **Cardano** |  | ❌ | |
+| **Celo** | ❌ |  | |
 | **Cosmos** family |  | | |
 | Axelar |  |  | |
-| Cosmos |  |  | |
-| Osmosis |  | ❌ | |
+| Cosmos |  | ❌ | |
+| Osmosis |  |  | |
 | Persistence |  |  | |
-| Quicksilver |  |  | |
+| Quicksilver |  | ? | |
 | Onomy |  | ? | |
 | **Crypto.org** |  | ? | |
 | **MultiversX** |  | ? | |
@@ -649,23 +657,24 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli |  | ? | |
 | **Filecoin** |  | ? | |
 | **Hedera** | ❌ | ? | |
+| **Internet Computer** |  | ? | |
 | **NEAR** |  | ? | |
-| **XRP** |  | ? | |
-| **Solana** | ❌ | ? | |
+| **XRP** | ❌ | ? | |
+| **Solana** |  | ? | |
 | **Stellar** |  | ? | |
-| **Tezos** |  | ? | |
-| **Tron** | ❌ | ? | |
+| **Tezos** | ❌ | ? | |
+| **Tron** |  | ? | |
 | **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
 | Cronos |  | ? | |
-| Fantom |  | ? | |
-| Flare | ❌ | ? | |
+| Fantom | ❌ | ? | |
+| Flare |  | ? | |
 | Songbird |  | ? | |
 | Moonbeam |  | ? | |
 | RSK |  | ? | |
-| Bittorent Chain |  | ? | |
-| Kava EVM | 827kb | ? |827kb |
+| Bittorent Chain | 827kb | ? |827kb |
+| Kava EVM |  | ? | |
 | Evmos EVM |  | ? | |
 | Optimism |  | ? | |
 | Optimism Goerli |  | ? | |
@@ -675,8 +684,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba |  | ? | |
 | Moonriver |  | ? | |
 | Velas EVM |  | ? | |
-| Syscoin |  | ? | |
-| **Polkadot** | ❌ | ? | |
+| Syscoin | ❌ | ? | |
+| **Polkadot** |  | ? | |
 | **Total** |  | | |
 
 </details>
@@ -702,17 +711,17 @@ exports[`finalMarkdownReport sample 1`] = `
 | Qtum |  |  | |
 | Vertcoin |  |  | |
 | Viacoin |  |  | |
-| Zcash |  |  | |
-| Horizen |  | ❌ | |
+| Zcash |  | ❌ | |
+| Horizen |  |  | |
 | Decred |  |  | |
-| **Cardano** |  |  | |
-| **Celo** | ❌ | ❌ | |
+| **Cardano** |  | ❌ | |
+| **Celo** | ❌ |  | |
 | **Cosmos** family |  | | |
 | Axelar |  |  | |
-| Cosmos |  |  | |
-| Osmosis |  | ❌ | |
+| Cosmos |  | ❌ | |
+| Osmosis |  |  | |
 | Persistence |  |  | |
-| Quicksilver |  |  | |
+| Quicksilver |  | ? | |
 | Onomy |  | ? | |
 | **Crypto.org** |  | ? | |
 | **MultiversX** |  | ? | |
@@ -725,23 +734,24 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli |  | ? | |
 | **Filecoin** |  | ? | |
 | **Hedera** | ❌ | ? | |
+| **Internet Computer** |  | ? | |
 | **NEAR** |  | ? | |
-| **XRP** |  | ? | |
-| **Solana** | ❌ | ? | |
+| **XRP** | ❌ | ? | |
+| **Solana** |  | ? | |
 | **Stellar** |  | ? | |
-| **Tezos** |  | ? | |
-| **Tron** | ❌ | ? | |
+| **Tezos** | ❌ | ? | |
+| **Tron** |  | ? | |
 | **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
 | Cronos |  | ? | |
-| Fantom |  | ? | |
-| Flare | ❌ | ? | |
+| Fantom | ❌ | ? | |
+| Flare |  | ? | |
 | Songbird |  | ? | |
 | Moonbeam |  | ? | |
 | RSK |  | ? | |
-| Bittorent Chain |  | ? | |
-| Kava EVM | 0kb | ? |0kb |
+| Bittorent Chain | 0kb | ? |0kb |
+| Kava EVM |  | ? | |
 | Evmos EVM |  | ? | |
 | Optimism |  | ? | |
 | Optimism Goerli |  | ? | |
@@ -751,8 +761,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba |  | ? | |
 | Moonriver |  | ? | |
 | Velas EVM |  | ? | |
-| Syscoin |  | ? | |
-| **Polkadot** | ❌ | ? | |
+| Syscoin | ❌ | ? | |
+| **Polkadot** |  | ? | |
 | **Total** |  | | |
 
 </details>
@@ -764,31 +774,31 @@ exports[`finalMarkdownReport sample 1`] = `
 | Currency |SEED1 | SEED2| Total |
 |--|--|--|--|
 | **Bitcoin** family |  | | |
-| Bitcoin | 0.04s | 0.11s |0.15s |
-| Bitcoin Testnet | 1.14s | 2.05s |3.19s |
-| Bitcoin Cash | ❌ | 0.08s | |
-| Bitcoin Gold | 2.67s | 0.09s |2.76s |
-| Dash | 1.14s | 0.94s |2.08s |
-| DigiByte | 0.16s | 0.91s |1.07s |
-| Dogecoin | 0.51s | 0.17s |0.68s |
-| Komodo | 3.34s | 1.68s |5.02s |
-| Litecoin | 0.15s | 1.00s |1.15s |
-| Peercoin | 1.16s | 0.17s |1.33s |
-| PivX | 0.15s | 0.09s |0.24s |
-| Qtum | 0.14s | 0.07s |0.21s |
-| Vertcoin | 0.76s | 0.08s |0.85s |
-| Viacoin | 1.06s | 0.07s |1.14s |
-| Zcash | 0.20s | 0.08s |0.28s |
-| Horizen | 1.84s | ❌ | |
-| Decred | 0.99s | 0.04s |1.03s |
-| **Cardano** | 0.98s | 0.44s |1.43s |
-| **Celo** | ❌ | ❌ | |
+| Bitcoin | 0.04s | 2.05s |2.09s |
+| Bitcoin Testnet | 1.14s | 0.08s |1.22s |
+| Bitcoin Cash | ❌ | 0.09s | |
+| Bitcoin Gold | 2.67s | 0.94s |3.61s |
+| Dash | 1.14s | 0.91s |2.05s |
+| DigiByte | 0.16s | 0.17s |0.33s |
+| Dogecoin | 0.51s | 1.68s |2.19s |
+| Komodo | 3.34s | 1.00s |4.34s |
+| Litecoin | 0.15s | 0.17s |0.32s |
+| Peercoin | 1.16s | 0.09s |1.25s |
+| PivX | 0.15s | 0.07s |0.22s |
+| Qtum | 0.14s | 0.08s |0.23s |
+| Vertcoin | 0.76s | 0.07s |0.84s |
+| Viacoin | 1.06s | 0.08s |1.14s |
+| Zcash | 0.20s | ❌ | |
+| Horizen | 1.84s | 0.04s |1.88s |
+| Decred | 0.99s | 0.44s |1.44s |
+| **Cardano** | 0.98s | ❌ | |
+| **Celo** | ❌ | 0.04s | |
 | **Cosmos** family | 4.17s | | |
-| Axelar | 0.11s | 0.04s |0.15s |
-| Cosmos | 2.05s | 0.37s |2.42s |
-| Osmosis | 0.08s | ❌ | |
-| Persistence | 0.09s | 0.15s |0.24s |
-| Quicksilver | 0.94s | 4.20s |5.14s |
+| Axelar | 0.11s | 0.37s |0.48s |
+| Cosmos | 2.05s | ❌ | |
+| Osmosis | 0.08s | 0.15s |0.23s |
+| Persistence | 0.09s | 4.20s |4.29s |
+| Quicksilver | 0.94s | ? |0.94s |
 | Onomy | 0.91s | ? |0.91s |
 | **Crypto.org** | 0.17s | ? |0.17s |
 | **MultiversX** | 1.68s | ? |1.68s |
@@ -801,34 +811,35 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 0.07s | ? |0.07s |
 | **Filecoin** | 0.08s | ? |0.08s |
 | **Hedera** | ❌ | ? | |
-| **NEAR** | 0.04s | ? |0.04s |
-| **XRP** | 0.44s | ? |0.44s |
-| **Solana** | ❌ | ? | |
-| **Stellar** | 0.04s | ? |0.04s |
-| **Tezos** | 0.37s | ? |0.37s |
-| **Tron** | ❌ | ? | |
-| **Algorand** | 0.15s | ? |0.15s |
+| **Internet Computer** | 0.04s | ? |0.04s |
+| **NEAR** | 0.44s | ? |0.44s |
+| **XRP** | ❌ | ? | |
+| **Solana** | 0.04s | ? |0.04s |
+| **Stellar** | 0.37s | ? |0.37s |
+| **Tezos** | ❌ | ? | |
+| **Tron** | 0.15s | ? |0.15s |
+| **Algorand** | 4.20s | ? |4.20s |
 | **evm** family |  | | |
-| Arbitrum Goerli | 4.20s | ? |4.20s |
-| Cronos | 0.04s | ? |0.04s |
-| Fantom | 1.14s | ? |1.14s |
-| Flare | ❌ | ? | |
-| Songbird | 2.67s | ? |2.67s |
-| Moonbeam | 1.14s | ? |1.14s |
-| RSK | 0.16s | ? |0.16s |
-| Bittorent Chain | 0.51s | ? |0.51s |
-| Kava EVM | 3.34s | ? |3.34s |
-| Evmos EVM | 0.15s | ? |0.15s |
-| Optimism | 1.16s | ? |1.16s |
-| Optimism Goerli | 0.15s | ? |0.15s |
-| Energy Web | 0.14s | ? |0.14s |
-| Astar | 0.76s | ? |0.76s |
-| Metis | 1.06s | ? |1.06s |
-| Boba | 0.20s | ? |0.20s |
-| Moonriver | 1.84s | ? |1.84s |
-| Velas EVM | 0.99s | ? |0.99s |
-| Syscoin | 0.98s | ? |0.98s |
-| **Polkadot** | ❌ | ? | |
+| Arbitrum Goerli | 0.04s | ? |0.04s |
+| Cronos | 1.14s | ? |1.14s |
+| Fantom | ❌ | ? | |
+| Flare | 2.67s | ? |2.67s |
+| Songbird | 1.14s | ? |1.14s |
+| Moonbeam | 0.16s | ? |0.16s |
+| RSK | 0.51s | ? |0.51s |
+| Bittorent Chain | 3.34s | ? |3.34s |
+| Kava EVM | 0.15s | ? |0.15s |
+| Evmos EVM | 1.16s | ? |1.16s |
+| Optimism | 0.15s | ? |0.15s |
+| Optimism Goerli | 0.14s | ? |0.14s |
+| Energy Web | 0.76s | ? |0.76s |
+| Astar | 1.06s | ? |1.06s |
+| Metis | 0.20s | ? |0.20s |
+| Boba | 1.84s | ? |1.84s |
+| Moonriver | 0.99s | ? |0.99s |
+| Velas EVM | 0.98s | ? |0.98s |
+| Syscoin | ❌ | ? | |
+| **Polkadot** | 0.11s | ? |0.11s |
 | **Total** |  | | |
 
 </details>
@@ -839,30 +850,30 @@ exports[`finalMarkdownReport sample 1`] = `
 
 | Currency |SEED1 | SEED2|
 |--|--|--|
-| Bitcoin | 279mb | 278mb |
-| Bitcoin Testnet | 226mb | 224mb |
-| Bitcoin Cash | ❌ | 265mb |
-| Bitcoin Gold | 223mb | 262mb |
-| Dash | 224mb | 223mb |
-| DigiByte | 279mb | 222mb |
-| Dogecoin | 230mb | 262mb |
-| Komodo | 241mb | 232mb |
-| Litecoin | 271mb | 222mb |
-| Peercoin | 182mb | 260mb |
-| PivX | 273mb | 277mb |
-| Qtum | 279mb | 271mb |
-| Vertcoin | 224mb | 262mb |
-| Viacoin | 224mb | 272mb |
-| Zcash | 269mb | 276mb |
-| Horizen | 231mb | ❌ |
-| Decred | 224mb | 277mb |
-| Cardano | 222mb | 257mb |
-| Celo | ❌ | ❌ |
-| Axelar | 278mb | 269mb |
-| Cosmos | 224mb | 288mb |
-| Osmosis | 265mb | ❌ |
-| Persistence | 262mb | 265mb |
-| Quicksilver | 223mb | 239mb |
+| Bitcoin | 279mb | 224mb |
+| Bitcoin Testnet | 226mb | 265mb |
+| Bitcoin Cash | ❌ | 262mb |
+| Bitcoin Gold | 223mb | 223mb |
+| Dash | 224mb | 222mb |
+| DigiByte | 279mb | 262mb |
+| Dogecoin | 230mb | 232mb |
+| Komodo | 241mb | 222mb |
+| Litecoin | 271mb | 260mb |
+| Peercoin | 182mb | 277mb |
+| PivX | 273mb | 271mb |
+| Qtum | 279mb | 262mb |
+| Vertcoin | 224mb | 272mb |
+| Viacoin | 224mb | 276mb |
+| Zcash | 269mb | ❌ |
+| Horizen | 231mb | 277mb |
+| Decred | 224mb | 257mb |
+| Cardano | 222mb | ❌ |
+| Celo | ❌ | 269mb |
+| Axelar | 278mb | 288mb |
+| Cosmos | 224mb | ❌ |
+| Osmosis | 265mb | 265mb |
+| Persistence | 262mb | 239mb |
+| Quicksilver | 223mb | ? |
 | Onomy | 222mb | ? |
 | Crypto.org | 262mb | ? |
 | MultiversX | 232mb | ? |
@@ -874,33 +885,34 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli | 272mb | ? |
 | Filecoin | 276mb | ? |
 | Hedera | ❌ | ? |
-| NEAR | 277mb | ? |
-| XRP | 257mb | ? |
-| Solana | ❌ | ? |
-| Stellar | 269mb | ? |
-| Tezos | 288mb | ? |
-| Tron | ❌ | ? |
-| Algorand | 265mb | ? |
-| Arbitrum Goerli | 239mb | ? |
-| Cronos | 279mb | ? |
-| Fantom | 226mb | ? |
-| Flare | ❌ | ? |
-| Songbird | 223mb | ? |
-| Moonbeam | 224mb | ? |
-| RSK | 279mb | ? |
-| Bittorent Chain | 230mb | ? |
-| Kava EVM | 241mb | ? |
-| Evmos EVM | 271mb | ? |
-| Optimism | 182mb | ? |
-| Optimism Goerli | 273mb | ? |
-| Energy Web | 279mb | ? |
+| Internet Computer | 277mb | ? |
+| NEAR | 257mb | ? |
+| XRP | ❌ | ? |
+| Solana | 269mb | ? |
+| Stellar | 288mb | ? |
+| Tezos | ❌ | ? |
+| Tron | 265mb | ? |
+| Algorand | 239mb | ? |
+| Arbitrum Goerli | 279mb | ? |
+| Cronos | 226mb | ? |
+| Fantom | ❌ | ? |
+| Flare | 223mb | ? |
+| Songbird | 224mb | ? |
+| Moonbeam | 279mb | ? |
+| RSK | 230mb | ? |
+| Bittorent Chain | 241mb | ? |
+| Kava EVM | 271mb | ? |
+| Evmos EVM | 182mb | ? |
+| Optimism | 273mb | ? |
+| Optimism Goerli | 279mb | ? |
+| Energy Web | 224mb | ? |
 | Astar | 224mb | ? |
-| Metis | 224mb | ? |
-| Boba | 269mb | ? |
-| Moonriver | 231mb | ? |
-| Velas EVM | 224mb | ? |
-| Syscoin | 222mb | ? |
-| Polkadot | ❌ | ? |
+| Metis | 269mb | ? |
+| Boba | 231mb | ? |
+| Moonriver | 224mb | ? |
+| Velas EVM | 222mb | ? |
+| Syscoin | ❌ | ? |
+| Polkadot | 278mb | ? |
 
 </details>
 
@@ -924,16 +936,16 @@ exports[`finalMarkdownReport sample 1`] = `
 | Qtum |  |  |
 | Vertcoin |  |  |
 | Viacoin |  |  |
-| Zcash |  |  |
-| Horizen |  | ❌ |
+| Zcash |  | ❌ |
+| Horizen |  |  |
 | Decred |  |  |
-| Cardano |  |  |
-| Celo | ❌ | ❌ |
+| Cardano |  | ❌ |
+| Celo | ❌ |  |
 | Axelar |  |  |
-| Cosmos |  |  |
-| Osmosis |  | ❌ |
+| Cosmos |  | ❌ |
+| Osmosis |  |  |
 | Persistence |  |  |
-| Quicksilver |  |  |
+| Quicksilver |  | ? |
 | Onomy |  | ? |
 | Crypto.org |  | ? |
 | MultiversX |  | ? |
@@ -945,17 +957,18 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli |  | ? |
 | Filecoin |  | ? |
 | Hedera | ❌ | ? |
+| Internet Computer |  | ? |
 | NEAR |  | ? |
-| XRP |  | ? |
-| Solana | ❌ | ? |
+| XRP | ❌ | ? |
+| Solana |  | ? |
 | Stellar |  | ? |
-| Tezos |  | ? |
-| Tron | ❌ | ? |
+| Tezos | ❌ | ? |
+| Tron |  | ? |
 | Algorand |  | ? |
 | Arbitrum Goerli |  | ? |
 | Cronos |  | ? |
-| Fantom |  | ? |
-| Flare | ❌ | ? |
+| Fantom | ❌ | ? |
+| Flare |  | ? |
 | Songbird |  | ? |
 | Moonbeam |  | ? |
 | RSK |  | ? |
@@ -970,8 +983,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba |  | ? |
 | Moonriver |  | ? |
 | Velas EVM |  | ? |
-| Syscoin |  | ? |
-| Polkadot | ❌ | ? |
+| Syscoin | ❌ | ? |
+| Polkadot |  | ? |
 
 </details>
 
@@ -996,17 +1009,17 @@ exports[`finalMarkdownReport sample 1`] = `
 | Qtum |  |  |✅ |
 | Vertcoin |  |  |✅ |
 | Viacoin |  |  |✅ |
-| Zcash |  |  |✅ |
-| Horizen |  | ❌ |✅ |
+| Zcash |  | ❌ |✅ |
+| Horizen |  |  |✅ |
 | Decred |  |  |✅ |
-| **Cardano** |  |  |✅ |
-| **Celo** | ❌ | ❌ |✅ |
+| **Cardano** |  | ❌ |✅ |
+| **Celo** | ❌ |  |✅ |
 | **Cosmos** family | ✅ |✅ |✅ |
 | Axelar |  |  |✅ |
-| Cosmos |  |  |✅ |
-| Osmosis |  | ❌ |✅ |
+| Cosmos |  | ❌ |✅ |
+| Osmosis |  |  |✅ |
 | Persistence |  |  |✅ |
-| Quicksilver |  |  |✅ |
+| Quicksilver |  | ? |✅ |
 | Onomy |  | ? |✅ |
 | **Crypto.org** |  | ? |✅ |
 | **MultiversX** |  | ? |✅ |
@@ -1019,18 +1032,19 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Goerli |  | ? |✅ |
 | **Filecoin** |  | ? |✅ |
 | **Hedera** | ❌ | ? |✅ |
+| **Internet Computer** |  | ? |✅ |
 | **NEAR** |  | ? |✅ |
-| **XRP** |  | ? |✅ |
-| **Solana** | ❌ | ? |✅ |
+| **XRP** | ❌ | ? |✅ |
+| **Solana** |  | ? |✅ |
 | **Stellar** |  | ? |✅ |
-| **Tezos** |  | ? |✅ |
-| **Tron** | ❌ | ? |✅ |
+| **Tezos** | ❌ | ? |✅ |
+| **Tron** |  | ? |✅ |
 | **Algorand** |  | ? |✅ |
 | **evm** family | ✅ |✅ |✅ |
 | Arbitrum Goerli |  | ? |✅ |
 | Cronos |  | ? |✅ |
-| Fantom |  | ? |✅ |
-| Flare | ❌ | ? |✅ |
+| Fantom | ❌ | ? |✅ |
+| Flare |  | ? |✅ |
 | Songbird |  | ? |✅ |
 | Moonbeam |  | ? |✅ |
 | RSK |  | ? |✅ |
@@ -1045,8 +1059,8 @@ exports[`finalMarkdownReport sample 1`] = `
 | Boba |  | ? |✅ |
 | Moonriver |  | ? |✅ |
 | Velas EVM |  | ? |✅ |
-| Syscoin |  | ? |✅ |
-| **Polkadot** | ❌ | ? |✅ |
+| Syscoin | ❌ | ? |✅ |
+| **Polkadot** |  | ? |✅ |
 | **Total** | ✅ |✅ |✅ |
 
 </details>
@@ -1055,13 +1069,15 @@ exports[`finalMarkdownReport sample 1`] = `
 
 # Errors
 - SEED1: Bitcoin Cash: Error: scan accounts timeout for currency Bitcoin Testnet
+- SEED2: cardano: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
 - SEED1: Celo: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
-- SEED2: Celo: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
-- SEED1: Flare: Error: scan accounts timeout for currency Bitcoin Testnet
+- SEED2: cosmos: TypeError: Cannot read properties of undefined (reading 'length')
+- SEED1: Fantom: Error: scan accounts timeout for currency Bitcoin Testnet
 - SEED1: Hedera: LedgerAPI5xx: API HTTP 503
-- SEED2: Horizen: LedgerAPI5xx: API HTTP 503
-- SEED2: osmosis: TypeError: Cannot read properties of undefined (reading 'length')
-- SEED1: Polkadot: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
-- SEED1: Solana: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
-- SEED1: Tron: TypeError: Cannot read properties of undefined (reading 'length')"
+- SEED1: Syscoin: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
+- SEED1: Tezos: TypeError: Cannot read properties of undefined (reading 'length')
+- SEED1: XRP: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
+- SEED2: ZCash: LedgerAPI5xx: API HTTP 503"
 `;
+
+
