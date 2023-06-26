@@ -45,10 +45,11 @@ class ChainwatchAccountManager {
 
   async registerNewChainwatchAccount() {
     try {
-      await network({
+      const { data } = await network({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
+      return data;
     } catch (err) {
       console.error("err put account", err);
     }
@@ -136,24 +137,22 @@ class ChainwatchAccountManager {
 
   async setupChainwatchAccount() {
     // Get or set Chainwatch Account
-    let chainwatchAccount = await this.getChainwatchAccount();
-    if (!chainwatchAccount) {
-      await this.registerNewChainwatchAccount();
-      chainwatchAccount = await this.getChainwatchAccount();
-    }
-    this.suffixes = chainwatchAccount?.suffixes || [];
+    let chainwatchAccount = (await this.getChainwatchAccount()) || (await this.registerNewChainwatchAccount());
+    if (chainwatchAccount) {
+      this.suffixes = chainwatchAccount?.suffixes || [];
 
-    // Set Chainwatch account's monitors (receive and send) if they don't exist yet
-    if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "send")) {
-      await this.registerNewMonitor("send");
-    }
-    if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "receive")) {
-      await this.registerNewMonitor("receive");
-    }
+      // Set Chainwatch account's monitors (receive and send) if they don't exist yet
+      if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "send")) {
+        await this.registerNewMonitor("send");
+      }
+      if (!chainwatchAccount?.monitors?.find(monitor => monitor.type === "receive")) {
+        await this.registerNewMonitor("receive");
+      }
 
-    // Set Chainwatch account's target (braze) if it doesn't exist yet
-    if (!chainwatchAccount?.targets?.find(target => target.type === "braze")) {
-      await this.registerNewTarget("braze");
+      // Set Chainwatch account's target (braze) if it doesn't exist yet
+      if (!chainwatchAccount?.targets?.find(target => target.type === "braze")) {
+        await this.registerNewTarget("braze");
+      }
     }
   }
 }
