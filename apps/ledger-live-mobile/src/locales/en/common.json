@@ -3494,6 +3494,7 @@
     },
     "fees": {
       "title": "Network fees",
+      "titleMaxFees": "Max Network Fees",
       "validate": "Confirm",
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
@@ -3501,7 +3502,8 @@
       "edit": {
         "title": "Choose unit"
       },
-      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction"
+      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction",
+      "networkInfoMaxFees": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded."
     },
     "verification": {
       "streaming": {
