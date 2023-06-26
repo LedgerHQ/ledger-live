@@ -37,6 +37,7 @@ type Props = {
   onCustomFeesPress: TouchableOpacityProps["onPress"];
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
+  NetworkFeesInfoComponent?: React.FC;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -54,6 +55,7 @@ export default function SelectFeesStrategy({
   onCustomFeesPress,
   forceUnitLabel,
   disabledStrategies,
+  NetworkFeesInfoComponent,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -151,7 +153,7 @@ export default function SelectFeesStrategy({
         preventBackdropClick={false}
         onClose={closeNetworkFeeHelpModal}
       >
-        <NetworkFeeInfo />
+        {NetworkFeesInfoComponent ? <NetworkFeesInfoComponent /> : <NetworkFeeInfo />}
       </QueuedDrawer>
 
       <View>
