@@ -84,6 +84,7 @@
     "pnpm-utils": "1.0.1"
   },
   "changesets": [
-    "fuzzy-eyes-wave"
+    "fuzzy-eyes-wave",
+    "modern-peas-suffer"
   ]
 }
