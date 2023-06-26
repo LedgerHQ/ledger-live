@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Button, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, InfiniteLoader, Text, Link } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { CircledCheckSolidMedium, WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  CircledCheckSolidMedium,
+  ExternalLinkMedium,
+  WarningSolidMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import AllowManagerDrawer from "./AllowManagerDrawer";
@@ -71,7 +75,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     error: genuineCheckError,
     resetGenuineCheckState,
   } = useGenuineCheck({
-    isHookEnabled: genuineCheckStatus === "ongoing",
+    isHookEnabled: genuineCheckStatus === "ongoing" && false,
     deviceId: device.deviceId,
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
@@ -115,12 +119,12 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   `);
 
   // Exit point
-  useEffect(() => {
-    // FIXME: to adapt with skip and real fw update
-    if (firmwareUpdateCheckStatus === "completed") {
-      notifyOnboardingEarlyCheckEnded();
-    }
-  }, [firmwareUpdateCheckStatus, notifyOnboardingEarlyCheckEnded]);
+  // useEffect(() => {
+  //   // FIXME: to adapt with skip and real fw update
+  //   if (firmwareUpdateCheckStatus === "completed") {
+  //     notifyOnboardingEarlyCheckEnded();
+  //   }
+  // }, [firmwareUpdateCheckStatus, notifyOnboardingEarlyCheckEnded]);
 
   const onStartChecks = useCallback(() => {
     setCurrentStep("genuine-check");
@@ -283,7 +287,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   }
 
   let stepContent = (
-    <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
+    <Flex width="100%">
       <Text>{t("earlySecurityCheck.genuineCheck.description")}</Text>
       <CheckCard title={genuineCheckStepTitle} status={genuineCheckUiStepStatus} index={1} mb={4} />
       <CheckCard
@@ -296,8 +300,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   if (currentStep === "idle") {
     stepContent = (
-      <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
-        <Text>{t("earlySecurityCheck.idle.description")}</Text>
+      <Flex width="100%" mt="4">
+        <Text mb="4">{t("earlySecurityCheck.idle.description")}</Text>
+        <Link Icon={ExternalLinkMedium} style={{ justifyContent: "flex-start" }}>
+          {t("earlySecurityCheck.idle.learnMore")}
+        </Link>
       </Flex>
     );
   }
@@ -306,14 +313,14 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   if (currentStep === "idle") {
     cta = (
-      <Button type="main" mb={6} onPress={onStartChecks}>
+      <Button type="main" onPress={onStartChecks}>
         {t("earlySecurityCheck.idle.checkCta")}
       </Button>
     );
   }
 
   return (
-    <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
+    <>
       <UnlockDeviceDrawer
         isOpen={currentDisplayedDrawer === "unlock-needed"}
         onClose={() => {
@@ -372,10 +379,25 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           setFirmwareUpdateCheckStatus("completed");
         }}
       />
-      <Text>{t("earlySecurityCheck.title")}</Text>
-      <Text>{stepContent}</Text>
-      {cta}
-    </Flex>
+      <Flex flexDirection="column" height="100%" width="100%">
+        <Flex border="1px dashed #606060" borderRadius="16px" height="300px" mx="5"></Flex>
+        <Flex
+          flex={1}
+          mt="5"
+          flexDirection="column"
+          alignItems="stretch"
+          justifyContent="space-between"
+        >
+          <Flex paddingX="4">
+            <Text variant="h4">{t("earlySecurityCheck.title")}</Text>
+            {stepContent}
+          </Flex>
+          <Flex mx="5" mb="3">
+            {cta}
+          </Flex>
+        </Flex>
+      </Flex>
+    </>
   );
 };
 

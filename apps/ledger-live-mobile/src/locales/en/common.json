@@ -1903,6 +1903,7 @@
     "title": "Genuine Check and OS update check",
     "idle": {
       "description": "Genuine Check makes sure your Ledger Stax is an official Ledger. OS update check makes sure Ledger Stax OS is up to date.",
+      "learnMore": "Learn more about Genuine Check",
       "checkCta": "Check Ledger Stax"
     },
     "genuineCheckFailedDrawer": {
