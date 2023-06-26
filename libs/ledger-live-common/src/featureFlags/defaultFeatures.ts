@@ -292,6 +292,13 @@ export const defaultFeatures: DefaultFeatures = {
       path: "/discover/refer-a-friend",
     },
   },
+  transactionsAlerts: {
+    enabled: false,
+    params: {
+      chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
+      networks: [{ ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 }],
+    },
+  },
   listAppsV2: {
     enabled: false,
   },
