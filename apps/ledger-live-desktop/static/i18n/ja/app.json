@@ -187,7 +187,55 @@
       "REGISTER" : "登録されました",
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
-      "WITHDRAW_UNSTAKED" : "引き出し済み"
+      "WITHDRAW_UNSTAKED" : "引き出し済み",
+      "SENDING" : "送信中"
+    },
+    "edit" : {
+      "title" : "速度を上げる、またはキャンセルする",
+      "description" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "stuckDescription" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報： ",
+        "networkfee" : "ネットワーク手数料＝ ",
+        "maxFee" : "最大手数料＝ ",
+        "maxPriorityFee" : "最大優先手数料＝ ",
+        "gasPrice" : "ガス代＝ "
+      },
+      "learnMore" : "詳細を知りたいです",
+      "panel" : {
+        "title" : "速度を上げる、またはキャンセルする",
+        "description" : "直近の「送信」トランザクションが滞っています。さらに高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。"
+      },
+      "speedUp" : {
+        "title" : "スピードアップ",
+        "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
+      },
+      "cancel" : {
+        "title" : "キャンセル",
+        "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+      },
+      "steps" : {
+        "method" : {
+          "title" : "方法"
+        },
+        "fees" : {
+          "title" : "手数料"
+        },
+        "summary" : {
+          "title" : "概要"
+        },
+        "device" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルできません。",
+        "notEnoughFundsToSpeedup" : "アカウントに十分な資金がないため、トランザクションの高速化は利用できません。",
+        "notlowestNonceToSpeedup" : "高速化機能は利用できません。以前のトランザクションが滞っているため、お客様のトランザクションは保留中です。承認されるのを待って、高速化してキャンセルすることができます。"
+      }
     }
   },
   "byteSize" : {
@@ -648,6 +696,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "テスト"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "Connect Vault",
+      "info" : "Link your Ledger Vault workspace accounts and create transactions from Ledger Live by completing fields below. Locate info at Settings > External wallet signer.",
+      "info_link" : "Learn more",
+      "host" : {
+        "title" : "URL Endpoint",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "Workspace name",
+        "placeholder" : "workspace"
+      },
+      "token" : {
+        "title" : "Operator API Token",
+        "placeholder" : "Token"
+      },
+      "submit" : "Connect"
+    }
   },
   "fullNode" : {
     "status" : "ステータス",
@@ -1396,6 +1464,10 @@
     "referralProgram" : {
       "title" : "紹介して$10を獲得",
       "description" : "ご友人の紹介に成功すると、お客様とご友人の両者が$10相当のBitcoinを獲得できます。"
+    },
+    "vaultSigner" : {
+      "title" : "Vault signer mode",
+      "link" : "Vault Help Center"
     }
   },
   "signmessage" : {
@@ -2219,6 +2291,8 @@
         "recipientAddress" : "送付先アドレス",
         "amount" : "数量",
         "fees" : "ネットワーク手数料",
+        "maxFees" : "Max Network fees",
+        "maxFeesInfo" : "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded.",
         "useMax" : "全額を選択",
         "sendMax" : "最大数量を送付",
         "rippleTag" : "タグ",
@@ -2297,7 +2371,8 @@
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語を変更する",
-    "changeLanguage" : "言語の変更",
+    "changeLanguage" : "変更",
+    "dontChangeLanguage" : "変更しない",
     "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}}が{{deviceName}}でもご利用可能になりました",
@@ -3946,6 +4021,10 @@
           "title" : "EIP1559最低優先手数料ゲートを無効にする",
           "description" : "最低優先手数料なしでトランザクションを送信できます。これにより、トランザクションがメモリプールに永久にスタック（停滞）する可能性があります。"
         },
+        "vaultSigner" : {
+          "title" : "Vault Signer",
+          "description" : "Use Ledger Vault as a signer with your operator API token"
+        },
         "1559CustomPriorityLowerGate" : {
           "title" : "カスタム優先手数料ゲート",
           "description" : "高度なEIP1559トランザクションで許可される、当社の推定最小優先手数料の割合をカスタマイズします"
@@ -4558,7 +4637,7 @@
           },
           "pairMyNano" : {
             "title" : "正規品チェック",
-            "paragraph" : "お使いのNanoが正規品かどうかを確認します。短時間で簡単にチェックできます！",
+            "paragraph" : "Nanoデバイスが正規品であることを確認します。チェックは、短時間で完了します！",
             "buttons" : {
               "next" : "Nanoをチェックする",
               "prev" : "前のステップ",
@@ -5346,6 +5425,10 @@
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
       "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "速度を上げたりキャンセルすることはできません",
+      "description" : "このトランザクションはすでに検証済みです"
+    },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
     },
@@ -5760,6 +5843,7 @@
   },
   "customImage" : {
     "title" : "カスタムロック画面",
+    "cta" : "カスタムロック画面",
     "managerCTA" : "画面写真をロック",
     "managerCTARemove" : "削除",
     "steps" : {
