@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.1-hotfix.0
+
+### Patch Changes
+
+- [#3811](https://github.com/LedgerHQ/ledger-live/pull/3811) [`ed638c3aaf`](https://github.com/LedgerHQ/ledger-live/commit/ed638c3aaf66604b69abd6014407f489f5f616bd) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix apple notarize
+
 ## 2.62.0
 
 ### Minor Changes
