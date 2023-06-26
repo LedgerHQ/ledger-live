@@ -451,7 +451,7 @@ export function SwapForm({
     if (params?.rate) {
       setExchangeRate(params.rate);
     }
-  }, [params, swapTransaction]);
+  }, [params, setExchangeRate, swapTransaction]);
 
   const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");

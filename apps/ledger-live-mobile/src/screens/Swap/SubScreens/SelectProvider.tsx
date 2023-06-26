@@ -41,7 +41,7 @@ export function SelectProvider({ navigation, route }: SelectProviderParamList) {
         rate,
       });
     },
-    [navigation, track, selectedRate, rates],
+    [track, selectedRate?.provider, rates.value?.length, navigation, route.params],
   );
 
   if (!rates.value || !fromUnit || !to.currency) {
