@@ -187,7 +187,55 @@
       "REGISTER" : "등록 완료",
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
-      "WITHDRAW_UNSTAKED" : "출금됨"
+      "WITHDRAW_UNSTAKED" : "출금됨",
+      "SENDING" : "보내기"
+    },
+    "edit" : {
+      "title" : "속도 올리기 또는 취소",
+      "description" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "stuckDescription" : "트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높이세요.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보: ",
+        "networkfee" : "네트워크 수수료 = ",
+        "maxFee" : "최대 비용 = ",
+        "maxPriorityFee" : "최대 우선 수수료 = ",
+        "gasPrice" : "가스비 = "
+      },
+      "learnMore" : "더 자세히 알고 싶어요",
+      "panel" : {
+        "title" : "속도 올리기 또는 취소",
+        "description" : "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+      },
+      "speedUp" : {
+        "title" : "스피드 업",
+        "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+      },
+      "cancel" : {
+        "title" : "취소",
+        "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "방법"
+        },
+        "fees" : {
+          "title" : "수수료"
+        },
+        "summary" : {
+          "title" : "요약"
+        },
+        "device" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
+        "notEnoughFundsToSpeedup" : "계정에 충분한 자금이 없기 때문에 트랜잭션 속도를 높일 수 없습니다.",
+        "notlowestNonceToSpeedup" : "속도 향상 기능을 사용할 수 없습니다. 이전 트랜잭션이 중단되어 현재 트랜잭션이 보류 중입니다. 확인될 때까지 기다렸다가 속도를 높이거나 취소할 수 있습니다."
+      }
     }
   },
   "byteSize" : {
@@ -648,6 +696,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "테스트"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "Ledger Vault 연결하기",
+      "info" : "아래 필드를 작성하여 Ledger Vault 워크스페이스 계정을 연결하고 Ledger Live에서 트랜잭션을 생성하세요. 설정 > 외부 지갑 서명인에서 정보를 찾으세요.",
+      "info_link" : "Learn more",
+      "host" : {
+        "title" : "URL 엔드포인트",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "워크스페이스 이름",
+        "placeholder" : "워크스페이스"
+      },
+      "token" : {
+        "title" : "운영자 API 토큰",
+        "placeholder" : "Token"
+      },
+      "submit" : "Connect"
+    }
   },
   "fullNode" : {
     "status" : "상태",
@@ -1396,6 +1464,10 @@
     "referralProgram" : {
       "title" : "추천하고 $10를 받으세요",
       "description" : "친구를 추천하면 두 분 모두에게 $10 상당의 비트코인을 제공합니다."
+    },
+    "vaultSigner" : {
+      "title" : "Vault 서명인 모드",
+      "link" : "Vault 지원 센터"
     }
   },
   "signmessage" : {
@@ -2219,6 +2291,8 @@
         "recipientAddress" : "수령인 주소",
         "amount" : "금액",
         "fees" : "네트워크 수수료",
+        "maxFees" : "최대 네트워크 수수료",
+        "maxFeesInfo" : "이 트랜잭션에 대해 지불할 수 있는 최대 금액입니다. 최대 네트워크 수수료와 실제 수수료 간의 차액은 환불됩니다.",
         "useMax" : "최대치 사용",
         "sendMax" : "최대치 송금",
         "rippleTag" : "태그",
@@ -2297,7 +2371,8 @@
   "deviceLocalization" : {
     "language" : "언어",
     "deviceLanguage" : "장치 언어 변경",
-    "changeLanguage" : "언어 변경",
+    "changeLanguage" : "변경",
+    "dontChangeLanguage" : "변경 금지",
     "changeDeviceLanguage" : "장치 언어를 변경하시겠습니까?",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}}에서 {{language}}도 지원됩니다",
@@ -3946,6 +4021,10 @@
           "title" : "EIP1559 최소 우선 수수료 게이트 비활성화",
           "description" : "이를 통해 예상되는 최소 우선 수수료 없이 트랜잭션을 전송할 수 있습니다. 이로 인해 트랜잭션이 멤풀에서 영원히 대기 상태로 멈출 수 있습니다."
         },
+        "vaultSigner" : {
+          "title" : "Vault 서명인",
+          "description" : "운영자 API 토큰으로 Ledger Vault를 서명인으로 사용하세요"
+        },
         "1559CustomPriorityLowerGate" : {
           "title" : "개인 맞춤형 우선 수수료 게이트",
           "description" : "고급 EIP1559 트랜잭션에 대한 예상 최소 우선 수수료의 비율을 사용자 지정합니다."
@@ -5346,6 +5425,10 @@
       "title" : "이 장치에서 사용할 수 없는 작업",
       "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "속도를 높이거나 취소할 수 없습니다.",
+      "description" : "이 트랜잭션은 이미 검증되었습니다"
+    },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
     },
@@ -5760,6 +5843,7 @@
   },
   "customImage" : {
     "title" : "맞춤 가능한 잠금 화면",
+    "cta" : "커스텀 가능한 잠금 화면",
     "managerCTA" : "잠금 화면 사진",
     "managerCTARemove" : "제거",
     "steps" : {
