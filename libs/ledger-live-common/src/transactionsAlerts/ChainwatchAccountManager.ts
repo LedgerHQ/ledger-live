@@ -27,8 +27,8 @@ class ChainwatchAccountManager {
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
       return data;
-    } catch (err) {
-      console.error("err get account", err);
+    } catch {
+      return;
     }
   }
 
@@ -38,8 +38,8 @@ class ChainwatchAccountManager {
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
-    } catch (err) {
-      console.error("err remove account", err);
+    } catch {
+      return;
     }
   }
 
@@ -50,8 +50,8 @@ class ChainwatchAccountManager {
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/`,
       });
       return data;
-    } catch (err) {
-      console.error("err put account", err);
+    } catch {
+      return;
     }
   }
 
@@ -81,8 +81,8 @@ class ChainwatchAccountManager {
           data: addresses,
         });
       }
-    } catch (err) {
-      console.error("err put new addresses", err);
+    } catch {
+      return;
     }
   }
 
@@ -100,8 +100,8 @@ class ChainwatchAccountManager {
           data: addresses,
         });
       }
-    } catch (err) {
-      console.error("err delete addresses", err);
+    } catch {
+      return;
     }
   }
 
@@ -115,8 +115,8 @@ class ChainwatchAccountManager {
           type: monitor,
         },
       });
-    } catch (err) {
-      console.error("err put monitor", err);
+    } catch {
+      return;
     }
   }
 
@@ -130,14 +130,15 @@ class ChainwatchAccountManager {
           type: target,
         },
       });
-    } catch (err) {
-      console.error("err put target", err);
+    } catch {
+      return;
     }
   }
 
   async setupChainwatchAccount() {
     // Get or set Chainwatch Account
-    let chainwatchAccount = (await this.getChainwatchAccount()) || (await this.registerNewChainwatchAccount());
+    const chainwatchAccount =
+      (await this.getChainwatchAccount()) || (await this.registerNewChainwatchAccount());
     if (chainwatchAccount) {
       this.suffixes = chainwatchAccount?.suffixes || [];
 

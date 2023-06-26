@@ -23,6 +23,23 @@ const formatAccountsByCurrencies = (newAccounts: Account[], removedAccounts: Acc
   return accountsByCurrencies;
 };
 
+export const getSupportedChainsAccounts = (
+  userId: string,
+  chainwatchBaseUrl: string,
+  supportedChains: ChainwatchNetwork[],
+) => {
+  return Promise.all(
+    supportedChains.map(supportedChain => {
+      const accountManager = new ChainwatchAccountManager(
+        chainwatchBaseUrl,
+        userId,
+        supportedChain,
+      );
+      return accountManager.getChainwatchAccount();
+    }),
+  );
+};
+
 export const updateTransactionsAlertsAddresses = async (
   userId: string,
   chainwatchBaseUrl: string,
