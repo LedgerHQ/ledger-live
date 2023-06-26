@@ -187,7 +187,55 @@
       "REGISTER" : "已注册",
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
-      "WITHDRAW_UNSTAKED" : "已提取"
+      "WITHDRAW_UNSTAKED" : "已提取",
+      "SENDING" : "发送"
+    },
+    "edit" : {
+      "title" : "加速或取消",
+      "description" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
+      "stuckDescription" : "您的交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "待处理交易费用信息： ",
+        "networkfee" : "网络费用 = ",
+        "maxFee" : "最高费用 = ",
+        "maxPriorityFee" : "最高优先费用 = ",
+        "gasPrice" : "Gas 价格 = "
+      },
+      "learnMore" : "我想进一步了解",
+      "panel" : {
+        "title" : "加速或取消",
+        "description" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。"
+      },
+      "speedUp" : {
+        "title" : "加快速度",
+        "description" : "使用较高的网络费用重新提交交易。"
+      },
+      "cancel" : {
+        "title" : "取消",
+        "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+      },
+      "steps" : {
+        "method" : {
+          "title" : "方法"
+        },
+        "fees" : {
+          "title" : "费用"
+        },
+        "summary" : {
+          "title" : "概要"
+        },
+        "device" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
+        "notEnoughFundsToSpeedup" : "无法使用加速交易，因为您的账户中没有足够的资金。",
+        "notlowestNonceToSpeedup" : "无法使用加速功能。您的交易有待处理，因为之前的交易已停滞。您可以等待确认交易，加速交易和取消交易。"
+      }
     }
   },
   "byteSize" : {
@@ -324,7 +372,7 @@
         },
         "login" : {
           "required" : "您需要登录此供应方",
-          "complete" : "Login"
+          "complete" : "登录"
         },
         "mfa" : {
           "required" : "您需要在此供应方处设置多重身份验证",
@@ -554,7 +602,7 @@
     "resetThirdPartyDataModal" : {
       "title" : "删除您的本地第三方数据",
       "subtitle" : "删除您的本地第三方数据。您可能需要重新提交了解您的客户 (KYC) 信息并/或重新登录，从而访问我们的合作伙伴提供的服务。",
-      "cta" : "Confirm"
+      "cta" : "确认"
     },
     "modal" : {
       "title" : "互换",
@@ -648,6 +696,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "测试"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "连接 Vault",
+      "info" : "填写以下字段，关联您的 Ledger Vault 工作空间帐户，通过 Ledger Live 创建交易。前往 Settings（设置）> External wallet signer（外部钱包签名人）寻找信息位置。",
+      "info_link" : "了解更多",
+      "host" : {
+        "title" : "网址端点",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "工作空间名称",
+        "placeholder" : "工作空间"
+      },
+      "token" : {
+        "title" : "操作员 API 令牌",
+        "placeholder" : "Token（代币）"
+      },
+      "submit" : "连接"
+    }
   },
   "fullNode" : {
     "status" : "状态",
@@ -1396,6 +1464,10 @@
     "referralProgram" : {
       "title" : "推荐好友，赚取 10 美元",
       "description" : "成功推荐一名好友，双方均可赚取价值 10 美元的比特币。"
+    },
+    "vaultSigner" : {
+      "title" : "Vault 签名人模式",
+      "link" : "Vault 帮助中心"
     }
   },
   "signmessage" : {
@@ -2219,6 +2291,8 @@
         "recipientAddress" : "接收方地址",
         "amount" : "数额",
         "fees" : "网络费用",
+        "maxFees" : "最高网络费用",
+        "maxFeesInfo" : "这是您可以为此交易支付的最高金额。最高网络费用与实际费用之间的任何差额都会退还。",
         "useMax" : "使用最大值",
         "sendMax" : "发送最大值",
         "rippleTag" : "标签",
@@ -2297,7 +2371,8 @@
   "deviceLocalization" : {
     "language" : "语言",
     "deviceLanguage" : "更改设备语言",
-    "changeLanguage" : "更改语言",
+    "changeLanguage" : "更改",
+    "dontChangeLanguage" : "不要更改",
     "changeDeviceLanguage" : "要更改您的设备语言？",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}}同样适用于您的 {{deviceName}}",
@@ -2937,7 +3012,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "数额"
           },
           "validator" : {
             "title" : "验证者"
@@ -3009,7 +3084,7 @@
             "newDelegation" : "新的委托",
             "chooseValidator" : "选择一个验证者",
             "warning" : "如果再次改变主意，那么必须等待 <0>{{numberOfDays}} 天</0>才能从新的验证者重新委托。",
-            "amountLabel" : "Amount to redelegate"
+            "amountLabel" : "要重新委托的数额"
           },
           "device" : {
             "title" : "设备"
@@ -3418,17 +3493,17 @@
       }
     },
     "delegation" : {
-      "totalStake" : "Total stake",
+      "totalStake" : "质押总额",
       "commission" : "佣金",
       "delegate" : "添加",
       "listHeader" : "委托",
-      "availableBalance" : "Withdrawable",
+      "availableBalance" : "可提取",
       "active" : "活跃",
       "activeTooltip" : "活跃的数额产生奖励",
       "inactiveTooltip" : "未激活的数额不产生奖励",
       "delegatedInfoTooltip" : "委托至验证者的总数额。",
       "withdrawableInfoTooltip" : "可从委托提取的总数额。",
-      "withdrawableTitle" : "Withdrawable",
+      "withdrawableTitle" : "可提取",
       "statusUpdateNotice" : "交易确认后，委托状态将更新。",
       "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
       "emptyState" : {
@@ -3945,6 +4020,10 @@
         "1559DeactivateGate" : {
           "title" : "停用 EIP1559 最低优先费用限额",
           "description" : "这将允许发送交易时没有最低优先费用要求。这可能会导致交易永远停滞在内存池中。"
+        },
+        "vaultSigner" : {
+          "title" : "Vault 签名人",
+          "description" : "使用操作员 API 令牌，将 Ledger Vault 作为签名人"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "自定义优先费用限额",
@@ -5346,6 +5425,10 @@
       "title" : "操作不可用于此设备",
       "description" : "仅 Nano X 和 Nano S Plus 提供发送 NFT 功能。请访问我们的客服平台，了解如何使用 Nano S 发送 NFT。"
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "无法加速或取消",
+      "description" : "此交易已经过验证"
+    },
     "CantScanQRCode" : {
       "title" : "无法扫描此二维码：此地址不支持自动验证"
     },
@@ -5566,7 +5649,7 @@
       "title" : "地址关闭 ed25519 曲线"
     },
     "SolanaUseAllAmountStakeWarning" : {
-      "title" : "Ensure you have enough balance left for future transactions fees"
+      "title" : "确保您有足够的剩余余额以用作未来的交易费"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
@@ -5760,6 +5843,7 @@
   },
   "customImage" : {
     "title" : "自定义锁屏界面",
+    "cta" : "自定义锁屏界面",
     "managerCTA" : "锁屏图片",
     "managerCTARemove" : "删除",
     "steps" : {
