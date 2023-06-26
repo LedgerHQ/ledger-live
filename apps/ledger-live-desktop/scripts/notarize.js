@@ -10,7 +10,7 @@ const info = str => {
   console.log(chalk.blue(str));
 };
 
-async function attemptNotarize(retries) {
+async function attemptNotarize(retries, path) {
   try {
     await notarize({
       tool: "notarytool",
@@ -60,7 +60,7 @@ async function notarizeApp(context) {
       appleIdPassword: APPLEID_PASSWORD,
     });
   } else {
-    await attemptNotarize(5);
+    await attemptNotarize(5, path);
   }
 }
 
