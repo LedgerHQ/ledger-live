@@ -10,6 +10,26 @@ const info = str => {
   console.log(chalk.blue(str));
 };
 
+async function attemptNotarize(retries) {
+  try {
+    await notarize({
+      tool: "notarytool",
+      appBundleId: "com.ledger.live",
+      appPath: path,
+      ascProvider: "EpicDreamSAS",
+      appleId: APPLEID,
+      teamId: DEVELOPER_TEAM_ID,
+      appleIdPassword: APPLEID_PASSWORD,
+    });
+  } catch (e) {
+    if (retries > 0) {
+      await attemptNotarize(retries - 1);
+    } else {
+      throw e;
+    }
+  }
+}
+
 async function notarizeApp(context) {
   if (platform !== "darwin") {
     info("OS is not mac, skipping notarization.");
@@ -31,6 +51,7 @@ async function notarizeApp(context) {
   const path = `${appOutDir}/${appName}.app`;
 
   if (!DEVELOPER_TEAM_ID) {
+    // legacy way without notarytool
     await notarize({
       appBundleId: "com.ledger.live",
       appPath: path,
@@ -39,25 +60,7 @@ async function notarizeApp(context) {
       appleIdPassword: APPLEID_PASSWORD,
     });
   } else {
-    try {
-      await notarize({
-        tool: "notarytool",
-        appBundleId: "com.ledger.live",
-        appPath: path,
-        ascProvider: "EpicDreamSAS",
-        appleId: APPLEID,
-        teamId: DEVELOPER_TEAM_ID,
-        appleIdPassword: APPLEID_PASSWORD,
-      });
-    } catch (error) {
-      // Issue with staple
-      // https://github.com/electron/notarize/issues/109#issuecomment-1213359106
-      if (error.message?.includes("Failed to staple")) {
-        spawn(`xcrun`, ["stapler", "staple", path]);
-      } else {
-        throw error;
-      }
-    }
+    await attemptNotarize(5);
   }
 }
 
