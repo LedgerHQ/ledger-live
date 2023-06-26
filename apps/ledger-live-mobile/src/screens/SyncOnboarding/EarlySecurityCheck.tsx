@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Button, Flex, InfiniteLoader, Text, Link } from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, InfiniteLoader, Text, Link, Icon } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
@@ -238,8 +238,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     }
   }
 
-  // Handles the genuine check UI step title
+  // Handles the genuine check UI step title and description
   let genuineCheckStepTitle;
+  let genuineCheckStepDescription: string | null = null;
+  const firmwareUpdateCheckStepDescription: string | null = null;
+
   switch (genuineCheckUiStepStatus) {
     case "active":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.active.title");
@@ -251,6 +254,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       break;
     case "failed":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.failed.title");
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.failed.description");
       break;
     default:
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.inactive.title");
@@ -287,11 +291,17 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   }
 
   let stepContent = (
-    <Flex width="100%">
-      <Text>{t("earlySecurityCheck.genuineCheck.description")}</Text>
-      <CheckCard title={genuineCheckStepTitle} status={genuineCheckUiStepStatus} index={1} mb={4} />
+    <Flex width="100%" mt="4">
+      <CheckCard
+        title={genuineCheckStepTitle}
+        description={genuineCheckStepDescription}
+        status={genuineCheckUiStepStatus}
+        index={1}
+        mb={6}
+      />
       <CheckCard
         title={firmwareUpdatecheckStepTitle}
+        description={firmwareUpdateCheckStepDescription}
         status={firmwareUpdateUiStepStatus}
         index={2}
       />
@@ -403,6 +413,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
 type CheckCardProps = FlexBoxProps & {
   title: string;
+  description: string | null;
   index: number;
   status: UiCheckStatus;
 };
@@ -413,7 +424,7 @@ type CheckCardProps = FlexBoxProps & {
  *   after going to the fw update screen <- maybe it won't be implemented
  * - title and optional description message ?
  */
-const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
+const CheckCard = ({ title, description, index, status, ...props }: CheckCardProps) => {
   let checkIcon;
   switch (status) {
     case "active":
@@ -427,20 +438,22 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
       break;
     case "inactive":
     default:
-      checkIcon = <Text variant="body">{index}</Text>;
+      checkIcon = <InfiniteLoader opacity="0" color="primary.c80" size={24} />;
   }
 
   return (
-    <Flex flexDirection="row" alignItems="center" {...props}>
-      <BoxedIcon
-        backgroundColor="neutral.c30"
-        borderColor="neutral.c30"
-        variant="circle"
-        Icon={checkIcon}
-      />
-      <Text ml={4} variant="body" flex={1}>
-        {title}
-      </Text>
+    <Flex flexDirection="row" alignItems="flex-start" {...props}>
+      {checkIcon}
+      <Flex flexDirection="column" flex={1} justifyContent="flex-end">
+        <Text ml={4} variant="large">
+          {title}
+        </Text>
+        {description ? (
+          <Text ml={4} mt={5} variant="body" color="neutral.c70">
+            {description}
+          </Text>
+        ) : null}
+      </Flex>
     </Flex>
   );
 };

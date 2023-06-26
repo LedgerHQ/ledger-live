@@ -1926,7 +1926,8 @@
         "title": "{{productName}} is genuine"
       },
       "failed": {
-        "title": "Genuine Check skipped"
+        "title": "Genuine Check skipped",
+        "description": "You cannot setup your Ledger Stax without allowing this Check."
       }
     },
     "firmwareUpdateCheckStep": {
