@@ -1,6 +1,5 @@
 ---
 "ledger-live-desktop": patch
-"@ledgerhq/live-common": patch
 ---
 
-Show DEX providers on SWAP & remove feature flag
+Remove DEX feature flag and move dex utils to common
