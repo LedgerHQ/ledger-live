@@ -41,29 +41,15 @@ const TransactionsAlerts = () => {
   };
 
   useEffect(() => {
+    if (!chainwatchBaseUrl) return;
+
     // If the FF is disabled or if the transactionsAlerts toggle is turned off in the settings we stop tracking all addresses for this user
-    if (
-      (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) &&
-      chainwatchBaseUrl
-    ) {
+    if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) {
       getOrCreateUser().then(({ user }) => {
         deleteUserChainwatchAccounts(user.id, chainwatchBaseUrl, supportedChains);
       });
       return;
     }
-  }, [
-    featureTransactionsAlerts?.enabled,
-    notifications.transactionsAlertsCategory,
-    chainwatchBaseUrl,
-  ]);
-
-  useEffect(() => {
-    if (
-      !featureTransactionsAlerts?.enabled ||
-      !notifications.transactionsAlertsCategory ||
-      !chainwatchBaseUrl
-    )
-      return;
 
     const newAccounts = accountsFilteredBySupportedChains.filter(
       account => !refAccounts.current.find(refAccount => refAccount.id === account.id),
@@ -77,7 +63,12 @@ const TransactionsAlerts = () => {
       syncTransactionsAlerts(newAccounts, removedAccounts);
     }
     refAccounts.current = accountsFilteredBySupportedChains;
-  }, [featureTransactionsAlerts?.enabled, chainwatchBaseUrl, accountsFilteredBySupportedChains]);
+  }, [
+    featureTransactionsAlerts?.enabled,
+    chainwatchBaseUrl,
+    accountsFilteredBySupportedChains,
+    notifications.transactionsAlertsCategory,
+  ]);
 
   return null;
 };
