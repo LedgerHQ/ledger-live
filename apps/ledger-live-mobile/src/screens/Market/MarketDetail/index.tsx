@@ -35,7 +35,6 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "../../../components/RootNavigator/types/MarketNavigator";
 import { Item } from "../../../components/Graph/types";
-import { EthereumStakingDrawer } from "../../../families/ethereum/EthereumStakingDrawer";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -266,7 +265,6 @@ function MarketDetail({ navigation, route }: NavigationProps) {
           <MarketStats currency={currency} counterCurrency={counterCurrency} />
         )}
       </ScrollContainerHeader>
-      <EthereumStakingDrawer drawer={params.drawer} />
     </TabBarSafeAreaView>
   );
 }

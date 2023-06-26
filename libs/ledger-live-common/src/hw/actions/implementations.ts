@@ -48,7 +48,7 @@ type PollingImplementationParams<Request, EmittedEvents> = {
   config?: PollingImplementationConfig;
 };
 
-const defaultConfig: PollingImplementationConfig = {
+export const defaultConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,
   initialWaitTime: 5000,
   reconnectWaitTime: 5000,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
+import { Account, FeeStrategy, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 
@@ -13,6 +13,7 @@ type Props = {
   mapStrategies?: (a: FeeStrategy) => FeeStrategy;
   bridgePending?: boolean;
   trackProperties?: Record<string, unknown>;
+  transactionRaw?: TransactionCommonRaw;
 };
 
 const AmountRelatedField = (props: Props) => {

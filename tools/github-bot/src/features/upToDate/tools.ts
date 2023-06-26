@@ -22,10 +22,7 @@ export const getCheckRunByName = async ({
     check_name,
   });
 
-export const batch = <T>(
-  tasks: (() => T)[],
-  batchSize: number
-): Promise<T[]> => {
+export const batch = <T>(tasks: (() => T)[], batchSize: number): Promise<T[]> => {
   const results: T[] = [];
   const tasksLength = tasks.length;
 
@@ -38,9 +35,9 @@ export const batch = <T>(
         const task = tasks.shift();
         if (task) {
           Promise.resolve(task())
-            .then((result) => results.push(result))
+            .then(result => results.push(result))
             .then(shiftAndRun)
-            .catch((error) => {
+            .catch(error => {
               aborted = true;
               reject(error);
             });
@@ -93,7 +90,7 @@ export async function updateCheckRun({
         owner,
         repo,
       })
-    ).filter((pr) => pr.head.sha === checkRun.head_sha);
+    ).filter(pr => pr.head.sha === checkRun.head_sha);
 
     for await (const pr of associatedPRs) {
       const isFork = pr.head.repo?.fork;
@@ -108,9 +105,7 @@ export async function updateCheckRun({
         per_page: 1,
       });
 
-      const isUpToDate = ["ahead", "identical"].includes(
-        comparison.data.status
-      );
+      const isUpToDate = ["ahead", "identical"].includes(comparison.data.status);
 
       outcome.push({
         isUpToDate,
@@ -134,7 +129,7 @@ export async function updateCheckRun({
           ],
         };
       },
-      { valid: true, branchList: [] }
+      { valid: true, branchList: [] },
     );
 
     const output = valid

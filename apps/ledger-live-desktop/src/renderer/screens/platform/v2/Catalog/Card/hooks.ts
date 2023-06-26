@@ -1,11 +1,19 @@
 import { useMemo, useCallback } from "react";
 import { PropsRaw } from "./types";
+import { LiveAppManifestParams } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifestParamsDapp } from "@ledgerhq/live-common/lib/platform/types";
+
+const hasDappUrl = (params: LiveAppManifestParams): params is LiveAppManifestParamsDapp => {
+  return "dappUrl" in params;
+};
 
 export function useCard({ manifest, onClick: onClickProp }: PropsRaw) {
-  const hostname = useMemo(
-    () => new URL(manifest.url).hostname.replace("www.", ""),
-    [manifest.url],
-  );
+  let url = manifest.url;
+  if (manifest.params && hasDappUrl(manifest.params)) {
+    url = manifest.params.dappUrl;
+  }
+
+  const hostname = useMemo(() => new URL(url).hostname.replace("www.", ""), [url]);
 
   const onClick = useCallback(() => {
     onClickProp(manifest);

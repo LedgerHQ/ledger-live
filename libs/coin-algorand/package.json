@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",
@@ -48,7 +48,6 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

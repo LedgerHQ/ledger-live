@@ -15,7 +15,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
-import { useCallback } from "react";
+import React, { MutableRefObject, useCallback } from "react";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
@@ -30,10 +30,7 @@ import {
   localeSelector,
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
-  firstConnectionHasDeviceSelector,
-  firstConnectHasDeviceUpdatedSelector,
-  readOnlyModeEnabledSelector,
-  hasOrderedNanoSelector,
+  onboardingHasDeviceSelector,
   notificationsSelector,
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
@@ -49,6 +46,7 @@ import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
+import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -79,13 +77,12 @@ const extraProperties = async (store: AppStore) => {
         modelId: lastDevice.modelId,
       }
     : {};
-  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
   const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
-  const firstConnectHasDeviceUpdated = firstConnectHasDeviceUpdatedSelector(state);
   const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
@@ -119,8 +116,9 @@ const extraProperties = async (store: AppStore) => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
-    firstConnectionHasDevice,
-    firstConnectHasDeviceUpdated,
+    modelIdQtyList: aggregateData(devices),
+    modelIdList: getUniqueModelIdList(devices),
+    onboardingHasDevice,
     ...(satisfaction
       ? {
           satisfaction,
@@ -212,14 +210,8 @@ export function getIsTracking(
   mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
-  const hasOrderedNano = state && hasOrderedNanoSelector(state);
   const analyticsEnabled = state && analyticsEnabledSelector(state);
-  if (readOnlyMode && hasOrderedNano)
-    return {
-      enabled: false,
-      reason: "not tracking anything in the reborn state post purchase pre device setup",
-    };
+
   if (!mandatory && !analyticsEnabled) {
     return {
       enabled: false,
@@ -309,6 +301,8 @@ export const useAnalytics = () => {
   };
 };
 
+const lastScreenEventName: MutableRefObject<string | null | undefined> = React.createRef();
+
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
  * Extra logic to update the route names used in "screen" and "source"
@@ -344,15 +338,23 @@ export const screen = async (
    * any effect.
    */
   refreshSource?: boolean,
+  /**
+   * When true, event will not be emitted if it's a duplicate (if the last
+   * screen event emitted was the same screen event).
+   * This is practical in case a TrackScreen component gets remounted.
+   */
+  avoidDuplicates?: boolean,
 ) => {
   const fullScreenName = category + (name ? ` ${name}` : "");
+  const eventName = `Page ${fullScreenName}`;
+  if (avoidDuplicates && eventName === lastScreenEventName.current) return;
+  lastScreenEventName.current = eventName;
   if (updateRoutes) {
     previousRouteNameRef.current = currentRouteNameRef.current;
     if (refreshSource) {
       currentRouteNameRef.current = fullScreenName;
     }
   }
-  const eventName = `Page ${fullScreenName}`;
   Sentry.addBreadcrumb({
     message: eventName,
     category: "screen",

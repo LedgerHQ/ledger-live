@@ -1,7 +1,11 @@
 // polyfill the unfinished support of apps logic
 import uniq from "lodash/uniq";
 import semver from "semver";
-import { listCryptoCurrencies, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import {
+  listCryptoCurrencies,
+  findCryptoCurrencyById,
+  findCryptoCurrency,
+} from "@ledgerhq/cryptoassets";
 import { App, AppType, Application, ApplicationV2 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
@@ -110,16 +114,13 @@ export const polyfillApplication = (app: Application): Application => {
 };
 
 export const getCurrencyIdFromAppName = (
-  appName: string,
+  name: string,
 ): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
-  const crypto = listCryptoCurrencies(true, true).find(
-    crypto =>
-      appName.toLowerCase() === crypto.managerAppName.toLowerCase() &&
-      (crypto.managerAppName !== "Ethereum" ||
-        // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-        appName === "Ethereum"),
-  );
-
+  const crypto =
+    // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
+    findCryptoCurrency(c => c.name === name) ||
+    // Else take the first one with that manager app
+    findCryptoCurrency(c => c.managerAppName === name);
   return crypto?.id;
 };
 

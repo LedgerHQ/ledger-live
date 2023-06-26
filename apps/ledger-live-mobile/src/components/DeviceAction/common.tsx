@@ -4,9 +4,11 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TFunction } from "react-i18next";
-import Button from "../Button";
+import Button from "../wrappedUi/Button";
 import Animation from "../Animation";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import Link from "../wrappedUi/Link";
+import { TrackScreen } from "../../analytics";
 
 // NEW DEVICE ACTION UX
 // area reserved to the project of redefining the UX of the device actions
@@ -107,8 +109,11 @@ export const FirmwareUpdateDenied = ({
   onPressRestart: () => void;
   onPressQuit: () => void;
 }) => {
+  const productName = getDeviceModel(device.modelId).productName;
+  const drawerName = `Error: update cancelled on ${productName}`;
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
+      <TrackScreen category={drawerName} type="drawer" refreshSource={false} />
       <IconBadge iconColor="primary.c100" iconSize={32} Icon={Icons.InfoAltFillMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateCancelled", {
@@ -121,12 +126,33 @@ export const FirmwareUpdateDenied = ({
           newFirmwareVersion,
         })}
       </Text>
-      <Button type="main" outline={false} onPress={onPressRestart} mt={8} alignSelf="stretch">
+      <Button
+        type="main"
+        event="button_clicked"
+        eventProperties={{
+          button: "Restart OS update",
+          screen: "Firmware update",
+          drawer: drawerName,
+        }}
+        outline={false}
+        onPress={onPressRestart}
+        mt={8}
+        mb={6}
+        alignSelf="stretch"
+      >
         {t("FirmwareUpdate.restartUpdate")}
       </Button>
-      <Button type="default" outline={false} onPress={onPressQuit} mt={6} alignSelf="stretch">
+      <Link
+        event="button_clicked"
+        eventProperties={{
+          button: "Exit update",
+          screen: "Firmware update",
+          drawer: drawerName,
+        }}
+        onPress={onPressQuit}
+      >
         {t("FirmwareUpdate.quitUpdate")}
-      </Button>
+      </Link>
     </Flex>
   );
 };
