@@ -263,7 +263,8 @@ export default function BaseNavigator() {
             */
               const onError =
                 route.params?.onError || (route.params as unknown as typeof route)?.params?.onError;
-              // @TODO replace with correct error
+              // @TODO This route.params.error mechanism is deprecated, no part of the code is currently using it
+              // WalletAPI are suggesting they will rework that at some point
               if (onError && typeof onError === "function" && route.params.error)
                 onError(route.params.error);
             },
