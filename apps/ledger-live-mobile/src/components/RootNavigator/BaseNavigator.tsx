@@ -571,37 +571,9 @@ export default function BaseNavigator() {
           }}
         />
         <Stack.Screen
-          name={ScreenName.RedirectToOnboardingRecoverFlow}
-          options={{ headerShown: false }}
-          component={RedirectToOnboardingRecoverFlowScreen}
-        />
-        <Stack.Screen
-          name={ScreenName.RedirectToRecoverStaxFlow}
-          options={{ headerShown: false }}
-          component={RedirectToRecoverStaxFlowScreen}
-        />
-        <Stack.Screen
-          name={NavigatorName.NoFundsFlow}
-          component={NoFundsFlowNavigator}
-          options={{
-            ...TransparentHeaderNavigationOptions,
-            headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
           name={NavigatorName.EditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
-        />
-        <Stack.Screen
-          name={NavigatorName.StakeFlow}
-          component={StakeFlowNavigator}
-          options={{
-            ...TransparentHeaderNavigationOptions,
-            headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
-            headerLeft: () => null,
-          }}
         />
       </Stack.Navigator>
     </>
