@@ -41,18 +41,21 @@ const TransactionsAlerts = () => {
         deleteUserChainwatchAccounts(user.id, chainwatchBaseUrl, supportedChains);
       });
     }
-    refFeatureEnabled.current = featureTransactionsAlerts?.enabled;
-    refNotifSettings.current = notifications.transactionsAlertsCategory;
-
-    if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
-
-    const newAccounts = accountsFilteredBySupportedChains.filter(
-      account => !refAccounts.current.find(refAccount => refAccount.id === account.id),
-    );
+    const newAccounts =
+      notifications.transactionsAlertsCategory && !refNotifSettings.current
+        ? accountsFilteredBySupportedChains
+        : accountsFilteredBySupportedChains.filter(
+            account => !refAccounts.current.find(refAccount => refAccount.id === account.id),
+          );
     const removedAccounts = refAccounts.current.filter(
       refAccount =>
         !accountsFilteredBySupportedChains.find(account => account.id === refAccount.id),
     );
+
+    refFeatureEnabled.current = featureTransactionsAlerts?.enabled;
+    refNotifSettings.current = notifications.transactionsAlertsCategory;
+
+    if (!featureTransactionsAlerts?.enabled || !notifications.transactionsAlertsCategory) return;
 
     if (newAccounts.length > 0 || removedAccounts.length > 0) {
       getOrCreateUser().then(({ user }) => {
