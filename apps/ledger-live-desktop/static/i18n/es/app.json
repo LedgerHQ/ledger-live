@@ -117,7 +117,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
-    "featureFlags" : "Marcas de funciones",
+    "featureFlags" : "Indicadores de funciones",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -187,7 +187,55 @@
       "REGISTER" : "Registrado",
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
-      "WITHDRAW_UNSTAKED" : "Retirado"
+      "WITHDRAW_UNSTAKED" : "Retirado",
+      "SENDING" : "Enviando"
+    },
+    "edit" : {
+      "title" : "Acelerar o cancelar",
+      "description" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla.",
+      "stuckDescription" : "Tu transacción se ha quedado atascada. Acelérala con una tarifa de red más alta o cancélala.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Información sobre las tarifas de transacciones pendientes: ",
+        "networkfee" : "Tarifa de red = ",
+        "maxFee" : "Tarifa máxima = ",
+        "maxPriorityFee" : "Tarifa de prioridad máxima = ",
+        "gasPrice" : "Precio del gas = "
+      },
+      "learnMore" : "Quiero saber más",
+      "panel" : {
+        "title" : "Acelerar o cancelar",
+        "description" : "Una de tus transacciones de envío más recientes se ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala."
+      },
+      "speedUp" : {
+        "title" : "Acelerar",
+        "description" : "Vuelve a enviar la transacción con una tarifa de red mayor."
+      },
+      "cancel" : {
+        "title" : "Cancelar",
+        "description" : "Enviando 0 {{ticker}} a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 30% más alta que la tarifa de la transacción que se pretende cancelar."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Método"
+        },
+        "fees" : {
+          "title" : "Tarifas"
+        },
+        "summary" : {
+          "title" : "Resumen"
+        },
+        "device" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "La cancelación de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+        "notEnoughFundsToSpeedup" : "La aceleración de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+        "notlowestNonceToSpeedup" : "La función de aceleración no está disponible. Tu transacción está pendiente porque hay una transacción anterior atascada. Puedes esperar a que se confirme, acelerarla o cancelarla."
+      }
     }
   },
   "byteSize" : {
@@ -648,6 +696,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "Prueba"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "Conectar Vault",
+      "info" : "Vincula las cuentas de tu espacio de trabajo de Ledger Vault y crea transacciones desde Ledger Live completando los siguientes campos. Busca la información en Ajustes > Firmante de billetera externa.",
+      "info_link" : "Más información",
+      "host" : {
+        "title" : "Endpoint de URL",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "Nombre del espacio de trabajo",
+        "placeholder" : "espacio de trabajo"
+      },
+      "token" : {
+        "title" : "Token de API de operador",
+        "placeholder" : "Token"
+      },
+      "submit" : "Conectar"
+    }
   },
   "fullNode" : {
     "status" : "Estado",
@@ -1396,6 +1464,10 @@
     "referralProgram" : {
       "title" : "Recomiéndanos y llévate $10 USD",
       "description" : "Refiere con éxito a un amigo para recibir $10 USD en Bitcoin cada uno."
+    },
+    "vaultSigner" : {
+      "title" : "Modo firmante de Vault",
+      "link" : "Centro de ayuda de Vault"
     }
   },
   "signmessage" : {
@@ -2219,6 +2291,8 @@
         "recipientAddress" : "Dirección de recepción",
         "amount" : "Importe",
         "fees" : "Tarifas de red",
+        "maxFees" : "Tarifas de red máx.",
+        "maxFeesInfo" : "Es la máxima cantidad que se puede pagar por esta transacción. Se reembolsará la diferencia entre las tarifas de red máx. y las tarifas reales.",
         "useMax" : "Utilizar máx",
         "sendMax" : "Enviar máx",
         "rippleTag" : "Etiqueta",
@@ -2297,7 +2371,8 @@
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Cambiar el idioma del dispositivo",
-    "changeLanguage" : "Cambiar idioma",
+    "changeLanguage" : "Cambiar",
+    "dontChangeLanguage" : "No cambiar",
     "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
     "changeDeviceLanguagePrompt" : {
       "title" : "El idioma {{language}} también está disponible para tu {{deviceName}}.",
@@ -3725,7 +3800,7 @@
         },
         "validator" : {
           "title" : "Seleccionar validador",
-          "description" : "Puedes seleccionar un validador comparando los índices de recompensa estimados",
+          "description" : "Puedes seleccionar un validador comparando los índices de recompensa calculados",
           "customValidator" : "Validador personalizado",
           "providedBy" : "Tasas de rendimiento suministradas por <1><0>{{name}}</0></1>"
         },
@@ -3831,12 +3906,12 @@
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
       "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
       "customLockScreenCTA" : "Ejecutar",
-      "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
+      "featureFlagsTitle" : "Indicadores de funciones definidos que se usan en Ledger Live",
       "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Anular",
-      "featureFlagsRestoreAll" : "Restaurar los valores de todas las marcas",
+      "featureFlagsRestoreAll" : "Restaurar los valores de todos los Indicadores",
       "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
       "buttonTitle" : "Señales de alarma anuladas localmente",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
@@ -3945,6 +4020,10 @@
         "1559DeactivateGate" : {
           "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
           "description" : "Esto permite enviar una transacción sin ninguna expectativa de tarifa de prioridad mínima. Optar por ello puede provocar que una transacción quede bloqueada en el pool de memoria para siempre."
+        },
+        "vaultSigner" : {
+          "title" : "Firmante de Vault",
+          "description" : "Usar Ledger Vault como firmante con tu token de API de operador"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Umbral de tarifa de prioridad personalizada",
@@ -5346,6 +5425,10 @@
       "title" : "Operación no disponible en este dispositivo",
       "description" : "La función Enviar NFT sólo está disponible en el Nano X y el Nano S+. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "No es posible acelerarla ni cancelarla",
+      "description" : "Esta transacción ya se ha validado"
+    },
     "CantScanQRCode" : {
       "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática"
     },
@@ -5760,6 +5843,7 @@
   },
   "customImage" : {
     "title" : "Pantalla de bloqueo personalizada",
+    "cta" : "Pantalla de bloqueo personalizada",
     "managerCTA" : "Imagen de pantalla de bloqueo",
     "managerCTARemove" : "Eliminar",
     "steps" : {
