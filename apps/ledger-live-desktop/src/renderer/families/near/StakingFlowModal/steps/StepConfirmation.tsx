@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { track } from "~/renderer/analytics/segment";
+import { useTrack } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -31,6 +31,7 @@ function StepConfirmation({
   transaction,
   source,
 }: StepProps) {
+  const track = useTrack();
   useEffect(() => {
     const voteAccAddress = transaction?.recipient;
     // Blockchain is not retrieving the name yet.

@@ -47,6 +47,7 @@ import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -281,9 +282,11 @@ export const trackWithRoute = (
 };
 export const useTrack = () => {
   const route = useRoute();
+  const ptxEarnFeatureFlag = useFeature('ptxEarn')
+s
   const track = useCallback(
     (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      trackWithRoute(event, route, properties, mandatory),
+      trackWithRoute(event, route, {...properties,ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,}, mandatory),
     [route],
   );
   return track;

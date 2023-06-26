@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { useTrack } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -39,6 +39,7 @@ function StepConfirmation({
   const voteAccAddress = (transaction?.model?.uiState as StakeCreateAccountTransaction["uiState"])
     ?.delegate?.voteAccAddress;
   const validators = useValidators(account.currency);
+  const track = useTrack();
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.voteAccount === voteAccAddress);

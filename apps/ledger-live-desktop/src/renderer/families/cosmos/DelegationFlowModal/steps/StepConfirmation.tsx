@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { track } from "~/renderer/analytics/segment";
+import { useTrack } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -37,7 +37,8 @@ function StepConfirmation({
   const voteAccAddress = transaction?.validators[0]?.address;
   const currencyName = account.currency.name.toLowerCase();
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
-
+  const track = useTrack();
+  
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);

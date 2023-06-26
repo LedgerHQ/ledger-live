@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen, track } from "../../../analytics";
+import { TrackScreen, useTrack } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
@@ -35,6 +35,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     type: route.params.result.type,
   });
   const currency = getAccountCurrency(account);
+  const track = useTrack();
 
   useEffect(() => {
     if (delegation)

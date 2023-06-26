@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { TrackScreen, track } from "../../../analytics";
+import { TrackScreen, useTrack } from "../../../analytics";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import { ScreenName } from "../../../const";
@@ -38,6 +38,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
+  const track = useTrack();
   useEffect(() => {
     if (delegation)
       track("staking_completed", {

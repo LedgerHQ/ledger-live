@@ -26,6 +26,7 @@ import createStore from "../createStore";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { useCallback, useContext } from "react";
 import { analyticsDrawerContext } from "../drawers/Provider";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -84,6 +85,7 @@ const extraProperties = (store: ReduxStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+
   return {
     appVersion: __APP_VERSION__,
     language,
@@ -223,6 +225,8 @@ export const track = (
  * */
 export function useTrack() {
   const { analyticsDrawerName } = useContext(analyticsDrawerContext);
+  const ptxEarnFeatureFlag = useFeature('ptxEarn')
+
   return useCallback(
     (
       eventName: string,
@@ -233,12 +237,13 @@ export function useTrack() {
         eventName,
         {
           ...(analyticsDrawerName ? { drawer: analyticsDrawerName } : {}),
+          ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
           ...(properties ?? {}),
         },
         mandatory,
       );
     },
-    [analyticsDrawerName],
+    [analyticsDrawerName, ptxEarnFeatureFlag?.enabled],
   );
 }
 
