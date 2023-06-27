@@ -17,6 +17,7 @@ describe("Swap", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToSwapFromTransferMenu();
+    await expect(swapPage.swapFormTab()).toBeVisible();
   });
 
   it("should be able to select a different source account", async () => {

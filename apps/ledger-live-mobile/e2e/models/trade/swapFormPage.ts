@@ -1,7 +1,6 @@
 import {
   clearTextByElement,
   getElementById,
-  getElementByText,
   openDeeplink,
   tapByElement,
   tapByText,

@@ -29,10 +29,11 @@ export default function SwapFormNavigator() {
         options={{
           title: t("transfer.swap.form.tab"),
           tabBarLabel: (props: TabLabelProps) => (
-            <Text variant="body" fontWeight="semiBold" {...props} testID="swap-form-tab">
+            <Text variant="body" fontWeight="semiBold" {...props}>
               {t("transfer.swap.form.tab")}
             </Text>
           ),
+          tabBarTestID: "swap-form-tab",
         }}
       />
       <Tab.Screen
@@ -41,10 +42,11 @@ export default function SwapFormNavigator() {
         options={{
           title: t("exchange.buy.tabTitle"),
           tabBarLabel: (props: TabLabelProps) => (
-            <Text variant="body" fontWeight="semiBold" testID="swap-history-tab" {...props}>
+            <Text variant="body" fontWeight="semiBold" {...props}>
               {t("transfer.swap.history.tab")}
             </Text>
           ),
+          tabBarTestID: "swap-history-tab",
         }}
       />
     </Tab.Navigator>
