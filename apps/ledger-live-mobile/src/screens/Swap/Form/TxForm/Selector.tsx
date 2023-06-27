@@ -11,7 +11,7 @@ interface Props {
   subTitle: string;
   onPress: () => void;
   disabled?: boolean;
-  selectorTestId?: string;
+  testID?: string;
 }
 
 export function Selector({ currency, title, subTitle, onPress, disabled = false }: Props) {
