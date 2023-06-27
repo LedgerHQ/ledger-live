@@ -3114,9 +3114,6 @@
     },
     "swap2": {
       "form": {
-        "ratesNotFoundError": {
-          "message": "No result found"
-        },
         "ratesDrawer": {
           "title": "Rate",
           "quote": "Quote",
@@ -3158,6 +3155,9 @@
           "to": {
             "title": "To"
           }
+        },
+        "ratesNotFoundError": {
+          "message": "No result found"
         },
         "providers": {
           "kyc": {
