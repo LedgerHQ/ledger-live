@@ -222,27 +222,6 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       <TrackScreen category="EditTransaction" name="EditTransaction" />
       <Flex p={6}>
         <SelectableList onChange={onSelect}>
-          <SelectableList.Element disabled={!haveFundToCancel} value={"cancel"}>
-            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
-              <LText bold>
-                <Trans i18nKey={"editTransaction.cancel.title"} />
-              </LText>
-              <LText
-                style={{
-                  marginTop: 15,
-                  marginBottom: 0,
-                  overflow: "hidden",
-                }}
-              >
-                {haveFundToCancel
-                  ? t("editTransaction.cancel.description", {
-                      ticker: currency.ticker,
-                    })
-                  : t("editTransaction.error.notEnoughFundsToCancel")}
-              </LText>
-            </Box>
-          </SelectableList.Element>
-
           <SelectableList.Element
             disabled={!haveFundToSpeedup || !oldestOperation}
             value={"speedup"}
@@ -264,6 +243,27 @@ function MethodSelectionComponent({ navigation, route }: Props) {
                   />
                 </LText>
               </Flex>
+            </Box>
+          </SelectableList.Element>
+
+          <SelectableList.Element disabled={!haveFundToCancel} value={"cancel"}>
+            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
+              <LText bold>
+                <Trans i18nKey={"editTransaction.cancel.title"} />
+              </LText>
+              <LText
+                style={{
+                  marginTop: 15,
+                  marginBottom: 0,
+                  overflow: "hidden",
+                }}
+              >
+                {haveFundToCancel
+                  ? t("editTransaction.cancel.description", {
+                      ticker: currency.ticker,
+                    })
+                  : t("editTransaction.error.notEnoughFundsToCancel")}
+              </LText>
             </Box>
           </SelectableList.Element>
         </SelectableList>
