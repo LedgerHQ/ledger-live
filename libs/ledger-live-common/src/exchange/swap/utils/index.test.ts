@@ -368,7 +368,7 @@ describe("swap/utils/getCustomDappUrl", () => {
       "https://app.1inch.io/#/1/simple/swap/eth/usdt?ledgerLive=true&sourceTokenAmount=0.04",
     );
   });
-  it("should not convert correct when backend send a complete url (future)", async () => {
+  it("should not update URL when complete URL is provided", async () => {
     const customDappUrl = getCustomDappUrl({
       provider: "oneinch",
       providerURL: "https://app.1inch.io/#/test",
