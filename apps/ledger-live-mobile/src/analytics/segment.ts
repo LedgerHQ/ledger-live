@@ -283,7 +283,7 @@ export const trackWithRoute = (
 export const useTrack = () => {
   const route = useRoute();
   const ptxEarnFeatureFlag = useFeature('ptxEarn')
-s
+
   const track = useCallback(
     (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
       trackWithRoute(event, route, {...properties,ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,}, mandatory),
