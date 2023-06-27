@@ -73,7 +73,6 @@ export type AppState = {
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
-  wiredDevice: DeviceLike | null;
 };
 
 // === BLE STATE ===
@@ -147,6 +146,12 @@ export type RatingsState = {
 
 // === SETTINGS STATE ===
 
+export enum OnboardingType {
+  restore = "restore",
+  connect = "connect",
+  setupNew = "setup new",
+}
+
 export type CurrencySettings = {
   confirmationsNb: number;
   // FIXME: SEEMS TO NEVER BE USED - DROPPING ?
@@ -216,8 +221,8 @@ export type SettingsState = {
   marketCounterCurrency: string | null | undefined;
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
-  firstConnectionHasDevice: boolean | null;
-  firstConnectHasDeviceUpdated: boolean | null;
+  onboardingHasDevice: boolean | null;
+  onboardingType: OnboardingType | null;
   customImageType: ImageType | null;
   customImageBackup?: { hex: string; hash: string };
   lastSeenCustomImage: {
@@ -239,6 +244,7 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
   largeMoverCategory: boolean;
+  transactionsAlertsCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===

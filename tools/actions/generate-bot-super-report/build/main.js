@@ -25831,9 +25831,7 @@ function retry(f, options) {
         "promise-retry",
         context + " failed. " + remainingTry + " retry remain. " + String(e)
       );
-      return delay(i).then(
-        () => rec(remainingTry - 1, i * intervalMultiplicator)
-      );
+      return delay(i).then(() => rec(remainingTry - 1, i * intervalMultiplicator));
     });
   }
   return rec(maxRetry, interval);
@@ -26194,10 +26192,7 @@ async function main() {
   const slackApiToken = core.getInput("slackApiToken");
   const environment = core.getInput("environment");
   const reports = await loadReports({ branch, days, githubToken, environment });
-  const { reportMarkdownBody, reportSlackText } = generateSuperReport(
-    reports,
-    days
-  );
+  const { reportMarkdownBody, reportSlackText } = generateSuperReport(reports, days);
   const sha = await getLatestCommitShaOfBranch({ githubToken, branch });
   const githubComment = await uploadCommentToGithubSha({
     sha,

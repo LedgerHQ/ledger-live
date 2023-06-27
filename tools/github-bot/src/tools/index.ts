@@ -2,9 +2,8 @@ import { Context, ProbotOctokit } from "probot";
 import https from "https";
 import { unzipSingleFile } from "./zip";
 
-export const extractWorkflowFile = (
-  payload: Context<"workflow_run">["payload"]
-) => payload.workflow.path.split("@")[0].replace(".github/workflows/", "");
+export const extractWorkflowFile = (payload: Context<"workflow_run">["payload"]) =>
+  payload.workflow.path.split("@")[0].replace(".github/workflows/", "");
 
 type Octokit = InstanceType<typeof ProbotOctokit>;
 type CheckRunResponse = ReturnType<Octokit["checks"]["listForRef"]>;
@@ -32,7 +31,7 @@ export async function downloadArtifact(
   octokit: Octokit,
   owner: string,
   repo: string,
-  artifactId: number
+  artifactId: number,
 ): Promise<Buffer> {
   const artifactResponse = await octokit.actions.downloadArtifact({
     owner,
@@ -46,10 +45,10 @@ export async function downloadArtifact(
     const headers = {
       "User-Agent": "Node.js",
     };
-    https.get(downloadUrl, { headers }, (res) => {
+    https.get(downloadUrl, { headers }, res => {
       const chunks: Buffer[] = [];
 
-      res.on("data", (chunk) => {
+      res.on("data", chunk => {
         chunks.push(chunk);
       });
 
@@ -58,11 +57,7 @@ export async function downloadArtifact(
 
         if (res.statusCode !== 200) {
           return reject(
-            new Error(
-              `Request failed with status code ${
-                res.statusCode
-              }\n${buffer.toString()}`
-            )
+            new Error(`Request failed with status code ${res.statusCode}\n${buffer.toString()}`),
           );
         }
 
@@ -73,7 +68,7 @@ export async function downloadArtifact(
         }
       });
 
-      res.on("error", (error) => {
+      res.on("error", error => {
         reject(error);
       });
     });
@@ -131,12 +126,7 @@ export function getGenericOutput(conclusion: string, summary?: string) {
 }
 
 export function formatConclusion(conclusion: string) {
-  return (
-    getStatusEmoji(conclusion) +
-    " " +
-    conclusion[0].toLocaleUpperCase() +
-    conclusion.slice(1)
-  );
+  return getStatusEmoji(conclusion) + " " + conclusion[0].toLocaleUpperCase() + conclusion.slice(1);
 }
 
 export function getStatusEmoji(status: string) {
@@ -220,7 +210,7 @@ export async function listWorkflowRunArtifacts(
   owner: string,
   repo: string,
   run_id: number,
-  attempt: number = 0
+  attempt = 0,
 ): Promise<WorkflowRunArtifacts> {
   const artifacts = await octokit.actions.listWorkflowRunArtifacts({
     owner,
@@ -233,10 +223,10 @@ export async function listWorkflowRunArtifacts(
   }
 
   if (artifacts.data.artifacts.length === 0 && attempt <= MAX_RETRIES) {
-    return new Promise((res) =>
+    return new Promise(res =>
       setTimeout(() => {
         res(listWorkflowRunArtifacts(octokit, owner, repo, run_id, ++attempt));
-      }, TIMEOUT)
+      }, TIMEOUT),
     );
   }
 

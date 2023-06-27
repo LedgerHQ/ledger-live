@@ -24,6 +24,7 @@ import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { NavigatorName } from "../../const";
+import { Loading } from "../Loading";
 
 type BackToWhitelistedDomainProps = {
   manifest: AppManifest;
@@ -185,6 +186,7 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
         inputs={inputs}
         onStateChange={setWebviewState}
       />
+      {webviewState.loading ? <Loading /> : null}
     </SafeAreaView>
   );
 };

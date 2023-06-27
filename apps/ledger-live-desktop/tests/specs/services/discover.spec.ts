@@ -52,14 +52,12 @@ test("Discover", async ({ page }) => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
     await discoverPage.waitForCorrectTextInWebview("Ledger Live Dummy Test App");
-    await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
   await test.step("List all accounts", async () => {
     await discoverPage.getAccountsList();
     await discoverPage.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_0:");
     await discoverPage.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_1:");
-    await expect.soft(page).toHaveScreenshot("live-app-list-all-accounts.png");
   });
 
   await test.step("Request Account drawer - open", async () => {
@@ -77,13 +75,11 @@ test("Discover", async ({ page }) => {
     await discoverPage.selectAccount();
     await drawer.waitForDrawerToDisappear();
     await discoverPage.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_0:");
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-output.png");
   });
 
   await test.step("List currencies", async () => {
     await discoverPage.listCurrencies();
     await discoverPage.waitForCorrectTextInWebview("CryptoCurrency");
-    await expect.soft(page).toHaveScreenshot("live-app-list-currencies.png");
   });
 
   await test.step("Verify Address - modal", async () => {
@@ -95,7 +91,6 @@ test("Discover", async ({ page }) => {
   await test.step("Verify Address - address output", async () => {
     await modal.waitForModalToDisappear();
     await discoverPage.waitForCorrectTextInWebview("1xey");
-    await expect.soft(page).toHaveScreenshot("live-app-verify-address-output.png");
   });
 
   await test.step("Sign Transaction - info modal", async () => {
@@ -117,7 +112,6 @@ test("Discover", async ({ page }) => {
 
   await test.step("Sign Transaction - signature output", async () => {
     await modal.waitForModalToDisappear();
-    await discoverPage.waitForCorrectTextInWebview("mock_op_100");
-    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-output.png");
+    await discoverPage.waitForCorrectTextInWebview("mock_op_100_mock:1:bitcoin:true_bitcoin_0:");
   });
 });

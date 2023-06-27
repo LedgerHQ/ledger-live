@@ -83,12 +83,10 @@ export enum AppStateActionTypes {
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
-  SET_WIRED_DEVICE = "SET_WIRED_DEVICE",
 }
 
 export type AppStateIsConnectedPayload = AppState["isConnected"];
 export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
-export type AppStateSetWiredDevicePayload = AppState["wiredDevice"];
 export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
@@ -260,7 +258,7 @@ export enum SettingsActionTypes {
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
-  SET_FIRST_CONNECTION_HAS_DEVICE = "SET_FIRST_CONNECTION_HAS_DEVICE",
+  SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
@@ -271,6 +269,7 @@ export enum SettingsActionTypes {
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
+  SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -344,9 +343,10 @@ export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCount
 export type SettingsSetMarketFilterByStarredAccountsPayload =
   SettingsState["marketFilterByStarredAccounts"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
-export type SettingsSetFirstConnectionHasDevicePayload = SettingsState["firstConnectionHasDevice"];
-export type SettingsSetFirstConnectHasDeviceUpdatedPayload =
-  SettingsState["firstConnectHasDeviceUpdated"];
+export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
+
+export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
+
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
@@ -409,7 +409,7 @@ export type SettingsPayload =
   | SettingsSetMarketCounterCurrencyPayload
   | SettingsSetMarketFilterByStarredAccountsPayload
   | SettingsSetSensitiveAnalyticsPayload
-  | SettingsSetFirstConnectHasDeviceUpdatedPayload
+  | SettingsSetOnboardingHasDevicePayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
   | DangerouslyOverrideStatePayload
@@ -419,7 +419,8 @@ export type SettingsPayload =
   | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
-  | SettingsSetHasBeenUpsoldProtectPayload;
+  | SettingsSetHasBeenUpsoldProtectPayload
+  | SettingsSetOnboardingTypePayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

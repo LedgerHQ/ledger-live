@@ -18,7 +18,6 @@ import {
 import { setHasBeenUpsoldProtect } from "../../actions/settings";
 
 import Carousel from "../../components/Carousel";
-import TrackScreen from "../../analytics/TrackScreen";
 import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
@@ -128,9 +127,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
             openAddModal={openAddModal}
           />
         </Box>
-      ) : (
-        <TrackScreen category="Wallet" accountsLength={0} discreet={discreetMode} />
-      ),
+      ) : null,
       ...(showAssets && isAWalletCardDisplayed
         ? [
             <Box background={colors.background.main}>

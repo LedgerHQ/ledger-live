@@ -4,7 +4,6 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
-import ManagerPage from "../models/manager/managerPage";
 import { tapByElement, tapByText } from "../helpers";
 import ReceivePage from "../models/trade/receivePage";
 import { loadConfig } from "../bridge/server";
@@ -13,7 +12,6 @@ let portfolioPage: PortfolioPage;
 let walletTabNavigatorPage: WalletTabNavigatorPage;
 let nftGalleryPage: NftGalleryPage;
 let nftViewerPage: NftViewerPage;
-let managerPage: ManagerPage;
 let receivePage: ReceivePage;
 
 describe("NFT Gallery screen", () => {
@@ -22,13 +20,9 @@ describe("NFT Gallery screen", () => {
     walletTabNavigatorPage = new WalletTabNavigatorPage();
     nftGalleryPage = new NftGalleryPage();
     nftViewerPage = new NftViewerPage();
-    managerPage = new ManagerPage();
     receivePage = new ReceivePage();
-    await loadConfig("1Account1NFT");
+    await loadConfig("1Account1NFTReadOnlyFalse");
     await portfolioPage.waitForPortfolioPageToLoad();
-    await managerPage.openViaDeeplink();
-    await managerPage.expectManagerPage();
-    await managerPage.addDevice("Nano X de David");
     await nftGalleryPage.openViaDeeplink();
   });
 

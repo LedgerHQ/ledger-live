@@ -1,4 +1,4 @@
-This document allows to track, explain and maintain the dependencies we have defined in package.json.
+This document allows to track, explain and maintain the dependencies we have defined in package.json
 
 You can see at any point in time what libraries are upgradable using:
 
@@ -56,10 +56,10 @@ yarn upgrade-interactive -i --latest
 | @walletconnect/client                       | Wallet connect feature                                            | monthly                                                              |
 | @xstate/react                               | used for some components                                          | TBD DEPRECATE?                                                       |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
+| @zondax/izari-filecoin                      | Filecoin coin integration                                         | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
 | axios-retry                                 | network                                                           | monthly                                                              |
-| base32-decode                               | Filecoin coin integration                                         | monthly                                                              |
 | bchaddrjs                                   | Bitcoin coin integration                                          | monthly                                                              |
 | bech32                                      | Bitcoin coin integration                                          | BLOCKED? TBD                                                         |
 | bignumber.js                                | many parts involving amounts                                      | monthly                                                              |
@@ -84,7 +84,6 @@ yarn upgrade-interactive -i --latest
 | invariant                                   | generic helper                                                    | monthly                                                              |
 | isomorphic-ws                               | WebSocket helper                                                  | monthly                                                              |
 | json-rpc-2.0                                | Ethereum coin integration                                         | monthly                                                              |
-| leb128                                      | Filecoin coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
 | long                                        | Osmosis coin integration                                          | monthly                                                              |
 | numeral                                     | for very concise amount display (on graph)                        | monthly – **TBD if can be dropped**                                  |

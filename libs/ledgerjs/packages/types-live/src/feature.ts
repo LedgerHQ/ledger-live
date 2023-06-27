@@ -66,7 +66,9 @@ export type FeatureId =
   | "domainInputResolution"
   | "discover"
   | "protectServicesDiscoverDesktop"
-  | "protectServicesDesktop";
+  | "protectServicesDesktop"
+  | "transactionsAlerts"
+  | "listAppsV2";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

@@ -113,19 +113,6 @@ export function useWebviewState(
     });
   }, []);
 
-  const onLoadProgress: Required<WebViewProps>["onLoadProgress"] = useCallback(
-    ({ nativeEvent }) => {
-      setState({
-        title: nativeEvent.title,
-        url: nativeEvent.url,
-        canGoBack: nativeEvent.canGoBack,
-        canGoForward: nativeEvent.canGoForward,
-        loading: nativeEvent.loading,
-      });
-    },
-    [],
-  );
-
   const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] = useCallback(
     event => {
       setState({
@@ -144,11 +131,10 @@ export function useWebviewState(
       onLoad,
       onLoadStart,
       onLoadEnd,
-      onLoadProgress,
       onNavigationStateChange,
       source,
     }),
-    [onLoad, onLoadEnd, onLoadProgress, onLoadStart, onNavigationStateChange, source],
+    [onLoad, onLoadEnd, onLoadStart, onNavigationStateChange, source],
   );
 
   return {

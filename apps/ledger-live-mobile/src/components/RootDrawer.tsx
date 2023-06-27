@@ -3,20 +3,28 @@ import React from "react";
 import { StakingDrawerNavigationProps } from "./Stake/types";
 import { EthereumStakingDrawer } from "../families/ethereum/EthereumStakingDrawer";
 
+import { RootDrawerProvider, useRootDrawerContext } from "../context/RootDrawerContext";
+
 export type RootDrawerProps = StakingDrawerNavigationProps;
 
 type Props = {
   drawer?: RootDrawerProps;
 };
 
-export function RootDrawer({ drawer }: Props) {
-  if (!drawer) {
-    return null;
-  }
+export function RootDrawerSelector() {
+  const { drawer } = useRootDrawerContext();
   switch (drawer.id) {
     case "EthStakingDrawer":
-      return <EthereumStakingDrawer drawer={drawer} />;
+      return <EthereumStakingDrawer />;
     default:
       return null;
   }
+}
+
+export function RootDrawer({ drawer }: Props) {
+  return (
+    <RootDrawerProvider drawer={drawer}>
+      <RootDrawerSelector />
+    </RootDrawerProvider>
+  );
 }

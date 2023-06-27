@@ -35,6 +35,7 @@ import DebugPlayground from "../../screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
 import DebugSnackbars from "../../screens/Settings/Debug/Features/Snackbars";
+import DebugTransactionsAlerts from "../../screens/Settings/Debug/Features/TransactionsAlerts";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
@@ -392,6 +393,13 @@ export default function SettingsNavigator() {
         component={DebugSnackbars}
         options={{
           title: "Debug snackbars",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugTransactionsAlerts}
+        component={DebugTransactionsAlerts}
+        options={{
+          title: "Debug transactions alerts",
         }}
       />
       <Stack.Screen

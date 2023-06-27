@@ -5,9 +5,8 @@ import { DescriptorEvent, DeviceModelId } from "@ledgerhq/types-devices";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import { map } from "rxjs/operators";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
-import { setWiredDevice } from "../actions/appstate";
 import { DeviceLike } from "../reducers/types";
-import { AppStateSetWiredDevicePayload } from "../actions/types";
+import { setLastConnectedDevice } from "../actions/settings";
 
 /**
  * Allows LLM to be aware of USB OTG connections on Android as they happen.
@@ -46,8 +45,17 @@ export const useListenToHidDevices = () => {
           ),
         )
         .subscribe({
-          next: (wiredDevice: AppStateSetWiredDevicePayload) => {
-            dispatch(setWiredDevice(wiredDevice));
+          next: (wiredDevice: DeviceLike | null) => {
+            if (wiredDevice) {
+              dispatch(
+                setLastConnectedDevice({
+                  deviceId: wiredDevice.id,
+                  modelId: wiredDevice.modelId,
+                  deviceName: wiredDevice.name,
+                  wired: true,
+                }),
+              );
+            }
           },
           error: () => {
             onScheduleNewListen();
