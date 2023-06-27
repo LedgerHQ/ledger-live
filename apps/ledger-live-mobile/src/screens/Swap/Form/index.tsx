@@ -12,6 +12,7 @@ import {
   usePollKYCStatus,
   useSwapTransaction,
   useSwapProviders,
+  usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
@@ -48,6 +49,7 @@ import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
 import { sharedSwapTracking, useTrackSwapError } from "../utils";
+import EmptyState from "./EmptyState";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
@@ -130,6 +132,8 @@ export function SwapForm({
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const pageState = usePageState(swapTransaction, swapError);
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
   const providerKYC = provider ? swapKYC?.[provider] : undefined;
@@ -190,7 +194,6 @@ export function SwapForm({
     },
     [dispatch],
   );
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   // Track errors
   useEffect(
@@ -415,12 +418,19 @@ export function SwapForm({
               swapError={swapError}
               isSendMaxLoading={swapTransaction.swap.isMaxLoading}
             />
-
-            {swapTransaction.swap.rates.status === "loading" ? (
-              <Flex height={200}>
-                <Loading size={20} color="neutral.c70" />
+            {(pageState === "empty" || pageState === "loading") && (
+              <Flex height={200} alignItems={"center"} justifyContent={"center"}>
+                {pageState === "empty" && (
+                  <EmptyState
+                    from={swapTransaction.swap.from.currency.ticker}
+                    to={swapTransaction.swap.to.currency.ticker}
+                  />
+                )}
+                {pageState === "loading" && <Loading size={20} color="neutral.c70" />}
               </Flex>
-            ) : (
+            )}
+
+            {pageState === "loaded" && (
               <>
                 {exchangeRate &&
                   swapTransaction.swap.to.currency &&
