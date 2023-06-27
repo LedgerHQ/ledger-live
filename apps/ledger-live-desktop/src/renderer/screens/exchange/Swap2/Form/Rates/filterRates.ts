@@ -1,5 +1,5 @@
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { FILTER } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { FILTER } from "@ledgerhq/live-common/exchange/swap/utils";
 
 export const filterRates = (
   rates: ExchangeRate[] | undefined,
