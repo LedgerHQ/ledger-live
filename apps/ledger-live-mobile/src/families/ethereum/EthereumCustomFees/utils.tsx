@@ -44,8 +44,9 @@ export const inferMaxPriorityFeeRange = (
 };
 
 export const inferMaxFeeRange = (networkInfo: Transaction["networkInfo"]): Range => {
-  if (!networkInfo?.maxPriorityFeePerGas || !networkInfo?.nextBaseFeePerGas)
+  if (!networkInfo?.maxPriorityFeePerGas || !networkInfo?.nextBaseFeePerGas) {
     return defaultMaxFeePerGasRange;
+  }
 
   const { maxPriorityFeePerGas, nextBaseFeePerGas } = networkInfo;
   const amplifiedBaseFee = nextBaseFeePerGas

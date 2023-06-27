@@ -86,10 +86,9 @@ const Ethereum1559CustomFees = ({
     }
   }
 
-  const mainAccount = getMainAccount(account, parentAccount);
   const maxPriorityFeeRange = useMemo(
     () => inferMaxPriorityFeeRange(transaction?.networkInfo, transactionRaw),
-    [mainAccount, transaction?.networkInfo, transactionRaw],
+    [transaction?.networkInfo, transactionRaw],
   );
 
   const maxFeePerGasRange = useMemo(() => {
@@ -125,10 +124,14 @@ const Ethereum1559CustomFees = ({
     (setter: React.Dispatch<React.SetStateAction<BigNumber>>) => (value: BigNumber) => {
       if (!transaction) return; // type guard
       setter(value); // setMaxPriorityFeePerGas or setMaxFeePerGas
-      setTransaction(bridge.updateTransaction(transaction, transactionPatch));
     },
-    [transaction, bridge, transactionPatch, setTransaction],
+    [transaction],
   );
+
+  useEffect(() => {
+    if (!transaction) return;
+    setTransaction(bridge.updateTransaction(transaction, transactionPatch));
+  }, [maxPriorityFeePerGas, maxFeePerGas, transactionPatch]);
 
   return (
     <View style={styles.root}>

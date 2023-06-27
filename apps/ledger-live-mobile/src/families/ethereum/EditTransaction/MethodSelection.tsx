@@ -19,7 +19,7 @@ import { log } from "@ledgerhq/logs";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import { EditTransactionParamList } from "../editTransactionNavigatorParamsList";
+import { EditTransactionParamList } from "../EditTransactionParamList";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import LText from "../../../components/LText";
 import { urls } from "../../../config/urls";
