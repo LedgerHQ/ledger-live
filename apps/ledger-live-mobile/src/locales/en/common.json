@@ -3114,6 +3114,9 @@
     },
     "swap2": {
       "form": {
+        "ratesNotFoundError": {
+          "message": "No result found"
+        },
         "ratesDrawer": {
           "title": "Rate",
           "quote": "Quote",
