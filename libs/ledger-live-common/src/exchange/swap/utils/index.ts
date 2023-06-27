@@ -254,6 +254,7 @@ export const getCustomDappUrl = ({
       : "https://app.1inch.io/?ledgerLive=true";
   const newUrl = `https://www.prefix.com/${providerURL}`;
   const isValidNewdUrl = isValidUrl(newUrl);
+  
   if (isValidNewdUrl) {
     const { origin, search } = new URL(dappUrl);
     const { hash: fragment, searchParams } = new URL(newUrl);
