@@ -74,11 +74,7 @@ runs:
       run: |
         pnpm desktop build:testing
       shell: bash
-    - name: Build Dummy Live SDK app for testing
+    - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
-      run: pnpm --filter="dummy-live-app" build
-      shell: bash
-    - name: Build Dummy Wallet API app for testing
-      if: ${{ !inputs.skip_builds }}
-      run: pnpm --filter="dummy-wallet-app" build
+      run: pnpm desktop build:dummy-apps
       shell: bash
