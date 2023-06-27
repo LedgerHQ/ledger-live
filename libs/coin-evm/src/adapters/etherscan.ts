@@ -1,5 +1,4 @@
 import eip55 from "eip55";
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import {
   encodeERC1155OperationId,
@@ -11,70 +10,34 @@ import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import {
-  Transaction as EvmTransaction,
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
   EtherscanOperation,
   EtherscanERC20Event,
   EtherscanERC721Event,
   EtherscanERC1155Event,
-} from "./types";
-import { getGasLimit } from "./logic";
+} from "../types";
 
 /**
- * Adapter to convert a Ledger Live transaction to an Ethers transaction
- */
-export const transactionToEthersTransaction = (tx: EvmTransaction): ethers.Transaction => {
-  const gasLimit = getGasLimit(tx);
-
-  const ethersTx = {
-    to: tx.recipient,
-    value: ethers.BigNumber.from(tx.amount.toFixed()),
-    data: tx.data ? `0x${tx.data.toString("hex")}` : undefined,
-    gasLimit: ethers.BigNumber.from(gasLimit.toFixed()),
-    nonce: tx.nonce,
-    chainId: tx.chainId,
-    type: tx.type,
-  } as Partial<ethers.Transaction>;
-
-  // is EIP-1559 transaction (type 2)
-  if (tx.type === 2) {
-    ethersTx.maxFeePerGas = ethers.BigNumber.from(
-      (tx as EvmTransactionEIP1559).maxFeePerGas.toFixed(),
-    );
-    ethersTx.maxPriorityFeePerGas = ethers.BigNumber.from(
-      (tx as EvmTransactionEIP1559).maxPriorityFeePerGas.toFixed(),
-    );
-  } else {
-    // is Legacy transaction (type 0)
-    ethersTx.gasPrice = ethers.BigNumber.from((tx as EvmTransactionLegacy).gasPrice.toFixed());
-  }
-
-  return ethersTx as ethers.Transaction;
-};
-
-/**
- * Adapter to convert an Etherscan-like operation into a Ledger Live Operation
+ * Adapter to convert an Etherscan operation into Ledger Live Operations.
  * It can return more than one operation in case of self-send
  */
 export const etherscanOperationToOperations = (
   accountId: string,
-  tx: EtherscanOperation,
+  etherscanOp: EtherscanOperation,
 ): Operation[] => {
   const { xpubOrAddress: address } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
-  const from = eip55.encode(tx.from);
-  const to = tx.to ? eip55.encode(tx.to) : "";
-  const value = new BigNumber(tx.value);
-  const fee = new BigNumber(tx.gasUsed).times(new BigNumber(tx.gasPrice));
-  const hasFailed = tx.isError === "1";
+  const from = eip55.encode(etherscanOp.from);
+  const to = eip55.encode(etherscanOp.to);
+  const value = new BigNumber(etherscanOp.value);
+  const fee = new BigNumber(etherscanOp.gasUsed).times(new BigNumber(etherscanOp.gasPrice));
+  const hasFailed = etherscanOp.isError === "1";
   const types: OperationType[] = [];
 
   if (to === checksummedAddress) {
     types.push("IN");
   }
   if (from === checksummedAddress) {
-    types.push(tx.methodId === "0x" ? "OUT" : "FEES");
+    types.push(etherscanOp.methodId === "0x" ? "OUT" : "FEES");
   }
   if (!types.length) {
     types.push("NONE");
@@ -83,18 +46,18 @@ export const etherscanOperationToOperations = (
   return types.map(
     type =>
       ({
-        id: encodeOperationId(accountId, tx.hash, type),
-        hash: tx.hash,
+        id: encodeOperationId(accountId, etherscanOp.hash, type),
+        hash: etherscanOp.hash,
         type: type,
         value: type === "OUT" || type === "FEES" ? value.plus(fee) : hasFailed ? fee : value,
         fee,
         senders: [from],
         recipients: [to],
-        blockHeight: parseInt(tx.blockNumber, 10),
-        blockHash: tx.blockHash,
-        transactionSequenceNumber: parseInt(tx.nonce, 10),
+        blockHeight: parseInt(etherscanOp.blockNumber, 10),
+        blockHash: etherscanOp.blockHash,
+        transactionSequenceNumber: parseInt(etherscanOp.nonce, 10),
         accountId: accountId,
-        date: new Date(parseInt(tx.timeStamp, 10) * 1000),
+        date: new Date(parseInt(etherscanOp.timeStamp, 10) * 1000),
         subOperations: [],
         nftOperations: [],
         hasFailed,
@@ -104,9 +67,9 @@ export const etherscanOperationToOperations = (
 };
 
 /**
- * Adapter to convert an ERC20 transaction received
- * on etherscan-like APIs into an Operation
- * It can return more than one operation
+ * Adapter to convert an ERC20 transaction
+ * on etherscan APIs into LL Operations
+ * It can return up to 2 operations
  * in case of self-send or airdrop
  */
 export const etherscanERC20EventToOperations = (
@@ -120,15 +83,16 @@ export const etherscanERC20EventToOperations = (
 
   const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
   const from = eip55.encode(event.from);
-  const to = event.to ? eip55.encode(event.to) : "";
+  const to = eip55.encode(event.to);
+  const checksummedAddress = eip55.encode(address);
   const value = new BigNumber(event.value);
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
   const types: OperationType[] = [];
 
-  if (event.contractAddress && to === eip55.encode(address)) {
+  if (to === checksummedAddress) {
     types.push("IN");
   }
-  if (event.contractAddress && from === eip55.encode(address)) {
+  if (from === checksummedAddress) {
     types.push("OUT");
   }
 
@@ -154,9 +118,9 @@ export const etherscanERC20EventToOperations = (
 };
 
 /**
- * Adapter to convert an ERC721 transaction received
- * on etherscan-like APIs into an Operation
- * It can return more than one operation
+ * Adapter to convert an ERC721 transaction
+ * on etherscan APIs into LL Operations
+ * It can return up to 2 operations
  * in case of self-send or airdrop
  */
 export const etherscanERC721EventToOperations = (
@@ -167,17 +131,18 @@ export const etherscanERC721EventToOperations = (
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
 
   const from = eip55.encode(event.from);
-  const to = event.to ? eip55.encode(event.to) : "";
+  const to = eip55.encode(event.to);
+  const checksummedAddress = eip55.encode(address);
   const value = new BigNumber(1); // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
   const contract = eip55.encode(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
 
-  if (event.contractAddress && to === eip55.encode(address)) {
+  if (to === checksummedAddress) {
     types.push("NFT_IN");
   }
-  if (event.contractAddress && from === eip55.encode(address)) {
+  if (from === checksummedAddress) {
     types.push("NFT_OUT");
   }
 
@@ -205,8 +170,8 @@ export const etherscanERC721EventToOperations = (
 };
 
 /**
- * Adapter to convert an ERC1155 transaction received
- * on etherscan-like APIs into an Operation
+ * Adapter to convert an ERC1155 transaction
+ * on etherscan APIs into LL Operations
  */
 export const etherscanERC1155EventToOperations = (
   accountId: string,
@@ -216,17 +181,18 @@ export const etherscanERC1155EventToOperations = (
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
 
   const from = eip55.encode(event.from);
-  const to = event.to ? eip55.encode(event.to) : "";
+  const to = eip55.encode(event.to);
+  const checksummedAddress = eip55.encode(address);
   const value = new BigNumber(event.tokenValue); // value is representing the number of NFT transfered.
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
   const contract = eip55.encode(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
 
-  if (event.contractAddress && to === eip55.encode(address)) {
+  if (to === checksummedAddress) {
     types.push("NFT_IN");
   }
-  if (event.contractAddress && from === eip55.encode(address)) {
+  if (from === checksummedAddress) {
     types.push("NFT_OUT");
   }
 
