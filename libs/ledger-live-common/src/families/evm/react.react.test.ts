@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks";
 import { useGasOptions } from "./react";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { Transaction } from "@ledgerhq/coin-evm/types";
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
 import type { GasTrackerApi } from "@ledgerhq/coin-evm/api/gasTracker/index";
