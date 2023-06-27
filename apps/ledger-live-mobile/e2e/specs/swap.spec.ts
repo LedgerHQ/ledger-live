@@ -29,6 +29,7 @@ describe("Swap", () => {
 
   it("should show an error for too low an amount", async () => {
     await swapPage.enterSourceAmount("0.00001");
+    await swapPage.navigateToSwapForm();
     // unfortunately there's no way to check if a button that is disabled in the JS is actually disabled on the native side (which is what Detox checks)
     // we tap the `Exchange` button to see if the next step fails as a way of checking if the exchange button disabled. If it proceeds then the button was incorrectly available and the next test will fail
     await swapPage.startExchange();
@@ -36,6 +37,7 @@ describe("Swap", () => {
 
   it("should show an error for not enough funds", async () => {
     await swapPage.enterSourceAmount("10");
+    await swapPage.navigateToSwapForm();
     await swapPage.startExchange();
   });
 
