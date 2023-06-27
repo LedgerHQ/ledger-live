@@ -7,7 +7,7 @@ import { Account, SubAccount, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { getOptimismAdditionalFees } from "./api/rpc/rpc.common";
+import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,
@@ -55,7 +55,8 @@ export const getAdditionalLayer2Fees = async (
   switch (currency.id) {
     case "optimism":
     case "optimism_goerli": {
-      const additionalFees = await getOptimismAdditionalFees(currency, transaction);
+      const nodeApi = getNodeApi(currency);
+      const additionalFees = await nodeApi.getOptimismAdditionalFees(currency, transaction);
       return additionalFees;
     }
     default:
