@@ -38,10 +38,16 @@ export function Terms({
       <Link type="color" Icon={Icons.ExternalLinkMedium} onPress={onPressLink}>
         {t("transfer.swap2.form.disclaimer.tos")}
       </Link>
-      <Button type="main" onPress={onCTA} marginTop={8} marginBottom={4}>
+      <Button
+        type="main"
+        onPress={onCTA}
+        marginTop={8}
+        marginBottom={4}
+        testID="terms-accept-button"
+      >
         {t("transfer.swap2.form.disclaimer.accept")}
       </Button>
-      <Button type="main" onPress={onClose} outline>
+      <Button type="main" onPress={onClose} outline testID="terms-close-button">
         {t("common.close")}
       </Button>
     </QueuedDrawer>
