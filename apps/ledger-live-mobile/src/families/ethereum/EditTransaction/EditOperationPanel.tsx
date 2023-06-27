@@ -41,9 +41,9 @@ const EditOperationPanelComponent = ({
     }
   }, [account, parentAccount, operation, navigation, onPress]);
 
-  return flag?.enabled && account ? (
+  return flag?.enabled ? (
     <Flex
-      backgroundColor={isOperationStuck ? "warning.c70" : "primary.c80"}
+      backgroundColor={isOperationStuck ? colors.warning.c70 : colors.warning.c80}
       color={"primary.c80"}
       width="95%"
       alignSelf={"center"}

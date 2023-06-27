@@ -2,8 +2,8 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
-import { Linking } from "react-native";
-import { Flex, SelectableList } from "@ledgerhq/native-ui";
+import { Dimensions, Linking } from "react-native";
+import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { Transaction, TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -223,35 +223,48 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       <Flex p={6}>
         <SelectableList onChange={onSelect}>
           <SelectableList.Element disabled={!haveFundToCancel} value={"cancel"}>
-            <Trans i18nKey={"editTransaction.cancel.title"} />
-            <Flex>
-              <LText style={{ marginTop: 15, marginBottom: 0 }}>
+            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
+              <LText bold>
+                <Trans i18nKey={"editTransaction.cancel.title"} />
+              </LText>
+              <LText
+                style={{
+                  marginTop: 15,
+                  marginBottom: 0,
+                  overflow: "hidden",
+                }}
+              >
                 {haveFundToCancel
                   ? t("editTransaction.cancel.description", {
                       ticker: currency.ticker,
                     })
                   : t("editTransaction.error.notEnoughFundsToCancel")}
               </LText>
-            </Flex>
+            </Box>
           </SelectableList.Element>
+
           <SelectableList.Element
             disabled={!haveFundToSpeedup || !oldestOperation}
             value={"speedup"}
           >
-            <Trans i18nKey={"editTransaction.speedUp.title"} />
-            <Flex>
-              <LText style={{ marginTop: 15, marginBottom: 0 }}>
-                <Trans
-                  i18nKey={
-                    !oldestOperation
-                      ? "editTransaction.error.notlowestNonceToSpeedup"
-                      : haveFundToSpeedup
-                      ? "editTransaction.speedUp.description"
-                      : "editTransaction.error.notEnoughFundsToSpeedup"
-                  }
-                />
+            <Box style={{ width: Dimensions.get("window").width * 0.8 }}>
+              <LText bold>
+                <Trans i18nKey={"editTransaction.speedUp.title"} />
               </LText>
-            </Flex>
+              <Flex>
+                <LText style={{ marginTop: 15, marginBottom: 0 }}>
+                  <Trans
+                    i18nKey={
+                      !oldestOperation
+                        ? "editTransaction.error.notlowestNonceToSpeedup"
+                        : haveFundToSpeedup
+                        ? "editTransaction.speedUp.description"
+                        : "editTransaction.error.notEnoughFundsToSpeedup"
+                    }
+                  />
+                </LText>
+              </Flex>
+            </Box>
           </SelectableList.Element>
         </SelectableList>
         <LText
