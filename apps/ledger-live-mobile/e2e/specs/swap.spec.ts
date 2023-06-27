@@ -9,12 +9,14 @@ let swapPage: SwapFormPage;
 describe("Swap", () => {
   beforeAll(async () => {
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
+
+    await portfolioPage.waitForPortfolioPageToLoad();
   });
 
   it("should load the Swap page from the Transfer menu", async () => {
-    await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToSwapFromTransferMenu();
     await expect(swapPage.swapFormTab()).toBeVisible();
