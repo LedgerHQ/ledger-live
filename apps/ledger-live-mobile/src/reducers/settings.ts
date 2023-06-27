@@ -36,7 +36,6 @@ import type {
   SettingsSetAvailableUpdatePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetFirstConnectHasDeviceUpdatedPayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
@@ -74,6 +73,8 @@ import type {
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
+  SettingsSetOnboardingHasDevicePayload,
+  SettingsSetOnboardingTypePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -161,13 +162,13 @@ export const INITIAL_STATE: SettingsState = {
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
-  firstConnectionHasDevice: null,
-  firstConnectHasDeviceUpdated: null,
+  onboardingHasDevice: null,
   notifications: {
     areNotificationsAllowed: true,
     announcementsCategory: true,
     recommendationsCategory: true,
     largeMoverCategory: true,
+    transactionsAlertsCategory: false,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   overriddenFeatureFlags: {},
@@ -175,6 +176,7 @@ export const INITIAL_STATE: SettingsState = {
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
+  onboardingType: null,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -541,10 +543,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     sensitiveAnalytics: (action as Action<SettingsSetSensitiveAnalyticsPayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE]: (state, action) => ({
+  [SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE]: (state, action) => ({
     ...state,
-    firstConnectHasDeviceUpdated: (action as Action<SettingsSetFirstConnectHasDeviceUpdatedPayload>)
-      .payload,
+    onboardingHasDevice: (action as Action<SettingsSetOnboardingHasDevicePayload>).payload,
+  }),
+
+  [SettingsActionTypes.SET_ONBOARDING_TYPE]: (state, action) => ({
+    ...state,
+    onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
   }),
 
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
@@ -780,10 +786,8 @@ export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
 export const customImageBackupSelector = (state: State) => state.settings.customImageBackup;
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
-export const firstConnectionHasDeviceSelector = (state: State) =>
-  state.settings.firstConnectionHasDevice;
-export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
-  state.settings.firstConnectHasDeviceUpdated;
+export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
+export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
 export const notificationsSelector = (state: State) => state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;

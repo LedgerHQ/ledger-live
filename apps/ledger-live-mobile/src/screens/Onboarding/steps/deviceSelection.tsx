@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { Image } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { Image, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -19,6 +19,7 @@ import { RootStackParamList } from "../../../components/RootNavigator/types/Root
 import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavigator";
 import ChoiceCard from "./ChoiceCard";
 import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
+import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
 
 const nanoX = {
   source: require("../../../../assets/images/devices/NanoXCropped.png"),
@@ -47,11 +48,15 @@ type NavigationProp = RootNavigationComposite<
   >
 >;
 
+const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
+
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
   const syncOnboarding = useFeature("syncOnboarding" as const);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
+  const [isOpen, setOpen] = useState<boolean>(false);
 
   const devices = useMemo(() => {
     if (syncOnboarding?.enabled) {
@@ -61,7 +66,7 @@ function OnboardingStepDeviceSelection() {
   }, [syncOnboarding?.enabled]);
 
   const getProductName = (modelId: DeviceModelId) =>
-    getDeviceModel(modelId)?.productName || modelId;
+    getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc. when they will support the sync-onboarding
@@ -105,8 +110,19 @@ function OnboardingStepDeviceSelection() {
     }
   };
 
+  const closeDrawer = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const triggerNotCompatibleDrawer = useCallback(() => {
+    setOpen(true);
+  }, []);
+
+  const isNotCompatible = (deviceModelId: DeviceModelId) =>
+    Platform.OS === "ios" && NOT_SUPPORTED_DEVICES_IOS.includes(deviceModelId);
+
   return (
-    <ScrollListContainer flex={1} mx={6} mt={7}>
+    <ScrollListContainer flex={1} mx={6} mt={3}>
       <TrackScreen category="Onboarding" name="SelectDevice" />
       <Text variant="h4" mb={7} fontWeight="semiBold">
         {t("syncOnboarding.deviceSelection.title")}
@@ -114,15 +130,14 @@ function OnboardingStepDeviceSelection() {
       {devices.map(device => (
         <ChoiceCard
           key={device.id}
-          event="Onboarding Device - Selection"
-          eventProperties={{ id: device.id }}
+          event="button_clicked"
+          eventProperties={{ button: device.id }}
           testID={`onboarding-device-selection-${device.id}`}
           title={getProductName(device.id)}
-          titleProps={{ variant: "large", fontWeight: "semiBold" }}
-          onPress={() => next(device.id)}
-          labelBadge={t("syncOnboarding.deviceSelection.setupTime", {
-            time: device.setupTime / 60000,
-          })}
+          onPress={() =>
+            isNotCompatible(device.id) ? triggerNotCompatibleDrawer() : next(device.id)
+          }
+          notCompatible={isNotCompatible(device.id)}
           Image={
             <Image
               source={device.source}
@@ -133,8 +148,11 @@ function OnboardingStepDeviceSelection() {
               }}
             />
           }
+          t={t}
         />
       ))}
+
+      <NotCompatibleModal isOpen={isOpen} onClose={closeDrawer} />
     </ScrollListContainer>
   );
 }

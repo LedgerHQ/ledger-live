@@ -61,7 +61,7 @@ export function regenPods(app: Probot) {
     });
   });
 
-  app.on("check_run.requested_action", async (context) => {
+  app.on("check_run.requested_action", async context => {
     const { payload } = context;
 
     if (payload.requested_action.identifier !== ACTION_ID) return;
@@ -83,7 +83,7 @@ export function regenPods(app: Probot) {
     checkRunName: "@Mobile • Regen Pods",
     description: "Regenerates iOS podlock file",
     summaryFile: "summary.json",
-    getInputs: (payload) => ({
+    getInputs: payload => ({
       ref: payload.check_run.head_sha,
       login: payload.sender.login,
     }),
