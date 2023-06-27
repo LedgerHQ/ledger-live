@@ -1,6 +1,6 @@
 import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction as EvmTx } from "@ledgerhq/coin-evm/types";
+import { Transaction as EvmTx } from "@ledgerhq/coin-evm/types/index";
 import {
   AreFeesProvided,
   ConvertToLiveTransaction,
