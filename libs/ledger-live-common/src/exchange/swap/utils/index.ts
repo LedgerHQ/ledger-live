@@ -222,14 +222,21 @@ const isValidUrl = (urlString: string) => {
   }
 };
 
-// Back-end is not retriving the correct URL.
-
-// backend: /platform/paraswap/#/0xdac17f958d2ee523a2206206994597c13d831ec7-0x2260fac5e5542a773aa44fbcfedf7c193bc2c599/21.3?network=1
-// real: https://embedded.paraswap.io?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false&network=1#/0xdac17f958d2ee523a2206206994597c13d831ec7-0x2260fac5e5542a773aa44fbcfedf7c193bc2c599/21.3
-
-// backend: /platform/1inch/#/1/unified/swap/usdt/shib?sourceTokenAmount=24.6
-// real: https://app.1inch.io/#/1/simple/swap/usdt/shib?ledgerLive=true&sourceTokenAmount=24.6
-
+/**
+ * Get complete DAPP URL
+ * @param provider
+ * @param providerURL
+ *
+ * This Func is to ensure a complete DAPP URL is generated if partial & incorrect path is provided.
+ *
+ * Example 1:
+ *  actual: /platform/paraswap/#/0xdac17f958d2ee523a2206206994597c13d831ec7-0x2260fac5e5542a773aa44fbcfedf7c193bc2c599/21.3?network=1
+ *  expected: https://embedded.paraswap.io?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false&network=1#/0xdac17f958d2ee523a2206206994597c13d831ec7-0x2260fac5e5542a773aa44fbcfedf7c193bc2c599/21.3
+ *
+ * Example 2:
+ *  expected: /platform/1inch/#/1/unified/swap/usdt/shib?sourceTokenAmount=24.6
+ *  actual: https://app.1inch.io/#/1/simple/swap/usdt/shib?ledgerLive=true&sourceTokenAmount=24.6
+ */
 export const getCustomDappUrl = ({
   provider,
   providerURL = "",
