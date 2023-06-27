@@ -5,6 +5,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { EtherscanAPIError } from "../../errors";
+import { ExplorerApi } from "./types";
 import {
   etherscanOperationToOperations,
   etherscanERC20EventToOperations,
@@ -61,12 +62,12 @@ export const getLastCoinOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
+  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!explorerUri) {
     return [];
   }
 
-  let url = `${apiDomain}/api?module=account&action=txlist&address=${address}&tag=latest&page=1&sort=desc`;
+  let url = `${explorerUri}/api?module=account&action=txlist&address=${address}`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
   }
@@ -77,6 +78,11 @@ export const getLastCoinOperations = async (
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
     url,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+    },
   });
 
   return ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
@@ -92,12 +98,12 @@ export const getLastTokenOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
+  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!explorerUri) {
     return [];
   }
 
-  let url = `${apiDomain}/api?module=account&action=tokentx&address=${address}&tag=latest&page=1&sort=desc`;
+  let url = `${explorerUri}/api?module=account&action=tokentx&address=${address}`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
   }
@@ -108,6 +114,11 @@ export const getLastTokenOperations = async (
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
     url,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+    },
   });
 
   // Why this thing ?
@@ -144,12 +155,12 @@ export const getLastERC721Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
+  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!explorerUri) {
     return [];
   }
 
-  let url = `${apiDomain}/api?module=account&action=tokennfttx&address=${address}&tag=latest&page=1&sort=desc`;
+  let url = `${explorerUri}/api?module=account&action=tokennfttx&address=${address}`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
   }
@@ -160,6 +171,11 @@ export const getLastERC721Operations = async (
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
     url,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+    },
   });
 
   // Why this thing ?
@@ -196,12 +212,12 @@ export const getLastERC1155Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
+  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!explorerUri) {
     return [];
   }
 
-  let url = `${apiDomain}/api?module=account&action=token1155tx&address=${address}&tag=latest&page=1&sort=desc`;
+  let url = `${explorerUri}/api?module=account&action=token1155tx&address=${address}`;
   if (fromBlock) {
     url += `&startBlock=${fromBlock}`;
   }
@@ -212,6 +228,11 @@ export const getLastERC1155Operations = async (
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
     url,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+    },
   });
 
   // Why this thing ?
@@ -270,7 +291,7 @@ export const getLastNftOperations = async (
  * do not use a Promise.all here, it would
  * break because of the rate limits
  */
-export const getLastOperations = makeLRUCache<
+export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
@@ -315,11 +336,8 @@ export const getLastOperations = makeLRUCache<
   { ttl: ETHERSCAN_TIMEOUT },
 );
 
-export default {
-  getLastCoinOperations,
-  getLastTokenOperations,
-  getLastERC721Operations,
-  getLastERC1155Operations,
-  getLastNftOperations,
+const explorerApi: ExplorerApi = {
   getLastOperations,
 };
+
+export default explorerApi;
