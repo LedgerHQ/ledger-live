@@ -133,7 +133,7 @@ export async function createSpeculosDevice(
           "-p",
           `${ports.automationPort}:43000`,
         ]
-      : ["-p", `${ports.apiPort}:4000`, "-p", `${ports.vncPort}:41000`]),
+      : ["-p", `${ports.apiPort}:40000`, "-p", `${ports.vncPort}:41000`]),
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
