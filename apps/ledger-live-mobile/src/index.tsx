@@ -81,6 +81,7 @@ import { DeeplinksProvider } from "./navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
+import TransactionsAlerts from "./components/TransactionsAlerts";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -174,6 +175,7 @@ function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
+      <TransactionsAlerts />
       <ExperimentalHeader />
       <RootNavigator />
       <AnalyticsConsole />

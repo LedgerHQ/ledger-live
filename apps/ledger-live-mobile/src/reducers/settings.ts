@@ -168,6 +168,7 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     recommendationsCategory: true,
     largeMoverCategory: true,
+    transactionsAlertsCategory: false,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   overriddenFeatureFlags: {},

@@ -61,6 +61,7 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
             subTitle={swapTx.swap.to.currency?.units[0].code || "-"}
             onPress={onPress}
             disabled={!swapTx.swap.to.currency}
+            testID="swap-destination-selector"
           />
         </Flex>
 

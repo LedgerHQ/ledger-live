@@ -18,10 +18,15 @@ module.exports = {
   verbose: true,
   preset: "react-native",
   setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect", "./jest-setup.js"],
+  globals: {
+    "ts-jest": {
+      babelConfig: true,
+    },
+  },
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
     "^.+\\.js?$": "babel-jest",
-    "^.+\\.tsx?$": ["ts-jest", { babelConfig: true }],
+    "^.+\\.tsx?$": "ts-jest",
   },
   transformIgnorePatterns: [
     `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,
