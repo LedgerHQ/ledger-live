@@ -43,11 +43,11 @@ export function Terms({
         onPress={onCTA}
         marginTop={8}
         marginBottom={4}
-        buttonTestId="terms-accept-button"
+        testID="terms-accept-button"
       >
         {t("transfer.swap2.form.disclaimer.accept")}
       </Button>
-      <Button type="main" onPress={onClose} outline buttonTestId="terms-close-button">
+      <Button type="main" onPress={onClose} outline testID="terms-close-button">
         {t("common.close")}
       </Button>
     </QueuedDrawer>

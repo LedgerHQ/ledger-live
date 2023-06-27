@@ -13,7 +13,7 @@ interface Props {
   error: Error | undefined;
   loading: boolean;
   onFocus?: (_: boolean) => void;
-  inputTestId?: string;
+  testID?: string;
 }
 
 export function AmountInput({
@@ -24,7 +24,7 @@ export function AmountInput({
   unit,
   error,
   loading,
-  inputTestId,
+  testID,
 }: Props) {
   return (
     <Flex justifyContent="flex-end" alignItems="flex-end">
@@ -42,7 +42,7 @@ export function AmountInput({
           hasError={!!error}
           dynamicFontRatio={0.3}
           onFocus={onFocus}
-          inputTestId={inputTestId}
+          testID={testID}
         />
       ) : (
         <Text variant="h1" color="neutral.c70">
