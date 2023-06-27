@@ -350,7 +350,7 @@ export function SwapForm({
       const fromAccountId = from.parentAccount?.id || from.account?.id;
       const customParams = {
         provider,
-        providerURL: providerURL || undefined,
+        providerURL,
       };
 
       const customDappUrl = getCustomDappUrl({
