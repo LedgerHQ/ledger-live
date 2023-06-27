@@ -110,7 +110,6 @@ export function SwapForm({
         message: "no_rates",
         sourceCurrency: toState.currency?.name,
       });
-      setError("RATE_NOT_FOUND");
     },
     [track],
   );
@@ -440,7 +439,7 @@ export function SwapForm({
 
                 <Requirement required={currentBanner} provider={provider} />
 
-                {error && <ErrorBanner provider={provider} errorCode={error} />}
+                {error && provider && <ErrorBanner provider={provider} errorCode={error} />}
               </>
             )}
           </Flex>

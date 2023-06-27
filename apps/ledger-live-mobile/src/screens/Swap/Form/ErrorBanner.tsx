@@ -31,8 +31,6 @@ export function ErrorBanner({
         }
         return `${t("crash.title")} - ${errorCode}`;
       }
-      case "RATE_NOT_FOUND":
-        return `${t("swap2.form.ratesNotFoundError.message")}`;
       default:
         return `${t("crash.title")} - ${errorCode}`;
     }

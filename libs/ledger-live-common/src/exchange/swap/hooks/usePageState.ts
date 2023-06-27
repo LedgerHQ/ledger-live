@@ -31,7 +31,7 @@ export const usePageState = (
       setPageState("initial");
     } else if ((pageState === "initial" || pageState === "empty") && isDataLoading) {
       setPageState("loading");
-    } else if (swapError && swapError?.message.length === 0 && !isDataLoading) {
+    } else if (swapError && !isDataLoading) {
       setPageState("empty");
     } else if (fromFieldIsZero && !isDataLoading) {
       setPageState("initial");
