@@ -38,7 +38,7 @@ function StepConfirmation({
   const currencyName = account.currency.name.toLowerCase();
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
   const track = useTrack();
-  
+
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);

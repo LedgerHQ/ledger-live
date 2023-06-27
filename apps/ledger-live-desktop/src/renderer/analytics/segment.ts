@@ -225,7 +225,7 @@ export const track = (
  * */
 export function useTrack() {
   const { analyticsDrawerName } = useContext(analyticsDrawerContext);
-  const ptxEarnFeatureFlag = useFeature('ptxEarn')
+  const ptxEarnFeatureFlag = useFeature("ptxEarn");
 
   return useCallback(
     (

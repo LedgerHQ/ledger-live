@@ -68,7 +68,7 @@ const StepConfirmation = ({
   const voteAccAddress = transaction?.recipient;
   const validators = useValidatorGroups();
   const track = useTrack();
-  
+
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.address === voteAccAddress);
