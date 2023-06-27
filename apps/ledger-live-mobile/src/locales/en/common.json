@@ -1317,7 +1317,7 @@
       "recovery": "Already have a recovery phrase?",
       "protect": {
         "title": "Restore using Ledger Recover",
-        "subTitle":"You need to have a Ledger Recover subscription.",
+        "subTitle": "You need to have a Ledger Recover subscription.",
         "drawer": {
           "title": "Use Ledger Nano X",
           "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
@@ -1884,7 +1884,7 @@
       "brand": "Ledger",
       "setupTime": "{{time}} mins",
       "notCompatible": "No iPhone compatibility",
-      "modal":{
+      "modal": {
         "title": "Ledger Nano S and Ledger Nano S Plus not supported on iOS devices",
         "desc": "Use your Ledger Nano S or Ledger Nano S Plus with Ledger Live on your computer."
       }
@@ -3153,9 +3153,6 @@
           "to": {
             "title": "To"
           }
-        },
-        "ratesNotFoundError": {
-          "message": "No result found"
         },
         "providers": {
           "kyc": {
