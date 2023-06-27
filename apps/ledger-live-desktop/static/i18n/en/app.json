@@ -351,9 +351,6 @@
       "to": {
         "title": "To"
       },
-      "ratesNotFoundError": {
-        "message": "No result found"
-      },
       "notAvailable": {
         "title": "Swap is not available yet in your area",
         "content": "Have a little more patience,<br/>we will launch this feature very soon"
