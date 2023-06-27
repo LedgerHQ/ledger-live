@@ -18,7 +18,7 @@ import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getBalanceAndBlock, getBlock, getTokenBalance, getTransaction } from "./api/rpc";
+import { getBlockByHeight, getCoinBalance, getTokenBalance, getTransaction } from "./api/node/rpc";
 import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
 import { getExplorerApi } from "./api/explorer";
 
@@ -34,7 +34,11 @@ export const SAFE_REORG_THRESHOLD = 80;
  */
 export const getAccountShape: GetAccountShape = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
-  const { blockHeight, balance } = await getBalanceAndBlock(currency, address);
+  const [block, balance] = await Promise.all([
+    getBlockByHeight(currency, "latest"),
+    getCoinBalance(currency, address),
+  ]);
+  const { height: blockHeight } = block;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -199,27 +203,14 @@ export const getOperationStatus = async (
   op: Operation,
 ): Promise<Operation | null> => {
   try {
-    const {
-      blockNumber: blockHeight,
-      blockHash,
-      timestamp,
-      nonce,
-    } = await getTransaction(currency, op.hash);
+    const { blockNumber: blockHeight, blockHash, nonce } = await getTransaction(currency, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
     }
 
-    const date = await (async () => {
-      // timestamp can be missing depending on the node
-      if (timestamp) {
-        return new Date(timestamp * 1000);
-      }
-
-      // Without timestamp, we directly look for the block
-      const { timestamp: blockTimestamp } = await getBlock(currency, blockHeight);
-      return new Date(blockTimestamp * 1000);
-    })();
+    const { timestamp } = await getBlockByHeight(currency, blockHeight);
+    const date = new Date(timestamp * 1000);
 
     return {
       ...op,

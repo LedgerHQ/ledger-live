@@ -3,15 +3,15 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-promise";
-import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
-import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../../types";
 import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
 import ERC20Abi from "../../abis/erc20.abi.json";
+import { FeeHistory } from "../../types";
+import { NodeApi } from "./types";
 
 export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
 export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;
@@ -37,18 +37,17 @@ export async function withApi<T>(
   execute: (api: ethers.providers.StaticJsonRpcProvider) => Promise<T>,
   retries = DEFAULT_RETRIES_RPC_METHODS,
 ): Promise<T> {
-  if (!currency?.ethereumLikeInfo?.rpc) {
+  if (currency?.ethereumLikeInfo?.rpc?.type !== "external") {
     throw new Error("Currency doesn't have an RPC node provided");
   }
 
   try {
-    if (!PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc]) {
-      PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc] = new ethers.providers.StaticJsonRpcProvider(
-        currency.ethereumLikeInfo.rpc,
-      );
+    if (!PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc.uri]) {
+      PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc.uri] =
+        new ethers.providers.StaticJsonRpcProvider(currency.ethereumLikeInfo.rpc.uri);
     }
 
-    const provider = PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc];
+    const provider = PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc.uri];
     return await execute(provider);
   } catch (e) {
     if (retries) {
@@ -62,39 +61,24 @@ export async function withApi<T>(
 }
 
 /**
- * Get account balance and last chain block
- */
-export const getBalanceAndBlock: (
-  currency: CryptoCurrency,
-  addr: string,
-) => Promise<{ blockHeight: number; balance: BigNumber }> = async (currency, addr) =>
-  withApi(currency, async api => {
-    const [balance, blockHeight] = await Promise.all([
-      getCoinBalance(currency, addr),
-      api.getBlockNumber(),
-    ]);
-
-    return {
-      blockHeight,
-      balance: new BigNumber(balance.toString()),
-    };
-  });
-
-/**
  * Get a transaction by hash
  */
-export const getTransaction = (
-  currency: CryptoCurrency,
-  hash: string,
-): Promise<ethers.providers.TransactionResponse> =>
-  withApi(currency, api => {
-    return api.getTransaction(hash);
+export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
+  withApi(currency, async api => {
+    const { hash, blockNumber: blockHeight, blockHash, nonce } = await api.getTransaction(txHash);
+
+    return {
+      hash,
+      blockHeight,
+      blockHash,
+      nonce,
+    };
   });
 
 /**
  * Get the balance of an address
  */
-export const getCoinBalance = (currency: CryptoCurrency, address: string): Promise<BigNumber> =>
+export const getCoinBalance: NodeApi["getCoinBalance"] = (currency, address) =>
   withApi(currency, async api => {
     const balance = await api.getBalance(address);
     return new BigNumber(balance.toString());
@@ -103,11 +87,7 @@ export const getCoinBalance = (currency: CryptoCurrency, address: string): Promi
 /**
  * Get the balance of an address
  */
-export const getTokenBalance = (
-  currency: CryptoCurrency,
-  address: string,
-  contractAddress: string,
-): Promise<BigNumber> =>
+export const getTokenBalance: NodeApi["getTokenBalance"] = (currency, address, contractAddress) =>
   withApi(currency, async api => {
     const erc20 = new ethers.Contract(contractAddress, ERC20Abi, api);
     const balance = await erc20.balanceOf(address);
@@ -117,18 +97,15 @@ export const getTokenBalance = (
 /**
  * Get account nonce
  */
-export const getTransactionCount = (currency: CryptoCurrency, addr: string): Promise<number> =>
+export const getTransactionCount: NodeApi["getTransactionCount"] = (currency, address) =>
   withApi(currency, async api => {
-    return api.getTransactionCount(addr, "pending");
+    return api.getTransactionCount(address, "pending");
   });
 
 /**
  * Get an estimated gas limit for a transaction
  */
-export const getGasEstimation = (
-  account: Account,
-  transaction: EvmTransaction,
-): Promise<BigNumber> =>
+export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transaction) =>
   withApi(account.currency, async api => {
     const { to, value, data } = transactionToEthersTransaction(transaction);
 
@@ -150,7 +127,8 @@ export const getGasEstimation = (
 /**
  * Get an estimation of fees on the network
  */
-export const getFeesEstimation = (currency: CryptoCurrency): Promise<FeeData> =>
+// Waiting for proxies
+export const getFeesEstimation: NodeApi["getFeesEstimation"] = currency =>
   withApi(currency, async api => {
     const block = await api.getBlock("latest");
     const currencySupports1559 = Boolean(block.baseFeePerGas);
@@ -203,17 +181,15 @@ export const getFeesEstimation = (currency: CryptoCurrency): Promise<FeeData> =>
   });
 
 /**
- * Broadcast a serialized transaction
+ * Broadcast a serialized transaction and returns its hash
  */
-export const broadcastTransaction = (
-  currency: CryptoCurrency,
-  signedTxHex: string,
-): Promise<ethers.providers.TransactionResponse> =>
+export const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, signedTxHex) =>
   withApi(
     currency,
     async api => {
       try {
-        return await api.sendTransaction(signedTxHex);
+        const { hash } = await api.sendTransaction(signedTxHex);
+        return hash;
       } catch (e) {
         if ((e as Error & { code: string }).code === "INSUFFICIENT_FUNDS") {
           log("error", "EVM Family: Wrong estimation of fees", e);
@@ -228,12 +204,15 @@ export const broadcastTransaction = (
 /**
  * Get the informations about a block by block height
  */
-export const getBlock = (
-  currency: CryptoCurrency,
-  blockHeight: number,
-): Promise<ethers.providers.Block> =>
+export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHeight = "latest") =>
   withApi(currency, async api => {
-    return api.getBlock(blockHeight);
+    const { hash, number, timestamp } = await api.getBlock(blockHeight);
+
+    return {
+      hash,
+      height: number,
+      timestamp,
+    };
   });
 
 /**
@@ -251,7 +230,7 @@ export const getSubAccount: (
     const [balance, nonce, blockHeight] = await Promise.all([
       getCoinBalance(currency, addr),
       getTransactionCount(currency, addr),
-      api.getBlockNumber(),
+      api.getBlockNumber(), // @TODO GET RID OF THIS AND TAKE IT AS PARAM
     ]);
 
     return {
@@ -270,7 +249,7 @@ export const getSubAccount: (
  *
  * @see https://help.optimism.io/hc/en-us/articles/4411895794715-How-do-transaction-fees-on-Optimism-work-
  */
-export const getOptimismAdditionalFees = makeLRUCache<[CryptoCurrency, EvmTransaction], BigNumber>(
+export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = makeLRUCache(
   async (currency, transaction) =>
     withApi(currency, async api => {
       if (!["optimism", "optimism_goerli"].includes(currency.id)) {
@@ -317,17 +296,16 @@ export const getOptimismAdditionalFees = makeLRUCache<[CryptoCurrency, EvmTransa
   { ttl: 15 * 1000 }, // preventing rate limit by caching this for at least 15sec
 );
 
-export default {
-  DEFAULT_RETRIES_RPC_METHODS,
-  RPC_TIMEOUT,
-  withApi,
-  getBalanceAndBlock,
-  getTransaction,
+const node: NodeApi = {
+  getBlockByHeight,
   getCoinBalance,
+  getTokenBalance,
   getTransactionCount,
+  getTransaction,
   getGasEstimation,
   getFeesEstimation,
   broadcastTransaction,
-  getBlock,
   getOptimismAdditionalFees,
 };
+
+export default node;
