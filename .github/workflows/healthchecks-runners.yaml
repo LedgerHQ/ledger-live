@@ -52,7 +52,7 @@ jobs:
           java-version: "11"
       - name: setup Android SDK
         if: always()
-        uses: android-actions/setup-android@v2.0.6
+        uses: android-actions/setup-android@v2.0.10
       - name: check java
         if: always()
         id: check-java

@@ -48,6 +48,7 @@ import { targetDataDimensions } from "../CustomImage/shared";
 import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
 import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage";
 import Button from "../../components/wrappedUi/Button";
+import { RestoreStepDenied } from "./RestoreStepDenied";
 
 type FirmwareUpdateProps = {
   device: Device;
@@ -160,6 +161,8 @@ export const FirmwareUpdate = ({
     noOfAppsToReinstall,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
+    restoreStepDeniedError,
+    skipCurrentRestoreStep,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
     device,
@@ -558,6 +561,18 @@ export const FirmwareUpdate = ({
       });
     }
 
+    if (restoreStepDeniedError) {
+      return (
+        <RestoreStepDenied
+          device={device}
+          onPressRetry={retryCurrentStep}
+          onPressSkip={skipCurrentRestoreStep}
+          stepDeniedError={restoreStepDeniedError}
+          t={t}
+        />
+      );
+    }
+
     return undefined;
   }, [
     updateActionState.error,
@@ -577,6 +592,8 @@ export const FirmwareUpdate = ({
     retryCurrentStep,
     hasReconnectErrors,
     deviceLockedOrUnresponsive,
+    restoreStepDeniedError,
+    skipCurrentRestoreStep,
   ]);
 
   return (

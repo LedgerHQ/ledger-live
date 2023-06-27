@@ -46,7 +46,7 @@ jobs:
           distribution: "zulu" # See 'Supported distributions' for available options
           java-version: "11"
       - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.6
+        uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - uses: ./tools/actions/get-package-infos
