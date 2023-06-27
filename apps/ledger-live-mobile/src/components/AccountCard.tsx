@@ -1,10 +1,6 @@
 import React, { ReactNode } from "react";
 import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
