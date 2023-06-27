@@ -25,14 +25,14 @@ export function ErrorBanner({
     switch (errorCode) {
       case "WITHDRAWALS_BLOCKED": {
         if (providerName) {
-          return t("swap2.form.providers.withdrawalsBlockedError.message", {
+          return t("transfer.swap2.form.providers.withdrawalsBlockedError.message", {
             providerName,
           });
         }
         return `${t("crash.title")} - ${errorCode}`;
       }
       case "RATE_NOT_FOUND":
-        return `${t("swap2.form.ratesNotFoundError.message")}`;
+        return t("transfer.swap2.form.ratesNotFoundError.message");
       default:
         return `${t("crash.title")} - ${errorCode}`;
     }
