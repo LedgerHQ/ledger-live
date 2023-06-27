@@ -6,6 +6,11 @@ on:
       family:
         description: coin family to filter with (if any)
         required: false
+      speculos_websocket:
+        description: true if you want to use speculos has a websocket
+        type: boolean
+        required: false
+        default: false
   push:
     branches:
       - support/bot-mere-denis
@@ -42,3 +47,4 @@ jobs:
           SEED: ${{ secrets.SEED1 }}
           BOT_ENVIRONMENT: testing
           BOT_FILTER_FAMILY: ${{inputs.family}}
+          SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
