@@ -7,7 +7,7 @@ on:
         description: coin family to filter with (if any)
         required: false
       speculos_websocket:
-        description: true if you want to use speculos has a websocket
+        description: check to use speculos with Websocket
         type: boolean
         required: false
         default: false
