@@ -46,7 +46,10 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
         style={styles.camera}
         type={CameraType.back}
         ratio="16:9"
-        onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
+        onBarCodeScanned={({ data }: BarCodeScanningResult) => {
+          console.log("qrcoded", new Date());
+          onResult(data);
+        }}
         barCodeScannerSettings={{
           barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
         }}
@@ -69,7 +72,10 @@ const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <NavigationHeaderCloseButtonAdvanced color={colors.neutral.c100} preferDismiss={false} />
+        <NavigationHeaderCloseButtonAdvanced
+          color={colors.neutral.c100}
+          preferDismiss={false}
+        />
       ),
     });
   }, [colors.neutral.c100, navigation]);
