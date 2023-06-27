@@ -421,8 +421,8 @@ export function SwapForm({
               <Flex height={200} alignItems={"center"} justifyContent={"center"}>
                 {pageState === "empty" && (
                   <EmptyState
-                    from={swapTransaction.swap.from.currency.ticker}
-                    to={swapTransaction.swap.to.currency.ticker}
+                    from={swapTransaction.swap.from.currency?.ticker || ""}
+                    to={swapTransaction.swap.to.currency?.ticker || ""}
                   />
                 )}
                 {pageState === "loading" && <Loading size={20} color="neutral.c70" />}
