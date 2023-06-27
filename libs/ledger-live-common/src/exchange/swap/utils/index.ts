@@ -258,11 +258,12 @@ export const getCustomDappUrl = ({
       ...Object.fromEntries(searchParams),
     };
 
-    // Providers need to use the standard structure: query + fragment
-    // https://www.rfc-editor.org/rfc/rfc3986#section-4.2
-    // 1inch is not using the standard  (fragnment + query).
-    // Refactor when the providers follow the standards.
-
+/**
+     * Providers should use the standard structure: query + fragment
+     *
+     * 1inch is currently not using the standard (fragment + query). To be refactored once providers follow the standard structure.
+     * @see https://www.rfc-editor.org/rfc/rfc3986#section-4.2
+     */
     const newDappUrl =
       provider === "oneinch"
         ? `${origin}/${realFragment}?${new URLSearchParams(allParams).toString()}`.replace(
