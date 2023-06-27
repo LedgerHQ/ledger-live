@@ -84,6 +84,7 @@
     "pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "calm-cows-shout",
     "fuzzy-eyes-wave"
   ]
 }
