@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account";
 import {
   providersSelector,
   rateSelector,
