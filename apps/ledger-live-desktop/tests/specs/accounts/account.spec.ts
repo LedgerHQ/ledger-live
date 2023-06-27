@@ -8,7 +8,7 @@ import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "skip-onboarding" });
 
-const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP"];
+const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP", "Tron"];
 
 test.describe.parallel("Accounts", () => {
   for (const currency of currencies) {
