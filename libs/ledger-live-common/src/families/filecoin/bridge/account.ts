@@ -1,3 +1,4 @@
+import { isEqual } from "lodash";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -9,7 +10,11 @@ import { BigNumber } from "bignumber.js";
 import Fil from "@zondax/ledger-filecoin";
 import { Observable } from "rxjs";
 
-import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
+import {
+  makeAccountBridgeReceive,
+  makeSync,
+  defaultUpdateTransaction,
+} from "../../../bridge/jsHelpers";
 import {
   Account,
   AccountBridge,
@@ -48,12 +53,6 @@ const createTransaction = (): Transaction => {
     recipient: "",
     useAllAmount: false,
   };
-};
-
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
-  // log("debug", "[updateTransaction] patching tx");
-
-  return { ...t, ...patch };
 };
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
@@ -284,7 +283,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
 export const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   getTransactionStatus,
   estimateMaxSpendable,

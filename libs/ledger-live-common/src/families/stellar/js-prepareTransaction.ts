@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import { isEqual } from "lodash";
 import { fetchAccountNetworkInfo } from "./api";
 import type { Account } from "@ledgerhq/types-live";
 import { getAssetCodeIssuer } from "./logic";
@@ -15,7 +16,8 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
     return { ...t, networkInfo, fees, baseReserve, assetCode, assetIssuer };
   }
 
-  return { ...t, assetCode, assetIssuer };
+  const newTx = { ...t, assetCode, assetIssuer };
+  return isEqual(t, newTx) ? t : newTx;
 };
 
 export default prepareTransaction;

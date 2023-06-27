@@ -24,16 +24,6 @@ export const createTransaction = (): Transaction => {
 };
 
 /**
- * Apply patch to t
- *
- * @param {*} t
- * @param {*} patch
- */
-export const updateTransaction = (t: Transaction, patch: $Shape<Transaction>): Transaction => {
-  return { ...t, ...patch };
-};
-
-/**
  * Prepare t before checking status
  *
  * @param {ElrondAccount} a

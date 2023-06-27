@@ -13,11 +13,12 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts as makeScanHelper,
   makeSync as makeSyncHelper,
+  defaultUpdateTransaction,
 } from "../../../bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
 import { minutes } from "../api/cached";
 import { broadcastWithAPI } from "../js-broadcast";
-import createTransaction, { updateTransaction } from "../js-createTransaction";
+import createTransaction from "../js-createTransaction";
 import estimateMaxSpendableWithAPI from "../js-estimateMaxSpendable";
 import getTransactionStatus from "../js-getTransactionStatus";
 import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
@@ -153,7 +154,7 @@ export function makeBridges({
 
   const accountBridge: AccountBridge<Transaction> = {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction,
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
     getTransactionStatus,
     sync,

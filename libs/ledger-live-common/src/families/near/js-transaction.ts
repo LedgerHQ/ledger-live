@@ -1,4 +1,4 @@
-import { $Shape } from "utility-types";
+import { isEqual } from "lodash";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
@@ -14,11 +14,6 @@ export const createTransaction = (): Transaction => ({
   fees: new BigNumber(0),
 });
 
-export const updateTransaction = (t: Transaction, patch: $Shape<Transaction>): Transaction => ({
-  ...t,
-  ...patch,
-});
-
 export const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   const fees = await getEstimatedFees(t);
 
@@ -30,5 +25,6 @@ export const prepareTransaction = async (a: Account, t: Transaction): Promise<Tr
       })
     : t.amount;
 
-  return { ...t, fees, amount };
+  const newTx = { ...t, fees, amount };
+  return isEqual(t, newTx) ? t : newTx;
 };

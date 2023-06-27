@@ -33,7 +33,7 @@ import {
 } from "../utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import signTransaction from "../../../hw/signTransaction";
-import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
+import { makeSync, makeScanAccounts, defaultUpdateTransaction } from "../../../bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import {
   getAccountUnit,
@@ -514,11 +514,6 @@ const createTransaction = (): Transaction => ({
   votes: [],
 });
 
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => ({
-  ...t,
-  ...patch,
-});
-
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth
 // 2. If not enough, will cost some TRX
@@ -763,7 +758,7 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   getTransactionStatus,
   estimateMaxSpendable,

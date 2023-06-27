@@ -1,5 +1,6 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
+  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -16,13 +17,6 @@ import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronization";
 import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
 import type { Transaction as EvmTransaction, Transaction } from "../types";
-
-const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
-  transaction,
-  patch,
-) => {
-  return { ...transaction, ...patch } as EvmTransaction;
-};
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
@@ -51,7 +45,7 @@ export function buildAccountBridge(
 
   return {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction<EvmTransaction>,
     prepareTransaction,
     getTransactionStatus,
     sync,

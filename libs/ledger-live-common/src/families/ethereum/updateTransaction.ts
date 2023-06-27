@@ -1,12 +1,20 @@
+import { isEqual } from "lodash";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 
 export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] = (tx, patch) => {
+  let patched;
   if ("recipient" in patch && patch.recipient !== tx.recipient) {
-    return { ...tx, ...patch, userGasLimit: null, estimatedGasLimit: null };
+    patched = {
+      ...tx,
+      ...patch,
+      userGasLimit: null,
+      estimatedGasLimit: null,
+    };
   }
 
-  return { ...tx, ...patch };
+  patched = { ...tx, ...patch };
+  return isEqual(tx, patched) ? tx : patched;
 };
 
 export default updateTransaction;

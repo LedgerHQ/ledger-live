@@ -1,4 +1,4 @@
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { makeAccountBridgeReceive, defaultUpdateTransaction } from "../../../bridge/jsHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { scanAccounts, sync } from "../js-synchronization";
@@ -16,8 +16,6 @@ const hydrate = (): void => {};
 
 const receive = makeAccountBridgeReceive();
 
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => ({ ...t, ...patch });
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getPreloadStrategy = (currency: CryptoCurrency): any => ({});
 
@@ -30,7 +28,7 @@ const currencyBridge: CurrencyBridge = {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   estimateMaxSpendable,
   getTransactionStatus,

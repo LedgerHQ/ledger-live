@@ -20,9 +20,12 @@ import {
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
+import { defaultUpdateTransaction } from "../../../bridge/jsHelpers";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];
+
 export function addNotCreatedRippleMockAddress(addr: string) {
   notCreatedAddresses.push(addr);
 }
@@ -39,8 +42,6 @@ const createTransaction = (): Transaction => ({
   networkInfo: null,
   useAllAmount: false,
 });
-
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -132,7 +133,7 @@ const prepareTransaction = async (a, t) => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,
