@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.26.0-nightly.1
+
+### Minor Changes
+
+- [#3708](https://github.com/LedgerHQ/ledger-live/pull/3708) [`bdd99894e6`](https://github.com/LedgerHQ/ledger-live/commit/bdd99894e6b4f746f3570b757c7c8da8818e1dbd) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change network fees label to max network fees for eth
+
+- [#3659](https://github.com/LedgerHQ/ledger-live/pull/3659) [`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - New Onboarding UI/UX with new Device Selection flow
+
+### Patch Changes
+
+- [#3593](https://github.com/LedgerHQ/ledger-live/pull/3593) [`2444f6f090`](https://github.com/LedgerHQ/ledger-live/commit/2444f6f09070f8346d6441de54b1ea00e41cc6fb) Thanks [@grsoares21](https://github.com/grsoares21)! - Add info drawer when users deny a settings restore step during the firmware update allowing them to retry or skip the restore step.
+
+- [#3767](https://github.com/LedgerHQ/ledger-live/pull/3767) [`42f64359c5`](https://github.com/LedgerHQ/ledger-live/commit/42f64359c5554d66529091070185b7ab43d33d21) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove critical error on navigation
+
+- [#3659](https://github.com/LedgerHQ/ledger-live/pull/3659) [`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Revamp Onboarding LLM
+
+- Updated dependencies [[`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312), [`7719cbf508`](https://github.com/LedgerHQ/ledger-live/commit/7719cbf5087a44aefa3fc66e7a28c69ba7687bcc), [`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312)]:
+  - @ledgerhq/native-ui@0.20.1-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.29.2-nightly.0
+
 ## 3.26.0-nightly.0
 
 ### Minor Changes

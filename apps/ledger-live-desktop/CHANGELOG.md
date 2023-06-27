@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.63.0-nightly.1
+
+### Minor Changes
+
+- [#3708](https://github.com/LedgerHQ/ledger-live/pull/3708) [`bdd99894e6`](https://github.com/LedgerHQ/ledger-live/commit/bdd99894e6b4f746f3570b757c7c8da8818e1dbd) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change network fees label to max network fees for eth
+
 ## 2.63.0-nightly.0
 
 ### Minor Changes
