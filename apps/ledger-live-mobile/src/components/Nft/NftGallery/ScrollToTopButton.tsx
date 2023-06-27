@@ -5,9 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-interface Props {}
-
-const ScrollToTopButton: FC<Props> = () => {
+const ScrollToTopButton: FC = () => {
   const { t } = useTranslation();
   const { scrollY, headerHeight, scrollableRefArray } = useContext(WalletTabNavigatorScrollContext);
 
