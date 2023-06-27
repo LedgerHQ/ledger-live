@@ -237,7 +237,6 @@ export const getCustomDappUrl = ({
   provider: string;
   providerURL?: string;
 }) => {
-  // To support when bk apply set the complete URL
   if (isValidUrl(providerURL)) {
     return providerURL;
   }
