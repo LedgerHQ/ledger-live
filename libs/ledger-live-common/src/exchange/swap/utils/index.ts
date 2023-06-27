@@ -241,6 +241,7 @@ export const getCustomDappUrl = ({
   if (isValidUrl(providerURL)) {
     return providerURL;
   }
+  
   const dappUrl =
     provider === "paraswap"
       ? "https://embedded.paraswap.io/?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false"
