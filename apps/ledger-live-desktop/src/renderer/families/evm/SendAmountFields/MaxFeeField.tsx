@@ -1,5 +1,4 @@
 // FIXME: removed nextBaseFeeValue for now because data not available at the time
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AccountBridge } from "@ledgerhq/types-live";

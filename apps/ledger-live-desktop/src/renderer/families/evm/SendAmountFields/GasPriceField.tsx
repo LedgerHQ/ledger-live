@@ -1,13 +1,11 @@
 import React, { memo, useCallback } from "react";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
+import invariant from "invariant";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
 
 import { EvmFamily } from "../types";
 
-const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
 let lastNetworkGasPrice: Range | undefined; // local cache of last value to prevent extra blinks
 
 const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
@@ -16,7 +14,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   status,
   updateTransaction,
 }) => {
-  invariant(transaction.family === "evm", "FeeField: evm family expected");
+  invariant(transaction.family === "evm", "GasPriceField: evm family expected");
   const bridge = getAccountBridge(account);
   const onGasPriceChange = useCallback(
     gasPrice => {
@@ -32,18 +30,18 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
 
   const { gasOptions } = transaction;
 
-  // FIXME: gasPrice should always be defined if gasOptions is defined
-  const networkGasPrice =
-    gasOptions &&
-    inferDynamicRange(gasOptions.medium.gasPrice || new BigNumber(0), {
-      minValue: gasOptions.slow.gasPrice || undefined,
-      maxValue: gasOptions.fast.gasPrice || undefined,
-    });
+  invariant(gasOptions, "GasPriceField: 'transaction.gasOptions' should be defined");
 
-  if (!lastNetworkGasPrice && networkGasPrice) {
+  const networkGasPrice = inferDynamicRange(gasOptions.medium.gasPrice!, {
+    minValue: gasOptions.slow.gasPrice!,
+    maxValue: gasOptions.fast.gasPrice!,
+  });
+
+  if (!lastNetworkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
   }
-  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+
+  const range = networkGasPrice || lastNetworkGasPrice;
   const gasPrice = transaction.gasPrice || range.initial;
   const { units } = account.currency;
 
