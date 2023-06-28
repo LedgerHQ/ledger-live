@@ -1,4 +1,4 @@
-import React, { useCallback, ReactNode } from "react";
+import React, { useCallback, ReactNode, useEffect } from "react";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,7 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { formatToFirebaseFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
+import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 
 const checkFeatureFlagVersion = (feature: Feature) => {
   if (
@@ -125,6 +126,14 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
   const resetFeatures = (): void => {
     dispatch(setOverriddenFeatureFlags({}));
   };
+
+  useEffect(() => {
+    if(remoteConfig) {
+      setAnalyticsFeatureFlagMethod(getFeature)
+    }
+    
+    return () => setAnalyticsFeatureFlagMethod(null)
+  },[remoteConfig,getFeature])
 
   return (
     <FeatureFlagsProvider

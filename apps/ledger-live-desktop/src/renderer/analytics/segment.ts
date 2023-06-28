@@ -14,7 +14,7 @@ import {
   devicesModelListSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
-import { AccountLike, idsToLanguage } from "@ledgerhq/types-live";
+import { AccountLike, Feature, FeatureId, idsToLanguage } from "@ledgerhq/types-live";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "../reducers/accounts";
 import {
@@ -44,6 +44,22 @@ const getContext = () => ({
 });
 
 type ReduxStore = ReturnType<typeof createStore>;
+
+let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
+
+export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
+  analyticsFeatureFlagMethod = method
+}
+
+const getFeatureFlagProperties = (): Record<string,boolean | string> => {
+  if(!analyticsFeatureFlagMethod) return {}
+  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod('ptxEarn');
+
+  return {
+    ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+  }
+}
 
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
@@ -84,6 +100,7 @@ const extraProperties = (store: ReduxStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+
   return {
     appVersion: __APP_VERSION__,
     language,
@@ -102,9 +119,9 @@ const extraProperties = (store: ReduxStore) => {
     hasInfinityPass,
     modelIdList: devices,
     ...deviceInfo,
+    ...getFeatureFlagProperties()
   };
 };
-let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
 function getAnalytics() {
   const { analytics } = window;
