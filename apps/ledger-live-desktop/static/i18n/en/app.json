@@ -4362,7 +4362,7 @@
           },
           "4": {
             "title": "Restore using Ledger Recover",
-            "description": "Log into Ledger Trust Services on the Ledger Live app to restore the backup for your Secret Recovery Phrase."
+            "description": "You need to have a Ledger Recover subscription."
           }
         }
       },
