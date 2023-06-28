@@ -219,6 +219,46 @@ export type ExplorerView = {
   token?: string;
 };
 
+export type EthereumLikeInfo = {
+  chainId: number;
+  networkId?: number; // FIXME To remove after the EVM merge
+  baseChain?: "mainnet" | "goerli" | "ropsten"; // FIXME To remove after the EVM merge
+  hardfork?: string; // FIXME To remove after the EVM merge
+  // used by evm coin integration
+  node?: // FIXME Should not be optional after the EVM merge
+  | {
+        type: "external";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: string;
+      };
+  // used by evm coin integration
+  explorer?:
+    | {
+        type: "etherscan" | "blockscout";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: string;
+      };
+  // used by evm coin integration
+  gasTracker?: {
+    type: "ledger";
+    explorerId: string;
+  };
+};
+
+export type BitcoinLikeInfo = {
+  P2PKH: number;
+  P2SH: number;
+  XPUBVersion?: number;
+  // FIXME optional as we miss some data to fill
+  hasTimestamp?: boolean;
+};
+
 /**
  *
  */
@@ -246,27 +286,8 @@ export type CryptoCurrency = CurrencyCommon & {
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string;
   // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
-  bitcoinLikeInfo?: {
-    P2PKH: number;
-    P2SH: number;
-    XPUBVersion?: number;
-    // FIXME optional as we miss some data to fill
-    hasTimestamp?: boolean;
-  };
-  ethereumLikeInfo?: {
-    chainId: number;
-    networkId?: number;
-    baseChain?: "mainnet" | "goerli" | "ropsten";
-    hardfork?: string;
-    // used by evm light integration
-    rpc?: string;
-    // used by evm light integration
-    explorer?: {
-      uri: string;
-      type: "etherscan" | "blockscout";
-    };
-    gasTracker?: { uri: string; type: "ledger" };
-  };
+  bitcoinLikeInfo?: BitcoinLikeInfo;
+  ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
   terminated?: {
     link: string;
