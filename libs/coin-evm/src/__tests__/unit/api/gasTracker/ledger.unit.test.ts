@@ -12,7 +12,7 @@ const fakeCurrency: Partial<CryptoCurrency> = {
     chainId: 1,
     gasTracker: {
       type: "ledger",
-      uri: "my-gas-tracker.com",
+      explorerId: "eth",
     },
   },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
