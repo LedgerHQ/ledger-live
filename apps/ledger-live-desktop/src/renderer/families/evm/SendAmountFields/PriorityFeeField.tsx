@@ -1,7 +1,6 @@
-import { Transaction } from "@ledgerhq/coin-evm/types";
+import { GasOptions, Transaction } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
@@ -45,7 +44,7 @@ const WhiteSpacedLabel = styled(Label)`
   color: ${p => p.theme.colors.neutral.c60};
 `;
 
-const fallbackMaxPriorityFeePerGas = inferDynamicRange(new BigNumber(10e9));
+const strategies: (keyof GasOptions)[] = ["slow", "medium", "fast"];
 
 const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   account,
@@ -53,7 +52,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   status,
   updateTransaction,
 }) => {
-  invariant(transaction.family === "evm", "FeeField: evm family expected");
+  invariant(transaction.family === "evm", "PriorityFeeField: evm family expected");
 
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { t } = useTranslation();
@@ -71,26 +70,27 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
 
   const { gasOptions } = transaction;
 
+  invariant(gasOptions, "PriorityFeeField: 'transaction.gasOptions' should be defined");
+
+  strategies.forEach(strategy => {
+    invariant(
+      gasOptions[strategy].maxPriorityFeePerGas,
+      `PriorityFeeField: 'gasOptions[${strategy}].maxPriorityFeePerGas' should be defined`,
+    );
+  });
+
   const maxPriorityFee =
-    transaction.maxPriorityFeePerGas ??
-    gasOptions?.medium.maxPriorityFeePerGas ??
-    fallbackMaxPriorityFeePerGas.initial;
+    transaction.maxPriorityFeePerGas ?? gasOptions.medium.maxPriorityFeePerGas!;
   const { units } = account.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
 
   const [lowPriorityFeeValue, highPriorityFeeValue] = useMemo(
     () => [
-      formatCurrencyUnit(
-        unit,
-        gasOptions?.slow.maxPriorityFeePerGas || fallbackMaxPriorityFeePerGas.min,
-      ),
-      formatCurrencyUnit(
-        unit,
-        gasOptions?.fast.maxPriorityFeePerGas || fallbackMaxPriorityFeePerGas.max,
-      ),
+      formatCurrencyUnit(unit, gasOptions.slow.maxPriorityFeePerGas!),
+      formatCurrencyUnit(unit, gasOptions.fast.maxPriorityFeePerGas!),
     ],
-    [gasOptions?.slow, gasOptions?.fast, unit],
+    [gasOptions.slow, gasOptions.fast, unit],
   );
 
   const validTransactionError = status.errors.maxPriorityFee;
