@@ -81,7 +81,7 @@ jobs:
         if: always()
         id: check-node
         run: |
-          if [[ "$(node --version)" == *"v16."* ]]; then
+          if [[ "$(node --version)" == *"v18."* ]]; then
             result=ok
           else
             result=ko
@@ -262,7 +262,7 @@ jobs:
         id: check-node
         shell: bash
         run: |
-          if [[ "$(node --version)" == *"v16."* ]]; then
+          if [[ "$(node --version)" == *"v18."* ]]; then
             result=ok
           else
             result=ko
