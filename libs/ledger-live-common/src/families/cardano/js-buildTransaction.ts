@@ -129,10 +129,8 @@ const buildSendTokenTransaction = async ({
     typhonTx.addInput(getTyphonInputFromUtxo(u));
   }
 
-  if (typhonTx.getInputAmount().ada.lt(requiredInputAmount)) {
-    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
-    if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
-  }
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   typhonTx.addOutput({
     address: receiverAddress,
@@ -210,10 +208,8 @@ const buildSendAdaTransaction = async ({
     usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
-  if (usedUtxoAdaAmount < requiredInputAmount) {
-    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
-    if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
-  }
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   typhonTx.addOutput({
     address: receiverAddress,
@@ -280,10 +276,8 @@ const buildDelegateTransaction = async ({
     usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
-  if (usedUtxoAdaAmount < requiredInputAmount) {
-    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
-    if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
-  }
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   return typhonTx.prepareTransaction({
     inputs: transactionInputs,
