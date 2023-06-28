@@ -1,5 +1,5 @@
 import { Operation } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 
 type ExplorerBasicRequest = (
   currency: CryptoCurrency,
@@ -25,4 +25,24 @@ export type ExplorerApi = {
   //   | "getLastERC721Operations"
   //   | "getLastERC1155Operations"
   //   | "getLastNftOperations"]: ExplorerBasicRequest; }
+};
+
+type ExplorerConfig = EthereumLikeInfo["explorer"];
+
+/**
+ * Type guard
+ */
+export const isLedgerExplorerConfig = (
+  explorerConfig: ExplorerConfig,
+): explorerConfig is ExplorerConfig & { type: "ledger" } => {
+  return explorerConfig?.type === "ledger";
+};
+
+/**
+ * Type guard
+ */
+export const isEtherscanLikeExplorerConfig = (
+  explorerConfig: ExplorerConfig,
+): explorerConfig is ExplorerConfig & { type: "etherscan" | "blockscout" } => {
+  return ["etherscan", "blockscout"].includes(explorerConfig?.type as string);
 };

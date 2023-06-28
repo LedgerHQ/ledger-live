@@ -3619,12 +3619,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 1,
       networkId: 1,
-      rpc: "https://rpc.ankr.com/eth",
-      explorer: {
-        uri: "https://api.etherscan.io",
-        type: "etherscan",
-      },
-      gasTracker: { uri: "", type: "ledger" },
+      node: { type: "ledger", explorerId: "eth" },
+      explorer: { type: "ledger", explorerId: "eth" },
+      gasTracker: { type: "ledger", explorerId: "eth" },
     },
     explorerViews: [
       {
@@ -3633,6 +3630,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         token: "https://etherscan.io/token/$contractAddress?a=$address",
       },
     ],
+    explorerId: "eth",
   },
   /**
    * FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
@@ -3659,12 +3657,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 137,
       networkId: 137,
-      rpc: "https://rpc.ankr.com/polygon",
-      explorer: {
-        uri: "https://api.polygonscan.com",
-        type: "etherscan",
-      },
-      gasTracker: { uri: "", type: "ledger" },
+      node: { type: "ledger", explorerId: "matic" },
+      explorer: { type: "ledger", explorerId: "matic" },
+      gasTracker: { type: "ledger", explorerId: "matic" },
     },
     explorerViews: [
       {
@@ -3673,6 +3668,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         token: "https://polygonscan.com/token/$contractAddress?a=$address",
       },
     ],
+    explorerId: "matic",
   },
   arbitrum: {
     type: "CryptoCurrency",
@@ -3689,7 +3685,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 42161,
       networkId: 42161,
-      rpc: "https://arb1.arbitrum.io/rpc",
+      node: { type: "external", uri: "https://arb1.arbitrum.io/rpc" },
       explorer: {
         uri: "https://api.arbiscan.io",
         type: "etherscan",
@@ -3720,7 +3716,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 421613,
       networkId: 421613,
-      rpc: "https://goerli-rollup.arbitrum.io/rpc",
+      node: { type: "external", uri: "https://goerli-rollup.arbitrum.io/rpc" },
       explorer: {
         uri: "https://api-goerli.arbiscan.io/",
         type: "etherscan",
@@ -3748,7 +3744,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 25,
       networkId: 25,
-      rpc: "https://evm.cronos.org",
+      node: { type: "external", uri: "https://evm.cronos.org" },
       explorer: {
         uri: "https://api.cronoscan.com",
         type: "etherscan",
@@ -3784,7 +3780,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 250,
       networkId: 250,
-      rpc: "https://rpcapi.fantom.network",
+      node: { type: "external", uri: "https://rpcapi.fantom.network" },
       explorer: {
         uri: "https://api.ftmscan.com",
         type: "etherscan",
@@ -3812,7 +3808,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 14,
       networkId: 14,
-      rpc: "https://flare-api.flare.network/ext/bc/C/rpc",
+      node: { type: "external", uri: "https://flare-api.flare.network/ext/bc/C/rpc" },
       explorer: {
         uri: "https://flare-explorer.flare.network",
         type: "blockscout",
@@ -3840,7 +3836,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 19,
       networkId: 19,
-      rpc: "https://songbird-api.flare.network/ext/C/rpc",
+      node: { type: "external", uri: "https://songbird-api.flare.network/ext/C/rpc" },
       explorer: {
         uri: "https://songbird-explorer.flare.network",
         type: "blockscout",
@@ -3874,7 +3870,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 1284,
       networkId: 1284,
-      rpc: "https://rpc.api.moonbeam.network",
+      node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
       explorer: {
         uri: "https://api-moonbeam.moonscan.io",
         type: "etherscan",
@@ -3902,7 +3898,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 30,
       networkId: 30,
-      rpc: "https://public-node.rsk.co",
+      node: { type: "external", uri: "https://public-node.rsk.co" },
       explorer: {
         uri: "https://blockscout.com/rsk/mainnet",
         type: "blockscout",
@@ -3936,7 +3932,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 199,
       networkId: 199,
-      rpc: "https://rpc.bt.io",
+      node: { type: "external", uri: "https://rpc.bt.io" },
       explorer: {
         uri: "https://api.bttcscan.com",
         type: "etherscan",
@@ -3970,7 +3966,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 2222,
       networkId: 2222,
-      rpc: "https://evm2.kava.io",
+      node: { type: "external", uri: "https://evm2.kava.io" },
       explorer: {
         uri: "https://explorer.kava.io",
         type: "blockscout",
@@ -4004,7 +4000,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 9001,
       networkId: 9001,
-      rpc: "https://evmos-evm.publicnode.com",
+      node: { type: "external", uri: "https://evmos-evm.publicnode.com" },
       explorer: {
         uri: "https://blockscout.evmos.org",
         type: "blockscout",
@@ -4032,7 +4028,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 10,
       networkId: 10,
-      rpc: "https://mainnet.optimism.io",
+      node: { type: "external", uri: "https://mainnet.optimism.io" },
       explorer: {
         uri: "https://api-optimistic.etherscan.io",
         type: "etherscan",
@@ -4064,7 +4060,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 420,
       networkId: 420,
-      rpc: "https://goerli.optimism.io",
+      node: { type: "external", uri: "https://goerli.optimism.io" },
       explorer: {
         uri: "https://api-goerli-optimistic.etherscan.io/",
         type: "etherscan",
@@ -4092,7 +4088,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 246,
       networkId: 246,
-      rpc: "https://rpc.energyweb.org",
+      node: { type: "external", uri: "https://rpc.energyweb.org" },
       explorer: {
         uri: "https://explorer.energyweb.org",
         type: "blockscout",
@@ -4120,7 +4116,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 592,
       networkId: 592,
-      rpc: "https://evm.astar.network",
+      node: { type: "external", uri: "https://evm.astar.network" },
       explorer: {
         uri: "https://blockscout.com/astar",
         type: "blockscout",
@@ -4148,7 +4144,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 1088,
       networkId: 1088,
-      rpc: "https://andromeda.metis.io/?owner=1088",
+      node: { type: "external", uri: "https://andromeda.metis.io/?owner=1088" },
       explorer: {
         uri: "https://andromeda-explorer.metis.io",
         type: "blockscout",
@@ -4176,7 +4172,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 288,
       networkId: 288,
-      rpc: "https://mainnet.boba.network",
+      node: { type: "external", uri: "https://mainnet.boba.network" },
       explorer: {
         uri: "https://api.bobascan.com",
         type: "etherscan",
@@ -4210,7 +4206,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 1285,
       networkId: 1285,
-      rpc: "https://rpc.api.moonriver.moonbeam.network",
+      node: { type: "external", uri: "https://rpc.api.moonriver.moonbeam.network" },
       explorer: {
         uri: "https://api-moonriver.moonscan.io",
         type: "etherscan",
@@ -4244,7 +4240,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 106,
       networkId: 106,
-      rpc: "https://evmexplorer.velas.com/rpc",
+      node: { type: "external", uri: "https://evmexplorer.velas.com/rpc" },
       explorer: {
         uri: "https://evmexplorer.velas.com",
         type: "blockscout",
@@ -4272,7 +4268,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 57,
       networkId: 57,
-      rpc: "https://rpc.syscoin.org",
+      node: { type: "external", uri: "https://rpc.syscoin.org" },
       explorer: {
         uri: "https://explorer.syscoin.org",
         type: "blockscout",

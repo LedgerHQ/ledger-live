@@ -3,7 +3,7 @@ import { NodeApi } from "./types";
 import rpcNodeApi from "./rpc";
 
 export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
-  switch (currency?.ethereumLikeInfo?.rpc?.type) {
+  switch (currency.ethereumLikeInfo?.node?.type) {
     case "external":
       return rpcNodeApi;
 

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
 
 export type NodeApi = {
@@ -31,4 +31,24 @@ export type NodeApi = {
     currency: CryptoCurrency,
     transaction: EvmTransaction,
   ) => Promise<BigNumber>;
+};
+
+type NodeConfig = EthereumLikeInfo["node"];
+
+/**
+ * Type guard
+ */
+export const isLedgerNodeConfig = (
+  nodeConfig: NodeConfig,
+): nodeConfig is NodeConfig & { type: "ledger" } => {
+  return nodeConfig?.type === "ledger";
+};
+
+/**
+ * Type guard
+ */
+export const isExternalNodeConfig = (
+  nodeConfig: NodeConfig,
+): nodeConfig is NodeConfig & { type: "external" } => {
+  return nodeConfig?.type === "external";
 };
