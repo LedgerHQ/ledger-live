@@ -94,7 +94,7 @@ class NftVideo extends React.PureComponent<Props> {
                 onReadyForDisplay={this.startAnimation}
                 onError={this.onError}
                 repeat={true}
-                controls={isAndroid}
+                controls={false}
               />
             </TouchableOpacity>
           )}
