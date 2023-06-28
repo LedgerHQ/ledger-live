@@ -4,7 +4,6 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
-import ManagerPage from "../models/manager/managerPage";
 import { tapByElement, tapByText } from "../helpers";
 import ReceivePage from "../models/trade/receivePage";
 import { loadConfig } from "../bridge/server";
@@ -13,23 +12,19 @@ let portfolioPage: PortfolioPage;
 let walletTabNavigatorPage: WalletTabNavigatorPage;
 let nftGalleryPage: NftGalleryPage;
 let nftViewerPage: NftViewerPage;
-let managerPage: ManagerPage;
 let receivePage: ReceivePage;
 
-//FIXME Fix device action mocks B2CQA-1834
-describe.skip("NFT Gallery screen", () => {
+describe("NFT Gallery screen", () => {
   beforeAll(async () => {
+    loadConfig("1Account1NFTReadOnlyFalse");
+
     portfolioPage = new PortfolioPage();
     walletTabNavigatorPage = new WalletTabNavigatorPage();
     nftGalleryPage = new NftGalleryPage();
     nftViewerPage = new NftViewerPage();
-    managerPage = new ManagerPage();
     receivePage = new ReceivePage();
-    await loadConfig("1Account1NFT");
+
     await portfolioPage.waitForPortfolioPageToLoad();
-    await managerPage.openViaDeeplink();
-    await managerPage.expectManagerPage();
-    await managerPage.addDevice("Nano X de David");
     await nftGalleryPage.openViaDeeplink();
   });
 
