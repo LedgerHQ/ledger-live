@@ -1,12 +1,16 @@
+import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { BigNumber } from "bignumber.js";
+import { isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
-import { GasTrackerDoesNotSupportEIP1559, NoGasTrackerFound } from "../../errors";
+import {
+  GasTrackerDoesNotSupportEIP1559,
+  LedgerGasTrackerUsedIncorrectly,
+  NoGasTrackerFound,
+} from "../../errors";
 
 type GasTracker = {
-  explorerId: string;
   compatibilty: {
     eip1559: boolean;
   };
@@ -16,21 +20,14 @@ type GasTracker = {
 // Shouldn't this be a dynamic / remote config? For example if there is an
 // update of the explorer backend to support EIP1559, we should be able to
 // update this config without having to release a new version of the app?
-const currencyIdGasTrackerMap = new Map<CryptoCurrency["id"], GasTracker>([
-  ["avalanche_c_chain", { explorerId: "avax", compatibilty: { eip1559: false } }],
-  ["bsc", { explorerId: "bnb", compatibilty: { eip1559: false } }],
-  ["ethereum", { explorerId: "eth", compatibilty: { eip1559: true } }],
-  ["ethereum_classic", { explorerId: "etc", compatibilty: { eip1559: false } }],
-  ["polygon", { explorerId: "matic", compatibilty: { eip1559: true } }],
-  ["ethereum_ropsten", { explorerId: "eth_ropsten", compatibilty: { eip1559: true } }],
-  ["ethereum_goerli", { explorerId: "eth_goerli", compatibilty: { eip1559: true } }],
-  /**
-   * FIXME: for tests, to be removed when ethereum_as_evm_test_only and
-   * polygon_as_evm_test_only are removed from
-   * libs/ledgerjs/packages/cryptoassets/src/currencies.ts
-   */
-  ["ethereum_as_evm_test_only", { explorerId: "eth", compatibilty: { eip1559: true } }],
-  ["polygon_as_evm_test_only", { explorerId: "matic", compatibilty: { eip1559: true } }],
+const currencyIdGasTrackerMap = new Map<string, GasTracker>([
+  ["avax", { compatibilty: { eip1559: false } }],
+  ["bnb", { compatibilty: { eip1559: false } }],
+  ["eth", { compatibilty: { eip1559: true } }],
+  ["etc", { compatibilty: { eip1559: false } }],
+  ["matic", { compatibilty: { eip1559: true } }],
+  ["eth_ropsten", { compatibilty: { eip1559: true } }],
+  ["eth_goerli", { compatibilty: { eip1559: true } }],
 ]);
 
 export const getGasOptions = async ({
@@ -42,8 +39,12 @@ export const getGasOptions = async ({
     useEIP1559: boolean;
   };
 }): Promise<GasOptions> => {
-  const gasTrackerConfig = currencyIdGasTrackerMap.get(currency.id);
+  const { gasTracker } = currency.ethereumLikeInfo || {};
+  if (!isLedgerGasTracker(gasTracker)) {
+    throw new LedgerGasTrackerUsedIncorrectly();
+  }
 
+  const gasTrackerConfig = currencyIdGasTrackerMap.get(gasTracker.explorerId);
   if (!gasTrackerConfig) {
     throw new NoGasTrackerFound(`No gas tracker found for ${currency.id}`);
   }
@@ -58,7 +59,7 @@ export const getGasOptions = async ({
 
   const { low, medium, high, next_base } = await network({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${gasTrackerConfig.explorerId}/gastracker/barometer${
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${gasTracker.explorerId}/gastracker/barometer${
       useEIP1559 ? "?display=eip1559" : ""
     }`,
   }).then(({ data }) => ({
