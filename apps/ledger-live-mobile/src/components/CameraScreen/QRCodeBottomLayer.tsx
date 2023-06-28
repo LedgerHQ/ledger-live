@@ -17,14 +17,14 @@ function QrCodeBottomLayer({ progress, liveQrCode, instruction }: Props) {
     <Box
       backgroundColor={rgba(colors.constant.black, 0.4)}
       borderRadius={2}
-      pt={7}
+      pt={6}
       pb={6}
       px={6}
       mt={"auto"}
       mx={6}
-      mb={10}
+      mb={7}
     >
-      <Text variant={"h5"} fontWeight={"semiBold"} mb={7}>
+      <Text variant={"h5"} fontWeight={"semiBold"} mb={6}>
         {instruction || (
           <Trans
             i18nKey={

@@ -3,8 +3,9 @@ import { View } from "react-native";
 import { rgba } from "../../colors";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
 import QRCodeRectangleViewport from "./QRCodeRectangleViewport";
-import { Box } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
+import ScanTargetSvg from "./ScanTargetSvg";
 
 type Props = {
   width: number;
@@ -36,10 +37,26 @@ export default function CameraScreen({
   return (
     <View style={wrapperStyle}>
       <Box
-        height={height * 0.18}
+        height={height * 0.15}
         backgroundColor={rgba(colors.constant.black, 0.8)}
       ></Box>
-      <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
+      <Flex
+        flexDirection={"row"}
+        justifyContent={"space-evenly"}
+        alignItems={"center"}
+      >
+        <Box
+          flexGrow={1}
+          backgroundColor={rgba(colors.constant.black, 0.8)}
+          height={"100%"}
+        />
+        <ScanTargetSvg />
+        <Box
+          flexGrow={1}
+          backgroundColor={rgba(colors.constant.black, 0.8)}
+          height={"100%"}
+        />
+      </Flex>
       <Box backgroundColor={rgba(colors.constant.black, 0.8)} flex={1}>
         <QRCodeBottomLayer
           liveQrCode={liveQrCode}
