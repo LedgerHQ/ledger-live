@@ -5,53 +5,18 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import * as server from "../../utils/serve-dummy-app";
-import { randomUUID } from "crypto";
+import { LiveApp } from "../../models/LiveApp";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
 let continueTest = false;
 
 test.beforeAll(async ({ request }) => {
-  // Check that dummy app in tests/utils/dummy-app-build has been started successfully
-  try {
-    const port = await server.start("dummy-wallet-app/build");
-    const url = `http://localhost:${port}`;
-    const response = await request.get(url);
-    if (response.ok()) {
-      continueTest = true;
-      console.info(
-        `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
-      );
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-        server.liveAppManifest({
-          id: "dummy-live-app",
-          url,
-          name: "Dummy Wallet API Live App",
-          apiVersion: "2.0.0",
-          content: {
-            shortDescription: {
-              en: "App to test the Wallet API",
-            },
-            description: {
-              en: "App to test the Wallet API with Playwright",
-            },
-          },
-        }),
-      );
-    } else {
-      throw new Error("Ping response != 200, got: " + response.status);
-    }
-  } catch (error) {
-    console.warn(`========> Dummy test app not running! <=========`);
-    console.error(error);
-  }
+  continueTest = await LiveApp.start(request);
 });
 
 test.afterAll(() => {
-  server.stop();
-  console.info(`========> Dummy Wallet API app stopped <=========`);
-  delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
+  LiveApp.stop();
 });
 
 test("Wallet API methods", async ({ page }) => {
@@ -62,6 +27,7 @@ test("Wallet API methods", async ({ page }) => {
   const modal = new Modal(page);
   const layout = new Layout(page);
   const deviceAction = new DeviceAction(page);
+  const liveApp = new LiveApp(page);
 
   await test.step("account.request", async () => {
     await layout.goToDiscover();
@@ -69,10 +35,7 @@ test("Wallet API methods", async ({ page }) => {
     await drawer.continue();
     await drawer.waitForDrawerToDisappear();
 
-    const id = randomUUID();
-    const resPromise = discoverPage.send({
-      jsonrpc: "2.0",
-      id,
+    const { id, response } = liveApp.send({
       method: "account.request",
       params: {
         currencyIds: ["ethereum", "bitcoin"],
@@ -82,9 +45,7 @@ test("Wallet API methods", async ({ page }) => {
     await drawer.selectCurrency("bitcoin");
     await drawer.selectAccount("bitcoin");
 
-    const res = await resPromise;
-
-    expect(res).toStrictEqual({
+    await expect(response).resolves.toStrictEqual({
       jsonrpc: "2.0",
       id,
       result: {
@@ -103,10 +64,7 @@ test("Wallet API methods", async ({ page }) => {
   });
 
   await test.step("account.receive", async () => {
-    const id = randomUUID();
-    const resPromise = discoverPage.send({
-      jsonrpc: "2.0",
-      id,
+    const { id, response } = liveApp.send({
       method: "account.receive",
       params: {
         accountId: "2d23ca2a-069e-579f-b13d-05bc706c7583",
@@ -116,9 +74,7 @@ test("Wallet API methods", async ({ page }) => {
     await deviceAction.openApp();
     await modal.waitForModalToDisappear();
 
-    const res = await resPromise;
-
-    expect(res).toStrictEqual({
+    await expect(response).resolves.toStrictEqual({
       jsonrpc: "2.0",
       id,
       result: {

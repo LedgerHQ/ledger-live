@@ -100,7 +100,7 @@ const DAppDisclaimer = ({
       </Flex>
 
       <Flex mt={8}>
-        <Button type="main" onPress={onContinue}>
+        <Button type="main" onPress={onContinue} testID="dapp-disclaimer-button">
           {t("platform.disclaimer.CTA")}
         </Button>
       </Flex>

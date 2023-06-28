@@ -55,7 +55,7 @@ export default class OnboardingSteps {
 
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
 
-    bridge.open(); // Mocked action open ledger manager on the Nano
+    bridge.openNano(); // Mocked action open ledger manager on the Nano
   }
 
   async openLedgerLive() {

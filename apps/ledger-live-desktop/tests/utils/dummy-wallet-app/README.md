@@ -33,12 +33,12 @@ pnpm --filter="dummy-wallet-app" build
 ### Desktop
 
 pnpm desktop build:testing
-pnpm desktop test:playwright
+pnpm desktop test:playwright wallet-api.spec.ts
 
 ### Mobile
 
 pnpm mobile e2e:build -c ios.sim.debug
-pnpm mobile e2e:test -c ios.sim.debug
+pnpm mobile e2e:test -c ios.sim.debug apps/ledger-live-mobile/e2e/specs/wallet-api.spec.ts
 ```
 
 ## [WIP] How it works?
@@ -50,12 +50,12 @@ pnpm mobile e2e:test -c ios.sim.debug
 Add manifest json string to `MOCK_REMOTE_LIVE_MANIFEST`.
 
 ```typescript
-import { liveAppManifest } from "PATH/TO/utils/serve-dummy-app";
+import { getMockAppManifest } from "PATH/TO/utils/serve-dummy-app";
 
 test.beforeAll(async () => {
     process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-        // liveAppManifest accepts object to override mock values
-        liveAppManifest({
+        // getMockAppManifest accepts object to override mock values
+        getMockAppManifest({
           id: "dummy-app",
           url: "localhost:3000",
           name: "Dummy App",
@@ -77,10 +77,10 @@ test.beforeAll(async () => {
 sequenceDiagram
     participant T as Test (Playwright)
     participant A as App (Electron)
-    participant W as WebView # TODO: Should we create WalletAPI object for send method?
-    T->>A: await DiscoverPage.send
+    participant W as WebView
+    T->>A: await LiveApp.send
     activate T
-    A->>W: await window.ledger.e2e.walletApi.send(request)
+    A->>W: await window.ledger.e2e.walletApi.send(request) via webview.executeJavaScript
     activate A
     W-->>A: wallet-api request
     A-->>A: UI Hook (e.g. Side drawer to select account etc.)
@@ -91,7 +91,7 @@ sequenceDiagram
     deactivate T
 ```
 
-- `DiscoverPage.send`: This method turns JSON-RPC request object into JSON. Then, it calls injected method via [`webview.executeJavaScript`](https://www.electronjs.org/docs/latest/api/webview-tag#webviewexecutejavascriptcode-usergesture). It allows testing engineers to simply await for a response from Live's wallet server and `expect` against the response.
+- `LiveApp.send`: This method turns JSON-RPC request object into JSON. Then, it calls injected method via [`webview.executeJavaScript`](https://www.electronjs.org/docs/latest/api/webview-tag#webviewexecutejavascriptcode-usergesture). It allows testing engineers to simply await for a response from Live's wallet server and `expect` against the response.
 - `window.ledger.e2e.walletApi.send`: This is an injected method in Dummy App to send request to wallet api server. It returns `Promise<response>`.
 
 ### Mobile
@@ -101,9 +101,9 @@ sequenceDiagram
     participant T as Test (Jest)
     participant A as App (React Native)
     participant W as WebView (react-native-webview)
-    T->>A: await DiscoverPage.send
+    T->>A: await LiveApp.send
     activate T
-    A->>W: window.ledger.e2e.walletApi.send(request)
+    A->>W: webview.injectJavScript
     activate A
     W-->>A: wallet-api request
     A-->>A: UI Hook (e.g. Side drawer to select account etc.)

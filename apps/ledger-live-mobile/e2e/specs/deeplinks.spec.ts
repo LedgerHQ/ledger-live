@@ -4,7 +4,7 @@ import { getElementByText, isAndroid } from "../helpers";
 import AccountPage from "../models/accounts/accountPage";
 import AccountsPage from "../models/accounts/accountsPage";
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
-import DiscoveryPage from "../models/discovery/discoveryPage";
+import DiscoveryPage from "../models/discover/discoverPage";
 import ManagerPage from "../models/manager/managerPage";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SendPage from "../models/trade/sendPage";

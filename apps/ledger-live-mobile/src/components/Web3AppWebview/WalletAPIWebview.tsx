@@ -346,6 +346,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         scrollEnabled={true}
         style={styles.webview}
         renderError={() => <NetworkError handleTryAgain={() => webviewRef.current?.reload()} />}
+        testID="wallet-api-webview"
         {...webviewProps}
       />
     );
