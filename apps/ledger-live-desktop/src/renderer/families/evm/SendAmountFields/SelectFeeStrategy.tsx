@@ -1,12 +1,8 @@
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { Account } from "@ledgerhq/types-live";
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -23,8 +19,7 @@ import TachometerMedium from "~/renderer/icons/TachometerMedium";
 type Props = {
   onClick: (_: { feesStrategy: Strategy }) => void;
   transaction: EvmTransaction;
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
+  account: Account;
   gasOptions: GasOptions;
 };
 
@@ -70,10 +65,9 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
 
 const strategies: Strategy[] = ["slow", "medium", "fast"];
 
-const SelectFeeStrategy = ({ transaction, account, parentAccount, onClick, gasOptions }: Props) => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const accountUnit = getAccountUnit(mainAccount);
-  const feesCurrency = getAccountCurrency(mainAccount);
+const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props) => {
+  const accountUnit = getAccountUnit(account);
+  const feesCurrency = getAccountCurrency(account);
 
   return (
     <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">

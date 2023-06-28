@@ -1,9 +1,7 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { Transaction } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { Strategy } from "@ledgerhq/coin-evm/lib/types";
-import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import BigNumber from "bignumber.js";
@@ -19,6 +17,8 @@ import Label from "~/renderer/components/Label";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { openURL } from "~/renderer/linking";
+import { EvmFamily } from "../types";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 
 const ErrorContainer = styled(Box)<{ hasError?: boolean }>`
   margin-top: 0px;
@@ -49,21 +49,17 @@ const WhiteSpacedLabel = styled(Label)`
 
 const strategies: Strategy[] = ["slow", "medium", "fast"];
 
-type Props = {
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  transaction: Transaction;
-  status: TransactionStatus;
-  updateTransaction: Result<Transaction>["updateTransaction"];
-};
-
 const fallbackMaxPriorityFeePerGas = inferDynamicRange(new BigNumber(10e9));
 
-const FeesField = ({ account, parentAccount, transaction, status, updateTransaction }: Props) => {
+const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
+  account,
+  transaction,
+  status,
+  updateTransaction,
+}) => {
   invariant(transaction.family === "evm", "FeeField: evm family expected");
-  const mainAccount = getMainAccount(account, parentAccount);
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { t } = useTranslation();
 
   const onPriorityFeeChange = useCallback(
@@ -89,7 +85,7 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
   });
 
   const { maxPriorityFeePerGas: maxPriorityFee } = transaction;
-
+  const mainAccount = getMainAccount(account);
   const { units } = mainAccount.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;

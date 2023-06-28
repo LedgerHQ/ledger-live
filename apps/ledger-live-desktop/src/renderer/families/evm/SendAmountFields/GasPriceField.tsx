@@ -1,23 +1,21 @@
 import React, { memo, useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
 
-type Props = {
-  account: Account;
-  transaction: Transaction;
-  status: TransactionStatus;
-  updateTransaction: (updater: (_: Transaction) => Transaction) => void;
-};
+import { EvmFamily } from "../types";
 
 const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
 let lastNetworkGasPrice: Range | undefined; // local cache of last value to prevent extra blinks
 
-const FeesField = ({ account, transaction, status, updateTransaction }: Props) => {
+const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
+  account,
+  transaction,
+  status,
+  updateTransaction,
+}) => {
   invariant(transaction.family === "evm", "FeeField: evm family expected");
   const bridge = getAccountBridge(account);
   const onGasPriceChange = useCallback(
