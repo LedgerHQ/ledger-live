@@ -358,7 +358,10 @@ export function SwapForm({
       const customParams = {
         provider,
         providerURL,
-      } as { provider: string; providerURL?: string };
+      } as {
+        provider: string;
+        providerURL?: string;
+      };
 
       const customDappUrl = getCustomDappUrl(customParams);
 

@@ -50,7 +50,7 @@ export type ExchangeRate = {
   providerType: "CEX" | "DEX";
   tradeMethod: "fixed" | "float";
   error?: Error;
-  providerURL?: string | null | undefined;
+  providerURL?: string;
   expirationTime?: number;
 };
 
@@ -66,7 +66,7 @@ export type ExchangeRateRaw = {
   providerType: "CEX" | "DEX";
   tradeMethod: TradeMethod;
   error?: string;
-  providerURL?: string | null | undefined;
+  providerURL?: string;
 };
 
 export type AvailableProviderV2 = {

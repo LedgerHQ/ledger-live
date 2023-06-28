@@ -410,10 +410,11 @@ const SwapForm = () => {
       const customParams = {
         provider,
         providerURL,
+      } as {
+        provider: string;
+        providerURL?: string;
       };
-      const customDappUrl = getCustomDappUrl({
-        ...customParams,
-      });
+      const customDappUrl = getCustomDappUrl(customParams);
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
       const getAccountId = ({
         accountId,
