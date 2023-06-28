@@ -63,6 +63,7 @@ import {
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingTypePayload,
+  SettingsSetKnownDeviceModelIdsPayload,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -179,6 +180,9 @@ export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayl
 );
 export const setLastSeenDeviceLanguageId = createAction<SettingsLastSeenDeviceLanguagePayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
+);
+export const setKnownDeviceModelIds = createAction<SettingsSetKnownDeviceModelIdsPayload>(
+  SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS,
 );
 const setHasSeenStaxEnabledNftsPopupAction =
   createAction<SettingsSetHasSeenStaxEnabledNftsPopupPayload>(
