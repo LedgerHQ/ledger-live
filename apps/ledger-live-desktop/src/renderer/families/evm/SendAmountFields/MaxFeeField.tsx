@@ -2,11 +2,10 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { Transaction } from "@ledgerhq/coin-evm/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
@@ -126,4 +125,4 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   );
 };
 
-export default FeesField;
+export default memo(FeesField);

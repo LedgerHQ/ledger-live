@@ -4,8 +4,8 @@ import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import FeeSliderField from "~/renderer/components/FeeSliderField";
 import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
+import FeeSliderField from "~/renderer/components/FeeSliderField";
 
 type Props = {
   account: Account;
