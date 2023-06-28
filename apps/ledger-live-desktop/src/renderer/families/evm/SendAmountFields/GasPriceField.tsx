@@ -1,11 +1,11 @@
-import React, { useCallback } from "react";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import FeeSliderField from "~/renderer/components/FeeSliderField";
 import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
+import { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import React, { memo, useCallback } from "react";
+import FeeSliderField from "~/renderer/components/FeeSliderField";
 type Props = {
   account: Account;
   transaction: Transaction;
@@ -57,4 +57,4 @@ const FeesField = ({ account, transaction, status, updateTransaction }: Props) =
     />
   );
 };
-export default FeesField;
+export default memo(FeesField);

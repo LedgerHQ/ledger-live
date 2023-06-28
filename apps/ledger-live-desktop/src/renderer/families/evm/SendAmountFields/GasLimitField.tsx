@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from "react";
-import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
 import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
-import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { useTranslation } from "react-i18next";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { Button } from "@ledgerhq/react-ui";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import React, { memo, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
@@ -92,4 +92,4 @@ const AdvancedOptions = ({
   );
 };
 
-export default AdvancedOptions;
+export default memo(AdvancedOptions);

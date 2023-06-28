@@ -1,23 +1,23 @@
-import React, { memo } from "react";
-import styled from "styled-components";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
+import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
+import { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types";
 import {
   getAccountCurrency,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { GasOptions, Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
-import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import TachometerMedium from "~/renderer/icons/TachometerMedium";
+import React, { memo } from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import Box, { Tabbable } from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import TachometerHigh from "~/renderer/icons/TachometerHigh";
-import TachometerLow from "~/renderer/icons/TachometerLow";
-import Box, { Tabbable } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Clock from "~/renderer/icons/Clock";
-import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
+import TachometerHigh from "~/renderer/icons/TachometerHigh";
+import TachometerLow from "~/renderer/icons/TachometerLow";
+import TachometerMedium from "~/renderer/icons/TachometerMedium";
 
 type OnClickType = {
   feesStrategy: keyof GasOptions;
