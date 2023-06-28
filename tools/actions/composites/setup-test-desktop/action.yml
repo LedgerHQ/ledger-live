@@ -51,7 +51,7 @@ runs:
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --filter="dummy-wallet-app" --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
@@ -67,14 +67,14 @@ runs:
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       shell: bash
-    - name: Build desktop testing
+    - name: Build LLD app for testing
       env:
         GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
       run: |
         pnpm desktop build:testing
       shell: bash
-    - name: Build Dummy SDK app for testing
+    - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
-      run: pnpm --filter="dummy-live-app" build
+      run: pnpm desktop build:dummy-apps
       shell: bash
