@@ -9,10 +9,9 @@ import * as bridge from "../../bridge/server";
 
 export default class OnboardingSteps {
   onboardingGetStartedButton = () => getElementByText("Get started");
-  yesIDoButton = () => getElementByText("Yes, I do");
-  notYetButton = () => getElementByText("Not yet");
-  setupMyLedgerButton = () => getElementByText("Set up my Ledger");
-  connectYourNanoButton = () => getElementByText("Connect your Nano");
+  setupLedgerButton = () => getElementByText("Set up your Ledger");
+  accessWalletButton = () => getElementByText("Access your wallet");
+  connectLedgerButton = () => getElementByText("Connect your Ledger");
   continueButton = () => getElementByText("Continue");
   pairNanoButton = () => getElementByText("Let’s pair my Nano"); // Yes it's a weird character, no do not replace it as it won't find the text
   pairDeviceButton = () => getElementById("pair-device");
@@ -24,24 +23,20 @@ export default class OnboardingSteps {
     await tapByElement(this.onboardingGetStartedButton());
   }
 
-  async DoIOwnDevice(answer = true) {
-    answer ? await tapByElement(this.yesIDoButton()) : await tapByElement(this.notYetButton());
+  async chooseToSetupLedger() {
+    await tapByElement(this.setupLedgerButton());
   }
 
-  async chooseToSetupLedger() {
-    await tapByElement(this.setupMyLedgerButton());
+  async chooseToAccessYourWallet() {
+    await tapByElement(this.accessWalletButton());
   }
 
   async selectYourDevice(device: string) {
     await tapByText(device);
   }
 
-  async chooseToConnectYourNano() {
-    await tapByElement(this.connectYourNanoButton());
-  }
-
-  async verifyContentsOfBoxAreChecked() {
-    await tapByElement(this.continueButton());
+  async chooseToConnectYourLedger() {
+    await tapByElement(this.connectLedgerButton());
   }
 
   async chooseToPairMyNano() {

@@ -11,6 +11,7 @@ import {
   OperationType,
   SubAccount,
   TransactionCommon,
+  TransactionCommonRaw,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
 import { StepProps as SendStepProps } from "../modals/Send/types";
@@ -53,6 +54,13 @@ export type OperationDetailsExtraProps<A> = {
   type: OperationType;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra: Record<string, any>; // TODO check if we can use unknown instead of any
+};
+
+export type SummaryNetworkFeesRowProps = {
+  feeTooHigh: Error;
+  feesUnit: Unit;
+  estimatedFees: BigNumber;
+  feesCurrency: TokenCurrency | CryptoCurrency;
 };
 
 /**
@@ -175,6 +183,12 @@ export type LLDCoinFamily<
     parentAccount: A | null | undefined;
   }>;
 
+  AccountFooter?: React.ComponentType<{
+    account: A | SubAccount;
+    parentAccount?: A | undefined | null;
+    status: TS;
+  }>;
+
   /**
    * Replace amount field on send modal
    */
@@ -192,6 +206,7 @@ export type LLDCoinFamily<
       mapStrategies?: (a: FeeStrategy) => FeeStrategy;
       bridgePending?: boolean;
       trackProperties?: Record<string, unknown>;
+      transactionRaw?: TransactionCommonRaw;
     }>;
     fields?: string[];
   };
@@ -262,6 +277,11 @@ export type LLDCoinFamily<
    * Allow to add component below the confirmation address box on receive step
    */
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;
+
+  /**
+   * Replace Networkfees row on Summary Step
+   */
+  StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps>;
 
   /**
    * It was for Hedera specifc, when we do not find any account it show a specific component

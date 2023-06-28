@@ -44,25 +44,35 @@ export type AppPermission = {
   params?: any;
 };
 
+export type ParamsWithDappUrl = {
+  dappUrl: string;
+};
+
+export type ParamsWithNetwork = {
+  networks: Array<LiveAppManifestParamsNetwork>;
+};
+
+export type LiveAppManifestParamsDappWithNetwork = ParamsWithDappUrl & ParamsWithNetwork;
+export type LiveAppManifestParamsDappWithNetworkAndNanoApp =
+  LiveAppManifestParamsDappWithNetwork & {
+    nanoApp: string;
+    dappName: string;
+  };
+
+export type LiveAppManifestParamsDapp =
+  | LiveAppManifestParamsDappWithNetwork
+  | LiveAppManifestParamsDappWithNetworkAndNanoApp;
+
+export type LiveAppManifestParamsWebApp = {
+  currencies: string[];
+  webAppName: string;
+  webUrl: string;
+};
+
 export type LiveAppManifestParams =
-  | {
-      dappName: string;
-      dappUrl: string;
-      nanoApp: string;
-      networks: Array<LiveAppManifestParamsNetwork>;
-    }
-  | {
-      currencies: string[];
-      webAppName: string;
-      webUrl: string;
-    }
-  | {
-      dappUrl: string;
-      networks: Array<LiveAppManifestParamsNetwork>;
-    }
-  | {
-      networks: Array<LiveAppManifestParamsNetwork>;
-    }
+  | LiveAppManifestParamsDapp
+  | LiveAppManifestParamsWebApp
+  | ParamsWithNetwork
   | Array<string>;
 
 export type LiveAppManifestParamsNetwork = {

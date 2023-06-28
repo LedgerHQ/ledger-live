@@ -47,6 +47,7 @@ type OwnProps = {
   withAccount?: boolean;
   withAddress?: boolean;
   text?: string;
+  editable?: boolean;
 };
 type Props = {
   confirmationsNb: number;
@@ -72,6 +73,7 @@ class OperationComponent extends PureComponent<Props> {
       text,
       withAddress,
       confirmationsNb,
+      editable,
     } = this.props;
     const isOptimistic = operation.blockHeight === null;
     const currency = getAccountCurrency(account);
@@ -91,7 +93,7 @@ class OperationComponent extends PureComponent<Props> {
           t={t}
           isConfirmed={isConfirmed}
         />
-        <DateCell text={text} operation={operation} t={t} />
+        <DateCell text={text} operation={operation} editable={editable} t={t} />
         {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
         {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
         <AmountCell
