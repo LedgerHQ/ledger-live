@@ -23,9 +23,9 @@ import { closePlatformAppDrawer, openPlatformAppDisclaimerDrawer } from "~/rende
 
 export function useCatalog(db: RecentlyUsedDB) {
   const categories = useCategories();
-  const recentlyUsed = useRecentlyUsed(categories.manifests, db);
+  const recentlyUsed = useRecentlyUsed(categories.manifests.all, db);
   const search = useSearch({
-    list: categories.manifests,
+    list: categories.manifests.searchable,
     options: BROWSE_SEARCH_OPTIONS,
     filter: item =>
       categories.selected === "all" ? true : item.categories.includes(categories.selected),
