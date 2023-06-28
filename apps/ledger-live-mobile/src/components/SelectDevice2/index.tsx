@@ -330,7 +330,10 @@ export default function SelectDevice({
               <Trans i18nKey="manager.selectDevice.title" />
             </Text>
             {deviceList.length > 0 && (
-              <Touchable onPress={onAddNewPress} {...addNewButtonEventProps}>
+              <Touchable
+                onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                {...addNewButtonEventProps}
+              >
                 <Flex flexDirection="row" alignItems="center">
                   <Text color="primary.c90" mr={3} fontWeight="semiBold">
                     <Trans
