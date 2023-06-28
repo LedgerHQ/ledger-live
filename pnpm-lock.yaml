@@ -518,9 +518,6 @@ importers:
       '@electron/notarize':
         specifier: ^2.0.0
         version: 2.0.0
-      '@mapbox/node-pre-gyp':
-        specifier: ^1.0.8
-        version: 1.0.9
       '@octokit/rest':
         specifier: ^18.12.0
         version: 18.12.0

@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.62.2",
+  "version": "2.62.1",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -148,7 +148,6 @@
     "@babel/preset-react": "^7.13.13",
     "@babel/preset-typescript": "^7.15.0",
     "@electron/notarize": "^2.0.0",
-    "@mapbox/node-pre-gyp": "^1.0.8",
     "@octokit/rest": "^18.12.0",
     "@playwright/test": "^1.34.3",
     "@sentry/cli": "^2.13.0",

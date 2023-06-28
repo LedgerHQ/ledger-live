@@ -1,17 +1,5 @@
 # ledger-live-desktop
 
-## 2.62.2
-
-### Patch Changes
-
-- [#3851](https://github.com/LedgerHQ/ledger-live/pull/3851) [`5ee86b42a5`](https://github.com/LedgerHQ/ledger-live/commit/5ee86b42a51d708ef15d06fe888e6ccaf9f1664c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add release notes
-
-## 2.62.2-hotfix.0
-
-### Patch Changes
-
-- [#3849](https://github.com/LedgerHQ/ledger-live/pull/3849) [`5ee86b42a5`](https://github.com/LedgerHQ/ledger-live/commit/5ee86b42a51d708ef15d06fe888e6ccaf9f1664c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Add release notes
-
 ## 2.62.1
 
 ### Patch Changes
