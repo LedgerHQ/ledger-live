@@ -181,6 +181,11 @@ export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayl
 export const setLastSeenDeviceLanguageId = createAction<SettingsLastSeenDeviceLanguagePayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
 );
+/**
+ * Do not use this for purposes other than debugging. The reducers for other
+ * actions like setLastSeenDevice, setLastSeenDeviceInfo,
+ * setLastSeenDeviceLanguageId already update that part of the state.
+ * */
 export const setKnownDeviceModelIds = createAction<SettingsSetKnownDeviceModelIdsPayload>(
   SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS,
 );
