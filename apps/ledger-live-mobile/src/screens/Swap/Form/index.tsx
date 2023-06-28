@@ -35,6 +35,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
+import { Feature } from "@ledgerhq/types-live";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import { swapAcceptedProvidersSelector, swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus, setSwapSelectableCurrencies } from "../../../actions/settings";
@@ -58,9 +59,15 @@ import { Modal } from "./Modal";
 import { Connect } from "./Connect";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { ErrorBanner } from "./ErrorBanner";
-import { MaterialTopTabNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import {
+  MaterialTopTabNavigatorProps,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
+
+type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
 export const useProviders = () => {
   const dispatch = useDispatch();
@@ -351,11 +358,9 @@ export function SwapForm({
       const customParams = {
         provider,
         providerURL,
-      };
+      } as { provider: string; providerURL?: string };
 
-      const customDappUrl = getCustomDappUrl({
-        ...customParams,
-      });
+      const customDappUrl = getCustomDappUrl(customParams);
 
       const getAccountId = ({
         accountId,

@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
   providersSelector,
   rateSelector,
@@ -409,7 +409,7 @@ const SwapForm = () => {
       const fromAccountId = from.parentAccount?.id || from.account?.id;
       const customParams = {
         provider,
-        providerURL: providerURL || undefined,
+        providerURL,
       };
       const customDappUrl = getCustomDappUrl({
         ...customParams,

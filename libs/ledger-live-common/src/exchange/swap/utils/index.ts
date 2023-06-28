@@ -243,18 +243,18 @@ export const getCustomDappUrl = ({
 }: {
   provider: string;
   providerURL?: string;
-}) => {
+}): string => {
   if (isValidUrl(providerURL)) {
     return providerURL;
   }
-  
+
   const dappUrl =
     provider === "paraswap"
       ? "https://embedded.paraswap.io/?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false"
       : "https://app.1inch.io/?ledgerLive=true";
   const newUrl = `https://www.prefix.com/${providerURL}`;
   const isValidNewdUrl = isValidUrl(newUrl);
-  
+
   if (isValidNewdUrl) {
     const { origin, search } = new URL(dappUrl);
     const { hash: fragment, searchParams } = new URL(newUrl);
@@ -266,7 +266,7 @@ export const getCustomDappUrl = ({
       ...Object.fromEntries(searchParams),
     };
 
-/**
+    /**
      * Providers should use the standard structure: query + fragment
      *
      * 1inch is currently not using the standard (fragment + query). To be refactored once providers follow the standard structure.
@@ -281,5 +281,5 @@ export const getCustomDappUrl = ({
         : `${origin}?${new URLSearchParams(allParams).toString()}${realFragment}`;
     return newDappUrl;
   }
-  return false;
+  return "";
 };

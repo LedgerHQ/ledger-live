@@ -45,14 +45,11 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
   },
   [SwapActionTypes.UPDATE_RATE]: (state, action) => {
     const payload = (action as Action<UpdateRatePayload>).payload;
-    const newRate = state?.rates?.find(
-      item => (item.provider = payload.provider && item.tradeMethod === payload.tradeMethod),
-    );
     return {
       ...state,
-      exchangeRate: newRate || payload,
+      exchangeRate: payload,
       exchangeRateExpiration:
-        newRate?.tradeMethod === "fixed"
+        payload?.tradeMethod === "fixed"
           ? new Date(new Date().getTime() + ratesExpirationThreshold)
           : undefined,
     };
