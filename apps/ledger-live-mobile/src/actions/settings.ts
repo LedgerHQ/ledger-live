@@ -186,7 +186,7 @@ export const setLastSeenDeviceLanguageId = createAction<SettingsLastSeenDeviceLa
  * actions like setLastSeenDevice, setLastSeenDeviceInfo,
  * setLastSeenDeviceLanguageId already update that part of the state.
  * */
-export const setKnownDeviceModelIds = createAction<SettingsSetKnownDeviceModelIdsPayload>(
+export const unsafe_setKnownDeviceModelIds = createAction<SettingsSetKnownDeviceModelIdsPayload>(
   SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS,
 );
 const setHasSeenStaxEnabledNftsPopupAction =

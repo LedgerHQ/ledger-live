@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";
-import { setKnownDeviceModelIds } from "../../../../actions/settings";
+import { unsafe_setKnownDeviceModelIds } from "../../../../actions/settings";
 import { knownDeviceModelIdsSelector } from "../../../../reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -13,7 +13,7 @@ const HasStaxRow = () => {
 
   const onChange = useCallback(
     (enabled: boolean) => {
-      dispatch(setKnownDeviceModelIds({ [DeviceModelId.stax]: enabled }));
+      dispatch(unsafe_setKnownDeviceModelIds({ [DeviceModelId.stax]: enabled }));
     },
     [dispatch],
   );
