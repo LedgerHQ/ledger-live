@@ -1,5 +1,4 @@
 import { Transaction } from "@ledgerhq/coin-evm/types";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AccountBridge } from "@ledgerhq/types-live";
@@ -47,15 +46,13 @@ const WhiteSpacedLabel = styled(Label)`
 
 const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   account,
-  parentAccount,
   transaction,
   status,
   updateTransaction,
 }) => {
   invariant(transaction.family === "evm", "FeeField: evm family expected");
 
-  const mainAccount = getMainAccount(account, parentAccount);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { t } = useTranslation();
 
   const onMaxFeeChange = useCallback(
@@ -70,7 +67,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   );
 
   const maxFeePerGas = transaction.maxFeePerGas || transaction.gasOptions?.medium.maxFeePerGas;
-  const { units } = mainAccount.currency;
+  const { units } = account.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
 
