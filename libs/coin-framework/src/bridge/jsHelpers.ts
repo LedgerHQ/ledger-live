@@ -48,12 +48,14 @@ type IterateResult = ({
   derivationScheme,
   derivationMode,
   currency,
+  deviceId,
 }: {
   index: number;
   derivationsCache: Record<string, Result>;
   derivationScheme: string;
   derivationMode: DerivationMode;
   currency: CryptoCurrency;
+  deviceId: string;
 }) => Promise<Result | null>;
 
 export type IterateResultBuilder = ({
@@ -260,7 +262,7 @@ export const makeSync =
       main();
     });
 
-const defaultIterateResultBuilder = (deviceId: string, getAddressFn: GetAddressFn) => () =>
+const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
   Promise.resolve(
     async ({
       index,
@@ -268,12 +270,14 @@ const defaultIterateResultBuilder = (deviceId: string, getAddressFn: GetAddressF
       derivationScheme,
       derivationMode,
       currency,
+      deviceId,
     }: {
       index: number | string;
       derivationsCache: Record<string, Result>;
       derivationScheme: string;
       derivationMode: DerivationMode;
       currency: CryptoCurrency;
+      deviceId: string;
     }): Promise<Result | null> => {
       const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
         account: index,
@@ -304,7 +308,7 @@ export const makeScanAccounts =
   ({ currency, deviceId, syncConfig }): Observable<ScanAccountEvent> =>
     new Observable((o: Observer<{ type: "discovered"; account: Account }>) => {
       if (buildIterateResult === undefined) {
-        buildIterateResult = defaultIterateResultBuilder(deviceId, getAddressFn);
+        buildIterateResult = defaultIterateResultBuilder(getAddressFn);
       }
 
       let finished = false;
@@ -503,6 +507,7 @@ export const makeScanAccounts =
                 derivationMode,
                 derivationScheme,
                 currency,
+                deviceId,
               });
 
               if (!res) break;
