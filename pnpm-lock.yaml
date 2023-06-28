@@ -516,8 +516,8 @@ importers:
         specifier: ^7.15.0
         version: 7.16.7(@babel/core@7.21.0)
       '@electron/notarize':
-        specifier: ^1.2.4
-        version: 1.2.4
+        specifier: ^2.0.0
+        version: 2.0.0
       '@octokit/rest':
         specifier: ^18.12.0
         version: 18.12.0
@@ -10582,8 +10582,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@electron/notarize@1.2.4:
-    resolution: {integrity: sha512-W5GQhJEosFNafewnS28d3bpQ37/s91CDWqxVchHfmv2dQSTWpOzNlUVQwYzC1ay5bChRV/A9BTL68yj0Pa+TSg==}
+  /@electron/notarize@2.0.0:
+    resolution: {integrity: sha512-dqDpd2YCgl6PHJgXEuKGYH3+L4GIGV7ZbKYJjJv66ed+hVPxZA+GAL5JH8/hCnoyQa8WzJTzqd+qhiL5Oxr+SA==}
     engines: {node: '>= 10.0.0'}
     dependencies:
       debug: 4.3.4
