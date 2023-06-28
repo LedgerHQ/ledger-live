@@ -2,7 +2,6 @@ import React from "react";
 import { View } from "react-native";
 import { rgba } from "../../colors";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
-import QRCodeRectangleViewport from "./QRCodeRectangleViewport";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import ScanTargetSvg from "./ScanTargetSvg";
@@ -23,7 +22,6 @@ export default function CameraScreen({
   const progress = undefined;
   const { colors } = useTheme();
   // Make the viewfinder borders 2/3 of the screen shortest border
-  const viewFinderSize = (width > height ? height : width) * (2 / 3);
   const wrapperStyle =
     width > height
       ? {
