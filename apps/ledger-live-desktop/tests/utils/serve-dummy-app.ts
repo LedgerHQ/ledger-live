@@ -1,6 +1,7 @@
 import handler from "serve-handler";
 import http from "http";
 import path from "path";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 let dummyAppPath: string;
 
@@ -28,69 +29,51 @@ export const start = (appPath: string, port = 0): Promise<number> => {
   });
 };
 
-export const dummyLiveAppManifest = (port: number) => [
-  {
-    id: "dummy-live-app",
-    name: "Dummy Live App",
-    url: `http://localhost:${port}`,
-    homepageUrl: "https://developers.ledger.com/",
-    icon: "",
-    platforms: ["ios", "android", "desktop"],
-    apiVersion: "^1.0.0 || ~0.0.1",
-    manifestVersion: "1",
-    branch: "stable",
-    categories: ["tools"],
-    currencies: "*",
-    content: {
-      shortDescription: {
-        en: "Dummy app for testing the Platform apps and Live SDK in E2E (Playwright) tests",
-      },
-      description: {
-        en: "Dummy app for testing the Platform apps and Live SDK in E2E (Playwright) tests",
-      },
-    },
-    permissions: [
-      {
-        method: "*",
-      },
-    ],
-    domains: ["https://*"],
-    visibility: "complete",
-  },
-];
-
-export const dummyBuyAppManifest = (port: number) => [
-  {
-    id: "multibuy",
-    name: "Dummy Buy / Sell App",
-    private: false,
-    url: `http://localhost:${port}`,
-    homepageUrl: "https://developers.ledger.com/",
-    icon: "",
-    platform: "all",
-    apiVersion: "^1.0.0 || ~0.0.1",
-    manifestVersion: "1",
-    branch: "stable",
-    categories: ["exchange", "buy"],
-    currencies: ["ethereum", "bitcoin", "algorand"],
-    content: {
-      shortDescription: {
-        en: "Dummy app for testing the Buy app is accessed correctly",
-      },
-      description: {
-        en: "Dummy app for testing the Buy app is accessed correctly",
-      },
-    },
-    permissions: [
-      {
-        method: "account.request",
-        params: {
-          currencies: ["ethereum", "bitcoin", "algorand"],
+export const liveAppManifest = (params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">) => {
+  const manifest = [
+    {
+      name: "Generic Live App",
+      homepageUrl: "https://developers.ledger.com/",
+      icon: "",
+      platforms: ["ios", "android", "desktop"],
+      apiVersion: "^1.0.0 || ~0.0.1",
+      manifestVersion: "1",
+      branch: "stable",
+      categories: ["tools"],
+      currencies: "*",
+      content: {
+        shortDescription: {
+          en: "Generic Live App",
+        },
+        description: {
+          en: "Generic Live App for testing",
         },
       },
-    ],
-    domains: ["https://*"],
-  },
-];
+      permissions: [
+        "account.list",
+        "account.receive",
+        "account.request",
+        "currency.list",
+        "device.close",
+        "device.exchange",
+        "device.transport",
+        "message.sign",
+        "transaction.sign",
+        "transaction.signAndBroadcast",
+        "storage.set",
+        "storage.get",
+        "bitcoin.getXPub",
+        "wallet.capabilities",
+        "wallet.userId",
+        "wallet.info",
+      ],
+      domains: ["https://*"],
+      visibility: "complete",
+      ...params,
+    },
+  ];
+
+  return manifest;
+};
 
 export const stop = () => server.close();

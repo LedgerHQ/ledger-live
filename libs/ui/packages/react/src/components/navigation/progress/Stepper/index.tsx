@@ -94,6 +94,7 @@ export const Item = {
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`
+  text-align: center;
   color: ${p => {
     if (p.state === "errored") {
       return p.theme.colors.error.c50;
@@ -160,7 +161,7 @@ export const Step = memo(function Step({
   const nextInactive = state === "pending";
 
   return (
-    <Flex flexDirection="column" alignItems="center">
+    <Flex flexDirection="column" alignItems="center" flex={20}>
       <Item.Spacer mb={5}>
         {(!hideLeftSeparator && <Separator.Item inactive={inactive} position="left" />) || (
           <Flex flex="1" />

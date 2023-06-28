@@ -7,7 +7,6 @@ import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currenci
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
-import logger from "../../logger";
 import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
 
@@ -43,20 +42,22 @@ const StakeFlow = ({ route }: Props) => {
       )?.navigationParams;
       if (!stakeFlow) return null;
       const [name, options] = stakeFlow;
-      navigation.navigate(name, {
-        screen: options?.screen,
+
+      navigation.navigate(NavigatorName.Base, {
+        screen: name,
+        drawer: options?.drawer,
         params: {
-          ...(options?.params ?? {}),
-          account,
-          parentAccount,
+          screen: options.screen,
+          params: {
+            ...(options?.params || {}),
+            account,
+            parentAccount,
+          },
         },
       });
     },
     [navigation, parentRoute],
   );
-  const onError = (error: Error) => {
-    logger.critical(error);
-  };
 
   const requestAccount = useCallback(() => {
     if (cryptoCurrencies.length === 1) {
@@ -67,7 +68,6 @@ const StakeFlow = ({ route }: Props) => {
           currency: cryptoCurrencies[0],
           onSuccess,
         },
-        onError,
       });
     } else {
       navigation.replace(NavigatorName.RequestAccount, {
@@ -77,7 +77,6 @@ const StakeFlow = ({ route }: Props) => {
           allowAddAccount: true,
           onSuccess,
         },
-        onError,
       });
     }
   }, [cryptoCurrencies, navigation, onSuccess]);

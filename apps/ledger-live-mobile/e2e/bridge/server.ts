@@ -21,18 +21,12 @@ export function close() {
   wss?.close();
 }
 
-export async function loadConfig(
-  fileName: string,
-  agreed: true = true,
-): Promise<void> {
+export function loadConfig(fileName: string, agreed: true = true): void {
   if (agreed) {
     acceptTerms();
   }
 
-  const f = fs.readFileSync(
-    path.resolve("e2e", "setups", `${fileName}.json`),
-    "utf8",
-  );
+  const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 
@@ -53,11 +47,7 @@ function navigate(name: string) {
 }
 
 export function addDevices(
-  deviceNames: string[] = [
-    "Nano X de David",
-    "Nano X de Arnaud",
-    "Nano X de Didier Duchmol",
-  ],
+  deviceNames: string[] = ["Nano X de David", "Nano X de Arnaud", "Nano X de Didier Duchmol"],
 ): string[] {
   deviceNames.forEach((name, i) => {
     postMessage({

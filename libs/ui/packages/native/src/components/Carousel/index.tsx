@@ -257,6 +257,7 @@ function Carousel({
         {React.isValidElement(IndicatorComponent) ? (
           IndicatorComponent
         ) : (
+          /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
           <IndicatorComponent
             activeIndex={activeIndexState || 0}
             onChange={(index: number) => {

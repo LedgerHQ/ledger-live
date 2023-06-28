@@ -39,6 +39,7 @@
     "rxjs": "*",
     "semver": "^7.3.7",
     "styled-components": "^4.4.0",
+    "tslib": "^2.5.0",
     "webpack": "4.42"
   },
   "scripts": {

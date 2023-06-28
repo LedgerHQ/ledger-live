@@ -11,9 +11,10 @@ interface Props {
   subTitle: string;
   onPress: () => void;
   disabled?: boolean;
+  testID?: string;
 }
 
-export function Selector({ currency, title, subTitle, onPress, disabled = false }: Props) {
+export function Selector({ currency, title, subTitle, onPress, disabled = false, testID }: Props) {
   const { t } = useTranslation();
 
   const Icon = currency ? (
@@ -29,7 +30,7 @@ export function Selector({ currency, title, subTitle, onPress, disabled = false 
   );
 
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
+    <TouchableOpacity onPress={onPress} disabled={disabled} testID={testID}>
       <Flex flexDirection="row" alignItems="center" justifyContent="space-between" width="100%">
         <Flex flexDirection="row" alignItems="center" flex={1}>
           <Flex alignItems="center" justifyContent="center" marginRight={2}>
