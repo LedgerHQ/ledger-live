@@ -561,6 +561,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "offset to be added to the speculos pid and avoid collision with other instances",
   },
+  SPECULOS_USE_WEBSOCKET: {
+    def: false,
+    parser: boolParser,
+    desc: "Use speculos websocket interface instead of Rest API",
+  },
   SWAP_API_BASE: {
     def: "https://swap.ledger.com/v4",
     parser: stringParser,
