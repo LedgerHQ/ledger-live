@@ -109,6 +109,8 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.Recover]: {
     platform?: string;
+    device?: Device;
+    fromOnboarding?: boolean;
     name?: string;
     source?: string;
     redirectTo?: string;
