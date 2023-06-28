@@ -5,7 +5,6 @@ import { log } from "@ledgerhq/logs";
 import { AccountBridge } from "@ledgerhq/types-live";
 import React, { useCallback, useEffect, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
-import { ContextValue, context } from "~/renderer/drawers/Provider";
 import { EvmFamily } from "../types";
 import GasLimitField from "./GasLimitField";
 import GasPriceField from "./GasPriceField";
@@ -16,7 +15,6 @@ import SelectFeeStrategy from "./SelectFeeStrategy";
 const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const { account, updateTransaction, transaction } = props;
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
-  const { state: drawerState, setDrawer } = React.useContext<ContextValue>(context);
 
   const [gasOptions, error] = useGasOptions({
     currency: account.currency,
@@ -43,9 +41,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
           feesStrategy,
         }),
       );
-      if (drawerState.open) setDrawer(undefined);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateTransaction, bridge],
   );
 
