@@ -1,10 +1,7 @@
 import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
-import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { Transaction } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { Button } from "@ledgerhq/react-ui";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useState } from "react";
@@ -12,31 +9,22 @@ import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
+import { EvmFamily } from "../types";
 
-type Props = {
-  transaction: Transaction;
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  status: TransactionStatus;
-  updateTransaction: Result<Transaction>["updateTransaction"];
-};
-
-const AdvancedOptions = ({
+const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   account,
-  parentAccount,
   transaction,
   status,
   updateTransaction,
-}: Props) => {
+}) => {
   invariant(transaction.family === "evm", "AdvancedOptions: evm family expected");
-  const mainAccount = getMainAccount(account, parentAccount);
-  invariant(mainAccount, "Account required");
+  invariant(account, "Account required");
   const [editable, setEditable] = useState(false);
   const { t } = useTranslation();
 
   const onGasLimitChange = useCallback(
     (str: string) => {
-      const bridge = getAccountBridge(mainAccount);
+      const bridge = getAccountBridge(account);
       let gasLimit = new BigNumber(str || 0);
       if (!gasLimit.isFinite()) {
         gasLimit = DEFAULT_GAS_LIMIT;
@@ -45,7 +33,7 @@ const AdvancedOptions = ({
         bridge.updateTransaction(transaction, { gasLimit, feesStrategy: "custom" }),
       );
     },
-    [mainAccount, updateTransaction],
+    [account, updateTransaction],
   );
 
   const onEditClick = useCallback(() => setEditable(true), [setEditable]);
