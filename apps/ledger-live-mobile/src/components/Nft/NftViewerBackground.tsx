@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { View, StyleSheet, Image, Animated } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Rect } from "react-native-svg";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 // Number of scrollY pixels to animate 1 -> 0
 const OPACITY_ANIMATION_PERIOD = 200;
@@ -13,9 +13,9 @@ interface Props {
 }
 
 const NftViewerBackground: FC<Props> = ({ src, scrollY }) => {
-  const { dark } = useTheme();
-  const gradientColor = dark ? "#131214" : "#fff";
-  const overlayColor = dark ? "#000" : "#fff";
+  const { colors, theme } = useTheme();
+  const gradientColor = colors.background.main;
+  const overlayColor = theme === "dark" ? colors.constant.black : colors.constant.white;
   const opacity = scrollY.interpolate({
     inputRange: [0, OPACITY_ANIMATION_PERIOD],
     outputRange: [1, 0],
@@ -23,9 +23,9 @@ const NftViewerBackground: FC<Props> = ({ src, scrollY }) => {
   });
   return (
     <Animated.View style={[styles.root]}>
-      {/* NOTE: We have to aniamte the image only, iOs works fine animating out the entire
+      {/* NOTE: We have to animate the image only, iOS works fine animating out the entire
       view but Android doesn't play nice with the gradient and the text in the content
-      becomes ineligible for a brief time when scrolling */}
+      becomes unreadable for a brief time when scrolling */}
       <Animated.View style={[styles.imageContainer, { opacity }]}>
         <Image
           blurRadius={BLUR_RADIUS}
