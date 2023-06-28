@@ -26,7 +26,7 @@ type Metadata = {
 };
 
 type NavigationProps = RootComposite<
-  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingPairNew>
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingProtectFlow>
 >;
 
 const scenes = [RestoreWithProtect, PinCodeInstructions] as Step[];

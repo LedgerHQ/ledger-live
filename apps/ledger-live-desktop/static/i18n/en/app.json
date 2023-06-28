@@ -2292,6 +2292,8 @@
         "recipientAddress": "Recipient address",
         "amount": "Amount",
         "fees": "Network fees",
+        "maxFees": "Max Network fees",
+        "maxFeesInfo": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded.",
         "useMax": "Use Max",
         "sendMax": "Send Max",
         "rippleTag": "Tag",
@@ -2370,7 +2372,8 @@
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Change device language",
-    "changeLanguage": "Change language",
+    "changeLanguage": "Change",
+    "dontChangeLanguage": "Don't change",
     "changeDeviceLanguage": "Change your device language?",
     "changeDeviceLanguagePrompt": {
       "title": "{{language}} is also available for your {{deviceName}}",
@@ -5860,6 +5863,7 @@
   },
   "customImage": {
     "title": "Custom lock screen",
+    "cta": "Custom lock screen",
     "managerCTA": "Lock screen picture",
     "managerCTARemove": "Remove",
     "steps": {

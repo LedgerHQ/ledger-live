@@ -2190,10 +2190,7 @@ var path2 = __toESM(require("path"));
 var path = __toESM(require("path"));
 var rootDirectory = process.env.GITHUB_WORKSPACE;
 var cacheDirectory = "node_modules/.cache/turbo";
-var absoluteCacheDirectory = path.resolve(
-  rootDirectory,
-  cacheDirectory
-);
+var absoluteCacheDirectory = path.resolve(rootDirectory, cacheDirectory);
 var logFileName = "__turbo_server.log";
 
 // src/cleanup.ts

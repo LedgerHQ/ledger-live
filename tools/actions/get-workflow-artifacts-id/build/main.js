@@ -8297,14 +8297,10 @@ var main = async () => {
   core.info(isRelease ? "release build" : "prerelease build");
   let hash;
   if (isRelease) {
-    hash = artifacts.data.artifacts.find(
-      (artifact) => artifact.name.includes("hash")
-    );
+    hash = artifacts.data.artifacts.find((artifact) => artifact.name.includes("hash"));
     core.setOutput("hash", hash.id);
   }
-  const builds = artifacts.data.artifacts.find(
-    (artifact) => artifact.name.includes("builds")
-  );
+  const builds = artifacts.data.artifacts.find((artifact) => artifact.name.includes("builds"));
   core.setOutput("builds", builds.id);
 };
 main().catch((err) => core.setFailed(err));

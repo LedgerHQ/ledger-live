@@ -161,6 +161,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             stopBleScanning={!!device}
             displayServicesWidget
             requestToSetHeaderOptions={requestToSetHeaderOptions}
+            withMyLedgerTracking
           />
         </Flex>
       ) : (
