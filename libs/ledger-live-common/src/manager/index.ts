@@ -28,13 +28,7 @@ const oldAppsInstallDisabled = [
 ];
 
 const canHandleInstall = (app: { name: string }): boolean =>
-  !oldAppsInstallDisabled.includes(app.name) &&
-  !listCryptoCurrencies(true, true).some(
-    coin =>
-      coin.managerAppName &&
-      coin.terminated &&
-      coin.managerAppName.toLowerCase() === app.name.toLowerCase(),
-  );
+  !oldAppsInstallDisabled.includes(app.name);
 
 const CacheAPI = {
   // TODO: Move to new ManagerAPI
