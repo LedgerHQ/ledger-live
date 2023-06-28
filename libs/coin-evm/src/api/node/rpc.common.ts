@@ -9,9 +9,9 @@ import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.jso
 import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
+import { NodeApi, isExternalNodeConfig } from "./types";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import { FeeHistory } from "../../types";
-import { NodeApi } from "./types";
 
 export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
 export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;
@@ -37,17 +37,17 @@ export async function withApi<T>(
   execute: (api: ethers.providers.StaticJsonRpcProvider) => Promise<T>,
   retries = DEFAULT_RETRIES_RPC_METHODS,
 ): Promise<T> {
-  if (currency?.ethereumLikeInfo?.rpc?.type !== "external") {
+  const { node } = currency.ethereumLikeInfo || {};
+  if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }
 
   try {
-    if (!PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc.uri]) {
-      PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc.uri] =
-        new ethers.providers.StaticJsonRpcProvider(currency.ethereumLikeInfo.rpc.uri);
+    if (!PROVIDERS_BY_RPC[node.uri]) {
+      PROVIDERS_BY_RPC[node.uri] = new ethers.providers.StaticJsonRpcProvider(node.uri);
     }
 
-    const provider = PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc.uri];
+    const provider = PROVIDERS_BY_RPC[node.uri];
     return await execute(provider);
   } catch (e) {
     if (retries) {

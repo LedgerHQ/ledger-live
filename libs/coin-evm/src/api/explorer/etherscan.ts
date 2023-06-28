@@ -4,8 +4,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { EtherscanAPIError } from "../../errors";
-import { ExplorerApi } from "./types";
+import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 import {
   etherscanOperationToOperations,
   etherscanERC20EventToOperations,
@@ -62,26 +62,20 @@ export const getLastCoinOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!explorerUri) {
-    return [];
-  }
-
-  let url = `${explorerUri}/api?module=account&action=txlist&address=${address}`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=txlist&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
       sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
     },
   });
 
@@ -98,26 +92,20 @@ export const getLastTokenOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!explorerUri) {
-    return [];
-  }
-
-  let url = `${explorerUri}/api?module=account&action=tokentx&address=${address}`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=tokentx&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
       sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
     },
   });
 
@@ -155,26 +143,20 @@ export const getLastERC721Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!explorerUri) {
-    return [];
-  }
-
-  let url = `${explorerUri}/api?module=account&action=tokennfttx&address=${address}`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=tokennfttx&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
       sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
     },
   });
 
@@ -212,26 +194,20 @@ export const getLastERC1155Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const explorerUri = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!explorerUri) {
-    return [];
-  }
-
-  let url = `${explorerUri}/api?module=account&action=token1155tx&address=${address}`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=token1155tx&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
       sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
     },
   });
 

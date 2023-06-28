@@ -1,4 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { UnknownNode } from "../../errors";
 import { NodeApi } from "./types";
 import rpcNodeApi from "./rpc";
 
@@ -8,6 +9,6 @@ export const getNodeApi = (currency: CryptoCurrency): NodeApi => {
       return rpcNodeApi;
 
     default:
-      throw new Error();
+      throw new UnknownNode(`Unknown node for currency: ${currency.id}`);
   }
 };
