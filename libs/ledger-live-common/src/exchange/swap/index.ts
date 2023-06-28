@@ -70,6 +70,30 @@ type DEXProviderConfig = {
 type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const swapProviders: Record<string, ProviderConfig> = {
+  "ch-dev": {
+    ...createExchangeProviderNameAndSignature({
+      name: "ch-dev",
+      publicKey:
+        "04d1985390d0a1b184d43153f0f5f03586f68c48abba43bc914d15b70c6a489df0a7d04703b4f471d1163f231c117627a278c2bce28a539c4f27e9ee7cda8b522a",
+      signature:
+        "3045022100d866defb423d0cdcf2f8ef1f1aabe8f1d07ca6492fb5b34cffd27e107dc90a2c022058b41471ccec2c1bffa99690eb56db9fa8897d2b759ad6cddc0dff7d269c7e6d",
+    }),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
+  changehero: {
+    ...createExchangeProviderNameAndSignature({
+      name: "changehero",
+      publicKey:
+        "04641a1cdb4bb985b21501d1f79d411cf0f453fa84238133f3efe1080b1e1840af4967fc3f5ccba9012b050859c63fd30414ebce4a5362dcbbafb419eae0494c88",
+      signature:
+        "3045022100f1243ba2857e2ebb6f173f8a63ea44ec58bd9af0e20997c61e0c9302c0e43ba3022005bf4041d9496388abad575d8a9c5c19da5f857fe8fc93ab15c94c449c316e61",
+    }),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
   changelly: {
     ...createExchangeProviderNameAndSignature({
       name: "Changelly",
