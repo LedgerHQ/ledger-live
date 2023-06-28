@@ -20,6 +20,7 @@ import polygon_tokens from "./137/erc20.json";
 import rsk_tokens from "./30/erc20.json";
 import songbird_tokens from "./19/erc20.json";
 import syscoin_tokens from "./57/erc20.json";
+import telos_evm_tokens from "./40/erc20.json";
 import velas_evm_tokens from "./106/erc20.json";
 import arbitrum_signatures from "./42161/erc20-signatures.json";
 import arbitrum_goerli_signatures from "./421613/erc20-signatures.json";
@@ -43,6 +44,7 @@ import polygon_signatures from "./137/erc20-signatures.json";
 import rsk_signatures from "./30/erc20-signatures.json";
 import songbird_signatures from "./19/erc20-signatures.json";
 import syscoin_signatures from "./57/erc20-signatures.json";
+import telos_evm_signatures from "./40/erc20-signatures.json";
 import velas_evm_signatures from "./106/erc20-signatures.json";
 
 export const tokens = {
@@ -68,6 +70,7 @@ export const tokens = {
   30: rsk_tokens,
   19: songbird_tokens,
   57: syscoin_tokens,
+  40: telos_evm_tokens,
   106: velas_evm_tokens,
 };
 
@@ -94,6 +97,7 @@ export const signatures = {
   30: rsk_signatures,
   19: songbird_signatures,
   57: syscoin_signatures,
+  40: telos_evm_signatures,
   106: velas_evm_signatures,
 };
 

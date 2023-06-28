@@ -1,3 +1,8 @@
+export enum TxStatus {
+  Ok = "Ok",
+  Fail = "Fail",
+}
+
 export interface EstimatedFeesRequest {
   to?: string;
   from: string;

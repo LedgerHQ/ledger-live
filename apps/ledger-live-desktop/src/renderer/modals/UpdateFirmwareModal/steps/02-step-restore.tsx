@@ -27,7 +27,11 @@ const StepRestore = ({
   setError,
   setCurrentRestoreStep,
   setCompletedRestoreSteps,
+  setIsLanguagePromptOpen,
+  isLanguagePromptOpen,
+  confirmedPrompt,
   completedRestoreSteps,
+  deviceModelId,
   nonce,
 }: StepProps) => {
   const { t } = useTranslation();
@@ -75,10 +79,14 @@ const StepRestore = ({
       ) : pendingRestoreLanguage ? (
         <Language
           key={nonce}
+          deviceModelId={deviceModelId}
           deviceInfo={deviceInfo}
           updatedDeviceInfo={updatedDeviceInfo}
           onDone={onCompleteLanguageRestore}
           setError={setError}
+          setIsLanguagePromptOpen={setIsLanguagePromptOpen}
+          isLanguagePromptOpen={isLanguagePromptOpen}
+          confirmedPrompt={confirmedPrompt}
         />
       ) : pendingRestoreCLS ? (
         <CLS CLSBackup={CLSBackup} onDone={onCompleteCLSRestore} setError={setError} />
@@ -96,6 +104,8 @@ export const StepRestoreFooter = ({
   setNonce,
   nonce,
   setFirmwareUpdateCompleted,
+  isLanguagePromptOpen,
+  setConfirmedPrompt,
 }: StepProps) => {
   const { t } = useTranslation();
 
@@ -110,6 +120,11 @@ export const StepRestoreFooter = ({
     setError(null);
   }, [completedRestoreSteps, currentRestoreStep, setCompletedRestoreSteps, setError]);
 
+  const onContinue = useCallback(() => {
+    setConfirmedPrompt(true);
+    setError(null);
+  }, [setConfirmedPrompt, setError]);
+
   const onRetry = useCallback(() => {
     setNonce(++nonce);
     setError(null);
@@ -120,6 +135,13 @@ export const StepRestoreFooter = ({
       <Button onClick={onSkip}>{t("common.skip")}</Button>
       <Button variant="main" ml={4} onClick={onRetry}>
         {t("common.retry")}
+      </Button>
+    </>
+  ) : isLanguagePromptOpen ? (
+    <>
+      <Button onClick={onSkip}>{t("common.skip")}</Button>
+      <Button variant="main" ml={4} onClick={onContinue}>
+        {t("common.continue")}
       </Button>
     </>
   ) : (

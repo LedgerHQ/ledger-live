@@ -1,15 +1,17 @@
+import React, { useCallback, useMemo } from "react";
+import invariant from "invariant";
+import BigNumber from "bignumber.js";
+import styled from "styled-components";
+import { getEnv } from "@ledgerhq/live-env";
+import { useTranslation } from "react-i18next";
+import {
+  Transaction as EthereumTransaction,
+  TransactionRaw as EthereumTransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { AccountBridge } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
@@ -17,6 +19,8 @@ import Label from "~/renderer/components/Label";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
+import { MaxFeeTooLow } from "@ledgerhq/errors";
 import { EthereumFamily } from "./types";
 
 const ErrorContainer = styled(Box)<{ hasError: Error }>`
@@ -52,6 +56,7 @@ const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = 
   transaction,
   status,
   updateTransaction,
+  transactionRaw,
 }) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
 
@@ -93,9 +98,24 @@ const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = 
     [transaction.networkInfo?.nextBaseFeePerGas, unit],
   );
 
+  // give user an error if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
+  const ethTransactionRaw = transactionRaw as EthereumTransactionRaw | undefined;
+  if (
+    !status.errors.maxFee &&
+    ethTransactionRaw &&
+    ethTransactionRaw.maxPriorityFeePerGas &&
+    ethTransactionRaw.maxFeePerGas
+  ) {
+    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
+    const lowerLimitMaxFeePerGas = new BigNumber(ethTransactionRaw.maxFeePerGas).times(
+      1 + maxPriorityFeeGap,
+    );
+    if (transaction.maxFeePerGas && transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
+      status.errors.maxFee = new MaxFeeTooLow();
+    }
+  }
   const validTransactionError = status.errors.maxFee;
   const validTransactionWarning = status.warnings.maxFee;
-
   return (
     <Box mb={1}>
       <LabelWithExternalIcon

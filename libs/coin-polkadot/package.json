@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -48,11 +48,8 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-portfolio": "workspace:^",
-    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Linking, Platform } from "react-native";
+import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import { useFlipper } from "@react-navigation/devtools";
@@ -212,15 +212,12 @@ const linkingOptions = {
                 },
               },
               [NavigatorName.Discover]: {
-                screens:
-                  Platform.OS === "ios"
-                    ? {}
-                    : {
-                        /**
-                         * ie: "ledgerlive://discover" will open the catalog
-                         */
-                        [ScreenName.PlatformCatalog]: "discover",
-                      },
+                screens: {
+                  /**
+                   * ie: "ledgerlive://discover" will open the catalog
+                   */
+                  [ScreenName.PlatformCatalog]: "discover",
+                },
               },
               [NavigatorName.Manager]: {
                 screens: {

@@ -67,7 +67,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     acceptTerms();
     dispatch(setAnalytics(true));
 
-    navigation.navigate(ScreenName.OnboardingDoYouHaveALedgerDevice);
+    navigation.navigate({
+      name: ScreenName.OnboardingPostWelcomeSelection,
+      params: {
+        userHasDevice: true,
+      },
+    });
   }, [acceptTerms, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
@@ -192,7 +197,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
-          <Button type="main" size="large" event="Onboarding - Start" onPress={next} mt={0} mb={7}>
+          <Button type="main" size="large" onPress={next} mt={0} mb={7}>
             {t("onboarding.stepWelcome.start")}
           </Button>
           {recoverFeature?.enabled && recoverFeature?.params?.onboardingLogin ? (

@@ -1,4 +1,4 @@
-import { Linking } from "react-native";
+import { Image, Linking } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
   updateFirmwareActionArgs,
@@ -7,7 +7,6 @@ import {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   Alert,
-  Button,
   Flex,
   IconBadge,
   Icons,
@@ -43,6 +42,13 @@ import {
 } from "../../components/DeviceAction/rendering";
 import { useUpdateFirmwareAndRestoreSettings } from "./useUpdateFirmwareAndRestoreSettings";
 import { urls } from "../../config/urls";
+import { TrackScreen } from "../../analytics";
+import ImageHexProcessor from "../../components/CustomImage/ImageHexProcessor";
+import { targetDataDimensions } from "../CustomImage/shared";
+import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
+import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage";
+import Button from "../../components/wrappedUi/Button";
+import { RestoreStepDenied } from "./RestoreStepDenied";
 
 type FirmwareUpdateProps = {
   device: Device;
@@ -73,6 +79,7 @@ const CloseWarning = ({
 
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
+      <TrackScreen category="Error: update not complete yet" type="drawer" refreshSource={false} />
       <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateNotYetComplete")}
@@ -80,10 +87,34 @@ const CloseWarning = ({
       <Text fontSize={14} textAlign="center" color="neutral.c80" mt={6}>
         {t("FirmwareUpdate.updateNotYetCompleteDescription")}
       </Text>
-      <Button type="main" outline={false} onPress={onPressContinue} mt={8} alignSelf="stretch">
+      <Button
+        event="button_clicked"
+        eventProperties={{
+          button: "Continue update",
+          screen: "Firmware update",
+          drawer: "Error: update not complete yet",
+        }}
+        type="main"
+        outline={false}
+        onPress={onPressContinue}
+        mt={8}
+        alignSelf="stretch"
+      >
         {t("FirmwareUpdate.continueUpdate")}
       </Button>
-      <Button type="default" outline={false} onPress={onPressQuit} mt={6} alignSelf="stretch">
+      <Button
+        event="button_clicked"
+        eventProperties={{
+          button: "Exit update",
+          screen: "Firmware update",
+          drawer: "Error: update not complete yet",
+        }}
+        type="default"
+        outline={false}
+        onPress={onPressQuit}
+        mt={6}
+        alignSelf="stretch"
+      >
         {t("FirmwareUpdate.quitUpdate")}
       </Button>
     </Flex>
@@ -104,15 +135,18 @@ export const FirmwareUpdate = ({
   const dispatch = useDispatch();
 
   const quitUpdate = useCallback(() => {
-    if (onBackFromUpdate) onBackFromUpdate();
-    navigation.goBack();
+    if (onBackFromUpdate) {
+      onBackFromUpdate();
+    } else {
+      navigation.goBack();
+    }
   }, [navigation, onBackFromUpdate]);
 
   const onOpenReleaseNotes = useCallback(() => {
     Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
   }, [device.modelId]);
 
-  const deviceName = useMemo(() => getDeviceModel(device.modelId).productName, [device.modelId]);
+  const productName = getDeviceModel(device.modelId).productName;
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
@@ -127,11 +161,25 @@ export const FirmwareUpdate = ({
     noOfAppsToReinstall,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
+    restoreStepDeniedError,
+    skipCurrentRestoreStep,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
     device,
     deviceInfo,
   });
+
+  const [staxImageSource, setStaxImageSource] =
+    useState<React.ComponentProps<typeof Image>["source"]>();
+  const handleStaxImageSourceLoaded = useCallback((res: ProcessorPreviewResult) => {
+    setStaxImageSource({ uri: res.imageBase64DataUri });
+  }, []);
+  const staxImageSourceProviderValue = useMemo(
+    () => ({
+      source: staxImageSource,
+    }),
+    [staxImageSource],
+  );
 
   useEffect(() => {
     if (updateStep === "completed") {
@@ -226,22 +274,33 @@ export const FirmwareUpdate = ({
         status: ItemStatus.inactive,
         title: t("FirmwareUpdate.steps.prepareUpdate.titleActive"),
         renderBody: () => (
-          <Text color="neutral.c80">
-            {t("FirmwareUpdate.steps.prepareUpdate.description", {
-              deviceName,
-            })}
-          </Text>
+          <>
+            <TrackScreen
+              category={`Update ${productName} - Step 1: preparing updates for install`}
+            />
+            <Text color="neutral.c80">
+              {t("FirmwareUpdate.steps.prepareUpdate.description", {
+                deviceName: productName,
+              })}
+            </Text>
+          </>
         ),
       },
       installUpdate: {
         status: ItemStatus.inactive,
         title: t("FirmwareUpdate.steps.installUpdate.titleInactive"),
         renderBody: () => (
-          <Text color="neutral.c80">
-            {t("FirmwareUpdate.steps.installUpdate.description", {
-              deviceName,
-            })}
-          </Text>
+          <>
+            <TrackScreen
+              category={`Update ${productName} - Step 2: installing updates`}
+              avoidDuplicates
+            />
+            <Text color="neutral.c80">
+              {t("FirmwareUpdate.steps.installUpdate.description", {
+                deviceName: productName,
+              })}
+            </Text>
+          </>
         ),
       },
       restoreAppsAndSettings: {
@@ -249,13 +308,14 @@ export const FirmwareUpdate = ({
         title: t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
+            <TrackScreen category={`Update ${productName} - Step 3: restore apps and settings`} />
             <Text color="neutral.c80">{t("FirmwareUpdate.steps.restoreSettings.description")}</Text>
             {restoreSteps.length > 0 && <VerticalStepper nested steps={restoreSteps} />}
           </Flex>
         ),
       },
     }),
-    [t, deviceName, restoreSteps],
+    [t, productName, restoreSteps],
   );
 
   useEffect(() => {
@@ -405,7 +465,20 @@ export const FirmwareUpdate = ({
           errorName={error.name}
           translationContext="FirmwareUpdate"
         >
-          <Button type="main" outline={false} onPress={quitUpdate} mt={6} alignSelf="stretch">
+          <TrackScreen category={`Error: ${error.name}`} refreshSource={false} type="drawer" />
+          <Button
+            event="button_clicked"
+            eventProperties={{
+              button: "Quit flow",
+              screen: "Firmware update",
+              drawer: `Error: ${error.name}`,
+            }}
+            type="main"
+            outline={false}
+            onPress={quitUpdate}
+            mt={6}
+            alignSelf="stretch"
+          >
             {t("FirmwareUpdate.quitUpdate")}
           </Button>
         </DeviceActionError>
@@ -488,6 +561,18 @@ export const FirmwareUpdate = ({
       });
     }
 
+    if (restoreStepDeniedError) {
+      return (
+        <RestoreStepDenied
+          device={device}
+          onPressRetry={retryCurrentStep}
+          onPressSkip={skipCurrentRestoreStep}
+          stepDeniedError={restoreStepDeniedError}
+          t={t}
+        />
+      );
+    }
+
     return undefined;
   }, [
     updateActionState.error,
@@ -507,18 +592,21 @@ export const FirmwareUpdate = ({
     retryCurrentStep,
     hasReconnectErrors,
     deviceLockedOrUnresponsive,
+    restoreStepDeniedError,
+    skipCurrentRestoreStep,
   ]);
 
   return (
     <>
       {fullUpdateComplete ? (
         <Flex flex={1} px={7}>
+          <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex mb={7}>
               <Icons.CircledCheckSolidMedium color="success.c80" size={100} />
             </Flex>
             <Text textAlign="center" fontSize={7} mb={3}>
-              {t("FirmwareUpdate.updateDone", { deviceName })}
+              {t("FirmwareUpdate.updateDone", { deviceName: productName })}
             </Text>
             <Text textAlign="center" fontSize={4} color="neutral.c80">
               {t("FirmwareUpdate.updateDoneDescription", {
@@ -539,7 +627,7 @@ export const FirmwareUpdate = ({
         <Flex flex={1} justifyContent="space-between">
           <Flex>
             <Text variant="h4" ml={5}>
-              {t("FirmwareUpdate.updateDevice", { deviceName })}
+              {t("FirmwareUpdate.updateDevice", { deviceName: productName })}
             </Text>
             <VerticalStepper steps={steps} />
           </Flex>
@@ -550,7 +638,9 @@ export const FirmwareUpdate = ({
       )}
 
       <QueuedDrawer isRequestingToBeOpened={Boolean(deviceInteractionDisplay)} noCloseButton>
-        {deviceInteractionDisplay}
+        <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
+          {deviceInteractionDisplay}
+        </ImageSourceContext.Provider>
       </QueuedDrawer>
       <QueuedDrawer isRequestingToBeOpened={isCloseWarningOpen} noCloseButton>
         <CloseWarning
@@ -558,6 +648,29 @@ export const FirmwareUpdate = ({
           onPressQuit={quitUpdate}
         />
       </QueuedDrawer>
+      {updateStep === "languageRestore" ? (
+        <TrackScreen key="a" category={`Update ${productName} - Step 3a: restore language`} />
+      ) : updateStep === "imageRestore" ? (
+        <TrackScreen
+          key="b"
+          category={`Update ${productName} - Step 3b: restore lock screen picture`}
+        />
+      ) : updateStep === "appsRestore" ? (
+        <TrackScreen key="c" category={`Update ${productName} - Step 3c: reinstall apps`} />
+      ) : updateStep === "completed" ? (
+        <TrackScreen
+          key="d"
+          category={`Update ${productName} - Step 3d: apps and settings successfully restored`}
+        />
+      ) : null}
+      {staxFetchImageState.hexImage ? (
+        <ImageHexProcessor
+          hexData={staxFetchImageState.hexImage as string}
+          {...targetDataDimensions}
+          onPreviewResult={handleStaxImageSourceLoaded}
+          onError={error => console.error(error)}
+        />
+      ) : null}
     </>
   );
 };

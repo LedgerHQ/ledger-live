@@ -3,6 +3,7 @@ import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -34,7 +35,6 @@ import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { ReferralProgram } from "./referralProgram";
-import { EthereumStakingDrawer } from "../../families/ethereum/EthereumStakingDrawer";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -45,6 +45,7 @@ type NavigationProps = BaseComposite<
 >;
 
 const AssetScreen = ({ route }: NavigationProps) => {
+  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -111,7 +112,11 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty={cryptoAccountsEmpty}
         />
       </Box>,
-      currency.ticker === "BTC" ? <ReferralProgram /> : null,
+      featureReferralProgramMobile?.enabled &&
+      featureReferralProgramMobile?.params?.path &&
+      currency.ticker === "BTC" ? (
+        <ReferralProgram />
+      ) : null,
       <SectionContainer px={6} isFirst>
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
@@ -187,7 +192,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currencyBalance={currencyBalance}
         />
       </TabBarSafeAreaView>
-      <EthereumStakingDrawer drawer={route.params.drawer} />
     </ReactNavigationPerformanceView>
   );
 };
