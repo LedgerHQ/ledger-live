@@ -6265,10 +6265,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
+          "desc": "Stop worrying about getting locked out of your wallet.",
           "actions": {
             "learnMore": "How does it benefit me?",
-            "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
+            "alreadySubscribed": "I already have a log in <LinkAccount>View my subscription</LinkAccount>"
           }
         }
       }
