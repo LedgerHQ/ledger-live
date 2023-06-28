@@ -1,6 +1,7 @@
 import { AssertionError, fail } from "assert";
-import { getExplorerApi } from "../../../../api/explorer";
 import etherscanLikeApi from "../../../../api/explorer/etherscan";
+import { getExplorerApi } from "../../../../api/explorer";
+import { UnknownExplorer } from "../../../../errors";
 
 describe("EVM Family", () => {
   describe("api/explorer/index.ts", () => {
@@ -16,7 +17,7 @@ describe("EVM Family", () => {
           if (e instanceof AssertionError) {
             throw e;
           }
-          expect((e as Error).message).toEqual(`No explorer found for currency "not-existing"`);
+          expect(e).toBeInstanceOf(UnknownExplorer);
         }
       });
 

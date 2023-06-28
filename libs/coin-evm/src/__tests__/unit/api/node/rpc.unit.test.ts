@@ -6,13 +6,18 @@ import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../../types";
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
-import * as RPC_API from "../../../../api/rpc/rpc.common";
+import * as RPC_API from "../../../../api/node/rpc.common";
+
+jest.useFakeTimers();
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
-    rpc: "my-rpc.com",
+    node: {
+      type: "external",
+      uri: "my-rpc.com",
+    },
   },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
@@ -42,6 +47,9 @@ describe("EVM Family", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest
+      .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "_ready")
+      .mockResolvedValue(mockedNetwork);
+    jest
       .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "getNetwork")
       .mockResolvedValue(mockedNetwork);
     jest
@@ -64,9 +72,11 @@ describe("EVM Family", () => {
           case "getTransaction":
             return {
               hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+              blockHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+              blockNumber: 69,
               confirmations: 100,
               from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-              nonce: 0,
+              nonce: 123,
               gasLimit: ethers.BigNumber.from(123),
               data: "0x",
               value: ethers.BigNumber.from(456),
@@ -80,14 +90,15 @@ describe("EVM Family", () => {
             return ethers.BigNumber.from(5);
           case "getBlock":
             return {
-              parentHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+              hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+              parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
               number: 1,
-              timestamp: 123,
               difficulty: null,
               gasLimit: ethers.BigNumber.from(1),
               gasUsed: ethers.BigNumber.from(2),
               extraData: "0x",
               baseFeePerGas: ethers.BigNumber.from(123),
+              timestamp: Math.floor(Date.now() / 1000),
             };
           case "getGasPrice":
             return ethers.BigNumber.from(666);
@@ -171,15 +182,6 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getBalanceAndBlock", () => {
-      it("should return the expected payload", async () => {
-        expect(await RPC_API.getBalanceAndBlock(fakeCurrency as CryptoCurrency, "0xkvn")).toEqual({
-          blockHeight: 69,
-          balance: new BigNumber(420),
-        });
-      });
-    });
-
     describe("getTransaction", () => {
       it("should return the expected payload", async () => {
         expect(
@@ -188,22 +190,10 @@ describe("EVM Family", () => {
             "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           ),
         ).toEqual({
-          accessList: null,
-          blockHash: null,
-          blockNumber: null,
-          chainId: mockedNetwork.chainId,
-          confirmations: 0,
-          creates: "0x46188244A4a21a43f1f6d3bCb5b3e428572f88eC",
-          data: "0x",
-          from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-          gasLimit: ethers.BigNumber.from(123),
+          blockHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+          blockHeight: 69,
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
-          nonce: 0,
-          to: null,
-          transactionIndex: null,
-          type: 0,
-          value: ethers.BigNumber.from(456),
-          wait: expect.any(Function),
+          nonce: 123,
         });
       });
     });
@@ -370,11 +360,7 @@ describe("EVM Family", () => {
         "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41629";
       expect(
         await RPC_API.broadcastTransaction(fakeCurrency as CryptoCurrency, serializedTransaction),
-      ).toEqual({
-        ...ethers.utils.parseTransaction(serializedTransaction),
-        confirmations: 0,
-        wait: expect.any(Function),
-      });
+      ).toEqual("0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59");
     });
 
     it("should throw an insufficient funds errors", async () => {
@@ -410,16 +396,10 @@ describe("EVM Family", () => {
 
   describe("getBlock", () => {
     it("should return the expected payload", async () => {
-      expect(await RPC_API.getBlock(fakeCurrency as CryptoCurrency, 0)).toEqual({
-        parentHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-        number: 1,
-        timestamp: 123,
-        difficulty: null,
-        _difficulty: null,
-        gasLimit: ethers.BigNumber.from(1),
-        gasUsed: ethers.BigNumber.from(2),
-        extraData: "0x",
-        baseFeePerGas: ethers.BigNumber.from(123),
+      expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 0)).toEqual({
+        hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+        timestamp: Math.floor(Date.now() / 1000),
+        height: 1,
       });
     });
   });
@@ -438,6 +418,7 @@ describe("EVM Family", () => {
 
   describe("getOptimismAdditionalFees", () => {
     it("should return the expected payload", async () => {
+      // @ts-expect-error LRUCache
       RPC_API.getOptimismAdditionalFees.reset();
       expect(
         await RPC_API.getOptimismAdditionalFees(

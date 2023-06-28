@@ -3,8 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { EvmTransactionEIP1559, EvmTransactionLegacy, Transaction } from "../../types";
-import * as RPC_API from "../../api/rpc/rpc.common";
+import * as RPC_API from "../../api/node/rpc.common";
 import {
   deepFreeze,
   makeAccount,
@@ -22,6 +21,11 @@ import {
   legacyTransactionHasFees,
   mergeSubAccounts,
 } from "../../logic";
+import {
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  Transaction as EvmTransaction,
+} from "../../types";
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
@@ -102,7 +106,7 @@ describe("EVM Family", () => {
 
     describe("getGasLimit", () => {
       it("should return the gasLimit when no customGasLimit provided", () => {
-        const tx: Partial<Transaction> = {
+        const tx: Partial<EvmTransaction> = {
           gasLimit: new BigNumber(100),
           customGasLimit: undefined,
         };
@@ -111,7 +115,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the customGasLimit when provided", () => {
-        const tx: Partial<Transaction> = {
+        const tx: Partial<EvmTransaction> = {
           gasLimit: new BigNumber(100),
           customGasLimit: new BigNumber(200),
         };
