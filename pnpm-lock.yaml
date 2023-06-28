@@ -1940,6 +1940,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/hw-transport-node-speculos':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-node-speculos-http
