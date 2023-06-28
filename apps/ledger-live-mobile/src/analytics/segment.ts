@@ -59,17 +59,17 @@ let segmentClient: SegmentClient | undefined;
 let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
-  analyticsFeatureFlagMethod = method
+  analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = (): Record<string,boolean | string> => {
-  if(!analyticsFeatureFlagMethod) return {}
-  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod('ptxEarn');
+const getFeatureFlagProperties = (): Record<string, boolean | string> => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
 
   return {
     ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-  }
-}
+  };
+};
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -121,7 +121,7 @@ const extraProperties = async (store: AppStore) => {
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
-  
+
   return {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
@@ -155,11 +155,9 @@ const extraProperties = async (store: AppStore) => {
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
-    ...getFeatureFlagProperties()
+    ...getFeatureFlagProperties(),
   };
 };
-
-
 
 const token = ANALYTICS_TOKEN;
 export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {

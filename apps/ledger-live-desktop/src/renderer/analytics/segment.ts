@@ -49,17 +49,17 @@ let storeInstance: ReduxStore | null | undefined; // is the redux store. it's al
 let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
-  analyticsFeatureFlagMethod = method
+  analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = (): Record<string,boolean | string> => {
-  if(!analyticsFeatureFlagMethod) return {}
-  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod('ptxEarn');
+const getFeatureFlagProperties = (): Record<string, boolean | string> => {
+  if (!analyticsFeatureFlagMethod) return {};
+  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
 
   return {
     ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-  }
-}
+  };
+};
 
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
@@ -119,7 +119,7 @@ const extraProperties = (store: ReduxStore) => {
     hasInfinityPass,
     modelIdList: devices,
     ...deviceInfo,
-    ...getFeatureFlagProperties()
+    ...getFeatureFlagProperties(),
   };
 };
 

@@ -128,12 +128,12 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
   };
 
   useEffect(() => {
-    if(remoteConfig) {
-      setAnalyticsFeatureFlagMethod(getFeature)
+    if (remoteConfig) {
+      setAnalyticsFeatureFlagMethod(getFeature);
     }
-    
-    return () => setAnalyticsFeatureFlagMethod(null)
-  },[remoteConfig,getFeature])
+
+    return () => setAnalyticsFeatureFlagMethod(null);
+  }, [remoteConfig, getFeature]);
 
   return (
     <FeatureFlagsProvider

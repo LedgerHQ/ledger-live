@@ -165,10 +165,10 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
   );
 
   useEffect(() => {
-    setAnalyticsFeatureFlagMethod(wrappedGetFeature)
-    
-    return () => setAnalyticsFeatureFlagMethod(null)
-  },[wrappedGetFeature])
+    setAnalyticsFeatureFlagMethod(wrappedGetFeature);
+
+    return () => setAnalyticsFeatureFlagMethod(null);
+  }, [wrappedGetFeature]);
 
   return (
     <FeatureFlagsProvider
