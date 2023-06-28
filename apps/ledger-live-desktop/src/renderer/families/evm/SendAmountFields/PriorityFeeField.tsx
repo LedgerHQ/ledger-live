@@ -1,23 +1,23 @@
-import React, { useCallback, useMemo } from "react";
-import invariant from "invariant";
-import BigNumber from "bignumber.js";
-import styled from "styled-components";
-import { useTranslation } from "react-i18next";
 import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import React, { memo, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import { urls } from "~/config/urls";
+import { track } from "~/renderer/analytics/segment";
+import Box from "~/renderer/components/Box";
+import InputCurrency from "~/renderer/components/InputCurrency";
+import Label from "~/renderer/components/Label";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import InputCurrency from "~/renderer/components/InputCurrency";
-import { track } from "~/renderer/analytics/segment";
-import Label from "~/renderer/components/Label";
 import { openURL } from "~/renderer/linking";
-import Box from "~/renderer/components/Box";
-import { urls } from "~/config/urls";
 
 const ErrorContainer = styled(Box)<{ hasError?: boolean }>`
   margin-top: 0px;
@@ -142,4 +142,4 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
   );
 };
 
-export default FeesField;
+export default memo(FeesField);
