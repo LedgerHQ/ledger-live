@@ -27,11 +27,34 @@ test.beforeAll(async ({ request }) => {
   // Check that dummy app in tests/utils/dummy-ptx-app has been started successfully
   try {
     const port = await server.start("dummy-ptx-app/public");
-    const response = await request.get(`http://localhost:${port}`);
+    const url = `http://localhost:${port}`;
+    const response = await request.get(url);
     if (response.ok() && port) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.dummyLiveAppManifest(port));
+      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
+        server.liveAppManifest({
+          id: "multibuy",
+          url,
+          name: "Dummy Buy / Sell App",
+          content: {
+            shortDescription: {
+              en: "Dummy app for testing the Buy app is accessed correctly",
+            },
+            description: {
+              en: "Dummy app for testing the Buy app is accessed correctly",
+            },
+          },
+          permissions: [
+            {
+              method: "account.request",
+              params: {
+                currencies: ["ethereum", "bitcoin", "algorand"],
+              },
+            },
+          ],
+        }),
+      );
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }

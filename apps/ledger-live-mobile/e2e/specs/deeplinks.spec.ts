@@ -21,8 +21,6 @@ let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
 let receivePage: ReceivePage;
 
-// const ethereumShort = "eth";
-// const bitcoinShort = "btc";
 const ethereumLong = "Ethereum";
 const bitcoinLong = "Bitcoin";
 
@@ -55,7 +53,8 @@ const openNCheckApp = (l10n: { name: string; url: string }) => {
 
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+
     accountPage = new AccountPage();
     accountsPage = new AccountsPage();
     customLockscreenPage = new CustomLockscreenPage();
@@ -71,8 +70,7 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("should open My Ledger page and add a device", async () => {
+  it("should open My Ledger page and add a device", async () => {
     await managerPage.openViaDeeplink();
     await managerPage.expectManagerPage();
     await managerPage.addDevice(deviceName);
@@ -114,11 +112,10 @@ describe("DeepLinks Tests", () => {
 
   it("should open Swap Form page", async () => {
     await swapFormPage.openViaDeeplink();
-    await swapFormPage.expectSwapFormPage();
+    await expect(swapFormPage.swapFormTab()).toBeVisible();
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("should open Send pages", async () => {
+  it("should open Send pages", async () => {
     await sendPage.openViaDeeplink();
     await expect(sendPage.getStep1HeaderTitle()).toBeVisible();
     await portfolioPage.openViaDeeplink();
@@ -128,8 +125,7 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.openViaDeeplink();
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("should open Receive pages", async () => {
+  it("should open Receive pages", async () => {
     await receivePage.openViaDeeplink();
     await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
     await portfolioPage.openViaDeeplink();

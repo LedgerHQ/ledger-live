@@ -10,7 +10,7 @@ export function ErrorBanner({
   provider,
   errorCode,
 }: {
-  provider: string;
+  provider?: string;
   errorCode: ValidCheckQuoteErrorCodes;
 }) {
   const { t } = useTranslation();
@@ -21,11 +21,15 @@ export function ErrorBanner({
   }, [provider]);
 
   const message = useMemo(() => {
+    const providerName = provider && getProviderName(provider);
     switch (errorCode) {
       case "WITHDRAWALS_BLOCKED": {
-        return t("swap2.form.providers.withdrawalsBlockedError.message", {
-          providerName: getProviderName(provider),
-        });
+        if (providerName) {
+          return t("transfer.swap2.form.providers.withdrawalsBlockedError.message", {
+            providerName,
+          });
+        }
+        return `${t("crash.title")} - ${errorCode}`;
       }
       default:
         return `${t("crash.title")} - ${errorCode}`;
