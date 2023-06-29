@@ -1,6 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { UnknownExplorer } from "../../errors";
 import etherscanLikeApi from "./etherscan";
+import ledgerExplorerApi from "./ledger";
 import { ExplorerApi } from "./types";
 
 /**
@@ -13,6 +14,8 @@ export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
     case "etherscan":
     case "blockscout":
       return etherscanLikeApi;
+    case "ledger":
+      return ledgerExplorerApi;
 
     default:
       throw new UnknownExplorer(`Unknown explorer for currency: ${currency.id}`);
