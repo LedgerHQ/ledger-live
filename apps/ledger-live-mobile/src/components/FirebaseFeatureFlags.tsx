@@ -106,10 +106,11 @@ export const getAllDivergedFlags = (
   appLanguage: string,
 ): Partial<{ [key in FeatureId]: boolean }> => {
   const res: Partial<{ [key in FeatureId]: boolean }> = {};
-  Object.keys(defaultFeatures).forEach(key => {
-    const value = getFeature({ key: key as FeatureId, appLanguage });
-    if (value && value.enabled !== defaultFeatures[key as FeatureId]?.enabled) {
-      res[key as FeatureId] = value.enabled;
+  Object.keys(defaultFeatures).forEach(k => {
+    const key = k as keyof typeof defaultFeatures;
+    const value = getFeature({ key, appLanguage });
+    if (value && value.enabled !== defaultFeatures[key]?.enabled) {
+      res[key] = value.enabled;
     }
   });
   return res;

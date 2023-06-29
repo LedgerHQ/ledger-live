@@ -19,4 +19,8 @@ export class AccountsPage {
   async navigateToAccountByName(accountName: string) {
     await this.accountComponent(accountName).click();
   }
+
+  async scrollToOperations() {
+    await this.page.locator("id=operation-list").scrollIntoViewIfNeeded();
+  }
 }

@@ -43,6 +43,8 @@ import {
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
+import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 if (process.env.VERBOSE) {
   enableDebugLogger();
@@ -205,6 +207,15 @@ async function init() {
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {
     store,
+    addDevice: (device: Device) => {
+      store.dispatch(addDevice(device));
+    },
+    removeDevice: (device: Device) => {
+      store.dispatch(removeDevice(device));
+    },
+    resetDevices: () => {
+      store.dispatch(resetDevices());
+    },
   };
 }
 function r(Comp: JSX.Element) {
