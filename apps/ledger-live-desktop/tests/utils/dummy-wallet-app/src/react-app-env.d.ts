@@ -1,5 +1,6 @@
 /// <reference types="react-scripts" />
 //
+
 interface Window {
   ledger: {
     e2e: {
@@ -7,5 +8,8 @@ interface Window {
         send: (params: any) => void;
       };
     };
+  };
+  ReactNativeWebView?: {
+    postMessage: (value: any) => void;
   };
 }

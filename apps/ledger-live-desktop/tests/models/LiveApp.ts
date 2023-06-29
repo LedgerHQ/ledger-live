@@ -54,24 +54,28 @@ export class LiveApp {
     delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
   }
 
-  send(request: Record<string, unknown>) {
+  send(params: Record<string, unknown>) {
     const id = randomUUID();
-    const sendFunction = `
+    const json = JSON.stringify({
+      id,
+      jsonrpc: "2.0",
+      ...params,
+    });
+
+    const script = `
       (function() {
-        return window.ledger.e2e.walletApi.send('${JSON.stringify({
-          id,
-          jsonrpc: "2.0",
-          ...request,
-        })}');
+        return window.ledger.e2e.walletApi.send('${json}');
       })()
     `;
 
+    const response = this.page.evaluate(functionToExecute => {
+      const webview = document.querySelector("webview") as WebviewTag;
+      return webview.executeJavaScript(functionToExecute);
+    }, script);
+
     return {
-      id,
-      response: this.page.evaluate(functionToExecute => {
-        const webview = document.querySelector("webview") as WebviewTag;
-        return webview.executeJavaScript(functionToExecute);
-      }, sendFunction),
+      id, // this is value
+      response, // this is promise
     };
   }
 }

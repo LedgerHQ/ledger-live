@@ -13,7 +13,7 @@ export const server = http.createServer((request, response) => {
   });
 });
 
-export const start = (appPath: string, port = 0): Promise<number> => {
+export function start(appPath: string, port = 0): Promise<number> {
   dummyAppPath = appPath;
 
   return new Promise((resolve, reject) => {
@@ -27,12 +27,10 @@ export const start = (appPath: string, port = 0): Promise<number> => {
         reject(error);
       });
   });
-};
+}
 
-export const getMockAppManifest = (
-  params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">,
-) => {
-  const manifest = {
+export function getMockAppManifest(params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">) {
+  return {
     name: "Generic Live App",
     homepageUrl: "https://developers.ledger.com/",
     icon: "",
@@ -72,8 +70,8 @@ export const getMockAppManifest = (
     visibility: "complete",
     ...params,
   };
+}
 
-  return manifest;
-};
-
-export const stop = () => server.close();
+export function stop() {
+  server.close();
+}

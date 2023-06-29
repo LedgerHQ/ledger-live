@@ -39,7 +39,7 @@ export function init(port = 8099) {
   ws.onmessage = onMessage;
 }
 
-async function onMessage(event: { data: unknown }) {
+function onMessage(event: { data: unknown }) {
   invariant(typeof event.data === "string", "[E2E Bridge Client]: Message data must be string");
   const msg = JSON.parse(event.data);
   invariant(msg.type, "[E2E Bridge Client]: type is missing");
@@ -80,5 +80,5 @@ async function onMessage(event: { data: unknown }) {
 
 function log(message: string) {
   // eslint-disable-next-line no-console
-  // console.log(`[E2E Bridge Client]: ${message}`);
+  console.log(`[E2E Bridge Client]: ${message}`);
 }

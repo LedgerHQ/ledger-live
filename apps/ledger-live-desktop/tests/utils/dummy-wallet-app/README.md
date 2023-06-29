@@ -35,10 +35,15 @@ pnpm --filter="dummy-wallet-app" build
 pnpm desktop build:testing
 pnpm desktop test:playwright wallet-api.spec.ts
 
-### Mobile
+### iOS
 
 pnpm mobile e2e:build -c ios.sim.debug
 pnpm mobile e2e:test -c ios.sim.debug apps/ledger-live-mobile/e2e/specs/wallet-api.spec.ts
+
+### Android
+
+pnpm mobile e2e:build -c android.emu.debug
+pnpm mobile e2e:test -c android.emu.debug apps/ledger-live-mobile/e2e/specs/wallet-api.spec.ts
 ```
 
 ## [WIP] How it works?

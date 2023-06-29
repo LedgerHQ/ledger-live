@@ -1,19 +1,18 @@
 import * as detox from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
-import { loadConfig, loadLocalManifest } from "../bridge/server";
+import { loadConfig } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
-import { isAndroid } from "../helpers";
+import { delay, isAndroid } from "../helpers";
 import * as server from "../../../ledger-live-desktop/tests/utils/serve-dummy-app";
 import DiscoveryPage from "../models/discover/discoverPage";
-import { LiveApp } from "../../src/screens/Platform";
-import LiveAppPage from "../models/discover/liveAppPage";
+import { LiveApp } from "../models/discover/liveApp";
 
 let portfolioPage: PortfolioPage;
 let discoverPage: DiscoveryPage;
-let liveAppPage: LiveAppPage;
+let liveApp: LiveApp;
 
 let continueTest: boolean;
 
-describe("Swap", () => {
+describe("Wallet API methods", () => {
   // {
   //   "id": "multibuy",
   //   "name": "Buy / Sell Preview App",
@@ -77,7 +76,7 @@ describe("Swap", () => {
     // start navigation
     portfolioPage = new PortfolioPage();
     discoverPage = new DiscoveryPage();
-    liveAppPage = new LiveAppPage();
+    liveApp = new LiveApp();
 
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
     // loadLocalManifest();
@@ -100,17 +99,14 @@ describe("Swap", () => {
 
     const url = await detox.web.element(detox.by.web.id("param-container")).getCurrentUrl();
     expect(url).toBe("http://localhost:52619/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App");
-    // await delay(100000000);
 
-    // it("should navigate to discover", async () => {
-    //   await portfolioPage.navigateToDiscoverTab();
-    // });
+    liveApp.send({
+      method: "account.request",
+      params: {
+        currencyIds: ["ethereum", "bitcoin"],
+      },
+    });
 
-    // it("should navigate to dummy app", async () => {
-    //   await discoverPage.searchForApp("dummy");
-    //   // await discoverPage.navigateToLiveApp("ramp");
-    //   await discoverPage.navigateToLiveApp("https://developers.ledger.com");
-    //   await discoverPage.continueToLiveApp();
-    // });
+    // await delay(20000);
   });
 });
