@@ -9,8 +9,6 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ScreenName } from "../../../const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
-
-
 export type NearStakingFlowParamList = {
   [ScreenName.NearStakingStarted]: {
     accountId: string;
