@@ -435,6 +435,54 @@ describe("EVM Family", () => {
 
         expect(hash1).not.toEqual(hash2);
       });
+
+      it("should provide a new hash if currency is using a new node config", () => {
+        const hash1 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "eth" } },
+        });
+        const hash2 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "matic" } },
+        });
+        const hash3 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "anything" } },
+        });
+        const hash4 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "somethingelse" } },
+        });
+
+        const hashes = [hash1, hash2, hash3, hash4];
+        const uniqueSet = new Set(hashes);
+
+        expect(hashes).toEqual(Array.from(uniqueSet));
+      });
+
+      it("should provide a new hash if currency is using a new explorer config", () => {
+        const hash1 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "eth" } },
+        });
+        const hash2 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "matic" } },
+        });
+        const hash3 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "etherscan", uri: "anything" } },
+        });
+        const hash4 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "blockscout", uri: "somethingelse" } },
+        });
+
+        const hashes = [hash1, hash2, hash3, hash4];
+        const uniqueSet = new Set(hashes);
+
+        expect(hashes).toEqual(Array.from(uniqueSet));
+      });
     });
 
     describe("attachOperations", () => {

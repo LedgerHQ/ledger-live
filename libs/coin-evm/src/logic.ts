@@ -148,8 +148,12 @@ export const getSyncHash = (currency: CryptoCurrency): string => {
     .map(token => token.id + token.contractAddress + token.name + token.ticker + token.delisted)
     .join("");
   const isNftSupported = isNFTActive(currency);
-
-  return ethers.utils.sha256(Buffer.from(basicTokensListString + isNftSupported));
+  const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
+  return ethers.utils.sha256(
+    Buffer.from(
+      basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer),
+    ),
+  );
 };
 
 /**
