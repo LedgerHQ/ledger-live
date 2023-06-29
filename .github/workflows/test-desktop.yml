@@ -321,14 +321,14 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
-      - name: "download linter results"
-        uses: actions/download-artifact@v3
-        with:
-          name: lint
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
+      - name: "download linter results"
+        uses: actions/download-artifact@v3
+        with:
+          name: lint
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
