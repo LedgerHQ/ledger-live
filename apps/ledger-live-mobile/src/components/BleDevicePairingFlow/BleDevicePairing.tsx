@@ -176,8 +176,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
           <Text mb={4} mt={16} textAlign="center" variant="h4" fontWeight="semiBold">
             {t("blePairingFlow.pairing.loading.title", { deviceName })}
           </Text>
-          {/* Transparent text in order to have a smooth transition between loading and success */}
-          <Text variant="body" textAlign="center" color="transparent">
+          <Text variant="body" textAlign="center">
             {t("blePairingFlow.pairing.loading.subtitle", { productName })}
           </Text>
         </Flex>

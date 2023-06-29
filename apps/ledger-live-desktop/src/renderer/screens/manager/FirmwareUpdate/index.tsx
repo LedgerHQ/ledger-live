@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useRef } from "react";
+import React, { useEffect, useState, useCallback, useContext, useRef } from "react";
 import { Trans } from "react-i18next";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -61,6 +61,7 @@ const FirmwareUpdate = (props: Props) => {
   const { setDrawer } = useContext(context);
   const stepId = initialStepId(props);
   const firmwareUpdateCompletedRef = useRef(false);
+  const [autoOpened, setAutoOpened] = useState(false);
   const modal = deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed";
   const deviceSpecs = getDeviceModel(device.modelId);
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
@@ -80,7 +81,7 @@ const FirmwareUpdate = (props: Props) => {
     }
   }, [onReset, setDrawer]);
 
-  const onShowDisclaimer = useCallback(() => {
+  const onOpenDrawer = useCallback(() => {
     if (!firmware) return;
     track("Manager Firmware Update Click", {
       firmwareName: firmware.final.name,
@@ -132,6 +133,18 @@ const FirmwareUpdate = (props: Props) => {
     stepId,
   ]);
 
+  useEffect(() => {
+    // NB Open automatically the firmware update drawer if needed
+    if (firmware && modal === "install" && !autoOpened) {
+      track("Manager Firmware Update Auto", {
+        firmwareName: firmware.final.name,
+      });
+
+      setAutoOpened(true);
+      onOpenDrawer();
+    }
+  }, [autoOpened, modal, onOpenDrawer, firmware]);
+
   if (!firmware) {
     if (!isDeprecated) return null;
     return (
@@ -167,7 +180,12 @@ const FirmwareUpdate = (props: Props) => {
           <FakeLink
             data-test-id="manager-update-firmware-button"
             disabled={!!disableFirmwareUpdate}
-            onClick={onShowDisclaimer}
+            onClick={() => {
+              track("Manager Firmware Update Click", {
+                firmwareName: firmware.final.name,
+              });
+              onOpenDrawer();
+            }}
           >
             <Trans i18nKey="manager.firmware.banner.cta2" />
           </FakeLink>

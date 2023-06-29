@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.62.2
+
+### Patch Changes
+
+- [#3851](https://github.com/LedgerHQ/ledger-live/pull/3851) [`5ee86b42a5`](https://github.com/LedgerHQ/ledger-live/commit/5ee86b42a51d708ef15d06fe888e6ccaf9f1664c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add release notes
+
+## 2.62.2-hotfix.0
+
+### Patch Changes
+
+- [#3849](https://github.com/LedgerHQ/ledger-live/pull/3849) [`5ee86b42a5`](https://github.com/LedgerHQ/ledger-live/commit/5ee86b42a51d708ef15d06fe888e6ccaf9f1664c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Add release notes
+
+## 2.62.1
+
+### Patch Changes
+
+- [#3811](https://github.com/LedgerHQ/ledger-live/pull/3811) [`168bf3a5e7`](https://github.com/LedgerHQ/ledger-live/commit/168bf3a5e7dadef989c4f740831a8b7c11ca7c6a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix apple notarization
+
+- [#3811](https://github.com/LedgerHQ/ledger-live/pull/3811) [`fe3a750139`](https://github.com/LedgerHQ/ledger-live/commit/fe3a750139973d40f8e23203e2d004fb558b36a0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix apple notarize
+
+## 2.62.1-hotfix.0
+
+### Patch Changes
+
+- [#3811](https://github.com/LedgerHQ/ledger-live/pull/3811) [`168bf3a5e7`](https://github.com/LedgerHQ/ledger-live/commit/168bf3a5e7dadef989c4f740831a8b7c11ca7c6a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix apple notarization
+
 ## 2.62.0
 
 ### Minor Changes

@@ -11,6 +11,8 @@ declare module "*.png";
 declare module "*.jpg";
 declare module "*.webm";
 
+type Store = import("redux").Store;
+type Device = import("@ledgerhq/live-common/hw/actions/types").Device;
 type ReplaySubject = import("rxjs").ReplaySubject;
 type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
@@ -42,8 +44,12 @@ interface Window {
   };
 
   // for debugging purposes
-  // eslint-disable-next-line
-  ledger: any;
+  ledger: {
+    store: Store;
+    addDevice: (device: Device) => void;
+    removeDevice: (device: Device) => void;
+    resetDevices: () => void;
+  };
 
   // used for the analytics, initialized in the index.html
   // eslint-disable-next-line
