@@ -53,15 +53,17 @@ test.describe.parallel("Accounts", () => {
       await test.step(`[${currency}] Done`, async () => {
         await addAccountModal.done();
         await layout.totalBalance.waitFor({ state: "visible" });
-        await expect
-          .soft(page)
-          .toHaveScreenshot(`${currency}-complete.png`, { mask: [page.locator("canvas")] });
       });
 
       await test.step(`Navigate to first account`, async () => {
         await layout.goToAccounts();
         await accountsPage.navigateToAccountByName(firstAccountName);
         await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage.png`);
+      });
+
+      await test.step(`scroll to operations`, async () => {
+        await accountsPage.scrollToOperations();
+        await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage-operations.png`);
       });
     });
   }
