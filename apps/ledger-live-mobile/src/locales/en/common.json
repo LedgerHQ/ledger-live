@@ -1920,14 +1920,18 @@
         "title": "Authenticity check"
       },
       "active": {
-        "title": "Genuine Check in progress..."
+        "title": "Genuine Check"
       },
       "completed": {
         "title": "{{productName}} is genuine"
       },
+      "refused": {
+        "title": "Genuine Check declined",
+        "description": "You cannot setup your Ledger Stax without allowing this Check.",
+        "cta": "Resume Check"
+      },
       "failed": {
-        "title": "Genuine Check skipped",
-        "description": "You cannot setup your Ledger Stax without allowing this Check."
+        "title": "Genuine Check failed"
       }
     },
     "firmwareUpdateCheckStep": {
