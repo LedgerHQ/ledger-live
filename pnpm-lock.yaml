@@ -219,7 +219,7 @@ importers:
         version: 4.6.3
       '@electron/remote':
         specifier: ^2
-        version: 2.0.8(electron@23.1.3)
+        version: 2.0.8(electron@25.1.1)
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -648,8 +648,8 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4
       electron:
-        specifier: ^23.1.3
-        version: 23.1.3
+        specifier: ^25.1.1
+        version: 25.1.1
       electron-builder:
         specifier: ^23.6.0
         version: 23.6.0(lodash@4.17.21)
@@ -10595,12 +10595,12 @@ packages:
       - supports-color
     dev: true
 
-  /@electron/remote@2.0.8(electron@23.1.3):
+  /@electron/remote@2.0.8(electron@25.1.1):
     resolution: {integrity: sha512-P10v3+iFCIvEPeYzTWWGwwHmqWnjoh8RYnbtZAb3RlQefy4guagzIwcWtfftABIfm6JJTNQf4WPSKWZOpLmHXw==}
     peerDependencies:
       electron: '>= 13.0.0'
     dependencies:
-      electron: 23.1.3
+      electron: 25.1.1
     dev: false
 
   /@electron/universal@1.2.1:
@@ -21440,6 +21440,7 @@ packages:
 
   /@types/node@16.18.16:
     resolution: {integrity: sha512-ZOzvDRWp8dCVBmgnkIqYCArgdFOO9YzocZp8Ra25N/RStKiWvMOXHMz+GjSeVNe5TstaTmTWPucGJkDw0XXJWA==}
+    dev: true
 
   /@types/node@17.0.32:
     resolution: {integrity: sha512-eAIcfAvhf/BkHcf4pkLJ7ECpBAhh9kcxRBpip9cTiO+hf+aJrsxYxBeS6OXvOd9WqNAJmavXVpZvY1rBjNsXmw==}
@@ -29527,14 +29528,14 @@ packages:
   /electron-to-chromium@1.4.355:
     resolution: {integrity: sha512-056hxzEE4l667YeOccgjhRr5fTiwZ6EIJ4FpzGps4k3YcS8iAhiaBYUBrv5E2LDQJsussscv9EEUwAYKnv+ZKg==}
 
-  /electron@23.1.3:
-    resolution: {integrity: sha512-MNjuUS2K6/OxlJ0zTC77djo1R3xM038v1kUunvNFgDMZHYKpSOzOMNsPiwM2BGp+uZbkUb0nTnYafxXrM8H16w==}
+  /electron@25.1.1:
+    resolution: {integrity: sha512-WvFUfVsJn6YiP35UxdibYVjU2LceastyMm4SVp2bmb4XvKEvItAIiwxgm7tPC5Syl1243aRCvQLqr84sZ71pyQ==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
     dependencies:
       '@electron/get': 2.0.2
-      '@types/node': 16.18.16
+      '@types/node': 18.15.11
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
