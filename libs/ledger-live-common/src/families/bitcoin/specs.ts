@@ -77,32 +77,24 @@ const genericTest = ({
   });
 
   botTest("operation matches tx senders and recipients", () => {
-    if (transaction.opReturnData) {
-      // transaction.recipient has format <coinId>:<address>
-      const [, recipientAddress] = transaction.recipient.split(":");
-      expect(operation.recipients).toContain(recipientAddress);
-      expect(operation.recipients.length).toBe(2);
-    } else {
-      let expectedSenders = nonDeterministicPicking
-        ? operation.senders
-        : (txInputs!.map(t => t.address).filter(Boolean) as string[]);
+    let expectedSenders = nonDeterministicPicking
+      ? operation.senders
+      : (txInputs!.map(t => t.address).filter(Boolean) as string[]);
 
-      let expectedRecipients = txOutputs!
-        .filter(o => o.address && !o.isChange)
-        .map(o => o.address) as string[];
+    let expectedRecipients = txOutputs!
+      .filter(o => o.address && !o.isChange)
+      .map(o => o.address) as string[];
 
-      if (account.currency.id === "bitcoin_cash") {
-        expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
-        expectedRecipients = expectedRecipients.map(bchToCashaddrAddressWithoutPrefix);
-      }
-
-      expect(asSorted(operation)).toMatchObject(
-        asSorted({
-          senders: expectedSenders,
-          recipients: expectedRecipients,
-        }),
-      );
+    if (account.currency.id === "bitcoin_cash") {
+      expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
+      expectedRecipients = expectedRecipients.map(bchToCashaddrAddressWithoutPrefix);
     }
+    expect(asSorted(operation)).toMatchObject(
+      asSorted({
+        senders: expectedSenders,
+        recipients: expectedRecipients,
+      }),
+    );
   });
 
   const utxosPicked = ((status as TransactionStatus).txInputs || [])
