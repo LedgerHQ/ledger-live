@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.26.0-next.1
+
+### Patch Changes
+
+- [#3846](https://github.com/LedgerHQ/ledger-live/pull/3846) [`85169ecac7`](https://github.com/LedgerHQ/ledger-live/commit/85169ecac7ac68ebe35dbb37e3679f68774c12c3) Thanks [@grsoares21](https://github.com/grsoares21)! - Make reloading of manager upon new connection specific to Bluetooth to USB transitions
+
 ## 3.26.0-next.0
 
 ### Minor Changes
