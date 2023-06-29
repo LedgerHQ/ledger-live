@@ -12,6 +12,17 @@ import preloadedData from "./preloadedData.mock";
 import { genHex, genAddress } from "../../mock/helpers";
 const { validators } = preloadedData;
 
+const defaultCosmosResources = {
+  delegations: [],
+  delegatedBalance: new BigNumber(0),
+  pendingRewardsBalance: new BigNumber(0),
+  unbondingBalance: new BigNumber(0),
+  withdrawAddress: "",
+  unbondings: [],
+  redelegations: [],
+  lowestBlockHeight: new BigNumber(1),
+};
+
 function setCosmosResources(
   account: CosmosAccount,
   delegations: CosmosDelegation[],
@@ -33,7 +44,9 @@ function setCosmosResources(
     withdrawAddress: account.id,
     unbondings: unbondings ?? account.cosmosResources?.unbondings ?? [],
     redelegations: redelegations ?? account.cosmosResources?.redelegations ?? [],
+    lowestBlockHeight: new BigNumber(1),
   };
+
   return account;
 }
 
@@ -85,16 +98,11 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): Account {
   const { spendableBalance } = account;
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
-        unbondings: [],
-        redelegations: [],
-      };
-  if (spendableBalance.isZero()) return account;
+    : defaultCosmosResources;
+
+  if (spendableBalance.isZero()) {
+    return account;
+  }
 
   /** select position on the operation stack where we will insert the new delegation */
   const opIndex = rng.next(0, 10);
@@ -152,16 +160,10 @@ function addDelegationOperation(account: CosmosAccount, rng: Prando): Account {
 function addRedelegationOperation(account: CosmosAccount, rng: Prando): Account {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
-        unbondings: [],
-        redelegations: [],
-      };
-  if (!cosmosResources.delegations.length) return account;
+    : defaultCosmosResources;
+  if (!cosmosResources.delegations.length) {
+    return account;
+  }
 
   /** select position on the operation stack where we will insert the new delegation */
   const opIndex = rng.next(0, 10);
@@ -211,15 +213,7 @@ function addRedelegationOperation(account: CosmosAccount, rng: Prando): Account 
 function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): Account {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
-        unbondings: [],
-        redelegations: [],
-      };
+    : defaultCosmosResources;
   if (!cosmosResources.delegations.length) return account;
 
   /** select position on the operation stack where we will insert the new claim rewards */
@@ -259,15 +253,7 @@ function addClaimRewardsOperation(account: CosmosAccount, rng: Prando): Account 
 function addUndelegationOperation(account: CosmosAccount, rng: Prando): Account {
   const cosmosResources: CosmosResources = account.cosmosResources
     ? account.cosmosResources
-    : {
-        delegations: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-        withdrawAddress: "",
-        unbondings: [],
-        redelegations: [],
-      };
+    : defaultCosmosResources;
   if (!cosmosResources.delegations.length) return account;
 
   /** select position on the operation stack where we will insert the new claim rewards */
@@ -357,15 +343,7 @@ function postScanAccount(
   },
 ): CosmosAccount {
   if (isEmpty) {
-    account.cosmosResources = {
-      delegations: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-      withdrawAddress: account.id,
-      unbondings: [],
-      redelegations: [],
-    };
+    account.cosmosResources = defaultCosmosResources;
     account.operations = [];
   }
 

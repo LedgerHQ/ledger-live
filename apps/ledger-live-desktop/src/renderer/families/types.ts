@@ -294,6 +294,13 @@ export type LLDCoinFamily<
   StakeBanner?: React.ComponentType<{
     account: A;
   }>;
+
+  /**
+   * Component banner before Account body header
+   */
+  IncompleteHistoryBanner?: React.ComponentType<{
+    account: A;
+  }>;
 };
 
 export type FieldComponentProps<

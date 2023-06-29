@@ -11,6 +11,7 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     withdrawAddress,
     redelegations,
     unbondings,
+    lowestBlockHeight,
   } = r;
 
   return {
@@ -37,8 +38,10 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     pendingRewardsBalance: pendingRewardsBalance.toString(),
     unbondingBalance: unbondingBalance.toString(),
     withdrawAddress,
+    lowestBlockHeight: lowestBlockHeight.toString(),
   };
 }
+
 export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
   const {
     delegatedBalance,
@@ -48,7 +51,9 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     unbondingBalance,
     withdrawAddress,
     unbondings,
+    lowestBlockHeight,
   } = r;
+
   return {
     delegations: delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
       amount: new BigNumber(amount),
@@ -73,6 +78,7 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     pendingRewardsBalance: new BigNumber(pendingRewardsBalance),
     unbondingBalance: new BigNumber(unbondingBalance),
     withdrawAddress,
+    lowestBlockHeight: new BigNumber(lowestBlockHeight),
   };
 }
 

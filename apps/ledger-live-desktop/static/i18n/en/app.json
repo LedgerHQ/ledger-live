@@ -1468,6 +1468,10 @@
     "vaultSigner": {
       "title": "Vault signer mode",
       "link": "Vault Help Center"
+    },
+    "incompleteHistory": {
+      "title": "Transaction History Limitation",
+      "description": "The transaction history displayed is limited and only available up to block {{block}}."
     }
   },
   "signmessage": {

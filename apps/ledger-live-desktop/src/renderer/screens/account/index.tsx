@@ -36,6 +36,7 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { AccountIncompleteHistoryBanner } from "./AccountIncompleteHistoryBanner";
 
 type Params = {
   id: string;
@@ -168,6 +169,7 @@ const AccountPage = ({
           {account.type === "Account" && isNFTActive(account.currency) ? (
             <Collections account={account} />
           ) : null}
+          <AccountIncompleteHistoryBanner account={account} />
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
             account={account}
@@ -183,6 +185,7 @@ const AccountPage = ({
     </Box>
   );
 };
+
 const ConnectedAccountPage = compose<React.ComponentType<Props>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),

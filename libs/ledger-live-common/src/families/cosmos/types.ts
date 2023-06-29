@@ -62,7 +62,9 @@ export type CosmosResources = {
   pendingRewardsBalance: BigNumber;
   unbondingBalance: BigNumber;
   withdrawAddress: string;
+  lowestBlockHeight: BigNumber;
 };
+
 export type CosmosDelegationRaw = {
   validatorAddress: string;
   amount: string;
@@ -88,6 +90,7 @@ export type CosmosResourcesRaw = {
   pendingRewardsBalance: string;
   unbondingBalance: string;
   withdrawAddress: string;
+  lowestBlockHeight: string;
 };
 // NB this must be serializable (no Date, no BigNumber)
 export type CosmosValidatorItem = {

@@ -9,21 +9,21 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosDelegationInfo, CosmosMessage, CosmosTx } from "./types";
+import { CosmosAccount, CosmosDelegationInfo, CosmosMessage, CosmosTx } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 
-const getBlankOperation = (tx, fees, id) => ({
+const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): Operation => ({
   id: "",
   hash: tx.txhash,
   type: "" as OperationType,
   value: new BigNumber(0),
   fee: fees,
   blockHash: null,
-  blockHeight: tx.height,
+  blockHeight: Number(tx.height),
   senders: [] as string[],
   recipients: [] as string[],
-  accountId: id,
+  accountId,
   date: new Date(tx.timestamp),
   extra: {
     validators: [] as CosmosDelegationInfo[],
@@ -199,10 +199,9 @@ export const getAccountShape: GetAccountShape = async info => {
   });
 
   const cosmosAPI = new CosmosAPI(currency.id);
-  console.log(await cosmosAPI.getLowestBlockHeight());
-
   const { balances, blockHeight, txs, delegations, redelegations, unbondings, withdrawAddress } =
     await cosmosAPI.getAccountInfo(address, currency);
+  const lowestBlockHeight = await cosmosAPI.getLowestBlockHeight();
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);
@@ -229,7 +228,7 @@ export const getAccountShape: GetAccountShape = async info => {
     spendableBalance = new BigNumber(0);
   }
 
-  const shape = {
+  const shape: Partial<CosmosAccount> = {
     id: accountId,
     xpub: address,
     balance: balance,
@@ -244,6 +243,7 @@ export const getAccountShape: GetAccountShape = async info => {
       pendingRewardsBalance,
       unbondingBalance,
       withdrawAddress,
+      lowestBlockHeight,
     },
   };
 

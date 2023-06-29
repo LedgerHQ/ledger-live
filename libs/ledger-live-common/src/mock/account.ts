@@ -55,6 +55,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
             pendingRewardsBalance: new BigNumber(0),
             unbondingBalance: new BigNumber(0),
             withdrawAddress: address,
+            lowestBlockHeight: new BigNumber(1),
           };
           break;
         case "bitcoin":

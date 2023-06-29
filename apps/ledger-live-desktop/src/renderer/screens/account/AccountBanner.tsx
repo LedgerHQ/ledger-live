@@ -9,8 +9,8 @@ export type BannerProps =
       linkText?: string;
       linkUrl?: string;
       description: string;
-      cta: string;
-      onClick: () => void;
+      cta?: string;
+      onClick?: () => void;
       display: true;
     }
   | { display: false };
@@ -48,14 +48,16 @@ const AccountBanner = (props: BannerProps) => {
               )}
             </Text>
           </Flex>
-          <Button
-            variant="color"
-            ml={12}
-            onClick={onClick}
-            buttonTestId="account-stake-banner-button"
-          >
-            {cta}
-          </Button>
+          {cta && onClick && (
+            <Button
+              variant="color"
+              ml={12}
+              onClick={onClick}
+              buttonTestId="account-stake-banner-button"
+            >
+              {cta}
+            </Button>
+          )}
         </Flex>
       )}
     />

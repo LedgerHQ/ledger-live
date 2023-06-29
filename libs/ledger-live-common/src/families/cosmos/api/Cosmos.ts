@@ -12,6 +12,9 @@ import {
   CosmosUnbonding,
 } from "../types";
 
+type GetLowestBlockHeightError = {
+  message: string;
+};
 export class CosmosAPI {
   protected defaultEndpoint: string;
   private version: string;
@@ -370,17 +373,22 @@ export class CosmosAPI {
 
   getLowestBlockHeight = async (): Promise<BigNumber> => {
     try {
-      const { data } = await network({
-        method: "POST",
+      await network({
+        method: "GET",
         url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/1`,
       });
 
-      console.log(data);
       return new BigNumber(1);
     } catch (err) {
-      console.log(err);
+      const error = err as GetLowestBlockHeightError;
+      const numberPattern = /\d+/g;
+      const matchedNumbers = error.message.match(numberPattern);
+      if (matchedNumbers) {
+        const [, lowestBlockHeight] = matchedNumbers;
+        return new BigNumber(lowestBlockHeight);
+      }
     }
 
-    return new BigNumber(0);
+    return new BigNumber(1);
   };
 }

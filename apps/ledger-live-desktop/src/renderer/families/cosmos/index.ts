@@ -6,6 +6,7 @@ import StakeBanner from "./StakeBanner";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import operationDetails from "./operationDetails";
 import { CosmosFamily } from "./types";
+import { IncompleteHistoryBanner } from "./IncompleteHistoryBanner";
 
 const family: CosmosFamily = {
   operationDetails,
@@ -15,6 +16,7 @@ const family: CosmosFamily = {
   sendRecipientFields,
   AccountBalanceSummaryFooter,
   StakeBanner,
+  IncompleteHistoryBanner,
 };
 
 export default family;
