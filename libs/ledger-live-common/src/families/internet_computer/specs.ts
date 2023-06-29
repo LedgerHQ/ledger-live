@@ -76,6 +76,7 @@ const internetComputerSpecs: AppSpec<Transaction> = {
     {
       name: "Transfer Max",
       maxRun: 1,
+      testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         const transaction = bridge.createTransaction(account);
         const updates: Array<Partial<Transaction>> = [
