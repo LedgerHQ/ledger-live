@@ -56,72 +56,72 @@ describe("fetchAllTransactions", () => {
 });
 
 describe("preserveInitialOperationsDate", () => {
-  it("should preserve initial operations date in newOps", () => {
-    const operation: OperationRaw = {
-      id: "1",
-      hash: "hash1",
-      type: "OUT",
-      value: "1",
-      fee: "string",
-      senders: ["0x789d2f10826BF8f3a56Ec524359bBA4e738Af5bF"],
-      recipients: ["0xdA9EDcC3CF66bc18050dB55D376407Cf85e0617B"],
-      blockHeight: 10042069,
-      blockHash: "0x00000000000000000000000000000000000Th1sH4shSh0u1dN0t3x1sTOnCh4iN",
-      transactionSequenceNumber: 1,
-      date: "May-11-2020 01:50:10 UTC",
-      extra: {},
-      accountId: ethereum2.id,
-    };
-    const operation1 = {
-      ...operation,
-      id: "1",
-      hash: "hash1",
-      date: "2023-04-01",
-    };
-    const operation2 = {
-      ...operation,
-      id: "2",
-      hash: "hash2",
-      date: "2023-04-02",
-    };
-    const operation3 = {
-      ...operation,
-      id: "3",
-      hash: "hash2",
-      date: "2023-04-01",
-    };
-    const operation4 = {
-      ...operation,
-      id: "4",
-      hash: "hash4",
-      date: "2023-04-01",
-    };
-    let account = fromAccountRaw({
+  const operation: OperationRaw = {
+    id: "1",
+    hash: "hash1",
+    type: "OUT",
+    value: "1",
+    fee: "string",
+    senders: ["0x789d2f10826BF8f3a56Ec524359bBA4e738Af5bF"],
+    recipients: ["0xdA9EDcC3CF66bc18050dB55D376407Cf85e0617B"],
+    blockHeight: 10042069,
+    blockHash: "0x00000000000000000000000000000000000Th1sH4shSh0u1dN0t3x1sTOnCh4iN",
+    transactionSequenceNumber: 1,
+    date: "May-11-2020 01:50:10 UTC",
+    extra: {},
+    accountId: ethereum2.id,
+  };
+  const operation1 = {
+    ...operation,
+    id: "1",
+    hash: "hash1",
+    date: "2023-04-01",
+  };
+  const operation2 = {
+    ...operation,
+    id: "2",
+    hash: "hash2",
+    date: "2023-04-02",
+  };
+  const operation3 = {
+    ...operation,
+    id: "3",
+    hash: "hash2",
+    date: "2023-04-01",
+  };
+  const operation4 = {
+    ...operation,
+    id: "4",
+    hash: "hash4",
+    date: "2023-04-01",
+  };
+  const newOps = [
+    fromOperationRaw(operation1, ethereum2.id),
+    fromOperationRaw(operation2, ethereum2.id),
+  ];
+  it("should update operations date in newOps with initial date in existing account", () => {
+    const account = fromAccountRaw({
       ...ethereum2,
       blockHeight: 10042069,
       syncHash: "NotImportant",
       operations: [operation3],
       operationsCount: 1,
     });
-
-    const newOps = [
-      fromOperationRaw(operation1, ethereum2.id),
-      fromOperationRaw(operation2, ethereum2.id),
-    ];
-    let result = preserveInitialOperationsDate(newOps, account);
+    const result = preserveInitialOperationsDate(newOps, account);
     // preserve initial date, initial date is from the "operation3" of "account". So result is updated from newOps
     expect(result.find(op => op.hash === "hash2")?.date).toEqual(new Date("2023-04-01"));
-
-    account = fromAccountRaw({
+  });
+  it("no need to update operations date in newOps as newOps contains different operations hash than those in existing account", () => {
+    const account = fromAccountRaw({
       ...ethereum2,
       blockHeight: 10042069,
       syncHash: "NotImportant",
       operations: [operation4],
       operationsCount: 1,
     });
-    result = preserveInitialOperationsDate(newOps, account);
+    const result = preserveInitialOperationsDate(newOps, account);
     // no need to update date in newOps because operation4 has a different hash. So result is same as newOps
-    expect(result[0].date).toEqual(new Date("2023-04-01"));
-    expect(result[1].date).toEqual(new Date("2023-04-02"));
+    expect(result[0].date).toEqual(new Date("2023-04-01")); // operation1 date
+    expect(result[1].date).toEqual(new Date("2023-04-02")); // operation2 date
   });
 });
