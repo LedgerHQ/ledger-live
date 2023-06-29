@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Button, Flex, InfiniteLoader, Text, Link, ScrollListContainer } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/types-devices";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import {
@@ -11,15 +10,25 @@ import {
   WarningSolidMedium,
   InfoAltFillMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import { track } from "../../analytics";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { ScrollView } from "react-native";
+import { useGetDeviceInfo } from "@ledgerhq/live-common/deviceSDK/hooks/getDeviceInfo";
+import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useLocale } from "../../context/Locale";
+import { localeIdToDeviceLanguage } from "../../languages";
+import { Language, idsToLanguage } from "@ledgerhq/types-live";
+import QueuedDrawer from "../../components/QueuedDrawer";
+import ChangeDeviceLanguageAction from "../../components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguagePrompt from "../../components/ChangeDeviceLanguagePrompt";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -91,7 +100,70 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
-  console.log(`🦖 
+  const { deviceInfo } = useGetDeviceInfo({ deviceId: device.deviceId });
+  const { availableLanguages, loaded: availableLanguagesLoaded } =
+    useAvailableLanguagesForDevice(deviceInfo);
+
+  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
+  const [deviceLanguagePromptDismissed, setDeviceLanguagePromptDismissed] =
+    useState<boolean>(false);
+  const [preventPromptBackdropClick, setPreventPromptBackdropClick] = useState<boolean>(false);
+  const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] = useState<Device | null>(
+    null,
+  );
+
+  const { locale: currentLocale } = useLocale();
+
+  useEffect(() => {
+    console.log("🐯 language use effect:", {
+      deviceInfo,
+      availableLanguages,
+      availableLanguagesLoaded,
+      deviceLanguagePromptDismissed,
+    });
+    if (
+      deviceInfo &&
+      availableLanguages &&
+      availableLanguagesLoaded &&
+      !deviceLanguagePromptDismissed
+    ) {
+      const potentialDeviceLanguage = localeIdToDeviceLanguage[currentLocale];
+      const deviceLanguageId = deviceInfo.languageId;
+      const langAvailableOnDevice =
+        potentialDeviceLanguage !== undefined &&
+        availableLanguages.includes(potentialDeviceLanguage);
+
+      console.log("🐣 all loaded:", {
+        potentialDeviceLanguage,
+        langAvailableOnDevice,
+        deviceLanguageId,
+        currentLocale,
+      });
+      if (
+        langAvailableOnDevice &&
+        deviceLanguageId !== undefined &&
+        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage
+      ) {
+        console.log("❤️‍🔥 opening prompt:");
+        setIsDeviceLanguagePromptOpen(true);
+      } else {
+        console.log("🌑 not opening prompt:");
+      }
+    }
+  }, [
+    availableLanguages,
+    availableLanguagesLoaded,
+    deviceInfo,
+    currentLocale,
+    deviceLanguagePromptDismissed,
+  ]);
+
+  const closeDeviceLanguagePrompt = useCallback(() => {
+    setIsDeviceLanguagePromptOpen(false);
+    setDeviceLanguagePromptDismissed(true);
+  }, []);
+
+  /*console.log(`🦖
     Genuine check input: ${JSON.stringify({
       isHookEnabled: genuineCheckStatus === "ongoing",
       deviceId: device.deviceId,
@@ -102,8 +174,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       genuineState,
       devicePermissionState,
       error: genuineCheckError,
-    })}  
-  `);
+    })}
+  `);*/
 
   const {
     latestFirmware,
@@ -115,7 +187,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     deviceId: device.deviceId,
   });
 
-  console.log(`🦕 
+  /*console.log(`🦕 
     Firmware update check input: ${JSON.stringify({
       isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
       deviceId: device.deviceId,
@@ -126,8 +198,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       status: latestFirmwareGettingStatus,
       lockedDevice: latestFirmwareGettingLockedDevice,
       latestFirmware,
-    })}  
-  `);
+    })}
+  `);*/
 
   // Exit point: actually with a button
   // useEffect(() => {
@@ -188,7 +260,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   let genuineCheckUiStepStatus: UiCheckStatus = "inactive";
   let firmwareUpdateUiStepStatus: UiCheckStatus = "inactive";
 
-  console.log(
+  /*console.log(
     `🍕 UI logic: ${JSON.stringify({
       currentStep,
       currentDisplayedDrawer,
@@ -197,7 +269,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       genuineState,
       devicePermissionState,
     })}`,
-  );
+  );*/
 
   // Handles genuine check states logic (both check state and UI state)
   if (currentStep === "genuine-check") {
@@ -244,7 +316,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   // Handles firmware update check UI logic
   if (currentStep === "firmware-update-check") {
-    console.log(`🥦 fw update check UI logic: ${JSON.stringify({ latestFirmwareGettingStatus })}`);
+    //console.log(`🥦 fw update check UI logic: ${JSON.stringify({ latestFirmwareGettingStatus })}`);
     if (firmwareUpdateCheckStatus === "ongoing") {
       firmwareUpdateUiStepStatus = "active";
       currentDisplayedDrawer = "none";
@@ -508,6 +580,40 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           </Flex>
         </Flex>
       </ScrollView>
+      <QueuedDrawer
+        isRequestingToBeOpened={isDeviceLanguagePromptOpen}
+        onClose={closeDeviceLanguagePrompt}
+        preventBackdropClick={preventPromptBackdropClick}
+      >
+        <Flex alignItems="center">
+          {deviceForChangeLanguageAction ? (
+            <ChangeDeviceLanguageAction
+              onError={() => {
+                setPreventPromptBackdropClick(false);
+              }}
+              device={deviceForChangeLanguageAction}
+              onStart={() => setPreventPromptBackdropClick(true)}
+              language={localeIdToDeviceLanguage[currentLocale] as Language}
+              onResult={() => setPreventPromptBackdropClick(false)}
+              onContinue={() => {
+                setDeviceForChangeLanguageAction(null);
+                closeDeviceLanguagePrompt();
+              }}
+            />
+          ) : (
+            <ChangeDeviceLanguagePrompt
+              language={localeIdToDeviceLanguage[currentLocale] as Language}
+              deviceModel={getDeviceModel(device?.modelId || DeviceModelId.nanoX)}
+              onConfirm={() => {
+                track("Page LiveLanguageChange LanguageInstallTriggered", {
+                  selectedLanguage: localeIdToDeviceLanguage[currentLocale],
+                });
+                setDeviceForChangeLanguageAction(device);
+              }}
+            />
+          )}
+        </Flex>
+      </QueuedDrawer>
     </>
   );
 };

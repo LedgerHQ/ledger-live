@@ -6,7 +6,7 @@ import {
 } from "../actions/getDeviceInfo";
 
 export type UseGetDeviceInfoArgs = {
-  getDeviceInfoAction: typeof defaultGetDeviceInfoAction;
+  getDeviceInfoAction?: typeof defaultGetDeviceInfoAction;
   deviceId: string;
 };
 
@@ -17,7 +17,10 @@ export const useGetDeviceInfo = ({
   const [state, setState] = useState<GetDeviceInfoActionState>(initialState);
 
   useEffect(() => {
-    const sub = getDeviceInfoAction({ deviceId }).subscribe(setState);
+    const sub = getDeviceInfoAction({ deviceId }).subscribe(newState => {
+      console.log("🦁 updating state from hook: ", { newState });
+      setState(newState);
+    });
 
     return () => sub.unsubscribe();
   }, [deviceId, getDeviceInfoAction]);
