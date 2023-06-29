@@ -77,7 +77,7 @@ export const defaultFeatures = {
   currencyPersistence: {
     enabled: false,
   },
-  currencyTelos: {
+  currencyTelosEvm: {
     enabled: false,
   },
   deviceInitialApps: {

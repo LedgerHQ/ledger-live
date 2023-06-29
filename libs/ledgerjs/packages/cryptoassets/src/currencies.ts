@@ -4205,14 +4205,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  telos: {
+  telos_evm: {
     type: "CryptoCurrency",
-    id: "telos",
+    id: "telos_evm",
     coinType: CoinType.ETH,
     name: "Telos",
     managerAppName: "Ethereum",
     ticker: "TLOS",
-    scheme: "telos",
+    scheme: "telos_evm",
     color: "#AC72F9",
     family: "evm",
     units: ethereumUnits("TLOS", "TLOS"),

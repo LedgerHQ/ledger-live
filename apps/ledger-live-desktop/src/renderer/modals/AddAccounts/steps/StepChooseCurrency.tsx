@@ -49,7 +49,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
-  const telos = useFeature("currencyTelos");
+  const telosEvm = useFeature("currencyTelosEvm");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -73,7 +73,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       moonriver,
       velas_evm: velasEvm,
       syscoin,
-      telos,
+      telos_evm: telosEvm,
     }),
     [
       avaxCChain,
@@ -96,7 +96,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       onomy,
       persistence,
       quicksilver,
-      telos,
+      telosEvm,
     ],
   );
   const currencies = useMemo(() => {
