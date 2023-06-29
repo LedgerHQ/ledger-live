@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.26.0-nightly.2
+
+### Patch Changes
+
+- [#3828](https://github.com/LedgerHQ/ledger-live/pull/3828) [`32e3d60144`](https://github.com/LedgerHQ/ledger-live/commit/32e3d60144d3e6afebcffd87400c6cb1c10aeb67) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix discover catalog visibility and ordering
+
+- [#3852](https://github.com/LedgerHQ/ledger-live/pull/3852) [`dab136d518`](https://github.com/LedgerHQ/ledger-live/commit/dab136d5188ba87afe1511a1537590009c83db4e) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Aligned UI of pairing flow + wording change
+
+- Updated dependencies [[`32e3d60144`](https://github.com/LedgerHQ/ledger-live/commit/32e3d60144d3e6afebcffd87400c6cb1c10aeb67), [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099)]:
+  - @ledgerhq/live-common@31.2.0-nightly.1
+  - @ledgerhq/live-env@0.4.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.7-nightly.0
+
 ## 3.26.0-nightly.1
 
 ### Minor Changes

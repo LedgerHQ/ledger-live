@@ -1,5 +1,16 @@
 # @ledgerhq/live-env
 
+## 0.4.0-nightly.1
+
+### Minor Changes
+
+- [#3841](https://github.com/LedgerHQ/ledger-live/pull/3841) [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover on LLD
+
+  Handle the recover deeplink
+  Add a screen to redirect to the correct device onboarding automatically
+  Rework of the recover feature flags
+  Add upsell screen for recover after onboarding
+
 ## 0.3.1-nightly.0
 
 ### Patch Changes

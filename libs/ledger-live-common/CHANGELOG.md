@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 31.2.0-nightly.1
+
+### Minor Changes
+
+- [#3841](https://github.com/LedgerHQ/ledger-live/pull/3841) [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover on LLD
+
+  Handle the recover deeplink
+  Add a screen to redirect to the correct device onboarding automatically
+  Rework of the recover feature flags
+  Add upsell screen for recover after onboarding
+
+### Patch Changes
+
+- [#3828](https://github.com/LedgerHQ/ledger-live/pull/3828) [`32e3d60144`](https://github.com/LedgerHQ/ledger-live/commit/32e3d60144d3e6afebcffd87400c6cb1c10aeb67) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - Fix discover catalog visibility and ordering
+
+- Updated dependencies [[`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099)]:
+  - @ledgerhq/live-env@0.4.0-nightly.1
+  - @ledgerhq/coin-algorand@0.2.3-nightly.0
+  - @ledgerhq/coin-evm@0.2.2-nightly.0
+  - @ledgerhq/coin-framework@0.3.7-nightly.0
+  - @ledgerhq/coin-polkadot@0.2.1-nightly.0
+  - @ledgerhq/live-network@1.1.2-nightly.0
+
 ## 31.2.0-nightly.0
 
 ### Minor Changes
