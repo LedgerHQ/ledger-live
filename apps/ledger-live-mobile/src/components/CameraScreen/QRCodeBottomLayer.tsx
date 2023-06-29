@@ -26,13 +26,7 @@ function QrCodeBottomLayer({ progress, liveQrCode, instruction }: Props) {
     >
       <Text variant={"h5"} fontWeight={"semiBold"} mb={6}>
         {instruction || (
-          <Trans
-            i18nKey={
-              liveQrCode
-                ? "account.import.newScan.title"
-                : "send.scan.descBottom"
-            }
-          />
+          <Trans i18nKey={liveQrCode ? "account.import.newScan.title" : "send.scan.descBottom"} />
         )}
       </Text>
       {liveQrCode && (
@@ -55,25 +49,13 @@ function QrCodeBottomLayer({ progress, liveQrCode, instruction }: Props) {
             <NumberedList
               items={[
                 {
-                  description: (
-                    <Trans
-                      i18nKey={"account.import.newScan.instructions.line1"}
-                    />
-                  ),
+                  description: <Trans i18nKey={"account.import.newScan.instructions.line1"} />,
                 },
                 {
-                  description: (
-                    <Trans
-                      i18nKey={"account.import.newScan.instructions.line2"}
-                    />
-                  ),
+                  description: <Trans i18nKey={"account.import.newScan.instructions.line2"} />,
                 },
                 {
-                  description: (
-                    <Trans
-                      i18nKey={"account.import.newScan.instructions.line3"}
-                    />
-                  ),
+                  description: <Trans i18nKey={"account.import.newScan.instructions.line3"} />,
                 },
               ]}
               itemContainerProps={{ mb: 3 }}

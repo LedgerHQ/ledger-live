@@ -11,6 +11,7 @@ import { NavigationHeaderCloseButtonAdvanced } from "./NavigationHeaderCloseButt
 import getWindowDimensions from "../logic/getWindowDimensions";
 import RequiresCameraPermissions from "./RequiresCameraPermissions";
 import CameraPermissionContext from "./RequiresCameraPermissions/CameraPermissionContext";
+import TrackScreen from "../analytics/TrackScreen";
 
 type Props = {
   onResult: (_: string) => void;
@@ -72,10 +73,7 @@ const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <NavigationHeaderCloseButtonAdvanced
-          color={colors.neutral.c100}
-          preferDismiss={false}
-        />
+        <NavigationHeaderCloseButtonAdvanced color={colors.neutral.c100} preferDismiss={false} />
       ),
     });
   }, [colors.neutral.c100, navigation]);

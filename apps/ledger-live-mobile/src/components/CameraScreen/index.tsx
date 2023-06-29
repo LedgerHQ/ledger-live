@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View } from "react-native";
 import { rgba } from "../../colors";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Box, Flex, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import ScanTargetSvg from "./ScanTargetSvg";
+import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { track } from "../../analytics";
 
 type Props = {
   width: number;
@@ -21,6 +24,15 @@ export default function CameraScreen({
 }: Props) {
   const progress = undefined;
   const { colors } = useTheme();
+  const { goBack } = useNavigation();
+
+  const onClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close"
+    });
+    goBack();
+  }, [goBack]);
+
   // Make the viewfinder borders 2/3 of the screen shortest border
   const wrapperStyle =
     width > height
@@ -34,10 +46,27 @@ export default function CameraScreen({
         };
   return (
     <View style={wrapperStyle}>
-      <Box
+      <Flex
         height={height * 0.15}
         backgroundColor={rgba(colors.constant.black, 0.8)}
-      ></Box>
+        alignItems={"flex-end"}
+        px={6}
+        pt={9}
+        zIndex={1}
+      >
+        <TouchableOpacity onPress={onClose}>
+          <Flex
+            bg={"neutral.c100"}
+            width={"32px"}
+            height={"32px"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            borderRadius={32}
+          >
+            <Icons.CloseMedium size={20} color={"neutral.c00"} />
+          </Flex>
+        </TouchableOpacity>
+      </Flex>
       <Flex
         flexDirection={"row"}
         justifyContent={"space-evenly"}

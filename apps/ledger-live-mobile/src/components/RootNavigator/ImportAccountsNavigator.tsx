@@ -22,7 +22,7 @@ export default function ImportAccountsNavigator() {
         component={ScanAccounts}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerShown: true,
+          headerShown: false,
           headerTitle: () => (
             <Text variant="h3" uppercase>
               {t("account.import.scan.title")}
