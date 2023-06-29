@@ -1906,10 +1906,16 @@
       "learnMore": "Learn more about Genuine Check",
       "checkCta": "Check Ledger Stax"
     },
-    "genuineCheckFailedDrawer": {
+    "earlySecurityCheckMandatoryDrawer": {
       "title": "Genuine Check is mandatory",
       "description": "You cannot setup your {{productName}} without allowing this Check.",
-      "retryCta": "Resume Check",
+      "resumeCta": "Resume Check",
+      "skipCta": "Cancel Check"
+    },
+    "genuineCheckFailedDrawer": {
+      "title": "Genuine Check error",
+      "description": "An error occurred while running the genuine check on {{productName}}.",
+      "retryCta": "Retry Check",
       "skipCta": "Cancel Check"
     },
     "allowManagerDrawer": {

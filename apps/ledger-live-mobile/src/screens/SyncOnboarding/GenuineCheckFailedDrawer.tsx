@@ -32,9 +32,9 @@ export type Props = {
   productName: string;
 
   /**
-   * Error instance coming from the genuine check hook
+   * Error instance coming from the genuine check hook - if null, a default message is displayed.
    */
-  error?: Error | null;
+  error: Error | null;
 };
 
 /**
