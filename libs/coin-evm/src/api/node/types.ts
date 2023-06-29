@@ -19,7 +19,7 @@ export type NodeApi = {
     address: string,
     contractAddress: string,
   ) => Promise<BigNumber>;
-  getTransactionCount: (currency: CryptoCurrency, addr: string) => Promise<number>;
+  getTransactionCount: (currency: CryptoCurrency, address: string) => Promise<number>;
   getGasEstimation: (account: Account, transaction: EvmTransaction) => Promise<BigNumber>;
   getFeesEstimation: (currency: CryptoCurrency) => Promise<FeeData>;
   broadcastTransaction: (currency: CryptoCurrency, signedTxHex: string) => Promise<string>;

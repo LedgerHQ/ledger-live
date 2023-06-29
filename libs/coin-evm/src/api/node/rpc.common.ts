@@ -127,7 +127,6 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
 /**
  * Get an estimation of fees on the network
  */
-// Waiting for proxies
 export const getFeesEstimation: NodeApi["getFeesEstimation"] = currency =>
   withApi(currency, async api => {
     const block = await api.getBlock("latest");

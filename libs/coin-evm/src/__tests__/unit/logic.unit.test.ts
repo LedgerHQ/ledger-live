@@ -20,6 +20,7 @@ import {
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
+  padHexString,
 } from "../../logic";
 import {
   EvmTransactionEIP1559,
@@ -543,6 +544,13 @@ describe("EVM Family", () => {
           // @ts-expect-error purposely ignore readonly ts issue for this
           () => attachOperations(coinOperations, tokenOperations, nftOperations),
         ).not.toThrow(); // mutation prevented by deepFreeze method
+      });
+    });
+
+    describe("padHexString", () => {
+      it("should always return an odd number of characters", () => {
+        expect(padHexString("1")).toEqual("01");
+        expect(padHexString("01")).toEqual("01");
       });
     });
   });
