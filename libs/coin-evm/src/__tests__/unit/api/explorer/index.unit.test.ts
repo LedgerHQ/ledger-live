@@ -1,5 +1,6 @@
 import { AssertionError, fail } from "assert";
 import etherscanLikeApi from "../../../../api/explorer/etherscan";
+import ledgerExplorerApi from "../../../../api/explorer/ledger";
 import { getExplorerApi } from "../../../../api/explorer";
 import { UnknownExplorer } from "../../../../errors";
 
@@ -31,6 +32,14 @@ describe("EVM Family", () => {
 
         expect(explorerA).toBe(etherscanLikeApi);
         expect(explorerB).toBe(etherscanLikeApi);
+      });
+
+      it("should return the ledger api", async () => {
+        const explorerA = await getExplorerApi({
+          ethereumLikeInfo: { explorer: { type: "ledger", explorerId: "eth" } },
+        } as any);
+
+        expect(explorerA).toBe(ledgerExplorerApi);
       });
     });
   });
