@@ -9,7 +9,7 @@ import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
 
-type SubjectData =
+export type SubjectData =
   | {
       type: "add";
       payload: { id: string; name: string; serviceUUID: string };
@@ -20,7 +20,7 @@ type SubjectData =
       payload: LiveAppManifest;
     };
 
-export const e2eBridgeSubject = new Subject<SubjectData>();
+export const e2eClientBridgeSubject = new Subject<SubjectData>();
 
 let ws: WebSocket;
 
@@ -51,7 +51,7 @@ function onMessage(event: { data: unknown }) {
     case "add":
     case "openNano":
     case "loadLocalManifest":
-      e2eBridgeSubject.next(msg);
+      e2eClientBridgeSubject.next(msg);
       break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {

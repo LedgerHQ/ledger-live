@@ -95,7 +95,7 @@ describe("Wallet API methods", () => {
     await discoverPage.openViaDeeplink("dummy-live-app");
 
     const title = await detox.web.element(detox.by.web.id("image-container")).getTitle();
-    expect(title).toBe("Ledger Live App");
+    expect(title).toBe("Dummy Wallet API App");
 
     const url = await detox.web.element(detox.by.web.id("param-container")).getCurrentUrl();
     expect(url).toBe("http://localhost:52619/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App");

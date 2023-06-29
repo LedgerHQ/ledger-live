@@ -8,7 +8,6 @@ export function useE2EInjection() {
   const transport = useRef(new WindowMessageTransport());
 
   const send = useCallback(async jsonStr => {
-    alert("yooo");
     const { id } = JSON.parse(jsonStr);
 
     const promise = new Promise(resolve => {
@@ -18,9 +17,11 @@ export function useE2EInjection() {
 
     // if mobile
     if (window.ReactNativeWebView) {
+      console.log("HELLO");
       const response = await promise;
-      window.ReactNativeWebView.postMessage(response);
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: "e2eTest", payload: response }));
     }
+    console.log("BYE");
 
     return promise;
   }, []);

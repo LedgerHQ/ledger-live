@@ -17,5 +17,11 @@ export class LiveApp {
       console.log(window.ledger.e2e.walletApi.send);
       window.ledger.e2e.walletApi.send('${json}');
     }`);
+
+    const response = new Promise((resolve, reject) => {
+      // here we listen to messages from the bridge client
+    });
+
+    return { id, response };
   }
 }

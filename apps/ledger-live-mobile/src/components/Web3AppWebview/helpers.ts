@@ -64,7 +64,7 @@ export function useWebView(
       },
       // TODO: wallet-api-server lifecycle is not perfect and will try to send messages before a ref is available. Some additional thinkering is needed here.
       postMessage: (message: string) => {
-        console.log("MESSAGE INCOMING", message);
+        console.log("MESSAGE GOING TO WEBVIEW", message);
 
         try {
           const webview = safeGetRefValue(webviewRef);
@@ -90,7 +90,11 @@ export function useWebView(
 
   const onMessage = useCallback(
     e => {
-      console.log("!!!", JSON.stringify(e.nativeEvent?.data, null, 2));
+      console.log(
+        "MESSAGE FROM WEBVIEW",
+        JSON.stringify(JSON.parse(e.nativeEvent?.data), null, 2),
+        typeof e.nativeEvent?.data,
+      );
       if (e.nativeEvent?.data) {
         onMessageRaw(e.nativeEvent.data);
       }
