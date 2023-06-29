@@ -62,12 +62,13 @@ export const OnboardingContext = createContext<OnboardingContextTypes>({
 });
 
 export function Onboarding() {
+  const { path } = useRouteMatch();
+  const matchRecover = useRouteMatch(`${path}/${UseCase.recover}`);
   const [imgsLoaded, setImgsLoaded] = useState(false);
-  const [useCase, setUseCase] = useState<UseCase | null>(null);
+  const [useCase, setUseCase] = useState<UseCase | null>(matchRecover ? UseCase.recover : null);
   const [deviceModelId, setDeviceModelId] = useState<NullableDeviceModelId>(null);
   const [openedPedagogyModal, setOpenedPedagogyModal] = useState(false);
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
-  const { path } = useRouteMatch();
 
   useEffect(() => {
     preloadAssets().then(() => setImgsLoaded(true));

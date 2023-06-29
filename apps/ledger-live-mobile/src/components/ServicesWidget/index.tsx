@@ -9,7 +9,6 @@ import {
   useLearnMoreURI,
 } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import NewProtectState from "./Protect/NewProtectState";
-import { ServicesConfigParams } from "./types";
 import Touchable from "../Touchable";
 
 import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
@@ -19,7 +18,7 @@ import LedgerRecoverCardTopImage from "../../images/ledger_recover_card_top.png"
 
 function ServicesWidget() {
   const { t } = useTranslation();
-  const servicesConfig = useFeature<ServicesConfigParams>("protectServicesMobile");
+  const servicesConfig = useFeature("protectServicesMobile");
   const theme = useTheme();
 
   const learnMoreURI = useLearnMoreURI(servicesConfig);
