@@ -198,8 +198,11 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
+  const cosmosAPI = new CosmosAPI(currency.id);
+  console.log(await cosmosAPI.getLowestBlockHeight());
+
   const { balances, blockHeight, txs, delegations, redelegations, unbondings, withdrawAddress } =
-    await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+    await cosmosAPI.getAccountInfo(address, currency);
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);

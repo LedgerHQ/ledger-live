@@ -367,4 +367,20 @@ export class CosmosAPI {
       throw new Error("Tx simulation failed");
     }
   };
+
+  getLowestBlockHeight = async (): Promise<BigNumber> => {
+    try {
+      const { data } = await network({
+        method: "POST",
+        url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/1`,
+      });
+
+      console.log(data);
+      return new BigNumber(1);
+    } catch (err) {
+      console.log(err);
+    }
+
+    return new BigNumber(0);
+  };
 }
