@@ -16,9 +16,11 @@ import {
 } from "./SyncOnboardingCompanion";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
+import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 export type SyncOnboardingScreenProps = CompositeScreenProps<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
@@ -49,6 +51,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   >(null);
 
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
+  const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
 
   // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
@@ -56,6 +59,17 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const [headerOverlayDelayMs, setHeaderOverlayDelayMs] = useState<number>(
     NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
+
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+
+  // Depending on the current step, the close button triggers different paths
+  const onCloseButtonPress = useCallback(() => {
+    if (currentStep === "early-security-check") {
+      setIsESCMandatoryDrawerOpen(true);
+    } else {
+      navigation.popToTop();
+    }
+  }, [currentStep, navigation]);
 
   // Updates dynamically the screen header to handle a possible overlay
   useEffect(() => {
@@ -65,14 +79,14 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
             <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
-              <NavigationHeaderCloseButton />
+              <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
           <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />
         </>
       ),
     });
-  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs]);
+  }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
 
   const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
     device,
@@ -94,6 +108,12 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const notifySyncOnboardingShouldReset = useCallback(() => {
     setIsPollingOn(true);
   }, []);
+
+  // Called when the user taps on the "skip" button in the mandatory drawer
+  const onSkipEarlySecurityCheck = useCallback(() => {
+    setIsESCMandatoryDrawerOpen(false);
+    notifyOnboardingEarlyCheckEnded();
+  }, [notifyOnboardingEarlyCheckEnded]);
 
   // Handles current step and toggling onboarding early check logics
   useEffect(() => {
@@ -226,6 +246,14 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         onClose={handleDesyncClose}
         onRetry={handleDesyncRetry}
         device={device}
+      />
+      <EarlySecurityCheckMandatoryDrawer
+        productName={productName}
+        isOpen={isESCMandatoryDrawerOpen}
+        onResume={() => {
+          setIsESCMandatoryDrawerOpen(false);
+        }}
+        onSkip={onSkipEarlySecurityCheck}
       />
       {stepContent}
     </>
