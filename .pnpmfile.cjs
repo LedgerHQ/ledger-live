@@ -19,19 +19,13 @@ const {
 } = require("./tools/pnpm-utils");
 
 function readPackage(pkg, context) {
-  const major = parseInt(
-    pkg.version?.replace(/(\^|~|>=|>|<=|<)/g, "").split(".")[0] || "0"
-  );
+  const major = parseInt(pkg.version?.replace(/(\^|~|>=|>|<=|<)/g, "").split(".")[0] || "0");
 
   /*
     Fix packages using wrong @types/react versions by making it a peer dependency.
     So ultimately it uses our types package instead of their own which can conflict.
   */
-  if (
-    !!pkg.dependencies["@types/react"] &&
-    !pkg.name.startsWith("@ledgerhq") &&
-    !pkg.private
-  ) {
+  if (!!pkg.dependencies["@types/react"] && !pkg.name.startsWith("@ledgerhq") && !pkg.private) {
     delete pkg.dependencies["@types/react"];
     pkg.peerDependencies["@types/react"] = "*";
     pkg.peerDependenciesMeta = {
@@ -258,15 +252,18 @@ function readPackage(pkg, context) {
       addPeerDependencies("asyncstorage-down", {
         "@react-native-async-storage/async-storage": "*",
       }),
+      addDependencies("documentation", {
+        micromark: "*",
+      }),
       addDependencies("@dfinity/candid", {
         "@dfinity/principal": "*",
       }),
       addDependencies("@dfinity/agent", {
-        "buffer": "*",
+        buffer: "*",
       }),
     ],
     pkg,
-    context
+    context,
   );
 
   return pkg;
