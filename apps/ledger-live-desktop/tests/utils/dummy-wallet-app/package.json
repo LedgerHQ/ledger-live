@@ -7,6 +7,7 @@
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:*",
     "@ledgerhq/wallet-api-client": "^0.15.2",
+    "@ledgerhq/wallet-api-simulator": "^0.12.5",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.7.13",
     "@types/react": "^17.0.53",

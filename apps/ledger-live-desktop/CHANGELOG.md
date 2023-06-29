@@ -1,23 +1,30 @@
 # ledger-live-desktop
 
-## 2.63.0-nightly.1
-
-### Minor Changes
-
-- [#3708](https://github.com/LedgerHQ/ledger-live/pull/3708) [`bdd99894e6`](https://github.com/LedgerHQ/ledger-live/commit/bdd99894e6b4f746f3570b757c7c8da8818e1dbd) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change network fees label to max network fees for eth
-
-## 2.63.0-nightly.0
-
-### Minor Changes
-
-- [#3742](https://github.com/LedgerHQ/ledger-live/pull/3742) [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swapWebApp
+## 2.62.2
 
 ### Patch Changes
 
-- [#3782](https://github.com/LedgerHQ/ledger-live/pull/3782) [`c62fbdf499`](https://github.com/LedgerHQ/ledger-live/commit/c62fbdf499e76b13a520ea5cc7fc3edf45b75f9c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove a duplicate of the date in DateCell due to a wrong rebase
+- [#3851](https://github.com/LedgerHQ/ledger-live/pull/3851) [`5ee86b42a5`](https://github.com/LedgerHQ/ledger-live/commit/5ee86b42a51d708ef15d06fe888e6ccaf9f1664c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add release notes
 
-- Updated dependencies [[`e4bd3297cf`](https://github.com/LedgerHQ/ledger-live/commit/e4bd3297cf1064faa04935c2e35455e06ed88e9e), [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39), [`f2bfff7234`](https://github.com/LedgerHQ/ledger-live/commit/f2bfff7234a4eaa41e039aec09c5dfb68c5cba39), [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d)]:
-  - @ledgerhq/live-common@31.2.0-nightly.0
+## 2.62.2-hotfix.0
+
+### Patch Changes
+
+- [#3849](https://github.com/LedgerHQ/ledger-live/pull/3849) [`5ee86b42a5`](https://github.com/LedgerHQ/ledger-live/commit/5ee86b42a51d708ef15d06fe888e6ccaf9f1664c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Add release notes
+
+## 2.62.1
+
+### Patch Changes
+
+- [#3811](https://github.com/LedgerHQ/ledger-live/pull/3811) [`168bf3a5e7`](https://github.com/LedgerHQ/ledger-live/commit/168bf3a5e7dadef989c4f740831a8b7c11ca7c6a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix apple notarization
+
+- [#3811](https://github.com/LedgerHQ/ledger-live/pull/3811) [`fe3a750139`](https://github.com/LedgerHQ/ledger-live/commit/fe3a750139973d40f8e23203e2d004fb558b36a0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix apple notarize
+
+## 2.62.1-hotfix.0
+
+### Patch Changes
+
+- [#3811](https://github.com/LedgerHQ/ledger-live/pull/3811) [`168bf3a5e7`](https://github.com/LedgerHQ/ledger-live/commit/168bf3a5e7dadef989c4f740831a8b7c11ca7c6a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix apple notarization
 
 ## 2.62.0
 
