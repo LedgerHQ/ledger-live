@@ -261,3 +261,11 @@ export const isNftTransaction = (
   transaction: EvmTransaction,
 ): transaction is EvmTransaction & EvmNftTransaction =>
   ["erc1155", "erc721"].includes(transaction.mode);
+
+/**
+ * Helper adding when necessary a 0
+ * prefix if string length is odd
+ */
+export const padHexString = (str: string): string => {
+  return str.length % 2 !== 0 ? "0" + str : str;
+};
