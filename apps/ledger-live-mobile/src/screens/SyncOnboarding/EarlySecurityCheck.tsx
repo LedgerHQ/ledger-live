@@ -21,9 +21,12 @@ import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
 // Represents the UI status of each check step
-type UiCheckStatus = "inactive" | "active" | "completed" | "failed";
+// TODO: one for each ?
+// Pb: used in CheckCard
+type UiCheckStatus = "inactive" | "active" | "completed" | "refused" | "failed";
 
 // Represents the status of the genuine check from which is derived the displayed UI and if the genuine check hook can be started or not
+// TODO: no skipped anymore
 type GenuineCheckStatus = "unchecked" | "ongoing" | "completed" | "failed" | "skipped";
 // Defines which drawer should be displayed during the genuine check
 type GenuineCheckUiDrawerStatus =
@@ -63,6 +66,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     "idle" | "genuine-check" | "firmware-update-check" | "firmware-updating"
   >("idle");
 
+  // Genuine check status state from which will be derived the displayed UI and if the genuine check hook can be started / is ongoing etc.
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<GenuineCheckStatus>("unchecked");
 
   const [firmwareUpdateCheckStatus, setFirmwareUpdateCheckStatus] =
@@ -75,7 +79,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     error: genuineCheckError,
     resetGenuineCheckState,
   } = useGenuineCheck({
-    isHookEnabled: genuineCheckStatus === "ongoing" && false,
+    isHookEnabled: genuineCheckStatus === "ongoing",
     deviceId: device.deviceId,
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
@@ -130,6 +134,14 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     setCurrentStep("genuine-check");
   }, []);
 
+  const onRetryGenuineCheck = useCallback(() => {
+    track("button_clicked", {
+      button: "Run genuine check again",
+    });
+    resetGenuineCheckState();
+    setGenuineCheckStatus("unchecked");
+  }, [resetGenuineCheckState]);
+
   // Check steps entry points
   useEffect(() => {
     // Genuine check start and retry entry point
@@ -146,6 +158,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     }
   }, [currentStep, genuineCheckStatus]);
 
+  // ***** Handles check states *****
+  // UI states
   let currentDisplayedDrawer: GenuineCheckUiDrawerStatus | FirmwareUpdateUiDrawerStatus = "none";
   let genuineCheckUiStepStatus: UiCheckStatus = "inactive";
   let firmwareUpdateUiStepStatus: UiCheckStatus = "inactive";
@@ -161,7 +175,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     })}`,
   );
 
-  // Handles genuine check UI logic
+  // Handles genuine check states logic (both check state and UI state)
   if (currentStep === "genuine-check") {
     if (genuineCheckStatus === "ongoing") {
       genuineCheckUiStepStatus = "active";
@@ -177,7 +191,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         setGenuineCheckStatus("failed");
       }
 
-      // Updates the UI
+      // Updates the displayed drawer and UI state
       if (devicePermissionState === "unlock-needed") {
         // As the PIN has not been set before the ESC, the "unlock-needed" happens if the device is powered off.
         // But an error `CantOpenDevice` should be triggered quickly after.
@@ -185,7 +199,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       } else if (devicePermissionState === "requested") {
         currentDisplayedDrawer = "allow-manager";
       } else if (devicePermissionState === "refused") {
-        currentDisplayedDrawer = "genuine-check-failed";
+        // TODO: no drawer
+        currentDisplayedDrawer = "none";
+        genuineCheckUiStepStatus = "refused";
+        // currentDisplayedDrawer = "genuine-check-failed";
       }
     } else if (genuineCheckStatus === "failed") {
       // Currently genuine check failed or refused is handled in the same way. This can be changed in the future.
@@ -195,8 +212,9 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   // `currentStep` can be any value for those UI updates
   if (genuineCheckStatus === "completed") {
     genuineCheckUiStepStatus = "completed";
-  } else if (genuineCheckStatus === "skipped") {
-    // "skipped" represents the user skipping the genuine check because they refused or it failed
+  } else if (genuineCheckStatus === "skipped" || genuineCheckStatus === "failed") {
+    // "skipped" represents the user skipping the genuine check because they refused it (on) or it failed
+    // TODO: no skipped anymore
     genuineCheckUiStepStatus = "failed";
   }
 
@@ -238,7 +256,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     }
   }
 
-  // Handles the genuine check UI step title and description
+  // ***** Updates UI *****
+  // For both genuine check step and firmware update check step
+  let bottomCta = <></>;
+
+  // Updates the genuine check UI step
   let genuineCheckStepTitle;
   let genuineCheckStepDescription: string | null = null;
   const firmwareUpdateCheckStepDescription: string | null = null;
@@ -254,7 +276,15 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       break;
     case "failed":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.failed.title");
-      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.failed.description");
+      break;
+    case "refused":
+      genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.refused.title");
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.refused.description");
+      bottomCta = (
+        <Button type="main" onPress={onRetryGenuineCheck}>
+          {t("earlySecurityCheck.genuineCheckStep.refused.cta")}
+        </Button>
+      );
       break;
     default:
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.inactive.title");
@@ -317,12 +347,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         </Link>
       </Flex>
     );
-  }
 
-  let cta = <></>;
-
-  if (currentStep === "idle") {
-    cta = (
+    bottomCta = (
       <Button type="main" onPress={onStartChecks}>
         {t("earlySecurityCheck.idle.checkCta")}
       </Button>
@@ -354,15 +380,9 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         productName={productName}
         isOpen={currentDisplayedDrawer === "genuine-check-failed"}
         error={genuineCheckError}
-        onRetry={() => {
-          track("button_clicked", {
-            button: "run genuine check again",
-            drawer: "Failed Stax hardware check",
-          });
-          resetGenuineCheckState();
-          setGenuineCheckStatus("unchecked");
-        }}
+        onRetry={onRetryGenuineCheck}
         onSkip={() => {
+          // TODO: to remove -> or to actually go to the sync onboarding
           track("button_clicked", {
             button: "check if hardware genuine later",
             drawer: "Failed Stax hardware check",
@@ -403,7 +423,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
             {stepContent}
           </Flex>
           <Flex mx="5" mb="3">
-            {cta}
+            {bottomCta}
           </Flex>
         </Flex>
       </Flex>
@@ -434,7 +454,8 @@ const CheckCard = ({ title, description, index, status, ...props }: CheckCardPro
       checkIcon = <CircledCheckSolidMedium color="success.c50" size={24} />;
       break;
     case "failed":
-      checkIcon = <WarningSolidMedium color="warning.c40" size={24} />;
+    case "refused":
+      checkIcon = <WarningSolidMedium color="warning.c60" size={24} />;
       break;
     case "inactive":
     default:
