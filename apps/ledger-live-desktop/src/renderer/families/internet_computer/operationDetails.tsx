@@ -9,9 +9,9 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import type { Account } from "@ledgerhq/types-live";
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: any },
-  type: string,
-  account: Account,
+  extra: { [key: string]: string };
+  type: string;
+  account: Account;
 };
 
 const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
