@@ -258,7 +258,7 @@ export function useDeepLinkHandler() {
           break;
         }
         case "discover":
-          if (path.startsWith("protect")) {
+          if (path?.startsWith("protect")) {
             navigate(`/recover/${path}`, undefined, search);
           } else {
             navigate(`/platform/${path ?? ""}`, query);
