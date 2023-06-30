@@ -35,15 +35,14 @@ function StepConfirmation({
   account,
 }: StepProps) {
   const voteAccAddress = transaction?.validators[0]?.address;
-  const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
+  const currencyId = account.currency.id;
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);
-      const currency = account?.currency?.id?.toUpperCase();
       track("staking_completed", {
-        currency,
+        currency: currencyId.toUpperCase(),
         validator: chosenValidator?.name || voteAccAddress,
         delegation: "delegation",
         flow: "stake",
