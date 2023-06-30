@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 31.2.0-nightly.2
+
+### Patch Changes
+
+- [#3831](https://github.com/LedgerHQ/ledger-live/pull/3831) [`04f63f0776`](https://github.com/LedgerHQ/ledger-live/commit/04f63f077647f9d77fe2c80ec62f872547ed332a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Fix no funds swap result
+
+- Updated dependencies [[`c660c4e389`](https://github.com/LedgerHQ/ledger-live/commit/c660c4e389ac200ef308cbc3882930d392375de3), [`2c28d5aab3`](https://github.com/LedgerHQ/ledger-live/commit/2c28d5aab36b8b0cf2cb2a50e02eac4c5a588e41)]:
+  - @ledgerhq/coin-framework@0.4.0-nightly.1
+  - @ledgerhq/coin-algorand@0.2.3-nightly.1
+  - @ledgerhq/coin-evm@0.2.2-nightly.1
+  - @ledgerhq/coin-polkadot@0.2.1-nightly.1
+
 ## 31.2.0-nightly.1
 
 ### Minor Changes

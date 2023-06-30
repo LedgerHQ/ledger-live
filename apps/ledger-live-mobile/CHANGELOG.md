@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.26.0-nightly.3
+
+### Patch Changes
+
+- [#3848](https://github.com/LedgerHQ/ledger-live/pull/3848) [`2c28d5aab3`](https://github.com/LedgerHQ/ledger-live/commit/2c28d5aab36b8b0cf2cb2a50e02eac4c5a588e41) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add debug setting to simulate LL having connected once to a Ledger Stax
+
+- [#3831](https://github.com/LedgerHQ/ledger-live/pull/3831) [`04f63f0776`](https://github.com/LedgerHQ/ledger-live/commit/04f63f077647f9d77fe2c80ec62f872547ed332a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Fix no funds swap result
+
+- Updated dependencies [[`c660c4e389`](https://github.com/LedgerHQ/ledger-live/commit/c660c4e389ac200ef308cbc3882930d392375de3), [`2c28d5aab3`](https://github.com/LedgerHQ/ledger-live/commit/2c28d5aab36b8b0cf2cb2a50e02eac4c5a588e41), [`04f63f0776`](https://github.com/LedgerHQ/ledger-live/commit/04f63f077647f9d77fe2c80ec62f872547ed332a)]:
+  - @ledgerhq/coin-framework@0.4.0-nightly.1
+  - @ledgerhq/live-common@31.2.0-nightly.2
+
 ## 3.26.0-nightly.2
 
 ### Patch Changes

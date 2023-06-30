@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.63.0-nightly.1
+
+### Minor Changes
+
+- [#3844](https://github.com/LedgerHQ/ledger-live/pull/3844) [`74ab0c1f48`](https://github.com/LedgerHQ/ledger-live/commit/74ab0c1f4856e6619bb2af1ecd274e5bdf792a3a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fixed regression in firmware update for old devices on LLD
+
+### Patch Changes
+
+- [#3831](https://github.com/LedgerHQ/ledger-live/pull/3831) [`04f63f0776`](https://github.com/LedgerHQ/ledger-live/commit/04f63f077647f9d77fe2c80ec62f872547ed332a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Fix no funds swap result
+
+- [#3788](https://github.com/LedgerHQ/ledger-live/pull/3788) [`48b3880202`](https://github.com/LedgerHQ/ledger-live/commit/48b388020218e935c0e628ed109e571611f76f90) Thanks [@flocks](https://github.com/flocks)! - Fix vault center help url
+
+- Updated dependencies [[`c660c4e389`](https://github.com/LedgerHQ/ledger-live/commit/c660c4e389ac200ef308cbc3882930d392375de3), [`2c28d5aab3`](https://github.com/LedgerHQ/ledger-live/commit/2c28d5aab36b8b0cf2cb2a50e02eac4c5a588e41), [`04f63f0776`](https://github.com/LedgerHQ/ledger-live/commit/04f63f077647f9d77fe2c80ec62f872547ed332a)]:
+  - @ledgerhq/coin-framework@0.4.0-nightly.1
+  - @ledgerhq/live-common@31.2.0-nightly.2
+
 ## 2.63.0-nightly.0
 
 ### Minor Changes

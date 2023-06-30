@@ -1,5 +1,15 @@
 # @ledgerhq/coin-framework
 
+## 0.4.0-nightly.1
+
+### Minor Changes
+
+- [#3853](https://github.com/LedgerHQ/ledger-live/pull/3853) [`c660c4e389`](https://github.com/LedgerHQ/ledger-live/commit/c660c4e389ac200ef308cbc3882930d392375de3) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - avoid deviceId capturing
+
+### Patch Changes
+
+- [#3848](https://github.com/LedgerHQ/ledger-live/pull/3848) [`2c28d5aab3`](https://github.com/LedgerHQ/ledger-live/commit/2c28d5aab36b8b0cf2cb2a50e02eac4c5a588e41) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - NFT fixtures: replace NFT with Stax metadata (previous one didn't have Stax metadata)
+
 ## 0.3.7-nightly.0
 
 ### Patch Changes
