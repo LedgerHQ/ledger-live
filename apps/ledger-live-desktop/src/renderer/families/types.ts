@@ -298,9 +298,7 @@ export type LLDCoinFamily<
   /**
    * Component banner before Account body header
    */
-  IncompleteHistoryBanner?: React.ComponentType<{
-    account: A;
-  }>;
+  historyLowestBlock?: ({ account }: { account: A }) => BigNumber;
 };
 
 export type FieldComponentProps<
