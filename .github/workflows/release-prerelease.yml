@@ -75,7 +75,7 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          git commit -m "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
@@ -84,13 +84,13 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          git commit -m "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
       - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git add .
-          git commit -m ":rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
+          git commit -m "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
       - name: publish prerelease
         run: pnpm changeset publish

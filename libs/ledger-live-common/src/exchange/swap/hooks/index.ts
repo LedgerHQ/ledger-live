@@ -8,3 +8,4 @@ export * from "./useUpdateMaxAmount";
 export * from "./useProviderRates";
 export * from "./useFromState";
 export * from "./useToState";
+export * from "./usePageState";
