@@ -89,6 +89,10 @@ async function init() {
     }
   });
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
+  if (process.env.LEDGER_LIVE_DEEPLINK) {
+    deepLinkUrl = process.env.LEDGER_LIVE_DEEPLINK;
+    store.dispatch(setDeepLinkUrl(deepLinkUrl));
+  }
   ipcRenderer.once("deep-linking", (_, url: string) => {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
