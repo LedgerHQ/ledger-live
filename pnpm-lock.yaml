@@ -14625,6 +14625,14 @@ packages:
       events: 3.3.0
     dev: false
 
+  /@ledgerhq/hw-transport@6.28.1:
+    resolution: {integrity: sha512-RaZe+abn0zBIz82cE9tp7Y7aZkHWWbEaE2yJpfxT8AhFz3fx+BU0kLYzuRN9fmA7vKueNJ1MTVUCY+Ex9/CHSQ==}
+    dependencies:
+      '@ledgerhq/devices': 8.0.4
+      '@ledgerhq/errors': 6.12.7
+      events: 3.3.0
+    dev: false
+
   /@ledgerhq/hw-transport@6.28.5:
     resolution: {integrity: sha512-xmw5RhYbqExBBqTvOnOjN/RYNIGMBxFJ+zcYNfkfw/E+uEY3L7xq8Z7sC/n7URTT6xtEctElqduBJnBQE4OQtw==}
     dependencies:
