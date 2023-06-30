@@ -47,10 +47,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
         style={styles.camera}
         type={CameraType.back}
         ratio="16:9"
-        onBarCodeScanned={({ data }: BarCodeScanningResult) => {
-          console.log("qrcoded", new Date());
-          onResult(data);
-        }}
+        onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
         barCodeScannerSettings={{
           barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
         }}

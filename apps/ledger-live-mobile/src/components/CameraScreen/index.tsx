@@ -16,19 +16,14 @@ type Props = {
   liveQrCode?: boolean;
   instruction?: React.ReactNode | string;
 };
-export default function CameraScreen({
-  width,
-  height,
-  liveQrCode,
-  instruction,
-}: Props) {
+export default function CameraScreen({ width, height, liveQrCode, instruction }: Props) {
   const progress = undefined;
   const { colors } = useTheme();
   const { goBack } = useNavigation();
 
   const onClose = useCallback(() => {
     track("button_clicked", {
-      button: "Close"
+      button: "Close",
     });
     goBack();
   }, [goBack]);
@@ -67,22 +62,10 @@ export default function CameraScreen({
           </Flex>
         </TouchableOpacity>
       </Flex>
-      <Flex
-        flexDirection={"row"}
-        justifyContent={"space-evenly"}
-        alignItems={"center"}
-      >
-        <Box
-          flexGrow={1}
-          backgroundColor={rgba(colors.constant.black, 0.8)}
-          height={"100%"}
-        />
+      <Flex flexDirection={"row"} justifyContent={"space-evenly"} alignItems={"center"}>
+        <Box flexGrow={1} backgroundColor={rgba(colors.constant.black, 0.8)} height={"100%"} />
         <ScanTargetSvg />
-        <Box
-          flexGrow={1}
-          backgroundColor={rgba(colors.constant.black, 0.8)}
-          height={"100%"}
-        />
+        <Box flexGrow={1} backgroundColor={rgba(colors.constant.black, 0.8)} height={"100%"} />
       </Flex>
       <Box backgroundColor={rgba(colors.constant.black, 0.8)} flex={1}>
         <QRCodeBottomLayer
