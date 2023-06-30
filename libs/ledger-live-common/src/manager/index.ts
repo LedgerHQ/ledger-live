@@ -4,7 +4,6 @@ import semver from "semver";
 import chunk from "lodash/chunk";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { UnknownMCU } from "@ledgerhq/errors";
-import { listCryptoCurrencies } from "../currencies";
 import ManagerAPI from "./api";
 import { getProviderId } from "./provider";
 import type {
@@ -28,13 +27,7 @@ const oldAppsInstallDisabled = [
 ];
 
 const canHandleInstall = (app: { name: string }): boolean =>
-  !oldAppsInstallDisabled.includes(app.name) &&
-  !listCryptoCurrencies(true, true).some(
-    coin =>
-      coin.managerAppName &&
-      coin.terminated &&
-      coin.managerAppName.toLowerCase() === app.name.toLowerCase(),
-  );
+  !oldAppsInstallDisabled.includes(app.name);
 
 const CacheAPI = {
   // TODO: Move to new ManagerAPI

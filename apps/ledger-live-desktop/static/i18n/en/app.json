@@ -2030,7 +2030,6 @@
         "install": "Install update",
         "restore": "Restore settings",
         "apps": "Restore apps",
-
         "updateMCU": "Firmware update",
         "updating": "Firmware update",
         "reset": "Prepare device",
@@ -4312,6 +4311,7 @@
         "nextButton": "Get started",
         "noDevice": "No device?",
         "buyLink": "No device? Buy a Ledger Nano X",
+        "recoverSignIn": "Log in for Ledger Recover",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",
         "termsAndConditions": "Terms and conditions",
         "and": "and",
@@ -4361,7 +4361,7 @@
           },
           "4": {
             "title": "Restore using Ledger Recover",
-            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+            "description": "You need to have a Ledger Recover subscription."
           }
         }
       },
@@ -5955,5 +5955,8 @@
       "contactSupport": "Contact Ledger support",
       "saveLog": "Save log"
     }
+  },
+  "recoverRestore": {
+    "title": "Connect and unlock your Ledger"
   }
 }

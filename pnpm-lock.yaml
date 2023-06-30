@@ -219,7 +219,7 @@ importers:
         version: 4.6.3
       '@electron/remote':
         specifier: ^2
-        version: 2.0.8(electron@23.1.3)
+        version: 2.0.8(electron@25.1.1)
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -648,8 +648,8 @@ importers:
         specifier: ^4.3.4
         version: 4.3.4
       electron:
-        specifier: ^23.1.3
-        version: 23.1.3
+        specifier: ^25.1.1
+        version: 25.1.1
       electron-builder:
         specifier: ^23.6.0
         version: 23.6.0(lodash@4.17.21)
@@ -1940,6 +1940,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/hw-transport-node-speculos':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-node-speculos-http
@@ -2394,8 +2397,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2437,8 +2440,8 @@ importers:
         specifier: ^7.3.9
         version: 7.3.9
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2464,8 +2467,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2513,8 +2516,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2586,8 +2589,8 @@ importers:
         specifier: ^0.25.0
         version: 0.25.0
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2626,8 +2629,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2687,8 +2690,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       ethers:
         specifier: ^5.6.9
         version: 5.7.0
@@ -2733,8 +2736,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.9.1)
@@ -2791,8 +2794,8 @@ importers:
         specifier: ^0.26.1
         version: 0.26.1
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2831,8 +2834,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2871,8 +2874,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2920,8 +2923,8 @@ importers:
         specifier: ^0.26.1
         version: 0.26.1
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -2963,8 +2966,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3006,8 +3009,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3043,8 +3046,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3080,8 +3083,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3117,8 +3120,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3160,8 +3163,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3194,8 +3197,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3243,8 +3246,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3295,8 +3298,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3341,8 +3344,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3393,8 +3396,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3433,8 +3436,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3476,8 +3479,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3522,8 +3525,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.11
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.11)(ts-node@10.7.0)
@@ -3568,8 +3571,8 @@ importers:
         specifier: ^0.0.12
         version: 0.0.12
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3611,8 +3614,8 @@ importers:
         specifier: ^1.0.2
         version: 1.0.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3654,8 +3657,8 @@ importers:
         specifier: ^1.0.5
         version: 1.0.6
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3681,8 +3684,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3727,8 +3730,8 @@ importers:
         specifier: ^0.66.24
         version: 0.66.24
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3782,8 +3785,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3816,8 +3819,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.9.1)
@@ -3850,8 +3853,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.9.1)
@@ -3881,8 +3884,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.9.1)
@@ -3908,8 +3911,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3935,8 +3938,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -3975,8 +3978,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       documentation:
-        specifier: 13.2.4
-        version: 13.2.4
+        specifier: 13.2.5
+        version: 13.2.5
       jest:
         specifier: ^28.1.1
         version: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
@@ -5593,7 +5596,7 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-environment-visitor': 7.22.1
       '@babel/helper-function-name': 7.21.0
       '@babel/helper-member-expression-to-functions': 7.21.0
       '@babel/helper-optimise-call-expression': 7.18.6
@@ -5963,7 +5966,7 @@ packages:
     resolution: {integrity: sha512-vujDMtB6LVfNW13jhlCrp48QNslK6JXi7lQG736HVbHz/mbf4Dc7tIRh1Xf5C0rF7BP8iiSxGMCmY6Ci1ven3A==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-environment-visitor': 7.22.1
       '@babel/helper-member-expression-to-functions': 7.21.0
       '@babel/helper-optimise-call-expression': 7.18.6
       '@babel/template': 7.21.9
@@ -9067,7 +9070,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.21.4
       '@babel/generator': 7.22.3
-      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-environment-visitor': 7.22.1
       '@babel/helper-function-name': 7.21.0
       '@babel/helper-hoist-variables': 7.18.6
       '@babel/helper-split-export-declaration': 7.18.6
@@ -9142,7 +9145,7 @@ packages:
     resolution: {integrity: sha512-rU2oY501qDxE8Pyo7i/Orqma4ziCOrby0/9mvbDUGEfvZjb279Nk9k19e2fiCxHbRRpY2ZyrgW1eq22mvmOIzA==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/helper-string-parser': 7.19.4
+      '@babel/helper-string-parser': 7.21.5
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
 
@@ -10592,12 +10595,12 @@ packages:
       - supports-color
     dev: true
 
-  /@electron/remote@2.0.8(electron@23.1.3):
+  /@electron/remote@2.0.8(electron@25.1.1):
     resolution: {integrity: sha512-P10v3+iFCIvEPeYzTWWGwwHmqWnjoh8RYnbtZAb3RlQefy4guagzIwcWtfftABIfm6JJTNQf4WPSKWZOpLmHXw==}
     peerDependencies:
       electron: '>= 13.0.0'
     dependencies:
-      electron: 23.1.3
+      electron: 25.1.1
     dev: false
 
   /@electron/universal@1.2.1:
@@ -21405,6 +21408,7 @@ packages:
 
   /@types/node@16.18.16:
     resolution: {integrity: sha512-ZOzvDRWp8dCVBmgnkIqYCArgdFOO9YzocZp8Ra25N/RStKiWvMOXHMz+GjSeVNe5TstaTmTWPucGJkDw0XXJWA==}
+    dev: true
 
   /@types/node@17.0.32:
     resolution: {integrity: sha512-eAIcfAvhf/BkHcf4pkLJ7ECpBAhh9kcxRBpip9cTiO+hf+aJrsxYxBeS6OXvOd9WqNAJmavXVpZvY1rBjNsXmw==}
@@ -29103,8 +29107,8 @@ packages:
     dependencies:
       esutils: 2.0.3
 
-  /documentation@13.2.4:
-    resolution: {integrity: sha512-/E22DKX9W90eF/kK001zu/WAhTrFuK28nM8v4x/pclbatHg23O5Jr1+wl/LsQbqOK0wKMsoWd9iZ2fy7l+gopA==}
+  /documentation@13.2.5:
+    resolution: {integrity: sha512-d1TrfrHXYZR63xrOzkYwwe297vkSwBoEhyyMBOi20T+7Ohe1aX1dW4nqXncQmdmE5MxluSaxxa3BW1dCvbF5AQ==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
@@ -29131,6 +29135,7 @@ packages:
       lodash: 4.17.21
       mdast-util-find-and-replace: 1.1.1
       mdast-util-inject: 1.1.0
+      micromark: 2.11.4
       micromatch: 3.1.10
       mime: 2.6.0
       module-deps-sortable: 5.0.3
@@ -29138,6 +29143,7 @@ packages:
       pify: 5.0.0
       read-pkg-up: 4.0.0
       remark: 13.0.0
+      remark-gfm: 1.0.0
       remark-html: 13.0.2
       remark-reference-links: 5.0.0
       remark-toc: 7.2.0
@@ -29500,14 +29506,14 @@ packages:
       - supports-color
     dev: false
 
-  /electron@23.1.3:
-    resolution: {integrity: sha512-MNjuUS2K6/OxlJ0zTC77djo1R3xM038v1kUunvNFgDMZHYKpSOzOMNsPiwM2BGp+uZbkUb0nTnYafxXrM8H16w==}
+  /electron@25.1.1:
+    resolution: {integrity: sha512-WvFUfVsJn6YiP35UxdibYVjU2LceastyMm4SVp2bmb4XvKEvItAIiwxgm7tPC5Syl1243aRCvQLqr84sZ71pyQ==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
     dependencies:
       '@electron/get': 2.0.2
-      '@types/node': 16.18.16
+      '@types/node': 18.15.11
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
@@ -40777,6 +40783,12 @@ packages:
   /markdown-escapes@1.0.4:
     resolution: {integrity: sha512-8z4efJYk43E0upd0NbVXwgSTQs6cT3T06etieCMEg7dRbzCbxUCK/GHlX8mhHRDcp+OLlHkPKsvqQTCvsRl2cg==}
 
+  /markdown-table@2.0.0:
+    resolution: {integrity: sha512-Ezda85ToJUBhM6WGaG6veasyym+Tbs3cMAw/ZhOPqXiYsr0jgocBV3j3nx+4lk47plLlIqjwuTm/ywVI+zjJ/A==}
+    dependencies:
+      repeat-string: 1.6.1
+    dev: true
+
   /markdown-to-jsx@7.1.7(react@17.0.2):
     resolution: {integrity: sha512-VI3TyyHlGkO8uFle0IOibzpO1c1iJDcXcS/zBrQrXQQvJ2tpdwVzVZ7XdKsyRz1NdRmre4dqQkMZzUHaKIG/1w==}
     engines: {node: '>= 10'}
@@ -40867,6 +40879,47 @@ packages:
       micromark: 2.11.4
       parse-entities: 2.0.0
       unist-util-stringify-position: 2.0.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /mdast-util-gfm-autolink-literal@0.1.3:
+    resolution: {integrity: sha512-GjmLjWrXg1wqMIO9+ZsRik/s7PLwTaeCHVB7vRxUwLntZc8mzmTsLVr6HW1yLokcnhfURsn5zmSVdi3/xWWu1A==}
+    dependencies:
+      ccount: 1.1.0
+      mdast-util-find-and-replace: 1.1.1
+      micromark: 2.11.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /mdast-util-gfm-strikethrough@0.2.3:
+    resolution: {integrity: sha512-5OQLXpt6qdbttcDG/UxYY7Yjj3e8P7X16LzvpX8pIQPYJ/C2Z1qFGMmcw+1PZMUM3Z8wt8NRfYTvCni93mgsgA==}
+    dependencies:
+      mdast-util-to-markdown: 0.6.5
+    dev: true
+
+  /mdast-util-gfm-table@0.1.6:
+    resolution: {integrity: sha512-j4yDxQ66AJSBwGkbpFEp9uG/LS1tZV3P33fN1gkyRB2LoRL+RR3f76m0HPHaby6F4Z5xr9Fv1URmATlRRUIpRQ==}
+    dependencies:
+      markdown-table: 2.0.0
+      mdast-util-to-markdown: 0.6.5
+    dev: true
+
+  /mdast-util-gfm-task-list-item@0.1.6:
+    resolution: {integrity: sha512-/d51FFIfPsSmCIRNp7E6pozM9z1GYPIkSy1urQ8s/o4TC22BZ7DqfHFWiqBD23bc7J3vV1Fc9O4QIHBlfuit8A==}
+    dependencies:
+      mdast-util-to-markdown: 0.6.5
+    dev: true
+
+  /mdast-util-gfm@0.1.2:
+    resolution: {integrity: sha512-NNkhDx/qYcuOWB7xHUGWZYVXvjPFFd6afg6/e2g+SV4r9q5XUcCbV4Wfa3DLYIiD+xAEZc6K4MGaE/m0KDcPwQ==}
+    dependencies:
+      mdast-util-gfm-autolink-literal: 0.1.3
+      mdast-util-gfm-strikethrough: 0.2.3
+      mdast-util-gfm-table: 0.1.6
+      mdast-util-gfm-task-list-item: 0.1.6
+      mdast-util-to-markdown: 0.6.5
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -42212,6 +42265,55 @@ packages:
 
   /microevent.ts@0.1.1:
     resolution: {integrity: sha512-jo1OfR4TaEwd5HOrt5+tAZ9mqT4jmpNAusXtyfNzqVm9uiSYFZlKM1wYL4oU7azZW/PxQW53wM0S6OR1JHNa2g==}
+
+  /micromark-extension-gfm-autolink-literal@0.5.7:
+    resolution: {integrity: sha512-ePiDGH0/lhcngCe8FtH4ARFoxKTUelMp4L7Gg2pujYD5CSMb9PbblnyL+AAMud/SNMyusbS2XDSiPIRcQoNFAw==}
+    dependencies:
+      micromark: 2.11.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /micromark-extension-gfm-strikethrough@0.6.5:
+    resolution: {integrity: sha512-PpOKlgokpQRwUesRwWEp+fHjGGkZEejj83k9gU5iXCbDG+XBA92BqnRKYJdfqfkrRcZRgGuPuXb7DaK/DmxOhw==}
+    dependencies:
+      micromark: 2.11.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /micromark-extension-gfm-table@0.4.3:
+    resolution: {integrity: sha512-hVGvESPq0fk6ALWtomcwmgLvH8ZSVpcPjzi0AjPclB9FsVRgMtGZkUcpE0zgjOCFAznKepF4z3hX8z6e3HODdA==}
+    dependencies:
+      micromark: 2.11.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /micromark-extension-gfm-tagfilter@0.3.0:
+    resolution: {integrity: sha512-9GU0xBatryXifL//FJH+tAZ6i240xQuFrSL7mYi8f4oZSbc+NvXjkrHemeYP0+L4ZUT+Ptz3b95zhUZnMtoi/Q==}
+    dev: true
+
+  /micromark-extension-gfm-task-list-item@0.3.3:
+    resolution: {integrity: sha512-0zvM5iSLKrc/NQl84pZSjGo66aTGd57C1idmlWmE87lkMcXrTxg1uXa/nXomxJytoje9trP0NDLvw4bZ/Z/XCQ==}
+    dependencies:
+      micromark: 2.11.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /micromark-extension-gfm@0.3.3:
+    resolution: {integrity: sha512-oVN4zv5/tAIA+l3GbMi7lWeYpJ14oQyJ3uEim20ktYFAcfX1x3LNlFGGlmrZHt7u9YlKExmyJdDGaTt6cMSR/A==}
+    dependencies:
+      micromark: 2.11.4
+      micromark-extension-gfm-autolink-literal: 0.5.7
+      micromark-extension-gfm-strikethrough: 0.6.5
+      micromark-extension-gfm-table: 0.4.3
+      micromark-extension-gfm-tagfilter: 0.3.0
+      micromark-extension-gfm-task-list-item: 0.3.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /micromark@2.11.4:
     resolution: {integrity: sha512-+WoovN/ppKolQOFIAajxi7Lu9kInbPxFuTBVEavFcL8eAfVstoc5MocPmqBeAdBOJV00uaVjegzH4+MA0DN/uA==}
@@ -48925,6 +49027,15 @@ packages:
 
   /remark-footnotes@2.0.0:
     resolution: {integrity: sha512-3Clt8ZMH75Ayjp9q4CorNeyjwIxHFcTkaektplKGl2A1jNGEUey8cKL0ZC5vJwfcD5GFGsNLImLG/NGzWIzoMQ==}
+    dev: true
+
+  /remark-gfm@1.0.0:
+    resolution: {integrity: sha512-KfexHJCiqvrdBZVbQ6RopMZGwaXz6wFJEfByIuEwGf0arvITHjiKKZ1dpXujjH9KZdm1//XJQwgfnJ3lmXaDPA==}
+    dependencies:
+      mdast-util-gfm: 0.1.2
+      micromark-extension-gfm: 0.3.3
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /remark-html@13.0.2:

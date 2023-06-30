@@ -10,6 +10,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { ActionButtonEvent } from "../../components/FabActions";
 
 import { NavigatorName, ScreenName } from "../../const";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 /*
  * Declare the types for the properties and return payload.
@@ -18,6 +19,7 @@ import { NavigatorName, ScreenName } from "../../const";
 export interface getActionsType {
   account: ElrondAccount;
   parentAccount?: Account;
+  parentRoute: RouteProp<ParamListBase, ScreenName>;
 }
 export type getActionsReturnType = ActionButtonEvent[] | null | undefined;
 
@@ -27,9 +29,11 @@ type NavigationParamsType = readonly [name: string, options: object];
  * Declare the function that will return the actions' settings array.
  */
 
-const getMainActions = (props: getActionsType): getActionsReturnType => {
-  const { account, parentAccount } = props;
-
+const getMainActions = ({
+  account,
+  parentAccount,
+  parentRoute,
+}: getActionsType): getActionsReturnType => {
   const delegationEnabled = account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT);
 
   /*
@@ -55,7 +59,10 @@ const getMainActions = (props: getActionsType): getActionsReturnType => {
    * Return the array of actions.
    */
   const navigationParams = delegationEnabled
-    ? [NavigatorName.ElrondDelegationFlow, { screen, params: { account, validators } }]
+    ? [
+        NavigatorName.ElrondDelegationFlow,
+        { screen, params: { account, validators, source: parentRoute } },
+      ]
     : [
         NavigatorName.NoFundsFlow,
         {
