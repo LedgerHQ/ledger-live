@@ -142,10 +142,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       accountId: account.id,
       transaction,
       status,
-      validatorName: chosenValidatorName,
+      validators: validators,
       source: route.params.source,
     });
-  }, [status, account, navigation, transaction, route.params.source, chosenValidatorName]);
+  }, [status, account, navigation, transaction, route.params.source, validators]);
 
   /*
    * Callback function to be called when wanting to change the transaction amount.

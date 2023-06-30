@@ -39,7 +39,7 @@ export type ElrondDelegationFlowParamList = {
     parentId?: string;
     transaction?: Transaction | null | undefined;
     status?: TransactionStatus;
-    validatorName: string;
+    validators: ElrondProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationConnectDevice]: {
@@ -54,7 +54,7 @@ export type ElrondDelegationFlowParamList = {
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
-    validatorName: string;
+    validators: ElrondProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationValidationError]: {
@@ -69,7 +69,7 @@ export type ElrondDelegationFlowParamList = {
     deviceId: string;
     transaction: Transaction;
     result: Operation;
-    validatorName: string;
+    validators: ElrondProvider[];
     source?: RouteProp<ParamListBase, ScreenName>;
   };
 };
