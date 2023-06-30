@@ -29,7 +29,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
-  const validator = route.params.validatorName ?? "unknown";
+  const validator = route.params.transaction.recipient;
   const source = route.params.source?.name ?? "unknown";
 
   useEffect(() => {
