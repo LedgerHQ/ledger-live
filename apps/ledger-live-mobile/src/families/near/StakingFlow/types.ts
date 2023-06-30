@@ -41,7 +41,6 @@ export type NearStakingFlowParamList = {
   };
   [ScreenName.NearStakingSelectDevice]: {
     accountId: string;
-    validatorName: string;
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
@@ -50,7 +49,6 @@ export type NearStakingFlowParamList = {
   [ScreenName.NearStakingConnectDevice]: {
     device: Device;
     accountId: string;
-    validatorName: string;
     parentId?: string;
     transaction: Transaction;
     status: TransactionStatus;
@@ -64,14 +62,14 @@ export type NearStakingFlowParamList = {
   };
   [ScreenName.NearStakingValidationError]: {
     accountId: string;
-    validatorName: string;
+    transaction: Transaction;
     error: Error;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.NearStakingValidationSuccess]: {
     accountId: string;
-    validatorName: string;
     result: Operation;
+    transaction: Transaction;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
 };
