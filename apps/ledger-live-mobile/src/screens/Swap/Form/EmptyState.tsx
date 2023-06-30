@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
-const EmptyState: React.FC<T> = () => {
+const EmptyState = () => {
   const { t } = useTranslation();
   return (
     <Box alignItems={"center"}>
