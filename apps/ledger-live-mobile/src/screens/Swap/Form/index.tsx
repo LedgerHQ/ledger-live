@@ -490,12 +490,7 @@ export function SwapForm({
             />
             {(pageState === "empty" || pageState === "loading") && (
               <Flex height={200} alignItems={"center"} justifyContent={"center"}>
-                {pageState === "empty" && (
-                  <EmptyState
-                    from={swapTransaction.swap.from.currency?.ticker || ""}
-                    to={swapTransaction.swap.to.currency?.ticker || ""}
-                  />
-                )}
+                {pageState === "empty" && <EmptyState />}
                 {pageState === "loading" && <Loading size={20} color="neutral.c70" />}
               </Flex>
             )}

@@ -3183,7 +3183,7 @@
           "withdrawalsBlockedError": {
             "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
           },
-          "noProviders": "No quotes found for this swap. {{from}} cannot be swapped with {{to}}. Please choose another pair."
+          "noProviders": "No results found. There are no quotes available with the current preferences."
         }
       }
     },
