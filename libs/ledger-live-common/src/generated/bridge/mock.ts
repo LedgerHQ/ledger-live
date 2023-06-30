@@ -6,6 +6,7 @@ import ripple from "../../families/ripple/bridge/mock";
 import solana from "../../families/solana/bridge/mock";
 import stellar from "../../families/stellar/bridge/mock";
 import tezos from "../../families/tezos/bridge/mock";
+import tron from "../../families/tron/bridge/mock";
 
 export default {
   algorand,
@@ -16,4 +17,5 @@ export default {
   solana,
   stellar,
   tezos,
+  tron,
 };

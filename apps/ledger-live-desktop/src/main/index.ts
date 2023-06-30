@@ -133,7 +133,7 @@ app.on("ready", async () => {
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
   ipcMain.on("webview-dom-ready", (_, id) => {
     const wc = webContents.fromId(id);
-    wc.setWindowOpenHandler(({ url }) => {
+    wc?.setWindowOpenHandler(({ url }) => {
       const protocol = new URL(url).protocol;
       if (["https:", "http:"].includes(protocol)) {
         shell.openExternal(url);

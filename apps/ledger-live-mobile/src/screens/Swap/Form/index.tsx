@@ -12,6 +12,7 @@ import {
   usePollKYCStatus,
   useSwapTransaction,
   useSwapProviders,
+  usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
@@ -48,6 +49,7 @@ import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
 import { sharedSwapTracking, useTrackSwapError } from "../utils";
+import EmptyState from "./EmptyState";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
@@ -111,27 +113,30 @@ export function SwapForm({
     },
     [track],
   );
+
+  const onBeforeTransaction = useCallback(() => {
+    setCurrentBanner(ActionRequired.None);
+    setCurrentFlow(ActionRequired.None);
+    setError(undefined);
+  }, []);
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     onNoRates,
+    onBeforeTransaction,
     excludeFixedRates: true,
     providers,
     includeDEX: false,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const pageState = usePageState(swapTransaction, swapError);
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
   const providerKYC = provider ? swapKYC?.[provider] : undefined;
   const kycStatus = providerKYC?.status as ValidKYCStatus | "rejected";
-
-  // On provider change, reset banner and flow
-  useEffect(() => {
-    setCurrentBanner(ActionRequired.None);
-    setCurrentFlow(ActionRequired.None);
-    setError(undefined);
-  }, [provider]);
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
@@ -188,7 +193,6 @@ export function SwapForm({
     },
     [dispatch],
   );
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   // Track errors
   useEffect(
@@ -413,12 +417,19 @@ export function SwapForm({
               swapError={swapError}
               isSendMaxLoading={swapTransaction.swap.isMaxLoading}
             />
-
-            {swapTransaction.swap.rates.status === "loading" ? (
-              <Flex height={200}>
-                <Loading size={20} color="neutral.c70" />
+            {(pageState === "empty" || pageState === "loading") && (
+              <Flex height={200} alignItems={"center"} justifyContent={"center"}>
+                {pageState === "empty" && (
+                  <EmptyState
+                    from={swapTransaction.swap.from.currency?.ticker || ""}
+                    to={swapTransaction.swap.to.currency?.ticker || ""}
+                  />
+                )}
+                {pageState === "loading" && <Loading size={20} color="neutral.c70" />}
               </Flex>
-            ) : (
+            )}
+
+            {pageState === "loaded" && (
               <>
                 {exchangeRate &&
                   swapTransaction.swap.to.currency &&
@@ -436,7 +447,7 @@ export function SwapForm({
           <Flex paddingY={4}>
             <Max swapTx={swapTransaction} />
 
-            <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
+            <Button type="main" disabled={!isSwapReady} onPress={onSubmit} testID="exchange-button">
               {t("transfer.swap2.form.cta")}
             </Button>
           </Flex>

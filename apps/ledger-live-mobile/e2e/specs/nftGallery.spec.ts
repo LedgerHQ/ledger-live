@@ -16,12 +16,14 @@ let receivePage: ReceivePage;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {
+    loadConfig("1Account1NFTReadOnlyFalse");
+
     portfolioPage = new PortfolioPage();
     walletTabNavigatorPage = new WalletTabNavigatorPage();
     nftGalleryPage = new NftGalleryPage();
     nftViewerPage = new NftViewerPage();
     receivePage = new ReceivePage();
-    await loadConfig("1Account1NFTReadOnlyFalse");
+
     await portfolioPage.waitForPortfolioPageToLoad();
     await nftGalleryPage.openViaDeeplink();
   });

@@ -3,6 +3,7 @@ import {
   usePollKYCStatus,
   useSwapProviders,
   useSwapTransaction,
+  usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
@@ -58,7 +59,6 @@ import debounce from "lodash/debounce";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
-import usePageState from "./hooks/usePageState";
 import { getCustomDappUrl } from "./utils";
 import { AccountLike, Feature } from "@ledgerhq/types-live";
 import {

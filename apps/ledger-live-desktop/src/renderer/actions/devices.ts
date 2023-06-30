@@ -25,4 +25,5 @@ export const removeDevice: RemoveDevice = payload => ({
 });
 export const resetDevices = () => ({
   type: "RESET_DEVICES",
+  payload: undefined,
 });

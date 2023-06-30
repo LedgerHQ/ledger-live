@@ -1,4 +1,5 @@
 import { Page, Locator } from "@playwright/test";
+import { WebviewTag } from "../../src/renderer/components/Web3AppWebview/types";
 import { waitFor } from "../utils/waitFor";
 
 export class DiscoverPage {
@@ -144,5 +145,18 @@ export class DiscoverPage {
     }, textToCheck);
 
     return result;
+  }
+
+  send(request: Record<string, unknown>) {
+    const sendFunction = `
+      (function() {
+        return window.ledger.e2e.walletApi.send('${JSON.stringify(request)}');
+      })()
+    `;
+
+    return this.page.evaluate(functionToExecute => {
+      const webview = document.querySelector("webview") as WebviewTag;
+      return webview.executeJavaScript(functionToExecute);
+    }, sendFunction);
   }
 }
