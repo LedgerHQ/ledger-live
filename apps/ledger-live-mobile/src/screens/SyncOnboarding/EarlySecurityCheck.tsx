@@ -115,12 +115,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   const { locale: currentLocale } = useLocale();
 
   useEffect(() => {
-    console.log("🐯 language use effect:", {
-      deviceInfo,
-      availableLanguages,
-      availableLanguagesLoaded,
-      deviceLanguagePromptDismissed,
-    });
     if (
       deviceInfo &&
       availableLanguages &&
@@ -133,21 +127,12 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         potentialDeviceLanguage !== undefined &&
         availableLanguages.includes(potentialDeviceLanguage);
 
-      console.log("🐣 all loaded:", {
-        potentialDeviceLanguage,
-        langAvailableOnDevice,
-        deviceLanguageId,
-        currentLocale,
-      });
       if (
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage
       ) {
-        console.log("❤️‍🔥 opening prompt:");
         setIsDeviceLanguagePromptOpen(true);
-      } else {
-        console.log("🌑 not opening prompt:");
       }
     }
   }, [
@@ -163,7 +148,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     setDeviceLanguagePromptDismissed(true);
   }, []);
 
-  /*console.log(`🦖
+  console.log(`🦖
     Genuine check input: ${JSON.stringify({
       isHookEnabled: genuineCheckStatus === "ongoing",
       deviceId: device.deviceId,
@@ -175,7 +160,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       devicePermissionState,
       error: genuineCheckError,
     })}
-  `);*/
+  `);
 
   const {
     latestFirmware,
@@ -187,7 +172,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     deviceId: device.deviceId,
   });
 
-  /*console.log(`🦕 
+  console.log(`🦕 
     Firmware update check input: ${JSON.stringify({
       isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
       deviceId: device.deviceId,
@@ -199,7 +184,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       lockedDevice: latestFirmwareGettingLockedDevice,
       latestFirmware,
     })}
-  `);*/
+  `);
 
   // Exit point: actually with a button
   // useEffect(() => {
@@ -260,7 +245,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   let genuineCheckUiStepStatus: UiCheckStatus = "inactive";
   let firmwareUpdateUiStepStatus: UiCheckStatus = "inactive";
 
-  /*console.log(
+  console.log(
     `🍕 UI logic: ${JSON.stringify({
       currentStep,
       currentDisplayedDrawer,
@@ -269,7 +254,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       genuineState,
       devicePermissionState,
     })}`,
-  );*/
+  );
 
   // Handles genuine check states logic (both check state and UI state)
   if (currentStep === "genuine-check") {
@@ -316,7 +301,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   // Handles firmware update check UI logic
   if (currentStep === "firmware-update-check") {
-    //console.log(`🥦 fw update check UI logic: ${JSON.stringify({ latestFirmwareGettingStatus })}`);
+    console.log(`🥦 fw update check UI logic: ${JSON.stringify({ latestFirmwareGettingStatus })}`);
     if (firmwareUpdateCheckStatus === "ongoing") {
       firmwareUpdateUiStepStatus = "active";
       currentDisplayedDrawer = "none";
