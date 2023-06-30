@@ -19,6 +19,7 @@ import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
 import Identicon from "@polkadot/react-identicon";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;

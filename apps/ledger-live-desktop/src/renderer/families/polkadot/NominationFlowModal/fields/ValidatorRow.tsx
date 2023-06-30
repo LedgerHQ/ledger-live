@@ -11,6 +11,7 @@ import CheckBox from "~/renderer/components/CheckBox";
 import Tooltip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
 import Identicon from "@polkadot/react-identicon";
+
 const IconContainer = styled.div`
   display: flex;
   align-items: center;
