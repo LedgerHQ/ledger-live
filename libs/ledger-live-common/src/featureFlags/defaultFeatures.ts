@@ -77,6 +77,9 @@ export const defaultFeatures = {
   currencyPersistence: {
     enabled: false,
   },
+  currencyInternetComputer: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
