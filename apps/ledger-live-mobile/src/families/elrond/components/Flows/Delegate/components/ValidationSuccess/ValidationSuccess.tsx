@@ -34,7 +34,11 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
     [navigation],
   );
 
-  const validator = route.params.validatorName;
+  const validator = useMemo(() => {
+    const voteAccAddress = route.params.transaction.recipient;
+    const chosenValidator = route.params.validators.find(v => v.contract === voteAccAddress);
+    return chosenValidator?.identity?.name ?? voteAccAddress;
+  }, [route.params.transaction, route.params.validators]);
   const source = route.params.source?.name ?? "unknown";
 
   useEffect(() => {
