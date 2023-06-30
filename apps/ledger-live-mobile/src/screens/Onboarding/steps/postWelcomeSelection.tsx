@@ -76,7 +76,7 @@ function PostWelcomeSelection() {
         }}
         testID={`Onboarding PostWelcome - Selection|Setup your Ledger`}
         onPress={setupLedger}
-        Icon={<Icons.PlusMedium color={colors.primary.c80} size={14} />}
+        Icon={<Icons.PlusMedium color={colors.primary.c80} size={24} />}
       />
 
       <Box mt={6}>
@@ -89,7 +89,7 @@ function PostWelcomeSelection() {
           }}
           testID={`Onboarding PostWelcome - Selection|Access an existing wallet`}
           onPress={accessExistingWallet}
-          Icon={<Icons.PlusMedium color={colors.primary.c80} size={14} />}
+          Icon={<Icons.PlusMedium color={colors.primary.c80} size={24} />}
         />
       </Box>
 
