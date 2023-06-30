@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.26.0-next.3
+
+### Patch Changes
+
+- [#3871](https://github.com/LedgerHQ/ledger-live/pull/3871) [`2103cef1c8`](https://github.com/LedgerHQ/ledger-live/commit/2103cef1c8fc05d4ec31445dc44242d4534ca41c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Icons alignment on new Onboarding flow
+
 ## 3.26.0-next.2
 
 ### Patch Changes
