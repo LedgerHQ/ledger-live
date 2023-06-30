@@ -116,7 +116,7 @@ const genericTest = ({
 
 const testDestination = genericTestDestination;
 
-const genericMinimalAmount = new BigNumber(10000);
+const genericMinimalAmount = new BigNumber(15000);
 
 const bitcoinLikeMutations = ({
   minimalAmount = genericMinimalAmount,
