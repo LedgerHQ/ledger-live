@@ -7,23 +7,23 @@ export default class PortfolioPage {
   transferButton = () => getElementById("transfer-button");
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
 
-  async navigateToSettings() {
-    await tapByElement(this.portfolioSettingsButton());
+  navigateToSettings() {
+    return tapByElement(this.portfolioSettingsButton());
   }
 
   async openTransferMenu() {
     await tapByElement(this.transferButton());
   }
 
-  async navigateToSwapFromTransferMenu() {
-    await tapByElement(this.swapTransferMenuButton());
+  navigateToSwapFromTransferMenu() {
+    return tapByElement(this.swapTransferMenuButton());
   }
 
-  async waitForPortfolioPageToLoad() {
-    await waitForElementByID("settings-icon");
+  waitForPortfolioPageToLoad() {
+    return waitForElementByID("settings-icon");
   }
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 }

@@ -1,10 +1,12 @@
 import { randomUUID } from "crypto";
 import { web, by } from "detox";
+import { e2eBridgeServer } from "../../bridge/server";
+import { first, filter, map } from "rxjs/operators";
 
 export class LiveApp {
   // constructor() {}
 
-  async send(params: Record<string, unknown>) {
+  send(params: Record<string, unknown>) {
     const webview = web.element(by.web.id("root"));
     const id = randomUUID();
     const json = JSON.stringify({
@@ -14,13 +16,16 @@ export class LiveApp {
     });
 
     webview.runScript(`function foo(element) {
-      console.log(window.ledger.e2e.walletApi.send);
       window.ledger.e2e.walletApi.send('${json}');
     }`);
 
-    const response = new Promise((resolve, reject) => {
-      // here we listen to messages from the bridge client
-    });
+    const response = e2eBridgeServer
+      .pipe(
+        filter(msg => msg.type === "walletAPIResponse"),
+        first(),
+        map(msg => msg.payload),
+      )
+      .toPromise();
 
     return { id, response };
   }

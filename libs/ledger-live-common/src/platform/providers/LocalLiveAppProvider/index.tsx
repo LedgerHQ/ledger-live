@@ -41,18 +41,6 @@ export function LocalLiveAppProvider({
 LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<LiveAppRegistry>(initialState);
 
-  // if (mockModeObserver) {
-  //   console.log("LOCAL LIVE APP PROVIDER NOW IN MOCK MODE");
-
-  //   mockModeObserver.subscribe(message => {
-  //     console.log("Message received");
-  //     if (message.type === "loadLocalManifest") {
-  //       console.log("Manifest to add:", JSON.stringify(message.payload, null, 2));
-  //       addLocalManifest(message.payload);
-  //     }
-  //   });
-  // }
-
   const addLocalManifest = useCallback((newManifest: LiveAppManifest) => {
     setState(oldState => {
       // eslint-disable-next-line no-console

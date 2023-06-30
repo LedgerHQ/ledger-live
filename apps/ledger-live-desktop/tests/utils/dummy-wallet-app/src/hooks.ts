@@ -17,11 +17,9 @@ export function useE2EInjection() {
 
     // if mobile
     if (window.ReactNativeWebView) {
-      console.log("HELLO");
       const response = await promise;
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: "e2eTest", payload: response }));
     }
-    console.log("BYE");
 
     return promise;
   }, []);

@@ -1,7 +1,7 @@
 import {
   getElementById,
   openDeeplink,
-  tapByElement,
+  tapById,
   tapByText,
   typeTextByElement,
   waitForElementByText,
@@ -39,5 +39,15 @@ export default class DiscoveryPage {
 
   continueToLiveApp() {
     return tapByText("Continue");
+  }
+
+  selectCurrencyFromDrawer(currencyName: string) {
+    return tapByText(currencyName);
+  }
+
+  selectAccountFromDrawer(index: number) {
+    // return tapByElement(this.accountCard(`$account-card`));
+    return tapById("account-card", 1);
+    // return tapByText(accountId);
   }
 }

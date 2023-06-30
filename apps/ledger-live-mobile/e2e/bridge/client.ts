@@ -1,7 +1,6 @@
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { setAccounts } from "../../src/actions/accounts";
@@ -9,18 +8,14 @@ import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
 
-export type SubjectData =
+export type ClientData =
   | {
       type: "add";
       payload: { id: string; name: string; serviceUUID: string };
     }
-  | { type: "openNano" }
-  | {
-      type: "loadLocalManifest";
-      payload: LiveAppManifest;
-    };
+  | { type: "openNano" };
 
-export const e2eClientBridgeSubject = new Subject<SubjectData>();
+export const e2eBridgeClient = new Subject<ClientData>();
 
 let ws: WebSocket;
 
@@ -50,9 +45,6 @@ function onMessage(event: { data: unknown }) {
   switch (msg.type) {
     case "add":
     case "openNano":
-    case "loadLocalManifest":
-      e2eClientBridgeSubject.next(msg);
-      break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {
         //  @ts-expect-error global bullshit
@@ -76,6 +68,15 @@ function onMessage(event: { data: unknown }) {
     default:
       break;
   }
+}
+
+export function sendWalletAPIResponse(payload: Record<string, unknown>) {
+  ws.send(
+    JSON.stringify({
+      type: "walletAPIResponse",
+      payload,
+    }),
+  );
 }
 
 function log(message: string) {

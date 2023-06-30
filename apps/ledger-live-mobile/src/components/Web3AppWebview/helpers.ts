@@ -28,6 +28,8 @@ import { analyticsEnabledSelector } from "../../reducers/settings";
 import deviceStorage from "../../logic/storeWrapper";
 import { track } from "../../analytics/segment";
 import getOrCreateUser from "../../user";
+import * as bridge from "../../../e2e/bridge/client";
+import Config from "react-native-config";
 
 export function useWebView(
   { manifest, inputs }: Pick<WebviewProps, "manifest" | "inputs">,
@@ -64,8 +66,6 @@ export function useWebView(
       },
       // TODO: wallet-api-server lifecycle is not perfect and will try to send messages before a ref is available. Some additional thinkering is needed here.
       postMessage: (message: string) => {
-        console.log("MESSAGE GOING TO WEBVIEW", message);
-
         try {
           const webview = safeGetRefValue(webviewRef);
 
@@ -90,13 +90,18 @@ export function useWebView(
 
   const onMessage = useCallback(
     e => {
-      console.log(
-        "MESSAGE FROM WEBVIEW",
-        JSON.stringify(JSON.parse(e.nativeEvent?.data), null, 2),
-        typeof e.nativeEvent?.data,
-      );
       if (e.nativeEvent?.data) {
-        onMessageRaw(e.nativeEvent.data);
+        try {
+          const msg = JSON.parse(e.nativeEvent.data);
+
+          if (Config.MOCK && msg.type === "e2eTest") {
+            bridge.sendWalletAPIResponse(msg.payload);
+          } else {
+            onMessageRaw(e.nativeEvent.data);
+          }
+        } catch {
+          onMessageRaw(e.nativeEvent.data);
+        }
       }
     },
     [onMessageRaw],

@@ -79,7 +79,6 @@ describe("Wallet API methods", () => {
     liveApp = new LiveApp();
 
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    // loadLocalManifest();
   });
 
   afterAll(() => {
@@ -100,13 +99,37 @@ describe("Wallet API methods", () => {
     const url = await detox.web.element(detox.by.web.id("param-container")).getCurrentUrl();
     expect(url).toBe("http://localhost:52619/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App");
 
-    liveApp.send({
+    const { id, response } = liveApp.send({
       method: "account.request",
       params: {
         currencyIds: ["ethereum", "bitcoin"],
       },
     });
 
+    // TODO: select accounts
+
     // await delay(20000);
+    await discoverPage.selectCurrencyFromDrawer("Ethereum");
+    // await discoverPage.selectAccountFromDrawer("mock:1:ethereum:true_ethereum_1:");
+    await discoverPage.selectAccountFromDrawer(1);
+    // await discoverPage.selectAccountFromDrawer("11.31");
+    // await delay(1000000000);
+
+    await expect(response).resolves.toStrictEqual({
+      jsonrpc: "2.0",
+      id,
+      result: {
+        rawAccount: {
+          id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
+          address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
+          balance: "35688397",
+          blockHeight: 194870,
+          currency: "bitcoin",
+          lastSyncDate: "2020-03-14T13:34:42.000Z",
+          name: "Bitcoin 1 (legacy)",
+          spendableBalance: "35688397",
+        },
+      },
+    });
   });
 });

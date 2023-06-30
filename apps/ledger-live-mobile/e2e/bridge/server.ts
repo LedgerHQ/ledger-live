@@ -2,7 +2,7 @@ import { Server } from "ws";
 import path from "path";
 import fs from "fs";
 import { NavigatorName } from "../../src/const";
-import { getTestManifest } from "../setups/manifests/testManifest";
+import { Subject } from "rxjs";
 
 let wss: Server;
 
@@ -70,18 +70,21 @@ export function openNano() {
   postMessage({ type: "openNano", payload: null });
 }
 
-// in future pass the manifest in as an argument
-export function loadLocalManifest(): void {
-  console.log("passing in manifest");
-  const manifest = getTestManifest();
-  postMessage({ type: "loadLocalManifest", payload: manifest });
-}
+type ServerData = {
+  type: "walletAPIResponse";
+  payload: string;
+};
+
+export const e2eBridgeServer = new Subject<ServerData>();
 
 function onMessage(messageStr: string) {
-  const msg = JSON.parse(messageStr);
+  const msg: ServerData = JSON.parse(messageStr);
   log(`Message\n${JSON.stringify(msg, null, 2)}`);
 
   switch (msg.type) {
+    case "walletAPIResponse":
+      e2eBridgeServer.next(msg);
+      break;
     default:
       break;
   }
