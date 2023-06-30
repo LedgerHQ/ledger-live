@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.3.0-next.1
+
+### Patch Changes
+
+- [#3872](https://github.com/LedgerHQ/ledger-live/pull/3872) [`d1d1578ab5`](https://github.com/LedgerHQ/ledger-live/commit/d1d1578ab5b351544c98d56b67c68f18640f2d20) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Rename rpc file that prevented shims to be applied for React Native
+
 ## 0.3.0-next.0
 
 ### Minor Changes
