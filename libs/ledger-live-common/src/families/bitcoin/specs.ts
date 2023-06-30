@@ -442,6 +442,7 @@ const pivx: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
   minViableAmount: genericMinimalAmount,
 };
+const qtumViacoin = parseCurrencyUnit(getCryptoCurrencyById("qtum").units[0], "0.001");
 const qtum: AppSpec<Transaction> = {
   name: "Qtum",
   currency: getCryptoCurrencyById("qtum"),
@@ -453,8 +454,10 @@ const qtum: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
+  mutations: bitcoinLikeMutations({
+    minimalAmount: qtumViacoin,
+  }),
+  minViableAmount: qtumViacoin,
 };
 const vertcoin: AppSpec<Transaction> = {
   name: "Vertcoin",
@@ -470,6 +473,7 @@ const vertcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
   minViableAmount: genericMinimalAmount,
 };
+const minViacoin = parseCurrencyUnit(getCryptoCurrencyById("viacoin").units[0], "0.001");
 const viacoin: AppSpec<Transaction> = {
   name: "Viacoin",
   currency: getCryptoCurrencyById("viacoin"),
@@ -481,8 +485,10 @@ const viacoin: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
+  mutations: bitcoinLikeMutations({
+    minimalAmount: minViacoin,
+  }),
+  minViableAmount: minViacoin,
 };
 const minDash = parseCurrencyUnit(getCryptoCurrencyById("dash").units[0], "0.001");
 const dash: AppSpec<Transaction> = {
