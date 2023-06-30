@@ -27,6 +27,7 @@ import {
 } from "react-native-ble-plx";
 import {
   BluetoothInfos,
+  DeviceModelId,
   getBluetoothServiceUuids,
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
@@ -317,15 +318,18 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     const afterMTUTime = Date.now();
 
     if (reconnectionConfig) {
-      // workaround for #279: we need to open() again if we come the first time here,
-      // to make sure we do a disconnect() after the first pairing time
-      // because of a firmware bug
+      // Refer to ledgerjs archived repo issue #279
+      // All HW .v1 LNX have a bug that prevents us from communicating with the device right after pairing.
+      // When we connect for the first time we issue a disconnect and reconnect, this guarantees that we are
+      // in a good state. This is avoidable in some key scenarios ↓
       if (afterMTUTime - beforeMTUTime < reconnectionConfig.pairingThreshold) {
-        needsReconnect = false; // (optim) there is likely no new pairing done because mtu answer was fast.
+        needsReconnect = false;
+      } else if (deviceModel.id === DeviceModelId.stax) {
+        log(TAG, "skipping needsReconnect for stax");
+        needsReconnect = false;
       }
 
       if (needsReconnect) {
-        // necessary time for the bonding workaround
         await BleTransport.disconnect(transport.id).catch(() => {});
         await delay(reconnectionConfig.delayAfterFirstPairing);
       }
@@ -335,6 +339,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   }
 
   if (needsReconnect) {
+    log(TAG, "reconnecting");
     return open(device, false);
   }
 

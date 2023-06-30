@@ -25,6 +25,11 @@ inputs:
   BOT_ENVIRONMENT:
     description: "defines an environment to be included in the report.json"
     required: false
+  SPECULOS_USE_WEBSOCKET:
+    description: true if you want to use speculos has a websocket
+    type: boolean
+    required: false
+    default: false
 
 runs:
   using: "composite"
@@ -62,6 +67,7 @@ runs:
         SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
         BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         explorerinput: ${{ inputs.EXPLORER }}
+        SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
       run: |
         export COINAPPS=$PWD/coin-apps
         export NODE_ENV=production

@@ -40,8 +40,12 @@ jobs:
   #       id: setup-test-desktop
   #       with:
   #         skip_builds: true
-  #     - name: Run code checkers
-  #       run: pnpm desktop test:codecheck
+  #     - name: lint
+  #       run: pnpm desktop lint
+  #     - name: prettier
+  #       run: pnpm desktop prettier:check
+  #     - name: typecheck
+  #       run: pnpm desktop typecheck
 
   unit-tests:
     name: "Ledger Live Desktop Unit Tests"

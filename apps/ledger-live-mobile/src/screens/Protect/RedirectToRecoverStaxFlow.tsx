@@ -10,7 +10,6 @@ import { ScreenName } from "../../const";
 import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
 import BleDevicePairingFlow from "../../components/BleDevicePairingFlow";
 import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
-import { ServicesConfigParams } from "../../components/ServicesWidget/types";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.RedirectToRecoverStaxFlow>
@@ -18,7 +17,7 @@ type NavigationProps = RootComposite<
 
 export function RedirectToRecoverStaxFlowScreen({ navigation }: NavigationProps) {
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
-  const recoverConfig = useFeature<ServicesConfigParams>("protectServicesMobile");
+  const recoverConfig = useFeature("protectServicesMobile");
   const recoverRestoreFlowURI = usePostOnboardingURI(recoverConfig);
 
   useEffect(() => {

@@ -75,6 +75,7 @@ import type {
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingHasDevicePayload,
   SettingsSetOnboardingTypePayload,
+  SettingsSetKnownDeviceModelIdsPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -168,6 +169,7 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     recommendationsCategory: true,
     largeMoverCategory: true,
+    transactionsAlertsCategory: false,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   overriddenFeatureFlags: {},
@@ -455,6 +457,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     knownDeviceModelIds: {
       ...state.knownDeviceModelIds,
       [(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.modelId]: true,
+    },
+  }),
+
+  [SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS]: (state, action) => ({
+    ...state,
+    knownDeviceModelIds: {
+      ...state.knownDeviceModelIds,
+      ...(action as Action<SettingsSetKnownDeviceModelIdsPayload>).payload,
     },
   }),
 

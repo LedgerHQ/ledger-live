@@ -258,7 +258,7 @@ export function useDeepLinkHandler() {
           break;
         }
         case "discover":
-          if (path.startsWith("protect")) {
+          if (path?.startsWith("protect")) {
             navigate(`/recover/${path}`, undefined, search);
           } else {
             navigate(`/platform/${path ?? ""}`, query);
@@ -275,6 +275,9 @@ export function useDeepLinkHandler() {
           break;
         case "recover":
           navigate(`/recover/${path}`, undefined, search);
+          break;
+        case "recover-restore-flow":
+          navigate("/recover-restore");
           break;
         case "portfolio":
         default:
