@@ -3,15 +3,17 @@ import Svg, { Path } from "react-native-svg";
 import { getFTXLogo } from "./FTX";
 import { Changelly } from "./Changelly";
 import { Cic } from "./Cic";
+import { Oneinch } from "./Oneinch";
+import { Paraswap } from "./Paraswap";
 import { Wyre } from "./Wyre";
-
-export { Paraswap } from "./Paraswap";
 
 export const providerIcons: Record<string, React.FC<{ size: number }>> = {
   changelly: React.memo(Changelly),
   cic: React.memo(Cic),
   ftx: getFTXLogo(),
   ftxus: getFTXLogo(true),
+  oneinch: React.memo(Oneinch),
+  paraswap: React.memo(Paraswap),
   wyre: React.memo(Wyre),
 };
 

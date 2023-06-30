@@ -111,14 +111,7 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const res = await getExchangeRates(
-      exchange,
-      transaction,
-      undefined,
-      undefined,
-      providers,
-      true,
-    );
+    const res = await getExchangeRates(exchange, transaction, undefined, undefined, providers);
 
     const expectedExchangeRate: ExchangeRate = {
       magnitudeAwareRate: new BigNumber("140000000000"),
@@ -162,14 +155,7 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const res = await getExchangeRates(
-      exchange,
-      transaction,
-      undefined,
-      undefined,
-      providers,
-      true,
-    );
+    const res = await getExchangeRates(exchange, transaction, undefined, undefined, providers);
 
     const expectedExchangeRate: ExchangeRate = {
       magnitudeAwareRate: new BigNumber("133913600000"),
@@ -184,7 +170,7 @@ describe("swap/getExchangeRates", () => {
     expect(res).toEqual([expectedExchangeRate]);
   });
 
-  it("should query for CEX providers only", async () => {
+  it("should query for CEX and DEX providers by default", async () => {
     const resp = {
       data: [],
       status: 200,
@@ -195,34 +181,7 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const includeDEX = false;
-    await getExchangeRates(exchange, transaction, undefined, undefined, providers, includeDEX);
-    expect(mockedAxios).toHaveBeenCalledWith({
-      method: "POST",
-      url: "https://swap.ledger.com/v4/rate",
-      data: {
-        amountFrom: "0.0001",
-        from: "bitcoin",
-        providers: ["changelly"],
-        to: "ethereum",
-      },
-      headers: expect.anything(),
-    });
-  });
-
-  it("should query for CEX and DEX providers", async () => {
-    const resp = {
-      data: [],
-      status: 200,
-      statusText: "",
-      headers: {},
-      config: {},
-    };
-
-    mockedAxios.mockResolvedValue(Promise.resolve(resp));
-    mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const includeDEX = true;
-    await getExchangeRates(exchange, transaction, undefined, undefined, providers, includeDEX);
+    await getExchangeRates(exchange, transaction, undefined, undefined, providers);
     expect(mockedAxios).toHaveBeenCalledWith({
       method: "POST",
       url: "https://swap.ledger.com/v4/rate",
@@ -235,7 +194,7 @@ describe("swap/getExchangeRates", () => {
       headers: expect.anything(),
     });
   });
-  test("shout not query for providers which is not compatible with the requested pair", async () => {
+  test("should not query for providers which is not compatible with the requested pair", async () => {
     const providers = [
       {
         provider: "changelly",
@@ -257,8 +216,7 @@ describe("swap/getExchangeRates", () => {
 
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
-    const includeDEX = true;
-    await getExchangeRates(exchange, transaction, undefined, undefined, providers, includeDEX);
+    await getExchangeRates(exchange, transaction, undefined, undefined, providers);
     expect(mockedAxios).toHaveBeenCalledWith({
       method: "POST",
       url: "https://swap.ledger.com/v4/rate",
