@@ -1199,8 +1199,8 @@
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
-      "terms": "By tapping “Get Started” you consent and agree to our",
-      "termsLink": "Terms of Service",
+      "terms": "By continuing, you agree to Ledger's",
+      "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
       "and": "and",
       "recoverLogIn": "Log in for Ledger Recover"

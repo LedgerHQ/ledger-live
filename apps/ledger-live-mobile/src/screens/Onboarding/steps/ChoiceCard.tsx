@@ -4,6 +4,7 @@ import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { TFunction } from "i18next";
 import Touchable from "../../../components/Touchable";
 import { track } from "../../../analytics";
+import { useTheme } from "styled-components/native";
 
 export type Props = {
   title: string;
@@ -30,6 +31,7 @@ const ChoiceCard = ({
   eventProperties,
   ...props
 }: Props) => {
+  const { colors } = useTheme();
   const pressAndTrack = useCallback(() => {
     track(event, {
       page: "Select Device",
@@ -44,7 +46,7 @@ const ChoiceCard = ({
         flexDirection={"row"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        bg="neutral.c20"
+        bg={colors.opacityDefault.c05}
         borderRadius={8}
         overflow="hidden"
         minHeight={130}
