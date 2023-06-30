@@ -1,4 +1,3 @@
-import { isEqual } from "lodash";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -10,11 +9,8 @@ import { BigNumber } from "bignumber.js";
 import Fil from "@zondax/ledger-filecoin";
 import { Observable } from "rxjs";
 
-import {
-  makeAccountBridgeReceive,
-  makeSync,
-  defaultUpdateTransaction,
-} from "../../../bridge/jsHelpers";
+import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   Account,
   AccountBridge,

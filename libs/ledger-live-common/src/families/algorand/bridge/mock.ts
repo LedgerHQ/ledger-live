@@ -12,7 +12,7 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-algorand/serialization";
 import { initAccount } from "@ledgerhq/coin-algorand/initAccount";

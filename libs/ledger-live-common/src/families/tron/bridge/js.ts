@@ -33,7 +33,8 @@ import {
 } from "../utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import signTransaction from "../../../hw/signTransaction";
-import { makeSync, makeScanAccounts, defaultUpdateTransaction } from "../../../bridge/jsHelpers";
+import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import {
   getAccountUnit,

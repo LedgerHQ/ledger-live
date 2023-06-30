@@ -1,4 +1,3 @@
-import { $Shape } from "utility-types";
 import { BigNumber } from "bignumber.js";
 import type { ElrondAccount, Transaction } from "./types";
 import { getFees } from "./api";

@@ -1,9 +1,7 @@
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
-import {
-  defaultUpdateTransaction,
-  makeAccountBridgeReceive,
-} from "../../../bridge/jsHelpers";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { sync, scanAccounts } from "../js-synchronisation";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
 import signOperation from "../js-signOperation";

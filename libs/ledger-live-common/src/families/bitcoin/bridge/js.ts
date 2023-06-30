@@ -8,10 +8,8 @@ import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import { calculateFees } from "./../cache";
 import { perCoinLogic } from "../logic";
-import {
-  makeAccountBridgeReceive,
-  defaultUpdateTransaction,
-} from "../../../bridge/jsHelpers";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { withDevice } from "../../../hw/deviceAccess";
@@ -37,10 +35,6 @@ const updateTransaction = (t, patch): any => {
   if (updatedT.recipient.toLowerCase().indexOf("bc1") === 0) {
     updatedT.recipient = updatedT.recipient.toLowerCase();
   }
-
-  // FIXME DEBUG TBR
-  console.log("XXX - t: ", t);
-  console.log("XXX - updatedT: ", updatedT);
 
   return defaultUpdateTransaction(t, updatedT);
 };

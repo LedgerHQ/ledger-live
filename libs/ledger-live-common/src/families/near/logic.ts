@@ -10,7 +10,7 @@ import {
   NearAccount,
 } from "./types";
 import { createTransaction } from "./js-transaction";
-import { defaultUpdateTransaction as updateTransaction } from "../../bridge/jsHelpers";
+import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCurrentNearPreloadData } from "./preload";
 import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 

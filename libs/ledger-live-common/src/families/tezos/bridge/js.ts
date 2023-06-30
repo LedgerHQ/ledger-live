@@ -17,12 +17,8 @@ import {
 } from "@ledgerhq/errors";
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import type { CurrencyBridge, AccountBridge, Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  makeSync,
-  makeScanAccounts,
-  makeAccountBridgeReceive,
-  defaultUpdateTransaction,
-} from "../../../bridge/jsHelpers";
+import { makeSync, makeScanAccounts, makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { TezosAccount, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "../synchronisation";

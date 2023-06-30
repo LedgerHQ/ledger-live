@@ -19,8 +19,8 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
-import { defaultUpdateTransaction } from "../../../bridge/jsHelpers";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 
 const receive = makeAccountBridgeReceive();

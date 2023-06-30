@@ -13,8 +13,8 @@ import {
   makeAccountBridgeReceive,
   makeScanAccounts as makeScanHelper,
   makeSync as makeSyncHelper,
-  defaultUpdateTransaction,
 } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
 import { minutes } from "../api/cached";
 import { broadcastWithAPI } from "../js-broadcast";

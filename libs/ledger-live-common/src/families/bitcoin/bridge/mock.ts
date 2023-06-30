@@ -17,7 +17,7 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cryptoFactory from "../wallet-btc/crypto/factory";
