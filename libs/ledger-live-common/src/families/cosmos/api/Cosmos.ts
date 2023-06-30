@@ -15,6 +15,7 @@ import {
 type GetLowestBlockHeightError = {
   message: string;
 };
+
 export class CosmosAPI {
   protected defaultEndpoint: string;
   private version: string;
