@@ -49,7 +49,7 @@ function StepConfirmation({
         source,
       });
     }
-  }, [optimisticOperation, validators, account.currency.id, voteAccAddress, source]);
+  }, [currencyId, optimisticOperation, validators, voteAccAddress, source]);
 
   if (optimisticOperation) {
     return (
