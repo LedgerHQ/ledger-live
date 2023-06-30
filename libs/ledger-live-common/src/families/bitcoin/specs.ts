@@ -204,7 +204,11 @@ const bitcoinLikeMutations = ({
         ...bridge.createTransaction(account),
         feePerByte: new BigNumber(0.0001),
       };
-      const utxo = sample((bitcoinResources as BitcoinResources).utxos.filter(u => u.blockHeight));
+      const utxo = sample(
+        (bitcoinResources as BitcoinResources).utxos.filter(
+          u => u.blockHeight && u.value.gt(genericMinimalAmount),
+        ),
+      );
       invariant(utxo, "no confirmed utxo");
       return {
         transaction,
