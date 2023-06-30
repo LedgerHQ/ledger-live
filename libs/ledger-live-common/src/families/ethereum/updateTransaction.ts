@@ -1,20 +1,16 @@
-import { isEqual } from "lodash";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Transaction } from "./types";
 
 export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] = (tx, patch) => {
-  let patched;
+  const updatedTx = defaultUpdateTransaction(tx, patch);
+
   if ("recipient" in patch && patch.recipient !== tx.recipient) {
-    patched = {
-      ...tx,
-      ...patch,
-      userGasLimit: null,
-      estimatedGasLimit: null,
-    };
+    updatedTx.userGasLimit = null;
+    updatedTx.estimatedGasLimit = null;
   }
 
-  patched = { ...tx, ...patch };
-  return isEqual(tx, patched) ? tx : patched;
+  return updatedTx;
 };
 
 export default updateTransaction;

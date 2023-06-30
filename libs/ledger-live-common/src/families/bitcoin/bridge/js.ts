@@ -27,8 +27,8 @@ const receive = makeAccountBridgeReceive({
   },
 });
 
-const updateTransaction = (t, patch): any => {
-  const updatedT = { ...t, ...patch };
+const updateTransaction = (tx, patch): any => {
+  const updatedT = defaultUpdateTransaction(tx, patch);
 
   // We accept case-insensitive addresses as input from user,
   // but segwit addresses need to be converted to lowercase to be valid
@@ -36,7 +36,7 @@ const updateTransaction = (t, patch): any => {
     updatedT.recipient = updatedT.recipient.toLowerCase();
   }
 
-  return defaultUpdateTransaction(t, updatedT);
+  return updatedT;
 };
 
 const signerContext: SignerContext = (

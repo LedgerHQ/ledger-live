@@ -23,13 +23,11 @@ import {
   isInvalidRecipient,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 const receive = makeAccountBridgeReceive();
 
 const notCreatedAddresses: string[] = [];
 const multiSignAddresses: string[] = [];
-
 export function addNotCreatedStellarMockAddresses(addr: string) {
   notCreatedAddresses.push(addr);
 }
@@ -53,11 +51,11 @@ const createTransaction = (): Transaction => ({
 });
 
 const updateTransaction = (t, patch) => {
-  if ("recipient" in patch && patch.recipient !== t.recipient && patch.memoType) {
+  if ("recipient" in patch && patch.recipient !== t.recipient) {
     return { ...t, ...patch, memoType: null };
   }
 
-  return defaultUpdateTransaction(t, patch);
+  return { ...t, ...patch };
 };
 
 const isMemoValid = (memoType: string, memoValue: string): boolean => {
