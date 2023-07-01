@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.26.0-nightly.4
+
+### Minor Changes
+
+- [#3692](https://github.com/LedgerHQ/ledger-live/pull/3692) [`be437fa19f`](https://github.com/LedgerHQ/ledger-live/commit/be437fa19ff8c0557fe426fc8a174445fbee0f7a) Thanks [@cksanders](https://github.com/cksanders)! - Add DEX providers to SWAP
+
+### Patch Changes
+
+- [#3736](https://github.com/LedgerHQ/ledger-live/pull/3736) [`a31cbf1f4a`](https://github.com/LedgerHQ/ledger-live/commit/a31cbf1f4ab8068f8518cc90731b49f9fad5f7fc) Thanks [@mderrick](https://github.com/mderrick)! - add nft detail view background
+
+- [#3862](https://github.com/LedgerHQ/ledger-live/pull/3862) [`dd3d108c1b`](https://github.com/LedgerHQ/ledger-live/commit/dd3d108c1b2e4fbf9942027307d04b433a0bcfdf) Thanks [@grsoares21](https://github.com/grsoares21)! - Make reloading of manager upon new connection specific to Bluetooth to USB transitions
+
+- Updated dependencies [[`d0cfcbc6d7`](https://github.com/LedgerHQ/ledger-live/commit/d0cfcbc6d7ca4693bd9db9f3958d4fbbdd947865), [`d2c1b9ed8d`](https://github.com/LedgerHQ/ledger-live/commit/d2c1b9ed8d7dc3bacfc9c5020a4612693cd62272), [`be437fa19f`](https://github.com/LedgerHQ/ledger-live/commit/be437fa19ff8c0557fe426fc8a174445fbee0f7a)]:
+  - @ledgerhq/live-common@31.2.0-nightly.3
+
 ## 3.26.0-nightly.3
 
 ### Patch Changes

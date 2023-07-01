@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.63.0-nightly.2
+
+### Patch Changes
+
+- [#3870](https://github.com/LedgerHQ/ledger-live/pull/3870) [`4d530b9f4b`](https://github.com/LedgerHQ/ledger-live/commit/4d530b9f4b83a3f2b984bd6e36691932b17498e5) Thanks [@sarneijim](https://github.com/sarneijim)! - Correct osmos track delegation completed
+
+- [#3692](https://github.com/LedgerHQ/ledger-live/pull/3692) [`be437fa19f`](https://github.com/LedgerHQ/ledger-live/commit/be437fa19ff8c0557fe426fc8a174445fbee0f7a) Thanks [@cksanders](https://github.com/cksanders)! - Remove DEX feature flag and move dex utils to common
+
+- Updated dependencies [[`d0cfcbc6d7`](https://github.com/LedgerHQ/ledger-live/commit/d0cfcbc6d7ca4693bd9db9f3958d4fbbdd947865), [`d2c1b9ed8d`](https://github.com/LedgerHQ/ledger-live/commit/d2c1b9ed8d7dc3bacfc9c5020a4612693cd62272), [`be437fa19f`](https://github.com/LedgerHQ/ledger-live/commit/be437fa19ff8c0557fe426fc8a174445fbee0f7a)]:
+  - @ledgerhq/live-common@31.2.0-nightly.3
+
 ## 2.63.0-nightly.1
 
 ### Minor Changes

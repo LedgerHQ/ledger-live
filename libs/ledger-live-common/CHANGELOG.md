@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 31.2.0-nightly.3
+
+### Minor Changes
+
+- [#3864](https://github.com/LedgerHQ/ledger-live/pull/3864) [`d0cfcbc6d7`](https://github.com/LedgerHQ/ledger-live/commit/d0cfcbc6d7ca4693bd9db9f3958d4fbbdd947865) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Increase ttl coinc config
+
+### Patch Changes
+
+- [#3865](https://github.com/LedgerHQ/ledger-live/pull/3865) [`d2c1b9ed8d`](https://github.com/LedgerHQ/ledger-live/commit/d2c1b9ed8d7dc3bacfc9c5020a4612693cd62272) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove condition of terminated coin for Nano app installation
+
+- [#3692](https://github.com/LedgerHQ/ledger-live/pull/3692) [`be437fa19f`](https://github.com/LedgerHQ/ledger-live/commit/be437fa19ff8c0557fe426fc8a174445fbee0f7a) Thanks [@cksanders](https://github.com/cksanders)! - Move swap dex utils to common and remove DEX feature flag.
+
 ## 31.2.0-nightly.2
 
 ### Patch Changes
