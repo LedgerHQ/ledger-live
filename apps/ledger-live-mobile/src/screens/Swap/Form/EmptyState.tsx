@@ -2,11 +2,7 @@ import React from "react";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
-type Props = {
-  from: string;
-  to: string;
-};
-const EmptyState: React.FC<Props> = ({ from, to }) => {
+const EmptyState = () => {
   const { t } = useTranslation();
   return (
     <Box alignItems={"center"}>
@@ -17,10 +13,7 @@ const EmptyState: React.FC<Props> = ({ from, to }) => {
           textAlign: "center",
         }}
       >
-        {t("transfer.swap2.form.providers.noProviders", {
-          from,
-          to,
-        })}
+        {t("transfer.swap2.form.providers.noProviders")}
       </Text>
     </Box>
   );

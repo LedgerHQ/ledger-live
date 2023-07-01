@@ -20,7 +20,6 @@ const getExchangeRates: GetExchangeRates = async (
   userId?: string, // TODO remove when wyre doesn't require this for rates
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
   providers: AvailableProviderV3[] = [],
-  includeDEX = false,
 ) => {
   if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
@@ -35,15 +34,7 @@ const getExchangeRates: GetExchangeRates = async (
 
   const providerList = providers
     .filter(provider => provider.pairs.some(pair => pair.from === from && pair.to === to))
-    .filter(provider =>
-      includeDEX ? true : !(getProviderConfig(provider.provider).type === "DEX"),
-    )
     .map(item => item.provider);
-
-  // This if can be removed if includeDex is always true. Prevent a backEnd error.
-  if (providerList.length === 0) {
-    return [];
-  }
 
   const request = {
     from,

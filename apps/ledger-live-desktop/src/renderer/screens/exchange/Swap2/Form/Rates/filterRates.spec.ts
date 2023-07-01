@@ -1,6 +1,6 @@
 import { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { filterRates } from "~/renderer/screens/exchange/Swap2/Form/Rates/filterRates";
-import { FILTER } from "~/renderer/screens/exchange/Swap2/Form/utils";
+import { FILTER } from "@ledgerhq/live-common/exchange/swap/utils/index";
 const rates: Partial<ExchangeRate>[] = [
   {
     providerType: "CEX",
