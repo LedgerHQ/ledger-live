@@ -47,7 +47,7 @@ import type {
 } from "../../../components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import Identicon from "@polkadot/reactnative-identicon/icons/Polkadot";
+import Identicon from "@polkadot/reactnative-identicon";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
