@@ -36,10 +36,13 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
 
     return { ...INITIAL_STATE, providers, pairs };
   },
-  [SwapActionTypes.UPDATE_TRANSACTION]: (state, action) => ({
-    ...state,
-    transaction: (action as Action<UpdateTransactionPayload>).payload,
-  }),
+  [SwapActionTypes.UPDATE_TRANSACTION]: (state, action) => {
+    const payload = (action as Action<UpdateTransactionPayload>).payload;
+    return {
+      ...state,
+      transaction: payload,
+    };
+  },
   [SwapActionTypes.UPDATE_RATE]: (state, action) => {
     const payload = (action as Action<UpdateRatePayload>).payload;
     return {

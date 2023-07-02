@@ -1,5 +1,6 @@
 import manager from ".";
 import { lenseDevices } from "../__tests__/test-helpers/deviceInfos";
+
 test("firmwareUpdateNeedsLegacyBlueResetInstructions", () => {
   lenseDevices(["Blue211", "NanoS120", "NanoS142", "NanoS155", "NanoX1242rc5"]).forEach(
     ({ deviceInfo, modelId }) => {
@@ -33,4 +34,7 @@ test("firmwareUnsupported", () => {
   lenseDevices(["NanoS120"]).forEach(({ deviceInfo, modelId }) => {
     expect(manager.firmwareUnsupported(modelId, deviceInfo)).toBe(true);
   });
+});
+test("A terminated currency is still installable", () => {
+  expect(manager.canHandleInstall({ name: "Stratis" })).toBe(true);
 });
