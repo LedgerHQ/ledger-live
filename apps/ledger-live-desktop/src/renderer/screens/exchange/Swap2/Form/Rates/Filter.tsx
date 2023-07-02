@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
-import { FILTER } from "../utils";
+import { FILTER } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import Button from "~/renderer/components/Button";
 import { Icons } from "@ledgerhq/react-ui";
 type Props = {
