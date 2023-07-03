@@ -38,8 +38,6 @@ export function autoClose(app: Probot) {
       "\n" +
       "Found Issues:\n";
 
-    let comment;
-
     if (!isBranchValid) {
       body += `- _the branch name \`${branch}\` is invalid_\n`;
     }
@@ -50,7 +48,8 @@ export function autoClose(app: Probot) {
       body +=
         "_💡 make sure you added comments only inside the template sections - and not above the `📝 Description` heading_\n";
     }
-    comment = context.issue({
+
+    const comment = context.issue({
       body,
     });
 

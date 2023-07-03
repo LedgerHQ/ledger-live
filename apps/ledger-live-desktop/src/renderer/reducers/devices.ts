@@ -70,7 +70,7 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
     };
   }
 
-  if (getEnv("DEVICE_PROXY_URL") || getEnv("MOCK")) {
+  if (getEnv("DEVICE_PROXY_URL") || (getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"))) {
     // bypass the listen devices (we should remove modelId here by instead get it at open time if needed)
     return {
       deviceId: "",

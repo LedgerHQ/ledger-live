@@ -46,6 +46,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({ language, onError, onSucc
     <DeviceAction
       action={action}
       request={request}
+      inlineRetry={false}
       onResult={onSuccess}
       Result={() => <DeviceLanguageInstalled language={language} />}
       onError={onError}

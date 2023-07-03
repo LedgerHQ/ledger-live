@@ -17,6 +17,7 @@
     "sortBy": "Sort by",
     "signOut": "Sign out",
     "search": "Search",
+    "searchProvider": "Search for a provider...",
     "contactUs": "Contact Ledger Support",
     "device": "Device",
     "cryptoAsset": "Crypto asset",
@@ -1204,20 +1205,22 @@
       "and": "and",
       "recoverLogIn": "Log in for Ledger Recover"
     },
-    "stepDoYouHaveALedgerDevice": {
-      "title": "Do you own a Ledger?",
-      "subtitle": "First things first",
-      "yes": "Yes, I do",
-      "no": "Not yet"
-    },
     "postWelcomeStep": {
-      "title": "Let's get you started",
-      "subtitle_yes": "Set up your Ledger, or take a look around the app first.",
-      "subtitle_no": "You can choose to take a look around the app first or buy a Nano X device",
-      "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
+      "title": "Let’s get started",
+      "noLedgerYet": "I don’t have a Ledger yet",
+      "noLedgerYetModal": {
+        "title": "Millions of users. 0 hacks.",
+        "desc": "Experience peace of mind with a Ledger securing your digital assets.",
+        "buy": "Buy a Ledger",
+        "explore": "Explore this app"
+      },
       "setupLedger": {
-        "title": "Set up my Ledger",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "title": "Set up your Ledger",
+        "subtitle": "Select if your Ledger is new or was reset."
+      },
+      "accessWallet": {
+        "title": "Access your wallet",
+        "subtitle": "Select if your Ledger is already set up."
       },
       "buyNano": {
         "title": "Buy a Ledger Nano X",
@@ -1231,6 +1234,12 @@
         "title": "Sync with desktop app",
         "subtitle": "Sync your assets from Ledger Live desktop with your mobile."
       }
+    },
+    "welcomeBackStep": {
+      "title": "Welcome back",
+      "subtitle": "Select how you’d like to access your wallet:",
+      "connect": "Connect your Ledger",
+      "sync": "Sync with Ledger Live desktop"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -1276,16 +1285,22 @@
       "title": "Hello!",
       "or": "Or",
       "firstUse": {
-        "title": "First time using your Nano?",
-        "subTitle": "Set up a new Nano",
+        "section": "Set up your Ledger {{model}}",
+        "title": "Create a new wallet",
+        "subTitle": "This generates a new Secret Recovery Phrase.",
         "desc": "Let’s start and set up your device!",
         "label": "30 mins"
       },
       "devicePairing": {
-        "title": "Already have a recovery phrase?",
+        "title": "Got a Secret Recovery Phrase?",
         "label": "Device pairing",
         "subTitle": "Connect your Nano",
         "desc": "Your device is already set up? Connect it to the app!"
+      },
+      "newDevice": {
+        "label": "new device",
+        "title": "Set up as new",
+        "subTitle": "Choose this if you are setting up your Ledger for the first time"
       },
       "desktopSync": {
         "title": "Already have a recovery phrase?",
@@ -1295,12 +1310,14 @@
       },
       "restoreDevice": {
         "label": "Restore device",
-        "subTitle": "Restore your recovery phrase on a new device",
+        "title": "Restore with your Secret  Recovery Phrase",
+        "subTitle": "You will need access to your Secret Recovery Phrase.",
         "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
       },
       "recovery": "Already have a recovery phrase?",
       "protect": {
-        "subTitle": "Restore using Ledger Recover",
+        "title": "Restore using Ledger Recover",
+        "subTitle": "You need to have a Ledger Recover subscription.",
         "drawer": {
           "title": "Use Ledger Nano X",
           "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
@@ -1621,6 +1638,11 @@
       }
     },
     "stepPairNew": {
+      "generic": {
+        "title": "Pair your Nano",
+        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
+        "cta": "Let’s pair my Nano"
+      },
       "nanoX": {
         "title": "Pair your Nano",
         "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
@@ -1838,7 +1860,7 @@
       },
       "loading": {
         "title": "Pairing with {{deviceName}}...",
-        "subtitle": "Confirm the code on your {{productName}}"
+        "subtitle": "If prompted, confirm the code on your {{productName}}"
       },
       "error": {
         "generic": {
@@ -1858,9 +1880,14 @@
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
     "deviceSelection": {
-      "title": "Choose the Ledger you'd like to set up:",
+      "title": "Select the Ledger you want to set up:",
       "brand": "Ledger",
-      "setupTime": "{{time}} mins"
+      "setupTime": "{{time}} mins",
+      "notCompatible": "No iPhone compatibility",
+      "modal": {
+        "title": "Ledger Nano S and Ledger Nano S Plus not supported on iOS devices",
+        "desc": "Use your Ledger Nano S or Ledger Nano S Plus with Ledger Live on your computer."
+      }
     },
     "scanning": {
       "title": "Looking for your {{productName}}",
@@ -1872,7 +1899,7 @@
       },
       "loading": {
         "title": "Pairing with {{deviceName}}",
-        "subtitle": "Confirm the code on your {{productName}}"
+        "subtitle": "If prompted, confirm the code on your {{productName}}"
       },
       "error": {
         "title": "Pairing unsuccessful",
@@ -1918,11 +1945,9 @@
       "title": "Secret Recovery Phrase",
       "doneTitle": "Secret Recovery Phrase confirmed",
       "description": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your {{productName}} generates a unique recovery phrase. Ledger does not keep a copy of it",
-
       "choiceRestoreDirectOrRecover": "Placeholder - choice direct restore or use Recover",
       "recoverSeed": "Placeholder: Recover",
       "restoreSeed": "For recovery, make sure to use a Secret Recovery Phrase generated by a Ledger for the guaranted security of your assets.\n\nDon't have one? Use your {{productName}} to generate a new Phrase.",
-
       "selection": "On {{productName}}, choose a setup option that best suits you.",
       "selectionContinueOnDevice": "Tap an option on {{productName}}",
       "newSeedDescription": "Watch the videos below to learn more about your secret words.",
@@ -2647,6 +2672,10 @@
         "title": "Large Mover",
         "desc": "You'll be notified of important price movements for BTC and ETH"
       },
+      "transactionsAlerts": {
+        "title": "Transaction Alerts",
+        "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
+      },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
@@ -3153,7 +3182,8 @@
           },
           "withdrawalsBlockedError": {
             "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
-          }
+          },
+          "noProviders": "No results found. There are no quotes available with the current preferences."
         }
       }
     },
@@ -3463,6 +3493,7 @@
     },
     "fees": {
       "title": "Network fees",
+      "titleMaxFees": "Max Network Fees",
       "validate": "Confirm",
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
@@ -3470,7 +3501,8 @@
       "edit": {
         "title": "Choose unit"
       },
-      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction"
+      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction",
+      "networkInfoMaxFees": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded."
     },
     "verification": {
       "streaming": {
@@ -4092,21 +4124,28 @@
       "flash": "Flashing your device",
       "preparing": "Preparing update",
       "firmware": "Downloading update",
-      "prepareUpdate":  {
+      "prepareUpdate": {
         "titleActive": "Preparing update for install",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
       },
-      "installUpdate":  {
+      "installUpdate": {
         "titleInactive": "Install update",
         "titleActive": "Installing update",
         "description": "{{deviceName}} will restart multiple times.\n\nAfter installation is finished on your {{deviceName}}, unlock your device to complete installation"
       },
-      "restoreSettings":  {
+      "restoreSettings": {
         "titleInactive": "Restore apps and settings",
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
-        "installingApps": "Installing apps"
+        "installingApps": "Installing apps",
+        "errors": {
+          "description": "If this was a mistake you can retry the restoration, or you may skip this step",
+          "LanguageInstallRefusedOnDevice": "Language change was cancelled on {{deviceName}}",
+          "ImageLoadRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
+          "ImageCommitRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
+          "UserRefusedAllowManager": "Restoration of apps was cancelled on {{deviceName}}"
+        }
       }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
@@ -5800,7 +5839,7 @@
   },
   "browseWeb3": {
     "catalog": {
-      "title": "Browse Web3",
+      "title": "Discover",
       "subtitle": "Explore Web3 fully integrated with Ledger",
       "section": {
         "recentlyUsed": "Recently Used",

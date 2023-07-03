@@ -704,7 +704,12 @@ export enum ExchangeType {
 }
 
 export interface Categories {
-  manifests: AppManifest[];
+  manifests: {
+    all: AppManifest[];
+    complete: AppManifest[];
+    searchable: AppManifest[];
+  };
+  searchable: AppManifest[];
   categories: string[];
   manifestsByCategories: Map<string, AppManifest[]>;
   selected: string;
@@ -713,30 +718,34 @@ export interface Categories {
 }
 
 export function useCategories(): Categories {
-  const manifestsSearchable = useManifests({ visibility: "searchable" });
-  const manifestsCompleted = useManifests({ visibility: "complete" });
-  const { categories, manifestsByCategories } = useCategoriesRaw(manifestsCompleted);
+  const all = useManifests();
+  const complete = useMemo(() => all.filter(m => m.visibility === "complete"), [all]);
+  const searchable = useMemo(
+    () => all.filter(m => ["complete", "searchable"].includes(m.visibility)),
+    [all],
+  );
+  const { categories, manifestsByCategories } = useCategoriesRaw(complete);
   const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
     setSelected(DISCOVER_INITIAL_CATEGORY);
   }, []);
 
-  const manifests = useMemo(
-    () => [...manifestsSearchable, ...manifestsCompleted],
-    [manifestsSearchable, manifestsCompleted],
-  );
-
   return useMemo(
     () => ({
-      manifests,
+      manifests: {
+        all,
+        complete,
+        searchable,
+      },
+      searchable,
       categories,
       manifestsByCategories,
       selected,
       setSelected,
       reset,
     }),
-    [manifests, categories, manifestsByCategories, selected, setSelected, reset],
+    [all, complete, searchable, categories, manifestsByCategories, selected, setSelected, reset],
   );
 }
 

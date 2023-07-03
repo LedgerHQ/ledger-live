@@ -55,7 +55,6 @@ export type FeatureId =
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile"
   | "protectServicesDesktop"
-  | "swapShowDexQuotes"
   | "swapWalletApiPartnerList"
   | "stakePrograms"
   | "portfolioExchangeBanner"
@@ -67,6 +66,7 @@ export type FeatureId =
   | "discover"
   | "protectServicesDiscoverDesktop"
   | "protectServicesDesktop"
+  | "transactionsAlerts"
   | "listAppsV2";
 
 /**  We use objects instead of direct booleans for potential future improvements

@@ -20,9 +20,7 @@ function getEndOfCentralDirectory(buffer: Buffer) {
     eodSignature: buffer.readUInt32LE(eodOffset),
     diskNumber: buffer.readUInt16LE(eodOffset + 4),
     diskWhereCentralDirectoryStarts: buffer.readUInt16LE(eodOffset + 6),
-    numberOfCentralDirectoryRecordsOnThisDisk: buffer.readUInt16LE(
-      eodOffset + 8
-    ),
+    numberOfCentralDirectoryRecordsOnThisDisk: buffer.readUInt16LE(eodOffset + 8),
     totalNumberOfCentralDirectoryRecords: buffer.readUInt16LE(eodOffset + 10),
     sizeOfCentralDirectory: buffer.readUInt32LE(eodOffset + 12),
     offsetOfStartOfCentralDirectory: buffer.readUInt32LE(eodOffset + 16),
@@ -30,11 +28,7 @@ function getEndOfCentralDirectory(buffer: Buffer) {
 }
 
 // Generator function that yields one entry from the central directory
-function* centralDirectoryYielder(
-  buffer: Buffer,
-  offset: number,
-  eodOffset: number
-) {
+function* centralDirectoryYielder(buffer: Buffer, offset: number, eodOffset: number) {
   while (offset < eodOffset) {
     const fileNameLength = buffer.readUInt16LE(offset + 28);
     const extraFieldLength = buffer.readUInt16LE(offset + 30);
@@ -57,16 +51,14 @@ function* centralDirectoryYielder(
       internalFileAttributes: buffer.readUInt16LE(offset + 36),
       externalFileAttributes: buffer.readUInt32LE(offset + 38),
       relativeOffsetOfLocalFileHeader: buffer.readUInt32LE(offset + 42),
-      fileName: buffer
-        .slice(offset + 46, offset + 46 + fileNameLength)
-        .toString("utf8"),
+      fileName: buffer.slice(offset + 46, offset + 46 + fileNameLength).toString("utf8"),
       extraField: buffer.slice(
         offset + 46 + fileNameLength,
-        offset + 46 + fileNameLength + extraFieldLength
+        offset + 46 + fileNameLength + extraFieldLength,
       ),
       fileComment: buffer.slice(
         offset + 46 + fileNameLength + extraFieldLength,
-        offset + 46 + fileNameLength + extraFieldLength + fileCommentLength
+        offset + 46 + fileNameLength + extraFieldLength + fileCommentLength,
       ),
     };
     yield entry;
@@ -92,12 +84,10 @@ function readLocalHeader(buffer: Buffer, offset: number) {
     uncompressedSize: buffer.readUInt32LE(offset + 22),
     fileNameLength,
     extraFieldLength,
-    fileName: buffer
-      .slice(offset + 30, offset + 30 + fileNameLength)
-      .toString("utf-8"),
+    fileName: buffer.slice(offset + 30, offset + 30 + fileNameLength).toString("utf-8"),
     extraField: buffer.slice(
       offset + 30 + fileNameLength,
-      offset + 30 + fileNameLength + extraFieldLength
+      offset + 30 + fileNameLength + extraFieldLength,
     ),
   };
 }
@@ -109,16 +99,15 @@ export function unzipSingleFile(buffer: Buffer): Buffer {
   const centralDirectory = centralDirectoryYielder(
     buffer,
     endOfCentralDirectory.offsetOfStartOfCentralDirectory,
-    endOfCentralDirectory.eodOffset
+    endOfCentralDirectory.eodOffset,
   );
   const centralDirectoryEntry = centralDirectory.next().value;
   if (!centralDirectoryEntry) return Buffer.alloc(0);
   const localHeader = readLocalHeader(
     buffer,
-    centralDirectoryEntry.relativeOffsetOfLocalFileHeader
+    centralDirectoryEntry.relativeOffsetOfLocalFileHeader,
   );
-  const start =
-    centralDirectoryEntry.relativeOffsetOfLocalFileHeader + localHeader.length;
+  const start = centralDirectoryEntry.relativeOffsetOfLocalFileHeader + localHeader.length;
   const end = start + centralDirectoryEntry.compressedSize;
   return zlib.inflateRawSync(buffer.slice(start, end));
 }

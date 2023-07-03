@@ -17,11 +17,6 @@ import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
-  featureFlags: {
-    swapShowDexQuotes: {
-      enabled: true,
-    },
-  },
 });
 
 // Tests to cover in Playwright test suite

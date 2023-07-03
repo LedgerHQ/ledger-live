@@ -1,3 +1,21 @@
+# 2.62.2
+
+### 🚀 Features
+
+Ledger Live now supports eight new Cardano tokens and twelve ESDT tokens, including WrappedUSDT (USDT).
+
+We've made a few improvements to speed up synchronization between your Bitcoin account and the Bitcoin network.
+
+### 🐛 Fixes
+
+Some users reported wrong countervalues for certain tokens. This has been fixed.
+
+We’ve resolved the bug that caused an error when adding Solana (SOL) accounts.
+
+A bug that caused the NEAR commission fee to be displayed incorrectly has been fixed.
+
+We fixed a bug that prevented users to manage their Polkadot (DOT) account.
+
 # 2.60.0
 
 ### 🚀 Features
@@ -24,18 +42,18 @@ We've squished some minor bugs and spruced up a few UI elements.
 
 # 2.55.0
 
-This release includes performance improvements and minor bug fixes. 
+This release includes performance improvements and minor bug fixes.
 
 # 2.54.0
 
 ### 🚀 Features
 
-- Starting today, you can manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live. 
+- Starting today, you can manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live.
 - Ledger Live will no longer display zero-amount transactions in the transaction history. If you want to view zero-amount transactions nonetheless, navigate to Settings -> Accounts -> Zero-amount transactions and flip the toggle switch to the on position.
 
 ### 🐛 Fixes
 
-- We squished the bug that was triggering an error message instead of undelegating ATOM. 
+- We squished the bug that was triggering an error message instead of undelegating ATOM.
 
 # 2.53.2
 

@@ -18,6 +18,7 @@ const mockSignerFactory = (
   fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
 ) =>
   fn({
+    setLoadConfig: jest.fn(),
     getAddress: async () => ({
       publicKey: "",
       address: address.toLowerCase(),

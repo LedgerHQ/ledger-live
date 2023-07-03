@@ -1,18 +1,19 @@
-import { Observable } from "rxjs";
 import {
   Account,
   SignOperationFnSignature,
   SignOperationEvent,
   DeviceId,
 } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
+import { getEnv } from "@ledgerhq/live-env";
 import { ledgerService } from "@ledgerhq/hw-app-eth";
-import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
-import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -67,10 +68,14 @@ export const buildSignOperation =
           erc20: true,
           domains: transaction.recipientDomain ? [transaction.recipientDomain] : [],
         };
+        const loadConfig: LoadConfig = {
+          cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
+          nftExplorerBaseURL: getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum",
+        };
         // Look for resolutions for external plugins and ERC20
         const resolution = await ledgerService.resolveTransaction(
           serializedTxHexString,
-          {},
+          loadConfig,
           resolutionConfig,
         );
 
@@ -78,10 +83,15 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
-        const sig = (await signerContext(deviceId, signer =>
+        const sig = (await signerContext(deviceId, signer => {
+          signer.setLoadConfig(loadConfig);
           // Request signature on the nano
-          signer.signTransaction(account.freshAddressPath, serializedTxHexString, resolution),
-        )) as EvmSignature;
+          return signer.signTransaction(
+            account.freshAddressPath,
+            serializedTxHexString,
+            resolution,
+          );
+        })) as EvmSignature;
 
         o.next({ type: "device-signature-granted" }); // Signature is done
 

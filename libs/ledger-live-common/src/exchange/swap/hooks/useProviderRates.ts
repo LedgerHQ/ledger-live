@@ -9,6 +9,7 @@ import {
   RatesReducerState,
   CustomMinOrMaxError,
   AvailableProviderV3,
+  OnBeforeTransaction,
 } from "../types";
 import { SetExchangeRateCallback } from "./useSwapTransaction";
 
@@ -32,9 +33,9 @@ type UseProviderRates = (args: {
   toState: SwapSelectorStateType;
   transaction?: Transaction | null;
   onNoRates?: OnNoRatesCallback;
+  onBeforeTransaction?: OnBeforeTransaction;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
   providers?: AvailableProviderV3[];
-  includeDEX?: boolean;
 }) => {
   rates: RatesReducerState;
   refetchRates: () => void;
@@ -51,9 +52,9 @@ export const useProviderRates: UseProviderRates = ({
   toState,
   transaction,
   onNoRates,
+  onBeforeTransaction,
   setExchangeRate,
   providers,
-  includeDEX,
 }) => {
   const { account: fromAccount, parentAccount: fromParentAccount } = fromState;
   const { currency: toCurrency, parentAccount: toParentAccount, account: toAccount } = toState;
@@ -72,6 +73,7 @@ export const useProviderRates: UseProviderRates = ({
     () => {
       let abort = false;
       async function getRates() {
+        onBeforeTransaction && onBeforeTransaction();
         if (
           !transaction ||
           !transaction?.amount ||
@@ -95,7 +97,6 @@ export const useProviderRates: UseProviderRates = ({
             undefined,
             toCurrency,
             providers,
-            includeDEX,
           );
 
           if (abort) return;

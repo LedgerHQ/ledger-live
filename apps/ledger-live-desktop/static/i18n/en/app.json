@@ -2030,7 +2030,6 @@
         "install": "Install update",
         "restore": "Restore settings",
         "apps": "Restore apps",
-
         "updateMCU": "Firmware update",
         "updating": "Firmware update",
         "reset": "Prepare device",
@@ -2292,6 +2291,8 @@
         "recipientAddress": "Recipient address",
         "amount": "Amount",
         "fees": "Network fees",
+        "maxFees": "Max Network fees",
+        "maxFeesInfo": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded.",
         "useMax": "Use Max",
         "sendMax": "Send Max",
         "rippleTag": "Tag",
@@ -2370,7 +2371,8 @@
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Change device language",
-    "changeLanguage": "Change language",
+    "changeLanguage": "Change",
+    "dontChangeLanguage": "Don't change",
     "changeDeviceLanguage": "Change your device language?",
     "changeDeviceLanguagePrompt": {
       "title": "{{language}} is also available for your {{deviceName}}",
@@ -4309,6 +4311,7 @@
         "nextButton": "Get started",
         "noDevice": "No device?",
         "buyLink": "No device? Buy a Ledger Nano X",
+        "recoverSignIn": "Log in for Ledger Recover",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",
         "termsAndConditions": "Terms and conditions",
         "and": "and",
@@ -4358,7 +4361,7 @@
           },
           "4": {
             "title": "Restore using Ledger Recover",
-            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+            "description": "You need to have a Ledger Recover subscription."
           }
         }
       },
@@ -5860,6 +5863,7 @@
   },
   "customImage": {
     "title": "Custom lock screen",
+    "cta": "Custom lock screen",
     "managerCTA": "Lock screen picture",
     "managerCTARemove": "Remove",
     "steps": {
@@ -5951,5 +5955,8 @@
       "contactSupport": "Contact Ledger support",
       "saveLog": "Save log"
     }
+  },
+  "recoverRestore": {
+    "title": "Connect and unlock your Ledger"
   }
 }
