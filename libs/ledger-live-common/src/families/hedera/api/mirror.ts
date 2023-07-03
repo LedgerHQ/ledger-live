@@ -122,7 +122,9 @@ export async function getOperationsForAccount(
     recipients.reverse();
     senders.reverse();
 
-    const hash = base64ToUrlSafeBase64(raw.transaction_hash);
+    // const b64hash = base64ToUrlSafeBase64(raw.transaction_hash);
+    const buffer = Buffer.from(raw.transaction_hash, 'base64');
+    const hash = buffer.toString('hex');
 
     operations.push({
       value,
