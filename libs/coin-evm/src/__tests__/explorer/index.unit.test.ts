@@ -5,40 +5,21 @@ import etherscanLikeApi from "../../api/explorer/etherscan";
 const mockedEtherscanLikeApi = jest.mocked(etherscanLikeApi);
 
 describe("getExplorerApi", () => {
-  it("should return etherscanLikeApi if explorer type is etherscan", () => {
-    expect(
-      getExplorerApi({
-        ethereumLikeInfo: {
-          explorer: {
-            type: "etherscan",
-          },
-        },
-      } as CryptoCurrency),
-    ).toBe(mockedEtherscanLikeApi);
-  });
+  const cases = [
+    ["etherscan", mockedEtherscanLikeApi],
+    ["blockscout", mockedEtherscanLikeApi],
+    ["teloscan", mockedEtherscanLikeApi],
+  ];
 
-  it("should return etherscanLikeApi if explorer type is blockscout", () => {
-    expect(
-      getExplorerApi({
-        ethereumLikeInfo: {
-          explorer: {
-            type: "blockscout",
-          },
+  it.each(cases)("should return right explorer api for %p", (apiType, expectedExplorerApi) => {
+    const explorerApi = getExplorerApi({
+      ethereumLikeInfo: {
+        explorer: {
+          type: apiType,
         },
-      } as CryptoCurrency),
-    ).toBe(mockedEtherscanLikeApi);
-  });
-
-  it("should return etherscanLikeApi if explorer type is teloscan", () => {
-    expect(
-      getExplorerApi({
-        ethereumLikeInfo: {
-          explorer: {
-            type: "teloscan",
-          },
-        },
-      } as CryptoCurrency),
-    ).toBe(mockedEtherscanLikeApi);
+      },
+    } as CryptoCurrency);
+    expect(explorerApi).toBe(expectedExplorerApi);
   });
 
   it("should throw an error if explorer type is unknown", () => {
