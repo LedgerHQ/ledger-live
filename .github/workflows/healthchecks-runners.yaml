@@ -124,7 +124,7 @@ jobs:
           else
             result=ko
           fi
-          version=$(${ANDROID_HOME}/cmdline-tools/3.0/bin/sdkmanager --version)
+          version=$($command --version)
           echo "result=$result" >> $GITHUB_OUTPUT
           echo "version=$version" >> $GITHUB_OUTPUT
       - name: check xvfb
