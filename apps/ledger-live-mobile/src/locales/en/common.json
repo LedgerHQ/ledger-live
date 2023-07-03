@@ -4159,6 +4159,10 @@
       "TimeoutError": {
         "title": "Update timeout",
         "description": "The update was unable to complete because we lost connection to {{deviceName}}"
+      },
+      "CantOpenDevice": {
+        "title": "Sorry, connection failed",
+        "description": "The update was unable to complete because we lost connection to {{deviceName}}."
       }
     }
   },

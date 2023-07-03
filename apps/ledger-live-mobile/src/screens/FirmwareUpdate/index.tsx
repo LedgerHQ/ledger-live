@@ -48,6 +48,7 @@ import { targetDataDimensions } from "../CustomImage/shared";
 import { ProcessorPreviewResult } from "../../components/CustomImage/ImageProcessor";
 import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage";
 import Button from "../../components/wrappedUi/Button";
+import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
 
 type FirmwareUpdateProps = {
@@ -469,18 +470,32 @@ export const FirmwareUpdate = ({
           <Button
             event="button_clicked"
             eventProperties={{
-              button: "Quit flow",
+              button: "Retry flow",
               screen: "Firmware update",
               drawer: `Error: ${error.name}`,
             }}
             type="main"
             outline={false}
-            onPress={quitUpdate}
+            onPress={retryCurrentStep}
             mt={6}
             alignSelf="stretch"
           >
-            {t("FirmwareUpdate.quitUpdate")}
+            {t("common.retry")}
           </Button>
+          <Flex mt={7} alignSelf="stretch">
+            <Link
+              event="button_clicked"
+              eventProperties={{
+                button: "Quit flow",
+                screen: "Firmware update",
+                drawer: `Error: ${error.name}`,
+              }}
+              type="main"
+              onPress={quitUpdate}
+            >
+              {t("FirmwareUpdate.quitUpdate")}
+            </Link>
+          </Flex>
         </DeviceActionError>
       );
     }
