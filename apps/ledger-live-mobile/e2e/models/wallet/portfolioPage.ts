@@ -11,8 +11,8 @@ export default class PortfolioPage {
     return tapByElement(this.portfolioSettingsButton());
   }
 
-  async openTransferMenu() {
-    await tapByElement(this.transferButton());
+  openTransferMenu() {
+    return tapByElement(this.transferButton());
   }
 
   navigateToSwapFromTransferMenu() {
