@@ -44,6 +44,7 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
   fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
 ) => {
   return fn({
+    setLoadConfig: jest.fn(),
     getAddress: jest.fn(),
     signTransaction: () =>
       Promise.resolve({
