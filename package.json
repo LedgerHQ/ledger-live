@@ -11,8 +11,8 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "scripts": {
-    "bump": "changeset version",
     "clean": "git clean -fdX",
+    "bump": "changeset version",
     "changelog": "changeset add",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
