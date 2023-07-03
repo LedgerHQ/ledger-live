@@ -17,6 +17,8 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+import { useEffect } from "react";
+import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -33,12 +35,26 @@ const StepConfirmation = ({
   signed,
   transaction,
   eventType,
+  source,
 }: StepProps) => {
   invariant(
     transaction && transaction.family === "tezos",
     "transaction is required and must be of tezos family",
   );
+  const baker = useBaker(transaction.recipient);
   const undelegating = transaction.mode === "undelegate";
+
+  useEffect(() => {
+    if (optimisticOperation) {
+      track("staking_completed", {
+        currency: "XTZ",
+        validator: baker?.name || transaction.recipient,
+        source,
+        delegation: transaction.mode,
+        flow: "stake",
+      });
+    }
+  }, [baker?.name, optimisticOperation, transaction.mode, transaction.recipient, source]);
   if (optimisticOperation) {
     return (
       <Container>

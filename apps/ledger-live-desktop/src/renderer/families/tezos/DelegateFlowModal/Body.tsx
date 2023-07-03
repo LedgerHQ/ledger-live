@@ -212,16 +212,17 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
   const isRandomChoice =
     !transaction || !randomBaker || transaction.recipient === randomBaker.address;
   const error = transactionError || bridgeError;
+  const { account: accountParams, eventType, source = "Account Page" } = params || {};
   const stepperProps = {
     title,
     stepId,
-    openedWithAccount: Boolean(params && params.account),
+    openedWithAccount: Boolean(params && accountParams),
     steps,
-    eventType: params.eventType,
+    eventType,
     errorSteps,
     device,
     openedFromAccount,
-    account,
+    account: accountParams,
     parentAccount,
     transaction,
     hideBreadcrumb:
@@ -244,6 +245,7 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     onStepChange: handleStepChange,
     onOperationBroadcasted: handleOperationBroadcasted,
     onTransactionError: handleTransactionError,
+    source,
   };
   if (!status) return null;
   return (
