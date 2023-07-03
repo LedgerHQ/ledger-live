@@ -4,15 +4,18 @@ import {
   FeeNotLoaded,
   GasLessThanEstimate,
   InvalidAddress,
+  MaxFeeTooLow,
   NotEnoughBalance,
   NotEnoughGas,
+  PriorityFeeHigherThanMaxFee,
+  PriorityFeeTooHigh,
   PriorityFeeTooLow,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
-import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
+import { EvmTransactionEIP1559, EvmTransactionLegacy, GasOptions } from "../../types";
 import getTransactionStatus from "../../getTransactionStatus";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../../errors";
 
@@ -50,6 +53,27 @@ const eip1559Tx: EvmTransactionEIP1559 = {
   maxFeePerGas: new BigNumber(100),
   maxPriorityFeePerGas: new BigNumber(100),
   type: 2,
+};
+
+const gasOptions: GasOptions = {
+  slow: {
+    maxFeePerGas: new BigNumber(1),
+    maxPriorityFeePerGas: new BigNumber(1),
+    nextBaseFee: new BigNumber(1),
+    gasPrice: null,
+  },
+  medium: {
+    maxFeePerGas: new BigNumber(2),
+    maxPriorityFeePerGas: new BigNumber(2),
+    nextBaseFee: new BigNumber(2),
+    gasPrice: null,
+  },
+  fast: {
+    maxFeePerGas: new BigNumber(3),
+    maxPriorityFeePerGas: new BigNumber(3),
+    nextBaseFee: new BigNumber(3),
+    gasPrice: null,
+  },
 };
 
 describe("EVM Family", () => {
@@ -326,6 +350,75 @@ describe("EVM Family", () => {
         expect(enoughhBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
+          }),
+        );
+      });
+
+      it("should detect maxFeePerGas being greater than max gasOptions maxFeePerGas and error", async () => {
+        const response = await getTransactionStatus(account, {
+          ...eip1559Tx,
+          gasOptions,
+          maxFeePerGas: new BigNumber(5),
+        });
+
+        expect(response.errors).toEqual(
+          expect.objectContaining({
+            maxPriorityFee: new PriorityFeeHigherThanMaxFee(),
+          }),
+        );
+      });
+
+      it("should detect customGasLimit being lower than gasLimit and warn", async () => {
+        const response = await getTransactionStatus(account, {
+          ...eip1559Tx,
+          customGasLimit: eip1559Tx.gasLimit.minus(1),
+        });
+
+        expect(response.warnings).toEqual(
+          expect.objectContaining({
+            gasLimit: new GasLessThanEstimate(),
+          }),
+        );
+      });
+
+      it("should detect maxPriorityFeePerGas being greater than max gasOptions maxPriorityFeePerGas and warn", async () => {
+        const response = await getTransactionStatus(account, {
+          ...eip1559Tx,
+          gasOptions,
+          maxPriorityFeePerGas: new BigNumber(4),
+        });
+
+        expect(response.warnings).toEqual(
+          expect.objectContaining({
+            maxPriorityFee: new PriorityFeeTooHigh(),
+          }),
+        );
+      });
+
+      it("should detect maxPriorityFeePerGas being lower than min gasOptions maxPriorityFeePerGas and warn", async () => {
+        const response = await getTransactionStatus(account, {
+          ...eip1559Tx,
+          gasOptions,
+          maxPriorityFeePerGas: new BigNumber(0.5),
+        });
+
+        expect(response.warnings).toEqual(
+          expect.objectContaining({
+            maxPriorityFee: new PriorityFeeTooLow(),
+          }),
+        );
+      });
+
+      it("should detect maxFeePerGas being lower than recommanded next base fee and warn", async () => {
+        const response = await getTransactionStatus(account, {
+          ...eip1559Tx,
+          gasOptions,
+          maxFeePerGas: new BigNumber(1),
+        });
+
+        expect(response.warnings).toEqual(
+          expect.objectContaining({
+            maxFee: new MaxFeeTooLow(),
           }),
         );
       });

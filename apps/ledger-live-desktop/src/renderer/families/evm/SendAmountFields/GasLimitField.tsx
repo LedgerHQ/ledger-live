@@ -1,3 +1,4 @@
+import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
 import { Transaction } from "@ledgerhq/coin-evm/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -30,7 +31,7 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
         gasLimit = DEFAULT_GAS_LIMIT;
       }
       updateTransaction((transaction: Transaction) =>
-        bridge.updateTransaction(transaction, { gasLimit, feesStrategy: "custom" }),
+        bridge.updateTransaction(transaction, { customGasLimit: gasLimit }),
       );
     },
     [account, updateTransaction],
@@ -38,7 +39,7 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
 
   const onEditClick = useCallback(() => setEditable(true), [setEditable]);
 
-  const { gasLimit } = transaction;
+  const gasLimit = getGasLimit(transaction);
   const { gasLimit: gasLimitError } = status.errors;
   const { gasLimit: gasLimitWarning } = status.warnings;
 
