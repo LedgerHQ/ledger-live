@@ -20,7 +20,7 @@ runs:
         dotnet-version: 2.1.816
     - uses: moonrepo/setup-proto@v0
     - name: Use proto (bash)
-      if: ${{ runner.os != 'Windows' }}
+      # if: ${{ runner.os != 'Windows' }}
       shell: bash
       run: |
         proto --version
