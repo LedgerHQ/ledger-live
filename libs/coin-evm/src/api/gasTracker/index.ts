@@ -2,7 +2,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { GasOptions } from "../../types";
 import { getGasOptions as ledgerGetGasOptions } from "./ledger";
 
-type GasTrackerApi = {
+export type GasTrackerApi = {
   getGasOptions: ({
     currency,
     options,
