@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.2.0-next.2
+
+### Patch Changes
+
+- [#3875](https://github.com/LedgerHQ/ledger-live/pull/3875) [`8df4c0a0dc`](https://github.com/LedgerHQ/ledger-live/commit/8df4c0a0dcf1e2ff51dc49403f3a3c377ae272a8) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a device action implementation issue that was causing the UI to flicker during device actions
+
 ## 31.2.0-next.1
 
 ### Patch Changes
