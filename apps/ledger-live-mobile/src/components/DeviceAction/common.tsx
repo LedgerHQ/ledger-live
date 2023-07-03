@@ -16,7 +16,7 @@ import { TrackScreen } from "../../analytics";
 export const AllowManager = ({ wording, device }: { wording: string; device: Device }) => {
   const { theme } = useTheme();
   return (
-    <Flex pb={6} pt={6}>
+    <Flex pb={6} pt={6} alignItems="center">
       <Flex>
         <Text fontWeight="semiBold" fontSize={7} textAlign="center">
           {wording}

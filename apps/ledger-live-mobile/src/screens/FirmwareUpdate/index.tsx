@@ -152,6 +152,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
   const {
+    connectManagerState,
     updateActionState,
     updateStep,
     retryCurrentStep,
@@ -591,6 +592,10 @@ export const FirmwareUpdate = ({
       );
     }
 
+    if (connectManagerState.allowManagerRequestedWording) {
+      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+    }
+
     if (installLanguageState.languageInstallationRequested) {
       return renderAllowLanguageInstallation({
         t,
@@ -625,6 +630,7 @@ export const FirmwareUpdate = ({
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
     restoreAppsState.allowManagerRequestedWording,
+    connectManagerState.allowManagerRequestedWording,
     installLanguageState.languageInstallationRequested,
     restoreStepDeniedError,
     device,
