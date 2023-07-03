@@ -404,18 +404,6 @@ describe("EVM Family", () => {
     });
   });
 
-  describe("getSubAccount", () => {
-    it("should return the expected payload", async () => {
-      expect(
-        await RPC_API.getSubAccount(fakeCurrency as CryptoCurrency, account.freshAddress),
-      ).toEqual({
-        balance: new BigNumber(420),
-        blockHeight: 69,
-        nonce: 5,
-      });
-    });
-  });
-
   describe("getOptimismAdditionalFees", () => {
     it("should return the expected payload", async () => {
       // @ts-expect-error LRUCache

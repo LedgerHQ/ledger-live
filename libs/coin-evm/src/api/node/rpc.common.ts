@@ -215,31 +215,6 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
   });
 
 /**
- * Get account balances and nonce
- */
-export const getSubAccount: (
-  currency: CryptoCurrency,
-  addr: string,
-) => Promise<{
-  blockHeight: number;
-  balance: BigNumber;
-  nonce: number;
-}> = async (currency, addr) =>
-  withApi(currency, async api => {
-    const [balance, nonce, blockHeight] = await Promise.all([
-      getCoinBalance(currency, addr),
-      getTransactionCount(currency, addr),
-      api.getBlockNumber(), // @TODO GET RID OF THIS AND TAKE IT AS PARAM
-    ]);
-
-    return {
-      blockHeight,
-      balance: new BigNumber(balance.toString()),
-      nonce,
-    };
-  });
-
-/**
  * ⚠️ Blockchain specific
  *
  * For a layer 2 like Optimism, additional fees are needed in order to

@@ -44,11 +44,6 @@ describe("EVM Family", () => {
           height: 6969,
           timestamp: Math.floor(Date.now() / 1000),
         }));
-        jest.spyOn(rpcAPI, "getSubAccount").mockImplementation(async () => ({
-          blockHeight: 10,
-          balance: new BigNumber(100),
-          nonce: 1,
-        }));
       });
 
       afterAll(() => {
