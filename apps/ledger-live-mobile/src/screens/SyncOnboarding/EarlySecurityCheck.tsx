@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Button, Flex, InfiniteLoader, Text, Link, Icon } from "@ledgerhq/native-ui";
+import styled from "styled-components/native";
+import { Button, Flex, InfiniteLoader, Text, Link, ScrollListContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
@@ -8,6 +9,7 @@ import {
   CircledCheckSolidMedium,
   ExternalLinkMedium,
   WarningSolidMedium,
+  InfoAltFillMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
@@ -16,14 +18,19 @@ import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
-import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
+import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
+import { ScrollView } from "react-native";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
-// Represents the UI status of each check step
-// TODO: one for each ?
-// Pb: used in CheckCard
-type UiCheckStatus = "inactive" | "active" | "completed" | "refused" | "failed";
+// Represents the UI status of each check step, used by CheckCard
+type UiCheckStatus =
+  | "inactive"
+  | "active"
+  | "completed"
+  | "genuineCheckRefused"
+  | "firmwareUpdateRefused"
+  | "failed";
 
 // Represents the status of the genuine check from which is derived the displayed UI and if the genuine check hook can be started or not
 // TODO: no skipped anymore
@@ -36,7 +43,7 @@ type GenuineCheckUiDrawerStatus =
   | "genuine-check-failed";
 
 // Represents the status of the firmware check from which is derived the displayed UI and if the genuine check hook can be started or not
-type FirmwareUpdateStatus = "unchecked" | "ongoing" | "completed" | "failed";
+type FirmwareUpdateStatus = "unchecked" | "ongoing" | "completed" | "failed" | "refused";
 // Defines which drawer should be displayed during the firmware check
 type FirmwareUpdateUiDrawerStatus = "none" | "unlock-needed" | "new-firmware-available";
 
@@ -122,7 +129,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     })}  
   `);
 
-  // Exit point
+  // Exit point: actually with a button
   // useEffect(() => {
   //   // FIXME: to adapt with skip and real fw update
   //   if (firmwareUpdateCheckStatus === "completed") {
@@ -141,6 +148,23 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     resetGenuineCheckState();
     setGenuineCheckStatus("unchecked");
   }, [resetGenuineCheckState]);
+
+  const onSkipUpdate = useCallback(() => {
+    track("button_clicked", {
+      button: "skip software update",
+    });
+
+    notifyOnboardingEarlyCheckEnded();
+  }, [notifyOnboardingEarlyCheckEnded]);
+
+  const onUpdateFirmware = useCallback(() => {
+    track("button_clicked", {
+      button: "going to software update",
+    });
+
+    // TODO: actual fw update: "updating"
+    setFirmwareUpdateCheckStatus("completed");
+  }, []);
 
   // Check steps entry points
   useEffect(() => {
@@ -201,7 +225,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       } else if (devicePermissionState === "refused") {
         // TODO: no drawer
         currentDisplayedDrawer = "none";
-        genuineCheckUiStepStatus = "refused";
+        genuineCheckUiStepStatus = "genuineCheckRefused";
         // currentDisplayedDrawer = "genuine-check-failed";
       }
     } else if (genuineCheckStatus === "failed") {
@@ -247,23 +271,26 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       }
 
       console.log(`🥦 fw update check UI logic end: ${JSON.stringify({ currentDisplayedDrawer })}`);
+    } else if (firmwareUpdateCheckStatus === "refused") {
+      currentDisplayedDrawer = "none";
+      firmwareUpdateUiStepStatus = "firmwareUpdateRefused";
     }
-    // currentSoftwareChecksStep can be any value for those UI updates
-    if (firmwareUpdateCheckStatus === "completed") {
-      firmwareUpdateUiStepStatus = "completed";
-    } else if (firmwareUpdateCheckStatus === "failed") {
-      firmwareUpdateUiStepStatus = "failed";
-    }
+  }
+  // `currentStep` can be any value for those UI updates
+  if (firmwareUpdateCheckStatus === "completed") {
+    firmwareUpdateUiStepStatus = "completed";
+  } else if (firmwareUpdateCheckStatus === "failed") {
+    firmwareUpdateUiStepStatus = "failed";
   }
 
   // ***** Updates UI *****
   // For both genuine check step and firmware update check step
-  let bottomCta = <></>;
+  let primaryBottomCta: JSX.Element | null = null;
+  let secondaryBottomCta: JSX.Element | null = null;
 
   // Updates the genuine check UI step
   let genuineCheckStepTitle;
   let genuineCheckStepDescription: string | null = null;
-  const firmwareUpdateCheckStepDescription: string | null = null;
 
   switch (genuineCheckUiStepStatus) {
     case "active":
@@ -277,10 +304,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     case "failed":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.failed.title");
       break;
-    case "refused":
+    case "genuineCheckRefused":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.refused.title");
       genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.refused.description");
-      bottomCta = (
+      primaryBottomCta = (
         <Button type="main" onPress={onRetryGenuineCheck}>
           {t("earlySecurityCheck.genuineCheckStep.refused.cta")}
         </Button>
@@ -292,31 +319,72 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   }
 
   // Handles the firmware update UI step title
-  let firmwareUpdatecheckStepTitle;
+  let firmwareUpdateCheckStepTitle;
+  let firmwareUpdateCheckStepDescription: string | null = null;
+
   switch (firmwareUpdateUiStepStatus) {
     case "active":
-      firmwareUpdatecheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
+      firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
       break;
     case "completed":
       if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
-        firmwareUpdatecheckStepTitle = t(
+        firmwareUpdateCheckStepTitle = t(
           "earlySecurityCheck.firmwareUpdateCheckStep.completed.updateAvailable.title",
           {
             firmwareVersion: JSON.stringify(latestFirmware.final.name),
           },
         );
       } else {
-        firmwareUpdatecheckStepTitle = t(
+        firmwareUpdateCheckStepTitle = t(
           "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
           { productName },
         );
       }
+
+      primaryBottomCta = (
+        <Button type="main" onPress={notifyOnboardingEarlyCheckEnded}>
+          {t("earlySecurityCheck.completed.continueCta")}
+        </Button>
+      );
       break;
     case "failed":
-      firmwareUpdatecheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.failed.title");
+      firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.failed.title");
+      break;
+    case "firmwareUpdateRefused":
+      if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
+        firmwareUpdateCheckStepTitle = t(
+          "earlySecurityCheck.firmwareUpdateCheckStep.refused.title",
+          {
+            firmwareVersion: JSON.stringify(latestFirmware.final.name),
+          },
+        );
+
+        firmwareUpdateCheckStepDescription = t(
+          "earlySecurityCheck.firmwareUpdateCheckStep.refused.description",
+        );
+
+        primaryBottomCta = (
+          <Button type="main" onPress={onUpdateFirmware} mt="2">
+            {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.updateCta")}
+          </Button>
+        );
+      } else {
+        // This should not happen: if the user refused the update, it means one was available
+        firmwareUpdateCheckStepTitle = t(
+          "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
+          { productName },
+        );
+      }
+
+      secondaryBottomCta = (
+        <Button type="default" onPress={onSkipUpdate}>
+          {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.skipCta")}
+        </Button>
+      );
+
       break;
     default:
-      firmwareUpdatecheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
+      firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
       break;
   }
 
@@ -330,7 +398,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         mb={6}
       />
       <CheckCard
-        title={firmwareUpdatecheckStepTitle}
+        title={firmwareUpdateCheckStepTitle}
         description={firmwareUpdateCheckStepDescription}
         status={firmwareUpdateUiStepStatus}
         index={2}
@@ -348,12 +416,20 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       </Flex>
     );
 
-    bottomCta = (
+    primaryBottomCta = (
       <Button type="main" onPress={onStartChecks}>
         {t("earlySecurityCheck.idle.checkCta")}
       </Button>
     );
   }
+
+  // Depends on `currentDisplayedDrawer` because of how the drawer `onClose` works
+  const onCloseUpdateAvailable = useCallback(() => {
+    // Then we're sure that the user clicks on the close button
+    if (currentDisplayedDrawer === "new-firmware-available") {
+      setFirmwareUpdateCheckStatus("refused");
+    }
+  }, [currentDisplayedDrawer]);
 
   return (
     <>
@@ -390,26 +466,30 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           setGenuineCheckStatus("skipped");
         }}
       />
-      <FirmwareUpdateDrawer
+      <FirmwareUpdateAvailableDrawer
         productName={productName}
+        firmwareVersion={latestFirmware?.final?.version ?? ""}
         isOpen={currentDisplayedDrawer === "new-firmware-available"}
-        onSkip={() => {
-          track("button_clicked", {
-            button: "skip software update",
-            drawer: `Set up ${productName}: Step 4: Software update available`,
-          });
-          setFirmwareUpdateCheckStatus("completed");
-        }}
-        onUpdate={() => {
-          track("button_clicked", {
-            button: "download software update",
-            drawer: `Set up ${productName}: Step 4: Software update available`,
-          });
-          // TODO: actual fw update
-          setFirmwareUpdateCheckStatus("completed");
-        }}
+        // onSkip={() => {
+        //   track("button_clicked", {
+        //     button: "skip software update",
+        //     drawer: `Set up ${productName}: Step 4: Software update available`,
+        //   });
+        //   setFirmwareUpdateCheckStatus("completed");
+        // }}
+        onUpdate={onUpdateFirmware}
+        onClose={onCloseUpdateAvailable}
       />
-      <Flex flexDirection="column" height="100%" width="100%">
+      <ScrollView
+        style={{
+          display: "flex",
+          flex: 1,
+        }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          flexDirection: "column",
+        }}
+      >
         <Flex border="1px dashed #606060" borderRadius="16px" height="300px" mx="5"></Flex>
         <Flex
           flex={1}
@@ -422,11 +502,12 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
             <Text variant="h4">{t("earlySecurityCheck.title")}</Text>
             {stepContent}
           </Flex>
-          <Flex mx="5" mb="3">
-            {bottomCta}
+          <Flex mx="5" mb="4">
+            {primaryBottomCta}
+            {secondaryBottomCta}
           </Flex>
         </Flex>
-      </Flex>
+      </ScrollView>
     </>
   );
 };
@@ -454,8 +535,11 @@ const CheckCard = ({ title, description, index, status, ...props }: CheckCardPro
       checkIcon = <CircledCheckSolidMedium color="success.c50" size={24} />;
       break;
     case "failed":
-    case "refused":
+    case "genuineCheckRefused":
       checkIcon = <WarningSolidMedium color="warning.c60" size={24} />;
+      break;
+    case "firmwareUpdateRefused":
+      checkIcon = <InfoAltFillMedium color="primary.c80" size={24} />;
       break;
     case "inactive":
     default:
@@ -470,7 +554,7 @@ const CheckCard = ({ title, description, index, status, ...props }: CheckCardPro
           {title}
         </Text>
         {description ? (
-          <Text ml={4} mt={5} variant="body" color="neutral.c70">
+          <Text ml={4} mt={5} mb={4} variant="body" color="neutral.c70">
             {description}
           </Text>
         ) : null}
@@ -478,3 +562,10 @@ const CheckCard = ({ title, description, index, status, ...props }: CheckCardPro
     </Flex>
   );
 };
+
+// const StyledScrollView = styled(ScrollView)`
+//   display: flex;
+//   flex: 1;
+//   height: 100%;
+//   background-color: "red";
+// `;

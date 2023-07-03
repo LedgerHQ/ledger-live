@@ -1906,6 +1906,9 @@
       "learnMore": "Learn more about Genuine Check",
       "checkCta": "Check Ledger Stax"
     },
+    "completed": {
+      "continueCta": "Continue to setup"
+    },
     "earlySecurityCheckMandatoryDrawer": {
       "title": "Genuine Check is mandatory",
       "description": "You cannot setup your {{productName}} without allowing this Check.",
@@ -1954,7 +1957,19 @@
       },
       "failed": {
         "title": "Software update failed"
+      },
+      "refused": {
+        "title": "OS version {{firmwareVersion}} is available",
+        "description": "We recommend performing this update to benefit from the latest security and functionality.",
+        "updateCta": "Update Ledger Stax",
+        "skipCta": "Skip update"
       }
+    },
+    "firmwareUpdateAvailableDrawer": {
+      "title": "OS update available",
+      "description": "Update your {{productName}} to benefit from the latest security and functionality.",
+      "descriptionVersion": "Version {{firmwareVersion}}",
+      "updateCta": "Update now"
     }
   },
   "syncOnboarding": {
