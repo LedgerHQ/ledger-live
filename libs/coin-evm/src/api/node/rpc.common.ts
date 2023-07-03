@@ -107,15 +107,6 @@ export const getTransactionCount: NodeApi["getTransactionCount"] = (currency, ad
  */
 export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transaction) =>
   withApi(account.currency, async api => {
-    /**
-     * NOTE: either we do this here, or we duplicate this logic in all functions
-     * using getGasEstimation (in order not to update the tx gasLimit when in
-     * "custom" mode)
-     */
-    if (transaction.feesStrategy === "custom") {
-      return transaction.gasLimit;
-    }
-
     const { to, value, data } = transactionToEthersTransaction(transaction);
 
     try {

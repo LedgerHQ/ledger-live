@@ -117,17 +117,11 @@ const validateGas = (
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
-  // Gas Limit
-  if (gasLimit.isZero()) {
-    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
-    errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
-  }
-  if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
-    warnings.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
-  }
+  const maximalPriorityFee = tx.gasOptions?.fast?.maxPriorityFeePerGas;
+  const minimunPriorityFee = tx.gasOptions?.slow?.maxPriorityFeePerGas;
+  const maximalMaxFeePerGas = tx.gasOptions?.fast?.maxFeePerGas;
+  const recommandedNextBaseFee = tx.gasOptions?.medium?.nextBaseFee;
 
-  // Gas Price
   if (
     // if fees are not set or wrongly set
     !(
@@ -164,6 +158,24 @@ const validateGas = (
     }
   }
 
+  if (maximalMaxFeePerGas && tx.maxFeePerGas?.gt(maximalMaxFeePerGas)) {
+    // priority fee is more than max fee (total fee for the transaction) which doesn't make sense
+    errors.maxPriorityFee = new PriorityFeeHigherThanMaxFee();
+  }
+
+  if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
+    warnings.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+  }
+
+  if (maximalPriorityFee && tx.maxPriorityFeePerGas?.gt(maximalPriorityFee)) {
+    warnings.maxPriorityFee = new PriorityFeeTooHigh();
+  } else if (minimunPriorityFee && tx.maxPriorityFeePerGas?.lt(minimunPriorityFee)) {
+    warnings.maxPriorityFee = new PriorityFeeTooLow();
+  }
+
+  if (recommandedNextBaseFee && tx.maxFeePerGas?.lt(recommandedNextBaseFee)) {
+    warnings.maxFee = new MaxFeeTooLow();
+  }
   return [errors, warnings];
 };
 
