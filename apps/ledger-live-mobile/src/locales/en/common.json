@@ -56,6 +56,7 @@
     "forgetDevice": "Remove device",
     "help": "Help",
     "saveLogs": "Save logs",
+    "scrollToTop": "Scroll to top",
     "sync": {
       "ago": "Synchronized {{time}}"
     },
