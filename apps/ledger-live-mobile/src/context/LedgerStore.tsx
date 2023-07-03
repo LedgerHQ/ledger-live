@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Provider } from "react-redux";
+import Config from "react-native-config";
 import thunk from "redux-thunk";
-import { createStore, applyMiddleware, compose } from "redux";
+import { createStore, applyMiddleware, compose, type Middleware } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -21,9 +22,15 @@ import { updateProtectData, updateProtectStatus } from "../actions/protect";
 import { INITIAL_STATE as settingsState, supportedCountervalues } from "../reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "../bridge/cache";
 
+const middlewares: [Middleware] = [thunk];
 
+if (Config.DEBUG_RNDEBUGGER) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const createDebugger = require("redux-flipper").default;
+  middlewares.push(createDebugger());
+}
 
-export const store = createStore(reducers, compose(applyMiddleware(thunk)));
+export const store = createStore(reducers, compose(applyMiddleware(...middlewares)));
 
 export type StoreType = typeof store;
 
