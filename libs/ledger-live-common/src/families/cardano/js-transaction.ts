@@ -1,4 +1,3 @@
-import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
