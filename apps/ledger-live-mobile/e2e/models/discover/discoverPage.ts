@@ -45,9 +45,7 @@ export default class DiscoveryPage {
     return tapByText(currencyName);
   }
 
-  selectAccountFromDrawer(index: number) {
-    // return tapByElement(this.accountCard(`$account-card`));
-    return tapById("account-card", 1);
-    // return tapByText(accountId);
+  selectAccountFromDrawer(accountName: string) {
+    return tapByText(accountName);
   }
 }

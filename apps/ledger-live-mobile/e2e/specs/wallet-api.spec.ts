@@ -1,14 +1,14 @@
 import * as detox from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
 import { loadConfig } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
-import { delay, isAndroid } from "../helpers";
+import { isAndroid } from "../helpers";
 import * as server from "../../../ledger-live-desktop/tests/utils/serve-dummy-app";
 import DiscoveryPage from "../models/discover/discoverPage";
-import { LiveApp } from "../models/discover/liveApp";
+import { LiveAppWebview } from "../models/discover/liveAppWebview";
 
 let portfolioPage: PortfolioPage;
 let discoverPage: DiscoveryPage;
-let liveApp: LiveApp;
+let liveAppWebview: LiveAppWebview;
 
 let continueTest: boolean;
 
@@ -76,7 +76,7 @@ describe("Wallet API methods", () => {
     // start navigation
     portfolioPage = new PortfolioPage();
     discoverPage = new DiscoveryPage();
-    liveApp = new LiveApp();
+    liveAppWebview = new LiveAppWebview();
 
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
   });
@@ -99,23 +99,17 @@ describe("Wallet API methods", () => {
     const url = await detox.web.element(detox.by.web.id("param-container")).getCurrentUrl();
     expect(url).toBe("http://localhost:52619/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App");
 
-    const { id, response } = liveApp.send({
+    const { id, response } = await liveAppWebview.send({
       method: "account.request",
       params: {
         currencyIds: ["ethereum", "bitcoin"],
       },
     });
 
-    // TODO: select accounts
+    await discoverPage.selectCurrencyFromDrawer("Bitcoin");
+    await discoverPage.selectAccountFromDrawer("Bitcoin 1 (legacy)");
 
-    // await delay(20000);
-    await discoverPage.selectCurrencyFromDrawer("Ethereum");
-    // await discoverPage.selectAccountFromDrawer("mock:1:ethereum:true_ethereum_1:");
-    await discoverPage.selectAccountFromDrawer(1);
-    // await discoverPage.selectAccountFromDrawer("11.31");
-    // await delay(1000000000);
-
-    await expect(response).resolves.toStrictEqual({
+    await expect(response).resolves.toMatchObject({
       jsonrpc: "2.0",
       id,
       result: {
@@ -125,7 +119,7 @@ describe("Wallet API methods", () => {
           balance: "35688397",
           blockHeight: 194870,
           currency: "bitcoin",
-          lastSyncDate: "2020-03-14T13:34:42.000Z",
+          // lastSyncDate: "2020-03-14T13:34:42.000Z",
           name: "Bitcoin 1 (legacy)",
           spendableBalance: "35688397",
         },

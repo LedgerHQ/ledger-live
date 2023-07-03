@@ -3,10 +3,8 @@ import { web, by } from "detox";
 import { e2eBridgeServer } from "../../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 
-export class LiveApp {
-  // constructor() {}
-
-  send(params: Record<string, unknown>) {
+export class LiveAppWebview {
+  async send(params: Record<string, unknown>) {
     const webview = web.element(by.web.id("root"));
     const id = randomUUID();
     const json = JSON.stringify({
@@ -15,7 +13,7 @@ export class LiveApp {
       ...params,
     });
 
-    webview.runScript(`function foo(element) {
+    await webview.runScript(`function foo(element) {
       window.ledger.e2e.walletApi.send('${json}');
     }`);
 
