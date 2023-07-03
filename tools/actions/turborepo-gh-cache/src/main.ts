@@ -20,6 +20,7 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
     detached: true,
     stdio: ["ignore", out, err],
     env: process.env,
+    shell: true,
   });
 
   subprocess.unref();

@@ -4819,7 +4819,8 @@ var cleanupCacheFolder = (0, import_core.getInput)("cleanup-cache-folder", {
   const subprocess = (0, import_child_process.spawn)("node", [path2.resolve(__dirname, "server.js")], {
     detached: true,
     stdio: ["ignore", out, err],
-    env: process.env
+    env: process.env,
+    shell: true
   });
   subprocess.unref();
   let interval = null;

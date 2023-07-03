@@ -31540,9 +31540,9 @@ var init_httpPipelineLogLevel = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js
+// ../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/tslib.js
 var require_tslib = __commonJS({
-  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js"(exports, module2) {
+  "../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/tslib.js"(exports, module2) {
     var __extends2;
     var __assign2;
     var __rest2;
@@ -31680,10 +31680,10 @@ var require_tslib = __commonJS({
             if (_ = accept3(result.set))
               descriptor.set = _;
             if (_ = accept3(result.init))
-              initializers.push(_);
+              initializers.unshift(_);
           } else if (_ = accept3(result)) {
             if (kind === "field")
-              initializers.push(_);
+              initializers.unshift(_);
             else
               descriptor[key] = _;
           }
@@ -32047,10 +32047,10 @@ var require_tslib = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js
+// ../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/modules/index.js
 var import_tslib, __extends, __assign, __rest, __decorate, __param, __esDecorate, __runInitializers, __propKey, __setFunctionName, __metadata, __awaiter, __generator, __exportStar, __createBinding, __values2, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet, __classPrivateFieldIn;
 var init_modules = __esm({
-  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js"() {
+  "../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/modules/index.js"() {
     import_tslib = __toESM(require_tslib(), 1);
     ({
       __extends,
