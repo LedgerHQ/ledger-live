@@ -96,7 +96,7 @@ const Description = styled(Text).attrs<{
 type Props = {
   account: PolkadotAccount;
 };
-const ManageModal = ({ account, ...rest }: Props) => {
+const ManageModal = ({ account, source, ...rest }: Props) => {
   const dispatch = useDispatch();
   const { staking } = usePolkadotPreloadData();
   const { polkadotResources } = account;
@@ -108,6 +108,7 @@ const ManageModal = ({ account, ...rest }: Props) => {
       dispatch(
         openModal(name, {
           account,
+          source,
           ...params,
         }),
       );

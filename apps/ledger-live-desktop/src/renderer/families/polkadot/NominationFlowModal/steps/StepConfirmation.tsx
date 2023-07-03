@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
@@ -13,6 +13,7 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -23,7 +24,35 @@ const Container = styled(Box).attrs(() => ({
 }>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) {
+function StepConfirmation({
+  t,
+  optimisticOperation,
+  error,
+  signed,
+  transaction,
+  source,
+}: StepProps) {
+  const preloaded = usePolkadotPreloadData();
+  const { validators: allValidators } = preloaded;
+
+  const validators = useMemo(() => {
+    return allValidators
+      .filter(val => transaction.validators.includes(val.address))
+      .map(val => val.identity || val.address);
+  }, [allValidators, transaction.validators]);
+
+  useEffect(() => {
+    if (optimisticOperation && validators) {
+      track("staking_completed", {
+        currency: "DOT",
+        validator: validators,
+        source,
+        delegation: "nomination",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, validators, source]);
+
   if (optimisticOperation) {
     return (
       <Container>

@@ -15,8 +15,9 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 type Props = {
   account: PolkadotAccount | SubAccount;
   parentAccount: PolkadotAccount | undefined | null;
+  source?: string;
 };
-const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
+const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -34,6 +35,7 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
       dispatch(
         openModal("MODAL_POLKADOT_MANAGE", {
           account: mainAccount,
+          source,
         }),
       );
     } else {
