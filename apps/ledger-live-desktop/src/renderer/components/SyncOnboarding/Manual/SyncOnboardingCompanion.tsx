@@ -23,7 +23,7 @@ import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatue
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
-import { StepText, analyticsFlowName } from "./shared";
+import { analyticsFlowName, StepText } from "./shared";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";

@@ -1,77 +1,170 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Flex } from "@ledgerhq/react-ui";
-import { Bullet, Status as SoftwareCheckStatus } from "./shared";
+import { Button, Link, Flex, Text, Icons } from "@ledgerhq/react-ui";
+import { Bullet } from "./Bullet";
+import { Status as SoftwareCheckStatus } from "./types";
 
 export type Props = {
   genuineCheckStatus: SoftwareCheckStatus;
   firmwareUpdateStatus: SoftwareCheckStatus;
-  handleSkipFirmwareUpdate: () => void;
   availableFirmwareVersion: string;
-  productName: string;
+  modelName: string;
+  onClickStartChecks: () => void;
+  onClickWhyPerformSecurityChecks: () => void;
+  onClickResumeGenuineCheck: () => void;
+  onClickDownloadUpdate: () => void;
+  onClickWhatsInThisUpdate: () => void;
+  onClickContinueToSetup: () => void;
 };
 
 const SoftwareCheckContent = ({
   genuineCheckStatus,
   firmwareUpdateStatus,
   availableFirmwareVersion,
-  handleSkipFirmwareUpdate,
-  productName,
+  modelName,
+  onClickStartChecks,
+  onClickWhyPerformSecurityChecks,
+  onClickResumeGenuineCheck,
+  onClickDownloadUpdate,
+  onClickWhatsInThisUpdate,
+  onClickContinueToSetup,
 }: Props) => {
   const { t } = useTranslation();
-
   return (
-    <Flex flexDirection="column" alignContent="start">
+    <Flex flexDirection="column" alignContent="start" flexShrink={1}>
+      <Text variant="h4Inter" mb={12} whiteSpace="pre-wrap">
+        {genuineCheckStatus === SoftwareCheckStatus.completed &&
+        firmwareUpdateStatus === SoftwareCheckStatus.completed
+          ? t("syncOnboarding.manual.softwareCheckContent.title.completed", { modelName })
+          : t("syncOnboarding.manual.softwareCheckContent.title.active", { modelName })}
+      </Text>
       <Bullet
-        mb={7}
+        mb={8}
         bulletText="1"
         status={genuineCheckStatus}
-        text={
+        title={
           genuineCheckStatus === SoftwareCheckStatus.completed
-            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.completed", {
-                deviceName: productName,
+            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.completed", {
+                modelName,
               })
-            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.active", {
-                deviceName: productName,
+            : genuineCheckStatus === SoftwareCheckStatus.cancelled
+            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.cancelled", {
+                modelName,
+              })
+            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.title.active", {
+                modelName,
               })
         }
-      />
+        subtitle={
+          genuineCheckStatus === SoftwareCheckStatus.completed
+            ? undefined
+            : genuineCheckStatus === SoftwareCheckStatus.cancelled
+            ? t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.cancelled", {
+                modelName,
+              })
+            : t("syncOnboarding.manual.softwareCheckContent.genuineCheck.subtitle.active", {
+                modelName,
+              })
+        }
+      >
+        {genuineCheckStatus === SoftwareCheckStatus.cancelled ? (
+          <Button
+            variant="main"
+            size="small"
+            outline={false}
+            mr={6}
+            onClick={onClickResumeGenuineCheck}
+          >
+            {t("syncOnboarding.manual.softwareCheckContent.genuineCheck.resumeCTA")}
+          </Button>
+        ) : null}
+      </Bullet>
       <Bullet
         bulletText="2"
         status={firmwareUpdateStatus}
-        text={
-          firmwareUpdateStatus === SoftwareCheckStatus.inactive
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.inactive")
-            : firmwareUpdateStatus === SoftwareCheckStatus.active
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.active")
+        title={
+          firmwareUpdateStatus === SoftwareCheckStatus.completed
+            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.completed", {
+                modelName,
+              })
             : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.updateAvailable", {
+            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.updateAvailable", {
+                modelName,
                 firmwareVersion: availableFirmwareVersion,
               })
-            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.completed")
+            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.title.active", {
+                modelName,
+              })
         }
-        subText={
-          firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
-            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.recommendation")
-            : undefined
+        subtitle={
+          firmwareUpdateStatus === SoftwareCheckStatus.completed
+            ? undefined
+            : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
+            ? t(
+                "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.updateAvailable",
+                {
+                  modelName,
+                },
+              )
+            : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.active", {
+                modelName,
+              })
         }
-      />
-      {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
-        <Flex mt={2} flex="1" justifyContent="space-around">
-          <Button variant="main" width="45%" padding="10px 20px">
-            {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.downloadUpdate")}
-          </Button>
-          <Button
-            variant="main"
-            outline
-            width="45%"
-            padding="10px 20px"
-            onClick={handleSkipFirmwareUpdate}
+      >
+        {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
+          <Flex flexDirection="row">
+            <Button
+              variant="main"
+              size="small"
+              outline={false}
+              mr={6}
+              onClick={onClickDownloadUpdate}
+            >
+              {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.downloadUpdateCTA")}
+            </Button>
+            <Button
+              variant="shade"
+              size="small"
+              outline
+              onClick={onClickWhatsInThisUpdate}
+              Icon={Icons.ExternalLinkMedium}
+            >
+              {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.whatsInThisUpdateCTA")}
+            </Button>
+          </Flex>
+        )}
+      </Bullet>
+      {genuineCheckStatus === SoftwareCheckStatus.inactive ||
+      genuineCheckStatus === SoftwareCheckStatus.requested ? (
+        <Flex flexDirection={"column"} mt={12} rowGap={12}>
+          <Link
+            Icon={Icons.ExternalLinkMedium}
+            alignSelf={"flex-start"}
+            iconPosition="right"
+            onClick={onClickWhyPerformSecurityChecks}
           >
-            {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.skipUpdate")}
+            {t("syncOnboarding.manual.softwareCheckContent.whyPerformChecksLink")}
+          </Link>
+          <Button onClick={onClickStartChecks} variant="main" size="large" outline={false}>
+            {t("syncOnboarding.manual.softwareCheckContent.startChecksCTA")}
           </Button>
         </Flex>
-      )}
+      ) : null}
+      {genuineCheckStatus === SoftwareCheckStatus.completed &&
+      firmwareUpdateStatus === SoftwareCheckStatus.completed ? (
+        <Flex flexDirection={"column"} mt={12} rowGap={12}>
+          <Button
+            onClick={onClickContinueToSetup}
+            variant="main"
+            size="large"
+            outline={false}
+            Icon={Icons.ArrowRightMedium}
+            iconPosition="right"
+          >
+            {t("syncOnboarding.manual.softwareCheckContent.continueCTA")}
+          </Button>
+        </Flex>
+      ) : null}
     </Flex>
   );
 };

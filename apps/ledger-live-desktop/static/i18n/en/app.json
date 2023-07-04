@@ -1320,19 +1320,37 @@
         "restoreChoiceRecoverDescription": "Restore your Recovery Phrase Backup by logging into your Ledger account and confirming your identity."
       },
       "softwareCheckContent": {
-        "title": "Software check",
+        "title": {
+          "active": "Genuine check and\nOS update check",
+          "completed": "Your {{modelName}} is genuine and up to date"
+        },
+        "whyPerformChecksLink": "Why perform these security checks?",
+        "startChecksCTA": "Start checks",
+        "continueCTA": "Continue to setup",
         "genuineCheck": {
-          "active": "Checking {{deviceName}}",
-          "completed": "{{deviceName}} is authentic"
+          "title": {
+            "active": "Genuine check",
+            "completed": "Your {{modelName}} is genuine",
+            "cancelled": "Genuine check declined"
+          },
+          "subtitle": {
+            "active": "This check ensures that your {{modelName}} is official Ledger hardware",
+            "cancelled": "You cannot setup your {{modelName}} without allowing this check"
+          },
+          "resumeCTA": "Resume genuine check"
         },
         "firmwareUpdate": {
-          "inactive": "Software check",
-          "active": "Checking for software updates",
-          "updateAvailable": "Software update available {{firmwareVersion}}",
-          "recommendation": "We recommend downloading the update now",
-          "downloadUpdate": "Download update",
-          "skipUpdate": "Skip for now",
-          "completed": "Software is up to date"
+          "title": {
+            "active": "OS update check",
+            "completed": "{{modelName}} OS is up to date",
+            "updateAvailable": "OS update {{firmwareVersion}} is available"
+          },
+          "subtitle": {
+            "active": "This check ensures your {{modelName}} OS is up to date",
+            "updateAvailable": "We recommend performing this update to have access to the latest security features"
+          },
+          "downloadUpdateCTA": "Download update",
+          "whatsInThisUpdateCTA": "What's in this update?"
         }
       },
       "installApplications": {
