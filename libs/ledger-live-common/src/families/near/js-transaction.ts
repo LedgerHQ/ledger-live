@@ -1,6 +1,6 @@
-import { isEqual } from "lodash";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { Transaction } from "./types";
 import getEstimatedFees from "./js-getFeesForTransaction";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
@@ -25,6 +25,5 @@ export const prepareTransaction = async (a: Account, t: Transaction): Promise<Tr
       })
     : t.amount;
 
-  const newTx = { ...t, fees, amount };
-  return isEqual(t, newTx) ? t : newTx;
+  return defaultUpdateTransaction(t, { fees, amount });
 };

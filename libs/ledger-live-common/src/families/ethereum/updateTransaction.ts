@@ -3,14 +3,11 @@ import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelp
 import { Transaction } from "./types";
 
 export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] = (tx, patch) => {
-  const updatedTx = defaultUpdateTransaction(tx, patch);
-
   if ("recipient" in patch && patch.recipient !== tx.recipient) {
-    updatedTx.userGasLimit = null;
-    updatedTx.estimatedGasLimit = null;
+    patch = { ...patch, userGasLimit: null, estimatedGasLimit: null };
   }
 
-  return updatedTx;
+  return defaultUpdateTransaction(tx, patch);
 };
 
 export default updateTransaction;
