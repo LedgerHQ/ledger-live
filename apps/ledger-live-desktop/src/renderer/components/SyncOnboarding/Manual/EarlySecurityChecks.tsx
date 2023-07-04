@@ -52,8 +52,6 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     deviceId,
   });
 
-  useEffect(() => onComplete(), [onComplete]);
-
   const { latestFirmware, status, lockedDevice } = useGetLatestAvailableFirmware({
     getLatestAvailableFirmwareFromDeviceId,
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
