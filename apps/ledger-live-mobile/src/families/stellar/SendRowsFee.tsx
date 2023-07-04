@@ -9,7 +9,6 @@ import type { SendFundsNavigatorStackParamList } from "../../components/RootNavi
 import { ScreenName } from "../../const";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { EditTransactionParamList } from "../ethereum/EditTransaction/EditTransactionParamList";
 
 type Props = {
   account: AccountLike;
@@ -18,7 +17,6 @@ type Props = {
   setTransaction: (..._: Array<Transaction>) => void;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>

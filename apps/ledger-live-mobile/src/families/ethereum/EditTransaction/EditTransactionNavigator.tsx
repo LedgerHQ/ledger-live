@@ -10,7 +10,7 @@ import { MethodSelection } from "./MethodSelection";
 import { EditTransactionParamList } from "./EditTransactionParamList";
 import SelectDevice from "../../../screens/SelectDevice";
 import SendConnectDevice from "../../../screens/ConnectDevice";
-import SendSummary from "../../../screens/SendFunds/04-Summary";
+import EditEthereumSummary from "./EditEthereumSummary";
 import SendValidationSuccess from "../../../screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "../../../screens/SendFunds/07-ValidationError";
 import { TransactionAlreadyValidatedError } from "./TransactionAlreadyValidatedError";
@@ -32,8 +32,8 @@ export default function EditTransactionNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.SendSummary}
-        component={SendSummary}
+        name={ScreenName.EthereumEditTransactionSummary}
+        component={EditEthereumSummary}
         options={{
           headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
         }}

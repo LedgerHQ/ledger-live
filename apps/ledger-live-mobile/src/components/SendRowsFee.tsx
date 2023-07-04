@@ -12,7 +12,6 @@ import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/Si
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
 import { ScreenName } from "../const";
-import { EditTransactionParamList } from "../families/ethereum/EditTransaction/EditTransactionParamList";
 
 type Props = {
   transaction: Transaction;
@@ -23,7 +22,6 @@ type Props = {
   disabledStrategies?: Array<string>;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>

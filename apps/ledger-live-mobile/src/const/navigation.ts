@@ -334,6 +334,7 @@ export enum ScreenName {
   // Ethereum
   EthereumCustomFees = "EthereumCustomFees",
   EthereumEditGasLimit = "EthereumEditGasLimit",
+  EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
