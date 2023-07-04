@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Button, Flex, InfiniteLoader, Text, Link, ScrollListContainer } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/types-devices";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import {
@@ -20,6 +19,8 @@ import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck"
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { ScrollView } from "react-native";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { LanguagePrompt } from "./LanguagePrompt";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -91,7 +92,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
-  console.log(`🦖 
+  console.log(`🦖
     Genuine check input: ${JSON.stringify({
       isHookEnabled: genuineCheckStatus === "ongoing",
       deviceId: device.deviceId,
@@ -102,7 +103,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       genuineState,
       devicePermissionState,
       error: genuineCheckError,
-    })}  
+    })}
   `);
 
   const {
@@ -126,7 +127,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       status: latestFirmwareGettingStatus,
       lockedDevice: latestFirmwareGettingLockedDevice,
       latestFirmware,
-    })}  
+    })}
   `);
 
   // Exit point: actually with a button
@@ -508,6 +509,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           </Flex>
         </Flex>
       </ScrollView>
+      <LanguagePrompt device={device} />
     </>
   );
 };
