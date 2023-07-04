@@ -1,55 +1,53 @@
-import { $Shape } from "utility-types";
 import { mapTxToOperations } from "./logic";
 import { TX } from "./wallet-btc";
-import type { Operation } from "@ledgerhq/types-live";
 
 describe("mapTxToOperations", () => {
   it("should filter out outputs that have unknown in their address", () => {
-    const ops: $Shape<Operation[]> = mapTxToOperations(
+    const ops = mapTxToOperations(
       {
         outputs: [
           {
-            address: "lelunknownaddress",
+            address: "<unknown>",
           },
         ],
         inputs: [],
       } as unknown as TX,
       "bitcoin",
       "accountId",
-      new Set(["myaddress"]),
-      new Set(["address"]),
+      new Set(["myAddress"]),
+      new Set(["changeAddress"]),
     );
     expect(ops.length).toEqual(0);
   });
 
   it("should filter out outputs that have no address", () => {
-    const ops: $Shape<Operation[]> = mapTxToOperations(
+    const ops = mapTxToOperations(
       {
         outputs: [{}],
         inputs: [],
       } as unknown as TX,
       "bitcoin",
       "accountId",
-      new Set(["myaddress"]),
-      new Set(["address"]),
+      new Set(["myAddress"]),
+      new Set(["changeAddress"]),
     );
     expect(ops.length).toEqual(0);
   });
 
   it("shouldn't filter out outputs with address", () => {
-    const ops: $Shape<Operation[]> = mapTxToOperations(
+    const ops = mapTxToOperations(
       {
         outputs: [
           {
-            address: "myaddress",
+            address: "myAddress",
           },
         ],
         inputs: [],
       } as unknown as TX,
       "bitcoin",
       "accountId",
-      new Set(["myaddress"]),
-      new Set(["address"]),
+      new Set(["myAddress"]),
+      new Set(["changeAddress"]),
     );
     expect(ops.length).toEqual(1);
   });
