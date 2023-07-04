@@ -58,6 +58,50 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
     jest.clearAllTimers();
   });
 
+  describe("The device is in a correct state", () => {
+    it("should return the latest available firmware for the device", done => {
+      // Happy path
+      mockedGetDeviceInfo.mockResolvedValue(aDeviceInfo);
+      mockedGetLatestFirmwareForDevice.mockResolvedValue(aLatestFirmwareContext);
+
+      let step = 1;
+
+      getLatestAvailableFirmwareFromDeviceId({
+        deviceId: "A_DEVICE_ID",
+      }).subscribe({
+        next: ({
+          firmwareUpdateContext,
+          deviceInfo,
+          lockedDevice,
+          status,
+        }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
+          try {
+            switch (step) {
+              case 1:
+                expect(firmwareUpdateContext).toBeNull();
+                expect(deviceInfo).toEqual(aDeviceInfo);
+                expect(lockedDevice).toBe(false);
+                expect(status).toBe("started");
+                // No need to advance the timer, as the retry timer is mocked to return directly, without a timeout
+                break;
+              case 2:
+                expect(firmwareUpdateContext).toEqual(aLatestFirmwareContext);
+                expect(deviceInfo).toEqual(aDeviceInfo);
+                expect(lockedDevice).toBe(false);
+                expect(status).toBe("done");
+                done();
+                break;
+            }
+          } catch (expectError) {
+            done(expectError);
+          }
+
+          step += 1;
+        },
+      });
+    });
+  });
+
   describe("The device is locked, and the mechanism to know that a device is locked is a 0x5515 locked-device response", () => {
     it("should notify the function consumer of the need to unlock the device, and once done, continue the get latest available firmware flow", done => {
       let count = 0;
@@ -84,6 +128,7 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
       }).subscribe({
         next: ({
           firmwareUpdateContext,
+          deviceInfo,
           lockedDevice,
           status,
         }: GetLatestAvailableFirmwareFromDeviceIdResult) => {
@@ -91,6 +136,7 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
             switch (step) {
               case 1:
                 expect(firmwareUpdateContext).toBeNull();
+                expect(deviceInfo).toBeNull();
                 expect(lockedDevice).toBe(true);
                 expect(status).toBe("started");
                 // No need to advance the timer, as the retry timer is mocked to return directly, without a timeout
@@ -98,11 +144,13 @@ describe("getLatestAvailableFirmwareFromDeviceId", () => {
               // A retry happened, this time with an unlocked device
               case 2:
                 expect(firmwareUpdateContext).toBeNull();
+                expect(deviceInfo).toEqual(aDeviceInfo);
                 expect(lockedDevice).toBe(false);
                 expect(status).toBe("started");
                 break;
               case 3:
                 expect(firmwareUpdateContext).toEqual(aLatestFirmwareContext);
+                expect(deviceInfo).toEqual(aDeviceInfo);
                 expect(lockedDevice).toBe(false);
                 expect(status).toBe("done");
                 done();
