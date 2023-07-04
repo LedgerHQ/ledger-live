@@ -45,6 +45,8 @@ function onMessage(event: { data: unknown }) {
   switch (msg.type) {
     case "add":
     case "openNano":
+      e2eBridgeClient.next(msg);
+      break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {
         //  @ts-expect-error global bullshit
