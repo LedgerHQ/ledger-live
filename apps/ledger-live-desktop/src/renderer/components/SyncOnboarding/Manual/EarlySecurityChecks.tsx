@@ -68,6 +68,11 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     deviceId,
   });
 
+  const closeFwUpdateDrawer = useCallback(() => {
+    setDrawer();
+    // TODO: set status to cancelled ? and update icon for cancelled
+  }, []);
+
   const startFirmwareUpdate = useCallback(() => {
     // TODO: use deviceInfo from useGetLatestAvailableFirmware once implemented by Alex
     withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
@@ -82,10 +87,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
             deviceInfo,
             device.modelId,
           ),
-          onDrawerClose: () => {
-            setDrawer();
-            // TODO: set status to cancelled ? and update icon for cancelled
-          },
+          onDrawerClose: closeFwUpdateDrawer,
           status: modal,
           stepId: stepId,
           firmware: latestFirmware,
@@ -102,7 +104,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
           preventBackdropClick: true,
           forceDisableFocusTrap: true,
-          onRequestClose: () => null, // TODO: ?
+          onRequestClose: closeFwUpdateDrawer,
         });
       })
       .catch(e => console.error(e));
