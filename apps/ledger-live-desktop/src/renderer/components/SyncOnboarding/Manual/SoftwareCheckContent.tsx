@@ -31,7 +31,7 @@ const SoftwareCheckContent = ({
 }: Props) => {
   const { t } = useTranslation();
   return (
-    <Flex flexDirection="column" alignContent="start" flexShrink={1}>
+    <Flex flexDirection="column" alignContent="start" flexShrink={1} width={"432px"}>
       <Text variant="h4Inter" mb={12} whiteSpace="pre-wrap">
         {genuineCheckStatus === SoftwareCheckStatus.completed &&
         firmwareUpdateStatus === SoftwareCheckStatus.completed
