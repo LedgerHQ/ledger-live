@@ -50,7 +50,6 @@ export type SignTransactionNavigatorParamList = {
     appName?: string;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -86,7 +85,6 @@ export type SignTransactionNavigatorParamList = {
     status?: AlgorandTransactionStatus;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -101,7 +99,6 @@ export type SignTransactionNavigatorParamList = {
     status?: BitcoinTransactionStatus;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -118,7 +115,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: CardanoTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -132,7 +128,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: EthereumTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -148,7 +143,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: EthereumTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -162,7 +156,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: RippleTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -176,7 +169,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: StellarTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -191,7 +183,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: CosmosTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -206,7 +197,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: CryptoOrgTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -221,7 +211,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: HederaTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -235,7 +224,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: RippleTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -250,7 +238,6 @@ export type SignTransactionNavigatorParamList = {
     transaction: SolanaTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -266,7 +253,6 @@ export type SignTransactionNavigatorParamList = {
     memoType?: string;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
