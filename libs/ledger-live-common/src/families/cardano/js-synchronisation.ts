@@ -11,13 +11,14 @@ import BigNumber from "bignumber.js";
 import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { APITransaction } from "./api/api-types";
+import { APITransaction, HashType } from "./api/api-types";
 import {
   CardanoAccount,
   CardanoOutput,
   PaymentCredential,
   ProtocolParams,
   Transaction,
+  StakeCredential,
 } from "./types";
 import {
   getAccountChange,
@@ -51,6 +52,7 @@ function mapTxToAccountOperation(
   tx: APITransaction,
   accountId: string,
   accountCredentialsMap: Record<string, PaymentCredential>,
+  stakeCredential: StakeCredential,
   subAccounts: Array<TokenAccount>,
   accountShapeInfo: AccountShapeInfo,
   protocolParams: ProtocolParams,
@@ -73,16 +75,42 @@ function mapTxToAccountOperation(
   }
 
   let operationValue = accountChange.ada;
-  if (mainOperationType === "UNDELEGATE") {
-    operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
-    extra["depositRefund"] = formatCurrencyUnit(
-      accountShapeInfo.currency.units[0],
-      new BigNumber(protocolParams.stakeKeyDeposit),
-      {
-        showCode: true,
-        disableRounding: true,
-      },
+  if (tx.certificate.stakeDeRegistrations.length) {
+    const walletDeRegistration = tx.certificate.stakeDeRegistrations.find(
+      c =>
+        c.stakeCredential.type === HashType.ADDRESS &&
+        c.stakeCredential.key === stakeCredential.key,
     );
+    if (walletDeRegistration) {
+      operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
+      extra["depositRefund"] = formatCurrencyUnit(
+        accountShapeInfo.currency.units[0],
+        new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  if (tx.withdrawals && tx.withdrawals.length) {
+    const walletWithdraw = tx.withdrawals.find(
+      w =>
+        w.stakeCredential.type === HashType.ADDRESS &&
+        w.stakeCredential.key === stakeCredential.key,
+    );
+    if (walletWithdraw) {
+      operationValue = operationValue.minus(walletWithdraw.amount);
+      extra["delegationRewards"] = formatCurrencyUnit(
+        accountShapeInfo.currency.units[0],
+        new BigNumber(walletWithdraw.amount),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
   }
 
   return {
@@ -245,7 +273,7 @@ const makeGetAccountShape =
     );
 
     const utxos = prepareUtxos(newTransactions, stableUtxos, accountCredentialsMap);
-    const accountBalance = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
+    let accountBalance = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
     const tokenBalance = mergeTokens(utxos.map(u => u.tokens).flat());
     const subAccounts = buildSubAccounts({
       initialAccount,
@@ -270,6 +298,9 @@ const makeGetAccountShape =
       }));
     const cardanoNetworkInfo = await getNetworkInfo(initialAccount as CardanoAccount, currency);
     const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
+    if (delegationInfo?.rewards) {
+      accountBalance = accountBalance.plus(delegationInfo.rewards);
+    }
 
     const minAdaBalanceForTokens = tokenBalance.length
       ? calculateMinUtxoAmount(
@@ -284,6 +315,7 @@ const makeGetAccountShape =
         t,
         accountId,
         accountCredentialsMap,
+        stakeCredential,
         subAccounts,
         info,
         cardanoNetworkInfo.protocolParams,

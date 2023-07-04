@@ -19,7 +19,7 @@ import Ada, {
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { types as TyphonTypes, Transaction as TyphonTransaction } from "@stricahq/typhonjs";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { getExtendedPublicKeyFromHex, getOperationType } from "./logic";
+import { getAccountStakeCredential, getExtendedPublicKeyFromHex, getOperationType } from "./logic";
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import { getNetworkParameters } from "./networks";
 import { MEMO_LABEL } from "./constants";
@@ -39,7 +39,7 @@ import {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit } from "../../account";
+import { HashType } from "@stricahq/typhonjs/dist/types";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
@@ -52,6 +52,8 @@ const buildOptimisticOperation = (
       cred => cred.key,
     ),
   );
+  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+  const protocolParams = account.cardanoResources.protocolParams;
 
   const accountInput = transaction
     .getInputs()
@@ -74,6 +76,11 @@ const buildOptimisticOperation = (
 
   const accountChange = accountOutput.minus(accountInput);
   const txCertificates = transaction.getCertificates();
+  const StakeDeRegistrationCertificates = txCertificates.filter(
+    c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
+  );
+  const txWithdrawals = transaction.getWithdrawals();
+
   const opType: OperationType = txCertificates.find(
     c => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION,
   )
@@ -103,16 +110,43 @@ const buildOptimisticOperation = (
   if (memo) {
     extra["memo"] = memo;
   }
-  if (opType === "UNDELEGATE") {
-    operationValue = accountChange.minus(account.cardanoResources.protocolParams.stakeKeyDeposit);
-    extra["depositRefund"] = formatCurrencyUnit(
-      getAccountUnit(account),
-      new BigNumber(account.cardanoResources.protocolParams.stakeKeyDeposit),
-      {
-        showCode: true,
-        disableRounding: true,
-      },
+
+  if (StakeDeRegistrationCertificates.length) {
+    const walletDeRegistration = StakeDeRegistrationCertificates.find(
+      c =>
+        c.stakeCredential.type === HashType.ADDRESS &&
+        c.stakeCredential.hash === stakeCredential.key,
     );
+    if (walletDeRegistration) {
+      operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
+      extra["depositRefund"] = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  if (txWithdrawals && txWithdrawals.length) {
+    const walletWithdraw = txWithdrawals.find(
+      w =>
+        w.rewardAccount.stakeCredential.type === HashType.ADDRESS &&
+        w.rewardAccount.stakeCredential.hash === stakeCredential.key,
+    );
+    if (walletWithdraw) {
+      operationValue = operationValue.minus(walletWithdraw.amount);
+      extra["delegationRewards"] = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(walletWithdraw.amount),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
   }
 
   const op: Operation = {
