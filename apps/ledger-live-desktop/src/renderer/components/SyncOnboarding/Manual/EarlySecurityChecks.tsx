@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
+import { Flex } from "@ledgerhq/react-ui";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
 import SoftwareCheckContent from "./SoftwareCheckContent";
@@ -14,17 +11,20 @@ import SoftwareCheckAllowSecureChannelModal from "./SoftwareCheckAllowSecureChan
 import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
 import GenuineCheckNotGenuineModal from "./GenuineCheckNotGenuineModal";
 import { Status as SoftwareCheckStatus } from "./shared";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 const UIDelay = 2500;
 
 export type Props = {
-  isDisplayed?: boolean;
   onComplete: () => void;
-  productName: string;
-  deviceModelId: DeviceModelId;
+  device: Device;
 };
 
-const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId }: Props) => {
+/**
+ * Component representing the early security checks step, which polls the current device state
+ * to display correctly information about the onboarding to the user
+ */
+const EarlySecurityChecks = ({ onComplete, device }: Props) => {
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
     SoftwareCheckStatus.inactive,
   );
@@ -33,8 +33,9 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
   );
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
 
-  const device = useSelector(getCurrentDevice);
-  const deviceId = device?.deviceId ?? "";
+  const deviceId = device.deviceId ?? "";
+  const deviceModelId = device.modelId;
+  const productName = getDeviceModel(device.modelId).productName;
 
   const { genuineState, devicePermissionState, resetGenuineCheckState } = useGenuineCheck({
     getGenuineCheckFromDeviceId,
@@ -49,10 +50,6 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
   });
 
   useEffect(() => {
-    if (!isDisplayed) {
-      return;
-    }
-
     if (devicePermissionState === "refused") {
       setGenuineCheckStatus(SoftwareCheckStatus.cancelled);
     }
@@ -75,13 +72,9 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
     ) {
       setFirmwareUpdateStatus(SoftwareCheckStatus.requested);
     }
-  }, [isDisplayed, genuineCheckStatus, genuineState, devicePermissionState]);
+  }, [genuineCheckStatus, genuineState, devicePermissionState]);
 
   useEffect(() => {
-    if (!isDisplayed) {
-      return;
-    }
-
     if (firmwareUpdateStatus === SoftwareCheckStatus.requested) {
       setFirmwareUpdateStatus(SoftwareCheckStatus.active);
     }
@@ -101,7 +94,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
     ) {
       setTimeout(onComplete, UIDelay);
     }
-  }, [isDisplayed, firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);
+  }, [firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);
 
   const lockedDeviceOnClose = useCallback(() => {
     if (genuineCheckStatus === SoftwareCheckStatus.active) {
@@ -124,7 +117,7 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
       firmwareUpdateStatus === SoftwareCheckStatus.active);
 
   return (
-    <Box>
+    <Flex flex={1} justifyContent="center" alignItems="center">
       <GenuineCheckModal
         isOpen={genuineCheckStatus === SoftwareCheckStatus.requested}
         onClose={() => setGenuineCheckStatus(SoftwareCheckStatus.active)}
@@ -171,8 +164,8 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
         handleSkipFirmwareUpdate={onComplete}
         productName={productName}
       />
-    </Box>
+    </Flex>
   );
 };
 
-export default SoftwareCheckStep;
+export default EarlySecurityChecks;
