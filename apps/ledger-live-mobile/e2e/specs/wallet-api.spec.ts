@@ -43,7 +43,6 @@ describe("Wallet API methods", () => {
     }
 
     if (!continueTest || !isAndroid()) {
-      console.log("BAILLLINNG OUT");
       return; // need to make this a proper ignore/jest warning
     }
 
