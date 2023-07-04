@@ -113,10 +113,11 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-windows-2022]
+    if: github.event_name == 'push'
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ github.sha }}
           base: ${{ inputs.base_ref }}
       - uses: actions/setup-dotnet@v2
         with:
@@ -131,11 +132,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          if [[ "${{ inputs.draft }}" == true ]]; then
-            pnpm desktop test:playwright --project smoke
-          else
-            pnpm desktop test:playwright --project all
-          fi
+          pnpm desktop test:playwright --project all
         shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
@@ -202,10 +199,10 @@ jobs:
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          if [[ "${{ inputs.draft }}" == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --project smoke
-          else
+          if [[ "${{ github.event_name == 'push' }}" == true ]]; then
             xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --project all
+          else
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --project smoke
           fi
       - name: upload diffs to imgur
         if: always() && !cancelled()
@@ -257,10 +254,11 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
+    if: github.event_name == 'push'
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ github.sha }}
           base: ${{ inputs.base_ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
@@ -272,11 +270,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          if [[ "${{ inputs.draft }}" == true ]]; then
-            pnpm desktop test:playwright --project smoke
-          else
-            pnpm desktop test:playwright --project all
-          fi
+          pnpm desktop test:playwright --project all
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -338,7 +332,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const files = ["images-linux", "images-windows", "images-macos"];
+            const files = ${{ github.event_name == 'push' }} ? ["images-linux", "images-windows", "images-macos"] : ["images-linux"]
             let result = {};
             for (const file of files) {
               try {
@@ -408,7 +402,7 @@ jobs:
               pass: ${{ needs.deadcodecheck.result == 'success' }},
             };
 
-            const report = {
+            const report = ${{ github.event_name == 'push' }} ? {
               mac: {
                 pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-mac.outputs.status }}",
@@ -420,6 +414,11 @@ jobs:
               windows: {
                 pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-windows.outputs.status }}",
+              },
+            } : {
+              linux: {
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
               },
             };
 
