@@ -38,7 +38,9 @@
     "test:jest": "jest src --silent --ci --coverage --json --testLocationInResults --outputFile=report.json",
     "test:playwright:setup": "playwright install chromium",
     "test:playwright": "playwright test --config=tests/playwright.config.ts",
-    "test:playwright:update-snapshots": "pnpm test:playwright --update-snapshots",
+    "test:playwright:smoke": "pnpm test:playwright --project smoke",
+    "test:playwright:all": "pnpm test:playwright --project all",
+    "test:playwright:update-snapshots": "pnpm test:playwright:all --update-snapshots",
     "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts",
     "test:playwright:clean": "git clean -fdX tests/artifacts",
     "typecheck": "node scripts/typecheck.js"
