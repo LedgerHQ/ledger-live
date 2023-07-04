@@ -63,12 +63,12 @@ export const Bullet = ({
           <Text variant="body">{bulletText}</Text>
         )}
       </IconContainer>
-      <Column flex="1" ml={7} rowGap={2}>
+      <Column ml={7} flex={1}>
         <Text variant="body" fontWeight="semiBold" whiteSpace="pre-wrap">
           {title}
         </Text>
         {subtitle ? (
-          <Text variant="paragraph" color="neutral.c80" whiteSpace="pre-wrap">
+          <Text variant="paragraph" fontWeight="medium" color="neutral.c80" whiteSpace="pre-wrap">
             {subtitle}
           </Text>
         ) : null}

@@ -12,6 +12,10 @@ import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
 import GenuineCheckNotGenuineModal from "./GenuineCheckNotGenuineModal";
 import { Status as SoftwareCheckStatus } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { useSelector } from "react-redux";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
+import { localeSelector } from "~/renderer/reducers/settings";
 
 const UIDelay = 2500;
 
@@ -25,6 +29,11 @@ export type Props = {
  * to display correctly information about the onboarding to the user
  */
 const EarlySecurityChecks = ({ onComplete, device }: Props) => {
+  const locale = useSelector(localeSelector);
+  const whySecurityChecksUrl =
+    locale in urls.genuineCheck
+      ? urls.genuineCheck[locale as keyof typeof urls.genuineCheck]
+      : urls.genuineCheck.en;
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
     SoftwareCheckStatus.inactive,
   );
@@ -42,6 +51,8 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     isHookEnabled: genuineCheckStatus === SoftwareCheckStatus.active,
     deviceId,
   });
+
+  useEffect(() => onComplete(), [onComplete]);
 
   const { latestFirmware, status, lockedDevice } = useGetLatestAvailableFirmware({
     getLatestAvailableFirmwareFromDeviceId,
@@ -159,7 +170,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
         onClickStartChecks={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
-        onClickWhyPerformSecurityChecks={() => null}
+        onClickWhyPerformSecurityChecks={() => openURL(whySecurityChecksUrl)}
         onClickResumeGenuineCheck={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
         onClickDownloadUpdate={() => null}
         onClickWhatsInThisUpdate={() => null}
