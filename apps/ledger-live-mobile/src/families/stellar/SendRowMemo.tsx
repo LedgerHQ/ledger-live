@@ -12,7 +12,7 @@ import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigat
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { EditTransactionParamList } from "../ethereum/EditTransactionParamList";
+import { EditTransactionParamList } from "../ethereum/EditTransaction/EditTransactionParamList";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

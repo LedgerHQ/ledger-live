@@ -12,7 +12,7 @@ import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/Si
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
 import { ScreenName } from "../const";
-import { EditTransactionParamList } from "../families/ethereum/EditTransactionParamList";
+import { EditTransactionParamList } from "../families/ethereum/EditTransaction/EditTransactionParamList";
 
 type Props = {
   transaction: Transaction;

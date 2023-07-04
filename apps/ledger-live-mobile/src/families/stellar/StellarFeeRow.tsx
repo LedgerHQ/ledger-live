@@ -21,7 +21,7 @@ import type { StackNavigatorProps } from "../../components/RootNavigator/types/h
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { EditTransactionParamList } from "../ethereum/EditTransactionParamList";
+import { EditTransactionParamList } from "../ethereum/EditTransaction/EditTransactionParamList";
 
 type Props = {
   account: AccountLike;

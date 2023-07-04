@@ -23,7 +23,7 @@ import type { CeloRevokeFlowFlowParamList } from "./RevokeFlow/types";
 import type { CeloUnlockFlowParamList } from "./UnlockFlow/types";
 import type { CeloVoteFlowParamList } from "./VoteFlow/types";
 import type { CeloWithdrawFlowParamList } from "./WithdrawFlow/types";
-import { EditTransactionParamList } from "../ethereum/EditTransactionParamList";
+import { EditTransactionParamList } from "../ethereum/EditTransaction/EditTransactionParamList";
 
 type Props = {
   account: AccountLike;

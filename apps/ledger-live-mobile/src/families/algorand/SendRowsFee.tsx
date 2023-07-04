@@ -19,7 +19,7 @@ import type { BaseNavigatorStackParamList } from "../../components/RootNavigator
 import { ScreenName } from "../../const";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { EditTransactionParamList } from "../ethereum/EditTransactionParamList";
+import { EditTransactionParamList } from "../ethereum/EditTransaction/EditTransactionParamList";
 
 type Props = {
   transaction: Transaction;
