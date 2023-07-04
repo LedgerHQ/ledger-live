@@ -113,7 +113,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
         }),
       );
     },
-    [dispatch, account],
+    [dispatch, account, source],
   );
   const electionOpen = staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
