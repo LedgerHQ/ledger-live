@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
+import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
+import { from } from "rxjs";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
@@ -16,6 +20,12 @@ import { useSelector } from "react-redux";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import UpdateFirmwareModal, {
+  Props as UpdateFirmwareModalProps,
+} from "~/renderer/modals/UpdateFirmwareModal";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
 
 const UIDelay = 2500;
 
@@ -57,6 +67,46 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
   });
+
+  const startFirmwareUpdate = useCallback(() => {
+    // TODO: use deviceInfo from useGetLatestAvailableFirmware once implemented by Alex
+    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
+      .toPromise()
+      .then(deviceInfo => {
+        console.log("deviceInfo", deviceInfo);
+        const modal = deviceInfo.isOSU ? "install" : "disclaimer";
+        const stepId = initialStepId({ device, deviceInfo });
+        const updateFirmwareModalProps: UpdateFirmwareModalProps = {
+          withAppsToReinstall: false,
+          withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
+            deviceInfo,
+            device.modelId,
+          ),
+          onDrawerClose: () => {
+            setDrawer();
+            // TODO: set status to cancelled ? and update icon for cancelled
+          },
+          status: modal,
+          stepId: stepId,
+          firmware: latestFirmware,
+          deviceInfo,
+          device,
+          deviceModelId: deviceModelId,
+          setFirmwareUpdateOpened: () => null, // TODO: see if we need to keep that state locally
+          setFirmwareUpdateCompleted: () => {
+            setGenuineCheckStatus(SoftwareCheckStatus.requested);
+            setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
+          },
+        };
+
+        setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
+          preventBackdropClick: true,
+          forceDisableFocusTrap: true,
+          onRequestClose: () => null, // TODO: ?
+        });
+      })
+      .catch(e => console.error(e));
+  }, [device, deviceId, deviceModelId, latestFirmware]);
 
   useEffect(() => {
     if (devicePermissionState === "refused") {
@@ -170,8 +220,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         onClickStartChecks={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
         onClickWhyPerformSecurityChecks={() => openURL(whySecurityChecksUrl)}
         onClickResumeGenuineCheck={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
-        onClickDownloadUpdate={() => null}
-        onClickWhatsInThisUpdate={() => null}
+        onClickViewUpdate={startFirmwareUpdate}
         onClickContinueToSetup={onComplete}
       />
     </Flex>

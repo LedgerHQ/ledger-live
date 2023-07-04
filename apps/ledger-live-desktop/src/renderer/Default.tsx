@@ -185,7 +185,15 @@ export default function Default() {
               <DisableTransactionBroadcastWarning />
             ) : null}
             <Switch>
-              <Route path="/onboarding" component={Onboarding} />
+              <Route
+                path="/onboarding"
+                render={() => (
+                  <>
+                    <Onboarding />
+                    <Drawer />
+                  </>
+                )}
+              />
               <Route path="/sync-onboarding" component={SyncOnboarding} />
               <Route
                 path="/post-onboarding"

@@ -48,7 +48,7 @@ export type StepProps = {
 
 export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
 
-type Props = {
+export type Props = {
   withResetStep: boolean;
   withAppsToReinstall: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
