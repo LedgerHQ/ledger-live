@@ -10,7 +10,7 @@ import SoftwareCheckLockedDeviceModal from "./SoftwareCheckLockedDeviceModal";
 import SoftwareCheckAllowSecureChannelModal from "./SoftwareCheckAllowSecureChannelModal";
 import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
 import GenuineCheckNotGenuineModal from "./GenuineCheckNotGenuineModal";
-import { Status as SoftwareCheckStatus } from "./shared";
+import { Status as SoftwareCheckStatus } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 const UIDelay = 2500;
@@ -52,10 +52,6 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
   useEffect(() => {
     if (devicePermissionState === "refused") {
       setGenuineCheckStatus(SoftwareCheckStatus.cancelled);
-    }
-
-    if (genuineCheckStatus === SoftwareCheckStatus.inactive) {
-      setTimeout(() => setGenuineCheckStatus(SoftwareCheckStatus.requested), UIDelay);
     }
 
     if (genuineState === "non-genuine") {
@@ -161,8 +157,13 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         genuineCheckStatus={genuineCheckStatus}
         firmwareUpdateStatus={firmwareUpdateStatus}
         availableFirmwareVersion={availableFirmwareVersion}
-        handleSkipFirmwareUpdate={onComplete}
-        productName={productName}
+        modelName={productName}
+        onClickStartChecks={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
+        onClickWhyPerformSecurityChecks={() => null}
+        onClickResumeGenuineCheck={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
+        onClickDownloadUpdate={() => null}
+        onClickWhatsInThisUpdate={() => null}
+        onClickContinueToSetup={onComplete}
       />
     </Flex>
   );
