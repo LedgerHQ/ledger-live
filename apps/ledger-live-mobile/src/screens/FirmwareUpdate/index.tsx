@@ -561,7 +561,7 @@ export const FirmwareUpdate = ({
         device,
         fullScreen: false,
         wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
-          deviceName,
+          deviceName: productName,
         }),
       });
     }
@@ -571,7 +571,9 @@ export const FirmwareUpdate = ({
         t,
         device,
         fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", { deviceName }),
+        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
+          deviceName: productName,
+        }),
       });
     }
 
@@ -579,7 +581,9 @@ export const FirmwareUpdate = ({
       return (
         <AllowManager
           device={device}
-          wording={t("FirmwareUpdate.steps.restoreSettings.allowAppsRestoration", { deviceName })}
+          wording={t("FirmwareUpdate.steps.restoreSettings.allowAppsRestoration", {
+            deviceName: productName,
+          })}
         />
       );
     }
@@ -591,7 +595,7 @@ export const FirmwareUpdate = ({
         theme,
         fullScreen: false,
         wording: t("FirmwareUpdate.steps.restoreSettings.allowLanguageInstallation", {
-          deviceName,
+          deviceName: productName,
         }),
       });
     }
@@ -613,22 +617,22 @@ export const FirmwareUpdate = ({
     updateActionState.error,
     updateActionState.step,
     updateActionState.progress,
+    deviceLockedOrUnresponsive,
+    hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
-    installLanguageState.languageInstallationRequested,
     restoreAppsState.allowManagerRequestedWording,
+    installLanguageState.languageInstallationRequested,
+    restoreStepDeniedError,
     device,
-    deviceName,
     t,
-    theme,
+    retryCurrentStep,
     quitUpdate,
     deviceInfo.seVersion,
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
-    retryCurrentStep,
-    hasReconnectErrors,
-    deviceLockedOrUnresponsive,
-    restoreStepDeniedError,
+    theme,
+    productName,
     skipCurrentRestoreStep,
   ]);
 
