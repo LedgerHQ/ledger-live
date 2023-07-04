@@ -1,30 +1,37 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Linking } from "react-native";
+import { Trans } from "react-i18next";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
+import { DeviceOnboarded } from "@ledgerhq/live-common/errors";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { Flex } from "@ledgerhq/native-ui";
+import type { FirmwareInfo } from "@ledgerhq/types-live";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getVersion from "@ledgerhq/live-common/hw/getVersion";
+import { BleError } from "@ledgerhq/live-common/ble/types";
+import { Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { DeviceModelId } from "@ledgerhq/devices";
+import {
+  OnboardingState,
+  extractOnboardingState,
+} from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { first } from "rxjs/operators";
+import { from } from "rxjs";
 import { TrackScreen } from "../../analytics";
 import { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
-import DeviceActionModal from "../../components/DeviceActionModal";
 import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import BleDevicePairingFlow from "../../components/BleDevicePairingFlow";
 import { NavigatorName, ScreenName } from "../../const";
 import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
-
-const action = createAction(connectApp);
+import GenericErrorView from "../../components/GenericErrorView";
+import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
+import { urls } from "../../config/urls";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.RedirectToOnboardingRecoverFlow>
 >;
-
-const request = {
-  appName: "BOLOS",
-};
 
 export function RedirectToOnboardingRecoverFlowScreen({ navigation }: NavigationProps) {
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
@@ -39,10 +46,13 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
 
   const { colors } = useTheme();
   const headerHeight = useHeaderHeight();
-  const [device, setDevice] = useState<Device | null | undefined>();
+  const [device, setDevice] = useState<Device>();
+  const [state, setState] = useState<OnboardingState>();
+  const [error, setError] = useState<Error>();
 
-  const onDone = useCallback(() => {
-    if (device) {
+  // redirect to correct onboarding if device is not seeded
+  useEffect(() => {
+    if (device && state && !state.isOnboarded) {
       if (device.modelId === DeviceModelId.stax) {
         navigation.navigate(NavigatorName.BaseOnboarding, {
           screen: NavigatorName.SyncOnboarding,
@@ -65,21 +75,41 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
         });
       }
     }
-  }, [device, navigation]);
+  }, [device, navigation, state]);
 
-  const handleSuccess = useCallback(
-    (result: AppResult) => {
-      // check if the device is seeded or not
-      if (result) {
-        onDone();
-      }
-    },
-    [onDone],
-  );
+  // check if device is seeded when selected
+  useEffect(() => {
+    if (device) {
+      const requestObservable = withDevice(device.deviceId)(t => from(getVersion(t))).pipe(first());
 
-  const resetDevice = useCallback(() => {
-    setDevice(undefined);
+      const sub = requestObservable.subscribe({
+        next: (firmware: FirmwareInfo) => {
+          try {
+            setState(extractOnboardingState(firmware.flags));
+          } catch (error: unknown) {
+            if (error instanceof Error) {
+              setError(error);
+            }
+          }
+        },
+        error: (error: BleError) => {
+          setError(error);
+        },
+      });
+
+      return () => {
+        sub.unsubscribe();
+      };
+    }
+  }, [device]);
+
+  const handleOnSelect = useCallback((device: Device) => {
+    setDevice(device);
   }, []);
+
+  const goBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
   const requestToSetHeaderOptions = useCallback(
     (request: SetHeaderOptionsRequest) => {
@@ -91,21 +121,22 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
       } else {
         // Sets back the header to its initial values set for this screen
         navigation.setOptions({
-          headerLeft: () => null,
-          headerRight: () => null,
+          headerLeft: () => <NavigationHeaderBackButton onPress={goBack} />,
         });
       }
     },
-    [navigation],
+    [goBack, navigation],
   );
 
-  const handleOnSelect = useCallback((device: Device) => {
-    setDevice(device);
+  const onOpenHelp = useCallback(() => {
+    Linking.openURL(urls.errors.PairingFailed);
   }, []);
 
-  const closeBlePairingFlow = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
+  const onRetry = useCallback(() => {
+    setDevice(undefined);
+    setState(undefined);
+    setError(undefined);
+  }, []);
 
   const savStyle = useMemo(
     () => ({
@@ -115,26 +146,96 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
     [colors.background],
   );
 
+  useEffect(() => {
+    if (state?.isOnboarded) {
+      navigation.setOptions({
+        headerLeft: () => <NavigationHeaderBackButton onPress={goBack} />,
+      });
+    }
+  }, [goBack, navigation, state?.isOnboarded]);
+
+  // Handle error if present
+  if (error) {
+    return (
+      <SafeAreaView edges={edges} style={savStyle}>
+        <TrackScreen category="RedirectToRecoverOnboarding" name="Error handling" />
+        <Flex px={16} py={5} flex={1} justifyContent="space-between">
+          <Flex flex={1} justifyContent="center">
+            <GenericErrorView
+              error={error}
+              withDescription
+              hasExportLogButton={false}
+              withIcon
+              withHelp={false}
+            />
+          </Flex>
+
+          <Flex mt={30} flexDirection="column" width="100%">
+            <Button type="main" onPress={onRetry} mt={6}>
+              <Trans i18nKey="common.retry" />
+            </Button>
+            <Button
+              iconPosition="right"
+              Icon={Icons.ExternalLinkMedium}
+              onPress={onOpenHelp}
+              mb={0}
+            >
+              <Trans i18nKey="help.helpCenter.desc" />
+            </Button>
+          </Flex>
+        </Flex>
+      </SafeAreaView>
+    );
+  }
+
+  // Handle onboarded screen
+  if (state?.isOnboarded) {
+    return (
+      <SafeAreaView edges={edges} style={savStyle}>
+        <TrackScreen category="RedirectToRecoverOnboarding" name="Already seeded" />
+        <Flex px={16} py={5} flex={1} justifyContent="space-between">
+          <Flex flex={1} justifyContent="center">
+            <GenericErrorView
+              error={
+                new DeviceOnboarded("Your device is already setup with a Secret Recover Phrase")
+              }
+              withDescription
+              hasExportLogButton={false}
+              withIcon
+              withHelp={false}
+            />
+          </Flex>
+
+          <Flex mt={30} flexDirection="column" width="100%">
+            <Button type="main" onPress={onRetry} mt={6}>
+              <Trans i18nKey="common.retry" />
+            </Button>
+            <Button
+              iconPosition="right"
+              Icon={Icons.ExternalLinkMedium}
+              onPress={onOpenHelp}
+              mb={0}
+            >
+              <Trans i18nKey="help.helpCenter.desc" />
+            </Button>
+          </Flex>
+        </Flex>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView edges={edges} style={savStyle}>
-      <TrackScreen category="DeviceConnect" name="ConnectDevice" />
+      <TrackScreen category="RedirectToRecoverOnboarding" name="PairingFlow" />
       <Flex px={16} py={5} marginTop={headerHeight} flex={1}>
         <BleDevicePairingFlow
           onPairingSuccess={handleOnSelect}
-          onGoBackFromScanning={closeBlePairingFlow}
+          onGoBackFromScanning={goBack}
           onPairingSuccessAddToKnownDevices
           areKnownDevicesPairable
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>
-      <DeviceActionModal
-        action={action}
-        device={device}
-        onResult={handleSuccess}
-        onClose={resetDevice}
-        request={request}
-        analyticsPropertyFlow={"recoverRestore"}
-      />
     </SafeAreaView>
   );
 }
