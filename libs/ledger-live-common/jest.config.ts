@@ -28,11 +28,8 @@ const defaultConfig = {
     },
   },
   testEnvironment: "node",
-  coverageDirectory: "./coverage/",
-  coverageReporters: ["json", "lcov", "clover"],
   reporters,
-  collectCoverage: true,
-  coveragePathIgnorePatterns: ["src/__tests__"],
+  coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   modulePathIgnorePatterns: [
     "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
@@ -44,6 +41,9 @@ const defaultConfig = {
 };
 
 export default {
+  collectCoverage: true,
+  collectCoverageFrom: ["src/**/*.{ts,tsx}"],
+  coverageReporters: ["json", "lcov", "clover", "json-summary"],
   projects: [
     {
       ...defaultConfig,
