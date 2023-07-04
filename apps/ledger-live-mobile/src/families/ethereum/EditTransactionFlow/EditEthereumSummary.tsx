@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
@@ -38,8 +37,6 @@ import TooMuchUTXOBottomModal from "../../../screens/SendFunds/TooMuchUTXOBottom
 import { CurrentNetworkFee } from "../CurrentNetworkFee";
 import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
-const WARN_FROM_UTXO_COUNT = 50;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function EditEthereumSummary({ navigation, route }: any) {
@@ -84,23 +81,11 @@ function EditEthereumSummary({ navigation, route }: any) {
     if (!continuing) {
       return;
     }
-    // FIXME: NOT SURE BITCOIN TRANSACTION STATUS IS CORRECT HERE
-    //  BUT WE TYPE LIKE ANIMALS SO...
-    const { warnings, txInputs } = status as BitcoinTransactionStatus;
+    const { warnings } = status;
 
     if (Object.keys(warnings).includes("feeTooHigh") && !highFeesWarningPassed) {
       setHighFeesOpen(true);
       return;
-    }
-
-    if (txInputs && txInputs.length >= WARN_FROM_UTXO_COUNT && !utxoWarningPassed) {
-      const to = setTimeout(
-        () => setUtxoWarningOpen(true), // looks like you can not open close a bottom modal
-        // and open another one very fast
-        highFeesWarningPassed ? 1000 : 0,
-      );
-      // eslint-disable-next-line consistent-return
-      return () => clearTimeout(to);
     }
 
     setContinuing(false);
