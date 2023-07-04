@@ -301,4 +301,7 @@ export const defaultFeatures = {
   listAppsV2: {
     enabled: false,
   },
+  staxRecover: {
+    enabled: false,
+  },
 } as const satisfies DefaultFeatures;
