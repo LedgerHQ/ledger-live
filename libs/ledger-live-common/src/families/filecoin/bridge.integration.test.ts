@@ -42,8 +42,6 @@ const filecoin: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
-      // TODO works or not?
-      //FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: `js:2:filecoin:${SEED_IDENTIFIER}:glif`,
         seedIdentifier: SEED_IDENTIFIER,
