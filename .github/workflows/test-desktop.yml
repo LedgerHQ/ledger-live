@@ -132,7 +132,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          pnpm desktop test:playwright --project all
+          pnpm desktop test:playwright:all
         shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
@@ -200,9 +200,9 @@ jobs:
         id: tests
         run: |
           if [[ "${{ github.event_name == 'push' }}" == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --project all
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:all
           else
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --project smoke
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
           fi
       - name: upload diffs to imgur
         if: always() && !cancelled()
@@ -270,7 +270,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          pnpm desktop test:playwright --project all
+          pnpm desktop test:playwright:all
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
