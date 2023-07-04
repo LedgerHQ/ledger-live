@@ -21,7 +21,7 @@ const SoftwareCheckContent = ({
   const { t } = useTranslation();
 
   return (
-    <>
+    <Flex flexDirection="column" alignContent="start">
       <Bullet
         mb={7}
         bulletText="1"
@@ -72,7 +72,7 @@ const SoftwareCheckContent = ({
           </Button>
         </Flex>
       )}
-    </>
+    </Flex>
   );
 };
 

@@ -15,6 +15,7 @@ import Header from "./Header";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
+import EarlySecurityChecks from "./EarlySecurityChecks";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -184,10 +185,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   if (currentStep === "early-security-check" && lastSeenDevice) {
     stepContent = (
-      <EarlySecurityCheck
-        device={lastSeenDevice}
-        notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
-      />
+      <EarlySecurityChecks device={lastSeenDevice} onComplete={notifyOnboardingEarlyCheckEnded} />
     );
   } else if (currentStep === "companion" && lastSeenDevice) {
     stepContent = (

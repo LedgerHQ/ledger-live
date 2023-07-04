@@ -21,7 +21,6 @@ import {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
-import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { StepText, analyticsFlowName } from "./shared";
@@ -44,7 +43,6 @@ enum StepKey {
   Paired = 0,
   Pin,
   Seed,
-  SoftwareCheck,
   Applications,
   Ready,
   Exit,
@@ -113,10 +111,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
-
-  const handleSoftwareCheckComplete = useCallback(() => {
-    setStepKey(nextStepKey(StepKey.SoftwareCheck));
-  }, []);
 
   const handleInstallRecommendedApplicationComplete = useCallback(() => {
     setStepKey(nextStepKey(StepKey.Applications));
@@ -188,25 +182,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         ),
       },
       {
-        key: StepKey.SoftwareCheck,
-        status: "inactive",
-        title: t("syncOnboarding.manual.softwareCheckContent.title"),
-        renderBody: (isDisplayed?: boolean) => (
-          <>
-            <TrackPage
-              category={`Set up ${productName}: Step 4 Software & Hardware check`}
-              flow={analyticsFlowName}
-            />
-            <SoftwareCheckStep
-              deviceModelId={device.modelId}
-              isDisplayed={isDisplayed}
-              onComplete={handleSoftwareCheckComplete}
-              productName={productName}
-            />
-          </>
-        ),
-      },
-      {
         key: StepKey.Applications,
         status: "inactive",
         title: t("syncOnboarding.manual.installApplications.title"),
@@ -231,7 +206,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       productName,
       seedPathStatus,
       device,
-      handleSoftwareCheckComplete,
       shouldRestoreApps,
       deviceToRestore,
       handleInstallRecommendedApplicationComplete,
@@ -326,7 +300,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [productName, stepKey]);
 
   useEffect(() => {
-    // When the device is seeded, there are 2 cases before triggering the software check step:
+    // When the device is seeded, there are 2 cases before triggering the application install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
     if (
@@ -335,7 +309,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         deviceOnboardingState?.currentOnboardingStep,
       )
     ) {
-      setStepKey(StepKey.SoftwareCheck);
+      setStepKey(StepKey.Applications);
       return;
     }
 
@@ -411,7 +385,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [deviceOnboardingState]);
 
   useEffect(() => {
-    if (stepKey >= StepKey.SoftwareCheck) {
+    if (stepKey >= StepKey.Applications) {
       setIsPollingOn(false);
     }
 
