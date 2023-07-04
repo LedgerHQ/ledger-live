@@ -17,6 +17,7 @@
     "sortBy" : "排序方式",
     "signOut" : "注销",
     "search" : "搜索",
+    "searchProvider" : "搜索提供商...",
     "contactUs" : "联系 Ledger 客服",
     "device" : "设备",
     "cryptoAsset" : "加密资产",
@@ -324,6 +325,10 @@
       "title" : "Ledger Stax 锁屏已取消",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
+    },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "您的 Ledger Stax 没有可移除的锁屏图片",
+      "description" : "之前移除了自定义锁屏图片。"
     },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
@@ -691,10 +696,10 @@
       "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
     },
     "SolanaUseAllAmountStakeWarning" : {
-      "title" : "确保您有足够的余额剩余，用作未来的交易费"
+      "title" : "确保您有足够的剩余余额以用作未来的交易费"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
-      "title" : "您之前的交易尚未处理。请稍等片刻后检查交易记录，然后重试。"
+      "title" : "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
@@ -779,7 +784,7 @@
       "title" : "您的账户尚未添加。请再次尝试。"
     },
     "NearNewAccountWarning" : {
-      "title" : "尚未创建接收人账户。 该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
+      "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
     },
     "NearNewNamedAccountError" : {
       "title" : "尚未创建接收人账户。需要在 NEAR 钱包中创建账户。"
@@ -1194,26 +1199,28 @@
       "start" : "开始",
       "noDevice" : "没有设备？",
       "buy" : "购买一个 {{fullDeviceName}}",
-      "terms" : "点击 \"开始\" 即表示您应允并同意我们的",
-      "termsLink" : "服务条款",
+      "terms" : "By continuing, you agree to Ledger's",
+      "termsLink" : "Terms & Conditions",
       "privacyLink" : "隐私政策",
       "and" : "和",
       "recoverLogIn" : "登录使用 Ledger Recover"
     },
-    "stepDoYouHaveALedgerDevice" : {
-      "title" : "您拥有 Ledger 设备吗？",
-      "subtitle" : "首要事情",
-      "yes" : "是的，我有",
-      "no" : "还没有"
-    },
     "postWelcomeStep" : {
-      "title" : "我们开始吧",
-      "subtitle_yes" : "设置您的 Ledger，或者先看看应用程序。",
-      "subtitle_no" : "您可以选择先看看应用程序，或者购买 Nano X 设备",
-      "noLedgerLink" : "我没有 Ledger 设备，我想买一个。",
+      "title" : "开始操作",
+      "noLedgerYet" : "我还没有 Ledger 设备",
+      "noLedgerYetModal" : {
+        "title" : "数百万用户。0 次黑客入侵。",
+        "desc" : "使用 Ledger 设备保护您的数字资产，让您安心无忧。",
+        "buy" : "购买 Ledger 设备",
+        "explore" : "探索此应用程序"
+      },
       "setupLedger" : {
-        "title" : "设置我的 Ledger 设备",
-        "subtitle" : "我们将一步步地引导您来保护您的加密货币和 NFT"
+        "title" : "设置 Ledger 设备",
+        "subtitle" : "选择您的 Ledger 设备是新的还是经过重置。"
+      },
+      "accessWallet" : {
+        "title" : "访问您的钱包",
+        "subtitle" : "选择您的 Ledger 设备是否已设置完毕。"
       },
       "buyNano" : {
         "title" : "购买 Ledger Nano X",
@@ -1227,6 +1234,12 @@
         "title" : "通过桌面应用程序同步",
         "subtitle" : "在 Ledger Live 桌面版中与您的手机同步资产。"
       }
+    },
+    "welcomeBackStep" : {
+      "title" : "欢迎回来",
+      "subtitle" : "选择您想要访问钱包的方式：",
+      "connect" : "连接 Ledger 设备",
+      "sync" : "与 Ledger Live 桌面版同步"
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "不使用设备探索",
@@ -1272,16 +1285,22 @@
       "title" : "您好！",
       "or" : "或者",
       "firstUse" : {
-        "title" : "首次使用此 Nano？",
-        "subTitle" : "设置一个新 Nano",
+        "section" : "设置您的 Ledger {{model}}",
+        "title" : "创建新钱包",
+        "subTitle" : "这会生成新的秘密恢复短语。",
         "desc" : "让我们开始设置您的设备吧！",
         "label" : "30 分钟"
       },
       "devicePairing" : {
-        "title" : "已经有了恢复短语？",
+        "title" : "有秘密恢复短语？",
         "label" : "设备配对",
         "subTitle" : "连接您的 Nano",
         "desc" : "设备已经设置好了？将其连接到应用程序！"
+      },
+      "newDevice" : {
+        "label" : "新设备",
+        "title" : "设置为新设备",
+        "subTitle" : "如果您是首次设置 Ledger 设备，请选择此项"
       },
       "desktopSync" : {
         "title" : "已经有了恢复短语？",
@@ -1291,12 +1310,14 @@
       },
       "restoreDevice" : {
         "label" : "还原设备",
-        "subTitle" : "在新设备上还原您的恢复短语",
+        "title" : "用您的秘密恢复短语恢复",
+        "subTitle" : "您将需要访问您的秘密恢复短语。",
         "desc" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
       },
       "recovery" : "已经有了恢复短语？",
       "protect" : {
-        "subTitle" : "使用 Ledger Recover 恢复",
+        "title" : "使用 Ledger Recover 恢复",
+        "subTitle" : "您需要订阅 Ledger Recover。",
         "drawer" : {
           "title" : "使用 Ledger Nano X",
           "desc" : "Ledger Recover 软启动专用于 Ledger Nano X",
@@ -1617,6 +1638,11 @@
       }
     },
     "stepPairNew" : {
+      "generic" : {
+        "title" : "配对您的 Nano",
+        "desc" : "这是您第一次使用该手机设置您的 Nano。让我们快速配对您的设备。",
+        "cta" : "来配对我的 Nano"
+      },
       "nanoX" : {
         "title" : "配对您的 Nano",
         "desc" : "这是您第一次使用该手机设置您的 Nano。让我们快速配对您的设备。",
@@ -1854,9 +1880,14 @@
     "title" : "设置 {{deviceName}}",
     "estimatedTimeFormat" : "{{estimatedTime}} 分钟",
     "deviceSelection" : {
-      "title" : "选择您要设置的 Ledger：",
+      "title" : "选择您要设置的 Ledger 设备：",
       "brand" : "Ledger",
-      "setupTime" : "{{time}} 分钟"
+      "setupTime" : "{{time}} 分钟",
+      "notCompatible" : "不兼容 iPhone",
+      "modal" : {
+        "title" : "iOS 设备不支持 Ledger Nano S 和 Ledger Nano S Plus",
+        "desc" : "在计算机上将 Ledger Nano S 或 Ledger Nano S Plus 与 Ledger Live 配合使用。"
+      }
     },
     "scanning" : {
       "title" : "正在寻找您的 {{productName}}",
@@ -2277,7 +2308,7 @@
     "receive" : "接收",
     "buy" : "买入",
     "walletconnect" : "WalletConnect",
-    "stake" : "权益质押",
+    "stake" : "质押",
     "sell" : "卖出",
     "swap" : "互换",
     "manage" : "管理",
@@ -2602,7 +2633,7 @@
       "privacyPolicy" : "隐私政策",
       "privacyPolicyDesc" : "查看我们会收集哪些个人资料以及收集的原因和用途。",
       "liveReview" : {
-        "title" : "反馈",
+        "title" : "Feedback",
         "desc" : "请告诉我们您对应用程序的反馈",
         "ios" : "在 App Store（苹果应用商店）内评论",
         "android" : "在 Google Play（谷歌应用商店）内评论"
@@ -2640,6 +2671,10 @@
       "largeMover" : {
         "title" : "大幅波动工具",
         "desc" : "当比特币和以太币价格出现重要波动时，您会收到通知。"
+      },
+      "transactionsAlerts" : {
+        "title" : "交易提醒",
+        "desc" : "获取以太坊、多边形、币安智能链、雪崩链和以太坊经典的交易通知"
       },
       "price" : {
         "title" : "价格提醒",
@@ -2699,10 +2734,6 @@
         "experimentalListAppsV2" : {
           "title" : "我的 Ledger 的实验性应用程序列表",
           "description" : "我的 Ledger 访问和内部流程的性能改进。"
-        },
-        "experimentalCountervalues" : {
-          "title" : "实验性对价 API",
-          "description" : "这可能会导致您的账户对价显示错误。"
         },
         "experimentalSwap" : {
           "title" : "新的互换界面",
@@ -3461,6 +3492,7 @@
     },
     "fees" : {
       "title" : "网络费用",
+      "titleMaxFees" : "最高网络费用",
       "validate" : "确认",
       "required" : "需要费用",
       "chooseGas" : "选择 gas 价格",
@@ -3468,7 +3500,8 @@
       "edit" : {
         "title" : "选择单位"
       },
-      "networkInfo" : "选择该交易包含的网络费用数额。费用数额的多少会影响到该交易的处理速度"
+      "networkInfo" : "选择该交易包含的网络费用数额。费用数额的多少会影响到该交易的处理速度",
+      "networkInfoMaxFees" : "这是您可以为此交易支付的最高金额。最高网络费用与实际费用之间的任何差额都会退还。"
     },
     "verification" : {
       "streaming" : {
@@ -4106,7 +4139,14 @@
         "description" : "您的设置和区块链应用程序将恢复。",
         "restoreLockScreenPicture" : "恢复锁屏图片",
         "restoreLanguage" : "恢复语言",
-        "installingApps" : "安装应用程序"
+        "installingApps" : "安装应用程序",
+        "errors" : {
+          "description" : "如果是误操作，您可以重新尝试恢复，也可以跳过此步骤",
+          "LanguageInstallRefusedOnDevice" : "已取消在 {{deviceName}} 上更改语言",
+          "ImageLoadRefusedOnDevice" : "已取消在 {{deviceName}} 上恢复锁屏图片",
+          "ImageCommitRefusedOnDevice" : "已取消在 {{deviceName}} 上恢复锁屏图片",
+          "UserRefusedAllowManager" : "已取消在 {{deviceName}} 上恢复应用程序"
+        }
       }
     },
     "newVersion" : "更新适用于您的 {{deviceName}} 的版本 {{version}}",
@@ -5168,7 +5208,7 @@
       },
       "minBondWarning" : {
         "title" : "绑定量不足",
-        "description" : "您的绑定余额低于当前允许提名的最小值{0}。您的提名有可能被删除。"
+        "description" : "您的已绑定余额低于提名所需的最低额度。您的提名有被移除的风险。"
       }
     },
     "nomination" : {
@@ -5792,7 +5832,7 @@
   },
   "browseWeb3" : {
     "catalog" : {
-      "title" : "浏览 Web3",
+      "title" : "探索",
       "subtitle" : "浏览与 Ledger 完全集成的 Web3",
       "section" : {
         "recentlyUsed" : "最近使用",
@@ -5801,7 +5841,7 @@
       },
       "branch" : {
         "soon" : "敬请期待",
-        "experimental" : "实验性的",
+        "experimental" : "实验性功能",
         "debug" : "除错"
       },
       "banner" : {
@@ -5819,6 +5859,11 @@
       "developerCTA" : {
         "title" : "面向开发者",
         "description" : "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。"
+      },
+      "warnings" : {
+        "notFound" : "未能找到",
+        "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
+        "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。"
       }
     },
     "disclaimer" : {
@@ -5934,13 +5979,10 @@
       "reload" : "重新加载",
       "noCryptosFound" : "未找到币",
       "noCurrencyFound" : "没有找到货币",
-      "noAppFound" : "未找到应用程序",
-      "notFound" : "未能找到",
       "noSearchResultsFor" : "对不起，我们没有找到任何币， <0>{{search}}</0> 。请用另一个关键词重新进行搜索。",
       "noCurrencySearchResultsFor" : "对不起，我们没有为<0>{{search}}</0>找到任何货币。请用另一个关键词重新进行搜索。",
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
-      "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
       "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
@@ -6120,8 +6162,8 @@
         "selectAndHide" : "选择并隐藏",
         "hide" : "隐藏 {{count}} 件藏品",
         "hide_plural" : "隐藏 {{count}} 件藏品",
-        "alertHide" : "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
-        "alertHide_plural" : "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
+        "alertHide" : "已隐藏 1 件收藏。随时前往 “设置” 中的 “账户” 部分显示并取消隐藏",
+        "alertHide_plural" : "已隐藏 {{count}} 件收藏。随时前往 “设置” 中的 “账户” 部分显示并取消隐藏"
       },
       "empty" : {
         "title" : "暂时没有 NFT 可显示",
@@ -6174,6 +6216,30 @@
     "title" : "连接设备"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "增长您的以太币持有量",
+      "subTitle" : "将每日收益直接存入您的 Ledger Live，质押您的以太币并增加您的持仓。",
+      "close" : "关闭",
+      "providers" : {
+        "lido" : {
+          "title" : "使用 Lido 赚取",
+          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无最低以太币数量要求。无锁定期。",
+          "supportLink" : "了解关于 Lido 的更多信息"
+        },
+        "kiln" : {
+          "title" : "Kiln 专属质押",
+          "tag" : "需要 32 枚以太币",
+          "description" : "使用专门的验证者进行权益质押。需要是 32 以太币的倍数。奖励需要手动领取。随时退出。",
+          "supportLink" : "了解关于 Kiln 验证者的更多信息"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 质押池",
+          "description" : "加入权益质押池。不要求最低以太币金额。奖励自动按复利计算。随时退出。",
+          "supportLink" : "了解关于 Kiln 池的更多信息",
+          "tag" : "无最低限制"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "买入、互换或接收",
       "text" : "您没有足够的 {{coin}} 可供权益质押",
