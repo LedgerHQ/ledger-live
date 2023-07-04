@@ -6,11 +6,12 @@ import { LedgerSigner } from "@cosmjs/ledger-amino";
 import { stringToPath } from "@cosmjs/crypto";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
-import { makeSignDoc } from "@cosmjs/launchpad";
+import { makeSignDoc, StdSignDoc } from "@cosmjs/launchpad";
 
 import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
+import { sortObjectKeysDeeply } from "./helpers";
 
 const signOperation = ({
   account,
@@ -62,7 +63,9 @@ const signOperation = ({
           prefix: cryptoFactory(account.currency.id).prefix,
         });
 
-        const signResponse = await ledgerSigner.signAmino(account.freshAddress, signDoc);
+        const signDocOrdered = sortObjectKeysDeeply(signDoc) as StdSignDoc;
+
+        const signResponse = await ledgerSigner.signAmino(account.freshAddress, signDocOrdered);
         const tx_bytes = await postBuildTransaction(signResponse, protoMsgs);
         const signed = Buffer.from(tx_bytes).toString("hex");
 
