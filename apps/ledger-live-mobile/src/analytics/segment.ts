@@ -63,12 +63,16 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
 }
 
 const getFeatureFlagProperties = (): Record<string, boolean | string> => {
-  if (!analyticsFeatureFlagMethod) return {};
-  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
+  try {
+    if (!analyticsFeatureFlagMethod) return {};
+    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
 
-  return {
-    ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-  };
+    return {
+      ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+    };
+  } catch (e) {
+    return {};
+  }
 };
 
 export const updateSessionId = () => (sessionId = uuid());
