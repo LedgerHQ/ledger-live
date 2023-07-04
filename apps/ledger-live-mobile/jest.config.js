@@ -26,16 +26,18 @@ module.exports = {
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
     "^.+\\.js?$": "babel-jest",
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.(ts|tsx)?$": "ts-jest",
   },
   transformIgnorePatterns: [
     `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,
     "\\.pnp\\.[^\\/]+$",
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
+  moduleDirectories: ["node_modules"],
   coverageReporters: ["json"],
   coverageDirectory: "<rootDir>/coverage",
   moduleNameMapper: {
+    uuid: require.resolve("uuid"),
     "^@ledgerhq/coin-framework(.*)$": "<rootDir>/../../libs/coin-framework/lib$1.js",
     "^@ledgerhq/icons-ui/native(.*)$": "<rootDir>/../../libs/ui/packages/icons/native/$1",
     "^@ledgerhq/crypto-icons-ui/native(.*)$":
