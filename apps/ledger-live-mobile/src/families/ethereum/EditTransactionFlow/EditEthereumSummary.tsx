@@ -42,7 +42,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 const WARN_FROM_UTXO_COUNT = 50;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function SendSummary({ navigation, route }: any) {
+function EditEthereumSummary({ navigation, route }: any) {
   const { colors } = useTheme();
   const { nextNavigation, overrideAmountLabel, hideTotal, operation } = route.params;
 
@@ -374,4 +374,4 @@ class VerticalConnector extends Component<{
   }
 }
 
-export default SendSummary;
+export default EditEthereumSummary;

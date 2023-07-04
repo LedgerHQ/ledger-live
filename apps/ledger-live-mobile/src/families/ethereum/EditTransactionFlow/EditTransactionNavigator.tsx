@@ -5,15 +5,15 @@ import { useTheme } from "styled-components/native";
 
 import { ScreenName } from "../../../const";
 import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
-import StepHeader from "../../../components/StepHeader";
 import { MethodSelection } from "./MethodSelection";
+import StepHeader from "../../../components/StepHeader";
 import { EditTransactionParamList } from "./EditTransactionParamList";
+import EditEthereumSummary from "./EditEthereumSummary";
+import { TransactionAlreadyValidatedError } from "./TransactionAlreadyValidatedError";
 import SelectDevice from "../../../screens/SelectDevice";
 import SendConnectDevice from "../../../screens/ConnectDevice";
-import EditEthereumSummary from "./EditEthereumSummary";
 import SendValidationSuccess from "../../../screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "../../../screens/SendFunds/07-ValidationError";
-import { TransactionAlreadyValidatedError } from "./TransactionAlreadyValidatedError";
 
 const Stack = createStackNavigator<EditTransactionParamList>();
 

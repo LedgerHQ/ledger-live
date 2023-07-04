@@ -72,7 +72,6 @@ import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
-import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
@@ -90,6 +89,7 @@ import {
 } from "../NavigationHeaderCloseButton";
 import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
 import { RootDrawer, RootDrawerProps } from "../RootDrawer";
+import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
