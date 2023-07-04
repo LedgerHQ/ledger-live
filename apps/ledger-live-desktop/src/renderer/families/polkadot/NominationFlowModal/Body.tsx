@@ -26,7 +26,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 
 export type Data = {
   account: PolkadotAccount;
-  source: string;
+  source?: string;
 };
 
 type OwnProps = {

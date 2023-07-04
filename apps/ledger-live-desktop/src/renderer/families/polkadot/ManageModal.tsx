@@ -95,6 +95,7 @@ const Description = styled(Text).attrs<{
 `;
 type Props = {
   account: PolkadotAccount;
+  source: string;
 };
 const ManageModal = ({ account, source, ...rest }: Props) => {
   const dispatch = useDispatch();

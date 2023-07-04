@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -37,9 +38,9 @@ function StepConfirmation({
 
   const validators = useMemo(() => {
     return allValidators
-      .filter(val => transaction.validators.includes(val.address))
+      .filter(val => transaction?.validators?.includes(val.address))
       .map(val => val.identity || val.address);
-  }, [allValidators, transaction.validators]);
+  }, [allValidators, transaction?.validators]);
 
   useEffect(() => {
     if (optimisticOperation && validators) {

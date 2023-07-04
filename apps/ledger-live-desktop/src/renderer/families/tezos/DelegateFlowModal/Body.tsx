@@ -50,6 +50,7 @@ export type Data = {
   mode?: TezosOperationMode | undefined;
   eventType?: string;
   stepId?: StepId;
+  source?: string;
 };
 
 type Props = {
