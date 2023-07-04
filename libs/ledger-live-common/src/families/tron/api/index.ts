@@ -155,9 +155,6 @@ function extendTronTxExpirationTimeBy10mn(
   const solidityNode = new HttpProvider(getBaseApiUrl());
   const eventServer = new HttpProvider(getBaseApiUrl());
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
-  // tronWeb.setHeader({
-  //   "TRON-PRO-API-KEY": "ec320f10-8bd8-4ac9-a6cf-eef9bd346e25",
-  // });
   return tronWeb.transactionBuilder.extendExpiration(preparedTransaction, VAULT_EXPIRATION_TIME);
 }
 
