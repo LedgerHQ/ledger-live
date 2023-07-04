@@ -14,7 +14,6 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import Header from "./Header";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
-import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 
 const POLLING_PERIOD_MS = 1000;

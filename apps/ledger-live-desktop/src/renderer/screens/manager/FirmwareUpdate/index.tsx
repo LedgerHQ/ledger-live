@@ -29,7 +29,7 @@ type Props = {
   openFirmwareUpdate?: boolean;
 };
 
-const initialStepId = ({
+export const initialStepId = ({
   deviceInfo,
   device,
 }: {

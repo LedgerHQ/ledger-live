@@ -12,8 +12,7 @@ export type Props = {
   onClickStartChecks: () => void;
   onClickWhyPerformSecurityChecks: () => void;
   onClickResumeGenuineCheck: () => void;
-  onClickDownloadUpdate: () => void;
-  onClickWhatsInThisUpdate: () => void;
+  onClickViewUpdate: () => void;
   onClickContinueToSetup: () => void;
 };
 
@@ -25,8 +24,7 @@ const SoftwareCheckContent = ({
   onClickStartChecks,
   onClickWhyPerformSecurityChecks,
   onClickResumeGenuineCheck,
-  onClickDownloadUpdate,
-  onClickWhatsInThisUpdate,
+  onClickViewUpdate,
   onClickContinueToSetup,
 }: Props) => {
   const { t } = useTranslation();
@@ -112,26 +110,9 @@ const SoftwareCheckContent = ({
         }
       >
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
-          <Flex flexDirection="row">
-            <Button
-              variant="main"
-              size="small"
-              outline={false}
-              mr={6}
-              onClick={onClickDownloadUpdate}
-            >
-              {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.downloadUpdateCTA")}
-            </Button>
-            <Button
-              variant="shade"
-              size="small"
-              outline
-              onClick={onClickWhatsInThisUpdate}
-              Icon={Icons.ExternalLinkMedium}
-            >
-              {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.whatsInThisUpdateCTA")}
-            </Button>
-          </Flex>
+          <Button variant="main" size="small" outline={false} mr={6} onClick={onClickViewUpdate}>
+            {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdate")}
+          </Button>
         )}
       </Bullet>
       {genuineCheckStatus === SoftwareCheckStatus.inactive ||

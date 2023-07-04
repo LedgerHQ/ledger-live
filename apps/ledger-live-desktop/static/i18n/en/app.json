@@ -1349,7 +1349,7 @@
             "active": "This check ensures your {{modelName}} OS is up to date",
             "updateAvailable": "We recommend performing this update to have access to the latest security features"
           },
-          "downloadUpdateCTA": "Download update",
+          "viewUpdate": "View update",
           "whatsInThisUpdateCTA": "What's in this update?"
         }
       },
