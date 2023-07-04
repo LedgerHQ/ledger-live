@@ -77,6 +77,11 @@ export const getAccountShape: GetAccountShape = async (infoInput, { blacklistedT
 
   // transform transactions into operations
   let newOps = flatMap(txs, txToOps({ address, id: accountId, currency }));
+
+  if (initialAccount) {
+    newOps = preserveInitialOperationsDate(newOps, initialAccount);
+  }
+
   // extracting out the sub operations by token account
   const perTokenAccountIdOperations = {};
   newOps.forEach(op => {
@@ -676,4 +681,32 @@ function reconciliateSubAccounts(
   }
 
   return subAccounts;
+}
+
+// keep the initial dates of the operations to avoid the dates are overwrited by the ones from the blockchain
+export function preserveInitialOperationsDate(
+  newOps: Operation[],
+  initialAccount: Account,
+): Operation[] {
+  const initialOperationsDate = initialAccount.pendingOperations
+    .concat(initialAccount.operations)
+    .reduce((acc, op) => {
+      acc[op.hash] = op.date;
+      return acc;
+    }, {});
+
+  if (Object.keys(initialOperationsDate).length > 0) {
+    return newOps.map(op => {
+      const date = initialOperationsDate[op.hash];
+      if (date) {
+        return {
+          ...op,
+          date,
+          nftOperations: op.nftOperations?.map(nftOp => ({ ...nftOp, date })),
+        };
+      }
+      return op;
+    });
+  }
+  return newOps;
 }

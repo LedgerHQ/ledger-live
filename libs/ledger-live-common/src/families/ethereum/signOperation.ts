@@ -154,6 +154,9 @@ export const signOperation = ({
                 transaction.amount = new BigNumber(value);
               }
               const accountId = account.id;
+              const editingOp = account.pendingOperations.find(
+                op => op.transactionSequenceNumber === nonce,
+              );
               // currently, all mode are always at least one OUT tx on ETH parent
               const operation: Operation = {
                 id: `${accountId}-${txHash}-OUT`,
@@ -167,7 +170,7 @@ export const signOperation = ({
                 senders,
                 recipients,
                 accountId,
-                date: new Date(),
+                date: editingOp ? editingOp.date : new Date(),
                 extra: {},
                 transactionRaw: toTransactionRaw(transaction),
               };
