@@ -5,10 +5,10 @@ const baseLink = "accounts";
 export default class accountsPage {
   accountTitle = (coin: string) => getElementById(`accounts-title-${coin}`);
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
-  async waitForAccountsPageToLoad() {
-    await waitForElementByID("accounts-list-title");
+  waitForAccountsPageToLoad() {
+    return waitForElementByID("accounts-list-title");
   }
 }

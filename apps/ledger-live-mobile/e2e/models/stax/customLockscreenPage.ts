@@ -7,11 +7,11 @@ export default class CustomLockscreenPage {
   welcomeCustomImageTitle = () => getElementById("custom-image-welcome-title");
   welcomeChoosePictureButton = () => getElementById("custom-image-choose-picture-button");
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
-  async expectCustomLockscreenPage() {
-    await expect(this.welcomeCustomImageTitle()).toBeVisible();
+  expectCustomLockscreenPage() {
+    return expect(this.welcomeCustomImageTitle()).toBeVisible();
   }
 }

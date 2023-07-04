@@ -6,13 +6,13 @@ export default class SendPage {
   getStep1HeaderTitle = () => getElementById("send-header-step1-title");
   getSearchField = () => getElementById("common-search-field");
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
-  async sendViaDeeplink(currencyLong?: string) {
+  sendViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
 
-    await openDeeplink(link);
+    return openDeeplink(link);
   }
 }

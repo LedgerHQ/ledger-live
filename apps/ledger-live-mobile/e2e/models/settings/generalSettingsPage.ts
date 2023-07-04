@@ -14,20 +14,20 @@ export default class GeneralSettingsPage {
   enterLanguageMenuButton = () => getElementById("language-button");
   isLocalized = (localization: string) => getElementByText(localization);
 
-  async togglePassword() {
-    await this.passwordSettingsSwitch().atIndex(0).tap();
+  togglePassword() {
+    return this.passwordSettingsSwitch().atIndex(0).tap();
   }
 
-  async enterNewPassword(passwordText: string) {
-    await this.passwordTextInput().typeText(passwordText);
+  enterNewPassword(passwordText: string) {
+    return this.passwordTextInput().typeText(passwordText);
   }
 
-  async confirm() {
-    await tapByElement(this.confirmButton());
+  confirm() {
+    return tapByElement(this.confirmButton());
   }
 
-  async navigateToLanguageSelect() {
-    await tapByElement(this.enterLanguageMenuButton());
+  navigateToLanguageSelect() {
+    return tapByElement(this.enterLanguageMenuButton());
   }
 
   async selectLanguage(lang: string) {

@@ -17,12 +17,12 @@ export default class ManagerPage {
   getProceedButton = () => getElementById(proceedButtonId);
   waitProceedButton = () => waitForElementByID(proceedButtonId);
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
-  async expectManagerPage() {
-    await expect(this.getManagerTitle()).toBeVisible();
+  expectManagerPage() {
+    return expect(this.getManagerTitle()).toBeVisible();
   }
 
   async addDevice(deviceName: string) {
@@ -32,7 +32,7 @@ export default class ManagerPage {
     await waitForElementByText(deviceName, 3000);
     await tapByText(deviceName);
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
-    bridge.open();
+    bridge.openNano();
     await this.waitProceedButton();
     await this.getProceedButton();
   }

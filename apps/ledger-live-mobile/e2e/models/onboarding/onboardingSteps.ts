@@ -23,28 +23,28 @@ export default class OnboardingSteps {
     await tapByElement(this.onboardingGetStartedButton());
   }
 
-  async chooseToSetupLedger() {
-    await tapByElement(this.setupLedgerButton());
+  chooseToSetupLedger() {
+    return tapByElement(this.setupLedgerButton());
   }
 
-  async chooseToAccessYourWallet() {
-    await tapByElement(this.accessWalletButton());
+  chooseToAccessYourWallet() {
+    return tapByElement(this.accessWalletButton());
   }
 
-  async selectYourDevice(device: string) {
-    await tapByText(device);
+  selectYourDevice(device: string) {
+    return tapByText(device);
   }
 
-  async chooseToConnectYourLedger() {
-    await tapByElement(this.connectLedgerButton());
+  chooseToConnectYourLedger() {
+    return tapByElement(this.connectLedgerButton());
   }
 
-  async chooseToPairMyNano() {
-    await tapByElement(this.pairNanoButton());
+  chooseToPairMyNano() {
+    return tapByElement(this.pairNanoButton());
   }
 
-  async selectPairWithBluetooth() {
-    await tapByElement(this.pairDeviceButton());
+  selectPairWithBluetooth() {
+    return tapByElement(this.pairDeviceButton());
   }
 
   async addDeviceViaBluetooth(name = "David") {
@@ -63,7 +63,7 @@ export default class OnboardingSteps {
     await tapByElement(this.continueButton());
   }
 
-  async declineNotifications() {
-    await tapByElement(this.maybeLaterButton());
+  declineNotifications() {
+    return tapByElement(this.maybeLaterButton());
   }
 }

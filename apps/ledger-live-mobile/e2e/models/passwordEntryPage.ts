@@ -4,11 +4,11 @@ export default class PasswordEntryPage {
   getPasswordTextInput = () => getElementById("password-text-input");
   getLogin = () => getElementByText("Log in");
 
-  async enterPassword(password: string) {
-    await typeTextByElement(this.getPasswordTextInput(), password);
+  enterPassword(password: string) {
+    return typeTextByElement(this.getPasswordTextInput(), password);
   }
 
-  async login() {
-    await tapByElement(this.getLogin());
+  login() {
+    return tapByElement(this.getLogin());
   }
 }

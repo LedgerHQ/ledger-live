@@ -1,10 +1,10 @@
 import * as detox from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
 import { loadConfig } from "../bridge/server";
-import PortfolioPage from "../models/wallet/portfolioPage";
 import { isAndroid } from "../helpers";
 import * as server from "../../../ledger-live-desktop/tests/utils/serve-dummy-app";
+import PortfolioPage from "../models/wallet/portfolioPage";
 import DiscoveryPage from "../models/discover/discoverPage";
-import { LiveAppWebview } from "../models/discover/liveAppWebview";
+import LiveAppWebview from "../models/discover/liveAppWebview";
 
 let portfolioPage: PortfolioPage;
 let discoverPage: DiscoveryPage;
@@ -13,38 +13,11 @@ let liveAppWebview: LiveAppWebview;
 let continueTest: boolean;
 
 describe("Wallet API methods", () => {
-  // {
-  //   "id": "multibuy",
-  //   "name": "Buy / Sell Preview App",
-  //   "url": "https://buy-sell-live-app.vercel.app",
-  //   "homepageUrl": "https://buy-sell-live-app.vercel.app",
-  //   "icon": "",
-  //   "platform": "all",
-  //   "apiVersion": "0.0.1",
-  //   "manifestVersion": "1",
-  //   "branch": "stable",
-  //   "categories": ["exchange", "buy"],
-  //   "currencies": ["ethereum", "bitcoin"],
-  //   "content": {
-  //     "shortDescription": {
-  //       "en": "Preview app for Buy/Sell"
-  //     },
-  //     "description": {
-  //       "en": "Preview app for Buy/Sell"
-  //     }
-  //   },
-  //   "permissions": [
-  //     {
-  //       "method": "account.request",
-  //       "params": {
-  //         "currencies": ["ethereum", "bitcoin"]
-  //       }
-  //     }
-  //   ],
-  //   "domains": ["https://*"]
-  // }
-
   beforeAll(async () => {
+    if (!continueTest || !isAndroid()) {
+      return; // need to make this a proper ignore/jest warning
+    }
+
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
     try {
       const port = await server.start(
@@ -79,16 +52,6 @@ describe("Wallet API methods", () => {
     liveAppWebview = new LiveAppWebview();
 
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-  });
-
-  afterAll(() => {
-    server.stop();
-  });
-
-  it("should load LLM", async () => {
-    if (!continueTest || !isAndroid()) {
-      return; // need to make this a proper ignore/jest warning
-    }
 
     await portfolioPage.waitForPortfolioPageToLoad();
     await discoverPage.openViaDeeplink("dummy-live-app");
@@ -98,7 +61,13 @@ describe("Wallet API methods", () => {
 
     const url = await detox.web.element(detox.by.web.id("param-container")).getCurrentUrl();
     expect(url).toBe("http://localhost:52619/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App");
+  });
 
+  afterAll(() => {
+    server.stop();
+  });
+
+  it("account.request", async () => {
     const { id, response } = await liveAppWebview.send({
       method: "account.request",
       params: {

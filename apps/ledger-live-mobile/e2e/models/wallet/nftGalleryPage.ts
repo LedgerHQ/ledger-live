@@ -16,8 +16,8 @@ export default class NftGalleryPage {
   confirmHide = () => getElementById("wallet-nft-gallery-confirm-hide");
   nftListItem = (index: number) => getElementById(`wallet-nft-gallery-list-item-${index}`);
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
   async hideNft(index: number) {
@@ -28,7 +28,7 @@ export default class NftGalleryPage {
     await expect(this.nftListItem(index)).not.toBeVisible();
   }
 
-  async continueFromReceiveNFTsModal() {
-    await tapByElement(this.nftReceiveModalContinueButton());
+  continueFromReceiveNFTsModal() {
+    return tapByElement(this.nftReceiveModalContinueButton());
   }
 }

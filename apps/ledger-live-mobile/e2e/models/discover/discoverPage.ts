@@ -1,7 +1,6 @@
 import {
   getElementById,
   openDeeplink,
-  tapById,
   tapByText,
   typeTextByElement,
   waitForElementByText,
@@ -28,10 +27,6 @@ export default class DiscoveryPage {
   searchForApp(appName: string) {
     return typeTextByElement(this.catalogSearchBar(), appName);
   }
-
-  // navigateToLiveApp(appId: string) {
-  //   return tapByElement(this.appCard(appId));
-  // }
 
   navigateToLiveApp(appId: string) {
     return tapByText(appId);

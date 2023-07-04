@@ -8,13 +8,12 @@ export default class ReceivePage {
   getStep3HeaderTitle = () => getElementById("receive-header-step3-title");
   getStep2Accounts = () => getElementById("receive-header-step2-accounts");
 
-  async openViaDeeplink() {
-    await openDeeplink(baseLink);
+  openViaDeeplink() {
+    return openDeeplink(baseLink);
   }
 
-  async receiveViaDeeplink(currencyLong?: string) {
+  receiveViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
-
-    await openDeeplink(link);
+    return openDeeplink(link);
   }
 }

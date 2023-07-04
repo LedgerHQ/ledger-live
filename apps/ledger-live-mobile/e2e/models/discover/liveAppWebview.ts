@@ -3,7 +3,7 @@ import { web, by } from "detox";
 import { e2eBridgeServer } from "../../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 
-export class LiveAppWebview {
+export default class LiveAppWebview {
   async send(params: Record<string, unknown>) {
     const webview = web.element(by.web.id("root"));
     const id = randomUUID();

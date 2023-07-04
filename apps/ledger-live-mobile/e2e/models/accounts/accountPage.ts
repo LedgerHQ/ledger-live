@@ -3,12 +3,12 @@ import { currencyParam, openDeeplink, waitForElementByID } from "../../helpers";
 const baseLink = "accounts";
 
 export default class accountPage {
-  async waitForAccountPageToLoad(coin: string) {
-    await waitForElementByID(`accounts-title-${coin}`);
+  waitForAccountPageToLoad(coin: string) {
+    return waitForElementByID(`accounts-title-${coin}`);
   }
 
-  async openViaDeeplink(currencyLong?: string) {
+  openViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
-    await openDeeplink(link);
+    return openDeeplink(link);
   }
 }

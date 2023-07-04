@@ -5,11 +5,11 @@ export default class WalletTabNavigatorPage {
   nftGalleryTab = () => getElementById(`wallet-tab-${ScreenName.WalletNftGallery}`);
   portfolioTab = () => getElementById(`wallet-tab-${ScreenName.Portfolio}`);
 
-  async navigateToNftGallery() {
-    await tapByElement(this.nftGalleryTab());
+  navigateToNftGallery() {
+    return tapByElement(this.nftGalleryTab());
   }
 
-  async navigateToPortfolio() {
-    await tapByElement(this.portfolioTab());
+  navigateToPortfolio() {
+    return tapByElement(this.portfolioTab());
   }
 }
