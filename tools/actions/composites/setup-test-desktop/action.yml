@@ -78,7 +78,3 @@ runs:
       if: ${{ !inputs.skip_builds }}
       run: pnpm desktop build:dummy-apps
       shell: bash
-    - name: Build Dummy Wallet API app for testing
-      if: ${{ !inputs.skip_builds }}
-      run: pnpm --filter="dummy-wallet-app" build
-      shell: bash

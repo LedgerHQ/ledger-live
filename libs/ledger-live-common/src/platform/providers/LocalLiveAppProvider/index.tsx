@@ -1,7 +1,6 @@
 import React, { useContext, createContext, useMemo, useState, useCallback } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
-// import { Subject } from "rxjs";
 
 const initialState: LiveAppRegistry = {
   liveAppById: {},
@@ -22,7 +21,6 @@ export const liveAppContext = createContext<LiveAppContextType>({
 
 type LiveAppProviderProps = {
   children: React.ReactNode;
-  // mockModeObserver?: Subject<MockSubjectData>;
 };
 
 export function useLocalLiveAppManifest(appId?: string): LiveAppManifest | undefined {
@@ -35,16 +33,11 @@ export function useLocalLiveAppContext(): LiveAppContextType {
   return useContext(liveAppContext);
 }
 
-export function LocalLiveAppProvider({
-  children,
-}: // mockModeObserver,
-LiveAppProviderProps): JSX.Element {
+export function LocalLiveAppProvider({ children }: LiveAppProviderProps): JSX.Element {
   const [state, setState] = useState<LiveAppRegistry>(initialState);
 
   const addLocalManifest = useCallback((newManifest: LiveAppManifest) => {
     setState(oldState => {
-      // eslint-disable-next-line no-console
-      console.log("Here we go: ADDING MANIFEST", newManifest);
       const liveAppByIndex = oldState.liveAppByIndex.filter(
         manifest => manifest.id !== newManifest.id,
       );

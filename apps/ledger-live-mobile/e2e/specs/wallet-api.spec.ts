@@ -14,10 +14,6 @@ let continueTest: boolean;
 
 describe("Wallet API methods", () => {
   beforeAll(async () => {
-    if (!continueTest || !isAndroid()) {
-      return; // need to make this a proper ignore/jest warning
-    }
-
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
     try {
       const port = await server.start(
@@ -44,6 +40,10 @@ describe("Wallet API methods", () => {
       console.error(error);
 
       continueTest = false;
+    }
+
+    if (!continueTest || !isAndroid()) {
+      return; // need to make this a proper ignore/jest warning
     }
 
     // start navigation

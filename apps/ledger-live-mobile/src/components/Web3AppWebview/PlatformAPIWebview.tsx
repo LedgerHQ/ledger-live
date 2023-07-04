@@ -523,7 +523,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         scrollEnabled={true}
         style={styles.webview}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
-        testID="live-app-webview"
         {...webviewProps}
       />
     );
