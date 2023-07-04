@@ -161,17 +161,19 @@ const cardano: AppSpec<Transaction> = {
           ],
         };
       },
-      test: ({ operation, transaction, account }): void => {
+      test: ({ operation, transaction, accountBeforeTransaction }): void => {
         botTest("check delegate operation type", () => {
           expect(operation.type).toEqual("DELEGATE");
         });
 
-        botTest("op value should be equal to fees plus deposit", () => {
-          expect(operation.value).toEqual(
-            transaction.fees
-              ?.plus((account as CardanoAccount).cardanoResources.protocolParams.stakeKeyDeposit)
-              .toString(),
-          );
+        botTest("check for operation value", () => {
+          const cardanoResources = (accountBeforeTransaction as CardanoAccount).cardanoResources;
+          const isStakeKeyRegistered = cardanoResources.delegation?.status ?? false;
+          let opValue = transaction.fees as BigNumber;
+          if (!isStakeKeyRegistered) {
+            opValue = opValue.plus(cardanoResources.protocolParams.stakeKeyDeposit);
+          }
+          expect(operation.value.toString()).toEqual(opValue.toString());
         });
       },
     },
@@ -224,19 +226,13 @@ const cardano: AppSpec<Transaction> = {
           ],
         };
       },
-      test: ({ operation, transaction, account }): void => {
-        const stakeKeyDeposit = new BigNumber(
-          (account as CardanoAccount).cardanoResources.protocolParams.stakeKeyDeposit,
-        );
-
+      test: ({ operation, transaction }): void => {
         botTest("check undelegate operation type", () => {
           expect(operation.type).toEqual("UNDELEGATE");
         });
 
-        botTest("deposit minus op value should be equal to fees", () => {
-          expect(stakeKeyDeposit.minus(operation.value.toString())).toEqual(
-            transaction.fees?.toString(),
-          );
+        botTest("op value should be equal to fees", () => {
+          expect(operation.value.toString()).toEqual(transaction.fees?.toString());
         });
       },
     },

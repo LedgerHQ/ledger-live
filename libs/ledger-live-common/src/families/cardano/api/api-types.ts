@@ -15,17 +15,19 @@ export type StakeCredential = {
 };
 
 export type StakeKeyRegistrationCertificate = {
+  index: number;
   stakeCredential: StakeCredential;
 };
 
 export type StakeKeyDeRegistrationCertificate = {
+  index: number;
   stakeCredential: StakeCredential;
 };
 
 export type StakeDelegationCertificate = {
-  stakeCredential: StakeCredential & {
-    poolKeyHash: string;
-  };
+  index: number;
+  poolKeyHash: string;
+  stakeCredential: StakeCredential;
 };
 
 export type TransactionCertificate =
@@ -60,8 +62,13 @@ export type APITransaction = {
     tokens: Array<APIToken>;
   }>;
   metadata?: {
+    hash: string;
     data: Array<APIMetadata>;
   };
+  withdrawals?: Array<{
+    stakeCredential: StakeCredential;
+    amount: string;
+  }>;
 };
 
 export type APINetworkInfo = {
