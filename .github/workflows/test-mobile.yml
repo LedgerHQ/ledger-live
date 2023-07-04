@@ -59,6 +59,8 @@ jobs:
         shell: bash
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Run unit tests
+        run: pnpm mobile test
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
         if: always()

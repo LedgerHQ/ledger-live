@@ -47,9 +47,8 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   useEffect(() => {
-    // refresh the manager if a new device gets connected
-    // (happes only when we plug a new device via USB)
-    if (lastConnectedDevice?.deviceId !== device.deviceId) {
+    // refresh the manager if an USB device gets plugged while we're on a bluetooth connection
+    if (lastConnectedDevice?.deviceId.startsWith("usb|") && !device.deviceId.startsWith("usb|")) {
       navigation.replace(ScreenName.Manager, {
         device: lastConnectedDevice,
       });

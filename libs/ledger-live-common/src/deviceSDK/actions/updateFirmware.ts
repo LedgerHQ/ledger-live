@@ -73,11 +73,11 @@ export function updateFirmwareAction({
       scan<
         UpdateFirmwareTaskEvent | GetLatestFirmwareTaskErrorEvent | GetDeviceInfoTaskErrorEvent,
         UpdateFirmwareActionState
-      >((_, event) => {
+      >((currentState, event) => {
         switch (event.type) {
           case "taskError":
             return {
-              ...initialState,
+              ...currentState,
               error: {
                 type: "UpdateFirmwareError",
                 name: event.error,
@@ -104,7 +104,7 @@ export function updateFirmwareAction({
             };
           default:
             return {
-              ...initialState,
+              ...currentState,
               ...sharedReducer({
                 event,
               }),

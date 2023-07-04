@@ -164,12 +164,13 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.NearStakingSelectDevice, {
+      source: route.params.source,
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction,
       status,
     });
-  }, [status, account, parentAccount?.id, navigation, transaction]);
+  }, [status, account, parentAccount?.id, navigation, transaction, route.params.source]);
 
   const error =
     transaction.amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");

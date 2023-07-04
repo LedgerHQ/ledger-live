@@ -20,6 +20,7 @@ const NftNavigator = () => {
         options={() => ({
           title: "",
           headerRight: undefined,
+          headerTransparent: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         })}
       />
