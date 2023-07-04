@@ -74,13 +74,4 @@ export type EditTransactionParamList = {
         accountId?: string;
         parentId?: string;
       };
-  [ScreenName.StellarEditCustomFees]: undefined;
-  [ScreenName.CardanoEditMemo]: undefined;
-  [ScreenName.CosmosFamilyEditMemo]: undefined;
-  [ScreenName.BitcoinEditCustomFees]: undefined;
-  [ScreenName.CryptoOrgEditMemo]: undefined;
-  [ScreenName.HederaEditMemo]: undefined;
-  [ScreenName.RippleEditTag]: undefined;
-  [ScreenName.SolanaEditMemo]: undefined;
-  [ScreenName.StellarEditMemoType]: undefined;
 };
