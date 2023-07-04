@@ -47,7 +47,7 @@ import type {
   StackNavigatorNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { EditOperationPanel } from "../../families/ethereum/EditTransaction/EditOperationPanel";
+import { EditOperationPanel } from "../../families/ethereum/EditTransactionFlow/EditOperationPanel";
 
 type HelpLinkProps = {
   event: string;
