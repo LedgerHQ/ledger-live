@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.3.0-nightly.2
+
+### Minor Changes
+
+- [#3786](https://github.com/LedgerHQ/ledger-live/pull/3786) [`11e62b1e1e`](https://github.com/LedgerHQ/ledger-live/commit/11e62b1e1e3773eeaad748453973e0b3bcd3e3bf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adds support for the `setLoadConfig` during the SignOperation step and adds the usage of environment variables to set the backends URIs
+
 ## 0.2.2-nightly.1
 
 ### Patch Changes

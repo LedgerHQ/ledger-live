@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.26.0-nightly.5
+
+### Minor Changes
+
+- [#3867](https://github.com/LedgerHQ/ledger-live/pull/3867) [`f5e05ef9f1`](https://github.com/LedgerHQ/ledger-live/commit/f5e05ef9f1598fca8d62cc91265ff41e18fb4e71) Thanks [@henri-ly](https://github.com/henri-ly)! - change polkadot react icon to identicon
+
+### Patch Changes
+
+- [#3812](https://github.com/LedgerHQ/ledger-live/pull/3812) [`dc2b1db53a`](https://github.com/LedgerHQ/ledger-live/commit/dc2b1db53adbd65cc06a3c5de02251ee10d16d25) Thanks [@mderrick](https://github.com/mderrick)! - add nft gallery scroll to top button
+
+- [#3813](https://github.com/LedgerHQ/ledger-live/pull/3813) [`ef39bc40f3`](https://github.com/LedgerHQ/ledger-live/commit/ef39bc40f3a1ad97d523ee93df0efbc9cb3d695d) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - adjust wording on recover quiz
+
+- [#3709](https://github.com/LedgerHQ/ledger-live/pull/3709) [`f474bc5631`](https://github.com/LedgerHQ/ledger-live/commit/f474bc56314a32b8b81453bf2c3c43959d42c3bd) Thanks [@grsoares21](https://github.com/grsoares21)! - Add retry possibility when an error happens during the firmware update
+
+- Updated dependencies [[`f474bc5631`](https://github.com/LedgerHQ/ledger-live/commit/f474bc56314a32b8b81453bf2c3c43959d42c3bd), [`b68120562b`](https://github.com/LedgerHQ/ledger-live/commit/b68120562b99d6a19ffc4c9cc13ac49979bef3e8)]:
+  - @ledgerhq/live-common@31.2.0-nightly.4
+
 ## 3.26.0-nightly.4
 
 ### Minor Changes

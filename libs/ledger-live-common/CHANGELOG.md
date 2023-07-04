@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 31.2.0-nightly.4
+
+### Patch Changes
+
+- [#3709](https://github.com/LedgerHQ/ledger-live/pull/3709) [`f474bc5631`](https://github.com/LedgerHQ/ledger-live/commit/f474bc56314a32b8b81453bf2c3c43959d42c3bd) Thanks [@grsoares21](https://github.com/grsoares21)! - Small fix on the state handling of the firmware update device action
+
+- [#3881](https://github.com/LedgerHQ/ledger-live/pull/3881) [`b68120562b`](https://github.com/LedgerHQ/ledger-live/commit/b68120562b99d6a19ffc4c9cc13ac49979bef3e8) Thanks [@aboissiere-ledger](https://github.com/aboissiere-ledger)! - Fix jest config to generate coverage report and include untested files
+
+- Updated dependencies [[`11e62b1e1e`](https://github.com/LedgerHQ/ledger-live/commit/11e62b1e1e3773eeaad748453973e0b3bcd3e3bf)]:
+  - @ledgerhq/coin-evm@0.3.0-nightly.2
+
 ## 31.2.0-nightly.3
 
 ### Minor Changes
