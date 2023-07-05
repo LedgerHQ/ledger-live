@@ -8,4 +8,7 @@ interface Window {
       };
     };
   };
+  ReactNativeWebview?: {
+    postMessage: (value: unknown) => void;
+  };
 }
