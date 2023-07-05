@@ -1,6 +1,7 @@
 import * as detox from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
 import { loadConfig } from "../bridge/server";
 import { isAndroid } from "../helpers";
+// TODO: move it to common or make it as independent workspace
 import * as server from "../../../ledger-live-desktop/tests/utils/serve-dummy-app";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import DiscoveryPage from "../models/discovery/discoveryPage";
@@ -16,6 +17,7 @@ let continueTest: boolean;
 
 describe("Wallet API methods", () => {
   beforeAll(async () => {
+    // TODO: Move this to LiveAppWebview
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
     try {
       const port = await server.start(
