@@ -15,6 +15,8 @@ import Header from "./Header";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import ExitChecksDrawer, { Props as ExitChecksDrawerProps } from "./ExitChecksDrawer";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -52,7 +54,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     }
   }, [device]);
 
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
@@ -168,9 +169,23 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     setTroubleshootingDrawerOpen(true);
   }, []);
 
+  const isEarlySecurityChecks = currentStep === "early-security-check" && lastSeenDevice;
+
   const handleClose = useCallback(() => {
-    history.push("/onboarding/select-device");
-  }, [history]);
+    const exit = () => history.push("/onboarding/select-device");
+    if (isEarlySecurityChecks) {
+      const props: ExitChecksDrawerProps = {
+        onClose: () => setDrawer(),
+        onClickExit: () => {
+          exit();
+          setDrawer();
+        },
+      };
+      setDrawer(ExitChecksDrawer, props, { forceDisableFocusTrap: true });
+    } else {
+      exit();
+    }
+  }, [history, isEarlySecurityChecks]);
 
   const handleTroubleshootingDrawerClose = useCallback(() => {
     history.push("/onboarding/select-device");
@@ -198,14 +213,13 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
-      <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
-      <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
         lastKnownDeviceId={deviceModelId}
         isOpen={isTroubleshootingDrawerOpen}
         onClose={handleTroubleshootingDrawerClose}
       />
       {stepContent}
+      <Header onClose={handleClose} />
     </Flex>
   );
 };

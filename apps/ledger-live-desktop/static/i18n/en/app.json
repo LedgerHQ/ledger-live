@@ -1280,6 +1280,7 @@
     "hideCTA": "Hide token"
   },
   "syncOnboarding": {
+    "exitCTA": "Exit setup",
     "connection": {
       "searching": {
         "title": "Connect {{deviceModelName}} to your computer",
@@ -1323,6 +1324,10 @@
         "title": {
           "active": "Genuine check and\nOS update check",
           "completed": "Your {{modelName}} is genuine and up to date"
+        },
+        "exitWarningModal": {
+          "cancelCheckCTA": "Cancel check",
+          "resumeCheckCTA": "Resume check"
         },
         "whyPerformChecksLink": "Why perform these security checks?",
         "startChecksCTA": "Start checks",
@@ -5852,6 +5857,10 @@
     },
     "GasEstimationError": {
       "title": "Gas estimation failed"
+    },
+    "ExitEarlySecurityChecksWarning": {
+      "title": "Are you sure you want to exit setup?",
+      "description": "You cannot setup your Ledger Stax without allowing this check."
     }
   },
   "cryptoOrg": {
