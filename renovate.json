@@ -5,6 +5,7 @@
   "labels": ["dependencies"],
   "automerge": false,
   "detectGlobalManagerConfig": true,
+  "allowScripts": true,
   "packageRules": [
     {
       "description": "Tag Ledger Live Core Team for major updates",
