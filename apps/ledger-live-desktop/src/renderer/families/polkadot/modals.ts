@@ -16,6 +16,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 export type ModalsData = {
   MODAL_POLKADOT_MANAGE: {
     account: PolkadotAccount;
+    source: string;
   };
   MODAL_POLKADOT_REWARDS_INFO: {
     account: PolkadotAccount;
