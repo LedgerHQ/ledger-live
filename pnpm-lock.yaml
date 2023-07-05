@@ -521,6 +521,9 @@ importers:
       '@electron/notarize':
         specifier: ^2.0.0
         version: 2.0.0
+      '@ledgerhq/react-devtools':
+        specifier: workspace:^
+        version: link:../../tools/react-dev-tools
       '@octokit/rest':
         specifier: ^18.12.0
         version: 18.12.0
@@ -5060,6 +5063,8 @@ importers:
   tools/native-modules-tools: {}
 
   tools/pnpm-utils: {}
+
+  tools/react-dev-tools: {}
 
 packages:
 
