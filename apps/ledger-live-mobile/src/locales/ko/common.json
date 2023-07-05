@@ -56,6 +56,7 @@
     "forgetDevice" : "장치 제거",
     "help" : "도움말",
     "saveLogs" : "로그 저장",
+    "scrollToTop" : "맨위로 스크롤하기",
     "sync" : {
       "ago" : "{{time}}에 동기화됨"
     },
@@ -1460,11 +1461,11 @@
         "cta" : "다음 단계"
       },
       "recoveryPhrase" : {
-        "title" : "복구 문구",
+        "title" : "비밀 복구 문구",
         "desc" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다.",
-        "desc_1" : "Nano는 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다.",
+        "desc_1" : "Ledger Nano는 고유한 비밀 복구 문구를 생성하며, Ledger는 이를 알 수 없습니다.",
         "cta" : "다음 단계",
-        "checkboxDesc" : "복구 문구를 분실할 경우, Nano에 액세스 할 수 없을 때 내 암호 화폐에 대한 액세스도 불가능함을 잘 인지하고 있습니다."
+        "checkboxDesc" : "누군가 나의 비밀 복구 문구를 손에 넣으면 내 자산이 취약해진다는 사실을 이해합니다."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1789,7 @@
         "title" : "Ledger 사용자로서, 내 암호화폐가 저장된 곳은:",
         "answers" : {
           "correct" : "블록체인에서",
-          "wrong" : "내 Nano 장치"
+          "wrong" : "내 Ledger Nano에서"
         },
         "modal" : {
           "text" : "사용자의 암호화폐는 언제나 블록체인에 저장됩니다. 사용자의 하드웨어 지갑은 개인 키만을 저장하고, 이 개인 키로 암호화폐에 액세스 할 수 있습니다.",
@@ -1796,10 +1797,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "복구 문구가 더 이상 안전하지 않거나 노출되었다면...",
+        "title" : "다른 사람이 내 비밀 복구 문구에 대한 액세스 권한을 가질 경우...",
         "answers" : {
-          "correct" : "현재 제 암호화폐가 안전하지 않아서 안전한 곳으로 전송해야 합니다",
-          "wrong" : "Ledger가 제게 복사본을 보내줄 수 있으니 괜찮습니다"
+          "correct" : "자산이 취약해지고 그 사람이 내 자산에 액세스할 수 있습니다",
+          "wrong" : "복구 문구를 기억하는 한 전혀 문제가 되지 않습니다"
         },
         "modal" : {
           "text" : "복구 문구를 알고 있는 사람이라면 누구나 귀하의 암호화폐를 가져갈 수 있습니다.\n복구 문구를 분실한 경우, 암호화폐를 안전한 장소로 신속하게 전송해야 합니다.",
@@ -1807,7 +1808,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Nano를 Ledger 앱에 연결할 때, 내 개인 키는...",
+        "title" : "내 Ledger Nano를 Ledger Live 앱에 연결할 때, 내 개인 키는...",
         "answers" : {
           "correct" : "여전히 오프라인 상태입니다",
           "wrong" : "잠시 인터넷에 연결됩니다"
@@ -1860,7 +1861,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}}와 페어링...",
-        "subtitle" : "{{productName}}에서 코드를 확인합니다"
+        "subtitle" : "메시지가 표시되면 {{productName}}에서 코드를 확인합니다"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1900,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}} 장치와 페어링",
-        "subtitle" : "{{productName}}에서 코드를 확인합니다"
+        "subtitle" : "메시지가 표시되면 {{productName}}에서 코드를 확인합니다"
       },
       "error" : {
         "title" : "페어링 실패",
@@ -3182,7 +3183,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "고객님의 출금이 {{providerName}}에 의해 차단되었습니다.\n\n 자세한 내용은 해당 지원팀에 문의하세요."
-          }
+          },
+          "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
       }
     },
@@ -4140,6 +4142,10 @@
         "restoreLockScreenPicture" : "잠금 화면 이미지 복원",
         "restoreLanguage" : "언어 복원",
         "installingApps" : "앱 설치",
+        "imageLoadRequested" : "{{deviceName}}에서 잠금 화면 이미지 복원 허용",
+        "imageCommitRequested" : "{{deviceName}}에서 사진을 확인하세요",
+        "allowLanguageInstallation" : "{{deviceName}}에서 언어 복구를 허용하세요",
+        "allowAppsRestoration" : "{{deviceName}}에서 앱 복구를 허용하세요",
         "errors" : {
           "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다",
           "LanguageInstallRefusedOnDevice" : "{{deviceName}}에서 언어 변경이 취소되었습니다",
@@ -4160,6 +4166,10 @@
       "TimeoutError" : {
         "title" : "업데이트 타임아웃",
         "description" : "{{deviceName}}의 연결이 끊어져 업데이트를 완료하지 못했습니다"
+      },
+      "CantOpenDevice" : {
+        "title" : "죄송하지만, 연결에 실패했습니다",
+        "description" : "{{deviceName}}의 연결이 끊어져 업데이트를 완료하지 못했습니다."
       }
     }
   },
