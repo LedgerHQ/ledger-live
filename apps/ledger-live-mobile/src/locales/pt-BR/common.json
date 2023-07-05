@@ -56,6 +56,7 @@
     "forgetDevice" : "Remover Dispositivo",
     "help" : "Ajuda",
     "saveLogs" : "Salvar Registros",
+    "scrollToTop" : "Deslizar para o topo",
     "sync" : {
       "ago" : "Sincronizado {{time}}"
     },
@@ -1460,11 +1461,11 @@
         "cta" : "Próximo passo"
       },
       "recoveryPhrase" : {
-        "title" : "Frase de recuperação",
-        "desc" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas.",
-        "desc_1" : "Sua Nano gera uma frase de recuperação única. A Ledger não guarda uma cópia dela.",
+        "title" : "Sua Frase de Recuperação Secreta",
+        "desc" : "Sua Frase de Recuperação Secreta é uma lista de 24 palavras que respaldam as suas chaves privadas.",
+        "desc_1" : "Sua Ledger Nano gera uma Frase de Recuperação Secreta única. A Ledger não sabe qual é.",
         "cta" : "Próximo passo",
-        "checkboxDesc" : "Eu entendo que, se perder esta frase de recuperação, não poderei acessar meus criptoativos caso perca o acesso à minha Nano."
+        "checkboxDesc" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos se tornarão vulneráveis."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1789,7 @@
         "title" : "Como usuário Ledger, meus criptoativos estão armazenados:",
         "answers" : {
           "correct" : "Na blockchain",
-          "wrong" : "Na minha Nano"
+          "wrong" : "Em minha Ledger Nano"
         },
         "modal" : {
           "text" : "Seus criptoativos são sempre armazenados na blockchain. A sua carteira hardware guarda somente sua chave privada, que lhe dá acesso aos seus criptoativos.",
@@ -1796,10 +1797,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Se minha frase de recuperação não estiver mais secreta e segura...",
+        "title" : "Se alguém obtiver acesso à minha Frase de Recuperação Secreta...",
         "answers" : {
-          "correct" : "Minhas criptomoedas não estão mais seguras e preciso transferi-las para um lugar seguro",
-          "wrong" : "Sem problemas, a Ledger pode me enviar uma cópia"
+          "correct" : "Meus ativos se tornam vulneráveis e essa pessoa pode ter acesso a eles",
+          "wrong" : "Não tem problema, desde que eu ainda saiba qual é"
         },
         "modal" : {
           "text" : "Qualquer pessoa que souber sua frase de recuperação poderá tomar seus criptoativos. \nCaso a perca, você deve transferir rapidamente seus criptoativos para um local seguro.",
@@ -1807,7 +1808,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Ao conectar minha Nano ao aplicativo Ledger, minha chave privada...",
+        "title" : "Quando conecto minha Ledger Nano ao aplicativo Ledger Live, minha chave privada...",
         "answers" : {
           "correct" : "permanece desconectada",
           "wrong" : "se conecta brevemente à internet"
@@ -1860,7 +1861,7 @@
       },
       "loading" : {
         "title" : "Emparelhando com {{deviceName}}...",
-        "subtitle" : "Confirme o código em sua {{productName}}"
+        "subtitle" : "Se solicitado, confirme o código em sua {{productName}}"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1900,7 @@
       },
       "loading" : {
         "title" : "Emparelhando com {{deviceName}}",
-        "subtitle" : "Confirme o código em sua {{productName}}"
+        "subtitle" : "Se solicitado, confirme o código em sua {{productName}}"
       },
       "error" : {
         "title" : "Emparelhamento sem sucesso",
@@ -3182,7 +3183,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "Seu saque foi bloqueado por {{providerName}}.\n\n Entre em contato com o suporte deles para obter mais informações."
-          }
+          },
+          "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
         }
       }
     },
@@ -4140,6 +4142,10 @@
         "restoreLockScreenPicture" : "Restaurando a imagem da tela de bloqueio",
         "restoreLanguage" : "Restaurando o idioma",
         "installingApps" : "Instalando aplicativos",
+        "imageLoadRequested" : "Permitir restauração da imagem da tela de bloqueio em {{deviceName}}",
+        "imageCommitRequested" : "Confirme a imagem em sua {{deviceName}}",
+        "allowLanguageInstallation" : "Permitir restauração de idioma em {{deviceName}}",
+        "allowAppsRestoration" : "Permitir restauração de aplicativos em {{deviceName}}",
         "errors" : {
           "description" : "Se isso foi um engano, você pode tentar restaurar novamente ou pode pular esta etapa.",
           "LanguageInstallRefusedOnDevice" : "Mudança de idioma cancelada na {{deviceName}}",
@@ -4160,6 +4166,10 @@
       "TimeoutError" : {
         "title" : "Tempo de atualização expirado",
         "description" : "A atualização não pôde ser concluída porque perdemos a conexão com a {{deviceName}}"
+      },
+      "CantOpenDevice" : {
+        "title" : "Desculpe, falha de conexão",
+        "description" : "A atualização não pôde ser concluída porque perdemos a conexão com a {{deviceName}}."
       }
     }
   },
