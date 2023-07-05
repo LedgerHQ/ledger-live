@@ -11,7 +11,7 @@ export type Props = {
   productName: string;
 };
 
-const SoftwareCheckLockedDeviceModal = ({ deviceModelId, productName }: Props) => {
+const SoftwareCheckLockedDeviceDrawer = ({ deviceModelId, productName }: Props) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -29,4 +29,4 @@ const SoftwareCheckLockedDeviceModal = ({ deviceModelId, productName }: Props) =
   );
 };
 
-export default SoftwareCheckLockedDeviceModal;
+export default SoftwareCheckLockedDeviceDrawer;
