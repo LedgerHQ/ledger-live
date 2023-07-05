@@ -96,6 +96,6 @@ export async function openDeeplink(link?: string) {
   await device.openURL({ url: BASE_DEEPLINK + link });
 }
 
-export async function isAndroid() {
+export function isAndroid() {
   return device.getPlatform() === "android";
 }
