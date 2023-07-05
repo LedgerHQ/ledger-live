@@ -64,7 +64,13 @@ const StepValidatorGroup = ({
   const chosenValidatorGroupAddress = transaction.recipient;
   return (
     <Box flow={1}>
-      <TrackPage category="Celo Vote" name="Step ValidatorGroup" />
+      <TrackPage
+        category="Celo Vote"
+        name="Step ValidatorGroup"
+        flow="stake"
+        action="vote"
+        currency="celo"
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorGroupsField
         account={account}
