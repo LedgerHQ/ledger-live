@@ -30,28 +30,24 @@ module.exports = {
     "ios.debug": {
       type: "ios.app",
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
+      binaryPath: "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.staging": {
       type: "ios.app",
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
+      binaryPath: "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.release": {
       type: "ios.app",
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+      binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },
     "android.debug": {
       type: "android.apk",
       build:
         "cd android && ENVFILE=.env.mock ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
-      testBinaryPath:
-        "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
