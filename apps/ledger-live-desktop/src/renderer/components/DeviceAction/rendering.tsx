@@ -632,6 +632,7 @@ export const renderError = ({
   withOnboardingCTA,
   device,
   inlineRetry = true,
+  Icon,
 }: {
   error: Error | ErrorConstructor;
   t: TFunction;
@@ -647,6 +648,7 @@ export const renderError = ({
   withOnboardingCTA?: boolean;
   device?: Device;
   inlineRetry?: boolean;
+  Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
@@ -659,12 +661,17 @@ export const renderError = ({
   return (
     <Wrapper id={`error-${error.name}`}>
       <BoxedIcon
-        Icon={() => (
-          <Logo info={info} warning={warning}>
-            <ErrorIcon size={24} error={error} />
-          </Logo>
-        )}
+        Icon={
+          Icon
+            ? Icon
+            : () => (
+                <Logo info={info} warning={warning}>
+                  <ErrorIcon size={24} error={error} />
+                </Logo>
+              )
+        }
         size={64}
+        iconSize={24}
       />
       <ErrorTitle>
         <TranslatedError error={error as unknown as Error} noLink />
