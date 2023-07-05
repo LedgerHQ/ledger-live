@@ -1293,7 +1293,7 @@
       "title": "Setup {{deviceName}}",
       "continueOnDevice": "Perform this action on your {{productName}}",
       "pairedContent": {
-        "title": "{{deviceName}} is connected",
+        "title": "{{deviceName}} is secure",
         "description": "Continue setup on {{deviceName}}",
         "text": "This screen will change dynamically to provide you with relevant information while you set up your {{deviceName}}",
         "continueOnDevice": "Tap on {{productName}} to see the next screen."
@@ -1349,8 +1349,7 @@
             "active": "This check ensures your {{modelName}} OS is up to date",
             "updateAvailable": "We recommend performing this update to have access to the latest security features"
           },
-          "viewUpdate": "View update",
-          "whatsInThisUpdateCTA": "What's in this update?"
+          "viewUpdate": "View update"
         }
       },
       "installApplications": {
@@ -1362,28 +1361,8 @@
       "endOfSetup": {
         "title": "End of setup"
       },
-      "genuineCheckModal": {
-        "title": "Authenticity Check",
-        "paragraph1": "Let's make sure your {{deviceName}} is Authentic and safe to use",
-        "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your {{deviceName}}.",
-        "checkDeviceButton": "Check device"
-      },
-      "genuineCheckCancelModal": {
-        "title": "Authenticity Check",
-        "paragraph1": "The genuine check was cancelled",
-        "paragraph2": "This check is very important to make sure your {{deviceName}} is safe to use.",
-        "checkDeviceButton": "Run check again",
-        "cancelButton": "Maybe later"
-      },
-      "genuineCheckNotGenuineModal": {
-        "title": "Authenticity Check",
-        "paragraph1": "Your device is not genuine",
-        "paragraph2": "Authenticity check failed",
-        "checkDeviceButton": "Run check again",
-        "cancelButton": "Maybe later"
-      },
       "softwareCheckAllowSecureChannelModal": {
-        "title": "Allow manager on {{deviceName}}"
+        "title": "Allow a secure connection with Ledger"
       },
       "softwareCheckLockedDeviceModal": {
         "title": "Unlock your device"

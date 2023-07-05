@@ -9,11 +9,12 @@ import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/us
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
 import SoftwareCheckContent from "./SoftwareCheckContent";
-import GenuineCheckModal from "./GenuineCheckModal";
-import SoftwareCheckLockedDeviceModal from "./SoftwareCheckLockedDeviceModal";
-import SoftwareCheckAllowSecureChannelModal from "./SoftwareCheckAllowSecureChannelModal";
-import GenuineCheckCancelModal from "./GenuineCheckCancelModal";
-import GenuineCheckNotGenuineModal from "./GenuineCheckNotGenuineModal";
+import SoftwareCheckLockedDeviceModal, {
+  Props as SoftwareCheckLockedDeviceModalProps,
+} from "./SoftwareCheckLockedDeviceDrawer";
+import SoftwareCheckAllowSecureChannelDrawer, {
+  Props as SoftwareCheckAllowSecureChannelDrawerProps,
+} from "./SoftwareCheckAllowSecureChannelDrawer";
 import { Status as SoftwareCheckStatus } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useSelector } from "react-redux";
@@ -26,8 +27,6 @@ import UpdateFirmwareModal, {
 } from "~/renderer/modals/UpdateFirmwareModal";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
-
-const UIDelay = 2500;
 
 export type Props = {
   onComplete: () => void;
@@ -78,7 +77,6 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
       .toPromise()
       .then(deviceInfo => {
-        console.log("deviceInfo", deviceInfo);
         const modal = deviceInfo.isOSU ? "install" : "disclaimer";
         const stepId = initialStepId({ device, deviceInfo });
         const updateFirmwareModalProps: UpdateFirmwareModalProps = {
@@ -89,14 +87,15 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
           ),
           onDrawerClose: closeFwUpdateDrawer,
           status: modal,
-          stepId: stepId,
+          stepId,
           firmware: latestFirmware,
           deviceInfo,
           device,
           deviceModelId: deviceModelId,
-          setFirmwareUpdateOpened: () => null, // TODO: see if we need to keep that state locally
+          setFirmwareUpdateOpened: () => null, // we don't need to keep the state
           setFirmwareUpdateCompleted: () => {
-            setGenuineCheckStatus(SoftwareCheckStatus.requested);
+            resetGenuineCheckState();
+            setGenuineCheckStatus(SoftwareCheckStatus.active);
             setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
           },
         };
@@ -108,7 +107,14 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         });
       })
       .catch(e => console.error(e));
-  }, [device, deviceId, deviceModelId, latestFirmware]);
+  }, [
+    closeFwUpdateDrawer,
+    device,
+    deviceId,
+    deviceModelId,
+    latestFirmware,
+    resetGenuineCheckState,
+  ]);
 
   useEffect(() => {
     if (devicePermissionState === "refused") {
@@ -127,15 +133,11 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
       genuineCheckStatus === SoftwareCheckStatus.failed ||
       genuineCheckStatus === SoftwareCheckStatus.completed
     ) {
-      setFirmwareUpdateStatus(SoftwareCheckStatus.requested);
+      setFirmwareUpdateStatus(SoftwareCheckStatus.active);
     }
   }, [genuineCheckStatus, genuineState, devicePermissionState]);
 
   useEffect(() => {
-    if (firmwareUpdateStatus === SoftwareCheckStatus.requested) {
-      setFirmwareUpdateStatus(SoftwareCheckStatus.active);
-    }
-
     if (status === "available-firmware") {
       setAvailableFirmwareVersion(latestFirmware?.final.name || "");
       setFirmwareUpdateStatus(SoftwareCheckStatus.updateAvailable);
@@ -144,22 +146,14 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     if (status === "no-available-firmware") {
       setFirmwareUpdateStatus(SoftwareCheckStatus.completed);
     }
-
-    if (
-      firmwareUpdateStatus === SoftwareCheckStatus.failed ||
-      firmwareUpdateStatus === SoftwareCheckStatus.completed
-    ) {
-      setTimeout(onComplete, UIDelay);
-    }
   }, [firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);
 
-  const lockedDeviceOnClose = useCallback(() => {
+  const handleCloseLockedDeviceDrawer = useCallback(() => {
+    // TODO: see if this behaviour is still adapted
     if (genuineCheckStatus === SoftwareCheckStatus.active) {
-      // Triggers a prompt asking for the user to retry or confirm cancelling
       setGenuineCheckStatus(SoftwareCheckStatus.cancelled);
     } else if (firmwareUpdateStatus === SoftwareCheckStatus.active) {
-      // No prompt, directly failed status
-      setFirmwareUpdateStatus(SoftwareCheckStatus.failed);
+      setFirmwareUpdateStatus(SoftwareCheckStatus.cancelled);
     }
   }, [firmwareUpdateStatus, genuineCheckStatus]);
 
@@ -173,55 +167,59 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     (genuineCheckStatus === SoftwareCheckStatus.active ||
       firmwareUpdateStatus === SoftwareCheckStatus.active);
 
+  const notGenuineIsOpen = genuineCheckStatus === SoftwareCheckStatus.notGenuine;
+
+  /** Opening and closing of drawers */
+  useEffect(() => {
+    if (lockedDeviceModalIsOpen) {
+      const props: SoftwareCheckLockedDeviceModalProps = {
+        deviceModelId,
+        productName,
+      };
+      setDrawer(SoftwareCheckLockedDeviceModal, props, {
+        forceDisableFocusTrap: true,
+        preventBackdropClick: true,
+      });
+      return () => setDrawer();
+    } else if (allowSecureChannelIsOpen) {
+      const props: SoftwareCheckAllowSecureChannelDrawerProps = {
+        deviceModelId,
+      };
+      setDrawer(SoftwareCheckAllowSecureChannelDrawer, props, {
+        forceDisableFocusTrap: true,
+        preventBackdropClick: true,
+        // FIXME: drawer is non closeable so we have to handle device disconnection
+      });
+      return () => setDrawer();
+    } else if (notGenuineIsOpen) {
+      // TODO: set drawer
+    }
+  }, [
+    allowSecureChannelIsOpen,
+    deviceModelId,
+    handleCloseLockedDeviceDrawer,
+    lockedDeviceModalIsOpen,
+    notGenuineIsOpen,
+    productName,
+    resetGenuineCheckState,
+  ]);
+
   return (
     <Flex flex={1} justifyContent="center" alignItems="center">
-      <GenuineCheckModal
-        isOpen={genuineCheckStatus === SoftwareCheckStatus.requested}
-        onClose={() => setGenuineCheckStatus(SoftwareCheckStatus.active)}
-        productName={productName}
-      />
-      <GenuineCheckCancelModal
-        isOpen={genuineCheckStatus === SoftwareCheckStatus.cancelled}
-        onClose={() => {
-          resetGenuineCheckState();
-          setGenuineCheckStatus(SoftwareCheckStatus.requested);
-        }}
-        onSkip={() => {
-          resetGenuineCheckState();
-          setGenuineCheckStatus(SoftwareCheckStatus.failed);
-        }}
-        productName={productName}
-      />
-      <GenuineCheckNotGenuineModal
-        isOpen={genuineCheckStatus === SoftwareCheckStatus.notGenuine}
-        onClose={() => {
-          resetGenuineCheckState();
-          setGenuineCheckStatus(SoftwareCheckStatus.requested);
-        }}
-        onSkip={() => {
-          resetGenuineCheckState();
-          setGenuineCheckStatus(SoftwareCheckStatus.failed);
-        }}
-      />
-      <SoftwareCheckLockedDeviceModal
-        isOpen={lockedDeviceModalIsOpen}
-        deviceModelId={deviceModelId}
-        productName={productName}
-        onClose={lockedDeviceOnClose}
-      />
-      <SoftwareCheckAllowSecureChannelModal
-        isOpen={allowSecureChannelIsOpen}
-        deviceModelId={deviceModelId}
-        productName={productName}
-      />
       <SoftwareCheckContent
         genuineCheckStatus={genuineCheckStatus}
         firmwareUpdateStatus={firmwareUpdateStatus}
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
-        onClickStartChecks={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
+        onClickStartChecks={() => {
+          setGenuineCheckStatus(SoftwareCheckStatus.active);
+          resetGenuineCheckState();
+        }}
         onClickWhyPerformSecurityChecks={() => openURL(whySecurityChecksUrl)}
-        onClickResumeGenuineCheck={() => setGenuineCheckStatus(SoftwareCheckStatus.requested)}
+        onClickResumeGenuineCheck={() => {
+          setGenuineCheckStatus(SoftwareCheckStatus.active);
+          resetGenuineCheckState();
+        }}
         onClickViewUpdate={startFirmwareUpdate}
         onClickContinueToSetup={onComplete}
       />
