@@ -52,6 +52,9 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
         s: "abc",
         v: "27",
       }),
+    signEIP712HashedMessage: jest.fn(),
+    signEIP712Message: jest.fn(),
+    signPersonalMessage: jest.fn(),
   });
 };
 

@@ -5,6 +5,7 @@ export type EvmAddress = {
   address: string;
   chainCode?: string;
 };
+
 export type EvmSignature = {
   s: string;
   v: string;
@@ -47,4 +48,30 @@ export interface EvmSigner {
     rawTxHex: string,
     resolution?: LedgerEthTransactionResolution | null,
   ): Promise<EvmSignature>;
+  signPersonalMessage(
+    path: string,
+    messageHex: string,
+  ): Promise<{
+    v: number;
+    s: string;
+    r: string;
+  }>;
+  signEIP712HashedMessage(
+    path: string,
+    domainSeparatorHex: string,
+    hashStructMessageHex: string,
+  ): Promise<{
+    v: number;
+    s: string;
+    r: string;
+  }>;
+  signEIP712Message(
+    path: string,
+    jsonMessage: EIP712Message,
+    fullImplem?: boolean,
+  ): Promise<{
+    v: number;
+    s: string;
+    r: string;
+  }>;
 }
