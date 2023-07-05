@@ -456,7 +456,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [history, postOnboardingPath, seedPathStatus]);
 
   return (
-    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start" pt={84}>
+    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
       <DesyncOverlay
         isOpen={isDesyncOverlayOpen}
         delay={desyncOverlayDelay}
@@ -472,6 +472,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         overflowY="scroll"
         flexGrow={0}
         flexShrink={1}
+        pt={84}
       >
         <Text variant="h3Inter" fontSize="8" fontWeight="semiBold" mb="8">
           {t("syncOnboarding.manual.title", { deviceName })}
