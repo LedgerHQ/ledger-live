@@ -1200,7 +1200,7 @@
       "noDevice" : "Нет устройства Ledger?",
       "buy" : "Приобретайте {{fullDeviceName}}",
       "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "termsLink" : "Условия и положения",
       "privacyLink" : "Политика конфиденциальности",
       "and" : "и",
       "recoverLogIn" : "Войти в Ledger Recover"
