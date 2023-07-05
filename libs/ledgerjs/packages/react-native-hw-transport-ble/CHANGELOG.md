@@ -1,5 +1,11 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.29.2
+
+### Patch Changes
+
+- [#3790](https://github.com/LedgerHQ/ledger-live/pull/3790) [`7719cbf508`](https://github.com/LedgerHQ/ledger-live/commit/7719cbf5087a44aefa3fc66e7a28c69ba7687bcc) Thanks [@juan-cortes](https://github.com/juan-cortes)! - BleTransport optimization in pairing flows for Stax
+
 ## 6.29.2-next.0
 
 ### Patch Changes
