@@ -14,7 +14,7 @@ const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   const entries = Object.keys(extra);
 
   return entries.map(key => (
-    <Section title={t(`operationDetails.extra.${key}`)} value={`${extra[key]}`} />
+    <Section key={key} title={t(`operationDetails.extra.${key}`)} value={`${extra[key]}`} />
   ));
 };
 
