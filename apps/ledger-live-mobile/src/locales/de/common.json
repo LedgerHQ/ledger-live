@@ -56,6 +56,7 @@
     "forgetDevice" : "Gerät entfernen",
     "help" : "Hilfe",
     "saveLogs" : "Protokolle speichern",
+    "scrollToTop" : "Nach oben scrollen",
     "sync" : {
       "ago" : "Synchronisiert {{time}}"
     },
@@ -1460,11 +1461,11 @@
         "cta" : "Nächster Schritt"
       },
       "recoveryPhrase" : {
-        "title" : "Wiederherstellungsphrase",
-        "desc" : "Ihre Wiederherstellungsphrase ist eine geheime Liste von 24 Wörtern, die Ihre privaten Schlüssel sichern.",
-        "desc_1" : "Ihr Nano erzeugt eine einzigartige Wiederherstellungsphrase. Ledger behält keine Kopie davon.",
+        "title" : "Ihre geheime Wiederherstellungsphrase",
+        "desc" : "Ihre geheime Wiederherstellungsphrase ist eine Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden.",
+        "desc_1" : "Ihre Ledger Nano erzeugt eine eindeutige geheime Wiederherstellungsphrase. Ledger kennt diese Phrase nicht.",
         "cta" : "Nächster Schritt",
-        "checkboxDesc" : "Ich verstehe, dass ich bei Verlust dieser Wiederherstellungsphrase nicht auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere."
+        "checkboxDesc" : "Ich habe zur Kenntnis genommen, dass, wenn jemand Zugriff auf meine geheime Wiederherstellungsphrase erhält, meine Vermögenswerte gefährdet sind."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1789,7 @@
         "title" : "Als Ledger-Benutzer werden meine Kryptos so gespeichert:",
         "answers" : {
           "correct" : "Auf der Blockchain",
-          "wrong" : "Auf meinem Nano"
+          "wrong" : "Auf meiner Ledger Nano"
         },
         "modal" : {
           "text" : "Ihre Kryptos sind immer in der Blockchain gespeichert. Ihre Hardware-Wallet enthält nur Ihren privaten Schlüssel, der Ihnen Zugriff auf Ihre Kryptos gibt.",
@@ -1796,10 +1797,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Wenn meine Wiederherstellungsphrase nicht mehr geheim und sicher ist...",
+        "title" : "Wenn jemand anderes Zugang zu meiner geheimen Wiederherstellungsphrase erhält …",
         "answers" : {
-          "correct" : "Meine Kryptos sind nicht mehr sicher und ich muss sie an einen sicheren Ort übertragen",
-          "wrong" : "Kein Problem, Ledger kann mir eine Kopie schicken"
+          "correct" : "Meine Vermögenswerte sind dann jedoch gefährdet und diese Person könnte Zugriff darauf haben",
+          "wrong" : "Kein Problem, solange ich sie noch kenne"
         },
         "modal" : {
           "text" : "Jeder, der Ihre Wiederherstellungsphrase kennt, kann Ihr Krypto-Vermögen stehlen.Wenn Sie die Phrase verlieren, müssen Sie Ihre Kryptos schnell an einen sicheren Ort übertragen.",
@@ -1807,7 +1808,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Wenn ich meinen Nano mit der Ledger-App verbinde, ist mein privater Schlüssel ...",
+        "title" : "Wenn ich meine Ledger Nano mit der Ledger Live-App verbinde, ist mein privater Schlüssel …",
         "answers" : {
           "correct" : "Noch offline",
           "wrong" : "Kurzzeitig mit dem Internet verbunden"
@@ -1860,7 +1861,7 @@
       },
       "loading" : {
         "title" : "Verbinden mit {{deviceName}}...",
-        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
+        "subtitle" : "Wenn Sie dazu aufgefordert werden, bestätigen Sie den Code auf Ihrem {{productName}}"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1900,7 @@
       },
       "loading" : {
         "title" : "Koppeln mit {{deviceName}}",
-        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
+        "subtitle" : "Wenn Sie dazu aufgefordert werden, bestätigen Sie den Code auf Ihrem {{productName}}"
       },
       "error" : {
         "title" : "Kopplung fehlgeschlagen",
@@ -3182,7 +3183,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
-          }
+          },
+          "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
         }
       }
     },
@@ -4140,6 +4142,10 @@
         "restoreLockScreenPicture" : "Bild für Sperrbildschirm wird wiederhergestellt",
         "restoreLanguage" : "Sprache wird wiederhergestellt",
         "installingApps" : "Apps werden installiert",
+        "imageLoadRequested" : "Wiederherstellung des Sperrbildschirmbildes auf {{deviceName}} erlauben",
+        "imageCommitRequested" : "Bestätigen Sie das Bild auf Ihrer {{deviceName}}",
+        "allowLanguageInstallation" : "Wiederherstellung der Sprache erlauben auf {{deviceName}}",
+        "allowAppsRestoration" : "Wiederherstellung der Apps erlauben auf {{deviceName}}",
         "errors" : {
           "description" : "Wenn dies irrtümlich geschehen ist, können Sie die Wiederherstellung neu starten oder aber diesen Schritt überspringen",
           "LanguageInstallRefusedOnDevice" : "Die Sprachumstellung auf {{deviceName}} wurde abgebrochen",
@@ -4160,6 +4166,10 @@
       "TimeoutError" : {
         "title" : "Update-Timeout",
         "description" : "Das Update konnte nicht abgeschlossen werden, weil wir die Verbindung zum {{deviceName}} verloren haben."
+      },
+      "CantOpenDevice" : {
+        "title" : "Entschuldigung, Verbindung fehlgeschlagen",
+        "description" : "Das Update konnte nicht abgeschlossen werden, da die Verbindung zu {{deviceName}} verloren gegangen ist."
       }
     }
   },
