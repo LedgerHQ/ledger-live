@@ -44,6 +44,7 @@ describe("Wallet API methods", () => {
     }
 
     if (!continueTest || !isAndroid()) {
+      console.warn("Stopping Wallet API test setup");
       return; // need to make this a proper ignore/jest warning
     }
 
@@ -71,6 +72,7 @@ describe("Wallet API methods", () => {
 
   it("account.request", async () => {
     if (!continueTest || !isAndroid()) {
+      console.warn("Stopping Wallet API test");
       return; // need to make this a proper ignore/jest warning
     }
 
