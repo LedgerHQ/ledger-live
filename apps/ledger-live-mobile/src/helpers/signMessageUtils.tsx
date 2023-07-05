@@ -1,17 +1,16 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { AnyMessage } from "@ledgerhq/types-live";
 import {
   isEIP712Message,
   getNanoDisplayedInfosFor712,
 } from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 export type NanoDisplayedInfoFor712 = Awaited<ReturnType<typeof getNanoDisplayedInfosFor712>>;
 
 export const getMessageProperties = async (
   currency: CryptoCurrency,
-  messageData: TypedMessageData | MessageData,
+  messageData: AnyMessage,
 ): Promise<{ message: string; fields?: NanoDisplayedInfoFor712 }> => {
   try {
     if (currency.family === "ethereum") {

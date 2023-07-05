@@ -1,12 +1,10 @@
 import { View, StyleSheet, ScrollView } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
-import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import LText from "./LText";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
@@ -14,7 +12,7 @@ import { getMessageProperties, NanoDisplayedInfoFor712 } from "../helpers/signMe
 
 type Props = {
   device: Device;
-  message: TypedMessageData | MessageData;
+  message: AnyMessage;
   account: AccountLike;
 };
 
