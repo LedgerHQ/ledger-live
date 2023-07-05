@@ -2306,7 +2306,7 @@
       "seeLess": "See fewer subaccounts"
     },
     "send": "Send",
-    "receive": "Receive",
+    "receive": "Deposit",
     "buy": "Buy",
     "walletconnect": "WalletConnect",
     "stake": "Stake",
@@ -2320,7 +2320,7 @@
       "descWithBuy": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
       "descToken": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> tokens</5>",
       "buttons": {
-        "receiveFunds": "Receive",
+        "receiveFunds": "Deposit",
         "buyCrypto": "Buy"
       },
       "addAccountCta": "Add Account"
@@ -2809,7 +2809,7 @@
       "title": "Edit fees"
     },
     "receive": {
-      "title": "Receive",
+      "title": "Deposit",
       "description": "Receive crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
@@ -2887,7 +2887,7 @@
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
       },
       "readOnly": {
-        "title": "Receive",
+        "title": "Deposit",
         "text": "Please be careful",
         "desc": "You are about to view an address which was not verified. Verify addresses on your device to stay secure.",
         "verify": "The address of {{accountType}} was not verified. Verify addresses on your device to stay secure."
@@ -6271,7 +6271,7 @@
           "body": "Convert crypto to crypto securely"
         },
         "receive": {
-          "title": "Receive",
+          "title": "Deposit",
           "body": "Receive crypto in your wallet"
         }
       }
