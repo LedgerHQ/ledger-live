@@ -508,7 +508,6 @@ jobs:
             const output = {
               summary,
               annotations,
-              // actions: playwrightSuccess ? [] : [{
               actions: [{
                 // 20 chars max
                 label: "Regen. Screenshots",
