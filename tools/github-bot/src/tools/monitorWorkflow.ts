@@ -19,6 +19,7 @@ type WorkflowDescriptor = {
   description?: string;
   summaryFile?: string;
   getInputs: (payload: GetInputsPayload) => Record<string, any>;
+  getConclusion?: (conclusion: string) => string;
 };
 export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
   /**
@@ -142,12 +143,19 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
       // ignore error, file is not found
     }
 
+    let conclusion: string;
+    if (workflow.getConclusion) {
+      conclusion = workflow.getConclusion(payload.workflow_run.conclusion);
+    } else {
+      conclusion = payload.workflow_run.conclusion;
+    }
+
     await octokit.checks.update({
       owner,
       repo,
       check_run_id: checkRun.id,
       status: "completed",
-      conclusion: payload.workflow_run.conclusion,
+      conclusion,
       output: {
         ...output,
         text: tips,
