@@ -4,13 +4,7 @@ import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type {
-  Account,
-  Operation,
-  AccountLike,
-  NFTMetadataResponse,
-  NFTCollectionMetadataResponse,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -25,7 +19,6 @@ import {
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/operation";
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -152,16 +145,12 @@ export default function Content({ account, parentAccount, operation, disableAllL
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
     operation.contract,
     currency.id,
-  ) as NFTResource & {
-    metadata: NFTCollectionMetadataResponse["result"];
-  };
+  );
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,
     currency.id,
-  ) as NFTResource & {
-    metadata: NFTMetadataResponse["result"];
-  };
+  );
   return (
     <>
       <View style={styles.header}>
@@ -265,10 +254,10 @@ export default function Content({ account, parentAccount, operation, disableAllL
                 style={{
                   marginHorizontal: 16,
                 }}
+                key={op.id}
               >
                 <OperationRow
                   isSubOperation
-                  key={op.id}
                   operation={op}
                   parentAccount={account}
                   account={opAccount}

@@ -198,7 +198,7 @@ export default class StepSummary extends PureComponent<StepProps> {
               </Box>
             </Box>
           ) : (
-            <NFTSummary transaction={transaction} />
+            <NFTSummary transaction={transaction} currency={mainAccount.currency} />
           )}
           {SpecificSummaryNetworkFeesRow ? (
             <SpecificSummaryNetworkFeesRow

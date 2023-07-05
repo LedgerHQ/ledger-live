@@ -507,7 +507,7 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
+    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },

@@ -31,6 +31,7 @@ const defaultConfig = {
   reporters,
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   modulePathIgnorePatterns: [
+    "__tests__/fixtures",
     "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
   ],

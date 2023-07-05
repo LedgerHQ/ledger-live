@@ -1,20 +1,34 @@
 import { CacheRes } from "@ledgerhq/live-network/cache";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import etherscanLikeApi from "./etherscan";
 
+type ExplorerBasicRequest = (
+  currency: CryptoCurrency,
+  address: string,
+  accountId: string,
+  fromBlock: number,
+  toBlock?: number,
+) => Promise<Operation[]>;
+
 type ExplorerApi = {
-  getLastCoinOperations: CacheRes<
-    [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-    Operation[]
-  >;
-  getLastTokenOperations: CacheRes<
-    [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
+  getLastOperations: CacheRes<
+    Parameters<ExplorerBasicRequest>,
     {
-      tokenCurrency: TokenCurrency;
-      operation: Operation;
-    }[]
+      lastCoinOperations: Operation[];
+      lastTokenOperations: Operation[];
+      lastNftOperations: Operation[];
+    }
   >;
+  // For now every other exported function should be considered as internal
+  // methods as they're unecessary to the synchronization it self.
+  // This can be updated with new sync requirements.
+  // & { [key in
+  //   | "getLastCoinOperations"
+  //   | "getLastTokenOperations"
+  //   | "getLastERC721Operations"
+  //   | "getLastERC1155Operations"
+  //   | "getLastNftOperations"]: ExplorerBasicRequest; }
 };
 
 /**
