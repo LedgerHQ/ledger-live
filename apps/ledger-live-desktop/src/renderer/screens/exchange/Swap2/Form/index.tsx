@@ -14,7 +14,7 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -52,7 +52,6 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import debounce from "lodash/debounce";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
