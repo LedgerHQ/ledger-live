@@ -17,35 +17,72 @@ on:
         description: true if the PR is in draft
         required: false
         default: "false"
+      full-tests:
+        description: Set to true to run the full e2e tests
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
+env:
+  RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
+
 jobs:
-  # typecheck:
-  #   name: "Ledger Live Desktop TypeCheck"
-  #   env:
-  #     NODE_OPTIONS: "--max-old-space-size=7168"
-  #     FORCE_COLOR: 3
-  #     CI_OS: ubuntu-latest
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-  #       with:
-  #         ref: ${{ github.ref_name }}
-  #         base: ${{ inputs.base_ref }}
-  #     - uses: ./tools/actions/composites/setup-test-desktop
-  #       id: setup-test-desktop
-  #       with:
-  #         skip_builds: true
-  #     - name: lint
-  #       run: pnpm desktop lint
-  #     - name: prettier
-  #       run: pnpm desktop prettier:check
-  #     - name: typecheck
-  #       run: pnpm desktop typecheck
+  codechecks:
+    name: "Ledger Live code checks"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ github.ref_name }}
+          base: ${{ inputs.base_ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_builds: true
+          install_dotnet: true
+      - name: lint
+        run: |
+          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+      - name: prettier
+        run: pnpm desktop prettier:check
+      - name: typecheck
+        run: pnpm desktop typecheck
+      - uses: actions/upload-artifact@v3
+        name: upload eslint json output
+        if: always()
+        with:
+          name: lint
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
+
+  deadcodecheck:
+    name: "Desktop deadcode check"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ github.ref_name }}
+          base: ${{ inputs.base_ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_builds: true
+      - name: check for dead code
+        run: cd apps/ledger-live-desktop && npx unimported
+        shell: bash
 
   unit-tests:
     name: "Ledger Live Desktop Unit Tests"
@@ -139,6 +176,7 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: macos-latest
+    if: ${{ github.env.RUN_FULL_SUITE }}
     outputs:
       status: ${{ steps.tests.outcome }}
     steps:
@@ -202,6 +240,7 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: windows-latest
+    if: ${{ github.env.RUN_FULL_SUITE }}
     outputs:
       status: ${{ steps.tests.outcome }}
     steps:
@@ -257,13 +296,8 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   report:
-    needs: [
-        # typecheck,
-        unit-tests,
-        e2e-tests-linux,
-        e2e-tests-mac,
-        e2e-tests-windows,
-      ]
+    needs:
+      [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-mac, e2e-tests-windows]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
@@ -271,6 +305,10 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: "download linter results"
+        uses: actions/download-artifact@v3
+        with:
+          name: lint
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -304,6 +342,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
+            const path = require("path");
 
             const [ owner, repo ] = "${{ github.repository }}".split("/");
 
@@ -331,23 +370,25 @@ jobs:
               linux: {
                 symbol: "🐧",
                 name: "Linux",
-                jobUrl: findJobUrl("Ubuntu")
+                jobUrl: findJobUrl("Linux")
               },
             };
 
-            /*
             const typecheck = {
-              pass: ${{ needs.typecheck.result == 'success' }},
-              status: "${{ needs.typecheck.result }}",
+              pass: ${{ needs.codechecks.result == 'success' }},
+              status: "${{ needs.codechecks.result }}",
             };
-            */
 
             const unitTests = {
               pass: ${{ needs.unit-tests.result == 'success' }},
               status: "${{ needs.unit-tests.result }}",
             };
 
-            const report = {
+            const deadcodecheck = {
+              pass: ${{ needs.deadcodecheck.result == 'success' }},
+            };
+
+            const report = ${{ env.RUN_FULL_SUITE }} ? {
               mac: {
                 pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-mac.outputs.status }}",
@@ -360,11 +401,21 @@ jobs:
                 pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-windows.outputs.status }}",
               },
+            } : {
+              linux: {
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
+              },
             };
 
             let summary = `### TypeCheck
 
-            DISABLED (ts migration in progress)
+            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
+              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
+
+            ### Dead Code Check
+            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`npx unimported\` in apps/ledger-live-desktop"}
+              - ${deadcodecheck.pass ? "✅" : "❌"}
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
@@ -399,8 +450,40 @@ jobs:
             ${{ steps.comment.outputs.body }}
             `
 
+            // Store eslint results as annotations
+            let annotations = []
+            try {
+              const lintResult = require("./lint.json");
+              const LEVELS = {
+                0: "notice",
+                1: "warning",
+                2: "failure"
+              };
+              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
+              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
+                messages.map((m) => {
+                  const sameLine = m.line === m.endLine;
+                  return {
+                    path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
+                    start_line: m.line,
+                    end_line: m.endLine,
+                    // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
+                    // https://docs.github.com/en/rest/reference/checks#create-a-check-run
+                    start_column: sameLine ? m.column : undefined,
+                    end_column: sameLine ? m.endColumn : undefined,
+                    annotation_level: LEVELS[m.severity],
+                    message: m.message,
+                    title: m.ruleId,
+                  }
+                })
+              );
+            } catch(error) {
+              console.error("Failed processing eslint annotations", error)
+            }
+
             const output = {
               summary,
+              annotations,
               actions: [{
                 // 20 chars max
                 label: "Regen. Screenshots",
