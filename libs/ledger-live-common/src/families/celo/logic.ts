@@ -75,14 +75,10 @@ export const fallbackValidatorGroup = (address: string): CeloValidatorGroup => (
   votes: new BigNumber(0),
 });
 
-export const isAccountRegistrationPending = (
-  accountId: string,
-  accounts: CeloAccount[],
-): boolean => {
+export const isAccountRegistrationPending = (account: CeloAccount): boolean => {
   // If there's a pending "REGISTER" operation and the
   // account's registration status is false, then
   // we know that the account is truly not registered yet.
-  const account = accounts.find(currentAccount => accountId === currentAccount.id);
 
   const isAccountRegistrationPending =
     !!account &&
