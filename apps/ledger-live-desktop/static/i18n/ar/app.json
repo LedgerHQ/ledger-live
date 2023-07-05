@@ -187,7 +187,55 @@
       "REGISTER" : "مُسجّل",
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
-      "WITHDRAW_UNSTAKED" : "مسحوب"
+      "WITHDRAW_UNSTAKED" : "مسحوب",
+      "SENDING" : "إرسال"
+    },
+    "edit" : {
+      "title" : "التسريع أو الإلغاء",
+      "description" : "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى، أو إلغائها.",
+      "stuckDescription" : "معاملتك عالقة. قم بتسريعها برسوم شبكة أعلى أو قم بإلغائها.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "معلومات رسوم المعاملة المُعلَّقة: ",
+        "networkfee" : "رسوم الشبكة = ",
+        "maxFee" : "الحد الأقصى للرسوم = ",
+        "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية = ",
+        "gasPrice" : "سعر الغاز = "
+      },
+      "learnMore" : "أرغب في معرفة المزيد",
+      "panel" : {
+        "title" : "التسريع أو الإلغاء",
+        "description" : "واحدة من أحدث معاملات 'الإرسال' لديك عالقة. قم بتسريع المعاملة برسوم شبكة أعلى أو قم بإلغائها."
+      },
+      "speedUp" : {
+        "title" : "تسريع",
+        "description" : "أعد تقديم المعاملة برسوم شبكة أعلى."
+      },
+      "cancel" : {
+        "title" : "إلغاء",
+        "description" : "إرسال 0 {{ticker}} إلى عنوانك. لضمان الإلغاء، رسوم الشبكة أعلى بـ %30 من رسوم المعاملة المراد إلغاؤها."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "الطريقة"
+        },
+        "fees" : {
+          "title" : "رسوم"
+        },
+        "summary" : {
+          "title" : "الملخص"
+        },
+        "device" : {
+          "title" : "الجهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "إلغاء المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+        "notEnoughFundsToSpeedup" : "تسريع المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+        "notlowestNonceToSpeedup" : "ميزة التسريع غير متاحة. معاملتك مُعلَّقة لأن هناك معاملة سابقة عالقة. يمكنك الانتظار حتى يتم تأكيدها وتسريعها وإلغائها."
+      }
     }
   },
   "byteSize" : {
@@ -648,6 +696,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "اختبر"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "توصيل Vault",
+      "info" : "اربط حسابات مساحة عمل Ledger Vault الخاصة بك وأنشئ معاملات من Ledger Live عن طريق إكمال الحقول أدناه. حدِّد المعلومات في Settings (الإعدادات) > External wallet signer (مُوقِّع المحفظة الخارجية).",
+      "info_link" : "تعرّف على المزيد",
+      "host" : {
+        "title" : "نقطة نهاية عنوان URL",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "اسم مساحة العمل",
+        "placeholder" : "مساحة العمل"
+      },
+      "token" : {
+        "title" : "رمز توكن واجهة برمجة التطبيقات (API) الخاص بالمُشغِّل",
+        "placeholder" : "رمز توكن"
+      },
+      "submit" : "اتصال"
+    }
   },
   "fullNode" : {
     "status" : "الوضع الحالي",
@@ -1396,6 +1464,10 @@
     "referralProgram" : {
       "title" : "رشّح واكسب 10$",
       "description" : "قم بترشيح صديق بنجاح وكلاكما سيكسب ما قيمته 10$ من بيتكوين."
+    },
+    "vaultSigner" : {
+      "title" : "وضع مُوقِّع Vault",
+      "link" : "مركز مساعدة Vault"
     }
   },
   "signmessage" : {
@@ -2219,6 +2291,8 @@
         "recipientAddress" : "عنوان المستلم",
         "amount" : "المبلغ",
         "fees" : "رسوم الشبكة",
+        "maxFees" : "الحد الأقصى لرسوم الشبكة",
+        "maxFeesInfo" : "هذا هو الحد الأقصى للمبلغ الذي قد تدفعه مقابل هذه المعاملة. سيتم رد أي فرق بين الحد الأقصى لرسوم الشبكة والرسوم الفعلية.",
         "useMax" : "استخدم الحد الأقصى",
         "sendMax" : "إرسال الحد الأقصى",
         "rippleTag" : "علامة",
@@ -2297,7 +2371,8 @@
   "deviceLocalization" : {
     "language" : "اللغة",
     "deviceLanguage" : "تغيير لغة الجهاز",
-    "changeLanguage" : "تغيير اللغة",
+    "changeLanguage" : "تغيير",
+    "dontChangeLanguage" : "لا تُغيّر",
     "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}} متاحة أيضاً لجهازك {{deviceName}}",
@@ -3946,6 +4021,10 @@
           "title" : "إلغاء تنشيط بوابة EIP1559 للحد الأدنى لرسوم الأولوية",
           "description" : "هذا سيسمح بإرسال معاملة دون أي حد أدنى متوقع لرسوم الأولوية. قد يؤدي هذا إلى أن تُعلّق المعاملات في مجمَع الذاكرة (mempool) إلى الأبد."
         },
+        "vaultSigner" : {
+          "title" : "مُوقِّع Vault",
+          "description" : "استخدم Ledger Vault كمُوقِّع مع رمز توكن واجهة برمجة التطبيقات (API) الخاص بالمُشغِّل"
+        },
         "1559CustomPriorityLowerGate" : {
           "title" : "بوابة رسوم أولوية مخصصة",
           "description" : "خصِّص النسبة المئوية من الحد الأدنى لرسوم الأولوية المُقدَّرة لدينا المسموح بها لمعاملات EIP1559 المتقدمة"
@@ -4061,7 +4140,7 @@
     "downloadInProgress" : "جاري تنزيل التحديث...",
     "downloadProgress" : "اكتمل {{progress}}%",
     "checking" : "جاري التحقق من التحديث...",
-    "checkSuccess" : "التحديث جاهز للتثبيت",
+    "checkSuccess" : "New Ledger Live update available, it will install automatically when you close the app",
     "quitAndInstall" : "تثبيت الآن",
     "updateAvailable" : "التحديث إلى إصدار {{version}} من Ledger Live متاح",
     "error" : "حدث خطأ أثناء التحديث. يرجى التنزيل مرة أخرى",
@@ -4216,6 +4295,7 @@
         "nextButton" : "بدء الاستخدام",
         "noDevice" : "ليس لديك جهاز؟",
         "buyLink" : "ليس لديك جهاز؟ قم بشراء Ledger Nano X",
+        "recoverSignIn" : "تسجيل الدخول إلى Ledger Recover",
         "byTapping" : "بالضغط على \"Get Started (بدء الاستخدام)\" أنت توافق على وتقبل",
         "termsAndConditions" : "الشروط والأحكام",
         "and" : "و",
@@ -4265,7 +4345,7 @@
           },
           "4" : {
             "title" : "استعادة باستخدام Ledger Recover",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+            "description" : "You need to have a Ledger Recover subscription."
           }
         }
       },
@@ -4468,10 +4548,10 @@
             }
           },
           "newRecoveryPhrase" : {
-            "title" : "عبارة الاسترداد",
-            "paragraph1" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً.",
-            "paragraph2" : "Nano الخاصة بك تقوم بإنشاء عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها.",
-            "disclaimer" : "أفهم أنني إذا فقدت عبارة الاسترداد هذه فلن أتمكن من الوصول إلى أصولي المشفرة في حالة أن فقدت الوصول إلى Nano الخاصة بي.",
+            "title" : "Your Secret Recovery Phrase",
+            "paragraph1" : "Your Secret Recovery Phrase is a list of 24 words that backs up your private keys.",
+            "paragraph2" : "Your Ledger Nano generates a unique Secret Recovery Phrase. Ledger does not know what it is.",
+            "disclaimer" : "I understand that if someone gets my Secret Recovery Phrase, my assets become vulnerable.",
             "buttons" : {
               "next" : "عبارة الاسترداد",
               "prev" : "الخطوة السابقة",
@@ -4611,7 +4691,7 @@
         "1" : {
           "text" : "كمستخدم Ledger، يتم حفظ أصولي المشفرة:",
           "answers" : {
-            "1" : "على Nano الخاصة بي",
+            "1" : "On my Ledger Nano",
             "2" : "على سلسلة الكتل (blockchain)"
           },
           "results" : {
@@ -4626,10 +4706,10 @@
           }
         },
         "2" : {
-          "text" : "إذا لم تعد عبارة الاسترداد الخاصة بي سرية وآمنة...",
+          "text" : "If someone else gets access to my Secret Recovery Phrase...",
           "answers" : {
-            "1" : "ليست مشكلة، Ledger يمكن أن تُرسل لي نسخة",
-            "2" : "أصولي المشفرة لم تعد آمنة وأحتاج إلى نقلها إلى مكان آمن"
+            "1" : "No problem, as long as I still know what it is",
+            "2" : "My assets become vulnerable and that person could have access to them"
           },
           "results" : {
             "success" : {
@@ -4643,10 +4723,10 @@
           }
         },
         "3" : {
-          "text" : "عندما أقوم بتوصيل Nano الخاصة بي بتطبيق Ledger، فإن مفتاحي الخاص...",
+          "text" : "When I connect my Ledger Nano to the Ledger Live app, my private key is...",
           "answers" : {
             "1" : "لا يزال غير متصل بالإنترنت",
-            "2" : "متصل بالإنترنت لفترة قصيرة"
+            "2" : "Briefly connected to the Internet"
           },
           "results" : {
             "success" : {
@@ -5346,6 +5426,10 @@
       "title" : "العملية غير متوفرة لهذا الجهاز",
       "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "لا يمكن تسريعها أو إلغائها",
+      "description" : "هذه المعاملة تم تأكيدها بالفعل"
+    },
     "CantScanQRCode" : {
       "title" : "تعذر فحص كود الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
     },
@@ -5760,6 +5844,7 @@
   },
   "customImage" : {
     "title" : "شاشة قَفل مُخصّصة",
+    "cta" : "شاشة قَفل مُخصّصة",
     "managerCTA" : "صورة شاشة القَفل",
     "managerCTARemove" : "حذف",
     "steps" : {
@@ -5851,5 +5936,8 @@
       "contactSupport" : "تواصل مع دعم Ledger",
       "saveLog" : "حفظ السجل"
     }
+  },
+  "recoverRestore" : {
+    "title" : "قم بتوصيل وإلغاء قفل جهازك Ledger"
   }
 }
