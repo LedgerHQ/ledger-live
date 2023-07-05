@@ -48,8 +48,8 @@ test.beforeAll(async ({ request }) => {
   }
 });
 
-test.afterAll(() => {
-  server.stop();
+test.afterAll(async () => {
+  await server.stop();
   console.info(`========> Dummy Wallet API app stopped <=========`);
   delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
 });
