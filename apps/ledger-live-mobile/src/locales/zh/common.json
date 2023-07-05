@@ -1200,7 +1200,7 @@
       "noDevice" : "没有设备？",
       "buy" : "购买一个 {{fullDeviceName}}",
       "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "termsLink" : "条款和条件",
       "privacyLink" : "隐私政策",
       "and" : "和",
       "recoverLogIn" : "登录使用 Ledger Recover"
