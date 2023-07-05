@@ -456,7 +456,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [history, postOnboardingPath, seedPathStatus]);
 
   return (
-    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
+    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start" pt={84}>
       <DesyncOverlay
         isOpen={isDesyncOverlayOpen}
         delay={desyncOverlayDelay}
