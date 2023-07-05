@@ -528,7 +528,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": ":warning: [Alert] Ledger Live Desktop tests failed on develop",
+                    "text": ":warning: [Alert] Ledger Live Desktop tests failed on ${{ github.ref_name }}",
                     "emoji": true
                   }
                 },
@@ -592,15 +592,7 @@ jobs:
       - name: post to a Slack channel (failure)
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        if: contains(join(needs.*.result, ','), 'failure')
-        with:
-          channel-id: "C05FKJ7DFAP"
-          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-      - name: post to a Slack channel (always)
-        id: slack2
-        uses: slackapi/slack-github-action@v1.23.0
+        if: always() && !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure')
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
