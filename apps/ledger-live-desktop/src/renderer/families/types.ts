@@ -7,6 +7,7 @@ import { Unit, CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-c
 import {
   Account,
   FeeStrategy,
+  NFTStandard,
   Operation,
   OperationType,
   SubAccount,
@@ -294,6 +295,15 @@ export type LLDCoinFamily<
   StakeBanner?: React.ComponentType<{
     account: A;
   }>;
+
+  nft?: {
+    injectNftIntoTransaction: (
+      transaction: T,
+      nftProperties: Partial<NftProperties>,
+      standard?: NFTStandard,
+    ) => T;
+    getNftTransactionProperties: (transaction: T) => NftProperties;
+  };
 };
 
 export type FieldComponentProps<
@@ -324,4 +334,10 @@ export type ManageAction = {
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;
+};
+
+export type NftProperties = {
+  tokenId: string | null;
+  contract: string | null;
+  quantity: BigNumber | null;
 };

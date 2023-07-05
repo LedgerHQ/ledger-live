@@ -3,8 +3,9 @@ import {
   NFTCollectionMetadataResponse,
   NFTMetadataResponse,
 } from "@ledgerhq/types-live";
+import { metadataCallBatcher } from "@ledgerhq/coin-framework/nft/support";
 import { getCryptoCurrencyById } from "../../currencies";
-import { metadataCallBatcher } from "../../nft";
+import { apiForCurrency } from "./api";
 
 const SUPPORTED_CHAIN_IDS = new Set([
   1, // Ethereum
@@ -38,10 +39,11 @@ export const nftMetadata: NftResolvers["nftMetadata"] = async ({
     throw new Error("Ethereum Bridge NFT Resolver: Unsupported chainId");
   }
 
-  const response = (await metadataCallBatcher(currency).loadNft({
+  const api = apiForCurrency(currency);
+  const response = await metadataCallBatcher(currency, api).loadNft({
     contract,
     tokenId,
-  })) as NFTMetadataResponse;
+  });
 
   return response;
 };
@@ -69,9 +71,10 @@ export const collectionMetadata: NftResolvers["collectionMetadata"] = async ({
     throw new Error("Ethereum Bridge NFT Resolver: Unsupported chainId");
   }
 
-  const response = (await metadataCallBatcher(currency).loadCollection({
+  const api = apiForCurrency(currency);
+  const response = await metadataCallBatcher(currency, api).loadCollection({
     contract,
-  })) as NFTCollectionMetadataResponse;
+  });
 
   return response;
 };

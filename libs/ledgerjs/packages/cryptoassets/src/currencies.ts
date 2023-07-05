@@ -3594,6 +3594,70 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
   },
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  ethereum_as_evm_test_only: {
+    type: "CryptoCurrency",
+    id: "ethereum_as_evm_test_only",
+    coinType: CoinType.ETH,
+    name: "Ethereum EVM (TEST ONLY DO NOT USE)",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "ethereum_as_evm_test_only",
+    color: "#ff6969",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    isTestnetFor: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 1,
+      networkId: 1,
+      rpc: "https://rpc.ankr.com/eth",
+      explorer: {
+        uri: "https://api.etherscan.io",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://etherscan.io/tx/$hash",
+        address: "https://etherscan.io/address/$address",
+        token: "https://etherscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  polygon_as_evm_test_only: {
+    type: "CryptoCurrency",
+    id: "polygon_as_evm_test_only",
+    coinType: CoinType.ETH,
+    name: "Polygon EVM (TEST ONLY DO NOT USE)",
+    managerAppName: "Polygon",
+    ticker: "MATIC",
+    scheme: "polygon_as_evm_test_only",
+    color: "#f7a363",
+    family: "evm",
+    units: [
+      {
+        name: "MATIC",
+        code: "MATIC",
+        magnitude: 18,
+      },
+    ],
+    isTestnetFor: "polygon",
+    ethereumLikeInfo: {
+      chainId: 137,
+      networkId: 137,
+      rpc: "https://rpc.ankr.com/polygon",
+      explorer: {
+        uri: "https://api.polygonscan.com",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://polygonscan.com/tx/$hash",
+        address: "https://polygonscan.com/address/$address",
+        token: "https://polygonscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",

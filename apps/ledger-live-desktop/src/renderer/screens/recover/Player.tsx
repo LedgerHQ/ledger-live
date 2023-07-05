@@ -32,6 +32,7 @@ const FullscreenWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: 20;
+  background-color: ${p => p.theme.colors.palette.background.default};
 `;
 
 export default function RecoverPlayer({

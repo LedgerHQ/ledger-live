@@ -227,6 +227,7 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
+  const recoverFeature = useFeature("protectServicesDesktop");
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -310,11 +311,25 @@ const MainSideBar = () => {
   }, [dispatch, maybeRedirectToAccounts]);
 
   const handleClickRecover = useCallback(() => {
+    const enabled = recoverFeature?.enabled;
+    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
+    const liveAppId = recoverFeature?.params?.protectId;
+
+    if (enabled && openRecoverFromSidebar && liveAppId) {
+      push(`/recover/${liveAppId}`);
+    } else if (enabled) {
+      dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+    }
     track("button_clicked", {
       button: "Protect",
     });
-    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
-  }, [dispatch]);
+  }, [
+    recoverFeature?.enabled,
+    recoverFeature?.params?.openRecoverFromSidebar,
+    recoverFeature?.params?.protectId,
+    push,
+    dispatch,
+  ]);
 
   return (
     <Transition

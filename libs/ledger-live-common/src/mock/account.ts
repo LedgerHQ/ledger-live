@@ -14,6 +14,7 @@ import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
+import { TronAccount } from "../families/tron/types";
 
 /**
  * @memberof mock/account
@@ -79,6 +80,32 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
           (account as TezosAccount).tezosResources = {
             revealed: true,
             counter: 0,
+          };
+          break;
+        case "tron":
+          // TODO variation in these. you could use the account.name as a way to split cases
+          (account as TronAccount).tronResources = {
+            frozen: {
+              bandwidth: null,
+              energy: null,
+            },
+            delegatedFrozen: {
+              bandwidth: null,
+              energy: null,
+            },
+            votes: [],
+            tronPower: 0,
+            energy: BigNumber(0),
+            bandwidth: {
+              freeUsed: BigNumber(0),
+              freeLimit: BigNumber(1),
+              gainedUsed: BigNumber(0),
+              gainedLimit: BigNumber(0),
+            },
+            unwithdrawnReward: BigNumber(0),
+            lastWithdrawnRewardDate: null,
+            lastVotedDate: null,
+            cacheTransactionInfoById: {},
           };
           break;
         default: {

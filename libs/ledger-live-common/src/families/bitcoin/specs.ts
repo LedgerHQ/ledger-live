@@ -77,32 +77,24 @@ const genericTest = ({
   });
 
   botTest("operation matches tx senders and recipients", () => {
-    if (transaction.opReturnData) {
-      // transaction.recipient has format <coinId>:<address>
-      const [, recipientAddress] = transaction.recipient.split(":");
-      expect(operation.recipients).toContain(recipientAddress);
-      expect(operation.recipients.length).toBe(2);
-    } else {
-      let expectedSenders = nonDeterministicPicking
-        ? operation.senders
-        : (txInputs!.map(t => t.address).filter(Boolean) as string[]);
+    let expectedSenders = nonDeterministicPicking
+      ? operation.senders
+      : (txInputs!.map(t => t.address).filter(Boolean) as string[]);
 
-      let expectedRecipients = txOutputs!
-        .filter(o => o.address && !o.isChange)
-        .map(o => o.address) as string[];
+    let expectedRecipients = txOutputs!
+      .filter(o => o.address && !o.isChange)
+      .map(o => o.address) as string[];
 
-      if (account.currency.id === "bitcoin_cash") {
-        expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
-        expectedRecipients = expectedRecipients.map(bchToCashaddrAddressWithoutPrefix);
-      }
-
-      expect(asSorted(operation)).toMatchObject(
-        asSorted({
-          senders: expectedSenders,
-          recipients: expectedRecipients,
-        }),
-      );
+    if (account.currency.id === "bitcoin_cash") {
+      expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
+      expectedRecipients = expectedRecipients.map(bchToCashaddrAddressWithoutPrefix);
     }
+    expect(asSorted(operation)).toMatchObject(
+      asSorted({
+        senders: expectedSenders,
+        recipients: expectedRecipients,
+      }),
+    );
   });
 
   const utxosPicked = ((status as TransactionStatus).txInputs || [])
@@ -124,7 +116,7 @@ const genericTest = ({
 
 const testDestination = genericTestDestination;
 
-const genericMinimalAmount = new BigNumber(10000);
+const genericMinimalAmount = new BigNumber(15000);
 
 const bitcoinLikeMutations = ({
   minimalAmount = genericMinimalAmount,
@@ -212,7 +204,11 @@ const bitcoinLikeMutations = ({
         ...bridge.createTransaction(account),
         feePerByte: new BigNumber(0.0001),
       };
-      const utxo = sample((bitcoinResources as BitcoinResources).utxos.filter(u => u.blockHeight));
+      const utxo = sample(
+        (bitcoinResources as BitcoinResources).utxos.filter(
+          u => u.blockHeight && u.value.gt(genericMinimalAmount),
+        ),
+      );
       invariant(utxo, "no confirmed utxo");
       return {
         transaction,
@@ -446,6 +442,7 @@ const pivx: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
   minViableAmount: genericMinimalAmount,
 };
+const minQtum = parseCurrencyUnit(getCryptoCurrencyById("qtum").units[0], "0.001");
 const qtum: AppSpec<Transaction> = {
   name: "Qtum",
   currency: getCryptoCurrencyById("qtum"),
@@ -457,8 +454,10 @@ const qtum: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
+  mutations: bitcoinLikeMutations({
+    minimalAmount: minQtum,
+  }),
+  minViableAmount: minQtum,
 };
 const vertcoin: AppSpec<Transaction> = {
   name: "Vertcoin",
@@ -474,6 +473,7 @@ const vertcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
   minViableAmount: genericMinimalAmount,
 };
+const minViacoin = parseCurrencyUnit(getCryptoCurrencyById("viacoin").units[0], "0.001");
 const viacoin: AppSpec<Transaction> = {
   name: "Viacoin",
   currency: getCryptoCurrencyById("viacoin"),
@@ -485,8 +485,10 @@ const viacoin: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
+  mutations: bitcoinLikeMutations({
+    minimalAmount: minViacoin,
+  }),
+  minViableAmount: minViacoin,
 };
 const minDash = parseCurrencyUnit(getCryptoCurrencyById("dash").units[0], "0.001");
 const dash: AppSpec<Transaction> = {

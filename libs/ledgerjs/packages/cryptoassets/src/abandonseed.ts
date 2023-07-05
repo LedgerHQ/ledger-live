@@ -84,6 +84,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   onomy: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   quicksilver: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   persistence: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  ethereum_as_evm_test_only: "0x0000000000000000000000000000000000000000",
+  polygon_as_evm_test_only: "0x0000000000000000000000000000000000000000",
 };
 
 /**
