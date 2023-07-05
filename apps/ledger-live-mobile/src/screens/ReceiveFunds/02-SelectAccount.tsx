@@ -2,17 +2,18 @@ import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 
-import { Flex } from "@ledgerhq/native-ui";
+import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Account, AccountLike, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
-import AccountCard from "../../components/AccountCard";
-import LText from "../../components/LText";
+
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import AccountCard from "../../components/AccountCard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -84,7 +85,7 @@ function ReceiveSelectAccount({
     },
     [currency, navigation, route.params, selectedAccount],
   );
-
+  const insets = useSafeAreaInsets();
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AccountLike>) => (
       <Flex px={6}>
@@ -93,14 +94,14 @@ function ReceiveSelectAccount({
           AccountSubTitle={
             (item as SubAccountEnhanced).parentAccount ||
             (item as TokenAccount).token?.parentCurrency ? (
-              <LText color="neutral.c70">
+              <Text color="neutral.c80">
                 {
                   (
                     ((item as SubAccountEnhanced).parentAccount as Account) ||
                     (item as TokenAccount).token.parentCurrency
                   ).name
                 }
-              </LText>
+              </Text>
             ) : null
           }
           onPress={() => selectAccount(item)}
@@ -112,23 +113,24 @@ function ReceiveSelectAccount({
 
   const keyExtractor = useCallback(item => item?.id, []);
 
-  return currency && aggregatedAccounts && aggregatedAccounts.length > 1 ? (
+  return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>
       <TrackScreen category="ReceiveFunds" name="Receive Account Select" currency={currency.name} />
       <Flex p={6}>
-        <LText
-          fontSize="32px"
-          fontFamily="InterMedium"
-          semiBold
+        <Text
+          variant="h4"
           testID="receive-header-step2-title"
+          fontSize="24px"
+          color="neutral.c100"
+          mb={2}
         >
           {t("transfer.receive.selectAccount.title")}
-        </LText>
-        <LText variant="body" color="neutral.c70">
+        </Text>
+        <Text variant="bodyLineHeight" color="neutral.c80">
           {t("transfer.receive.selectAccount.subtitle", {
             currencyTicker: currency.ticker,
           })}
-        </LText>
+        </Text>
       </Flex>
       <FlatList
         testID="receive-header-step2-accounts"
@@ -137,6 +139,12 @@ function ReceiveSelectAccount({
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
+
+      <Flex mb={insets.bottom} px={6}>
+        <Button type="shade" size="large" outline onPress={() => console.log("create new account")}>
+          {t("transfer.receive.selectAccount.cta")}
+        </Button>
+      </Flex>
     </>
   ) : null;
 }
