@@ -27,7 +27,7 @@ function ReceiveSelectAccount({
   const currency = route?.params?.currency;
   const { t } = useTranslation();
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
-
+  const insets = useSafeAreaInsets();
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
       ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
@@ -85,7 +85,7 @@ function ReceiveSelectAccount({
     },
     [currency, navigation, route.params, selectedAccount],
   );
-  const insets = useSafeAreaInsets();
+
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AccountLike>) => (
       <Flex px={6}>
@@ -111,11 +111,22 @@ function ReceiveSelectAccount({
     [selectAccount],
   );
 
+  const createNewAccount = useCallback(() => {
+    track("button_clicked", {
+      button: "Create a new account",
+    });
+    console.log("create new account");
+  }, []);
+
   const keyExtractor = useCallback(item => item?.id, []);
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>
-      <TrackScreen category="ReceiveFunds" name="Receive Account Select" currency={currency.name} />
+      <TrackScreen
+        category="Deposit flow"
+        name="Select account to deposit to"
+        currency={currency.name}
+      />
       <Flex p={6}>
         <Text
           variant="h4"
@@ -141,7 +152,7 @@ function ReceiveSelectAccount({
       />
 
       <Flex mb={insets.bottom} px={6}>
-        <Button type="shade" size="large" outline onPress={() => console.log("create new account")}>
+        <Button type="shade" size="large" outline onPress={createNewAccount}>
           {t("transfer.receive.selectAccount.cta")}
         </Button>
       </Flex>
