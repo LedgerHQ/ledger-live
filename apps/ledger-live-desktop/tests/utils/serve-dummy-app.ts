@@ -13,7 +13,7 @@ export const server = http.createServer((request, response) => {
   });
 });
 
-export const start = (appPath: string, port = 0): Promise<number> => {
+export function start(appPath: string, port = 0): Promise<number> {
   dummyAppPath = appPath;
 
   return new Promise((resolve, reject) => {
@@ -27,9 +27,9 @@ export const start = (appPath: string, port = 0): Promise<number> => {
         reject(error);
       });
   });
-};
+}
 
-export const liveAppManifest = (params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">) => {
+export function liveAppManifest(params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">) {
   const manifest = [
     {
       name: "Generic Live App",
@@ -74,13 +74,13 @@ export const liveAppManifest = (params: Partial<AppManifest> & Pick<AppManifest,
   ];
 
   return manifest;
-};
+}
 
-export const stop = (): Promise<unknown> => {
+export function stop(): Promise<unknown> {
   server.close();
   return new Promise(resolve => {
     server.on("close", () => {
       resolve("Server Closed");
     });
   });
-};
+}
