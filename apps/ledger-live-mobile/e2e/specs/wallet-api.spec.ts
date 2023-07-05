@@ -35,13 +35,12 @@ describe("Wallet API methods", () => {
           `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
         );
       } else {
+        continueTest = false;
         throw new Error("Ping response != 200, got: " + response.status);
       }
     } catch (error) {
       console.warn(`========> Dummy test app not running! <=========`);
       console.error(error);
-
-      continueTest = false;
     }
 
     if (!continueTest || !isAndroid()) {
@@ -66,11 +65,15 @@ describe("Wallet API methods", () => {
     expect(url).toBe("http://localhost:52619/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App");
   });
 
-  afterAll(() => {
-    server.stop();
+  afterAll(async () => {
+    await server.stop();
   });
 
   it("account.request", async () => {
+    if (!continueTest || !isAndroid()) {
+      return; // need to make this a proper ignore/jest warning
+    }
+
     const { id, response } = await liveAppWebview.send({
       method: "account.request",
       params: {

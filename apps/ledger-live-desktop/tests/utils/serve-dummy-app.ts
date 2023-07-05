@@ -76,4 +76,11 @@ export const liveAppManifest = (params: Partial<AppManifest> & Pick<AppManifest,
   return manifest;
 };
 
-export const stop = () => server.close();
+export const stop = (): Promise<unknown> => {
+  server.close();
+  return new Promise(resolve => {
+    server.on("close", () => {
+      resolve("Server Closed");
+    });
+  });
+};
