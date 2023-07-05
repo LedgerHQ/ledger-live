@@ -56,6 +56,7 @@
     "forgetDevice" : "Retirer l’appareil",
     "help" : "Aide",
     "saveLogs" : "Enregistrer les logs",
+    "scrollToTop" : "Haut de page",
     "sync" : {
       "ago" : "Synchronisé {{time}}"
     },
@@ -1200,7 +1201,7 @@
       "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
       "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "termsLink" : "Conditions d’utilisation",
       "privacyLink" : "Politique de confidentialité",
       "and" : "et",
       "recoverLogIn" : "Se connecter à Ledger Recover"
@@ -1460,11 +1461,11 @@
         "cta" : "Étape suivante"
       },
       "recoveryPhrase" : {
-        "title" : "Phrase de récupération",
-        "desc" : "Votre phrase de récupération (\"recovery phrase\") est une liste secrète de 24 mots qui sauvegarde vos clés privées.",
-        "desc_1" : "Votre Ledger Nano génère une phrase de récupération unique. Ledger ne conserve pas de copie de celle-ci.",
+        "title" : "Votre phrase de récupération secrète",
+        "desc" : "Votre phrase de récupération secrète est une liste de 24 mots qui sauvegarde vos clés privées.",
+        "desc_1" : "Votre Ledger Nano génère une phrase de récupération secrète unique. Ledger ne la connaît pas.",
         "cta" : "Étape suivante",
-        "checkboxDesc" : "Je comprends que si je perds cette phrase de récupération, je ne pourrais plus accéder à mes cryptos au cas où je n’ai plus accès à mon Nano."
+        "checkboxDesc" : "Je comprends que si un tiers obtient ma phrase de récupération secrète, mes actifs sont en danger."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1789,7 @@
         "title" : "Les cryptos sécurisées par mon appareil Ledger sont stockées :",
         "answers" : {
           "correct" : "Sur la blockchain",
-          "wrong" : "Dans mon appareil Ledger"
+          "wrong" : "Sur mon Ledger Nano"
         },
         "modal" : {
           "text" : "Vos cryptos sont toujours stockées sur la blockchain. Votre wallet physique ne détient que votre clé privée, qui vous donne accès à vos cryptos.",
@@ -1796,10 +1797,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Si quelqu’un connaît ma phrase de récupération ou si elle n’est plus en sécurité :",
+        "title" : "Si un tiers a accès à ma phrase de récupération secrète...",
         "answers" : {
-          "correct" : "Mes cryptos ne sont plus en sécurité et je dois les transférer en lieu sûr.",
-          "wrong" : "Ledger m’en enverra une copie."
+          "correct" : "Mes actifs sont en danger et cette personne pourrait y avoir accès.",
+          "wrong" : "Pas de problème, tant que je m’en souviens toujours."
         },
         "modal" : {
           "text" : "Toute personne qui connaît votre phrase de récupération peut voler vos crypto-actifs.\nSi vous la perdez, vous devez rapidement mettre vos cryptos en lieu sûr.",
@@ -1807,7 +1808,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Lorsque je connecte mon Nano à l’app Ledger Live, ma clé privée est :",
+        "title" : "Lorsque je connecte mon Ledger Nano à l’application Ledger Live, ma clé privée est...",
         "answers" : {
           "correct" : "Toujours hors ligne",
           "wrong" : "Brièvement connectée à Internet"
@@ -1860,7 +1861,7 @@
       },
       "loading" : {
         "title" : "Appairage avec votre {{deviceName}}...",
-        "subtitle" : "Confirmez le code sur votre {{productName}}."
+        "subtitle" : "Confirmez le code sur votre {{productName}}, si cela est demandé."
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1900,7 @@
       },
       "loading" : {
         "title" : "Appairage avec votre {{deviceName}}",
-        "subtitle" : "Confirmez le code sur votre {{productName}}."
+        "subtitle" : "Confirmez le code sur votre {{productName}}, si cela est demandé."
       },
       "error" : {
         "title" : "Échec de l’appairage",
@@ -3182,7 +3183,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
-          }
+          },
+          "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
       }
     },
@@ -4140,6 +4142,10 @@
         "restoreLockScreenPicture" : "Restauration du fond d’écran",
         "restoreLanguage" : "Restauration de la langue",
         "installingApps" : "Installation des apps",
+        "imageLoadRequested" : "Autorisez la restauration du fond d’écran sur {{deviceName}}.",
+        "imageCommitRequested" : "Confirmez ce fond d’écran sur votre {{deviceName}}",
+        "allowLanguageInstallation" : "Autorisez la restauration de la langue sur votre {{deviceName}}",
+        "allowAppsRestoration" : "Autorisez la restauration des apps sur votre {{deviceName}}",
         "errors" : {
           "description" : "Vous pouvez réessayer de restaurer, ou choisir de sauter cette étape.",
           "LanguageInstallRefusedOnDevice" : "Changement de langue annulé sur {{deviceName}}",
@@ -4159,6 +4165,10 @@
     "errors" : {
       "TimeoutError" : {
         "title" : "Délai écoulé",
+        "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
+      },
+      "CantOpenDevice" : {
+        "title" : "Échec de la connexion",
         "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
       }
     }
