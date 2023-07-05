@@ -10,6 +10,7 @@ const transformIncludePatterns = [
   "react-native-animatable",
   "@sentry/react-native",
   "react-native-startup-time",
+  "uuid",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
