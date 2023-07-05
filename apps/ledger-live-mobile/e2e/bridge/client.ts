@@ -9,6 +9,15 @@ import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
 
+type ClientData =
+  | {
+      type: DescriptorEventType;
+      payload: { id: string; name: string; serviceUUID: string };
+    }
+  | { type: "open" };
+
+export const e2eBridgeClient = new Subject<ClientData>();
+
 let ws: WebSocket;
 
 export function init(port = 8099) {
@@ -26,11 +35,8 @@ export function init(port = 8099) {
   ws.onmessage = onMessage;
 }
 
-async function onMessage(event: { data: unknown }) {
-  invariant(
-    typeof event.data === "string",
-    "[E2E Bridge Client]: Message data must be string",
-  );
+function onMessage(event: { data: unknown }) {
+  invariant(typeof event.data === "string", "[E2E Bridge Client]: Message data must be string");
   const msg = JSON.parse(event.data);
   invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
@@ -40,7 +46,7 @@ async function onMessage(event: { data: unknown }) {
   switch (msg.type) {
     case "add":
     case "open":
-      e2eBridgeSubject.next(msg);
+      e2eBridgeClient.next(msg);
       break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {
@@ -67,14 +73,14 @@ async function onMessage(event: { data: unknown }) {
   }
 }
 
-type SubjectData =
-  | {
-      type: DescriptorEventType;
-      payload: { id: string; name: string; serviceUUID: string };
-    }
-  | { type: "open" };
-
-export const e2eBridgeSubject = new Subject<SubjectData>();
+export function sendWalletAPIResponse(payload: Record<string, unknown>) {
+  ws.send(
+    JSON.stringify({
+      type: "walletAPIResponse",
+      payload,
+    }),
+  );
+}
 
 function log(message: string) {
   // eslint-disable-next-line no-console
