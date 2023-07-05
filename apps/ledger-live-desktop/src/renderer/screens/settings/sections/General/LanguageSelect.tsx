@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
-import { DeviceModelId } from "@ledgerhq/devices";
 import {
   allLanguages,
   prodStableLanguages,
@@ -9,7 +8,7 @@ import {
   localeIdToDeviceLanguage,
 } from "~/config/languages";
 import useEnv from "~/renderer/hooks/useEnv";
-import { setLanguage } from "~/renderer/actions/settings";
+import { setLanguage, setLastSeenDevice } from "~/renderer/actions/settings";
 import {
   useSystemLanguageSelector,
   lastSeenDeviceSelector,
@@ -20,9 +19,14 @@ import Select from "~/renderer/components/Select";
 import { track } from "~/renderer/analytics/segment";
 import Track from "~/renderer/analytics/Track";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { idsToLanguage } from "@ledgerhq/types-live";
+import { DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { from } from "rxjs";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import isEqual from "lodash/isEqual";
 
 export const languageLabels: { [key in Locale]: string } = {
   de: "Deutsch",
@@ -63,6 +67,18 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
     lastSeenDevice?.deviceInfo,
   );
 
+  const currentDevice = useSelector(getCurrentDevice);
+  const refreshDeviceInfo = useCallback(() => {
+    if (currentDevice) {
+      withDevice(currentDevice.deviceId)(transport => from(getDeviceInfo(transport)))
+        .toPromise()
+        .then((deviceInfo: DeviceInfo) => {
+          if (!isEqual(deviceInfo, lastSeenDevice?.deviceInfo))
+            dispatch(setLastSeenDevice({ deviceInfo }));
+        });
+    }
+  }, [currentDevice, lastSeenDevice?.deviceInfo, dispatch]);
+
   const debugLanguage = useEnv("EXPERIMENTAL_LANGUAGES");
 
   const languages = useMemo(
@@ -93,13 +109,16 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
       setDrawer(
         ChangeDeviceLanguagePromptDrawer,
         {
-          deviceModelId: lastSeenDevice?.modelId ?? DeviceModelId.nanoX,
           currentLanguage: (language ?? getInitialLanguageLocale()) as Locale,
+          deviceModeInfo: lastSeenDevice,
+          analyticsContext: "Page LiveLanguageChange",
+          onSuccess: refreshDeviceInfo,
+          onError: refreshDeviceInfo,
         },
         {},
       );
     },
-    [lastSeenDevice?.modelId],
+    [lastSeenDevice, refreshDeviceInfo],
   );
 
   const avoidEmptyValue = (language?: ChangeLangArgs | null) =>
