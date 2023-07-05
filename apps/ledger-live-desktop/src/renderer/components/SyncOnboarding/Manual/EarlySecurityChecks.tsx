@@ -9,7 +9,7 @@ import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/us
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
 import SoftwareCheckContent from "./SoftwareCheckContent";
-import SoftwareCheckLockedDeviceModal, {
+import SoftwareCheckLockedDeviceDrawer, {
   Props as SoftwareCheckLockedDeviceModalProps,
 } from "./SoftwareCheckLockedDeviceDrawer";
 import SoftwareCheckAllowSecureChannelDrawer, {
@@ -55,13 +55,18 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
   const deviceModelId = device.modelId;
   const productName = getDeviceModel(device.modelId).productName;
 
-  const { genuineState, devicePermissionState, resetGenuineCheckState } = useGenuineCheck({
+  const {
+    genuineState,
+    // error: genuineCheckError, // TODO: use
+    devicePermissionState,
+    resetGenuineCheckState,
+  } = useGenuineCheck({
     getGenuineCheckFromDeviceId,
     isHookEnabled: genuineCheckStatus === SoftwareCheckStatus.active,
     deviceId,
   });
 
-  const { latestFirmware, status, lockedDevice } = useGetLatestAvailableFirmware({
+  const { deviceInfo, latestFirmware, status, lockedDevice } = useGetLatestAvailableFirmware({
     getLatestAvailableFirmwareFromDeviceId,
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
@@ -73,44 +78,38 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
   }, []);
 
   const startFirmwareUpdate = useCallback(() => {
-    // TODO: use deviceInfo from useGetLatestAvailableFirmware once implemented by Alex
-    withDevice(deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then(deviceInfo => {
-        const modal = deviceInfo.isOSU ? "install" : "disclaimer";
-        const stepId = initialStepId({ device, deviceInfo });
-        const updateFirmwareModalProps: UpdateFirmwareModalProps = {
-          withAppsToReinstall: false,
-          withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
-            deviceInfo,
-            device.modelId,
-          ),
-          onDrawerClose: closeFwUpdateDrawer,
-          status: modal,
-          stepId,
-          firmware: latestFirmware,
-          deviceInfo,
-          device,
-          deviceModelId: deviceModelId,
-          setFirmwareUpdateOpened: () => null, // we don't need to keep the state
-          setFirmwareUpdateCompleted: () => {
-            resetGenuineCheckState();
-            setGenuineCheckStatus(SoftwareCheckStatus.active);
-            setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
-          },
-        };
+    const modal = deviceInfo.isOSU ? "install" : "disclaimer";
+    const stepId = initialStepId({ device, deviceInfo });
+    const updateFirmwareModalProps: UpdateFirmwareModalProps = {
+      withAppsToReinstall: false,
+      withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
+        deviceInfo,
+        device.modelId,
+      ),
+      onDrawerClose: closeFwUpdateDrawer,
+      status: modal,
+      stepId,
+      firmware: latestFirmware,
+      deviceInfo,
+      device,
+      deviceModelId: deviceModelId,
+      setFirmwareUpdateOpened: () => null, // we don't need to keep the state
+      setFirmwareUpdateCompleted: () => {
+        resetGenuineCheckState();
+        setGenuineCheckStatus(SoftwareCheckStatus.active);
+        setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
+      },
+    };
 
-        setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
-          preventBackdropClick: true,
-          forceDisableFocusTrap: true,
-          onRequestClose: closeFwUpdateDrawer,
-        });
-      })
-      .catch(e => console.error(e));
+    setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
+      preventBackdropClick: true,
+      forceDisableFocusTrap: true,
+      onRequestClose: closeFwUpdateDrawer,
+    });
   }, [
     closeFwUpdateDrawer,
     device,
-    deviceId,
+    deviceInfo,
     deviceModelId,
     latestFirmware,
     resetGenuineCheckState,
@@ -176,7 +175,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         deviceModelId,
         productName,
       };
-      setDrawer(SoftwareCheckLockedDeviceModal, props, {
+      setDrawer(SoftwareCheckLockedDeviceDrawer, props, {
         forceDisableFocusTrap: true,
         preventBackdropClick: true,
       });
