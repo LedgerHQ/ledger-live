@@ -29,6 +29,9 @@ const StepAccount = ({
       <TrackPage
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step Account"
+        flow="stake"
+        action="delegation"
+        currency="tezos"
       />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}

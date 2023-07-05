@@ -45,6 +45,9 @@ const StepConfirmation = ({
         <TrackPage
           category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
           name="Step Confirmed"
+          flow="stake"
+          action="delegation"
+          currency="xtz"
         />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
@@ -73,7 +76,13 @@ const StepConfirmation = ({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Delegation Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="delegation"
+          currency="xtz"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="delegation.flow.steps.confirmation.broadcastError" />}
