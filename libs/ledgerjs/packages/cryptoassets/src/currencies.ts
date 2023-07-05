@@ -4212,6 +4212,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Telos",
     managerAppName: "Ethereum",
     ticker: "TLOS",
+    deviceTicker: "TLOS",
     scheme: "telos_evm",
     color: "#AC72F9",
     family: "evm",
