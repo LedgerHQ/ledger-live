@@ -1200,7 +1200,7 @@
       "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
       "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "termsLink" : "Conditions d’utilisation",
       "privacyLink" : "Politique de confidentialité",
       "and" : "et",
       "recoverLogIn" : "Se connecter à Ledger Recover"
