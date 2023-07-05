@@ -1,4 +1,5 @@
 import { DomainServiceResolution } from "@ledgerhq/domain-service/types";
+import { EIP712Message } from "@ledgerhq/types-live";
 
 export type EvmAddress = {
   publicKey: string;
@@ -8,7 +9,7 @@ export type EvmAddress = {
 
 export type EvmSignature = {
   s: string;
-  v: string;
+  v: string | number;
   r: string;
 };
 
