@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 31.2.0-nightly.5
+
+### Patch Changes
+
+- [#3859](https://github.com/LedgerHQ/ledger-live/pull/3859) [`2292a285e0`](https://github.com/LedgerHQ/ledger-live/commit/2292a285e03d34951b57d778b0c3626e9b4aff17) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix bitcoin family bot
+
+- [#3892](https://github.com/LedgerHQ/ledger-live/pull/3892) [`ae9f327cc7`](https://github.com/LedgerHQ/ledger-live/commit/ae9f327cc7414d7f769704dd1cc83128c876d185) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix missing pending transaction bug
+
 ## 31.2.0-nightly.4
 
 ### Patch Changes
