@@ -1,17 +1,12 @@
 # @ledgerhq/live-env
 
-## 0.4.0-nightly.1
+## 0.3.1
 
-### Minor Changes
+### Patch Changes
 
-- [#3841](https://github.com/LedgerHQ/ledger-live/pull/3841) [`bae3b64dd2`](https://github.com/LedgerHQ/ledger-live/commit/bae3b64dd2710a3743552600166be986e93d9099) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover on LLD
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
 
-  Handle the recover deeplink
-  Add a screen to redirect to the correct device onboarding automatically
-  Rework of the recover feature flags
-  Add upsell screen for recover after onboarding
-
-## 0.3.1-nightly.0
+## 0.3.1-next.0
 
 ### Patch Changes
 

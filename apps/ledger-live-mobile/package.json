@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.26.0-nightly.6",
+  "version": "3.26.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -180,6 +180,7 @@
     "react-redux": "^7.2.9",
     "redux": "^4.1.2",
     "redux-actions": "2.6.5",
+    "redux-flipper": "^2.0.2",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "rn-fetch-blob": "^0.12.0",

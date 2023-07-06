@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useCallback } from "react";
+import React, { PropsWithChildren, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
@@ -11,6 +11,7 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
+import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 
 type Props = PropsWithChildren<unknown>;
 
@@ -162,6 +163,12 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     (key: FeatureId): Feature => getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
   );
+
+  useEffect(() => {
+    setAnalyticsFeatureFlagMethod(wrappedGetFeature);
+
+    return () => setAnalyticsFeatureFlagMethod(null);
+  }, [wrappedGetFeature]);
 
   return (
     <FeatureFlagsProvider

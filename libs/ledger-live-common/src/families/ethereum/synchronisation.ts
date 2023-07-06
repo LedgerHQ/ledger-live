@@ -4,6 +4,7 @@ import throttle from "lodash/throttle";
 import flatMap from "lodash/flatMap";
 import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
+import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { mergeNfts, mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import {
@@ -18,7 +19,7 @@ import { encodeAccountId } from "../../account";
 import type { Operation, TokenAccount, SubAccount, Account } from "@ledgerhq/types-live";
 import { API, apiForCurrency, Block, Tx } from "./api";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
+import { encodeNftId, isNFTActive } from "../../nft";
 import { encodeOperationId, encodeSubOperationId } from "../../operation";
 import { encodeERC1155OperationId, encodeERC721OperationId } from "../../nft/nftOperationId";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

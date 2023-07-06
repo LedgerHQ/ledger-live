@@ -122,10 +122,10 @@ export type API = {
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
   getERC20Balances: (input: ERC20BalancesInput) => Promise<ERC20BalanceOutput>;
-  getNFTMetadata: (input: NFTMetadataInput, chainId: string) => Promise<NFTMetadataResponse[]>;
-  getNFTCollectionMetadata: (
+  getNftMetadata: (input: NFTMetadataInput, chainId: number) => Promise<NFTMetadataResponse[]>;
+  getNftCollectionMetadata: (
     input: NFTCollectionMetadataInput,
-    chainId: string,
+    chainId: number,
   ) => Promise<NFTCollectionMetadataResponse[]>;
   getAccountBalance: (address: string) => Promise<BigNumber>;
   getERC20ApprovalsPerContract: (
@@ -253,7 +253,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       }));
     },
 
-    async getNFTMetadata(input, chainId): Promise<NFTMetadataResponse[]> {
+    async getNftMetadata(input, chainId): Promise<NFTMetadataResponse[]> {
       const { data }: { data: NFTMetadataResponse[] } = await network({
         method: "POST",
         url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${chainId}/contracts/tokens/infos`,
@@ -263,7 +263,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return data;
     },
 
-    async getNFTCollectionMetadata(input, chainId): Promise<NFTCollectionMetadataResponse[]> {
+    async getNftCollectionMetadata(input, chainId): Promise<NFTCollectionMetadataResponse[]> {
       const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
         method: "POST",
         url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${chainId}/contracts/infos`,

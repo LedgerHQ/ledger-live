@@ -40,5 +40,6 @@ export type StepProps = {
   maybeNFTCollection?: string;
   onChangeQuantities: (a: string) => void;
   onChangeNFT: (a: ProtoNFT | NFT) => void;
+  shouldSkipAmount: boolean;
 };
 export type St = Step<StepId, StepProps>;

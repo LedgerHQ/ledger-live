@@ -1,5 +1,21 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.28.14
+
+### Patch Changes
+
+- [#3625](https://github.com/LedgerHQ/ledger-live/pull/3625) [`f37494ae0c`](https://github.com/LedgerHQ/ledger-live/commit/f37494ae0cb5a14a83969615d58466126704cb6d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumping `usb` to 2.9.0
+
+  For both `hw-transport-node-hid` and `hw-transport-node-hid-singleton`
+
+## 6.28.14-next.0
+
+### Patch Changes
+
+- [#3625](https://github.com/LedgerHQ/ledger-live/pull/3625) [`f37494ae0c`](https://github.com/LedgerHQ/ledger-live/commit/f37494ae0cb5a14a83969615d58466126704cb6d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumping `usb` to 2.9.0
+
+  For both `hw-transport-node-hid` and `hw-transport-node-hid-singleton`
+
 ## 6.28.13
 
 ### Patch Changes

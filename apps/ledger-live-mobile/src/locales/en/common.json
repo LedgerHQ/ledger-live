@@ -1200,8 +1200,8 @@
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
-      "terms": "By tapping “Get Started” you consent and agree to our",
-      "termsLink": "Terms of Service",
+      "terms": "By continuing, you agree to Ledger's",
+      "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
       "and": "and",
       "recoverLogIn": "Log in for Ledger Recover"
@@ -4140,6 +4140,10 @@
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
         "installingApps": "Installing apps",
+        "imageLoadRequested": "Allow lock screen picture restoration on {{deviceName}}",
+        "imageCommitRequested": "Confirm the picture on your {{deviceName}}",
+        "allowLanguageInstallation": "Allow language restoration on {{deviceName}}",
+        "allowAppsRestoration": "Allow app restoration on {{deviceName}}",
         "errors": {
           "description": "If this was a mistake you can retry the restoration, or you may skip this step",
           "LanguageInstallRefusedOnDevice": "Language change was cancelled on {{deviceName}}",
