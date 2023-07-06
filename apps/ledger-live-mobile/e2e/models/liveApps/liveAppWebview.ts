@@ -13,7 +13,7 @@ export default class LiveAppWebview {
       ...params,
     });
 
-    await webview.runScript(`function foo(element) {
+    await webview.runScript(`function sendWalletAPIRequestFromLiveApp(webviewElement) {
       window.ledger.e2e.walletApi.send('${json}');
     }`);
 
