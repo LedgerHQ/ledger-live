@@ -14,7 +14,7 @@ import {
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -52,7 +52,6 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import debounce from "lodash/debounce";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
@@ -481,14 +480,6 @@ const SwapForm = () => {
     // suppressing as swapTransaction is not memoized and causes infinite loop
     // eslint-disable-next-line
   }, [exchangeRate]);
-  const debouncedSetFromAmount = useMemo(
-    () =>
-      debounce((amount: BigNumber) => {
-        swapTransaction.setFromAmount(amount);
-      }, 400),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [swapTransaction.setFromAmount],
-  );
   switch (currentFlow) {
     case "LOGIN":
       return <Login provider={provider} onClose={() => setCurrentFlow(null)} />;
@@ -514,6 +505,9 @@ const SwapForm = () => {
   const setFromAccount = (account: AccountLike | undefined) => {
     swapTransaction.setFromAccount(account);
   };
+  const setFromAmount = (amount: BigNumber) => {
+    swapTransaction.setFromAmount(amount);
+  };
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
     swapTransaction.setToCurrency(currency);
   };
@@ -531,7 +525,7 @@ const SwapForm = () => {
           toCurrency={targetCurrency}
           toAmount={exchangeRate?.toAmount}
           setFromAccount={setFromAccount}
-          setFromAmount={debouncedSetFromAmount}
+          setFromAmount={setFromAmount}
           setToCurrency={setToCurrency}
           isMaxEnabled={swapTransaction.swap.isMaxEnabled}
           toggleMax={toggleMax}
