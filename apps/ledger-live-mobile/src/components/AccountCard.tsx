@@ -11,6 +11,7 @@ import { ViewStyle, StyleProp } from "react-native";
 import Card, { Props as CardProps } from "./Card";
 import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import CounterValue from "./CounterValue";
 
 export type Props = CardProps & {
   account?: AccountLike | null;
@@ -19,6 +20,7 @@ export type Props = CardProps & {
   disabled?: boolean;
   useFullBalance?: boolean;
   AccountSubTitle?: ReactNode;
+  iconSize?: number;
 };
 
 const AccountCard = ({
@@ -29,6 +31,7 @@ const AccountCard = ({
   disabled,
   useFullBalance,
   AccountSubTitle,
+  iconSize = 48,
   ...props
 }: Props) => {
   const { colors } = useTheme();
@@ -56,13 +59,13 @@ const AccountCard = ({
           currency={currency}
           disabled={disabled}
           color={colors.constant.white}
-          size={32}
+          size={iconSize}
           circle
         />
-        <Flex flexGrow={1} flexShrink={1} marginLeft={3} flexDirection="row" alignItems="center">
+        <Flex flexGrow={1} flexShrink={1} marginLeft={4} flexDirection="row" alignItems="center">
           <Flex minWidth={20} flexShrink={1}>
             <Text
-              variant="paragraph"
+              variant="large"
               fontWeight="semiBold"
               numberOfLines={1}
               color={disabled ? "neutral.c50" : "neutral.c100"}
@@ -75,11 +78,19 @@ const AccountCard = ({
                 : account.name}
             </Text>
             {AccountSubTitle}
+
+            {tag && (
+              <Flex flexDirection="row">
+                <Tag mt={2}>{tag}</Tag>
+              </Flex>
+            )}
           </Flex>
-          {tag && <Tag marginLeft={3}>{tag}</Tag>}
         </Flex>
         <Flex marginLeft={3} alignItems="flex-end">
-          <Text variant="small" fontWeight="medium" color="neutral.c70">
+          <Text variant="large" fontWeight="semiBold" color="neutral.c100" mb={2}>
+            <CounterValue currency={currency} value={account.balance} showCode />
+          </Text>
+          <Text variant="body" fontWeight="medium" color="neutral.c70">
             <CurrencyUnitValue
               showCode
               unit={unit}

@@ -77,16 +77,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       });
 
       const accs = findAccountByCurrency(accounts, currency);
-      if (accs.length > 1) {
+      if (accs.length > 0) {
         // if we found one or more accounts of the given currency we select account
         navigation.navigate(ScreenName.ReceiveSelectAccount, {
           currency,
-        });
-      } else if (accs.length === 1) {
-        // if we found only one account of the given currency we go straight to QR code
-        navigation.navigate(ScreenName.ReceiveConfirmation, {
-          accountId: accs[0].id,
-          parentId: (accs[0] as TokenAccount)?.parentId,
         });
       } else if (currency.type === "TokenCurrency") {
         // cases for token currencies
