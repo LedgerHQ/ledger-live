@@ -76,11 +76,11 @@ export function liveAppManifest(params: Partial<AppManifest> & Pick<AppManifest,
   return manifest;
 }
 
-export function stop(): Promise<unknown> {
+export function stop(): Promise<void> {
   server.close();
   return new Promise(resolve => {
     server.on("close", () => {
-      resolve("Server Closed");
+      resolve();
     });
   });
 }
