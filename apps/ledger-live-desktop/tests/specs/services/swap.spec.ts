@@ -75,6 +75,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectCurrencyByName("Dogecoin");
       await swapPage.sendMax(); // entering amount in textbox doesn't generate a quote in mock/PW
       await layout.waitForLoadingSpinnerToHaveDisappeared();
+      await swapPage.waitForProviderRates();
       await expect.soft(page).toHaveScreenshot("add-to-account-button.png");
     });
 
@@ -105,6 +106,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectCurrencyByName("Tether USD (USDT)");
       await swapPage.sendMax();
       await layout.waitForLoadingSpinnerToHaveDisappeared();
+      await swapPage.waitForProviderRates();
       await expect.soft(page).toHaveScreenshot("eth-to-usdt-quotes-generated.png");
     });
 
