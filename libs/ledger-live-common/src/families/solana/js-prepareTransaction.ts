@@ -61,6 +61,7 @@ import type {
   TransferTransaction,
 } from "./types";
 import { assertUnreachable } from "./utils";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -105,15 +106,14 @@ const prepareTransaction = async (
     commandDescriptor,
   };
 
-  const preparedTx: Transaction = {
-    ...tx,
+  const patch: Partial<Transaction> = {
     model,
   };
 
   // LLM requires this field to be truthy to show fees
-  (preparedTx as any).networkInfo = true;
+  (patch as any).networkInfo = true;
 
-  return preparedTx;
+  return defaultUpdateTransaction(tx, patch);
 };
 
 const deriveTokenTransferCommandDescriptor = async (

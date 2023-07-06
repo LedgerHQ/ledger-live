@@ -17,6 +17,7 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import cryptoFactory from "../wallet-btc/crypto/factory";
@@ -40,8 +41,6 @@ const createTransaction = (): Transaction => ({
     excludeUTXOs: [],
   },
 });
-
-const updateTransaction = (t, patch): any => ({ ...t, ...patch });
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -121,7 +120,7 @@ const prepareTransaction = async (
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,
