@@ -31,7 +31,7 @@ import DeviceNotGenuineDrawer, {
   Props as DeviceNotGenuineDrawerProps,
 } from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
-import { useChangeLanguagePrompt } from "./ChangeLanguagePrompt";
+import { useChangeLanguagePrompt } from "./useChangeLanguagePrompt";
 
 const UIDelay = 2500;
 
