@@ -65,6 +65,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     null | "enter" | "exit"
   >(null);
 
+  const [autoStartChecks, setAutoStartChecks] = useState(false);
+
   const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
     device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
@@ -82,9 +84,15 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   }, []);
 
   // Called when the companion component thinks the device is not in a correct state anymore
-  const notifySyncOnboardingShouldReset = useCallback(() => {
+  const notifyOnboardingEarlyCheckShouldReset = useCallback(() => {
     setIsPollingOn(true);
+    setCurrentStep("loading");
   }, []);
+
+  const restartChecksAfterUpdate = useCallback(() => {
+    setAutoStartChecks(true);
+    notifyOnboardingEarlyCheckShouldReset();
+  }, [notifyOnboardingEarlyCheckShouldReset]);
 
   // Handles current step and toggling onboarding early check logics
   useEffect(() => {
@@ -200,13 +208,18 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   if (currentStep === "early-security-check" && lastSeenDevice) {
     stepContent = (
-      <EarlySecurityChecks device={lastSeenDevice} onComplete={notifyOnboardingEarlyCheckEnded} />
+      <EarlySecurityChecks
+        device={lastSeenDevice}
+        onComplete={notifyOnboardingEarlyCheckEnded}
+        restartChecksAfterUpdate={restartChecksAfterUpdate}
+        autoStartChecks={autoStartChecks}
+      />
     );
   } else if (currentStep === "companion" && lastSeenDevice) {
     stepContent = (
       <SyncOnboardingCompanion
         device={lastSeenDevice}
-        notifySyncOnboardingShouldReset={notifySyncOnboardingShouldReset}
+        notifySyncOnboardingShouldReset={notifyOnboardingEarlyCheckShouldReset}
         onLostDevice={onLostDevice}
       />
     );
