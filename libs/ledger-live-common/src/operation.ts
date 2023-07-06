@@ -1,12 +1,8 @@
 import type { NFTStandard, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "./account";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
 
-const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
-  ERC721: encodeERC721OperationId,
-  ERC1155: encodeERC1155OperationId,
-};
+import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
 
 import {
   findOperationInAccount,
@@ -41,6 +37,11 @@ export {
   isAddressPoisoningOperation,
   isEditableOperation,
   getStuckAccountAndOperation,
+};
+
+const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
+  ERC721: encodeERC721OperationId,
+  ERC1155: encodeERC1155OperationId,
 };
 
 export function patchOperationWithHash(operation: Operation, hash: string): Operation {

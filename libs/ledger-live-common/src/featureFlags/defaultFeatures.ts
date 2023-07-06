@@ -98,6 +98,9 @@ export const defaultFeatures = {
       supportedCurrencyIds: ["ethereum"],
     },
   },
+  editEthTx: {
+    enabled: false,
+  },
   ratingsPrompt: {
     enabled: false,
     params: {
@@ -215,9 +218,6 @@ export const defaultFeatures = {
     enabled: false,
   },
   objkt: {
-    enabled: false,
-  },
-  editEthTx: {
     enabled: false,
   },
   protectServicesMobile: {
