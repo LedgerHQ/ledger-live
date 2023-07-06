@@ -27,7 +27,6 @@ export const toOperationRaw = (
     standard,
     tokenId,
     transactionRaw,
-    consensusTimeStamp,
   }: Operation,
   preserveSubOperation?: boolean,
 ): OperationRaw => {
@@ -48,7 +47,6 @@ export const toOperationRaw = (
     operator,
     standard,
     tokenId,
-    consensusTimeStamp,
   };
 
   if (transactionSequenceNumber !== undefined) {
@@ -125,7 +123,6 @@ export const fromOperationRaw = (
     standard,
     tokenId,
     transactionRaw,
-    consensusTimeStamp,
   }: OperationRaw,
   accountId: string,
   subAccounts?: SubAccount[] | null | undefined,
@@ -147,7 +144,6 @@ export const fromOperationRaw = (
     operator,
     standard,
     tokenId,
-    consensusTimeStamp,
   };
 
   if (transactionSequenceNumber !== undefined) {

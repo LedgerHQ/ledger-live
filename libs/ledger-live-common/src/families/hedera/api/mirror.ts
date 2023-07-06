@@ -131,7 +131,7 @@ export async function getOperationsForAccount(
       // Set a value just so that it's considered confirmed according to isConfirmedOperation
       blockHeight: 5,
       blockHash: null,
-      extra: {},
+      extra: {consensusTimeStamp: consensus_timestamp,},
       fee,
       hash,
       recipients,
@@ -139,7 +139,6 @@ export async function getOperationsForAccount(
       accountId: ledgerAccountId,
       id: encodeOperationId(ledgerAccountId, hash, type),
       type,
-      consensusTimeStamp: consensus_timestamp,
     });
   }
 
