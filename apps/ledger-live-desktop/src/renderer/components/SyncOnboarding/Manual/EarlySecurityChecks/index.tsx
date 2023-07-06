@@ -153,15 +153,6 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     }
   }, [firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);
 
-  const handleCloseLockedDeviceDrawer = useCallback(() => {
-    // TODO: see if this behaviour is still adapted
-    if (genuineCheckStatus === SoftwareCheckStatus.active) {
-      setGenuineCheckStatus(SoftwareCheckStatus.cancelled);
-    } else if (firmwareUpdateStatus === SoftwareCheckStatus.active) {
-      setFirmwareUpdateStatus(SoftwareCheckStatus.cancelled);
-    }
-  }, [firmwareUpdateStatus, genuineCheckStatus]);
-
   const lockedDeviceModalIsOpen =
     (devicePermissionState === "unlock-needed" &&
       genuineCheckStatus === SoftwareCheckStatus.active) ||
@@ -209,7 +200,6 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     allowSecureChannelIsOpen,
     deviceModelId,
     genuineCheckError,
-    handleCloseLockedDeviceDrawer,
     lockedDeviceModalIsOpen,
     notGenuineIsOpen,
     productName,
