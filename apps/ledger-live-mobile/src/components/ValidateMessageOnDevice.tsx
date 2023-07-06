@@ -8,7 +8,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import LText from "./LText";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
-import { getMessageProperties, NanoDisplayedInfoFor712 } from "../helpers/signMessageUtils";
+import { getMessageProperties, MessageProperties } from "../helpers/signMessageUtils";
 
 type Props = {
   device: Device;
@@ -40,16 +40,13 @@ export default function ValidateOnDevice({ device, message: messageData, account
   );
   const mainAccount = getMainAccount(account, null);
 
-  const [messageProperties, setMessageProperties] = useState<{
-    message?: string;
-    fields?: NanoDisplayedInfoFor712;
-  }>({});
+  const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
   useEffect(() => {
-    getMessageProperties(mainAccount.currency, messageData).then(setMessageProperties);
-  }, [mainAccount.currency, messageData, setMessageProperties]);
-
-  const { message, fields } = messageProperties;
+    if (messageData.standard === "EIP712") {
+      getMessageProperties(mainAccount, messageData).then(setMessageFields);
+    }
+  }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
   return (
     <View style={styles.root}>
@@ -72,27 +69,31 @@ export default function ValidateOnDevice({ device, message: messageData, account
           <LText style={messageTextStyle}>{t("walletconnect.stepVerification.accountName")}</LText>
           <LText semiBold>{mainAccount.name}</LText>
         </View>
-        {fields ? (
-          fields.map(({ label, value }) => (
-            <View style={messageContainerStyle}>
-              <LText style={messageTextStyle}>{label}</LText>
-              {Array.isArray(value) ? (
-                value.map(v => (
-                  <LText style={[styles.value, styles.subValue]} semiBold>
-                    {v}
-                  </LText>
+        {messageData.standard === "EIP712" ? (
+          <>
+            {messageFields
+              ? messageFields.map(({ label, value }) => (
+                  <View key={label} style={messageContainerStyle}>
+                    <LText style={messageTextStyle}>{label}</LText>
+                    {Array.isArray(value) ? (
+                      value.map((v, i) => (
+                        <LText key={i} style={[styles.value, styles.subValue]} semiBold>
+                          {v}
+                        </LText>
+                      ))
+                    ) : (
+                      <LText style={styles.value} semiBold>
+                        {value}
+                      </LText>
+                    )}
+                  </View>
                 ))
-              ) : (
-                <LText style={styles.value} semiBold>
-                  {value}
-                </LText>
-              )}
-            </View>
-          ))
+              : null}
+          </>
         ) : (
           <View style={messageContainerStyle}>
             <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
-            <LText semiBold>{message}</LText>
+            <LText semiBold>{messageData.message}</LText>
           </View>
         )}
       </ScrollView>
