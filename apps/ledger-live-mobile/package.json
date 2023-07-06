@@ -203,6 +203,7 @@
     "@babel/plugin-transform-named-capturing-groups-regex": "^7.16.8",
     "@babel/plugin-transform-shorthand-properties": "^7.18.6",
     "@babel/plugin-transform-template-literals": "^7.18.9",
+    "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.13.13",
     "@babel/runtime": "^7.12.5",
     "@jest/reporters": "^29.3.1",
