@@ -6,11 +6,11 @@ import { Handlers } from "./types";
 import { SettingsState } from "./settings";
 
 export type DevicesState = {
-  currentDevice: Device | undefined | null;
+  currentDevice: Device | undefined;
   devices: Device[];
 };
 const initialState: DevicesState = {
-  currentDevice: null,
+  currentDevice: undefined,
   devices: [],
 };
 
@@ -35,7 +35,7 @@ const handlers: DevicesHandlers = {
     ...state,
     currentDevice:
       state.currentDevice && state.currentDevice.deviceId === device.deviceId
-        ? null
+        ? undefined
         : state.currentDevice,
     devices: state.devices.filter(d => d.deviceId !== device.deviceId),
   }),
@@ -46,7 +46,7 @@ const handlers: DevicesHandlers = {
 };
 
 function setCurrentDevice(state: DevicesState) {
-  const currentDevice = state.devices.length ? state.devices[state.devices.length - 1] : null;
+  const currentDevice = state.devices.length ? state.devices[state.devices.length - 1] : undefined;
   return {
     ...state,
     currentDevice,
