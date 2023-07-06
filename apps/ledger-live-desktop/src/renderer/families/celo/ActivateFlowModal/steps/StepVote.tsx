@@ -84,7 +84,13 @@ const StepVote = ({
   const unit = getAccountUnit(account);
   return (
     <Box flow={1}>
-      <TrackPage category="Celo Activate" name="Step 1" />
+      <TrackPage
+        category="Celo Activate"
+        name="Step 1"
+        flow="stake"
+        action="activate"
+        currency="celo"
+      />
       {error ? <ErrorBanner error={error} /> : null}
       <Box>
         {mappedVotes.map(({ vote, validatorGroup }) => {

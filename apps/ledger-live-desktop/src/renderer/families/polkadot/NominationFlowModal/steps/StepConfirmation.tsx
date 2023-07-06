@@ -57,7 +57,13 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Nomination Polkadot" name="Step Confirmed" />
+        <TrackPage
+          category="Nomination Polkadot"
+          name="Step Confirmed"
+          flow="stake"
+          action="nomination"
+          currency="dot"
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -73,7 +79,13 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Nomination Polkadot" name="Step Confirmation Error" />
+        <TrackPage
+          category="Nomination Polkadot"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="nomination"
+          currency="dot"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="polkadot.nominate.steps.confirmation.broadcastError" />}

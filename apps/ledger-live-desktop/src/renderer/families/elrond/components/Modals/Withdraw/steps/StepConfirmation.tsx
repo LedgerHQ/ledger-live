@@ -32,7 +32,13 @@ const StepConfirmation = (props: StepProps) => {
     })} ${getAccountUnit(account).code || "EGLD"}`;
     return (
       <Container>
-        <TrackPage category="Withdraw Elrond Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Withdraw Elrond Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="withdraw"
+          currency="egld"
+        />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={<Trans i18nKey="elrond.withdraw.flow.steps.confirmation.success.title" />}
@@ -55,7 +61,13 @@ const StepConfirmation = (props: StepProps) => {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Withdraw Elrond Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Withdraw Elrond Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="withdraw"
+          currency="egld"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="elrond.withdraw.flow.steps.confirmation.broadcastError" />}
