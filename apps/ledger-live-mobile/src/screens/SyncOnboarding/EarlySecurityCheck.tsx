@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components/native";
-import { Button, Flex, InfiniteLoader, Text, Link, ScrollListContainer } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader, Text, Link } from "@ledgerhq/native-ui";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import {
@@ -21,6 +21,8 @@ import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { ScrollView } from "react-native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { LanguagePrompt } from "./LanguagePrompt";
+import { NavigatorName, ScreenName } from "../../const";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -44,7 +46,13 @@ type GenuineCheckUiDrawerStatus =
   | "genuine-check-failed";
 
 // Represents the status of the firmware check from which is derived the displayed UI and if the genuine check hook can be started or not
-type FirmwareUpdateStatus = "unchecked" | "ongoing" | "completed" | "failed" | "refused";
+type FirmwareUpdateCheckStatus =
+  | "unchecked"
+  | "ongoing"
+  | "updating"
+  | "completed"
+  | "failed"
+  | "refused";
 // Defines which drawer should be displayed during the firmware check
 type FirmwareUpdateUiDrawerStatus = "none" | "unlock-needed" | "new-firmware-available";
 
@@ -67,6 +75,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   device,
   notifyOnboardingEarlyCheckEnded,
 }) => {
+  // const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
+  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
   const { t } = useTranslation();
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
@@ -78,7 +88,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<GenuineCheckStatus>("unchecked");
 
   const [firmwareUpdateCheckStatus, setFirmwareUpdateCheckStatus] =
-    useState<FirmwareUpdateStatus>("unchecked");
+    useState<FirmwareUpdateCheckStatus>("unchecked");
 
   // Not a real "device action" but we get: permission requested, granted and result.
   const {
@@ -108,6 +118,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   const {
     latestFirmware,
+    deviceInfo,
     error: latestFirmwareGettingError,
     status: latestFirmwareGettingStatus,
     lockedDevice: latestFirmwareGettingLockedDevice,
@@ -158,14 +169,61 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     notifyOnboardingEarlyCheckEnded();
   }, [notifyOnboardingEarlyCheckEnded]);
 
+  const onBackFromUpdate = useCallback(() => {
+    console.log(`🐊 COMING BACK TO ESC`);
+    navigation.goBack();
+    setFirmwareUpdateCheckStatus("ongoing");
+  }, [navigation]);
+
   const onUpdateFirmware = useCallback(() => {
     track("button_clicked", {
       button: "going to software update",
+      firmwareUpdate: {
+        version: latestFirmware?.final.name,
+      },
     });
 
-    // TODO: actual fw update: "updating"
-    setFirmwareUpdateCheckStatus("completed");
-  }, []);
+    if (deviceInfo && latestFirmware) {
+      // TODO: actual fw update: "updating"
+      // setFirmwareUpdateCheckStatus("completed");
+      // Also resets the `useGetLatestAvailableFirmware` hook
+      setFirmwareUpdateCheckStatus("updating");
+
+      console.log(
+        `🍕 Going to update firmware: ${JSON.stringify(latestFirmware)} on device: ${JSON.stringify(
+          deviceInfo,
+        )}`,
+      );
+
+      // `push` to make sure the screen is added to the navigation stack, if ever the user was on the manager before doing an update, and we can return
+      // to this screen with a `goBack`.
+      navigation.push(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+        params: {
+          screen: NavigatorName.Manager,
+          params: {
+            screen: ScreenName.FirmwareUpdate,
+            params: {
+              device,
+              deviceInfo,
+              firmwareUpdateContext: latestFirmware,
+              onBackFromUpdate,
+            },
+          },
+        },
+      });
+    }
+    // It should never happen
+    else {
+      log(
+        "EarlySecurityCheck",
+        `Trying to update firmware without a deviceInfo ${JSON.stringify(
+          deviceInfo,
+        )} or a firmwareUpdateContext: ${JSON.stringify(latestFirmware)}`,
+      );
+      setFirmwareUpdateCheckStatus("completed");
+    }
+  }, [device, deviceInfo, latestFirmware, navigation, onBackFromUpdate]);
 
   // Check steps entry points
   useEffect(() => {
@@ -328,6 +386,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
       break;
     case "completed":
+      // TODO: why is this needed ? It was former completed ?
       if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
         firmwareUpdateCheckStepTitle = t(
           "earlySecurityCheck.firmwareUpdateCheckStep.completed.updateAvailable.title",
@@ -564,10 +623,3 @@ const CheckCard = ({ title, description, index, status, ...props }: CheckCardPro
     </Flex>
   );
 };
-
-// const StyledScrollView = styled(ScrollView)`
-//   display: flex;
-//   flex: 1;
-//   height: 100%;
-//   background-color: "red";
-// `;
