@@ -5,7 +5,8 @@ import { selectorStateDefaultValues } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
 import { SwapSelectorStateType, SwapTransactionType } from "../types";
-import debounce from "lodash/debounce";
+import BigNumber from "bignumber.js";
+import { debounce } from "../utils/debounce";
 
 export const useFromState = ({
   accounts,
@@ -61,7 +62,7 @@ export const useFromState = ({
 
   const debouncedSetFromAmount = useMemo(
     () =>
-      debounce(amount => {
+      debounce((amount: BigNumber) => {
         bridgeTransaction.updateTransaction(transaction => ({
           ...transaction,
           amount,
