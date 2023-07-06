@@ -62,7 +62,7 @@ const AccountCard = ({
           size={iconSize}
           circle
         />
-        <Flex flexGrow={1} flexShrink={1} marginLeft={3} flexDirection="row" alignItems="center">
+        <Flex flexGrow={1} flexShrink={1} marginLeft={4} flexDirection="row" alignItems="center">
           <Flex minWidth={20} flexShrink={1}>
             <Text
               variant="large"
