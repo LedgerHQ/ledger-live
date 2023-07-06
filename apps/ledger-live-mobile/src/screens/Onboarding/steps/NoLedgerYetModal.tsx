@@ -95,7 +95,13 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
         </Button>
       </Flex>
       <Flex mx={16} flexDirection={"row"} mt={6}>
-        <Button onPress={exploreLedger} type="default" size={"large"} flex={1}>
+        <Button
+          onPress={exploreLedger}
+          type="default"
+          size={"large"}
+          flex={1}
+          testID="onboarding-noLedgerYetModal-explore"
+        >
           <Text variant="large" fontWeight="semiBold">
             {t("onboarding.postWelcomeStep.noLedgerYetModal.explore")}
           </Text>
