@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Flex } from "@ledgerhq/react-ui";
+import { Button, Flex } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
@@ -80,10 +80,19 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     deviceId,
   });
 
+  console.log({ latestFirmware, deviceInfo });
+
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
     // TODO: set status to cancelled ? and update icon for cancelled
   }, []);
+
+  const resetAndRestartChecks = useCallback(() => {
+    resetGenuineCheckState();
+    setAvailableFirmwareVersion("");
+    setGenuineCheckStatus(SoftwareCheckStatus.active);
+    setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
+  }, [resetGenuineCheckState]);
 
   const startFirmwareUpdate = useCallback(() => {
     if (!deviceInfo || !latestFirmware) return;
@@ -103,11 +112,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
       device,
       deviceModelId: deviceModelId,
       setFirmwareUpdateOpened: () => null, // we don't need to keep the state
-      setFirmwareUpdateCompleted: () => {
-        resetGenuineCheckState();
-        setGenuineCheckStatus(SoftwareCheckStatus.active);
-        setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
-      },
+      setFirmwareUpdateCompleted: resetAndRestartChecks,
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
@@ -121,7 +126,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     deviceInfo,
     deviceModelId,
     latestFirmware,
-    resetGenuineCheckState,
+    resetAndRestartChecks,
   ]);
 
   useEffect(() => {
@@ -143,15 +148,35 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
   }, [genuineCheckStatus, genuineState, devicePermissionState, genuineCheckError]);
 
   useEffect(() => {
-    if (status === "available-firmware") {
+    /**
+     * for infinite loop firmware, we arbitrarily decide that the il2 -> il0
+     * path does not exist. It allows testing this flow without being stuck
+     * in an infinite loop (UX wise)
+     * */
+    const isIL2firmware = deviceInfo?.version.endsWith("-il2");
+    const isIL0firmwareAvailable = latestFirmware?.final?.name?.endsWith("-il0");
+    const shouldPretendNoAvailableFirmware = isIL2firmware && isIL0firmwareAvailable;
+
+    if (firmwareUpdateStatus !== SoftwareCheckStatus.active) return;
+
+    if (
+      (shouldPretendNoAvailableFirmware && status === "available-firmware") ||
+      status === "no-available-firmware"
+    ) {
+      setFirmwareUpdateStatus(SoftwareCheckStatus.completed);
+      setAvailableFirmwareVersion("");
+    } else if (status === "available-firmware") {
       setAvailableFirmwareVersion(latestFirmware?.final.name || "");
       setFirmwareUpdateStatus(SoftwareCheckStatus.updateAvailable);
     }
-
-    if (status === "no-available-firmware") {
-      setFirmwareUpdateStatus(SoftwareCheckStatus.completed);
-    }
-  }, [firmwareUpdateStatus, onComplete, status, genuineCheckStatus, latestFirmware]);
+  }, [
+    firmwareUpdateStatus,
+    onComplete,
+    status,
+    genuineCheckStatus,
+    latestFirmware,
+    deviceInfo?.version,
+  ]);
 
   const lockedDeviceModalIsOpen =
     (devicePermissionState === "unlock-needed" &&
@@ -207,7 +232,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
   ]);
 
   return (
-    <Flex flex={1} justifyContent="center" alignItems="center">
+    <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
       <Body
         genuineCheckStatus={genuineCheckStatus}
         firmwareUpdateStatus={firmwareUpdateStatus}
@@ -225,6 +250,9 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         onClickViewUpdate={startFirmwareUpdate}
         onClickContinueToSetup={onComplete}
       />
+      <Button mt={5} variant="main" onClick={resetAndRestartChecks}>
+        (debug) reset all checks
+      </Button>
     </Flex>
   );
 };
