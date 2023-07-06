@@ -73,6 +73,7 @@ async function buildOptimisticOperation({
     recipients: [transaction.recipient],
     accountId: account.id,
     date: new Date(),
+    consensusTimeStamp: "",
     extra: {},
   };
 

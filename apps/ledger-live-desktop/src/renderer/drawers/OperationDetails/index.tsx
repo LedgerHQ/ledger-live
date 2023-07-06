@@ -170,7 +170,7 @@ const OperationD = (props: Props) => {
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
-  const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
+  const url = cryptoCurrency.id != "hedera" ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash) : getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.consensusTimeStamp);
   const uniqueSenders = uniq(senders);
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;

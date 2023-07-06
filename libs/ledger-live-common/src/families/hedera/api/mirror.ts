@@ -139,6 +139,7 @@ export async function getOperationsForAccount(
       accountId: ledgerAccountId,
       id: encodeOperationId(ledgerAccountId, hash, type),
       type,
+      consensusTimeStamp: consensus_timestamp,
     });
   }
 
