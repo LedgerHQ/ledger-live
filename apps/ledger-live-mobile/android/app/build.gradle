@@ -212,6 +212,8 @@ dependencies {
     }
 
     androidTestImplementation('com.wix:detox:+')
+    // Needed for Detox getAttributes on Android :  https://github.com/wix/Detox/issues/3147
+    implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.facebook.soloader:soloader:0.10.4+'
 
     // implementation 'com.brentvatne.react:react-native-video'

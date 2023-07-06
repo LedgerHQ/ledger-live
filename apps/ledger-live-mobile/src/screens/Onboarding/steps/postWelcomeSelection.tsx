@@ -93,7 +93,7 @@ function PostWelcomeSelection() {
         />
       </Box>
 
-      <Button type="default" mt="auto" mb={11} onPress={openModal}>
+      <Button type="default" mt="auto" mb={11} onPress={openModal} testID="onboarding-noLedgerYet">
         {t("onboarding.postWelcomeStep.noLedgerYet")}
       </Button>
 
