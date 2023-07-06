@@ -10,7 +10,6 @@ const transformIncludePatterns = [
   "react-native-animatable",
   "@sentry/react-native",
   "react-native-startup-time",
-  "@segment/analytics-react-native",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
