@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, Linking } from "react-native";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
@@ -24,6 +24,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { setCloseNetworkBanner } from "../../actions/settings";
 import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   devMode?: boolean;
@@ -44,6 +45,8 @@ export default function SelectNetwork({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const [displayBanner, setBanner] = useState(!hasClosedNetworkBanner);
+
+  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
 
   const { t } = useTranslation();
   const filterCurrencyIds = useMemo(
@@ -122,7 +125,8 @@ export default function SelectNetwork({ navigation, route }: Props) {
       button: "Choose a network article",
       type: "card",
     });
-  }, []);
+    Linking.openURL(depositNetworkBannerMobile?.params.url);
+  }, [depositNetworkBannerMobile?.params.url]);
 
   useEffect(() => {
     if (paramsCurrency) {
@@ -164,7 +168,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
         keyboardDismissMode="on-drag"
       />
 
-      {displayBanner && (
+      {depositNetworkBannerMobile?.enabled && displayBanner && (
         <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
           <Flex pb={insets.bottom} px={6}>
             <BannerCard

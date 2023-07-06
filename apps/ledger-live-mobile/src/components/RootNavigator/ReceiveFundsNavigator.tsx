@@ -34,6 +34,7 @@ export default function ReceiveFundsNavigator() {
   const { t } = useTranslation();
   const route = useRoute();
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
+
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
