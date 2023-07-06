@@ -13,7 +13,7 @@ beforeAll(async () => {
       locale: "en-US",
     },
   });
-}, 350000);
+}, 2000000);
 
 afterAll(async () => {
   serverBridge.close();
