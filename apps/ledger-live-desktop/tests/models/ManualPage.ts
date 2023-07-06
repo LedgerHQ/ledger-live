@@ -8,7 +8,6 @@ export class ManualPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.helpButton = page.locator("data-test-id=manual-help-button");
     this.languageSelect = page.locator("data-test-id=manual-select");
     this.closeButton = page.locator("data-test-id=manual-close-button");
   }
