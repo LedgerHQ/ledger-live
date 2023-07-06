@@ -3,11 +3,11 @@ import { Button, Flex, Icons, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import ErrorDisplay from "../../ErrorDisplay";
+import ErrorDisplay from "../../../ErrorDisplay";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import useEnv from "~/renderer/hooks/useEnv";
 import { useHistory } from "react-router";
-import { DeviceBlocker } from "../../DeviceAction/DeviceBlocker";
+import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 export type Props = {

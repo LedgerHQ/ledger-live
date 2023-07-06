@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Link, Flex, Text, Icons } from "@ledgerhq/react-ui";
 import { Bullet } from "./Bullet";
-import { Status as SoftwareCheckStatus } from "./types";
+import { Status as SoftwareCheckStatus } from "../types";
 
 export type Props = {
   genuineCheckStatus: SoftwareCheckStatus;

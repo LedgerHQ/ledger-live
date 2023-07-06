@@ -5,7 +5,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { useTheme } from "styled-components";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { DeviceBlocker } from "../../DeviceAction/DeviceBlocker";
+import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 
 export type Props = {
   deviceModelId: DeviceModelId;
