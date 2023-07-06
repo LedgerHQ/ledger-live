@@ -10,6 +10,7 @@ import Fil from "@zondax/ledger-filecoin";
 import { Observable } from "rxjs";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   Account,
   AccountBridge,
@@ -48,12 +49,6 @@ const createTransaction = (): Transaction => {
     recipient: "",
     useAllAmount: false,
   };
-};
-
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
-  // log("debug", "[updateTransaction] patching tx");
-
-  return { ...t, ...patch };
 };
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
@@ -147,21 +142,24 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
   const { address } = getAddress(a);
   const { recipient, useAllAmount } = t;
 
-  if (recipient && address) {
-    if (validateAddress(recipient).isValid && validateAddress(address).isValid) {
-      const newTx = { ...t };
+  if (
+    recipient &&
+    address &&
+    validateAddress(recipient).isValid &&
+    validateAddress(address).isValid
+  ) {
+    const patch: Partial<Transaction> = {};
 
-      const result = await fetchEstimatedFees({ to: recipient, from: address });
-      newTx.gasFeeCap = new BigNumber(result.gas_fee_cap);
-      newTx.gasPremium = new BigNumber(result.gas_premium);
-      newTx.gasLimit = new BigNumber(result.gas_limit);
-      newTx.nonce = result.nonce;
+    const result = await fetchEstimatedFees({ to: recipient, from: address });
+    patch.gasFeeCap = new BigNumber(result.gas_fee_cap);
+    patch.gasPremium = new BigNumber(result.gas_premium);
+    patch.gasLimit = new BigNumber(result.gas_limit);
+    patch.nonce = result.nonce;
 
-      const fee = calculateEstimatedFees(newTx.gasFeeCap, newTx.gasLimit);
-      if (useAllAmount) newTx.amount = balance.minus(fee);
+    const fee = calculateEstimatedFees(patch.gasFeeCap, patch.gasLimit);
+    if (useAllAmount) patch.amount = balance.minus(fee);
 
-      return newTx;
-    }
+    return defaultUpdateTransaction(t, patch);
   }
 
   return t;
@@ -284,7 +282,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
 export const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
