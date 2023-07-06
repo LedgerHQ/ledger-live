@@ -10,6 +10,8 @@ const transformIncludePatterns = [
   "react-native-animatable",
   "@sentry/react-native",
   "react-native-startup-time",
+  "uuid",
+  "@segment/analytics-react-native",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
@@ -37,7 +39,6 @@ module.exports = {
   coverageReporters: ["json"],
   coverageDirectory: "<rootDir>/coverage",
   moduleNameMapper: {
-    uuid: require.resolve("uuid"),
     "^@ledgerhq/coin-framework(.*)$": "<rootDir>/../../libs/coin-framework/lib$1.js",
     "^@ledgerhq/icons-ui/native(.*)$": "<rootDir>/../../libs/ui/packages/icons/native/$1",
     "^@ledgerhq/crypto-icons-ui/native(.*)$":
