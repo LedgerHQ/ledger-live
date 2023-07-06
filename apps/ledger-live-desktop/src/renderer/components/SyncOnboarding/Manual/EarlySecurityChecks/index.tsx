@@ -34,6 +34,8 @@ import DeviceNotGenuineDrawer, {
 export type Props = {
   onComplete: () => void;
   device: Device;
+  autoStartChecks: boolean;
+  restartChecksAfterUpdate: () => void;
 };
 
 const commonDrawerProps = {
@@ -45,14 +47,20 @@ const commonDrawerProps = {
  * Component representing the early security checks step, which polls the current device state
  * to display correctly information about the onboarding to the user
  */
-const EarlySecurityChecks = ({ onComplete, device }: Props) => {
+const EarlySecurityChecks = ({
+  onComplete,
+  device,
+  autoStartChecks,
+  restartChecksAfterUpdate,
+}: Props) => {
   const locale = useSelector(localeSelector);
   const whySecurityChecksUrl =
     locale in urls.genuineCheck
       ? urls.genuineCheck[locale as keyof typeof urls.genuineCheck]
       : urls.genuineCheck.en;
+
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
-    SoftwareCheckStatus.inactive,
+    autoStartChecks ? SoftwareCheckStatus.active : SoftwareCheckStatus.inactive,
   );
   const [firmwareUpdateStatus, setFirmwareUpdateStatus] = useState<SoftwareCheckStatus>(
     SoftwareCheckStatus.inactive,
@@ -87,13 +95,6 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     // TODO: set status to cancelled ? and update icon for cancelled
   }, []);
 
-  const resetAndRestartChecks = useCallback(() => {
-    resetGenuineCheckState();
-    setAvailableFirmwareVersion("");
-    setGenuineCheckStatus(SoftwareCheckStatus.active);
-    setFirmwareUpdateStatus(SoftwareCheckStatus.inactive);
-  }, [resetGenuineCheckState]);
-
   const startFirmwareUpdate = useCallback(() => {
     if (!deviceInfo || !latestFirmware) return;
     const modal = deviceInfo.isOSU ? "install" : "disclaimer";
@@ -112,7 +113,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
       device,
       deviceModelId: deviceModelId,
       setFirmwareUpdateOpened: () => null, // we don't need to keep the state
-      setFirmwareUpdateCompleted: resetAndRestartChecks,
+      setFirmwareUpdateCompleted: restartChecksAfterUpdate,
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
@@ -126,7 +127,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     deviceInfo,
     deviceModelId,
     latestFirmware,
-    resetAndRestartChecks,
+    restartChecksAfterUpdate,
   ]);
 
   useEffect(() => {
@@ -250,9 +251,9 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         onClickViewUpdate={startFirmwareUpdate}
         onClickContinueToSetup={onComplete}
       />
-      <Button mt={5} variant="main" onClick={resetAndRestartChecks}>
+      {/* <Button mt={5} variant="main" onClick={restartChecksAfterUpdate}>
         (debug) reset all checks
-      </Button>
+      </Button> */}
     </Flex>
   );
 };
