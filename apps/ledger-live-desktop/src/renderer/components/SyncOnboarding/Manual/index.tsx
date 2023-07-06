@@ -14,9 +14,11 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import Header from "./Header";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
-import EarlySecurityChecks from "./EarlySecurityChecks";
+import EarlySecurityChecks from "./EarlySecurityChecks/EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import ExitChecksDrawer, { Props as ExitChecksDrawerProps } from "./ExitChecksDrawer";
+import ExitChecksDrawer, {
+  Props as ExitChecksDrawerProps,
+} from "./EarlySecurityChecks/ExitChecksDrawer";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;

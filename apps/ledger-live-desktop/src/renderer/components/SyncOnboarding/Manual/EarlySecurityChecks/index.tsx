@@ -5,14 +5,14 @@ import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck"
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
-import SoftwareCheckContent from "./SoftwareCheckContent";
+import Body from "./Body";
 import SoftwareCheckLockedDeviceDrawer, {
   Props as SoftwareCheckLockedDeviceModalProps,
 } from "./SoftwareCheckLockedDeviceDrawer";
 import SoftwareCheckAllowSecureChannelDrawer, {
   Props as SoftwareCheckAllowSecureChannelDrawerProps,
 } from "./SoftwareCheckAllowSecureChannelDrawer";
-import { Status as SoftwareCheckStatus } from "./types";
+import { Status as SoftwareCheckStatus } from "../types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useSelector } from "react-redux";
 import { urls } from "~/config/urls";
@@ -79,8 +79,6 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
   });
-
-  console.log({ deviceInfo, genuineCheckError });
 
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
@@ -220,7 +218,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
 
   return (
     <Flex flex={1} justifyContent="center" alignItems="center">
-      <SoftwareCheckContent
+      <Body
         genuineCheckStatus={genuineCheckStatus}
         firmwareUpdateStatus={firmwareUpdateStatus}
         availableFirmwareVersion={availableFirmwareVersion}

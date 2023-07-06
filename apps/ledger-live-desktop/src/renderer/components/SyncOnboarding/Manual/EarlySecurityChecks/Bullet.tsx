@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text, InfiniteLoader, Icons } from "@ledgerhq/react-ui";
 import styled, { StyledComponent, DefaultTheme } from "styled-components";
 import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
-import { Status } from "./types";
+import { Status } from "../types";
 
 const BorderFlex: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(Flex).attrs({
   border: "1px solid",

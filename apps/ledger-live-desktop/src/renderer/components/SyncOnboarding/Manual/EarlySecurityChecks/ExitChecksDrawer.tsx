@@ -3,7 +3,7 @@ import { Button, Flex, Icons, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import ErrorDisplay from "../../ErrorDisplay";
+import ErrorDisplay from "../../../ErrorDisplay";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
 export type Props = {
