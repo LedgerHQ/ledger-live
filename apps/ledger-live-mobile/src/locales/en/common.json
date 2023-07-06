@@ -2833,7 +2833,8 @@
       },
       "selectAccount": {
         "title": "Select an account",
-        "subtitle": "Your {{currencyTicker}} will be deposited into this account."
+        "subtitle": "Your {{currencyTicker}} will be deposited into this account.",
+        "cta": "Create a new account"
       },
       "addAccount": {
         "title": "Searching the blockchain",
