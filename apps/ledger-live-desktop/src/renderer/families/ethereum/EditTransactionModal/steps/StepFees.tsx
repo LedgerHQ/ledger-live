@@ -124,8 +124,8 @@ export class StepFeesFooter extends PureComponent<StepProps> {
     if (mainAccount.currency.family !== "ethereum") return;
     apiForCurrency(mainAccount.currency)
       .getTransactionByHash(transactionHash)
-      .then((tx: { confirmations?: number }) => {
-        if (tx.confirmations) {
+      .then(tx => {
+        if (tx?.confirmations) {
           this.setState({ transactionHasBeenValidated: true });
         }
       });

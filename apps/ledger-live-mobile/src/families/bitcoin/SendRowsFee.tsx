@@ -77,6 +77,7 @@ export default function BitcoinSendRowsFee({
       setSatPerByte,
     });
   }, [navigation, route.params, account.id, parentAccount?.id, transaction, satPerByte]);
+
   return (
     <SelectFeesStrategy
       {...props}

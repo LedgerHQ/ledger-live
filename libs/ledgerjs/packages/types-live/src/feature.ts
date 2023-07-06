@@ -67,7 +67,8 @@ export type FeatureId =
   | "protectServicesDiscoverDesktop"
   | "protectServicesDesktop"
   | "transactionsAlerts"
-  | "listAppsV2";
+  | "listAppsV2"
+  | "editEthTx";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

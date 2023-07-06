@@ -130,6 +130,7 @@ export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnect
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
+
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
 export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");

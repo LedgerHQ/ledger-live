@@ -6,53 +6,42 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
-import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { NotEnoughGas } from "@ledgerhq/errors";
-import { useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
+import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
+import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
 
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
-import Alert from "../../components/Alert";
-import TranslatedError from "../../components/TranslatedError";
-import SendRowsCustom from "../../components/SendRowsCustom";
-import SendRowsFee from "../../components/SendRowsFee";
-import SummaryFromSection from "./SummaryFromSection";
-import SummaryToSection from "./SummaryToSection";
-import SummaryAmountSection from "./SummaryAmountSection";
-import SummaryNft from "./SummaryNft";
-import SummaryTotalSection from "./SummaryTotalSection";
-import SectionSeparator from "../../components/SectionSeparator";
-import AlertTriangle from "../../icons/AlertTriangle";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import Info from "../../icons/Info";
-import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
-import { isCurrencySupported } from "../Exchange/coinifyConfig";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { NavigatorName, ScreenName } from "../../../const";
+import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "../../../analytics";
+import NavigationScrollView from "../../../components/NavigationScrollView";
+import Alert from "../../../components/Alert";
+import SummaryFromSection from "../../../screens/SendFunds/SummaryFromSection";
+import SummaryToSection from "../../../screens/SendFunds/SummaryToSection";
+import LText from "../../../components/LText";
+import SectionSeparator from "../../../components/SectionSeparator";
+import SummaryNft from "../../../screens/SendFunds/SummaryNft";
+import SummaryAmountSection from "../../../screens/SendFunds/SummaryAmountSection";
+import TranslatedError from "../../../components/TranslatedError";
+import SendRowsFee from "../../../components/SendRowsFee";
+import SendRowsCustom from "../../../components/SendRowsCustom";
+import Info from "../../../icons/Info";
+import SummaryTotalSection from "../../../screens/SendFunds/SummaryTotalSection";
+import Button from "../../../components/Button";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import AlertTriangle from "../../../icons/AlertTriangle";
+import TooMuchUTXOBottomModal from "../../../screens/SendFunds/TooMuchUTXOBottomModal";
+import { CurrentNetworkFee } from "../CurrentNetworkFee";
+import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-type Navigation = BaseComposite<
-  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
-  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
->;
-
-type Props = Navigation;
-
-const WARN_FROM_UTXO_COUNT = 50;
-
-function SendSummary({ navigation, route }: Props) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function EditEthereumSummary({ navigation, route }: any) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
+  const { nextNavigation, overrideAmountLabel, hideTotal, operation } = route.params;
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
@@ -63,6 +52,7 @@ function SendSummary({ navigation, route }: Props) {
     account,
     parentAccount,
   }));
+
   invariant(transaction, "transaction is missing");
 
   const isNFTSend = isNftTransaction(transaction);
@@ -79,7 +69,7 @@ function SendSummary({ navigation, route }: Props) {
       // This component is used in a wild bunch of navigators.
       // nextNavigation is a param which can have too many shapes
       // Unfortunately for this reason let's keep it untyped for now.
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(nextNavigation, {
+      navigation.navigate(nextNavigation, {
         ...route.params,
         transaction,
         status,
@@ -91,23 +81,11 @@ function SendSummary({ navigation, route }: Props) {
     if (!continuing) {
       return;
     }
-    // FIXME: NOT SURE BITCOIN TRANSACTION STATUS IS CORRECT HERE
-    //  BUT WE TYPE LIKE ANIMALS SO...
-    const { warnings, txInputs } = status as BitcoinTransactionStatus;
+    const { warnings } = status;
 
     if (Object.keys(warnings).includes("feeTooHigh") && !highFeesWarningPassed) {
       setHighFeesOpen(true);
       return;
-    }
-
-    if (txInputs && txInputs.length >= WARN_FROM_UTXO_COUNT && !utxoWarningPassed) {
-      const to = setTimeout(
-        () => setUtxoWarningOpen(true), // looks like you can not open close a bottom modal
-        // and open another one very fast
-        highFeesWarningPassed ? 1000 : 0,
-      );
-      // eslint-disable-next-line consistent-return
-      return () => clearTimeout(to);
     }
 
     setContinuing(false);
@@ -150,6 +128,24 @@ function SendSummary({ navigation, route }: Props) {
       },
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const errorNavigation = useNavigation<any>();
+  const editableOperation = operation && isEditableOperation(account, operation);
+
+  if (editableOperation) {
+    apiForCurrency(mainAccount.currency)
+      .getTransactionByHash(operation?.hash || "")
+      .then(tx => {
+        if (tx?.confirmations) {
+          errorNavigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+            error: new TransactionHasBeenValidatedError(
+              "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+            ),
+          });
+        }
+      });
+  }
 
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
@@ -221,6 +217,14 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
+        {editableOperation ? (
+          <CurrentNetworkFee
+            account={account}
+            parentAccount={parentAccount}
+            transactionRaw={operation.transactionRaw}
+          />
+        ) : null}
+
         {error ? (
           <View style={styles.gasPriceError}>
             <View
@@ -251,7 +255,7 @@ function SendSummary({ navigation, route }: Props) {
           <TranslatedError error={transactionError} />
         </LText>
         {error && error instanceof NotEnoughGas ? (
-          isCurrencySupported(currencyOrToken) && (
+          isCurrencySupported(currencyOrToken as CryptoCurrency) && (
             <Button
               event="SummaryBuyEth"
               type="primary"
@@ -346,7 +350,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewStyle>
 class VerticalConnector extends Component<{
   style: Record<string, string | number> | Array<Record<string, string | number>>;
 }> {
@@ -356,4 +359,4 @@ class VerticalConnector extends Component<{
   }
 }
 
-export default SendSummary;
+export default EditEthereumSummary;
