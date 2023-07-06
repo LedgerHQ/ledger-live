@@ -520,10 +520,10 @@ jobs:
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
 
-            // if (${{ github.event_name != 'push' }}) return;
+            if (${{ github.event_name != 'push' }}) return;
 
             const slackPayload = {
-              "text": "[Alert] Ledger Live Desktop tests failed on develop",
+              "text": "[Alert] Ledger Live Desktop tests failed on ${{github.ref_name}}",
               "blocks": [
                 {
                   "type": "header",
@@ -593,7 +593,7 @@ jobs:
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        # if: always() && !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure')
+        if: always() && !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure')
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
