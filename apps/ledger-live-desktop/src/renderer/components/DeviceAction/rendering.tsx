@@ -161,6 +161,7 @@ const ErrorDescription = styled(Text).attrs({
   color: "palette.text.shade60",
   textAlign: "center",
   fontSize: 4,
+  whiteSpace: "pre-wrap",
 })`
   user-select: text;
 `;

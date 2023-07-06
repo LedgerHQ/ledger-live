@@ -115,8 +115,7 @@ const SoftwareCheckContent = ({
           </Button>
         )}
       </Bullet>
-      {genuineCheckStatus === SoftwareCheckStatus.inactive ||
-      genuineCheckStatus === SoftwareCheckStatus.requested ? (
+      {genuineCheckStatus === SoftwareCheckStatus.inactive ? (
         <Flex flexDirection={"column"} mt={12} rowGap={12}>
           <Link
             Icon={Icons.ExternalLinkMedium}

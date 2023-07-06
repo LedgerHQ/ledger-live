@@ -1325,9 +1325,15 @@
           "active": "Genuine check and\nOS update check",
           "completed": "Your {{modelName}} is genuine and up to date"
         },
-        "exitWarningModal": {
+        "exitWarningDrawer": {
           "cancelCheckCTA": "Cancel check",
           "resumeCheckCTA": "Resume check"
+        },
+        "genuineCheckErrorDrawer": {
+          "quitSetupCTA": "Quit setup",
+          "goToSettingsCTA": "Go to settings",
+          "retryCTA": "Retry",
+          "contactSupportCTA": "Contact Ledger support"
         },
         "whyPerformChecksLink": "Why perform these security checks?",
         "startChecksCTA": "Start checks",
@@ -5861,6 +5867,14 @@
     "ExitEarlySecurityChecksWarning": {
       "title": "Are you sure you want to exit setup?",
       "description": "You cannot setup your Ledger Stax without allowing this check."
+    },
+    "NotFoundEntityError": {
+      "title": "We could not check if this device was genuine.",
+      "description": "The experimental setting “My Ledger provider ({{providerNumber}})” may be conflicting with the genuine check. You can disable it in settings."
+    },
+    "DeviceNotGenuineError": {
+      "title": "This {{productName}} is not genuine",
+      "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
     }
   },
   "cryptoOrg": {
