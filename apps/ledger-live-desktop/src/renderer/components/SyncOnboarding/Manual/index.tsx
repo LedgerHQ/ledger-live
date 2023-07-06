@@ -9,12 +9,11 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import Header from "./Header";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
-import EarlySecurityChecks from "./EarlySecurityChecks/EarlySecurityChecks";
+import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
