@@ -7,25 +7,35 @@ import { useTranslation } from "react-i18next";
 import { Account, AccountLike, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import AccountCard from "../../components/AccountCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import { useNavigation } from "@react-navigation/core";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
   triggerCreateAccount: boolean;
 };
 
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<AccountsNavigatorParamList, ScreenName.ReceiveSelectAccount>
+>;
+
 function ReceiveSelectAccount({
   navigation,
   route,
-}: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveSelectAccount>) {
+}: StackNavigatorProps<
+  ReceiveFundsStackParamList & AccountsNavigatorParamList,
+  ScreenName.ReceiveSelectAccount
+>) {
   const currency = route?.params?.currency;
   const { t } = useTranslation();
+  const navigationAccount = useNavigation<NavigationProps["navigation"]>();
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
   const accounts = useSelector(
@@ -115,8 +125,20 @@ function ReceiveSelectAccount({
     track("button_clicked", {
       button: "Create a new account",
     });
-    console.log("create new account");
-  }, []);
+    if (currency && currency.type === "TokenCurrency") {
+      navigationAccount.navigate(NavigatorName.AddAccounts, {
+        screen: undefined,
+        params: {
+          token: currency,
+        },
+      });
+    } else {
+      navigationAccount.navigate(NavigatorName.AddAccounts, {
+        screen: undefined,
+        currency,
+      });
+    }
+  }, [currency, navigationAccount]);
 
   const keyExtractor = useCallback(item => item?.id, []);
 
