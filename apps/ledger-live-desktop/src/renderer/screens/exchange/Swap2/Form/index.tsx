@@ -137,6 +137,8 @@ const SwapForm = () => {
     onNoRates,
     ...(locationState as object),
     providers: storedProviders || undefined,
+    timeout: 10000,
+    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
