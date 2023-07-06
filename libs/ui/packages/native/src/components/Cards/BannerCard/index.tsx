@@ -25,6 +25,7 @@ export const Container = styled(TouchableOpacity)`
   height: 72px;
   padding: ${(p) => p.theme.space[6]}px;
   align-items: center;
+  z-index: 5;
 `;
 
 export const CloseContainer = styled(TouchableOpacity)`
@@ -58,7 +59,7 @@ const CardContainer = (props: CardProps): React.ReactElement => {
   const { onPressDismiss, LeftElement, title, typeOfRightIcon } = props;
 
   return (
-    <Container>
+    <Container {...props}>
       <Flex
         borderRadius={50}
         height={40}

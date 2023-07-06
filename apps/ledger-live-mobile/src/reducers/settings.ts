@@ -76,6 +76,7 @@ import type {
   SettingsSetOnboardingHasDevicePayload,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
+  SettingsSetClosedNetworkBannerPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -178,6 +179,9 @@ export const INITIAL_STATE: SettingsState = {
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
   onboardingType: null,
+  depositFlow: {
+    hasClosedNetworkBanner: false,
+  },
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -562,6 +566,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_CLOSED_NETWORK_BANNER]: (state, action) => ({
+    ...state,
+    depositFlow: {
+      ...state.depositFlow,
+      hasClosedNetworkBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
+    },
+  }),
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
     ...state,
     notifications: {
@@ -797,6 +808,8 @@ export const customImageBackupSelector = (state: State) => state.settings.custom
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
+export const hasClosedNetworkBannerSelector = (state: State) =>
+  state.settings.depositFlow.hasClosedNetworkBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;

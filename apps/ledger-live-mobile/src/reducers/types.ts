@@ -237,6 +237,9 @@ export type SettingsState = {
   dateFormat: string;
   hasBeenUpsoldProtect: boolean;
   generalTermsVersionAccepted?: string;
+  depositFlow: {
+    hasClosedNetworkBanner: boolean;
+  };
 };
 
 export type NotificationsSettings = {

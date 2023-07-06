@@ -10,7 +10,6 @@ import ReceiveConnectDevice, {
   connectDeviceHeaderOptions,
 } from "../../screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
-import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
 
 import ReceiveSelectNetwork from "../../screens/ReceiveFunds/02-SelectNetwork";
 import ReceiveAddAccountSelectDevice, {
@@ -25,12 +24,16 @@ import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseBut
 import { track } from "../../analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
+import { useSelector } from "react-redux";
+import { Flex } from "@ledgerhq/native-ui";
+import HelpButton from "../../screens/ReceiveFunds/HelpButton";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
-
+  const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
@@ -77,11 +80,18 @@ export default function ReceiveFundsNavigator() {
     >
       {/* Select Crypto (see : apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.js) */}
       <Stack.Screen
-        name={ScreenName.ReceiveSelectCrypto}
+        name={ScreenName.DepositSelectNetwork}
         component={ReceiveSelectNetwork}
         options={{
           headerLeft: () => <NavigationHeaderBackButton />,
           headerTitle: "",
+          headerRight: () => (
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              {hasClosedNetworkBanner && <HelpButton />}
+
+              <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
+            </Flex>
+          ),
         }}
       />
 

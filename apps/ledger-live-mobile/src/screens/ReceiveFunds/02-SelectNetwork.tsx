@@ -1,12 +1,8 @@
-import React, { useCallback, useEffect, useMemo } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, FlatList } from "react-native";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   isCurrencySupported,
   listTokens,
@@ -16,33 +12,24 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 
 import { BannerCard, Flex, Text } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { NetworkWiredMedium } from "@ledgerhq/native-ui/assets/icons";
+import { ChartNetworkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { space } from "@ledgerhq/native-ui/styles/theme";
-
-const SEARCH_KEYS = ["name", "ticker"];
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
+import { setCloseNetworkBanner } from "../../actions/settings";
+import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
 
 type Props = {
   devMode?: boolean;
-} & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveSelectCrypto>;
+} & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.DepositSelectNetwork>;
 
 const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
-
-const renderEmptyList = () => (
-  <Flex px={6}>
-    <Text textAlign="center">
-      <Trans i18nKey="common.noCryptoFound" />
-    </Text>
-  </Flex>
-);
 
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
@@ -52,8 +39,11 @@ const findAccountByCurrency = (accounts: AccountLike[], currency: CryptoCurrency
       (acc.type === "Account" ? acc.currency?.id : (acc as TokenAccount).token?.id) === currency.id,
   );
 
-export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
+export default function SelectNetwork({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
+  const dispatch = useDispatch();
+  const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
+  const [displayBanner, setBanner] = useState(!hasClosedNetworkBanner);
 
   const { t } = useTranslation();
   const filterCurrencyIds = useMemo(
@@ -74,21 +64,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
-      track("currency_clicked", {
-        currency: currency.name,
+      track("network_clicked", {
+        network: currency.name,
       });
 
       const accs = findAccountByCurrency(accounts, currency);
-      if (accs.length > 1) {
+      if (accs.length > 0) {
         // if we found one or more accounts of the given currency we select account
         navigation.navigate(ScreenName.ReceiveSelectAccount, {
           currency,
-        });
-      } else if (accs.length === 1) {
-        // if we found only one account of the given currency we go straight to QR code
-        navigation.navigate(ScreenName.ReceiveConfirmation, {
-          accountId: accs[0].id,
-          parentId: (accs[0] as TokenAccount)?.parentId,
         });
       } else if (currency.type === "TokenCurrency") {
         // cases for token currencies
@@ -125,6 +109,21 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     [accounts, navigation],
   );
 
+  const hideBanner = useCallback(() => {
+    track("button_clicked", {
+      button: "Close network article",
+    });
+    dispatch(setCloseNetworkBanner(true));
+    setBanner(false);
+  }, [dispatch]);
+
+  const clickLearn = useCallback(() => {
+    track("button_clicked", {
+      button: "Choose a network article",
+      type: "card",
+    });
+  }, []);
+
   useEffect(() => {
     if (paramsCurrency) {
       const selectedCurrency = findCryptoCurrencyByKeyword(paramsCurrency.toUpperCase());
@@ -135,27 +134,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   }, [onPressItem, paramsCurrency]);
 
-  const renderList = useCallback(
-    (items: CryptoOrTokenCurrency[]) => (
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={items}
-        renderItem={({ item }) => (
-          <CurrencyRow iconSize={32} currency={item} onPress={onPressItem} />
-        )}
-        keyExtractor={keyExtractor}
-        showsVerticalScrollIndicator={false}
-        keyboardDismissMode="on-drag"
-      />
-    ),
-    [onPressItem],
-  );
-
   const insets = useSafeAreaInsets();
 
   return (
     <>
-      <TrackScreen category="Receive" name="Select Crypto" />
+      <TrackScreen name="Choose a network" />
       <Flex px={6} py={2}>
         <Text variant="h4" fontWeight="semiBold" testID="receive-header-step2-title" mb={2}>
           {t("transfer.receive.selectNetwork.title")}
@@ -170,21 +153,30 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         </Text>
       </Flex>
 
-      <FilteredSearchBar
-        keys={SEARCH_KEYS}
-        inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-        list={sortedCryptoCurrencies}
-        renderList={renderList}
-        renderEmptySearch={renderEmptyList}
+      <FlatList
+        contentContainerStyle={styles.list}
+        data={sortedCryptoCurrencies}
+        renderItem={({ item }) => (
+          <CurrencyRow iconSize={32} currency={item} onPress={onPressItem} />
+        )}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
       />
 
-      <Flex pb={insets.bottom} px={6}>
-        <BannerCard
-          typeOfRightIcon="close"
-          title={t("transfer.receive.selectNetwork.bannerTitle")}
-          LeftElement={<NetworkWiredMedium />}
-        />
-      </Flex>
+      {displayBanner && (
+        <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+          <Flex pb={insets.bottom} px={6}>
+            <BannerCard
+              typeOfRightIcon="close"
+              title={t("transfer.receive.selectNetwork.bannerTitle")}
+              LeftElement={<ChartNetworkMedium />}
+              onPressDismiss={hideBanner}
+              onPress={clickLearn}
+            />
+          </Flex>
+        </Animated.View>
+      )}
     </>
   );
 }

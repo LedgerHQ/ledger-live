@@ -21,8 +21,11 @@ export const BannerCardStory: ComponentStory<typeof BannerCard> = (
   args: typeof BannerCardStoryArgs,
 ) => {
   return (
-    <Flex backgroundColor="primary.c70" alignItems="center" justifyContent="center" p="16px">
+    <Flex backgroundColor="primary.c70" alignItems="center" justifyContent="center" p="70px">
       <Flex width={args.width}>
+        {args.hadBackdropFilter && (
+          <Flex bg={"red"} width={200} height={100} position={"absolute"} />
+        )}
         <BannerCard
           title={args.title}
           onPress={() => {}}
@@ -40,6 +43,7 @@ const BannerCardStoryArgs = {
   title:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam tellus risus, pretium a nulla sit amet, porta sollicitudin tortor.",
   typeOfRightIcon: undefined,
+  hadBackdropFilter: false,
 };
 BannerCardStory.args = BannerCardStoryArgs;
 BannerCardStory.argTypes = {

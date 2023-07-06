@@ -64,6 +64,7 @@ import {
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
+  SettingsSetClosedNetworkBannerPayload,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -236,6 +237,9 @@ export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
 );
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
+);
+export const setCloseNetworkBanner = createAction<SettingsSetClosedNetworkBannerPayload>(
+  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
 );
 export const setWalletTabNavigatorLastVisitedTab =
   createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
