@@ -17,7 +17,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { useSelector } from "react-redux";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import UpdateFirmwareModal, {
   Props as UpdateFirmwareModalProps,
@@ -31,11 +31,7 @@ import DeviceNotGenuineDrawer, {
   Props as DeviceNotGenuineDrawerProps,
 } from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
-import ChangeDeviceLanguagePromptDrawer from "~/renderer/screens/settings/sections/General/ChangeDeviceLanguagePromptDrawer";
-import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
-import { DeviceInfo, DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live";
-import isEqual from "lodash/isEqual";
+import { useChangeLanguagePrompt } from "./ChangeLanguagePrompt";
 
 const UIDelay = 2500;
 
@@ -98,69 +94,7 @@ const EarlySecurityChecks = ({
   });
 
   console.log({ latestFirmware, deviceInfo });
-  const [deviceModelInfo, setDeviceModelInfo] = useState<DeviceModelInfo | null | undefined>();
-  const refreshDeviceInfo = useCallback(() => {
-    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
-      .toPromise()
-      .then((deviceInfo: DeviceInfo) => {
-        if (!isEqual(deviceInfo, deviceModelInfo?.deviceInfo))
-          setDeviceModelInfo({ deviceInfo, modelId: device.modelId, apps: [] });
-      });
-  }, [device.deviceId, device.modelId, deviceModelInfo?.deviceInfo]);
-
-  const currentLanguage = useSelector(languageSelector) as Locale;
-  useEffect(() => {
-    if (!deviceModelInfo) refreshDeviceInfo();
-  }, [deviceModelInfo, refreshDeviceInfo]);
-
-  const { availableLanguages: availableDeviceLanguages, loaded } = useAvailableLanguagesForDevice(
-    deviceModelInfo?.deviceInfo,
-  );
-
-  const [disableLanguagePrompt, setDisableLanguagePrompt] = useState(false);
-
-  useEffect(() => {
-    console.log("langague useeffect", {
-      loaded,
-      availableDeviceLanguages,
-      disableLanguagePrompt,
-      deviceModelInfo,
-      currentLanguage,
-    });
-    if (loaded && deviceModelInfo?.deviceInfo) {
-      const deviceLanguageId = deviceModelInfo?.deviceInfo.languageId;
-      const potentialDeviceLanguage =
-        localeIdToDeviceLanguage[currentLanguage as keyof typeof localeIdToDeviceLanguage];
-      const langAvailableOnDevice =
-        potentialDeviceLanguage !== undefined &&
-        availableDeviceLanguages.includes(potentialDeviceLanguage);
-
-      console.log("doing checks", {
-        deviceLanguageId,
-        potentialDeviceLanguage,
-        langAvailableOnDevice,
-      });
-
-      if (
-        langAvailableOnDevice &&
-        deviceLanguageId !== undefined &&
-        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        !disableLanguagePrompt
-      ) {
-        console.log("entered sandman");
-        setDrawer(
-          ChangeDeviceLanguagePromptDrawer,
-          {
-            deviceModelInfo,
-            currentLanguage,
-            analyticsContext: "Page SyncOnboarding",
-            onClose: () => setDisableLanguagePrompt(true),
-          },
-          {},
-        );
-      }
-    }
-  }, [availableDeviceLanguages, deviceModelInfo, disableLanguagePrompt, loaded, currentLanguage]);
+  useChangeLanguagePrompt({ device });
 
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
