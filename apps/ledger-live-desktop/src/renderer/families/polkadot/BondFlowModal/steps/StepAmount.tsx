@@ -41,7 +41,7 @@ export default function StepAmount({
   return (
     <Box flow={1}>
       <SyncSkipUnderPriority priority={100} />
-      <TrackPage category="Bond Flow" name="Step 1" />
+      <TrackPage category="Bond Flow" name="Step 1" flow="stake" action="bond" currency="dot" />
       {error && <ErrorBanner error={error} />}
       <Alert
         type="primary"
