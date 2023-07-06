@@ -24,10 +24,10 @@ const ExitChecksDrawer: React.FC<Props> = ({ onClose, onClickExit }) => {
       />
       <DrawerFooter>
         <Link mr={8} size="large" type="shade" onClick={onClickExit}>
-          {t("syncOnboarding.manual.softwareCheckContent.exitWarningModal.cancelCheckCTA")}
+          {t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.cancelCheckCTA")}
         </Link>
         <Button size="large" variant="main" onClick={onClose}>
-          {t("syncOnboarding.manual.softwareCheckContent.exitWarningModal.resumeCheckCTA")}
+          {t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.resumeCheckCTA")}
         </Button>
       </DrawerFooter>
     </Flex>

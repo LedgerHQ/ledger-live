@@ -2,9 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-import { from } from "rxjs";
-import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
@@ -27,10 +24,21 @@ import UpdateFirmwareModal, {
 } from "~/renderer/modals/UpdateFirmwareModal";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
+import GenuineCheckErrorDrawer, {
+  Props as GenuineCheckErrorDrawerProps,
+} from "./GenuineCheckErrorDrawer";
+import DeviceNotGenuineDrawer, {
+  Props as DeviceNotGenuineDrawerProps,
+} from "./DeviceNotGenuineDrawer";
 
 export type Props = {
   onComplete: () => void;
   device: Device;
+};
+
+const commonDrawerProps = {
+  forceDisableFocusTrap: true,
+  preventBackdropClick: true,
 };
 
 /**
@@ -57,7 +65,7 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
 
   const {
     genuineState,
-    // error: genuineCheckError, // TODO: use
+    error: genuineCheckError,
     devicePermissionState,
     resetGenuineCheckState,
   } = useGenuineCheck({
@@ -72,12 +80,15 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
     deviceId,
   });
 
+  console.log({ deviceInfo, genuineCheckError });
+
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
     // TODO: set status to cancelled ? and update icon for cancelled
   }, []);
 
   const startFirmwareUpdate = useCallback(() => {
+    if (!deviceInfo || !latestFirmware) return;
     const modal = deviceInfo.isOSU ? "install" : "disclaimer";
     const stepId = initialStepId({ device, deviceInfo });
     const updateFirmwareModalProps: UpdateFirmwareModalProps = {
@@ -128,13 +139,10 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
       setGenuineCheckStatus(SoftwareCheckStatus.completed);
     }
 
-    if (
-      genuineCheckStatus === SoftwareCheckStatus.failed ||
-      genuineCheckStatus === SoftwareCheckStatus.completed
-    ) {
+    if (genuineCheckStatus === SoftwareCheckStatus.completed) {
       setFirmwareUpdateStatus(SoftwareCheckStatus.active);
     }
-  }, [genuineCheckStatus, genuineState, devicePermissionState]);
+  }, [genuineCheckStatus, genuineState, devicePermissionState, genuineCheckError]);
 
   useEffect(() => {
     if (status === "available-firmware") {
@@ -175,27 +183,34 @@ const EarlySecurityChecks = ({ onComplete, device }: Props) => {
         deviceModelId,
         productName,
       };
-      setDrawer(SoftwareCheckLockedDeviceDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-      });
-      return () => setDrawer();
+      setDrawer(SoftwareCheckLockedDeviceDrawer, props, commonDrawerProps);
     } else if (allowSecureChannelIsOpen) {
       const props: SoftwareCheckAllowSecureChannelDrawerProps = {
         deviceModelId,
       };
-      setDrawer(SoftwareCheckAllowSecureChannelDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-        // FIXME: drawer is non closeable so we have to handle device disconnection
-      });
-      return () => setDrawer();
+      // FIXME: drawer is non closeable so we have to handle device disconnection
+      setDrawer(SoftwareCheckAllowSecureChannelDrawer, props, commonDrawerProps);
     } else if (notGenuineIsOpen) {
-      // TODO: set drawer
+      const props: DeviceNotGenuineDrawerProps = {
+        productName,
+      };
+      setDrawer(DeviceNotGenuineDrawer, props, commonDrawerProps);
+    } else if (genuineCheckError) {
+      setGenuineCheckStatus(SoftwareCheckStatus.failed);
+      const props: GenuineCheckErrorDrawerProps = {
+        onClickRetry: () => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.active);
+        },
+        error: genuineCheckError,
+      };
+      setDrawer(GenuineCheckErrorDrawer, props, commonDrawerProps);
     }
+    return () => setDrawer();
   }, [
     allowSecureChannelIsOpen,
     deviceModelId,
+    genuineCheckError,
     handleCloseLockedDeviceDrawer,
     lockedDeviceModalIsOpen,
     notGenuineIsOpen,
