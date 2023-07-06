@@ -31,7 +31,7 @@ const StepAccount = ({
         name="Step Account"
         flow="stake"
         action="delegation"
-        currency="tezos"
+        currency="xtz"
       />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
