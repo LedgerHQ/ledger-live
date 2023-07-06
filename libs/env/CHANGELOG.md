@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 0.3.2-nightly.0
+
+### Patch Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add polygon_as_evm_test_only & ethereum_as_evm_test_only to NFT_CURRENCIES
+
 ## 0.3.1
 
 ### Patch Changes

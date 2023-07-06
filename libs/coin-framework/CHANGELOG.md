@@ -1,5 +1,21 @@
 # @ledgerhq/coin-framework
 
+## 0.4.0-nightly.0
+
+### Minor Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Moving NFT related files from live-common to coin-framework with retrocompatibility
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Complete rework of the mergeNfts method that never worked before
+
+### Patch Changes
+
+- Updated dependencies [[`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec)]:
+  - @ledgerhq/live-env@0.3.2-nightly.0
+  - @ledgerhq/cryptoassets@9.9.1-nightly.0
+  - @ledgerhq/types-cryptoassets@7.3.1-nightly.0
+  - @ledgerhq/types-live@6.36.0
+
 ## 0.3.7
 
 ### Patch Changes

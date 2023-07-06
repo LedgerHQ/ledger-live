@@ -1,5 +1,35 @@
 # @ledgerhq/live-common
 
+## 31.3.0-nightly.0
+
+### Minor Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add NFT support to EVM family synchronization
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Moving NFT related files from live-common to coin-framework with retrocompatibility
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update NftMetadataProvider types
+
+### Patch Changes
+
+- [#3918](https://github.com/LedgerHQ/ledger-live/pull/3918) [`9676e157b3`](https://github.com/LedgerHQ/ledger-live/commit/9676e157b3471ce43c9a283417c718ee11978ee4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: return device info from hook to get latest available firmware update
+
+  - return device info from getLatestAvailableFirmwareFromDeviceId
+  - return device info from hook useGetLatestAvailableFirmware
+
+- [#3883](https://github.com/LedgerHQ/ledger-live/pull/3883) [`194acaf3d7`](https://github.com/LedgerHQ/ledger-live/commit/194acaf3d7389727ace87206a45a39fd3a5e1f98) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a device action implementation issue that was causing the UI to flicker during device actions
+
+- Updated dependencies [[`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec)]:
+  - @ledgerhq/live-env@0.3.2-nightly.0
+  - @ledgerhq/coin-evm@0.4.0-nightly.0
+  - @ledgerhq/coin-framework@0.4.0-nightly.0
+  - @ledgerhq/cryptoassets@9.9.1-nightly.0
+  - @ledgerhq/coin-algorand@0.2.4-nightly.0
+  - @ledgerhq/coin-polkadot@0.3.1-nightly.0
+  - @ledgerhq/live-network@1.1.3-nightly.0
+  - @ledgerhq/domain-service@1.1.6-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.8-nightly.0
+
 ## 31.2.0
 
 ### Minor Changes

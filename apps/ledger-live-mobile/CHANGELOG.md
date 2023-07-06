@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.27.0-nightly.0
+
+### Minor Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for NFT w/ the EVM family
+
+### Patch Changes
+
+- [#3877](https://github.com/LedgerHQ/ledger-live/pull/3877) [`57088d976b`](https://github.com/LedgerHQ/ledger-live/commit/57088d976b8679d4a5406022c37400a9d2c011e8) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - feat: add feature flag to tracking
+
+- [#3614](https://github.com/LedgerHQ/ledger-live/pull/3614) [`c352c557f8`](https://github.com/LedgerHQ/ledger-live/commit/c352c557f8b39b8c03f13332b557690006615fb2) Thanks [@grsoares21](https://github.com/grsoares21)! - Small modifications to the wording on the restore steps of the new firmware update UX.
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding clone currencies of ethereum & polygon with the evm family for test purposes
+
+- Updated dependencies [[`9676e157b3`](https://github.com/LedgerHQ/ledger-live/commit/9676e157b3471ce43c9a283417c718ee11978ee4), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`194acaf3d7`](https://github.com/LedgerHQ/ledger-live/commit/194acaf3d7389727ace87206a45a39fd3a5e1f98), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec)]:
+  - @ledgerhq/live-common@31.3.0-nightly.0
+  - @ledgerhq/live-env@0.3.2-nightly.0
+  - @ledgerhq/coin-framework@0.4.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.3.1-nightly.0
+  - @ledgerhq/domain-service@1.1.6-nightly.0
+  - @ledgerhq/types-live@6.36.0
+
 ## 3.26.0
 
 ### Minor Changes

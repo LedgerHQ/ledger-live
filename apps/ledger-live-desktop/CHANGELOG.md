@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.64.0-nightly.0
+
+### Minor Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for NFT w/ the EVM family
+
+### Patch Changes
+
+- [#3877](https://github.com/LedgerHQ/ledger-live/pull/3877) [`57088d976b`](https://github.com/LedgerHQ/ledger-live/commit/57088d976b8679d4a5406022c37400a9d2c011e8) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - feat: add feature flag to tracking
+
+- [#3891](https://github.com/LedgerHQ/ledger-live/pull/3891) [`12691d34ee`](https://github.com/LedgerHQ/ledger-live/commit/12691d34ee7559796a8697c4dfa6c75a88ca2b99) Thanks [@sarneijim](https://github.com/sarneijim)! - Add staking_completed track to tezos and polkadot
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding clone currencies of ethereum & polygon with the evm family for test purposes
+
+- Updated dependencies [[`9676e157b3`](https://github.com/LedgerHQ/ledger-live/commit/9676e157b3471ce43c9a283417c718ee11978ee4), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`194acaf3d7`](https://github.com/LedgerHQ/ledger-live/commit/194acaf3d7389727ace87206a45a39fd3a5e1f98), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec)]:
+  - @ledgerhq/live-common@31.3.0-nightly.0
+  - @ledgerhq/live-env@0.3.2-nightly.0
+  - @ledgerhq/coin-evm@0.4.0-nightly.0
+  - @ledgerhq/coin-framework@0.4.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.3.1-nightly.0
+  - @ledgerhq/live-network@1.1.3-nightly.0
+  - @ledgerhq/domain-service@1.1.6-nightly.0
+  - @ledgerhq/types-live@6.36.0
+
 ## 2.63.0
 
 ### Minor Changes

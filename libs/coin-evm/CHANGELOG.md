@@ -1,5 +1,29 @@
 # @ledgerhq/coin-evm
 
+## 0.4.0-nightly.0
+
+### Minor Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for NFT transactions
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for non finite quantity w/ NFT transaction data crafting
+
+### Patch Changes
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent duplicated sub & nft operations with rate limited explorers & make explorerless implementation also patch sub & nft operations after transaction finalization
+
+- [#3714](https://github.com/LedgerHQ/ledger-live/pull/3714) [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Rename rpc file that prevented shims to be applied for React Native
+
+- Updated dependencies [[`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec), [`15e8abc482`](https://github.com/LedgerHQ/ledger-live/commit/15e8abc482b2b38e4808890f556097cf693359ec)]:
+  - @ledgerhq/live-env@0.3.2-nightly.0
+  - @ledgerhq/coin-framework@0.4.0-nightly.0
+  - @ledgerhq/cryptoassets@9.9.1-nightly.0
+  - @ledgerhq/types-cryptoassets@7.3.1-nightly.0
+  - @ledgerhq/live-network@1.1.3-nightly.0
+  - @ledgerhq/domain-service@1.1.6-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.8-nightly.0
+  - @ledgerhq/types-live@6.36.0
+
 ## 0.3.0
 
 ### Minor Changes
