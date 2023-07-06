@@ -17,16 +17,14 @@ type CloseProps = {
   onPressDismiss?: () => void;
 };
 
-export const Base = styled(TouchableOpacity)`
-  border-radius: 12px;
-  backdrop-filter: blur(62px);
-`;
-
-export const Container = styled(Flex)`
+export const Container = styled(TouchableOpacity)`
   background: ${(p) => p.theme.colors.opacityDefault.c05};
   flex-direction: row;
   backdrop-filter: blur(62px);
   border-radius: 12px;
+  height: 72px;
+  padding: ${(p) => p.theme.space[6]}px;
+  align-items: center;
 `;
 
 export const CloseContainer = styled(TouchableOpacity)`
@@ -60,7 +58,7 @@ const CardContainer = (props: CardProps): React.ReactElement => {
   const { onPressDismiss, LeftElement, title, typeOfRightIcon } = props;
 
   return (
-    <Container height={"72px"} p={6} alignItems="center">
+    <Container>
       <Flex
         borderRadius={50}
         height={40}
@@ -94,11 +92,7 @@ const CardContainer = (props: CardProps): React.ReactElement => {
 };
 
 const BannerCard = (props: CardProps): React.ReactElement => {
-  return (
-    <Base {...props} activeOpacity={0.5}>
-      <CardContainer {...props} />
-    </Base>
-  );
+  return <CardContainer {...props} activeOpacity={0.5} />;
 };
 
 export default BannerCard;

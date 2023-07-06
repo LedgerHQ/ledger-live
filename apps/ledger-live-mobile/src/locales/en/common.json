@@ -2845,6 +2845,11 @@
       "selectCrypto": {
         "title": "Choose a crypto to receive"
       },
+      "selectNetwork": {
+        "title": "Choose a network",
+        "subtitle": "Where do you want to deposit your assets ?\nYou must choose the same as the sender.",
+        "bannerTitle": "Learn how to choose a network?"
+      },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
         "connectDevice": "Connect Device"

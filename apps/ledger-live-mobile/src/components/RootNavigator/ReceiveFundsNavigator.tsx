@@ -12,6 +12,7 @@ import ReceiveConnectDevice, {
 import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
 import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
 
+import ReceiveSelectNetwork from "../../screens/ReceiveFunds/02-SelectNetwork";
 import ReceiveAddAccountSelectDevice, {
   addAccountsSelectDeviceHeaderOptions,
 } from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
@@ -23,6 +24,7 @@ import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { track } from "../../analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -76,9 +78,9 @@ export default function ReceiveFundsNavigator() {
       {/* Select Crypto (see : apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.js) */}
       <Stack.Screen
         name={ScreenName.ReceiveSelectCrypto}
-        component={ReceiveSelectCrypto}
+        component={ReceiveSelectNetwork}
         options={{
-          headerLeft: () => null,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerTitle: "",
         }}
       />
