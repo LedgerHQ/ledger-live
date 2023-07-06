@@ -4,8 +4,6 @@ import {
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   makeTypeEntryStructBuffer,
-  sortObjectAlphabetically,
-  getFiltersForMessage,
 } from "../../src/modules/EIP712/utils";
 
 const padHexString = (str: string) => {

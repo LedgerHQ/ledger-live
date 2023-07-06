@@ -1,10 +1,7 @@
-import axios from "axios";
 import path from "path";
+import nock from "nock";
 import fs from "fs/promises";
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Eth from "../../src/Eth";
 
 const getFilePath = (type: "apdu" | "message", filename: string): string => {
@@ -16,27 +13,16 @@ const getFilePath = (type: "apdu" | "message", filename: string): string => {
   }
 };
 
-jest.mock("@ledgerhq/cryptoassets/data/eip712", () =>
-  require("../fixtures/CAL")
-);
-jest.mock("axios");
-// @ts-expect-error not detected as mocked with jest
-axios.get.mockRejectedValue();
+jest.mock("@ledgerhq/cryptoassets/data/eip712", () => require("../fixtures/CAL"));
+nock.disableNetConnect();
 
-describe.only("EIP712", () => {
+describe("EIP712", () => {
   describe("SignEIP712Message with filters", () => {
     test("should sign correctly the 0.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "0-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "0"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "0-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "0"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -49,17 +35,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 1.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "1-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "1"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "1-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "1"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -72,17 +51,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 2.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "2-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "2"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "2-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "2"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -95,17 +67,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 3.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "3-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "3"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "3-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "3"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -118,17 +83,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 4.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "4-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "4"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "4-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "4"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -141,17 +99,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 5.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "5-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "5"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "5-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "5"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -164,17 +115,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 6.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "6-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "6"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "6-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "6"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -187,17 +131,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 7.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "7-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "7"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "7-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "7"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -210,17 +147,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 8.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "8-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "8"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "8-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "8"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -233,17 +163,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 9.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "9-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "9"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "9-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "9"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -256,17 +179,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 10.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "10-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "10"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "10-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "10"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -279,17 +195,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 11.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "11-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "11"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "11-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "11"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -302,17 +211,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 12.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "12-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "12"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "12-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "12"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
@@ -325,17 +227,10 @@ describe.only("EIP712", () => {
     });
 
     test("should sign correctly the 13.json sample message", async () => {
-      const apdusBuffer = await fs.readFile(
-        getFilePath("apdu", "13-filtered"),
-        "utf-8"
-      );
-      const message = await fs
-        .readFile(getFilePath("message", "13"), "utf-8")
-        .then(JSON.parse);
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "13-filtered"), "utf-8");
+      const message = await fs.readFile(getFilePath("message", "13"), "utf-8").then(JSON.parse);
 
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
 
       const eth = new Eth(transport);
       const result = await eth.signEIP712Message("44'/60'/0'/0/0", message);
