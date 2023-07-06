@@ -40,8 +40,3 @@ jest.mock("react-native-version-number", () => ({
 jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
-
-// jest.mock("react", () => ({
-// ...jest.requireActual("react"),
-// useMemo: jest.fn(),
-// }));
