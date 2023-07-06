@@ -119,7 +119,7 @@
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-org-chain/chain-jslib": "1.1.2",
-    "@elrondnetwork/erdjs": "11.0.0",
+    "@elrondnetwork/erdjs": "11.0.1",
     "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
