@@ -142,11 +142,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "Static fee for Stellar account",
   },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
-  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
