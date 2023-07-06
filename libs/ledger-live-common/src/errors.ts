@@ -28,6 +28,7 @@ export const ImageCommitRefusedOnDevice = createCustomErrorClass("ImageCommitRef
 
 export const LanguageInstallTimeout = createCustomErrorClass("LanguageInstallTimeout");
 
+export const DeviceOnboarded = createCustomErrorClass("DeviceOnboarded");
 export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
   "InvalidAddressBecauseAlreadyDelegated",
