@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
 import { formatDistanceToNow } from "date-fns";
-import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   WalletHandlers,
@@ -44,8 +44,6 @@ import { getEnv } from "../env";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { MessageData } from "../hw/signMessage/types";
-import { TypedMessageData } from "../families/ethereum/types";
 import { Transaction } from "../generated/types";
 import { useManifests } from "../platform/providers/RemoteLiveAppProvider";
 import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
@@ -127,7 +125,7 @@ export interface UiHook {
   }) => void;
   "message.sign": (params: {
     account: AccountLike;
-    message: MessageData | TypedMessageData;
+    message: AnyMessage;
     onSuccess: (signature: string) => void;
     onError: (error: Error) => void;
     onCancel: () => void;
@@ -399,7 +397,7 @@ export function useWalletAPIServer({
         { manifest, accounts, tracking },
         account.id,
         message.toString("hex"),
-        (account: AccountLike, message: MessageData | TypedMessageData) =>
+        (account: AccountLike, message: AnyMessage) =>
           new Promise((resolve, reject) => {
             return uiMessageSign({
               account,

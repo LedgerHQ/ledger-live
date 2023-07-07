@@ -6,6 +6,7 @@ import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index"
 import { Unit, CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
+  AnyMessage,
   FeeStrategy,
   NFTStandard,
   Operation,
@@ -304,6 +305,10 @@ export type LLDCoinFamily<
     ) => T;
     getNftTransactionProperties: (transaction: T) => NftProperties;
   };
+
+  message?: {
+    getMessageProperties: (account: A, message: AnyMessage) => Promise<MessageProperties | null>;
+  };
 };
 
 export type FieldComponentProps<
@@ -341,3 +346,8 @@ export type NftProperties = {
   contract: string | null;
   quantity: BigNumber | null;
 };
+
+export type MessageProperties = {
+  label: string;
+  value: string | string[];
+}[];
