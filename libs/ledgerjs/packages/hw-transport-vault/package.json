@@ -1,15 +1,15 @@
 {
   "name": "@ledgerhq/hw-transport-vault",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Ledger Vault transport",
   "keywords": [
     "Ledger",
-	"Vault",
+    "Vault",
     "LedgerWallet",
     "proxy",
     "http",
-	"wss",
-	"sockets"
+    "wss",
+    "sockets"
   ],
   "repository": {
     "type": "git",

@@ -1,5 +1,17 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.3.0
+
+### Minor Changes
+
+- [#3611](https://github.com/LedgerHQ/ledger-live/pull/3611) [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2) Thanks [@chabroA](https://github.com/chabroA)! - Create GasTracker abstraction for evm familly
+
+## 7.3.0-next.0
+
+### Minor Changes
+
+- [#3611](https://github.com/LedgerHQ/ledger-live/pull/3611) [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2) Thanks [@chabroA](https://github.com/chabroA)! - Create GasTracker abstraction for evm familly
+
 ## 7.2.1
 
 ### Patch Changes

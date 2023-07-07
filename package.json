@@ -22,6 +22,7 @@
     "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
     "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
     "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
+    "build:network": "pnpm turbo build --no-daemon --filter=live-network",
     "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",

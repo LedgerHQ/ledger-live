@@ -75,8 +75,7 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
-  EthereumCustomFees = "EthereumCustomFees",
-  EthereumEditGasLimit = "EthereumEditGasLimit",
+  EditTransactionMethodSelection = "EditTransactionMethodSelection",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
   ExchangeHistory = "ExchangeHistory",
@@ -142,6 +141,7 @@ export enum ScreenName {
   SendSelectRecipient = "SendSelectRecipient",
   SendSummary = "SendSummary",
   SendValidationError = "SendValidationError",
+  TransactionAlreadyValidatedError = "TransactionAlreadyValidatedError",
   SendValidationSuccess = "SendValidationSuccess",
   SettingsScreen = "SettingsScreen",
   SignConnectDevice = "SignConnectDevice",
@@ -285,6 +285,7 @@ export enum ScreenName {
   ElrondWithdrawValidationError = "ElrondWithdrawValidationError",
   ElrondWithdrawValidationSuccess = "ElrondWithdrawValidationSuccess",
 
+  // Osmosis
   OsmosisDelegationStarted = "OsmosisDelegationStarted",
   OsmosisDelegationValidator = "OsmosisDelegationValidator",
   OsmosisDelegationValidatorSelect = "OsmosisDelegationValidatorSelect",
@@ -313,6 +314,8 @@ export enum ScreenName {
 
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
+
+  // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
   AlgorandClaimRewardsInfo = "AlgorandClaimRewardsInfo",
   AlgorandClaimRewardsStarted = "AlgorandClaimRewardsStarted",
@@ -327,6 +330,12 @@ export enum ScreenName {
   AlgorandOptInSummary = "AlgorandOptInValidation",
   AlgorandOptInValidationError = "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess = "AlgorandOptInValidationSuccess",
+
+  // Ethereum
+  EthereumCustomFees = "EthereumCustomFees",
+  EthereumEditGasLimit = "EthereumEditGasLimit",
+  EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
+
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
   PolkadotBondAmount = "PolkadotBondAmount",
@@ -484,6 +493,7 @@ export enum ScreenName {
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
   RedirectToRecoverStaxFlow = "RedirectToRecoverStaxFlow",
 }
+
 export enum NavigatorName {
   // Stack
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
@@ -539,6 +549,10 @@ export enum NavigatorName {
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
+
+  // Edit transaction
+  EditTransaction = "EditTransaction",
+
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",
   PolkadotUnbondFlow = "PolkadotUnbondFlow",

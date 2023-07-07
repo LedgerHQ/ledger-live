@@ -26,6 +26,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 
 export type Data = {
   account: PolkadotAccount;
+  source?: string;
 };
 
 type OwnProps = {
@@ -163,6 +164,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     onTransactionError: handleTransactionError,
     t,
     bridgePending,
+    source: params.source,
   };
   return (
     <Stepper {...stepperProps}>

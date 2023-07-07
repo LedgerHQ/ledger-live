@@ -8,6 +8,7 @@ import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
 import { ledgerService } from "@ledgerhq/hw-app-eth";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
@@ -66,6 +67,7 @@ export const buildSignOperation =
         const resolutionConfig: ResolutionConfig = {
           externalPlugins: true,
           erc20: true,
+          nft: isNFTActive(account.currency),
           domains: transaction.recipientDomain ? [transaction.recipientDomain] : [],
         };
         const loadConfig: LoadConfig = {
@@ -120,6 +122,7 @@ export const buildSignOperation =
 
       main().then(
         () => o.complete(),
+        /* istanbul ignore next: don't test throwing an error */
         e => o.error(e),
       );
     });

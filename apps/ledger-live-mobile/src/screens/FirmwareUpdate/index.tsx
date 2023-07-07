@@ -556,15 +556,36 @@ export const FirmwareUpdate = ({
     }
 
     if (staxLoadImageState.imageLoadRequested) {
-      return renderImageLoadRequested({ t, device, fullScreen: false });
+      return renderImageLoadRequested({
+        t,
+        device,
+        fullScreen: false,
+        wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
+          deviceName: productName,
+        }),
+      });
     }
 
     if (staxLoadImageState.imageCommitRequested) {
-      return renderImageCommitRequested({ t, device, fullScreen: false });
+      return renderImageCommitRequested({
+        t,
+        device,
+        fullScreen: false,
+        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
+          deviceName: productName,
+        }),
+      });
     }
 
     if (restoreAppsState.allowManagerRequestedWording) {
-      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+      return (
+        <AllowManager
+          device={device}
+          wording={t("FirmwareUpdate.steps.restoreSettings.allowAppsRestoration", {
+            deviceName: productName,
+          })}
+        />
+      );
     }
 
     if (installLanguageState.languageInstallationRequested) {
@@ -573,6 +594,9 @@ export const FirmwareUpdate = ({
         device,
         theme,
         fullScreen: false,
+        wording: t("FirmwareUpdate.steps.restoreSettings.allowLanguageInstallation", {
+          deviceName: productName,
+        }),
       });
     }
 
@@ -593,21 +617,22 @@ export const FirmwareUpdate = ({
     updateActionState.error,
     updateActionState.step,
     updateActionState.progress,
+    deviceLockedOrUnresponsive,
+    hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
-    installLanguageState.languageInstallationRequested,
     restoreAppsState.allowManagerRequestedWording,
+    installLanguageState.languageInstallationRequested,
+    restoreStepDeniedError,
     device,
     t,
-    theme,
+    retryCurrentStep,
     quitUpdate,
     deviceInfo.seVersion,
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
-    retryCurrentStep,
-    hasReconnectErrors,
-    deviceLockedOrUnresponsive,
-    restoreStepDeniedError,
+    theme,
+    productName,
     skipCurrentRestoreStep,
   ]);
 

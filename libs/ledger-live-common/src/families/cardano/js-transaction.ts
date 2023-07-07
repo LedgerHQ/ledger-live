@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import { CardanoAccount, Transaction } from "./types";
 import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
+import { CardanoAccount, Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 
 /**
@@ -19,17 +20,6 @@ export const createTransaction = (): Transaction => ({
 });
 
 /**
- * Apply patch to transaction
- *
- * @param {*} t
- * @param {*} patch
- */
-export const updateTransaction = (t: Transaction, patch: Partial<Transaction>): Transaction => ({
-  ...t,
-  ...patch,
-});
-
-/**
  * Prepare transaction before checking status
  *
  * @param {Account} a
@@ -39,25 +29,26 @@ export const prepareTransaction = async (
   a: CardanoAccount,
   t: Transaction,
 ): Promise<Transaction> => {
-  let transaction;
+  let patch = {};
   try {
-    transaction = await buildTransaction(a, t);
+    const cardanoTransaction = await buildTransaction(a, t);
+    const transactionFees = cardanoTransaction.getFee();
+    const transactionAmount = t.subAccountId
+      ? t.amount
+      : cardanoTransaction
+          .getOutputs()
+          .filter(
+            o =>
+              !(o.address instanceof TyphonAddress.BaseAddress) ||
+              !(o.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) ||
+              o.address.paymentCredential.bipPath === undefined,
+          )
+          .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
+
+    patch = { fees: transactionFees, amount: transactionAmount };
   } catch (error) {
-    return { ...t, fees: new BigNumber(0), amount: t.amount };
+    patch = { fees: new BigNumber(0), amount: t.amount };
   }
 
-  const transactionFees = transaction.getFee();
-  const transactionAmount = t.subAccountId
-    ? t.amount
-    : transaction
-        .getOutputs()
-        .filter(
-          o =>
-            !(o.address instanceof TyphonAddress.BaseAddress) ||
-            !(o.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) ||
-            o.address.paymentCredential.bipPath === undefined,
-        )
-        .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
-
-  return { ...t, fees: transactionFees, amount: transactionAmount };
+  return defaultUpdateTransaction(t, patch);
 };

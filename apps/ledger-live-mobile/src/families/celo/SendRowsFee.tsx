@@ -39,6 +39,7 @@ type Props = {
   | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function CeloFeeRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {

@@ -65,7 +65,7 @@ runs:
         cleanup-cache-folder: "true"
     - name: Build dependencies
       run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
       shell: bash
     - name: Build LLD app for testing
       env:

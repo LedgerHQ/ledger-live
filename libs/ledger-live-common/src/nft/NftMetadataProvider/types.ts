@@ -1,5 +1,9 @@
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 
+type DefaultResource =
+  | NonNullable<NFTMetadataResponse["result"]>
+  | NonNullable<NFTCollectionMetadataResponse["result"]>;
+
 export type NFTResourceQueued = {
   status: "queued";
   metadata?: null;
@@ -12,9 +16,9 @@ export type NFTResourceLoading = {
   updatedAt?: undefined;
 };
 
-export type NFTResourceLoaded = {
+export type NFTResourceLoaded<T extends Record<string, unknown> = DefaultResource> = {
   status: "loaded";
-  metadata: NFTMetadataResponse["result"] | NFTCollectionMetadataResponse["result"];
+  metadata: T;
   updatedAt: number;
 };
 
@@ -31,15 +35,15 @@ export type NFTResourceNoData = {
   metadata?: null;
 };
 
-export type NFTResource =
+export type NFTResource<T extends Record<string, unknown> = DefaultResource> =
   | NFTResourceQueued
   | NFTResourceLoading
-  | NFTResourceLoaded
+  | NFTResourceLoaded<T>
   | NFTResourceError
   | NFTResourceNoData;
 
-export type NFTMetadataContextState = {
-  cache: Record<string, NFTResource>;
+export type NFTMetadataContextState<T extends Record<string, unknown> = DefaultResource> = {
+  cache: Record<string, NFTResource<T>>;
 };
 
 export type NFTMetadataContextAPI = {
@@ -48,7 +52,8 @@ export type NFTMetadataContextAPI = {
   clearCache: () => void;
 };
 
-export type NFTMetadataContextType = NFTMetadataContextState & NFTMetadataContextAPI;
+export type NFTMetadataContextType<T extends Record<string, unknown> = DefaultResource> =
+  NFTMetadataContextState<T> & NFTMetadataContextAPI;
 
 export type Batcher = {
   load: (

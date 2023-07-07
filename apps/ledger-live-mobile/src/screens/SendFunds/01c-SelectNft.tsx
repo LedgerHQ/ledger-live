@@ -1,17 +1,9 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
-
+import BigNumber from "bignumber.js";
 import { useNftMetadata, getNftCapabilities } from "@ledgerhq/live-common/nft/index";
-import { BigNumber } from "bignumber.js";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import {
-  Account,
-  NFTCollectionMetadataResponse,
-  NFTMetadataResponse,
-  ProtoNFT,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
@@ -26,36 +18,56 @@ import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator
 const MAX_NFTS_FIRST_RENDER = 8;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 8;
 
-const NftRow = memo(({ account, nft }: { account: Account | TokenAccount; nft: ProtoNFT }) => {
+const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
   const { t } = useTranslation();
   const navigation =
     useNavigation<StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendNft>>();
   const { colors } = useTheme();
-  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId) as {
-    status: NFTResource["status"];
-    metadata?: NFTMetadataResponse["result"] & NFTCollectionMetadataResponse["result"];
-  };
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
 
   const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
 
   const goToRecipientSelection = useCallback(() => {
     const bridge = getAccountBridge(account);
 
-    let transaction = bridge.createTransaction(account);
-    transaction = bridge.updateTransaction(transaction, {
-      tokenIds: [nft?.tokenId],
-      // Quantity is set to null first to allow the user to change it on the amount page
-      quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
-      collection: nft?.contract,
-      mode: `${nft?.standard?.toLowerCase()}.transfer`,
-    });
+    const defaultTransaction = bridge.createTransaction(account);
+    let transaction;
+    if (account.currency.family === "evm") {
+      transaction = bridge.updateTransaction(defaultTransaction, {
+        nft: {
+          contract: nft?.contract,
+          tokenId: nft?.tokenId,
+          // When available, quantity is set to Infinity (considered null) first for
+          // the next UI. It allows the user to not have a default value during
+          // the first screen, like 0 or 1, which could trigger an error
+          quantities: nftCapabilities.hasQuantity ? new BigNumber(Infinity) : new BigNumber(1),
+          mode: `${nft?.standard?.toLowerCase()}`,
+        },
+      });
+    } else if (account.currency.family === "ethereum") {
+      transaction = bridge.updateTransaction(defaultTransaction, {
+        tokenIds: [nft?.tokenId],
+        // When available, quantity is set to null first for the next UI.
+        // It allows the user to not have a default value during the
+        // first screen, like 0 or 1, which could trigger an error
+        quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
+        collection: nft?.contract,
+        mode: `${nft?.standard?.toLowerCase()}.transfer`,
+      });
+    }
 
     navigation.navigate(ScreenName.SendSelectRecipient, {
       accountId: account.id,
-      parentId: (account as TokenAccount).parentId,
       transaction,
     });
-  }, [account, nft, nftCapabilities.hasQuantity, navigation]);
+  }, [
+    account,
+    navigation,
+    nft?.contract,
+    nft?.tokenId,
+    nft?.standard,
+    nftCapabilities.hasQuantity,
+  ]);
 
   return (
     <TouchableOpacity style={styles.nftRow} onPress={goToRecipientSelection}>
@@ -81,7 +93,7 @@ const NftRow = memo(({ account, nft }: { account: Account | TokenAccount; nft: P
           {t("common.patterns.id", { value: nft?.tokenId })}
         </LText>
       </View>
-      {nft?.standard === "ERC1155" ? (
+      {nftCapabilities.hasQuantity ? (
         <View style={styles.amount}>
           <LText numberOfLines={1} style={{ color: colors.grey }}>
             {t("common.patterns.times", { value: nft?.amount?.toFixed() })}
