@@ -575,7 +575,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 #### desktop_version
 
-It should respect the semantic versioning specification (https://semver.org/)
+It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
@@ -599,7 +599,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 #### mobile_version
 
-It should respect the semantic versioning specification (https://semver.org/)
+It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
@@ -1190,9 +1190,12 @@ Unique identifier of a post onboarding action.
 Navigation params when the user presses the button for this action
 
 *   In LLM, this will be used like this:
-    `navigation.navigate(...navigationParams)`
+
+`navigation.navigate(...navigationParams)`
+
 *   In LLD, this will be used like this:
-    `history.push(...navigationParams)`
+
+`history.push(...navigationParams)`
 
 Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
 
