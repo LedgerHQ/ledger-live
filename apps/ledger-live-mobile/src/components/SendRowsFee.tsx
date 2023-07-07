@@ -42,7 +42,10 @@ export default ({
   if (perFamily.hasOwnProperty(mainAccount.currency.family)) {
     const C = perFamily[mainAccount.currency.family as keyof typeof perFamily];
 
-    // FIXME
+    /**
+     * Evm familly type does not have networkInfo property but we still want to
+     * display the fee selection logic
+     */
     if (mainAccount.currency.family === "evm") {
       return (
         <C
