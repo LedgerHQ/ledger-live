@@ -94,7 +94,6 @@ const EarlySecurityChecks = ({
 
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
-    // TODO: set status to cancelled ? and update icon for cancelled
   }, []);
 
   const startFirmwareUpdate = useCallback(() => {
