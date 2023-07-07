@@ -26,7 +26,6 @@ import { addKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncOverlay from "./DesyncOverlay";
-import SoftwareChecksStep from "./SoftwareChecksStep";
 import {
   completeOnboarding,
   setHasOrderedNano,
@@ -106,7 +105,6 @@ enum CompanionStepKey {
   Paired = 0,
   Pin,
   Seed,
-  SoftwareCheck,
   Apps,
   Ready,
   Exit,
@@ -175,10 +173,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     },
     [deviceInitialApps?.enabled],
   );
-
-  const handleSoftwareCheckComplete = useCallback(() => {
-    setCompanionStepKey(getNextStepKey(CompanionStepKey.SoftwareCheck));
-  }, [getNextStepKey]);
 
   const handleInstallAppsComplete = useCallback(() => {
     setCompanionStepKey(getNextStepKey(CompanionStepKey.Apps));
@@ -345,7 +339,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   }, [companionStepKey, productName]);
 
   useEffect(() => {
-    // When the device is seeded, there are 2 cases before triggering the software check step:
+    // When the device is seeded, there are 2 cases before triggering the applications install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
     if (
@@ -354,7 +348,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         deviceOnboardingState?.currentOnboardingStep,
       )
     ) {
-      setCompanionStepKey(CompanionStepKey.SoftwareCheck);
+      setCompanionStepKey(CompanionStepKey.Apps);
       return;
     }
 
@@ -433,7 +427,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const preventNavigation = useRef(false);
 
   useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.SoftwareCheck) {
+    // Stops the polling once the installation apps step is reached
+    if (companionStepKey >= CompanionStepKey.Apps) {
       setIsPollingOn(false);
     }
 
@@ -577,20 +572,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             </Flex>
           ),
         },
-        {
-          key: CompanionStepKey.SoftwareCheck,
-          title: t("syncOnboarding.softwareChecksSteps.title"),
-          doneTitle: t("syncOnboarding.softwareChecksSteps.doneTitle", {
-            productName,
-          }),
-          renderBody: (isDisplayed?: boolean) => (
-            <SoftwareChecksStep
-              device={device}
-              isDisplayed={isDisplayed}
-              onComplete={handleSoftwareCheckComplete}
-            />
-          ),
-        },
         ...(deviceInitialApps?.enabled
           ? [
               {
@@ -627,7 +608,6 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       seedPathStatus,
       deviceInitialApps?.enabled,
       device,
-      handleSoftwareCheckComplete,
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
