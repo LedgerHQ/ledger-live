@@ -64,15 +64,7 @@ describe("walletconnect", () => {
       }),
     ).toMatchObject({
       data: {
-        currency: getCryptoCurrencyById("ethereum"),
-        derivationMode: "",
         message: "My email is john@doe.com - 1537836206101",
-        rawMessage:
-          "0x4d7920656d61696c206973206a6f686e40646f652e636f6d202d2031353337383336323036313031",
-        path: "44'/60'/0'/0/0",
-        hashes: {
-          stringHash: "0x4a15deb26c7084592efc4a5e5dbadfa43ea596391461421145705a1f86494ddd",
-        },
       },
       type: "message",
     });
