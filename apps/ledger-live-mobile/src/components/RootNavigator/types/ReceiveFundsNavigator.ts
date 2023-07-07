@@ -14,6 +14,7 @@ export type ReceiveFundsStackParamList = {
     | {
         filterCurrencyIds?: string[];
         currency?: string;
+        networks?: string[];
       }
     | undefined;
   [ScreenName.ReceiveSelectAccount]: {

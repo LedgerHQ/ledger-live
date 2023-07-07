@@ -35,7 +35,7 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
       event="HeaderRightClose"
       onPress={() => (onPress ? onPress() : navigation.popToTop())}
     >
-      <Flex p={6}>
+      <Flex pr={6}>
         <Icons.CloseMedium size={24} color={color || "neutral.c100"} />
       </Flex>
     </Touchable>

@@ -16,7 +16,7 @@ const HelpButton = () => {
   }, [depositNetworkBannerMobile?.params.url]);
 
   return depositNetworkBannerMobile?.enabled ? (
-    <Box mr={6}>
+    <Box mr={4}>
       <TouchableOpacity onPress={onClickButton}>
         <HelpMedium size={24} color={"neutral.c100"} />
       </TouchableOpacity>
