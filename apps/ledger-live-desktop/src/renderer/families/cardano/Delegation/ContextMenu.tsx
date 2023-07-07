@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { AccountLike, Account } from "@ledgerhq/types-live";
@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import UserEdit from "~/renderer/icons/UserEdit";
 import StopCircle from "~/renderer/icons/StopCircle";
-import IconDots from "~/renderer/icons/Dots";
+import { Icons } from "@ledgerhq/react-ui";
 
 const Container = styled.div`
   display: flex;
@@ -32,6 +32,7 @@ type Props = {
 
 const ContextMenu = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const items = [
     {
       key: "redelegate",
@@ -112,7 +113,7 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
           }}
         >
           <Box horizontal flow={1} alignItems="center" justifyContent="center">
-            <IconDots size={14} />
+            <Icons.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
           </Box>
         </Container>
       )}
