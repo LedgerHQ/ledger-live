@@ -1,16 +1,14 @@
 import BigNumber from "bignumber.js";
 import {
+  ProtoNFT,
+  ProtoNFTRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
-export type EvmTransactionMode = "send";
-
-export type GasOptions = {
-  [key in "slow" | "medium" | "fast"]: FeeData;
-};
+export type EvmTransactionMode = "send" | "erc721" | "erc1155";
 
 export type EvmTransactionBase = TransactionCommon & {
   family: "evm";
@@ -30,16 +28,41 @@ export type EvmTransactionBase = TransactionCommon & {
   additionalFees?: BigNumber;
   // available gas options for the transaction, used to display sensible default fees choices to the user
   gasOptions?: GasOptions;
+  // additional informations related to an NFT in order to craft the real evm transaction at `signOperation` level
+  nft?: EvmTransactionNftParam;
 };
 
-export type EvmTransactionLegacy = EvmTransactionBase & {
+// Send mode transactions are used for coin transactions & token transactions (erc20)
+type EvmSendTransaction = EvmTransactionBase & {
+  mode: "send";
+  nft?: never;
+};
+
+// NFT transactions are used for ERC721 & ERC1155 transactions
+export type EvmNftTransaction = EvmTransactionBase & {
+  mode: "erc721" | "erc1155";
+  nft: EvmTransactionNftParam;
+};
+
+// Once the kind of transaction defined, we still need to "type" it
+// regarding EVM standards (@see https://eips.ethereum.org/EIPS/eip-2718)
+type EvmTransactionUntyped = EvmSendTransaction | EvmNftTransaction;
+
+// Legacy transaction types are type 0 & 1
+// (type 1 is not creating breaking changes, but we're not supporting the feature implied by this new type as of today)
+// (@see https://eips.ethereum.org/EIPS/eip-2930)
+export type EvmTransactionLegacy = EvmTransactionUntyped & {
   type?: 0 | 1;
   gasPrice: BigNumber;
   maxPriorityFeePerGas?: never;
   maxFeePerGas?: never;
 };
 
-export type EvmTransactionEIP1559 = EvmTransactionBase & {
+// Transactions type 2 are transaction supporting the new fee system
+// applied with the EIP-1559, introducing new keys for fees and
+// removing gasPrice.
+// (@see https://eips.ethereum.org/EIPS/eip-1559)
+export type EvmTransactionEIP1559 = EvmTransactionUntyped & {
   type: 2;
   gasPrice?: never;
   maxPriorityFeePerGas: BigNumber;
@@ -48,7 +71,7 @@ export type EvmTransactionEIP1559 = EvmTransactionBase & {
 
 export type Transaction = EvmTransactionLegacy | EvmTransactionEIP1559;
 
-export type EvmTransactionBaseRaw = TransactionCommonRaw & {
+type EvmTransactionBaseRaw = TransactionCommonRaw & {
   family: "evm";
   mode: EvmTransactionMode;
   nonce: number;
@@ -57,16 +80,29 @@ export type EvmTransactionBaseRaw = TransactionCommonRaw & {
   data?: string | null;
   type?: number;
   additionalFees?: string;
+  nft?: EvmTransactionNftParamRaw;
 };
 
-export type EvmTransactionLegacyRaw = EvmTransactionBaseRaw & {
+type EvmSendTransactionRaw = EvmTransactionBaseRaw & {
+  mode: "send";
+  nft?: never;
+};
+
+export type EvmNftTransactionRaw = EvmTransactionBaseRaw & {
+  mode: "erc721" | "erc1155";
+  nft: EvmTransactionNftParamRaw;
+};
+
+type EvmTransactionUntypedRaw = EvmSendTransactionRaw | EvmNftTransactionRaw;
+
+export type EvmTransactionLegacyRaw = EvmTransactionUntypedRaw & {
   type?: 0 | 1;
   gasPrice: string;
   maxPriorityFeePerGas?: never;
   maxFeePerGas?: never;
 };
 
-export type EvmTransactionEIP1559Raw = EvmTransactionBaseRaw & {
+export type EvmTransactionEIP1559Raw = EvmTransactionUntypedRaw & {
   type: 2;
   gasPrice?: never;
   maxPriorityFeePerGas: string;
@@ -120,6 +156,50 @@ export type EtherscanERC20Event = {
   confirmations: string;
 };
 
+export type EtherscanERC721Event = {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  blockHash: string;
+  from: string;
+  contractAddress: string;
+  to: string;
+  tokenID: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenDecimal: string;
+  transactionIndex: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  cumulativeGasUsed: string;
+  input: string;
+  confirmations: string;
+};
+
+export type EtherscanERC1155Event = {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  blockHash: string;
+  transactionIndex: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  cumulativeGasUsed: string;
+  input: string;
+  contractAddress: string;
+  from: string;
+  to: string;
+  tokenID: string;
+  tokenValue: string;
+  tokenName: string;
+  tokenSymbol: string;
+  confirmations: string;
+};
+
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
@@ -135,4 +215,22 @@ export type FeeData = {
   maxFeePerGas: null | BigNumber;
   maxPriorityFeePerGas: null | BigNumber;
   gasPrice: null | BigNumber;
+};
+
+export type GasOptions = {
+  [key in "slow" | "medium" | "fast"]: FeeData;
+};
+
+export type EvmTransactionNftParam = {
+  tokenId: ProtoNFT["tokenId"];
+  contract: ProtoNFT["contract"];
+  quantity: ProtoNFT["amount"];
+  collectionName: string;
+};
+
+type EvmTransactionNftParamRaw = {
+  tokenId: ProtoNFTRaw["tokenId"];
+  contract: ProtoNFTRaw["contract"];
+  quantity: ProtoNFTRaw["amount"];
+  collectionName: string;
 };

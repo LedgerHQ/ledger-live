@@ -20,6 +20,7 @@ type Props = {
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function TezosSendRowsFee({ account, ...props }: Props) {
   return <TezosFeeRow {...props} account={account} />;
 }

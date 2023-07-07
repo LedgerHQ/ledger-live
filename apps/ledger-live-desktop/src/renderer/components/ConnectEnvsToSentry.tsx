@@ -36,10 +36,11 @@ export const ConnectEnvsToSentry = () => {
       });
       // if there are features on, we will add them in tags
       const features: { [key in FeatureId]?: boolean } = {};
-      Object.keys(defaultFeatures).forEach(key => {
-        const value = featureFlags.getFeature(key as keyof typeof defaultFeatures);
-        if (key && value && value.enabled !== defaultFeatures[key as FeatureId]!.enabled) {
-          features[key as FeatureId] = value.enabled;
+      Object.keys(defaultFeatures).forEach(k => {
+        const key = k as keyof typeof defaultFeatures;
+        const value = featureFlags.getFeature(key);
+        if (key && value && value.enabled !== defaultFeatures[key]!.enabled) {
+          features[key] = value.enabled;
         }
       });
 

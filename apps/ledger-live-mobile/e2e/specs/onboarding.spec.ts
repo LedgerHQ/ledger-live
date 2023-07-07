@@ -1,5 +1,4 @@
 import { expect } from "detox";
-import { waitForElementByText } from "../helpers";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/wallet/portfolioPage";
 
@@ -16,22 +15,12 @@ describe("Onboarding", () => {
     await onboardingSteps.startOnboarding();
   });
 
-  it("selects already owned nano", async () => {
-    await onboardingSteps.DoIOwnDevice(true);
+  it("selects to access wallet", async () => {
+    await onboardingSteps.chooseToAccessYourWallet();
   });
 
-  it("goes to setup my ledger nano", async () => {
-    await onboardingSteps.chooseToSetupLedger();
-    await waitForElementByText("Ledger\u00A0Nano\u00A0X");
-  });
-
-  it("chooses Nano X", async () => {
-    await onboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
-  });
-
-  it("connects to Nano X", async () => {
-    await onboardingSteps.chooseToConnectYourNano();
-    await onboardingSteps.verifyContentsOfBoxAreChecked();
+  it("choosesto connect Ledger", async () => {
+    await onboardingSteps.chooseToConnectYourLedger();
   });
 
   it("choses to Pair Nano", async () => {
@@ -42,20 +31,17 @@ describe("Onboarding", () => {
     await onboardingSteps.selectPairWithBluetooth();
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("adds device via Bluetooth", async () => {
+  it("adds device via Bluetooth", async () => {
     await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("opens Ledger Live", async () => {
+  it("opens Ledger Live", async () => {
     await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
   });
 
-  //FIXME Fix device action mocks B2CQA-1834
-  it.skip("should see an empty portfolio page", async () => {
+  it("should see an empty portfolio page", async () => {
     await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
   });
 });

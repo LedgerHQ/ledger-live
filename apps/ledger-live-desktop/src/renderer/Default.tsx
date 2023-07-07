@@ -14,6 +14,7 @@ import Card from "~/renderer/screens/card";
 import Manager from "~/renderer/screens/manager";
 import Exchange from "~/renderer/screens/exchange";
 import Earn from "./screens/earn";
+import SwapWeb from "./screens/swapWeb";
 import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
@@ -51,6 +52,7 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
+import RecoverRestore from "~/renderer/components/RecoverRestore";
 import Onboarding from "~/renderer/components/Onboarding";
 import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -194,6 +196,7 @@ export default function Default() {
                   </>
                 )}
               />
+              <Route path="/recover-restore" component={RecoverRestore} />
 
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
@@ -251,6 +254,7 @@ export default function Default() {
                               path="/account/:id/nft-collection"
                               component={NFTGallery}
                             />
+                            <Route path="/swap-web" component={SwapWeb} />
                             <Route
                               path="/account/:id/nft-collection/:collectionAddress?"
                               component={NFTCollection}

@@ -52,7 +52,7 @@ jobs:
           distribution: "zulu" # See 'Supported distributions' for available options
           java-version: "11"
       - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.6
+        uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - uses: ./tools/actions/get-package-infos
@@ -83,7 +83,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
       - uses: ./tools/actions/get-package-infos
         id: post-version
         with:

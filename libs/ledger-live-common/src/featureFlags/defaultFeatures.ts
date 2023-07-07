@@ -1,6 +1,6 @@
 import type { DefaultFeatures } from "@ledgerhq/types-live";
 
-export const defaultFeatures: DefaultFeatures = {
+export const defaultFeatures = {
   learn: {
     enabled: false,
   },
@@ -97,6 +97,9 @@ export const defaultFeatures: DefaultFeatures = {
     params: {
       supportedCurrencyIds: ["ethereum"],
     },
+  },
+  editEthTx: {
+    enabled: false,
   },
   ratingsPrompt: {
     enabled: false,
@@ -217,9 +220,6 @@ export const defaultFeatures: DefaultFeatures = {
   objkt: {
     enabled: false,
   },
-  editEthTx: {
-    enabled: false,
-  },
   protectServicesMobile: {
     enabled: false,
     params: {
@@ -239,7 +239,7 @@ export const defaultFeatures: DefaultFeatures = {
           alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
         },
       },
-      login: {
+      account: {
         loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       protectId: "protect-simu",
@@ -254,12 +254,11 @@ export const defaultFeatures: DefaultFeatures = {
       version: "1",
     },
   },
-  protectServicesDiscoverDesktop: {
-    enabled: false,
-  },
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openRecoverFromSidebar: true,
+      discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingRestore: {
         restoreInfoDrawer: {
           enabled: true,
@@ -273,7 +272,7 @@ export const defaultFeatures: DefaultFeatures = {
         upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
         alreadySubscribedURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
-      login: {
+      account: {
         loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       protectId: "protect-simu",
@@ -292,7 +291,14 @@ export const defaultFeatures: DefaultFeatures = {
       path: "/discover/refer-a-friend",
     },
   },
+  transactionsAlerts: {
+    enabled: false,
+    params: {
+      chainwatchBaseUrl: "https://chainwatch.aws.stg.ldg-tech.com/v0",
+      networks: [{ ledgerLiveId: "ethereum", chainwatchId: "eth", nbConfirmations: 1 }],
+    },
+  },
   listAppsV2: {
     enabled: false,
   },
-};
+} as const satisfies DefaultFeatures;

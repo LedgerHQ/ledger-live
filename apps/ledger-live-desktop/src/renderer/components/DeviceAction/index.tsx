@@ -16,7 +16,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   setPreferredDeviceModel,
   setLastSeenDeviceInfo,
-  addNewDevice,
+  addNewDeviceModel,
 } from "~/renderer/actions/settings";
 import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -245,7 +245,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         apps: [],
       };
       dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware }));
-      dispatch(addNewDevice({ seenDevice: lastSeenDevice }));
+      dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 

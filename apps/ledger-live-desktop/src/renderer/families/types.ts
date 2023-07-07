@@ -7,6 +7,7 @@ import { Unit, CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-c
 import {
   Account,
   FeeStrategy,
+  NFTStandard,
   Operation,
   OperationType,
   SubAccount,
@@ -54,6 +55,13 @@ export type OperationDetailsExtraProps<A> = {
   type: OperationType;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra: Record<string, any>; // TODO check if we can use unknown instead of any
+};
+
+export type SummaryNetworkFeesRowProps = {
+  feeTooHigh: Error;
+  feesUnit: Unit;
+  estimatedFees: BigNumber;
+  feesCurrency: TokenCurrency | CryptoCurrency;
 };
 
 /**
@@ -176,6 +184,12 @@ export type LLDCoinFamily<
     parentAccount: A | null | undefined;
   }>;
 
+  AccountFooter?: React.ComponentType<{
+    account: A | SubAccount;
+    parentAccount?: A | undefined | null;
+    status: TS;
+  }>;
+
   /**
    * Replace amount field on send modal
    */
@@ -266,6 +280,11 @@ export type LLDCoinFamily<
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;
 
   /**
+   * Replace Networkfees row on Summary Step
+   */
+  StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps>;
+
+  /**
    * It was for Hedera specifc, when we do not find any account it show a specific component
    */
   NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>;
@@ -276,6 +295,15 @@ export type LLDCoinFamily<
   StakeBanner?: React.ComponentType<{
     account: A;
   }>;
+
+  nft?: {
+    injectNftIntoTransaction: (
+      transaction: T,
+      nftProperties: Partial<NftProperties>,
+      standard?: NFTStandard,
+    ) => T;
+    getNftTransactionProperties: (transaction: T) => NftProperties;
+  };
 };
 
 export type FieldComponentProps<
@@ -306,4 +334,10 @@ export type ManageAction = {
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;
+};
+
+export type NftProperties = {
+  tokenId: string | null;
+  contract: string | null;
+  quantity: BigNumber | null;
 };

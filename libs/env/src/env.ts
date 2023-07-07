@@ -501,8 +501,13 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
   },
+  MOCK_NO_BYPASS: {
+    def: false,
+    parser: boolParser,
+    desc: "if defined, avoids bypass of the currentDevice in the store.",
+  },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
+    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -560,6 +565,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: 0,
     parser: intParser,
     desc: "offset to be added to the speculos pid and avoid collision with other instances",
+  },
+  SPECULOS_USE_WEBSOCKET: {
+    def: false,
+    parser: boolParser,
+    desc: "Use speculos websocket interface instead of Rest API",
   },
   SWAP_API_BASE: {
     def: "https://swap.ledger.com/v4",
@@ -755,6 +765,16 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
   },
 };
 

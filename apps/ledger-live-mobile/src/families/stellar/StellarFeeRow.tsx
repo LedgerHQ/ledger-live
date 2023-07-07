@@ -33,6 +33,7 @@ type Props = {
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function StellarFeeRow({
   account,
   parentAccount,

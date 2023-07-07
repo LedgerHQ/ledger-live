@@ -48,7 +48,7 @@ type PollingImplementationParams<Request, EmittedEvents> = {
   config?: PollingImplementationConfig;
 };
 
-export const defaultConfig: PollingImplementationConfig = {
+const defaultConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,
   initialWaitTime: 5000,
   reconnectWaitTime: 5000,
@@ -162,13 +162,6 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
               // All other events pass through.
               return EMPTY;
             }),
-            // NB An error is a dead-end as far as the task is concerned, and by delaying
-            // the emission of the event we prevent instant failures from showing flashing
-            // UI that looks like a glitch. For instance, if the device is locked and we retry
-            // this would allow a better UX, 800ms before a failure is totally acceptable.
-            delayWhen((e: any) =>
-              e.type === "error" || e.type === "lockedDevice" ? interval(800) : interval(0),
-            ),
           )
           .subscribe({
             next: (event: any) => {

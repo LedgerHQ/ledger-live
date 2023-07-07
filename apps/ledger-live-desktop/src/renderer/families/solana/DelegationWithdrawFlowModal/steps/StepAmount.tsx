@@ -14,7 +14,13 @@ export default function StepAmount({ account, transaction, status, error }: Step
   const { t } = useTranslation();
   return (
     <Box flow={1}>
-      <TrackPage category="Solana Delegation Withdraw" name="Step Amount" />
+      <TrackPage
+        category="Solana Delegation Withdraw"
+        name="Step Amount"
+        flow="stake"
+        action="withdraw"
+        currency="sol"
+      />
       {error && <ErrorBanner error={error} />}
       <Label>{t("send.steps.details.amount")}</Label>
       {transaction ? (

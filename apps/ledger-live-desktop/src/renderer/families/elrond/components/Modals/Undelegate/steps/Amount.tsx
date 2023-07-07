@@ -60,7 +60,13 @@ const StepAmount = (props: StepProps) => {
   if (!account) return null;
   return (
     <Box flow={1}>
-      <TrackPage category="Undelegation Flow" name="Step 1" />
+      <TrackPage
+        category="Undelegation Flow"
+        name="Step 1"
+        flow="stake"
+        action="undelegate"
+        currency="egld"
+      />
       {error && <ErrorBanner error={error} />}
 
       <Box horizontal={true} justifyContent="center" mb={2}>

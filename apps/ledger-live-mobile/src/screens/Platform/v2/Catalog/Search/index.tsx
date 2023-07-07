@@ -13,6 +13,7 @@ import { ManifestList } from "../ManifestList";
 import { SearchBar } from "./SearchBar";
 import { Disclaimer } from "../../hooks";
 import { Search as SearchType } from "../../types";
+import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 
 export * from "./SearchBar";
 
@@ -27,12 +28,12 @@ interface Props {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   listTitle?: React.ReactNode;
+  categories: Pick<Categories, "manifests">;
   disclaimer: Pick<Disclaimer, "onSelect">;
   search: SearchType;
 }
 
-export function Search({ title, disclaimer, search }: Props) {
-  const { input, result, isSearching } = search;
+export function Search({ title, categories, disclaimer, search }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -49,25 +50,23 @@ export function Search({ title, disclaimer, search }: Props) {
         {t("browseWeb3.catalog.warnings.notFound")}
       </Text>
       <Text textAlign="center" variant="body" color="neutral.c70">
-        {input.match(HTTP_REGEX) ? (
+        {search.input.match(HTTP_REGEX) && (
           <Trans
             i18nKey="browseWeb3.catalog.warnings.retrySearchKeywordAndUrl"
             values={{
-              search: input,
+              search: search.input,
             }}
             components={{
               Link: (
                 <Text
                   style={{ textDecorationLine: "underline" }}
-                  onPress={() => Linking.openURL("http://" + input)}
+                  onPress={() => Linking.openURL("http://" + search.input)}
                 >
                   {""}
                 </Text>
               ),
             }}
           />
-        ) : (
-          t("browseWeb3.category.warnings.retrySearchKeyword")
         )}
       </Text>
     </Flex>
@@ -94,17 +93,20 @@ export function Search({ title, disclaimer, search }: Props) {
         }
         searchContent={<SearchBar search={search} />}
         bodyContent={
-          isSearching ? (
+          search.isSearching ? (
             <Flex marginTop={100}>
               <InfiniteLoader size={40} />
             </Flex>
           ) : (
             <AnimatedView animation="fadeInUp" delay={50} duration={300}>
               <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT + 50}>
-                {result.length ? (
-                  <ManifestList manifests={result} onSelect={disclaimer.onSelect} />
-                ) : (
+                {!!search.input.length && !search.result.length ? (
                   noResultFoundComponent
+                ) : (
+                  <ManifestList
+                    manifests={search.input ? search.result : categories.manifests.complete}
+                    onSelect={disclaimer.onSelect}
+                  />
                 )}
               </Flex>
             </AnimatedView>

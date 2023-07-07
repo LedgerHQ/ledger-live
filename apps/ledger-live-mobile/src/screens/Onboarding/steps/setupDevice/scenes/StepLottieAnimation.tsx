@@ -166,7 +166,7 @@ export default function StepLottieAnimation({
   style,
 }: {
   stepId: string;
-  deviceModelId: DeviceModelId;
+  deviceModelId?: DeviceModelId;
   theme: "dark" | "light";
   style?: StyleProp<ViewStyle>;
 }) {

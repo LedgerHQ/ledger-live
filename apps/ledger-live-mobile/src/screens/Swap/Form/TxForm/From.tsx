@@ -91,6 +91,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               title={name}
               subTitle={balance}
               onPress={onPress}
+              testID="swap-source-selector"
             />
           </Flex>
 
@@ -103,6 +104,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               onChange={swapTx.setFromAmount}
               onFocus={onFocus}
               error={swapError}
+              testID="swap-source-amount-textbox"
             />
           </Flex>
         </Flex>
