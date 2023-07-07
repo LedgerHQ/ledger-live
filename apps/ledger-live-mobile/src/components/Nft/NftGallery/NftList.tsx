@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from "react";
-import { FlatListProps } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { FlatListProps, View } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
@@ -13,6 +13,8 @@ import globalSyncRefreshControl from "../../globalSyncRefreshControl";
 import { TrackScreen } from "../../../analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../../TabBar/BackgroundGradient";
+import NftFilterDrawer from "./NftFilterDrawer";
+import EmptyState from "./EmptyState";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -51,6 +53,11 @@ export function NftList({ data }: Props) {
     handleSelectableNftPressed,
     nftsToHide,
     multiSelectModeEnabled,
+    closeFilterDrawer,
+    openFilterDrawer,
+    chainFilters,
+    toggleChainFilter,
+    isFilterDrawerVisible,
   } = useNftList({ nftList: data });
 
   const gradient = {
@@ -113,18 +120,33 @@ export function NftList({ data }: Props) {
                   width="100%"
                   flexDirection="row"
                   alignItems="center"
-                  justifyContent="flex-start"
+                  justifyContent="space-between"
                 >
+                  {data.length > 0 ? (
+                    <StyledButton
+                      testID="wallet-nft-gallery-select-and-hide"
+                      onPress={onPressMultiselect}
+                      type="default"
+                      iconName="Tasks"
+                      iconPosition="left"
+                      size="small"
+                    >
+                      <Text variant="body" fontWeight="semiBold">
+                        {t("wallet.nftGallery.filters.selectAndHide")}
+                      </Text>
+                    </StyledButton>
+                  ) : (
+                    <View />
+                  )}
                   <StyledButton
-                    testID="wallet-nft-gallery-select-and-hide"
-                    onPress={onPressMultiselect}
+                    onPress={openFilterDrawer}
                     type="default"
-                    iconName="Tasks"
+                    iconName="Filters"
                     iconPosition="left"
                     size="small"
                   >
                     <Text variant="body" fontWeight="semiBold">
-                      {t("wallet.nftGallery.filters.selectAndHide")}
+                      {t("wallet.nftGallery.filters.filter")}
                     </Text>
                   </StyledButton>
                 </Flex>
@@ -135,7 +157,8 @@ export function NftList({ data }: Props) {
         ListHeaderComponentStyle={{
           marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
-        data={dataWithAdd}
+        ListEmptyComponent={<EmptyState onPress={() => openFilterDrawer()} />}
+        data={data.length > 0 ? dataWithAdd : data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
@@ -177,6 +200,12 @@ export function NftList({ data }: Props) {
           </Animated.View>
         )}
       </Animated.View>
+      <NftFilterDrawer
+        filters={chainFilters}
+        isOpen={isFilterDrawerVisible}
+        toggleFilter={toggleChainFilter}
+        onClose={closeFilterDrawer}
+      />
     </>
   );
 }
