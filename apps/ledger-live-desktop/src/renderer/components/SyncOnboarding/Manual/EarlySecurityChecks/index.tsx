@@ -123,7 +123,10 @@ const EarlySecurityChecks = ({
       finalStepSuccessButtonLabel: t(
         "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessButtonLabel",
       ),
-      finalStepSuccessButtonOnClick: restartChecksAfterUpdate,
+      finalStepSuccessButtonOnClick: () => {
+        closeFwUpdateDrawer();
+        restartChecksAfterUpdate();
+      },
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
