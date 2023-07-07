@@ -4,7 +4,8 @@ import type { CosmosAccountRaw, Transaction } from "../types";
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreOperationFields: ["gas"],
   FIXME_ignoreAccountFields: [
-    "cosmosResources.delegations", // They are always movings because of pending Rewards
+    "cosmosResources.delegations", // They are always moving because of pending Rewards
+    "cosmosResources.pendingRewardsBalance", // They are always moving
   ],
   scanAccounts: [
     {
