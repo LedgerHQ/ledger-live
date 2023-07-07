@@ -23,7 +23,7 @@ import {
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetFirstConnectionHasDevicePayload,
+  SettingsSetOnboardingHasDevicePayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
@@ -62,6 +62,8 @@ import {
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
+  SettingsSetOnboardingTypePayload,
+  SettingsSetKnownDeviceModelIdsPayload,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -179,6 +181,14 @@ export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayl
 export const setLastSeenDeviceLanguageId = createAction<SettingsLastSeenDeviceLanguagePayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
 );
+/**
+ * Do not use this for purposes other than debugging. The reducers for other
+ * actions like setLastSeenDevice, setLastSeenDeviceInfo,
+ * setLastSeenDeviceLanguageId already update that part of the state.
+ * */
+export const unsafe_setKnownDeviceModelIds = createAction<SettingsSetKnownDeviceModelIdsPayload>(
+  SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS,
+);
 const setHasSeenStaxEnabledNftsPopupAction =
   createAction<SettingsSetHasSeenStaxEnabledNftsPopupPayload>(
     SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP,
@@ -218,8 +228,11 @@ export const setMarketFilterByStarredAccounts =
 export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsPayload>(
   SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
 );
-export const setFirstConnectionHasDevice = createAction<SettingsSetFirstConnectionHasDevicePayload>(
-  SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE,
+export const setOnboardingHasDevice = createAction<SettingsSetOnboardingHasDevicePayload>(
+  SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
+);
+export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
+  SettingsActionTypes.SET_ONBOARDING_TYPE,
 );
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,

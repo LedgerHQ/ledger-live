@@ -18,6 +18,7 @@ import { Observable } from "rxjs";
 import { getMainAccount } from "../../../account";
 import getLedgerIndex, { getAccountInfo, getServerInfo, parseAPIValue, submit } from "../api";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import signTransaction from "../../../hw/signTransaction";
 import { withDevice } from "../../../hw/deviceAccess";
@@ -204,8 +205,6 @@ const createTransaction = (): Transaction => ({
   feeCustomUnit: null,
 });
 
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => ({ ...t, ...patch });
-
 const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   let networkInfo: NetworkInfo | null | undefined = t.networkInfo;
 
@@ -325,7 +324,7 @@ const estimateMaxSpendable = async ({
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   getTransactionStatus,
   estimateMaxSpendable,

@@ -22,6 +22,7 @@ export type ButtonProps = TouchableOpacityProps &
     children?: React.ReactNode;
     pending?: boolean;
     displayContentWhenPending?: boolean;
+    testID?: string;
   };
 
 const IconContainer = styled.View<{
@@ -145,6 +146,7 @@ const Button = (props: ButtonProps): React.ReactElement => {
     disabled = false,
     pending = false,
     displayContentWhenPending = false,
+    testID,
   } = props;
   const theme = useTheme();
 
@@ -155,6 +157,7 @@ const Button = (props: ButtonProps): React.ReactElement => {
       iconButton={(!!Icon || !!iconName) && !children}
       activeOpacity={1}
       disabled={disabled || pending}
+      testID={testID}
     >
       <View>
         <ButtonContainer {...props} type={type} hide={pending && !displayContentWhenPending} />

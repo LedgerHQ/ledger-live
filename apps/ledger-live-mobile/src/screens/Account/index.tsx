@@ -153,13 +153,13 @@ const AccountScreenInner = ({
     ...listHeaderComponents,
     ...(!isEmpty
       ? [
-          <SectionContainer px={6} isLast>
+          <SectionContainer key={"section-container-accounts"} px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
             <OperationsHistorySection accounts={[account]} />
           </SectionContainer>,
         ]
       : [
-          <Flex px={6}>
+          <Flex key={"section-container-empty"} px={6}>
             <EmptyAccountCard currencyTicker={currency.ticker} />
           </Flex>,
         ]),

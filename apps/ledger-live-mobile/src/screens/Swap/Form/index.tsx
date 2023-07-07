@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import { Button, Flex } from "@ledgerhq/native-ui";
@@ -12,13 +13,16 @@ import {
   usePollKYCStatus,
   useSwapTransaction,
   useSwapProviders,
+  usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
   KYC_STATUS,
+  getCustomDappUrl,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -28,8 +32,11 @@ import {
   isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
+import { Feature } from "@ledgerhq/types-live";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import { swapAcceptedProvidersSelector, swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus, setSwapSelectableCurrencies } from "../../../actions/settings";
@@ -48,14 +55,21 @@ import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
 import { sharedSwapTracking, useTrackSwapError } from "../utils";
+import EmptyState from "./EmptyState";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { ErrorBanner } from "./ErrorBanner";
-import { MaterialTopTabNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import {
+  MaterialTopTabNavigatorProps,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
+
+type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
 export const useProviders = () => {
   const dispatch = useDispatch();
@@ -101,6 +115,10 @@ export function SwapForm({
     },
     [dispatch],
   );
+  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
+    "swapWalletApiPartnerList",
+  );
+  const navigation = useNavigation<Navigation["navigation"]>();
   const onNoRates: OnNoRatesCallback = useCallback(
     ({ toState }) => {
       track("error_message", {
@@ -111,27 +129,29 @@ export function SwapForm({
     },
     [track],
   );
+
+  const onBeforeTransaction = useCallback(() => {
+    setCurrentBanner(ActionRequired.None);
+    setCurrentFlow(ActionRequired.None);
+    setError(undefined);
+  }, []);
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
     onNoRates,
+    onBeforeTransaction,
     excludeFixedRates: true,
     providers,
-    includeDEX: false,
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const pageState = usePageState(swapTransaction, swapError);
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
   const providerKYC = provider ? swapKYC?.[provider] : undefined;
   const kycStatus = providerKYC?.status as ValidKYCStatus | "rejected";
-
-  // On provider change, reset banner and flow
-  useEffect(() => {
-    setCurrentBanner(ActionRequired.None);
-    setCurrentFlow(ActionRequired.None);
-    setError(undefined);
-  }, [provider]);
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
@@ -188,7 +208,6 @@ export function SwapForm({
     },
     [dispatch],
   );
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
 
   // Track errors
   useEffect(
@@ -324,6 +343,8 @@ export function SwapForm({
     swapTransaction.swap.to.account;
 
   const onSubmit = useCallback(() => {
+    if (!exchangeRate) return;
+    const { provider, providerURL, providerType } = exchangeRate;
     track(
       "button_clicked",
       {
@@ -335,8 +356,60 @@ export function SwapForm({
       },
       undefined,
     );
-    setConfirmed(true);
-  }, [swapTransaction, provider, track]);
+    if (providerType === "DEX") {
+      const from = swapTransaction.swap.from;
+      const fromAccountId = from.parentAccount?.id || from.account?.id;
+      const customParams = {
+        provider,
+        providerURL,
+      } as {
+        provider: string;
+        providerURL?: string;
+      };
+
+      const customDappUrl = getCustomDappUrl(customParams);
+
+      const getAccountId = ({
+        accountId,
+        provider,
+      }: {
+        accountId: string | undefined;
+        provider: string;
+      }) => {
+        if (
+          !walletApiPartnerList?.enabled ||
+          !walletApiPartnerList?.params?.list.includes(provider)
+        ) {
+          return accountId;
+        }
+        const account = accounts.find(a => a.id === accountId);
+        if (!account) return accountId;
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
+        return walletApiId || accountId;
+      };
+      const accountId = getAccountId({ accountId: fromAccountId, provider });
+      navigation.navigate(ScreenName.PlatformApp, {
+        platform: getProviderName(provider).toLowerCase(),
+        name: getProviderName(provider),
+        accountId,
+        customDappURL: customDappUrl,
+      });
+    } else {
+      setConfirmed(true);
+    }
+  }, [
+    exchangeRate,
+    track,
+    swapTransaction.swap.from,
+    swapTransaction.swap.to.currency?.name,
+    navigation,
+    walletApiPartnerList?.enabled,
+    walletApiPartnerList?.params?.list,
+    accounts,
+  ]);
 
   const onCloseModal = useCallback(() => {
     setConfirmed(false);
@@ -380,15 +453,17 @@ export function SwapForm({
       }
     }
 
-    if (params?.rate) {
-      setExchangeRate(params.rate);
-    }
-
     if (params?.transaction) {
       swapTransaction.setTransaction(params.transaction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
+
+  useEffect(() => {
+    if (params?.rate) {
+      setExchangeRate(params.rate);
+    }
+  }, [params, setExchangeRate, swapTransaction]);
 
   const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
@@ -413,12 +488,14 @@ export function SwapForm({
               swapError={swapError}
               isSendMaxLoading={swapTransaction.swap.isMaxLoading}
             />
-
-            {swapTransaction.swap.rates.status === "loading" ? (
-              <Flex height={200}>
-                <Loading size={20} color="neutral.c70" />
+            {(pageState === "empty" || pageState === "loading") && (
+              <Flex height={200} alignItems={"center"} justifyContent={"center"}>
+                {pageState === "empty" && <EmptyState />}
+                {pageState === "loading" && <Loading size={20} color="neutral.c70" />}
               </Flex>
-            ) : (
+            )}
+
+            {pageState === "loaded" && (
               <>
                 {exchangeRate &&
                   swapTransaction.swap.to.currency &&
@@ -436,7 +513,7 @@ export function SwapForm({
           <Flex paddingY={4}>
             <Max swapTx={swapTransaction} />
 
-            <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
+            <Button type="main" disabled={!isSwapReady} onPress={onSubmit} testID="exchange-button">
               {t("transfer.swap2.form.cta")}
             </Button>
           </Flex>

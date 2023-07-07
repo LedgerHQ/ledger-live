@@ -3,26 +3,24 @@ import {
   usePollKYCStatus,
   useSwapProviders,
   useSwapTransaction,
+  usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
   getProviderName,
   KYC_STATUS,
   KYCStatus,
+  getCustomDappUrl,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
-import {
-  getMainAccount,
-  getParentAccount,
-  isTokenAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import {
   providersSelector,
   rateSelector,
@@ -54,12 +52,9 @@ import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import debounce from "lodash/debounce";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
-import usePageState from "./hooks/usePageState";
-import { getCustomDappUrl } from "./utils";
 import { AccountLike, Feature } from "@ledgerhq/types-live";
 import {
   ValidCheckQuoteErrorCodes,
@@ -122,7 +117,6 @@ const SwapForm = () => {
     },
     [dispatch],
   );
-  const showDexQuotes: Feature<boolean> | null = useFeature("swapShowDexQuotes");
   const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
     "swapWalletApiPartnerList",
   );
@@ -143,7 +137,6 @@ const SwapForm = () => {
     onNoRates,
     ...(locationState as object),
     providers: storedProviders || undefined,
-    includeDEX: showDexQuotes?.enabled || false,
   });
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
@@ -415,11 +408,12 @@ const SwapForm = () => {
       const fromAccountId = from.parentAccount?.id || from.account?.id;
       const customParams = {
         provider,
-        providerURL: providerURL || undefined,
+        providerURL,
+      } as {
+        provider: string;
+        providerURL?: string;
       };
-      const customDappUrl = getCustomDappUrl({
-        ...customParams,
-      });
+      const customDappUrl = getCustomDappUrl(customParams);
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
       const getAccountId = ({
         accountId,
@@ -474,32 +468,8 @@ const SwapForm = () => {
   };
   const sourceAccount = swapTransaction.swap.from.account;
   const sourceCurrency = swapTransaction.swap.from.currency;
-  const sourceParentAccount = swapTransaction.swap.from.parentAccount;
-  const targetAccount = swapTransaction.swap.to.account;
-  const targetParentAccount = swapTransaction.swap.to.parentAccount;
   const targetCurrency = swapTransaction.swap.to.currency;
 
-  // We check if a decentralized swap is available to conditionnaly render an Alert below.
-  // All Ethereum, Binance and Polygon related currencies are considered available
-  const showNoQuoteDexRate = useMemo(() => {
-    // if we are showing DEX quotes, we don't want to show the link banners
-    if (showDexQuotes?.enabled) {
-      return false;
-    }
-    if (sourceAccount && targetAccount) {
-      const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
-      const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
-      const dexFamilyList = ["ethereum", "bsc", "polygon"];
-      if (
-        dexFamilyList.includes(targetMainAccount.currency.id) &&
-        sourceMainAccount.currency.id === targetMainAccount.currency.id &&
-        sourceMainAccount.currency.family === targetMainAccount.currency.family
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }, [showDexQuotes, sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
   useEffect(() => {
     if (!exchangeRate) {
       // @ts-expect-error This seems like a mistake? updateSelectedRate expects an ExchangeRate
@@ -510,14 +480,6 @@ const SwapForm = () => {
     // suppressing as swapTransaction is not memoized and causes infinite loop
     // eslint-disable-next-line
   }, [exchangeRate]);
-  const debouncedSetFromAmount = useMemo(
-    () =>
-      debounce((amount: BigNumber) => {
-        swapTransaction.setFromAmount(amount);
-      }, 400),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [swapTransaction.setFromAmount],
-  );
   switch (currentFlow) {
     case "LOGIN":
       return <Login provider={provider} onClose={() => setCurrentFlow(null)} />;
@@ -543,6 +505,9 @@ const SwapForm = () => {
   const setFromAccount = (account: AccountLike | undefined) => {
     swapTransaction.setFromAccount(account);
   };
+  const setFromAmount = (amount: BigNumber) => {
+    swapTransaction.setFromAmount(amount);
+  };
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
     swapTransaction.setToCurrency(currency);
   };
@@ -560,7 +525,7 @@ const SwapForm = () => {
           toCurrency={targetCurrency}
           toAmount={exchangeRate?.toAmount}
           setFromAccount={setFromAccount}
-          setFromAmount={debouncedSetFromAmount}
+          setFromAmount={setFromAmount}
           setToCurrency={setToCurrency}
           isMaxEnabled={swapTransaction.swap.isMaxEnabled}
           toggleMax={toggleMax}
@@ -588,7 +553,6 @@ const SwapForm = () => {
               provider={provider}
               refreshTime={refreshTime}
               countdown={!pauseRefreshing}
-              showNoQuoteDexRate={showNoQuoteDexRate}
             />
           </>
         )}

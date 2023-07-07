@@ -1,3 +1,4 @@
+import { expect } from "detox";
 import {
   getElementById,
   openDeeplink,
@@ -5,7 +6,6 @@ import {
   waitForElementByID,
   waitForElementByText,
 } from "../../helpers";
-import { expect } from "detox";
 import * as bridge from "../../bridge/server";
 
 const proceedButtonId = "Proceed";

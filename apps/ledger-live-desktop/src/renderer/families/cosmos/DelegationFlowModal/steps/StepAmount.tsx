@@ -24,7 +24,13 @@ const StepAmount = ({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   return (
     <Box flow={4}>
-      <TrackPage category="Delegation Cosmos" name="Step Amount" />
+      <TrackPage
+        category="Delegation Cosmos"
+        name="Step Amount"
+        flow="stake"
+        action="delegation"
+        currency={account.currency.id}
+      />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (

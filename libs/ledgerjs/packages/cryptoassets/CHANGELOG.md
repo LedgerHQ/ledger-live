@@ -1,5 +1,49 @@
 # @ledgerhq/cryptoassets
 
+## 9.9.0
+
+### Minor Changes
+
+- [#3676](https://github.com/LedgerHQ/ledger-live/pull/3676) [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#3701](https://github.com/LedgerHQ/ledger-live/pull/3701) [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fixed exchange app signatures for BSC coin and tokens
+
+## 9.9.0-next.0
+
+### Minor Changes
+
+- [#3676](https://github.com/LedgerHQ/ledger-live/pull/3676) [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#3701](https://github.com/LedgerHQ/ledger-live/pull/3701) [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fixed exchange app signatures for BSC coin and tokens
+
+## 9.8.0
+
+### Minor Changes
+
+- [#3626](https://github.com/LedgerHQ/ledger-live/pull/3626) [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Allow addtoken to replace existing token
+
+- [#3632](https://github.com/LedgerHQ/ledger-live/pull/3632) [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+
+### Patch Changes
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
+## 9.8.0-next.0
+
+### Minor Changes
+
+- [#3626](https://github.com/LedgerHQ/ledger-live/pull/3626) [`d1aa522db7`](https://github.com/LedgerHQ/ledger-live/commit/d1aa522db75f7ea850efe412abaa4dc7d37af6b7) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Allow addtoken to replace existing token
+
+- [#3632](https://github.com/LedgerHQ/ledger-live/pull/3632) [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - CAL update
+
+### Patch Changes
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
 ## 9.7.0
 
 ### Minor Changes

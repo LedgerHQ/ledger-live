@@ -6,6 +6,7 @@ import {
   OnNoRatesCallback,
   SwapTransactionType,
   AvailableProviderV3,
+  OnBeforeTransaction,
 } from "../types";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import { useFromState } from "./useFromState";
@@ -45,9 +46,9 @@ export const useSwapTransaction = ({
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
+  onBeforeTransaction,
   excludeFixedRates,
   providers,
-  includeDEX,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
@@ -55,9 +56,9 @@ export const useSwapTransaction = ({
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   onNoRates?: OnNoRatesCallback;
+  onBeforeTransaction?: OnBeforeTransaction;
   excludeFixedRates?: boolean;
   providers?: AvailableProviderV3[];
-  includeDEX?: boolean;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -105,10 +106,10 @@ export const useSwapTransaction = ({
     fromState,
     toState,
     transaction,
+    onBeforeTransaction,
     onNoRates,
     setExchangeRate,
     providers,
-    includeDEX,
   });
 
   return {

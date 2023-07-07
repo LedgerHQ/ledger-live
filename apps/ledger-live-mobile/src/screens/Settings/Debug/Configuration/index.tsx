@@ -15,6 +15,7 @@ import { StackNavigatorNavigation } from "../../../../components/RootNavigator/t
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
 import NftMetadataServiceRow from "./NftMetadataServiceRow";
+import HasStaxRow from "./HasStaxRow";
 
 export default function Configuration() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -39,6 +40,7 @@ export default function Configuration() {
       <ResetOnboardingStateRow />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
+      <HasStaxRow />
       <MockModeRow />
       <AnalyticsConsoleRow />
       <NftMetadataServiceRow />

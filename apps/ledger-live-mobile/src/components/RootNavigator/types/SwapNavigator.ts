@@ -36,7 +36,7 @@ import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
 
 type Target = "from" | "to";
@@ -57,7 +57,7 @@ export type SwapNavigatorParamList = {
   };
   [ScreenName.SwapSelectCurrency]: {
     currencies: Currency[];
-    provider: string;
+    provider?: string;
   };
   [ScreenName.SwapSelectProvider]: {
     provider?: string;
@@ -73,13 +73,12 @@ export type SwapNavigatorParamList = {
     transaction?: Transaction | null;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    operation?: Operation;
     currentNavigation:
-      | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -111,11 +110,9 @@ export type SwapNavigatorParamList = {
     status?: AlgorandTransactionStatus;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -127,11 +124,9 @@ export type SwapNavigatorParamList = {
     status?: BitcoinTransactionStatus;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -145,11 +140,9 @@ export type SwapNavigatorParamList = {
     transaction: CardanoTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -160,11 +153,9 @@ export type SwapNavigatorParamList = {
     transaction: EthereumTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -177,11 +168,9 @@ export type SwapNavigatorParamList = {
     transaction: EthereumTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -192,11 +181,9 @@ export type SwapNavigatorParamList = {
     transaction: RippleTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -207,11 +194,9 @@ export type SwapNavigatorParamList = {
     transaction: StellarTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -223,11 +208,9 @@ export type SwapNavigatorParamList = {
     transaction: CosmosTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -239,11 +222,9 @@ export type SwapNavigatorParamList = {
     transaction: CryptoOrgTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -255,11 +236,9 @@ export type SwapNavigatorParamList = {
     transaction: HederaTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -270,11 +249,9 @@ export type SwapNavigatorParamList = {
     transaction: RippleTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -286,11 +263,9 @@ export type SwapNavigatorParamList = {
     transaction: SolanaTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -303,11 +278,9 @@ export type SwapNavigatorParamList = {
     memoType?: string;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;

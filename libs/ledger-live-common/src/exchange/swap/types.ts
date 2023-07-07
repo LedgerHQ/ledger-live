@@ -50,7 +50,7 @@ export type ExchangeRate = {
   providerType: "CEX" | "DEX";
   tradeMethod: "fixed" | "float";
   error?: Error;
-  providerURL?: string | null | undefined;
+  providerURL?: string;
   expirationTime?: number;
 };
 
@@ -66,7 +66,7 @@ export type ExchangeRateRaw = {
   providerType: "CEX" | "DEX";
   tradeMethod: TradeMethod;
   error?: string;
-  providerURL?: string | null | undefined;
+  providerURL?: string;
 };
 
 export type AvailableProviderV2 = {
@@ -138,7 +138,6 @@ export type GetExchangeRates = (
   wyreUserId?: string,
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
   providers?: AvailableProviderV3[],
-  includeDEX?: boolean,
 ) => Promise<ExchangeRate[]>;
 export type GetProviders = () => Promise<AvailableProvider[]>;
 export type InitSwapResult = {
@@ -285,6 +284,8 @@ export type OnNoRatesCallback = (arg: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
 }) => void;
+
+export type OnBeforeTransaction = () => void;
 
 export type RatesReducerState = {
   status?: string | null;

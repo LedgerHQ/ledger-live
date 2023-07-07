@@ -10,6 +10,7 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
+
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
 import OperationDetails from "../../screens/OperationDetails";
@@ -88,6 +89,7 @@ import {
 } from "../NavigationHeaderCloseButton";
 import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
 import { RootDrawer, RootDrawerProps } from "../RootDrawer";
+import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -108,6 +110,7 @@ export default function BaseNavigator() {
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
+
   return (
     <>
       <RootDrawer drawer={route.params?.drawer} />
@@ -263,9 +266,10 @@ export default function BaseNavigator() {
             */
               const onError =
                 route.params?.onError || (route.params as unknown as typeof route)?.params?.onError;
-              // @TODO replace with correct error
-              if (onError && typeof onError === "function")
-                onError(route.params.error || new Error("Request account interrupted by user"));
+              // @TODO This route.params.error mechanism is deprecated, no part of the code is currently using it
+              // WalletAPI are suggesting they will rework that at some point
+              if (onError && typeof onError === "function" && route.params.error)
+                onError(route.params.error);
             },
           })}
         />
@@ -565,6 +569,11 @@ export default function BaseNavigator() {
             headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
             headerLeft: () => null,
           }}
+        />
+        <Stack.Screen
+          name={NavigatorName.EditTransaction}
+          options={{ headerShown: false }}
+          component={EditTransactionNavigator}
         />
       </Stack.Navigator>
     </>

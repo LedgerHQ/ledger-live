@@ -17,11 +17,6 @@ import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
-  featureFlags: {
-    swapShowDexQuotes: {
-      enabled: true,
-    },
-  },
 });
 
 // Tests to cover in Playwright test suite
@@ -80,6 +75,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectCurrencyByName("Dogecoin");
       await swapPage.sendMax(); // entering amount in textbox doesn't generate a quote in mock/PW
       await layout.waitForLoadingSpinnerToHaveDisappeared();
+      await swapPage.waitForProviderRates();
       await expect.soft(page).toHaveScreenshot("add-to-account-button.png");
     });
 
@@ -110,6 +106,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectCurrencyByName("Tether USD (USDT)");
       await swapPage.sendMax();
       await layout.waitForLoadingSpinnerToHaveDisappeared();
+      await swapPage.waitForProviderRates();
       await expect.soft(page).toHaveScreenshot("eth-to-usdt-quotes-generated.png");
     });
 

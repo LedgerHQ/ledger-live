@@ -92,7 +92,7 @@ function stepping(n, step, roundingMode) {
 const log10 = Math.log(10);
 
 // return step to use for a [min,max] with a planned number of steps (will approx).
-function findBestRangeStep(min, max, steps) {
+function findBestRangeStep(min: BigNumber, max: BigNumber, steps: number) {
   const nonRoundedStep = (max.toNumber() - min.toNumber()) / steps;
   const mag = Math.log(nonRoundedStep) / log10;
   const magInt = Math.floor(mag);

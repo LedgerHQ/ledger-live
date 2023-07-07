@@ -49,7 +49,7 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m ":rocket: prepare release [skip ci]"
+          git commit -m "chore(release): :rocket: prepare release [skip ci]"
 
       - name: push changes
         run: |

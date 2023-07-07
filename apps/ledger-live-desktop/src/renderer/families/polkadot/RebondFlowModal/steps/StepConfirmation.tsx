@@ -27,7 +27,13 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Rebond Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Rebond Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="rebond"
+          currency="dot"
+        />
         <SuccessDisplay
           title={<Trans i18nKey="polkadot.rebond.steps.confirmation.success.title" />}
           description={multiline(t("polkadot.rebond.steps.confirmation.success.text"))}
@@ -38,7 +44,13 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Rebond Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Rebond Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="rebond"
+          currency="dot"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="polkadot.rebond.steps.confirmation.broadcastError" />}

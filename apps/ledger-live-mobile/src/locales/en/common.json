@@ -56,6 +56,7 @@
     "forgetDevice": "Remove device",
     "help": "Help",
     "saveLogs": "Save logs",
+    "scrollToTop": "Scroll to top",
     "sync": {
       "ago": "Synchronized {{time}}"
     },
@@ -416,6 +417,9 @@
     "MaxFeeLow": {
       "title": "Your max fee is too low. Your transaction might stay pending for a while"
     },
+    "MaxPriorityFeeLowerThanInitial": {
+      "title": "Priority fee too low, please enter an amount superior to priority fee value of the initial transaction"
+    },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
@@ -499,6 +503,9 @@
     "TimeoutTagged": {
       "title": "Sorry, server took too long to respond ({{tag}})",
       "description": "Timeout occurred."
+    },
+    "TransactionAlreadyValidated": {
+      "title": "Transaction already validated"
     },
     "TransactionRefusedOnDevice": {
       "title": "Transaction refused on device",
@@ -1205,26 +1212,28 @@
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
-      "terms": "By tapping “Get Started” you consent and agree to our",
-      "termsLink": "Terms of Service",
+      "terms": "By continuing, you agree to Ledger's",
+      "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
       "and": "and",
       "recoverLogIn": "Log in for Ledger Recover"
     },
-    "stepDoYouHaveALedgerDevice": {
-      "title": "Do you own a Ledger?",
-      "subtitle": "First things first",
-      "yes": "Yes, I do",
-      "no": "Not yet"
-    },
     "postWelcomeStep": {
-      "title": "Let's get you started",
-      "subtitle_yes": "Set up your Ledger, or take a look around the app first.",
-      "subtitle_no": "You can choose to take a look around the app first or buy a Nano X device",
-      "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
+      "title": "Let’s get started",
+      "noLedgerYet": "I don’t have a Ledger yet",
+      "noLedgerYetModal": {
+        "title": "Millions of users. 0 hacks.",
+        "desc": "Experience peace of mind with a Ledger securing your digital assets.",
+        "buy": "Buy a Ledger",
+        "explore": "Explore this app"
+      },
       "setupLedger": {
-        "title": "Set up my Ledger",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "title": "Set up your Ledger",
+        "subtitle": "Select if your Ledger is new or was reset."
+      },
+      "accessWallet": {
+        "title": "Access your wallet",
+        "subtitle": "Select if your Ledger is already set up."
       },
       "buyNano": {
         "title": "Buy a Ledger Nano X",
@@ -1238,6 +1247,12 @@
         "title": "Sync with desktop app",
         "subtitle": "Sync your assets from Ledger Live desktop with your mobile."
       }
+    },
+    "welcomeBackStep": {
+      "title": "Welcome back",
+      "subtitle": "Select how you’d like to access your wallet:",
+      "connect": "Connect your Ledger",
+      "sync": "Sync with Ledger Live desktop"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -1283,16 +1298,22 @@
       "title": "Hello!",
       "or": "Or",
       "firstUse": {
-        "title": "First time using your Nano?",
-        "subTitle": "Set up a new Nano",
+        "section": "Set up your Ledger {{model}}",
+        "title": "Create a new wallet",
+        "subTitle": "This generates a new Secret Recovery Phrase.",
         "desc": "Let’s start and set up your device!",
         "label": "30 mins"
       },
       "devicePairing": {
-        "title": "Already have a recovery phrase?",
+        "title": "Got a Secret Recovery Phrase?",
         "label": "Device pairing",
         "subTitle": "Connect your Nano",
         "desc": "Your device is already set up? Connect it to the app!"
+      },
+      "newDevice": {
+        "label": "new device",
+        "title": "Set up as new",
+        "subTitle": "Choose this if you are setting up your Ledger for the first time"
       },
       "desktopSync": {
         "title": "Already have a recovery phrase?",
@@ -1302,12 +1323,14 @@
       },
       "restoreDevice": {
         "label": "Restore device",
-        "subTitle": "Restore your recovery phrase on a new device",
+        "title": "Restore with your Secret  Recovery Phrase",
+        "subTitle": "You will need access to your Secret Recovery Phrase.",
         "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
       },
       "recovery": "Already have a recovery phrase?",
       "protect": {
-        "subTitle": "Restore using Ledger Recover",
+        "title": "Restore using Ledger Recover",
+        "subTitle": "You need to have a Ledger Recover subscription.",
         "drawer": {
           "title": "Use Ledger Nano X",
           "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
@@ -1450,11 +1473,11 @@
         "cta": "Next step"
       },
       "recoveryPhrase": {
-        "title": "Recovery phrase",
-        "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys.",
-        "desc_1": "Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
+        "title": "Your Secret Recovery Phrase",
+        "desc": "Your Secret Recovery Phrase is a list of 24 words that backs up your private keys.",
+        "desc_1": "Your Ledger Nano generates a unique Secret Recovery Phrase. Ledger does not know what it is.",
         "cta": "Next step",
-        "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
+        "checkboxDesc": "I understand that if someone gets my Secret Recovery Phrase, my assets become vulnerable."
       },
       "recoveryPhraseSetup": {
         "infoModal": {
@@ -1628,6 +1651,11 @@
       }
     },
     "stepPairNew": {
+      "generic": {
+        "title": "Pair your Nano",
+        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
+        "cta": "Let’s pair my Nano"
+      },
       "nanoX": {
         "title": "Pair your Nano",
         "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
@@ -1773,7 +1801,7 @@
         "title": "As a Ledger user, my crypto is stored:",
         "answers": {
           "correct": "On the blockchain",
-          "wrong": "On my Nano"
+          "wrong": "On my Ledger Nano"
         },
         "modal": {
           "text": "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto.",
@@ -1781,10 +1809,10 @@
         }
       },
       "recoveryPhrase": {
-        "title": "If my recovery phrase is no longer secret and safe...",
+        "title": "If someone else gets access to my Secret Recovery Phrase...",
         "answers": {
-          "correct": "My crypto is no longer safe and I need to transfer them to a secure place",
-          "wrong": "No problem, Ledger can send me a copy"
+          "correct": "My assets become vulnerable and that person could have access to them",
+          "wrong": "No problem, as long as I still know what it is"
         },
         "modal": {
           "text": "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place.",
@@ -1792,10 +1820,10 @@
         }
       },
       "privateKey": {
-        "title": "When I connect my Nano to the Ledger app, my private key is...",
+        "title": "When I connect my Ledger Nano to the Ledger Live app, my private key is...",
         "answers": {
           "correct": "Still offline",
-          "wrong": "Briefly connected to the internet"
+          "wrong": "Briefly connected to the Internet"
         },
         "modal": {
           "text": "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device.",
@@ -1845,7 +1873,7 @@
       },
       "loading": {
         "title": "Pairing with {{deviceName}}...",
-        "subtitle": "Confirm the code on your {{productName}}"
+        "subtitle": "If prompted, confirm the code on your {{productName}}"
       },
       "error": {
         "generic": {
@@ -1865,9 +1893,14 @@
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
     "deviceSelection": {
-      "title": "Choose the Ledger you'd like to set up:",
+      "title": "Select the Ledger you want to set up:",
       "brand": "Ledger",
-      "setupTime": "{{time}} mins"
+      "setupTime": "{{time}} mins",
+      "notCompatible": "No iPhone compatibility",
+      "modal": {
+        "title": "Ledger Nano S and Ledger Nano S Plus not supported on iOS devices",
+        "desc": "Use your Ledger Nano S or Ledger Nano S Plus with Ledger Live on your computer."
+      }
     },
     "scanning": {
       "title": "Looking for your {{productName}}",
@@ -1879,7 +1912,7 @@
       },
       "loading": {
         "title": "Pairing with {{deviceName}}",
-        "subtitle": "Confirm the code on your {{productName}}"
+        "subtitle": "If prompted, confirm the code on your {{productName}}"
       },
       "error": {
         "title": "Pairing unsuccessful",
@@ -1925,11 +1958,9 @@
       "title": "Secret Recovery Phrase",
       "doneTitle": "Secret Recovery Phrase confirmed",
       "description": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your {{productName}} generates a unique recovery phrase. Ledger does not keep a copy of it",
-
       "choiceRestoreDirectOrRecover": "Placeholder - choice direct restore or use Recover",
       "recoverSeed": "Placeholder: Recover",
       "restoreSeed": "For recovery, make sure to use a Secret Recovery Phrase generated by a Ledger for the guaranted security of your assets.\n\nDon't have one? Use your {{productName}} to generate a new Phrase.",
-
       "selection": "On {{productName}}, choose a setup option that best suits you.",
       "selectionContinueOnDevice": "Tap an option on {{productName}}",
       "newSeedDescription": "Watch the videos below to learn more about your secret words.",
@@ -2654,6 +2685,10 @@
         "title": "Large Mover",
         "desc": "You'll be notified of important price movements for BTC and ETH"
       },
+      "transactionsAlerts": {
+        "title": "Transaction Alerts",
+        "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche and Ethereum Classic"
+      },
       "price": {
         "title": "Price Alerts",
         "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
@@ -3160,7 +3195,8 @@
           },
           "withdrawalsBlockedError": {
             "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
-          }
+          },
+          "noProviders": "No results found. There are no quotes available with the current preferences."
         }
       }
     },
@@ -3470,6 +3506,7 @@
     },
     "fees": {
       "title": "Network fees",
+      "titleMaxFees": "Max Network Fees",
       "validate": "Confirm",
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
@@ -3477,7 +3514,8 @@
       "edit": {
         "title": "Choose unit"
       },
-      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction"
+      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction",
+      "networkInfoMaxFees": "This is the maximum amount that you could pay for this transaction. Any difference between the Max network fees and the actual fees will be refunded."
     },
     "verification": {
       "streaming": {
@@ -3489,6 +3527,39 @@
       "maxSpendable": {
         "title": "Max spendable amount",
         "description": "The maximum spendable amount is the total balance in an account that is available to send in a transaction."
+      }
+    }
+  },
+  "editTransaction": {
+    "cta": "Speed up or Cancel",
+    "header": "Edit Transaction",
+    "learnMore": "I want to learn more",
+    "panel": {
+      "stuckMessage": "Your oldest 'send' transaction is stuck. Speed up the transaction with a higher network fee, or cancel it.",
+      "speedupMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it."
+    },
+    "previousFeesInfo": {
+      "pendingTransactionFeesInfo": "Pending transaction fees info: ",
+      "networkfee": "Network fee = {{amount}} {{unit}}",
+      "maxFee": "Max fee = {{amount}} Gwei",
+      "maxPriorityFee": "Max Priority fee = {{amount}} Gwei",
+      "gasPrice": "GasPrice = {{amount}} Gwei"
+    },
+    "speedUp": {
+      "title": "Speed Up",
+      "description": "Re-submit the transaction with a higher network fee."
+    },
+    "cancel": {
+      "title": "Cancel",
+      "description": "Sending 0 {{ticker}} to your own address.\nTo ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+    },
+    "error": {
+      "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
+      "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
+      "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it.",
+      "TransactionHasBeenValidatedError": {
+        "title": "Can't be speed up or cancel",
+        "description": "This transaction has already been validated"
       }
     }
   },
@@ -4113,7 +4184,18 @@
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
-        "installingApps": "Installing apps"
+        "installingApps": "Installing apps",
+        "imageLoadRequested": "Allow lock screen picture restoration on {{deviceName}}",
+        "imageCommitRequested": "Confirm the picture on your {{deviceName}}",
+        "allowLanguageInstallation": "Allow language restoration on {{deviceName}}",
+        "allowAppsRestoration": "Allow app restoration on {{deviceName}}",
+        "errors": {
+          "description": "If this was a mistake you can retry the restoration, or you may skip this step",
+          "LanguageInstallRefusedOnDevice": "Language change was cancelled on {{deviceName}}",
+          "ImageLoadRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
+          "ImageCommitRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
+          "UserRefusedAllowManager": "Restoration of apps was cancelled on {{deviceName}}"
+        }
       }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
@@ -4127,6 +4209,10 @@
       "TimeoutError": {
         "title": "Update timeout",
         "description": "The update was unable to complete because we lost connection to {{deviceName}}"
+      },
+      "CantOpenDevice": {
+        "title": "Sorry, connection failed",
+        "description": "The update was unable to complete because we lost connection to {{deviceName}}."
       }
     }
   },

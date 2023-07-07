@@ -238,14 +238,22 @@ export function getStuckAccountAndOperation(
   const mainAccount = getMainAccount(account, parentAccount);
 
   const SUPPORTED_FAMILIES = ["ethereum"];
-  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) return undefined;
+
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
+    return undefined;
+  }
+
   const now = new Date().getTime();
   const stuckOperations = mainAccount.pendingOperations.filter(
     pendingOp =>
       isEditableOperation(mainAccount, pendingOp) &&
       now - pendingOp.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
   );
-  if (stuckOperations.length === 0) return undefined;
+
+  if (stuckOperations.length === 0) {
+    return undefined;
+  }
+
   const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
     if (!oldestOp) return currentOp;
     return oldestOp.transactionSequenceNumber !== undefined &&
@@ -254,6 +262,7 @@ export function getStuckAccountAndOperation(
       ? currentOp
       : oldestOp;
   });
+
   if (oldestStuckOperation?.transactionRaw?.subAccountId) {
     stuckAccount = findSubAccountById(
       mainAccount,
@@ -264,7 +273,9 @@ export function getStuckAccountAndOperation(
     stuckAccount = mainAccount;
     stuckParentAccount = undefined;
   }
+
   invariant(stuckAccount, "stuckAccount required");
+
   return {
     account: stuckAccount,
     parentAccount: stuckParentAccount,

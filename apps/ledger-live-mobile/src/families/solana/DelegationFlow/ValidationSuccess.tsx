@@ -32,7 +32,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const delegation = getTrackingDelegationType({
     type: route.params.result.type,
   });
-  const currency = getAccountCurrency(account);
+  const { ticker } = getAccountCurrency(account);
 
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
@@ -41,12 +41,12 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   useEffect(() => {
     if (delegation)
       track("staking_completed", {
-        currency,
+        currency: ticker,
         validator,
         source,
         delegation,
       });
-  }, [source, validator, delegation, currency]);
+  }, [source, validator, delegation, ticker]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

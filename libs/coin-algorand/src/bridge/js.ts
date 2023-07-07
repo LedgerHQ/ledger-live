@@ -1,5 +1,6 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
+  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
@@ -21,11 +22,6 @@ import { makeGetAccountShape } from "../js-synchronization";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { Transaction } from "../types";
 import { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "../signer";
-
-const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
-  ...t,
-  ...patch,
-});
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
@@ -61,7 +57,7 @@ export function buildAccountBridge(
 
   return {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction,
     prepareTransaction: prepareTransaction(algorandAPI),
     getTransactionStatus: getTransactionStatus(algorandAPI),
     sync,

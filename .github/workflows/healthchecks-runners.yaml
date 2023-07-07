@@ -52,7 +52,7 @@ jobs:
           java-version: "11"
       - name: setup Android SDK
         if: always()
-        uses: android-actions/setup-android@v2.0.6
+        uses: android-actions/setup-android@v2.0.10
       - name: check java
         if: always()
         id: check-java
@@ -81,7 +81,7 @@ jobs:
         if: always()
         id: check-node
         run: |
-          if [[ "$(node --version)" == *"v16."* ]]; then
+          if [[ "$(node --version)" == *"v18."* ]]; then
             result=ok
           else
             result=ko
@@ -119,12 +119,12 @@ jobs:
         id: check-android
         run: |
           command=$(which sdkmanager)
-          if [[ $(${ANDROID_HOME}/cmdline-tools/3.0/bin/sdkmanager --version) ]]; then
+          if [[ $($command --version) ]]; then
             result=ok
           else
             result=ko
           fi
-          version=$(${ANDROID_HOME}/cmdline-tools/3.0/bin/sdkmanager --version)
+          version=$($command --version)
           echo "result=$result" >> $GITHUB_OUTPUT
           echo "version=$version" >> $GITHUB_OUTPUT
       - name: check xvfb
@@ -262,7 +262,7 @@ jobs:
         id: check-node
         shell: bash
         run: |
-          if [[ "$(node --version)" == *"v16."* ]]; then
+          if [[ "$(node --version)" == *"v18."* ]]; then
             result=ok
           else
             result=ko

@@ -31,14 +31,16 @@ describe("Change Language", () => {
   ];
 
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+
     portfolioPage = new PortfolioPage();
     settingsPage = new SettingsPage();
     generalSettingsPage = new GeneralSettingsPage();
+
+    await portfolioPage.waitForPortfolioPageToLoad();
   });
 
   it("should go to General Settings", async () => {
-    await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.navigateToSettings();
     await settingsPage.navigateToGeneralSettings();
   });

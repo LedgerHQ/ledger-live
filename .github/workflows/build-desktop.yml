@@ -51,7 +51,7 @@ jobs:
         with:
           os: linux
       - name: Build the app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
       - name: Upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -82,7 +82,7 @@ jobs:
           os: win
       - name: Build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
         shell: bash
       - name: Upload windows
         uses: actions/upload-artifact@v3
@@ -115,7 +115,7 @@ jobs:
           os: mac
       - name: Build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
       - name: Upload macOS app
         uses: actions/upload-artifact@v3
         with:

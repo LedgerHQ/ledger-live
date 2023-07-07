@@ -33,6 +33,7 @@ import type {
   ProtectState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -246,6 +247,7 @@ export enum SettingsActionTypes {
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
+  SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
   SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP = "SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
@@ -258,7 +260,7 @@ export enum SettingsActionTypes {
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
-  SET_FIRST_CONNECTION_HAS_DEVICE = "SET_FIRST_CONNECTION_HAS_DEVICE",
+  SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
@@ -269,6 +271,7 @@ export enum SettingsActionTypes {
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
+  SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -324,6 +327,7 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 >["deviceInfo"];
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
+export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetLastConnectedDevicePayload = Device;
@@ -342,9 +346,10 @@ export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCount
 export type SettingsSetMarketFilterByStarredAccountsPayload =
   SettingsState["marketFilterByStarredAccounts"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
-export type SettingsSetFirstConnectionHasDevicePayload = SettingsState["firstConnectionHasDevice"];
-export type SettingsSetFirstConnectHasDeviceUpdatedPayload =
-  SettingsState["firstConnectHasDeviceUpdated"];
+export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
+
+export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
+
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
@@ -407,7 +412,7 @@ export type SettingsPayload =
   | SettingsSetMarketCounterCurrencyPayload
   | SettingsSetMarketFilterByStarredAccountsPayload
   | SettingsSetSensitiveAnalyticsPayload
-  | SettingsSetFirstConnectHasDeviceUpdatedPayload
+  | SettingsSetOnboardingHasDevicePayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
   | DangerouslyOverrideStatePayload
@@ -417,7 +422,8 @@ export type SettingsPayload =
   | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
-  | SettingsSetHasBeenUpsoldProtectPayload;
+  | SettingsSetHasBeenUpsoldProtectPayload
+  | SettingsSetOnboardingTypePayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

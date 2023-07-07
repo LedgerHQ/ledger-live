@@ -35,27 +35,32 @@ function StepConfirmation({
   account,
 }: StepProps) {
   const voteAccAddress = transaction?.validators[0]?.address;
-  const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
+  const currencyId = account.currency.id;
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);
-      const currency = account?.currency?.id?.toUpperCase();
       track("staking_completed", {
-        currency,
+        currency: currencyId.toUpperCase(),
         validator: chosenValidator?.name || voteAccAddress,
         delegation: "delegation",
         flow: "stake",
         source,
       });
     }
-  }, [optimisticOperation, validators, account.currency.id, voteAccAddress, source]);
+  }, [currencyId, optimisticOperation, validators, voteAccAddress, source]);
 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Delegation Cosmos" name="Step Confirmed" />
+        <TrackPage
+          category="Delegation Cosmos"
+          name="Step Confirmed"
+          flow="stake"
+          action="delegation"
+          currency={account.currency.id}
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -71,7 +76,13 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Cosmos" name="Step Confirmation Error" />
+        <TrackPage
+          category="Delegation Cosmos"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="delegation"
+          currency={account.currency.id}
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cosmos.delegation.flow.steps.confirmation.broadcastError" />}

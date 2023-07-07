@@ -99,6 +99,13 @@ export default function Features() {
         iconLeft={<Icons.MailMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugSnackbars)}
       />
+
+      <SettingsRow
+        title="Transactions alerts"
+        desc="See your addresses that are registered in chainwatch"
+        iconLeft={<Icons.NotificationsMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugTransactionsAlerts)}
+      />
     </SettingsNavigationScrollView>
   );
 }

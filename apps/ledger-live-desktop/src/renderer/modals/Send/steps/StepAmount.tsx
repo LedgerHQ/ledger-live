@@ -1,4 +1,7 @@
-import React, { Fragment, PureComponent } from "react";
+import React, { Fragment, PureComponent, useMemo } from "react";
+import invariant from "invariant";
+import { ProtoNFT } from "@ledgerhq/types-live";
+import { getNFT } from "@ledgerhq/live-common/nft/index";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -16,6 +19,8 @@ import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
+import { getLLDCoinFamily } from "~/renderer/families";
+
 const StepAmount = (props: StepProps) => {
   const {
     t,
@@ -34,12 +39,27 @@ const StepAmount = (props: StepProps) => {
     isNFTSend,
     walletConnectProxy,
   } = props;
-  const allNfts = useSelector(getAllNFTs);
-  const nft = allNfts?.find(
-    nft => transaction && "tokenIds" in transaction && nft?.tokenId === transaction.tokenIds?.[0],
-  );
+  invariant(transaction, "transaction required");
+  invariant(account, "account required");
+
+  const mainAccount = getMainAccount(account, parentAccount);
+  invariant(mainAccount, "main account required");
+
+  const specific = getLLDCoinFamily(transaction.family);
+  const allNfts = useSelector(getAllNFTs) as ProtoNFT[]; // filter(Boolean) not working because: typescript.
+  const nft = useMemo(() => {
+    const { contract, tokenId } = specific.nft?.getNftTransactionProperties(transaction) || {};
+
+    return getNFT(contract, tokenId, allNfts);
+  }, [allNfts, specific.nft, transaction]);
+
+  const nftQuantity = useMemo(() => {
+    const { quantity } = specific.nft?.getNftTransactionProperties(transaction) || {};
+
+    return quantity?.toFixed();
+  }, [specific.nft, transaction]);
+
   if (!status) return null;
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   return (
     <Box flow={4}>
       <TrackPage
@@ -49,56 +69,51 @@ const StepAmount = (props: StepProps) => {
         isNFTSend={isNFTSend}
         walletConnectSend={walletConnectProxy}
       />
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
+      <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
       {error ? <ErrorBanner error={error} /> : null}
-      {account && transaction && mainAccount && (
-        <Fragment key={account.id}>
-          {account && transaction && !isNFTSend ? (
-            <SpendableBanner
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-            />
-          ) : null}
-          {isNFTSend && nft ? (
-            nft.standard === "ERC1155" ? (
-              <Box mb={2}>
-                <Label>{t("send.steps.amount.nftQuantity")}</Label>
-                <Input
-                  value={
-                    ("quantities" in transaction && transaction.quantities?.[0]?.toString()) ||
-                    undefined
-                  }
-                  onChange={onChangeQuantities}
-                  error={status?.errors?.amount}
-                />
-              </Box>
-            ) : null
-          ) : (
-            <AmountField
-              status={status}
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-              onChangeTransaction={onChangeTransaction}
-              bridgePending={bridgePending}
-              walletConnectProxy={walletConnectProxy}
-              t={t}
-              initValue={maybeAmount}
-              resetInitValue={onResetMaybeAmount}
-            />
-          )}
-          <SendAmountFields
-            account={mainAccount}
+      <Fragment key={account.id}>
+        {!isNFTSend ? (
+          <SpendableBanner
+            account={account}
             parentAccount={parentAccount}
-            status={status}
             transaction={transaction}
-            onChange={onChangeTransaction}
-            bridgePending={bridgePending}
-            updateTransaction={updateTransaction}
           />
-        </Fragment>
-      )}
+        ) : null}
+        {isNFTSend ? (
+          nft?.standard === "ERC1155" ? (
+            <Box mb={2}>
+              <Label>{t("send.steps.amount.nftQuantity")}</Label>
+              <Input
+                value={nftQuantity}
+                onChange={onChangeQuantities}
+                error={status?.errors?.amount}
+              />
+            </Box>
+          ) : null
+        ) : (
+          <AmountField
+            status={status}
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            onChangeTransaction={onChangeTransaction}
+            bridgePending={bridgePending}
+            walletConnectProxy={walletConnectProxy}
+            t={t}
+            initValue={maybeAmount}
+            resetInitValue={onResetMaybeAmount}
+          />
+        )}
+        <SendAmountFields
+          account={mainAccount}
+          parentAccount={parentAccount}
+          status={status}
+          transaction={transaction}
+          onChange={onChangeTransaction}
+          bridgePending={bridgePending}
+          updateTransaction={updateTransaction}
+        />
+      </Fragment>
     </Box>
   );
 };

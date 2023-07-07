@@ -29,5 +29,6 @@ export type StepProps = {
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
+  source?: string;
 };
 export type St = Step<StepId, StepProps>;

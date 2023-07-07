@@ -4,6 +4,9 @@
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "automerge": false,
+  "detectGlobalManagerConfig": true,
+  "allowScripts": true,
+  "ignoreScripts": false,
   "packageRules": [
     {
       "description": "Tag Ledger Live Core Team for major updates",
@@ -12,7 +15,7 @@
     }
   ],
   "prConcurrentLimit": 10,
-  "schedule": ["before 9am every monday"],
+  "schedule": ["before 7am every weekday"],
   "separateMinorPatch": true,
   "timezone": "Europe/Paris"
 }
