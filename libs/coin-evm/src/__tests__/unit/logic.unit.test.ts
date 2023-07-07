@@ -1,10 +1,21 @@
-import BigNumber from "bignumber.js";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { EvmTransactionEIP1559, EvmTransactionLegacy, Transaction } from "../../types";
+import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import * as RPC_API from "../../api/rpc/rpc.common";
+import {
+  attachOperations,
+  eip1559TransactionHasFees,
+  getAdditionalLayer2Fees,
+  getDefaultFeeUnit,
+  getEstimatedFees,
+  getGasLimit,
+  getSyncHash,
+  legacyTransactionHasFees,
+  mergeSubAccounts,
+} from "../../logic";
+import { EvmTransactionEIP1559, EvmTransactionLegacy, Transaction } from "../../types";
 import {
   deepFreeze,
   makeAccount,
@@ -12,16 +23,6 @@ import {
   makeOperation,
   makeTokenAccount,
 } from "../fixtures/common.fixtures";
-import {
-  attachOperations,
-  eip1559TransactionHasFees,
-  getAdditionalLayer2Fees,
-  getEstimatedFees,
-  getGasLimit,
-  getSyncHash,
-  legacyTransactionHasFees,
-  mergeSubAccounts,
-} from "../../logic";
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
@@ -194,6 +195,40 @@ describe("EVM Family", () => {
         };
 
         expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
+      });
+    });
+
+    describe("getDefaultFeeUnit", () => {
+      it("should return the unit when currency has only one", () => {
+        const expectedUnit: Unit = {
+          name: "name",
+          code: "code",
+          magnitude: 18,
+        };
+
+        const currency: Partial<CryptoCurrency> = {
+          units: [expectedUnit],
+        };
+
+        expect(getDefaultFeeUnit(currency as CryptoCurrency)).toEqual(expectedUnit);
+      });
+
+      it("should return the second unit when currency has multiple", () => {
+        const expectedUnit: Unit = {
+          name: "name",
+          code: "code",
+          magnitude: 18,
+        };
+
+        const currency: Partial<CryptoCurrency> = {
+          units: [
+            { ...expectedUnit, name: "unit0" },
+            expectedUnit,
+            { ...expectedUnit, name: "unit2" },
+          ],
+        };
+
+        expect(getDefaultFeeUnit(currency as CryptoCurrency)).toEqual(expectedUnit);
       });
     });
 
