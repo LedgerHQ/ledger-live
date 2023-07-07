@@ -28,9 +28,10 @@ import InvertTheme from "./theme/InvertTheme";
 import { urls } from "../config/urls";
 import { renderConnectYourDevice } from "./DeviceAction/rendering";
 import { DeviceActionError } from "./DeviceAction/common";
+import type { FirmwareUpdateProps } from "../screens/FirmwareUpdate";
 
 type FirmwareUpdateBannerProps = {
-  onBackFromUpdate?: () => void;
+  onBackFromUpdate?: FirmwareUpdateProps["onBackFromUpdate"];
 };
 
 const requiredBatteryStatuses = [
