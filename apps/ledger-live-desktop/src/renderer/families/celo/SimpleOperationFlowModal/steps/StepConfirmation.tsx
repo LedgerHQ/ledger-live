@@ -34,7 +34,13 @@ const StepConfirmation = ({ optimisticOperation, error, signed, mode }: StepProp
   if (optimisticOperation) {
     return (
       <S.Container>
-        <TrackPage category="Celo SimpleOperation" name="Step Confirmed" />
+        <TrackPage
+          category="Celo SimpleOperation"
+          name="Step Confirmed"
+          flow="stake"
+          action={mode}
+          currency="celo"
+        />
         <SuccessDisplay
           title={
             <Trans
@@ -55,7 +61,13 @@ const StepConfirmation = ({ optimisticOperation, error, signed, mode }: StepProp
   if (error) {
     return (
       <S.Container shouldSpace={signed}>
-        <TrackPage category="Celo SimpleOperation" name="Step Confirmation Error" />
+        <TrackPage
+          category="Celo SimpleOperation"
+          name="Step Confirmation Error"
+          flow="stake"
+          action={mode}
+          currency="celo"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="celo.simpleOperation.steps.confirmation.broadcastError" />}

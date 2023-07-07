@@ -1,5 +1,6 @@
 /* istanbul ignore file: pure exports, bridge tested by live-common with bridge.integration.test.ts */
 import {
+  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -18,13 +19,6 @@ import { hydrate, preload } from "../preload";
 import nftResolvers from "../nftResolvers";
 import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
-
-const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
-  transaction,
-  patch,
-) => {
-  return { ...transaction, ...patch } as EvmTransaction;
-};
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
@@ -54,7 +48,7 @@ export function buildAccountBridge(
 
   return {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction<EvmTransaction>,
     prepareTransaction,
     getTransactionStatus,
     sync,

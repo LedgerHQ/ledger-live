@@ -54,7 +54,13 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Delegation Cosmos" name="Step Confirmed" />
+        <TrackPage
+          category="Delegation Cosmos"
+          name="Step Confirmed"
+          flow="stake"
+          action="delegation"
+          currency={account.currency.id}
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -70,7 +76,13 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Cosmos" name="Step Confirmation Error" />
+        <TrackPage
+          category="Delegation Cosmos"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="delegation"
+          currency={account.currency.id}
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cosmos.delegation.flow.steps.confirmation.broadcastError" />}
