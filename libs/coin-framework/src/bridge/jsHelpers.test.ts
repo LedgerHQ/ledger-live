@@ -15,7 +15,7 @@ describe("jsHelpers", () => {
         amount: new BigNumber("10000000000000"),
       });
 
-      expect(transaction).toBe(updatedTransaction);
+      expect(Object.is(transaction, updatedTransaction)).toBe(true);
     });
 
     it("should update the transaction object", () => {
@@ -29,7 +29,7 @@ describe("jsHelpers", () => {
         amount: new BigNumber("20000000000000"),
       });
 
-      expect(transaction).not.toBe(updatedTransaction);
+      expect(Object.is(transaction, updatedTransaction)).toBe(false);
 
       expect(updatedTransaction).toEqual({
         ...transaction,
