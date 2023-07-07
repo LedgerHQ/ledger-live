@@ -647,16 +647,21 @@ export const FirmwareUpdate = ({
   return (
     <>
       {fullUpdateComplete ? (
-        <Flex flex={1} px={7}>
+        <Flex flex={1} px={7} pb={7}>
           <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex mb={7}>
-              <Icons.CircledCheckSolidMedium color="success.c80" size={100} />
+              <IconBadge
+                Icon={Icons.CheckAloneMedium}
+                iconColor="success.c50"
+                iconSize={32}
+                backgroundColor="neutral.c20"
+              />
             </Flex>
-            <Text textAlign="center" fontSize={7} mb={3}>
+            <Text textAlign="center" fontSize={7} mb={3} fontWeight="semiBold">
               {t("FirmwareUpdate.updateDone", { deviceName: productName })}
             </Text>
-            <Text textAlign="center" fontSize={4} color="neutral.c80">
+            <Text textAlign="center" fontSize={4} color="neutral.c80" variant="largeLineHeight">
               {t("FirmwareUpdate.updateDoneDescription", {
                 firmwareVersion: firmwareUpdateContext.final.name,
               })}
