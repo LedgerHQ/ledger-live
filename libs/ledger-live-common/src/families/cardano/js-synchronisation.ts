@@ -58,14 +58,6 @@ function mapTxToAccountOperation(
   protocolParams: ProtocolParams,
 ): Operation {
   const accountChange = getAccountChange(tx, accountCredentialsMap);
-  const mainOperationType: OperationType = tx.certificate.stakeDelegations.length
-    ? "DELEGATE"
-    : tx.certificate.stakeDeRegistrations.length
-    ? "UNDELEGATE"
-    : getOperationType({
-        valueChange: accountChange.ada,
-        fees: new BigNumber(tx.fees),
-      });
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);
@@ -75,6 +67,25 @@ function mapTxToAccountOperation(
   }
 
   let operationValue = accountChange.ada;
+
+  if (tx.certificate.stakeRegistrations.length) {
+    const walletRegistration = tx.certificate.stakeRegistrations.find(
+      c =>
+        c.stakeCredential.type === HashType.ADDRESS &&
+        c.stakeCredential.key === stakeCredential.key,
+    );
+    if (walletRegistration) {
+      extra["deposit"] = formatCurrencyUnit(
+        accountShapeInfo.currency.units[0],
+        new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
   if (tx.certificate.stakeDeRegistrations.length) {
     const walletDeRegistration = tx.certificate.stakeDeRegistrations.find(
       c =>
@@ -83,7 +94,7 @@ function mapTxToAccountOperation(
     );
     if (walletDeRegistration) {
       operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
-      extra["depositRefund"] = formatCurrencyUnit(
+      extra["refund"] = formatCurrencyUnit(
         accountShapeInfo.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
         {
@@ -102,7 +113,7 @@ function mapTxToAccountOperation(
     );
     if (walletWithdraw) {
       operationValue = operationValue.minus(walletWithdraw.amount);
-      extra["delegationRewards"] = formatCurrencyUnit(
+      extra["rewards"] = formatCurrencyUnit(
         accountShapeInfo.currency.units[0],
         new BigNumber(walletWithdraw.amount),
         {
@@ -112,6 +123,15 @@ function mapTxToAccountOperation(
       );
     }
   }
+
+  const mainOperationType: OperationType = tx.certificate.stakeDelegations.length
+    ? "DELEGATE"
+    : tx.certificate.stakeDeRegistrations.length
+    ? "UNDELEGATE"
+    : getOperationType({
+        valueChange: operationValue,
+        fees: new BigNumber(tx.fees),
+      });
 
   return {
     accountId,

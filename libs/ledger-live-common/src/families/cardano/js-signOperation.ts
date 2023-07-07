@@ -74,23 +74,14 @@ const buildOptimisticOperation = (
       new BigNumber(0),
     );
 
-  const accountChange = accountOutput.minus(accountInput);
   const txCertificates = transaction.getCertificates();
-  const StakeDeRegistrationCertificates = txCertificates.filter(
+  const stakeRegistrationCertificates = txCertificates.filter(
+    c => c.certType === TyphonTypes.CertificateType.STAKE_REGISTRATION,
+  );
+  const stakeDeRegistrationCertificates = txCertificates.filter(
     c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
   );
   const txWithdrawals = transaction.getWithdrawals();
-
-  const opType: OperationType = txCertificates.find(
-    c => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION,
-  )
-    ? "DELEGATE"
-    : txCertificates.find(c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION)
-    ? "UNDELEGATE"
-    : getOperationType({
-        valueChange: accountChange,
-        fees: transaction.getFee(),
-      });
 
   const transactionHash = transaction.getTransactionHash().toString("hex");
   const auxiliaryData = transaction.getAuxiliaryData();
@@ -105,21 +96,40 @@ const buildOptimisticOperation = (
     }
   }
 
-  let operationValue = accountChange;
   const extra = {};
   if (memo) {
     extra["memo"] = memo;
   }
 
-  if (StakeDeRegistrationCertificates.length) {
-    const walletDeRegistration = StakeDeRegistrationCertificates.find(
+  let operationValue = accountOutput.minus(accountInput);
+
+  if (stakeRegistrationCertificates.length) {
+    const walletRegistration = stakeRegistrationCertificates.find(
+      c =>
+        c.stakeCredential.type === HashType.ADDRESS &&
+        c.stakeCredential.hash === stakeCredential.key,
+    );
+    if (walletRegistration) {
+      extra["deposit"] = formatCurrencyUnit(
+        account.currency.units[0],
+        new BigNumber(protocolParams.stakeKeyDeposit),
+        {
+          showCode: true,
+          disableRounding: true,
+        },
+      );
+    }
+  }
+
+  if (stakeDeRegistrationCertificates.length) {
+    const walletDeRegistration = stakeDeRegistrationCertificates.find(
       c =>
         c.stakeCredential.type === HashType.ADDRESS &&
         c.stakeCredential.hash === stakeCredential.key,
     );
     if (walletDeRegistration) {
       operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
-      extra["depositRefund"] = formatCurrencyUnit(
+      extra["refund"] = formatCurrencyUnit(
         account.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
         {
@@ -138,7 +148,7 @@ const buildOptimisticOperation = (
     );
     if (walletWithdraw) {
       operationValue = operationValue.minus(walletWithdraw.amount);
-      extra["delegationRewards"] = formatCurrencyUnit(
+      extra["rewards"] = formatCurrencyUnit(
         account.currency.units[0],
         new BigNumber(walletWithdraw.amount),
         {
@@ -148,6 +158,17 @@ const buildOptimisticOperation = (
       );
     }
   }
+
+  const opType: OperationType = txCertificates.find(
+    c => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION,
+  )
+    ? "DELEGATE"
+    : txCertificates.find(c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION)
+    ? "UNDELEGATE"
+    : getOperationType({
+        valueChange: operationValue,
+        fees: transaction.getFee(),
+      });
 
   const op: Operation = {
     id: encodeOperationId(account.id, transactionHash, opType),
