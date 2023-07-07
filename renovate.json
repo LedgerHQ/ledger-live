@@ -5,7 +5,6 @@
   "labels": ["dependencies"],
   "automerge": false,
   "detectGlobalManagerConfig": true,
-  "allowScripts": true,
   "ignoreScripts": false,
   "packageRules": [
     {
