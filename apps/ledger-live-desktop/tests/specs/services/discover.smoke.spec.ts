@@ -5,7 +5,7 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import * as server from "../../utils/serve-dummy-app";
+import { startDummyServer, getLiveAppManifest, stopDummyServer } from "@ledgerhq/test-utils";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
@@ -14,14 +14,14 @@ let continueTest = false;
 test.beforeAll(async ({ request }) => {
   // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
-    const port = await server.start("dummy-live-app/build");
+    const port = await startDummyServer("dummy-live-app/build");
     const url = `http://localhost:${port}`;
     const response = await request.get(url);
     if (response.ok()) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
       process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-        server.liveAppManifest({
+        getLiveAppManifest({
           id: "dummy-live-app",
           url,
           permissions: [{ method: "*" }],
@@ -45,7 +45,7 @@ test.beforeAll(async ({ request }) => {
 });
 
 test.afterAll(async () => {
-  await server.stop();
+  await stopDummyServer();
   console.info(`========> Dummy test app stopped <=========`);
   delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
 });
