@@ -39,7 +39,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   delegation: Delegation;
-  parentRoute?: RouteProp<ParamListBase>;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 };
 const styles = StyleSheet.create({
   modal: {

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { useNavigatio, ParamListBase, RouteProp } from "@react-navigation/native";
+import { useNavigation, ParamListBase, RouteProp } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
 type Props = {
   account: AccountLike;
   parentAccount?: Account;
-  parentSource?: RouteProp<ParamListBase>;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 };
 
 export default function TezosAccountHeader({ account, parentAccount, parentRoute }: Props) {
