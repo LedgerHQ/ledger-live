@@ -40,7 +40,10 @@ import {
   renderImageCommitRequested,
   renderImageLoadRequested,
 } from "../../components/DeviceAction/rendering";
-import { useUpdateFirmwareAndRestoreSettings } from "./useUpdateFirmwareAndRestoreSettings";
+import {
+  UpdateStep,
+  useUpdateFirmwareAndRestoreSettings,
+} from "./useUpdateFirmwareAndRestoreSettings";
 import { urls } from "../../config/urls";
 import { TrackScreen } from "../../analytics";
 import ImageHexProcessor from "../../components/CustomImage/ImageHexProcessor";
@@ -51,11 +54,26 @@ import Button from "../../components/wrappedUi/Button";
 import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
 
-type FirmwareUpdateProps = {
+// Screens/components navigating to this screen shouldn't know the implementation fw update
+// -> re-exporting useful types.
+export type { UpdateStep };
+
+export type FirmwareUpdateProps = {
   device: Device;
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
-  onBackFromUpdate?: () => void;
+
+  /**
+   * Called when the user leaves the firmware update screen
+   *
+   * Two possible reasons:
+   * - the update has completed
+   * - the user quits before the completion of the update
+   *
+   * @param updateState The current state of the update when the user leaves the screen
+   */
+  onBackFromUpdate?: (updateState: UpdateStep) => void;
+
   updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
 };
 
@@ -135,14 +153,6 @@ export const FirmwareUpdate = ({
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const dispatch = useDispatch();
 
-  const quitUpdate = useCallback(() => {
-    if (onBackFromUpdate) {
-      onBackFromUpdate();
-    } else {
-      navigation.goBack();
-    }
-  }, [navigation, onBackFromUpdate]);
-
   const onOpenReleaseNotes = useCallback(() => {
     Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
   }, [device.modelId]);
@@ -183,6 +193,15 @@ export const FirmwareUpdate = ({
     }),
     [staxImageSource],
   );
+
+  const quitUpdate = useCallback(() => {
+    if (onBackFromUpdate) {
+      console.log(`🦀 QUIT UPDATE ! updateStep: ${updateStep}`);
+      onBackFromUpdate(updateStep);
+    } else {
+      navigation.goBack();
+    }
+  }, [navigation, onBackFromUpdate, updateStep]);
 
   useEffect(() => {
     if (updateStep === "completed") {
