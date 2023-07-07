@@ -5,6 +5,7 @@ import {
   getAccountDelegationSync,
   isAccountDelegating,
 } from "@ledgerhq/live-common/families/tezos/bakers";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
@@ -44,9 +45,11 @@ const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
 const getMainActions = ({
   account,
   parentAccount,
+  parentRoute,
 }: {
   account: Account;
   parentAccount: Account;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled = isAccountDelegating(account) || account.type !== "Account";
   const navigationParams = delegationDisabled
@@ -67,6 +70,7 @@ const getMainActions = ({
           params: {
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
+            source: parentRoute,
           },
         },
       ];
