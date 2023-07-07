@@ -766,6 +766,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
   },
+  CRYPTO_ASSET_SEARCH_KEYS: {
+    def: "ticker,name,keywords",
+    parser: stringArrayParser,
+    desc: "Fuse search in `ticker`, `name`, `keywords` values in cryptoassets list",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | null | undefined => envDefinitions[name];
