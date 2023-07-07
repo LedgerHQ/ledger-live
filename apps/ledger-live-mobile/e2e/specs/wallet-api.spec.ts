@@ -16,24 +16,24 @@ let continueTest: boolean;
 
 describe("Wallet API methods", () => {
   beforeAll(async () => {
+    portfolioPage = new PortfolioPage();
+    discoverPage = new DiscoveryPage();
+    liveAppWebview = new LiveAppWebview();
+    cryptoDrawer = new CryptoDrawer();
+
     await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
 
-    const continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
+    continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
 
     if (!continueTest || !isAndroid()) {
       console.warn("Stopping Wallet API test setup");
       return; // need to make this a proper ignore/jest warning
     }
 
-    // start navigation
-    portfolioPage = new PortfolioPage();
-    discoverPage = new DiscoveryPage();
-    liveAppWebview = new LiveAppWebview();
-    cryptoDrawer = new CryptoDrawer();
-
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
+    // start navigation
     await portfolioPage.waitForPortfolioPageToLoad();
     await discoverPage.openViaDeeplink("dummy-live-app");
 
