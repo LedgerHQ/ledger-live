@@ -79,7 +79,7 @@ const EvmLegacyCustomFees = ({ account, onValidateFees, transaction }: Props) =>
 
       <View style={styles.flex}>
         <Button
-          event="EthereumSetCustomFees"
+          event="EvmSetCustomFees"
           type="primary"
           title={<Trans i18nKey="send.summary.validateFees" />}
           onPress={onValidateFees(transactionPatch)}

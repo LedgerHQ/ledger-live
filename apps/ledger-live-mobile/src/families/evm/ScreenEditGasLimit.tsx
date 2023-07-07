@@ -75,7 +75,7 @@ function EvmEditGasLimit({ navigation, route }: NavigationProps) {
 
           <View style={styles.flex}>
             <Button
-              event="EthereumSetGasLimit"
+              event="EvmSetGasLimit"
               type="primary"
               title={t("send.summary.validateGasLimit")}
               onPress={onValidateText}

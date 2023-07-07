@@ -173,7 +173,7 @@ const Evm1559CustomFees = ({
 
       <View style={styles.flex}>
         <Button
-          event="EthereumSetCustomFees"
+          event="EvmSetCustomFees"
           type="primary"
           title={t("send.summary.validateFees")}
           disabled={Boolean(maxPriorityFeeError || maxFeeError)}
