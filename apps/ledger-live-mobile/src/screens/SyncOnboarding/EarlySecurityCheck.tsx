@@ -23,6 +23,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { LanguagePrompt } from "./LanguagePrompt";
 import { NavigatorName, ScreenName } from "../../const";
 import { StackNavigationProp } from "@react-navigation/stack";
+import type { UpdateStep } from "../FirmwareUpdate";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -61,10 +62,16 @@ export type EarlySecurityCheckProps = {
    * A `Device` object
    */
   device: Device;
+
   /**
    * Function called once the ESC step is finished
    */
   notifyOnboardingEarlyCheckEnded: () => void;
+
+  /**
+   * Called when the device is not in a correct state anymore, for ex when a firmware update has completed and the device probably restarted
+   */
+  notifyEarlySecurityCheckShouldReset: () => void;
 };
 
 /**
@@ -74,6 +81,7 @@ export type EarlySecurityCheckProps = {
 export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   device,
   notifyOnboardingEarlyCheckEnded,
+  notifyEarlySecurityCheckShouldReset,
 }) => {
   // const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
   const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
@@ -169,11 +177,22 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     notifyOnboardingEarlyCheckEnded();
   }, [notifyOnboardingEarlyCheckEnded]);
 
-  const onBackFromUpdate = useCallback(() => {
-    console.log(`🐊 COMING BACK TO ESC`);
-    navigation.goBack();
-    setFirmwareUpdateCheckStatus("ongoing");
-  }, [navigation]);
+  const onBackFromUpdate = useCallback(
+    (updateState: UpdateStep) => {
+      console.log(`🐊 COMING BACK TO ESC: update state = ${updateState}`);
+      navigation.goBack();
+
+      // The device has restarted for sure
+      if (updateState === "completed") {
+        notifyEarlySecurityCheckShouldReset();
+      }
+      // The user left the firmware update flow
+      else {
+        setFirmwareUpdateCheckStatus("refused");
+      }
+    },
+    [navigation, notifyEarlySecurityCheckShouldReset],
+  );
 
   const onUpdateFirmware = useCallback(() => {
     track("button_clicked", {

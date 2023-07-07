@@ -81,7 +81,7 @@ export type SyncOnboardingCompanionProps = {
   /**
    * Called by the companion component to force a reset of the entire sync onboarding because the device is not in a correct state anymore
    */
-  notifySyncOnboardingShouldReset: () => void;
+  notifyEarlySecurityCheckShouldReset: () => void;
 };
 
 const POLLING_PERIOD_MS = 1000;
@@ -134,7 +134,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   updateHeaderOverlayDelay,
   onShouldHeaderBeOverlaid,
   onLostDevice,
-  notifySyncOnboardingShouldReset,
+  notifyEarlySecurityCheckShouldReset,
 }) => {
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
@@ -367,7 +367,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       case DeviceOnboardingStep.WelcomeScreen4:
       case DeviceOnboardingStep.WelcomeScreenReminder:
       case DeviceOnboardingStep.OnboardingEarlyCheck:
-        notifySyncOnboardingShouldReset();
+        notifyEarlySecurityCheckShouldReset();
         break;
 
       case DeviceOnboardingStep.ChooseName:
@@ -406,7 +406,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       default:
         break;
     }
-  }, [deviceOnboardingState, notifySyncOnboardingShouldReset, shouldRestoreApps]);
+  }, [deviceOnboardingState, notifyEarlySecurityCheckShouldReset, shouldRestoreApps]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost

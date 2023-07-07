@@ -94,6 +94,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     stopPolling: !isPollingOn,
   });
 
+  console.log(`🙀 POLLING: ${JSON.stringify(onboardingState)} | allowedError: ${JSON.stringify(allowedError)} | fatalError: ${JSON.stringify(fatalError)}`);
+
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: device.deviceId,
     toggleType: toggleOnboardingEarlyCheckType,
@@ -104,8 +106,10 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     setToggleOnboardingEarlyCheckType("exit");
   }, []);
 
-  // Called when the companion component thinks the device is not in a correct state anymore
-  const notifySyncOnboardingShouldReset = useCallback(() => {
+  // Called when the device seems not to be in the correct state anymore.
+  // Probably because the device restarted.
+  const notifyEarlySecurityCheckShouldReset = useCallback(() => {
+    setCurrentStep("loading");
     setIsPollingOn(true);
   }, []);
 
@@ -117,6 +121,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   // Handles current step and toggling onboarding early check logics
   useEffect(() => {
+    console.log(`🦥 onboardingState: ${JSON.stringify(onboardingState)}`);
     if (!onboardingState) {
       return;
     }
@@ -135,6 +140,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       setIsPollingOn(false);
       setToggleOnboardingEarlyCheckType("enter");
     } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
+      console.log(`🦥 setting step to early-security-check`);
       setIsPollingOn(false);
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
@@ -224,6 +230,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       <EarlySecurityCheck
         device={device}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
       />
     );
   } else if (currentStep === "companion") {
@@ -231,7 +238,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       <SyncOnboardingCompanion
         navigation={navigation}
         device={device}
-        notifySyncOnboardingShouldReset={notifySyncOnboardingShouldReset}
+        notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
         onLostDevice={onLostDevice}
         onShouldHeaderBeOverlaid={setIsHeaderOverlayOpen}
         updateHeaderOverlayDelay={setHeaderOverlayDelayMs}
