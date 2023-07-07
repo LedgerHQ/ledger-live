@@ -14,7 +14,7 @@ let cryptoDrawer: CryptoDrawer;
 
 let continueTest: boolean;
 
-describe.skip("Wallet API methods", () => {
+describe("Wallet API methods", () => {
   beforeAll(async () => {
     await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
