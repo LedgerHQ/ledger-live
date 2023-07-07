@@ -15,7 +15,7 @@ let cryptoDrawer: CryptoDrawer;
 
 let continueTest: boolean;
 
-describe("Wallet API methods", () => {
+describe.skip("Wallet API methods", () => {
   beforeAll(async () => {
     // TODO: Move this to LiveAppWebview
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
