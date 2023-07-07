@@ -78,39 +78,10 @@ First we start the local Dummy app at port 3000 by default and check that it can
 ```typescript
 import { getMockAppManifest } from "PATH/TO/utils/serve-dummy-app";
 
+let continueTest = false;
+
 test.beforeAll(async () => {
-  try {
-    const port = await server.start("dummy-wallet-app/build");
-    const url = `http://localhost:${port}`;
-    const response = await request.get(url);
-    if (response.ok()) {
-      continueTest = true;
-      console.info(
-        `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
-      );
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-        server.liveAppManifest({
-          id: "dummy-live-app",
-          url,
-          name: "Dummy Wallet API Live App",
-          apiVersion: "2.0.0",
-          content: {
-            shortDescription: {
-              en: "App to test the Wallet API",
-            },
-            description: {
-              en: "App to test the Wallet API with Playwright",
-            },
-          },
-        }),
-      );
-    } else {
-      throw new Error("Ping response != 200, got: " + response.status);
-    }
-  } catch (error) {
-    console.warn(`========> Dummy test app not running! <=========`);
-    console.error(error);
-  }
+  continueTest = await LiveApp.start(request);
 });
 ```
 
@@ -125,8 +96,8 @@ await test.step("account.request", async () => {
   // generate a random id
   const id = randomUUID();
 
-  // send the account.request method and save the promise for later
-  const resPromise = discoverPage.send({
+  // send the account.request method. This send method gives us the Wallet API message id and a promise from the 'inject javascript' step that we will resolve later
+  const { id, response } = discoverPage.send({
     jsonrpc: "2.0",
     id,
     method: "account.request",
@@ -139,11 +110,8 @@ await test.step("account.request", async () => {
   await drawer.selectCurrency("bitcoin");
   await drawer.selectAccount("bitcoin");
 
-  // get the response value that the live app received
-  const res = await resPromise;
-
-  // verify the response is as expected
-  expect(res).toStrictEqual({
+  // verify the response is as expected. Be careful to only resolve this one all the required user actions are finished
+  await expect(res).resolves.toStrictEqual({
     jsonrpc: "2.0",
     id,
     result: {
