@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.27.0-nightly.1
+
+### Minor Changes
+
+- [#2499](https://github.com/LedgerHQ/ledger-live/pull/2499) [`9d2382c84b`](https://github.com/LedgerHQ/ledger-live/commit/9d2382c84bae333b81fe67158da1e0199e2b828b) Thanks [@lvndry](https://github.com/lvndry)! - Users can cancel and speedup ethereum transactions
+
+### Patch Changes
+
+- Updated dependencies [[`989707f00c`](https://github.com/LedgerHQ/ledger-live/commit/989707f00c76145cef924f3e5417894ee117080e)]:
+  - @ledgerhq/live-common@31.3.0-nightly.1
+
 ## 3.27.0-nightly.0
 
 ### Minor Changes

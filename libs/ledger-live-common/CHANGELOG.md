@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.3.0-nightly.1
+
+### Patch Changes
+
+- [#3917](https://github.com/LedgerHQ/ledger-live/pull/3917) [`989707f00c`](https://github.com/LedgerHQ/ledger-live/commit/989707f00c76145cef924f3e5417894ee117080e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - debounce setFromAmount in LLC by 400ms
+
 ## 31.3.0-nightly.0
 
 ### Minor Changes
