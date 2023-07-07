@@ -165,7 +165,7 @@ const Evm1559CustomFees = ({
       <View style={styles.container}>
         <EvmGasLimit
           account={account}
-          transaction={transaction as Transaction}
+          transaction={transaction}
           gasLimit={gasLimit}
           setGasLimit={setGasLimit}
         />

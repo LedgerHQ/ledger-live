@@ -1,6 +1,6 @@
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/evm/types";
+import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
