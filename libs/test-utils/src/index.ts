@@ -5,31 +5,35 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 let dummyAppPath: string;
 
-export const server = http.createServer((request, response) => {
-  // You pass two more arguments for config and middleware
-  // More details here: https://github.com/vercel/serve-handler#options
-  handler(request, response, {
-    public: path.resolve(__dirname, dummyAppPath),
-  });
-});
+export const dummyAppServer = http.createServer(
+  (request: http.IncomingMessage, response: http.ServerResponse) => {
+    // You pass two more arguments for config and middleware
+    // More details here: https://github.com/vercel/serve-handler#options
 
-export function start(appPath: string, port = 0): Promise<number> {
+    console.log(path.resolve(__dirname, dummyAppPath));
+    handler(request, response, {
+      public: path.resolve(__dirname, "..", dummyAppPath),
+    });
+  },
+);
+
+export function startDummyServer(appPath: string, port = 0): Promise<number> {
   dummyAppPath = appPath;
 
   return new Promise((resolve, reject) => {
-    server
+    dummyAppServer
       .listen(port, "localhost")
       .once("listening", () => {
-        resolve((server.address() as any).port as number);
+        resolve((dummyAppServer.address() as any).port as number);
       })
       .once("error", error => {
-        server.close();
+        dummyAppServer.close();
         reject(error);
       });
   });
 }
 
-export function liveAppManifest(params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">) {
+export function getLiveAppManifest(params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">) {
   const manifest = [
     {
       name: "Generic Live App",
@@ -76,10 +80,10 @@ export function liveAppManifest(params: Partial<AppManifest> & Pick<AppManifest,
   return manifest;
 }
 
-export function stop(): Promise<void> {
-  server.close();
+export function stopDummyServer(): Promise<void> {
+  dummyAppServer.close();
   return new Promise(resolve => {
-    server.on("close", () => {
+    dummyAppServer.on("close", () => {
       resolve();
     });
   });

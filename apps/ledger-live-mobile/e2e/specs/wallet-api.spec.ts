@@ -1,12 +1,11 @@
 import * as detox from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
 import { loadConfig } from "../bridge/server";
 import { isAndroid } from "../helpers";
-// TODO: move it to common or make it as independent workspace
-import * as server from "../../../ledger-live-desktop/tests/utils/serve-dummy-app";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import DiscoveryPage from "../models/discovery/discoveryPage";
 import LiveAppWebview from "../models/liveApps/liveAppWebview";
 import CryptoDrawer from "../models/liveApps/cryptoDrawer";
+import { stopDummyServer } from "@ledgerhq/test-utils";
 
 let portfolioPage: PortfolioPage;
 let discoverPage: DiscoveryPage;
@@ -15,35 +14,12 @@ let cryptoDrawer: CryptoDrawer;
 
 let continueTest: boolean;
 
-describe.skip("Wallet API methods", () => {
+describe("Wallet API methods", () => {
   beforeAll(async () => {
-    // TODO: Move this to LiveAppWebview
+    await detox.device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
     // Check that dummy app in tests/utils/dummy-app-build has been started successfully
-    try {
-      const port = await server.start(
-        "../../../ledger-live-desktop/tests/utils/dummy-wallet-app/build",
-        52619,
-      );
 
-      await detox.device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
-
-      const url = `http://localhost:${port}`;
-      const response = await fetch(url);
-      if (response.ok) {
-        continueTest = true;
-
-        // eslint-disable-next-line no-console
-        console.info(
-          `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
-        );
-      } else {
-        continueTest = false;
-        throw new Error("Ping response != 200, got: " + response.status);
-      }
-    } catch (error) {
-      console.warn(`========> Dummy test app not running! <=========`);
-      console.error(error);
-    }
+    const continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
 
     if (!continueTest || !isAndroid()) {
       console.warn("Stopping Wallet API test setup");
@@ -69,7 +45,7 @@ describe.skip("Wallet API methods", () => {
   });
 
   afterAll(async () => {
-    await server.stop();
+    await stopDummyServer();
   });
 
   it("account.request", async () => {
