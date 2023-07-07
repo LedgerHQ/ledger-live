@@ -17,7 +17,6 @@ import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
 import { RootComposite, StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import { HeaderBackButton } from "@react-navigation/elements";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 const hitSlop = {
@@ -76,14 +75,16 @@ export default function BaseOnboardingNavigator() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name={ScreenName.PairDevices} component={PairDevices} 
+      <Stack.Screen
+        name={ScreenName.PairDevices}
+        component={PairDevices}
         options={{
           title: "",
-          headerLeft: () => <NavigationHeaderBackButton/>,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => null,
           headerShown: true,
         }}
-        />
+      />
       <Stack.Screen
         name={ScreenName.EditDeviceName}
         component={EditDeviceName}
