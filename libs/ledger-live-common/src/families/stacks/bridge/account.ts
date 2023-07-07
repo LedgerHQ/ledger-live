@@ -25,6 +25,7 @@ import {
 } from "@stacks/transactions";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   Account,
   AccountBridge,
@@ -57,10 +58,6 @@ const createTransaction = (): Transaction => {
     anchorMode: AnchorMode.Any,
     useAllAmount: false,
   };
-};
-
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
-  return { ...t, ...patch };
 };
 
 const sync = makeSync({ getAccountShape });
@@ -159,9 +156,9 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
   const { recipient, useAllAmount } = t;
   const { xpubOrAddress: xpub } = decodeAccountId(accountID);
 
+  const patch: Partial<Transaction> = {};
   if (xpub && recipient && validateAddress(recipient).isValid) {
     const { anchorMode, memo, amount } = t;
-    const newTx = { ...t };
 
     const network = StacksNetwork[t.network] || new StacksMainnet();
 
@@ -185,15 +182,13 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
 
     const fee = await estimateTransfer(tx);
 
-    newTx.fee = new BigNumber(fee.toString());
-    newTx.nonce = await findNextNonce(senderAddress, pendingOperations);
+    patch.fee = new BigNumber(fee.toString());
+    patch.nonce = await findNextNonce(senderAddress, pendingOperations);
 
-    if (useAllAmount) newTx.amount = spendableBalance.minus(newTx.fee);
-
-    return newTx;
+    if (useAllAmount) patch.amount = spendableBalance.minus(patch.fee);
   }
 
-  return t;
+  return defaultUpdateTransaction(t, patch);
 };
 
 const signOperation: SignOperationFnSignature<Transaction> = ({
@@ -299,7 +294,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
 export const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   prepareTransaction,
   estimateMaxSpendable,
