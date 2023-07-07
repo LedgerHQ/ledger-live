@@ -53,7 +53,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
-  const secretNetwork = useFeature("curencySecretNetwork");
+  const secretNetwork = useFeature("currencySecretNetwork");
   const umee = useFeature("currencyUmee");
   const desmos = useFeature("currencyDesmos");
   const onomy = useFeature("currencyOnomy");
