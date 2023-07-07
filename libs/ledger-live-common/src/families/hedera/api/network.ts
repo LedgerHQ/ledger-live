@@ -41,7 +41,7 @@ export async function getAccountBalance(address: string): Promise<AccountBalance
   try {
     accountBalance = await new hedera.AccountBalanceQuery({
       accountId,
-    }).execute(getBalanceClient());
+    }).execute(getClient());
   } catch {
     throw new HederaAddAccountError();
   }
@@ -56,15 +56,14 @@ let _hederaClient: hedera.Client | null = null;
 let _hederaBalanceClient: hedera.Client | null = null;
 
 function getClient(): hedera.Client {
-  _hederaClient ??= hedera.Client.forMainnet().setMaxNodesPerTransaction(1);
+  const nodes = {
+    "hedera-edf.coin.ledger.com:443": "0.0.21",
+    "hedera-nomura.coin.ledger.com:443": "0.0.7",
+    "hedera-ubisoft.coin.ledger.com:443": "0.0.28",
+  }
+  _hederaClient ??= hedera.Client.forNetwork(nodes);
 
   //_hederaClient.setNetwork({ mainnet: "https://hedera.coin.ledger.com" });
 
   return _hederaClient;
-}
-
-function getBalanceClient(): hedera.Client {
-  _hederaBalanceClient ??= hedera.Client.forMainnet();
-
-  return _hederaBalanceClient;
 }
