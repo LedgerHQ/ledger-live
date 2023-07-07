@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Flex } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
@@ -30,6 +30,7 @@ import GenuineCheckErrorDrawer, {
 import DeviceNotGenuineDrawer, {
   Props as DeviceNotGenuineDrawerProps,
 } from "./DeviceNotGenuineDrawer";
+import { useTranslation } from "react-i18next";
 
 export type Props = {
   onComplete: () => void;
@@ -53,6 +54,7 @@ const EarlySecurityChecks = ({
   autoStartChecks,
   restartChecksAfterUpdate,
 }: Props) => {
+  const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const whySecurityChecksUrl =
     locale in urls.genuineCheck
@@ -113,7 +115,15 @@ const EarlySecurityChecks = ({
       device,
       deviceModelId: deviceModelId,
       setFirmwareUpdateOpened: () => null, // we don't need to keep the state
-      setFirmwareUpdateCompleted: restartChecksAfterUpdate,
+      setFirmwareUpdateCompleted: () => null,
+
+      finalStepSuccessDescription: t(
+        "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessDescription",
+      ),
+      finalStepSuccessButtonLabel: t(
+        "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessButtonLabel",
+      ),
+      finalStepSuccessButtonOnClick: restartChecksAfterUpdate,
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
@@ -128,6 +138,7 @@ const EarlySecurityChecks = ({
     deviceModelId,
     latestFirmware,
     restartChecksAfterUpdate,
+    t,
   ]);
 
   useEffect(() => {
