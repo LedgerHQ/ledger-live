@@ -151,6 +151,7 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveConfirmation}
         component={ReceiveConfirmation}
         options={{
+          // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
           headerLeft: () => null,
           headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />,

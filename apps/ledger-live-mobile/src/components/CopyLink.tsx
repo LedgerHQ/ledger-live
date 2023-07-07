@@ -32,6 +32,11 @@ class CopyLink extends PureComponent<Props, State> {
 
   onPress = () => {
     const { string, onCopy } = this.props;
+    const { copied } = this.state;
+
+    if (copied) {
+      return;
+    }
 
     Clipboard.setString(string);
 
