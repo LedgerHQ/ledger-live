@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
-import { parseCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit, parseCurrencyUnit } from "../../currencies";
 import { SubAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
 
@@ -56,12 +56,26 @@ const cardano: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({ operation, transaction }): void => {
-        botTest("operation extra matches memo", () =>
-          expect(operation.extra).toEqual({
-            memo: transaction.memo,
-          }),
-        );
+      test: ({ accountBeforeTransaction, operation, transaction }): void => {
+        const cardanoResources = (accountBeforeTransaction as CardanoAccount)
+          .cardanoResources as CardanoResources;
+
+        const extra = {
+          memo: transaction.memo,
+        };
+
+        if (cardanoResources.delegation?.rewards.gt(0)) {
+          extra["rewards"] = formatCurrencyUnit(
+            accountBeforeTransaction.currency.units[0],
+            new BigNumber(cardanoResources.delegation.rewards),
+            {
+              showCode: true,
+              disableRounding: true,
+            },
+          );
+        }
+
+        botTest("operation extra matches memo", () => expect(operation.extra).toEqual(extra));
 
         botTest("optimistic value matches transaction amount", () =>
           expect(transaction.amount).toEqual(operation.value.minus(operation.fee)),
@@ -85,9 +99,8 @@ const cardano: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({ accountBeforeTransaction, operation }): void => {
-        const cardanoResources = (accountBeforeTransaction as CardanoAccount)
-          .cardanoResources as CardanoResources;
+      test: ({ account }): void => {
+        const cardanoResources = (account as CardanoAccount).cardanoResources as CardanoResources;
         const utxoTokens = cardanoResources.utxos.map(u => u.tokens).flat();
         const tokenBalance = mergeTokens(utxoTokens);
         const requiredAdaForTokens = tokenBalance.length
@@ -97,10 +110,9 @@ const cardano: AppSpec<Transaction> = {
               false,
             )
           : new BigNumber(0);
-        botTest("operation value matches (balance-requiredAdaForTokens)", () =>
-          expect(operation.value).toEqual(
-            accountBeforeTransaction.balance.minus(requiredAdaForTokens),
-          ),
+
+        botTest("remaining balance equals requiredAdaForTokens)", () =>
+          expect(account.balance).toEqual(requiredAdaForTokens),
         );
       },
     },
@@ -134,7 +146,7 @@ const cardano: AppSpec<Transaction> = {
       test: ({ operation, transaction }): void => {
         botTest("subOperations is defined", () => expect(operation.subOperations).toBeTruthy());
 
-        botTest("there are one subOperation", () =>
+        botTest("there's only one subOperation", () =>
           expect(operation.subOperations?.length).toEqual(1),
         );
 
@@ -166,7 +178,7 @@ const cardano: AppSpec<Transaction> = {
           expect(operation.type).toEqual("DELEGATE");
         });
 
-        botTest("check for operation value", () => {
+        botTest("check operation value", () => {
           const cardanoResources = (accountBeforeTransaction as CardanoAccount).cardanoResources;
           const isStakeKeyRegistered = cardanoResources.delegation?.status ?? false;
           let opValue = transaction.fees as BigNumber;
