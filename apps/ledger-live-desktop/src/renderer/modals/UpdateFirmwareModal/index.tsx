@@ -44,6 +44,10 @@ export type StepProps = {
   nonce: number;
   setNonce: (arg0: number) => void;
   setFirmwareUpdateCompleted: (arg0: boolean) => void;
+
+  finalStepSuccessDescription?: string;
+  finalStepSuccessButtonLabel?: string;
+  finalStepSuccessButtonOnClick?: () => void;
 };
 
 export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
