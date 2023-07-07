@@ -56,6 +56,7 @@
     "forgetDevice" : "إزالة الجهاز",
     "help" : "مساعدة",
     "saveLogs" : "حفظ السجلات",
+    "scrollToTop" : "Scroll to top",
     "sync" : {
       "ago" : "مزامنة {{time}}"
     },
@@ -413,6 +414,9 @@
     "MaxFeeLow" : {
       "title" : "الحد الأقصى للرسوم لديك منخفض جداً. معاملتك ربما تظل معلقة لمدة"
     },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "رسوم الأولوية منخفضة جداً، يُرجى إدخال مبلغ أعلى من قيمة رسوم الأولوية للمعاملة الأولية"
+    },
     "NetworkDown" : {
       "title" : "عفواً، يبدو أن بالإنترنت مُعطل",
       "description" : "يرجى أن تتحقق من اتصالك بالإنترنت."
@@ -496,6 +500,9 @@
     "TimeoutTagged" : {
       "title" : "عفواً، استغرق خادم البيانات وقتاً أطول من اللازم ليستجيب ({{tag}})",
       "description" : "انقضت المهلة."
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "المعاملة تم تأكيدها بالفعل"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "تم رفض المعاملة على الجهاز",
@@ -641,6 +648,9 @@
     "SwapGenericAPIError" : {
       "title" : "حدث خطأ ما",
       "description" : "لم تتم عملية التبادل. يرجى المحاولة مرة أخرى أو التواصل مع الدعم."
+    },
+    "SwapTimeoutError" : {
+      "title" : "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
     },
     "PolkadotElectionClosed" : {
       "title" : "يجب إغلاق باب انتخاب المدققين"
@@ -1460,11 +1470,11 @@
         "cta" : "الخطوة التالية"
       },
       "recoveryPhrase" : {
-        "title" : "عبارة الاسترداد",
-        "desc" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً.",
-        "desc_1" : "Nano الخاصة بك تقوم بإنشاء عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها.",
+        "title" : "Your Secret Recovery Phrase",
+        "desc" : "Your Secret Recovery Phrase is a list of 24 words that backs up your private keys.",
+        "desc_1" : "Your Ledger Nano generates a unique Secret Recovery Phrase. Ledger does not know what it is.",
         "cta" : "الخطوة التالية",
-        "checkboxDesc" : "أفهم أنني إذا فقدت عبارة الاسترداد هذه فلن أتمكن من الوصول إلى أصولي المشفرة في حالة أن فقدت الوصول إلى Nano الخاصة بي."
+        "checkboxDesc" : "I understand that if someone gets my Secret Recovery Phrase, my assets become vulnerable."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1798,7 @@
         "title" : "كمستخدم Ledger، يتم حفظ أصولي المشفرة:",
         "answers" : {
           "correct" : "على سلسلة الكتل (blockchain)",
-          "wrong" : "على جهاز Nano الخاص بي"
+          "wrong" : "On my Ledger Nano"
         },
         "modal" : {
           "text" : "يتم حفظ أصولك المشفرة دائماً على سلسلة الكتل. تحتوي محفظة الأجهزة الخاصة بك على مفتاحك الخاص فقط، والذي يتيح لك الوصول إلى أصولك المشفرة.",
@@ -1796,10 +1806,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "إذا لم تعد عبارة الاسترداد الخاصة بي سرية وآمنة...",
+        "title" : "If someone else gets access to my Secret Recovery Phrase...",
         "answers" : {
-          "correct" : "لم تعد أصولي المشفرة آمنة وأحتاج إلى نقلها إلى مكان آمن",
-          "wrong" : "ليست مشكلة، Ledger يمكن أن تُرسل لي نسخة"
+          "correct" : "My assets become vulnerable and that person could have access to them",
+          "wrong" : "No problem, as long as I still know what it is"
         },
         "modal" : {
           "text" : "أي شخص يعرف عبارة الاسترداد الخاصة بك يمكنه أن يقوم بسرقة أصولك المشفرة. \nإذا فقدتها، يجب عليك نقل أصولك المشفرة بسرعة إلى مكان آمن.",
@@ -1807,10 +1817,10 @@
         }
       },
       "privateKey" : {
-        "title" : "عندما أقوم بتوصيل Nano الخاصة بي بتطبيق Ledger، فإن مفتاحي الخاص...",
+        "title" : "When I connect my Ledger Nano to the Ledger Live app, my private key is...",
         "answers" : {
           "correct" : "لا يزال غير متصل بالإنترنت",
-          "wrong" : "متصل بالإنترنت لفترة قصيرة"
+          "wrong" : "Briefly connected to the Internet"
         },
         "modal" : {
           "text" : "مفتاحك الخاص يظل دائماً غير مُتصل بالإنترنت في محفظة الأجهزة الخاصة بك. حتى عندما يكون مُتصل بـNano الخاصة بك، تطبيق Ledger لا يمكنه الوصول إلى مفتاحك الخاص. يجب عليك أن تقوم فعلياً بالتصريح بكل معاملة على جهازك.",
@@ -1860,7 +1870,7 @@
       },
       "loading" : {
         "title" : "جاري الإقران مع {{deviceName}}...",
-        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
+        "subtitle" : "إذا طُلب منك، قم بتأكيد الكود على جهازك {{productName}}"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1909,7 @@
       },
       "loading" : {
         "title" : "جارٍ الإقران مع {{deviceName}}",
-        "subtitle" : "قم بتأكيد الكود على {{productName}} خاصتك"
+        "subtitle" : "إذا طُلب منك، قم بتأكيد الكود على جهازك {{productName}}"
       },
       "error" : {
         "title" : "الإقران لم ينجح",
@@ -3182,7 +3192,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "تم حظر عملية السحب خاصتك من قِبل {{providerName}}.\n\n يرجى التواصل مع فريق الدعم لديهم للمزيد من المعلومات."
-          }
+          },
+          "noProviders" : "No results found. There are no quotes available with the current preferences."
         }
       }
     },
@@ -3513,6 +3524,39 @@
       "maxSpendable" : {
         "title" : "المبلغ الأقصى القابل للإنفاق",
         "description" : "الحد الأقصى للمبلغ القابل للإنفاق هو إجمالي الرصيد في الحساب المتاح للإرسال في معاملة."
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "التسريع أو الإلغاء",
+    "header" : "تعديل المعاملة",
+    "learnMore" : "أريد معرفة المزيد",
+    "panel" : {
+      "stuckMessage" : "Your oldest 'send' transaction is stuck. Speed up the transaction with a higher network fee, or cancel it.",
+      "speedupMessage" : "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى أو إلغائها."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "معلومات رسوم المعاملة المُعلَّقة: ",
+      "networkfee" : "رسوم الشبكة = {{amount}} {{unit}}",
+      "maxFee" : "الحد الأقصى للرسوم = {{amount}} Gwei",
+      "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية = {{amount}} Gwei",
+      "gasPrice" : "سعر الغاز = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "تسريع",
+      "description" : "أعد تقديم المعاملة برسوم شبكة أعلى."
+    },
+    "cancel" : {
+      "title" : "إلغاء",
+      "description" : "Sending 0 {{ticker}} to your own address.\nTo ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "إلغاء المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+      "notEnoughFundsToSpeedup" : "تسريع المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+      "notlowestNonceToSpeedup" : "ميزة التسريع غير متاحة. معاملتك قيد الانتظار لأن هناك معاملةً سابقةً عالقة. يمكنك الانتظار حتى يتم تأكيدها أو تسريعها أو إلغائها.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "لا يمكن تسريعها أو إلغائها",
+        "description" : "هذه المعاملة تم تأكيدها بالفعل"
       }
     }
   },
@@ -4140,6 +4184,10 @@
         "restoreLockScreenPicture" : "استعادة صورة شاشة القَفل",
         "restoreLanguage" : "استعادة اللغة",
         "installingApps" : "تثبيت التطبيقات",
+        "imageLoadRequested" : "السماح باستعادة صورة شاشة القفل على {{deviceName}}",
+        "imageCommitRequested" : "قم بتأكيد الصورة على جهازك {{deviceName}}",
+        "allowLanguageInstallation" : "السماح باستعادة اللغة على {{deviceName}}",
+        "allowAppsRestoration" : "السماح باستعادة التطبيق على {{deviceName}}",
         "errors" : {
           "description" : "إذا كان هذا خطأ يمكنك إعادة محاولة الاستعادة، أو يمكنك تخطي هذه الخطوة.",
           "LanguageInstallRefusedOnDevice" : "تم إلغاء تغيير اللغة على {{deviceName}}",
@@ -4160,6 +4208,10 @@
       "TimeoutError" : {
         "title" : "انقضت مهلة التحديث",
         "description" : "التحديث لم يتمكن من الإنتهاء لانقطاع اتصالنا مع {{deviceName}}"
+      },
+      "CantOpenDevice" : {
+        "title" : "Sorry, connection failed",
+        "description" : "The update was unable to complete because we lost connection to {{deviceName}}."
       }
     }
   },
