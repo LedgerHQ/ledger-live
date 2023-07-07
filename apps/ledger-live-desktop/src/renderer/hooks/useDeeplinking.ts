@@ -279,6 +279,9 @@ export function useDeepLinkHandler() {
         case "recover-restore-flow":
           navigate("/recover-restore");
           break;
+        case "exchange":
+          navigate(`/exchange/${path}`, undefined, search);
+          break;
         case "portfolio":
         default:
           navigate("/");

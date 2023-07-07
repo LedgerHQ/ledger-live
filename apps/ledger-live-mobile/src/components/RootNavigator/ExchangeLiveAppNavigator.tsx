@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -16,15 +15,13 @@ const Stack = createStackNavigator<ExchangeLiveAppNavigatorParamList>();
 const ExchangeBuy = (
   _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeBuy>,
 ) => {
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   return (
     <BuyAndSellScreen
       {..._props}
       route={{
         ..._props.route,
         params: {
-          platform: ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
+          platform: "multibuy",
           mode: "buy",
           currency: _props.route.params?.currency
             ? findCryptoCurrencyByKeyword(_props.route.params?.currency)?.id
@@ -40,15 +37,13 @@ const ExchangeSell = (
   _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeSell>,
 ) => {
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
-
   return (
     <BuyAndSellScreen
       {..._props}
       route={{
         ..._props.route,
         params: {
-          platform: ptxSmartRoutingMobile?.params?.liveAppId || "multibuy",
+          platform: "multibuy",
           mode: "sell",
           currency: _props.route.params?.currency
             ? findCryptoCurrencyByKeyword(_props.route.params?.currency)?.id

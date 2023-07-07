@@ -29,7 +29,6 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
-import ExchangeNavigator from "./ExchangeNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -104,8 +103,6 @@ export default function BaseNavigator() {
   >();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
@@ -292,12 +289,8 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Exchange}
-          component={ptxSmartRoutingMobile?.enabled ? ExchangeLiveAppNavigator : ExchangeNavigator}
-          options={
-            ptxSmartRoutingMobile?.enabled
-              ? { headerShown: false }
-              : { headerStyle: styles.headerNoShadow, headerLeft: () => null }
-          }
+          component={ExchangeLiveAppNavigator}
+          options={{ headerShown: false }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen

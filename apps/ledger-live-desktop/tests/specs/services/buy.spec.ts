@@ -13,10 +13,6 @@ import { MarketPage } from "../../models/MarketPage";
 test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
-    ptxSmartRouting: {
-      enabled: true,
-      params: { liveAppId: "multibuy" },
-    },
     portfolioExchangeBanner: { enabled: true },
   },
 });

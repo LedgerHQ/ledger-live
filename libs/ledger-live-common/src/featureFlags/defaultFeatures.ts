@@ -157,12 +157,6 @@ export const defaultFeatures = {
   llmNewFirmwareUpdateUx: {
     enabled: false,
   },
-  ptxSmartRouting: {
-    enabled: false,
-  },
-  ptxSmartRoutingMobile: {
-    enabled: false,
-  },
   syncOnboarding: {
     enabled: false,
   },
