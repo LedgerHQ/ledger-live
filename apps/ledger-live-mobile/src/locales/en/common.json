@@ -649,6 +649,9 @@
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."
     },
+    "SwapTimeoutError": {
+      "title": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
+    },
     "PolkadotElectionClosed": {
       "title": "Validators election must be closed"
     },

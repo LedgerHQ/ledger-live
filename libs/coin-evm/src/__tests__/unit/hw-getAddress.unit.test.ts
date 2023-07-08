@@ -24,6 +24,9 @@ const mockSignerFactory = (
       address: address.toLowerCase(),
     }),
     signTransaction: jest.fn(),
+    signEIP712HashedMessage: jest.fn(),
+    signEIP712Message: jest.fn(),
+    signPersonalMessage: jest.fn(),
   });
 
 describe("EVM Family", () => {

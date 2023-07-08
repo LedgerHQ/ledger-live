@@ -56,17 +56,19 @@ import {
   RenderDeviceNotOnboardedError,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
-import { Account, AccountLike, DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AnyMessage,
+  DeviceInfo,
+  DeviceModelInfo,
+} from "@ledgerhq/types-live";
 import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-// eslint-disable-next-line no-restricted-imports
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -113,7 +115,7 @@ type States = PartialNullable<{
   initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
-  signMessageRequested: MessageData | TypedMessageData;
+  signMessageRequested: AnyMessage;
   allowOpeningGranted: boolean;
   completeExchangeStarted: boolean;
   completeExchangeResult: Transaction;

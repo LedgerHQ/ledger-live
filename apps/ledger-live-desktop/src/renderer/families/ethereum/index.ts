@@ -1,4 +1,3 @@
-import { getNftTransactionProperties, injectNftIntoTransaction } from "./helpers";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBodyHeader from "./AccountBodyHeader";
 import sendAmountFields from "./SendAmountFields";
@@ -7,6 +6,11 @@ import transactionConfirmFields from "./TransactionConfirmFields";
 import operationDetails from "./operationDetails";
 import AccountFooter from "./AccountFooter";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
+import {
+  getNftTransactionProperties,
+  injectNftIntoTransaction,
+  getMessageProperties,
+} from "./helpers";
 
 import { EthereumFamily } from "./types";
 
@@ -22,6 +26,9 @@ const family: EthereumFamily = {
   nft: {
     getNftTransactionProperties,
     injectNftIntoTransaction,
+  },
+  message: {
+    getMessageProperties,
   },
 };
 

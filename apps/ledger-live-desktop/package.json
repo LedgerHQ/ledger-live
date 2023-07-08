@@ -51,6 +51,7 @@
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/evm-tools": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",

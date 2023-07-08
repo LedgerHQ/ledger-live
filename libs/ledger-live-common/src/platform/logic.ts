@@ -1,5 +1,4 @@
-import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-
+import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { accountToPlatformAccount, getPlatformTransactionSignFlowInfos } from "./converters";
 import { RawPlatformTransaction, RawPlatformSignedTransaction } from "./rawTypes";
 import {
@@ -11,9 +10,7 @@ import { LiveAppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
-import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { TypedMessageData } from "../families/ethereum/types";
 import { Exchange } from "../exchange/platform/types";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
@@ -252,7 +249,7 @@ export function signMessageLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,
   message: string,
-  uiNavigation: (account: AccountLike, message: MessageData | TypedMessageData) => Promise<string>,
+  uiNavigation: (account: AccountLike, message: AnyMessage) => Promise<string>,
 ): Promise<string> {
   tracking.platformSignMessageRequested(manifest);
 
@@ -262,7 +259,7 @@ export function signMessageLogic(
     return Promise.reject(new Error(`account with id "${accountId}" not found`));
   }
 
-  let formattedMessage: MessageData | TypedMessageData;
+  let formattedMessage: AnyMessage;
   try {
     if (isAccount(account)) {
       formattedMessage = prepareMessageToSign(account, message);
