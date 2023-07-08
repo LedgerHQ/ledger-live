@@ -1,5 +1,4 @@
-import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
-
+import { Account, AccountLike, AnyMessage, SignedOperation } from "@ledgerhq/types-live";
 import {
   accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,
@@ -9,9 +8,7 @@ import type { TrackingAPI } from "./tracking";
 import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
 import { isTokenAccount, isAccount, getMainAccount } from "../account/index";
 import { Transaction } from "../generated/types";
-import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { TypedMessageData } from "../families/ethereum/types";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/platform/types";
 
@@ -161,7 +158,7 @@ export function signMessageLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   message: string,
-  uiNavigation: (account: AccountLike, message: MessageData | TypedMessageData) => Promise<Buffer>,
+  uiNavigation: (account: AccountLike, message: AnyMessage) => Promise<Buffer>,
 ): Promise<Buffer> {
   tracking.signMessageRequested(manifest);
 
@@ -177,7 +174,7 @@ export function signMessageLogic(
     return Promise.reject(new Error("account not found"));
   }
 
-  let formattedMessage: MessageData | TypedMessageData;
+  let formattedMessage: AnyMessage;
   try {
     if (isAccount(account)) {
       formattedMessage = prepareMessageToSign(account, message);

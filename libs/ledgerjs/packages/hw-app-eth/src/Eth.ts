@@ -24,15 +24,10 @@ import { decodeTxInfo, hexBuffer, intAsHexBytes, maybeHexBuffer, splitPath } fro
 import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
 import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
-import {
-  signEIP712HashedMessage,
-  signEIP712Message,
-  EIP712Message,
-  isEIP712Message,
-  getFiltersForMessage,
-} from "./modules/EIP712";
+import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
+import { EIP712Message } from "@ledgerhq/types-live";
 
-export { ledgerService, isEIP712Message, getFiltersForMessage };
+export { ledgerService };
 export * from "./utils";
 
 export type StarkQuantizationType = "eth" | "erc20" | "erc721" | "erc20mintable" | "erc721mintable";

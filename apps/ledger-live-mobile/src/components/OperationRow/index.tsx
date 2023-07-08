@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import {
@@ -12,18 +12,22 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
-import CurrencyUnitValue from "./CurrencyUnitValue";
-import CounterValue from "./CounterValue";
-import OperationIcon from "./OperationIcon";
-import { ScreenName } from "../const";
-import OperationRowDate from "./OperationRowDate";
-import OperationRowNftName from "./OperationRowNftName";
-import perFamilyOperationDetails from "../generated/operationDetails";
-import { track } from "../analytics";
-import { UnionToIntersection } from "../types/helpers";
-import { BaseNavigation } from "./RootNavigator/types/helpers";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+
+import CurrencyUnitValue from "../CurrencyUnitValue";
+import CounterValue from "../CounterValue";
+import OperationIcon from "../OperationIcon";
+import { ScreenName } from "../../const";
+import OperationRowDate from "../OperationRowDate";
+import OperationRowNftName from "../OperationRowNftName";
+import perFamilyOperationDetails from "../../generated/operationDetails";
+import { track } from "../../analytics";
+import { UnionToIntersection } from "../../types/helpers";
+import { BaseNavigation } from "../RootNavigator/types/helpers";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -135,14 +139,20 @@ function OperationRow({
     ) : null;
   }, [account, operation, parentAccount]);
 
+  const { colors } = useTheme();
   const amount = getOperationAmountNumber(operation);
-  const valueColor = amount.isNegative() ? "neutral.c100" : "success.c50";
+  const valueColor = amount.isNegative() ? colors.neutral.c100 : colors.success.c50;
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
-
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
-  const spinner = (
+  const isOperationStuck =
+    isEditableOperation(account, operation) &&
+    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+
+  const spinner = isOperationStuck ? (
+    <WarningMedium />
+  ) : (
     <SpinnerContainer>
       <InfiniteLoader size={10} />
     </SpinnerContainer>
@@ -160,14 +170,19 @@ function OperationRow({
       </Box>
       <Wrapper opacity={isOptimistic ? 0.5 : 1}>
         <BodyLeftContainer>
-          <Text variant="body" fontWeight="semiBold" color="neutral.c100" numberOfLines={1}>
+          <Text variant="body" fontWeight="semiBold" color={colors.neutral.c100} numberOfLines={1}>
             {multipleAccounts ? getAccountName(account) : text}
           </Text>
 
           {isOptimistic ? (
-            <Flex flexDirection="row" alignItems="center">
+            <Flex flexDirection="row" alignItems="center" testID="spinner-container">
               {spinner}
-              <Text numberOfLines={1} variant="paragraph" fontWeight="medium" color="neutral.c70">
+              <Text
+                numberOfLines={1}
+                variant="paragraph"
+                fontWeight="medium"
+                color={colors.neutral.c70}
+              >
                 <Trans
                   i18nKey={
                     amount.isNegative() ? "operationDetails.sending" : "operationDetails.receiving"
@@ -176,7 +191,13 @@ function OperationRow({
               </Text>
             </Flex>
           ) : (
-            <Text numberOfLines={1} color="neutral.c70" variant="paragraph" fontWeight="medium">
+            <Text
+              numberOfLines={1}
+              color={colors.neutral.c70}
+              variant="paragraph"
+              fontWeight="medium"
+              testID="operationRowDate"
+            >
               {text} <OperationRowDate date={operation.date} />
             </Text>
           )}
@@ -197,7 +218,7 @@ function OperationRow({
             <Text numberOfLines={1} color={valueColor} variant="body" fontWeight="semiBold">
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
-            <Text variant="paragraph" fontWeight="medium" color="neutral.c70">
+            <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>
               <CounterValue
                 showCode
                 date={operation.date}

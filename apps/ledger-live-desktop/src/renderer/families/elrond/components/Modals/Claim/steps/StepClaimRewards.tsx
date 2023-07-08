@@ -58,7 +58,13 @@ const StepClaimRewards = (props: StepProps) => {
   const key = transaction.mode === "claimRewards" ? "claimInfo" : "compoundInfo";
   return (
     <Box flow={1}>
-      <TrackPage category="ClaimRewards Flow" name="Step 1" />
+      <TrackPage
+        category="ClaimRewards Flow"
+        name="Step 1"
+        flow="stake"
+        action="claim"
+        currency="egld"
+      />
       {warning && !error ? <ErrorBanner error={warning} warning={true} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <ModeSelectorField mode={transaction.mode} onChange={onChangeMode} />

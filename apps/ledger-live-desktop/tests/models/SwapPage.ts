@@ -26,6 +26,7 @@ export class SwapPage {
   readonly decentralisedQuoteFilterButton: Locator;
   readonly floatQuoteFilterButton: Locator;
   readonly fixedQuoteFilterButton: Locator;
+  readonly swapProviderRates: Locator;
 
   constructor(page: Page) {
     // Misc Swap Components
@@ -77,6 +78,9 @@ export class SwapPage {
 
     // Swap History Components
     this.historyRow = page.locator(".swap-history-row").first();
+
+    // Swap Provider Rates
+    this.swapProviderRates = page.locator("data-test-id='swap2.provider-rates'");
   }
 
   async navigate() {
@@ -176,6 +180,11 @@ export class SwapPage {
   async verifyExchangeDetails() {
     await this.detailsSwapId.waitFor({ state: "visible" });
     return this.detailsSwapId.innerText();
+  }
+
+  async waitForProviderRates() {
+    await this.centralisedQuoteFilterButton.waitFor({ state: "visible" });
+    await this.decentralisedQuoteFilterButton.waitFor({ state: "visible" });
   }
 
   // TODO: pull this function out into a utility function so we can use it elsewhere

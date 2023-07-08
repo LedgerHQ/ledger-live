@@ -1,0 +1,72 @@
+{
+  "name": "@ledgerhq/evm-tools",
+  "version": "1.0.0",
+  "description": "EVM tooling used for coin integrations & app bindings",
+  "main": "./index.ts",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "evm",
+    "Ethereum",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/evm-tools",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "crypto-js": "4.1.1",
+    "ethers": "5.7.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/types-live": "workspace:^",
+    "@types/crypto-js": "^4.1.1",
+    "@types/jest": "^28.1.8",
+    "@types/node": "^18.15.7",
+    "jest": "^29.6.0",
+    "ts-jest": "^29.1.1"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  }
+}

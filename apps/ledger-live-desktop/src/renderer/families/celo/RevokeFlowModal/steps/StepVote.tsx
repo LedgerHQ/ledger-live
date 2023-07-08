@@ -81,7 +81,13 @@ const StepVote = ({
   const unit = getAccountUnit(account);
   return (
     <Box flow={1}>
-      <TrackPage category="Celo Revoke" name="Step 1" />
+      <TrackPage
+        category="Celo Revoke"
+        name="Step 1"
+        flow="stake"
+        action="revoke"
+        currency="celo"
+      />
       {error ? <ErrorBanner error={error} /> : null}
       <Alert type="primary" mb={4} learnMoreUrl={urls.celo.learnMore}>
         <Trans i18nKey="celo.revoke.steps.vote.info" />

@@ -142,11 +142,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "Static fee for Stellar account",
   },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
-  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
@@ -770,6 +765,16 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: ["ticker", "name", "keywords"],
     parser: stringArrayParser,
     desc: "Fuse search in `ticker`, `name`, `keywords` values in cryptoassets list",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
   },
 };
 

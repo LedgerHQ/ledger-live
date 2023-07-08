@@ -4,10 +4,8 @@ import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
+import type { Account, Operation, AccountLike, NFTMetadataResponse } from "@ledgerhq/types-live";
 import {
-  getMainAccount,
-  getAccountCurrency,
   getAccountUnit,
   getAccountName,
   getFeesCurrency,
@@ -19,6 +17,11 @@ import {
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/operation";
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -44,6 +47,7 @@ import type {
   StackNavigatorNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { EditOperationPanel } from "../../families/ethereum/EditTransactionFlow/EditOperationPanel";
 
 type HelpLinkProps = {
   event: string;
@@ -68,13 +72,24 @@ type Props = {
   parentAccount?: Account | null;
   operation: Operation;
   disableAllLinks?: boolean;
+  currency: CryptoCurrency | TokenCurrency;
+  mainAccount: Account;
 };
-export default function Content({ account, parentAccount, operation, disableAllLinks }: Props) {
+
+export default function Content({
+  account,
+  mainAccount,
+  parentAccount,
+  operation,
+  disableAllLinks,
+  currency,
+}: Props) {
   const { colors } = useTheme();
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
+
   const onPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Account,
@@ -84,19 +99,21 @@ export default function Content({ account, parentAccount, operation, disableAllL
       },
     });
   }, [account.id, navigation, parentAccount]);
+
   const onPressInfo = useCallback(() => {
     setIsModalOpened(true);
   }, []);
+
   const onModalClose = useCallback(() => {
     setIsModalOpened(false);
   }, []);
-  const mainAccount = getMainAccount(account, parentAccount);
+
   const currencySettings = useSelector((s: State) =>
     currencySettingsForAccountSelector(s, {
       account: mainAccount,
     }),
   );
-  const currency = getAccountCurrency(account);
+
   const isToken = currency.type === "TokenCurrency";
   const unit = getAccountUnit(account);
   const feeCurrency = getFeesCurrency(mainAccount);
@@ -106,20 +123,27 @@ export default function Content({ account, parentAccount, operation, disableAllL
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const uniqueSenders = uniq<(typeof operation.senders)[0]>(operation.senders);
   const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
-  const { extra, type } = operation;
-  const { hasFailed } = operation;
+  const { extra, type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
+
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,
     currencySettings.confirmationsNb,
   );
+
+  const isEditable = isEditableOperation(mainAccount, operation);
+  const isOperationStuck =
+    isEditable &&
+    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+
   const specific =
     byFamiliesOperationDetails[
       mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
     ];
+
   const urlFeesInfo =
     specific &&
     (specific as { getURLFeesInfo: (o: Operation, c: string) => string })?.getURLFeesInfo &&
@@ -127,6 +151,7 @@ export default function Content({ account, parentAccount, operation, disableAllL
       operation,
       mainAccount.currency.id,
     );
+
   const Extra =
     specific && (specific as { OperationDetailsExtra: React.ComponentType }).OperationDetailsExtra
       ? (
@@ -140,6 +165,7 @@ export default function Content({ account, parentAccount, operation, disableAllL
           }
         ).OperationDetailsExtra
       : DefaultOperationDetailsExtra;
+
   const isNftOperation =
     ["NFT_IN", "NFT_OUT"].includes(type) && operation.contract && operation.tokenId;
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
@@ -150,7 +176,10 @@ export default function Content({ account, parentAccount, operation, disableAllL
     operation.contract,
     operation.tokenId,
     currency.id,
-  );
+  ) as NFTResource & {
+    metadata: NFTMetadataResponse["result"];
+  };
+
   return (
     <>
       <View style={styles.header}>
@@ -174,7 +203,6 @@ export default function Content({ account, parentAccount, operation, disableAllL
           metadata={nftMetadata}
           styles={styles}
         />
-
         <View style={styles.confirmationContainer}>
           <View
             style={[
@@ -251,10 +279,10 @@ export default function Content({ account, parentAccount, operation, disableAllL
             if (!opAccount) return null;
             return (
               <View
+                key={op.id}
                 style={{
                   marginHorizontal: 16,
                 }}
-                key={op.id}
               >
                 <OperationRow
                   isSubOperation
@@ -291,6 +319,15 @@ export default function Content({ account, parentAccount, operation, disableAllL
           title={t("operationDetails.details", {
             currency: currency.name,
           })}
+        />
+      ) : null}
+
+      {isEditable ? (
+        <EditOperationPanel
+          isOperationStuck={isOperationStuck}
+          account={account}
+          parentAccount={parentAccount}
+          operation={operation}
         />
       ) : null}
 

@@ -14,8 +14,8 @@ import type { WCCallRequest, WCPayload } from "@ledgerhq/live-common/walletconne
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+
 type Opts = ScanCommonOpts &
   Partial<{
     walletConnectURI: string;
@@ -85,7 +85,7 @@ const start = async (opts: Opts) => {
     if (wcCallRequest.type === "message") {
       log("walletconnect", "message to sign", wcCallRequest.data);
       result = await withDevice(opts.device || "")(t =>
-        from(signMessage(t, wcCallRequest.data as MessageData)),
+        from(signMessage(t, account, wcCallRequest.data)),
       ).toPromise();
       result = result.signature;
       log("walletconnect", "message signature", result);

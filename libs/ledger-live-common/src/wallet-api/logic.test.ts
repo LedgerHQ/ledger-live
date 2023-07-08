@@ -16,7 +16,6 @@ import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
 import * as signMessage from "../hw/signMessage/index";
-import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
@@ -563,11 +562,8 @@ function createWalletAPIAccount() {
 
 function createMessageData() {
   return {
-    currency: createFixtureCryptoCurrency("eth"),
-    path: "path",
-    derivationMode: "ethM" as DerivationMode,
+    account: createFixtureAccount("17"),
     message: "default message",
-    rawMessage: "raw default message",
   };
 }
 

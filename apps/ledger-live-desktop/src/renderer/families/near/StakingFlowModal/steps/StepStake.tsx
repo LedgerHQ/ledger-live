@@ -31,7 +31,13 @@ export default function StepStake({
   const chosenVoteAccAddr = transaction.recipient || "";
   return (
     <Box flow={1}>
-      <TrackPage category="Staking Flow" name="Step Validator" />
+      <TrackPage
+        category="Staking Flow"
+        name="Step Validator"
+        flow="stake"
+        action="staking"
+        currency="near"
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorField
         account={account}

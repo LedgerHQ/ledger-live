@@ -56,7 +56,13 @@ const StepAmount = ({
   return (
     <Box flow={1}>
       <SyncSkipUnderPriority priority={100} />
-      <TrackPage category="Celo Unlock" name="Step 1" />
+      <TrackPage
+        category="Celo Unlock"
+        name="Step 1"
+        flow="stake"
+        action="unlock"
+        currency="celo"
+      />
       {error && <ErrorBanner error={error} />}
       <Alert
         type="primary"

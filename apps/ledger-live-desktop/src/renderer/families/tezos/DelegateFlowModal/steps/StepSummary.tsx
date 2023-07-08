@@ -66,6 +66,9 @@ const StepSummary = ({
       <TrackPage
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step Summary"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
       />
 
       <DelegationContainer
