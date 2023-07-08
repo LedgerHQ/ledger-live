@@ -1,5 +1,18 @@
 # @ledgerhq/hw-app-eth
 
+## 6.34.0-nightly.1
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Use of `evm-tools` lib for EIP712 clear signing, linting & use of `nock` to prevent all network calls now that some network related features have been moved to another lib which is not easily mockable
+
+### Patch Changes
+
+- Updated dependencies [[`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1)]:
+  - @ledgerhq/types-live@6.37.0-nightly.0
+  - @ledgerhq/domain-service@1.1.6-nightly.1
+  - @ledgerhq/evm-tools@1.0.0
+
 ## 6.33.8-nightly.0
 
 ### Patch Changes

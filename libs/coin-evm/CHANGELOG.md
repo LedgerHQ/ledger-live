@@ -1,5 +1,20 @@
 # @ledgerhq/coin-evm
 
+## 0.4.0-nightly.1
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Use of the `evm-tools` new library to bring support for SignMessage
+
+### Patch Changes
+
+- Updated dependencies [[`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1), [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1)]:
+  - @ledgerhq/types-live@6.37.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.0-nightly.1
+  - @ledgerhq/coin-framework@0.4.0-nightly.1
+  - @ledgerhq/domain-service@1.1.6-nightly.1
+  - @ledgerhq/evm-tools@1.0.0
+
 ## 0.4.0-nightly.0
 
 ### Minor Changes

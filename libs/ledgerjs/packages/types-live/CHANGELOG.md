@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.37.0-nightly.0
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EVM messages types
+
 ## 6.36.0
 
 ### Minor Changes

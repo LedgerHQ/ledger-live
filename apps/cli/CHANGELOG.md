@@ -1,5 +1,17 @@
 # @ledgerhq/live-cli
 
+## 22.10.0-nightly.2
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update SignMessage logic to be simpler, with improved typing.
+
+### Patch Changes
+
+- Updated dependencies [[`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1), [`16d29e18ee`](https://github.com/LedgerHQ/ledger-live/commit/16d29e18eef21009ba384f15f495c92b2028b4c4)]:
+  - @ledgerhq/live-common@31.3.0-nightly.2
+  - @ledgerhq/coin-framework@0.4.0-nightly.1
+
 ## 22.9.3-nightly.1
 
 ### Patch Changes
