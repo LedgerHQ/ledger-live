@@ -37,7 +37,13 @@ const StepConfirmation = (props: StepProps) => {
     const textKey = transaction?.mode === "claimRewards" ? "text" : "textCompound";
     return (
       <Container>
-        <TrackPage category="ClaimRewards Elrond Flow" name="Step Confirmed" />
+        <TrackPage
+          category="ClaimRewards Elrond Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="claim"
+          currency="egld"
+        />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
 
         <SuccessDisplay
@@ -65,7 +71,13 @@ const StepConfirmation = (props: StepProps) => {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="ClaimRewards Elrond Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="ClaimRewards Elrond Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="claim"
+          currency="egld"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="elrond.claimRewards.flow.steps.confirmation.broadcastError" />}

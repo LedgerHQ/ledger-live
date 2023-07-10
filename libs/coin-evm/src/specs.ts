@@ -1,16 +1,22 @@
+/* istanbul ignore file: don't test the test. */
+
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
 import BigNumber from "bignumber.js";
-import { MutationSpec, TransactionDestinationTestInput } from "@ledgerhq/coin-framework/bot/types";
-import { DeviceModelId } from "@ledgerhq/devices";
-import { CryptoCurrencyIds } from "@ledgerhq/types-live";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import {
+  AppSpec,
+  MutationSpec,
+  TransactionDestinationTestInput,
+} from "@ledgerhq/coin-framework/bot/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import {
   getCryptoCurrencyById,
   parseCurrencyUnit,
 } from "@ledgerhq/coin-framework/currencies/index";
+import { CryptoCurrencyIds } from "@ledgerhq/types-live";
+import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
 
@@ -298,8 +304,7 @@ const evmBasicMutations: ({
 
 export default Object.values(cryptocurrenciesById)
   .filter(currency => currency.family === "evm")
-  .reduce((acc, currency) => {
-    // @ts-expect-error FIXME: fix typings
+  .reduce<Record<CryptoCurrencyIds, AppSpec<EvmTransaction>>>((acc, currency) => {
     acc[currency.id] = {
       name: currency.name,
       currency,

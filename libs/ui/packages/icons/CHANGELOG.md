@@ -1,5 +1,17 @@
 # @ledgerhq/icons-ui
 
+## 0.4.1
+
+### Patch Changes
+
+- [#3707](https://github.com/LedgerHQ/ledger-live/pull/3707) [`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update some icons to fit better the bounding box
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- [#3707](https://github.com/LedgerHQ/ledger-live/pull/3707) [`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update some icons to fit better the bounding box
+
 ## 0.4.0
 
 ### Minor Changes

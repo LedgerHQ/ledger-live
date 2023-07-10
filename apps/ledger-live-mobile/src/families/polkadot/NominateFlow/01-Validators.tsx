@@ -6,7 +6,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 import type {
   Transaction,
   PolkadotValidator,
@@ -48,6 +47,7 @@ import type {
 } from "../../../components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import Identicon from "@polkadot/reactnative-identicon";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
@@ -251,12 +251,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
         account={account}
         ValidatorImage={({ size }) =>
           drawerValidator ? (
-            <PolkadotIdenticon
-              address={drawerValidator.address}
-              size={size}
-              // publicKey is not really needed, ts is wrong here but well…
-              publicKey=""
-            />
+            <Identicon value={drawerValidator.address} size={size} theme="polkadot" />
           ) : null
         }
         data={drawerInfo}

@@ -100,7 +100,7 @@ const OnboardingStepUseCaseSelection = () => {
         }}
         testID={`Onboarding UseCase - Selection|New Wallet`}
         onPress={onPressNew}
-        Icon={<Icons.PlusMedium color={colors.primary.c80} size={14} />}
+        Icon={<Icons.PlusMedium color={colors.primary.c80} size={24} />}
       />
 
       <Box mt={6}>
@@ -113,7 +113,7 @@ const OnboardingStepUseCaseSelection = () => {
           }}
           testID={`Onboarding UseCase - Selection|Recovery phrase`}
           onPress={onPressRecoveryPhrase}
-          Icon={<Icons.ListMedium color={colors.primary.c80} size={14} />}
+          Icon={<Icons.ListMedium color={colors.primary.c80} size={24} />}
         />
       </Box>
 
@@ -128,7 +128,7 @@ const OnboardingStepUseCaseSelection = () => {
             }}
             testID={`Onboarding UseCase - Selection|Ledger Recover`}
             onPress={onPressProtect}
-            Icon={<Icons.ShieldMedium color={colors.primary.c80} size={14} />}
+            Icon={<Icons.ShieldMedium color={colors.primary.c80} size={24} />}
           />
         </Box>
       )}

@@ -103,5 +103,14 @@ module.exports = {
         "no-console": "off",
       },
     },
+    {
+      files: ["**/jest.config.js", "**/jest-setup.js", "**/e2e/**"],
+      env: {
+        jest: true,
+      },
+      rules: {
+        "@typescript-eslint/no-var-requires": "off",
+      },
+    },
   ],
 };

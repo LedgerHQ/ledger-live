@@ -20,6 +20,9 @@ export const defaultFeatures = {
   currencyAvalancheCChain: {
     enabled: false,
   },
+  currencyStacks: {
+    enabled: false,
+  },
   currencyOptimism: {
     enabled: false,
   },
@@ -77,6 +80,18 @@ export const defaultFeatures = {
   currencyPersistence: {
     enabled: false,
   },
+  currencySecretNetwork: {
+    enabled: false,
+  },
+  currencyStargaze: {
+    enabled: false,
+  },
+  currencyUmee: {
+    enabled: false,
+  },
+  currencyDesmos: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
@@ -97,6 +112,9 @@ export const defaultFeatures = {
     params: {
       supportedCurrencyIds: ["ethereum"],
     },
+  },
+  editEthTx: {
+    enabled: false,
   },
   ratingsPrompt: {
     enabled: false,
@@ -215,9 +233,6 @@ export const defaultFeatures = {
     enabled: false,
   },
   objkt: {
-    enabled: false,
-  },
-  editEthTx: {
     enabled: false,
   },
   protectServicesMobile: {

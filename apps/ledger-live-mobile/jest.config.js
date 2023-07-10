@@ -10,6 +10,8 @@ const transformIncludePatterns = [
   "react-native-animatable",
   "@sentry/react-native",
   "react-native-startup-time",
+  "@segment/analytics-react-native",
+  "uuid",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
@@ -25,14 +27,15 @@ module.exports = {
   },
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
-    "^.+\\.js?$": "babel-jest",
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.(js|jsx)?$": "babel-jest",
+    "^.+\\.(ts|tsx)?$": "ts-jest",
   },
   transformIgnorePatterns: [
     `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,
     "\\.pnp\\.[^\\/]+$",
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
+  moduleDirectories: ["node_modules"],
   coverageReporters: ["json"],
   coverageDirectory: "<rootDir>/coverage",
   moduleNameMapper: {

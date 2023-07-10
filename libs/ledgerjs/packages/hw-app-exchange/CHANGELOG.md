@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.2.0
+
+### Minor Changes
+
+- [#3742](https://github.com/LedgerHQ/ledger-live/pull/3742) [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d) Thanks [@sarneijim](https://github.com/sarneijim)! - Improve Exchange Errors
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#3742](https://github.com/LedgerHQ/ledger-live/pull/3742) [`cc31fc9213`](https://github.com/LedgerHQ/ledger-live/commit/cc31fc9213dc2e3e751b63a7722207dc711bbe3d) Thanks [@sarneijim](https://github.com/sarneijim)! - Improve Exchange Errors
+
 ## 0.1.3
 
 ### Patch Changes

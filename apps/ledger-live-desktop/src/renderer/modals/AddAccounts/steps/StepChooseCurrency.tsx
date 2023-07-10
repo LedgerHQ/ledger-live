@@ -30,10 +30,15 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
+  const stargaze = useFeature("currencyStargaze");
+  const secretNetwork = useFeature("currencySecretNetwork");
+  const umee = useFeature("currencyUmee");
+  const desmos = useFeature("currencyDesmos");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
@@ -53,10 +58,15 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const featureFlaggedCurrencies = useMemo(
     () => ({
       axelar,
+      stargaze,
+      secretNetwork,
+      umee,
+      desmos,
       onomy,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
+      stacks,
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
@@ -75,6 +85,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     }),
     [
       avaxCChain,
+      stacks,
       optimism,
       optimismGoerli,
       arbitrum,
@@ -91,6 +102,10 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       velasEvm,
       syscoin,
       axelar,
+      stargaze,
+      desmos,
+      umee,
+      secretNetwork,
       onomy,
       persistence,
       quicksilver,
