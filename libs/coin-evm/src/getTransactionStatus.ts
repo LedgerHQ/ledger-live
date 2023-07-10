@@ -119,7 +119,6 @@ const validateGas = (
 
   const maximalPriorityFee = tx.gasOptions?.fast?.maxPriorityFeePerGas;
   const minimalPriorityFee = tx.gasOptions?.slow?.maxPriorityFeePerGas;
-  const maximalMaxFeePerGas = tx.gasOptions?.fast?.maxFeePerGas;
   const recommandedNextBaseFee = tx.gasOptions?.medium?.nextBaseFee;
 
   if (
@@ -158,7 +157,7 @@ const validateGas = (
     }
   }
 
-  if (maximalMaxFeePerGas && tx.maxFeePerGas?.gt(maximalMaxFeePerGas)) {
+  if (tx.type === 2 && tx.maxPriorityFeePerGas.isGreaterThan(tx.maxFeePerGas)) {
     // priority fee is more than max fee (total fee for the transaction) which doesn't make sense
     errors.maxPriorityFee = new PriorityFeeHigherThanMaxFee();
   }
