@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/types-live";
 import {
   Transaction,
   TransactionStatus,
