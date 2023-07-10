@@ -146,11 +146,6 @@ export default function SettingsNavigator() {
         options={{ title: t("settings.accounts.cryptoAssets.header") }}
       />
       <Stack.Screen
-        name={ScreenName.HiddenNftCollections}
-        component={HiddenNftCollections}
-        options={{ title: t("settings.accounts.hiddenNFTCollections") }}
-      />
-      <Stack.Screen
         name={ScreenName.CurrencySettings}
         component={CurrencySettings}
         options={({ route }) => ({

@@ -77,15 +77,6 @@ export default function AccountsSettings({
             onPress={() => navigation.navigate(ScreenName.CryptoAssetsSettings)}
           />
         )}
-        {hiddenNftCollections.length > 0 && (
-          <SettingsRow
-            event="HiddenNftCollectionsSettings"
-            title={t("settings.accounts.hiddenNFTCollections")}
-            desc={t("settings.accounts.hiddenNFTCollectionsDesc")}
-            arrowRight
-            onPress={() => navigation.navigate(ScreenName.HiddenNftCollections)}
-          />
-        )}
         <HideEmptyTokenAccountsRow />
         <FilterTokenOperationsZeroAmountRow />
         <SettingsRow

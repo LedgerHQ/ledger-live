@@ -11,4 +11,5 @@ export type NftNavigatorParamList = {
     mediaFormat: NFTMediaSize;
     status: NFTResource["status"];
   };
+  [ScreenName.HiddenNftCollections]: undefined;
 };

@@ -12,7 +12,6 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.HelpSettings]: undefined;
   [ScreenName.Resources]: undefined;
   [ScreenName.CryptoAssetsSettings]: undefined;
-  [ScreenName.HiddenNftCollections]: undefined;
   [ScreenName.CurrencySettings]: {
     currencyId: string;
     headerTitle?: string;
