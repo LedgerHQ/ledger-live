@@ -50,7 +50,8 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   status,
   updateTransaction,
 }) => {
-  invariant(transaction.family === "evm", "FeeField: evm family expected");
+  invariant(transaction.family === "evm", "MaxFeeField: evm family expected");
+  invariant(transaction.type === 2, "MaxFeeField: transaction should be of type 2 (EIP1559)");
 
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { t } = useTranslation();
@@ -66,7 +67,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
     [bridge, transaction, updateTransaction],
   );
 
-  const maxFeePerGas = transaction.maxFeePerGas || transaction.gasOptions?.medium.maxFeePerGas;
+  const { maxFeePerGas } = transaction;
   const { units } = account.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
