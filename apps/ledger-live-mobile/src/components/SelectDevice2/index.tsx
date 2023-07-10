@@ -29,6 +29,7 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import ServicesWidget from "../ServicesWidget";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type { SetHeaderOptionsRequest };
 
@@ -56,6 +57,7 @@ type Props = {
 
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
+  deviceModelIds?: DeviceModelId[];
 };
 
 export default function SelectDevice({
@@ -65,6 +67,7 @@ export default function SelectDevice({
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
   withMyLedgerTracking,
+  deviceModelIds,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -210,8 +213,8 @@ export default function SelectDevice({
       devices.push(ProxyDevice);
     }
 
-    return devices;
-  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice]);
+    return deviceModelIds ? devices.filter(d => deviceModelIds.includes(d.modelId)) : devices;
+  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, deviceModelIds]);
 
   // update device name on store when needed
   useEffect(() => {
