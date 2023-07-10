@@ -144,13 +144,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="Receive" name="Select Crypto" />
-      <Text
-        variant="h4"
-        fontWeight="semiBold"
-        mx={6}
-        mb={3}
-        testID="receive-header-step1-title"
-      >
+      <Text variant="h4" fontWeight="semiBold" mx={6} mb={3} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
       </Text>
       <FilteredSearchBar
