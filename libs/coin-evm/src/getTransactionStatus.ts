@@ -23,6 +23,7 @@ import {
   Transaction as EvmTransaction,
 } from "./types";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
+import { DEFAULT_GAS_LIMIT } from "./transaction";
 
 type ValidatedTransactionFields =
   | "recipient"
@@ -118,8 +119,7 @@ export const validateGas = (
   // Gas Limit
   if (gasLimit.isZero()) {
     errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isLessThan(21000)) {
-    // minimum gas for a tx is 21000
+  } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
     errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   }
   if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
