@@ -3352,8 +3352,8 @@ importers:
   libs/ledgerjs/packages/hw-transport-node-ble:
     dependencies:
       '@abandonware/noble':
-        specifier: 1.9.2-15
-        version: 1.9.2-15
+        specifier: 1.9.2-21
+        version: 1.9.2-21
       '@ledgerhq/devices':
         specifier: workspace:^
         version: link:../devices
@@ -5194,14 +5194,14 @@ packages:
     resolution: {integrity: sha512-sAP4LldeWNz0lNzmTird3uWfFDWWTeg6V/MsmyyLR9X1idwKBWIgt/ZvinqQldJm3LecKEs1emkbquO6PCiLVQ==}
     dev: true
 
-  /@abandonware/bluetooth-hci-socket@0.5.3-8:
-    resolution: {integrity: sha512-JIUkTZpAo6vKyXd94OasynjnmAxgCvn3VRrQJM/KXBKbm/yW59BMK6ni1wLy/JLM4eFhsLkd2S907HJnXBSWKw==}
+  /@abandonware/bluetooth-hci-socket@0.5.3-10:
+    resolution: {integrity: sha512-wXHiGmHaHz1pUR6Ix6uut24uTYCWZJL68aP9F056jnnl+U3KrjLT77g9dZHWDAId+9yQN54lLO4MEOIV0z9fUg==}
     os: [linux, android, freebsd, win32]
     requiresBuild: true
     dependencies:
-      '@mapbox/node-pre-gyp': 1.0.9
+      '@mapbox/node-pre-gyp': 1.0.10
       debug: 4.3.4
-      nan: 2.15.0
+      nan: 2.17.0
     optionalDependencies:
       usb: 1.9.2
     transitivePeerDependencies:
@@ -5210,16 +5210,18 @@ packages:
     dev: false
     optional: true
 
-  /@abandonware/noble@1.9.2-15:
-    resolution: {integrity: sha512-qD9NN5fzvbtHdWYFPDzxY2AveILvDSRX/PTdL0V+CUfyF70ggIJtLBc1WW1hbVMIpu8rZylYgrK+PUEBwIpjCg==}
+  /@abandonware/noble@1.9.2-21:
+    resolution: {integrity: sha512-A4Y3RYewdhpMje29nGfzw+OIUb4qQaD/hlkO8pDuh8eN87A3PZ8oY7w+dp9wAZ01GL547oCjGvVyC17LX0E2cw==}
     engines: {node: '>=6'}
     os: [darwin, linux, freebsd, win32]
     requiresBuild: true
     dependencies:
       debug: 4.3.4
-      node-addon-api: 3.2.1
+      napi-thread-safe-callback: 0.0.6
+      node-addon-api: 4.3.0
+      node-gyp-build: 4.6.0
     optionalDependencies:
-      '@abandonware/bluetooth-hci-socket': 0.5.3-8
+      '@abandonware/bluetooth-hci-socket': 0.5.3-10
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -15424,10 +15426,9 @@ packages:
       read-yaml-file: 1.1.0
     dev: true
 
-  /@mapbox/node-pre-gyp@1.0.9:
-    resolution: {integrity: sha512-aDF3S3rK9Q2gey/WAttUlISduDItz5BU3306M9Eyv6/oS40aMprnopshtlKTykxRNIBEZuRMaZAnbrQ4QtKGyw==}
+  /@mapbox/node-pre-gyp@1.0.10:
+    resolution: {integrity: sha512-4ySo4CjzStuprMwk35H5pPbkymjv1SF3jGLj6rAHp/xT/RF7TL7bd9CTm1xDY49K2qF7jmR/g7k+SkLETP6opA==}
     hasBin: true
-    requiresBuild: true
     dependencies:
       detect-libc: 2.0.1
       https-proxy-agent: 5.0.1
@@ -44387,6 +44388,11 @@ packages:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
     requiresBuild: true
 
+  /nan@2.17.0:
+    resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
+    dev: false
+    optional: true
+
   /nano-json-stream-parser@0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
     dev: false
@@ -44442,6 +44448,10 @@ packages:
 
   /napi-build-utils@1.0.2:
     resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
+
+  /napi-thread-safe-callback@0.0.6:
+    resolution: {integrity: sha512-X7uHCOCdY4u0yamDxDrv3jF2NtYc8A1nvPzBQgvpoSX+WB3jAe2cVNsY448V1ucq7Whf9Wdy02HEUoLW5rJKWg==}
+    dev: false
 
   /natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
@@ -44543,7 +44553,6 @@ packages:
     resolution: {integrity: sha512-73sE9+3UaLYYFmDsFZnqCInzPyh3MqIwZO9cw58yIqAZhONrrabrYyYe3TuIqtIiOuTXVhsGau8hcrhhwSsDIQ==}
     requiresBuild: true
     dev: false
-    optional: true
 
   /node-addon-api@5.1.0:
     resolution: {integrity: sha512-eh0GgfEkpnoWDq+VY8OyvYhFEzBk6jIYbRKdIlyTiAXIVJ8PyBaKb0rp7oDtoddbdoHWhq8wwr+XZ81F1rpNdA==}
@@ -44757,7 +44766,7 @@ packages:
     engines: {node: '>=12.19'}
 
   /nopt@1.0.10:
-    resolution: {integrity: sha1-bd0hvSoxQXuScn3Vhfim83YI6+4=}
+    resolution: {integrity: sha512-NWmpvLSqUrgrAC9HCuxEvb+PSloHpqVu+FqcO4eeF2h5qYRhA7ev6KvelyQAKtegUbC6RypJnlEOhd8vloNKYg==}
     hasBin: true
     dependencies:
       abbrev: 1.1.1
