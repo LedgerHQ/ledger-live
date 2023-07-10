@@ -544,7 +544,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.RedirectToOnboardingRecoverFlow}
-          options={{ headerShown: false }}
+          options={{ ...TransparentHeaderNavigationOptions, title: "" }}
           component={RedirectToOnboardingRecoverFlowScreen}
         />
         <Stack.Screen
