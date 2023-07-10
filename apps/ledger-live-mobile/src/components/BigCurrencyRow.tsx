@@ -6,12 +6,12 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 
 const RowContainer = styled(TouchableOpacity)`
-flex-direction: row;
-justify-content: center;
-padding-left: 16;
-padding-right: 16;
-padding-top: 12;
-padding-bottom: 12;
+  flex-direction: row;
+  justify-content: center;
+  padding-left: 16;
+  padding-right: 16;
+  padding-top: 12;
+  padding-bottom: 12;
 `;
 
 type Props = {
@@ -28,29 +28,16 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
 
   return (
     <RowContainer onPress={onPressAction}>
-      <CircleCurrencyIcon
-        size={iconSize}
-        sizeRatio={0.7}
-        currency={currency}
-      />
+      <CircleCurrencyIcon size={iconSize} sizeRatio={0.7} currency={currency} />
       <Flex flex={1} justifyContent="center" alignItems="flex-start" ml={6}>
-        <Text
-          variant="large"
-          fontWeight="semiBold"
-          numberOfLines={1}
-          color="neutral.c100"
-        >
+        <Text variant="large" fontWeight="semiBold" numberOfLines={1} color="neutral.c100">
           {currency.name}
         </Text>
-        {subTitle ? (<Text
-          variant="body"
-          fontWeight="semiBold"
-          numberOfLines={1}
-          color="neutral.c70"
-          mt={2}
-        >
-          {subTitle}
-        </Text>) : null}
+        {subTitle ? (
+          <Text variant="body" fontWeight="semiBold" numberOfLines={1} color="neutral.c70" mt={2}>
+            {subTitle}
+          </Text>
+        ) : null}
       </Flex>
     </RowContainer>
   );
