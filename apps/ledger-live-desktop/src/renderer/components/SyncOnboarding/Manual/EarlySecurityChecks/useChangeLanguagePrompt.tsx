@@ -42,13 +42,6 @@ export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParam
   const [disableLanguagePrompt, setDisableLanguagePrompt] = useState(false);
 
   useEffect(() => {
-    console.log("langague useeffect", {
-      loaded,
-      availableDeviceLanguages,
-      disableLanguagePrompt,
-      deviceModelInfo,
-      currentLanguage,
-    });
     if (loaded && deviceModelInfo?.deviceInfo) {
       const deviceLanguageId = deviceModelInfo?.deviceInfo.languageId;
       const potentialDeviceLanguage =
@@ -57,19 +50,12 @@ export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParam
         potentialDeviceLanguage !== undefined &&
         availableDeviceLanguages.includes(potentialDeviceLanguage);
 
-      console.log("doing checks", {
-        deviceLanguageId,
-        potentialDeviceLanguage,
-        langAvailableOnDevice,
-      });
-
       if (
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
         !disableLanguagePrompt
       ) {
-        console.log("entered sandman");
         setDrawer(
           ChangeDeviceLanguagePromptDrawer,
           {
