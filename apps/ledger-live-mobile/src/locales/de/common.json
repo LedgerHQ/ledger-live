@@ -56,6 +56,7 @@
     "forgetDevice" : "Gerät entfernen",
     "help" : "Hilfe",
     "saveLogs" : "Protokolle speichern",
+    "scrollToTop" : "Nach oben scrollen",
     "sync" : {
       "ago" : "Synchronisiert {{time}}"
     },
@@ -88,7 +89,7 @@
     "buyEth" : "Ethereum kaufen",
     "popular" : "beliebt",
     "getSupport" : "Hilfe",
-    "comingSoon" : "In Kürze verfügbar",
+    "comingSoon" : "Bald verfügbar",
     "restart" : "Neustarten",
     "loadMore" : "Mehr laden",
     "patterns" : {
@@ -333,6 +334,9 @@
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
     },
+    "InvalidNonce" : {
+      "title" : "Nonce ist erforderlich"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Ihr Konto wurde bereits an diesen Validator delegiert"
     },
@@ -412,6 +416,9 @@
     },
     "MaxFeeLow" : {
       "title" : "Ihre maximale Gebühr ist zu niedrig. Ihre Transaktion kann eine Weile ausstehend bleiben"
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "Prioritätsgebühr zu niedrig, bitte geben Sie einen Betrag ein, der höher ist als der Wert der Prioritätsgebühr bei der ersten Transaktion"
     },
     "NetworkDown" : {
       "title" : "Entschuldigung, das Internet scheint ausgefallen zu sein",
@@ -496,6 +503,9 @@
     "TimeoutTagged" : {
       "title" : "Entschuldigung, der Server hat zu lange gebraucht um zu antworten ({{tag}})",
       "description" : "Zeitüberschreitung aufgetreten."
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "Transaktion wurde bereits validiert"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Transaktion auf Gerät abgelehnt",
@@ -642,6 +652,9 @@
       "title" : "Etwas ist schief gelaufen",
       "description" : "Der Umtauschvorgang wurde nicht durchgeführt. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support."
     },
+    "SwapTimeoutError" : {
+      "title" : "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
+    },
     "PolkadotElectionClosed" : {
       "title" : "Auswahl der Validatoren muss geschlossen werden"
     },
@@ -709,6 +722,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "Memo ist zu lang"
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo-Format ist falsch"
@@ -1168,7 +1184,7 @@
         "desc" : "Kaufen Ihre Freunde einen Ledger, bekommen Sie alle Bitcoin im Wert von 10 $ geschenkt."
       }
     },
-    "comingSoon" : "In Kürze verfügbar",
+    "comingSoon" : "Bald verfügbar",
     "mostPopular" : "Am beliebtesten"
   },
   "installSetOfApps" : {
@@ -1200,7 +1216,7 @@
       "noDevice" : "Kein Gerät?",
       "buy" : "Kaufen Sie ein {{fullDeviceName}}",
       "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "termsLink" : "Allgemeine Geschäftsbedingungen",
       "privacyLink" : "Datenschutzrichtlinie",
       "and" : "Hinzu kommt:",
       "recoverLogIn" : "Für Ledger Recover anmelden"
@@ -1460,11 +1476,11 @@
         "cta" : "Nächster Schritt"
       },
       "recoveryPhrase" : {
-        "title" : "Wiederherstellungsphrase",
-        "desc" : "Ihre Wiederherstellungsphrase ist eine geheime Liste von 24 Wörtern, die Ihre privaten Schlüssel sichern.",
-        "desc_1" : "Ihr Nano erzeugt eine einzigartige Wiederherstellungsphrase. Ledger behält keine Kopie davon.",
+        "title" : "Ihre geheime Wiederherstellungsphrase",
+        "desc" : "Ihre geheime Wiederherstellungsphrase ist eine Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden.",
+        "desc_1" : "Ihre Ledger Nano erzeugt eine eindeutige geheime Wiederherstellungsphrase. Ledger kennt diese Phrase nicht.",
         "cta" : "Nächster Schritt",
-        "checkboxDesc" : "Ich verstehe, dass ich bei Verlust dieser Wiederherstellungsphrase nicht auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere."
+        "checkboxDesc" : "Ich habe zur Kenntnis genommen, dass, wenn jemand Zugriff auf meine geheime Wiederherstellungsphrase erhält, meine Vermögenswerte gefährdet sind."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1804,7 @@
         "title" : "Als Ledger-Benutzer werden meine Kryptos so gespeichert:",
         "answers" : {
           "correct" : "Auf der Blockchain",
-          "wrong" : "Auf meinem Nano"
+          "wrong" : "Auf meiner Ledger Nano"
         },
         "modal" : {
           "text" : "Ihre Kryptos sind immer in der Blockchain gespeichert. Ihre Hardware-Wallet enthält nur Ihren privaten Schlüssel, der Ihnen Zugriff auf Ihre Kryptos gibt.",
@@ -1796,10 +1812,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Wenn meine Wiederherstellungsphrase nicht mehr geheim und sicher ist...",
+        "title" : "Wenn jemand anderes Zugang zu meiner geheimen Wiederherstellungsphrase erhält …",
         "answers" : {
-          "correct" : "Meine Kryptos sind nicht mehr sicher und ich muss sie an einen sicheren Ort übertragen",
-          "wrong" : "Kein Problem, Ledger kann mir eine Kopie schicken"
+          "correct" : "Meine Vermögenswerte sind dann jedoch gefährdet und diese Person könnte Zugriff darauf haben",
+          "wrong" : "Kein Problem, solange ich sie noch kenne"
         },
         "modal" : {
           "text" : "Jeder, der Ihre Wiederherstellungsphrase kennt, kann Ihr Krypto-Vermögen stehlen.Wenn Sie die Phrase verlieren, müssen Sie Ihre Kryptos schnell an einen sicheren Ort übertragen.",
@@ -1807,7 +1823,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Wenn ich meinen Nano mit der Ledger-App verbinde, ist mein privater Schlüssel ...",
+        "title" : "Wenn ich meine Ledger Nano mit der Ledger Live-App verbinde, ist mein privater Schlüssel …",
         "answers" : {
           "correct" : "Noch offline",
           "wrong" : "Kurzzeitig mit dem Internet verbunden"
@@ -1860,7 +1876,7 @@
       },
       "loading" : {
         "title" : "Verbinden mit {{deviceName}}...",
-        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
+        "subtitle" : "Wenn Sie dazu aufgefordert werden, bestätigen Sie den Code auf Ihrem {{productName}}"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1915,7 @@
       },
       "loading" : {
         "title" : "Koppeln mit {{deviceName}}",
-        "subtitle" : "Bestätigen Sie den Code auf Ihrer {{productName}}"
+        "subtitle" : "Wenn Sie dazu aufgefordert werden, bestätigen Sie den Code auf Ihrem {{productName}}"
       },
       "error" : {
         "title" : "Kopplung fehlgeschlagen",
@@ -3182,7 +3198,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
-          }
+          },
+          "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
         }
       }
     },
@@ -3513,6 +3530,39 @@
       "maxSpendable" : {
         "title" : "Maximal ausgabefähiger Betrag",
         "description" : "Der maximal ausgabefähige Betrag ist das gesamte Guthaben auf einem Konto, das zum Senden in einer Transaktion zur Verfügung steht."
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Beschleunigen oder Abbrechen",
+    "header" : "Transaktion bearbeiten",
+    "learnMore" : "Ich möchte mehr erfahren",
+    "panel" : {
+      "stuckMessage" : "Ihre älteste „Senden“-Transaktion hängt. Sie können die Transaktion über eine höhere Netzwerkgebühr beschleunigen oder aber sie abbrechen.",
+      "speedupMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
+      "networkfee" : "Netzwerkgebühr: {{amount}} {{unit}}",
+      "maxFee" : "Max Gebühr: {{amount}} Gwei",
+      "maxPriorityFee" : "Max. Prioritätsgebühr: {{amount}} Gwei",
+      "gasPrice" : "Gaspreis: {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "Beschleunigen",
+      "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+    },
+    "cancel" : {
+      "title" : "Abbrechen",
+      "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse.\n Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 30 % höher als die Gebühr für die zu stornierende Transaktion."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "Kann nicht beschleunigt oder abgebrochen werden",
+        "description" : "Diese Transaktion wurde bereits validiert"
       }
     }
   },
@@ -4140,6 +4190,10 @@
         "restoreLockScreenPicture" : "Bild für Sperrbildschirm wird wiederhergestellt",
         "restoreLanguage" : "Sprache wird wiederhergestellt",
         "installingApps" : "Apps werden installiert",
+        "imageLoadRequested" : "Wiederherstellung des Sperrbildschirmbildes auf {{deviceName}} erlauben",
+        "imageCommitRequested" : "Bestätigen Sie das Bild auf Ihrer {{deviceName}}",
+        "allowLanguageInstallation" : "Wiederherstellung der Sprache erlauben auf {{deviceName}}",
+        "allowAppsRestoration" : "Wiederherstellung der Apps erlauben auf {{deviceName}}",
         "errors" : {
           "description" : "Wenn dies irrtümlich geschehen ist, können Sie die Wiederherstellung neu starten oder aber diesen Schritt überspringen",
           "LanguageInstallRefusedOnDevice" : "Die Sprachumstellung auf {{deviceName}} wurde abgebrochen",
@@ -4160,6 +4214,10 @@
       "TimeoutError" : {
         "title" : "Update-Timeout",
         "description" : "Das Update konnte nicht abgeschlossen werden, weil wir die Verbindung zum {{deviceName}} verloren haben."
+      },
+      "CantOpenDevice" : {
+        "title" : "Entschuldigung, Verbindung fehlgeschlagen",
+        "description" : "Das Update konnte nicht abgeschlossen werden, da die Verbindung zu {{deviceName}} verloren gegangen ist."
       }
     }
   },
@@ -4320,6 +4378,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "Der Gesamtkontostand enthält keine Stakingprämien"
+      },
+      "delegationUnavailable" : {
+        "title" : "Übertragung nicht verfügbar",
+        "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um eine neue Delegierung zu starten."
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "Delegierung aufheben",
+      "undelegationMessage" : "Wenn Sie die Delegierung aufheben, erhalten Sie keine Prämien für laufende und kommende Epochen",
+      "verificationSuccessTitle" : "Sie haben die Delegierung Ihrer Vermögenswerte erfolgreich aufgehoben."
+    },
+    "delegation" : {
+      "pool" : "Pool",
+      "poolId" : "Pool-ID",
+      "selectPool" : "Pool auswählen",
+      "pools" : "Pools",
+      "delegationEarn" : "Sie können durch Delegieren Ihrer Vermögenswerte ADA-Prämien verdienen.",
+      "delegatingFrom" : "Delegiert von",
+      "delegatingTo" : "Delegiert an",
+      "info" : "So funktioniert Delegierung",
+      "header" : "Delegierung(en)",
+      "delegate" : "Delegieren",
+      "redelegate" : "Erneut delegieren",
+      "estYield" : "Geschätzter Ertrag",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "commission" : "Provision",
+      "cost" : "Kosten",
+      "select" : "Auswählen",
+      "change" : "Änderung",
+      "networkFees" : "Netzgebühren",
+      "stakeKeyRegistrationDeposit" : "Kaution für Registrierung des Staking-Schlüssels",
+      "stakeKeyRegistrationDepositRefund" : "Erstattung der Kaution für Registrierung des Staking-Schlüssels",
+      "stepperHeader" : {
+        "starter" : "Verdienen Sie Belohnungen",
+        "validator" : "Delegierte Vermögenswerte",
+        "summary" : "Zusammenfassung",
+        "verification" : "Verifizierung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Sie können Prämien verdienen, indem Sie Ihre ADA an einen Pool delegieren.",
+            "steps" : {
+              "0" : "Sie behalten das Eigentum an delegierten Vermögenswerten",
+              "1" : "Delegieren Sie mit Ihrem Ledger-Gerät",
+              "2" : "Vermögenswerte können an einen anderen Pool umdelegiert werden. Sie können die Delegierung auch jederzeit aufheben."
+            },
+            "cta" : "Weiter"
+          },
+          "validator" : {
+            "validators" : "Validatoren",
+            "myDelegations" : "Meine Delegierungen",
+            "cta" : "Weiter",
+            "estYield" : "Geschätzter Ertrag {{amount}}",
+            "totalAvailable" : "Insgesamt verfügbar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "noResultsFound" : "Kein Validator für \"<0>{{search}}</0>\" gefunden."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
+              "text" : "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Status",
+        "rewards" : "Prämien",
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "redelegatedFrom" : "Zurückdelegiert von"
       }
     }
   },
@@ -5840,7 +5978,7 @@
         "clearAll" : "Alle löschen"
       },
       "branch" : {
-        "soon" : "In Kürze verfügbar",
+        "soon" : "Bald verfügbar",
         "experimental" : "Experimentell",
         "debug" : "debuggen"
       },
