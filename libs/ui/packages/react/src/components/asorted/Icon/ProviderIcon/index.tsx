@@ -1,9 +1,9 @@
 import React from "react";
-import { Provider, isProviderIconName, getIconUrl } from "./Providers";
+import { Provider, isProviderIconName, getProviderIconUrl } from "@ledgerhq/ui-shared";
 import * as Styles from "./styles";
 
 export type Props = {
-  name: Provider;
+  name: Provider | string;
   size?: Styles.IconSizes;
   boxed?: boolean;
   alt?: string;
@@ -17,7 +17,7 @@ const ProviderIcon = ({
 }: Props): JSX.Element | null => {
   const isValidIcon = isProviderIconName(name);
   if (!isValidIcon) return null;
-  const iconUrl = getIconUrl({ boxed, name });
+  const iconUrl = getProviderIconUrl({ boxed, name });
   return <Styles.Icon src={iconUrl} size={size} alt={alt} />;
 };
 

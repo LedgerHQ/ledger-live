@@ -38,19 +38,19 @@ export const ALL_PROVIDERS = [
 export type Provider = (typeof ALL_PROVIDERS)[number];
 
 export const isProviderIconName = (name: string): name is Provider =>
-  ALL_PROVIDERS.includes(name as Provider);
+  ALL_PROVIDERS.some((item) => item === name);
 
-type GetIconUrlProps = {
+type GetProviderIconUrlProps = {
   cdn?: string;
   name: Provider;
   boxed: boolean;
 };
 
-export const getIconUrl = ({
+export const getProviderIconUrl = ({
   cdn = CDN_URL,
   name,
   boxed,
-}: GetIconUrlProps) => {
+}: GetProviderIconUrlProps) => {
   const iconType = boxed ? "boxed" : "default";
   return `${cdn}/icons/providers/${iconType}/${name}.svg`;
 };

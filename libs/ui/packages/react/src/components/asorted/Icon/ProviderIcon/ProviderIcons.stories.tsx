@@ -1,41 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import ProviderIcon, {
-  iconNames,
-  Props as ProviderIconProps,
-  sizes as providerSizes,
-} from "./ProviderIcon";
+import { ALL_PROVIDERS } from "@ledgerhq/ui-shared";
+import ProviderIcon, { Props as ProviderIconProps } from ".";
+import { sizes as providerSizes } from "./styles";
 import { Text, SearchInput, Flex, Grid } from "../../..";
-
-const ScrollArea = styled(Grid)`
-  flex: 1;
-  height: auto;
-  ${p => p.theme.overflow.y};
-`;
-
-const Container = styled(Flex).attrs({
-  flex: 1,
-  flexDirection: "column",
-  p: 4,
-})`
-  overflow: hidden;
-  height: calc(100vh - 4em);
-`;
-
-const IconContainer = styled(Flex).attrs<{ active?: boolean }>({
-  flexDirection: "column",
-  justifyContent: "flex-end",
-  alignItems: "center",
-  p: 4,
-})<{ active?: boolean }>`
-  ${p => (p.active ? `background-color: ${p.theme.colors.neutral.c20};` : ``)}
-  border-radius: 4px;
-  height: 100px;
-`;
-
-const Bold = styled.b`
-  color: ${p => p.theme.colors.primary.c80};
-`;
 
 const Story = {
   title: "Asorted/Icons/ProviderIcons",
@@ -54,19 +22,13 @@ const Story = {
       defaultValue: false,
     },
     name: {
-      type: "string",
-      // defaultValue: "Aave",
-      // description: "[Only for single icon], Icon name",
-      // control: {
-      //   options: iconNames,
-      //   control: {
-      //     type: "select",
-      //   },
-      // },
+      options: ALL_PROVIDERS,
+      defaultValue: ALL_PROVIDERS[0],
+      description: "[Only for single icon], Icon name",
+      control: { type: "select" },
     },
   },
 };
-export default Story;
 
 const ListTemplate = (args: ProviderIconProps) => {
   const [search, setSearch] = useState("");
@@ -82,7 +44,7 @@ const ListTemplate = (args: ProviderIconProps) => {
         gridGap={4}
         mt={4}
       >
-        {iconNames
+        {[...ALL_PROVIDERS]
           .sort((a: string, b: string) => {
             return s ? b.toLowerCase().indexOf(s) - a.toLowerCase().indexOf(s) : a.localeCompare(b);
           })
@@ -113,9 +75,43 @@ const ListTemplate = (args: ProviderIconProps) => {
     </Container>
   );
 };
+
+export const List = ListTemplate.bind({});
+
 const FlagTemplate = (args: ProviderIconProps) => {
   return <ProviderIcon {...args} />;
 };
 
-export const List = ListTemplate.bind({});
 export const SingleIcon = FlagTemplate.bind({});
+
+export default Story;
+
+const ScrollArea = styled(Grid)`
+  flex: 1;
+  height: auto;
+  ${p => p.theme.overflow.y};
+`;
+
+const Container = styled(Flex).attrs({
+  flex: 1,
+  flexDirection: "column",
+  p: 4,
+})`
+  overflow: hidden;
+  height: calc(100vh - 4em);
+`;
+
+const IconContainer = styled(Flex).attrs<{ active?: boolean }>({
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  alignItems: "center",
+  p: 4,
+})<{ active?: boolean }>`
+  ${p => (p.active ? `background-color: ${p.theme.colors.neutral.c20};` : ``)}
+  border-radius: 4px;
+  height: 100px;
+`;
+
+const Bold = styled.b`
+  color: ${p => p.theme.colors.primary.c80};
+`;
