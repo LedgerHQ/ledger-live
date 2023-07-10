@@ -1382,7 +1382,6 @@ Array [
   "elrond",
   "fic",
   "flow",
-  "icp",
   "LBRY",
   "musicoin",
   "nyx",
@@ -1398,6 +1397,7 @@ Array [
   "shyft",
   "stride",
   "umee",
+  "internet_computer",
   "arbitrum",
   "cronos",
   "flare",
@@ -7616,5 +7616,6 @@ Array [
   "cardano/native/8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61446a65644d6963726f555344",
   "cardano/native/f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344",
   "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+  "icp/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
 ]
 `;

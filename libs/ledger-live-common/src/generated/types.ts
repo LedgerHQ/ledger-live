@@ -42,6 +42,10 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { TransactionStatus as hederaTransactionStatus } from "../families/hedera/types";
 import { TransactionStatusRaw as hederaTransactionStatusRaw } from "../families/hedera/types";
+import { Transaction as internet_computerTransaction } from "../families/internet_computer/types";
+import { TransactionRaw as internet_computerTransactionRaw } from "../families/internet_computer/types";
+import { TransactionStatus as internet_computerTransactionStatus } from "../families/internet_computer/types";
+import { TransactionStatusRaw as internet_computerTransactionStatusRaw } from "../families/internet_computer/types";
 import { Transaction as nearTransaction } from "../families/near/types";
 import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
 import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
@@ -87,6 +91,7 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | internet_computerTransaction
   | nearTransaction
   | polkadotTransaction
   | rippleTransaction
@@ -108,6 +113,7 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | internet_computerTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
@@ -129,6 +135,7 @@ export type TransactionStatus =
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | internet_computerTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
@@ -150,6 +157,7 @@ export type TransactionStatusRaw =
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw

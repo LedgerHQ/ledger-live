@@ -80,6 +80,9 @@ export const defaultFeatures = {
   currencyPersistence: {
     enabled: false,
   },
+  currencyInternetComputer: {
+    enabled: false,
+  },
   currencySecretNetwork: {
     enabled: false,
   },

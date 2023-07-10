@@ -6,6 +6,7 @@ export * from "./tezos";
 export * from "./tron";
 export * from "./elrond";
 export * from "./cosmos";
+export * from "./internet_computer";
 export * from "./algorand";
 export * from "./polkadot";
 export * from "./solana";

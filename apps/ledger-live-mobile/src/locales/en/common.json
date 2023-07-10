@@ -846,6 +846,9 @@
     },
     "GasEstimationError": {
       "title": "Gas estimation failed"
+    },
+    "InvalidMemoICP": {
+      "title": "Memo is required to be a number"
     }
   },
   "crash": {

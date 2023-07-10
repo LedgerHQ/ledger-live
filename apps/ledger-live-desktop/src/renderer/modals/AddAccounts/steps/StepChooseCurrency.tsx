@@ -54,6 +54,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
+  const internetComputer = useFeature("currencyInternetComputer");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -82,6 +83,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       moonriver,
       velas_evm: velasEvm,
       syscoin,
+      internet_computer: internetComputer,
     }),
     [
       avaxCChain,
@@ -109,6 +111,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       onomy,
       persistence,
       quicksilver,
+      internetComputer,
     ],
   );
   const currencies = useMemo(() => {
