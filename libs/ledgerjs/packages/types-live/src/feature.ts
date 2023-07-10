@@ -12,6 +12,7 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "ptxEarn"
   | "currencyAvalancheCChain"
+  | "currencyStacks"
   | "currencyOptimism"
   | "currencyOptimismGoerli"
   | "currencyArbitrum"

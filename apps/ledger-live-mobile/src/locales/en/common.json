@@ -334,6 +334,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
+    "InvalidNonce": {
+      "title": "Nonce is required"
+    },
     "InvalidAddressBecauseAlreadyDelegated": {
       "title": "Your account is already delegated to this validator"
     },
@@ -719,6 +722,9 @@
     },
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StacksMemoTooLong": {
+      "title": "Memo length is too long"
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"

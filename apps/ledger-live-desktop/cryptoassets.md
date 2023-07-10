@@ -55,6 +55,7 @@
 | SecretNetwork | SCRT | YES | secret_network |
 | Solana | SOL | YES | solana |
 | Songbird | SGB | YES | songbird |
+| Stacks | STX | YES | stacks |
 | Stargaze | STARS | YES | stargaze |
 | Stellar | XLM | YES | stellar |
 | Syscoin | SYS | YES | syscoin |
@@ -120,7 +121,6 @@
 | Rise | RISE | NO | rise |
 | SeiNetwork | SEI | NO | sei_network |
 | Shyft | SHFT | NO | shyft |
-| Stacks | STX | NO | stacks |
 | Stride | STRD | NO | stride |
 | Thundercore | TT | NO | thundercore |
 | TomoChain | TOMO | NO | tomo |

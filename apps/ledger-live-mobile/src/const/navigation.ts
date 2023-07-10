@@ -447,6 +447,8 @@ export enum ScreenName {
   LearnWebView = "LearnWebView",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
+  // stacks
+  StacksEditMemo = "StacksEditMemo",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near

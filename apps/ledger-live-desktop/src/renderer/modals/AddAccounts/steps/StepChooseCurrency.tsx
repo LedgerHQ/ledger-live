@@ -38,6 +38,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
@@ -65,6 +66,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
+      stacks,
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
@@ -83,6 +85,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     }),
     [
       avaxCChain,
+      stacks,
       optimism,
       optimismGoerli,
       arbitrum,
