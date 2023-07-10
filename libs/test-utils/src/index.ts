@@ -1,11 +1,12 @@
 import handler from "serve-handler";
 import http from "http";
+import net from "net";
 import path from "path";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 let dummyAppPath: string;
 
-export const dummyAppServer = http.createServer(
+export const dummyAppServer: http.Server = http.createServer(
   (request: http.IncomingMessage, response: http.ServerResponse) => {
     // You pass two more arguments for config and middleware
     // More details here: https://github.com/vercel/serve-handler#options
@@ -24,7 +25,7 @@ export function startDummyServer(appPath: string, port = 0): Promise<number> {
     dummyAppServer
       .listen(port, "localhost")
       .once("listening", () => {
-        resolve((dummyAppServer.address() as any).port as number);
+        resolve((dummyAppServer.address() as net.AddressInfo).port as number);
       })
       .once("error", (error: unknown) => {
         dummyAppServer.close();
