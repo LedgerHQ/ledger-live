@@ -20,7 +20,7 @@ const dataset: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
-      FIXME_tests: ["balance is sum of ops"],
+      FIXME_tests: ["balance is sum of ops", "existing operations object refs are preserved"],
       raw: {
         id: "js:2:secret_network:secret1gyauvl44q2apn3u3aujm36q8zrj74vryha27j4:",
         seedIdentifier: "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
