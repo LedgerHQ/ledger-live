@@ -102,7 +102,7 @@ const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, stri
 
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
-  Paired = 0,
+  EarlySecurityCheckCompleted = 0,
   Pin,
   Seed,
   Apps,
@@ -144,7 +144,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   const initialAppsToInstall = deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
-    CompanionStepKey.Paired,
+    CompanionStepKey.EarlySecurityCheckCompleted,
   );
   const lastCompanionStepKey = useRef<CompanionStepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<
@@ -365,7 +365,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         break;
 
       case DeviceOnboardingStep.ChooseName:
-        setCompanionStepKey(CompanionStepKey.Paired);
+        setCompanionStepKey(CompanionStepKey.EarlySecurityCheckCompleted);
         break;
       case DeviceOnboardingStep.Pin:
         setCompanionStepKey(CompanionStepKey.Pin);
@@ -478,17 +478,19 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     () =>
       [
         {
-          key: CompanionStepKey.Paired,
-          title: t("syncOnboarding.pairingStep.title", { productName }),
+          key: CompanionStepKey.EarlySecurityCheckCompleted,
+          title: t("syncOnboarding.earlySecurityCheckCompletedStep.title", { productName }),
           renderBody: () => (
             <>
-              <TrackScreen category={`Set up ${productName}: Step 1 device paired`} />
-              <BodyText>{t("syncOnboarding.pairingStep.description", { productName })}</BodyText>
+              <TrackScreen
+                category={`Set up ${productName}: Step 1 early security check completed`}
+              />
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
-                text={t("syncOnboarding.pairingStep.continueOnDevice", {
+                text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
                   productName,
                 })}
+                withTopDivider={false}
               />
             </>
           ),
