@@ -20,6 +20,8 @@ const getExchangeRates: GetExchangeRates = async (
   userId?: string, // TODO remove when wyre doesn't require this for rates
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
   providers: AvailableProviderV3[] = [],
+  timeout = undefined,
+  timeoutErrorMessage = undefined,
 ) => {
   if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
@@ -48,6 +50,8 @@ const getExchangeRates: GetExchangeRates = async (
     headers: {
       ...(userId ? { userId } : {}),
     },
+    ...(timeout ? { timeout } : {}),
+    ...(timeoutErrorMessage ? { timeoutErrorMessage } : {}),
     data: request,
   });
 

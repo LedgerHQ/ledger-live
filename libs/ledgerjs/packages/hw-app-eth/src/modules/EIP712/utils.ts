@@ -1,11 +1,6 @@
-import axios from "axios";
-import SHA224 from "crypto-js/sha224";
-import { hexBuffer, intAsHexBytes } from "../../utils";
-import { EIP712Message, EIP712MessageTypesEntry, MessageFilters } from "./EIP712.types";
-import EIP712CAL from "@ledgerhq/cryptoassets/data/eip712";
 import BigNumber from "bignumber.js";
-
-const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
+import { EIP712MessageTypesEntry } from "@ledgerhq/types-live";
+import { hexBuffer, intAsHexBytes } from "../../utils";
 
 /**
  * @ignore for the README
@@ -235,71 +230,4 @@ export const makeTypeEntryStructBuffer = ({ name, type }: EIP712MessageTypesEntr
   bufferArray.push(Buffer.from(intAsHexBytes(name.length, 1), "hex"), Buffer.from(name, "utf-8"));
 
   return Buffer.concat(bufferArray);
-};
-
-// As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.
-export function isEIP712Message(
-  message: Record<string, unknown> | string,
-): message is EIP712Message {
-  return (
-    typeof message === "object" &&
-    "types" in message &&
-    "primaryType" in message &&
-    "domain" in message &&
-    "message" in message
-  );
-}
-
-export const sortObjectAlphabetically = (obj: Record<string, any>): Record<string, any> => {
-  const keys = Object.keys(obj).sort();
-
-  return keys.reduce((acc, curr) => {
-    const value = (() => {
-      if (Array.isArray(obj[curr])) {
-        return obj[curr].map(field => sortObjectAlphabetically(field as Record<string, any>));
-      }
-      return obj[curr];
-    })();
-
-    acc[curr] = value;
-    return acc;
-  }, {});
-};
-
-export const getSchemaHashForMessage = (message: EIP712Message): string => {
-  const { types } = message;
-  const sortedTypes = sortObjectAlphabetically(types);
-
-  return SHA224(JSON.stringify(sortedTypes).replace(" ", "")).toString();
-};
-
-/**
- * @ignore for the README
- *
- * Tries to find the proper filters for a given EIP712 message
- * in the CAL
- *
- * @param {EIP712Message} message
- * @returns {MessageFilters | undefined}
- */
-export const getFiltersForMessage = async (
-  message: EIP712Message,
-  remoteCryptoAssetsListURI?: string | null,
-): Promise<MessageFilters | undefined> => {
-  const schemaHash = getSchemaHashForMessage(message);
-  const messageId = `${message.domain?.chainId ?? 0}:${
-    message.domain?.verifyingContract ?? NULL_ADDRESS
-  }:${schemaHash}`;
-
-  try {
-    if (remoteCryptoAssetsListURI) {
-      const { data: dynamicCAL } = await axios.get<Record<string, MessageFilters>>(
-        `${remoteCryptoAssetsListURI}/eip712.json`,
-      );
-      return dynamicCAL[messageId] || EIP712CAL[messageId];
-    }
-    throw new Error();
-  } catch (e) {
-    return EIP712CAL[messageId];
-  }
 };

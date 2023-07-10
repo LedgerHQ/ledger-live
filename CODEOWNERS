@@ -14,6 +14,7 @@ libs/ledgerjs/packages/types-cryptoassets                            @ledgerhq/l
 libs/ledgerjs/packages/hw-app-*                                      @ledgerhq/live-blockchain-support
 libs/coin-*                                                          @ledgerhq/live-blockchain-support
 libs/domain-service                                                  @ledgerhq/live-blockchain-support
+ledgerjs/packages/evm-tools                                     @ledgerhq/live-blockchain-support
 
 # PTX
 ledger-live-desktop/src/renderer/screens/exchange/  @ledgerhq/ptx

@@ -381,6 +381,9 @@
         "withdrawalsBlockedError": {
           "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
         }
+      },
+      "timeout": {
+        "message": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
       }
     },
     "history": {

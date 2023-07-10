@@ -63,6 +63,7 @@ import {
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
+import { SWAP_RATES_TIMEOUT } from "../../config";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -137,6 +138,8 @@ const SwapForm = () => {
     onNoRates,
     ...(locationState as object),
     providers: storedProviders || undefined,
+    timeout: SWAP_RATES_TIMEOUT,
+    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;

@@ -1,12 +1,11 @@
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import { AnyMessage } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../../const";
 
 export type CommonParams = {
   accountId: string;
-  message: MessageData | TypedMessageData;
+  message: AnyMessage;
 };
 
 export type SignMessageNavigatorStackParamList = {
