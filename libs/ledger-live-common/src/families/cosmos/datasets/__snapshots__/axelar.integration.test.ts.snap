@@ -4,10 +4,6 @@ exports[`axelar currency bridge scanAccounts axelar seed 1 1`] = `
 Array [
   Object {
     "balance": "772139",
-    "cosmosResources": Object {
-      "delegatedBalance": "584749",
-      "withdrawAddress": "axelar1gyauvl44q2apn3u3aujm36q8zrj74vry3kglyg",
-    },
     "currencyId": "axelar",
     "derivationMode": "",
     "freshAddress": "axelar1gyauvl44q2apn3u3aujm36q8zrj74vry3kglyg",
@@ -22,9 +18,9 @@ Array [
     "index": 0,
     "name": "Axelar 1",
     "nfts": undefined,
-    "operationsCount": 0,
     "pendingOperations": Array [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "187390",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
@@ -34,10 +30,6 @@ Array [
   },
   Object {
     "balance": "0",
-    "cosmosResources": Object {
-      "delegatedBalance": "0",
-      "withdrawAddress": "axelar1v2mp0m7k96dm9qv60fkspcqlzpkzrwnext9980",
-    },
     "currencyId": "axelar",
     "derivationMode": "",
     "freshAddress": "axelar1v2mp0m7k96dm9qv60fkspcqlzpkzrwnext9980",
@@ -52,9 +44,9 @@ Array [
     "index": 1,
     "name": "Axelar 2",
     "nfts": undefined,
-    "operationsCount": 0,
     "pendingOperations": Array [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,

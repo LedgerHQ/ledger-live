@@ -4,10 +4,6 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
 Array [
   Object {
     "balance": "124344",
-    "cosmosResources": Object {
-      "delegatedBalance": "0",
-      "withdrawAddress": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
-    },
     "currencyId": "osmo",
     "derivationMode": "",
     "freshAddress": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
@@ -22,9 +18,9 @@ Array [
     "index": 0,
     "name": "Osmosis 1",
     "nfts": undefined,
-    "operationsCount": 0,
     "pendingOperations": Array [],
     "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
+    "spendableBalance": "124344",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
@@ -34,10 +30,6 @@ Array [
   },
   Object {
     "balance": "0",
-    "cosmosResources": Object {
-      "delegatedBalance": "0",
-      "withdrawAddress": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
-    },
     "currencyId": "osmo",
     "derivationMode": "",
     "freshAddress": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
@@ -52,9 +44,9 @@ Array [
     "index": 1,
     "name": "Osmosis 2",
     "nfts": undefined,
-    "operationsCount": 0,
     "pendingOperations": Array [],
     "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
+    "spendableBalance": "0",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
