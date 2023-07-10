@@ -113,7 +113,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Delegate s...ke to (2/2)",
+      title: "Delegate ...ke to (2/2)",
       button: SpeculosButton.BOTH,
     },
     {
