@@ -115,10 +115,18 @@ export const validateGas = (
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
-  const maximalPriorityFee = tx.gasOptions?.fast?.maxPriorityFeePerGas;
-  const minimalPriorityFee = tx.gasOptions?.slow?.maxPriorityFeePerGas;
-  const recommandedNextBaseFee = tx.gasOptions?.medium?.nextBaseFee;
+  // Gas Limit
+  if (gasLimit.isZero()) {
+    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+  } else if (gasLimit.isLessThan(21000)) {
+    // minimum gas for a tx is 21000
+    errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+  }
+  if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
+    warnings.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+  }
 
+  // Gas Price
   if (
     // if fees are not set or wrongly set
     !(
@@ -127,35 +135,34 @@ export const validateGas = (
     )
   ) {
     errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isZero()) {
-    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isLessThan(21000)) {
-    // minimum gas for a tx is 21000
-    errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   } else if (tx.recipient && estimatedFees.gt(account.balance)) {
     errors.gasPrice = new NotEnoughGas(); // "The parent account balance is insufficient for network fees"
-  } else if (tx.maxPriorityFeePerGas && tx.maxPriorityFeePerGas.isZero()) {
-    errors.maxPriorityFee = new PriorityFeeTooLow();
   }
 
-  if (tx.type === 2 && tx.maxPriorityFeePerGas.isGreaterThan(tx.maxFeePerGas)) {
-    // priority fee is more than max fee (total fee for the transaction) which doesn't make sense
-    errors.maxPriorityFee = new PriorityFeeHigherThanMaxFee();
+  // Gas Price for EIP-1559
+  if (tx.type === 2) {
+    const maximalPriorityFee = tx.gasOptions?.fast?.maxPriorityFeePerGas;
+    const minimalPriorityFee = tx.gasOptions?.slow?.maxPriorityFeePerGas;
+    const recommandedNextBaseFee = tx.gasOptions?.medium?.nextBaseFee;
+
+    if (tx.maxPriorityFeePerGas.isZero()) {
+      errors.maxPriorityFee = new PriorityFeeTooLow();
+    } else if (tx.maxPriorityFeePerGas.isGreaterThan(tx.maxFeePerGas)) {
+      // priority fee is more than max fee (total fee for the transaction) which doesn't make sense
+      errors.maxPriorityFee = new PriorityFeeHigherThanMaxFee();
+    }
+
+    if (maximalPriorityFee && tx.maxPriorityFeePerGas.gt(maximalPriorityFee)) {
+      warnings.maxPriorityFee = new PriorityFeeTooHigh();
+    } else if (minimalPriorityFee && tx.maxPriorityFeePerGas.lt(minimalPriorityFee)) {
+      warnings.maxPriorityFee = new PriorityFeeTooLow();
+    }
+
+    if (recommandedNextBaseFee && tx.maxFeePerGas?.lt(recommandedNextBaseFee)) {
+      warnings.maxFee = new MaxFeeTooLow();
+    }
   }
 
-  if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
-    warnings.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
-  }
-
-  if (maximalPriorityFee && tx.maxPriorityFeePerGas?.gt(maximalPriorityFee)) {
-    warnings.maxPriorityFee = new PriorityFeeTooHigh();
-  } else if (minimalPriorityFee && tx.maxPriorityFeePerGas?.lt(minimalPriorityFee)) {
-    warnings.maxPriorityFee = new PriorityFeeTooLow();
-  }
-
-  if (recommandedNextBaseFee && tx.maxFeePerGas?.lt(recommandedNextBaseFee)) {
-    warnings.maxFee = new MaxFeeTooLow();
-  }
   return [errors, warnings];
 };
 
