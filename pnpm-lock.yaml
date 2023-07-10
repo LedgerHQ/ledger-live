@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -1185,7 +1189,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.6
-        version: 6.6.7(rxjs@7.8.0)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -2267,7 +2271,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.7
-        version: 6.6.7(rxjs@7.8.0)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -3677,8 +3681,8 @@ importers:
         specifier: ^18.15.3
         version: 18.15.3
       '@types/web-bluetooth':
-        specifier: ^0.0.12
-        version: 0.0.12
+        specifier: ^0.0.17
+        version: 0.0.17
       documentation:
         specifier: 13.2.5
         version: 13.2.5
@@ -15311,7 +15315,7 @@ packages:
       react-native-reanimated: '>=2.x.x'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.21.0)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-gesture-handler: 2.9.0(react-native@0.71.6)(react@18.0.0)
       react-native-reanimated: 3.1.0(@babel/core@7.21.0)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.20.7)(@babel/plugin-transform-shorthand-properties@7.18.6)(@babel/plugin-transform-template-literals@7.18.9)(react-native@0.71.6)(react@18.0.0)
     dev: false
@@ -22822,8 +22826,8 @@ packages:
   /@types/w3c-web-usb@1.0.6:
     resolution: {integrity: sha512-cSjhgrr8g4KbPnnijAr/KJDNKa/bBa+ixYkywFRvrhvi9n1WEl7yYbtRyzE6jqNQiSxxJxoAW3STaOQwJHndaw==}
 
-  /@types/web-bluetooth@0.0.12:
-    resolution: {integrity: sha512-Q4sUrowpylCOWjUWFtNwkNBHQUnCL8y44Iq2ZLtVMAuAGIwPSXa3kqIvu2LwXoc2d1jyaaw4Bg354degHrsADw==}
+  /@types/web-bluetooth@0.0.17:
+    resolution: {integrity: sha512-4p9vcSmxAayx72yn70joFoL44c9MO/0+iVEBIQXe3v2h2SiAsEIo/G5v6ObFWvNKRFjbrVadNf9LqEEZeQPzdA==}
     dev: true
 
   /@types/webpack-env@1.16.4:
@@ -51225,7 +51229,7 @@ packages:
     dependencies:
       aproba: 1.2.0
 
-  /rxjs-compat@6.6.7(rxjs@7.8.0):
+  /rxjs-compat@6.6.7(rxjs@6.6.7):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
     peerDependencies:
       rxjs: '*'
@@ -51233,7 +51237,7 @@ packages:
       rxjs:
         optional: true
     dependencies:
-      rxjs: 7.8.0
+      rxjs: 6.6.7
     dev: false
 
   /rxjs@6.6.7:
