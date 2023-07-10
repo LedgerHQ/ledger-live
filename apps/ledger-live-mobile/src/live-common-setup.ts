@@ -33,6 +33,10 @@ setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
   "onomy",
   "quicksilver",
   "persistence",

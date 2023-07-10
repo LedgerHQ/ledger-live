@@ -47,7 +47,7 @@ const defaultConfig = {
       },
       stargaze: {
         lcd: "https://stargaze-api.polkachu.com",
-        minGasPrice: 0.0025,
+        minGasPrice: 1,
       },
       umee: {
         lcd: "https://umee-api.polkachu.com",
