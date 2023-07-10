@@ -55,7 +55,7 @@ const dataset: CurrenciesData<Transaction> = {
           name: "Normal transaction",
           transaction: fromTransactionRaw({
             amount: "100000",
-            recipient: "umee103h9fdkgm7ucccujyunck5lfejrvthd7956gxh",
+            recipient: "secret1gyauvl44q2apn3u3aujm36q8zrj74vryha27j4",
             useAllAmount: false,
             family: "cosmos",
             mode: "send",
