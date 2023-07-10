@@ -1,5 +1,35 @@
 # @ledgerhq/coin-polkadot
 
+## 0.3.0
+
+### Minor Changes
+
+- [#3755](https://github.com/LedgerHQ/ledger-live/pull/3755) [`abd673dc7c`](https://github.com/LedgerHQ/ledger-live/commit/abd673dc7c994ad7efc8dd3199995a99add677c6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update lockedbalance retrieval polkadot
+
+### Patch Changes
+
+- Updated dependencies [[`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9), [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a), [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a)]:
+  - @ledgerhq/types-live@6.36.0
+  - @ledgerhq/cryptoassets@9.9.0
+  - @ledgerhq/types-cryptoassets@7.3.0
+  - @ledgerhq/live-env@0.3.1
+  - @ledgerhq/coin-framework@0.3.7
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#3755](https://github.com/LedgerHQ/ledger-live/pull/3755) [`abd673dc7c`](https://github.com/LedgerHQ/ledger-live/commit/abd673dc7c994ad7efc8dd3199995a99add677c6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update lockedbalance retrieval polkadot
+
+### Patch Changes
+
+- Updated dependencies [[`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9), [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92), [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a), [`092cb8d317`](https://github.com/LedgerHQ/ledger-live/commit/092cb8d317fa7971e0f790b77f900ae3864d96c2), [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a)]:
+  - @ledgerhq/types-live@6.36.0-next.0
+  - @ledgerhq/cryptoassets@9.9.0-next.0
+  - @ledgerhq/types-cryptoassets@7.3.0-next.0
+  - @ledgerhq/live-env@0.3.1-next.0
+  - @ledgerhq/coin-framework@0.3.7-next.0
+
 ## 0.2.0
 
 ### Minor Changes

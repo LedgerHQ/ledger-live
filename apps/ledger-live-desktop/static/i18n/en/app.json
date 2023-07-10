@@ -381,6 +381,9 @@
         "withdrawalsBlockedError": {
           "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
         }
+      },
+      "timeout": {
+        "message": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
       }
     },
     "history": {
@@ -4156,7 +4159,7 @@
     "downloadInProgress": "Downloading update...",
     "downloadProgress": "{{progress}}% completed",
     "checking": "Checking update...",
-    "checkSuccess": "Update ready to install",
+    "checkSuccess": "New Ledger Live update available, it will install automatically when you close the app",
     "quitAndInstall": "Install now",
     "updateAvailable": "Update to Ledger Live version {{version}} is available",
     "error": "Error during update. Please download again",
@@ -4564,10 +4567,10 @@
             }
           },
           "newRecoveryPhrase": {
-            "title": "Recovery phrase",
-            "paragraph1": "Your recovery phrase is a secret list of 24 words that backs up your private keys.",
-            "paragraph2": "Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
-            "disclaimer": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano.",
+            "title": "Your Secret Recovery Phrase",
+            "paragraph1": "Your Secret Recovery Phrase is a list of 24 words that backs up your private keys.",
+            "paragraph2": "Your Ledger Nano generates a unique Secret Recovery Phrase. Ledger does not know what it is.",
+            "disclaimer": "I understand that if someone gets my Secret Recovery Phrase, my assets become vulnerable.",
             "buttons": {
               "next": "Recovery phrase",
               "prev": "Previous step",
@@ -4707,7 +4710,7 @@
         "1": {
           "text": "As a Ledger user, my crypto is stored:",
           "answers": {
-            "1": "On my Nano",
+            "1": "On my Ledger Nano",
             "2": "On the blockchain"
           },
           "results": {
@@ -4722,10 +4725,10 @@
           }
         },
         "2": {
-          "text": "If my recovery phrase is no longer secure or private...",
+          "text": "If someone else gets access to my Secret Recovery Phrase...",
           "answers": {
-            "1": "No problem, Ledger can send me a copy",
-            "2": "My crypto is no longer safe and I need to transfer them to a secure place"
+            "1": "No problem, as long as I still know what it is",
+            "2": "My assets become vulnerable and that person could have access to them"
           },
           "results": {
             "success": {
@@ -4739,10 +4742,10 @@
           }
         },
         "3": {
-          "text": "When I connect my Nano to the Ledger app, my private key is...",
+          "text": "When I connect my Ledger Nano to the Ledger Live app, my private key is...",
           "answers": {
             "1": "Still offline",
-            "2": "Briefly connected to the internet"
+            "2": "Briefly connected to the Internet"
           },
           "results": {
             "success": {

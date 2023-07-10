@@ -19,6 +19,7 @@ import {
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
 } from "./types";
+import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
 
 type ValidatedTransactionFields =
   | "recipient"
@@ -131,6 +132,28 @@ export const validateGas = (
   return [errors, warnings];
 };
 
+export const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssues> => {
+  if (!tx.nft) return [{}, {}];
+
+  const errors: ValidationIssues = {};
+  const warnings: ValidationIssues = {};
+
+  const quantityIsPositive = tx.nft.quantity.gt(0);
+  const nftFromAccount = account.nfts?.find(
+    nft => nft.tokenId === tx.nft.tokenId && nft.contract === tx.nft.contract,
+  );
+
+  if (!nftFromAccount) {
+    errors.amount = new NotOwnedNft();
+  } else if (!quantityIsPositive) {
+    errors.amount = new QuantityNeedsToBePositive();
+  } else if (nftFromAccount.amount.lt(tx.nft.quantity)) {
+    errors.amount = new NotEnoughNftOwned();
+  }
+
+  return [errors, warnings];
+};
+
 /**
  * Validate a transaction and get all possibles errors and warnings about it
  */
@@ -151,16 +174,19 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
   const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
   // Gas related errors and warnings
   const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, totalFees);
+  const [nftErr, nftWarn] = validateNft(account, tx);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...gasErr,
     ...amountErr,
+    ...nftErr,
   };
   const warnings: ValidationIssues = {
     ...recipientWarn,
     ...gasWarn,
     ...amountWarn,
+    ...nftWarn,
   };
 
   return {

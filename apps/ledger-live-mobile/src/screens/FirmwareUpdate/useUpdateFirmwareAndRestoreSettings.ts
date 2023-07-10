@@ -218,7 +218,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
       case "firmwareUpdate":
-        if (updateActionState.step === "preparingUpdate") {
+        if (updateActionState.step === "preparingUpdate" && !updateActionState.lockedDevice) {
           triggerUpdate();
         } else if (updateActionState.step === "firmwareUpdateCompleted") {
           proceedToLanguageRestore();
@@ -284,6 +284,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     staxLoadImageState.imageLoaded,
     triggerUpdate,
     updateActionState.step,
+    updateActionState.lockedDevice,
     updateStep,
     restoreAppsState.error,
     restoreAppsState.opened,

@@ -10,16 +10,17 @@ function bufferToArrayBuffer(buffer: Buffer): Buffer {
   return Buffer.from(sig);
 }
 
-const signMessage: SignMessage = async (transport, { path, message }): Promise<Result> => {
+const signMessage: SignMessage = async (transport, account, { message }): Promise<Result> => {
   log("debug", "start signMessage process");
 
   const icp = new ICP(transport as any);
 
-  if (!message) throw new Error(`Message cannot be empty`);
+  if (!message) throw new Error("Message cannot be empty");
+  if (typeof message !== "string") throw new Error("Message must be a string");
 
   const r: ResponseSign = await icp.sign(
-    getPath(path),
-    getBufferFromString(message as string),
+    getPath(account.freshAddressPath),
+    getBufferFromString(message),
     ICP_SEND_TXN_TYPE,
   );
   isError(r);

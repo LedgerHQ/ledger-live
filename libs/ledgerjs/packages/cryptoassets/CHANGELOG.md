@@ -1,5 +1,25 @@
 # @ledgerhq/cryptoassets
 
+## 9.9.0
+
+### Minor Changes
+
+- [#3676](https://github.com/LedgerHQ/ledger-live/pull/3676) [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#3701](https://github.com/LedgerHQ/ledger-live/pull/3701) [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fixed exchange app signatures for BSC coin and tokens
+
+## 9.9.0-next.0
+
+### Minor Changes
+
+- [#3676](https://github.com/LedgerHQ/ledger-live/pull/3676) [`be5f56b233`](https://github.com/LedgerHQ/ledger-live/commit/be5f56b2330c166323914b79fef37a3c05e0e13a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+### Patch Changes
+
+- [#3701](https://github.com/LedgerHQ/ledger-live/pull/3701) [`cb95f72c24`](https://github.com/LedgerHQ/ledger-live/commit/cb95f72c2415876ef88ca83fd2c4363a57669b92) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fixed exchange app signatures for BSC coin and tokens
+
 ## 9.8.0
 
 ### Minor Changes

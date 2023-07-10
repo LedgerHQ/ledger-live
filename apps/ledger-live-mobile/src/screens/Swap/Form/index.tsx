@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import { Button, Flex } from "@ledgerhq/native-ui";
@@ -17,9 +18,11 @@ import {
 import {
   getKYCStatusFromCheckQuoteStatus,
   KYC_STATUS,
+  getCustomDappUrl,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -29,8 +32,11 @@ import {
   isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
+import { Feature } from "@ledgerhq/types-live";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import { swapAcceptedProvidersSelector, swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus, setSwapSelectableCurrencies } from "../../../actions/settings";
@@ -55,9 +61,15 @@ import { Modal } from "./Modal";
 import { Connect } from "./Connect";
 import { DeviceMeta } from "./Modal/Confirmation";
 import { ErrorBanner } from "./ErrorBanner";
-import { MaterialTopTabNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import {
+  MaterialTopTabNavigatorProps,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
+
+type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
 export const useProviders = () => {
   const dispatch = useDispatch();
@@ -103,6 +115,10 @@ export function SwapForm({
     },
     [dispatch],
   );
+  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
+    "swapWalletApiPartnerList",
+  );
+  const navigation = useNavigation<Navigation["navigation"]>();
   const onNoRates: OnNoRatesCallback = useCallback(
     ({ toState }) => {
       track("error_message", {
@@ -127,7 +143,8 @@ export function SwapForm({
     onBeforeTransaction,
     excludeFixedRates: true,
     providers,
-    includeDEX: false,
+    timeout: 10000,
+    timeoutErrorMessage: t("errors.SwapTimeoutError.title"),
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -328,6 +345,8 @@ export function SwapForm({
     swapTransaction.swap.to.account;
 
   const onSubmit = useCallback(() => {
+    if (!exchangeRate) return;
+    const { provider, providerURL, providerType } = exchangeRate;
     track(
       "button_clicked",
       {
@@ -339,8 +358,60 @@ export function SwapForm({
       },
       undefined,
     );
-    setConfirmed(true);
-  }, [swapTransaction, provider, track]);
+    if (providerType === "DEX") {
+      const from = swapTransaction.swap.from;
+      const fromAccountId = from.parentAccount?.id || from.account?.id;
+      const customParams = {
+        provider,
+        providerURL,
+      } as {
+        provider: string;
+        providerURL?: string;
+      };
+
+      const customDappUrl = getCustomDappUrl(customParams);
+
+      const getAccountId = ({
+        accountId,
+        provider,
+      }: {
+        accountId: string | undefined;
+        provider: string;
+      }) => {
+        if (
+          !walletApiPartnerList?.enabled ||
+          !walletApiPartnerList?.params?.list.includes(provider)
+        ) {
+          return accountId;
+        }
+        const account = accounts.find(a => a.id === accountId);
+        if (!account) return accountId;
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
+        return walletApiId || accountId;
+      };
+      const accountId = getAccountId({ accountId: fromAccountId, provider });
+      navigation.navigate(ScreenName.PlatformApp, {
+        platform: getProviderName(provider).toLowerCase(),
+        name: getProviderName(provider),
+        accountId,
+        customDappURL: customDappUrl,
+      });
+    } else {
+      setConfirmed(true);
+    }
+  }, [
+    exchangeRate,
+    track,
+    swapTransaction.swap.from,
+    swapTransaction.swap.to.currency?.name,
+    navigation,
+    walletApiPartnerList?.enabled,
+    walletApiPartnerList?.params?.list,
+    accounts,
+  ]);
 
   const onCloseModal = useCallback(() => {
     setConfirmed(false);
@@ -384,15 +455,17 @@ export function SwapForm({
       }
     }
 
-    if (params?.rate) {
-      setExchangeRate(params.rate);
-    }
-
     if (params?.transaction) {
       swapTransaction.setTransaction(params.transaction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
+
+  useEffect(() => {
+    if (params?.rate) {
+      setExchangeRate(params.rate);
+    }
+  }, [params, setExchangeRate, swapTransaction]);
 
   const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
@@ -419,12 +492,7 @@ export function SwapForm({
             />
             {(pageState === "empty" || pageState === "loading") && (
               <Flex height={200} alignItems={"center"} justifyContent={"center"}>
-                {pageState === "empty" && (
-                  <EmptyState
-                    from={swapTransaction.swap.from.currency?.ticker || ""}
-                    to={swapTransaction.swap.to.currency?.ticker || ""}
-                  />
-                )}
+                {pageState === "empty" && <EmptyState />}
                 {pageState === "loading" && <Loading size={20} color="neutral.c70" />}
               </Flex>
             )}

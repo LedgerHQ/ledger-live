@@ -11,14 +11,7 @@ import transactionTransformer from "../transaction";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "cosmosResources.unbondingBalance", // They move once all unbonding are done
-    "cosmosResources.pendingRewardsBalance", // They are always movings
-    "cosmosResources.delegations", // They are always movings because of pending Rewards
-    "cosmosResources.redelegations", // will change ince a redelegation it's done
-    "cosmosResources.unbondings", // will change once a unbonding it's done
-    "spendableBalance", // will change with the rewards that automatically up
-  ],
+  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {

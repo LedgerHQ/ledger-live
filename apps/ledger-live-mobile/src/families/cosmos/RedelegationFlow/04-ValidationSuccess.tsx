@@ -27,7 +27,7 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const currency = getAccountCurrency(account);
+  const { ticker } = getAccountCurrency(account);
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
@@ -50,12 +50,12 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   useEffect(() => {
     if (delegation)
       track("staking_completed", {
-        currency,
+        currency: ticker,
         validator,
         source,
         delegation,
       });
-  }, [source, validator, delegation, currency, account]);
+  }, [source, validator, delegation, ticker, account]);
   return (
     <View
       style={[

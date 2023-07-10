@@ -56,6 +56,7 @@
     "forgetDevice": "Remove device",
     "help": "Help",
     "saveLogs": "Save logs",
+    "scrollToTop": "Scroll to top",
     "sync": {
       "ago": "Synchronized {{time}}"
     },
@@ -413,6 +414,9 @@
     "MaxFeeLow": {
       "title": "Your max fee is too low. Your transaction might stay pending for a while"
     },
+    "MaxPriorityFeeLowerThanInitial": {
+      "title": "Priority fee too low, please enter an amount superior to priority fee value of the initial transaction"
+    },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."
@@ -496,6 +500,9 @@
     "TimeoutTagged": {
       "title": "Sorry, server took too long to respond ({{tag}})",
       "description": "Timeout occurred."
+    },
+    "TransactionAlreadyValidated": {
+      "title": "Transaction already validated"
     },
     "TransactionRefusedOnDevice": {
       "title": "Transaction refused on device",
@@ -641,6 +648,9 @@
     "SwapGenericAPIError": {
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."
+    },
+    "SwapTimeoutError": {
+      "title": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
     },
     "PolkadotElectionClosed": {
       "title": "Validators election must be closed"
@@ -1202,8 +1212,8 @@
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
-      "terms": "By tapping “Get Started” you consent and agree to our",
-      "termsLink": "Terms of Service",
+      "terms": "By continuing, you agree to Ledger's",
+      "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
       "and": "and",
       "recoverLogIn": "Log in for Ledger Recover"
@@ -1463,11 +1473,11 @@
         "cta": "Next step"
       },
       "recoveryPhrase": {
-        "title": "Recovery phrase",
-        "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys.",
-        "desc_1": "Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
+        "title": "Your Secret Recovery Phrase",
+        "desc": "Your Secret Recovery Phrase is a list of 24 words that backs up your private keys.",
+        "desc_1": "Your Ledger Nano generates a unique Secret Recovery Phrase. Ledger does not know what it is.",
         "cta": "Next step",
-        "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
+        "checkboxDesc": "I understand that if someone gets my Secret Recovery Phrase, my assets become vulnerable."
       },
       "recoveryPhraseSetup": {
         "infoModal": {
@@ -1791,7 +1801,7 @@
         "title": "As a Ledger user, my crypto is stored:",
         "answers": {
           "correct": "On the blockchain",
-          "wrong": "On my Nano"
+          "wrong": "On my Ledger Nano"
         },
         "modal": {
           "text": "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto.",
@@ -1799,10 +1809,10 @@
         }
       },
       "recoveryPhrase": {
-        "title": "If my recovery phrase is no longer secret and safe...",
+        "title": "If someone else gets access to my Secret Recovery Phrase...",
         "answers": {
-          "correct": "My crypto is no longer safe and I need to transfer them to a secure place",
-          "wrong": "No problem, Ledger can send me a copy"
+          "correct": "My assets become vulnerable and that person could have access to them",
+          "wrong": "No problem, as long as I still know what it is"
         },
         "modal": {
           "text": "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place.",
@@ -1810,10 +1820,10 @@
         }
       },
       "privateKey": {
-        "title": "When I connect my Nano to the Ledger app, my private key is...",
+        "title": "When I connect my Ledger Nano to the Ledger Live app, my private key is...",
         "answers": {
           "correct": "Still offline",
-          "wrong": "Briefly connected to the internet"
+          "wrong": "Briefly connected to the Internet"
         },
         "modal": {
           "text": "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device.",
@@ -3186,7 +3196,7 @@
           "withdrawalsBlockedError": {
             "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
           },
-          "noProviders": "No quotes found for this swap. {{from}} cannot be swapped with {{to}}. Please choose another pair."
+          "noProviders": "No results found. There are no quotes available with the current preferences."
         }
       }
     },
@@ -3517,6 +3527,39 @@
       "maxSpendable": {
         "title": "Max spendable amount",
         "description": "The maximum spendable amount is the total balance in an account that is available to send in a transaction."
+      }
+    }
+  },
+  "editTransaction": {
+    "cta": "Speed up or Cancel",
+    "header": "Edit Transaction",
+    "learnMore": "I want to learn more",
+    "panel": {
+      "stuckMessage": "Your oldest 'send' transaction is stuck. Speed up the transaction with a higher network fee, or cancel it.",
+      "speedupMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it."
+    },
+    "previousFeesInfo": {
+      "pendingTransactionFeesInfo": "Pending transaction fees info: ",
+      "networkfee": "Network fee = {{amount}} {{unit}}",
+      "maxFee": "Max fee = {{amount}} Gwei",
+      "maxPriorityFee": "Max Priority fee = {{amount}} Gwei",
+      "gasPrice": "GasPrice = {{amount}} Gwei"
+    },
+    "speedUp": {
+      "title": "Speed Up",
+      "description": "Re-submit the transaction with a higher network fee."
+    },
+    "cancel": {
+      "title": "Cancel",
+      "description": "Sending 0 {{ticker}} to your own address.\nTo ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+    },
+    "error": {
+      "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
+      "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
+      "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it.",
+      "TransactionHasBeenValidatedError": {
+        "title": "Can't be speed up or cancel",
+        "description": "This transaction has already been validated"
       }
     }
   },
@@ -4142,6 +4185,10 @@
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
         "installingApps": "Installing apps",
+        "imageLoadRequested": "Allow lock screen picture restoration on {{deviceName}}",
+        "imageCommitRequested": "Confirm the picture on your {{deviceName}}",
+        "allowLanguageInstallation": "Allow language restoration on {{deviceName}}",
+        "allowAppsRestoration": "Allow app restoration on {{deviceName}}",
         "errors": {
           "description": "If this was a mistake you can retry the restoration, or you may skip this step",
           "LanguageInstallRefusedOnDevice": "Language change was cancelled on {{deviceName}}",
@@ -4162,6 +4209,10 @@
       "TimeoutError": {
         "title": "Update timeout",
         "description": "The update was unable to complete because we lost connection to {{deviceName}}"
+      },
+      "CantOpenDevice": {
+        "title": "Sorry, connection failed",
+        "description": "The update was unable to complete because we lost connection to {{deviceName}}."
       }
     }
   },

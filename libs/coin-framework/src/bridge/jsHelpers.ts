@@ -39,6 +39,7 @@ import type {
   ProtoNFT,
   ScanAccountEvent,
   SyncConfig,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 
 // Customize the way to iterate on the keychain derivation
@@ -99,10 +100,11 @@ export const sameOp = (a: Operation, b: Operation): boolean =>
     a.blockHeight === b.blockHeight &&
     isEqual(a.senders, b.senders) &&
     isEqual(a.recipients, b.recipients));
+
 // efficiently prepend newFetched operations to existing operations
-export function mergeOps( // existing operations. sorted (newer to older). deduped.
-  existing: Operation[], // new fetched operations. not sorted. not deduped. time is allowed to overlap inside existing.
-  newFetched: Operation[],
+export function mergeOps(
+  existing: Operation[], // existing operations. sorted (newer to older). deduped.
+  newFetched: Operation[], // new fetched operations. not sorted. not deduped. time is allowed to overlap inside existing.
 ): // return a list of operations, deduped and sorted from newer to older
 Operation[] {
   // there is new fetched
@@ -582,4 +584,10 @@ export function makeAccountBridgeReceive(
       }),
     );
   };
+}
+
+// Default trivial implem for updateTransaction, that keeps reference stability (for React)
+export function defaultUpdateTransaction<T extends TransactionCommon>(t: T, patch: Partial<T>): T {
+  const patched = { ...t, ...patch };
+  return isEqual(t, patched) ? t : patched;
 }

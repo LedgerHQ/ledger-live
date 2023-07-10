@@ -36,7 +36,8 @@ type UseProviderRates = (args: {
   onBeforeTransaction?: OnBeforeTransaction;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
   providers?: AvailableProviderV3[];
-  includeDEX?: boolean;
+  timeout?: number;
+  timeoutErrorMessage?: string;
 }) => {
   rates: RatesReducerState;
   refetchRates: () => void;
@@ -56,7 +57,8 @@ export const useProviderRates: UseProviderRates = ({
   onBeforeTransaction,
   setExchangeRate,
   providers,
-  includeDEX,
+  timeout,
+  timeoutErrorMessage,
 }) => {
   const { account: fromAccount, parentAccount: fromParentAccount } = fromState;
   const { currency: toCurrency, parentAccount: toParentAccount, account: toAccount } = toState;
@@ -99,7 +101,8 @@ export const useProviderRates: UseProviderRates = ({
             undefined,
             toCurrency,
             providers,
-            includeDEX,
+            timeout,
+            timeoutErrorMessage,
           );
 
           if (abort) return;

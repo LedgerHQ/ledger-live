@@ -21,6 +21,7 @@ type Props = {
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function StellarSendRowsFee({ account, ...props }: Props) {
   return <StellarFeeRow {...props} account={account} />;
 }

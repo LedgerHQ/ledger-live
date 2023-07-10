@@ -49,7 +49,8 @@ export const useSwapTransaction = ({
   onBeforeTransaction,
   excludeFixedRates,
   providers,
-  includeDEX,
+  timeout,
+  timeoutErrorMessage,
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
@@ -60,7 +61,8 @@ export const useSwapTransaction = ({
   onBeforeTransaction?: OnBeforeTransaction;
   excludeFixedRates?: boolean;
   providers?: AvailableProviderV3[];
-  includeDEX?: boolean;
+  timeout?: number;
+  timeoutErrorMessage?: string;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -112,7 +114,8 @@ export const useSwapTransaction = ({
     onNoRates,
     setExchangeRate,
     providers,
-    includeDEX,
+    timeout,
+    timeoutErrorMessage,
   });
 
   return {

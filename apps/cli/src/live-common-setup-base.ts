@@ -71,10 +71,16 @@ setSupportedCurrencies([
   "velas_evm",
   "syscoin",
   "axelar",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
   "onomy",
   "persistence",
   "quicksilver",
   "internet_computer",
+  "ethereum_as_evm_test_only",
+  "polygon_as_evm_test_only",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

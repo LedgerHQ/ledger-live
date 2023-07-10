@@ -36,5 +36,6 @@ export type StepProps = {
   signed: boolean;
   isRandomChoice: boolean;
   openedWithAccount: boolean;
+  source?: string;
 };
 export type St = Step<StepId, StepProps>;

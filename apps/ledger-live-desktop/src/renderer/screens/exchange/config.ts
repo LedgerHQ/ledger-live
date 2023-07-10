@@ -43,3 +43,4 @@ const config = {
 };
 export const getConfig = (): Config =>
   process.env.COINIFY_SANDBOX ? config.sandbox : config.production;
+export const SWAP_RATES_TIMEOUT = 10000; // 10s

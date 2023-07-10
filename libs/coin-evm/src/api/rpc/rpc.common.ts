@@ -13,8 +13,8 @@ import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
 import ERC20Abi from "../../abis/erc20.abi.json";
 
-export const RPC_TIMEOUT = 5000; // wait 5 sec after a fail
-export const DEFAULT_RETRIES_RPC_METHODS = 3;
+export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
+export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;
 
 /**
  * Cache for RPC providers to avoid recreating the connection on every usage of `withApi`
@@ -119,7 +119,7 @@ export const getTokenBalance = (
  */
 export const getTransactionCount = (currency: CryptoCurrency, addr: string): Promise<number> =>
   withApi(currency, async api => {
-    return api.getTransactionCount(addr);
+    return api.getTransactionCount(addr, "pending");
   });
 
 /**
