@@ -31,10 +31,14 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   const { gasOptions } = transaction;
 
   invariant(gasOptions, "GasPriceField: 'transaction.gasOptions' should be defined");
+  invariant(
+    gasOptions.medium.gasPrice,
+    "GasPriceField: 'transaction.gasOptions.medium.gasPrice' should be defined",
+  );
 
-  const networkGasPrice = inferDynamicRange(gasOptions.medium.gasPrice!, {
-    minValue: gasOptions.slow.gasPrice!,
-    maxValue: gasOptions.fast.gasPrice!,
+  const networkGasPrice = inferDynamicRange(gasOptions.medium.gasPrice, {
+    minValue: gasOptions.slow.gasPrice,
+    maxValue: gasOptions.fast.gasPrice,
   });
 
   if (!lastNetworkGasPrice) {
