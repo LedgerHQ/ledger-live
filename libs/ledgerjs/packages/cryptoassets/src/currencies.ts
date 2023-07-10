@@ -3599,6 +3599,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
   },
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  /**
+   * FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
+   * when ethereum_as_evm_test_only is removed from the currencies list
+   */
   ethereum_as_evm_test_only: {
     type: "CryptoCurrency",
     id: "ethereum_as_evm_test_only",
@@ -3629,6 +3633,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  /**
+   * FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
+   * when polygon_as_evm_test_only is removed from the currencies list
+   */
   polygon_as_evm_test_only: {
     type: "CryptoCurrency",
     id: "polygon_as_evm_test_only",
@@ -3655,6 +3663,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         uri: "https://api.polygonscan.com",
         type: "etherscan",
       },
+      gasTracker: { uri: "", type: "ledger" },
     },
     explorerViews: [
       {
