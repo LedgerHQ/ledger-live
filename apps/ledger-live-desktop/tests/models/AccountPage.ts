@@ -43,4 +43,17 @@ export class AccountPage {
     await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
   }
+
+  async scrollToOperations() {
+    await this.page.locator("id=operation-list").scrollIntoViewIfNeeded();
+  }
+
+  /**
+   * Delete account from account itself
+   */
+  async deleteAccount() {
+    await this.page.locator("data-test-id=account-settings-button").click();
+    await this.page.locator("data-test-id=account-settings-delete-button").click();
+    await this.page.locator("data-test-id=modal-confirm-button").click();
+  }
 }
