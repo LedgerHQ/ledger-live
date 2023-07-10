@@ -212,7 +212,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         device={lastSeenDevice}
         onComplete={notifyOnboardingEarlyCheckEnded}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
-        autoStartChecks={autoStartChecks}
+        optimisticGenuineCheck={autoStartChecks}
       />
     );
   } else if (currentStep === "companion" && lastSeenDevice) {

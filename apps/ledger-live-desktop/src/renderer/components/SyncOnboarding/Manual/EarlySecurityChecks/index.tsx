@@ -35,7 +35,8 @@ import { useTranslation } from "react-i18next";
 export type Props = {
   onComplete: () => void;
   device: Device;
-  autoStartChecks: boolean;
+  /** display the genuine check as validated but still check it */
+  optimisticGenuineCheck: boolean;
   restartChecksAfterUpdate: () => void;
 };
 
@@ -51,7 +52,7 @@ const commonDrawerProps = {
 const EarlySecurityChecks = ({
   onComplete,
   device,
-  autoStartChecks,
+  optimisticGenuineCheck,
   restartChecksAfterUpdate,
 }: Props) => {
   const { t } = useTranslation();
@@ -62,7 +63,7 @@ const EarlySecurityChecks = ({
       : urls.genuineCheck.en;
 
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
-    autoStartChecks ? SoftwareCheckStatus.active : SoftwareCheckStatus.inactive,
+    optimisticGenuineCheck ? SoftwareCheckStatus.optimisticCompleted : SoftwareCheckStatus.inactive,
   );
   const [firmwareUpdateStatus, setFirmwareUpdateStatus] = useState<SoftwareCheckStatus>(
     SoftwareCheckStatus.inactive,
@@ -73,6 +74,10 @@ const EarlySecurityChecks = ({
   const deviceModelId = device.modelId;
   const productName = getDeviceModel(device.modelId).productName;
 
+  const genuineCheckActive =
+    genuineCheckStatus === SoftwareCheckStatus.active ||
+    genuineCheckStatus === SoftwareCheckStatus.optimisticCompleted;
+
   const {
     genuineState,
     error: genuineCheckError,
@@ -80,7 +85,7 @@ const EarlySecurityChecks = ({
     resetGenuineCheckState,
   } = useGenuineCheck({
     getGenuineCheckFromDeviceId,
-    isHookEnabled: genuineCheckStatus === SoftwareCheckStatus.active,
+    isHookEnabled: genuineCheckActive,
     deviceId,
   });
 
@@ -193,14 +198,12 @@ const EarlySecurityChecks = ({
   ]);
 
   const lockedDeviceModalIsOpen =
-    (devicePermissionState === "unlock-needed" &&
-      genuineCheckStatus === SoftwareCheckStatus.active) ||
+    (devicePermissionState === "unlock-needed" && genuineCheckActive) ||
     (lockedDevice && firmwareUpdateStatus === SoftwareCheckStatus.active);
 
   const allowSecureChannelIsOpen =
     devicePermissionState === "requested" &&
-    (genuineCheckStatus === SoftwareCheckStatus.active ||
-      firmwareUpdateStatus === SoftwareCheckStatus.active);
+    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active);
 
   const notGenuineIsOpen = genuineCheckStatus === SoftwareCheckStatus.notGenuine;
 
@@ -248,8 +251,16 @@ const EarlySecurityChecks = ({
   return (
     <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
       <Body
-        genuineCheckStatus={genuineCheckStatus}
-        firmwareUpdateStatus={firmwareUpdateStatus}
+        genuineCheckStatus={
+          genuineCheckStatus === SoftwareCheckStatus.optimisticCompleted
+            ? SoftwareCheckStatus.completed
+            : genuineCheckStatus
+        }
+        firmwareUpdateStatus={
+          genuineCheckStatus === SoftwareCheckStatus.optimisticCompleted
+            ? SoftwareCheckStatus.active
+            : firmwareUpdateStatus
+        }
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
         onClickStartChecks={() => {

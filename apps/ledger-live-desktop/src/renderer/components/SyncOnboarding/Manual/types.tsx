@@ -4,6 +4,7 @@ export enum Status {
   cancelled = "cancelled",
   active = "active",
   notGenuine = "notGenuine",
+  optimisticCompleted = "optimisticCompleted",
   completed = "completed",
   failed = "failed",
 }
