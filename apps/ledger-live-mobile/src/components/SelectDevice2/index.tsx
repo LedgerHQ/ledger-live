@@ -8,6 +8,7 @@ import { Text, Flex, Icons, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "../../analytics";
@@ -29,7 +30,6 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import ServicesWidget from "../ServicesWidget";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type { SetHeaderOptionsRequest };
 
