@@ -117,7 +117,7 @@ export const validateGas = (
   const warnings: ValidationIssues = {};
 
   const maximalPriorityFee = tx.gasOptions?.fast?.maxPriorityFeePerGas;
-  const minimunPriorityFee = tx.gasOptions?.slow?.maxPriorityFeePerGas;
+  const minimalPriorityFee = tx.gasOptions?.slow?.maxPriorityFeePerGas;
   const maximalMaxFeePerGas = tx.gasOptions?.fast?.maxFeePerGas;
   const recommandedNextBaseFee = tx.gasOptions?.medium?.nextBaseFee;
 
@@ -168,7 +168,7 @@ export const validateGas = (
 
   if (maximalPriorityFee && tx.maxPriorityFeePerGas?.gt(maximalPriorityFee)) {
     warnings.maxPriorityFee = new PriorityFeeTooHigh();
-  } else if (minimunPriorityFee && tx.maxPriorityFeePerGas?.lt(minimunPriorityFee)) {
+  } else if (minimalPriorityFee && tx.maxPriorityFeePerGas?.lt(minimalPriorityFee)) {
     warnings.maxPriorityFee = new PriorityFeeTooLow();
   }
 
