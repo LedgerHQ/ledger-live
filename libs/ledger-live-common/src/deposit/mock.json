@@ -1,0 +1,57 @@
+[
+  {
+    "$type": "Token",
+    "contract": "0x927159670c50042109d7c0f4aed0cee89452433e",
+    "data": {
+      "img": "https://assets.coingecko.com/coins/images/13291/large/dgpay-icon-logo.png?1607062736",
+      "marketCapRank": null
+    },
+    "ledgerId": "ethereum/erc20/dgpayment",
+    "name": "DGPayment",
+    "network": "ethereum",
+    "providerId": "dgpayment",
+    "reason": null,
+    "status": "Ok",
+    "ticker": "DGP"
+  },
+  {
+    "$type": "Token",
+    "contract": "0xf55a93b613d172b86c2ba3981a849dae2aecde2f",
+    "data": null,
+    "ledgerId": "ethereum/erc20/yfx",
+    "name": "YFX",
+    "network": "ethereum",
+    "providerId": "yfx",
+    "reason": null,
+    "status": "Ok",
+    "ticker": "YFX"
+  },
+  {
+    "$type": "Token",
+    "contract": "0xf2051511b9b121394fa75b8f7d4e7424337af687",
+    "data": {
+      "img": "https://assets.coingecko.com/coins/images/14551/large/jN3kkqke_400x400.png?1616990048",
+      "marketCapRank": 2170
+    },
+    "ledgerId": "ethereum/erc20/daohaus_token",
+    "name": "DAOhaus Token",
+    "network": "ethereum",
+    "providerId": "daohaus",
+    "reason": null,
+    "status": "Ok",
+    "ticker": "HAUS"
+  },
+  {
+    "$type": "Coin",
+    "data": {
+      "img": "https://assets.coingecko.com/coins/images/329/large/decred.png?1547034093",
+      "marketCapRank": 138
+    },
+    "ledgerId": "decred",
+    "name": "Decred",
+    "providerId": "decred",
+    "reason": null,
+    "status": "Ok",
+    "ticker": "DCR"
+  }
+]
