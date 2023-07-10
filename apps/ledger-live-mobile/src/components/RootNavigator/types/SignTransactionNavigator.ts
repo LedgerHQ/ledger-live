@@ -29,6 +29,7 @@ import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
+import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -168,6 +169,19 @@ export type SignTransactionNavigatorParamList = {
     accountId: string;
     parentId?: string;
     transaction: StellarTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.StacksEditMemo]: {
+    accountId: string;
+    parentId?: string;
+    transaction: StacksTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

@@ -60,6 +60,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
@@ -88,6 +89,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
+      stacks,
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
@@ -107,6 +109,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }),
     [
       avaxCChain,
+      stacks,
       optimism,
       optimismGoerli,
       arbitrum,

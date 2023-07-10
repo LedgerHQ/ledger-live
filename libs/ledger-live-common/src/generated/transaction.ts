@@ -11,6 +11,7 @@ import internet_computer from "../families/internet_computer/transaction";
 import near from "../families/near/transaction";
 import ripple from "../families/ripple/transaction";
 import solana from "../families/solana/transaction";
+import stacks from "../families/stacks/transaction";
 import stellar from "../families/stellar/transaction";
 import tezos from "../families/tezos/transaction";
 import tron from "../families/tron/transaction";
@@ -32,6 +33,7 @@ export default {
   near,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,

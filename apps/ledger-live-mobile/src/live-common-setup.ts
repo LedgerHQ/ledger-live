@@ -103,6 +103,7 @@ setSupportedCurrencies([
   "internet_computer",
   "ethereum_as_evm_test_only",
   "polygon_as_evm_test_only",
+  "stacks",
 ]);
 
 if (Config.VERBOSE) {

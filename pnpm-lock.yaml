@@ -2061,6 +2061,12 @@ importers:
       '@solana/web3.js':
         specifier: 1.77.2
         version: 1.77.2
+      '@stacks/network':
+        specifier: 1.2.2
+        version: 1.2.2
+      '@stacks/transactions':
+        specifier: 1.3.5
+        version: 1.3.5
       '@stricahq/bip32ed25519':
         specifier: ^1.0.3
         version: 1.0.4
@@ -2109,6 +2115,9 @@ importers:
       '@zondax/ledger-icp':
         specifier: ^0.7.0
         version: 0.7.0
+      '@zondax/ledger-stacks':
+        specifier: ^1.0.2
+        version: 1.0.2
       async:
         specifier: ^3.2.3
         version: 3.2.3
@@ -2148,6 +2157,9 @@ importers:
       blake2b:
         specifier: ^2.1.4
         version: 2.1.4
+      bn.js:
+        specifier: ^5.2.1
+        version: 5.2.1
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
@@ -2157,6 +2169,9 @@ importers:
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
+      c32check:
+        specifier: 1.1.3
+        version: 1.1.3
       cashaddrjs:
         specifier: ^0.4.4
         version: 0.4.4
@@ -2332,6 +2347,9 @@ importers:
       '@testing-library/react-hooks':
         specifier: ^4.0.1
         version: 4.0.1(@types/react@17.0.53)(react-test-renderer@17.0.2)(react@17.0.2)
+      '@types/bn.js':
+        specifier: ^5.1.1
+        version: 5.1.1
       '@types/bs58':
         specifier: ^4.0.1
         version: 4.0.1
@@ -17734,6 +17752,80 @@ packages:
     resolution: {integrity: sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==}
     dev: false
 
+  /@stacks/common@1.2.2:
+    resolution: {integrity: sha512-knCqq88EBRCN8AhS7+Sx2PJuRv0EFNChEpqLqCAchCHCQfp5bWad/47Zw+fLP9ccBwFXh4pl1wDtbQLBfDo0+A==}
+    dependencies:
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/common@4.3.5:
+    resolution: {integrity: sha512-UuViiQ7fn3vdtTe3739aRzbl+wbukekeQuXgqt8d7nB2HC2HodD7GcHhpUga165cO35CD6lQUtj3vXxJb5Ga+A==}
+    dependencies:
+      '@types/bn.js': 5.1.1
+      '@types/node': 18.16.19
+      buffer: 6.0.3
+    dev: false
+
+  /@stacks/network@1.2.2:
+    resolution: {integrity: sha512-xcWwuRrLJn9qqi3PEBcP2UPZHQztTZd31C0aVlzYHttNMir/sY9SrUqSnw45z2Jo4O9pIYYPIiPRtdV91Ho3fw==}
+    dependencies:
+      '@stacks/common': 1.2.2
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/network@4.3.5:
+    resolution: {integrity: sha512-TC4+AkuT6qi3MoEGxTftA+4BNp99QvGnI+qtKQkoA1m0KDr8b9hSBUhugJHRhQbWuo7D6q0+JagYEGxLID29Kw==}
+    dependencies:
+      '@stacks/common': 4.3.5
+      cross-fetch: 3.1.5
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/transactions@1.3.5:
+    resolution: {integrity: sha512-KhZ9y48KnOB+Es3whxbpxtPm6o5CYLrhxCCG5Tfglmj9AcFtpWCBjkcFwZJ/R3eI4OYthD5aMB9nYY31xGiULA==}
+    dependencies:
+      '@stacks/common': 1.2.2
+      '@stacks/network': 1.2.2
+      '@types/bn.js': 4.11.6
+      '@types/elliptic': 6.4.14
+      '@types/randombytes': 2.0.0
+      '@types/sha.js': 2.4.0
+      bn.js: 4.12.0
+      c32check: 1.1.3
+      cross-fetch: 3.1.5
+      elliptic: 6.5.4
+      lodash: 4.17.21
+      lodash-es: 4.17.20
+      randombytes: 2.1.0
+      ripemd160-min: 0.0.6
+      sha.js: 2.4.11
+      smart-buffer: 4.2.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/transactions@4.3.8:
+    resolution: {integrity: sha512-5xYYv2TdXXM9PVixB79Pr99symQ8fhbVATjempGUxtL23/XUiRiLvJZohDxIE4VQ2EzbB4g4j8Y7oqPjj0h09Q==}
+    dependencies:
+      '@noble/hashes': 1.3.1
+      '@noble/secp256k1': 1.7.1
+      '@stacks/common': 4.3.5
+      '@stacks/network': 4.3.5
+      '@types/node': 18.16.19
+      '@types/sha.js': 2.4.0
+      c32check: 1.1.3
+      lodash.clonedeep: 4.5.0
+      ripemd160-min: 0.0.6
+      sha.js: 2.4.11
+      smart-buffer: 4.2.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@storybook/addon-actions@6.4.22(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2):
     resolution: {integrity: sha512-t2w3iLXFul+R/1ekYxIEzUOZZmvEa7EzUAVAuCHP4i6x0jBnTTZ7sAIUVRaxVREPguH5IqI/2OklYhKanty2Yw==}
     peerDependencies:
@@ -21689,7 +21781,6 @@ packages:
     resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
     dependencies:
       '@types/node': 18.16.19
-    dev: false
 
   /@types/body-parser@1.19.2:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
@@ -22641,6 +22732,12 @@ packages:
     dependencies:
       '@types/mime': 1.3.2
       '@types/node': 18.16.19
+
+  /@types/sha.js@2.4.0:
+    resolution: {integrity: sha512-amxKgPy6WJTKuw8mpUwjX2BSxuBtBmZfRwIUDIuPJKNwGN8CWDli8JTg5ONTWOtcTkHIstvT7oAhhYXqEjStHQ==}
+    dependencies:
+      '@types/node': 18.16.19
+    dev: false
 
   /@types/sockjs@0.3.33:
     resolution: {integrity: sha512-f0KEEe05NvUnat+boPTZ0dgaLZ4SfSouXUgv5noUiefG2ajgKjmETo9ZJyuqsl7dfl2aHlLJUiki6B4ZYldiiw==}
@@ -23936,6 +24033,17 @@ packages:
     resolution: {integrity: sha512-7wOUlRF2+kRaRU2KSzKb7XjPfScwEg3Cjg6NH/p+ikQLJ9eMkGC45NhSxYn8lixIIk+TgZ4yzTNOzFvF836gQw==}
     dependencies:
       '@ledgerhq/hw-transport': 6.28.1
+    dev: false
+
+  /@zondax/ledger-stacks@1.0.2:
+    resolution: {integrity: sha512-RsUToV/ctEHrhBc87/xCC4Ft1vleiNQeaLp0GFYUDGBes0RrW3dcTDYMsR9+Bx7TYyNpTHkvBub8UVhz4ItFMQ==}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@ledgerhq/hw-transport': 6.28.5
+      '@stacks/transactions': 4.3.8
+      varuint-bitcoin: 1.1.2
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /JSONStream@1.3.5:
@@ -26857,6 +26965,15 @@ packages:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
 
+  /c32check@1.1.3:
+    resolution: {integrity: sha512-ADADE/PjAbJRlwpG3ShaOMbBUlJJZO7xaYSRD5Tub6PixQlgR4s36y9cvMf/YRGpkqX+QOxIdMw216iC320q9A==}
+    engines: {node: '>=8'}
+    dependencies:
+      base-x: 3.0.9
+      buffer: 5.7.1
+      cross-sha256: 1.2.0
+    dev: false
+
   /c8@7.11.2:
     resolution: {integrity: sha512-6ahJSrhS6TqSghHm+HnWt/8Y2+z0hM/FQyB1ybKhAR30+NYL9CTQ1uwHxuWw6U7BHlHv6wvhgOrH81I+lfCkxg==}
     engines: {node: '>=10.12.0'}
@@ -28452,6 +28569,12 @@ packages:
       node-fetch: 2.6.7
     transitivePeerDependencies:
       - encoding
+
+  /cross-sha256@1.2.0:
+    resolution: {integrity: sha512-KViLNMDZKV7jwFqjFx+rNhG26amnFYYQ0S+VaFlVvpk8tM+2XbFia/don/SjGHg9WQxnFVi6z64CGPuF3T+nNw==}
+    dependencies:
+      buffer: 5.7.1
+    dev: false
 
   /cross-spawn@4.0.2:
     resolution: {integrity: sha512-yAXz/pA1tD8Gtg2S98Ekf/sewp3Lcp3YoFKJ4Hkp5h5yLWnKVTDU0kwjKJ8NDCYcfTLfyGkzTikst+jWypT1iA==}
@@ -37989,7 +38112,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -38964,7 +39087,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3(metro@0.76.0)
     dev: true
 
   /jest-pnp-resolver@1.2.2(jest-resolve@29.6.1):
@@ -41618,6 +41741,10 @@ packages:
     dependencies:
       p-locate: 5.0.0
 
+  /lodash-es@4.17.20:
+    resolution: {integrity: sha512-JD1COMZsq8maT6mnuz1UMV0jvYD0E0aUsSOdrr1/nAG3dhqQXwRRgeW0cSqH1U43INKcqxaiVIQNOUDld7gRDA==}
+    dev: false
+
   /lodash._reinterpolate@3.0.0:
     resolution: {integrity: sha512-xYHt68QRoYGjeeM/XOE1uJtvXQAgvszfBhjV4yvsQH0u2i9I6cI6c6/eG4Hh3UAOVn0y/xAXwmTzEay49Q//HA==}
 
@@ -41627,6 +41754,10 @@ packages:
 
   /lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
+
+  /lodash.clonedeep@4.5.0:
+    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
+    dev: false
 
   /lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
@@ -50992,6 +51123,11 @@ packages:
     dependencies:
       glob: 9.3.5
 
+  /ripemd160-min@0.0.6:
+    resolution: {integrity: sha512-+GcJgQivhs6S9qvLogusiTcS9kQUfgR75whKuy5jIhuiOfQuJ8fjqxV6EGD5duH1Y/FawFUMtMhyeq3Fbnib8A==}
+    engines: {node: '>=8'}
+    dev: false
+
   /ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
     dependencies:
@@ -51934,7 +52070,6 @@ packages:
   /smart-buffer@4.2.0:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
-    dev: true
 
   /smartwrap@2.0.2:
     resolution: {integrity: sha512-vCsKNQxb7PnCNd2wY1WClWifAc2lwqsG8OaswpJkVJsvMGcnEntdTCDajZCkk93Ay1U3t/9puJmb525Rg5MZBA==}
@@ -54308,7 +54443,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
+      jest: 28.1.3(@types/node@18.15.11)(ts-node@10.7.0)
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2

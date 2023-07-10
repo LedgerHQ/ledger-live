@@ -4984,6 +4984,11 @@
       "memo": "Memo",
       "memoWarningText": "The value of memo can be a number between 0 and 9223372036854775807"
     },
+    "stacks": {
+      "memoPlaceholder": "Optional",
+      "memo": "Memo",
+      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -5435,6 +5440,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
+    "InvalidNonce": {
+      "title": "Nonce is required"
+    },
     "InvalidAddressBecauseAlreadyDelegated": {
       "title": "Your account is already delegated to this validator"
     },
@@ -5696,6 +5704,9 @@
     },
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StacksMemoTooLong": {
+      "title": "Memo length is too long"
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"
