@@ -21,6 +21,7 @@
 | Crypto.org | CRO | YES | crypto_org |
 | Dash | DASH | YES | dash |
 | Decred | DCR | YES | decred |
+| Desmos | DSM | YES | desmos |
 | DigiByte | DGB | YES | digibyte |
 | Dogecoin | DOGE | YES | dogecoin |
 | Energy Web | EWT | YES | energy_web |
@@ -51,12 +52,16 @@
 | Qtum | QTUM | YES | qtum |
 | Quicksilver | QCK | YES | quicksilver |
 | RSK | RBTC | YES | rsk |
+| SecretNetwork | SCRT | YES | secret_network |
 | Solana | SOL | YES | solana |
 | Songbird | SGB | YES | songbird |
+| Stacks | STX | YES | stacks |
+| Stargaze | STARS | YES | stargaze |
 | Stellar | XLM | YES | stellar |
 | Syscoin | SYS | YES | syscoin |
 | Tezos | XTZ | YES | tezos |
 | Tron | TRX | YES | tron |
+| Umee | UMEE | YES | umee |
 | Velas EVM | VLX | YES | velas_evm |
 | Vertcoin | VTC | YES | vertcoin |
 | Viacoin | VIA | YES | viacoin |
@@ -71,7 +76,6 @@
 | Bitcoin Private | BTCP | NO | bitcoin_private |
 | Callisto | CLO | NO | callisto |
 | DEXON | DXN | NO | dexon |
-| Desmos | DSM | NO | desmos |
 | EOS | EOS | NO | eos |
 | Elastos | ELA | NO | elastos |
 | Ellaism | ELLA | NO | ellaism |
@@ -115,16 +119,12 @@
 | Ravencoin | RVN | NO | ravencoin |
 | Resistance | RES | NO | resistance |
 | Rise | RISE | NO | rise |
-| SecretNetwork | SCRT | NO | secret_network |
 | SeiNetwork | SEI | NO | sei_network |
 | Shyft | SHFT | NO | shyft |
-| Stacks | STX | NO | stacks |
-| Stargaze | STARS | NO | stargaze |
 | Stride | STRD | NO | stride |
 | Thundercore | TT | NO | thundercore |
 | TomoChain | TOMO | NO | tomo |
 | Ubiq | UBQ | NO | ubiq |
-| Umee | UMEE | NO | umee |
 | VeChain | VET | NO | vechain |
 | Wanchain | WAN | NO | wanchain |
 | Waves | WAVES | NO | waves |

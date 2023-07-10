@@ -69,7 +69,13 @@ export default function StepClaimRewards({
   const key = transaction.mode === "claimReward" ? "claimInfo" : "compoundInfo";
   return (
     <Box flow={1}>
-      <TrackPage category="ClaimRewards Flow" name="Step 1" />
+      <TrackPage
+        category="ClaimRewards Flow"
+        name="Step 1"
+        flow="stake"
+        action="claim_rewards"
+        currency={account.currency.id}
+      />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <ModeSelectorField mode={transaction.mode} onChange={onChangeMode} />

@@ -1,4 +1,3 @@
-import { $Shape } from "utility-types";
 import { BigNumber } from "bignumber.js";
 import type { ElrondAccount, Transaction } from "./types";
 import { getFees } from "./api";
@@ -21,16 +20,6 @@ export const createTransaction = (): Transaction => {
     fees: new BigNumber(50000),
     gasLimit: MIN_GAS_LIMIT,
   };
-};
-
-/**
- * Apply patch to t
- *
- * @param {*} t
- * @param {*} patch
- */
-export const updateTransaction = (t: Transaction, patch: $Shape<Transaction>): Transaction => {
-  return { ...t, ...patch };
 };
 
 /**

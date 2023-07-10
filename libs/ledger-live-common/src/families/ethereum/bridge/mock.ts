@@ -16,10 +16,12 @@ import {
   broadcast,
   sync,
   isInvalidRecipient,
+  makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getGasLimit } from "../transaction";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import { inferDynamicRange } from "../../../range";
+
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t: any) => (t.gasPrice || new BigNumber(0)).times(getGasLimit(t));
@@ -37,8 +39,6 @@ const createTransaction = (): Transaction => ({
   useAllAmount: false,
   subAccountId: null,
 });
-
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -130,7 +130,7 @@ const prepareTransaction = async (a, t) => {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,

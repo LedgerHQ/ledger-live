@@ -107,6 +107,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "NEAR staking positions API",
   },
+  API_STACKS_ENDPOINT: {
+    parser: stringParser,
+    def: "https://stacks.coin.ledger.com",
+    desc: "Stacks API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -141,11 +146,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Static fee for Stellar account",
-  },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,
@@ -507,7 +507,7 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
+    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -765,6 +765,16 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
   },
 };
 

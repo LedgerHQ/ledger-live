@@ -1,11 +1,12 @@
 import type { Transaction } from "../types";
 import { SignerContext, scanAccounts, sync } from "../js-synchronisation";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import { createTransaction, prepareTransaction, updateTransaction } from "../js-transaction";
+import { createTransaction, prepareTransaction } from "../js-transaction";
 import getTransactionStatus from "../js-getTransactionStatus";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
@@ -24,7 +25,7 @@ const signerContext: SignerContext = (
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync: sync(signerContext),

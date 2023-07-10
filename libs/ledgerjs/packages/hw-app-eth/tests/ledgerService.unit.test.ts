@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getTransactionHash, transactionData, transactionContracts } from "./fixtures/utils";
+import { ERC1155_CLEAR_SIGNED_SELECTORS, ERC721_CLEAR_SIGNED_SELECTORS } from "../src/utils";
 import partialPluginResponse from "./fixtures/REST/Paraswap-Plugin.json";
 import * as contractServices from "../src/services/ledger/contracts";
 import { getLoadConfig } from "../src/services/ledger/loadConfig";
@@ -6,15 +8,6 @@ import * as erc20Services from "../src/services/ledger/erc20";
 import * as nftServices from "../src/services/ledger/nfts";
 import { ResolutionConfig } from "../src/services/types";
 import { ledgerService } from "../src/Eth";
-import {
-  getTransactionHash,
-  transactionData,
-  transactionContracts,
-} from "./fixtures/utils";
-import {
-  ERC1155_CLEAR_SIGNED_SELECTORS,
-  ERC721_CLEAR_SIGNED_SELECTORS,
-} from "../src/utils";
 
 const loadConfig = getLoadConfig();
 const resolutionConfig: ResolutionConfig = {
@@ -43,12 +36,12 @@ describe("Ledger Service", () => {
         axios.get.mockImplementation(async () => null);
         const txHash = getTransactionHash(
           transactionContracts.erc20,
-          transactionData.erc20.approve
+          transactionData.erc20.approve,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -60,13 +53,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(
-          1
-        );
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -76,12 +65,12 @@ describe("Ledger Service", () => {
         axios.get.mockImplementation(async () => null);
         const txHash = getTransactionHash(
           transactionContracts.erc20,
-          transactionData.erc20.transfer
+          transactionData.erc20.transfer,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -93,13 +82,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(
-          1
-        );
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).not.toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).not.toHaveBeenCalledTimes(1);
       });
@@ -109,12 +94,12 @@ describe("Ledger Service", () => {
         axios.get.mockImplementation(async () => null);
         const txHash = getTransactionHash(
           transactionContracts.random,
-          transactionData.erc20.approve
+          transactionData.erc20.approve,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -124,13 +109,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(
-          1
-        );
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -140,12 +121,12 @@ describe("Ledger Service", () => {
         axios.get.mockImplementation(async () => null);
         const txHash = getTransactionHash(
           transactionContracts.random,
-          transactionData.erc20.transfer
+          transactionData.erc20.transfer,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -155,13 +136,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(
-          1
-        );
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).not.toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).not.toHaveBeenCalledTimes(1);
       });
@@ -197,17 +174,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC721 approve", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.APPROVE)
+          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.APPROVE),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc721,
-          transactionData.erc721.approve
+          transactionData.erc721.approve,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -217,13 +194,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
-        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(
-          1
-        );
+        expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -231,20 +204,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC721 setApprovalForAll", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(
-            url,
-            ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL
-          )
+          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc721,
-          transactionData.erc721.setApprovalForAll
+          transactionData.erc721.setApprovalForAll,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -254,13 +224,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -268,17 +234,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC721 transferFrom", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM)
+          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc721,
-          transactionData.erc721.transferFrom
+          transactionData.erc721.transferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -288,13 +254,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -302,17 +264,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC721 safeTransferFrom", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM)
+          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc721,
-          transactionData.erc721.safeTransferFrom
+          transactionData.erc721.safeTransferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -322,13 +284,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -336,20 +294,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC721 safeTransferFromWitData", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(
-            url,
-            ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA
-          )
+          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc721,
-          transactionData.erc721.safeTransferFromWithData
+          transactionData.erc721.safeTransferFromWithData,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -359,13 +314,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -373,17 +324,17 @@ describe("Ledger Service", () => {
       it("should not resolve a safeTransferFrom from an ERC20 contract", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM)
+          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc20,
-          transactionData.erc721.safeTransferFrom
+          transactionData.erc721.safeTransferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -393,13 +344,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -407,17 +354,17 @@ describe("Ledger Service", () => {
       it("should not resolve a safeTransferFrom from an random contract", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM)
+          nftAxiosMocker(url, ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.random,
-          transactionData.erc721.safeTransferFrom
+          transactionData.erc721.safeTransferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -427,13 +374,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -469,20 +412,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC1155 setApprovalForAll", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(
-            url,
-            ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL
-          )
+          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc1155,
-          transactionData.erc1155.setApprovalForAll
+          transactionData.erc1155.setApprovalForAll,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -492,13 +432,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -506,17 +442,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC1155 safeTransferFrom", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM)
+          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc1155,
-          transactionData.erc1155.safeTransferFrom
+          transactionData.erc1155.safeTransferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -526,13 +462,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -540,20 +472,17 @@ describe("Ledger Service", () => {
       it("should resolve an ERC1155 safeBatchTransferFrom", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(
-            url,
-            ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM
-          )
+          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc1155,
-          transactionData.erc1155.safeBatchTransferFrom
+          transactionData.erc1155.safeBatchTransferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -563,13 +492,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [pluginAPDU],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -577,17 +502,17 @@ describe("Ledger Service", () => {
       it("should not resolve a safeTransferFrom from an ERC20 contract", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM)
+          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.erc20,
-          transactionData.erc1155.safeTransferFrom
+          transactionData.erc1155.safeTransferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -597,13 +522,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -611,17 +532,17 @@ describe("Ledger Service", () => {
       it("should not resolve a safeTransferFrom from an random contract", async () => {
         // @ts-expect-error not casted as jest mock
         axios.get.mockImplementation(async (url: string) =>
-          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM)
+          nftAxiosMocker(url, ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM),
         );
 
         const txHash = getTransactionHash(
           transactionContracts.random,
-          transactionData.erc1155.safeTransferFrom
+          transactionData.erc1155.safeTransferFrom,
         );
         const resolution = await ledgerService.resolveTransaction(
           txHash,
           loadConfig,
-          resolutionConfig
+          resolutionConfig,
         );
 
         expect(resolution).toEqual({
@@ -631,13 +552,9 @@ describe("Ledger Service", () => {
           externalPlugin: [],
           plugin: [],
         });
-        expect(
-          contractServices.loadInfosForContractMethod
-        ).toHaveBeenCalledTimes(1);
+        expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
         expect(erc20Services.findERC20SignaturesInfo).not.toHaveBeenCalled();
-        expect(
-          erc20Services.byContractAddressAndChainId
-        ).not.toHaveBeenCalled();
+        expect(erc20Services.byContractAddressAndChainId).not.toHaveBeenCalled();
         expect(nftServices.getNFTInfo).toHaveBeenCalledTimes(1);
         expect(nftServices.loadNftPlugin).toHaveBeenCalledTimes(1);
       });
@@ -656,12 +573,12 @@ describe("Ledger Service", () => {
 
           const txHash = getTransactionHash(
             transactionContracts.paraswap,
-            transactionData.paraswap.simpleSwap
+            transactionData.paraswap.simpleSwap,
           );
           const resolution = await ledgerService.resolveTransaction(
             txHash,
             loadConfig,
-            resolutionConfig
+            resolutionConfig,
           );
 
           expect(resolution).toEqual({
@@ -673,23 +590,16 @@ describe("Ledger Service", () => {
             nfts: [],
             externalPlugin: [
               {
-                payload:
-                  "085061726173776170def171fe48cf0115b1d80b88dc8eab59176fee5754e3f31b",
+                payload: "085061726173776170def171fe48cf0115b1d80b88dc8eab59176fee5754e3f31b",
                 signature:
                   "3045022100ec8e69d23371437ce5b5f1d894b836c036748e2fabf52fb069c34a9d0ba8704a022013e761d81c26ece4cb0ea385813699b7e646354d3404ed55f4bf068db02dda9a",
               },
             ],
             plugin: [],
           });
-          expect(
-            contractServices.loadInfosForContractMethod
-          ).toHaveBeenCalledTimes(1);
-          expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(
-            2
-          );
-          expect(
-            erc20Services.byContractAddressAndChainId
-          ).toHaveBeenCalledTimes(2);
+          expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
+          expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(2);
+          expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(2);
           expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
           expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
         });
@@ -705,12 +615,12 @@ describe("Ledger Service", () => {
 
           const txHash = getTransactionHash(
             transactionContracts.paraswap,
-            transactionData.paraswap.swapOnUniswapV2Fork
+            transactionData.paraswap.swapOnUniswapV2Fork,
           );
           const resolution = await ledgerService.resolveTransaction(
             txHash,
             loadConfig,
-            resolutionConfig
+            resolutionConfig,
           );
 
           expect(resolution).toEqual({
@@ -721,23 +631,16 @@ describe("Ledger Service", () => {
             nfts: [],
             externalPlugin: [
               {
-                payload:
-                  "085061726173776170def171fe48cf0115b1d80b88dc8eab59176fee570b86a4c1",
+                payload: "085061726173776170def171fe48cf0115b1d80b88dc8eab59176fee570b86a4c1",
                 signature:
                   "3045022100832052e09afece789911f4310118e40fbd04d16961257423435f29d43de7193a02203610a035156139cb63873317eba79365592de5fdb60da9b5735492a69f67bb00",
               },
             ],
             plugin: [],
           });
-          expect(
-            contractServices.loadInfosForContractMethod
-          ).toHaveBeenCalledTimes(1);
-          expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(
-            1
-          );
-          expect(
-            erc20Services.byContractAddressAndChainId
-          ).toHaveBeenCalledTimes(1);
+          expect(contractServices.loadInfosForContractMethod).toHaveBeenCalledTimes(1);
+          expect(erc20Services.findERC20SignaturesInfo).toHaveBeenCalledTimes(1);
+          expect(erc20Services.byContractAddressAndChainId).toHaveBeenCalledTimes(1);
           expect(nftServices.getNFTInfo).not.toHaveBeenCalled();
           expect(nftServices.loadNftPlugin).not.toHaveBeenCalled();
         });

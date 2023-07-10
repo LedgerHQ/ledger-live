@@ -20,6 +20,7 @@ type Props = {
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function RippleSendRowsFee(props: Props) {
   const { account } = props;
   if (account.type !== "Account") return null;

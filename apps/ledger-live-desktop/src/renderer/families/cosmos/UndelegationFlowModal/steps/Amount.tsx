@@ -70,7 +70,13 @@ export default function StepAmount({
   const crypto = cryptoFactory(account.currency.id);
   return (
     <Box flow={1}>
-      <TrackPage category="Undelegation Flow" name="Step 1" />
+      <TrackPage
+        category="Undelegation Flow"
+        name="Step 1"
+        flow="stake"
+        action="undelegation"
+        currency={account.currency.id}
+      />
       {error && <ErrorBanner error={error} />}
       <Box horizontal justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>

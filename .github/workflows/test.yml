@@ -140,7 +140,7 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3

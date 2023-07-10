@@ -23,7 +23,6 @@ import BigNumber from "bignumber.js";
 import * as converters from "./converters";
 import * as serializers from "./serializers";
 import * as signMessage from "../hw/signMessage/index";
-import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RawPlatformTransaction } from "./rawTypes";
 import { setSupportedCurrencies } from "../currencies";
@@ -686,11 +685,8 @@ function createPlatformAccount() {
 
 function createMessageData() {
   return {
-    currency: createFixtureCryptoCurrency("eth"),
-    path: "path",
-    derivationMode: "ethM" as DerivationMode,
+    account: createFixtureAccount("17"),
     message: "default message",
-    rawMessage: "raw default message",
   };
 }
 

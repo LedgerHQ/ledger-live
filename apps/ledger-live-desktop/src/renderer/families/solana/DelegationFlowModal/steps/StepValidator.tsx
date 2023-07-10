@@ -46,7 +46,13 @@ export default function StepValidator({
     .delegate?.voteAccAddress;
   return (
     <Box flow={1}>
-      <TrackPage category="Solana Delegation" name="Step Validator" />
+      <TrackPage
+        category="Solana Delegation"
+        name="Step Validator"
+        flow="stake"
+        action="delegation"
+        currency="sol"
+      />
       {error && <ErrorBanner error={error} />}
       {status ? (
         <ValidatorsField

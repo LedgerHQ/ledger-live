@@ -15,6 +15,7 @@ import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../../TabBar/BackgroundGradient";
 import NftFilterDrawer from "./NftFilterDrawer";
 import EmptyState from "./EmptyState";
+import ScrollToTopButton from "./ScrollToTopButton";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -167,6 +168,7 @@ export function NftList({ data }: Props) {
         contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
         testID={"wallet-nft-gallery-list"}
       />
+      {data.length > 12 ? <ScrollToTopButton /> : null}
       <Animated.View>
         {multiSelectModeEnabled && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>

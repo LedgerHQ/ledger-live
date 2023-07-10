@@ -28,16 +28,22 @@ import NetworkFeeInfo from "./NetworkFeeInfo";
 import { useAnalytics } from "../analytics";
 import { sharedSwapTracking } from "../screens/Swap/utils";
 
+type SelectFeeStrategy = FeeStrategy & {
+  userGasLimit?: BigNumber;
+  forceValueLabel?: string;
+};
+
 type Props = {
-  strategies: (FeeStrategy & { userGasLimit?: BigNumber })[];
+  strategies: SelectFeeStrategy[];
   account: AccountLike;
   parentAccount?: Account | null;
   transaction: Transaction;
-  onStrategySelect: (_: FeeStrategy & { userGasLimit?: BigNumber }) => void;
-  onCustomFeesPress: TouchableOpacityProps["onPress"];
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
   NetworkFeesInfoComponent?: React.FC;
+  forceValueLabel?: string;
+  onStrategySelect: (stategy: SelectFeeStrategy) => void;
+  onCustomFeesPress: TouchableOpacityProps["onPress"];
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -51,11 +57,11 @@ export default function SelectFeesStrategy({
   account,
   parentAccount,
   transaction,
-  onStrategySelect,
-  onCustomFeesPress,
   forceUnitLabel,
   disabledStrategies,
   NetworkFeesInfoComponent,
+  onStrategySelect,
+  onCustomFeesPress,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -73,78 +79,84 @@ export default function SelectFeesStrategy({
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
 
   const onPressStrategySelect = useCallback(
-    (item: FeeStrategy) => {
+    (item: SelectFeeStrategy) => {
       track("button_clicked", {
         ...sharedSwapTracking,
         button: item.label,
         page: "Swap quotes",
       });
+
       onStrategySelect({
         amount: item.amount,
-        label: (item as { forceValueLabel?: string }).forceValueLabel ?? item.label,
-        userGasLimit: (item as { userGasLimit?: BigNumber }).userGasLimit,
+        label: item.forceValueLabel ?? item.label,
+        userGasLimit: item.userGasLimit,
         txParameters: item.txParameters,
+        extra: item.extra,
       });
     },
     [onStrategySelect, track],
   );
 
-  const renderItem = ({ item }: ListRenderItemInfo<FeeStrategy>) => (
-    <TouchableOpacity
-      onPress={() => onPressStrategySelect(item)}
-      disabled={disabledStrategies ? disabledStrategies.includes(item.label) : false}
-      style={[
-        styles.feeButton,
-        {
-          borderColor: feesStrategy === item.label ? colors.live : colors.background,
-          backgroundColor: feesStrategy === item.label ? colors.lightLive : colors.lightFog,
-        },
-      ]}
-    >
-      <View
+  const renderItem = ({ item }: ListRenderItemInfo<SelectFeeStrategy>) => {
+    const isDisabled = disabledStrategies?.includes(item.label);
+
+    return (
+      <TouchableOpacity
+        onPress={() => onPressStrategySelect(item)}
+        disabled={isDisabled}
         style={[
-          styles.feeStrategyContainer,
+          styles.feeButton,
           {
-            opacity: disabledStrategies?.includes(item.label) ? 0.2 : 1,
+            borderColor: feesStrategy === item.label ? colors.live : colors.background,
+            backgroundColor: feesStrategy === item.label ? colors.lightLive : colors.lightFog,
           },
         ]}
       >
-        <View style={styles.leftBox}>
-          {item.label === "slow" ? (
-            <TachometerSlow size={16} color={colors.grey} />
-          ) : item.label === "medium" ? (
-            <TachometerMedium size={16} color={colors.grey} />
-          ) : (
-            <TachometerFast size={16} color={colors.grey} />
-          )}
-          <LText semiBold style={styles.feeLabel}>
-            {t(`fees.speed.${item.label}`)}
-          </LText>
+        <View
+          style={[
+            styles.feeStrategyContainer,
+            {
+              opacity: isDisabled ? 0.2 : 1,
+            },
+          ]}
+        >
+          <View style={styles.leftBox}>
+            {item.label === "slow" ? (
+              <TachometerSlow size={16} color={colors.grey} />
+            ) : item.label === "medium" ? (
+              <TachometerMedium size={16} color={colors.grey} />
+            ) : (
+              <TachometerFast size={16} color={colors.grey} />
+            )}
+            <LText semiBold style={styles.feeLabel}>
+              {t(`fees.speed.${item.label}`)}
+            </LText>
+          </View>
+          <View style={styles.feesAmountContainer}>
+            <LText semiBold style={styles.feesAmount}>
+              <CurrencyUnitValue
+                showCode={!forceUnitLabel}
+                unit={item.unit ?? unit}
+                value={item.displayedAmount ?? item.amount}
+              />
+              {forceUnitLabel ? " " : null}
+              {forceUnitLabel || null}
+            </LText>
+            {item.displayedAmount ? (
+              <CounterValue
+                currency={currency}
+                showCode
+                value={item.displayedAmount}
+                alwaysShowSign={false}
+                withPlaceholder
+                Wrapper={CVWrapper}
+              />
+            ) : null}
+          </View>
         </View>
-        <View style={styles.feesAmountContainer}>
-          <LText semiBold style={styles.feesAmount}>
-            <CurrencyUnitValue
-              showCode={!forceUnitLabel}
-              unit={item.unit ?? unit}
-              value={item.displayedAmount ?? item.amount}
-            />
-            {forceUnitLabel ? " " : null}
-            {forceUnitLabel || null}
-          </LText>
-          {item.displayedAmount ? (
-            <CounterValue
-              currency={currency}
-              showCode
-              value={item.displayedAmount}
-              alwaysShowSign={false}
-              withPlaceholder
-              Wrapper={CVWrapper}
-            />
-          ) : null}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <>
@@ -195,6 +207,7 @@ export default function SelectFeesStrategy({
     </>
   );
 }
+
 const styles = StyleSheet.create({
   strategiesContainer: {
     flex: 1,

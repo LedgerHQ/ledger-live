@@ -10,6 +10,7 @@ import hedera from "../families/hedera/hw-getAddress";
 import near from "../families/near/hw-getAddress";
 import ripple from "../families/ripple/hw-getAddress";
 import solana from "../families/solana/hw-getAddress";
+import stacks from "../families/stacks/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
@@ -30,6 +31,7 @@ export default {
   near,
   ripple,
   solana,
+  stacks,
   stellar,
   tezos,
   tron,

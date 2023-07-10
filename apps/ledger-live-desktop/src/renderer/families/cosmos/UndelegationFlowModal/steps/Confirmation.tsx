@@ -43,7 +43,13 @@ export default function StepConfirmation({
       });
     return (
       <Container>
-        <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Undelegation Cosmos Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="undelegation"
+          currency={currencyId}
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -71,7 +77,13 @@ export default function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Undelegation Cosmos Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="undelegation"
+          currency={currencyId}
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={t("cosmos.undelegation.flow.steps.confirmation.broadcastError")}
