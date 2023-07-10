@@ -18,12 +18,13 @@ import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
-import { ScrollView } from "react-native";
+import { Linking, ScrollView } from "react-native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { LanguagePrompt } from "./LanguagePrompt";
 import { NavigatorName, ScreenName } from "../../const";
 import { StackNavigationProp } from "@react-navigation/stack";
 import type { UpdateStep } from "../FirmwareUpdate";
+import { urls } from "../../config/urls";
 
 const LOCKED_DEVICE_TIMEOUT_MS = 1000;
 
@@ -149,16 +150,15 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     })}
   `);
 
-  // Exit point: actually with a button
-  // useEffect(() => {
-  //   // FIXME: to adapt with skip and real fw update
-  //   if (firmwareUpdateCheckStatus === "completed") {
-  //     notifyOnboardingEarlyCheckEnded();
-  //   }
-  // }, [firmwareUpdateCheckStatus, notifyOnboardingEarlyCheckEnded]);
-
   const onStartChecks = useCallback(() => {
     setCurrentStep("genuine-check");
+  }, []);
+
+  const onLearnMore = useCallback(() => {
+    track("button_clicked", {
+      button: "Learn more about Genuine Check",
+    });
+    Linking.openURL(urls.genuineCheck.learnMore);
   }, []);
 
   const onRetryGenuineCheck = useCallback(() => {
@@ -489,7 +489,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     stepContent = (
       <Flex width="100%" mt="4">
         <Text mb="4">{t("earlySecurityCheck.idle.description")}</Text>
-        <Link Icon={ExternalLinkMedium} style={{ justifyContent: "flex-start" }}>
+        <Link
+          Icon={ExternalLinkMedium}
+          onPress={onLearnMore}
+          style={{ justifyContent: "flex-start" }}
+        >
           {t("earlySecurityCheck.idle.learnMore")}
         </Link>
       </Flex>
@@ -642,3 +646,13 @@ const CheckCard = ({ title, description, index, status, ...props }: CheckCardPro
     </Flex>
   );
 };
+
+// https://www.youtube.com/watch?v=VRgB1I3HNYg
+//   const openLink = useCallback(() => {
+//     track("button_clicked", {
+//       button: "learn_more",
+//       ...getTrackProperties(),
+//       link: supportLink,
+//     });
+//     openURL(supportLink, "OpenURL", getTrackProperties());
+//   }, [getTrackProperties, supportLink]);
