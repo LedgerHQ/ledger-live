@@ -3,7 +3,7 @@ import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
 import { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box, { Tabbable } from "~/renderer/components/Box";
@@ -69,9 +69,9 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props)
   const accountUnit = getAccountUnit(account);
   const feesCurrency = getAccountCurrency(account);
 
-  return (
-    <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
-      {strategies.map(strategy => {
+  const feeStrategies = useMemo(
+    () =>
+      strategies.map(strategy => {
         const selected = transaction.feesStrategy === strategy;
         const gasOption = gasOptions[strategy];
         const estimatedFees = getEstimatedFees(getTypedTransaction(transaction, gasOption));
@@ -144,7 +144,13 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props)
             </>
           </FeesWrapper>
         );
-      })}
+      }),
+    [accountUnit, feesCurrency, gasOptions, onClick, transaction],
+  );
+
+  return (
+    <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
+      {feeStrategies}
     </Box>
   );
 };
