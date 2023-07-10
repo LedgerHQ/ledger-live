@@ -26,7 +26,7 @@ export function startDummyServer(appPath: string, port = 0): Promise<number> {
       .once("listening", () => {
         resolve((dummyAppServer.address() as any).port as number);
       })
-      .once("error", error => {
+      .once("error", (error: unknown) => {
         dummyAppServer.close();
         reject(error);
       });
