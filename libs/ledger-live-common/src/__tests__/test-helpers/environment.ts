@@ -10,6 +10,10 @@ setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
   "onomy",
   "quicksilver",
   "persistence",
@@ -78,6 +82,7 @@ setSupportedCurrencies([
   "syscoin",
   "ethereum_as_evm_test_only",
   "polygon_as_evm_test_only",
+  "stacks",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

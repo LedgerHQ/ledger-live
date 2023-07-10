@@ -14,3 +14,4 @@ export * from "./cardano";
 export * from "./hedera";
 export * from "./celo";
 export * from "./near";
+export * from "./stacks";

@@ -4,14 +4,15 @@ import { log } from "@ledgerhq/logs";
 import type { SignMessage, Result } from "../../hw/signMessage/types";
 import { getBufferFromString, getPath, isError } from "./utils";
 
-const signMessage: SignMessage = async (transport, { path, message }): Promise<Result> => {
+const signMessage: SignMessage = async (transport, account, { message }): Promise<Result> => {
   log("debug", "start signMessage process");
 
   const fil = new Fil(transport);
 
-  if (!message) throw new Error(`Message cannot be empty`);
+  if (typeof message !== "string") throw new Error("Invalid message type");
+  if (!message) throw new Error("Message cannot be empty");
 
-  const r = await fil.sign(getPath(path), getBufferFromString(message as string));
+  const r = await fil.sign(getPath(account.freshAddressPath), getBufferFromString(message));
   isError(r);
 
   return {

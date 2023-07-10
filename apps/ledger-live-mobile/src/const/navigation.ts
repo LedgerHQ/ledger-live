@@ -461,6 +461,8 @@ export enum ScreenName {
   CardanoUndelegationValidationError = "CardanoUndelegationValidationError",
   CardanoUndelegationValidationSuccess = "CardanoUndelegationValidationSuccess",
 
+  // stacks
+  StacksEditMemo = "StacksEditMemo",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near

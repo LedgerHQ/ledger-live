@@ -1,11 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
+  "extends": ["config:recommended", ":dependencyDashboard"],
   "dependencyDashboard": true,
   "labels": ["dependencies"],
   "automerge": false,
   "detectGlobalManagerConfig": true,
-  "allowScripts": true,
   "ignoreScripts": false,
   "packageRules": [
     {
@@ -15,7 +14,7 @@
     }
   ],
   "prConcurrentLimit": 10,
-  "schedule": ["before 7am every weekday"],
   "separateMinorPatch": true,
-  "timezone": "Europe/Paris"
+  "timezone": "Europe/Paris",
+  "enabledManagers": ["npm"]
 }

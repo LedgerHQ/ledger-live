@@ -102,7 +102,7 @@ export const buildSignOperation =
         const signature = await getSerializedTransaction(preparedTransaction, {
           r: "0x" + sig.r,
           s: "0x" + sig.s,
-          v: applyEIP155(sig.v, chainId),
+          v: applyEIP155(typeof sig.v === "number" ? sig.v.toString(16) : sig.v, chainId),
         });
 
         const operation = buildOptimisticOperation(account, {

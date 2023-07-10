@@ -1,14 +1,16 @@
 // Goal of this file is to provide utils for injecting device/signer dependency to coin-modules.
 
+import { from } from "rxjs";
+import Transport from "@ledgerhq/hw-transport";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { PassthroughFn, SignerContext } from "@ledgerhq/coin-framework/signer";
-import Transport from "@ledgerhq/hw-transport";
-import { from } from "rxjs";
+import { MessageSignerFn, SignMessage } from "../hw/signMessage/types";
+import { GetAddressOptions, Resolver } from "../hw/getAddress/types";
 import { withDevice } from "../hw/deviceAccess";
-import { GetAddressOptions, Resolver, Result } from "../hw/getAddress/types";
 
 export type CreateSigner<T> = (transport: Transport) => T;
 export type CoinResolver<T, U> = (signerContext: SignerContext<T, U>) => GetAddressFn;
+export type MessageSigner<T, U> = (signerContext: SignerContext<T, U>) => MessageSignerFn;
 
 /**
  * Retrieve `transport` to provide it to the signer and give some sort of scope for which the `transport` will be valid.
@@ -27,11 +29,24 @@ export function executeWithSigner<T, U>(signerFactory: CreateSigner<T>): SignerC
  * @returns Resolver
  */
 export function createResolver<T, U>(
-  signer: CreateSigner<T>,
+  signerFactory: CreateSigner<T>,
   coinResolver: CoinResolver<T, U>,
 ): Resolver {
-  return (transport: Transport, opts: GetAddressOptions): Promise<Result> => {
-    const signerContext: SignerContext<T, U> = (_, fn) => fn(signer(transport));
+  return (transport: Transport, opts: GetAddressOptions): ReturnType<GetAddressFn> => {
+    const signerContext: SignerContext<T, U> = (_, fn) => fn(signerFactory(transport));
     return coinResolver(signerContext)("", opts);
+  };
+}
+
+/**
+ * Inject the `signer` so it can be used by the hw-signMessage function.
+ */
+export function createMessageSigner<T, U>(
+  signerFactory: CreateSigner<T>,
+  messageSigner: MessageSigner<T, U>,
+): SignMessage {
+  return (transport, account, messageData) => {
+    const signerContext: SignerContext<T, U> = (_, fn) => fn(signerFactory(transport));
+    return messageSigner(signerContext)("", account, messageData);
   };
 }

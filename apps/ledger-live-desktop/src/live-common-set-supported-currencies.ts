@@ -4,6 +4,10 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "axelar",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
   "onomy",
   "quicksilver",
   "persistence",
@@ -70,4 +74,5 @@ setSupportedCurrencies([
   "syscoin",
   "ethereum_as_evm_test_only",
   "polygon_as_evm_test_only",
+  "stacks",
 ]);

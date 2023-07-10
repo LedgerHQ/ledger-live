@@ -195,6 +195,11 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  stacks_wallet: {
+    overridesDerivation: "44'/5757'/0'/0/<account>",
+    startsAt: 1,
+    tag: "third-party",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -214,6 +219,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  stacks: ["stacks_wallet"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -359,6 +365,7 @@ type SeedPathFn = (info: SeedInfo) => string;
 const seedIdentifierPath: Record<string, SeedPathFn> = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  stacks: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,

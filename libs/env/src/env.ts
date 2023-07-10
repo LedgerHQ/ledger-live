@@ -107,6 +107,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "NEAR staking positions API",
   },
+  API_STACKS_ENDPOINT: {
+    parser: stringParser,
+    def: "https://stacks.coin.ledger.com",
+    desc: "Stacks API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -141,11 +146,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Static fee for Stellar account",
-  },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,
