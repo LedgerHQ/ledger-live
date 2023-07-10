@@ -1,6 +1,7 @@
 // FIXME: very similar to src/renderer/components/WebPlatformPlayer/TopBar.js
 
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { ProviderIcon } from "@ledgerhq/react-ui";
 import React from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -11,8 +12,8 @@ import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { rgba } from "~/renderer/styles/helpers";
-import { iconByProviderName } from "../utils";
 import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
+
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
@@ -107,12 +108,11 @@ const TopBar = ({ provider, onClose, webviewRef }: Props) => {
       webview.openDevTools();
     }
   };
-  const ProviderIcon = (provider && iconByProviderName[provider.toLowerCase()]) || null;
   const name = getProviderName(provider);
   return (
     <Container>
       <TitleContainer>
-        {ProviderIcon && <ProviderIcon size={19} />}
+        <ProviderIcon size="XXS" name={provider.toLowerCase()} />
         <ItemContent>{name}</ItemContent>
       </TitleContainer>
       <Separator />
