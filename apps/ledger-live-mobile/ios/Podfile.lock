@@ -805,7 +805,7 @@ DEPENDENCIES:
   - "RNInAppBrowser (from `../../../node_modules/.pnpm/react-native-inappbrowser-reborn@3.7.0_react-native@0.71.6/node_modules/react-native-inappbrowser-reborn`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.21.0_@_b5ujqkpnd4y64zeftqbrbykuom/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.21.0_@babel+plugin-proposal-nullish-coalescing-op_b5ujqkpnd4y64zeftqbrbykuom/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.20.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-screens`)"
   - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@5.3.0_react-native@0.71.6_react@18.0.0/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@7.9.0/node_modules/react-native-share`)"
@@ -1015,7 +1015,7 @@ EXTERNAL SOURCES:
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.21.0_@_b5ujqkpnd4y64zeftqbrbykuom/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.21.0_@babel+plugin-proposal-nullish-coalescing-op_b5ujqkpnd4y64zeftqbrbykuom/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@3.20.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-screens"
   RNSentry:
