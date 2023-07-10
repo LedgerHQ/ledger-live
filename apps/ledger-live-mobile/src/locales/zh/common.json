@@ -56,6 +56,7 @@
     "forgetDevice" : "移除设备",
     "help" : "帮助",
     "saveLogs" : "保存日志",
+    "scrollToTop" : "滚动到顶部",
     "sync" : {
       "ago" : "已同步 {{time}}"
     },
@@ -1034,7 +1035,7 @@
       "discoverWeb3" : {
         "title" : "探索 Web3",
         "description" : "在您的设备抵达之前，探索关于 web3 的一切！",
-        "cta" : "发现"
+        "cta" : "探索"
       }
     }
   },
@@ -1135,7 +1136,7 @@
     "desc" : "您的订单正在处理中。\n您将很快收到您的 Ledger。请查收您的电子邮件以确认订单。"
   },
   "discover" : {
-    "title" : "发现",
+    "title" : "探索",
     "desc" : "安全地探索 Web3 的世界",
     "link" : "了解更多",
     "sections" : {
@@ -1200,7 +1201,7 @@
       "noDevice" : "没有设备？",
       "buy" : "购买一个 {{fullDeviceName}}",
       "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "termsLink" : "条款和条件",
       "privacyLink" : "隐私政策",
       "and" : "和",
       "recoverLogIn" : "登录使用 Ledger Recover"
@@ -1251,7 +1252,7 @@
         "title" : "时刻留意市场动态。"
       },
       "2" : {
-        "title" : "发现应用程序并了解 web3。"
+        "title" : "探索应用程序并了解 Web3。"
       },
       "3" : {
         "title" : "保护您的加密货币和 NFT。"
@@ -1460,11 +1461,11 @@
         "cta" : "下一步"
       },
       "recoveryPhrase" : {
-        "title" : "恢复短语",
-        "desc" : "您的恢复短语是备份您私人密钥的由 24 个助记词组成的秘密列表。",
-        "desc_1" : "Nano 为您生成一个独有的恢复短语。Ledger 不会保存其副本。",
+        "title" : "Your Secret Recovery Phrase",
+        "desc" : "Your Secret Recovery Phrase is a list of 24 words that backs up your private keys.",
+        "desc_1" : "Your Ledger Nano generates a unique Secret Recovery Phrase. Ledger does not know what it is.",
         "cta" : "下一步",
-        "checkboxDesc" : "我明白：如果我丢失了自己的恢复短语，那么一旦我的 Nano 无法使用，也就意味着我将无法访问自己的加密资产。"
+        "checkboxDesc" : "I understand that if someone gets my Secret Recovery Phrase, my assets become vulnerable."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1789,7 @@
         "title" : "身为 Ledger 用户，我的加密资产存放在：",
         "answers" : {
           "correct" : "区块链上",
-          "wrong" : "我的 Nano 上"
+          "wrong" : "On my Ledger Nano"
         },
         "modal" : {
           "text" : "您的加密资产一直都存放在区块链中。您的硬件钱包只是持有能够让您访问个人加密资产的私钥。",
@@ -1796,10 +1797,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "如果我的恢复短语不再安全或已被泄密……",
+        "title" : "If someone else gets access to my Secret Recovery Phrase...",
         "answers" : {
-          "correct" : "我的加密资产不再安全，我需要将其转移到安全的地方",
-          "wrong" : "没有问题，Ledger可以向我发送一份副本"
+          "correct" : "My assets become vulnerable and that person could have access to them",
+          "wrong" : "No problem, as long as I still know what it is"
         },
         "modal" : {
           "text" : "任何知道您恢复短语的人都能盗取您的加密资产。\n如果您将其丢失，必须尽快将您的加密资产转移到安全的地方。",
@@ -1807,7 +1808,7 @@
         }
       },
       "privateKey" : {
-        "title" : "当我将我的 Nano 连接到 Ledger 应用程序上，我的私钥是……",
+        "title" : "When I connect my Ledger Nano to the Ledger Live app, my private key is...",
         "answers" : {
           "correct" : "依旧处于离线状态",
           "wrong" : "已短暂连接到网络"
@@ -1860,7 +1861,7 @@
       },
       "loading" : {
         "title" : "正在和 {{deviceName}} 配对...",
-        "subtitle" : "在您的 {{productName}} 上确认代码"
+        "subtitle" : "如果有提示，请在您的 {{productName}} 上确认代码"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1900,7 @@
       },
       "loading" : {
         "title" : "正在和 {{deviceName}} 配对",
-        "subtitle" : "在您的 {{productName}} 上确认代码"
+        "subtitle" : "如果有提示，请在您的 {{productName}} 上确认代码"
       },
       "error" : {
         "title" : "配对不成功",
@@ -2031,7 +2032,7 @@
     "manager" : "我的 Ledger",
     "settings" : "设置",
     "platform" : "Live 应用程序",
-    "discover" : "发现",
+    "discover" : "探索",
     "nanoX" : "Nano X",
     "market" : "市场",
     "learn" : "学习"
@@ -2524,7 +2525,7 @@
     "header" : "设置",
     "resources" : "Ledger 资源",
     "display" : {
-      "title" : "一般条款",
+      "title" : "常规",
       "desc" : "配置 Ledger Live 常规设置。",
       "carousel" : "推荐",
       "carouselDesc" : "我们会向您显示一些卡片，其中有个性化提示以及您的专属最新优惠。",
@@ -3019,7 +3020,7 @@
         "balance" : "余额 <0>123</0>",
         "fromAccount" : "选择账户",
         "toAccount" : "选择账户",
-        "paraswapCTA" : "寻找 Paraswap？它已被移动到”发现“选项卡！",
+        "paraswapCTA" : "寻找 ParaSwap？它已被移动到”探索“选项卡！",
         "quote" : "报价",
         "receive" : "接收",
         "amount" : {
@@ -3182,7 +3183,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "您的提取请求已被 {{providerName}} 阻止。\n\n请联系对方客服了解更多信息。"
-          }
+          },
+          "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
       }
     },
@@ -4140,6 +4142,10 @@
         "restoreLockScreenPicture" : "恢复锁屏图片",
         "restoreLanguage" : "恢复语言",
         "installingApps" : "安装应用程序",
+        "imageLoadRequested" : "允许在 {{deviceName}} 上恢复锁屏图片",
+        "imageCommitRequested" : "确认 {{deviceName}} 上的图片",
+        "allowLanguageInstallation" : "允许在 {{deviceName}} 上恢复语言",
+        "allowAppsRestoration" : "允许在 {{deviceName}} 上恢复应用程序",
         "errors" : {
           "description" : "如果是误操作，您可以重新尝试恢复，也可以跳过此步骤",
           "LanguageInstallRefusedOnDevice" : "已取消在 {{deviceName}} 上更改语言",
@@ -4160,6 +4166,10 @@
       "TimeoutError" : {
         "title" : "更新超时",
         "description" : "与 {{deviceName}} 的连接断开，无法完成更新"
+      },
+      "CantOpenDevice" : {
+        "title" : "抱歉，连接失败",
+        "description" : "与 {{deviceName}} 的连接断开，未能完成更新。"
       }
     }
   },
