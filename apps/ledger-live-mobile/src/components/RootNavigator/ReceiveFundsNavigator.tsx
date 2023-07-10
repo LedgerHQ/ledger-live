@@ -78,7 +78,6 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveSelectCrypto}
         component={ReceiveSelectCrypto}
         options={{
-          headerLeft: () => null,
           headerTitle: "",
         }}
       />

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { StyleSheet, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
@@ -15,13 +15,12 @@ import {
   findCryptoCurrencyByKeyword,
 } from "@ledgerhq/live-common/currencies/index";
 
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import CurrencyRow from "../../components/CurrencyRow";
-import LText from "../../components/LText";
+import BigCurrencyRow from "../../components/BigCurrencyRow";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
@@ -36,9 +35,9 @@ const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <Flex px={6}>
-    <LText textAlign="center">
+    <Text textAlign="center">
       <Trans i18nKey="common.noCryptoFound" />
-    </LText>
+    </Text>
   </Flex>
 );
 
@@ -130,10 +129,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const renderList = useCallback(
     (items: CryptoOrTokenCurrency[]) => (
       <FlatList
-        contentContainerStyle={styles.list}
         data={items}
         renderItem={({ item }) => (
-          <CurrencyRow iconSize={32} currency={item} onPress={onPressItem} />
+          <BigCurrencyRow currency={item} onPress={onPressItem} subTitle={item.ticker} />
         )}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
@@ -146,33 +144,23 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="Receive" name="Select Crypto" />
-      <LText
-        fontSize="32px"
-        fontFamily="InterMedium"
-        semiBold
-        px={6}
-        my={3}
+      <Text
+        variant="h4"
+        fontWeight="semiBold"
+        mx={6}
+        mb={3}
         testID="receive-header-step1-title"
       >
         {t("transfer.receive.selectCrypto.title")}
-      </LText>
+      </Text>
       <FilteredSearchBar
         keys={SEARCH_KEYS}
-        inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
+        inputWrapperStyle={{ marginHorizontal: 16, marginBottom: 8 }}
         list={sortedCryptoCurrencies}
         renderList={renderList}
         renderEmptySearch={renderEmptyList}
+        newSearchBar
       />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    paddingBottom: 32,
-  },
-  filteredSearchInputWrapperStyle: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-  },
-});

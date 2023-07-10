@@ -2843,7 +2843,7 @@
       "addressCopied": "Copied",
       "taprootWarning": "Make sure the sender supports taproot",
       "selectCrypto": {
-        "title": "Select a crypto"
+        "title": "Choose a crypto to receive"
       },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
