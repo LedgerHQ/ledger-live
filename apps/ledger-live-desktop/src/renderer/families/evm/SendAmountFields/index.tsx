@@ -30,7 +30,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
     updateTransaction((tx: EvmTransaction) => bridge.updateTransaction(tx, { ...tx, gasOptions }));
   }, [bridge, updateTransaction, gasOptions]);
 
-  const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
+  const [isAdvanceMode, setAdvanceMode] = useState(false);
 
   const shouldUseEip1559 = transaction.type === 2;
 
