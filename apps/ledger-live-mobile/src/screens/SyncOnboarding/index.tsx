@@ -94,7 +94,11 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     stopPolling: !isPollingOn,
   });
 
-  console.log(`🙀 POLLING: ${JSON.stringify(onboardingState)} | allowedError: ${JSON.stringify(allowedError)} | fatalError: ${JSON.stringify(fatalError)}`);
+  console.log(
+    `🙀 POLLING: ${JSON.stringify(onboardingState)} | allowedError: ${JSON.stringify(
+      allowedError,
+    )} | fatalError: ${JSON.stringify(fatalError)}`,
+  );
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: device.deviceId,
@@ -113,11 +117,11 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     setIsPollingOn(true);
   }, []);
 
-  // Called when the user taps on the "skip" button in the mandatory drawer
-  const onSkipEarlySecurityCheck = useCallback(() => {
+  // Called when the user taps on the "cancel" button in the mandatory drawer
+  const onCancelEarlySecurityCheck = useCallback(() => {
     setIsESCMandatoryDrawerOpen(false);
-    notifyOnboardingEarlyCheckEnded();
-  }, [notifyOnboardingEarlyCheckEnded]);
+    navigation.popToTop();
+  }, [navigation]);
 
   // Handles current step and toggling onboarding early check logics
   useEffect(() => {
@@ -260,7 +264,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         onResume={() => {
           setIsESCMandatoryDrawerOpen(false);
         }}
-        onSkip={onSkipEarlySecurityCheck}
+        onCancel={onCancelEarlySecurityCheck}
       />
       {stepContent}
     </>

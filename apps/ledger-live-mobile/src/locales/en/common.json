@@ -1919,7 +1919,7 @@
       "title": "Genuine Check error",
       "description": "An error occurred while running the genuine check on {{productName}}.",
       "retryCta": "Retry Check",
-      "skipCta": "Cancel Check"
+      "cancelCta": "Cancel Check"
     },
     "allowManagerDrawer": {
       "title": "Tap 'Allow' to enable Genuine Check and OS update check"

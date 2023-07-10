@@ -17,9 +17,9 @@ export type Props = {
   onResume?: () => void;
 
   /**
-   * Callback when the user wants to skip the genuine check (and fw check) steps and presses on the skip button
+   * Callback when the user wants to cancel the genuine check (and fw check) steps and presses on the cancel button
    */
-  onSkip?: () => void;
+  onCancel?: () => void;
 
   /**
    * Callback when the drawer is closed
@@ -40,7 +40,7 @@ export type Props = {
 const EarlySecurityCheckMandatoryDrawer: React.FC<Props> = ({
   isOpen,
   onResume,
-  onSkip,
+  onCancel,
   onClose,
   productName,
 }) => {
@@ -78,7 +78,9 @@ const EarlySecurityCheckMandatoryDrawer: React.FC<Props> = ({
       <Button type="main" mb={4} onPress={onResume}>
         {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.resumeCta")}
       </Button>
-      <Button onPress={onSkip}>{t("earlySecurityCheck.genuineCheckFailedDrawer.skipCta")}</Button>
+      <Button onPress={onCancel}>
+        {t("earlySecurityCheck.genuineCheckFailedDrawer.cancelCta")}
+      </Button>
     </QueuedDrawer>
   );
 };
