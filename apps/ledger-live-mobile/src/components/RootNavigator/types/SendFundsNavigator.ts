@@ -7,7 +7,7 @@ import type {
   Transaction as EthereumTransaction,
   TransactionRaw as EtherumTransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,

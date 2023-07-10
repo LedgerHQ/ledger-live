@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction } from "@ledgerhq/coin-evm/types";
 import { SendFundsNavigatorStackParamList } from "../../../components/RootNavigator/types/SendFundsNavigator";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import EvmLegacyCustomFees from "./EvmLegacyCustomFees";
@@ -59,4 +59,5 @@ export default function EvmCustomFees({ route }: Props) {
     />
   );
 }
+
 export { options, EvmCustomFees as component };

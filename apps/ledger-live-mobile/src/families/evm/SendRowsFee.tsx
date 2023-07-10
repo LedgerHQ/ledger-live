@@ -1,5 +1,5 @@
 import React from "react";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction } from "@ledgerhq/coin-evm/types";
 import EvmFeesStrategy from "./EvmFeesStrategy";
 import { SendRowsFeeProps } from "./types";
 

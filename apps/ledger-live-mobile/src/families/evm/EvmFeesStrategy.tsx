@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { Transaction } from "@ledgerhq/coin-evm/types";
 import React, { useCallback, useEffect, useState } from "react";
 import SelectFeesStrategy from "./SelectFeesStrategy";
 import { ScreenName } from "../../const";

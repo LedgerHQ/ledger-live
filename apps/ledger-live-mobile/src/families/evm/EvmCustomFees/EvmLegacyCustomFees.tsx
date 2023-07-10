@@ -1,5 +1,5 @@
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
-import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Transaction } from "@ledgerhq/coin-evm/types";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
