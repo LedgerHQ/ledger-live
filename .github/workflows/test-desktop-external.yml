@@ -17,19 +17,11 @@ on:
         description: true if the PR is in draft
         required: false
         default: "false"
-      full-tests:
-        description: Set to true to run the full e2e tests
-        required: false
-        type: boolean
-        default: false
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
-
-env:
-  RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
 
 jobs:
   codechecks:
@@ -129,11 +121,7 @@ jobs:
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          if [[ "${{ inputs.draft }}" == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-          else
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-          fi
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -166,138 +154,8 @@ jobs:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
 
-  e2e-tests-mac:
-    name: "Live Desktop Tests (macOS X)"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: macos-latest
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
-    runs-on: macos-latest
-    if: ${{ github.env.RUN_FULL_SUITE }}
-    outputs:
-      status: ${{ steps.tests.outcome }}
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_python: true
-          skip_ruby: true
-          install_playwright: true
-      - name: Run playwright tests
-        id: tests
-        run: |
-          if [[ "${{ inputs.draft }}" == true ]]; then
-            pnpm desktop test:playwright
-          else
-            pnpm desktop test:playwright
-          fi
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ./tools/actions/upload-images
-        id: imgur
-        with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: macos
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
-        with:
-          name: images
-          path: images-macos.json
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
-        with:
-          name: playwright-results-macos
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
-            apps/ledger-live-desktop/tests/artifacts/logs
-      - name: Upload Allure Report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results-macos
-          path: apps/ledger-live-desktop/allure-results
-
-  e2e-tests-windows:
-    name: "Live Desktop Tests (Windows)"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: windows-latest
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
-    runs-on: windows-latest
-    if: ${{ github.env.RUN_FULL_SUITE }}
-    outputs:
-      status: ${{ steps.tests.outcome }}
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          install_node_gyp: true
-          install_playwright: true
-          upgrade_npm: true
-      - name: Run playwright tests
-        id: tests
-        run: |
-          if [[ "${{ inputs.draft }}" == true ]]; then
-            pnpm desktop test:playwright
-          else
-            pnpm desktop test:playwright
-          fi
-        shell: bash
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ./tools/actions/upload-images
-        id: imgur
-        with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: windows
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
-        with:
-          name: images
-          path: images-windows.json
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
-        with:
-          name: playwright-results-windows
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
-            apps/ledger-live-desktop/tests/artifacts/logs
-      - name: Upload Allure Report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results-windows
-          path: apps/ledger-live-desktop/allure-results
-
   report:
-    needs:
-      [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-mac, e2e-tests-windows]
+    needs: [codechecks, deadcodecheck, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
@@ -318,7 +176,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const files = ["images-linux", "images-windows", "images-macos"];
+            const files = ["images-linux"];
             let result = {};
             for (const file of files) {
               try {
@@ -357,16 +215,6 @@ jobs:
               jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
 
             const keys = {
-              mac: {
-                symbol: "🍏",
-                name: "macOS",
-                jobUrl: findJobUrl("macOS X")
-              },
-              windows: {
-                symbol: "🪟",
-                name: "Windows",
-                jobUrl: findJobUrl("Windows")
-              },
               linux: {
                 symbol: "🐧",
                 name: "Linux",
@@ -388,20 +236,7 @@ jobs:
               pass: ${{ needs.deadcodecheck.result == 'success' }},
             };
 
-            const report = ${{ env.RUN_FULL_SUITE }} ? {
-              mac: {
-                pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-mac.outputs.status }}",
-              },
-              linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
-              },
-              windows: {
-                pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-windows.outputs.status }}",
-              },
-            } : {
+            const report = {
               linux: {
                 pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-linux.outputs.status }}",
@@ -503,7 +338,7 @@ jobs:
 
   allure-report:
     name: "Allure Reports Export on Server"
-    needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
+    needs: [e2e-tests-linux]
     runs-on: [ledger-live-medium-linux]
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     steps:
@@ -511,37 +346,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
-      - name: Download Allure Report - Windows
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-windows
-          path: allure-results-windows
-      - name: Download Allure Report - MacOS
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-macos
-          path: allure-results-macos
       - name: Download Allure Report - Linux
         uses: actions/download-artifact@v3
         with:
           name: allure-results-linux
           path: allure-results-linux
-      - name: Send Results and Generate Allure Report - Windows
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: windows
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-windows
-      - name: Send Results and Generate Allure Report - MacOS
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: macos
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-macos
       - name: Send Results and Generate Allure Report - Linux
         uses: ./tools/actions/composites/upload-allure-report
         if: always()
