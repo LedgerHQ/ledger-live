@@ -36,6 +36,7 @@ export default ({
   ...props
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
+
   // eslint-disable-next-line no-prototype-builtins
   if (perFamily.hasOwnProperty(mainAccount.currency.family)) {
     const C = perFamily[mainAccount.currency.family as keyof typeof perFamily];
