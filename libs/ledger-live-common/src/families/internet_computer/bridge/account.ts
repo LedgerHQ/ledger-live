@@ -1,4 +1,5 @@
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   Account,
   AccountBridge,
@@ -44,12 +45,6 @@ const createTransaction = (): Transaction => {
     recipient: "",
     useAllAmount: false,
   };
-};
-
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
-  // log("debug", "[updateTransaction] patching tx");
-
-  return { ...t, ...patch };
 };
 
 const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
@@ -233,7 +228,7 @@ const broadcast: BroadcastFnSignature = async ({ signedOperation: { signature, o
 
 export const accountBridge: AccountBridge<Transaction> = {
   sync,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   createTransaction,
   prepareTransaction,
   getTransactionStatus,
