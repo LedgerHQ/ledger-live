@@ -15,12 +15,8 @@ import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 
-type OnClickType = {
-  feesStrategy: keyof GasOptions;
-};
-
 type Props = {
-  onClick: (arg: OnClickType) => void;
+  onClick: (_: { feesStrategy: keyof GasOptions }) => void;
   transaction: EvmTransaction;
   account: Account;
   gasOptions: GasOptions;
