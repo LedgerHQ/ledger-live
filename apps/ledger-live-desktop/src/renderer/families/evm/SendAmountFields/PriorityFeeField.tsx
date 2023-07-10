@@ -53,6 +53,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   updateTransaction,
 }) => {
   invariant(transaction.family === "evm", "PriorityFeeField: evm family expected");
+  invariant(transaction.type === 2, "PriorityFeeField: transaction should be of type 2 (EIP1559)");
 
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const { t } = useTranslation();
@@ -79,8 +80,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
     );
   });
 
-  const maxPriorityFee =
-    transaction.maxPriorityFeePerGas ?? gasOptions.medium.maxPriorityFeePerGas!;
+  const { maxPriorityFeePerGas: maxPriorityFee } = transaction;
   const { units } = account.currency;
   const unit = units.length > 1 ? units[1] : units[0];
   const unitName = unit.code;
