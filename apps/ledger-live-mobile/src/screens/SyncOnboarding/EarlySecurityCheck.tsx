@@ -343,12 +343,21 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       if (latestFirmwareGettingLockedDevice) {
         currentDisplayedDrawer = "unlock-needed";
       } else if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
-        currentDisplayedDrawer = "new-firmware-available";
+        // Only for QA to have always the same 1-way path: on infinite loop firmware
+        // the path 1.2.1-il2 -> 1.2.1-il0 does not trigger a firmware update during the ESC
+        if (
+          latestFirmwareGettingStatus === "available-firmware" &&
+          latestFirmware?.final.name === "1.2.1-il0" &&
+          deviceInfo?.version === "1.2.1-il2"
+        ) {
+          setFirmwareUpdateCheckStatus("completed");
+          currentDisplayedDrawer = "none";
+        } else {
+          currentDisplayedDrawer = "new-firmware-available";
+        }
       } else {
         currentDisplayedDrawer = "none";
       }
-
-      console.log(`🥦 fw update check UI logic end: ${JSON.stringify({ currentDisplayedDrawer })}`);
     } else if (firmwareUpdateCheckStatus === "refused") {
       currentDisplayedDrawer = "none";
       firmwareUpdateUiStepStatus = "firmwareUpdateRefused";
@@ -405,20 +414,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
       break;
     case "completed":
-      // TODO: why is this needed ? It was former completed ?
-      if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
-        firmwareUpdateCheckStepTitle = t(
-          "earlySecurityCheck.firmwareUpdateCheckStep.completed.updateAvailable.title",
-          {
-            firmwareVersion: JSON.stringify(latestFirmware.final.name),
-          },
-        );
-      } else {
-        firmwareUpdateCheckStepTitle = t(
-          "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
-          { productName },
-        );
-      }
+      firmwareUpdateCheckStepTitle = t(
+        "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
+        { productName },
+      );
 
       primaryBottomCta = (
         <Button type="main" onPress={notifyOnboardingEarlyCheckEnded}>
@@ -553,13 +552,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         productName={productName}
         firmwareVersion={latestFirmware?.final?.version ?? ""}
         isOpen={currentDisplayedDrawer === "new-firmware-available"}
-        // onSkip={() => {
-        //   track("button_clicked", {
-        //     button: "skip software update",
-        //     drawer: `Set up ${productName}: Step 4: Software update available`,
-        //   });
-        //   setFirmwareUpdateCheckStatus("completed");
-        // }}
         onUpdate={onUpdateFirmware}
         onClose={onCloseUpdateAvailable}
       />
