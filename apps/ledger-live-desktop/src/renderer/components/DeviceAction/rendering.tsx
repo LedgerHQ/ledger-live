@@ -135,6 +135,13 @@ export const Title = styled(Text).attrs({
   white-space: pre-line;
 `;
 
+const BulletText = styled(Text).attrs({
+  variant: "body",
+  fontWeight: "medium",
+  textAlign: "start",
+  whiteSpace: "pre-line",
+})``;
+
 export const SubTitle = styled(Text).attrs({
   variant: "paragraph",
   color: "palette.text.shade100",
@@ -800,12 +807,12 @@ const renderFirmwareUpdatingBase = ({
               {"1"}
             </Text>
           </Circle>
-          <Title flex={1}>
+          <BulletText flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
               values={{ productName: getDeviceModel(modelId).productName }}
             />
-          </Title>
+          </BulletText>
         </Flex>
         <Flex alignItems="center" mt={6}>
           <Circle mr={6}>
@@ -813,12 +820,12 @@ const renderFirmwareUpdatingBase = ({
               {"2"}
             </Text>
           </Circle>
-          <Title flex={1}>
+          <BulletText flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
               values={{ productName: getDeviceModel(modelId).productName }}
             />
-          </Title>
+          </BulletText>
         </Flex>
       </Flex>
     </Footer>
