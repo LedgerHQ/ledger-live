@@ -23,7 +23,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   });
 
   if (error) {
-    log("error", error.message);
+    log("SendAmountFields/index.tsx", error.message);
   }
 
   useEffect(() => {
