@@ -31,6 +31,7 @@ import DeviceNotGenuineDrawer, {
   Props as DeviceNotGenuineDrawerProps,
 } from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
+import { useChangeLanguagePrompt } from "./useChangeLanguagePrompt";
 
 export type Props = {
   onComplete: () => void;
@@ -96,6 +97,7 @@ const EarlySecurityChecks = ({
   });
 
   console.log({ latestFirmware, deviceInfo });
+  useChangeLanguagePrompt({ device });
 
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
