@@ -1,5 +1,47 @@
 # @ledgerhq/live-common
 
+## 31.3.0-nightly.3
+
+### Minor Changes
+
+- [#3843](https://github.com/LedgerHQ/ledger-live/pull/3843) [`96322128d8`](https://github.com/LedgerHQ/ledger-live/commit/96322128d8e4fffd0eea384e4f787c9e26e9fbac) Thanks [@Justkant](https://github.com/Justkant)! - feat: recover llm stax
+
+- [#3459](https://github.com/LedgerHQ/ledger-live/pull/3459) [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to stacks blockchain
+
+- [#3815](https://github.com/LedgerHQ/ledger-live/pull/3815) [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support for Internet Computer blockchain
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+### Patch Changes
+
+- Updated dependencies [[`1263b7a9c1`](https://github.com/LedgerHQ/ledger-live/commit/1263b7a9c1916da81ad55bb2ca1e804cff5f89e2), [`49182846de`](https://github.com/LedgerHQ/ledger-live/commit/49182846dee35ae9b3535c0c120e17d0eaecde70), [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d), [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/cryptoassets@9.10.0-nightly.1
+  - @ledgerhq/errors@6.13.0-nightly.0
+  - @ledgerhq/coin-algorand@0.2.4-nightly.2
+  - @ledgerhq/coin-evm@0.4.0-nightly.2
+  - @ledgerhq/coin-framework@0.4.0-nightly.2
+  - @ledgerhq/coin-polkadot@0.3.1-nightly.2
+  - @ledgerhq/domain-service@1.1.6-nightly.2
+  - @ledgerhq/evm-tools@1.0.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.0-nightly.2
+  - @ledgerhq/devices@8.0.5-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.17-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.28.3-nightly.0
+  - @ledgerhq/hw-app-exchange@0.2.1-nightly.0
+  - @ledgerhq/hw-app-near@6.27.12-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.17-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.11-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.17-nightly.0
+  - @ledgerhq/hw-transport@6.28.6-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.17-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.17-nightly.0
+  - @ledgerhq/live-network@1.1.3-nightly.1
+  - @ledgerhq/hw-app-btc@10.0.6-nightly.0
+  - @ledgerhq/hw-app-str@6.27.17-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.17-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.17-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.17-nightly.0
+
 ## 31.3.0-nightly.2
 
 ### Minor Changes
