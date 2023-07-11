@@ -18,7 +18,7 @@ describe("EVM Family", () => {
       // These mocks will be overriden in some tests
       jest.spyOn(nodeApi, "getGasEstimation").mockImplementation(async () => new BigNumber(21000));
       // These mocks will be overriden in some tests
-      jest.spyOn(nodeApi, "getFeesEstimation").mockImplementation(async () => ({
+      jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
         gasPrice: new BigNumber(1),
         maxFeePerGas: new BigNumber(1),
         maxPriorityFeePerGas: new BigNumber(1),
@@ -111,7 +111,7 @@ describe("EVM Family", () => {
         });
 
         it("should return a legacy coin transaction", async () => {
-          jest.spyOn(nodeApi, "getFeesEstimation").mockImplementationOnce(async () => ({
+          jest.spyOn(nodeApi, "getFeeData").mockImplementationOnce(async () => ({
             gasPrice: new BigNumber(1),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
@@ -314,7 +314,7 @@ describe("EVM Family", () => {
         });
 
         it("should return a legacy token transaction", async () => {
-          jest.spyOn(nodeApi, "getFeesEstimation").mockImplementationOnce(async () => ({
+          jest.spyOn(nodeApi, "getFeeData").mockImplementationOnce(async () => ({
             gasPrice: new BigNumber(1),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
@@ -346,13 +346,13 @@ describe("EVM Family", () => {
 
       describe("Gas", () => {
         describe("When feesStrategy provided", () => {
-          it("should call getFeesEstimation once", async () => {
+          it("should call getFeeData once", async () => {
             const tx = await prepareTransaction(account, {
               ...transaction,
               feesStrategy: undefined,
             });
 
-            expect(nodeApi.getFeesEstimation).toBeCalledTimes(1);
+            expect(nodeApi.getFeeData).toBeCalledTimes(1);
 
             expect(tx).toEqual({
               ...transaction,
@@ -373,7 +373,7 @@ describe("EVM Family", () => {
               feesStrategy: "custom",
             });
 
-            expect(nodeApi.getFeesEstimation).toBeCalledTimes(0);
+            expect(nodeApi.getFeeData).toBeCalledTimes(0);
 
             expect(tx).toEqual({
               ...transaction,
@@ -386,13 +386,13 @@ describe("EVM Family", () => {
         });
 
         describe("When gasOptions provided", () => {
-          it("should call getFeesEstimation once", async () => {
+          it("should call getFeeData once", async () => {
             const tx = await prepareTransaction(account, {
               ...transaction,
               gasOptions: undefined,
             });
 
-            expect(nodeApi.getFeesEstimation).toBeCalledTimes(1);
+            expect(nodeApi.getFeeData).toBeCalledTimes(1);
 
             expect(tx).toEqual({
               ...transaction,
@@ -429,7 +429,7 @@ describe("EVM Family", () => {
               gasOptions,
             });
 
-            expect(nodeApi.getFeesEstimation).toBeCalledTimes(0);
+            expect(nodeApi.getFeeData).toBeCalledTimes(0);
 
             expect(tx).toEqual({
               ...transaction,
@@ -518,7 +518,7 @@ describe("EVM Family", () => {
           });
 
           it("should return a legacy erc721 nft transaction", async () => {
-            jest.spyOn(nodeApi, "getFeesEstimation").mockImplementationOnce(async () => ({
+            jest.spyOn(nodeApi, "getFeeData").mockImplementationOnce(async () => ({
               gasPrice: new BigNumber(1),
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,
@@ -566,7 +566,7 @@ describe("EVM Family", () => {
           });
 
           it("should return a legacy erc1155 nft transaction", async () => {
-            jest.spyOn(nodeApi, "getFeesEstimation").mockImplementationOnce(async () => ({
+            jest.spyOn(nodeApi, "getFeeData").mockImplementationOnce(async () => ({
               gasPrice: new BigNumber(1),
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,

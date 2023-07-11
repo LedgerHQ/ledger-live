@@ -315,10 +315,10 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getFeesEstimation", () => {
+    describe("getFeeData", () => {
       it("should throw with misconfigured currency", async () => {
         try {
-          await LEDGER_API.getFeesEstimation(wrongCurrency);
+          await LEDGER_API.getFeeData(wrongCurrency, {} as any);
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {

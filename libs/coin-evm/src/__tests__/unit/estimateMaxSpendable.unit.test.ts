@@ -26,7 +26,7 @@ const account = {
 };
 
 jest.spyOn(nodeApi, "getGasEstimation").mockImplementation(async () => new BigNumber(21000));
-jest.spyOn(nodeApi, "getFeesEstimation").mockImplementation(async () => ({
+jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
   gasPrice: new BigNumber(10000),
   maxFeePerGas: new BigNumber(10000),
   maxPriorityFeePerGas: new BigNumber(0),
@@ -54,7 +54,7 @@ describe("EVM Family", () => {
         transaction: eip1559Tx,
       });
       const gasLimit = await nodeApi.getGasEstimation(account, eip1559Tx);
-      const { maxFeePerGas } = await nodeApi.getFeesEstimation(account.currency);
+      const { maxFeePerGas } = await nodeApi.getFeeData(account.currency, eip1559Tx);
       const estimatedFees = gasLimit.times(maxFeePerGas!);
       expect(amount).toEqual(account.balance.minus(estimatedFees));
     });
@@ -77,7 +77,7 @@ describe("EVM Family", () => {
         transaction: legacyTx,
       });
       const gasLimit = await nodeApi.getGasEstimation(account, legacyTx);
-      const { gasPrice } = await nodeApi.getFeesEstimation(account.currency);
+      const { gasPrice } = await nodeApi.getFeeData(account.currency, legacyTx);
       const estimatedFees = gasLimit.times(gasPrice!);
       expect(amount).toEqual(account.balance.minus(estimatedFees));
     });

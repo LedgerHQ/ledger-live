@@ -267,7 +267,7 @@ describe("EVM Family", () => {
     });
   });
 
-  describe("getFeesEstimation", () => {
+  describe("getFeeData", () => {
     it("should return the expected payload for an EIP1559 tx", async () => {
       jest
         .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "send")
@@ -286,7 +286,7 @@ describe("EVM Family", () => {
           }
         });
 
-      expect(await RPC_API.getFeesEstimation(fakeCurrency as CryptoCurrency)).toEqual({
+      expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, {} as any)).toEqual({
         maxFeePerGas: new BigNumber("6000000014"),
         maxPriorityFeePerGas: new BigNumber("5999999988"),
         gasPrice: null,
@@ -312,7 +312,7 @@ describe("EVM Family", () => {
           }
         });
 
-      expect(await RPC_API.getFeesEstimation(fakeCurrency as CryptoCurrency)).toEqual({
+      expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, {} as any)).toEqual({
         maxFeePerGas: new BigNumber("1000000026"),
         maxPriorityFeePerGas: new BigNumber(1e9),
         gasPrice: null,
@@ -341,10 +341,13 @@ describe("EVM Family", () => {
         });
 
       expect(
-        await RPC_API.getFeesEstimation({
-          ...fakeCurrency,
-          id: "optimism",
-        } as CryptoCurrency),
+        await RPC_API.getFeeData(
+          {
+            ...fakeCurrency,
+            id: "optimism",
+          } as CryptoCurrency,
+          {} as any,
+        ),
       ).toEqual({
         maxFeePerGas: null,
         maxPriorityFeePerGas: null,

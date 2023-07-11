@@ -127,7 +127,7 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
 /**
  * Get an estimation of fees on the network
  */
-export const getFeesEstimation: NodeApi["getFeesEstimation"] = currency =>
+export const getFeeData: NodeApi["getFeeData"] = currency =>
   withApi(currency, async api => {
     const block = await api.getBlock("latest");
     const currencySupports1559 = Boolean(block.baseFeePerGas);
@@ -277,7 +277,7 @@ const node: NodeApi = {
   getTransactionCount,
   getTransaction,
   getGasEstimation,
-  getFeesEstimation,
+  getFeeData,
   broadcastTransaction,
   getOptimismAdditionalFees,
 };
