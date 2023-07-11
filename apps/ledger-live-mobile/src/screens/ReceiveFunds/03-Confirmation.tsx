@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Share, View } from "react-native";
+import { Linking, Share, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
@@ -14,7 +14,7 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, Icons, Button, Notification, Box } from "@ledgerhq/native-ui";
+import { Flex, Text, Icons, Button, Notification, Box, BannerCard } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -33,8 +33,13 @@ import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import Clipboard from "@react-native-community/clipboard";
-import { v4 as uuid } from "uuid";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { hasClosedWithdrawBannerSelector } from "../../reducers/settings";
+import { setCloseWithdrawBanner } from "../../actions/settings";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<
@@ -77,6 +82,11 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] = useState(verified);
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
+  const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
+  const insets = useSafeAreaInsets();
+
+  const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
+  const [displayBanner, setBanner] = useState(!hasClosedWithdrawBanner);
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
@@ -112,6 +122,22 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
+
+  const hideBanner = useCallback(() => {
+    track("button_clicked", {
+      button: "Close network article",
+    });
+    dispatch(setCloseWithdrawBanner(true));
+    setBanner(false);
+  }, [dispatch]);
+
+  const clickLearn = useCallback(() => {
+    track("button_clicked", {
+      button: "Choose a network article",
+      type: "card",
+    });
+    Linking.openURL(depositWithdrawBannerMobile?.params.url);
+  }, [depositWithdrawBannerMobile?.params.url]);
 
   useEffect(() => {
     if (route.params?.createTokenAccount && !hasAddedTokenAccount) {
@@ -309,7 +335,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             >
               <Icons.CopyMedium size={20}></Icons.CopyMedium>
               <Text variant={"body"} fontWeight={"medium"} pl={3}>
-                Copy address
+                {t("transfer.receive.receiveConfirmation.copyAdress")}
               </Text>
             </StyledTouchableOpacity>
           </Flex>
@@ -351,9 +377,25 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             onClose={hideVerifiedToast}
           />
         ) : (
-          <Button type="main" size="large" onPress={onRetry}>
-            {t("transfer.receive.receiveConfirmation.verifyAddress")}
-          </Button>
+          <Flex>
+            <Button type="main" size="large" onPress={onRetry}>
+              {t("transfer.receive.receiveConfirmation.verifyAddress")}
+            </Button>
+
+            {depositWithdrawBannerMobile?.enabled && displayBanner && (
+              <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+                <Flex pb={insets.bottom} mt={6}>
+                  <BannerCard
+                    typeOfRightIcon="close"
+                    title={t("transfer.receive.receiveConfirmation.bannerTitle")}
+                    LeftElement={<BankMedium />}
+                    onPressDismiss={hideBanner}
+                    onPress={clickLearn}
+                  />
+                </Flex>
+              </Animated.View>
+            )}
+          </Flex>
         )}
       </Flex>
       {verified ? null : isModalOpened ? <ReceiveSecurityModal onVerifyAddress={onRetry} /> : null}

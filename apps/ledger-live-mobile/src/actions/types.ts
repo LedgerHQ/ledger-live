@@ -272,6 +272,8 @@ export enum SettingsActionTypes {
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
+  SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
+  SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -350,6 +352,9 @@ export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHas
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
+export type SettingsSetClosedNetworkBannerPayload = boolean;
+export type SettingsSetClosedWithdrawBannerPayload = boolean;
+
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
@@ -423,7 +428,8 @@ export type SettingsPayload =
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
-  | SettingsSetOnboardingTypePayload;
+  | SettingsSetOnboardingTypePayload
+  | SettingsSetClosedNetworkBannerPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

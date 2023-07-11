@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList } from "react-native";
-import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   CryptoOrTokenCurrency,
@@ -24,6 +23,7 @@ import BigCurrencyRow from "../../components/BigCurrencyRow";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { findAccountByCurrency } from "../../logic/deposit";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
@@ -42,12 +42,6 @@ const renderEmptyList = () => (
 );
 
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
-
-const findAccountByCurrency = (accounts: AccountLike[], currency: CryptoCurrency | TokenCurrency) =>
-  accounts.filter(
-    (acc: AccountLike) =>
-      (acc.type === "Account" ? acc.currency?.id : (acc as TokenAccount).token?.id) === currency.id,
-  );
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
@@ -73,14 +67,14 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     (currency: CryptoCurrency | TokenCurrency) => {
       track("asset_clicked", {
         asset: currency.name,
-        page: "Choose a crypto to secure"
+        page: "Choose a crypto to secure",
       });
 
       const accs = findAccountByCurrency(accounts, currency);
       if (accs.length > 0) {
         // if we found one or more accounts of the given currency we select account
-        navigation.navigate(ScreenName.ReceiveSelectAccount, {
-          currency,
+        navigation.navigate(ScreenName.DepositSelectNetwork, {
+          networks: ["ethereum", "polygon", "bsc", "cosmos"],
         });
       } else if (currency.type === "TokenCurrency") {
         // cases for token currencies
