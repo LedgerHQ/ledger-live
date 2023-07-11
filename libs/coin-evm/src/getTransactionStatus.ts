@@ -104,9 +104,6 @@ const validateAmount = (
   return [errors, warnings];
 };
 
-// minimum gas for a tx is 21000
-const MINIMUM_GAS = 21000;
-
 /**
  * Validate gas properties of a transaction, depending on its type and the account emitter
  */
@@ -123,7 +120,7 @@ const validateGas = (
   // Gas Limit
   if (gasLimit.isZero()) {
     errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isLessThan(MINIMUM_GAS)) {
+  } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
     errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   }
   if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
