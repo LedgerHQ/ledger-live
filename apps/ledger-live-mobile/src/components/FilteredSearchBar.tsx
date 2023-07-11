@@ -37,7 +37,7 @@ const FilteredSearchBar = <T,>({
     (newQuery: string) => {
       setQuery(newQuery);
       if (route.name === ScreenName.ReceiveSelectCrypto) {
-        track("search_clicked", { input: newQuery });
+        track("asset_searched", { page: "Choose a crypto to secure", asset: newQuery });
       }
     },
     [route.name],
