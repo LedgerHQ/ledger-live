@@ -114,7 +114,10 @@ const EarlySecurityChecks = ({
         deviceInfo,
         device.modelId,
       ),
-      onDrawerClose: closeFwUpdateDrawer,
+      onDrawerClose: () => {
+        closeFwUpdateDrawer();
+        setUpdateInterrupted(true);
+      },
       status: modal,
       stepId,
       firmware: latestFirmware,

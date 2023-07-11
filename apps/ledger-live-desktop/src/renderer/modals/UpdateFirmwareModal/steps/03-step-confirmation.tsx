@@ -78,6 +78,7 @@ export const StepConfirmFooter = ({
   onRetry,
   finalStepSuccessButtonLabel,
   finalStepSuccessButtonOnClick,
+  shouldReloadManagerOnCloseIfUpdateRefused,
 }: StepProps) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -85,11 +86,11 @@ export const StepConfirmFooter = ({
 
   const onCloseReload = useCallback(() => {
     onDrawerClose();
-    if (error instanceof UserRefusedFirmwareUpdate) {
+    if (error instanceof UserRefusedFirmwareUpdate && shouldReloadManagerOnCloseIfUpdateRefused) {
       history.push("/manager/reload");
       setDrawer();
     }
-  }, [error, history, onDrawerClose, setDrawer]);
+  }, [error, history, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
 
   if (error) {
     const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;

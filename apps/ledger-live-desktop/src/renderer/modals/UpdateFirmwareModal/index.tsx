@@ -48,6 +48,7 @@ export type StepProps = {
   finalStepSuccessDescription?: string;
   finalStepSuccessButtonLabel?: string;
   finalStepSuccessButtonOnClick?: () => void;
+  shouldReloadManagerIfUpdateRefused?: boolean;
 };
 
 export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
