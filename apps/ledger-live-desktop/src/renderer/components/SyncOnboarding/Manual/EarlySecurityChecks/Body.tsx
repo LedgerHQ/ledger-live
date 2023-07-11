@@ -9,10 +9,12 @@ export type Props = {
   firmwareUpdateStatus: SoftwareCheckStatus;
   availableFirmwareVersion: string;
   modelName: string;
+  updateSkippable?: boolean;
   onClickStartChecks: () => void;
   onClickWhyPerformSecurityChecks: () => void;
   onClickResumeGenuineCheck: () => void;
   onClickViewUpdate: () => void;
+  onClickSkipUpdate: () => void;
   onClickContinueToSetup: () => void;
 };
 
@@ -21,10 +23,12 @@ const SoftwareCheckContent = ({
   firmwareUpdateStatus,
   availableFirmwareVersion,
   modelName,
+  updateSkippable,
   onClickStartChecks,
   onClickWhyPerformSecurityChecks,
   onClickResumeGenuineCheck,
   onClickViewUpdate,
+  onClickSkipUpdate,
   onClickContinueToSetup,
 }: Props) => {
   const { t } = useTranslation();
@@ -110,9 +114,18 @@ const SoftwareCheckContent = ({
         }
       >
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
-          <Button variant="main" size="small" outline={false} mr={6} onClick={onClickViewUpdate}>
-            {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdate")}
-          </Button>
+          <Flex flexDirection="row" alignItems="center" columnGap={6}>
+            <Button variant="main" size="small" outline={false} onClick={onClickViewUpdate}>
+              {updateSkippable
+                ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
+                : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA")}
+            </Button>
+            {updateSkippable ? (
+              <Button variant="shade" size="small" outline onClick={onClickSkipUpdate}>
+                {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.skipUpdateCTA")}
+              </Button>
+            ) : null}
+          </Flex>
         )}
       </Bullet>
       {genuineCheckStatus === SoftwareCheckStatus.inactive ? (

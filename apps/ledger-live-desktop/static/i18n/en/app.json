@@ -1360,7 +1360,9 @@
             "active": "This check ensures your {{modelName}} OS is up to date",
             "updateAvailable": "We recommend performing this update to have access to the latest security features"
           },
-          "viewUpdate": "View update",
+          "viewUpdateCTA": "View update",
+          "resumeUpdateCTA": "Resume update",
+          "skipUpdateCTA": "Skip update",
           "finalStepSuccessDescription": "Back to OS check",
           "finalStepSuccessButtonLabel": "Continue"
         }

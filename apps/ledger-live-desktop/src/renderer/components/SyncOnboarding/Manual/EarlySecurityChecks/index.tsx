@@ -70,6 +70,7 @@ const EarlySecurityChecks = ({
     SoftwareCheckStatus.inactive,
   );
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
+  const [updateInterrupted, setUpdateInterrupted] = useState(false);
 
   const deviceId = device.deviceId ?? "";
   const deviceModelId = device.modelId;
@@ -138,7 +139,10 @@ const EarlySecurityChecks = ({
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
       preventBackdropClick: true,
       forceDisableFocusTrap: true,
-      onRequestClose: closeFwUpdateDrawer,
+      onRequestClose: () => {
+        closeFwUpdateDrawer();
+        setUpdateInterrupted(true);
+      },
     });
   }, [
     closeFwUpdateDrawer,
@@ -265,6 +269,7 @@ const EarlySecurityChecks = ({
         }
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
+        updateSkippable={updateInterrupted}
         onClickStartChecks={() => {
           setGenuineCheckStatus(SoftwareCheckStatus.active);
           resetGenuineCheckState();
@@ -275,11 +280,9 @@ const EarlySecurityChecks = ({
           resetGenuineCheckState();
         }}
         onClickViewUpdate={startFirmwareUpdate}
+        onClickSkipUpdate={onComplete}
         onClickContinueToSetup={onComplete}
       />
-      {/* <Button mt={5} variant="main" onClick={restartChecksAfterUpdate}>
-        (debug) reset all checks
-      </Button> */}
     </Flex>
   );
 };
