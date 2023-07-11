@@ -31,7 +31,7 @@ export default function ReceiveFundsNavigator() {
 
   const onClose = useCallback(() => {
     track("button_clicked", {
-      button: "Close 'x'",
+      button: "Close",
       screen: route.name,
     });
   }, [route]);
@@ -151,6 +151,7 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveConfirmation}
         component={ReceiveConfirmation}
         options={{
+          // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
           headerLeft: () => null,
           headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />,

@@ -26,6 +26,7 @@ type Props = {
   account: Account;
   transaction: Transaction;
 } & Navigation;
+
 export default function CryptoSendRowsCustom(props: Props) {
   const { account } = props;
   const transaction = props.transaction as CryptoOrgTransaction;

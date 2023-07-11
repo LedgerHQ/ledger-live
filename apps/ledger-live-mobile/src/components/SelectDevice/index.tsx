@@ -29,26 +29,26 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 
 type Props = {
-  onBluetoothDeviceAction?: (_: Device) => void;
-  onSelect: (_: Device) => void;
-  onWithoutDevice?: () => void;
   withArrows?: boolean;
   usbOnly?: boolean;
   autoSelectOnAdd?: boolean;
   hideAnimation?: boolean;
   /** If defined, only show devices that have a device model id in this array */
   deviceModelIds?: DeviceModelId[];
+  onBluetoothDeviceAction?: (_: Device) => void;
+  onSelect: (_: Device) => void;
+  onWithoutDevice?: () => void;
 };
 
 export default function SelectDevice({
   usbOnly,
   withArrows,
-  onSelect,
-  onWithoutDevice,
-  onBluetoothDeviceAction,
   autoSelectOnAdd,
   hideAnimation,
   deviceModelIds,
+  onSelect,
+  onWithoutDevice,
+  onBluetoothDeviceAction,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();

@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`quicksilver currency bridge scanAccounts quicksilver seed 1 1`] = `
+Array [
+  Object {
+    "balance": "4255927",
+    "currencyId": "quicksilver",
+    "derivationMode": "",
+    "freshAddress": "quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:quicksilver:quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km:",
+    "index": 0,
+    "name": "Quicksilver 1",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "2273041",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km",
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "quicksilver",
+    "derivationMode": "",
+    "freshAddress": "quick1v2mp0m7k96dm9qv60fkspcqlzpkzrwnefprl4u",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "quick1v2mp0m7k96dm9qv60fkspcqlzpkzrwnefprl4u",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:quicksilver:quick1v2mp0m7k96dm9qv60fkspcqlzpkzrwnefprl4u:",
+    "index": 1,
+    "name": "Quicksilver 2",
+    "nfts": undefined,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "quick1v2mp0m7k96dm9qv60fkspcqlzpkzrwnefprl4u",
+  },
+]
+`;
+
+exports[`quicksilver currency bridge scanAccounts quicksilver seed 1 2`] = `
+Array [
+  Array [],
+  Array [],
+]
+`;

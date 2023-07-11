@@ -472,6 +472,14 @@ const axelar = {
   ...generateGenericCosmosTest("axelar"),
 };
 
+const secretNetwork = {
+  ...generateGenericCosmosTest("secret_network"),
+};
+
+const stargaze = {
+  ...generateGenericCosmosTest("stargaze"),
+};
+
 export default {
   axelar,
   cosmos,
@@ -481,4 +489,6 @@ export default {
   persistence,
   quicksilver,
   onomy,
+  secretNetwork,
+  stargaze,
 };

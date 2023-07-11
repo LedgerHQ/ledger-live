@@ -62,6 +62,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
+  API_ICP_ENDPOINT: {
+    def: "https://icp.coin.ledger.com/",
+    parser: stringParser,
+    desc: "Rosetta API for ICP",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -107,6 +112,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "NEAR staking positions API",
   },
+  API_STACKS_ENDPOINT: {
+    parser: stringParser,
+    def: "https://stacks.coin.ledger.com",
+    desc: "Stacks API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -141,11 +151,6 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Static fee for Stellar account",
-  },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,
@@ -451,6 +456,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: 1000,
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
+  },
+  MAPPING_SERVICE: {
+    def: "https://mapping-service.api.ledger.com",
+    parser: stringParser,
+    desc: "",
   },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
@@ -765,6 +775,16 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: false,
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
   },
 };
 

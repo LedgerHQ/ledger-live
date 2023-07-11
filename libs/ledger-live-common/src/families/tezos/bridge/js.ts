@@ -18,6 +18,7 @@ import {
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import type { CurrencyBridge, AccountBridge, Account, AccountLike } from "@ledgerhq/types-live";
 import { makeSync, makeScanAccounts, makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { TezosAccount, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "../synchronisation";
@@ -60,8 +61,6 @@ const createTransaction: () => Transaction = () => ({
   taquitoError: null,
   estimatedFees: null,
 });
-
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const getTransactionStatus = async (
   account: TezosAccount,
@@ -365,7 +364,7 @@ const currencyBridge: CurrencyBridge = {
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   estimateMaxSpendable,
   getTransactionStatus,

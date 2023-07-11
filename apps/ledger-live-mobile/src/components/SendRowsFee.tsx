@@ -4,6 +4,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { CompositeScreenProps } from "@react-navigation/native";
+
 import perFamily from "../generated/SendRowsFee";
 import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";

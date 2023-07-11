@@ -334,6 +334,9 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
+    "InvalidNonce": {
+      "title": "Nonce is required"
+    },
     "InvalidAddressBecauseAlreadyDelegated": {
       "title": "Your account is already delegated to this validator"
     },
@@ -413,6 +416,9 @@
     },
     "MaxFeeLow": {
       "title": "Your max fee is too low. Your transaction might stay pending for a while"
+    },
+    "MaxPriorityFeeLowerThanInitial": {
+      "title": "Priority fee too low, please enter an amount superior to priority fee value of the initial transaction"
     },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
@@ -497,6 +503,9 @@
     "TimeoutTagged": {
       "title": "Sorry, server took too long to respond ({{tag}})",
       "description": "Timeout occurred."
+    },
+    "TransactionAlreadyValidated": {
+      "title": "Transaction already validated"
     },
     "TransactionRefusedOnDevice": {
       "title": "Transaction refused on device",
@@ -643,6 +652,9 @@
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."
     },
+    "SwapTimeoutError": {
+      "title": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
+    },
     "PolkadotElectionClosed": {
       "title": "Validators election must be closed"
     },
@@ -710,6 +722,9 @@
     },
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StacksMemoTooLong": {
+      "title": "Memo length is too long"
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"
@@ -831,6 +846,9 @@
     },
     "GasEstimationError": {
       "title": "Gas estimation failed"
+    },
+    "InvalidMemoICP": {
+      "title": "Memo is required to be a number"
     }
   },
   "crash": {
@@ -2822,10 +2840,10 @@
       "address": "Address for account",
       "copyAddress": "Copy",
       "shareAddress": "Share address",
-      "addressCopied": "Copied",
+      "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
       "selectCrypto": {
-        "title": "Select a crypto"
+        "title": "Choose a crypto to receive"
       },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
@@ -2853,8 +2871,9 @@
       },
       "receiveConfirmation": {
         "title": "Receive {{currencyTicker}}",
+        "onCurrencyName": "On {{currencyName}}",
         "addressVerified": "Address verified",
-        "verifyAddress": "Tap here to verify your address",
+        "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
         "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
         "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
@@ -3516,6 +3535,39 @@
       "maxSpendable": {
         "title": "Max spendable amount",
         "description": "The maximum spendable amount is the total balance in an account that is available to send in a transaction."
+      }
+    }
+  },
+  "editTransaction": {
+    "cta": "Speed up or Cancel",
+    "header": "Edit Transaction",
+    "learnMore": "I want to learn more",
+    "panel": {
+      "stuckMessage": "Your oldest 'send' transaction is stuck. Speed up the transaction with a higher network fee, or cancel it.",
+      "speedupMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it."
+    },
+    "previousFeesInfo": {
+      "pendingTransactionFeesInfo": "Pending transaction fees info: ",
+      "networkfee": "Network fee = {{amount}} {{unit}}",
+      "maxFee": "Max fee = {{amount}} Gwei",
+      "maxPriorityFee": "Max Priority fee = {{amount}} Gwei",
+      "gasPrice": "GasPrice = {{amount}} Gwei"
+    },
+    "speedUp": {
+      "title": "Speed Up",
+      "description": "Re-submit the transaction with a higher network fee."
+    },
+    "cancel": {
+      "title": "Cancel",
+      "description": "Sending 0 {{ticker}} to your own address.\nTo ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+    },
+    "error": {
+      "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
+      "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
+      "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it.",
+      "TransactionHasBeenValidatedError": {
+        "title": "Can't be speed up or cancel",
+        "description": "This transaction has already been validated"
       }
     }
   },

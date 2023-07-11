@@ -381,6 +381,9 @@
         "withdrawalsBlockedError": {
           "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
         }
+      },
+      "timeout": {
+        "message": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
       }
     },
     "history": {
@@ -4976,6 +4979,16 @@
       "memoPlaceholder": "Optional",
       "memo": "Memo"
     },
+    "internet_computer": {
+      "memoPlaceholder": "Optional, Default: 0",
+      "memo": "Memo",
+      "memoWarningText": "The value of memo can be a number between 0 and 9223372036854775807"
+    },
+    "stacks": {
+      "memoPlaceholder": "Optional",
+      "memo": "Memo",
+      "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -5427,11 +5440,17 @@
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
+    "InvalidNonce": {
+      "title": "Nonce is required"
+    },
     "InvalidAddressBecauseAlreadyDelegated": {
       "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Recipient address is the same as the sender address"
+    },
+    "InvalidMemoICP": {
+      "title": "Memo is required to be a number"
     },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
@@ -5685,6 +5704,9 @@
     },
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "StacksMemoTooLong": {
+      "title": "Memo length is too long"
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"

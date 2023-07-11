@@ -255,6 +255,24 @@ function readPackage(pkg, context) {
       addDependencies("documentation", {
         micromark: "*",
       }),
+      addDependencies("@dfinity/candid", {
+        "@dfinity/principal": "*",
+      }),
+      addDependencies("@dfinity/agent", {
+        buffer: "*",
+      }),
+      // TODO:
+      // Tron missing deps
+      // They are also added to live-common dependencies
+      // Is there another way without adding them explicitly ?
+      addDependencies("tronweb", {
+        "@ethersproject/bytes": "*",
+        "@ethersproject/bignumber": "*",
+        "@ethersproject/keccak256": "*",
+        "@ethersproject/properties": "*",
+        "@ethersproject/strings": "*",
+        "@ethersproject/logger": "*",
+      }),
     ],
     pkg,
     context,

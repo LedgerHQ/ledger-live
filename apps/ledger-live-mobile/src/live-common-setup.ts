@@ -33,6 +33,10 @@ setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
   "onomy",
   "quicksilver",
   "persistence",
@@ -96,8 +100,10 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "internet_computer",
   "ethereum_as_evm_test_only",
   "polygon_as_evm_test_only",
+  "stacks",
 ]);
 
 if (Config.VERBOSE) {
