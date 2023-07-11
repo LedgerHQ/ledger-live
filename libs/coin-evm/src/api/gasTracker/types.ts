@@ -1,4 +1,17 @@
-import { EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import { GasOptions } from "../../types";
+
+export type GasTrackerApi = {
+  getGasOptions: ({
+    currency,
+    options,
+  }: {
+    currency: CryptoCurrency;
+    options?: {
+      useEIP1559: boolean;
+    };
+  }) => Promise<GasOptions>;
+};
 
 type GasTrackerConfig = EthereumLikeInfo["gasTracker"];
 

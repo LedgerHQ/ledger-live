@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { isLedgerGasTracker } from "./types";
+import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
+import { GasTrackerApi, isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
 import {
   GasTrackerDoesNotSupportEIP1559,
@@ -20,7 +20,7 @@ type GasTracker = {
 // Shouldn't this be a dynamic / remote config? For example if there is an
 // update of the explorer backend to support EIP1559, we should be able to
 // update this config without having to release a new version of the app?
-const currencyIdGasTrackerMap = new Map<string, GasTracker>([
+const explorerIdGasTrackerMap = new Map<LedgerExplorerId, GasTracker>([
   ["avax", { compatibilty: { eip1559: false } }],
   ["bnb", { compatibilty: { eip1559: false } }],
   ["eth", { compatibilty: { eip1559: true } }],
@@ -44,7 +44,7 @@ export const getGasOptions = async ({
     throw new LedgerGasTrackerUsedIncorrectly();
   }
 
-  const gasTrackerConfig = currencyIdGasTrackerMap.get(gasTracker.explorerId);
+  const gasTrackerConfig = explorerIdGasTrackerMap.get(gasTracker.explorerId);
   if (!gasTrackerConfig) {
     throw new NoGasTrackerFound(`No gas tracker found for ${currency.id}`);
   }
@@ -115,3 +115,9 @@ export const getGasOptions = async ({
     },
   };
 };
+
+const gasTracker: GasTrackerApi = {
+  getGasOptions,
+};
+
+export default gasTracker;
