@@ -34,7 +34,7 @@ export function startDummyServer(appPath: string, port = 0): Promise<number> {
 }
 
 export function getLiveAppManifest(
-  params: Partial<AppManifest> & Pick<AppManifest, "id">,
+  params: Partial<AppManifest> & Pick<AppManifest, "id" & "url">,
 ): AppManifest[] {
   const manifest = [
     {

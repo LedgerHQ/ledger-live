@@ -54,7 +54,7 @@ export class LiveAppWebview {
         // eslint-disable-next-line no-console
         console.info(`========> Live app successfully running on port ${port}! <=========`);
 
-        const localManifests = JSON.stringify(getLiveAppManifest(liveAppManifest));
+        const localManifests = JSON.stringify(getLiveAppManifest({ ...liveAppManifest, url: url }));
         process.env.MOCK_REMOTE_LIVE_MANIFEST = localManifests;
         console.log("mock manifest:", process.env.MOCK_REMOTE_LIVE_MANIFEST);
         return true;
