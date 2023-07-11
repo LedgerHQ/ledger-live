@@ -62,6 +62,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "Show theme debug overlay UI",
   },
+  API_ICP_ENDPOINT: {
+    def: "https://icp.coin.ledger.com/",
+    parser: stringParser,
+    desc: "Rosetta API for ICP",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -106,6 +111,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: "https://validators-near.coin.ledger.com/",
     parser: stringParser,
     desc: "NEAR staking positions API",
+  },
+  API_STACKS_ENDPOINT: {
+    parser: stringParser,
+    def: "https://stacks.coin.ledger.com",
+    desc: "Stacks API url",
   },
   API_POLKADOT_INDEXER: {
     parser: stringParser,

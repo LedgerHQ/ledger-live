@@ -37,7 +37,7 @@ export default function TranslatedError({ error, field = "title" }: Props): JSX.
       if (typeof translation === "object" && "productName" in arg) {
         // it has specific translation for different device and platform
         const platform = Platform.OS;
-        const device = arg.productName!.includes("Nano S") ? "nanoS" : "nanoX";
+        const device = arg.productName!.includes("Nano S") ? "nanoS" : "nanoX";
 
         if (platform === "ios" && device === "nanoS") {
           /**
