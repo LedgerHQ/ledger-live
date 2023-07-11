@@ -4,4 +4,4 @@ The purpose of this app is to allow automated front end testing of Ledger Live P
 
 ## How to run locally for development
 
-Run `npx http-serve` in the same folder as the dummy-ptx-app
+Run `pnpm test-utils dummy-apps:start-ptx-app` in the same folder as the dummy-ptx-app

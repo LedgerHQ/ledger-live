@@ -71,10 +71,8 @@ jobs:
           pnpm build:llm:deps
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
-          pnpm --filter="test-utils" i
-          pnpm --filter="test-utils" build
-          pnpm --filter="test-utils" install-deps:dummy-apps
-          pnpm --filter="test-utils" build:dummy-apps
+          pnpm test-utils dummy-apps:install
+          pnpm test-utils dummy-apps:build
         shell: bash
       - name: Create iOS simulator
         id: simulator
