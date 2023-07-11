@@ -99,6 +99,7 @@ export default function ReceiveFundsNavigator() {
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               <HelpButton
+                eventButton="Choose a network"
                 url={depositNetworkBannerMobile?.params.url}
                 enabled={depositNetworkBannerMobile?.enabled ?? false}
               />
@@ -184,6 +185,7 @@ export default function ReceiveFundsNavigator() {
               <HelpButton
                 url={depositWithdrawBannerMobile?.params.url}
                 enabled={depositWithdrawBannerMobile?.enabled ?? false}
+                eventButton="How to withdraw from exchange"
               />
               <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />
             </Flex>
@@ -202,6 +204,7 @@ export default function ReceiveFundsNavigator() {
               <HelpButton
                 url={depositWithdrawBannerMobile?.params.url}
                 enabled={depositWithdrawBannerMobile?.enabled ?? false}
+                eventButton="How to withdraw from exchange"
               />
               <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
             </Flex>
