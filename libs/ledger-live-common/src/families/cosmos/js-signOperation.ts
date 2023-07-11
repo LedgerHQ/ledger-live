@@ -11,6 +11,7 @@ import { makeSignDoc } from "@cosmjs/launchpad";
 import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
+import { log } from "@ledgerhq/logs";
 
 const signOperation = ({
   account,
@@ -61,6 +62,8 @@ const signOperation = ({
           hdPaths: [stringToPath("m/" + account.freshAddressPath)],
           prefix: cryptoFactory(account.currency.id).prefix,
         });
+
+        log("debug", "signDoc", signDoc);
 
         const signResponse = await ledgerSigner.signAmino(account.freshAddress, signDoc);
         const tx_bytes = await postBuildTransaction(signResponse, protoMsgs);

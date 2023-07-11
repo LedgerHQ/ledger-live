@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network/network";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -324,6 +325,7 @@ export class CosmosAPI {
   }
 
   broadcast = async ({ signedOperation: { operation, signature } }): Promise<Operation> => {
+    log("debug", "operation", operation);
     const { data } = await network({
       method: "POST",
       url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs`,
@@ -332,6 +334,8 @@ export class CosmosAPI {
         mode: "BROADCAST_MODE_SYNC",
       },
     });
+
+    log("debug", "data", data);
 
     if (data.tx_response.code != 0) {
       // error codes: https://github.com/cosmos/cosmos-sdk/blob/master/types/errors/errors.go
