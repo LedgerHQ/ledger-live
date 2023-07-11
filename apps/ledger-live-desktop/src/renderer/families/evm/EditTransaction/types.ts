@@ -1,9 +1,9 @@
 import { TFunction } from "react-i18next";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction as TransactionCommon } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-import { TransactionRaw } from "@ledgerhq/coin-evm/lib/types";
+import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/lib/types";
 
 export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
 
@@ -27,7 +27,7 @@ export type StepProps = {
   t: TFunction;
   closeModal: (a: void) => void;
   openModal: (b: string, a: unknown) => void;
-  onChangeTransaction: (a: Transaction) => void;
+  onChangeTransaction: (a: TransactionCommon) => void;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   onRetry: (a: void) => void;

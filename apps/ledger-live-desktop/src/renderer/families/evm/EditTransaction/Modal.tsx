@@ -3,8 +3,8 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
-import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { StepId } from "./types";
+import { TransactionRaw } from "@ledgerhq/coin-evm/lib/types";
 
 export type EditTransactionModalProps = {
   account: AccountLike | undefined | null;
@@ -38,7 +38,7 @@ const EditTransactionModalComponent = ({
             params={{
               account: account,
               parentAccount: parentAccount,
-              transactionRaw: transactionRaw as EthereumTransactionRaw,
+              transactionRaw: transactionRaw as TransactionRaw,
               transactionHash: transactionHash,
             }}
           />
