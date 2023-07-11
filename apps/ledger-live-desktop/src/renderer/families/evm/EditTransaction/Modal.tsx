@@ -6,19 +6,19 @@ import { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { StepId } from "./types";
 
-export type Props = {
+export type EditTransactionModalProps = {
   account: AccountLike | undefined | null;
   parentAccount: Account | undefined | null;
   transactionRaw: TransactionCommonRaw;
   transactionHash: string;
 };
 
-const EditTransactionModal = ({
+const EditTransactionModalComponent = ({
   account,
   parentAccount,
   transactionRaw,
   transactionHash,
-}: Props) => {
+}: EditTransactionModalProps) => {
   const [stepId, setStepId] = useState<StepId>("method");
   const handleReset = useCallback(() => setStepId("method"), []);
   const handleStepChange = useCallback(stepId => setStepId(stepId), []);
@@ -48,4 +48,4 @@ const EditTransactionModal = ({
   );
 };
 
-export default memo<Props>(EditTransactionModal);
+export const EditTransactionModal = memo<EditTransactionModalProps>(EditTransactionModalComponent);

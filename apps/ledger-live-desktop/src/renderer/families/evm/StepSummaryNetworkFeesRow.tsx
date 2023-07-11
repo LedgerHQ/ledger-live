@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { useTheme } from "styled-components";
 import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -17,6 +18,7 @@ const StepSummaryNetworkFeesRow = ({
   feesCurrency,
 }: SummaryNetworkFeesRowProps) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <>
@@ -29,7 +31,7 @@ const StepSummaryNetworkFeesRow = ({
         </Text>
         <Box>
           <FormattedVal
-            color={feeTooHigh ? "warning" : "palette.text.shade80"}
+            color={feeTooHigh ? "warning" : colors.palette.text.shade80}
             disableRounding
             unit={feesUnit}
             alwaysShowValue
@@ -40,7 +42,7 @@ const StepSummaryNetworkFeesRow = ({
           />
           <Box textAlign="right">
             <CounterValue
-              color={feeTooHigh ? "warning" : "palette.text.shade60"}
+              color={feeTooHigh ? "warning" : colors.palette.text.shade60}
               fontSize={3}
               currency={feesCurrency}
               value={estimatedFees}
