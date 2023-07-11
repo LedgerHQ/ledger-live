@@ -11,7 +11,7 @@ The app is a simple [Create React App](https://github.com/facebook/create-react-
 
 ```sh
 pnpm i
-pnpm --filter="dummy-wallet-app" start # Start development server
+pnpm test-utils:dummy-wallet-app start # Start development server
 ```
 
 ## Serve production build
@@ -20,7 +20,7 @@ pnpm --filter="dummy-wallet-app" start # Start development server
 ### Setup
 
 pnpm i
-pnpm --filter="dummy-wallet-app" build
+pnpm test-utils:dummy-wallet-app build
 
 ### Desktop
 pnpm build:lld:deps
