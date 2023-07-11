@@ -239,6 +239,7 @@ export type SettingsState = {
   generalTermsVersionAccepted?: string;
   depositFlow: {
     hasClosedNetworkBanner: boolean;
+    hasClosedWithdrawBanner: boolean;
   };
 };
 

@@ -24,17 +24,17 @@ import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseBut
 import { track } from "../../analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
-import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
-import { useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "../../screens/ReceiveFunds/HelpButton";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
-  const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
-
+  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
+  const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
+  depositWithdrawBannerMobile;
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
@@ -88,8 +88,10 @@ export default function ReceiveFundsNavigator() {
           headerTitle: "",
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
-              {hasClosedNetworkBanner && <HelpButton />}
-
+              <HelpButton
+                url={depositNetworkBannerMobile?.params.url}
+                enabled={depositNetworkBannerMobile?.enabled ?? false}
+              />
               <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
             </Flex>
           ),
@@ -167,7 +169,15 @@ export default function ReceiveFundsNavigator() {
           // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
           headerLeft: () => null,
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />,
+          headerRight: () => (
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              <HelpButton
+                url={depositWithdrawBannerMobile?.params.url}
+                enabled={depositWithdrawBannerMobile?.enabled ?? false}
+              />
+              <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />
+            </Flex>
+          ),
         }}
       />
       {/* Receive Address Device Verification */}
@@ -178,7 +188,13 @@ export default function ReceiveFundsNavigator() {
           headerTitle: "",
           headerLeft: () => null,
           headerRight: () => (
-            <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              <HelpButton
+                url={depositWithdrawBannerMobile?.params.url}
+                enabled={depositWithdrawBannerMobile?.enabled ?? false}
+              />
+              <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
+            </Flex>
           ),
         }}
       />

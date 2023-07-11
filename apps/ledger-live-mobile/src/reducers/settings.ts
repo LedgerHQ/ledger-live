@@ -181,6 +181,7 @@ export const INITIAL_STATE: SettingsState = {
   onboardingType: null,
   depositFlow: {
     hasClosedNetworkBanner: false,
+    hasClosedWithdrawBanner: false,
   },
 };
 
@@ -573,6 +574,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       hasClosedNetworkBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
     },
   }),
+  [SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER]: (state, action) => ({
+    ...state,
+    depositFlow: {
+      ...state.depositFlow,
+      hasClosedWithdrawBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
+    },
+  }),
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
     ...state,
     notifications: {
@@ -810,6 +818,8 @@ export const onboardingHasDeviceSelector = (state: State) => state.settings.onbo
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
 export const hasClosedNetworkBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedNetworkBanner;
+export const hasClosedWithdrawBannerSelector = (state: State) =>
+  state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;

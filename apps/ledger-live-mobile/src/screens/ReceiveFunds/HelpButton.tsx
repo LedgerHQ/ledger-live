@@ -3,19 +3,20 @@ import { Linking, TouchableOpacity } from "react-native";
 import { HelpMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Box } from "@ledgerhq/native-ui";
 import { track } from "../../analytics";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
-const HelpButton = () => {
-  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
-
+type Props = {
+  enabled: boolean;
+  url: string;
+};
+const HelpButton = ({ enabled, url }: Props) => {
   const onClickButton = useCallback(() => {
     track("button_clicked", {
       button: "Choose a network article",
     });
-    Linking.openURL(depositNetworkBannerMobile?.params.url);
-  }, [depositNetworkBannerMobile?.params.url]);
+    Linking.openURL(url);
+  }, [url]);
 
-  return depositNetworkBannerMobile?.enabled ? (
+  return enabled ? (
     <Box mr={4}>
       <TouchableOpacity onPress={onClickButton}>
         <HelpMedium size={24} color={"neutral.c100"} />

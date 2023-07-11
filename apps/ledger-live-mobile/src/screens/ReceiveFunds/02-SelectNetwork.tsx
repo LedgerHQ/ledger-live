@@ -2,7 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, FlatList, Linking } from "react-native";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  CryptoOrTokenCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import {
   isCurrencySupported,
   listTokens,
@@ -15,7 +19,6 @@ import { BannerCard, Flex, Text } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
-import CurrencyRow from "../../components/CurrencyRow";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
@@ -25,6 +28,7 @@ import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { setCloseNetworkBanner } from "../../actions/settings";
 import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import BigCurrencyRow from "../../components/BigCurrencyRow";
 
 type Props = {
   devMode?: boolean;
@@ -128,6 +132,24 @@ export default function SelectNetwork({ navigation, route }: Props) {
     Linking.openURL(depositNetworkBannerMobile?.params.url);
   }, [depositNetworkBannerMobile?.params.url]);
 
+  const renderItem = useCallback(
+    ({ item }: { item: CryptoOrTokenCurrency }) => {
+      const accs = findAccountByCurrency(accounts, item);
+      return (
+        <BigCurrencyRow
+          currency={item}
+          onPress={onPressItem}
+          subTitle={
+            accs.length > 1
+              ? t("transfer.receive.selectNetwork.accounts", { count: accs.length })
+              : ""
+          }
+        />
+      );
+    },
+    [accounts, onPressItem, t],
+  );
+
   useEffect(() => {
     if (paramsCurrency) {
       const selectedCurrency = findCryptoCurrencyByKeyword(paramsCurrency.toUpperCase());
@@ -160,9 +182,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
       <FlatList
         contentContainerStyle={styles.list}
         data={sortedCryptoCurrencies}
-        renderItem={({ item }) => (
-          <CurrencyRow iconSize={32} currency={item} onPress={onPressItem} />
-        )}
+        renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"

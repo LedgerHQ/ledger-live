@@ -38,6 +38,7 @@ export type FeatureId =
   | "currencyQuicksilver"
   | "currencyInternetComputer"
   | "depositNetworkBannerMobile"
+  | "depositWithdrawBannerMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"

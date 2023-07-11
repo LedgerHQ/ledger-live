@@ -101,6 +101,12 @@ export const defaultFeatures = {
       url: "https://www.ledger.com/ledger-live",
     },
   },
+  depositWithdrawBannerMobile: {
+    enabled: false,
+    params: {
+      url: "https://www.ledger.com/ledger-live",
+    },
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
