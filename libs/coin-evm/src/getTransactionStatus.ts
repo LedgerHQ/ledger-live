@@ -8,6 +8,9 @@ import {
   NotEnoughBalance,
   GasLessThanEstimate,
   PriorityFeeTooLow,
+  PriorityFeeTooHigh,
+  PriorityFeeHigherThanMaxFee,
+  MaxFeeTooLow,
 } from "@ledgerhq/errors";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
@@ -20,13 +23,15 @@ import {
   Transaction as EvmTransaction,
 } from "./types";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
+import { DEFAULT_GAS_LIMIT } from "./transaction";
 
 type ValidatedTransactionFields =
   | "recipient"
   | "gasLimit"
   | "gasPrice"
   | "amount"
-  | "maxPriorityFee";
+  | "maxPriorityFee"
+  | "maxFee";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -104,12 +109,24 @@ export const validateAmount = (
 export const validateGas = (
   account: Account,
   tx: EvmTransaction,
-  gasLimit: BigNumber,
   estimatedFees: BigNumber,
+  gasLimit: BigNumber,
+  customGasLimit?: BigNumber,
 ): Array<ValidationIssues> => {
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
+  // Gas Limit
+  if (gasLimit.isZero()) {
+    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+  } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
+    errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+  }
+  if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
+    warnings.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+  }
+
+  // Gas Price
   if (
     // if fees are not set or wrongly set
     !(
@@ -118,15 +135,32 @@ export const validateGas = (
     )
   ) {
     errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isZero()) {
-    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isLessThan(21000)) {
-    // minimum gas for a tx is 21000
-    errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   } else if (tx.recipient && estimatedFees.gt(account.balance)) {
     errors.gasPrice = new NotEnoughGas(); // "The parent account balance is insufficient for network fees"
-  } else if (tx.maxPriorityFeePerGas && tx.maxPriorityFeePerGas.isZero()) {
-    errors.maxPriorityFee = new PriorityFeeTooLow();
+  }
+
+  // Gas Price for EIP-1559
+  if (tx.type === 2) {
+    const maximalPriorityFee = tx.gasOptions?.fast?.maxPriorityFeePerGas;
+    const minimalPriorityFee = tx.gasOptions?.slow?.maxPriorityFeePerGas;
+    const recommandedNextBaseFee = tx.gasOptions?.medium?.nextBaseFee;
+
+    if (tx.maxPriorityFeePerGas.isZero()) {
+      errors.maxPriorityFee = new PriorityFeeTooLow();
+    } else if (tx.maxPriorityFeePerGas.isGreaterThan(tx.maxFeePerGas)) {
+      // priority fee is more than max fee (total fee for the transaction) which doesn't make sense
+      errors.maxPriorityFee = new PriorityFeeHigherThanMaxFee();
+    }
+
+    if (maximalPriorityFee && tx.maxPriorityFeePerGas.gt(maximalPriorityFee)) {
+      warnings.maxPriorityFee = new PriorityFeeTooHigh();
+    } else if (minimalPriorityFee && tx.maxPriorityFeePerGas.lt(minimalPriorityFee)) {
+      warnings.maxPriorityFee = new PriorityFeeTooLow();
+    }
+
+    if (recommandedNextBaseFee && tx.maxFeePerGas?.lt(recommandedNextBaseFee)) {
+      warnings.maxFee = new MaxFeeTooLow();
+    }
   }
 
   return [errors, warnings];
@@ -163,7 +197,7 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
 ) => {
   const subAccount = findSubAccountById(account, tx.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
-  const { gasLimit, additionalFees, amount } = tx;
+  const { gasLimit, customGasLimit, additionalFees, amount } = tx;
   const estimatedFees = getEstimatedFees(tx);
   const totalFees = estimatedFees.plus(additionalFees || 0);
   const totalSpent = isTokenTransaction ? tx.amount : tx.amount.plus(totalFees);
@@ -173,7 +207,7 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
   // Amount related errors and warnings
   const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
   // Gas related errors and warnings
-  const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, totalFees);
+  const [gasErr, gasWarn] = validateGas(account, tx, totalFees, gasLimit, customGasLimit);
   const [nftErr, nftWarn] = validateNft(account, tx);
 
   const errors: ValidationIssues = {

@@ -90,6 +90,10 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     };
   }
 
+  if (rawTx.customGasLimit) {
+    tx.customGasLimit = new BigNumber(rawTx.customGasLimit);
+  }
+
   return tx as EvmTransaction;
 };
 
@@ -136,6 +140,10 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
       quantity: tx.nft.quantity.toFixed(),
       collectionName: tx.nft.collectionName,
     };
+  }
+
+  if (tx.customGasLimit) {
+    txRaw.customGasLimit = tx.customGasLimit.toFixed();
   }
 
   return txRaw as EvmTransactionRaw;

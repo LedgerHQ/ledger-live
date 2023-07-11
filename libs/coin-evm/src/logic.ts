@@ -28,13 +28,20 @@ export const eip1559TransactionHasFees = (tx: EvmTransactionEIP1559): boolean =>
   Boolean(tx.type === 2 && tx.maxFeePerGas && tx.maxPriorityFeePerGas);
 
 /**
+ * Helper to get the gas limit value for a tx, depending on if the user has set a custom value or not
+ */
+export const getGasLimit = (tx: EvmTransaction): BigNumber => tx.customGasLimit ?? tx.gasLimit;
+
+/**
  * Helper to get total fee value for a tx depending on its type
  */
 export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
+  const gasLimit = getGasLimit(tx);
+
   if (tx.type !== 2) {
-    return tx.gasPrice?.multipliedBy(tx.gasLimit) || new BigNumber(0);
+    return tx.gasPrice?.multipliedBy(gasLimit) || new BigNumber(0);
   }
-  return tx.maxFeePerGas?.multipliedBy(tx.gasLimit) || new BigNumber(0);
+  return tx.maxFeePerGas?.multipliedBy(gasLimit) || new BigNumber(0);
 };
 
 /**
