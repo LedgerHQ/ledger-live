@@ -207,7 +207,7 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = async (account, tra
  * rather than the status returned by the node
  * regarding the network status
  */
-export const getEstimatedFees: NodeApi["getEstimatedFees"] = async (currency, transaction) => {
+export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) => {
   const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
@@ -355,7 +355,7 @@ const node: NodeApi = {
   getTransactionCount,
   getTransaction,
   getGasEstimation,
-  getEstimatedFees,
+  getFeeData,
   broadcastTransaction,
   getOptimismAdditionalFees,
 };
