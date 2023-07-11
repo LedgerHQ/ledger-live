@@ -11,7 +11,6 @@ export const dummyAppServer: http.Server = http.createServer(
     // You pass two more arguments for config and middleware
     // More details here: https://github.com/vercel/serve-handler#options
 
-    console.log(path.resolve(__dirname, dummyAppPath));
     handler(request, response, {
       public: path.resolve(__dirname, "..", dummyAppPath),
     });

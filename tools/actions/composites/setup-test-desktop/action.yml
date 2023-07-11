@@ -51,7 +51,7 @@ runs:
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="test-utils" --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
@@ -77,7 +77,6 @@ runs:
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm --filter="test-utils" build
-        pnpm --filter="test-utils" install-deps:dummy-apps
-        pnpm --filter="test-utils" build:dummy-apps
+        pnpm test-utils dummy-apps:install
+        pnpm test-utils dummy-apps:build
       shell: bash

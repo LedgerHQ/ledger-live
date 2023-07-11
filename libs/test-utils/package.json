@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/test-utils",
   "version": "0.0.1",
+  "private": true,
   "description": "Dummy apps and utils for tests",
   "keywords": [
     "Ledger"
@@ -11,8 +12,9 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
-    "install-deps:dummy-apps": "pnpm --filter='dummy-wallet-app' --filter='dummy-live-app' i",
-    "build:dummy-apps": "pnpm --filter='dummy-wallet-app' --filter='dummy-live-app' build"
+    "dummy-apps:install": "pnpm --filter='dummy-*' i",
+    "dummy-apps:build": "pnpm --filter='dummy-*' build",
+    "dummy-apps:start-ptx-app": "cd dummy-ptx-app && npx http-server"
   },
   "dependencies": {
     "@ledgerhq/live-common": "workspace:^",
