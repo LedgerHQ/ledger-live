@@ -154,6 +154,38 @@ export type CryptoCurrencyId =
   | "internet_computer"
   | "telos_evm";
 
+export type LedgerExplorerId =
+  | "btc"
+  | "btc_testnet"
+  | "bch"
+  | "btg"
+  | "club"
+  | "dash"
+  | "dcr"
+  | "dgb"
+  | "doge"
+  | "hsr"
+  | "kmd"
+  | "ltc"
+  | "ppc"
+  | "pivx"
+  | "posw"
+  | "qtum"
+  | "xsn"
+  | "strat"
+  | "xst"
+  | "vtc"
+  | "via"
+  | "zec"
+  | "zen"
+  | "avax"
+  | "eth"
+  | "eth_ropsten"
+  | "eth_goerli"
+  | "etc"
+  | "matic"
+  | "bnb";
+
 /**
  *
  */
@@ -233,7 +265,7 @@ export type EthereumLikeInfo = {
       }
     | {
         type: "ledger";
-        explorerId: string;
+        explorerId: LedgerExplorerId;
       };
   // used by evm coin integration
   explorer?:
@@ -243,12 +275,12 @@ export type EthereumLikeInfo = {
       }
     | {
         type: "ledger";
-        explorerId: string;
+        explorerId: LedgerExplorerId;
       };
   // used by evm coin integration
   gasTracker?: {
     type: "ledger";
-    explorerId: string;
+    explorerId: LedgerExplorerId;
   };
 };
 
@@ -295,7 +327,7 @@ export type CryptoCurrency = CurrencyCommon & {
   };
   deviceTicker?: string;
   // Used to connect to the right endpoint url since it is different from currencyId and ticker
-  explorerId?: string;
+  explorerId?: LedgerExplorerId;
 };
 
 /**
