@@ -38,6 +38,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       validator,
       source,
       delegation: "delegation",
+      flow: "stake",
     });
   }, [source, validator, ticker]);
 

@@ -220,6 +220,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         account,
         parentAccount,
         colors,
+        parentRoute: route,
       })) ||
     [];
 

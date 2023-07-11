@@ -47,6 +47,7 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
       validator,
       source,
       delegation: "delegation",
+      flow: "stake",
     });
   }, [source, validator, ticker]);
 
