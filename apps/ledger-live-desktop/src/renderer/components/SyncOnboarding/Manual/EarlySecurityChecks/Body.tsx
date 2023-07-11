@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Link, Flex, Text, Icons } from "@ledgerhq/react-ui";
+import { Button, Link, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/react-ui";
 import { Bullet } from "./Bullet";
 import { Status as SoftwareCheckStatus } from "../types";
 
@@ -10,6 +10,7 @@ export type Props = {
   availableFirmwareVersion: string;
   modelName: string;
   updateSkippable?: boolean;
+  loading?: boolean;
   onClickStartChecks: () => void;
   onClickWhyPerformSecurityChecks: () => void;
   onClickResumeGenuineCheck: () => void;
@@ -24,6 +25,7 @@ const SoftwareCheckContent = ({
   availableFirmwareVersion,
   modelName,
   updateSkippable,
+  loading,
   onClickStartChecks,
   onClickWhyPerformSecurityChecks,
   onClickResumeGenuineCheck,
@@ -121,7 +123,13 @@ const SoftwareCheckContent = ({
                 : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA")}
             </Button>
             {updateSkippable ? (
-              <Button variant="shade" size="small" outline onClick={onClickSkipUpdate}>
+              <Button
+                variant="shade"
+                size="small"
+                outline
+                onClick={onClickSkipUpdate}
+                Icon={loading ? InfiniteLoader : undefined}
+              >
                 {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.skipUpdateCTA")}
               </Button>
             ) : null}
@@ -151,7 +159,7 @@ const SoftwareCheckContent = ({
             variant="main"
             size="large"
             outline={false}
-            Icon={Icons.ArrowRightMedium}
+            Icon={loading ? InfiniteLoader : Icons.ArrowRightMedium}
             iconPosition="right"
           >
             {t("syncOnboarding.manual.softwareCheckContent.continueCTA")}

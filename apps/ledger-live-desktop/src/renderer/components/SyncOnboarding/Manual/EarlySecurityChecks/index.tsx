@@ -97,8 +97,13 @@ const EarlySecurityChecks = ({
     deviceId,
   });
 
-  console.log({ latestFirmware, deviceInfo });
   useChangeLanguagePrompt({ device });
+
+  const [completionLoading, setCompletionLoading] = useState(false);
+  const handleCompletion = useCallback(() => {
+    setCompletionLoading(true);
+    onComplete();
+  }, [onComplete]);
 
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
@@ -197,14 +202,7 @@ const EarlySecurityChecks = ({
       setAvailableFirmwareVersion(latestFirmware?.final.name || "");
       setFirmwareUpdateStatus(SoftwareCheckStatus.updateAvailable);
     }
-  }, [
-    firmwareUpdateStatus,
-    onComplete,
-    status,
-    genuineCheckStatus,
-    latestFirmware,
-    deviceInfo?.version,
-  ]);
+  }, [firmwareUpdateStatus, status, genuineCheckStatus, latestFirmware, deviceInfo?.version]);
 
   const lockedDeviceModalIsOpen =
     (devicePermissionState === "unlock-needed" && genuineCheckActive) ||
@@ -283,8 +281,9 @@ const EarlySecurityChecks = ({
           resetGenuineCheckState();
         }}
         onClickViewUpdate={startFirmwareUpdate}
-        onClickSkipUpdate={onComplete}
-        onClickContinueToSetup={onComplete}
+        onClickSkipUpdate={handleCompletion}
+        onClickContinueToSetup={handleCompletion}
+        loading={completionLoading}
       />
     </Flex>
   );
