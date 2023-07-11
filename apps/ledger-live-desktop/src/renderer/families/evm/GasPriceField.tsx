@@ -35,9 +35,9 @@ const FeesField = ({ account, transaction, status, updateTransaction, transactio
   );
   const networkGasPrice = transaction.gasPrice;
   if (!lastNetworkGasPrice && networkGasPrice) {
-    lastNetworkGasPrice = networkGasPrice;
+    lastNetworkGasPrice = inferDynamicRange(networkGasPrice);
   }
-  let range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  let range = lastNetworkGasPrice || fallbackGasPrice;
   const gasPrice = transaction.gasPrice || range.initial;
   // update gas price range according to previous pending transaction if necessary
   const ethTransactionRaw = transactionRaw as TransactionRaw | undefined;
