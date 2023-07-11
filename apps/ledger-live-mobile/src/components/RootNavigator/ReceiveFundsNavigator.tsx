@@ -10,7 +10,7 @@ import ReceiveConnectDevice, {
   connectDeviceHeaderOptions,
 } from "../../screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
-
+import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
 import ReceiveSelectNetwork from "../../screens/ReceiveFunds/02-SelectNetwork";
 import ReceiveAddAccountSelectDevice, {
   addAccountsSelectDeviceHeaderOptions,
@@ -80,6 +80,16 @@ export default function ReceiveFundsNavigator() {
       }}
     >
       {/* Select Crypto (see : apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.js) */}
+      <Stack.Screen
+        name={ScreenName.ReceiveSelectCrypto}
+        component={ReceiveSelectCrypto}
+        options={{
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerTitle: "",
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+        }}
+      />
+
       <Stack.Screen
         name={ScreenName.DepositSelectNetwork}
         component={ReceiveSelectNetwork}
@@ -168,7 +178,7 @@ export default function ReceiveFundsNavigator() {
         options={{
           // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
-          headerLeft: () => null,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               <HelpButton
@@ -186,7 +196,7 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveConfirmation}
         options={{
           headerTitle: "",
-          headerLeft: () => null,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               <HelpButton

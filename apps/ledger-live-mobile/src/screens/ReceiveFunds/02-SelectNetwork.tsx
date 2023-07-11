@@ -1,17 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, FlatList, Linking } from "react-native";
-import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import {
-  isCurrencySupported,
-  listTokens,
   useCurrenciesByMarketcap,
-  listSupportedCurrencies,
   findCryptoCurrencyByKeyword,
 } from "@ledgerhq/live-common/currencies/index";
 
@@ -29,6 +25,7 @@ import { setCloseNetworkBanner } from "../../actions/settings";
 import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import BigCurrencyRow from "../../components/BigCurrencyRow";
+import { findAccountByCurrency } from "../../logic/deposit";
 
 type Props = {
   devMode?: boolean;
@@ -36,38 +33,34 @@ type Props = {
 
 const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
-
-const findAccountByCurrency = (accounts: AccountLike[], currency: CryptoCurrency | TokenCurrency) =>
-  accounts.filter(
-    (acc: AccountLike) =>
-      (acc.type === "Account" ? acc.currency?.id : (acc as TokenAccount).token?.id) === currency.id,
-  );
-
 export default function SelectNetwork({ navigation, route }: Props) {
-  const paramsCurrency = route?.params?.currency;
+  const networks = route?.params?.networks;
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const [displayBanner, setBanner] = useState(!hasClosedNetworkBanner);
 
   const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
 
   const { t } = useTranslation();
-  const filterCurrencyIds = useMemo(
-    () => route.params?.filterCurrencyIds || [],
-    [route.params?.filterCurrencyIds],
-  );
-  const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[])
-        .concat(listSupportedTokens())
-        .filter(({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id)),
-    [filterCurrencyIds],
-  );
+
+  const cryptoCurrencies = useMemo(() => {
+    if (!networks) {
+      return [];
+    } else {
+      return networks.map(net => {
+        const selectedCurrency = findCryptoCurrencyByKeyword(net.toUpperCase());
+        if (selectedCurrency) return selectedCurrency;
+        else return null;
+      });
+    }
+  }, [networks]);
 
   const accounts = useSelector(flattenAccountsSelector);
 
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+  const sortedCryptoCurrencies = useCurrenciesByMarketcap(
+    cryptoCurrencies.filter(e => !!e) as CryptoCurrency[],
+  );
 
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
@@ -149,18 +142,6 @@ export default function SelectNetwork({ navigation, route }: Props) {
     },
     [accounts, onPressItem, t],
   );
-
-  useEffect(() => {
-    if (paramsCurrency) {
-      const selectedCurrency = findCryptoCurrencyByKeyword(paramsCurrency.toUpperCase());
-
-      if (selectedCurrency) {
-        onPressItem(selectedCurrency);
-      }
-    }
-  }, [onPressItem, paramsCurrency]);
-
-  const insets = useSafeAreaInsets();
 
   return (
     <>

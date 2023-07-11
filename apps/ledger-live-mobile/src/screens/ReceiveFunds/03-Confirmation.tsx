@@ -38,7 +38,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
+import { hasClosedWithdrawBannerSelector } from "../../reducers/settings";
 import { setCloseWithdrawBanner } from "../../actions/settings";
 
 type ScreenProps = BaseComposite<
@@ -85,8 +85,8 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
   const insets = useSafeAreaInsets();
 
-  const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
-  const [displayBanner, setBanner] = useState(!hasClosedNetworkBanner);
+  const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
+  const [displayBanner, setBanner] = useState(!hasClosedWithdrawBanner);
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
