@@ -84,20 +84,24 @@ export const useProviders = () => {
   const dispatch = useDispatch();
   const { providers, error: providersError } = useSwapProviders();
   const storedProviders = useSelector(providersSelector);
+
   useEffect(() => {
     if (providers) dispatch(updateProvidersAction(providers));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providers]);
+
   useEffect(() => {
     if (providersError) dispatch(resetSwapAction());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providersError]);
+
   return {
     storedProviders,
     providers,
     providersError,
   };
 };
+
 const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState<string | null>(null);
@@ -112,15 +116,18 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
+
   const setExchangeRate = useCallback(
     rate => {
       dispatch(updateRateAction(rate));
     },
     [dispatch],
   );
+
   const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
     "swapWalletApiPartnerList",
   );
+
   const onNoRates = useCallback(
     ({ toState }) => {
       track("error_message", {
@@ -132,6 +139,7 @@ const SwapForm = () => {
     },
     [swapDefaultTrack],
   );
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
@@ -141,6 +149,7 @@ const SwapForm = () => {
     timeout: SWAP_RATES_TIMEOUT,
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
+
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const pageState = usePageState(swapTransaction, swapError);
@@ -157,6 +166,7 @@ const SwapForm = () => {
     setCurrentFlow(null);
     setError(undefined);
   }, [provider]);
+
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
     if (error) {
@@ -191,11 +201,14 @@ const SwapForm = () => {
       setCurrentBanner("KYC");
     }
   }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
+
   const { setDrawer } = React.useContext(context);
   const pauseRefreshing = !!swapError || idleState;
+
   const refreshTime = useRefreshRates(swapTransaction.swap, {
     pause: pauseRefreshing,
   });
+
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
@@ -203,6 +216,7 @@ const SwapForm = () => {
       setIdleState(true);
     }, idleTime);
   }, [idleState]);
+
   const swapWebAppRedirection = useCallback(() => {
     const { to, from } = swapTransaction.swap;
     const transaction = swapTransaction.transaction;
@@ -230,15 +244,18 @@ const SwapForm = () => {
       });
     }
   }, [history, swapTransaction, provider, exchangeRate?.rateId]);
+
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
     }
   }, [refreshIdle, swapTransaction.swap.rates.status]);
+
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapTransaction.transaction]);
+
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
     // (possibly the one that got created)
@@ -381,6 +398,7 @@ const SwapForm = () => {
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerKYC, exchangeRate, dispatch, provider, kycStatus, currentFlow]);
+
   const isSwapReady =
     !error &&
     !swapTransaction.bridgePending &&
@@ -393,6 +411,7 @@ const SwapForm = () => {
     swapTransaction.swap.to.account &&
     swapTransaction.swap.from.amount &&
     swapTransaction.swap.from.amount.gt(0);
+
   const onSubmit = () => {
     if (!exchangeRate) return;
 
@@ -483,6 +502,7 @@ const SwapForm = () => {
     // suppressing as swapTransaction is not memoized and causes infinite loop
     // eslint-disable-next-line
   }, [exchangeRate]);
+
   switch (currentFlow) {
     case "LOGIN":
       return <Login provider={provider} onClose={() => setCurrentFlow(null)} />;
@@ -505,18 +525,23 @@ const SwapForm = () => {
     default:
       break;
   }
+
   const setFromAccount = (account: AccountLike | undefined) => {
     swapTransaction.setFromAccount(account);
   };
+
   const setFromAmount = (amount: BigNumber) => {
     swapTransaction.setFromAmount(amount);
   };
+
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
     swapTransaction.setToCurrency(currency);
   };
+
   const toggleMax = () => {
     swapTransaction.toggleMax();
   };
+
   if (storedProviders?.length)
     return (
       <Wrapper>

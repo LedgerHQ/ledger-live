@@ -17,6 +17,7 @@ import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
+  env: { DEV_TOOLS: true },
 });
 
 // Tests to cover in Playwright test suite
@@ -82,6 +83,25 @@ test.describe.parallel("Swap", () => {
     await test.step("Add account from missing Destination (To) account", async () => {
       await swapPage.addDestinationAccount();
       await expect.soft(page).toHaveScreenshot("add-missing-destination-account.png");
+    });
+  });
+
+  test("Swap not yet available", async ({ page }) => {
+    const swapPage = new SwapPage(page);
+
+    // await page.route("https://swap.ledger.com/v4/providers**", async route => {
+    //   const mockProvidersResponse = getProvidersMock();
+    //   route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
+    // });
+
+    // await page.route("https://swap.ledger.com/v4/rate**", async route => {
+    //   const mockRatesResponse = getEthereumToTetherRatesMock();
+    //   route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+    // });
+
+    await test.step("Generate ETH to USDT quotes", async () => {
+      await swapPage.navigate();
+      await page.pause();
     });
   });
 
