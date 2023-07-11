@@ -4,12 +4,10 @@ import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { GasOptions } from "@ledgerhq/coin-evm/lib/types";
 import invariant from "invariant";
 
-// This is 10 Gwei in wei. 20 Gwei is 2e8 or 20e9
-// Should we rename the variable to TEN_GWEI or update the value to 20e9?
-const TWENTY_GWEI = new BigNumber(10e9);
+const TEN_GWEI = new BigNumber(10e9);
 
-const defaultMaxPriorityFeeRange = inferDynamicRange(TWENTY_GWEI); // 0 - 20 Gwei
-const defaultMaxFeePerGasRange = inferDynamicRange(TWENTY_GWEI); // 0 - 20 Gwei
+const defaultMaxPriorityFeeRange = inferDynamicRange(TEN_GWEI); // 0 - 10 Gwei
+const defaultMaxFeePerGasRange = inferDynamicRange(TEN_GWEI); // 0 - 10 Gwei
 
 export const inferMaxPriorityFeeRange = (gasOptions: GasOptions): Range => {
   if (!gasOptions) return defaultMaxPriorityFeeRange;
