@@ -122,7 +122,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
             ...(availableOnSwap
               ? [
                   {
-                    label: t("transfer.swap.title"),
+                    label: t("account.swap"),
                     Icon: iconSwap,
                     event: "button_clicked",
                     eventProperties: {
@@ -146,7 +146,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
             ...(canBeStaken
               ? [
                   {
-                    label: t("transfer.stake.title"),
+                    label: t("account.stake"),
                     Icon: iconStake,
                     event: "button_clicked",
                     eventProperties: {
