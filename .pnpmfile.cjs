@@ -255,6 +255,12 @@ function readPackage(pkg, context) {
       addDependencies("documentation", {
         micromark: "*",
       }),
+      addDependencies("@dfinity/candid", {
+        "@dfinity/principal": "*",
+      }),
+      addDependencies("@dfinity/agent", {
+        buffer: "*",
+      }),
       // TODO:
       // Tron missing deps
       // They are also added to live-common dependencies

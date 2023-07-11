@@ -53,7 +53,6 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
-  | "icp"
   | "iota"
   | "iov"
   | "kin"
@@ -151,7 +150,8 @@ export type CryptoCurrencyId =
   | "boba"
   | "moonriver"
   | "velas_evm"
-  | "syscoin";
+  | "syscoin"
+  | "internet_computer";
 
 /**
  *
@@ -239,8 +239,8 @@ export type CryptoCurrency = CurrencyCommon & {
   // used for UI
   color: string;
   family: string;
+  // the average time between 2 blocks, in seconds
   blockAvgTime?: number;
-  // in seconds
   supportsSegwit?: boolean;
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};

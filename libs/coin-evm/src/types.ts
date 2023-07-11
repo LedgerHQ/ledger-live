@@ -17,6 +17,8 @@ export type EvmTransactionBase = TransactionCommon & {
   nonce: number;
   // maximum of gas (as unit of computation) used by the transaction
   gasLimit: BigNumber;
+  // custom gas limit manually set by the user overriding the gasLimit
+  customGasLimit?: BigNumber;
   // id of the blockchain to use (used at the signature level for EIP-155)
   chainId: number;
   // buffer of the calldata that will be used by the smart contract
@@ -76,6 +78,7 @@ type EvmTransactionBaseRaw = TransactionCommonRaw & {
   mode: EvmTransactionMode;
   nonce: number;
   gasLimit: string;
+  customGasLimit?: string;
   chainId: number;
   data?: string | null;
   type?: number;
@@ -215,6 +218,8 @@ export type FeeData = {
   maxFeePerGas: null | BigNumber;
   maxPriorityFeePerGas: null | BigNumber;
   gasPrice: null | BigNumber;
+  // only used by UI send flow in advanced mode for EIP-1559
+  nextBaseFee: null | BigNumber;
 };
 
 export type GasOptions = {

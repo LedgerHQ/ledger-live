@@ -52,6 +52,7 @@ export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecogniz
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
+export const InvalidNonce = createCustomErrorClass("InvalidNonce");
 export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
   "InvalidAddressBecauseDestinationIsAlsoSource",
 );

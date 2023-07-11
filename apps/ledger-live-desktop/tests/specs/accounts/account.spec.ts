@@ -4,6 +4,7 @@ import { PortfolioPage } from "../../models/PortfolioPage";
 import { AddAccountModal } from "../../models/AddAccountModal";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
+import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "skip-onboarding" });
@@ -20,6 +21,7 @@ test.describe.parallel("Accounts", () => {
       const deviceAction = new DeviceAction(page);
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
+      const accountPage = new AccountPage(page);
 
       await test.step(`[${currency}] Open modal`, async () => {
         await portfolioPage.openAddAccountModal();
@@ -62,8 +64,18 @@ test.describe.parallel("Accounts", () => {
       });
 
       await test.step(`scroll to operations`, async () => {
-        await accountsPage.scrollToOperations();
+        await accountPage.scrollToOperations();
         await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage-operations.png`);
+      });
+
+      await test.step(`Delete current account`, async () => {
+        await accountPage.deleteAccount();
+        await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccount.png`);
+      });
+
+      await test.step(`Delete first account from list`, async () => {
+        await accountsPage.deleteFirstAccount();
+        await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccountFromAccountsList.png`);
       });
     });
   }

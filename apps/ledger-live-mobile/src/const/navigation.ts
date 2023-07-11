@@ -312,6 +312,9 @@ export enum ScreenName {
   OsmosisRedelegationValidationError = "OsmosisRedelegationValidationError",
   OsmosisRedelegationValidationSuccess = "OsmosisRedelegationValidationSuccess",
 
+  // internet_computer
+  InternetComputerEditMemo = "InternetComputerEditMemo",
+
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
 
@@ -447,6 +450,8 @@ export enum ScreenName {
   LearnWebView = "LearnWebView",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
+  // stacks
+  StacksEditMemo = "StacksEditMemo",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near
