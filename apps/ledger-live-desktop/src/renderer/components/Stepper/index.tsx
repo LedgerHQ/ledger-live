@@ -12,8 +12,8 @@ export type Step<T, StepProps> = {
   id: T;
   label?: React.ReactNode;
   excludeFromBreadcrumb?: boolean;
-  component: React.ComponentType<StepProps>;
-  footer?: React.ComponentType<StepProps>;
+  component: React.FC<StepProps>;
+  footer?: React.FC<StepProps>;
   onBack?: ((a: StepProps) => void) | null;
   backButtonComponent?: React.ReactNode;
   noScroll?: boolean;
