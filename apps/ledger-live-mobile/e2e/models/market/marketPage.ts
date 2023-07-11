@@ -7,7 +7,6 @@ import {
 } from "../../helpers";
 
 export default class marketPage {
-  // starFavoriteBtn = () => getElementById(`star-favorit-Btn`);
   searchBar = () => getElementById("search-box");
   starBtn = () => getElementById("starAsset");
   assetCardBtnBack = () => getElementByText("Bitcoin");
