@@ -10,7 +10,7 @@ const Icon = styled(SearchMedium).attrs((p) => ({
 }))``;
 
 function SearchInput(
-  { onChange, value, ...props }: InputProps,
+  { onChange, value, searchTestId, ...props }: InputProps,
   ref?: React.ForwardedRef<TextInput> | null,
 ): JSX.Element {
   const onClear = useCallback((): void => {
@@ -24,6 +24,7 @@ function SearchInput(
       onChange={onChange}
       value={value}
       {...props}
+      testID={searchTestId}
       renderLeft={
         <InputRenderLeftContainer>
           <Icon />

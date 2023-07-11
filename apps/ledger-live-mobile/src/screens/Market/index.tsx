@@ -147,7 +147,7 @@ const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
 
-      <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
+      <TouchableOpacity onPress={toggleFilterByStarredAccounts} testID="stared">
         <Badge bg={filterByStarredAccount ? "primary.c80" : "neutral.c30"}>
           <Icon
             name={filterByStarredAccount ? "StarSolid" : "Star"}

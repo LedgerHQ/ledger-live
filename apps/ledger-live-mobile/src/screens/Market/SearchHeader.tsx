@@ -35,6 +35,7 @@ function SearchHeader({ search, refresh }: Props) {
 
   return (
     <SearchInput
+      searchTestId="search-box"
       value={inputSearch ?? ""}
       onChange={setInputSearch}
       placeholder={t("common.search")}
