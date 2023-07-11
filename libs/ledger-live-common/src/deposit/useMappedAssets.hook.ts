@@ -1,18 +1,8 @@
-import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
 import { GroupedCurrency, MappedAsset } from "./type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useEffect, useMemo, useState } from "react";
 import { listTokens, isCurrencySupported, listSupportedCurrencies } from "../currencies";
-
-const ROOT_PATH = getEnv("MAPPING_SERVICE");
-
-async function getMappedAssets(): Promise<MappedAsset[]> {
-  const url = `${ROOT_PATH}/v1/coingecko/mapped-assets`;
-  const { data } = await network({ method: "GET", url });
-
-  return data;
-}
+import { getMappedAssets } from "./api";
 
 function getMaxValueKey(obj) {
   return Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b));
