@@ -50,6 +50,7 @@ export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
    * Additional style for the container element.
    */
   containerStyle?: StyleProp<ViewStyle>;
+  searchTestId?: string;
 };
 
 const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`

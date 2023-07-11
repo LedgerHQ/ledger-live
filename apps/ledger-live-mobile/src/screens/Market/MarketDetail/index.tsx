@@ -41,7 +41,12 @@ type NavigationProps = BaseComposite<
 >;
 
 export const BackButton = ({ navigation }: { navigation: NavigationProps["navigation"] }) => (
-  <Button size="large" onPress={() => navigation.goBack()} Icon={Icons.ArrowLeftMedium} />
+  <Button
+    size="large"
+    onPress={() => navigation.goBack()}
+    Icon={Icons.ArrowLeftMedium}
+    testID="marketBackBtn"
+  />
 );
 
 function MarketDetail({ navigation, route }: NavigationProps) {
@@ -192,7 +197,12 @@ function MarketDetail({ navigation, route }: NavigationProps) {
           </Flex>
         }
         TopRightSection={
-          <Button size="large" onPress={toggleStar} iconName={isStarred ? "StarSolid" : "Star"} />
+          <Button
+            testID="starAsset"
+            size="large"
+            onPress={toggleStar}
+            iconName={isStarred ? "StarSolid" : "Star"}
+          />
         }
         BottomSection={
           <>

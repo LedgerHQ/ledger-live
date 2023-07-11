@@ -6,9 +6,16 @@ import { track } from "../../analytics";
 export type WrappedButtonProps = ButtonProps & {
   event?: string;
   eventProperties?: unknown;
+  buttonTestId?: string;
 };
 
-function Button({ onPress, event, eventProperties, ...othersProps }: WrappedButtonProps) {
+function Button({
+  onPress,
+  event,
+  eventProperties,
+  buttonTestId,
+  ...othersProps
+}: WrappedButtonProps) {
   const onPressHandler = useCallback(
     async pressEvent => {
       if (!onPress) return;
@@ -20,7 +27,7 @@ function Button({ onPress, event, eventProperties, ...othersProps }: WrappedButt
     [event, eventProperties, onPress],
   );
 
-  return <UiButton onPress={onPressHandler} {...othersProps} />;
+  return <UiButton onPress={onPressHandler} {...othersProps} buttonTestId={buttonTestId} />;
 }
 
 export default Button;

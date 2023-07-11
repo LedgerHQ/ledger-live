@@ -103,7 +103,12 @@ export default function MainNavigator() {
           headerShown: false,
           unmountOnBlur: true,
           tabBarIcon: props => (
-            <TabIcon Icon={Icons.GraphGrowMedium} i18nKey="tabs.market" {...props} />
+            <TabIcon
+              Icon={Icons.GraphGrowMedium}
+              i18nKey="tabs.market"
+              testID="TabBarMarket"
+              {...props}
+            />
           ),
         }}
         listeners={({ navigation }) => ({
