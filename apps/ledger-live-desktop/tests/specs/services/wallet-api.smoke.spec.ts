@@ -5,52 +5,29 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import { startDummyServer, getLiveAppManifest, stopDummyServer } from "@ledgerhq/test-utils";
+import { stopDummyServer } from "@ledgerhq/test-utils";
 import { randomUUID } from "crypto";
+import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
+let liveAppWebview;
 let continueTest = false;
 
-test.beforeAll(async ({ request }) => {
+test.beforeAll(async ({ page }) => {
+  liveAppWebview = new LiveAppWebview(page);
+
   // Check that dummy app in tests/utils/dummy-app-build has been started successfully
-  try {
-    const port = await startDummyServer("dummy-wallet-app/build");
-    const url = `http://localhost:${port}`;
-    const response = await request.get(url);
-    if (response.ok()) {
-      continueTest = true;
-      console.info(
-        `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
-      );
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-        getLiveAppManifest({
-          id: "dummy-live-app",
-          url,
-          name: "Dummy Wallet API Live App",
-          apiVersion: "2.0.0",
-          content: {
-            shortDescription: {
-              en: "App to test the Wallet API",
-            },
-            description: {
-              en: "App to test the Wallet API with Playwright",
-            },
-          },
-        }),
-      );
-    } else {
-      throw new Error("Ping response != 200, got: " + response.status);
-    }
-  } catch (error) {
-    console.warn(`========> Dummy test app not running! <=========`);
-    console.error(error);
+  continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app/build");
+
+  if (!continueTest) {
+    console.warn("Stopping Wallet API test setup");
+    return; // need to make this a proper ignore/jest warning
   }
 });
 
 test.afterAll(async () => {
   await stopDummyServer();
-  console.info(`========> Dummy Wallet API app stopped <=========`);
   delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
 });
 
@@ -70,7 +47,7 @@ test("Wallet API methods", async ({ page }) => {
     await drawer.waitForDrawerToDisappear();
 
     const id = randomUUID();
-    const response = discoverPage.send({
+    const response = liveAppWebview.send({
       jsonrpc: "2.0",
       id,
       method: "account.request",
@@ -102,7 +79,7 @@ test("Wallet API methods", async ({ page }) => {
 
   await test.step("account.receive", async () => {
     const id = randomUUID();
-    const response = discoverPage.send({
+    const response = liveAppWebview.send({
       jsonrpc: "2.0",
       id,
       method: "account.receive",
