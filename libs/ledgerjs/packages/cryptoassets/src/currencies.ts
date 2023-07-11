@@ -1472,30 +1472,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  icp: {
-    type: "CryptoCurrency",
-    id: "icp",
-    coinType: CoinType.ICP,
-    family: "icp",
-    ticker: "ICP",
-    scheme: "icp",
-    color: "#000",
-    managerAppName: "InternetComputer",
-    name: "Internet Computer (ICP)",
-    units: [
-      {
-        name: "ICP",
-        code: "ICP",
-        magnitude: 8,
-      },
-    ],
-    explorerViews: [
-      {
-        address: "https://dashboard.internetcomputer.org/account/$address",
-        tx: "https://dashboard.internetcomputer.org/transaction/$hash",
-      },
-    ],
-  },
   iota: {
     type: "CryptoCurrency",
     id: "iota",
@@ -3460,6 +3436,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         code: "STX",
         magnitude: 6,
       },
+      {
+        name: "uSTX",
+        code: "uSTX",
+        magnitude: 0,
+      },
     ],
     explorerViews: [
       {
@@ -3593,6 +3574,31 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  internet_computer: {
+    type: "CryptoCurrency",
+    id: "internet_computer",
+    coinType: CoinType.ICP,
+    name: "Internet Computer",
+    managerAppName: "InternetComputer",
+    ticker: "ICP",
+    scheme: "internet_computer",
+    color: "#e1effa",
+    family: "internet_computer",
+    units: [
+      {
+        name: "ICP",
+        code: "ICP",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.icpexplorer.org/#/tx/$hash",
+        address: "https://www.icpexplorer.org/#/acct/$address",
+      },
+    ],
+  },
+  // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   ethereum_as_evm_test_only: {
     type: "CryptoCurrency",

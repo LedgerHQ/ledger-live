@@ -53,7 +53,6 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
-  | "icp"
   | "iota"
   | "iov"
   | "kin"
@@ -151,7 +150,8 @@ export type CryptoCurrencyId =
   | "boba"
   | "moonriver"
   | "velas_evm"
-  | "syscoin";
+  | "syscoin"
+  | "internet_computer";
 
 /**
  *
