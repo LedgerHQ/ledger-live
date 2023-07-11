@@ -33,7 +33,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   }, [account, dispatch, parentAccount]);
 
   // TODO: should currency.id only be "ethereum" ?
-  if (account.type === "Account" && account.currency.id === "ethereum") {
+  if (account.type === "Account" && ["ethereum"].includes(account.currency.id)) {
     return [
       {
         key: "Stake",

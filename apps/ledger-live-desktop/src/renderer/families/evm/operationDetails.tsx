@@ -39,10 +39,6 @@ const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   return <>{jsx}</>;
 };
 
-type Props = {
-  operation: Operation;
-};
-
 const Cell = styled(Box).attrs(() => ({
   horizontal: false,
   alignItems: "flex-end",
@@ -53,7 +49,11 @@ const Cell = styled(Box).attrs(() => ({
   min-width: 150px;
 `;
 
-const NFTAmountField = ({ operation }: Props) => {
+type NFTAmountFieldProps = {
+  operation: Operation;
+};
+
+const NFTAmountField = ({ operation }: NFTAmountFieldProps) => {
   const { currencyId } = decodeAccountId(operation.accountId);
   const { status, metadata } = useNftMetadata(operation.contract, operation.tokenId, currencyId);
   const show = useMemo(() => status === "loading", [status]);

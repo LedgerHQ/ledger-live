@@ -1,1 +1,1 @@
-export { default } from "./EditStuckTransactionPanelBodyHeader";
+export { default } from "./EditTransaction/EditStuckTransactionPanelBodyHeader";

@@ -2,13 +2,13 @@ import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router";
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { getAccountBannerState } from "@ledgerhq/coin-evm/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
-// TODO: get from coin-evm
-import { getAccountBannerState } from "@ledgerhq/live-common/families/ethereum/banner";
+import { urls } from "~/config/urls";
 
 const kilnAppId = "kiln";
 const lidoAppId = "lido";
@@ -18,13 +18,12 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const ethStakingProviders = useFeature("ethStakingProviders");
-  const stakeAccountBannerParams: StakeAccountBannerParams | null =
-    stakeAccountBanner?.params ?? null;
-  const state = getAccountBannerState(account);
-  const { stakeProvider } = state;
+  const stakeAccountBannerParams: StakeAccountBannerParams = stakeAccountBanner?.params;
+  const { stakeProvider } = getAccountBannerState(account);
 
   if (stakeProvider === "lido" && !stakeAccountBannerParams?.eth?.lido) return null;
   if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return null;
+
   const stakeOnClick = (providerLiveAppId: string) => {
     track("button_clicked", {
       ...stakeDefaultTrack,
@@ -60,17 +59,19 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     (provider: { liveAppId: string }) => provider.liveAppId === stakeProvider,
   );
 
-  if (!display) return null;
+  if (!display) {
+    return null;
+  }
 
   return (
     <AccountBanner
+      display
       title={title}
       description={description}
       cta={cta}
       onClick={onClick}
-      display={true}
       linkText={t("account.banner.delegation.linkText")}
-      linkUrl={"https://www.ledger.com/staking-ethereum"}
+      linkUrl={urls.stakingEthereum}
     />
   );
 };
