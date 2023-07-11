@@ -3,7 +3,7 @@ import {
   Transaction as EthereumTransaction,
   TransactionMode,
 } from "@ledgerhq/live-common/families/ethereum/types";
-import { Account, AnyMessage, NFTStandard } from "@ledgerhq/types-live";
+import { AnyMessage, NFTStandard } from "@ledgerhq/types-live";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { MessageProperties, NftProperties } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
@@ -27,11 +27,11 @@ export const injectNftIntoTransaction = (
 });
 
 export const getMessageProperties = async (
-  account: Account,
   messageData: AnyMessage,
 ): Promise<MessageProperties | null> => {
   if (messageData.standard === "EIP712") {
     return getEIP712FieldsDisplayedOnNano(messageData.message, getEnv("DYNAMIC_CAL_BASE_URL"));
   }
+
   return null;
 };
