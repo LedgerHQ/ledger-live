@@ -3,10 +3,10 @@ import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Button from "~/renderer/components/Button";
 import { StepProps } from "../types";
-import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
+import { getTransactionByHash } from "@ledgerhq/coin-evm/lib/api/transaction";
 
 export const StepSummaryFooter = (props: StepProps) => {
   const { account, parentAccount, transactionHash, status, bridgePending, transitionTo } = props;
@@ -25,13 +25,11 @@ export const StepSummaryFooter = (props: StepProps) => {
     transitionTo("device");
   };
 
-  apiForCurrency(mainAccount.currency)
-    .getTransactionByHash(transactionHash)
-    .then(tx => {
-      if (tx?.confirmations) {
-        setTransactionHasBeenValidated(true);
-      }
-    });
+  getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
+    if (tx?.confirmations) {
+      setTransactionHasBeenValidated(true);
+    }
+  });
 
   const { errors } = status;
   // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation

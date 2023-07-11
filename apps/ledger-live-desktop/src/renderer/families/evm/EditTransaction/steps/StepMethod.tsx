@@ -15,8 +15,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
-import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import invariant from "invariant";
+import { getTransactionByHash } from "@ledgerhq/coin-evm/lib/api/transaction";
 
 const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
   border: ${p =>
@@ -221,13 +221,11 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
     return null;
   }
 
-  apiForCurrency(mainAccount.currency)
-    .getTransactionByHash(transactionHash)
-    .then(tx => {
-      if (tx?.confirmations) {
-        setTransactionHasBeenValidated(true);
-      }
-    });
+  getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
+    if (tx?.confirmations) {
+      setTransactionHasBeenValidated(true);
+    }
+  });
 
   return (
     <>

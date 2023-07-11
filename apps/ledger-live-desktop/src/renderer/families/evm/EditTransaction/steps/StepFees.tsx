@@ -11,9 +11,9 @@ import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 import { TransactionHasBeenValidatedError, NotEnoughGas } from "@ledgerhq/errors";
-import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import logger from "~/renderer/logger";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
 
 const StepFees = (props: StepProps) => {
   const {
@@ -127,13 +127,11 @@ export const StepFeesFooter = ({
     return null;
   }
 
-  apiForCurrency(mainAccount.currency)
-    .getTransactionByHash(transactionHash)
-    .then(tx => {
-      if (tx?.confirmations) {
-        setTransactionHasBeenValidated(true);
-      }
-    });
+  getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
+    if (tx?.confirmations) {
+      setTransactionHasBeenValidated(true);
+    }
+  });
 
   // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
   let errorCount = Object.keys(errors).length;
