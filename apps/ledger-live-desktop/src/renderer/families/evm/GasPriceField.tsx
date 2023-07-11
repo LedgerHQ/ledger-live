@@ -20,7 +20,7 @@ const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
 let lastNetworkGasPrice: Range | undefined; // local cache of last value to prevent extra blinks
 
 const FeesField = ({ account, transaction, status, updateTransaction, transactionRaw }: Props) => {
-  invariant(transaction.family === "evm", "FeeField: ethereum family expected");
+  invariant(transaction.family === "evm", "FeeField: evm family expected");
   const bridge = getAccountBridge(account);
   const onGasPriceChange = useCallback(
     gasPrice => {

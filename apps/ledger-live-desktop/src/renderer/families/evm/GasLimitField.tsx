@@ -1,9 +1,4 @@
 import React, { useCallback, useState } from "react";
-import {
-  Transaction as EthereumTransaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/ethereum/types";
-import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -15,13 +10,15 @@ import invariant from "invariant";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
+import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/lib/types";
+import { getGasLimit } from "@ledgerhq/coin-evm/lib/logic";
 
 type Props = {
-  transaction: EthereumTransaction;
+  transaction: Transaction;
   account: AccountLike;
   parentAccount: Account | null | undefined;
   status: TransactionStatus;
-  updateTransaction: Result<EthereumTransaction>["updateTransaction"];
+  updateTransaction: Result<Transaction>["updateTransaction"];
 };
 
 const DEFAULT_GAS_LIMIT = new BigNumber(21000);
@@ -33,7 +30,7 @@ const AdvancedOptions = ({
   status,
   updateTransaction,
 }: Props) => {
-  invariant(transaction.family === "ethereum", "AdvancedOptions: ethereum family expected");
+  invariant(transaction.family === "evm", "AdvancedOptions: evm family expected");
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(mainAccount, "Account required");
   const [editable, setEditable] = useState(false);
@@ -74,7 +71,7 @@ const AdvancedOptions = ({
             error={gasLimitError}
             value={gasLimit.toString()}
             onChange={onGasLimitChange}
-            loading={!transaction.networkInfo && !transaction.userGasLimit}
+            loading={!transaction.gasLimit}
           />
         </Box>
       ) : (

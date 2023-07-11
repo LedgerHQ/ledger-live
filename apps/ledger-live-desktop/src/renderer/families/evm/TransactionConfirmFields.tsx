@@ -11,6 +11,7 @@ const Warning = ({
   recipientWording: string;
 }) => {
   switch (transaction.mode) {
+    // TODO: confirm this is the correct mode
     case "send":
       return (
         <WarnBox>

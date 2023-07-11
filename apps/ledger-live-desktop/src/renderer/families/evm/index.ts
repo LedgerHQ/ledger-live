@@ -8,7 +8,7 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import sendAmountFields from "./SendAmountFields";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
 import StakeBanner from "./StakeBanner";
-import { getMessageProperties } from "./helpers";
+import { getMessageProperties } from "./message";
 
 const family: EvmFamily = {
   AccountFooter,
