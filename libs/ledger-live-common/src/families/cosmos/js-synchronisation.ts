@@ -56,6 +56,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
 
     switch (mainMessage.type) {
       case "transfer":
+        // TODO: handle IBC transfers here
         for (const message of correspondingMessages) {
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
           const sender = message.attributes.find(attr => attr.key === "sender")?.value;
@@ -78,42 +79,23 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
 
       case "withdraw_rewards": {
         op.type = "REWARD";
-
         const rewardShards: { amount: BigNumber; address: string }[] = [];
-
         let txRewardValue = new BigNumber(0);
-
         for (const message of correspondingMessages) {
-          const validatorAttribute = message.attributes.find(attr => attr.key === "validator");
-
-          if (validatorAttribute == null) {
-            continue;
+          const validator = message.attributes.find(attr => attr.key === "validator")?.value;
+          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
+          if (validator && amount && amount.indexOf(currency.units[1].code) != -1) {
+            rewardShards.push({
+              amount: new BigNumber(amount.replace(currency.units[1].code, "")),
+              address: validator,
+            });
+            txRewardValue = txRewardValue.plus(amount.replace(currency.units[1].code, ""));
           }
-
-          const validatorAddress = validatorAttribute.value;
-
-          let messageRewardValue = new BigNumber(0);
-          const amountAttributes = message.attributes.filter(
-            attribute =>
-              attribute.key === "amount" && attribute.value.includes(currency.units[1].code),
-          );
-          amountAttributes.forEach(amountAttribute => {
-            messageRewardValue = messageRewardValue.plus(
-              new BigNumber(amountAttribute.value.replace(currency.units[1].code, "")),
-            );
-          });
-          rewardShards.push({
-            amount: messageRewardValue,
-            address: validatorAddress,
-          });
-
-          txRewardValue = txRewardValue.plus(messageRewardValue);
         }
         op.value = txRewardValue;
         op.extra.validators = rewardShards;
         break;
       }
-
       case "delegate": {
         op.type = "DELEGATE";
         op.value = new BigNumber(fees);
@@ -155,7 +137,6 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
         op.extra.validators = redelegateShards;
         break;
       }
-
       case "unbond": {
         op.type = "UNDELEGATE";
         op.value = new BigNumber(fees);
