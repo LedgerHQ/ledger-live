@@ -11,7 +11,7 @@ import ReceiveConnectDevice, {
 } from "../../screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
 import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
-
+import ReceiveSelectNetwork from "../../screens/ReceiveFunds/02-SelectNetwork";
 import ReceiveAddAccountSelectDevice, {
   addAccountsSelectDeviceHeaderOptions,
 } from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
@@ -23,12 +23,18 @@ import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { track } from "../../analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { Flex } from "@ledgerhq/native-ui";
+import HelpButton from "../../screens/ReceiveFunds/HelpButton";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
-
+  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
+  const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
+  depositWithdrawBannerMobile;
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
@@ -78,8 +84,27 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveSelectCrypto}
         component={ReceiveSelectCrypto}
         options={{
-          headerLeft: () => null,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerTitle: "",
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.DepositSelectNetwork}
+        component={ReceiveSelectNetwork}
+        options={{
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerTitle: "",
+          headerRight: () => (
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              <HelpButton
+                url={depositNetworkBannerMobile?.params.url}
+                enabled={depositNetworkBannerMobile?.enabled ?? false}
+              />
+              <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
+            </Flex>
+          ),
         }}
       />
 
@@ -153,8 +178,16 @@ export default function ReceiveFundsNavigator() {
         options={{
           // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
-          headerLeft: () => null,
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />,
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerRight: () => (
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              <HelpButton
+                url={depositWithdrawBannerMobile?.params.url}
+                enabled={depositWithdrawBannerMobile?.enabled ?? false}
+              />
+              <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />
+            </Flex>
+          ),
         }}
       />
       {/* Receive Address Device Verification */}
@@ -163,9 +196,15 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveConfirmation}
         options={{
           headerTitle: "",
-          headerLeft: () => null,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => (
-            <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              <HelpButton
+                url={depositWithdrawBannerMobile?.params.url}
+                enabled={depositWithdrawBannerMobile?.enabled ?? false}
+              />
+              <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
+            </Flex>
           ),
         }}
       />

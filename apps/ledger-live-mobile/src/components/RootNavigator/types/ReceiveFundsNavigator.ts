@@ -10,6 +10,13 @@ export type ReceiveFundsStackParamList = {
         currency?: string;
       }
     | undefined;
+  [ScreenName.DepositSelectNetwork]:
+    | {
+        filterCurrencyIds?: string[];
+        currency?: string;
+        networks?: string[];
+      }
+    | undefined;
   [ScreenName.ReceiveSelectAccount]: {
     currency: CryptoCurrency | TokenCurrency;
     createTokenAccount?: boolean;

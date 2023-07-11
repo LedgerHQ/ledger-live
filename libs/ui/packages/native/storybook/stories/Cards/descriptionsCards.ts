@@ -184,3 +184,50 @@ const onPressDismiss = ()=> console.log("DISMISS")
 };
 \`\`\`
 `;
+
+export const descriptionBannerCard = `
+### A simple card like a banner.
+
+This simple card implementation component allows to display specific content for users
+
+## Usage
+
+### Import
+\`\`\`ts
+
+import { BannerCard } from "@ledgerhq/native-ui"
+\`\`\`
+
+
+### Props
+\`\`\`ts
+type CardProps = TouchableOpacityProps & {
+  title?: string;
+  onPressDismiss?: () => void;
+  LeftElement?: JSX.Element;
+  typeOfRightIcon: "arrow" | "close";
+};
+
+\`\`\`
+
+### Integration
+
+\`\`\`ts
+
+const MyCard = (): JSX.Element => {
+const onPress = ()=> console.log("PRESS")
+const onPressDismiss = ()=> console.log("DISMISS")
+  return (
+
+    <BannerCard
+    title="Announcement for promotion"
+    onPress={onPress}
+    onPressDismiss={onPressDismiss}
+    LeftElement={<WalletConnectMedium />}
+    typeOfRightIcon={"close"}
+    />
+  
+  );
+};
+\`\`\`
+`;
