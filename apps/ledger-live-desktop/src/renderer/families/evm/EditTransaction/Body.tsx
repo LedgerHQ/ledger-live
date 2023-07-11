@@ -9,9 +9,6 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
-import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
@@ -26,13 +23,14 @@ import StepFees, { StepFeesFooter } from "./steps/StepFees";
 import StepConnectDevice from "~/renderer/modals/Send/steps/StepConnectDevice";
 import StepSummary from "~/renderer/modals/Send/steps/StepSummary";
 import { StepSummaryFooter } from "./steps/StepSummaryFooter";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import StepConfirmation, {
   StepConfirmationFooter,
 } from "~/renderer/modals/Send/steps/StepConfirmation";
 import { St, StepId } from "./types";
 import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
+import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/lib/types";
+import { fromTransactionRaw } from "@ledgerhq/coin-evm/lib/transaction";
 
 export type Data = {
   account: AccountLike | undefined | null;
@@ -40,26 +38,27 @@ export type Data = {
   recipient?: string;
   amount?: BigNumber;
   transaction?: Transaction;
-  transactionRaw: EthereumTransactionRaw;
+  transactionRaw: TransactionRaw;
   transactionHash: string;
 };
 
 type OwnProps = {
   stepId: StepId;
+  params: Data;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
-  params: Data;
 };
 
 type StateProps = {
-  t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
+  t: TFunction;
   closeModal: (a: string) => void;
   openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
-type Props = {} & OwnProps & StateProps;
+
+type Props = OwnProps & StateProps;
 
 const createSteps = (): St[] => [
   {
@@ -140,7 +139,7 @@ const Body = ({
     return {
       account,
       parentAccount,
-      transaction: fromTransactionRaw(params.transactionRaw as EthereumTransactionRaw),
+      transaction: fromTransactionRaw(params.transactionRaw as TransactionRaw),
     };
   });
 
@@ -184,18 +183,19 @@ const Body = ({
   const error = transactionError || bridgeError;
   const mainAccount = getMainAccount(account, parentAccount);
   const feePerGas = new BigNumber(
-    EIP1559ShouldBeUsed(mainAccount.currency)
-      ? (params.transactionRaw as EthereumTransactionRaw).maxFeePerGas ?? "0"
-      : (params.transactionRaw as EthereumTransactionRaw).gasPrice ?? "0",
+    transaction?.type === 2
+      ? (params.transactionRaw as TransactionRaw).maxFeePerGas ?? "0"
+      : (params.transactionRaw as TransactionRaw).gasPrice ?? "0",
   );
-  const feeValue = new BigNumber(
-    (params.transactionRaw as EthereumTransactionRaw).userGasLimit ||
-      (params.transactionRaw as EthereumTransactionRaw).estimatedGasLimit ||
-      0,
-  ).times(feePerGas);
+
+  const feeValue = new BigNumber((params.transactionRaw as TransactionRaw).gasLimit || 0).times(
+    feePerGas,
+  );
+
   const haveFundToCancel = mainAccount.balance.gt(
     feeValue.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
   );
+
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue
       .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
@@ -241,6 +241,12 @@ const Body = ({
     status,
     bridgePending,
     optimisticOperation,
+    editType,
+    transactionRaw: params.transactionRaw,
+    transactionHash: params.transactionHash,
+    haveFundToSpeedup,
+    haveFundToCancel,
+    isOldestEditableOperation,
     openModal,
     onClose,
     setSigned,
@@ -252,12 +258,6 @@ const Body = ({
     onTransactionError: handleTransactionError,
     updateTransaction,
     setEditType: handleSetEditType,
-    editType,
-    transactionRaw: params.transactionRaw,
-    transactionHash: params.transactionHash,
-    haveFundToSpeedup,
-    haveFundToCancel,
-    isOldestEditableOperation,
   };
 
   return (
@@ -267,9 +267,9 @@ const Body = ({
   );
 };
 
-const m = compose(
+const ModalBody = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body) as React.ComponentType<OwnProps>;
 
-export default m;
+export default ModalBody;

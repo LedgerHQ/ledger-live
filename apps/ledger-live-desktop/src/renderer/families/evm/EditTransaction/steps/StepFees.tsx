@@ -10,7 +10,6 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
-import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { TransactionHasBeenValidatedError, NotEnoughGas } from "@ledgerhq/errors";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import logger from "~/renderer/logger";
@@ -33,9 +32,7 @@ const StepFees = (props: StepProps) => {
     return null;
   }
   const feePerGas = new BigNumber(
-    EIP1559ShouldBeUsed(mainAccount.currency)
-      ? transactionRaw?.maxFeePerGas ?? 0
-      : transactionRaw?.gasPrice ?? 0,
+    transaction?.type === 2 ? transactionRaw?.maxFeePerGas ?? 0 : transactionRaw?.gasPrice ?? 0,
   );
   const feeValue = new BigNumber(transactionRaw.gasLimit || 0)
     .times(feePerGas)
@@ -47,7 +44,7 @@ const StepFees = (props: StepProps) => {
   logger.log(`transactionRaw.maxPriorityFeePerGas: ${transactionRaw.maxPriorityFeePerGas}`);
 
   let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
-  if (EIP1559ShouldBeUsed(mainAccount.currency)) {
+  if (transaction?.type === 2) {
     // dividedBy 1000000000 to convert from wei to gwei
     maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw?.maxPriorityFeePerGas ?? 0)
       .dividedBy(1000000000)
@@ -79,7 +76,7 @@ const StepFees = (props: StepProps) => {
         </Fragment>
       )}
       <Alert type="primary">
-        {EIP1559ShouldBeUsed(mainAccount.currency) ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
+        {transaction?.type === 2 ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
           <ul style={{ marginLeft: "5px" }}>
             {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
             <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${
@@ -126,7 +123,7 @@ export const StepFeesFooter = ({
 
   const mainAccount = getMainAccount(account, parentAccount);
 
-  if (mainAccount.currency.family !== "ethereum") {
+  if (mainAccount.currency.family !== "evm") {
     return null;
   }
 

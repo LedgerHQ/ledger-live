@@ -6,11 +6,7 @@ import { StepProps } from "../types";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
-import { NotOwnedNft as Erc721NotOwnedNft } from "@ledgerhq/live-common/families/ethereum/modules/erc721";
-import {
-  NotOwnedNft as Erc1155NotOwnedNft,
-  NotEnoughNftOwned as Erc1155NotEnoughNftOwned,
-} from "@ledgerhq/live-common/families/ethereum/modules/erc1155";
+import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
 
 export const StepSummaryFooter = (props: StepProps) => {
   const { account, parentAccount, transactionHash, status, bridgePending, transitionTo } = props;
@@ -42,9 +38,8 @@ export const StepSummaryFooter = (props: StepProps) => {
   let errorCount = Object.keys(errors).length;
   if (
     errors.amount &&
-    ((errors.amount as Error) instanceof Erc721NotOwnedNft ||
-      (errors.amount as Error) instanceof Erc1155NotOwnedNft ||
-      (errors.amount as Error) instanceof Erc1155NotEnoughNftOwned)
+    ((errors.amount as Error) instanceof NotOwnedNft ||
+      (errors.amount as Error) instanceof NotEnoughNftOwned)
   ) {
     errorCount = errorCount - 1;
   }
