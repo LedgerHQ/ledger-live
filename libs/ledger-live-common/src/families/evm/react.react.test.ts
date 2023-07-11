@@ -1,10 +1,10 @@
-import { renderHook } from "@testing-library/react-hooks";
-import { useGasOptions } from "./react";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { Transaction } from "@ledgerhq/coin-evm/types";
 import BigNumber from "bignumber.js";
+import { renderHook } from "@testing-library/react-hooks";
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
-import type { GasTrackerApi } from "@ledgerhq/coin-evm/api/gasTracker/index";
+import type { GasTrackerApi } from "@ledgerhq/coin-evm/api/gasTracker/types";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { useGasOptions } from "./react";
 
 jest.useFakeTimers();
 jest.spyOn(global, "setInterval");
@@ -20,7 +20,7 @@ const fakeCurrency: Partial<CryptoCurrency> = {
     chainId: 1,
     gasTracker: {
       type: "ledger",
-      uri: "my-gas-tracker.com",
+      explorerId: "eth",
     },
   },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
