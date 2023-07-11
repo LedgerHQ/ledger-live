@@ -25,11 +25,12 @@ export const Container = styled(TouchableOpacity)`
   height: 72px;
   padding: ${(p) => p.theme.space[6]}px;
   align-items: center;
+  justify-content: space-between;
   z-index: 5;
 `;
 
 export const CloseContainer = styled(TouchableOpacity)`
-  background-color: ${(p) => p.theme.colors.neutral.c30};
+  background-color: ${(p) => p.theme.colors.opacityDefault.c05};
   border-radius: 50;
   height: 24px;
   width: 24px;
@@ -72,11 +73,11 @@ const CardContainer = (props: CardProps): React.ReactElement => {
       </Flex>
 
       <Text
-        flexGrow={1}
         mx={4}
         variant="large"
         fontWeight="medium"
         numberOfLines={3}
+        maxWidth={"75%"}
         color="neutral.c100"
       >
         {title}

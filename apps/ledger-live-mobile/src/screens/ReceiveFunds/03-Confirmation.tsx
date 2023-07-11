@@ -244,7 +244,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }
 
   return (
-    <Flex flex={1} mb={9}>
+    <Flex flex={1} mb={insets.bottom}>
       <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
         <TrackScreen category="Receive" name="Qr Code" currency={currency.name} />

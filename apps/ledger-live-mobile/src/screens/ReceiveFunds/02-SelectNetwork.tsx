@@ -164,7 +164,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
       {depositNetworkBannerMobile?.enabled && displayBanner && (
         <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-          <Flex pb={insets.bottom} px={6}>
+          <Flex pb={insets.bottom + 2} px={6}>
             <BannerCard
               typeOfRightIcon="close"
               title={t("transfer.receive.selectNetwork.bannerTitle")}
