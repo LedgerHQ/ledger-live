@@ -55,7 +55,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   updateTransaction,
   transactionRaw,
 }) => {
-  invariant(transaction.family === "evm", "FeeField: ethereum family expected");
+  invariant(transaction.family === "evm", "FeeField: evm family expected");
 
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
