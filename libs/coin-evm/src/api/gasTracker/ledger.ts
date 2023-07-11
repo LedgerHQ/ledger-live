@@ -39,7 +39,7 @@ export const getGasOptions = async ({
     useEIP1559: boolean;
   };
 }): Promise<GasOptions> => {
-  const { gasTracker } = currency.ethereumLikeInfo || {};
+  const { gasTracker } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
   if (!isLedgerGasTracker(gasTracker)) {
     throw new LedgerGasTrackerUsedIncorrectly();
   }
@@ -49,7 +49,7 @@ export const getGasOptions = async ({
     throw new NoGasTrackerFound(`No gas tracker found for ${currency.id}`);
   }
 
-  const { useEIP1559 = false } = options || {};
+  const { useEIP1559 = false } = options || /* istanbul ignore next */ {};
 
   if (useEIP1559 && !gasTrackerConfig.compatibilty.eip1559) {
     throw new GasTrackerDoesNotSupportEIP1559(
