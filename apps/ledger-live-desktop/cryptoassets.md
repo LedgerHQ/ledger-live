@@ -43,7 +43,7 @@
 | MultiversX | EGLD | YES | elrond |
 | NEAR | NEAR | YES | near |
 | Onomy | NOM | YES | onomy |
-| Optimism | ETH | YES | optimism |
+| OP Mainnet | ETH | YES | optimism |
 | Osmosis | OSMO | YES | osmo |
 | Peercoin | PPC | YES | peercoin |
 | Persistence | XPRT | YES | persistence |

@@ -774,7 +774,7 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
   CRYPTO_ASSET_SEARCH_KEYS: {
     def: ["ticker", "name", "keywords"],
     parser: stringArrayParser,
-    desc: "Fuse search in `ticker`, `name`, `keywords` values in cryptoassets list",
+    desc: "Fuse search attributes to find a currency according to user input",
   },
   EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
     def: 0.1,
