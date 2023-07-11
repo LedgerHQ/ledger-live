@@ -59,16 +59,19 @@ describe("EVM Family", () => {
             maxFeePerGas: new BigNumber(9),
             maxPriorityFeePerGas: new BigNumber(1),
             gasPrice: null,
+            nextBaseFee: new BigNumber(4),
           },
           medium: {
             maxFeePerGas: new BigNumber(10),
             maxPriorityFeePerGas: new BigNumber(2),
             gasPrice: null,
+            nextBaseFee: new BigNumber(4),
           },
           fast: {
             maxFeePerGas: new BigNumber(11),
             maxPriorityFeePerGas: new BigNumber(3),
             gasPrice: null,
+            nextBaseFee: new BigNumber(4),
           },
         };
 
@@ -88,16 +91,19 @@ describe("EVM Family", () => {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             gasPrice: new BigNumber(1),
+            nextBaseFee: null,
           },
           medium: {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             gasPrice: new BigNumber(2),
+            nextBaseFee: null,
           },
           fast: {
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             gasPrice: new BigNumber(3),
+            nextBaseFee: null,
           },
         };
 

@@ -19,6 +19,7 @@ jest.spyOn(rpcAPI, "getFeesEstimation").mockImplementation(async () => ({
   gasPrice: new BigNumber(10000),
   maxFeePerGas: new BigNumber(10000),
   maxPriorityFeePerGas: new BigNumber(0),
+  nextBaseFee: new BigNumber(10000),
 }));
 
 describe("EVM Family", () => {

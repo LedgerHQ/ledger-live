@@ -239,8 +239,8 @@ export type CryptoCurrency = CurrencyCommon & {
   // used for UI
   color: string;
   family: string;
+  // the average time between 2 blocks, in seconds
   blockAvgTime?: number;
-  // in seconds
   supportsSegwit?: boolean;
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
