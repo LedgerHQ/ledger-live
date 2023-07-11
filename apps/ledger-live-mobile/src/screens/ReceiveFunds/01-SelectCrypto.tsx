@@ -72,26 +72,29 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       });
 
       const accs = findAccountByCurrency(accounts, currency);
+      const networks: string[] = ["ethereum", "polygon", "bsc", "cosmos"];
+
       if (accs.length > 0) {
         // if we found one or more accounts of the given currency we select account
-        navigation.navigate(ScreenName.DepositSelectNetwork, {
-          networks: ["ethereum", "polygon", "bsc", "cosmos"],
-        });
-      } else if (currency.type === "TokenCurrency") {
-        // cases for token currencies
-        const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
 
-        if (parentAccounts.length > 1) {
-          // if we found one or more accounts of the parent currency we select account
-
+        if (networks.length > 1) {
+          navigation.navigate(ScreenName.DepositSelectNetwork, {
+            networks,
+          });
+        } else {
           navigation.navigate(ScreenName.ReceiveSelectAccount, {
             currency,
             createTokenAccount: true,
           });
-        } else if (parentAccounts.length === 1) {
-          // if we found only one account of the parent currency we go straight to QR code
-          navigation.navigate(ScreenName.ReceiveConfirmation, {
-            accountId: parentAccounts[0].id,
+        }
+      } else if (currency.type === "TokenCurrency") {
+        // cases for token currencies
+        const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
+
+        if (parentAccounts.length > 0) {
+          // if we found one or more accounts of the parent currency we select account
+
+          navigation.navigate(ScreenName.ReceiveSelectAccount, {
             currency,
             createTokenAccount: true,
           });
@@ -103,10 +106,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           });
         }
       } else {
-        // else we create a currency account
-        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-          currency,
-        });
+        if (networks.length > 1) {
+          // we redirect to choose network on wich one you want to create the account
+          navigation.navigate(ScreenName.DepositSelectNetwork, {
+            networks,
+          });
+        } else {
+          // else we create a currency account
+          navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
+            currency,
+          });
+        }
       }
     },
     [accounts, navigation],

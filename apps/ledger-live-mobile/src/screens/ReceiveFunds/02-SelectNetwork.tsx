@@ -70,7 +70,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
       const accs = findAccountByCurrency(accounts, currency);
       if (accs.length > 0) {
-        // if we found one or more accounts of the given currency we select account
+        // if we found one or more accounts of the given currency we go to select account
         navigation.navigate(ScreenName.ReceiveSelectAccount, {
           currency,
         });
@@ -78,17 +78,10 @@ export default function SelectNetwork({ navigation, route }: Props) {
         // cases for token currencies
         const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
 
-        if (parentAccounts.length > 1) {
+        if (parentAccounts.length > 0) {
           // if we found one or more accounts of the parent currency we select account
 
           navigation.navigate(ScreenName.ReceiveSelectAccount, {
-            currency,
-            createTokenAccount: true,
-          });
-        } else if (parentAccounts.length === 1) {
-          // if we found only one account of the parent currency we go straight to QR code
-          navigation.navigate(ScreenName.ReceiveConfirmation, {
-            accountId: parentAccounts[0].id,
             currency,
             createTokenAccount: true,
           });
