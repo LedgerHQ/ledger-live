@@ -1,24 +1,24 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { TouchableOpacity, Share } from "react-native";
+import { Share, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
-import { useTranslation, Trans } from "react-i18next";
-import type { Account, TokenAccount, AccountLike } from "@ledgerhq/types-live";
+import { useTranslation } from "react-i18next";
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
   getMainAccount,
   getAccountCurrency,
-  getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
+import { Flex, Text, Icons, Button, Notification, Box } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
-import CopyLink from "../../components/CopyLink";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import AdditionalInfoModal from "./AdditionalInfoModal";
@@ -31,6 +31,10 @@ import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
+import Clipboard from "@react-native-community/clipboard";
+import { v4 as uuid } from "uuid";
+import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<
@@ -44,6 +48,9 @@ type Props = {
   parentAccount?: Account;
   readOnlyModeEnabled?: boolean;
 } & ScreenProps;
+
+const StyledTouchableHightlight = styled.TouchableHighlight<BaseStyledProps>``;
+const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>``;
 
 export default function ReceiveConfirmation({ navigation }: Props) {
   const route = useRoute<ScreenProps["route"]>();
@@ -62,6 +69,7 @@ export default function ReceiveConfirmation({ navigation }: Props) {
 function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { pushToast } = useToasts();
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
@@ -100,6 +108,8 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
+  const QRContainerSize = QRSize + 16 * 4;
+
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
 
@@ -134,9 +144,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: getAccountName(account as AccountLike),
+      //headerTitle: getAccountName(account as AccountLike),
+      headerTitle: () => (
+        <ConfirmationHeaderTitle accountCurrency={currency}></ConfirmationHeaderTitle>
+      ),
     });
-  }, [colors, navigation, account]);
+  }, [colors, navigation, account, currency]);
 
   useEffect(() => {
     setIsVerifiedToastDisplayed(verified);
@@ -154,11 +167,25 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     }
   }, [mainAccount?.freshAddress]);
 
-  const onCopy = useCallback(() => {
+  const onCopyAddress = useCallback(() => {
+    if (!mainAccount?.freshAddress) return;
+    Clipboard.setString(mainAccount.freshAddress);
     track("button_clicked", {
       button: "Copy",
     });
-  }, []);
+    const options = {
+      enableVibrateFallback: false,
+      ignoreAndroidSystemSettings: false,
+    };
+
+    ReactNativeHapticFeedback.trigger("soft", options);
+    pushToast({
+      id: `copy-receive`,
+      type: "success",
+      icon: "success",
+      title: t("transfer.receive.addressCopied"),
+    });
+  }, [mainAccount?.freshAddress, pushToast, t]);
 
   if (!account || !currency || !mainAccount) return null;
 
@@ -195,110 +222,114 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
         <TrackScreen category="Receive" name="Qr Code" currency={currency.name} />
-        <Flex p={6} alignItems="center" justifyContent="center">
-          <Text
-            testID="receive-header-step3-title"
-            color="neutral.c100"
-            fontWeight="semiBold"
-            variant="h4"
-            mb={3}
+        <Flex p={0} alignItems="center" justifyContent="center">
+          <StyledTouchableHightlight
+            activeOpacity={1}
+            underlayColor={colors.palette.opacityDefault.c10}
+            alignItems="center"
+            justifyContent="center"
+            width={QRContainerSize}
+            p={6}
+            mt={10}
+            bg={"opacityDefault.c05"}
+            borderRadius={2}
+            onPress={onCopyAddress}
           >
-            {t("transfer.receive.receiveConfirmation.title", {
-              currencyTicker: currency.ticker,
-            })}
-          </Text>
-          <Flex>
-            {verified ? (
-              <Flex alignItems="center" justifyContent="center" flexDirection="row">
-                <Icons.ShieldCheckMedium color="success.c50" size={16} />
-                <Text color="success.c50" fontWeight="medium" variant="paragraphLineHeight" ml={2}>
-                  {t("transfer.receive.receiveConfirmation.addressVerified")}
+            <View>
+              <Box mb={6}>
+                <Text
+                  variant={"body"}
+                  fontWeight={"semiBold"}
+                  textAlign={"center"}
+                  numberOfLines={1}
+                >
+                  {mainAccount.name}
                 </Text>
-              </Flex>
-            ) : (
-              <Flex>
-                <TouchableOpacity onPress={onRetry}>
+                {verified && (
                   <Flex alignItems="center" justifyContent="center" flexDirection="row">
-                    <Icons.ShieldSecurityMedium color="warning.c50" size={16} />
-                    <Text
-                      color="warning.c50"
-                      fontWeight="medium"
-                      variant="paragraphLineHeight"
-                      ml={2}
-                    >
-                      {t("transfer.receive.receiveConfirmation.verifyAddress")}
+                    <Icons.ShieldSecurityMedium color="success.c60" size={16} />
+                    <Text variant={"small"} color="success.c60" fontWeight="medium" ml={2}>
+                      {t("transfer.receive.receiveConfirmation.addressVerified")}
                     </Text>
                   </Flex>
-                </TouchableOpacity>
-                <Text
-                  variant="small"
-                  fontWeight="medium"
-                  color="neutral.c70"
-                  textAlign="center"
-                  mt={3}
+                )}
+              </Box>
+              <Flex
+                p={6}
+                borderRadius={24}
+                position="relative"
+                bg="constant.white"
+                borderWidth={1}
+                borderColor="neutral.c40"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <QRCode size={QRSize} value={mainAccount.freshAddress} ecl="H" />
+                <Flex
+                  alignItems="center"
+                  justifyContent="center"
+                  width={QRSize * 0.3}
+                  height={QRSize * 0.3}
+                  bg="constant.white"
+                  position="absolute"
                 >
-                  {t("transfer.receive.receiveConfirmation.adviceVerify")}
-                </Text>
+                  <CurrencyIcon
+                    currency={currency}
+                    color={colors.constant.white}
+                    bg={getCurrencyColor(currency) || colors.constant.black}
+                    size={48}
+                    circle
+                  />
+                </Flex>
               </Flex>
-            )}
-          </Flex>
-          <Flex alignItems="center" justifyContent="center" mt={10}>
-            <Flex
-              p={6}
-              borderRadius={24}
-              position="relative"
-              bg="constant.white"
-              borderWidth={1}
-              borderColor="neutral.c40"
+              <Text variant={"body"} fontWeight={"medium"} textAlign={"center"} mt={6}>
+                {mainAccount.freshAddress}
+              </Text>
+            </View>
+          </StyledTouchableHightlight>
+          <Flex width={QRContainerSize} flexDirection="row" mt={6}>
+            <StyledTouchableOpacity
+              p={4}
+              bg={"opacityDefault.c05"}
+              borderRadius={2}
+              mr={4}
+              onPress={onShare}
             >
-              <QRCode size={QRSize} value={mainAccount.freshAddress} ecl="H" />
-            </Flex>
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              width={QRSize * 0.3}
-              height={QRSize * 0.3}
-              bg="constant.white"
-              position="absolute"
+              <Icons.ShareMedium size={20}></Icons.ShareMedium>
+            </StyledTouchableOpacity>
+            <StyledTouchableOpacity
+              p={4}
+              bg={"opacityDefault.c05"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              flexDirection="row"
+              flex={1}
+              borderRadius={2}
+              onPress={onCopyAddress}
             >
-              <CurrencyIcon
-                currency={currency}
-                color={colors.constant.white}
-                bg={getCurrencyColor(currency) || colors.constant.black}
-                size={48}
-                circle
-              />
-            </Flex>
+              <Icons.CopyMedium size={20}></Icons.CopyMedium>
+              <Text variant={"body"} fontWeight={"medium"} pl={3}>
+                Copy address
+              </Text>
+            </StyledTouchableOpacity>
           </Flex>
-          <Flex
-            mt={10}
-            bg={"neutral.c30"}
-            borderRadius={8}
-            p={6}
-            mx={6}
-            flexDirection="row"
-            width="100%"
-            justifyContent={"space-between"}
-          >
-            <Text numberOfLines={4} flex={1} fontWeight="semiBold">
-              {mainAccount.freshAddress}
+          <Flex px={6}>
+            <Text
+              variant="small"
+              fontWeight="medium"
+              color="neutral.c70"
+              mt={6}
+              mb={4}
+              textAlign="center"
+            >
+              {t("transfer.receive.receiveConfirmation.sendWarning", {
+                currencyName: currency.name,
+                currencyTicker: currency.ticker,
+              })}
             </Text>
-            <CopyLink
-              onCopy={onCopy}
-              string={mainAccount.freshAddress}
-              replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
-            >
-              {t("transfer.receive.copyAddress")}
-            </CopyLink>
           </Flex>
-          <Text variant="body" fontWeight="medium" color="neutral.c70" mt={6} textAlign="center">
-            {t("transfer.receive.receiveConfirmation.sendWarning", {
-              currencyName: currency.name,
-              currencyTicker: currency.ticker,
-            })}
-          </Text>
+          {CustomConfirmationAlert && <CustomConfirmationAlert mainAccount={mainAccount} />}
         </Flex>
-        {CustomConfirmationAlert && <CustomConfirmationAlert mainAccount={mainAccount} />}
       </NavigationScrollView>
       <Flex m={6}>
         {isToastDisplayed ? (
@@ -320,8 +351,8 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             onClose={hideVerifiedToast}
           />
         ) : (
-          <Button type="shade" outline size="large" onPress={onShare}>
-            {t("transfer.receive.shareAddress")}
+          <Button type="main" size="large" onPress={onRetry}>
+            {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
         )}
       </Flex>

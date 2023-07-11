@@ -2840,7 +2840,7 @@
       "address": "Address for account",
       "copyAddress": "Copy",
       "shareAddress": "Share address",
-      "addressCopied": "Copied",
+      "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
       "selectCrypto": {
         "title": "Choose a crypto to receive"
@@ -2871,8 +2871,9 @@
       },
       "receiveConfirmation": {
         "title": "Receive {{currencyTicker}}",
+        "onCurrencyName": "On {{currencyName}}",
         "addressVerified": "Address verified",
-        "verifyAddress": "Tap here to verify your address",
+        "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
         "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
         "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
