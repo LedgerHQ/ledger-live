@@ -56,6 +56,7 @@
     "forgetDevice" : "Retirer l’appareil",
     "help" : "Aide",
     "saveLogs" : "Enregistrer les logs",
+    "scrollToTop" : "Haut de page",
     "sync" : {
       "ago" : "Synchronisé {{time}}"
     },
@@ -413,6 +414,9 @@
     "MaxFeeLow" : {
       "title" : "Frais maximaux trop bas. La transaction peut rester en attente un moment."
     },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "Frais de priorité trop bas. Entrez un montant supérieur aux frais de priorité de la transaction initiale"
+    },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
       "description" : "Vérifiez votre connexion Internet."
@@ -496,6 +500,9 @@
     "TimeoutTagged" : {
       "title" : "Le serveur a mis trop longtemps à répondre ({{tag}}).",
       "description" : "Délai d’attente écoulé"
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "Transaction déjà validée"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Transaction refusée sur l’appareil",
@@ -1199,8 +1206,8 @@
       "start" : "Commencer",
       "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
-      "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "terms" : "En continuant, vous acceptez nos",
+      "termsLink" : "Conditions d’utilisation",
       "privacyLink" : "Politique de confidentialité",
       "and" : "et",
       "recoverLogIn" : "Se connecter à Ledger Recover"
@@ -1460,11 +1467,11 @@
         "cta" : "Étape suivante"
       },
       "recoveryPhrase" : {
-        "title" : "Phrase de récupération",
-        "desc" : "Votre phrase de récupération (\"recovery phrase\") est une liste secrète de 24 mots qui sauvegarde vos clés privées.",
-        "desc_1" : "Votre Ledger Nano génère une phrase de récupération unique. Ledger ne conserve pas de copie de celle-ci.",
+        "title" : "Votre phrase de récupération secrète",
+        "desc" : "Votre phrase de récupération secrète est une liste de 24 mots qui sauvegarde vos clés privées.",
+        "desc_1" : "Votre Ledger Nano génère une phrase de récupération secrète unique. Ledger ne la connaît pas.",
         "cta" : "Étape suivante",
-        "checkboxDesc" : "Je comprends que si je perds cette phrase de récupération, je ne pourrais plus accéder à mes cryptos au cas où je n’ai plus accès à mon Nano."
+        "checkboxDesc" : "Je comprends que si un tiers obtient ma phrase de récupération secrète, mes actifs sont en danger."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1795,7 @@
         "title" : "Les cryptos sécurisées par mon appareil Ledger sont stockées :",
         "answers" : {
           "correct" : "Sur la blockchain",
-          "wrong" : "Dans mon appareil Ledger"
+          "wrong" : "Sur mon Ledger Nano"
         },
         "modal" : {
           "text" : "Vos cryptos sont toujours stockées sur la blockchain. Votre wallet physique ne détient que votre clé privée, qui vous donne accès à vos cryptos.",
@@ -1796,10 +1803,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Si quelqu’un connaît ma phrase de récupération ou si elle n’est plus en sécurité :",
+        "title" : "Si un tiers a accès à ma phrase de récupération secrète...",
         "answers" : {
-          "correct" : "Mes cryptos ne sont plus en sécurité et je dois les transférer en lieu sûr.",
-          "wrong" : "Ledger m’en enverra une copie."
+          "correct" : "Mes actifs sont en danger et cette personne pourrait y avoir accès.",
+          "wrong" : "Pas de problème, tant que je m’en souviens toujours."
         },
         "modal" : {
           "text" : "Toute personne qui connaît votre phrase de récupération peut voler vos crypto-actifs.\nSi vous la perdez, vous devez rapidement mettre vos cryptos en lieu sûr.",
@@ -1807,7 +1814,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Lorsque je connecte mon Nano à l’app Ledger Live, ma clé privée est :",
+        "title" : "Lorsque je connecte mon Ledger Nano à l’application Ledger Live, ma clé privée est...",
         "answers" : {
           "correct" : "Toujours hors ligne",
           "wrong" : "Brièvement connectée à Internet"
@@ -1860,7 +1867,7 @@
       },
       "loading" : {
         "title" : "Appairage avec votre {{deviceName}}...",
-        "subtitle" : "Confirmez le code sur votre {{productName}}."
+        "subtitle" : "Confirmez le code sur votre {{productName}}, si cela est demandé."
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1906,7 @@
       },
       "loading" : {
         "title" : "Appairage avec votre {{deviceName}}",
-        "subtitle" : "Confirmez le code sur votre {{productName}}."
+        "subtitle" : "Confirmez le code sur votre {{productName}}, si cela est demandé."
       },
       "error" : {
         "title" : "Échec de l’appairage",
@@ -1925,10 +1932,10 @@
       "content" : "Connexion à votre {{productName}} perdue. Reconnexion en cours..."
     },
     "helpDrawer" : {
-      "title" : "Besoin d’aide pour configurer votre Ledger ?",
+      "title" : "Besoin d’aide ?",
       "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal",
       "docCta" : "Consulter notre FAQ",
-      "supportCta" : "S’adresser à un agent"
+      "supportCta" : "Accéder à un expert"
     },
     "pairingStep" : {
       "title" : "Votre {{productName}} est appairé",
@@ -1948,7 +1955,7 @@
       "choiceRestoreDirectOrRecover" : "Placeholder : Choisissez de restaurer directement ou d’utiliser Ledger Recover",
       "recoverSeed" : "Placeholder : Ledger Recover",
       "restoreSeed" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
-      "selection" : "Sur votre {{productName}}, choisissez l’option de configuration qui vous convient.",
+      "selection" : "Sur votre {{productName}}, choisissez votre option de configuration préférée.",
       "selectionContinueOnDevice" : "Choisissez une option sur votre {{productName}}",
       "newSeedDescription" : "Regardez les vidéos ci-dessous pour en savoir plus sur vos mots secrets.",
       "newSeedContinueOnDevice" : "Faites-le sur votre {{productName}}",
@@ -2014,7 +2021,7 @@
       }
     },
     "appsStep" : {
-      "title" : "Installez des apps blockchain"
+      "title" : "Apps blockchain"
     },
     "readyStep" : {
       "title" : "Configuration terminée",
@@ -2472,7 +2479,7 @@
       }
     },
     "noResultsFound" : "Aucun actif trouvé",
-    "noResultsDesc" : "Merci de vérifier l’orthographe et réessayer",
+    "noResultsDesc" : "Veuillez vérifier l’orthographe et réessayer.",
     "readOnly" : {
       "moreCrypto" : {
         "title" : "et plus 6 000 autres",
@@ -2892,7 +2899,7 @@
         "verify" : "Vous n’avez pas vérifié votre adresse {{accountType}}. Vérifiez vos adresses sur votre appareil pour une sécurité optimale."
       },
       "noResultsFound" : "Aucun crypto-actif trouvé",
-      "noResultsDesc" : "Merci de vérifier l’orthographe et réessayer"
+      "noResultsDesc" : "Veuillez vérifier l’orthographe et réessayer."
     },
     "buy" : {
       "title" : "Acheter",
@@ -3182,7 +3189,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
-          }
+          },
+          "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
       }
     },
@@ -3513,6 +3521,39 @@
       "maxSpendable" : {
         "title" : "Montant maximal à dépenser",
         "description" : "Le montant maximal à dépenser est le solde total dans un compte qui est disponible pour effectuer une transaction."
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Accélérer ou annuler",
+    "header" : "Modifier la transaction",
+    "learnMore" : "En savoir plus",
+    "panel" : {
+      "stuckMessage" : "Votre transaction sortante la plus ancienne est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
+      "speedupMessage" : "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente : ",
+      "networkfee" : "Frais de réseau = {{amount}} {{unit}}",
+      "maxFee" : "Frais max. = {{amount}} gwei",
+      "maxPriorityFee" : "Frais de priorité max. = {{amount}} gwei",
+      "gasPrice" : "Prix du gaz = {{amount}} gwei"
+    },
+    "speedUp" : {
+      "title" : "Accélérer",
+      "description" : "Renvoyez votre transaction avec des frais de réseau plus élevés."
+    },
+    "cancel" : {
+      "title" : "Annuler",
+      "description" : "Envoyez 0 {{ticker}} à votre propre adresse.\nLes frais de réseau doivent être 30 % plus élevés que les frais de la transaction à annuler."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Vous ne pouvez pas annuler la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
+      "notEnoughFundsToSpeedup" : "Vous ne pouvez pas accélérer la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
+      "notlowestNonceToSpeedup" : "La fonctionnalité permettant d’accélérer la transaction n’est pas disponible. Votre transaction est en attente parce qu’une transaction antérieure est bloquée. Vous pouvez attendre qu’elle soit confirmée, l’accélérer ou l’annuler.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "Impossible de l’accélérer ou de l’annuler",
+        "description" : "Cette transaction a déjà été validée."
       }
     }
   },
@@ -3933,7 +3974,7 @@
       "noAppsInstalled" : "Aucune app installée sur votre appareil",
       "noAppsDescription" : "Allez dans le Catalogue pour installer des apps.",
       "noResultsFound" : "Aucun résultat",
-      "noResultsDesc" : "Merci de vérifier l’orthographe et réessayer",
+      "noResultsDesc" : "Veuillez vérifier l’orthographe et réessayer.",
       "versionNew" : "(NOUV. {{newVersion}})",
       "searchApps" : "Rechercher"
     },
@@ -4075,7 +4116,7 @@
   },
   "FirmwareUpdate" : {
     "title" : "Mettre à jour le micrologiciel",
-    "updateDevice" : "Mettez à jour votre {{deviceName}}",
+    "updateDevice" : "Mise à jour de votre {{deviceName}}",
     "updateDone" : "Vous avez terminé ! Votre {{deviceName}} est à jour",
     "updateDoneDescription" : "Nouvelle version du système d’exploitation : {{firmwareVersion}}",
     "preparing" : "Préparation de la mise à jour du micrologiciel... Veuillez garder votre appareil allumé et connecté. Nous vous informerons de la progression de la mise à jour.",
@@ -4126,7 +4167,8 @@
       "preparing" : "Préparation de la mise à jour",
       "firmware" : "Téléchargement de la mise à jour",
       "prepareUpdate" : {
-        "titleActive" : "Préparation de l’installation de la mise à jour",
+        "titleBackingUp" : "Sauvegarde des apps et des réglages",
+        "titleTransferring" : "Transfert de la mise à jour",
         "description" : "Sauvegarde de vos réglages et transfert de la mise à jour vers votre {{deviceName}}."
       },
       "installUpdate" : {
@@ -4139,14 +4181,18 @@
         "description" : "Vos paramètres et vos apps blockchain seront restaurés.",
         "restoreLockScreenPicture" : "Restauration du fond d’écran",
         "restoreLanguage" : "Restauration de la langue",
-        "installingApps" : "Installation des apps",
+        "imageLoadRequested" : "Autorisez la restauration du fond d’écran sur {{deviceName}}.",
+        "imageCommitRequested" : "Confirmez ce fond d’écran sur votre {{deviceName}}",
+        "allowLanguageInstallation" : "Autorisez la restauration de la langue sur votre {{deviceName}}",
+        "allowAppsRestoration" : "Autorisez la restauration des apps sur votre {{deviceName}}",
         "errors" : {
           "description" : "Vous pouvez réessayer de restaurer, ou choisir de sauter cette étape.",
           "LanguageInstallRefusedOnDevice" : "Changement de langue annulé sur {{deviceName}}",
           "ImageLoadRefusedOnDevice" : "Restauration du fond d’écran de verrouillage annulée sur {{deviceName}}",
           "ImageCommitRefusedOnDevice" : "Restauration du fond d’écran de verrouillage annulée sur {{deviceName}}",
           "UserRefusedAllowManager" : "Restauration des apps annulée sur {{deviceName}}"
-        }
+        },
+        "installingApps" : "Restauration des apps"
       }
     },
     "newVersion" : "Nouvelle version {{version}} disponible pour votre {{deviceName}}",
@@ -4159,6 +4205,10 @@
     "errors" : {
       "TimeoutError" : {
         "title" : "Délai écoulé",
+        "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
+      },
+      "CantOpenDevice" : {
+        "title" : "Échec de la connexion",
         "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
       }
     }
