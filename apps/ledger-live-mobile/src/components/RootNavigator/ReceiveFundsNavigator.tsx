@@ -31,7 +31,7 @@ export default function ReceiveFundsNavigator() {
 
   const onClose = useCallback(() => {
     track("button_clicked", {
-      button: "Close 'x'",
+      button: "Close",
       screen: route.name,
     });
   }, [route]);
@@ -78,6 +78,7 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveSelectCrypto}
         component={ReceiveSelectCrypto}
         options={{
+          headerLeft: () => null,
           headerTitle: "",
         }}
       />
