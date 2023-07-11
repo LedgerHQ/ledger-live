@@ -71,8 +71,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
-      track("currency_clicked", {
-        currency: currency.name,
+      track("asset_clicked", {
+        asset: currency.name,
+        page: "Choose a crypto to secure"
       });
 
       const accs = findAccountByCurrency(accounts, currency);
@@ -143,7 +144,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="Receive" name="Select Crypto" />
+      <TrackScreen category="Receive" name="Choose a crypto to secure" />
       <Text variant="h4" fontWeight="semiBold" mx={6} mb={3} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
       </Text>
