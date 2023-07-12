@@ -68,6 +68,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const shouldSkipAmount = useMemo(() => {
     if (transaction?.family === "evm") {
       return transaction.mode === "erc721";
+      // TODO: should be "evm" before the merge
     } else if (transaction?.family === "ethereum") {
       return transaction.mode === "erc721.transfer";
     }

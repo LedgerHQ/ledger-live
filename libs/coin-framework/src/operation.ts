@@ -243,10 +243,13 @@ export const isAddressPoisoningOperation = (
 export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
   let isEthFamily = false;
   if (account.type === "Account") {
+    // TODO: should be "evm" when we do the merge
     isEthFamily = account.currency.family === "ethereum";
   } else if (account.type === "TokenAccount") {
+    // TODO: should be "evm" when we do the merge
     isEthFamily = account.token.parentCurrency.family === "ethereum";
   }
+
   return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
 }
 

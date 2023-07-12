@@ -223,6 +223,7 @@ const NftViewer = ({ route }: Props) => {
           contract: nft?.contract,
         },
       });
+      // TODO: should be "evm" before doing the merge
     } else if (defaultTransaction.family === "ethereum") {
       transaction = bridge.updateTransaction(defaultTransaction, {
         tokenIds: [nft?.tokenId],
