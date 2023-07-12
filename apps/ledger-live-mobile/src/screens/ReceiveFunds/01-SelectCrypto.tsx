@@ -61,7 +61,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   useEffect(() => {
     groupedCurrenciesByProvider(displayableCoinsAndTokens).then(res => {
       setCurrenciesAndProvider(res);
-
       setCurrencies(Object.values(res).map(value => value.currenciesByNetwork[0]));
     });
   }, [displayableCoinsAndTokens]);

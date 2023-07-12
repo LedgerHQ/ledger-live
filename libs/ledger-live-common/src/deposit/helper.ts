@@ -1,15 +1,6 @@
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  currenciesByMarketcap,
-  findCryptoCurrencyById,
-  findTokenById,
-  useCurrenciesByMarketcap,
-} from "../currencies";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { currenciesByMarketcap, findCryptoCurrencyById, findTokenById } from "../currencies";
 import { MappedAsset, GroupedCurrency } from "./type";
-
-function getMaxValueIndex(obj) {
-  return Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b));
-}
 
 const groupedCurrenciesByProvider = async (data: MappedAsset[]) => {
   const groupedCurrencies = new Map<string, GroupedCurrency>();

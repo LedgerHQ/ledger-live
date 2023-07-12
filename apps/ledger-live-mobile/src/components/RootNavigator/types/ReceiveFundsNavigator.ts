@@ -1,6 +1,5 @@
 import {
   CryptoCurrency,
-  CryptoCurrencyId,
   CryptoOrTokenCurrency,
   Currency,
   TokenCurrency,
