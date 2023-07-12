@@ -1,4 +1,4 @@
-import React, { Fragment, PureComponent, memo } from "react";
+import React, { Fragment, memo, useState } from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
@@ -107,74 +107,77 @@ const StepFees = (props: StepProps) => {
   );
 };
 
-export class StepFeesFooter extends PureComponent<StepProps> {
-  state = {
-    transactionHasBeenValidated: false,
-  };
+export const StepFeesFooter: React.FC<StepProps> = props => {
+  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
 
-  onNext = async () => {
-    const { transitionTo } = this.props;
+  const {
+    account,
+    parentAccount,
+    transaction,
+    transactionHash,
+    bridgePending,
+    status,
+    transitionTo,
+  } = props;
+
+  const onNext = async () => {
     transitionTo("summary");
   };
 
-  componentDidMount() {
-    const { account, parentAccount, transaction, transactionHash } = this.props;
-    if (!account || !transaction || !transactionHash) {
-      return null;
-    }
-
-    const mainAccount = getMainAccount(account, parentAccount);
-    if (mainAccount.currency.family !== "ethereum") {
-      return null;
-    }
-
-    apiForCurrency(mainAccount.currency)
-      .getTransactionByHash(transactionHash)
-      .then(tx => {
-        if (tx?.confirmations) {
-          this.setState({ transactionHasBeenValidated: true });
-        }
-      });
+  if (!account || !transaction || !transactionHash) {
+    return null;
   }
 
-  render() {
-    const { bridgePending, status } = this.props;
-    const { errors } = status;
-    // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
-    let errorCount = Object.keys(errors).length;
-    if (
-      errors.amount &&
-      ((errors.amount as Error) instanceof Erc721NotOwnedNft ||
-        (errors.amount as Error) instanceof Erc1155NotOwnedNft ||
-        (errors.amount as Error) instanceof Erc1155NotEnoughNftOwned)
-    ) {
-      errorCount = errorCount - 1;
-    }
-    return (
-      <>
-        {this.state.transactionHasBeenValidated ? (
-          <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-        ) : errors.gasPrice && errors.gasPrice instanceof NotEnoughGas ? (
-          <Box width={"70%"}>
-            <Alert type={"error"} title={<TranslatedError error={errors.gasPrice} />} />
-          </Box>
-        ) : errorCount ? (
-          <Box width={"70%"}>
-            <Alert type={"error"} title={<TranslatedError error={Object.values(errors)[0]} />} />
-          </Box>
-        ) : null}
-        <Button
-          id={"send-amount-continue-button"}
-          isLoading={bridgePending}
-          primary
-          disabled={this.state.transactionHasBeenValidated || bridgePending || errorCount}
-          onClick={this.onNext}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </>
-    );
+  const mainAccount = getMainAccount(account, parentAccount);
+  if (mainAccount.currency.family !== "ethereum") {
+    return null;
   }
-}
+
+  apiForCurrency(mainAccount.currency)
+    .getTransactionByHash(transactionHash)
+    .then(tx => {
+      if (tx?.confirmations) {
+        setTransactionHasBeenValidated(true);
+      }
+    });
+
+  const { errors } = status;
+
+  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
+  let errorCount = Object.keys(errors).length;
+  if (
+    errors.amount &&
+    ((errors.amount as Error) instanceof Erc721NotOwnedNft ||
+      (errors.amount as Error) instanceof Erc1155NotOwnedNft ||
+      (errors.amount as Error) instanceof Erc1155NotEnoughNftOwned)
+  ) {
+    errorCount = errorCount - 1;
+  }
+
+  return (
+    <>
+      {transactionHasBeenValidated ? (
+        <ErrorBanner error={new TransactionHasBeenValidatedError()} />
+      ) : errors.gasPrice && errors.gasPrice instanceof NotEnoughGas ? (
+        <Box width={"70%"}>
+          <Alert type={"error"} title={<TranslatedError error={errors.gasPrice} />} />
+        </Box>
+      ) : errorCount ? (
+        <Box width={"70%"}>
+          <Alert type={"error"} title={<TranslatedError error={Object.values(errors)[0]} />} />
+        </Box>
+      ) : null}
+      <Button
+        id={"send-amount-continue-button"}
+        isLoading={bridgePending}
+        primary
+        disabled={transactionHasBeenValidated || bridgePending || errorCount}
+        onClick={onNext}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
+    </>
+  );
+};
 
 export default memo<StepProps>(StepFees);

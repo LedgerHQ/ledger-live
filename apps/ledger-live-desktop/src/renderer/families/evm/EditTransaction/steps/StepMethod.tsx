@@ -216,10 +216,8 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
   if (!account || !transaction || !transactionHash) {
     return null;
   }
+
   const mainAccount = getMainAccount(account, parentAccount);
-  if (mainAccount.currency.family !== "evm") {
-    return null;
-  }
 
   getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
     if (tx?.confirmations) {
