@@ -119,9 +119,14 @@ export class StepFeesFooter extends PureComponent<StepProps> {
 
   componentDidMount() {
     const { account, parentAccount, transaction, transactionHash } = this.props;
-    if (!account || !transaction || !transactionHash) return;
+    if (!account || !transaction || !transactionHash) {
+      return null;
+    }
+
     const mainAccount = getMainAccount(account, parentAccount);
-    if (mainAccount.currency.family !== "ethereum") return;
+    if (mainAccount.currency.family !== "ethereum") {
+      return null;
+    }
 
     apiForCurrency(mainAccount.currency)
       .getTransactionByHash(transactionHash)
