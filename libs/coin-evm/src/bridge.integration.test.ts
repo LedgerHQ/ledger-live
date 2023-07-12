@@ -9,7 +9,7 @@ import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 
 const ethereum: CurrenciesData<Transaction> = {
-  scanAccounts: [ethereumScanAccounts1, telosScanAccounts1],
+  scanAccounts: [ethereumScanAccounts1],
   accounts: [
     {
       implementations: ["js"],
@@ -60,6 +60,12 @@ const ethereum: CurrenciesData<Transaction> = {
         },
       ],
     },
+  ],
+};
+
+const telos: CurrenciesData<Transaction> = {
+  scanAccounts: [telosScanAccounts1],
+  accounts: [
     {
       implementations: ["js"],
       raw: telos1 as AccountRaw,
@@ -71,6 +77,7 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "js"],
   currencies: {
     ethereum,
+    telos,
   },
 };
 
