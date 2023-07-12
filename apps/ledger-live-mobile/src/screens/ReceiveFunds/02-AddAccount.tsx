@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState, useRef, memo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, ImageBackground } from "react-native";
 import { concat, from } from "rxjs";
 import type { Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
@@ -9,7 +9,7 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { replaceAccounts } from "../../actions/accounts";
 import logger from "../../logger";
@@ -29,6 +29,10 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
+import Animation from "../../components/Animation";
+import lottie from "./assets/lottie.json";
+import GradientContainer from "../../components/GradientContainer";
+import { useTheme } from "styled-components/native";
 
 type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccount>;
 
@@ -240,18 +244,23 @@ function ScanLoading({
   stopSubscription: () => void;
 }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+
   return (
     <>
+      <GradientContainer color={colors.background.main} startOpacity={1} endOpacity={0} containerStyle={{ borderRadius: 0, position: "absolute", bottom: 0, left: 0 }} gradientStyle={{ zIndex: 1 }}>
+        <Animation style={{ width: "100%" }} source={lottie} />
+      </GradientContainer>
+      <Flex flex={1} position="relative">
       <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
-        <InfiniteLoader size={48} />
-        <LText mt={13} variant="h4" textAlign="center">
+        <Text variant="h4" fontWeight="semiBold" textAlign="center">
           {t("transfer.receive.addAccount.title")}
-        </LText>
-        <LText p={6} textAlign="center" variant="body" color="neutral.c80">
+        </Text>
+        <Text mt={6} textAlign="center" variant="body" fontWeight="medium" color="neutral.c80">
           {t("transfer.receive.addAccount.subtitle", {
             currencyTicker: currency?.ticker,
           })}
-        </LText>
+        </Text>
       </Flex>
       <Flex
         minHeight={120}
@@ -272,6 +281,7 @@ function ScanLoading({
             </Button>
           </>
         ) : null}
+      </Flex>
       </Flex>
     </>
   );
