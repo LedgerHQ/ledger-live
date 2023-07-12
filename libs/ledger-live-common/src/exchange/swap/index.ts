@@ -70,6 +70,18 @@ type DEXProviderConfig = {
 type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const swapProviders: Record<string, ProviderConfig> = {
+  "sideshift-ai-test": {
+    ...createExchangeProviderNameAndSignature({
+      name: "sideshift-ai-test",
+      publicKey:
+        "3056301006072a8648ce3d020106052b8104000a0342000414d746bc20fa933d07c342d2eb0545236be68794f7a55f4b6fac0789c25c553b0a7f78011c7e79d679f9c23ff4412e15b899925079bfeb169768b4b2447b8084",
+      signature:
+        "304402204626012600d92602d5791810af32996e1a38a737d20b382b7417ff4fc67c1bd9022028c66ccbfa3e339daaef4f7fa4663bdb4f2d8dd3671490817bd28580247550a7",
+    }),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+  },
   "ch-dev": {
     ...createExchangeProviderNameAndSignature({
       name: "ch-dev",
