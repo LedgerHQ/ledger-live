@@ -18,7 +18,7 @@ export const prepareCoinTransaction = async (
   account: Account,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
-  const nodeApi = getNodeApi(account.currency);
+  const nodeApi = await getNodeApi(account.currency);
   // A `useAllAmount` transaction is a specific case of the live, and because we're in the
   // context of a coinTransaction, no smart contract should be involed
   if (typedTransaction.useAllAmount) {
@@ -56,10 +56,11 @@ export const prepareCoinTransaction = async (
     // and displayed in the UI as `set the gas manually`
     () => new BigNumber(0),
   );
-  const additionalFees = await getAdditionalLayer2Fees(account.currency, {
+  const draftTransaction = {
     ...typedTransaction,
     gasLimit,
-  });
+  };
+  const additionalFees = await getAdditionalLayer2Fees(account.currency, draftTransaction);
 
   return {
     ...typedTransaction,
@@ -77,7 +78,7 @@ export const prepareTokenTransaction = async (
   tokenAccount: TokenAccount,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
-  const nodeApi = getNodeApi(account.currency);
+  const nodeApi = await getNodeApi(account.currency);
   const [recipientErrors] = validateRecipient(account, typedTransaction);
   const amount = typedTransaction.useAllAmount ? tokenAccount.balance : typedTransaction.amount;
 
@@ -125,7 +126,7 @@ export const prepareNftTransaction = async (
   typedTransaction: EvmNftTransaction & EvmTransaction,
 ): Promise<EvmTransaction> => {
   const { currency } = account;
-  const nodeApi = getNodeApi(currency);
+  const nodeApi = await getNodeApi(currency);
   const [recipientErrors] = validateRecipient(account, typedTransaction);
 
   const data = !Object.keys(recipientErrors).length
@@ -183,7 +184,7 @@ export const prepareTransaction = async (
   transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
   const { currency } = account;
-  const nodeApi = getNodeApi(currency);
+  const nodeApi = await getNodeApi(currency);
   // Get the current network status fees
   const feeData: FeeData = await (async () => {
     if (transaction.feesStrategy === "custom") {
@@ -226,7 +227,7 @@ export const prepareForSignOperation = async (
   account: Account,
   transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
-  const nodeApi = getNodeApi(account.currency);
+  const nodeApi = await getNodeApi(account.currency);
   const nonce = await nodeApi.getTransactionCount(account.currency, account.freshAddress);
 
   if (isNftTransaction(transaction)) {

@@ -10,7 +10,7 @@ export const broadcast: AccountBridge<EvmTransaction>["broadcast"] = async ({
   account,
   signedOperation: { signature, operation },
 }) => {
-  const nodeApi = getNodeApi(account.currency);
+  const nodeApi = await getNodeApi(account.currency);
   const hash = await nodeApi.broadcastTransaction(account.currency, signature);
   return patchOperationWithHash(operation, hash);
 };

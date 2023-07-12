@@ -18,6 +18,7 @@ import {
   EtherscanERC721Event,
   EtherscanOperation,
 } from "../../types";
+import { getCurrencyConfig } from "../../logic";
 
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
 export const DEFAULT_RETRIES_API = 8;
@@ -62,7 +63,7 @@ export const getLastCoinOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { explorer } = await getCurrencyConfig(currency);
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
@@ -92,7 +93,7 @@ export const getLastTokenOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { explorer } = await getCurrencyConfig(currency);
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
@@ -143,7 +144,7 @@ export const getLastERC721Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { explorer } = await getCurrencyConfig(currency);
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
@@ -194,7 +195,7 @@ export const getLastERC1155Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { explorer } = await getCurrencyConfig(currency);
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }

@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
+import { GasTrackerApi } from "@ledgerhq/coin-evm/api/gasTracker/types";
 import type { GasOptions, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useEffect, useMemo, useState } from "react";
 
 /**
  * React hook to get gas options for a given currency
@@ -20,7 +21,11 @@ export const useGasOptions = ({
 }): [GasOptions | undefined, Error | null] => {
   const [gasOptions, setGasOptions] = useState<GasOptions | undefined>(undefined);
   const [error, setError] = useState<Error | null>(null);
-  const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
+
+  const [gasTracker, setGasTracker] = useState<GasTrackerApi | null>(null);
+  useEffect(() => {
+    getGasTracker(currency).then(setGasTracker);
+  }, [currency]);
 
   const shouldUseEip1559 = transaction.type === 2;
 

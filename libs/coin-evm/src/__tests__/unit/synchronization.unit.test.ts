@@ -177,7 +177,7 @@ describe("EVM Family", () => {
         });
 
         it("should do a full sync when syncHash changes", async () => {
-          jest.spyOn(logic, "getSyncHash").mockImplementationOnce(() => "0xNope");
+          jest.spyOn(logic, "getSyncHash").mockImplementationOnce(async () => "0xNope");
 
           await synchronization.getAccountShape(
             {

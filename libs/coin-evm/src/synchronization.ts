@@ -34,10 +34,11 @@ export const SAFE_REORG_THRESHOLD = 80;
  */
 export const getAccountShape: GetAccountShape = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
-  const nodeApi = getNodeApi(currency);
-  const [latestBlock, balance] = await Promise.all([
+  const nodeApi = await getNodeApi(currency);
+  const [latestBlock, balance, syncHash] = await Promise.all([
     nodeApi.getBlockByHeight(currency, "latest"),
     nodeApi.getCoinBalance(currency, address),
+    getSyncHash(currency),
   ]);
   const blockHeight = latestBlock.height;
   const accountId = encodeAccountId({
@@ -47,7 +48,6 @@ export const getAccountShape: GetAccountShape = async infos => {
     xpubOrAddress: address,
     derivationMode,
   });
-  const syncHash = getSyncHash(currency);
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
   const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
@@ -63,7 +63,7 @@ export const getAccountShape: GetAccountShape = async infos => {
 
   const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async () => {
     try {
-      const { getLastOperations } = getExplorerApi(currency);
+      const { getLastOperations } = await getExplorerApi(currency);
       return await getLastOperations(
         currency,
         address,
@@ -79,7 +79,8 @@ export const getAccountShape: GetAccountShape = async infos => {
         currency,
         error: e,
       });
-      throw e;
+      /** @TODO THINK ABOUT WHEN TO THROW  */
+      return { lastCoinOperations: [], lastNftOperations: [], lastTokenOperations: [] };
     }
   })();
 
@@ -102,7 +103,9 @@ export const getAccountShape: GetAccountShape = async infos => {
     lastNftOperations,
   );
   const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
-  const operations = mergeOps(initialAccount?.operations || [], newOperations);
+  const operations = shouldSyncFromScratch
+    ? newOperations
+    : mergeOps(initialAccount?.operations || [], newOperations);
   const operationsWithPendings = mergeOps(operations, initialAccount?.pendingOperations || []);
 
   // Merging potential new nfts while preserving the references.
@@ -176,7 +179,7 @@ export const getSubAccountShape = async (
   token: TokenCurrency,
   operations: Operation[],
 ): Promise<Partial<SubAccount>> => {
-  const nodeApi = getNodeApi(currency);
+  const nodeApi = await getNodeApi(currency);
   const { xpubOrAddress: address } = decodeAccountId(parentId);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
   const balance = await nodeApi.getTokenBalance(currency, address, token.contractAddress);
@@ -205,7 +208,7 @@ export const getOperationStatus = async (
   op: Operation,
 ): Promise<Operation | null> => {
   try {
-    const nodeApi = getNodeApi(currency);
+    const nodeApi = await getNodeApi(currency);
     const { blockHeight, blockHash, nonce } = await nodeApi.getTransaction(currency, op.hash);
 
     if (!blockHeight) {

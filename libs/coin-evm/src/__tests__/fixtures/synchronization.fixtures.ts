@@ -38,7 +38,6 @@ export const tokenCurrencies = [
 export const tokenAccount = makeTokenAccount("0xkvn", tokenCurrencies[0]);
 export const account = Object.freeze({
   ...makeAccount("0xkvn", currency, [tokenAccount]),
-  syncHash: logic.getSyncHash(currency),
 });
 
 export const coinOperations = [

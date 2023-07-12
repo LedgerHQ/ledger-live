@@ -13,7 +13,7 @@ import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
 import { NodeApi, isLedgerNodeConfig } from "./types";
 import { getGasOptions } from "../gasTracker/ledger";
-import { padHexString } from "../../logic";
+import { getCurrencyConfig, padHexString } from "../../logic";
 
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
 export const DEFAULT_RETRIES_API = 2;
@@ -59,7 +59,7 @@ const tokenBalancesBatchersMap = new Map<
  * Get a transaction by hash
  */
 export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -81,7 +81,7 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
  * Get the balance of an address
  */
 export const getCoinBalance: NodeApi["getCoinBalance"] = async (currency, address) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -102,7 +102,7 @@ export const getBatchTokenBalances = async (
   params: { currency: CryptoCurrency },
 ): Promise<BigNumber[]> => {
   const { currency } = params;
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -130,7 +130,7 @@ export const getTokenBalance: NodeApi["getTokenBalance"] = async (
   address,
   contractAddress,
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -148,7 +148,7 @@ export const getTokenBalance: NodeApi["getTokenBalance"] = async (
  * Get account nonce
  */
 export const getTransactionCount: NodeApi["getTransactionCount"] = async (currency, address) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -169,7 +169,7 @@ export const getTransactionCount: NodeApi["getTransactionCount"] = async (curren
  */
 export const getGasEstimation: NodeApi["getGasEstimation"] = async (account, transaction) => {
   const { currency } = account;
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -208,20 +208,17 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = async (account, tra
  * regarding the network status
  */
 export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
 
   const { medium } = await getGasOptions({
-    currency: {
-      ...currency,
-      ethereumLikeInfo: {
-        ...currency.ethereumLikeInfo!,
-        gasTracker: { type: "ledger", explorerId: node.explorerId },
-      },
+    currency,
+    options: {
+      useEIP1559: transaction.type === 2,
+      forcedCurrencyConfig: { gasTracker: { type: "ledger", explorerId: node.explorerId } },
     },
-    options: { useEIP1559: transaction.type === 2 },
   });
 
   return medium;
@@ -234,7 +231,7 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
   currency,
   signedTxHex,
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -257,7 +254,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   currency,
   blockHeight = "latest",
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -296,7 +293,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   currency,
   transaction,
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }

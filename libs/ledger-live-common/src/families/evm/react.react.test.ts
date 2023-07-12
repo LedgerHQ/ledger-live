@@ -65,7 +65,7 @@ const expectedGasOptions = {
 
 describe("useGasOptions", () => {
   beforeEach(() => {
-    mockedGetGasTracker.mockImplementation(() => ({ getGasOptions: mockedGetGasOptions }));
+    mockedGetGasTracker.mockImplementation(async () => ({ getGasOptions: mockedGetGasOptions }));
     mockedGetGasOptions.mockReturnValueOnce(Promise.resolve(expectedGasOptions));
   });
 
@@ -182,7 +182,7 @@ describe("useGasOptions", () => {
   });
 
   test("should not return gasOption if can't get gas tracker", async () => {
-    mockedGetGasTracker.mockImplementationOnce(() => null);
+    mockedGetGasTracker.mockImplementationOnce(async () => null);
 
     const { result } = renderHook(() => {
       return useGasOptions({

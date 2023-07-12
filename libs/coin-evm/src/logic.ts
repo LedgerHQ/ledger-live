@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, SubAccount, Operation } from "@ledgerhq/types-live";
@@ -55,7 +55,7 @@ export const getAdditionalLayer2Fees = async (
   switch (currency.id) {
     case "optimism":
     case "optimism_goerli": {
-      const nodeApi = getNodeApi(currency);
+      const nodeApi = await getNodeApi(currency);
       const additionalFees = await nodeApi.getOptimismAdditionalFees(currency, transaction);
       return additionalFees;
     }
@@ -142,13 +142,13 @@ export const mergeSubAccounts = (
  * As of now, it's checking if a token has been added, removed of changed regarding important properties
  * and if the NFTs are activated/supported on this chain
  */
-export const getSyncHash = (currency: CryptoCurrency): string => {
+export const getSyncHash = async (currency: CryptoCurrency): Promise<string> => {
   const tokens = listTokensForCryptoCurrency(currency);
   const basicTokensListString = tokens
     .map(token => token.id + token.contractAddress + token.name + token.ticker + token.delisted)
     .join("");
   const isNftSupported = isNFTActive(currency);
-  const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
+  const { node = {}, explorer = {} } = await getCurrencyConfig(currency);
   return ethers.utils.sha256(
     Buffer.from(
       basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer),
@@ -272,4 +272,36 @@ export const isNftTransaction = (
  */
 export const padHexString = (str: string): string => {
   return str.length % 2 !== 0 ? "0" + str : str;
+};
+
+/**
+ * Method is set as async now to add potential remote config
+ */
+export const getCurrencyConfig = async (currency: CryptoCurrency): Promise<EthereumLikeInfo> => {
+  const customConfig = JSON.parse(localStorage.getItem(`config_currency_${currency.id}`) || "{}");
+
+  Object.keys(customConfig).forEach(key => {
+    if (!Object.keys(customConfig[key]).length) {
+      customConfig[key] = undefined;
+    }
+  });
+
+  return {
+    chainId: 0,
+    ...(currency.ethereumLikeInfo || {}),
+    ...{
+      node:
+        customConfig && "node" in customConfig
+          ? customConfig.node
+          : currency.ethereumLikeInfo?.node,
+      explorer:
+        customConfig && "explorer" in customConfig
+          ? customConfig.explorer
+          : currency.ethereumLikeInfo?.explorer,
+      gasTracker:
+        customConfig && "gasTracker" in customConfig
+          ? customConfig.gasTracker
+          : currency.ethereumLikeInfo?.gasTracker,
+    },
+  };
 };

@@ -1,9 +1,11 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrencyConfig } from "../../logic";
 import ledgerGasTracker from "./ledger";
 import { GasTrackerApi } from "./types";
 
-export const getGasTracker = (currency: CryptoCurrency): GasTrackerApi | null => {
-  switch (currency.ethereumLikeInfo?.gasTracker?.type) {
+export const getGasTracker = async (currency: CryptoCurrency): Promise<GasTrackerApi | null> => {
+  const { gasTracker } = await getCurrencyConfig(currency);
+  switch (gasTracker?.type) {
     case "ledger":
       return ledgerGasTracker;
 

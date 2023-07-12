@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, EthereumLikeInfo, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import { GasTrackerApi, isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
 import {
@@ -9,6 +9,7 @@ import {
   LedgerGasTrackerUsedIncorrectly,
   NoGasTrackerFound,
 } from "../../errors";
+import { getCurrencyConfig } from "../../logic";
 
 type GasTracker = {
   compatibilty: {
@@ -36,10 +37,11 @@ export const getGasOptions = async ({
 }: {
   currency: CryptoCurrency;
   options?: {
-    useEIP1559: boolean;
+    useEIP1559?: boolean;
+    forcedCurrencyConfig?: Pick<EthereumLikeInfo, "gasTracker">;
   };
 }): Promise<GasOptions> => {
-  const { gasTracker } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const { gasTracker } = options?.forcedCurrencyConfig || (await getCurrencyConfig(currency));
   if (!isLedgerGasTracker(gasTracker)) {
     throw new LedgerGasTrackerUsedIncorrectly();
   }

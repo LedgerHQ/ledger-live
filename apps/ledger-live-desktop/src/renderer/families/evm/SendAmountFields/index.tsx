@@ -1,7 +1,10 @@
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
+import { EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
+import { getCurrencyConfig } from "@ledgerhq/coin-evm/logic";
 import { log } from "@ledgerhq/logs";
+import { Box } from "@ledgerhq/react-ui";
 import { AccountBridge } from "@ledgerhq/types-live";
 import React, { useCallback, useEffect, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
@@ -11,10 +14,16 @@ import GasPriceField from "./GasPriceField";
 import MaxFeeField from "./MaxFeeField";
 import PriorityFeeField from "./PriorityFeeField";
 import SelectFeeStrategy from "./SelectFeeStrategy";
+import Spinner from "~/renderer/components/Spinner";
 
 const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const { account, updateTransaction, transaction } = props;
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
+
+  const [currencyConfig, setCurrencyConfig] = useState<Partial<EthereumLikeInfo> | null>(null);
+  useEffect(() => {
+    getCurrencyConfig(account.currency).then(setCurrencyConfig);
+  }, [account.currency]);
 
   const [gasOptions, error] = useGasOptions({
     currency: account.currency,
@@ -44,6 +53,14 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
     },
     [updateTransaction, bridge],
   );
+
+  if (!currencyConfig || (currencyConfig?.gasTracker && !gasOptions)) {
+    return (
+      <Box display="flex" justifyContent="center" mt={40}>
+        <Spinner size={20} color="#BBB0FF" />
+      </Box>
+    );
+  }
 
   /**
    * If no gasOptions available, this means this currency does not have a

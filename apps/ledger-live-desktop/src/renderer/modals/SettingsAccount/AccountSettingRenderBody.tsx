@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { TFunction, withTranslation, Trans } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import { Unit } from "@ledgerhq/types-cryptoassets";
+import { EthereumLikeInfo, Unit } from "@ledgerhq/types-cryptoassets";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -23,6 +23,7 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
 import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import EvmCustomizeMyShit from "./EvmCustomizeMyShit";
 type State = {
   accountName: string | undefined | null;
   accountUnit: Unit | undefined | null;
@@ -30,6 +31,7 @@ type State = {
   accountNameError: Error | undefined | null;
   endpointConfigError: Error | undefined | null;
   isRemoveAccountModalOpen: boolean;
+  customCurrencyConfig: Partial<EthereumLikeInfo>;
 };
 type OwnProps = {
   onClose?: () => void;
@@ -55,6 +57,7 @@ const defaultState = {
   accountNameError: null,
   endpointConfigError: null,
   isRemoveAccountModalOpen: false,
+  customCurrencyConfig: {} as Partial<EthereumLikeInfo>,
 };
 class AccountSettingRenderBody extends PureComponent<Props, State> {
   state = {
@@ -79,12 +82,31 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
       accountName: value,
     });
 
+  handleChangeCurrencyConfig = (value: Record<string, unknown>) =>
+    this.setState({
+      customCurrencyConfig: value,
+    });
+
   handleSubmit =
     (account: Account, onClose: () => void) =>
     (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
       e.preventDefault();
       const { updateAccount, setDataModal } = this.props;
-      const { accountName, accountUnit, endpointConfig, endpointConfigError } = this.state;
+      const {
+        accountName,
+        accountUnit,
+        endpointConfig,
+        endpointConfigError,
+        customCurrencyConfig,
+      } = this.state;
+
+      if (customCurrencyConfig) {
+        localStorage.setItem(
+          `config_currency_${account.currency.id}`,
+          JSON.stringify(customCurrencyConfig),
+        );
+      }
+
       if (!account.name.length) {
         this.setState({
           accountNameError: new AccountNameRequiredError(),
@@ -167,6 +189,8 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
       account.derivationMode !== undefined &&
       account.derivationMode !== null &&
       getTagDerivationMode(account.currency, account.derivationMode as DerivationMode);
+    const { currency } = account;
+    const isCustomizable = currency.family === "evm";
     return (
       <ModalBody
         onClose={onClose}
@@ -220,6 +244,13 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
                 />
               </Box>
             </Container>
+            {isCustomizable ? (
+              <EvmCustomizeMyShit
+                account={account}
+                onConfigChange={this.handleChangeCurrencyConfig}
+              />
+            ) : null}
+
             <Spoiler textTransform title={t("account.settings.advancedLogs")}>
               {tag ? <Tips tag={tag} /> : null}
               <AdvancedLogsContainer>{JSON.stringify(usefulData, null, 2)}</AdvancedLogsContainer>

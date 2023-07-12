@@ -12,6 +12,7 @@ import { getSerializedTransaction } from "../../transaction";
 import { NodeApi, isExternalNodeConfig } from "./types";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import { FeeHistory } from "../../types";
+import { getCurrencyConfig } from "../../logic";
 
 export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
 export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;
@@ -37,7 +38,7 @@ export async function withApi<T>(
   execute: (api: ethers.providers.StaticJsonRpcProvider) => Promise<T>,
   retries = DEFAULT_RETRIES_RPC_METHODS,
 ): Promise<T> {
-  const { node } = currency.ethereumLikeInfo || {};
+  const { node } = await getCurrencyConfig(currency);
   if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }
