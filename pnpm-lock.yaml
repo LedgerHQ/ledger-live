@@ -792,9 +792,6 @@ importers:
       '@ledgerhq/react-native-passcode-auth':
         specifier: ^2.1.0
         version: 2.1.0
-      '@ledgerhq/test-utils':
-        specifier: workspace:^
-        version: link:../../libs/test-utils
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -1174,6 +1171,9 @@ importers:
       '@jest/reporters':
         specifier: ^29.3.1
         version: 29.5.0(metro@0.76.0)
+      '@ledgerhq/test-utils':
+        specifier: workspace:^
+        version: link:../../libs/test-utils
       '@react-native-community/cli':
         specifier: ^7.0.1
         version: 7.0.4(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react-native@0.71.6)
