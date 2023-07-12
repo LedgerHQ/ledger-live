@@ -1265,8 +1265,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       detox:
-        specifier: ^20.6.0
-        version: 20.9.1(jest@28.1.3)(metro@0.76.0)
+        specifier: 20.7.1
+        version: 20.7.1(jest@28.1.3)(metro@0.76.0)
       eslint-import-resolver-typescript:
         specifier: ^3.5.5
         version: 3.5.5(@typescript-eslint/parser@5.60.0)(eslint-plugin-import@2.27.5)(eslint@8.41.0)
@@ -29466,8 +29466,8 @@ packages:
       defined: 1.0.0
       minimist: 1.2.8
 
-  /detox@20.9.1(jest@28.1.3)(metro@0.76.0):
-    resolution: {integrity: sha512-o7x9fHhOoVDZK1069RgefqIxY0B53eAnk7N5/3D8qEa8N0YmvylqzAqeYVtnzHYkveZb1pkcruzKC9jomWTEnw==}
+  /detox@20.7.1(jest@28.1.3)(metro@0.76.0):
+    resolution: {integrity: sha512-a8y+M40g4goqWnyHZnestmVL/EII8Hq4utCK4kuSpvRHWkBA5KuQFlXErfNrrOcqXuXhPqdBnxqO9VsMAlLHFA==}
     engines: {node: '>=14.5.0'}
     hasBin: true
     requiresBuild: true
@@ -29486,7 +29486,7 @@ packages:
       child-process-promise: 2.2.1
       execa: 5.1.1
       find-up: 5.0.0
-      fs-extra: 11.1.0
+      fs-extra: 11.1.1
       funpermaproxy: 1.1.0
       glob: 8.0.3
       ini: 1.3.8
@@ -29501,7 +29501,7 @@ packages:
       proper-lockfile: 3.2.0
       resolve-from: 5.0.0
       sanitize-filename: 1.6.3
-      semver: 7.3.8
+      semver: 7.5.3
       serialize-error: 8.1.0
       shell-quote: 1.7.3
       signal-exit: 3.0.7
@@ -31354,7 +31354,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -33995,15 +33995,6 @@ packages:
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
-
-  /fs-extra@11.1.0:
-    resolution: {integrity: sha512-0rcTq621PD5jM/e0a3EJoGC/1TC5ZBCERW82LQuwfGnCa1V8w7dpYH1yNu+SLb6E5dkeCBzKEyLGlFrnr+dUyw==}
-    engines: {node: '>=14.14'}
-    dependencies:
-      graceful-fs: 4.2.10
-      jsonfile: 6.1.0
-      universalify: 2.0.0
-    dev: true
 
   /fs-extra@11.1.1:
     resolution: {integrity: sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==}
