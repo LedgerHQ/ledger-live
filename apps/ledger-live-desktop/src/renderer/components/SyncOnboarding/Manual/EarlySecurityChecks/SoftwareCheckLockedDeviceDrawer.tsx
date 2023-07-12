@@ -21,7 +21,7 @@ const SoftwareCheckLockedDeviceDrawer = ({ deviceModelId, productName }: Props) 
         animation={getDeviceAnimation(deviceModelId, theme.theme, "enterPinCode") as object}
       />
       <Text variant="h5Inter" fontWeight="semiBold" mt={6}>
-        {t("syncOnboarding.manual.softwareCheckLockedDeviceModal.title", {
+        {t("syncOnboarding.manual.softwareCheckLockedDeviceDrawer.title", {
           deviceName: productName,
         })}
       </Text>

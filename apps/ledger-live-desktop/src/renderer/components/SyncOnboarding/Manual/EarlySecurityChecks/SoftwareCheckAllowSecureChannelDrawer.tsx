@@ -21,7 +21,7 @@ const SoftwareCheckAllowSecureChannelDrawer = ({ deviceModelId }: Props) => {
         animation={getDeviceAnimation(deviceModelId, theme.theme, "allowManager") as object}
       />
       <Text variant="h5Inter" fontWeight="semiBold" mt={6}>
-        {t("syncOnboarding.manual.softwareCheckAllowSecureChannelModal.title")}
+        {t("syncOnboarding.manual.softwareCheckAllowSecureChannelDrawer.title")}
       </Text>
       <DeviceBlocker />
     </Flex>

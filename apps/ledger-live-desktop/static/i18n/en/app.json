@@ -1376,10 +1376,10 @@
       "endOfSetup": {
         "title": "End of setup"
       },
-      "softwareCheckAllowSecureChannelModal": {
+      "softwareCheckAllowSecureChannelDrawer": {
         "title": "Allow a secure connection with Ledger"
       },
-      "softwareCheckLockedDeviceModal": {
+      "softwareCheckLockedDeviceDrawer": {
         "title": "Unlock your device"
       },
       "helpDrawer": {
