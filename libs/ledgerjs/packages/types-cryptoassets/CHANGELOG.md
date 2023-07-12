@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.3.1-nightly.1
+
+### Patch Changes
+
+- [#3704](https://github.com/LedgerHQ/ledger-live/pull/3704) [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03) Thanks [@chabroA](https://github.com/chabroA)! - Add ethereum and polygon as evm familly for test
+
 ## 7.3.1-nightly.0
 
 ### Patch Changes

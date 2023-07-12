@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 31.3.0-nightly.4
+
+### Minor Changes
+
+- [#3704](https://github.com/LedgerHQ/ledger-live/pull/3704) [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03) Thanks [@chabroA](https://github.com/chabroA)! - Create EVM send flow
+
+### Patch Changes
+
+- Updated dependencies [[`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03), [`b6e50932af`](https://github.com/LedgerHQ/ledger-live/commit/b6e50932afac6acc2d2f9fa9ed10b77a62378e03)]:
+  - @ledgerhq/coin-evm@0.4.0-nightly.3
+  - @ledgerhq/cryptoassets@9.10.0-nightly.2
+  - @ledgerhq/coin-algorand@0.2.4-nightly.3
+  - @ledgerhq/coin-framework@0.4.0-nightly.3
+  - @ledgerhq/coin-polkadot@0.3.1-nightly.3
+  - @ledgerhq/domain-service@1.1.6-nightly.3
+  - @ledgerhq/evm-tools@1.0.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.0-nightly.3
+
 ## 31.3.0-nightly.3
 
 ### Minor Changes
