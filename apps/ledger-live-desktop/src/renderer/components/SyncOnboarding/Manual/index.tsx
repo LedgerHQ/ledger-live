@@ -18,6 +18,9 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
 } from "./EarlySecurityChecks/ExitChecksDrawer";
+import { renderError } from "../../DeviceAction/rendering";
+import { useTranslation } from "react-i18next";
+import { LockedDeviceError } from "@ledgerhq/errors";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -43,6 +46,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   deviceModelId: strDeviceModelId,
 }) => {
   const history = useHistory<RecoverState>();
+  const { t } = useTranslation();
 
   const device = useSelector(getCurrentDevice);
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
@@ -137,7 +141,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError) {
+    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
       timeout = setTimeout(() => {
         setIsPollingOn(false);
         setTroubleshootingDrawerOpen(true);
@@ -206,7 +210,18 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     </Flex>
   );
 
-  if (currentStep === "early-security-check" && lastSeenDevice) {
+  if (currentStep !== "companion" && (fatalError || allowedError)) {
+    stepContent = (
+      <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
+        {renderError({
+          t,
+          device,
+          error: fatalError || allowedError,
+          onRetry: isPollingOn ? undefined : notifyOnboardingEarlyCheckShouldReset,
+        })}
+      </Flex>
+    );
+  } else if (currentStep === "early-security-check" && lastSeenDevice) {
     stepContent = (
       <EarlySecurityChecks
         device={lastSeenDevice}
