@@ -269,9 +269,6 @@ importers:
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
-      '@ledgerhq/test-utils':
-        specifier: workspace:^
-        version: link:../../libs/test-utils
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-cryptoassets
@@ -534,6 +531,9 @@ importers:
       '@ledgerhq/react-devtools':
         specifier: workspace:^
         version: link:../../tools/react-dev-tools
+      '@ledgerhq/test-utils':
+        specifier: workspace:^
+        version: link:../../libs/test-utils
       '@octokit/rest':
         specifier: ^18.12.0
         version: 18.12.0
