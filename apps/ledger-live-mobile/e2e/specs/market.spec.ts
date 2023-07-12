@@ -48,9 +48,7 @@ describe("Market page for user with no device", () => {
     await marketPage.openMarketPlace();
 
     if (isAndroid()) {
-      const url = await detox.web
-        .element(detox.by.web.id("main"))
-        .getCurrentUrl();
+      const url = await detox.web.element(detox.by.web.id("main")).getCurrentUrl();
       // eslint-disable-next-line no-console
       console.log(url);
       await expect(url).toEqual(
