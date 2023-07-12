@@ -1,7 +1,7 @@
 import { Page, Locator } from "@playwright/test";
 import { WebviewTag } from "../../src/renderer/components/Web3AppWebview/types";
 import { waitFor } from "../utils/waitFor";
-import { getLiveAppManifest, startDummyServer } from "@ledgerhq/test-utils";
+import { getLiveAppManifest, startDummyServer, stopDummyServer } from "@ledgerhq/test-utils";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 export class LiveAppWebview {
@@ -56,7 +56,6 @@ export class LiveAppWebview {
 
         const localManifests = JSON.stringify(getLiveAppManifest({ ...liveAppManifest, url: url }));
         process.env.MOCK_REMOTE_LIVE_MANIFEST = localManifests;
-        console.log("mock manifest:", process.env.MOCK_REMOTE_LIVE_MANIFEST);
         return true;
       } else {
         throw new Error("Ping response != 200, got: " + response.status);
@@ -66,6 +65,11 @@ export class LiveAppWebview {
       console.error(error);
       return false;
     }
+  }
+
+  static async stopLiveApp() {
+    await stopDummyServer();
+    delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
   }
 
   async getLiveAppTitle() {

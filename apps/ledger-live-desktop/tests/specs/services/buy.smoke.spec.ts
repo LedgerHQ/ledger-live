@@ -21,11 +21,11 @@ test.use({
   },
 });
 
-let continueTest = false;
+let testServerIsRunning = false;
 
 test.beforeAll(async () => {
-  // Check that dummy app in tests/utils/dummy-app-build has been started successfully
-  continueTest = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
+  // Check that dummy app in libs/test-utils/dummy-ptx-app has been started successfully
+  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Buy App",
     id: "multibuy",
     permissions: [
@@ -38,20 +38,19 @@ test.beforeAll(async () => {
     ],
   });
 
-  if (!continueTest) {
+  if (!testServerIsRunning) {
     console.warn("Stopping Buy/Sell test setup");
-    return; // need to make this a proper ignore/jest warning
+    return;
   }
 });
 
 test.afterAll(async () => {
-  await stopDummyServer();
-  delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
+  await LiveAppWebview.stopLiveApp();
 });
 
 test("Buy / Sell", async ({ page }) => {
   // Don't run test if server is not running
-  if (!continueTest) return;
+  if (!testServerIsRunning) return;
 
   const layout = new Layout(page);
   const portfolioPage = new PortfolioPage(page);
@@ -63,10 +62,9 @@ test("Buy / Sell", async ({ page }) => {
   const marketPage = new MarketPage(page);
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
-    await page.pause();
     await portfolioPage.startBuyFlow();
-    // await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    // await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
     await expect.soft(page).toHaveScreenshot("buy-app-opened.png");
   });
 
