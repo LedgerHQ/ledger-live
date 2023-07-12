@@ -113,7 +113,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
       } else {
         // else we create a currency account
         navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-          currency,
+          currency: cryptoToSend,
         });
       }
     },
