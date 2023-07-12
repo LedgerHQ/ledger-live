@@ -48,8 +48,9 @@ export const getAccount = async (address: string): Promise<Partial<NearAccount>>
     };
   }
 
-  const { stakingPositions, totalStaked, totalAvailable, totalPending } =
-    await getStakingPositions(address);
+  const { stakingPositions, totalStaked, totalAvailable, totalPending } = await getStakingPositions(
+    address,
+  );
 
   const { storageCost } = getCurrentNearPreloadData();
 
