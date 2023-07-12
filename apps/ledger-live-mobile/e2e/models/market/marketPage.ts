@@ -8,38 +8,38 @@ import {
 
 export default class marketPage {
   searchBar = () => getElementById("search-box");
-  starBtn = () => getElementById("starAsset");
+  starButton = () => getElementById("star-asset");
   assetCardBtnBack = () => getElementByText("Bitcoin");
-  assetCardBackBtn = () => getElementById("marketBackBtn");
-  starMarketListBtn = () => getElementById("stared");
-  buyNanoBtn = () => getElementById("testIDBuyBtn");
-  openMarketPlaceBtn = () => getElementById("marketPlaceBtn");
+  assetCardBackBtn = () => getElementById("market-back-btn");
+  starMarketListButton = () => getElementById("starred");
+  buyNanoButton = () => getElementById("market-buy-btn");
+  openMarketPlaceButton = () => getElementById("market-place-btn");
 
-  async searchAsset(asset: string) {
-    await typeTextByElement(this.searchBar(), asset);
+  searchAsset(asset: string) {
+    return typeTextByElement(this.searchBar(), asset);
   }
 
-  async openAssetPage(selectAsset: string) {
-    await tapByText(selectAsset);
+  openAssetPage(selectAsset: string) {
+    return tapByText(selectAsset);
   }
 
-  async starFavoriteCoin() {
-    await tapByElement(this.starBtn());
+  starFavoriteCoin() {
+    return tapByElement(this.starButton());
   }
 
-  async backToAssetList() {
-    await tapByElement(this.assetCardBackBtn());
+  backToAssetList() {
+    return tapByElement(this.assetCardBackBtn());
   }
 
-  async filterStaredAsset() {
-    await tapByElement(this.starMarketListBtn());
+  filterStaredAsset() {
+    return tapByElement(this.starMarketListButton());
   }
 
-  async buyNano() {
-    await tapByElement(this.buyNanoBtn());
+  buyNano() {
+    return tapByElement(this.buyNanoButton());
   }
 
-  async openMarketPlace() {
-    await tapByElement(this.openMarketPlaceBtn());
+  openMarketPlace() {
+    return tapByElement(this.openMarketPlaceButton());
   }
 }

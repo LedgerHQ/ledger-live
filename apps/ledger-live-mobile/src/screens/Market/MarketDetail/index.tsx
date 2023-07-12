@@ -45,7 +45,7 @@ export const BackButton = ({ navigation }: { navigation: NavigationProps["naviga
     size="large"
     onPress={() => navigation.goBack()}
     Icon={Icons.ArrowLeftMedium}
-    testID="marketBackBtn"
+    testID="market-back-btn"
   />
 );
 
@@ -198,7 +198,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
         }
         TopRightSection={
           <Button
-            testID="starAsset"
+            testID="star-asset"
             size="large"
             onPress={toggleStar}
             iconName={isStarred ? "StarSolid" : "Star"}

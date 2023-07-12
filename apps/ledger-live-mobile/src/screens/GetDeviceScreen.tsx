@@ -210,7 +210,7 @@ export default function GetDeviceScreen() {
           type="main"
           outline={false}
           event="button_clicked"
-          testID="marketPlaceBtn"
+          testID="market-place-btn"
           eventProperties={{
             button: "Buy your Ledger now",
             screen: ScreenName.GetDevice,
