@@ -308,7 +308,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             >
               <Icons.CopyMedium size={20}></Icons.CopyMedium>
               <Text variant={"body"} fontWeight={"medium"} pl={3}>
-                {t("transfer.receive.receiveConfirmation")}
+                {t("transfer.receive.copyAddress")}
               </Text>
             </StyledTouchableOpacity>
           </Flex>
