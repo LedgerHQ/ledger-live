@@ -5,7 +5,7 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 let onboardingSteps: OnboardingSteps;
 let portfolioPage: PortfolioPage;
 
-describe("Onboarding", () => {
+describe("Onboarding - Read Only", () => {
   beforeAll(() => {
     onboardingSteps = new OnboardingSteps();
     portfolioPage = new PortfolioPage();
@@ -15,33 +15,20 @@ describe("Onboarding", () => {
     await onboardingSteps.startOnboarding();
   });
 
-  it("selects to access wallet", async () => {
-    await onboardingSteps.chooseToAccessYourWallet();
+  it("selects I don't have a Ledger Yet", async () => {
+    await onboardingSteps.chooseNoLedgerYet();
   });
 
-  it("chooses to connect Ledger", async () => {
-    await onboardingSteps.chooseToConnectYourLedger();
-  });
-
-  it("choses to Pair Nano", async () => {
-    await onboardingSteps.chooseToPairMyNano();
-  });
-
-  it("selects Pair with Bluetooth", async () => {
-    await onboardingSteps.selectPairWithBluetooth();
-  });
-
-  it("adds device via Bluetooth", async () => {
-    await onboardingSteps.addDeviceViaBluetooth("David");
+  it("chooses to explore the app goes through dicover carousel", async () => {
+    await onboardingSteps.chooseToExploreApp();
   });
 
   it("opens Ledger Live", async () => {
-    await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
   });
 
   it("should see an empty portfolio page", async () => {
-    await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
+    await portfolioPage.waitForPortfolioReadOnly();
   });
 });

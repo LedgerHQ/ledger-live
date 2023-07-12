@@ -3,19 +3,19 @@ import {
   getElementById,
   openDeeplink,
   tapByText,
-  waitForElementByID,
+  waitForElementById,
   waitForElementByText,
 } from "../../helpers";
 import * as bridge from "../../bridge/server";
 
-const proceedButtonId = "Proceed";
 const baseLink = "myledger";
 
 export default class ManagerPage {
+  proceedButtonId = "onboarding-paired-continue";
   getManagerTitle = () => getElementById("manager-title");
   getPairDeviceButton = () => getElementById("pair-device");
-  getProceedButton = () => getElementById(proceedButtonId);
-  waitProceedButton = () => waitForElementByID(proceedButtonId);
+  getProceedButton = () => getElementById(this.proceedButtonId);
+  waitProceedButton = () => waitForElementById(this.proceedButtonId);
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
