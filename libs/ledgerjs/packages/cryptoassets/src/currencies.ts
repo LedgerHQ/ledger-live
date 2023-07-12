@@ -4022,7 +4022,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "optimism",
     coinType: CoinType.ETH,
-    name: "Optimism",
+    name: "OP Mainnet",
     managerAppName: "Ethereum",
     ticker: "ETH",
     scheme: "optimism",
@@ -4045,6 +4045,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         token: "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["optimism"],
   },
   optimism_goerli: {
     type: "CryptoCurrency",
