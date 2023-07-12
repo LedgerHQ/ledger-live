@@ -771,6 +771,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
   },
+  CRYPTO_ASSET_SEARCH_KEYS: {
+    def: ["ticker", "name", "keywords"],
+    parser: stringArrayParser,
+    desc: "Fuse search attributes to find a currency according to user input",
+  },
   EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
     def: 0.1,
     parser: floatParser,
