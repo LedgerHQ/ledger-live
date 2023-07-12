@@ -2845,6 +2845,12 @@
       "selectCrypto": {
         "title": "Choose a crypto to receive"
       },
+      "selectNetwork": {
+        "title": "Choose a network",
+        "accounts": "{{count}} accounts",
+        "subtitle": "Where do you want to deposit your assets ?\nYou must choose the same as the sender.",
+        "bannerTitle": "Learn how to choose a network?"
+      },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
         "connectDevice": "Connect Device"
@@ -2872,11 +2878,13 @@
       "receiveConfirmation": {
         "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
+        "copyAdress": "Copy address",
         "addressVerified": "Address verified",
         "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
         "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
-        "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
+        "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
+        "bannerTitle": "Learn how to withdraw from an exchange."
       },
       "securityVerify": {
         "title": "For security we recommend verifying this address with your Ledger device.",
