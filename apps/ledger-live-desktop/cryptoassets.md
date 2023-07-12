@@ -42,8 +42,8 @@
 | Moonriver | MOVR | YES | moonriver |
 | MultiversX | EGLD | YES | elrond |
 | NEAR | NEAR | YES | near |
-| Onomy | NOM | YES | onomy |
 | OP Mainnet | ETH | YES | optimism |
+| Onomy | NOM | YES | onomy |
 | Osmosis | OSMO | YES | osmo |
 | Peercoin | PPC | YES | peercoin |
 | Persistence | XPRT | YES | persistence |
