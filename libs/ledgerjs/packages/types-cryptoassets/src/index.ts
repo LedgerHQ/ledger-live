@@ -156,7 +156,8 @@ export type CryptoCurrencyId =
   | "telos_evm"
   | "klaytn"
   | "polygon_zk_evm"
-  | "base";
+  | "base"
+  | "base_goerli";
 
 export type LedgerExplorerId =
   | "btc"

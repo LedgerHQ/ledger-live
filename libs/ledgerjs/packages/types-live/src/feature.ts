@@ -41,6 +41,7 @@ export type FeatureId =
   | "currencyCoreum"
   | "currencyPolygonZkEvm"
   | "currencyBase"
+  | "currencyBaseGoerli"
   | "currencyKlaytn"
   | "ptxSmartRoutingMobile"
   | "mockFeature"

@@ -84,6 +84,7 @@ setSupportedCurrencies([
   "klaytn",
   "polygon_zk_evm",
   "base",
+  "base_goerli",
   "stacks",
   "telos_evm",
   "coreum",

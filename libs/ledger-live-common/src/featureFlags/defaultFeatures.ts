@@ -107,6 +107,9 @@ export const defaultFeatures = {
   currencyBase: {
     enabled: false,
   },
+  currencyBaseGoerli: {
+    enabled: false,
+  },
   currencyKlaytn: {
     enabled: false,
   },

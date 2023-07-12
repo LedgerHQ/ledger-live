@@ -37,6 +37,7 @@ const minBalancePerCurrencyId: Record<CryptoCurrencyIds, BigNumber> = {
   rsk: parseCurrencyUnit(MBTC_UNIT, "0.05"),
   polygon_zkevm: parseCurrencyUnit(ETH_UNIT, "0.001"),
   base: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  base_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
 };
 
 /**
@@ -81,7 +82,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // effectively used gas but the "bid"/proposition of gas of the transaction
   // resulting in inconsistencies regarding the cumulated value of a tx.
   // value + gasLimit * gasPrice <-- gasPrice can be wrong here.
-  const underValuedFeesCurrencies = ["optimism", "optimism_goerli", "base"];
+  const underValuedFeesCurrencies = ["optimism", "optimism_goerli", "base", "base_goerli"];
   const overValuedFeesCurrencies = ["arbitrum", "arbitrum_goerli"];
   const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 
