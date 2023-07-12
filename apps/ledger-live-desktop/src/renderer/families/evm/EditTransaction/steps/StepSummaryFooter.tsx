@@ -6,7 +6,7 @@ import { StepProps } from "../types";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
-import { getTransactionByHash } from "@ledgerhq/coin-evm/lib/api/transaction";
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
 
 export const StepSummaryFooter = (props: StepProps) => {
   const { account, parentAccount, transactionHash, status, bridgePending, transitionTo } = props;

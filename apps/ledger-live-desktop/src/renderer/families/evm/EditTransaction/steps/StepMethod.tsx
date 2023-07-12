@@ -16,7 +16,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import invariant from "invariant";
-import { getTransactionByHash } from "@ledgerhq/coin-evm/lib/api/transaction";
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
 
 const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
   border: ${p =>
