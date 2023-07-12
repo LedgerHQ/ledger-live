@@ -33,12 +33,13 @@ const getBlankOperation = (tx, fees, id) => ({
 
 const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Operation[] => {
   const { address, currency } = info;
+  const unitCode = currency.units[1].code;
   const ops: Operation[] = [];
   for (const tx of txs) {
     let fees = new BigNumber(0);
 
     tx.tx.auth_info.fee.amount.forEach(elem => {
-      if (elem.denom === currency.units[1].code) fees = fees.plus(elem.amount);
+      if (elem.denom === unitCode) fees = fees.plus(elem.amount);
     });
 
     const op: Operation = getBlankOperation(tx, fees, accountId);
@@ -61,10 +62,10 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
           const sender = message.attributes.find(attr => attr.key === "sender")?.value;
           const recipient = message.attributes.find(attr => attr.key === "recipient")?.value;
-          if (amount && sender && recipient && amount.indexOf(currency.units[1].code) != -1) {
+          if (amount && sender && recipient && amount.endsWith(unitCode)) {
             if (op.senders.indexOf(sender) === -1) op.senders.push(sender);
             if (op.recipients.indexOf(recipient) === -1) op.recipients.push(recipient);
-            op.value = op.value.plus(amount.replace(currency.units[1].code, ""));
+            op.value = op.value.plus(amount.replace(unitCode, ""));
             if (!op.type && sender === address) {
               op.type = "OUT";
             } else if (!op.type && recipient === address) {
@@ -84,12 +85,12 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
         for (const message of correspondingMessages) {
           const validator = message.attributes.find(attr => attr.key === "validator")?.value;
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          if (validator && amount && amount.indexOf(currency.units[1].code) != -1) {
+          if (validator && amount && amount.endsWith(unitCode)) {
             rewardShards.push({
-              amount: new BigNumber(amount.replace(currency.units[1].code, "")),
+              amount: new BigNumber(amount.replace(unitCode, "")),
               address: validator,
             });
-            txRewardValue = txRewardValue.plus(amount.replace(currency.units[1].code, ""));
+            txRewardValue = txRewardValue.plus(amount.replace(unitCode, ""));
           }
         }
         op.value = txRewardValue;
@@ -103,9 +104,9 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
         for (const message of correspondingMessages) {
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
           const validator = message.attributes.find(attr => attr.key === "validator")?.value;
-          if (amount && validator && amount.indexOf(currency.units[1].code) != -1) {
+          if (amount && validator && amount.endsWith(unitCode)) {
             delegateShards.push({
-              amount: new BigNumber(amount.replace(currency.units[1].code, "")),
+              amount: new BigNumber(amount.replace(unitCode, "")),
               address: validator,
             });
           }
@@ -121,15 +122,10 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
           const validatorDst = message.attributes.find(attr => attr.key === "validator_dst")?.value;
           const validatorSrc = message.attributes.find(attr => attr.key === "validator_src")?.value;
-          if (
-            amount &&
-            validatorDst &&
-            validatorSrc &&
-            amount.indexOf(currency.units[1].code) != -1
-          ) {
+          if (amount && validatorDst && validatorSrc && amount.endsWith(unitCode)) {
             op.extra.sourceValidator = validatorSrc;
             redelegateShards.push({
-              amount: new BigNumber(amount.replace(currency.units[1].code, "")),
+              amount: new BigNumber(amount.replace(unitCode, "")),
               address: validatorDst,
             });
           }
@@ -144,9 +140,9 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
         for (const message of correspondingMessages) {
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
           const validator = message.attributes.find(attr => attr.key === "validator")?.value;
-          if (amount && validator && amount.indexOf(currency.units[1].code) != -1) {
+          if (amount && validator && amount.endsWith(unitCode)) {
             unbondShards.push({
-              amount: new BigNumber(amount.replace(currency.units[1].code, "")),
+              amount: new BigNumber(amount.replace(unitCode, "")),
               address: validator,
             });
           }
