@@ -12,7 +12,6 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
-    "dummy-apps:install": "pnpm --filter='dummy-*' i",
     "dummy-apps:build": "pnpm --filter='dummy-*' build",
     "dummy-apps:start-ptx-app": "cd dummy-ptx-app && npx http-server"
   },
