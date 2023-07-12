@@ -80,6 +80,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
+  const polygon_zk_evm = useFeature("currencyPolygonZkEvm");
   const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
@@ -112,6 +113,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       internet_computer: internetComputer,
       telos: telosEvm,
       coreum,
+      polygonZkEvm: polygon_zk_evm,
       klaytn,
     }),
     [
@@ -143,6 +145,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       internetComputer,
       telosEvm,
       coreum,
+      polygon_zk_evm,
       klaytn,
     ],
   );

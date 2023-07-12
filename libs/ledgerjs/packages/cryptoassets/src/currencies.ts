@@ -4332,6 +4332,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  polygon_zk_evm: {
+    type: "CryptoCurrency",
+    id: "polygon_zk_evm",
+    coinType: CoinType.ETH,
+    name: "Polygon zkEVM",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "polygon_zk_evm",
+    color: "#8247E5",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 1101,
+      node: { type: "external", uri: "https://zkevm-rpc.com" },
+      explorer: { type: "etherscan", uri: "https://api-zkevm.polygonscan.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://zkevm.polygonscan.com/tx/$hash",
+        address: "https://zkevm.polygonscan.com/address/$address",
+        token: "https://zkevm.polygonscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   klaytn: {
     type: "CryptoCurrency",
     id: "klaytn",

@@ -84,6 +84,7 @@ setSupportedCurrencies([
   "ethereum_as_evm_test_only",
   "polygon_as_evm_test_only",
   "klaytn",
+  "polygon_zk_evm",
   "stacks",
   "telos_evm",
   "coreum",

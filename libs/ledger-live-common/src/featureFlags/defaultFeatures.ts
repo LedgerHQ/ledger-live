@@ -101,6 +101,9 @@ export const defaultFeatures = {
   currencyCoreum: {
     enabled: false,
   },
+  currencyPolygonZkEvm: {
+    enabled: false,
+  },
   currencyKlaytn: {
     enabled: false,
   },
