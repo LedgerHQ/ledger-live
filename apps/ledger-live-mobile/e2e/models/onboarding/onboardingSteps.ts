@@ -6,7 +6,6 @@ import {
   waitForElementByText,
   waitForElementById,
   tapById,
-  delay,
   isAndroid,
 } from "../../helpers";
 import { device } from "detox";
