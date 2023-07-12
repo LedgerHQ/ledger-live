@@ -112,7 +112,16 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
         )}
       </SectionContainer>,
     ],
-    [onAssetCardLayout, currentPositionY, graphCardEndPosition, currency, t, hasOrderedNano],
+    [
+      onAssetCardLayout,
+      currentPositionY,
+      graphCardEndPosition,
+      currency,
+      t,
+      hasOrderedNano,
+      featureReferralProgramMobile?.enabled,
+      featureReferralProgramMobile?.params?.path,
+    ],
   );
 
   return (

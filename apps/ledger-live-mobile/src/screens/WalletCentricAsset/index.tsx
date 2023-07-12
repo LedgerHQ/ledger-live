@@ -164,6 +164,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
       cryptoAccounts,
       defaultAccount,
       onAddAccount,
+      featureReferralProgramMobile?.enabled,
+      featureReferralProgramMobile?.params?.path,
     ],
   );
 

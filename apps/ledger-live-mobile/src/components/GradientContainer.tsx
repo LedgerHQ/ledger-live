@@ -13,7 +13,14 @@ type Props = {
   endOpacity?: number;
 };
 
-export default function GradientContainer({ color, containerStyle, gradientStyle, children, startOpacity = 1, endOpacity = 0 }: Props) {
+export default function GradientContainer({
+  color,
+  containerStyle,
+  gradientStyle,
+  children,
+  startOpacity = 1,
+  endOpacity = 0,
+}: Props) {
   const { colors } = useTheme();
 
   return (
