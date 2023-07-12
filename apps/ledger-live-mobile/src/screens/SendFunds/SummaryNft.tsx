@@ -20,6 +20,7 @@ const SummaryNft = ({ transaction, currencyId }: Props) => {
   const tokenId = useMemo(() => {
     if (transaction?.family === "evm") {
       return transaction.nft?.tokenId;
+      // TODO: should be deleted after doing the merge
     } else if (transaction?.family === "ethereum") {
       return transaction.tokenIds?.[0];
     }
@@ -27,6 +28,7 @@ const SummaryNft = ({ transaction, currencyId }: Props) => {
   const quantity = useMemo(() => {
     if (transaction?.family === "evm") {
       return transaction.nft?.quantity;
+      // TODO: should be deleted after doing the merge
     } else if (transaction?.family === "ethereum") {
       return transaction.quantities?.[0];
     }
@@ -34,10 +36,12 @@ const SummaryNft = ({ transaction, currencyId }: Props) => {
   const collection = useMemo(() => {
     if (transaction?.family === "evm") {
       return transaction.nft?.contract;
+      // TODO: should be deleted after doing the merge
     } else if (transaction?.family === "ethereum") {
       return transaction.collection;
     }
   }, [transaction]);
+
   const shouldDisplayQuantity =
     "mode" in transaction && ["erc1155", "erc1155.transfer"].includes(transaction.mode);
   const { metadata } = useNftMetadata(collection, tokenId, currencyId);

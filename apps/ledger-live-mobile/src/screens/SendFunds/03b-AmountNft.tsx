@@ -55,6 +55,7 @@ const SendAmountNFT = ({ route }: Props) => {
             },
           }),
         );
+        // TODO: should be deleted after doing the merge
       } else if (mainAccount.currency.family === "ethereum") {
         setTransaction(
           bridge.updateTransaction(transaction, {
@@ -68,6 +69,7 @@ const SendAmountNFT = ({ route }: Props) => {
   const quantity = useMemo(() => {
     if (transaction.family === "evm") {
       return transaction.nft?.quantity;
+      // TODO: should be deleted after doing the merge
     } else if (transaction.family === "ethereum") {
       return transaction.quantities?.[0];
     }
@@ -76,6 +78,7 @@ const SendAmountNFT = ({ route }: Props) => {
   const nft = useMemo(() => {
     if (transaction.family === "evm") {
       return getNFT(transaction.nft?.contract, transaction.nft?.tokenId, mainAccount.nfts);
+      // TODO: should be deleted after doing the merge
     } else if (transaction.family === "ethereum") {
       return getNFT(transaction.collection, transaction.tokenIds?.[0], mainAccount.nfts);
     }
