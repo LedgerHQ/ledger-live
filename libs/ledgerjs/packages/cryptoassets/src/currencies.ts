@@ -4332,6 +4332,31 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  klaytn: {
+    type: "CryptoCurrency",
+    id: "klaytn",
+    coinType: CoinType.ETH,
+    name: "Klaytn",
+    managerAppName: "Ethereum",
+    ticker: "KLAY",
+    scheme: "klaytn",
+    color: "#FF8B00",
+    family: "evm",
+    units: ethereumUnits("KLAY", "KLAY"),
+    disableCountervalue: true,
+    ethereumLikeInfo: {
+      chainId: 8217,
+      node: { type: "external", uri: "https://public-node-api.klaytnapi.com/v1/cypress" },
+      explorer: { type: "klaytnfinder", uri: "https://cypress-oapi.klaytnfinder.io" },
+    },
+    explorerViews: [
+      {
+        tx: "https://www.klaytnfinder.io/tx/$hash",
+        address: "https://www.klaytnfinder.io/account/$address",
+        token: "https://www.klaytnfinder.io/token/$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};

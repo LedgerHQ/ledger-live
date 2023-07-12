@@ -14,6 +14,7 @@ describe("EVM Family", () => {
         expect(isEtherscanLikeExplorerConfig({ type: "etherscan", uri: "anything" })).toBe(true);
         expect(isEtherscanLikeExplorerConfig({ type: "blockscout", uri: "anything" })).toBe(true);
         expect(isEtherscanLikeExplorerConfig({ type: "teloscan", uri: "anything" })).toBe(true);
+        expect(isEtherscanLikeExplorerConfig({ type: "klaytnfinder", uri: "anything" })).toBe(true);
       });
     });
   });

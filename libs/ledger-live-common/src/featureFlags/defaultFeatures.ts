@@ -101,6 +101,9 @@ export const defaultFeatures = {
   currencyCoreum: {
     enabled: false,
   },
+  currencyKlaytn: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {

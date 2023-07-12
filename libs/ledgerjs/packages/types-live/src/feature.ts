@@ -39,6 +39,7 @@ export type FeatureId =
   | "currencyInternetComputer"
   | "currencyTelosEvm"
   | "currencyCoreum"
+  | "currencyKlaytn"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"
