@@ -25,8 +25,9 @@ import LText from "../../components/LText";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { getEnv } from "@ledgerhq/live-common/env";
 
-const SEARCH_KEYS = ["name", "ticker"];
+const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
 type Props = {
   devMode?: boolean;
