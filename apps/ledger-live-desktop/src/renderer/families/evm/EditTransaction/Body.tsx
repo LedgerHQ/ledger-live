@@ -30,7 +30,7 @@ import { St, StepId } from "./types";
 import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/lib/types";
-import { fromTransactionRaw } from "@ledgerhq/coin-evm/lib/transaction";
+import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 
 export type Data = {
   account: AccountLike | undefined | null;
