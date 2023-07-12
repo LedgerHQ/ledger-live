@@ -15,24 +15,22 @@ function FabButtonBar({ data }: Props) {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: 16 }}
     >
-      {data.map(
-        ({ children, onPress, Icon, buttonProps, disabled, testId }, index) => (
-          <Button
-            size={"small"}
-            Icon={Icon}
-            iconPosition={"left"}
-            type={buttonProps?.type ?? "shade"}
-            outline={buttonProps?.outline ?? true}
-            disabled={disabled}
-            onPress={onPress}
-            key={index}
-            mr={3}
-            testID={testId}
-          >
-            {children}
-          </Button>
-        ),
-      )}
+      {data.map(({ children, onPress, Icon, buttonProps, disabled, testId }, index) => (
+        <Button
+          size={"small"}
+          Icon={Icon}
+          iconPosition={"left"}
+          type={buttonProps?.type ?? "shade"}
+          outline={buttonProps?.outline ?? true}
+          disabled={disabled}
+          onPress={onPress}
+          key={index}
+          mr={3}
+          testID={testId}
+        >
+          {children}
+        </Button>
+      ))}
     </ScrollContainer>
   );
 }

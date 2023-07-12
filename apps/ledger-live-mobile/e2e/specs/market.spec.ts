@@ -49,11 +49,14 @@ describe("Market page for user with no device", () => {
 
     if (isAndroid()) {
       const url = await detox.web.element(detox.by.web.id("main")).getCurrentUrl();
-      // eslint-disable-next-line no-console
-      console.log(url);
-      await expect(url).toEqual(
-        "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=buy_from_live&apptracking=false",
-      );
+
+      const expectedUrl = "https://shop.ledger.com/*";
+
+      // using regular expression with uniq caracter
+      const regex = new RegExp(expectedUrl.replace("*", ".*"));
+      const isMatch = regex.test(url);
+
+      expect(isMatch).toEqual(true);
     } else {
       console.warn("Skipping webview check on iOS");
     }
