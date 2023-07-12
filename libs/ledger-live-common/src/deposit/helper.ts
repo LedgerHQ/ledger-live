@@ -1,47 +1,47 @@
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  currenciesByMarketcap,
+  findCryptoCurrencyById,
+  findTokenById,
+  useCurrenciesByMarketcap,
+} from "../currencies";
 import { MappedAsset, GroupedCurrency } from "./type";
 
-function getMaxValueKey(obj) {
+function getMaxValueIndex(obj) {
   return Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b));
 }
 
-const groupedCurrenciesByProvider = (data: MappedAsset[]) => {
+const groupedCurrenciesByProvider = async (data: MappedAsset[]) => {
   const groupedCurrencies = new Map<string, GroupedCurrency>();
 
   for (const currency of data) {
     let groupedCurrency = groupedCurrencies.get(currency.providerId);
     if (!groupedCurrency) {
       groupedCurrency = {
-        names: {},
         providerId: currency.providerId,
         currenciesByNetwork: [],
-        name: "",
-        ticker: "",
       };
       groupedCurrencies.set(currency.providerId, groupedCurrency);
     }
-    groupedCurrency.currenciesByNetwork.push(currency);
-    const nameEntry = `${currency.name}/${currency.ticker}`;
-    if (groupedCurrency.names[nameEntry]) {
-      groupedCurrency.names[nameEntry]++;
-    } else {
-      groupedCurrency.names[nameEntry] = 1;
-    }
+    groupedCurrency.currenciesByNetwork.push({
+      ...currency,
+      ledgerCurrency: (findCryptoCurrencyById(currency.ledgerId) ||
+        findTokenById(currency.ledgerId)) as CryptoCurrency | TokenCurrency,
+    });
   }
 
-  groupedCurrencies.forEach(value => {
-    if (value.currenciesByNetwork.length === 1) {
-      value.ticker = value.currenciesByNetwork[0].ticker;
-      value.name = value.currenciesByNetwork[0].name;
-    } else {
-      const maxKey = getMaxValueKey(value.names);
-      const [name, ticker] = maxKey.split("/");
-      value.name = name;
-      value.ticker = ticker;
-    }
+  const mapValues = Array.from(groupedCurrencies.entries()).map(async ([_, value]) => {
+    const currencies = value.currenciesByNetwork.map(
+      e => e.ledgerCurrency as CryptoCurrency | TokenCurrency,
+    );
+    const res = await currenciesByMarketcap(currencies);
+    return {
+      ...value,
+      currenciesByNetwork: res,
+    };
   });
 
-  const mapValues = Array.from(groupedCurrencies.entries());
-  return mapValues;
+  return Promise.all(mapValues);
 };
 
 const searchByProviderId = (list: MappedAsset[], providerId: string) =>

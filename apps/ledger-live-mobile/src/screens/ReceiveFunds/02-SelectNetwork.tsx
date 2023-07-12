@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import {
   useCurrenciesByMarketcap,
-  findCryptoCurrencyByKeyword,
+  findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 
 import { BannerCard, Flex, Text } from "@ledgerhq/native-ui";
@@ -34,7 +34,16 @@ type Props = {
 const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
 export default function SelectNetwork({ navigation, route }: Props) {
-  const networks = route?.params?.networks;
+  const provider = route?.params?.provider;
+
+  const networks = useMemo(
+    () =>
+      provider?.currenciesByNetwork.map(elem =>
+        elem.type === "TokenCurrency" ? elem.parentCurrency.id : elem.id,
+      ) || [],
+    [provider?.currenciesByNetwork],
+  );
+
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
@@ -49,7 +58,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
       return [];
     } else {
       return networks.map(net => {
-        const selectedCurrency = findCryptoCurrencyByKeyword(net.toUpperCase());
+        const selectedCurrency = findCryptoCurrencyById(net);
         if (selectedCurrency) return selectedCurrency;
         else return null;
       });
@@ -68,27 +77,36 @@ export default function SelectNetwork({ navigation, route }: Props) {
         network: currency.name,
       });
 
-      const accs = findAccountByCurrency(accounts, currency);
+      const cryptoToSend = provider?.currenciesByNetwork.find(curByNetwork =>
+        curByNetwork.type === "TokenCurrency"
+          ? curByNetwork.parentCurrency.id === currency.id
+          : curByNetwork.id === currency.id,
+      );
+
+      if (!cryptoToSend) return;
+
+      const accs = findAccountByCurrency(accounts, cryptoToSend);
+
       if (accs.length > 0) {
         // if we found one or more accounts of the given currency we go to select account
         navigation.navigate(ScreenName.ReceiveSelectAccount, {
-          currency,
+          currency: cryptoToSend,
         });
-      } else if (currency.type === "TokenCurrency") {
+      } else if (cryptoToSend.type === "TokenCurrency") {
         // cases for token currencies
-        const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
+        const parentAccounts = findAccountByCurrency(accounts, cryptoToSend.parentCurrency);
 
         if (parentAccounts.length > 0) {
           // if we found one or more accounts of the parent currency we select account
 
           navigation.navigate(ScreenName.ReceiveSelectAccount, {
-            currency,
+            currency: cryptoToSend,
             createTokenAccount: true,
           });
         } else {
           // if we didn't find any account of the parent currency we add and create one
           navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-            currency: currency.parentCurrency,
+            currency: cryptoToSend.parentCurrency,
             createTokenAccount: true,
           });
         }
@@ -99,7 +117,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
         });
       }
     },
-    [accounts, navigation],
+    [accounts, navigation, provider],
   );
 
   const hideBanner = useCallback(() => {

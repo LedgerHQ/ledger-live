@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList } from "react-native";
 import type {
@@ -7,10 +7,7 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import {
-  isCurrencySupported,
-  listTokens,
   useCurrenciesByMarketcap,
-  listSupportedCurrencies,
   findCryptoCurrencyByKeyword,
 } from "@ledgerhq/live-common/currencies/index";
 
@@ -25,6 +22,9 @@ import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { findAccountByCurrency } from "../../logic/deposit";
+
+import { useMappedAssets } from "@ledgerhq/live-common/deposit/index";
+import { groupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/helper";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -42,27 +42,31 @@ const renderEmptyList = () => (
   </Flex>
 );
 
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
-
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
 
   const { t } = useTranslation();
-  const filterCurrencyIds = useMemo(
-    () => route.params?.filterCurrencyIds || [],
-    [route.params?.filterCurrencyIds],
-  );
-  const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[])
-        .concat(listSupportedTokens())
-        .filter(({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id)),
-    [filterCurrencyIds],
-  );
+  const [currenciesByProvider, setCurrencies] = useState<CryptoOrTokenCurrency[]>([]);
+  const [currenciesAndProvider, setCurrenciesAndProvider] = useState<
+    {
+      currenciesByNetwork: CryptoOrTokenCurrency[];
+      providerId: string;
+    }[]
+  >([]);
 
   const accounts = useSelector(flattenAccountsSelector);
 
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+  const { displayableCoinsAndTokens } = useMappedAssets();
+
+  useEffect(() => {
+    groupedCurrenciesByProvider(displayableCoinsAndTokens).then(res => {
+      setCurrenciesAndProvider(res);
+
+      setCurrencies(Object.values(res).map(value => value.currenciesByNetwork[0]));
+    });
+  }, [displayableCoinsAndTokens]);
+
+  const sortedCryptoCurrencies = useCurrenciesByMarketcap(currenciesByProvider);
 
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
@@ -71,15 +75,20 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         page: "Choose a crypto to secure",
       });
 
-      const accs = findAccountByCurrency(accounts, currency);
-      const networks: string[] = ["ethereum", "polygon", "bsc", "cosmos"];
+      const provider = currenciesAndProvider.find(elem =>
+        elem.currenciesByNetwork.some(
+          currencyByNetwork =>
+            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
+        ),
+      );
 
+      const accs = findAccountByCurrency(accounts, currency);
       if (accs.length > 0) {
         // if we found one or more accounts of the given currency we select account
 
-        if (networks.length > 1) {
+        if (provider && provider?.currenciesByNetwork.length > 1) {
           navigation.navigate(ScreenName.DepositSelectNetwork, {
-            networks,
+            provider,
           });
         } else {
           navigation.navigate(ScreenName.ReceiveSelectAccount, {
@@ -93,11 +102,16 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
         if (parentAccounts.length > 0) {
           // if we found one or more accounts of the parent currency we select account
-
-          navigation.navigate(ScreenName.ReceiveSelectAccount, {
-            currency,
-            createTokenAccount: true,
-          });
+          if (provider && provider?.currenciesByNetwork.length > 1) {
+            navigation.navigate(ScreenName.DepositSelectNetwork, {
+              provider,
+            });
+          } else {
+            navigation.navigate(ScreenName.ReceiveSelectAccount, {
+              currency,
+              createTokenAccount: true,
+            });
+          }
         } else {
           // if we didn't find any account of the parent currency we add and create one
           navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
@@ -106,10 +120,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           });
         }
       } else {
-        if (networks.length > 1) {
+        if (provider && provider?.currenciesByNetwork.length > 1) {
           // we redirect to choose network on wich one you want to create the account
           navigation.navigate(ScreenName.DepositSelectNetwork, {
-            networks,
+            provider,
           });
         } else {
           // else we create a currency account
@@ -119,7 +133,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         }
       }
     },
-    [accounts, navigation],
+    [accounts, navigation, currenciesAndProvider],
   );
 
   useEffect(() => {
@@ -156,7 +170,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       <FilteredSearchBar
         keys={SEARCH_KEYS}
         inputWrapperStyle={{ marginHorizontal: 16, marginBottom: 8 }}
-        list={sortedCryptoCurrencies}
+        list={sortedCryptoCurrencies as CryptoOrTokenCurrency[]}
         renderList={renderList}
         renderEmptySearch={renderEmptyList}
         newSearchBar
