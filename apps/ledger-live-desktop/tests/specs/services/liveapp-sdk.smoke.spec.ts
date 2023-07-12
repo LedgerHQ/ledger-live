@@ -5,36 +5,33 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import { stopDummyServer } from "@ledgerhq/test-utils";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
-let continueTest = false;
+let testServerIsRunning = false;
 
 test.beforeAll(async () => {
-  // Check that dummy app in tests/utils/dummy-app-build has been started successfully
-  continueTest = await LiveAppWebview.startLiveApp("dummy-live-app/build", {
+  // Check that dummy app in libs/test-utils/dummy-live-app has been started successfully
+  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-live-app/build", {
     name: "Dummy Live App",
     id: "dummy-live-app",
     permissions: [{ method: "*" }],
   });
 
-  if (!continueTest) {
+  if (!testServerIsRunning) {
     console.warn("Stopping Buy/Sell test setup");
-    return; // need to make this a proper ignore/jest warning
+    return;
   }
 });
 
 test.afterAll(async () => {
-  await stopDummyServer();
-  delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
+  await LiveAppWebview.stopLiveApp();
 });
 
-// Due to flakiness on different OS's and CI, we won't run the screenshots where unncessary for testing
-test("Discover", async ({ page }) => {
+test("Live App SDK methods", async ({ page }) => {
   // Don't run test if server is not running
-  if (!continueTest) return;
+  if (!testServerIsRunning) return;
 
   const discoverPage = new DiscoverPage(page);
   const liveAppWebview = new LiveAppWebview(page);

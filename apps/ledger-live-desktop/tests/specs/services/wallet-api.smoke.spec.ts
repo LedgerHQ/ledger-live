@@ -5,36 +5,44 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import { stopDummyServer } from "@ledgerhq/test-utils";
 import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
-let liveAppWebview;
-let continueTest = false;
+let testServerIsRunning = false;
 
-test.beforeAll(async ({ page }) => {
-  liveAppWebview = new LiveAppWebview(page);
+test.beforeAll(async () => {
+  // Check that dummy app in libs/test-utils/dummy-live-app has been started successfully
+  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-wallet-app/build", {
+    name: "Dummy Wallet API Live App",
+    id: "dummy-live-app",
+    apiVersion: "2.0.0",
+    content: {
+      shortDescription: {
+        en: "App to test the Wallet API",
+      },
+      description: {
+        en: "App to test the Wallet API with Playwright",
+      },
+    },
+  });
 
-  // Check that dummy app in tests/utils/dummy-app-build has been started successfully
-  continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app/build");
-
-  if (!continueTest) {
-    console.warn("Stopping Wallet API test setup");
-    return; // need to make this a proper ignore/jest warning
+  if (!testServerIsRunning) {
+    console.warn("Stopping Buy/Sell test setup");
+    return;
   }
 });
 
 test.afterAll(async () => {
-  await stopDummyServer();
-  delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
+  await LiveAppWebview.stopLiveApp();
 });
 
 test("Wallet API methods", async ({ page }) => {
-  if (!continueTest) return;
+  if (!testServerIsRunning) return;
 
   const discoverPage = new DiscoverPage(page);
+  const liveAppWebview = new LiveAppWebview(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
   const layout = new Layout(page);
