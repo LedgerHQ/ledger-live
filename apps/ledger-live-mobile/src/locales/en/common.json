@@ -2838,7 +2838,7 @@
       "verifyAgain": "Check again",
       "noAccount": "No account found",
       "address": "Address for account",
-      "copyAddress": "Copy",
+      "copyAddress": "Copy address",
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",

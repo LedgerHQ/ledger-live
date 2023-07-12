@@ -33,7 +33,6 @@ import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import Clipboard from "@react-native-community/clipboard";
-import { v4 as uuid } from "uuid";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 
 type ScreenProps = BaseComposite<
@@ -309,7 +308,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             >
               <Icons.CopyMedium size={20}></Icons.CopyMedium>
               <Text variant={"body"} fontWeight={"medium"} pl={3}>
-                Copy address
+                {t("transfer.receive.receiveConfirmation")}
               </Text>
             </StyledTouchableOpacity>
           </Flex>

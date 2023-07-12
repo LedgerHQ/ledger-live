@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState, useRef, memo } from "react";
-import { FlatList, ImageBackground } from "react-native";
+import { FlatList } from "react-native";
 import { concat, from } from "rxjs";
 import type { Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
@@ -248,40 +248,46 @@ function ScanLoading({
 
   return (
     <>
-      <GradientContainer color={colors.background.main} startOpacity={1} endOpacity={0} containerStyle={{ borderRadius: 0, position: "absolute", bottom: 0, left: 0 }} gradientStyle={{ zIndex: 1 }}>
+      <GradientContainer
+        color={colors.background.main}
+        startOpacity={1}
+        endOpacity={0}
+        containerStyle={{ borderRadius: 0, position: "absolute", bottom: 0, left: 0 }}
+        gradientStyle={{ zIndex: 1 }}
+      >
         <Animation style={{ width: "100%" }} source={lottie} />
       </GradientContainer>
       <Flex flex={1} position="relative">
-      <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
-        <Text variant="h4" fontWeight="semiBold" textAlign="center">
-          {t("transfer.receive.addAccount.title")}
-        </Text>
-        <Text mt={6} textAlign="center" variant="body" fontWeight="medium" color="neutral.c80">
-          {t("transfer.receive.addAccount.subtitle", {
-            currencyTicker: currency?.ticker,
-          })}
-        </Text>
-      </Flex>
-      <Flex
-        minHeight={120}
-        flexDirection="column"
-        alignItems="stretch"
-        m={6}
-        justifyContent="flex-end"
-      >
-        {scannedAccounts?.length > 0 ? (
-          <>
-            <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-              {t("transfer.receive.addAccount.foundAccounts", {
-                count: scannedAccounts?.length,
-              })}
-            </LText>
-            <Button type="secondary" onPress={stopSubscription}>
-              {t("transfer.receive.addAccount.stopSynchronization")}
-            </Button>
-          </>
-        ) : null}
-      </Flex>
+        <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
+          <Text variant="h4" fontWeight="semiBold" textAlign="center">
+            {t("transfer.receive.addAccount.title")}
+          </Text>
+          <Text mt={6} textAlign="center" variant="body" fontWeight="medium" color="neutral.c80">
+            {t("transfer.receive.addAccount.subtitle", {
+              currencyTicker: currency?.ticker,
+            })}
+          </Text>
+        </Flex>
+        <Flex
+          minHeight={120}
+          flexDirection="column"
+          alignItems="stretch"
+          m={6}
+          justifyContent="flex-end"
+        >
+          {scannedAccounts?.length > 0 ? (
+            <>
+              <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
+                {t("transfer.receive.addAccount.foundAccounts", {
+                  count: scannedAccounts?.length,
+                })}
+              </LText>
+              <Button type="secondary" onPress={stopSubscription}>
+                {t("transfer.receive.addAccount.stopSynchronization")}
+              </Button>
+            </>
+          ) : null}
+        </Flex>
       </Flex>
     </>
   );

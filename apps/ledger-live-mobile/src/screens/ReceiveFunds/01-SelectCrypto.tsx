@@ -73,7 +73,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     (currency: CryptoCurrency | TokenCurrency) => {
       track("asset_clicked", {
         asset: currency.name,
-        page: "Choose a crypto to secure"
+        page: "Choose a crypto to secure",
       });
 
       const accs = findAccountByCurrency(accounts, currency);
