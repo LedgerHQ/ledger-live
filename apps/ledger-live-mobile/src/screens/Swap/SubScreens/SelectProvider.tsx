@@ -37,8 +37,8 @@ export function SelectProvider({ navigation, route }: SelectProviderParamList) {
       });
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, {
-        ...route.params,
         rate,
+        merge: true,
       });
     },
     [track, selectedRate?.provider, rates.value?.length, navigation, route.params],
