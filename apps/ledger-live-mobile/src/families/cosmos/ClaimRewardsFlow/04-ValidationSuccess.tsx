@@ -48,7 +48,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="CosmosClaimRewards" name="ValidationSuccess" />
+      <TrackScreen
+        category="CosmosClaimRewards"
+        name="ValidationSuccess"
+        flow="stake"
+        action="claim_rewards"
+        currency={account.currency.id}
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

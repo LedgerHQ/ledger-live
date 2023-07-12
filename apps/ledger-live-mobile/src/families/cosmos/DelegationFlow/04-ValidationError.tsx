@@ -1,7 +1,9 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
+import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
 import {
@@ -18,6 +20,7 @@ type Props = BaseComposite<
 >;
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const { account } = useSelector(accountScreenSelector(route));
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
@@ -25,6 +28,7 @@ export default function ValidationError({ navigation, route }: Props) {
     navigation.goBack();
   }, [navigation]);
   const error = route.params.error;
+  debugger;
   return (
     <SafeAreaView
       style={[
@@ -34,7 +38,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="CosmosDelegation" name="ValidationError" />
+      <TrackScreen
+        category="CosmosDelegation"
+        name="ValidationError"
+        flow="stake"
+        action="delegation"
+        currency={account.currency.id}
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

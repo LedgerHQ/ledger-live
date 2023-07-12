@@ -49,7 +49,13 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="SelectValidator" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="delegation"
+        currency={account.currency.id}
+      />
       <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>
         <ValidatorHead />

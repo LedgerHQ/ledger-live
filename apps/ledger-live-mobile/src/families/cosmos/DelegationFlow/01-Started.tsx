@@ -45,7 +45,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="DelegationFlow" name="Started" />
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="delegation"
+          currency={account.currency.id}
+        />
         <Flex alignItems="center" mb={6}>
           <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
