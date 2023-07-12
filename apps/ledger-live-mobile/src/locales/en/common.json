@@ -2855,8 +2855,8 @@
         "cta": "Create a new account"
       },
       "addAccount": {
-        "title": "Searching the blockchain",
-        "subtitle": "Checking to see if you already own {{currencyTicker}} accounts.",
+        "title": "Checking for an account...",
+        "subtitle": "Checking if you already have a {{currencyTicker}} account on the blockchain.",
         "foundAccounts": "{{count}} accounts found",
         "stopSynchronization": "Stop synchronization"
       },
