@@ -565,7 +565,7 @@ jobs:
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.macos.pass ? "✅" : "❌"}\n`
+                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
                     }
                   } :
                   {
