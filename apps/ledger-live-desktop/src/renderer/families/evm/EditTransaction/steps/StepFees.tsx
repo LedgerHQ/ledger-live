@@ -138,7 +138,6 @@ export const StepFeesFooter = ({
   if (
     errors.amount &&
     ((errors.amount as Error) instanceof NotOwnedNft ||
-      (errors.amount as Error) instanceof NotOwnedNft ||
       (errors.amount as Error) instanceof NotEnoughNftOwned)
   ) {
     errorCount = errorCount - 1;
