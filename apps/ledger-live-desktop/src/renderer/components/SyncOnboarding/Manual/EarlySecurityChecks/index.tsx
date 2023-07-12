@@ -142,6 +142,7 @@ const EarlySecurityChecks = ({
         closeFwUpdateDrawer();
         restartChecksAfterUpdate();
       },
+      deviceHasPin: false, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {

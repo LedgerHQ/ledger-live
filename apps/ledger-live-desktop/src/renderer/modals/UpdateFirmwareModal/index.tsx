@@ -49,6 +49,7 @@ export type StepProps = {
   finalStepSuccessButtonLabel?: string;
   finalStepSuccessButtonOnClick?: () => void;
   shouldReloadManagerIfUpdateRefused?: boolean;
+  deviceHasPin?: boolean;
 };
 
 export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";

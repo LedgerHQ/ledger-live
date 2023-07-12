@@ -790,47 +790,57 @@ export const renderConnectYourDevice = ({
 const renderFirmwareUpdatingBase = ({
   modelId,
   type,
+  deviceHasPin = true,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-}) => (
-  <Wrapper>
-    <Header />
-    <Box mb={8}>
-      <Animation animation={getDeviceAnimation(modelId, type, "firmwareUpdating")} />
-    </Box>
-    <Footer>
-      <Flex alignItems="flex-start" flexDirection="column">
-        <Flex alignItems="center">
-          <Circle mr={6}>
-            <Text color="palette.text.shade100" variant="body">
-              {"1"}
-            </Text>
-          </Circle>
-          <BulletText flex={1}>
-            <Trans
-              i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
-              values={{ productName: getDeviceModel(modelId).productName }}
-            />
-          </BulletText>
+  deviceHasPin?: boolean;
+}) =>
+  deviceHasPin ? (
+    <Wrapper>
+      <Header />
+      <Box mb={8}>
+        <Animation animation={getDeviceAnimation(modelId, type, "firmwareUpdating")} />
+      </Box>
+      <Footer>
+        <Flex alignItems="flex-start" flexDirection="column">
+          <Flex alignItems="center">
+            <Circle mr={6}>
+              <Text color="palette.text.shade100" variant="body">
+                {"1"}
+              </Text>
+            </Circle>
+            <BulletText flex={1}>
+              <Trans
+                i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
+                values={{ productName: getDeviceModel(modelId).productName }}
+              />
+            </BulletText>
+          </Flex>
+          <Flex alignItems="center" mt={6}>
+            <Circle mr={6}>
+              <Text color="palette.text.shade100" variant="body">
+                {"2"}
+              </Text>
+            </Circle>
+            <BulletText flex={1}>
+              <Trans
+                i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
+                values={{ productName: getDeviceModel(modelId).productName }}
+              />
+            </BulletText>
+          </Flex>
         </Flex>
-        <Flex alignItems="center" mt={6}>
-          <Circle mr={6}>
-            <Text color="palette.text.shade100" variant="body">
-              {"2"}
-            </Text>
-          </Circle>
-          <BulletText flex={1}>
-            <Trans
-              i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
-              values={{ productName: getDeviceModel(modelId).productName }}
-            />
-          </BulletText>
-        </Flex>
-      </Flex>
-    </Footer>
-  </Wrapper>
-);
+      </Footer>
+    </Wrapper>
+  ) : (
+    <BulletText flex={1}>
+      <Trans
+        i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
+        values={{ productName: getDeviceModel(modelId).productName }}
+      />
+    </BulletText>
+  );
 
 export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdatingBase);
 
