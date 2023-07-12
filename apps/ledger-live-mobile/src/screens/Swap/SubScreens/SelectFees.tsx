@@ -22,8 +22,8 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
     updatedTransaction => {
       // @ts-expect-error navigation type is only partially declared
       navigation.navigate(ScreenName.SwapForm, {
-        ...route.params,
         transaction: updatedTransaction,
+        merge: true,
       });
     },
     [navigation, route.params],
