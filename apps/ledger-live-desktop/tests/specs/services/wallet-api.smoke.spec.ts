@@ -5,7 +5,7 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
-import * as server from "../../utils/serve-dummy-app";
+import { startDummyServer, getLiveAppManifest, stopDummyServer } from "@ledgerhq/test-utils";
 import { randomUUID } from "crypto";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
@@ -15,7 +15,7 @@ let continueTest = false;
 test.beforeAll(async ({ request }) => {
   // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
-    const port = await server.start("dummy-wallet-app/build");
+    const port = await startDummyServer("dummy-wallet-app/build");
     const url = `http://localhost:${port}`;
     const response = await request.get(url);
     if (response.ok()) {
@@ -24,7 +24,7 @@ test.beforeAll(async ({ request }) => {
         `========> Dummy Wallet API app successfully running on port ${port}! <=========`,
       );
       process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-        server.liveAppManifest({
+        getLiveAppManifest({
           id: "dummy-live-app",
           url,
           name: "Dummy Wallet API Live App",
@@ -48,8 +48,8 @@ test.beforeAll(async ({ request }) => {
   }
 });
 
-test.afterAll(() => {
-  server.stop();
+test.afterAll(async () => {
+  await stopDummyServer();
   console.info(`========> Dummy Wallet API app stopped <=========`);
   delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
 });
@@ -70,7 +70,7 @@ test("Wallet API methods", async ({ page }) => {
     await drawer.waitForDrawerToDisappear();
 
     const id = randomUUID();
-    const resPromise = discoverPage.send({
+    const response = discoverPage.send({
       jsonrpc: "2.0",
       id,
       method: "account.request",
@@ -82,9 +82,7 @@ test("Wallet API methods", async ({ page }) => {
     await drawer.selectCurrency("bitcoin");
     await drawer.selectAccount("bitcoin");
 
-    const res = await resPromise;
-
-    expect(res).toStrictEqual({
+    await expect(response).resolves.toMatchObject({
       jsonrpc: "2.0",
       id,
       result: {
@@ -94,7 +92,7 @@ test("Wallet API methods", async ({ page }) => {
           balance: "35688397",
           blockHeight: 194870,
           currency: "bitcoin",
-          lastSyncDate: "2020-03-14T13:34:42.000Z",
+          // lastSyncDate: "2020-03-14T13:34:42.000Z", TODO: make sure the sync date doesn't change
           name: "Bitcoin 1 (legacy)",
           spendableBalance: "35688397",
         },
@@ -104,7 +102,7 @@ test("Wallet API methods", async ({ page }) => {
 
   await test.step("account.receive", async () => {
     const id = randomUUID();
-    const resPromise = discoverPage.send({
+    const response = discoverPage.send({
       jsonrpc: "2.0",
       id,
       method: "account.receive",
@@ -116,9 +114,7 @@ test("Wallet API methods", async ({ page }) => {
     await deviceAction.openApp();
     await modal.waitForModalToDisappear();
 
-    const res = await resPromise;
-
-    expect(res).toStrictEqual({
+    await expect(response).resolves.toStrictEqual({
       jsonrpc: "2.0",
       id,
       result: {

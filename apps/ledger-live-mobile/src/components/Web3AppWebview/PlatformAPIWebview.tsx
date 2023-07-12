@@ -57,19 +57,14 @@ function renderLoading() {
 }
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
-    const { webviewProps, webviewState, webviewRef } = useWebviewState(
+    const { webviewProps, webviewRef } = useWebviewState(
       {
         manifest,
         inputs,
       },
       ref,
+      onStateChange,
     );
-
-    useEffect(() => {
-      if (onStateChange) {
-        onStateChange(webviewState);
-      }
-    }, [webviewState, onStateChange]);
 
     const accounts = useSelector(flattenAccountsSelector);
     const navigation =

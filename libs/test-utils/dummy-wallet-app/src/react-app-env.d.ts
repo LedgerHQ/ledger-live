@@ -4,8 +4,11 @@ interface Window {
   ledger: {
     e2e: {
       walletApi: {
-        send: (params: any) => void;
+        send: (params: unknown) => void;
       };
     };
+  };
+  ReactNativeWebView?: {
+    postMessage: (value: unknown) => void;
   };
 }
