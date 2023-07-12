@@ -65,13 +65,12 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
-          pnpm test-utils dummy-apps:install
           pnpm test-utils dummy-apps:build
         shell: bash
       - name: Create iOS simulator
