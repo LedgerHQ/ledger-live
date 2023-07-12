@@ -2,12 +2,14 @@ import { FeeTooHigh } from "@ledgerhq/errors";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import ethereumScanAccounts1 from "./datasets/ethereum.scanAccounts.1";
+import telosScanAccounts1 from "./datasets/ethereum.scanAccounts.1";
 import { ethereum1 } from "./datasets/ethereum1";
+import { telos1 } from "./datasets/telos1";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 
 const ethereum: CurrenciesData<Transaction> = {
-  scanAccounts: [ethereumScanAccounts1],
+  scanAccounts: [ethereumScanAccounts1, telosScanAccounts1],
   accounts: [
     {
       implementations: ["js"],
@@ -57,6 +59,10 @@ const ethereum: CurrenciesData<Transaction> = {
           },
         },
       ],
+    },
+    {
+      implementations: ["js"],
+      raw: telos1 as AccountRaw,
     },
   ],
 };
