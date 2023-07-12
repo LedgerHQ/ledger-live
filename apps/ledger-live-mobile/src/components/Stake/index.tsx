@@ -17,13 +17,14 @@ const StakeFlow = ({ route }: Props) => {
   const currencies = route?.params?.currencies || featureFlag?.params?.list;
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;
+  const account = route?.params?.account;
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
       currencies: currencies || [],
     });
   }, [currencies]);
 
-  const onSuccess = useCallback(
+  const goToAccount = useCallback(
     (account: Account, parentAccount?: Account) => {
       // @ts-expect-error issue in typing
       const decorators = perFamilyAccountActions[account?.currency?.family];
@@ -66,7 +67,7 @@ const StakeFlow = ({ route }: Props) => {
         screen: ScreenName.RequestAccountsSelectAccount,
         params: {
           currency: cryptoCurrencies[0],
-          onSuccess,
+          onSuccess: goToAccount,
         },
       });
     } else {
@@ -75,15 +76,19 @@ const StakeFlow = ({ route }: Props) => {
         params: {
           currencies: cryptoCurrencies,
           allowAddAccount: true,
-          onSuccess,
+          onSuccess: goToAccount,
         },
       });
     }
-  }, [cryptoCurrencies, navigation, onSuccess]);
+  }, [cryptoCurrencies, navigation, goToAccount]);
 
   useLayoutEffect(() => {
-    requestAccount();
-  }, [requestAccount]);
+    if (account) {
+      goToAccount(account);
+    } else {
+      requestAccount();
+    }
+  }, [requestAccount, goToAccount, account]);
 
   return null;
 };

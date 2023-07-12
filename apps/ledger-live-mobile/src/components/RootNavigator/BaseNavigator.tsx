@@ -31,6 +31,7 @@ import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
+import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
@@ -299,6 +300,11 @@ export default function BaseNavigator() {
               : { headerStyle: styles.headerNoShadow, headerLeft: () => null }
           }
           {...noNanoBuyNanoWallScreenOptions}
+        />
+        <Stack.Screen
+          name={NavigatorName.Earn}
+          component={EarnLiveAppNavigator}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.ProviderList}
