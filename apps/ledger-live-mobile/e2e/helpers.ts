@@ -3,6 +3,7 @@ import { Direction } from "react-native-modal";
 
 const DEFAULT_TIMEOUT = 60000;
 const BASE_DEEPLINK = "ledgerlive://";
+const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
 export const currencyParam = "?currency=";
 export const recipientParam = "&recipient=";
 export const amountParam = "&amount=";
@@ -77,7 +78,7 @@ export async function scrollToId(
   await waitFor(element(by.id(id)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(pixels, direction, NaN, 0.8);
+    .scroll(pixels, direction, NaN, startPositionY);
 }
 
 export async function getTextOfElement(id: string, index = 0) {

@@ -43,13 +43,14 @@ export default class OnboardingSteps {
   }
 
   async chooseToExploreApp() {
-    await device.disableSynchronization();
+    // Fixme : Found a way to skip discover carousel without disabling synchro (animations prevent click)
+    if (isAndroid()) await device.disableSynchronization();
     await tapByElement(this.exploreAppButton());
-    if (await isAndroid())
-      for (let i = 0; i < 4; i++) {
-        await waitForElementById(this.discoverLiveTitle(i));
-        await tapById(this.discoverLiveTitle(i));
-      }
+    if (!isAndroid()) await device.disableSynchronization();
+    for (let i = 0; i < 4; i++) {
+      await waitForElementById(this.discoverLiveTitle(i));
+      await tapById(this.discoverLiveTitle(i));
+    }
     await waitForElementById(this.exploreWithoutDeviceButtonId);
     await tapById(this.exploreWithoutDeviceButtonId);
     await device.enableSynchronization();
