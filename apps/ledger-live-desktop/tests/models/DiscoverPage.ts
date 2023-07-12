@@ -1,6 +1,4 @@
 import { Page, Locator } from "@playwright/test";
-import { WebviewTag } from "../../src/renderer/components/Web3AppWebview/types";
-import { waitFor } from "../utils/waitFor";
 
 export class DiscoverPage {
   readonly page: Page;

@@ -8,7 +8,6 @@ import { AccountPage } from "../../models/AccountPage";
 import { SettingsPage } from "../../models/SettingsPage";
 import { MarketPage } from "../../models/MarketPage";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
-import { stopDummyServer } from "@ledgerhq/test-utils";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
