@@ -4,31 +4,56 @@ import {
   tapByElement,
   getElementById,
   waitForElementByText,
+  waitForElementById,
+  tapById,
+  isAndroid,
 } from "../../helpers";
+import { device } from "detox";
 import * as bridge from "../../bridge/server";
 
 export default class OnboardingSteps {
-  onboardingGetStartedButton = () => getElementByText("Get started");
-  setupLedgerButton = () => getElementByText("Set up your Ledger");
-  accessWalletButton = () => getElementByText("Access your wallet");
-  connectLedgerButton = () => getElementByText("Connect your Ledger");
-  continueButton = () => getElementByText("Continue");
-  pairNanoButton = () => getElementByText("Let’s pair my Nano"); // Yes it's a weird character, no do not replace it as it won't find the text
+  getStartedButtonId = "onboarding-getStarted-button";
+  devicePairedContinueButtonId = "onboarding-paired-continue";
+  exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
+  discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
+  onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
+  accessWalletButton = () =>
+    getElementById("Onboarding PostWelcome - Selection|Access an existing wallet");
+  noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
+  exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
+  exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
+  connectLedgerButton = () => getElementById("Existing Wallet | Connect");
+  continueButton = () => getElementById(this.devicePairedContinueButtonId);
   pairDeviceButton = () => getElementById("pair-device");
+  pairNanoButton = () => getElementById("Onboarding-PairNewNano");
   nanoDeviceButton = (name = "") => getElementByText(`Nano X de ${name}`);
-  maybeLaterButton = () => getElementById("Maybe later");
+  maybeLaterButton = () => getElementById("notifications-prompt-later");
 
   async startOnboarding() {
-    await waitForElementByText("Get started");
+    await waitForElementById(this.getStartedButtonId);
     await tapByElement(this.onboardingGetStartedButton());
-  }
-
-  async chooseToSetupLedger() {
-    await tapByElement(this.setupLedgerButton());
   }
 
   async chooseToAccessYourWallet() {
     await tapByElement(this.accessWalletButton());
+  }
+
+  async chooseNoLedgerYet() {
+    await tapByElement(this.noLedgerYetButton());
+  }
+
+  async chooseToExploreApp() {
+    // Fixme : Found a way to skip discover carousel without disabling synchro (animations prevent click)
+    if (isAndroid()) await device.disableSynchronization();
+    await tapByElement(this.exploreAppButton());
+    if (!isAndroid()) await device.disableSynchronization();
+    for (let i = 0; i < 4; i++) {
+      await waitForElementById(this.discoverLiveTitle(i));
+      await tapById(this.discoverLiveTitle(i));
+    }
+    await waitForElementById(this.exploreWithoutDeviceButtonId);
+    await tapById(this.exploreWithoutDeviceButtonId);
+    await device.enableSynchronization();
   }
 
   async selectYourDevice(device: string) {
@@ -59,7 +84,7 @@ export default class OnboardingSteps {
   }
 
   async openLedgerLive() {
-    await waitForElementByText("Continue");
+    await waitForElementById(this.devicePairedContinueButtonId);
     await tapByElement(this.continueButton());
   }
 

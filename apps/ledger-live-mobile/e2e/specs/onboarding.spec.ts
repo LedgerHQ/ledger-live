@@ -19,7 +19,7 @@ describe("Onboarding", () => {
     await onboardingSteps.chooseToAccessYourWallet();
   });
 
-  it("choosesto connect Ledger", async () => {
+  it("chooses to connect Ledger", async () => {
     await onboardingSteps.chooseToConnectYourLedger();
   });
 

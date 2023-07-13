@@ -285,18 +285,26 @@ function ScanLoading({
         left={0}
         width="100%"
       >
-        {scannedAccounts?.length > 0 ? (
-          <>
-            <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-              {t("transfer.receive.addAccount.foundAccounts", {
-                count: scannedAccounts?.length,
-              })}
-            </LText>
-            <Button type="secondary" onPress={stopSubscription}>
-              {t("transfer.receive.addAccount.stopSynchronization")}
-            </Button>
-          </>
-        ) : null}
+        <Flex
+          minHeight={120}
+          flexDirection="column"
+          alignItems="stretch"
+          m={6}
+          justifyContent="flex-end"
+        >
+          {scannedAccounts?.length > 0 ? (
+            <>
+              <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
+                {t("transfer.receive.addAccount.foundAccounts", {
+                  count: scannedAccounts?.length,
+                })}
+              </LText>
+              <Button type="secondary" onPress={stopSubscription}>
+                {t("transfer.receive.addAccount.stopSynchronization")}
+              </Button>
+            </>
+          ) : null}
+        </Flex>
       </Flex>
     </Loading>
   );

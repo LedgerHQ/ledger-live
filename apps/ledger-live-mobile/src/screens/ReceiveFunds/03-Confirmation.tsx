@@ -109,7 +109,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
-      button: "Verify your address",
+      button: "Verify address",
     });
     const params = { ...route.params, notSkippable: true };
     setIsModalOpened(false);
@@ -125,7 +125,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const hideBanner = useCallback(() => {
     track("button_clicked", {
-      button: "Close network article",
+      button: "How to withdraw from exchange",
     });
     dispatch(setCloseWithdrawBanner(true));
     setBanner(false);
@@ -133,7 +133,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const clickLearn = useCallback(() => {
     track("button_clicked", {
-      button: "Choose a network article",
+      button: "How to withdraw from exchange",
       type: "card",
     });
     Linking.openURL(depositWithdrawBannerMobile?.params.url);
@@ -186,7 +186,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const onShare = useCallback(() => {
     track("button_clicked", {
-      button: "Share",
+      button: "Share address",
     });
     if (mainAccount?.freshAddress) {
       Share.share({ message: mainAccount?.freshAddress });
@@ -197,7 +197,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     if (!mainAccount?.freshAddress) return;
     Clipboard.setString(mainAccount.freshAddress);
     track("button_clicked", {
-      button: "Copy",
+      button: "Copy address",
     });
     const options = {
       enableVibrateFallback: false,
@@ -244,7 +244,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }
 
   return (
-    <Flex flex={1} mb={9}>
+    <Flex flex={1} mb={insets.bottom}>
       <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
         <TrackScreen category="Receive" name="Qr Code" currency={currency.name} />

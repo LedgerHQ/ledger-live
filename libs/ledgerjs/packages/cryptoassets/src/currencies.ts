@@ -8,7 +8,7 @@
  * scheme is generally the id
  * color: is the dominant color of the currency logo, we will color the logo svg with it.
  * managerAppName: if any, is the exact name of the related Ledger's app in LL Manager.
- * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
+ * blockAvgTime: the average time between 2 blocks, in seconds. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
  * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
  * terminated: Present when we no longer support this specific coin.
@@ -3600,6 +3600,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  /**
+   * FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
+   * when ethereum_as_evm_test_only is removed from the currencies list
+   */
   ethereum_as_evm_test_only: {
     type: "CryptoCurrency",
     id: "ethereum_as_evm_test_only",
@@ -3620,6 +3624,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         uri: "https://api.etherscan.io",
         type: "etherscan",
       },
+      gasTracker: { uri: "", type: "ledger" },
     },
     explorerViews: [
       {
@@ -3629,6 +3634,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  /**
+   * FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
+   * when polygon_as_evm_test_only is removed from the currencies list
+   */
   polygon_as_evm_test_only: {
     type: "CryptoCurrency",
     id: "polygon_as_evm_test_only",
@@ -3655,6 +3664,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         uri: "https://api.polygonscan.com",
         type: "etherscan",
       },
+      gasTracker: { uri: "", type: "ledger" },
     },
     explorerViews: [
       {
@@ -4012,7 +4022,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "optimism",
     coinType: CoinType.ETH,
-    name: "Optimism",
+    name: "OP Mainnet",
     managerAppName: "Ethereum",
     ticker: "ETH",
     scheme: "optimism",
@@ -4035,6 +4045,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         token: "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["optimism"],
   },
   optimism_goerli: {
     type: "CryptoCurrency",
