@@ -586,8 +586,8 @@ importers:
         specifier: ^1.2.6
         version: 1.2.6(@types/react@17.0.53)
       '@types/react-motion':
-        specifier: ^0.0.33
-        version: 0.0.33(@types/react@17.0.53)
+        specifier: ^0.0.34
+        version: 0.0.34(@types/react@17.0.53)
       '@types/react-redux':
         specifier: ^7.1.24
         version: 7.1.24(@types/react@17.0.53)
@@ -23525,8 +23525,8 @@ packages:
       '@types/react': 17.0.53
     dev: true
 
-  /@types/react-motion@0.0.33(@types/react@17.0.53):
-    resolution: {integrity: sha512-R9grd4EwdDBcKKq7Zhszd8ukyy2BLKN6ooNI0V39nUl/sui+m7VI94cdebYemBteoPHmO7J7BZk+cIf+Xnk4TA==}
+  /@types/react-motion@0.0.34(@types/react@17.0.53):
+    resolution: {integrity: sha512-/rFI22Vg4Xzb47hXtS06WkzUGRu+Vb3yDleuxiqzGj0JbXYXQUCgwSa2ZU12K7ubKi4C8xsdIN3xt4Z4fjSdPw==}
     peerDependencies:
       '@types/react': '*'
     peerDependenciesMeta:
@@ -35540,7 +35540,7 @@ packages:
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
-      nan: 2.15.0
+      nan: 2.17.0
     optional: true
 
   /fsevents@2.1.2:
@@ -44865,7 +44865,6 @@ packages:
   /nan@2.17.0:
     resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
     requiresBuild: true
-    dev: false
     optional: true
 
   /nano-json-stream-parser@0.1.2:
