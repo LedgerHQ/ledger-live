@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
