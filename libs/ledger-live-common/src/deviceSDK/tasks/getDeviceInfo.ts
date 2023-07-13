@@ -1,4 +1,4 @@
-import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
 
@@ -45,7 +45,7 @@ function internalGetDeviceInfoTask({
           }),
           map(value => {
             if (value.type === "unresponsive") {
-              return { type: "error" as const, error: new LockedDeviceError() };
+              return { type: "error" as const, error: new UnresponsiveDeviceError() };
             }
 
             const { firmwareInfo } = value;

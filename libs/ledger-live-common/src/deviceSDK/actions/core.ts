@@ -1,4 +1,4 @@
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { SharedTaskEvent } from "../tasks/core";
 
 // Represents the state that is shared with any action
@@ -32,8 +32,12 @@ export function sharedReducer({ event }: { event: SharedTaskEvent }): Partial<Sh
       const { error } = event;
       const { name, message } = error;
 
-      if (error instanceof LockedDeviceError) {
-        return { lockedDevice: true };
+      if (
+        error instanceof LockedDeviceError ||
+        (error as unknown) instanceof UnresponsiveDeviceError
+      ) {
+        // Propagates the error so the consumer can distinguish locked (from error response) and unresponsive error.
+        return { lockedDevice: true, error: { type: "SharedError", name, message } };
       }
 
       // Maps any other unhandled error to a SharedError with a specific message
