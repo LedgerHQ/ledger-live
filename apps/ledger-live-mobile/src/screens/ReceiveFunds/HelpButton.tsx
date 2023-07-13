@@ -7,14 +7,15 @@ import { track } from "../../analytics";
 type Props = {
   enabled: boolean;
   url: string;
+  eventButton: string;
 };
-const HelpButton = ({ enabled, url }: Props) => {
+const HelpButton = ({ enabled, url, eventButton }: Props) => {
   const onClickButton = useCallback(() => {
     track("button_clicked", {
-      button: "Choose a network article",
+      button: eventButton,
     });
     Linking.openURL(url);
-  }, [url]);
+  }, [url, eventButton]);
 
   return enabled ? (
     <Box mr={4}>

@@ -173,7 +173,7 @@ function ReceiveSelectAccount({
         showsVerticalScrollIndicator={false}
       />
 
-      <Flex mb={insets.bottom} px={6}>
+      <Flex mb={insets.bottom + 2} px={6}>
         <Button type="shade" size="large" outline onPress={createNewAccount}>
           {t("transfer.receive.selectAccount.cta")}
         </Button>
