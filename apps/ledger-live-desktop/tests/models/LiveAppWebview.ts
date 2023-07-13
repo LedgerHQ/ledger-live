@@ -133,7 +133,7 @@ export class LiveAppWebview {
   async clickWebviewElement(elementName: string) {
     await this.page.evaluate(elementName => {
       const webview = document.querySelector("webview");
-      (webview as any).executeJavaScript(
+      (webview as WebviewTag).executeJavaScript(
         `(function() {
         const element = document.querySelector('${elementName}');
         element.click();
@@ -150,7 +150,7 @@ export class LiveAppWebview {
   async textIsPresent(textToCheck: string) {
     const result: boolean = await this.page.evaluate(textToCheck => {
       const webview = document.querySelector("webview");
-      return (webview as any)
+      return (webview as WebviewTag)
         .executeJavaScript(
           `(function() {
         return document.querySelector('*').innerHTML;
