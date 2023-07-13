@@ -12,7 +12,6 @@ import type { OperationType } from "@ledgerhq/types-live";
  */
 export const getOperationType = (pallet: string, palletMethod: string): OperationType => {
   switch (palletMethod) {
-    case "transfer":
     case "transferAllowDeath":
     case "transferKeepAlive":
       return "OUT";
