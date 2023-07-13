@@ -30,9 +30,8 @@ on:
         default: false
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 env:
   RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
@@ -122,7 +121,7 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-windows-2022]
-    if: ${{ github.env.RUN_FULL_SUITE }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -263,7 +262,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    if: ${{ github.env.RUN_FULL_SUITE }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -565,7 +564,7 @@ jobs:
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.macos.pass ? "✅" : "❌"}\n`
+                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
                     }
                   } :
                   {

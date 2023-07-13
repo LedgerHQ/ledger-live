@@ -26,9 +26,8 @@ on:
 #   DEBUG_DETOX: true
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   detox-tests-ios:
@@ -65,10 +64,14 @@ jobs:
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - name: install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps
+      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+        run: |
+          pnpm test-utils dummy-apps:build
+        shell: bash
       - name: Create iOS simulator
         id: simulator
         run: |
