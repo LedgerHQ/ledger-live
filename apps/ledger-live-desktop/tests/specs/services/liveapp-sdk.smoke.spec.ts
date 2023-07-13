@@ -30,8 +30,10 @@ test.afterAll(async () => {
 });
 
 test("Live App SDK methods", async ({ page }) => {
-  // Don't run test if server is not running
-  if (!testServerIsRunning) return;
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Live SDK E2E test");
+    return;
+  }
 
   const discoverPage = new DiscoverPage(page);
   const liveAppWebview = new LiveAppWebview(page);

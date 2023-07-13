@@ -39,7 +39,10 @@ test.afterAll(async () => {
 });
 
 test("Wallet API methods", async ({ page }) => {
-  if (!testServerIsRunning) return;
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Wallet API E2E test");
+    return;
+  }
 
   const discoverPage = new DiscoverPage(page);
   const liveAppWebview = new LiveAppWebview(page);
