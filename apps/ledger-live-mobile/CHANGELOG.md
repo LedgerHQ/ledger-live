@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.27.0-next.2
+
+### Patch Changes
+
+- [#4024](https://github.com/LedgerHQ/ledger-live/pull/4024) [`d51bf94843`](https://github.com/LedgerHQ/ledger-live/commit/d51bf9484357aaaab93491fe392fbe74a57d6cdf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix wrong `shouldSkipAmount` in general send flow
+
 ## 3.27.0-next.1
 
 ### Patch Changes
