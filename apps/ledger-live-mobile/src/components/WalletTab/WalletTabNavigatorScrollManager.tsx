@@ -55,7 +55,7 @@ export default function WalletTabNavigatorScrollManager({
           if (
             scrollYValue !== null &&
             item.value &&
-            ((scrollYValue < headerHeight && scrollYValue >= 0) ||
+            (scrollYValue < headerHeight ||
               (scrollYValue >= headerHeight &&
                 scrollableOffsetMap.current[item.key] < headerHeight))
           ) {
