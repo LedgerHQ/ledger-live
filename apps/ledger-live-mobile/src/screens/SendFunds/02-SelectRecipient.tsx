@@ -72,7 +72,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       return transaction.mode === "erc721.transfer";
     }
 
-    return true;
+    return false;
   }, [transaction]);
   const isNftSend = isNftTransaction(transaction);
 
