@@ -310,14 +310,14 @@ function ScanLoading({
   );
 }
 
-function AddingAccountLoading({
-  currency,
-}: {
-  currency: Currency;
-}) {
+function AddingAccountLoading({ currency }: { currency: Currency }) {
   const { t } = useTranslation();
 
-  return <Loading title={t("transfer.receive.addAccount.addingAccount", { currencyName: currency.name })} />;
+  return (
+    <Loading
+      title={t("transfer.receive.addAccount.addingAccount", { currencyName: currency.name })}
+    />
+  );
 }
 
 function Loading({
