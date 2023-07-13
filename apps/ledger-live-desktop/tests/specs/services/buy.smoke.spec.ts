@@ -44,7 +44,9 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  await LiveAppWebview.stopLiveApp();
+  if (testServerIsRunning) {
+    await LiveAppWebview.stopLiveApp();
+  }
 });
 
 test("Buy / Sell", async ({ page }) => {

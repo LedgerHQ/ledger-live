@@ -35,7 +35,9 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  await LiveAppWebview.stopLiveApp();
+  if (testServerIsRunning) {
+    await LiveAppWebview.stopLiveApp();
+  }
 });
 
 test("Wallet API methods", async ({ page }) => {
