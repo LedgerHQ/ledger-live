@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -109,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
         with:
           platform: ios
@@ -128,7 +128,7 @@ jobs:
   #     - name: checkout
   #       uses: actions/checkout@v3
   #       with:
-  #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+  #         ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
   #     - uses: pnpm/action-setup@v2
   #       with:
   #         version: 8.6
@@ -218,7 +218,7 @@ jobs:
   #     - name: checkout
   #       uses: actions/checkout@v3
   #       with:
-  #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+  #         ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
   #     - uses: ./tools/actions/composites/upload-allure-report
   #       with:
   #         platform: android
@@ -233,7 +233,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - uses: actions/github-script@v6
         name: prepare status
