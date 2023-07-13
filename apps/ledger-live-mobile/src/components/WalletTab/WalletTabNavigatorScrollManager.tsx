@@ -102,6 +102,11 @@ export default function WalletTabNavigatorScrollManager({
           if (currentRouteName) {
             setTimeout(() => syncScrollOffset(currentRouteName), 0);
           }
+        } else {
+          // NOTE: We must update the ref if it already exists
+          // otherwise no scrollTop or scrollToOffset calls work
+          // as it is called on the old ref and does nothing.
+          found.value = value;
         }
       }
     },
