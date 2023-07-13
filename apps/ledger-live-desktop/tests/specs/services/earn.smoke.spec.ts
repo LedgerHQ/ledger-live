@@ -38,8 +38,10 @@ test.afterAll(async () => {
 });
 
 test("Earn", async ({ page }) => {
-  // Don't run test if server is not running
-  if (!testServerIsRunning) return;
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Earn E2E test");
+    return;
+  }
 
   const layout = new Layout(page);
   const liveAppWebview = new LiveAppWebview(page);

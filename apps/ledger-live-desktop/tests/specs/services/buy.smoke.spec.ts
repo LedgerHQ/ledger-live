@@ -48,8 +48,10 @@ test.afterAll(async () => {
 });
 
 test("Buy / Sell", async ({ page }) => {
-  // Don't run test if server is not running
-  if (!testServerIsRunning) return;
+  if (!testServerIsRunning) {
+    console.warn("Test server not running - Cancelling Buy/Sell E2E test");
+    return;
+  }
 
   const layout = new Layout(page);
   const portfolioPage = new PortfolioPage(page);
