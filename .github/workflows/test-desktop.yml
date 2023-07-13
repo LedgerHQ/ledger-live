@@ -35,7 +35,7 @@ concurrency:
 
 env:
   RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
-  REFNAME: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.sha }}
+  REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
 
 jobs:
   codechecks:
