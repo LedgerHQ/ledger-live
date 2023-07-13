@@ -1,5 +1,6 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/celo/logic";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -15,7 +16,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const isRegistrationPending = isAccountRegistrationPending(account);
+  const isRegistrationPending = isAccountRegistrationPending(account as CeloAccount);
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
