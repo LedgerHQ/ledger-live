@@ -4422,8 +4422,8 @@ importers:
         specifier: ^18.0.1
         version: 18.0.1(expo-constants@14.2.1)(expo-modules-core@1.2.2)(expo@48.0.9)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
       '@react-native-async-storage/async-storage':
-        specifier: 1.17.11
-        version: 1.17.11(react-native@0.71.6)
+        specifier: 1.17.12
+        version: 1.17.12(react-native@0.71.6)
       '@react-native-community/cli-server-api':
         specifier: ^7.0.3
         version: 7.0.3
@@ -4474,7 +4474,7 @@ importers:
         version: 6.5.16(@babel/core@7.22.8)(@storybook/builder-webpack5@6.5.14)(@storybook/manager-webpack5@6.5.14)(eslint@8.41.0)(metro@0.76.0)(react-dom@18.0.0)(react@18.0.0)(typescript@5.1.3)(webpack-dev-server@4.12.0)
       '@storybook/react-native':
         specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.11)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
+        version: 6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0(@svgr/plugin-svgo@5.5.0)
@@ -17437,6 +17437,16 @@ packages:
     dependencies:
       merge-options: 3.0.4
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+    dev: false
+
+  /@react-native-async-storage/async-storage@1.17.12(react-native@0.71.6):
+    resolution: {integrity: sha512-BXg4OxFdjPTRt+8MvN6jz4muq0/2zII3s7HeT/11e4Zeh3WCgk/BleLzUcDfVqF3OzFHUqEkSrb76d6Ndjd/Nw==}
+    peerDependencies:
+      react-native: ^0.0.0-0 || 0.60 - 0.71 || 1000.0.0
+    dependencies:
+      merge-options: 3.0.4
+      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+    dev: true
 
   /@react-native-community/cli-clean@10.1.1:
     resolution: {integrity: sha512-iNsrjzjIRv9yb5y309SWJ8NDHdwYtnCpmxZouQDyOljUdC9MwdZ4ChbtA4rwQyAwgOVfS9F/j56ML3Cslmvrxg==}
@@ -21629,7 +21639,7 @@ packages:
       - supports-color
     dev: true
 
-  /@storybook/react-native@6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.11)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1):
+  /@storybook/react-native@6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1):
     resolution: {integrity: sha512-uZzuzTA3P3g4XSYEOCkh38oAndlBmdmTk9ANP+16q7Fotn6N20JHb3ly1YZnV/Ud8QM3MDiI9Tc2tLGzKwwxbA==}
     engines: {node: '>=8.0.0'}
     hasBin: true
@@ -21641,7 +21651,7 @@ packages:
     dependencies:
       '@emotion/core': 10.3.1(react@18.0.0)
       '@emotion/native': 10.0.27(@emotion/core@10.3.1)(react-native@0.71.6)(react@18.0.0)
-      '@react-native-async-storage/async-storage': 1.17.11(react-native@0.71.6)
+      '@react-native-async-storage/async-storage': 1.17.12(react-native@0.71.6)
       '@storybook/addons': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/channel-websocket': 6.5.16
       '@storybook/channels': 6.5.14
@@ -31348,7 +31358,7 @@ packages:
     engines: {node: '>=0.10'}
     requiresBuild: true
     dependencies:
-      nan: 2.15.0
+      nan: 2.17.0
     dev: true
     optional: true
 
@@ -35540,7 +35550,7 @@ packages:
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
-      nan: 2.15.0
+      nan: 2.17.0
     optional: true
 
   /fsevents@2.1.2:
@@ -44861,11 +44871,11 @@ packages:
   /nan@2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
     requiresBuild: true
+    dev: false
 
   /nan@2.17.0:
     resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
     requiresBuild: true
-    dev: false
     optional: true
 
   /nano-json-stream-parser@0.1.2:
