@@ -95,7 +95,8 @@
     "@ledgerhq/live-network": "1.0.0",
     "@ledgerhq/hw-transport-vault": "1.0.0",
     "@ledgerhq/react-devtools": "0.0.0",
-    "@ledgerhq/evm-tools": "1.0.0"
+    "@ledgerhq/evm-tools": "1.0.0",
+    "@ledgerhq/test-utils": "0.0.1"
   },
   "changesets": [
     "afraid-pants-decide",
@@ -122,6 +123,7 @@
     "good-donuts-sniff",
     "grumpy-dryers-breathe",
     "hip-socks-refuse",
+    "itchy-squids-sniff",
     "khaki-parents-sniff",
     "lazy-clocks-repeat",
     "lazy-shirts-trade",
@@ -131,6 +133,7 @@
     "new-maps-worry",
     "olive-items-yawn",
     "olive-trainers-explain",
+    "orange-deers-guess",
     "orange-penguins-rest",
     "perfect-chefs-know",
     "plenty-cycles-sit",

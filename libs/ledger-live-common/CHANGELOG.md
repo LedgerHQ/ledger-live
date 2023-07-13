@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 31.3.0-nightly.5
+
+### Patch Changes
+
+- [#4003](https://github.com/LedgerHQ/ledger-live/pull/4003) [`3de79a2927`](https://github.com/LedgerHQ/ledger-live/commit/3de79a2927a1679ce4571f2c298cd404877cc49a) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove extra refresh effect when configuration change in swap llm
+
+- Updated dependencies [[`770842cdbe`](https://github.com/LedgerHQ/ledger-live/commit/770842cdbe94c629b6844f93d1b5d94d381931b1)]:
+  - @ledgerhq/cryptoassets@9.10.0-nightly.3
+  - @ledgerhq/live-env@0.3.2-nightly.1
+  - @ledgerhq/coin-algorand@0.2.4-nightly.4
+  - @ledgerhq/coin-evm@0.4.0-nightly.4
+  - @ledgerhq/coin-framework@0.4.0-nightly.4
+  - @ledgerhq/coin-polkadot@0.3.1-nightly.4
+  - @ledgerhq/domain-service@1.1.6-nightly.4
+  - @ledgerhq/evm-tools@1.0.1-nightly.2
+  - @ledgerhq/hw-app-eth@6.34.0-nightly.4
+  - @ledgerhq/live-network@1.1.3-nightly.2
+
 ## 31.3.0-nightly.4
 
 ### Minor Changes
