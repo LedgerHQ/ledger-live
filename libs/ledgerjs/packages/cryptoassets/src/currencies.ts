@@ -4303,6 +4303,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  lukso: {
+    type: "CryptoCurrency",
+    id: "lukso",
+    coinType: CoinType.ETH,
+    name: "LUKSO",
+    managerAppName: "Ethereum",
+    ticker: "LYX",
+    deviceTicker: "LYX",
+    scheme: "lukso",
+    color: "#FE005B",
+    family: "evm",
+    units: ethereumUnits("LYX", "LYX"),
+    ethereumLikeInfo: {
+      chainId: 42,
+      networkId: 42,
+      node: { type: "external", uri: "https://rpc.lukso.gateway.fm" },
+      explorer: {
+        uri: "https://explorer.execution.mainnet.lukso.network",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.execution.mainnet.lukso.network/tx/$hash",
+        address: "https://explorer.execution.mainnet.lukso.network/address/$address",
+        token: "https://explorer.execution.mainnet.lukso.network/token/$contractAddress?a=$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};

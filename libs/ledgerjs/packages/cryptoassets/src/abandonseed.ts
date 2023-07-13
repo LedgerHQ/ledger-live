@@ -93,6 +93,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   stargaze: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   desmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   umee: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  lukso: "0x0000000000000000000000000000000000000000",
 };
 
 /**

@@ -79,6 +79,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
+  const lukso = useFeature("currencyLukso");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -109,6 +110,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       syscoin,
       internet_computer: internetComputer,
       telos: telosEvm,
+      lukso,
     }),
     [
       avaxCChain,
@@ -138,6 +140,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       quicksilver,
       internetComputer,
       telosEvm,
+      lukso,
     ],
   );
 

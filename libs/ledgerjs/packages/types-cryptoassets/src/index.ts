@@ -152,7 +152,8 @@ export type CryptoCurrencyId =
   | "velas_evm"
   | "syscoin"
   | "internet_computer"
-  | "telos_evm";
+  | "telos_evm"
+  | "lukso";
 
 export type LedgerExplorerId =
   | "btc"

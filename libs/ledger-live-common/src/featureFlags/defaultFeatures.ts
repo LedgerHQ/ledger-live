@@ -98,6 +98,9 @@ export const defaultFeatures = {
   currencyTelosEvm: {
     enabled: false,
   },
+  currencyLukso: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
