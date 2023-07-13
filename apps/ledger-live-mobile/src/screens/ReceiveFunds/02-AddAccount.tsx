@@ -41,6 +41,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   const { t } = useTranslation();
 
   const [scanning, setScanning] = useState(true);
+  const [addingAccount, setAddingAccount] = useState(false);
   const [error, setError] = useState(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [cancelled, setCancelled] = useState(false);
@@ -58,6 +59,13 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     return () => stopSubscription(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!scanning && scannedAccounts.length === 1) {
+      setAddingAccount(true);
+      selectAccount(scannedAccounts[0], 4000);
+    }
+  }, [scanning, scannedAccounts]);
 
   const startSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -140,7 +148,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   }, [cancelled, navigation]);
 
   const selectAccount = useCallback(
-    (account: Account) => {
+    (account: Account, addingAccountDelayMs?: number) => {
       if (!selectedAccount) {
         setSelectedAccount(account.id);
         dispatch(
@@ -150,10 +158,20 @@ function AddAccountsAccounts({ navigation, route }: Props) {
             renamings: {},
           }),
         );
-        navigation.navigate(ScreenName.ReceiveConfirmation, {
-          ...route.params,
-          accountId: account.id,
-        });
+        if (addingAccountDelayMs) {
+          setTimeout(() => {
+            setAddingAccount(false);
+            navigation.navigate(ScreenName.ReceiveConfirmation, {
+              ...route.params,
+              accountId: account.id,
+            });
+          }, addingAccountDelayMs);
+        } else {
+          navigation.navigate(ScreenName.ReceiveConfirmation, {
+            ...route.params,
+            accountId: account.id,
+          });
+        }
       }
     },
     [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
@@ -211,6 +229,12 @@ function AddAccountsAccounts({ navigation, route }: Props) {
           scannedAccounts={scannedAccounts}
           stopSubscription={stopSubscription}
         />
+      ) : addingAccount ? (
+        <AddingAccountLoading
+          currency={currency}
+          scannedAccounts={scannedAccounts}
+          stopSubscription={stopSubscription}
+        />
       ) : (
         <FlatList
           data={scannedAccounts}
@@ -244,6 +268,59 @@ function ScanLoading({
   stopSubscription: () => void;
 }) {
   const { t } = useTranslation();
+
+  return (
+    <Loading
+      title={t("transfer.receive.addAccount.subtitle", {
+        currencyName: currency.name,
+      })}
+    >
+      <Flex
+        minHeight={120}
+        flexDirection="column"
+        alignItems="stretch"
+        p={6}
+        position="absolute"
+        bottom={0}
+        left={0}
+        width="100%"
+      >
+        {scannedAccounts?.length > 0 ? (
+          <>
+            <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
+              {t("transfer.receive.addAccount.foundAccounts", {
+                count: scannedAccounts?.length,
+              })}
+            </LText>
+            <Button type="secondary" onPress={stopSubscription}>
+              {t("transfer.receive.addAccount.stopSynchronization")}
+            </Button>
+          </>
+        ) : null}
+      </Flex>
+    </Loading>
+  );
+}
+
+function AddingAccountLoading({
+  currency,
+}: {
+  currency: Currency;
+}) {
+  const { t } = useTranslation();
+
+  return <Loading title={t("transfer.receive.addAccount.addingAccount", { currencyName: currency.name })} />;
+}
+
+function Loading({
+  children,
+  title,
+  subtitle,
+}: {
+  children?: React.ReactNode;
+  title: string;
+  subtitle?: string;
+}) {
   const { colors } = useTheme();
 
   return (
@@ -260,34 +337,13 @@ function ScanLoading({
       <Flex flex={1} position="relative">
         <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
           <Text variant="h4" fontWeight="semiBold" textAlign="center">
-            {t("transfer.receive.addAccount.title")}
+            {title}
           </Text>
           <Text mt={6} textAlign="center" variant="body" fontWeight="medium" color="neutral.c80">
-            {t("transfer.receive.addAccount.subtitle", {
-              currencyTicker: currency?.ticker,
-            })}
+            {subtitle}
           </Text>
         </Flex>
-        <Flex
-          minHeight={120}
-          flexDirection="column"
-          alignItems="stretch"
-          m={6}
-          justifyContent="flex-end"
-        >
-          {scannedAccounts?.length > 0 ? (
-            <>
-              <LText textAlign="center" mb={6} variant="body" color="neutral.c80">
-                {t("transfer.receive.addAccount.foundAccounts", {
-                  count: scannedAccounts?.length,
-                })}
-              </LText>
-              <Button type="secondary" onPress={stopSubscription}>
-                {t("transfer.receive.addAccount.stopSynchronization")}
-              </Button>
-            </>
-          ) : null}
-        </Flex>
+        {children}
       </Flex>
     </>
   );

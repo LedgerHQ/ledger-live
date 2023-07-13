@@ -2862,9 +2862,10 @@
       },
       "addAccount": {
         "title": "Checking for an account...",
-        "subtitle": "Checking if you already have a {{currencyTicker}} account on the blockchain.",
+        "subtitle": "Checking if you already have an account for {{currencyName}} on the blockchain.",
         "foundAccounts": "{{count}} accounts found",
-        "stopSynchronization": "Stop synchronization"
+        "stopSynchronization": "Stop synchronization",
+        "addingAccount": "No accounts found. Creating a new account for {{currencyName}}..."
       },
       "verifyAddress": {
         "title": "Verify address",
