@@ -77,7 +77,7 @@ const CardContainer = (props: CardProps): React.ReactElement => {
         variant="large"
         fontWeight="medium"
         numberOfLines={3}
-        maxWidth={"75%"}
+        maxWidth={"70%"}
         color="neutral.c100"
       >
         {title}

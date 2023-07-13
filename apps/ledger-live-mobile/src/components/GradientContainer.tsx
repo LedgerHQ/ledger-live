@@ -8,7 +8,7 @@ type Props = {
   color?: string;
   containerStyle?: StyleProp<ViewStyle>;
   gradientStyle?: StyleProp<ViewStyle>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   startOpacity?: number;
   endOpacity?: number;
 };

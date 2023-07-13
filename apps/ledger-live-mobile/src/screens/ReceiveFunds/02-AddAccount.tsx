@@ -232,7 +232,6 @@ function AddAccountsAccounts({ navigation, route }: Props) {
       ) : addingAccount ? (
         <AddingAccountLoading
           currency={currency}
-          scannedAccounts={scannedAccounts}
           stopSubscription={stopSubscription}
         />
       ) : (

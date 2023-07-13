@@ -49519,7 +49519,7 @@ packages:
     peerDependencies:
       react-native: '>=0.60.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-image-crop-tools@1.6.4(patch_hash=p6wzwon3gzjcspjalwhmuroog4)(react-native@0.71.6)(react@18.0.0):
