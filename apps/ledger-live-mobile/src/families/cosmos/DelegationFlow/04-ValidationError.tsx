@@ -28,7 +28,6 @@ export default function ValidationError({ navigation, route }: Props) {
     navigation.goBack();
   }, [navigation]);
   const error = route.params.error;
-  debugger;
   return (
     <SafeAreaView
       style={[
