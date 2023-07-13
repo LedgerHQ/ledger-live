@@ -17,7 +17,6 @@ import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
-  env: { DEV_TOOLS: true },
 });
 
 // Tests to cover in Playwright test suite
@@ -89,19 +88,13 @@ test.describe.parallel("Swap", () => {
   test("Swap not yet available", async ({ page }) => {
     const swapPage = new SwapPage(page);
 
-    // await page.route("https://swap.ledger.com/v4/providers**", async route => {
-    //   const mockProvidersResponse = getProvidersMock();
-    //   route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
-    // });
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      route.fulfill({ headers: { teststatus: "mocked" }, status: 404 });
+    });
 
-    // await page.route("https://swap.ledger.com/v4/rate**", async route => {
-    //   const mockRatesResponse = getEthereumToTetherRatesMock();
-    //   route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
-    // });
-
-    await test.step("Generate ETH to USDT quotes", async () => {
+    await test.step("Warning displays for users when /providers endpoint returns an error", async () => {
       await swapPage.navigate();
-      await page.pause();
+      await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
     });
   });
 
@@ -178,17 +171,14 @@ test.describe.parallel("Swap", () => {
     // We mock the 'cancelled' swap response because the transaction isn't broadcast when run locally.
     // If 'cancelled' is called then it's a successful test
     await page.route("https://swap.ledger.com/v4/swap/cancelled", async route => {
-      console.log("Mocking swap cancelled HTTP response");
       route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
     });
 
     await page.route("https://swap.ledger.com/v4/swap/accepted", async route => {
-      console.log("Mocking swap accepted HTTP response");
       route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
     });
 
     await page.route("https://swap.ledger.com/v4/swap/status", async route => {
-      console.log("Mocking swap status HTTP response");
       const mockStatusResponse = getStatusMock();
       route.fulfill({ headers: { teststatus: "mocked" }, body: mockStatusResponse });
     });
