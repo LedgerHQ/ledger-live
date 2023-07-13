@@ -62,9 +62,11 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
                 },
               });
             } else {
+              // eslint-disable-next-line no-console
               console.log("not account found in earn dashboard deeplink");
             }
           } else {
+            // eslint-disable-next-line no-console
             console.log("accountId query is missing for earn dashboard deeplink");
           }
           break;
