@@ -37,7 +37,7 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
       ]}
     >
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="BondFlow" name="Started" />
+        <TrackScreen category="BondFlow" name="Started" flow="stake" action="bond" currency="dot" />
         <Flex alignItems="center" mb={6}>
           <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>

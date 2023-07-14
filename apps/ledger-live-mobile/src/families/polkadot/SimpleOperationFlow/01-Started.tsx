@@ -73,6 +73,7 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
   const infoTranslated = t(`polkadot.simpleOperation.modes.${mode}.info`, {
     defaultValue: "",
   });
+  const action = mode.replace(/([A-Z])/g, "_$1").toLowerCase();
   return (
     <>
       <View
@@ -84,7 +85,13 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
         ]}
       >
         <View style={styles.container}>
-          <TrackScreen category="SimpleOperationFlow" name="Started" />
+          <TrackScreen
+            category="SimpleOperationFlow"
+            name="Started"
+            flow="stake"
+            action={action}
+            currency="dot"
+          />
           <View style={styles.content}>
             <Log>
               <Trans i18nKey={`polkadot.simpleOperation.modes.${mode}.description`} />
