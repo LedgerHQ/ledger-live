@@ -67,7 +67,10 @@ export default function Price({
     ? BigNumber(rawCounterValue)
     : rawCounterValue;
   const theme = useTheme();
-  const textColor = useMemo(() => color ?? theme.colors.palette.text.shade100, [color, theme]);
+  const textColor = useMemo(
+    () => (color ? colors[color] : theme.colors.palette.text.shade100),
+    [color, theme],
+  );
   const bgColor = theme.colors.palette.background.paper;
   const activityColor = useMemo(
     () =>
