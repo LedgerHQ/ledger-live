@@ -20,25 +20,28 @@ const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>) => {
   // Earn dashboard feature flag
   // TODO: update to use specific mobile feature flag
-  const ptxEarnMobile = useFeature("ptxEarn");
+  const ptxEarn = useFeature("ptxEarn");
   const paramAction = _props.route.params?.action;
-  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation();
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
 
   useEffect(() => {
-    if (!ptxEarnMobile?.enabled) {
-      return navigation.pop();
+    if (!ptxEarn?.enabled) {
+      return (navigation as StackNavigatorNavigation<BaseNavigatorStackParamList>).pop();
     }
     if (!paramAction) {
       return;
     }
+
     async function deeplinkRouting() {
+      // Params from deeplink route
       const action = paramAction;
       const currencyId = _props.route.params?.currencyId;
       const accountId = _props.route.params?.accountId;
 
-      navigation.setParams(undefined);
+      // Reset params so that it will retrigger actions if a new deeplink is used
+      navigation.setParams({ action: null, accountId: null, currencyId: null });
 
       switch (action) {
         case "stake":
@@ -83,7 +86,7 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
       }
     }
     deeplinkRouting();
-  }, [paramAction, ptxEarnMobile?.enabled]);
+  }, [paramAction, ptxEarn?.enabled]);
 
   return (
     <EarnScreen
@@ -91,7 +94,7 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
       route={{
         ..._props.route,
         params: {
-          platform: ptxEarnMobile?.params?.liveAppId || "earn",
+          platform: ptxEarn?.params?.liveAppId || "earn",
         },
       }}
     />
