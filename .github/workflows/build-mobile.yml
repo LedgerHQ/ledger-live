@@ -21,9 +21,8 @@ on:
         required: false
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-mobile-app-android:
@@ -34,7 +33,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
@@ -102,7 +101,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: set git user
         run: |

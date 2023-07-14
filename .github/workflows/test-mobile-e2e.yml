@@ -26,9 +26,8 @@ on:
 #   DEBUG_DETOX: true
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   detox-tests-ios:
@@ -44,7 +43,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -110,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
         with:
           platform: ios
@@ -129,7 +128,7 @@ jobs:
   #     - name: checkout
   #       uses: actions/checkout@v3
   #       with:
-  #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+  #         ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
   #     - uses: pnpm/action-setup@v2
   #       with:
   #         version: 8.6
@@ -219,7 +218,7 @@ jobs:
   #     - name: checkout
   #       uses: actions/checkout@v3
   #       with:
-  #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+  #         ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
   #     - uses: ./tools/actions/composites/upload-allure-report
   #       with:
   #         platform: android
@@ -234,7 +233,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - uses: actions/github-script@v6
         name: prepare status

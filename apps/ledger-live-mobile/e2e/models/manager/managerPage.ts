@@ -2,10 +2,11 @@ import { expect } from "detox";
 import {
   getElementById,
   openDeeplink,
+  tapByElement,
   tapByText,
   waitForElementById,
-  waitForElementByText,
 } from "../../helpers";
+import { device } from "detox";
 import * as bridge from "../../bridge/server";
 
 const baseLink = "myledger";
@@ -27,9 +28,10 @@ export default class ManagerPage {
 
   async addDevice(deviceName: string) {
     await this.expectManagerPage();
-    await this.getPairDeviceButton().tap();
+    await device.disableSynchronization(); // Scanning animation prevents launching mocks
+    await tapByElement(this.getPairDeviceButton());
     bridge.addDevices();
-    await waitForElementByText(deviceName, 3000);
+    await device.enableSynchronization();
     await tapByText(deviceName);
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
     bridge.open();
