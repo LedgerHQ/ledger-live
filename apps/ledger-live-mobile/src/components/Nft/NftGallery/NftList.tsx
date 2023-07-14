@@ -16,6 +16,7 @@ import BackgroundGradient from "../../TabBar/BackgroundGradient";
 import NftFilterDrawer from "./NftFilterDrawer";
 import EmptyState from "./EmptyState";
 import ScrollToTopButton from "./ScrollToTopButton";
+import NftFilterChip from "./NftFilterChip";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -117,40 +118,25 @@ export function NftList({ data }: Props) {
           <Animated.View>
             {!multiSelectModeEnabled && (
               <Animated.View entering={FadeInDown}>
-                <Flex
+                <StyledFilterBar
                   width="100%"
                   flexDirection="row"
-                  alignItems="center"
-                  justifyContent="space-between"
+                  justifyContent="flex-end"
+                  alignItems="flex-end"
                 >
                   {data.length > 0 ? (
-                    <StyledButton
-                      testID="wallet-nft-gallery-select-and-hide"
+                    <NftFilterChip
                       onPress={onPressMultiselect}
-                      type="default"
-                      iconName="Tasks"
-                      iconPosition="left"
-                      size="small"
+                      testID="wallet-nft-gallery-select-and-hide"
                     >
-                      <Text variant="body" fontWeight="semiBold">
-                        {t("wallet.nftGallery.filters.selectAndHide")}
-                      </Text>
-                    </StyledButton>
-                  ) : (
-                    <View />
-                  )}
-                  <StyledButton
+                      {t("wallet.nftGallery.filters.select")}
+                    </NftFilterChip>
+                  ) : null}
+                  <NftFilterChip
                     onPress={openFilterDrawer}
-                    type="default"
-                    iconName="Filters"
-                    iconPosition="left"
-                    size="small"
-                  >
-                    <Text variant="body" fontWeight="semiBold">
-                      {t("wallet.nftGallery.filters.filter")}
-                    </Text>
-                  </StyledButton>
-                </Flex>
+                    icon={Object.values(chainFilters).some(val => !val) ? "FiltersOn" : "Filters"}
+                  />
+                </StyledFilterBar>
               </Animated.View>
             )}
           </Animated.View>
@@ -222,4 +208,9 @@ const ButtonsContainer = styled(Flex)`
   bottom: ${props => props.theme.space[6]}px;
   z-index: 5;
   padding: 0 ${props => props.theme.space[6]}px;
+`;
+
+const StyledFilterBar = styled(Flex)`
+  margin-bottom: ${props => props.theme.space[2]}px;
+  gap: ${props => props.theme.space[3]}px;
 `;

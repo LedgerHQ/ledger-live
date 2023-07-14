@@ -58,7 +58,7 @@ const NftNavigator = () => {
             />
           ),
           headerRight: undefined,
-          title: t("settings.accounts.hiddenNFTCollections"),
+          title: t("wallet.nftGallery.filters.hiddenCollections"),
         }}
       />
     </Stack.Navigator>
