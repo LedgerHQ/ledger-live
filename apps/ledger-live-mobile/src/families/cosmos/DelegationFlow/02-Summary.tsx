@@ -43,6 +43,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { validator } = route.params;
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { ticker } = getAccountCurrency(account);
 
   invariant(account, "account must be defined");
 
@@ -193,7 +194,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         name="Summary"
         flow="stake"
         action="delegation"
-        currency={account.currency.id}
+        currency={ticker}
       />
 
       <View style={styles.body}>

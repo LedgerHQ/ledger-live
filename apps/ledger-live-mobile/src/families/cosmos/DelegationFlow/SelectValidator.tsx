@@ -1,6 +1,7 @@
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
@@ -22,6 +23,7 @@ type Props = StackNavigatorProps<
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const { ticker } = getAccountCurrency(account);
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
@@ -54,7 +56,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         name="SelectValidator"
         flow="stake"
         action="delegation"
-        currency={account.currency.id}
+        currency={ticker}
       />
       <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>

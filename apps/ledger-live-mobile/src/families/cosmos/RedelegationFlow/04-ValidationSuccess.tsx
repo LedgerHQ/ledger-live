@@ -71,7 +71,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         name="ValidationSuccess"
         flow="stake"
         action="redelegation"
-        currency={account.currency.id}
+        currency={ticker}
       />
       <PreventNativeBack />
       <ValidateSuccess
