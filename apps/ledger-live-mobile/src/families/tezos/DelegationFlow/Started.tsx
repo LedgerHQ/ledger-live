@@ -30,7 +30,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
     <ScrollView>
       <Flex flex={1} justifyContent="space-between" bg="background.main">
         <Flex m={6}>
-          <TrackScreen category="DelegationFlow" name="Started" />
+          <TrackScreen
+            category="DelegationFlow"
+            name="Started"
+            flow="stake"
+            action="delegation"
+            currency="xtz"
+          />
           <Flex alignItems="center">
             <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
           </Flex>

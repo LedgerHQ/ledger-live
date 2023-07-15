@@ -29,7 +29,13 @@ export default function ValidationError({ navigation, route }: NavigationProps) 
         },
       ]}
     >
-      <TrackScreen category="UnbondFlow" name="ValidationError" />
+      <TrackScreen
+        category="UnbondFlow"
+        name="ValidationError"
+        flow="stake"
+        action="withdraw_unbonded"
+        currency="dot"
+      />
       <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
