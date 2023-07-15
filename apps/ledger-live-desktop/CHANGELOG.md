@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.64.0-nightly.6
+
+### Patch Changes
+
+- [#4030](https://github.com/LedgerHQ/ledger-live/pull/4030) [`7922b3569a`](https://github.com/LedgerHQ/ledger-live/commit/7922b3569a992d74e953741b30d4f41201e37838) Thanks [@cng-ledger](https://github.com/cng-ledger)! - quotes are not readable in light mode
+
+- [#4016](https://github.com/LedgerHQ/ledger-live/pull/4016) [`44cce5d4e3`](https://github.com/LedgerHQ/ledger-live/commit/44cce5d4e3262b6a924471ec75a80fabd14c4e6b) Thanks [@sarneijim](https://github.com/sarneijim)! - Add algo claim reward track attributes
+
 ## 2.64.0-nightly.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.27.0-nightly.7
+
+### Patch Changes
+
+- [#4016](https://github.com/LedgerHQ/ledger-live/pull/4016) [`44cce5d4e3`](https://github.com/LedgerHQ/ledger-live/commit/44cce5d4e3262b6a924471ec75a80fabd14c4e6b) Thanks [@sarneijim](https://github.com/sarneijim)! - Add attributes in stake screen tracks
+
 ## 3.27.0-nightly.6
 
 ### Patch Changes
