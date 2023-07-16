@@ -116,7 +116,7 @@ export type CryptoCurrencyId =
   | "waves"
   | "zcash"
   | "zclassic"
-  | "zcoin"
+  | "firo"
   | "zencash"
   | "zilliqa"
   | "crypto_org"

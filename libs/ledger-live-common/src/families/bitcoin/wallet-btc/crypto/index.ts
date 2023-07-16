@@ -11,6 +11,7 @@ export { default as Pivx } from "./pivx";
 export { default as Stealth } from "./stealth";
 export { default as BitcoinGold } from "./bitcoingold";
 export { default as Doge } from "./doge";
+export { default as Firo } from "./firo";
 export { default as Qtum } from "./qtum";
 export { default as Vertcoin } from "./vtc";
 export { default as ViaCoin } from "./via";

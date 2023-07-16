@@ -45,6 +45,11 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       res = new crypto.Doge({ network });
       break;
     }
+    case "firo": {
+      const network = coininfo.firo.main.toBitcoinJS();
+      res = new crypto.Firo({ network });
+      break;
+    }
     case "digibyte": {
       const network = coininfo.digibyte.main.toBitcoinJS();
       res = new crypto.Digibyte({ network });

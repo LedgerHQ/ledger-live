@@ -23,6 +23,7 @@ export type Currency =
   | "zcash"
   | "bitcoin_gold"
   | "dogecoin"
+  | "firo"
   | "digibyte"
   | "komodo"
   | "pivx"

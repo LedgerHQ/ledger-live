@@ -94,7 +94,7 @@ const hardcodedMarketcap = [
   "ethereum/erc20/enjin",
   "ethereum/erc20/walton",
   "ethereum/erc20/gxc",
-  "zcoin",
+  "firo",
   "ethereum/erc20/synthetix_network_token",
   "stratis",
   "ethereum/erc20/wax",

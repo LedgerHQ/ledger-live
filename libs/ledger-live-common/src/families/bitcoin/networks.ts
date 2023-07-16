@@ -228,6 +228,20 @@ export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkPar
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],
     };
+  } else if (networkName === "firo") {
+    return {
+      identifier: "firo",
+      P2PKHVersion: Buffer.from([0x52]),
+      P2SHVersion: Buffer.from([0x07]),
+      xpubVersion: Buffer.from([0x04, 0x88, 0xb2, 0x1e]),
+      feePolicy: BitcoinLikeFeePolicy.PER_BYTE,
+      dustAmount: new BigNumber(10000),
+      messagePrefix: "Firo Signed Message:\n",
+      usesTimestampedTransaction: false,
+      timestampDelay: new BigNumber(0),
+      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
+      additionalBIPs: [],
+    };
   } else if (networkName === "stratis") {
     return {
       identifier: "strat",

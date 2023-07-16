@@ -5,6 +5,7 @@ export const supportedBuyCurrenciesIds = [
   "polkadot",
   "litecoin",
   "dogecoin",
+  "firo",
   "bitcoin_cash",
   "stellar",
   "ethereum/erc20/usd_tether__erc20_",

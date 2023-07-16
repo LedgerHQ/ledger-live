@@ -51,6 +51,7 @@ setSupportedCurrencies([
   "bitcoin_cash",
   "stellar",
   "dogecoin",
+  "firo",
   "cosmos",
   "crypto_org",
   "crypto_org_croeseid",

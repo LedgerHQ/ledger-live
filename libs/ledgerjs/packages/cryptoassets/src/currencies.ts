@@ -3218,26 +3218,31 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  zcoin: {
+  firo: {
     type: "CryptoCurrency",
-    id: "zcoin",
+    id: "firo",
     coinType: CoinType.ZCOIN,
-    name: "ZCoin",
-    managerAppName: "Zcoin",
-    ticker: "XZC",
-    scheme: "zcoin",
+    name: "Firo",
+    managerAppName: "Firo",
+    ticker: "FIRO",
+    scheme: "firo",
     color: "#00C027",
     family: "bitcoin",
+    bitcoinLikeInfo: {
+      P2PKH: 0x52,
+      P2SH: 0x07,
+      XPUBVersion: 0x0488b21e,
+    },
     units: [
       {
-        name: "XZC",
-        code: "XZC",
+        name: "FIRO",
+        code: "FIRO",
         magnitude: 8,
       },
     ],
     explorerViews: [
       {
-        tx: "https://explorer.zcoin.io/tx/$hash",
+        tx: "https://explorer.firo.io/tx/$hash",
       },
     ],
   },

@@ -40,7 +40,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   viacoin: "VfwB3jbDWELpfiFNzbEVgx73HsR9bAq35C",
   zcash: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",
   zclassic: "t1Qmwyih5F7Mw6Vts4tSnXuA2o3NgJPYNgP",
-  zcoin: "a1bW3sVVUsLqgKuTMXtSaAHGvpxKwugxPH",
+  firo: "a1bW3sVVUsLqgKuTMXtSaAHGvpxKwugxPH",
   zencash: "zngWJRgpBa45KUeRuCmdMsqti4ohhe9sVwC",
   bsc: "0x0000000000000000000000000000000000000000",
   solana: "GjJyeC1r2RgkuoCWMyPYkCWSGSGLcz266EaAkLA27AhL",

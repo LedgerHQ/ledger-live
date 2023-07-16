@@ -12,6 +12,7 @@ const exchangeSupportAppVersions = {
   dash: "1.5.0",
   digibyte: "1.5.0",
   dogecoin: "1.5.0",
+  firo: "1.5.0",
   ethereum: "1.4.0",
   litecoin: "1.5.0",
   qtum: "1.5.0",

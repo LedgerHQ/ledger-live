@@ -33,6 +33,7 @@ setSupportedCurrencies([
   "bitcoin_gold",
   "stratis",
   "dogecoin",
+  "firo",
   "digibyte",
   "komodo",
   "pivx",
