@@ -37,11 +37,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
 
-  const isPtxServiceCtaScreensDisabled = useMemo(
-    () => !(ptxServiceCtaScreens?.enabled ?? true),
-    [ptxServiceCtaScreens],
-  );
-
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
@@ -80,8 +75,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const listFlag = featureFlag?.params?.list;
   const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
 
-  const actions = useMemo<ActionButtonEvent[]>(
-    () => [
+  const actions = useMemo<ActionButtonEvent[]>(() => {
+    const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
+
+    return [
       ...(canBeBought
         ? [
             {
@@ -259,22 +256,22 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                 ]
               : []),
           ]),
-    ],
-    [
-      areAccountsBalanceEmpty,
-      availableOnSwap,
-      canBeBought,
-      canBeSold,
-      canBeStaken,
-      currency,
-      defaultAccount,
-      hasAccounts,
-      hasMultipleAccounts,
-      readOnlyModeEnabled,
-      t,
-      route,
-    ],
-  );
+    ];
+  }, [
+    ptxServiceCtaScreens,
+    areAccountsBalanceEmpty,
+    availableOnSwap,
+    canBeBought,
+    canBeSold,
+    canBeStaken,
+    currency,
+    defaultAccount,
+    hasAccounts,
+    hasMultipleAccounts,
+    readOnlyModeEnabled,
+    t,
+    route,
+  ]);
 
   return {
     mainActions: actions,
