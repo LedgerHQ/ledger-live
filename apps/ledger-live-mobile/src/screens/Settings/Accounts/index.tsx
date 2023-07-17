@@ -79,13 +79,6 @@ export default function AccountsSettings({
         )}
         <HideEmptyTokenAccountsRow />
         <FilterTokenOperationsZeroAmountRow />
-        <SettingsRow
-          event="HideEmptyTokenAccountsRow"
-          title={t("settings.accounts.blacklistedTokens")}
-          desc={t("settings.accounts.blacklistedTokensDesc")}
-        >
-          {null}
-        </SettingsRow>
       </>
     ),
     [currencies.length, t, hiddenNftCollections.length, navigation],

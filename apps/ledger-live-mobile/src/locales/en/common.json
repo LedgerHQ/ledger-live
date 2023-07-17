@@ -6227,7 +6227,6 @@
         "seeAll": "See all",
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} collection",
-        "hideCollections": "Hide collections",
         "hiddenCollections": "Hidden collections",
         "hide_plural": "Hide {{count}} collections",
         "alertHide": "1 collection hidden. You can unhide them at any time in the gallery filter.",

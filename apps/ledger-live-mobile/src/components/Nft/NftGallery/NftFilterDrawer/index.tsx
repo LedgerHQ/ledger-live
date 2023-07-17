@@ -37,7 +37,7 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
         })}
       </NftFilterSection>
       <NftFilterSection
-        title={t("wallet.nftGallery.filters.hideCollections")}
+        title={t("wallet.nftGallery.filters.hiddenCollections")}
         onSeeAllPress={() => {
           onClose();
           navigation.navigate(NavigatorName.NftNavigator, {
