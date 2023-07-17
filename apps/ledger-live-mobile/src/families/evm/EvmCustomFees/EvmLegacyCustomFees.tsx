@@ -1,6 +1,6 @@
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { Transaction } from "@ledgerhq/coin-evm/types";
-import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
+import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -20,7 +20,6 @@ type Props = {
 };
 
 const fallbackGasPrice = inferDynamicRange(new BigNumber(10e9));
-let lastNetworkGasPrice: Range; // local cache of last value to prevent extra blinks
 
 const EvmLegacyCustomFees = ({ account, onValidateFees, transaction }: Props) => {
   const { colors } = useTheme();
@@ -32,16 +31,14 @@ const EvmLegacyCustomFees = ({ account, onValidateFees, transaction }: Props) =>
 
   invariant(gasOptions, "GasPriceField: 'transaction.gasOptions' should be defined");
 
-  const networkGasPrice = inferDynamicRange(gasOptions.medium.gasPrice!, {
-    minValue: gasOptions.slow.gasPrice!,
-    maxValue: gasOptions.fast.gasPrice!,
-  });
+  const networkGasPrice = useMemo(() => {
+    return inferDynamicRange(gasOptions.medium.gasPrice!, {
+      minValue: gasOptions.slow.gasPrice!,
+      maxValue: gasOptions.fast.gasPrice!,
+    });
+  }, [gasOptions]);
 
-  if (!lastNetworkGasPrice) {
-    lastNetworkGasPrice = networkGasPrice;
-  }
-
-  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  const range = networkGasPrice || fallbackGasPrice;
   const [gasPrice, setGasPrice] = useState(transaction.gasPrice || range.initial);
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
 
