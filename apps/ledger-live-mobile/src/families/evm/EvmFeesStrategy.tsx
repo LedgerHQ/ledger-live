@@ -10,7 +10,7 @@ import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 
 const getCustomStrategy = (transaction: Transaction): BigNumber | null => {
   if (transaction.feesStrategy === "custom") {

@@ -7,7 +7,6 @@ import type {
   Transaction as EthereumTransaction,
   TransactionRaw as EtherumTransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -34,6 +33,10 @@ import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
+import type {
+  Transaction as EvmTransaction,
+  TransactionRaw as EvmTransactionRaw,
+} from "@ledgerhq/coin-evm/types/index";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
@@ -184,6 +187,21 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [ScreenName.EVMCustomFees]: {
+    accountId: string;
+    parentId?: string;
+    transaction: EvmTransaction;
+    setTransaction: Result<EvmTransaction>["setTransaction"];
+    transactionRaw?: EvmTransactionRaw;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
   [ScreenName.EthereumEditGasLimit]: {
     accountId: string;
     parentId?: string;
@@ -199,34 +217,17 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EvmCustomFees]: {
+  [ScreenName.EVMEditGasLimit]: {
     accountId: string;
     parentId?: string;
-    transaction: EvmTransaction;
-    setTransaction: Result<EvmTransaction>["setTransaction"];
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.EvmEditGasLimit]: {
-    accountId: string;
     setGasLimit: (_: BigNumber) => void;
     gasLimit?: BigNumber | null;
     transaction: EvmTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;

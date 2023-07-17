@@ -5,17 +5,16 @@ import BigNumber from "bignumber.js";
 import { Dimensions, Linking } from "react-native";
 import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
-import { Transaction, TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account } from "@ledgerhq/types-live";
-import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
-import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
+import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types";
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -57,13 +56,11 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   );
 
   const feePerGas = new BigNumber(
-    EIP1559ShouldBeUsed(mainAccount.currency)
-      ? transactionToEdit.maxFeePerGas!
-      : transactionToEdit.gasPrice!,
+    transaction.type === 2 ? transactionToEdit.maxFeePerGas! : transactionToEdit.gasPrice!,
   );
 
   const estimatedFees = new BigNumber(
-    transactionToEdit.userGasLimit || transactionToEdit.estimatedGasLimit || 0,
+    transactionToEdit.gasLimit || transactionToEdit.customGasLimit || 0,
   )
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
@@ -97,13 +94,12 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               amount: new BigNumber(0),
               data: undefined,
               nonce: operation.transactionSequenceNumber,
-              allowZeroAmount: true,
               mode: "send",
               recipient: mainAccount.freshAddress,
               useAllAmount: false,
             };
 
-            if (EIP1559ShouldBeUsed(mainAccount.currency)) {
+            if (transaction.type === 2) {
               if (transactionToEdit.maxPriorityFeePerGas) {
                 updatedTransaction.maxPriorityFeePerGas = transactionToEdit.maxPriorityFeePerGas
                   ?.times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
@@ -138,10 +134,9 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               nonce: operation.transactionSequenceNumber,
               // set "fast" as default option for speedup flow
               feesStrategy: "fast",
-              networkInfo: null,
-              gasPrice: null,
-              maxFeePerGas: null,
-              maxPriorityFeePerGas: null,
+              gasPrice: undefined,
+              maxFeePerGas: undefined,
+              maxPriorityFeePerGas: undefined,
               useAllAmount: false,
             };
 
@@ -166,17 +161,15 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     ],
   );
 
-  apiForCurrency(mainAccount.currency)
-    .getTransactionByHash(operation.hash)
-    .then(tx => {
-      if (tx?.confirmations) {
-        navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
-          error: new TransactionHasBeenValidatedError(
-            "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
-          ),
-        });
-      }
-    });
+  getTransactionByHash(mainAccount.currency, operation.hash).then(tx => {
+    if (tx?.confirmations) {
+      navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+        error: new TransactionHasBeenValidatedError(
+          "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+        ),
+      });
+    }
+  });
 
   useEffect(() => {
     log("[edit transaction]", "Transaction to edit", transaction);
