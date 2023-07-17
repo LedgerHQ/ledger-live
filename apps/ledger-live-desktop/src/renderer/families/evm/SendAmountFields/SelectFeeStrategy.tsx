@@ -11,17 +11,12 @@ import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Clock from "~/renderer/icons/Clock";
-import { Strategy } from "@ledgerhq/coin-evm/lib/types";
 import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 
 type Props = {
-<<<<<<< HEAD
-  onClick: (_: { feesStrategy: Strategy }) => void;
-=======
   onClick: (_: { feesStrategy: keyof GasOptions }) => void;
->>>>>>> f66f2c6520 (improve typing)
   transaction: EvmTransaction;
   account: Account;
   gasOptions: GasOptions;
@@ -67,7 +62,7 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
   padding: 5px 6px;
 `;
 
-const strategies: Strategy[] = ["slow", "medium", "fast"];
+const strategies: (keyof GasOptions)[] = ["slow", "medium", "fast"];
 
 const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props) => {
   const accountUnit = getAccountUnit(account);
