@@ -131,10 +131,12 @@ jobs:
           ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
+        uses: ./tools/actions/turborepo-s3-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
+          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
