@@ -9,7 +9,7 @@ import { Observable, from, of, throwError, timer } from "rxjs";
 import { catchError, concatMap, retryWhen, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
 
-export type SharedTaskEvent = { type: "error"; error: Error };
+export type SharedTaskEvent = { type: "error"; error: Error; retrying: boolean };
 
 export const NO_RESPONSE_TIMEOUT_MS = 30000;
 export const RETRY_ON_ERROR_DELAY_MS = 500;
@@ -48,10 +48,11 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
                   error instanceof DisconnectedDevice ||
                   error instanceof TransportRaceCondition
                 ) {
-                  // Emits to the action a locked device error event so it is aware of it before retrying
+                  // Emits to the action an error event so it is aware of it (for ex locked device) before retrying
                   const event: SharedTaskEvent = {
                     type: "error",
                     error,
+                    retrying: true,
                   };
                   subscriber.next(event);
                   acceptedError = true;
@@ -64,7 +65,7 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
 
           catchError((error: Error) => {
             // Emits the error to the action, without throwing
-            return of<SharedTaskEvent>({ type: "error", error });
+            return of<SharedTaskEvent>({ type: "error", error, retrying: false });
           }),
         )
         .subscribe(subscriber);

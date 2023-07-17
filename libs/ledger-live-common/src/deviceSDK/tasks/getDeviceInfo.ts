@@ -45,7 +45,11 @@ function internalGetDeviceInfoTask({
           }),
           map(value => {
             if (value.type === "unresponsive") {
-              return { type: "error" as const, error: new UnresponsiveDeviceError() };
+              return {
+                type: "error" as const,
+                error: new UnresponsiveDeviceError(),
+                retrying: true,
+              };
             }
 
             const { firmwareInfo } = value;

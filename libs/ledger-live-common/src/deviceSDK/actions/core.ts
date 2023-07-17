@@ -5,7 +5,16 @@ import { SharedTaskEvent } from "../tasks/core";
 // The type of the error prop is specific to the action
 export type SharedActionState = {
   lockedDevice: boolean;
-  error: { type: "SharedError"; message: string; name: string } | null;
+  error: {
+    type: "SharedError";
+    message: string;
+    name: string;
+
+    /**
+     * Informs if the action and its associated task in error is attempting to retry
+     */
+    retrying: boolean;
+  } | null;
 };
 
 // Mix the specific action state with the shared state
@@ -29,7 +38,7 @@ export function sharedReducer({ event }: { event: SharedTaskEvent }): Partial<Sh
   switch (event.type) {
     // Handles shared errors coming from a task
     case "error": {
-      const { error } = event;
+      const { error, retrying } = event;
       const { name, message } = error;
 
       if (
@@ -37,7 +46,7 @@ export function sharedReducer({ event }: { event: SharedTaskEvent }): Partial<Sh
         (error as unknown) instanceof UnresponsiveDeviceError
       ) {
         // Propagates the error so the consumer can distinguish locked (from error response) and unresponsive error.
-        return { lockedDevice: true, error: { type: "SharedError", name, message } };
+        return { lockedDevice: true, error: { type: "SharedError", name, message, retrying } };
       }
 
       // Maps any other unhandled error to a SharedError with a specific message
@@ -46,6 +55,7 @@ export function sharedReducer({ event }: { event: SharedTaskEvent }): Partial<Sh
           type: "SharedError",
           name,
           message,
+          retrying,
         },
       };
     }
