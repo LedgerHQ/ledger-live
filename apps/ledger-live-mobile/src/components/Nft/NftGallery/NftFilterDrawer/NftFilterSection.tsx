@@ -6,6 +6,7 @@ import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import Link from "../../../wrappedUi/Link";
 import styled from "@ledgerhq/native-ui/components/styled";
 import { View } from "react-native";
+import { NftFilterItemProps } from "./NftFilterItem";
 
 type Props = {
   readonly title: string;
@@ -33,8 +34,7 @@ const NftFilterSection: FC<Props> = ({ title, onSeeAllPress, footer, children })
       {childrenArray.length ? (
         <StyledItems>
           {childrenArray.map((child, i) =>
-            // NOTE: Better types for children to ensure they are an NftFilterItem
-            React.cloneElement(child as any, {
+            React.cloneElement(child as React.ReactElement<NftFilterItemProps>, {
               first: i === 0,
               last: i === childrenArray.length - 1,
             }),
