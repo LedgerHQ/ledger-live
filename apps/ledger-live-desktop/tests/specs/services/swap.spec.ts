@@ -14,22 +14,23 @@ test.describe.parallel("Swap - Miscellaneous tests", () => {
       route.fulfill({ headers: { teststatus: "mocked" }, status: 404 });
     });
 
-    await test.step("Warning displays for users when /providers endpoint returns an error", async () => {
-      await swapPage.navigate();
-      await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
-    });
+    await swapPage.navigate();
+    await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
   });
 
   test("Swap not yet available due to no valid providers", async ({ page }) => {
     const swapPage = new SwapPage(page);
 
-    await page.route("https://swap.ledger.com/v4/providers**", async route => {
-      route.fulfill({ headers: { teststatus: "mocked" }, status: 404 });
+    const providers = JSON.stringify({
+      currencies: {},
+      providers: {},
     });
 
-    await test.step("Warning displays for users when /providers endpoint returns an error", async () => {
-      await swapPage.navigate();
-      await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      route.fulfill({ headers: { teststatus: "mocked" }, body: providers });
     });
+
+    await swapPage.navigate();
+    await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
   });
 });
