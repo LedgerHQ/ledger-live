@@ -1,15 +1,8 @@
-import {
-  getElementById,
-  getElementByText,
-  typeTextByElement,
-  tapByText,
-  tapByElement,
-} from "../../helpers";
+import { getElementById, typeTextByElement, tapByText, tapByElement } from "../../helpers";
 
-export default class marketPage {
+export default class MarketPage {
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
-  assetCardBtnBack = () => getElementByText("Bitcoin");
   assetCardBackBtn = () => getElementById("market-back-btn");
   starMarketListButton = () => getElementById("starred");
   buyNanoButton = () => getElementById("market-buy-btn");
