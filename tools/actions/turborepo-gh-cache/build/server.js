@@ -4965,9 +4965,9 @@ var require_glob = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/semver@6.3.0/node_modules/semver/semver.js
+// ../../../node_modules/.pnpm/semver@6.3.1/node_modules/semver/semver.js
 var require_semver = __commonJS({
-  "../../../node_modules/.pnpm/semver@6.3.0/node_modules/semver/semver.js"(exports, module2) {
+  "../../../node_modules/.pnpm/semver@6.3.1/node_modules/semver/semver.js"(exports, module2) {
     exports = module2.exports = SemVer;
     var debug;
     if (typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG)) {
@@ -4984,19 +4984,35 @@ var require_semver = __commonJS({
     var MAX_LENGTH = 256;
     var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
     var MAX_SAFE_COMPONENT_LENGTH = 16;
+    var MAX_SAFE_BUILD_LENGTH = MAX_LENGTH - 6;
     var re2 = exports.re = [];
+    var safeRe = exports.safeRe = [];
     var src = exports.src = [];
     var t = exports.tokens = {};
     var R = 0;
     function tok(n) {
       t[n] = R++;
     }
+    var LETTERDASHNUMBER = "[a-zA-Z0-9-]";
+    var safeRegexReplacements = [
+      ["\\s", 1],
+      ["\\d", MAX_LENGTH],
+      [LETTERDASHNUMBER, MAX_SAFE_BUILD_LENGTH]
+    ];
+    function makeSafeRe(value) {
+      for (var i2 = 0; i2 < safeRegexReplacements.length; i2++) {
+        var token = safeRegexReplacements[i2][0];
+        var max = safeRegexReplacements[i2][1];
+        value = value.split(token + "*").join(token + "{0," + max + "}").split(token + "+").join(token + "{1," + max + "}");
+      }
+      return value;
+    }
     tok("NUMERICIDENTIFIER");
     src[t.NUMERICIDENTIFIER] = "0|[1-9]\\d*";
     tok("NUMERICIDENTIFIERLOOSE");
-    src[t.NUMERICIDENTIFIERLOOSE] = "[0-9]+";
+    src[t.NUMERICIDENTIFIERLOOSE] = "\\d+";
     tok("NONNUMERICIDENTIFIER");
-    src[t.NONNUMERICIDENTIFIER] = "\\d*[a-zA-Z-][a-zA-Z0-9-]*";
+    src[t.NONNUMERICIDENTIFIER] = "\\d*[a-zA-Z-]" + LETTERDASHNUMBER + "*";
     tok("MAINVERSION");
     src[t.MAINVERSION] = "(" + src[t.NUMERICIDENTIFIER] + ")\\.(" + src[t.NUMERICIDENTIFIER] + ")\\.(" + src[t.NUMERICIDENTIFIER] + ")";
     tok("MAINVERSIONLOOSE");
@@ -5010,7 +5026,7 @@ var require_semver = __commonJS({
     tok("PRERELEASELOOSE");
     src[t.PRERELEASELOOSE] = "(?:-?(" + src[t.PRERELEASEIDENTIFIERLOOSE] + "(?:\\." + src[t.PRERELEASEIDENTIFIERLOOSE] + ")*))";
     tok("BUILDIDENTIFIER");
-    src[t.BUILDIDENTIFIER] = "[0-9A-Za-z-]+";
+    src[t.BUILDIDENTIFIER] = LETTERDASHNUMBER + "+";
     tok("BUILD");
     src[t.BUILD] = "(?:\\+(" + src[t.BUILDIDENTIFIER] + "(?:\\." + src[t.BUILDIDENTIFIER] + ")*))";
     tok("FULL");
@@ -5039,11 +5055,13 @@ var require_semver = __commonJS({
     src[t.COERCE] = "(^|[^\\d])(\\d{1," + MAX_SAFE_COMPONENT_LENGTH + "})(?:\\.(\\d{1," + MAX_SAFE_COMPONENT_LENGTH + "}))?(?:\\.(\\d{1," + MAX_SAFE_COMPONENT_LENGTH + "}))?(?:$|[^\\d])";
     tok("COERCERTL");
     re2[t.COERCERTL] = new RegExp(src[t.COERCE], "g");
+    safeRe[t.COERCERTL] = new RegExp(makeSafeRe(src[t.COERCE]), "g");
     tok("LONETILDE");
     src[t.LONETILDE] = "(?:~>?)";
     tok("TILDETRIM");
     src[t.TILDETRIM] = "(\\s*)" + src[t.LONETILDE] + "\\s+";
     re2[t.TILDETRIM] = new RegExp(src[t.TILDETRIM], "g");
+    safeRe[t.TILDETRIM] = new RegExp(makeSafeRe(src[t.TILDETRIM]), "g");
     var tildeTrimReplace = "$1~";
     tok("TILDE");
     src[t.TILDE] = "^" + src[t.LONETILDE] + src[t.XRANGEPLAIN] + "$";
@@ -5054,6 +5072,7 @@ var require_semver = __commonJS({
     tok("CARETTRIM");
     src[t.CARETTRIM] = "(\\s*)" + src[t.LONECARET] + "\\s+";
     re2[t.CARETTRIM] = new RegExp(src[t.CARETTRIM], "g");
+    safeRe[t.CARETTRIM] = new RegExp(makeSafeRe(src[t.CARETTRIM]), "g");
     var caretTrimReplace = "$1^";
     tok("CARET");
     src[t.CARET] = "^" + src[t.LONECARET] + src[t.XRANGEPLAIN] + "$";
@@ -5066,6 +5085,7 @@ var require_semver = __commonJS({
     tok("COMPARATORTRIM");
     src[t.COMPARATORTRIM] = "(\\s*)" + src[t.GTLT] + "\\s*(" + src[t.LOOSEPLAIN] + "|" + src[t.XRANGEPLAIN] + ")";
     re2[t.COMPARATORTRIM] = new RegExp(src[t.COMPARATORTRIM], "g");
+    safeRe[t.COMPARATORTRIM] = new RegExp(makeSafeRe(src[t.COMPARATORTRIM]), "g");
     var comparatorTrimReplace = "$1$2$3";
     tok("HYPHENRANGE");
     src[t.HYPHENRANGE] = "^\\s*(" + src[t.XRANGEPLAIN] + ")\\s+-\\s+(" + src[t.XRANGEPLAIN] + ")\\s*$";
@@ -5077,6 +5097,7 @@ var require_semver = __commonJS({
       debug(i, src[i]);
       if (!re2[i]) {
         re2[i] = new RegExp(src[i]);
+        safeRe[i] = new RegExp(makeSafeRe(src[i]));
       }
     }
     var i;
@@ -5097,7 +5118,7 @@ var require_semver = __commonJS({
       if (version3.length > MAX_LENGTH) {
         return null;
       }
-      var r = options.loose ? re2[t.LOOSE] : re2[t.FULL];
+      var r = options.loose ? safeRe[t.LOOSE] : safeRe[t.FULL];
       if (!r.test(version3)) {
         return null;
       }
@@ -5143,7 +5164,7 @@ var require_semver = __commonJS({
       debug("SemVer", version3, options);
       this.options = options;
       this.loose = !!options.loose;
-      var m = version3.trim().match(options.loose ? re2[t.LOOSE] : re2[t.FULL]);
+      var m = version3.trim().match(options.loose ? safeRe[t.LOOSE] : safeRe[t.FULL]);
       if (!m) {
         throw new TypeError("Invalid Version: " + version3);
       }
@@ -5495,6 +5516,7 @@ var require_semver = __commonJS({
       if (!(this instanceof Comparator)) {
         return new Comparator(comp26, options);
       }
+      comp26 = comp26.trim().split(/\s+/).join(" ");
       debug("comparator", comp26, options);
       this.options = options;
       this.loose = !!options.loose;
@@ -5508,7 +5530,7 @@ var require_semver = __commonJS({
     }
     var ANY = {};
     Comparator.prototype.parse = function(comp26) {
-      var r = this.options.loose ? re2[t.COMPARATORLOOSE] : re2[t.COMPARATOR];
+      var r = this.options.loose ? safeRe[t.COMPARATORLOOSE] : safeRe[t.COMPARATOR];
       var m = comp26.match(r);
       if (!m) {
         throw new TypeError("Invalid comparator: " + comp26);
@@ -5596,14 +5618,14 @@ var require_semver = __commonJS({
       this.options = options;
       this.loose = !!options.loose;
       this.includePrerelease = !!options.includePrerelease;
-      this.raw = range2;
-      this.set = range2.split(/\s*\|\|\s*/).map(function(range3) {
+      this.raw = range2.trim().split(/\s+/).join(" ");
+      this.set = this.raw.split("||").map(function(range3) {
         return this.parseRange(range3.trim());
       }, this).filter(function(c) {
         return c.length;
       });
       if (!this.set.length) {
-        throw new TypeError("Invalid SemVer Range: " + range2);
+        throw new TypeError("Invalid SemVer Range: " + this.raw);
       }
       this.format();
     }
@@ -5618,16 +5640,15 @@ var require_semver = __commonJS({
     };
     Range.prototype.parseRange = function(range2) {
       var loose = this.options.loose;
-      range2 = range2.trim();
-      var hr = loose ? re2[t.HYPHENRANGELOOSE] : re2[t.HYPHENRANGE];
+      var hr = loose ? safeRe[t.HYPHENRANGELOOSE] : safeRe[t.HYPHENRANGE];
       range2 = range2.replace(hr, hyphenReplace);
       debug("hyphen replace", range2);
-      range2 = range2.replace(re2[t.COMPARATORTRIM], comparatorTrimReplace);
-      debug("comparator trim", range2, re2[t.COMPARATORTRIM]);
-      range2 = range2.replace(re2[t.TILDETRIM], tildeTrimReplace);
-      range2 = range2.replace(re2[t.CARETTRIM], caretTrimReplace);
+      range2 = range2.replace(safeRe[t.COMPARATORTRIM], comparatorTrimReplace);
+      debug("comparator trim", range2, safeRe[t.COMPARATORTRIM]);
+      range2 = range2.replace(safeRe[t.TILDETRIM], tildeTrimReplace);
+      range2 = range2.replace(safeRe[t.CARETTRIM], caretTrimReplace);
       range2 = range2.split(/\s+/).join(" ");
-      var compRe = loose ? re2[t.COMPARATORLOOSE] : re2[t.COMPARATOR];
+      var compRe = loose ? safeRe[t.COMPARATORLOOSE] : safeRe[t.COMPARATOR];
       var set = range2.split(" ").map(function(comp26) {
         return parseComparator(comp26, this.options);
       }, this).join(" ").split(/\s+/);
@@ -5696,7 +5717,7 @@ var require_semver = __commonJS({
       }).join(" ");
     }
     function replaceTilde(comp26, options) {
-      var r = options.loose ? re2[t.TILDELOOSE] : re2[t.TILDE];
+      var r = options.loose ? safeRe[t.TILDELOOSE] : safeRe[t.TILDE];
       return comp26.replace(r, function(_, M, m, p, pr) {
         debug("tilde", comp26, _, M, m, p, pr);
         var ret;
@@ -5723,7 +5744,7 @@ var require_semver = __commonJS({
     }
     function replaceCaret(comp26, options) {
       debug("caret", comp26, options);
-      var r = options.loose ? re2[t.CARETLOOSE] : re2[t.CARET];
+      var r = options.loose ? safeRe[t.CARETLOOSE] : safeRe[t.CARET];
       return comp26.replace(r, function(_, M, m, p, pr) {
         debug("caret", comp26, _, M, m, p, pr);
         var ret;
@@ -5772,7 +5793,7 @@ var require_semver = __commonJS({
     }
     function replaceXRange(comp26, options) {
       comp26 = comp26.trim();
-      var r = options.loose ? re2[t.XRANGELOOSE] : re2[t.XRANGE];
+      var r = options.loose ? safeRe[t.XRANGELOOSE] : safeRe[t.XRANGE];
       return comp26.replace(r, function(ret, gtlt, M, m, p, pr) {
         debug("xRange", comp26, ret, gtlt, M, m, p, pr);
         var xM = isX(M);
@@ -5824,7 +5845,7 @@ var require_semver = __commonJS({
     }
     function replaceStars(comp26, options) {
       debug("replaceStars", comp26, options);
-      return comp26.trim().replace(re2[t.STAR], "");
+      return comp26.trim().replace(safeRe[t.STAR], "");
     }
     function hyphenReplace($0, from, fM, fm, fp, fpr, fb, to, tM, tm, tp, tpr, tb) {
       if (isX(fM)) {
@@ -6074,16 +6095,16 @@ var require_semver = __commonJS({
       options = options || {};
       var match = null;
       if (!options.rtl) {
-        match = version3.match(re2[t.COERCE]);
+        match = version3.match(safeRe[t.COERCE]);
       } else {
         var next;
-        while ((next = re2[t.COERCERTL].exec(version3)) && (!match || match.index + match[0].length !== version3.length)) {
+        while ((next = safeRe[t.COERCERTL].exec(version3)) && (!match || match.index + match[0].length !== version3.length)) {
           if (!match || next.index + next[0].length !== match.index + match[0].length) {
             match = next;
           }
-          re2[t.COERCERTL].lastIndex = next.index + next[1].length + next[2].length;
+          safeRe[t.COERCERTL].lastIndex = next.index + next[1].length + next[2].length;
         }
-        re2[t.COERCERTL].lastIndex = -1;
+        safeRe[t.COERCERTL].lastIndex = -1;
       }
       if (match === null) {
         return null;
@@ -72272,107 +72293,6 @@ var require_content_disposition = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/content-type@1.0.4/node_modules/content-type/index.js
-var require_content_type2 = __commonJS({
-  "../../../node_modules/.pnpm/content-type@1.0.4/node_modules/content-type/index.js"(exports) {
-    "use strict";
-    var PARAM_REGEXP = /; *([!#$%&'*+.^_`|~0-9A-Za-z-]+) *= *("(?:[\u000b\u0020\u0021\u0023-\u005b\u005d-\u007e\u0080-\u00ff]|\\[\u000b\u0020-\u00ff])*"|[!#$%&'*+.^_`|~0-9A-Za-z-]+) */g;
-    var TEXT_REGEXP = /^[\u000b\u0020-\u007e\u0080-\u00ff]+$/;
-    var TOKEN_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
-    var QESC_REGEXP = /\\([\u000b\u0020-\u00ff])/g;
-    var QUOTE_REGEXP = /([\\"])/g;
-    var TYPE_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+\/[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
-    exports.format = format;
-    exports.parse = parse3;
-    function format(obj) {
-      if (!obj || typeof obj !== "object") {
-        throw new TypeError("argument obj is required");
-      }
-      var parameters = obj.parameters;
-      var type3 = obj.type;
-      if (!type3 || !TYPE_REGEXP.test(type3)) {
-        throw new TypeError("invalid type");
-      }
-      var string = type3;
-      if (parameters && typeof parameters === "object") {
-        var param;
-        var params = Object.keys(parameters).sort();
-        for (var i = 0; i < params.length; i++) {
-          param = params[i];
-          if (!TOKEN_REGEXP.test(param)) {
-            throw new TypeError("invalid parameter name");
-          }
-          string += "; " + param + "=" + qstring(parameters[param]);
-        }
-      }
-      return string;
-    }
-    function parse3(string) {
-      if (!string) {
-        throw new TypeError("argument string is required");
-      }
-      var header = typeof string === "object" ? getcontenttype(string) : string;
-      if (typeof header !== "string") {
-        throw new TypeError("argument string is required to be a string");
-      }
-      var index = header.indexOf(";");
-      var type3 = index !== -1 ? header.substr(0, index).trim() : header.trim();
-      if (!TYPE_REGEXP.test(type3)) {
-        throw new TypeError("invalid media type");
-      }
-      var obj = new ContentType(type3.toLowerCase());
-      if (index !== -1) {
-        var key;
-        var match;
-        var value;
-        PARAM_REGEXP.lastIndex = index;
-        while (match = PARAM_REGEXP.exec(header)) {
-          if (match.index !== index) {
-            throw new TypeError("invalid parameter format");
-          }
-          index += match[0].length;
-          key = match[1].toLowerCase();
-          value = match[2];
-          if (value[0] === '"') {
-            value = value.substr(1, value.length - 2).replace(QESC_REGEXP, "$1");
-          }
-          obj.parameters[key] = value;
-        }
-        if (index !== header.length) {
-          throw new TypeError("invalid parameter format");
-        }
-      }
-      return obj;
-    }
-    function getcontenttype(obj) {
-      var header;
-      if (typeof obj.getHeader === "function") {
-        header = obj.getHeader("content-type");
-      } else if (typeof obj.headers === "object") {
-        header = obj.headers && obj.headers["content-type"];
-      }
-      if (typeof header !== "string") {
-        throw new TypeError("content-type header is missing from object");
-      }
-      return header;
-    }
-    function qstring(val) {
-      var str = String(val);
-      if (TOKEN_REGEXP.test(str)) {
-        return str;
-      }
-      if (str.length > 0 && !TEXT_REGEXP.test(str)) {
-        throw new TypeError("invalid parameter value");
-      }
-      return '"' + str.replace(QUOTE_REGEXP, "\\$1") + '"';
-    }
-    function ContentType(type3) {
-      this.parameters = /* @__PURE__ */ Object.create(null);
-      this.type = type3;
-    }
-  }
-});
-
 // ../../../node_modules/.pnpm/etag@1.8.1/node_modules/etag/index.js
 var require_etag = __commonJS({
   "../../../node_modules/.pnpm/etag@1.8.1/node_modules/etag/index.js"(exports, module2) {
@@ -74137,7 +74057,7 @@ var require_utils4 = __commonJS({
     "use strict";
     var Buffer2 = require_safe_buffer().Buffer;
     var contentDisposition = require_content_disposition();
-    var contentType2 = require_content_type2();
+    var contentType2 = require_content_type();
     var deprecate = require_depd()("express");
     var flatten = require_array_flatten();
     var mime = require_send().mime;
