@@ -34,7 +34,6 @@ import {
   calculateAmount,
   getMinimumAmountToBond,
   getMinimumBalance,
-  EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
 } from "./logic";
 import { isValidAddress } from "./address";
 import { getCurrentPolkadotPreloadData } from "./preload";
@@ -42,89 +41,73 @@ import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "./api";
 
 // Should try to refacto
-const getSendTransactionStatus =
-  (polkadotAPI: PolkadotAPI) =>
-  async (a: PolkadotAccount, t: Transaction): Promise<TransactionStatus> => {
-    const errors: any = {};
-    const warnings: any = {};
+const getSendTransactionStatus = async (
+  polkadotAPI: PolkadotAPI,
+  a: PolkadotAccount,
+  t: Transaction,
+  amount: BigNumber,
+): Promise<TransactionStatus> => {
+  const errors: any = {};
+  const warnings: any = {};
 
-    if (!t.fees) {
-      errors.fees = new FeeNotLoaded();
-    }
+  if (!t.fees) {
+    errors.fees = new FeeNotLoaded();
+  }
 
-    if (!t.recipient) {
-      errors.recipient = new RecipientRequired("");
-    } else if (a.freshAddress === t.recipient) {
-      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-    } else if (!isValidAddress(t.recipient)) {
-      errors.recipient = new InvalidAddress("", {
-        currencyName: a.currency.name,
-      });
-    }
-
-    const estimatedFees = t.fees || new BigNumber(0);
-    const amount = calculateAmount({
-      a,
-      t,
+  if (!t.recipient) {
+    errors.recipient = new RecipientRequired("");
+  } else if (a.freshAddress === t.recipient) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  } else if (!isValidAddress(t.recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
     });
-    const totalSpent = amount.plus(estimatedFees);
+  }
 
-    if (amount.lte(0) && !t.useAllAmount) {
-      errors.amount = new AmountRequired();
-    }
+  const estimatedFees = t.fees || new BigNumber(0);
+  const totalSpent = amount.plus(estimatedFees);
 
-    const minimumBalanceExistential = getMinimumBalance(a);
-    const leftover = a.spendableBalance.minus(totalSpent);
+  const minimumBalanceExistential = getMinimumBalance(a);
+  const leftover = a.spendableBalance.minus(totalSpent);
 
-    if (
-      minimumBalanceExistential.gt(0) &&
-      leftover.lt(minimumBalanceExistential) &&
-      leftover.gt(0)
-    ) {
-      errors.amount = new PolkadotDoMaxSendInstead("", {
-        minimumBalance: formatCurrencyUnit(a.currency.units[0], EXISTENTIAL_DEPOSIT, {
-          showCode: true,
-        }),
-      });
-    } else if (
-      !errors.amount &&
-      !t.useAllAmount &&
-      a.spendableBalance.lte(EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN))
-    ) {
-      errors.amount = new NotEnoughBalance();
-    } else if (totalSpent.gt(a.spendableBalance)) {
-      errors.amount = new NotEnoughBalance();
-    }
-
-    if (
-      !errors.amount &&
-      a.polkadotResources?.lockedBalance.gt(0) &&
-      (t.useAllAmount || a.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
-    ) {
-      warnings.amount = new PolkadotAllFundsWarning();
-    }
-
-    if (
-      !errors.recipient &&
-      amount.lt(EXISTENTIAL_DEPOSIT) &&
-      (await polkadotAPI.isNewAccount(t.recipient))
-    ) {
-      errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-        minimalAmount: formatCurrencyUnit(a.currency.units[0], EXISTENTIAL_DEPOSIT, {
-          showCode: true,
-        }),
-      });
-    }
-
-    return Promise.resolve({
-      errors,
-      warnings,
-      estimatedFees,
-      amount: amount.lt(0) ? new BigNumber(0) : amount,
-      totalSpent,
-      family: t.family,
+  if (minimumBalanceExistential.gt(0) && leftover.lt(minimumBalanceExistential) && leftover.gt(0)) {
+    errors.amount = new PolkadotDoMaxSendInstead("", {
+      minimumBalance: formatCurrencyUnit(a.currency.units[0], EXISTENTIAL_DEPOSIT, {
+        showCode: true,
+      }),
     });
+  } else if (!t.useAllAmount && totalSpent.gt(a.spendableBalance)) {
+    errors.amount = new NotEnoughBalance();
+  }
+
+  if (
+    !errors.amount &&
+    a.polkadotResources?.lockedBalance.gt(0) &&
+    (t.useAllAmount || a.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
+  ) {
+    warnings.amount = new PolkadotAllFundsWarning();
+  }
+
+  if (
+    !errors.recipient &&
+    amount.lt(EXISTENTIAL_DEPOSIT) &&
+    (await polkadotAPI.isNewAccount(t.recipient))
+  ) {
+    errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+      minimalAmount: formatCurrencyUnit(a.currency.units[0], EXISTENTIAL_DEPOSIT, {
+        showCode: true,
+      }),
+    });
+  }
+
+  return {
+    errors,
+    warnings,
+    estimatedFees,
+    amount: amount.lt(0) ? new BigNumber(0) : amount,
+    totalSpent,
   };
+};
 
 const getTransactionStatus =
   (polkadotAPI: PolkadotAPI) => async (a: PolkadotAccount, t: Transaction) => {
@@ -142,9 +125,25 @@ const getTransactionStatus =
     const preloaded = getCurrentPolkadotPreloadData();
     const { staking, validators } = preloaded;
     const minimumBondBalance = new BigNumber(preloaded.minimumBondBalance);
+    const amount = calculateAmount({
+      a,
+      t,
+    });
+
+    if (amount.lte(0) && !t.useAllAmount && ["bond", "unbond", "rebond", "send"].includes(t.mode)) {
+      return {
+        errors: {
+          amount: new AmountRequired(),
+        },
+        warnings,
+        estimatedFees: t.fees || new BigNumber(0),
+        amount: new BigNumber(0),
+        totalSpent: t.fees || new BigNumber(0),
+      };
+    }
 
     if (t.mode === "send") {
-      return await getSendTransactionStatus(polkadotAPI)(a, t);
+      return getSendTransactionStatus(polkadotAPI, a, t, amount);
     }
 
     if (
@@ -154,10 +153,6 @@ const getTransactionStatus =
       errors.staking = new PolkadotElectionClosed();
     }
 
-    const amount = calculateAmount({
-      a,
-      t,
-    });
     const unlockingBalance = a.polkadotResources?.unlockingBalance || new BigNumber(0);
     const unlockedBalance = a.polkadotResources?.unlockedBalance || new BigNumber(0);
     const currentBonded =
@@ -201,9 +196,7 @@ const getTransactionStatus =
           errors.unbondings = new PolkadotMaxUnbonding();
         }
 
-        if (amount.lte(0)) {
-          errors.amount = new AmountRequired();
-        } else if (amount.gt(currentBonded.minus(minimumBondBalance)) && amount.lt(currentBonded)) {
+        if (amount.gt(currentBonded.minus(minimumBondBalance)) && amount.lt(currentBonded)) {
           warnings.amount = new PolkadotBondMinimumAmountWarning("", {
             minimumBondBalance: formatCurrencyUnit(a.currency.units[0], minimumBondBalance, {
               showCode: true,
@@ -220,9 +213,7 @@ const getTransactionStatus =
           errors.staking = new PolkadotUnauthorizedOperation();
         }
 
-        if (amount.lte(0)) {
-          errors.amount = new AmountRequired();
-        } else if (amount.gt(unlockingBalance)) {
+        if (amount.gt(unlockingBalance)) {
           errors.amount = new NotEnoughBalance();
         } else if (amount.lt(minimumAmountToBond)) {
           warnings.amount = new PolkadotBondMinimumAmountWarning("", {
@@ -296,12 +287,6 @@ const getTransactionStatus =
     const estimatedFees = t.fees || new BigNumber(0);
     const totalSpent = t.mode === "bond" ? amount.plus(estimatedFees) : estimatedFees;
 
-    if (t.mode === "bond" || t.mode === "unbond" || t.mode === "rebond") {
-      if (amount.lte(0)) {
-        errors.amount = new AmountRequired();
-      }
-    }
-
     if (t.mode === "bond" && a.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER)) {
       errors.amount = new NotEnoughBalance();
     }
@@ -310,13 +295,13 @@ const getTransactionStatus =
       errors.amount = new NotEnoughBalance();
     }
 
-    return Promise.resolve({
+    return {
       errors,
       warnings,
       estimatedFees,
       amount: amount.lt(0) ? new BigNumber(0) : amount,
       totalSpent,
-    });
+    };
   };
 
 export default getTransactionStatus;
