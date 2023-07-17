@@ -8,6 +8,8 @@ if (getEnv("PLAYWRIGHT_RUN")) {
   });
 }
 
+console.log("yolo");
+
 if (!process.env.IS_INTERNAL_PROCESS) {
   // Main electron thread
   require("./main");
