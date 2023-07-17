@@ -150,7 +150,7 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
           <Flex flex={1} alignSelf="stretch">
             <SelectDevice2
               onSelect={setDevice}
-              deviceModelIds={deviceModelIds}
+              filterByDeviceModelId={DeviceModelId.stax}
               stopBleScanning={!!device}
               requestToSetHeaderOptions={requestToSetHeaderOptions}
             />

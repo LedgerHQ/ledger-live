@@ -57,7 +57,7 @@ type Props = {
 
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
-  deviceModelIds?: DeviceModelId[];
+  filterByDeviceModelId?: DeviceModelId;
 };
 
 export default function SelectDevice({
@@ -67,7 +67,7 @@ export default function SelectDevice({
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
   withMyLedgerTracking,
-  deviceModelIds,
+  filterByDeviceModelId,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -213,8 +213,10 @@ export default function SelectDevice({
       devices.push(ProxyDevice);
     }
 
-    return deviceModelIds ? devices.filter(d => deviceModelIds.includes(d.modelId)) : devices;
-  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, deviceModelIds]);
+    return filterByDeviceModelId
+      ? devices.filter(d => d.modelId === filterByDeviceModelId)
+      : devices;
+  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
@@ -320,6 +322,7 @@ export default function SelectDevice({
           onGoBackFromScanning={closeBlePairingFlow}
           onPairingSuccessAddToKnownDevices
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          filterByDeviceModelId={filterByDeviceModelId}
         />
       ) : (
         <Flex flex={1}>
