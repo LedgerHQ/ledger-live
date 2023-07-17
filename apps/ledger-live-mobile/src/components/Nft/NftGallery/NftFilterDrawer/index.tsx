@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { TrackScreen } from "../../../../analytics";
 import NftFilterSection from "./NftFilterSection";
-import { NftFilterCurrencyItem, NftFilterTagItem } from "./NftFilterItem";
+import { NftFilterCurrencyItem } from "./NftFilterItem";
 import { BottomDrawer } from "@ledgerhq/native-ui";
 import { NftGalleryChainFiltersState } from "../../../../reducers/types";
 import { NavigatorName, ScreenName } from "../../../../const/navigation";
