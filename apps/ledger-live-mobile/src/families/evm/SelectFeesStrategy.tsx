@@ -1,9 +1,11 @@
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import type { GasOptions, Transaction } from "@ledgerhq/coin-evm/types";
+import type { GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -28,10 +30,7 @@ import TachometerMedium from "../../icons/TachometerMedium";
 import TachometerSlow from "../../icons/TachometerSlow";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { sharedSwapTracking } from "../../screens/Swap/utils";
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
 
-type Strategy = keyof GasOptions;
 type StrategyWithCustom = Strategy | "custom";
 
 type Props = {
