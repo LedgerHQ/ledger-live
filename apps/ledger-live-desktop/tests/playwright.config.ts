@@ -55,8 +55,7 @@ const config: PlaywrightTestConfig = {
     },
     {
       name: "all",
-      testIgnore: [/.*smoke.spec.ts/, "specs/recorder.spec.ts"],
-      dependencies: ["smoke"],
+      testIgnore: ["specs/recorder.spec.ts"],
     },
   ],
 };

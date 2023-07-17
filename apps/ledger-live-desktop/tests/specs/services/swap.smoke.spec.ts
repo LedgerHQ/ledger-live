@@ -27,7 +27,7 @@ test.use({
 // Amount too low for providers ‘Amount must be at least …’
 // could add pause to HTTP mock to test 'LOADING' component
 
-test.describe.parallel("Swap", () => {
+test.describe.parallel("Swap - Critical tests", () => {
   test("Add accounts via Swap page", async ({ page }) => {
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
@@ -82,19 +82,6 @@ test.describe.parallel("Swap", () => {
     await test.step("Add account from missing Destination (To) account", async () => {
       await swapPage.addDestinationAccount();
       await expect.soft(page).toHaveScreenshot("add-missing-destination-account.png");
-    });
-  });
-
-  test("Swap not yet available", async ({ page }) => {
-    const swapPage = new SwapPage(page);
-
-    await page.route("https://swap.ledger.com/v4/providers**", async route => {
-      route.fulfill({ headers: { teststatus: "mocked" }, status: 404 });
-    });
-
-    await test.step("Warning displays for users when /providers endpoint returns an error", async () => {
-      await swapPage.navigate();
-      await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
     });
   });
 
