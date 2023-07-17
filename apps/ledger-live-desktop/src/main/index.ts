@@ -5,6 +5,7 @@ import "./setup";
 import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
+import path from "path";
 import {
   createMainWindow,
   getMainWindow,
@@ -191,7 +192,11 @@ async function installExtensions() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const installer = require("electron-devtools-installer");
   const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
-  const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
+  const extensions = [/*"REACT_DEVELOPER_TOOLS",*/ "REDUX_DEVTOOLS"];
+  // Temporary solution while Electron doesn't support manifest V3 extensions
+  // https://github.com/electron/electron/issues/36545
+  const reactDevToolsPath = path.dirname(require.resolve("@ledgerhq/react-devtools/package.json"));
+  session.defaultSession.loadExtension(reactDevToolsPath);
   return Promise.all(
     extensions.map(name =>
       installer.default(installer[name], {

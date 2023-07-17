@@ -232,7 +232,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
 
       <View style={styles.body}>
         <View style={styles.header}>

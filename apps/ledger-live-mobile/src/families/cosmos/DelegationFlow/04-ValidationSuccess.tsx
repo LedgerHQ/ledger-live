@@ -43,6 +43,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         validator,
         source,
         delegation,
+        flow: "stake",
       });
   }, [source, validator, delegation, ticker, account]);
 
@@ -64,7 +65,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="CosmosDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="CosmosDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="delegation"
+        currency={ticker}
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

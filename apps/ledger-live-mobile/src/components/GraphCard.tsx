@@ -133,6 +133,7 @@ function GraphCard({
                       color={"neutral.c100"}
                       numberOfLines={1}
                       adjustsFontSizeToFit
+                      testID={"graphCard-balance"}
                     >
                       <CurrencyUnitValue
                         unit={unit}

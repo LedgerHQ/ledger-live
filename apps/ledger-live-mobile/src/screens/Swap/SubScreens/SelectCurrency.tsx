@@ -11,6 +11,7 @@ import CurrencyRow from "../../../components/CurrencyRow";
 import { SelectCurrencyParamList } from "../types";
 import { ScreenName } from "../../../const";
 import { sharedSwapTracking } from "../utils";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 export function SelectCurrency({
   navigation,
@@ -55,7 +56,7 @@ export function SelectCurrency({
         <TrackScreen category="Swap Form" name="Edit Target Currency" provider={provider} />
 
         <FilteredSearchBar
-          keys={["name", "ticker"]}
+          keys={getEnv("CRYPTO_ASSET_SEARCH_KEYS")}
           inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
           list={sortedCurrencies}
           renderList={renderList}

@@ -8,7 +8,7 @@
  * scheme is generally the id
  * color: is the dominant color of the currency logo, we will color the logo svg with it.
  * managerAppName: if any, is the exact name of the related Ledger's app in LL Manager.
- * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
+ * blockAvgTime: the average time between 2 blocks, in seconds. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
  * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
  * terminated: Present when we no longer support this specific coin.
@@ -1471,30 +1471,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
-  },
-  icp: {
-    type: "CryptoCurrency",
-    id: "icp",
-    coinType: CoinType.ICP,
-    family: "icp",
-    ticker: "ICP",
-    scheme: "icp",
-    color: "#000",
-    managerAppName: "InternetComputer",
-    name: "Internet Computer (ICP)",
-    units: [
-      {
-        name: "ICP",
-        code: "ICP",
-        magnitude: 8,
-      },
-    ],
-    explorerViews: [
-      {
-        address: "https://dashboard.internetcomputer.org/account/$address",
-        tx: "https://dashboard.internetcomputer.org/transaction/$hash",
-      },
-    ],
   },
   iota: {
     type: "CryptoCurrency",
@@ -3460,6 +3436,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         code: "STX",
         magnitude: 6,
       },
+      {
+        name: "uSTX",
+        code: "uSTX",
+        magnitude: 0,
+      },
     ],
     explorerViews: [
       {
@@ -3593,7 +3574,36 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  internet_computer: {
+    type: "CryptoCurrency",
+    id: "internet_computer",
+    coinType: CoinType.ICP,
+    name: "Internet Computer",
+    managerAppName: "InternetComputer",
+    ticker: "ICP",
+    scheme: "internet_computer",
+    color: "#e1effa",
+    family: "internet_computer",
+    units: [
+      {
+        name: "ICP",
+        code: "ICP",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.icpexplorer.org/#/tx/$hash",
+        address: "https://www.icpexplorer.org/#/acct/$address",
+      },
+    ],
+  },
+  // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  /**
+   * FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
+   * when ethereum_as_evm_test_only is removed from the currencies list
+   */
   ethereum_as_evm_test_only: {
     type: "CryptoCurrency",
     id: "ethereum_as_evm_test_only",
@@ -3614,6 +3624,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         uri: "https://api.etherscan.io",
         type: "etherscan",
       },
+      gasTracker: { uri: "", type: "ledger" },
     },
     explorerViews: [
       {
@@ -3623,6 +3634,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  /**
+   * FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
+   * when polygon_as_evm_test_only is removed from the currencies list
+   */
   polygon_as_evm_test_only: {
     type: "CryptoCurrency",
     id: "polygon_as_evm_test_only",
@@ -3649,6 +3664,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         uri: "https://api.polygonscan.com",
         type: "etherscan",
       },
+      gasTracker: { uri: "", type: "ledger" },
     },
     explorerViews: [
       {
@@ -4006,7 +4022,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "optimism",
     coinType: CoinType.ETH,
-    name: "Optimism",
+    name: "OP Mainnet",
     managerAppName: "Ethereum",
     ticker: "ETH",
     scheme: "optimism",
@@ -4029,6 +4045,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         token: "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["optimism"],
   },
   optimism_goerli: {
     type: "CryptoCurrency",
@@ -4266,6 +4283,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://explorer.syscoin.org/tx/$hash",
         address: "https://explorer.syscoin.org/address/$address",
         token: "https://explorer.syscoin.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  telos_evm: {
+    type: "CryptoCurrency",
+    id: "telos_evm",
+    coinType: CoinType.ETH,
+    name: "Telos",
+    managerAppName: "Ethereum",
+    ticker: "TLOS",
+    deviceTicker: "ETH",
+    scheme: "telos_evm",
+    color: "#AC72F9",
+    family: "evm",
+    units: ethereumUnits("TLOS", "TLOS"),
+    ethereumLikeInfo: {
+      chainId: 40,
+      networkId: 40,
+      rpc: "https://mainnet.telos.net/evm",
+      explorer: {
+        uri: "https://api.teloscan.io",
+        type: "teloscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://www.teloscan.io/tx/$hash",
+        address: "https://www.teloscan.io/address/$address",
+        token: "https://www.teloscan.io/token/$contractAddress?a=$address",
       },
     ],
   },

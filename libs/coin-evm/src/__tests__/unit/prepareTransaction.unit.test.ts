@@ -22,6 +22,7 @@ describe("EVM Family", () => {
         gasPrice: new BigNumber(1),
         maxFeePerGas: new BigNumber(1),
         maxPriorityFeePerGas: new BigNumber(1),
+        nextBaseFee: new BigNumber(1),
       }));
       jest.spyOn(nftAPI, "getNftCollectionMetadata").mockImplementation(async input => {
         if (
@@ -97,6 +98,29 @@ describe("EVM Family", () => {
           });
         });
 
+        it("should have a gasLimit = 0 when amount has an error and useAllAmount is true", async () => {
+          jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => {
+            throw new Error();
+          });
+
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            amount: new BigNumber(0),
+            useAllAmount: true,
+          });
+
+          expect(tx).toEqual({
+            ...transaction,
+            amount: new BigNumber(0),
+            maxFeePerGas: new BigNumber(1),
+            maxPriorityFeePerGas: new BigNumber(1),
+            gasPrice: undefined,
+            gasLimit: new BigNumber(0),
+            type: 2,
+            useAllAmount: true,
+          });
+        });
+
         it("should return an EIP1559 coin transaction", async () => {
           const tx = await prepareTransaction(account, { ...transaction });
 
@@ -114,6 +138,7 @@ describe("EVM Family", () => {
             gasPrice: new BigNumber(1),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
+            nextBaseFee: null,
           }));
 
           const tx = await prepareTransaction(account, { ...transaction });
@@ -316,6 +341,7 @@ describe("EVM Family", () => {
             gasPrice: new BigNumber(1),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
+            nextBaseFee: null,
           }));
 
           const tokenAccountWithBalance = {
@@ -406,16 +432,19 @@ describe("EVM Family", () => {
                 maxFeePerGas: new BigNumber(10),
                 maxPriorityFeePerGas: new BigNumber(1),
                 gasPrice: null,
+                nextBaseFee: new BigNumber(1),
               },
               medium: {
                 maxFeePerGas: new BigNumber(20),
                 maxPriorityFeePerGas: new BigNumber(2),
                 gasPrice: null,
+                nextBaseFee: new BigNumber(1),
               },
               fast: {
                 maxFeePerGas: new BigNumber(30),
                 maxPriorityFeePerGas: new BigNumber(3),
                 gasPrice: null,
+                nextBaseFee: new BigNumber(1),
               },
             };
             const tx = await prepareTransaction(account, {
@@ -516,6 +545,7 @@ describe("EVM Family", () => {
               gasPrice: new BigNumber(1),
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,
+              nextBaseFee: null,
             }));
             const tx = await prepareTransaction(account, {
               ...nftTransaction,
@@ -563,6 +593,7 @@ describe("EVM Family", () => {
               gasPrice: new BigNumber(1),
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,
+              nextBaseFee: null,
             }));
             const tx = await prepareTransaction(account, {
               ...nftTransaction,

@@ -4,7 +4,9 @@ import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { reduce, snakeCase } from "lodash";
 import { DefaultFeatures } from "@ledgerhq/types-live";
 
-export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
+export const formatToFirebaseFeatureId = (id: string) => {
+  return `feature_${snakeCase(id)}`;
+};
 
 // Firebase SDK treat JSON values as strings
 const formatDefaultFeatures = (config: DefaultFeatures) =>

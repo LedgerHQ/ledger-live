@@ -39,6 +39,7 @@ import type {
   ProtoNFT,
   ScanAccountEvent,
   SyncConfig,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 
 // Customize the way to iterate on the keychain derivation
@@ -583,4 +584,10 @@ export function makeAccountBridgeReceive(
       }),
     );
   };
+}
+
+// Default trivial implem for updateTransaction, that keeps reference stability (for React)
+export function defaultUpdateTransaction<T extends TransactionCommon>(t: T, patch: Partial<T>): T {
+  const patched = { ...t, ...patch };
+  return isEqual(t, patched) ? t : patched;
 }

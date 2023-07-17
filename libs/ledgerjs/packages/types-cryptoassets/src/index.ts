@@ -53,7 +53,6 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
-  | "icp"
   | "iota"
   | "iov"
   | "kin"
@@ -151,7 +150,9 @@ export type CryptoCurrencyId =
   | "boba"
   | "moonriver"
   | "velas_evm"
-  | "syscoin";
+  | "syscoin"
+  | "internet_computer"
+  | "telos_evm";
 
 /**
  *
@@ -239,8 +240,8 @@ export type CryptoCurrency = CurrencyCommon & {
   // used for UI
   color: string;
   family: string;
+  // the average time between 2 blocks, in seconds
   blockAvgTime?: number;
-  // in seconds
   supportsSegwit?: boolean;
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
@@ -263,7 +264,7 @@ export type CryptoCurrency = CurrencyCommon & {
     // used by evm light integration
     explorer?: {
       uri: string;
-      type: "etherscan" | "blockscout";
+      type: "etherscan" | "blockscout" | "teloscan";
     };
     gasTracker?: { uri: string; type: "ledger" };
   };

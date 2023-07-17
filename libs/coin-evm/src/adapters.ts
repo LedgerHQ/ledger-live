@@ -10,6 +10,7 @@ import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { getGasLimit } from "./logic";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -24,11 +25,13 @@ import {
  * Adapter to convert a Ledger Live transaction to an Ethers transaction
  */
 export const transactionToEthersTransaction = (tx: EvmTransaction): ethers.Transaction => {
+  const gasLimit = getGasLimit(tx);
+
   const ethersTx = {
     to: tx.recipient,
     value: ethers.BigNumber.from(tx.amount.toFixed()),
     data: tx.data ? `0x${tx.data.toString("hex")}` : undefined,
-    gasLimit: ethers.BigNumber.from(tx.gasLimit.toFixed()),
+    gasLimit: ethers.BigNumber.from(gasLimit.toFixed()),
     nonce: tx.nonce,
     chainId: tx.chainId,
     type: tx.type,
@@ -71,7 +74,8 @@ export const etherscanOperationToOperations = (
     types.push("IN");
   }
   if (from === checksummedAddress) {
-    types.push(tx.methodId === "0x" ? "OUT" : "FEES");
+    const isContractInteraction = new RegExp(/0[xX][0-9a-fA-F]{8}/).test(tx.methodId); // 0x + 4 bytes selector
+    types.push(isContractInteraction ? "FEES" : "OUT");
   }
   if (!types.length) {
     types.push("NONE");

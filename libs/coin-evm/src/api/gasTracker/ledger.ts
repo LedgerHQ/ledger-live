@@ -24,6 +24,13 @@ const currencyIdGasTrackerMap = new Map<CryptoCurrency["id"], GasTracker>([
   ["polygon", { explorerId: "matic", compatibilty: { eip1559: true } }],
   ["ethereum_ropsten", { explorerId: "eth_ropsten", compatibilty: { eip1559: true } }],
   ["ethereum_goerli", { explorerId: "eth_goerli", compatibilty: { eip1559: true } }],
+  /**
+   * FIXME: for tests, to be removed when ethereum_as_evm_test_only and
+   * polygon_as_evm_test_only are removed from
+   * libs/ledgerjs/packages/cryptoassets/src/currencies.ts
+   */
+  ["ethereum_as_evm_test_only", { explorerId: "eth", compatibilty: { eip1559: true } }],
+  ["polygon_as_evm_test_only", { explorerId: "matic", compatibilty: { eip1559: true } }],
 ]);
 
 export const getGasOptions = async ({
@@ -69,16 +76,19 @@ export const getGasOptions = async ({
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(low),
         maxPriorityFeePerGas: low,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
       medium: {
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(medium),
         maxPriorityFeePerGas: medium,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
       fast: {
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(high),
         maxPriorityFeePerGas: high,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
     };
   }
@@ -88,16 +98,19 @@ export const getGasOptions = async ({
       gasPrice: low,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
     medium: {
       gasPrice: medium,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
     fast: {
       gasPrice: high,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
   };
 };

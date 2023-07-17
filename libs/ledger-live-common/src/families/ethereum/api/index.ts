@@ -117,9 +117,9 @@ export type API = {
     batchSize?: number,
     token?: string,
   ) => Promise<{ txs: Tx[]; nextPageToken: string | undefined }>;
-  getTransactionByHash: (hash: string) => Promise<Tx>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
+  getTransactionByHash: (hash: string) => Promise<Tx | undefined>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
   getERC20Balances: (input: ERC20BalancesInput) => Promise<ERC20BalanceOutput>;
   getNftMetadata: (input: NFTMetadataInput, chainId: number) => Promise<NFTMetadataResponse[]>;
@@ -191,14 +191,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return { txs: txData.data.data, nextPageToken: txData.data.token };
     },
 
-    async getTransactionByHash(hash): Promise<Tx> {
-      const { data } = await network({
-        method: "GET",
-        url: `${baseURL}/tx/${hash}`,
-      });
-      return data;
-    },
-
     async getCurrentBlock(): Promise<Block> {
       const { data } = await network({
         method: "GET",
@@ -230,6 +222,14 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         },
       });
       return data.result;
+    },
+
+    async getTransactionByHash(hash): Promise<Tx | undefined> {
+      const { data } = await network({
+        method: "GET",
+        url: `${baseURL}/tx/${hash}`,
+      });
+      return data;
     },
 
     async getAccountBalance(address): Promise<BigNumber> {

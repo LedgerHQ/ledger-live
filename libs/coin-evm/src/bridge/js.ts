@@ -1,12 +1,13 @@
 /* istanbul ignore file: pure exports, bridge tested by live-common with bridge.integration.test.ts */
 import {
+  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { Transaction as EvmTransaction, Transaction } from "../types";
+import type { Transaction as EvmTransaction } from "../types";
 import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -18,13 +19,6 @@ import { hydrate, preload } from "../preload";
 import nftResolvers from "../nftResolvers";
 import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
-
-const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
-  transaction,
-  patch,
-) => {
-  return { ...transaction, ...patch } as EvmTransaction;
-};
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
@@ -46,7 +40,7 @@ export function buildCurrencyBridge(
 
 export function buildAccountBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
-): AccountBridge<Transaction> {
+): AccountBridge<EvmTransaction> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -54,7 +48,7 @@ export function buildAccountBridge(
 
   return {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction<EvmTransaction>,
     prepareTransaction,
     getTransactionStatus,
     sync,
