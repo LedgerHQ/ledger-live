@@ -20,7 +20,7 @@ const exchangeSupportAppVersions = {
   stellar: "3.3.0",
   stratis: "1.5.0",
   tezos: "2.2.13",
-  tron: "", // TODO: Add Tron version
+  tron: "0.4.2",
   zcash: "1.5.0",
   zencash: "1.5.0",
 };
