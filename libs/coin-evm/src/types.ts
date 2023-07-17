@@ -128,7 +128,8 @@ export type EtherscanOperation = {
   gasPrice: string;
   isError: string;
   txreceipt_status: string;
-  input: string;
+  /** @deprecated do not use can be deprecated */
+  input?: string;
   contractAddress: string;
   cumulativeGasUsed: string;
   gasUsed: string;
