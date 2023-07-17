@@ -1,6 +1,6 @@
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
-import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types";
+import type { Transaction as EVMTransaction } from "@ledgerhq/coin-evm/types";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -153,33 +153,17 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EvmCustomFees]: {
+  [ScreenName.EVMEditGasLimit]: {
     accountId: string;
     parentId?: string;
-    transaction: EvmTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
-  [ScreenName.EvmEditGasLimit]: {
-    accountId: string;
     setGasLimit: (_: BigNumber) => void;
     gasLimit?: BigNumber | null;
-    transaction: EvmTransaction;
+    transaction: EVMTransaction;
     currentNavigation:
-      | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;

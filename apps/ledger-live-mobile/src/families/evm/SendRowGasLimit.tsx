@@ -35,6 +35,7 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
       gasLimit,
     });
   }, [navigation, route.params, account.id, transaction, setGasLimit, gasLimit]);
+
   return (
     <View style={styles.root}>
       <SummaryRow
