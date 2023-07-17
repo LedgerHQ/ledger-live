@@ -83,7 +83,7 @@ const OnboardingStepUseCaseSelection = () => {
   }, [deviceModelId, navigation, servicesConfig?.params.deeplink]);
 
   return (
-    <OnboardingView hasBackButton>
+    <ScrollListContainer flex={1} mx={6} mt={3}>
       <TrackScreen category="Onboarding" name="setup new options" />
       <Text variant="h4" fontWeight="semiBold" mb={7}>
         {t("onboarding.stepUseCase.firstUse.section", {
@@ -173,7 +173,7 @@ const OnboardingStepUseCaseSelection = () => {
           </Button>
         </Flex>
       </QueuedDrawer>
-    </OnboardingView>
+    </ScrollListContainer>
   );
 };
 
