@@ -482,8 +482,8 @@ export const filteredNftsSelector = createSelector(
   orderedVisibleNftsSelector,
   (galleryFilters, orderedNfts) => {
     const activeFilters = Object.entries(galleryFilters)
-      .filter(([key, value]) => value)
-      .map(([key, value]) => key);
+      .filter(([_, value]) => value)
+      .map(([key, _]) => key);
     return orderedNfts.filter(nft => activeFilters.includes(nft.currencyId));
   },
 );

@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { FlatListProps, View } from "react-native";
+import React, { useCallback, useMemo } from "react";
+import { FlatListProps } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
+import { Button, Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { Stop } from "react-native-svg";
 import styled, { useTheme } from "styled-components/native";
