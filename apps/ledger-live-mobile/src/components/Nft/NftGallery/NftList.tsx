@@ -17,6 +17,7 @@ import NftFilterDrawer from "./NftFilterDrawer";
 import EmptyState from "./EmptyState";
 import ScrollToTopButton from "./ScrollToTopButton";
 import NftFilterChip from "./NftFilterChip";
+import FiltersIcon from "../../../icons/Filters";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -132,10 +133,14 @@ export function NftList({ data }: Props) {
                       {t("wallet.nftGallery.filters.select")}
                     </NftFilterChip>
                   ) : null}
-                  <NftFilterChip
-                    onPress={openFilterDrawer}
-                    icon={Object.values(chainFilters).some(val => !val) ? "FiltersOn" : "Filters"}
-                  />
+                  <NftFilterChip onPress={openFilterDrawer}>
+                    <FiltersIcon
+                      active={Object.values(chainFilters).some(val => !val)}
+                      dotColor={colors.constant.purple}
+                      size={20}
+                      color={colors.neutral.c100}
+                    />
+                  </NftFilterChip>
                 </StyledFilterBar>
               </Animated.View>
             )}
