@@ -7,6 +7,7 @@ import { NetworkInfo, Transaction } from "./types";
 import { buildEthereumTx, EIP1559ShouldBeUsed } from "./transaction";
 import { prepareTransaction as prepareTransactionModules } from "./modules";
 import { findSubAccountById } from "../../account";
+import BigNumber from "bignumber.js";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -57,19 +58,25 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
       }
     })();
     invariant(protoTransaction.to, "ethereum transaction has no recipient");
-
-    estimatedGasLimit = await estimateGasLimit(
-      account,
-      // Those are the only elements from a transaction necessary to estimate the gas limit
-      {
-        from: account.freshAddress,
-        to: protoTransaction.to!.toString(),
-        value: "0x" + (padHexString(protoTransaction.value.toString(16)) || "00"),
-        data: protoTransaction.data
-          ? `0x${padHexString(protoTransaction.data.toString("hex"))}`
-          : "0x",
-      },
-    );
+    try {
+      estimatedGasLimit = await estimateGasLimit(
+        account,
+        // Those are the only elements from a transaction necessary to estimate the gas limit
+        {
+          from: account.freshAddress,
+          to: protoTransaction.to!.toString(),
+          value: "0x" + (padHexString(protoTransaction.value.toString(16)) || "00"),
+          data: protoTransaction.data
+            ? `0x${padHexString(protoTransaction.data.toString("hex"))}`
+            : "0x",
+        },
+      );
+    } catch (e) {
+      // since gas cannot be negative we will catch
+      // this in the get transaction status and treat
+      // it as a network fail.
+      estimatedGasLimit = BigNumber(-1);
+    }
   }
 
   if (!tx.estimatedGasLimit || (estimatedGasLimit && !estimatedGasLimit.eq(tx.estimatedGasLimit))) {

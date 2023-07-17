@@ -318,11 +318,19 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
 
     // FIXME: Dirty fix that calls v3 gas limit estimation while we find a better solution
     async getFallbackGasLimit(address: string): Promise<BigNumber> {
-      const { data } = await network({
-        method: "GET",
-        url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limit`,
-      });
-      return new BigNumber(data.estimated_gas_limit);
+      try {
+        const { data } = await network({
+          method: "GET",
+          url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limit`,
+          timeout: 10000,
+        });
+        if (data.error_message) {
+          throw new FeeEstimationFailed(data.error_message);
+        }
+        return new BigNumber(data.estimated_gas_limit);
+      } catch (e) {
+        throw new FeeEstimationFailed();
+      }
     },
 
     async getDryRunGasLimit(transaction): Promise<BigNumber> {
@@ -330,6 +338,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         method: "POST",
         url: `${baseURL}/tx/estimate-gas-limit`,
         data: transaction,
+        timeout: 10000,
       });
 
       if (data.error_message) {

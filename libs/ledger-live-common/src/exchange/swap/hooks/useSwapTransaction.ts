@@ -1,4 +1,4 @@
-import { AmountRequired } from "@ledgerhq/errors";
+import { AmountRequired, FeeEstimationFailed, SwapFeeEstimationFailed } from "@ledgerhq/errors";
 import { useMemo } from "react";
 import {
   ExchangeRate,
@@ -29,12 +29,16 @@ export const useFromAmountError = (
   errors: Record<string, Error | undefined>,
 ): Error | undefined => {
   const fromAmountError = useMemo(() => {
-    const [error] = [errors?.gasPrice, errors?.amount]
+    const [error] = [errors?.gasPrice, errors?.amount, errors?.gasNetwork]
       .filter(Boolean)
       .filter(error => !(error instanceof AmountRequired));
 
+    if (error instanceof FeeEstimationFailed) {
+      return new SwapFeeEstimationFailed();
+    }
+
     return error;
-  }, [errors?.gasPrice, errors?.amount]);
+  }, [errors?.gasPrice, errors?.amount, errors?.gasNetwork]);
 
   return fromAmountError;
 };

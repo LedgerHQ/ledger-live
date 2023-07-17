@@ -49,6 +49,7 @@ export const EthAppPleaseEnableContractData = createCustomErrorClass(
   "EthAppPleaseEnableContractData",
 );
 export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
+export const SwapFeeEstimationFailed = createCustomErrorClass("SwapFeeEstimationFailed");
 export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecognized");
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");

@@ -1,7 +1,8 @@
-import { InvalidAddress, ETHAddressNonEIP, RecipientRequired } from "@ledgerhq/errors";
+import { InvalidAddress, ETHAddressNonEIP, RecipientRequired, FeeEstimationFailed } from "@ledgerhq/errors";
 import {
   FeeNotLoaded,
   FeeRequired,
+  SwapFeeEstimationFailed,
   GasLessThanEstimate,
   PriorityFeeHigherThanMaxFee,
   NotEnoughGas,
@@ -25,6 +26,7 @@ type TransactionErrors = {
   maxFee?: Error;
   maxPriorityFee?: Error;
   gasLimit?: Error;
+  gasNetwork?: Error;
   recipient?: Error;
 };
 
@@ -156,7 +158,9 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     validateLegacyGas(account.currency, tx, status);
   }
 
-  if (gasLimit.eq(0)) {
+  if (gasLimit.lt(0)) {
+    errors.gasNetwork = new FeeEstimationFailed();
+  } else if (gasLimit.eq(0)) {
     errors.gasLimit = new FeeRequired();
   } else if (!errors.recipient) {
     if (estimatedFees.gt(account.balance)) {

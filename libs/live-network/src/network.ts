@@ -1,10 +1,18 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { changes, getEnv } from "@ledgerhq/live-env";
-import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import type { AxiosError, AxiosRequestConfig, Method } from "axios";
 import axios, { AxiosPromise, AxiosResponse } from "axios";
+import axiosRetry from "axios-retry";
 import invariant from "invariant";
+
+axiosRetry(axios, {
+  retries: getEnv("GET_CALLS_RETRY"),
+  retryCondition: error => error.config.method?.toUpperCase() === "GET",
+  retryDelay: retryCount => {
+    return retryCount * 1000;
+  },
+});
 
 type Metadata = { startTime: number };
 type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
@@ -154,21 +162,14 @@ const extractErrorMessage = (raw: string): string | undefined => {
 
 const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   invariant(typeof arg === "object", "network takes an object as parameter");
-  let promise;
 
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
       arg.timeout = getEnv("GET_CALLS_TIMEOUT");
     }
-
-    promise = retry(() => axios(arg), {
-      maxRetry: getEnv("GET_CALLS_RETRY"),
-    });
-  } else {
-    promise = axios(arg);
   }
 
-  return promise;
+  return axios(arg);
 };
 
 // attach the env "LEDGER_CLIENT_VERSION" to set the header globally for axios
