@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
-import { Platform, StyleProp, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
