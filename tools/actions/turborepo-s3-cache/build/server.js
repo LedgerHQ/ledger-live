@@ -36019,7 +36019,9 @@ var portFileName = "__turbo_port.txt";
 // src/server.ts
 async function startServer() {
   const app = (0, import_express.default)();
-  const client = new S3Client({});
+  const client = new S3Client({
+    region: "eu-west-1"
+  });
   const bucket = (0, import_core.getInput)("bucket-name");
   const serverToken = (0, import_core.getInput)("server-token", {
     required: true,
@@ -36067,8 +36069,7 @@ async function startServer() {
         ContentLength: req.headers["content-length"]
       });
       try {
-        const response = await client.send(command);
-        console.log(response);
+        await client.send(command);
         return res.end();
       } catch (error) {
         console.log(error);

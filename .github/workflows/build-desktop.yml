@@ -52,7 +52,7 @@ jobs:
           aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
           aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Build the app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
       - name: Upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -85,7 +85,7 @@ jobs:
           aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: Upload windows
         uses: actions/upload-artifact@v3
@@ -120,7 +120,7 @@ jobs:
           aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Build the app
         run: |
-          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+          pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
       - name: Upload macOS app
         uses: actions/upload-artifact@v3
         with:

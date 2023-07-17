@@ -74,7 +74,7 @@ runs:
         aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: Build dependencies
       run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       shell: bash
     - name: Build LLD app for testing
       env:

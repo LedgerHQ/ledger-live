@@ -9,7 +9,9 @@ import { cacheDirectory, absoluteCacheDirectory, portFileName } from "./utils/co
 
 async function startServer() {
   const app = express();
-  const client = new S3Client({});
+  const client = new S3Client({
+    region: "eu-west-1",
+  });
   const bucket = getInput("bucket-name");
   const serverToken = getInput("server-token", {
     required: true,
