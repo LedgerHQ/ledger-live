@@ -42,7 +42,8 @@ export function runDesktopTestSuite(app: Probot) {
       inputs: {
         number,
         login,
-        "full-tests": `${full}`,
+        // @ts-expect-error weird behavior with boolean values
+        "full-tests": full,
       },
     });
   }
