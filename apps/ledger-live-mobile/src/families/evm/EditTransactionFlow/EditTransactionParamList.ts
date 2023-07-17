@@ -1,10 +1,7 @@
-import {
-  TransactionRaw,
-  Transaction as EthereumTransaction,
-} from "@ledgerhq/live-common/families/ethereum/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { TransactionRaw, TransactionStatusRaw } from "@ledgerhq/coin-evm/lib/types";
 
 import { ScreenName } from "../../../const";
 
@@ -33,7 +30,7 @@ export type EditTransactionParamList = {
   [ScreenName.EthereumCustomFees]: {
     accountId: string;
     parentId?: string;
-    transaction: EthereumTransaction;
+    transaction: TransactionStatusRaw;
     currentNavigation: ScreenName.SendSummary;
     nextNavigation: ScreenName.SendSelectDevice;
     transactionRaw?: TransactionRaw;
