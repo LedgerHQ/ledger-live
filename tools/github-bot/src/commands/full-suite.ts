@@ -14,12 +14,10 @@ const ACTION_ID = "lld_full_suite";
 export function runDesktopTestSuite(app: Probot) {
   async function triggerWorkflow({
     context,
-    number,
     login,
     full,
   }: {
     context: Context<"issue_comment.created" | "check_run.requested_action">;
-    number: string;
     login: string;
     full?: boolean;
   }) {
@@ -40,7 +38,6 @@ export function runDesktopTestSuite(app: Probot) {
       workflow_id: "test-desktop.yml",
       ref,
       inputs: {
-        number,
         login,
         // @ts-expect-error weird behavior with boolean values
         "full-tests": full,
@@ -48,32 +45,28 @@ export function runDesktopTestSuite(app: Probot) {
     });
   }
 
-  commands(app, "full-lld-tests", async (context, data) => {
+  commands(app, "full-lld-tests", async (context, _data) => {
     const { payload } = context;
 
     if (context.isBot) return;
 
     await triggerWorkflow({
       context,
-      number: `${data.number}`,
       login: `${payload.comment.user.login}`,
       full: true,
     });
   });
 
+  // @ts-expect-error ts pls
   app.on("check_run.requested_action", async context => {
     const { payload } = context;
 
     if (payload.requested_action.identifier !== ACTION_ID) return;
 
-    const number = payload.check_run.pull_requests[0]?.number;
     const login = payload.sender.login;
-
-    if (!number) return;
 
     await triggerWorkflow({
       context,
-      number: `${number}`,
       login,
       full: true,
     });
