@@ -78,7 +78,14 @@ const SectionFees = ({
   const family = mainFromAccount?.currency.family;
   const sendAmountSpecific = account && family && getLLDCoinFamily(family)?.sendAmountFields;
   const canEdit =
-    hasRates && showSummaryValue && transaction && account && family && sendAmountSpecific;
+    hasRates &&
+    showSummaryValue &&
+    transaction &&
+    "networkInfo" in transaction &&
+    transaction.networkInfo &&
+    account &&
+    family &&
+    sendAmountSpecific;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const StrategyIcon = useMemo(
     () =>
