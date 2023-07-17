@@ -30,7 +30,8 @@ export type GetDeviceInfoTaskEvent =
   | GetDeviceInfoTaskErrorEvent
   | SharedTaskEvent;
 
-function internalGetDeviceInfoTask({
+// Exported for tests
+export function internalGetDeviceInfoTask({
   deviceId,
 }: GetDeviceInfoTaskArgs): Observable<GetDeviceInfoTaskEvent> {
   return new Observable(subscriber => {
@@ -134,4 +135,10 @@ export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
   return deviceInfo;
 };
 
+/**
+ * Task to get the `DeviceInfo` of a device
+ *
+ * @param `deviceId` A device id, or an empty string if device is usb plugged
+ * @returns An observable that emits `GetDeviceInfoTaskEvent` events
+ */
 export const getDeviceInfoTask = sharedLogicTaskWrapper(internalGetDeviceInfoTask);
