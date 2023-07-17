@@ -16,6 +16,7 @@ import {
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
+import { Platform } from "react-native";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -34,6 +35,13 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   mainActions: ActionButtonEvent[];
 } {
   const route = useRoute();
+
+  const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
+
+  const isPtxServiceCtaScreensDisabled = useMemo(
+    () => !(ptxServiceCtaScreens?.enabled ?? true),
+    [ptxServiceCtaScreens],
+  );
 
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -81,6 +89,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               id: "buy",
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
+              disabled: isPtxServiceCtaScreensDisabled,
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -108,7 +117,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 },
               ] as const,
-              disabled: areAccountsBalanceEmpty,
+              disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
               modalOnDisabledClick: !readOnlyModeEnabled
                 ? {
                     component: ZeroBalanceDisabledModalContent,
@@ -136,10 +145,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                         params: { currencyId: currency?.id, defaultAccount },
                       },
                     ] as const,
-                    disabled: areAccountsBalanceEmpty,
-                    modalOnDisabledClick: {
-                      component: ZeroBalanceDisabledModalContent,
-                    },
+                    disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
+                    modalOnDisabledClick: !isPtxServiceCtaScreensDisabled
+                      ? {
+                          component: ZeroBalanceDisabledModalContent,
+                        }
+                      : undefined,
                   },
                 ]
               : []),

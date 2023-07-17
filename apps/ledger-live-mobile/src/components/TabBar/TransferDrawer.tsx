@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
-import { StyleProp, ViewStyle } from "react-native";
+import { Platform, StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -46,6 +46,13 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
 
   const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
   const stakePrograms = useFeature("stakePrograms");
+
+  const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
+
+  const isPtxServiceCtaExchangeDrawerDisabled = useMemo(
+    () => !(ptxServiceCtaExchangeDrawer?.enabled ?? true),
+    [ptxServiceCtaExchangeDrawer],
+  );
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -145,7 +152,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       tag: t("common.popular"),
       Icon: Icons.PlusMedium,
       onPress: onBuy,
-      disabled: readOnlyModeEnabled,
+      disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
     },
     {
       eventProperties: {
@@ -157,7 +164,11 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       description: t("transfer.sell.description"),
       Icon: Icons.MinusMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSell : null,
-      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+      disabled:
+        isPtxServiceCtaExchangeDrawerDisabled ||
+        !accountsCount ||
+        readOnlyModeEnabled ||
+        areAccountsEmpty,
     },
 
     ...(stakePrograms?.enabled
@@ -186,7 +197,11 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       description: t("transfer.swap.description"),
       Icon: Icons.BuyCryptoMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSwap : null,
-      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+      disabled:
+        isPtxServiceCtaExchangeDrawerDisabled ||
+        !accountsCount ||
+        readOnlyModeEnabled ||
+        areAccountsEmpty,
       testID: "swap-transfer-button",
     },
 
