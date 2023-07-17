@@ -16,7 +16,7 @@
     "@types/unzipper": "0.10.6",
     "isomorphic-unfetch": "^3.1.0",
     "lodash": "4.17.21",
-    "stream-json": "1.7.4",
+    "stream-json": "1.7.5",
     "tsup": "^6.2.2",
     "unzipper": "0.10.14"
   },
