@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Platform } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,

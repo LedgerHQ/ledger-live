@@ -16,7 +16,6 @@ import {
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
-import { Platform } from "react-native";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
