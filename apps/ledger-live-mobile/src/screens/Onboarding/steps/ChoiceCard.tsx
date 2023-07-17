@@ -52,7 +52,7 @@ const ChoiceCard = ({
         minHeight={130}
         opacity={notCompatible ? 0.6 : 1}
         position="relative"
-        mb={6}
+        mb={24}
       >
         <Flex
           py={7}
