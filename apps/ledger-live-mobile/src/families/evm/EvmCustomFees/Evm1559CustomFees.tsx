@@ -2,7 +2,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
-import type { EvmTransactionEIP1559 } from "@ledgerhq/coin-evm/types";
+import type { EvmTransactionEIP1559 } from "@ledgerhq/coin-evm/types/index";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
