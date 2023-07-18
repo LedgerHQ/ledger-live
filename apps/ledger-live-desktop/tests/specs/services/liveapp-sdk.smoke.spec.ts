@@ -20,7 +20,7 @@ test.beforeAll(async () => {
   });
 
   if (!testServerIsRunning) {
-    console.warn("Stopping Buy/Sell test setup");
+    console.warn("Stopping Live SDK test setup");
     return;
   }
 });
