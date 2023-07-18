@@ -3,8 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { EvmTransactionEIP1559, EvmTransactionLegacy, Transaction } from "../../types";
-import * as RPC_API from "../../api/rpc/rpc.common";
+import * as RPC_API from "../../api/node/rpc.common";
 import {
   deepFreeze,
   makeAccount,
@@ -21,7 +20,13 @@ import {
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
+  padHexString,
 } from "../../logic";
+import {
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  Transaction as EvmTransaction,
+} from "../../types";
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
@@ -102,7 +107,7 @@ describe("EVM Family", () => {
 
     describe("getGasLimit", () => {
       it("should return the gasLimit when no customGasLimit provided", () => {
-        const tx: Partial<Transaction> = {
+        const tx: Partial<EvmTransaction> = {
           gasLimit: new BigNumber(100),
           customGasLimit: undefined,
         };
@@ -111,7 +116,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the customGasLimit when provided", () => {
-        const tx: Partial<Transaction> = {
+        const tx: Partial<EvmTransaction> = {
           gasLimit: new BigNumber(100),
           customGasLimit: new BigNumber(200),
         };
@@ -430,6 +435,54 @@ describe("EVM Family", () => {
 
         expect(hash1).not.toEqual(hash2);
       });
+
+      it("should provide a new hash if currency is using a new node config", () => {
+        const hash1 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "eth" } },
+        });
+        const hash2 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "matic" } },
+        });
+        const hash3 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "anything" } },
+        });
+        const hash4 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "somethingelse" } },
+        });
+
+        const hashes = [hash1, hash2, hash3, hash4];
+        const uniqueSet = new Set(hashes);
+
+        expect(hashes).toEqual(Array.from(uniqueSet));
+      });
+
+      it("should provide a new hash if currency is using a new explorer config", () => {
+        const hash1 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "eth" } },
+        });
+        const hash2 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "matic" } },
+        });
+        const hash3 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "etherscan", uri: "anything" } },
+        });
+        const hash4 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "blockscout", uri: "somethingelse" } },
+        });
+
+        const hashes = [hash1, hash2, hash3, hash4];
+        const uniqueSet = new Set(hashes);
+
+        expect(hashes).toEqual(Array.from(uniqueSet));
+      });
     });
 
     describe("attachOperations", () => {
@@ -539,6 +592,13 @@ describe("EVM Family", () => {
           // @ts-expect-error purposely ignore readonly ts issue for this
           () => attachOperations(coinOperations, tokenOperations, nftOperations),
         ).not.toThrow(); // mutation prevented by deepFreeze method
+      });
+    });
+
+    describe("padHexString", () => {
+      it("should always return an odd number of characters", () => {
+        expect(padHexString("1")).toEqual("01");
+        expect(padHexString("01")).toEqual("01");
       });
     });
   });

@@ -25,7 +25,7 @@ export async function prepareTransaction(
           contract: collection,
         },
       ],
-      account.currency?.ethereumLikeInfo?.chainId ?? 1,
+      { chainId: account.currency?.ethereumLikeInfo?.chainId ?? 1 },
     );
     let collectionName = ""; // default value fallback if issue
     if (status === 200) {

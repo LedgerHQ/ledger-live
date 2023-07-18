@@ -6,8 +6,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { CollectionMetadataInput, NftMetadataInput } from "./types";
-import { Batcher } from "../batcher/types";
+import { CollectionMetadataInput, NftMetadataInput, NftRequestsBatcher } from "./types";
 import { makeBatcher } from "../batcher";
 
 export function isNFTActive(currency: CryptoCurrency | undefined | null): boolean {
@@ -31,7 +30,7 @@ export const getNftCapabilities = (
     {} as Record<NftCapabilty, boolean>,
   );
 
-const batchersMap = new Map();
+const batchersMap = new Map<string, NftRequestsBatcher>();
 
 /**
  * In order to `instanciate`/make only 1 batcher by currency,
@@ -42,16 +41,16 @@ const batchersMap = new Map();
 export const metadataCallBatcher = (
   currency: CryptoCurrency,
   api: {
-    getNftMetadata: (input: NftMetadataInput[], chainId: number) => Promise<NFTMetadataResponse[]>;
+    getNftMetadata: (
+      input: NftMetadataInput[],
+      params: { chainId: number },
+    ) => Promise<NFTMetadataResponse[]>;
     getNftCollectionMetadata: (
       input: CollectionMetadataInput[],
-      chainId: number,
+      params: { chainId: number },
     ) => Promise<NFTCollectionMetadataResponse[]>;
   },
-): {
-  loadNft: Batcher<NftMetadataInput, NFTMetadataResponse>;
-  loadCollection: Batcher<CollectionMetadataInput, NFTCollectionMetadataResponse>;
-} => {
+): NftRequestsBatcher => {
   const chainId = currency?.ethereumLikeInfo?.chainId;
 
   if (!chainId) {
@@ -59,15 +58,12 @@ export const metadataCallBatcher = (
   }
 
   if (!batchersMap.has(currency.id)) {
-    batchersMap.set(currency.id, {
-      nft: makeBatcher(api.getNftMetadata, chainId),
-      collection: makeBatcher(api.getNftCollectionMetadata, chainId),
-    });
+    const batcher = {
+      loadNft: makeBatcher(api.getNftMetadata, { chainId }),
+      loadCollection: makeBatcher(api.getNftCollectionMetadata, { chainId }),
+    };
+    batchersMap.set(currency.id, batcher);
   }
 
-  const batchers = batchersMap.get(currency.id);
-  return {
-    loadNft: batchers.nft,
-    loadCollection: batchers.collection,
-  };
+  return batchersMap.get(currency.id)!;
 };
