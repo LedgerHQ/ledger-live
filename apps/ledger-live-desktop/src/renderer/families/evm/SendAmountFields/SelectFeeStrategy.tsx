@@ -1,6 +1,6 @@
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types";
+import { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
