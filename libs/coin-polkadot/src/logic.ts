@@ -4,7 +4,6 @@ import type { PolkadotAccount, Transaction } from "./types";
 import { getCurrentPolkadotPreloadData } from "./preload";
 
 export const EXISTENTIAL_DEPOSIT = new BigNumber(10000000000);
-export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1000000000); // Polkadot recommended Existential Deposit error margin
 export const MAX_NOMINATIONS = 16;
 export const MAX_UNLOCKINGS = 32;
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision

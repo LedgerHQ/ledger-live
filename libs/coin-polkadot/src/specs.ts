@@ -23,16 +23,14 @@ import {
   isFirstBond,
   hasMinimumBondBalance,
   getMinimumBalance,
+  EXISTENTIAL_DEPOSIT,
 } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
 
 const maxAccounts = 32;
 const currency = getCryptoCurrencyById("polkadot");
-// FIXME Should be replaced with EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN in logic.ts
 const POLKADOT_MIN_SAFE = parseCurrencyUnit(currency.units[0], "0.1");
-// FIXME Should be replaced with EXISTENTIAL_DEPOSIT in logic.ts
-const EXISTENTIAL_DEPOSIT = parseCurrencyUnit(currency.units[0], "1.0");
 const MIN_LOCKED_BALANCE_REQ = parseCurrencyUnit(currency.units[0], "1.0");
 
 const polkadot: AppSpec<Transaction> = {
