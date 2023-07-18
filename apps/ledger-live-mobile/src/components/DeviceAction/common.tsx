@@ -16,7 +16,7 @@ import { TrackScreen } from "../../analytics";
 export const AllowManager = ({ wording, device }: { wording: string; device: Device }) => {
   const { theme } = useTheme();
   return (
-    <Flex pb={6} pt={6}>
+    <Flex pb={6} pt={6} alignItems="center">
       <Flex>
         <Text fontWeight="semiBold" fontSize={7} textAlign="center">
           {wording}
@@ -30,17 +30,15 @@ export const AllowManager = ({ wording, device }: { wording: string; device: Dev
 export const ConfirmFirmwareUpdate = ({
   t,
   device,
-  oldFirmwareVersion,
   newFirmwareVersion,
 }: {
   t: TFunction;
   device: Device;
-  oldFirmwareVersion: string;
   newFirmwareVersion: string;
 }) => {
   const { theme } = useTheme();
   return (
-    <Flex pb={6} pt={6}>
+    <Flex pb={6} pt={6} alignItems="center">
       <Flex mb={6}>
         <Text fontWeight="semiBold" fontSize={7} textAlign="center">
           {t("FirmwareUpdate.pleaseConfirmUpdateOnYourDevice", {
@@ -49,11 +47,7 @@ export const ConfirmFirmwareUpdate = ({
         </Text>
       </Flex>
       <Flex flexDirection="row" justifyContent="center">
-        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40" mr={3}>
-          <Text>{oldFirmwareVersion}</Text>
-        </Flex>
-        <Icons.ArrowRightMedium />
-        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40" ml={3}>
+        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40">
           <Text>{newFirmwareVersion}</Text>
         </Flex>
       </Flex>
@@ -91,7 +85,9 @@ export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Devi
           </Text>
         </Flex>
       </Flex>
-      <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
+      <Flex alignItems="center">
+        <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
+      </Flex>
     </Flex>
   );
 };
