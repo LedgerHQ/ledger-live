@@ -3,7 +3,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { isEqual } from "lodash";
-import { NftList } from "../../../components/Nft/NftGallery/NftList";
+import NftList from "../../../components/Nft/NftGallery/NftList";
 
 import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
 import CollapsibleHeaderScrollView from "../../../components/WalletTab/CollapsibleHeaderScrollView";

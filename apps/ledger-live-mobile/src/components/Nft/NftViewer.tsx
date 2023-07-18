@@ -1,4 +1,12 @@
-import React, { useMemo, useState, useCallback, useEffect, ReactNode, useRef } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  ReactNode,
+  useRef,
+  useContext,
+} from "react";
 
 import {
   View,
@@ -50,6 +58,7 @@ import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 import { track, TrackScreen } from "../../analytics";
 import { DesignedForStaxDrawer, DesignedForStaxText } from "./DesignedForStax";
 import {
+  discreetModeSelector,
   hasSeenStaxEnabledNftsPopupSelector,
   knownDeviceModelIdsSelector,
 } from "../../reducers/settings";
@@ -58,6 +67,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import NftViewerBackground from "./NftViewerBackground";
 import NftViewerScreenHeader from "./NftViewerScreenHeader";
 import invariant from "invariant";
+import DiscreetModeContext, { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -299,6 +309,8 @@ const NftViewer = ({ route }: Props) => {
   );
 
   const [isStaxDrawerOpen, setStaxDrawerOpen] = useState<boolean>(false);
+  const discreet = useSelector(discreetModeSelector);
+  const shouldApplyDiscreetMode = useContext(DiscreetModeContext);
 
   const handleStaxModalClose = useCallback(() => {
     setStaxDrawerOpen(false);
@@ -452,7 +464,7 @@ const NftViewer = ({ route }: Props) => {
           {!floorPriceLoading && floorPrice ? (
             <Section
               title={t("nft.viewer.attributes.floorPrice")}
-              value={`${floorPrice} ${ticker}`}
+              value={`${shouldApplyDiscreetMode && discreet ? "***" : floorPrice} ${ticker}`}
             />
           ) : null}
         </FeatureToggle>
@@ -567,4 +579,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NftViewer;
+export default withDiscreetMode(NftViewer);
