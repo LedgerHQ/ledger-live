@@ -148,7 +148,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          pnpm desktop test:playwright:all
+          pnpm desktop test:playwright
         shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
@@ -218,7 +218,7 @@ jobs:
         id: tests
         run: |
           if [[ $RUN_FULL_SUITE == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:all
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
           else
             xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
           fi
@@ -290,7 +290,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          pnpm desktop test:playwright:all
+          pnpm desktop test:playwright
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
