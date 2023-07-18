@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.4.0-nightly.2
+
+### Minor Changes
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
 ## 7.3.1-nightly.1
 
 ### Patch Changes

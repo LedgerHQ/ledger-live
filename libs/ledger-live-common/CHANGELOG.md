@@ -1,5 +1,25 @@
 # @ledgerhq/live-common
 
+## 31.3.0-nightly.6
+
+### Minor Changes
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+### Patch Changes
+
+- [#4020](https://github.com/LedgerHQ/ledger-live/pull/4020) [`37c4e845c3`](https://github.com/LedgerHQ/ledger-live/commit/37c4e845c3f821760a67c56bdbfa09f45f736c78) Thanks [@chabroA](https://github.com/chabroA)! - remove unnecessary check on tx networkInfo
+
+- Updated dependencies [[`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86)]:
+  - @ledgerhq/cryptoassets@9.10.0-nightly.4
+  - @ledgerhq/coin-evm@0.4.0-nightly.5
+  - @ledgerhq/coin-algorand@0.2.4-nightly.5
+  - @ledgerhq/coin-framework@0.4.0-nightly.5
+  - @ledgerhq/coin-polkadot@0.3.1-nightly.5
+  - @ledgerhq/domain-service@1.1.6-nightly.5
+  - @ledgerhq/evm-tools@1.0.1-nightly.3
+  - @ledgerhq/hw-app-eth@6.34.0-nightly.5
+
 ## 31.3.0-nightly.5
 
 ### Patch Changes
