@@ -165,6 +165,7 @@ jobs:
             const fs = require("fs");
             fs.writeFileSync("summary-${{ matrix.os }}.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-${{ matrix.os }}.txt

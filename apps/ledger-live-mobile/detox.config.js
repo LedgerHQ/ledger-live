@@ -70,6 +70,8 @@ module.exports = {
       device: {
         avdName: "Pixel_5_API_31",
       },
+      gpuMode: "host",
+      headless: true,
     },
   },
   configurations: {
