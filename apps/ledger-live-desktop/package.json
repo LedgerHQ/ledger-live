@@ -64,7 +64,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@polkadot/react-identicon": "2.11.1",
+    "@polkadot/react-identicon": "2.11.3",
     "@sentry/electron": "^4.3.0",
     "@sentry/node": "7.37.1",
     "@sentry/tracing": "7.37.1",
