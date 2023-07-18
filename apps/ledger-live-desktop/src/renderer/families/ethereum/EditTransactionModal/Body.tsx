@@ -59,7 +59,6 @@ type StateProps = {
   openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
-
 type Props = {} & OwnProps & StateProps;
 
 const createSteps = (): St[] => [

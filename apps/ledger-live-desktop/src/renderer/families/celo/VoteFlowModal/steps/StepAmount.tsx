@@ -24,7 +24,6 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(errors).length;
     const canNext = !bridgePending && !hasErrors && !isTerminated;
-
     return (
       <>
         <AccountFooter parentAccount={parentAccount} account={account} status={status} />
@@ -41,7 +40,6 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     );
   }
 }
-
 const StepAmount = ({
   t,
   account,
@@ -88,5 +86,4 @@ const StepAmount = ({
     </Box>
   );
 };
-
 export default StepAmount;
