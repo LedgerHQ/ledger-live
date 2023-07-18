@@ -10,7 +10,7 @@ import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 // @FIXME workarround for main tokens
 const tokenIDToMarketID = {
   "ethereum/erc20/usd_tether__erc20_": "tether",
-  "ethereum/erc20/usd__coin": "usd",
+  "ethereum/erc20/usd__coin": "usd-coin",
 };
 
 const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
