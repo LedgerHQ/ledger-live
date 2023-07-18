@@ -7,7 +7,7 @@ import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-evm/types";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
-import { Navigation, RouteProps } from "./EvmCustomFees/types";
+import { Navigation, RouteProps } from "./CustomFees/types";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { localeSelector } from "../../reducers/settings";
 import LText from "../../components/LText";
