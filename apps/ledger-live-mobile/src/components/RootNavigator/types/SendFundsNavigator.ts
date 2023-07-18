@@ -187,7 +187,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EVMCustomFees]: {
+  [ScreenName.EvmCustomFees]: {
     accountId: string;
     parentId?: string;
     transaction: EvmTransaction;
@@ -217,11 +217,11 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EVMEditGasLimit]: {
+  [ScreenName.EvmEditGasLimit]: {
     accountId: string;
     parentId?: string;
-    setGasLimit: (_: BigNumber) => void;
     gasLimit?: BigNumber | null;
+    setGasLimit: (_: BigNumber) => void;
     transaction: EvmTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
