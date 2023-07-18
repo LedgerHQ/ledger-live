@@ -66,9 +66,9 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
             if (op.senders.indexOf(sender) === -1) op.senders.push(sender);
             if (op.recipients.indexOf(recipient) === -1) op.recipients.push(recipient);
             op.value = op.value.plus(amount.replace(unitCode, ""));
-            if (!op.type && sender === address) {
+            if (sender === address) {
               op.type = "OUT";
-            } else if (!op.type && recipient === address) {
+            } else if (recipient === address) {
               op.type = "IN";
             }
           }
