@@ -67,6 +67,10 @@ export const getSendTransactionStatus = async (
   const estimatedFees = t.fees || new BigNumber(0);
   const totalSpent = amount.plus(estimatedFees);
 
+  if (amount.lte(0) && !t.useAllAmount) {
+    errors.amount = new AmountRequired();
+  }
+
   const minimumBalanceExistential = getMinimumBalance(a);
   const leftover = a.spendableBalance.minus(totalSpent);
 
@@ -130,18 +134,6 @@ const getTransactionStatus =
       t,
     });
 
-    if (amount.lte(0) && !t.useAllAmount && ["bond", "unbond", "rebond", "send"].includes(t.mode)) {
-      return {
-        errors: {
-          amount: new AmountRequired(),
-        },
-        warnings,
-        estimatedFees: t.fees || new BigNumber(0),
-        amount: new BigNumber(0),
-        totalSpent: t.fees || new BigNumber(0),
-      };
-    }
-
     if (t.mode === "send") {
       return getSendTransactionStatus(polkadotAPI, a, t, amount);
     }
@@ -159,6 +151,10 @@ const getTransactionStatus =
       a.polkadotResources?.lockedBalance.minus(unlockingBalance) || new BigNumber(0);
 
     const minimumAmountToBond = getMinimumAmountToBond(a, minimumBondBalance);
+
+    if (amount.lte(0) && !t.useAllAmount && ["bond", "unbond", "rebond"].includes(t.mode)) {
+      errors.amount = new AmountRequired();
+    }
 
     switch (t.mode) {
       case "bond":
