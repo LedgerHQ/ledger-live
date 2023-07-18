@@ -232,7 +232,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         method: "GET",
         url: `${baseURL}/tx/${hash}`,
       });
-
       return data;
     },
 
