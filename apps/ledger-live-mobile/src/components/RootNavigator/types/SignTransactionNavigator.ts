@@ -153,7 +153,7 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EVMEditGasLimit]: {
+  [ScreenName.EvmEditGasLimit]: {
     accountId: string;
     parentId?: string;
     setGasLimit: (_: BigNumber) => void;
