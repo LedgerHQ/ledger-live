@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { useGetDeviceInfo } from "@ledgerhq/live-common/deviceSDK/hooks/getDeviceInfo";
+import { useGetDeviceInfo } from "@ledgerhq/live-common/deviceSDK/hooks/useGetDeviceInfo";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
