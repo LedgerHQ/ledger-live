@@ -28,7 +28,7 @@ export const prepareCoinTransaction = async (
     const gasLimit = await getGasEstimation(account, {
       ...typedTransaction,
       amount: new BigNumber(0),
-    });
+    }).catch(() => new BigNumber(0)); // this catch returning 0 should be handled by the `getTransactionStatus` method
     const draftTransaction = {
       ...typedTransaction,
       gasLimit,
