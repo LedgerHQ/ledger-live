@@ -68,6 +68,7 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
