@@ -3,9 +3,8 @@ import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/cel
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import { IconType } from "../../types";
 import { CeloFamily } from "../types";
 import Icon from "./Icon";
@@ -17,8 +16,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector) as CeloAccount[]; // FIXME: Celo Account
-  const isRegistrationPending = isAccountRegistrationPending(account.id, accounts);
+  const isRegistrationPending = isAccountRegistrationPending(account as CeloAccount);
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
