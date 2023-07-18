@@ -99,7 +99,7 @@ describe("EVM Family", () => {
         });
 
         it("should have a gasLimit = 0 when amount has an error and useAllAmount is true", async () => {
-          jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => {
+          jest.spyOn(nodeApi, "getGasEstimation").mockImplementation(async () => {
             throw new Error();
           });
 

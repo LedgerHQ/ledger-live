@@ -4289,7 +4289,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ethereumLikeInfo: {
       chainId: 40,
       networkId: 40,
-      rpc: "https://mainnet.telos.net/evm",
+      node: { type: "external", uri: "https://mainnet.telos.net/evm" },
       explorer: {
         uri: "https://api.teloscan.io",
         type: "teloscan",

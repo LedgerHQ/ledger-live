@@ -26,10 +26,12 @@ export const prepareCoinTransaction = async (
     // we should put in the simulation.
     // But as a coin transaction (no smart contract) should always consumme the same amount of gas, no matter
     // the amount of coin transfered, we can infer the gasLimit with any amount.
-    const gasLimit = await nodeApi.getGasEstimation(account, {
-      ...typedTransaction,
-      amount: new BigNumber(0),
-    }).catch(() => new BigNumber(0)); // this catch returning 0 should be handled by the `getTransactionStatus` method
+    const gasLimit = await nodeApi
+      .getGasEstimation(account, {
+        ...typedTransaction,
+        amount: new BigNumber(0),
+      })
+      .catch(() => new BigNumber(0)); // this catch returning 0 should be handled by the `getTransactionStatus` method
     const draftTransaction = {
       ...typedTransaction,
       gasLimit,
