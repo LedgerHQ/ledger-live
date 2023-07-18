@@ -34,9 +34,9 @@ import {
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
 import type {
-  Transaction as EVMTransaction,
-  TransactionRaw as EVMTransactionRaw,
-} from "@ledgerhq/coin-evm/types";
+  Transaction as EvmTransaction,
+  TransactionRaw as EvmTransactionRaw,
+} from "@ledgerhq/coin-Evm/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
@@ -187,12 +187,12 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EVMCustomFees]: {
+  [ScreenName.EvmCustomFees]: {
     accountId: string;
     parentId?: string;
-    transaction: EVMTransaction;
-    setTransaction: Result<EVMTransaction>["setTransaction"];
-    transactionRaw?: EVMTransactionRaw;
+    transaction: EvmTransaction;
+    setTransaction: Result<EvmTransaction>["setTransaction"];
+    transactionRaw?: EvmTransactionRaw;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
@@ -217,12 +217,12 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EVMEditGasLimit]: {
+  [ScreenName.EvmEditGasLimit]: {
     accountId: string;
     parentId?: string;
-    setGasLimit: (_: BigNumber) => void;
     gasLimit?: BigNumber | null;
-    transaction: EVMTransaction;
+    setGasLimit: (_: BigNumber) => void;
+    transaction: EvmTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
