@@ -91,7 +91,6 @@ const EthereumLegacyCustomFees = ({
       <View style={styles.container}>
         <EthereumGasLimit
           account={account}
-          parentAccount={parentAccount}
           transaction={transaction}
           gasLimit={gasLimit}
           setGasLimit={setGasLimit}

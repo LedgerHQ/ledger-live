@@ -11,6 +11,7 @@ import { log } from "@ledgerhq/logs";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
+import { useNavigation } from "@react-navigation/core";
 
 const getCustomStrategy = (transaction: Transaction): BigNumber | null => {
   if (transaction.feesStrategy === "custom") {
@@ -25,7 +26,6 @@ export default function EvmFeesStrategy({
   parentAccount,
   transaction,
   setTransaction,
-  navigation,
   route,
   ...props
 }: Props<Transaction>) {
@@ -71,6 +71,8 @@ export default function EvmFeesStrategy({
     },
     [setTransaction, account, parentAccount, transaction],
   );
+
+  const navigation = useNavigation<any>();
 
   const openCustomFees = useCallback(() => {
     navigation.navigate(ScreenName.EvmCustomFees, {
