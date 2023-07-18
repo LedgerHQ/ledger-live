@@ -86,6 +86,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
               disabled: isPtxServiceCtaScreensDisabled,
+              testId: "market-buy-btn",
               navigationParams: [
                 NavigatorName.Exchange,
                 {
