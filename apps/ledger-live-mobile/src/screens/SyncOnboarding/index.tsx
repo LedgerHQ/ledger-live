@@ -53,6 +53,10 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
 
+  // Used to know if a first genuine check already happened and to pass the information to the ESC
+  // TODO: set to false for init value
+  const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(true);
+
   // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
   const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] = useState<boolean>(false);
@@ -88,17 +92,16 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     });
   }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs, onCloseButtonPress]);
 
-  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
+  const {
+    onboardingState,
+    allowedError,
+    fatalError,
+    resetStates: resetPollingStates,
+  } = useOnboardingStatePolling({
     device,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
   });
-
-  console.log(
-    `🙀 POLLING: ${JSON.stringify(onboardingState)} | allowedError: ${JSON.stringify(
-      allowedError,
-    )} | fatalError: ${JSON.stringify(fatalError)}`,
-  );
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: device.deviceId,
@@ -112,10 +115,19 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   // Called when the device seems not to be in the correct state anymore.
   // Probably because the device restarted.
-  const notifyEarlySecurityCheckShouldReset = useCallback(() => {
-    setCurrentStep("loading");
-    setIsPollingOn(true);
-  }, []);
+  // If the caller knows that the device is already genuine, save this information.
+  const notifyEarlySecurityCheckShouldReset = useCallback(
+    ({ isAlreadyGenuine }: { isAlreadyGenuine: boolean } = { isAlreadyGenuine: false }) => {
+      console.log(`🥦 notifyEarlySecurityCheckShouldReset: isAlreadyGenuine = ${isAlreadyGenuine}`);
+      setIsAlreadyGenuine(isAlreadyGenuine);
+      setCurrentStep("loading");
+      // Resets the polling state because it could return the same result object (and so no state has changed)
+      // but we want to re-trigger the useEffect handling the polling result
+      resetPollingStates();
+      setIsPollingOn(true);
+    },
+    [resetPollingStates],
+  );
 
   // Called when the user taps on the "cancel" button in the mandatory drawer
   const onCancelEarlySecurityCheck = useCallback(() => {
@@ -123,12 +135,12 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     navigation.popToTop();
   }, [navigation]);
 
-  // Handles current step and toggling onboarding early check logics
+  // Handles current step and toggling onboarding early check logics from polling information
   useEffect(() => {
-    console.log(`🦥 onboardingState: ${JSON.stringify(onboardingState)}`);
     if (!onboardingState) {
       return;
     }
+
     const { currentOnboardingStep, isOnboarded } = onboardingState;
 
     if (
@@ -144,7 +156,6 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       setIsPollingOn(false);
       setToggleOnboardingEarlyCheckType("enter");
     } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
-      console.log(`🦥 setting step to early-security-check`);
       setIsPollingOn(false);
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
@@ -233,6 +244,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     stepContent = (
       <EarlySecurityCheck
         device={device}
+        isAlreadyGenuine={isAlreadyGenuine}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
       />

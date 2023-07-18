@@ -16,7 +16,8 @@ import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+// import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { Linking, ScrollView } from "react-native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -72,7 +73,15 @@ export type EarlySecurityCheckProps = {
   /**
    * Called when the device is not in a correct state anymore, for ex when a firmware update has completed and the device probably restarted
    */
-  notifyEarlySecurityCheckShouldReset: () => void;
+  notifyEarlySecurityCheckShouldReset: (currentState: { isAlreadyGenuine: boolean }) => void;
+
+  /**
+   * To tell the ESC that there is no need to do a genuine check (optional)
+   *
+   * This will bypass the (idle and) genuine check step and go directly to the firmware update check.
+   * Only useful when the EarlySecurityCheck component is mounting.
+   */
+  isAlreadyGenuine?: boolean;
 };
 
 /**
@@ -83,18 +92,23 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   device,
   notifyOnboardingEarlyCheckEnded,
   notifyEarlySecurityCheckShouldReset,
+  isAlreadyGenuine = false,
 }) => {
   // const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
   const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
   const { t } = useTranslation();
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
+  // If the device is genuine, puts the current step to `genuine-check` and it will automatically go to next step
+  // as the `genuineCheckStatus` is also set as `completed`.
   const [currentStep, setCurrentStep] = useState<
     "idle" | "genuine-check" | "firmware-update-check" | "firmware-updating"
-  >("idle");
+  >(isAlreadyGenuine ? "genuine-check" : "idle");
 
   // Genuine check status state from which will be derived the displayed UI and if the genuine check hook can be started / is ongoing etc.
-  const [genuineCheckStatus, setGenuineCheckStatus] = useState<GenuineCheckStatus>("unchecked");
+  const [genuineCheckStatus, setGenuineCheckStatus] = useState<GenuineCheckStatus>(
+    isAlreadyGenuine ? "completed" : "unchecked",
+  );
 
   const [firmwareUpdateCheckStatus, setFirmwareUpdateCheckStatus] =
     useState<FirmwareUpdateCheckStatus>("unchecked");
@@ -111,32 +125,21 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
-  console.log(`🦖
-    Genuine check input: ${JSON.stringify({
-      isHookEnabled: genuineCheckStatus === "ongoing",
-      deviceId: device.deviceId,
-      lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
-    })}
-    \n
-    Genuine check output: ${JSON.stringify({
-      genuineState,
-      devicePermissionState,
-      error: genuineCheckError,
-    })}
-  `);
-
+  // TODO: rename latestFirmware ?
   const {
-    latestFirmware,
-    deviceInfo,
-    error: latestFirmwareGettingError,
+    state: {
+      firmwareUpdateContext: latestFirmware,
+      deviceInfo,
+      error: latestFirmwareGettingError,
+      lockedDevice: latestFirmwareGettingLockedDevice,
+    },
     status: latestFirmwareGettingStatus,
-    lockedDevice: latestFirmwareGettingLockedDevice,
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
     deviceId: device.deviceId,
   });
 
-  console.log(`🦕 
+  console.log(`🦕 !
     Firmware update check input: ${JSON.stringify({
       isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
       deviceId: device.deviceId,
@@ -146,7 +149,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       error: latestFirmwareGettingError,
       status: latestFirmwareGettingStatus,
       lockedDevice: latestFirmwareGettingLockedDevice,
-      latestFirmware,
+      latestFirmware: !!latestFirmware,
     })}
   `);
 
@@ -182,14 +185,20 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       console.log(`🐊 COMING BACK TO ESC: update state = ${updateState}`);
       navigation.goBack();
 
-      // The device has restarted for sure
-      if (updateState === "completed") {
-        notifyEarlySecurityCheckShouldReset();
-      }
-      // The user left the firmware update flow
-      else {
-        setFirmwareUpdateCheckStatus("refused");
-      }
+      // TODO:
+      // TO REMOVE
+      notifyEarlySecurityCheckShouldReset({ isAlreadyGenuine: true });
+
+      // TODO:
+      // TO PUT BACK
+      // // The device has restarted for sure
+      // if (updateState === "completed") {
+      //   notifyEarlySecurityCheckShouldReset({ isAlreadyGenuine: true });
+      // }
+      // // The user left the firmware update flow
+      // else {
+      //   setFirmwareUpdateCheckStatus("refused");
+      // }
     },
     [navigation, notifyEarlySecurityCheckShouldReset],
   );
@@ -203,16 +212,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     });
 
     if (deviceInfo && latestFirmware) {
-      // TODO: actual fw update: "updating"
-      // setFirmwareUpdateCheckStatus("completed");
-      // Also resets the `useGetLatestAvailableFirmware` hook
+      // Resets the `useGetLatestAvailableFirmware` hook to be able to trigger it again
       setFirmwareUpdateCheckStatus("updating");
-
-      console.log(
-        `🍕 Going to update firmware: ${JSON.stringify(latestFirmware)} on device: ${JSON.stringify(
-          deviceInfo,
-        )}`,
-      );
 
       // `push` to make sure the screen is added to the navigation stack, if ever the user was on the manager before doing an update, and we can return
       // to this screen with a `goBack`.
@@ -266,17 +267,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   let genuineCheckUiStepStatus: UiCheckStatus = "inactive";
   let firmwareUpdateUiStepStatus: UiCheckStatus = "inactive";
 
-  console.log(
-    `🍕 UI logic: ${JSON.stringify({
-      currentStep,
-      currentDisplayedDrawer,
-      genuineCheckStatus,
-      genuineCheckError,
-      genuineState,
-      devicePermissionState,
-    })}`,
-  );
-
   // Handles genuine check states logic (both check state and UI state)
   if (currentStep === "genuine-check") {
     if (genuineCheckStatus === "ongoing") {
@@ -322,17 +312,16 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   // Handles firmware update check UI logic
   if (currentStep === "firmware-update-check") {
-    console.log(`🥦 fw update check UI logic: ${JSON.stringify({ latestFirmwareGettingStatus })}`);
     if (firmwareUpdateCheckStatus === "ongoing") {
       firmwareUpdateUiStepStatus = "active";
       currentDisplayedDrawer = "none";
 
       // Updates the firmwareUpdateCheckStatus
-      if (latestFirmwareGettingError) {
+      if (latestFirmwareGettingError && !latestFirmwareGettingLockedDevice) {
         log(
           "EarlySecurityCheck",
           "Failed to retrieve latest firmware version with error:",
-          latestFirmwareGettingError.message,
+          latestFirmwareGettingError,
         );
         setFirmwareUpdateCheckStatus("failed");
       } else if (latestFirmwareGettingStatus === "no-available-firmware") {
@@ -341,7 +330,17 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
       // Updates the UI
       if (latestFirmwareGettingLockedDevice) {
-        currentDisplayedDrawer = "unlock-needed";
+        console.log(
+          `🍕 latestFirmwareGettingLockedDevice: ${latestFirmwareGettingLockedDevice} | error: ${JSON.stringify(
+            latestFirmwareGettingError,
+          )}`,
+        );
+        // The device has no PIN in the ESC - and having an unresponsive device here probably means the user
+        // cancelled a firmware update previously and came back to the ESC.
+        // -> Not displaying a drawer in the case of unresponsive, and letting the device coming back to a normal state.
+        if (latestFirmwareGettingError?.name !== "UnresponsiveDeviceError") {
+          currentDisplayedDrawer = "unlock-needed";
+        }
       } else if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
         // Only for QA to have always the same 1-way path: on infinite loop firmware
         // the path 1.2.1-il2 -> 1.2.1-il0 does not trigger a firmware update during the ESC
@@ -427,6 +426,13 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       break;
     case "failed":
       firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.failed.title");
+
+      // So the user can continue the onboarding in case of failure
+      primaryBottomCta = (
+        <Button type="main" onPress={onSkipUpdate} mt="2">
+          {t("earlySecurityCheck.firmwareUpdateCheckStep.failed.skipCta")}
+        </Button>
+      );
       break;
     case "firmwareUpdateRefused":
       if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
