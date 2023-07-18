@@ -463,7 +463,12 @@ export const FirmwareUpdate = ({
     // device actions that use different transport acquisition paradigms
     // the action should, however, retry to execute and resolve the error by itself
     // no need to present the error to the user
-    if (error && error.name !== "TransportRaceCondition") {
+    if (
+      error &&
+      !["TransportRaceCondition", "LockedDeviceError", "UnresponsiveDeviceError"].includes(
+        error.name,
+      )
+    ) {
       return (
         <DeviceActionError
           device={device}
