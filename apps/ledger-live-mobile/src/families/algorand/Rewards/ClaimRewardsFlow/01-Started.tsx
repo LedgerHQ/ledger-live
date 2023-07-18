@@ -73,7 +73,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
       ]}
     >
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="DelegationFlow" name="Started" />
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="claim_rewards"
+          currency="algo"
+        />
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}

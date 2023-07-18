@@ -39,6 +39,7 @@ export type FeatureId =
   | "currencyInternetComputer"
   | "depositNetworkBannerMobile"
   | "depositWithdrawBannerMobile"
+  | "currencyTelosEvm"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"

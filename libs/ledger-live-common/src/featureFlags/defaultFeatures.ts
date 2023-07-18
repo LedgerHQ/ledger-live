@@ -106,6 +106,8 @@ export const defaultFeatures = {
     params: {
       url: "https://www.ledger.com/ledger-live",
     },
+  currencyTelosEvm: {
+    enabled: false,
   },
   deviceInitialApps: {
     enabled: false,

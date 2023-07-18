@@ -42,7 +42,13 @@ export default function ValidationSuccess({ navigation, route }: NavigationProps
         },
       ]}
     >
-      <TrackScreen category="RebondFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="RebondFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action="rebond"
+        currency="dot"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

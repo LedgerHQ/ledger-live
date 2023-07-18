@@ -151,7 +151,8 @@ export type CryptoCurrencyId =
   | "moonriver"
   | "velas_evm"
   | "syscoin"
-  | "internet_computer";
+  | "internet_computer"
+  | "telos_evm";
 
 /**
  *
@@ -263,7 +264,7 @@ export type CryptoCurrency = CurrencyCommon & {
     // used by evm light integration
     explorer?: {
       uri: string;
-      type: "etherscan" | "blockscout";
+      type: "etherscan" | "blockscout" | "teloscan";
     };
     gasTracker?: { uri: string; type: "ledger" };
   };

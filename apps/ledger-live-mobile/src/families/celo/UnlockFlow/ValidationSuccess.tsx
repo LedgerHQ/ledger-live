@@ -42,7 +42,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloUnlock" name="ValidationSuccess" />
+      <TrackScreen
+        category="CeloUnlock"
+        name="ValidationSuccess"
+        flow="stake"
+        action="unlock"
+        currency="celo"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
