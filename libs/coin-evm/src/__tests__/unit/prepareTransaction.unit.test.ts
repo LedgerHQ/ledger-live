@@ -98,6 +98,29 @@ describe("EVM Family", () => {
           });
         });
 
+        it("should have a gasLimit = 0 when amount has an error and useAllAmount is true", async () => {
+          jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => {
+            throw new Error();
+          });
+
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            amount: new BigNumber(0),
+            useAllAmount: true,
+          });
+
+          expect(tx).toEqual({
+            ...transaction,
+            amount: new BigNumber(0),
+            maxFeePerGas: new BigNumber(1),
+            maxPriorityFeePerGas: new BigNumber(1),
+            gasPrice: undefined,
+            gasLimit: new BigNumber(0),
+            type: 2,
+            useAllAmount: true,
+          });
+        });
+
         it("should return an EIP1559 coin transaction", async () => {
           const tx = await prepareTransaction(account, { ...transaction });
 

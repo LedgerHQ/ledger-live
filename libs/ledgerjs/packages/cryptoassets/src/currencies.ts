@@ -4286,6 +4286,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  telos_evm: {
+    type: "CryptoCurrency",
+    id: "telos_evm",
+    coinType: CoinType.ETH,
+    name: "Telos",
+    managerAppName: "Ethereum",
+    ticker: "TLOS",
+    deviceTicker: "ETH",
+    scheme: "telos_evm",
+    color: "#AC72F9",
+    family: "evm",
+    units: ethereumUnits("TLOS", "TLOS"),
+    ethereumLikeInfo: {
+      chainId: 40,
+      networkId: 40,
+      rpc: "https://mainnet.telos.net/evm",
+      explorer: {
+        uri: "https://api.teloscan.io",
+        type: "teloscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://www.teloscan.io/tx/$hash",
+        address: "https://www.teloscan.io/address/$address",
+        token: "https://www.teloscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
