@@ -41,7 +41,7 @@ import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "./api";
 
 // Should try to refacto
-const getSendTransactionStatus = async (
+export const getSendTransactionStatus = async (
   polkadotAPI: PolkadotAPI,
   a: PolkadotAccount,
   t: Transaction,

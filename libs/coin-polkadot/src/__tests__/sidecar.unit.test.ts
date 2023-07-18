@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getAccount } from "./sidecar";
+import { getAccount } from "../api/sidecar";
 
 const networkApiMock = jest.fn();
 
