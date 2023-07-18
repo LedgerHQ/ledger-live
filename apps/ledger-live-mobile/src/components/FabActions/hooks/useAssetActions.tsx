@@ -35,6 +35,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
 } {
   const route = useRoute();
 
+  const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
+
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
@@ -73,14 +75,17 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const listFlag = featureFlag?.params?.list;
   const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
 
-  const actions = useMemo<ActionButtonEvent[]>(
-    () => [
+  const actions = useMemo<ActionButtonEvent[]>(() => {
+    const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
+
+    return [
       ...(canBeBought
         ? [
             {
               id: "buy",
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
+              disabled: isPtxServiceCtaScreensDisabled,
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -108,7 +113,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 },
               ] as const,
-              disabled: areAccountsBalanceEmpty,
+              disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
               modalOnDisabledClick: !readOnlyModeEnabled
                 ? {
                     component: ZeroBalanceDisabledModalContent,
@@ -136,10 +141,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                         params: { currencyId: currency?.id, defaultAccount },
                       },
                     ] as const,
-                    disabled: areAccountsBalanceEmpty,
-                    modalOnDisabledClick: {
-                      component: ZeroBalanceDisabledModalContent,
-                    },
+                    disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
+                    modalOnDisabledClick: !isPtxServiceCtaScreensDisabled
+                      ? {
+                          component: ZeroBalanceDisabledModalContent,
+                        }
+                      : undefined,
                   },
                 ]
               : []),
@@ -249,22 +256,22 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                 ]
               : []),
           ]),
-    ],
-    [
-      areAccountsBalanceEmpty,
-      availableOnSwap,
-      canBeBought,
-      canBeSold,
-      canBeStaken,
-      currency,
-      defaultAccount,
-      hasAccounts,
-      hasMultipleAccounts,
-      readOnlyModeEnabled,
-      t,
-      route,
-    ],
-  );
+    ];
+  }, [
+    ptxServiceCtaScreens,
+    areAccountsBalanceEmpty,
+    availableOnSwap,
+    canBeBought,
+    canBeSold,
+    canBeStaken,
+    currency,
+    defaultAccount,
+    hasAccounts,
+    hasMultipleAccounts,
+    readOnlyModeEnabled,
+    t,
+    route,
+  ]);
 
   return {
     mainActions: actions,
