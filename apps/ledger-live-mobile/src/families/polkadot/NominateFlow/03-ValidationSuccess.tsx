@@ -68,7 +68,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="NominateFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="NominateFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action="nomination"
+        currency="dot"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
