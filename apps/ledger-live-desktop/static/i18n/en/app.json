@@ -5146,6 +5146,9 @@
       "title": "{{currencyName}} is not supported",
       "description": "This crypto asset is not yet supported. Please contact Ledger Support."
     },
+    "DeviceAlreadySetup": {
+      "title": "Your device is already setup with a Secret Recover Phrase"
+    },
     "DeviceNotGenuine": {
       "title": "Possibly not genuine",
       "description": "Request assistance from Ledger Support"
