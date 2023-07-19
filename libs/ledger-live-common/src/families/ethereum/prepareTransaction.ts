@@ -51,7 +51,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         return {
           from: account.freshAddress,
           to: recipient,
-          data: undefined,
+          data: tx.data,
           value: tx.amount,
         };
       }
