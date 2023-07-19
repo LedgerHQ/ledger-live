@@ -1,11 +1,6 @@
 name: "Dynamic cal importer ERC20"
 on:
-  schedule:
-    - cron: 0 7 * * *
   workflow_dispatch:
-  push:
-    branches:
-      - feat/LIVE-2174-dynamic-cal
 
 concurrency:
   group: bot-dyn-cal
