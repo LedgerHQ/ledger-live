@@ -12,6 +12,7 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "ptxEarn"
   | "currencyAvalancheCChain"
+  | "currencyStacks"
   | "currencyOptimism"
   | "currencyOptimismGoerli"
   | "currencyArbitrum"
@@ -28,9 +29,15 @@ export type FeatureId =
   | "currencyVelasEvm"
   | "currencySyscoin"
   | "currencyAxelar"
+  | "currencySecretNetwork"
+  | "currencyDesmos"
+  | "currencyUmee"
+  | "currencyStargaze"
   | "currencyOnomy"
   | "currencyPersistence"
   | "currencyQuicksilver"
+  | "currencyInternetComputer"
+  | "currencyTelosEvm"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"
@@ -55,6 +62,8 @@ export type FeatureId =
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile"
   | "protectServicesDesktop"
+  | "ptxServiceCtaExchangeDrawer"
+  | "ptxServiceCtaScreens"
   | "swapWalletApiPartnerList"
   | "stakePrograms"
   | "portfolioExchangeBanner"
@@ -67,7 +76,8 @@ export type FeatureId =
   | "protectServicesDiscoverDesktop"
   | "protectServicesDesktop"
   | "transactionsAlerts"
-  | "listAppsV2";
+  | "listAppsV2"
+  | "editEthTx";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

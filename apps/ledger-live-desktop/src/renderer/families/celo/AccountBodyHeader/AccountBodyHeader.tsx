@@ -1,7 +1,7 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
@@ -12,7 +12,6 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import Text from "~/renderer/components/Text";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import { openURL } from "~/renderer/linking";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import { Header } from "./Header";
 import { Row } from "./Row";
 import {
@@ -28,11 +27,11 @@ type Props = {
   account: CeloAccount;
 };
 const AccountBodyHeaderComponent = ({ account }: Props) => {
-  const { celoResources } = account;
+  const {
+    celoResources: { votes },
+  } = account;
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector) as CeloAccount[]; // FIXME: how to not cast here ?
-  const isRegistrationPending = isAccountRegistrationPending(account?.id, accounts);
-  const { votes } = celoResources;
+  const isRegistrationPending = isAccountRegistrationPending(account);
   const onEarnRewards = useCallback(() => {
     dispatch(
       openModal("MODAL_CELO_REWARDS_INFO", {
@@ -116,7 +115,7 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
             {votes.map(vote => (
               <Row
                 vote={vote}
-                key={vote.validatorGroup + vote.index}
+                key={`${vote.validatorGroup}${vote.index}`}
                 account={account}
                 onManageAction={onRedirect}
                 onExternalLink={onExternalLink}

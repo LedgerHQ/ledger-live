@@ -32,7 +32,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="NominateFlow" name="ValidationError" />
+      <TrackScreen
+        category="NominateFlow"
+        name="ValidationError"
+        flow="stake"
+        action="nomination"
+        currency="dot"
+      />
       <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

@@ -126,7 +126,14 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="SendFunds" name="Amount" currencyName={currency.name} />
+      <TrackScreen
+        category="SendFunds"
+        name="Amount"
+        currencyName={currency.name}
+        flow="stake"
+        action="delegation"
+        currency="sol"
+      />
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>

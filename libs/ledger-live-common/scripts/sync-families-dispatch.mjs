@@ -27,14 +27,12 @@ await rimraf("generated");
 await fs.promises.mkdir("generated");
 await fs.promises.mkdir("generated/bridge");
 
-const families = (
-  await fs.promises.readdir("families", { withFileTypes: true })
-)
-  .filter((dirent) => dirent.isDirectory())
-  .map((dirent) => dirent.name);
+const families = (await fs.promises.readdir("families", { withFileTypes: true }))
+  .filter(dirent => dirent.isDirectory())
+  .map(dirent => dirent.name);
 
 async function genTarget(targets, families) {
-  targets.forEach(async (target) => {
+  targets.forEach(async target => {
     const imprtTarget = target.replace(".ts", "");
     const outpath = path.join("generated", target);
     let imports = ``;
@@ -81,7 +79,7 @@ function genCoinFrameworkTarget(targetFile) {
   for (const family of familiesWPackage) {
     const targetImportPath = `@ledgerhq/coin-${family}/${targetName}`;
 
-    switch(targetFile) {
+    switch (targetFile) {
       case "bridge/js.ts":
         imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
         break;
@@ -90,6 +88,11 @@ function genCoinFrameworkTarget(targetFile) {
         break;
       case "hw-getAddress.ts":
         imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
+        break;
+      case "hw-signMessage.ts":
+        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+          imports += `import { messageSigner as ${family} } from "../families/${family}/setup";\n`;
+        }
         break;
       // We still use bridge/js file inside "families" directory
       default:
@@ -116,9 +119,7 @@ async function getDeviceTransactionConfig(families) {
     const p = path.join("families", family, "deviceTransactionConfig.ts");
     if (fs.existsSync(p)) {
       const file = await fs.promises.readFile(p, "utf8");
-      const hasExports = file.includes(
-        "export type ExtraDeviceTransactionField"
-      );
+      const hasExports = file.includes("export type ExtraDeviceTransactionField");
       if (hasExports) {
         imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "../families/${family}/deviceTransactionConfig";
 `;
@@ -144,6 +145,7 @@ ${exprts};
 }
 
 async function genTypesFile(families) {
+  const libsDir = path.join(__dirname, "../..");
   const outpath = path.join("generated", "types.ts");
   let imprts = ``;
   let exprtsT = `export type Transaction =`;
@@ -151,14 +153,20 @@ async function genTypesFile(families) {
   let exprtsStatus = `export type TransactionStatus =`;
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
-    const importPath = familiesWPackage.includes(family)
-      ? "@ledgerhq/coin-"
-      : "../families/";
+    const importPath = familiesWPackage.includes(family) ? "@ledgerhq/coin-" : "../families/";
+    const typesAsFolder = (() => {
+      if (!familiesWPackage.includes(family)) {
+        return "";
+      }
 
-    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types";
-import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types";
-import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types";
+      if (fs.existsSync(path.join(libsDir, `coin-${family}/src/types/index.ts`))) return "/index";
+
+      return "";
+    })();
+    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types${typesAsFolder}";
 `;
     exprtsT += `
   | ${family}Transaction`;

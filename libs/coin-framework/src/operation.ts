@@ -1,8 +1,16 @@
-import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
+import type { Account, AccountLike, NFTStandard, Operation } from "@ledgerhq/types-live";
+import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
 import { findSubAccountById, getMainAccount } from "./account/helpers";
-import invariant from "invariant";
+import { decodeAccountId } from "./account";
+import { encodeNftId } from "./nft/nftId";
+
+const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
+  ERC721: encodeERC721OperationId,
+  ERC1155: encodeERC1155OperationId,
+};
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
@@ -96,13 +104,33 @@ export function patchOperationWithHash(operation: Operation, hash: string): Oper
     ...operation,
     hash,
     id: encodeOperationId(operation.accountId, hash, operation.type),
-    subOperations:
-      operation.subOperations &&
-      operation.subOperations.map(op => ({
-        ...op,
-        hash,
-        id: encodeOperationId(op.accountId, hash, op.type),
-      })),
+    subOperations: operation.subOperations
+      ? operation.subOperations.map(op => ({
+          ...op,
+          hash,
+          id: encodeOperationId(op.accountId, hash, op.type),
+        }))
+      : [],
+    nftOperations: operation.nftOperations
+      ? operation.nftOperations.map((nftOp, i) => {
+          const { currencyId } = decodeAccountId(operation.accountId);
+          const nftId = encodeNftId(
+            operation.accountId,
+            nftOp.contract || "",
+            nftOp.tokenId || "",
+            currencyId,
+          );
+          const nftOperationIdEncoder =
+            nftOperationIdEncoderPerStandard[(nftOp?.standard as NFTStandard) || ""] ||
+            nftOperationIdEncoderPerStandard.ERC721;
+
+          return {
+            ...nftOp,
+            hash,
+            id: nftOperationIdEncoder(nftId, hash, nftOp.type, 0, i),
+          };
+        })
+      : [],
   };
 }
 
@@ -238,14 +266,22 @@ export function getStuckAccountAndOperation(
   const mainAccount = getMainAccount(account, parentAccount);
 
   const SUPPORTED_FAMILIES = ["ethereum"];
-  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) return undefined;
+
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
+    return undefined;
+  }
+
   const now = new Date().getTime();
   const stuckOperations = mainAccount.pendingOperations.filter(
     pendingOp =>
       isEditableOperation(mainAccount, pendingOp) &&
       now - pendingOp.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
   );
-  if (stuckOperations.length === 0) return undefined;
+
+  if (stuckOperations.length === 0) {
+    return undefined;
+  }
+
   const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
     if (!oldestOp) return currentOp;
     return oldestOp.transactionSequenceNumber !== undefined &&
@@ -254,6 +290,7 @@ export function getStuckAccountAndOperation(
       ? currentOp
       : oldestOp;
   });
+
   if (oldestStuckOperation?.transactionRaw?.subAccountId) {
     stuckAccount = findSubAccountById(
       mainAccount,
@@ -264,7 +301,9 @@ export function getStuckAccountAndOperation(
     stuckAccount = mainAccount;
     stuckParentAccount = undefined;
   }
+
   invariant(stuckAccount, "stuckAccount required");
+
   return {
     account: stuckAccount,
     parentAccount: stuckParentAccount,

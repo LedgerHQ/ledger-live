@@ -79,7 +79,7 @@ const CloseWarning = ({
   const { t } = useTranslation();
 
   return (
-    <Flex alignItems="center" justifyContent="center" px={1}>
+    <Flex alignItems="center" justifyContent="center" px={1} mt={7}>
       <TrackScreen category="Error: update not complete yet" type="drawer" refreshSource={false} />
       <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
@@ -152,6 +152,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
   const {
+    connectManagerState,
     updateActionState,
     updateStep,
     retryCurrentStep,
@@ -251,7 +252,10 @@ export const FirmwareUpdate = ({
                 restoreAppsState.installQueue.length > 0
               ? noOfAppsToReinstall - (restoreAppsState.installQueue.length - 1)
               : noOfAppsToReinstall
-          }/${noOfAppsToReinstall}`,
+          }/${noOfAppsToReinstall}` +
+          (restoreAppsState.installQueue !== undefined && restoreAppsState.installQueue.length > 0
+            ? ` - ${restoreAppsState.installQueue[0]}`
+            : ""),
       });
     }
 
@@ -273,7 +277,7 @@ export const FirmwareUpdate = ({
     () => ({
       prepareUpdate: {
         status: ItemStatus.inactive,
-        title: t("FirmwareUpdate.steps.prepareUpdate.titleActive"),
+        title: t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
         renderBody: () => (
           <>
             <TrackScreen
@@ -400,6 +404,7 @@ export const FirmwareUpdate = ({
     switch (updateActionState.step) {
       case "installingOsu":
         updatePrepareStepProgress();
+        newSteps.prepareUpdate.title = t("FirmwareUpdate.steps.prepareUpdate.titleTransferring");
         newSteps.prepareUpdate.status = ItemStatus.active;
         break;
       case "preparingUpdate":
@@ -477,7 +482,7 @@ export const FirmwareUpdate = ({
             type="main"
             outline={false}
             onPress={retryCurrentStep}
-            mt={6}
+            my={6}
             alignSelf="stretch"
           >
             {t("common.retry")}
@@ -507,7 +512,6 @@ export const FirmwareUpdate = ({
         return (
           <ConfirmFirmwareUpdate
             device={device}
-            oldFirmwareVersion={deviceInfo.seVersion ?? ""}
             newFirmwareVersion={firmwareUpdateContext.final.name}
             t={t}
           />
@@ -588,6 +592,10 @@ export const FirmwareUpdate = ({
       );
     }
 
+    if (connectManagerState.allowManagerRequestedWording) {
+      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+    }
+
     if (installLanguageState.languageInstallationRequested) {
       return renderAllowLanguageInstallation({
         t,
@@ -622,13 +630,13 @@ export const FirmwareUpdate = ({
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
     restoreAppsState.allowManagerRequestedWording,
+    connectManagerState.allowManagerRequestedWording,
     installLanguageState.languageInstallationRequested,
     restoreStepDeniedError,
     device,
     t,
     retryCurrentStep,
     quitUpdate,
-    deviceInfo.seVersion,
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
     theme,
@@ -639,16 +647,21 @@ export const FirmwareUpdate = ({
   return (
     <>
       {fullUpdateComplete ? (
-        <Flex flex={1} px={7}>
+        <Flex flex={1} px={7} pb={7}>
           <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex mb={7}>
-              <Icons.CircledCheckSolidMedium color="success.c80" size={100} />
+              <IconBadge
+                Icon={Icons.CheckAloneMedium}
+                iconColor="success.c50"
+                iconSize={32}
+                backgroundColor="neutral.c20"
+              />
             </Flex>
-            <Text textAlign="center" fontSize={7} mb={3}>
+            <Text textAlign="center" fontSize={7} mb={3} fontWeight="semiBold">
               {t("FirmwareUpdate.updateDone", { deviceName: productName })}
             </Text>
-            <Text textAlign="center" fontSize={4} color="neutral.c80">
+            <Text textAlign="center" fontSize={4} color="neutral.c80" variant="largeLineHeight">
               {t("FirmwareUpdate.updateDoneDescription", {
                 firmwareVersion: firmwareUpdateContext.final.name,
               })}
@@ -678,9 +691,11 @@ export const FirmwareUpdate = ({
       )}
 
       <QueuedDrawer isRequestingToBeOpened={Boolean(deviceInteractionDisplay)} noCloseButton>
-        <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
-          {deviceInteractionDisplay}
-        </ImageSourceContext.Provider>
+        <Flex mt={7}>
+          <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
+            {deviceInteractionDisplay}
+          </ImageSourceContext.Provider>
+        </Flex>
       </QueuedDrawer>
       <QueuedDrawer isRequestingToBeOpened={isCloseWarningOpen} noCloseButton>
         <CloseWarning

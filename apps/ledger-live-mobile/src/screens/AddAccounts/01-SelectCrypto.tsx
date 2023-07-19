@@ -22,8 +22,9 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { getEnv } from "@ledgerhq/live-common/env";
 
-const SEARCH_KEYS = ["name", "ticker"];
+const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
 type NavigationProps = StackNavigatorProps<
   AddAccountsNavigatorParamList,
@@ -52,10 +53,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { filterCurrencyIds = [], currency } = route.params || {};
 
   const axelar = useFeature("currencyAxelar");
+  const stargaze = useFeature("currencyStargaze");
+  const secretNetwork = useFeature("currencySecretNetwork");
+  const umee = useFeature("currencyUmee");
+  const desmos = useFeature("currencyDesmos");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
@@ -71,14 +77,21 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
+  const internetComputer = useFeature("currencyInternetComputer");
+  const telosEvm = useFeature("currencyTelosEvm");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
       axelar,
+      stargaze,
+      umee,
+      desmos,
+      secretNetwork,
       onomy,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
+      stacks,
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
@@ -94,9 +107,12 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       moonriver,
       velas_evm: velasEvm,
       syscoin,
+      internet_computer: internetComputer,
+      telos: telosEvm,
     }),
     [
       avaxCChain,
+      stacks,
       optimism,
       optimismGoerli,
       arbitrum,
@@ -113,9 +129,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       velasEvm,
       syscoin,
       axelar,
+      stargaze,
+      umee,
+      desmos,
+      secretNetwork,
       onomy,
       persistence,
       quicksilver,
+      internetComputer,
+      telosEvm,
     ],
   );
 

@@ -138,6 +138,8 @@ export type GetExchangeRates = (
   wyreUserId?: string,
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
   providers?: AvailableProviderV3[],
+  timeout?: number,
+  timeoutErrorMessage?: string,
 ) => Promise<ExchangeRate[]>;
 export type GetProviders = () => Promise<AvailableProvider[]>;
 export type InitSwapResult = {

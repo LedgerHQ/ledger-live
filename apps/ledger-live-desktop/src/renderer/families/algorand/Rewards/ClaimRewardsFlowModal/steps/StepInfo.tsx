@@ -27,7 +27,13 @@ export default function StepInfo({ account, warning, error }: StepProps) {
   });
   return (
     <Box flow={1}>
-      <TrackPage category="OptIn Flow" name="Step 1" />
+      <TrackPage
+        category="OptIn Flow"
+        name="Step 1"
+        flow="stake"
+        action="claim_rewards"
+        currency="algo"
+      />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <Box px={5} py={2}>

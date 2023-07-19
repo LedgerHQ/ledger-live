@@ -97,12 +97,12 @@ export const buildSignOperation =
 
         o.next({ type: "device-signature-granted" }); // Signature is done
 
-        const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
+        const { chainId = 0 } = account.currency.ethereumLikeInfo || /* istanbul ignore next */ {};
         // Create a new serialized tx with the signature now
         const signature = await getSerializedTransaction(preparedTransaction, {
           r: "0x" + sig.r,
           s: "0x" + sig.s,
-          v: applyEIP155(sig.v, chainId),
+          v: applyEIP155(typeof sig.v === "number" ? sig.v.toString(16) : sig.v, chainId),
         });
 
         const operation = buildOptimisticOperation(account, {

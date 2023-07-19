@@ -25,7 +25,13 @@ const StepAmount = (props: StepProps) => {
   if (!status) return null;
   return (
     <Box flow={4}>
-      <TrackPage category="Delegation Elrond" name="Step Amount" />
+      <TrackPage
+        category="Delegation Elrond"
+        name="Step Amount"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
 

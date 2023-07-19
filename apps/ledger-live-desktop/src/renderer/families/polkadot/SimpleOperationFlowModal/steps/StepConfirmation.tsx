@@ -20,11 +20,18 @@ const Container = styled(Box).attrs(() => ({
 }>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
+function StepConfirmation({ optimisticOperation, error, signed, mode }: StepProps) {
+  const action = mode.replace(/([A-Z])/g, "_$1").toLowerCase();
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Polkadot SimpleOperationFlow" name="Step Confirmed" />
+        <TrackPage
+          category="Polkadot SimpleOperationFlow"
+          name="Step Confirmed"
+          flow="stake"
+          action={action}
+          currency="dot"
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -46,7 +53,13 @@ function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Polkadot Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Polkadot Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action={action}
+          currency="dot"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="polkadot.simpleOperation.steps.confirmation.broadcastError" />}

@@ -73,7 +73,12 @@ const AssetRowLayout = ({
               )}
             </Flex>
             <Flex flexDirection="row" alignItems="flex-end" flexShrink={0}>
-              <Text variant="large" fontWeight="semiBold" color="neutral.c100">
+              <Text
+                variant="large"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                testID="asset-balance"
+              >
                 <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
               </Text>
             </Flex>

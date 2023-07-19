@@ -30,10 +30,10 @@ import { Transaction as ethereumTransaction } from "../families/ethereum/types";
 import { TransactionRaw as ethereumTransactionRaw } from "../families/ethereum/types";
 import { TransactionStatus as ethereumTransactionStatus } from "../families/ethereum/types";
 import { TransactionStatusRaw as ethereumTransactionStatusRaw } from "../families/ethereum/types";
-import { Transaction as evmTransaction } from "@ledgerhq/coin-evm/types";
-import { TransactionRaw as evmTransactionRaw } from "@ledgerhq/coin-evm/types";
-import { TransactionStatus as evmTransactionStatus } from "@ledgerhq/coin-evm/types";
-import { TransactionStatusRaw as evmTransactionStatusRaw } from "@ledgerhq/coin-evm/types";
+import { Transaction as evmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { TransactionRaw as evmTransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { TransactionStatus as evmTransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { TransactionStatusRaw as evmTransactionStatusRaw } from "@ledgerhq/coin-evm/types/index";
 import { Transaction as filecoinTransaction } from "../families/filecoin/types";
 import { TransactionRaw as filecoinTransactionRaw } from "../families/filecoin/types";
 import { TransactionStatus as filecoinTransactionStatus } from "../families/filecoin/types";
@@ -42,6 +42,10 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { TransactionStatus as hederaTransactionStatus } from "../families/hedera/types";
 import { TransactionStatusRaw as hederaTransactionStatusRaw } from "../families/hedera/types";
+import { Transaction as internet_computerTransaction } from "../families/internet_computer/types";
+import { TransactionRaw as internet_computerTransactionRaw } from "../families/internet_computer/types";
+import { TransactionStatus as internet_computerTransactionStatus } from "../families/internet_computer/types";
+import { TransactionStatusRaw as internet_computerTransactionStatusRaw } from "../families/internet_computer/types";
 import { Transaction as nearTransaction } from "../families/near/types";
 import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
 import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
@@ -58,6 +62,10 @@ import { Transaction as solanaTransaction } from "../families/solana/types";
 import { TransactionRaw as solanaTransactionRaw } from "../families/solana/types";
 import { TransactionStatus as solanaTransactionStatus } from "../families/solana/types";
 import { TransactionStatusRaw as solanaTransactionStatusRaw } from "../families/solana/types";
+import { Transaction as stacksTransaction } from "../families/stacks/types";
+import { TransactionRaw as stacksTransactionRaw } from "../families/stacks/types";
+import { TransactionStatus as stacksTransactionStatus } from "../families/stacks/types";
+import { TransactionStatusRaw as stacksTransactionStatusRaw } from "../families/stacks/types";
 import { Transaction as stellarTransaction } from "../families/stellar/types";
 import { TransactionRaw as stellarTransactionRaw } from "../families/stellar/types";
 import { TransactionStatus as stellarTransactionStatus } from "../families/stellar/types";
@@ -83,10 +91,12 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | internet_computerTransaction
   | nearTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
+  | stacksTransaction
   | stellarTransaction
   | tezosTransaction
   | tronTransaction;
@@ -103,10 +113,12 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | internet_computerTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
+  | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
   | tronTransactionRaw;
@@ -123,10 +135,12 @@ export type TransactionStatus =
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | internet_computerTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
+  | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
   | tronTransactionStatus;
@@ -143,10 +157,12 @@ export type TransactionStatusRaw =
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
+  | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
   | tronTransactionStatusRaw;
