@@ -1,12 +1,18 @@
-import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { getNetworkInfo, inferGasPrice, inferMaxFeePerGas, inferMaxPriorityFeePerGas } from "./gas";
-import { estimateGasLimit } from "./gas";
-import { isEthereumAddress, padHexString } from "./logic";
-import { NetworkInfo, Transaction } from "./types";
-import { buildEthereumTx, EIP1559ShouldBeUsed } from "./transaction";
-import { prepareTransaction as prepareTransactionModules } from "./modules";
+import invariant from "invariant";
 import { findSubAccountById } from "../../account";
+import {
+  estimateGasLimit,
+  getNetworkInfo,
+  inferGasPrice,
+  inferMaxFeePerGas,
+  inferMaxPriorityFeePerGas,
+} from "./gas";
+import { isEthereumAddress, padHexString } from "./logic";
+import { prepareTransaction as prepareTransactionModules } from "./modules";
+import { EIP1559ShouldBeUsed, buildEthereumTx } from "./transaction";
+import { NetworkInfo, Transaction } from "./types";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -44,6 +50,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
       try {
         return buildEthereumTx(account, tx, account.operationsCount).tx;
       } catch (e) {
+        log("error", "prepareTransaction: buildEthereumTx failed", e);
         // fallback in case @ethereumjs/tx breaks on building a potentially partial transaction
         const subAccount = tx.subAccountId ? findSubAccountById(account, tx.subAccountId) : null;
         const recipient =
