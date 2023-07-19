@@ -67,12 +67,7 @@ class NftVideo extends React.PureComponent<Props> {
           ]}
         >
           {isPosterMode ? (
-            <NftImage
-              {...this.props}
-              status="loaded"
-              style={styles.videoContainer}
-              src={srcFallback}
-            />
+            <NftImage {...this.props} status="loaded" src={srcFallback} />
           ) : (
             <TouchableOpacity
               // Android video doesn't seem to support fullscreen without a custom
