@@ -7,7 +7,7 @@ import { Account, SubAccount, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { getOptimismAdditionalFees } from "./api/rpc/rpc.common";
+import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,
@@ -28,13 +28,20 @@ export const eip1559TransactionHasFees = (tx: EvmTransactionEIP1559): boolean =>
   Boolean(tx.type === 2 && tx.maxFeePerGas && tx.maxPriorityFeePerGas);
 
 /**
+ * Helper to get the gas limit value for a tx, depending on if the user has set a custom value or not
+ */
+export const getGasLimit = (tx: EvmTransaction): BigNumber => tx.customGasLimit ?? tx.gasLimit;
+
+/**
  * Helper to get total fee value for a tx depending on its type
  */
 export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
+  const gasLimit = getGasLimit(tx);
+
   if (tx.type !== 2) {
-    return tx.gasPrice?.multipliedBy(tx.gasLimit) || new BigNumber(0);
+    return tx.gasPrice?.multipliedBy(gasLimit) || new BigNumber(0);
   }
-  return tx.maxFeePerGas?.multipliedBy(tx.gasLimit) || new BigNumber(0);
+  return tx.maxFeePerGas?.multipliedBy(gasLimit) || new BigNumber(0);
 };
 
 /**
@@ -48,7 +55,8 @@ export const getAdditionalLayer2Fees = async (
   switch (currency.id) {
     case "optimism":
     case "optimism_goerli": {
-      const additionalFees = await getOptimismAdditionalFees(currency, transaction);
+      const nodeApi = getNodeApi(currency);
+      const additionalFees = await nodeApi.getOptimismAdditionalFees(currency, transaction);
       return additionalFees;
     }
     default:
@@ -140,8 +148,12 @@ export const getSyncHash = (currency: CryptoCurrency): string => {
     .map(token => token.id + token.contractAddress + token.name + token.ticker + token.delisted)
     .join("");
   const isNftSupported = isNFTActive(currency);
-
-  return ethers.utils.sha256(Buffer.from(basicTokensListString + isNftSupported));
+  const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
+  return ethers.utils.sha256(
+    Buffer.from(
+      basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer),
+    ),
+  );
 };
 
 /**
@@ -253,3 +265,11 @@ export const isNftTransaction = (
   transaction: EvmTransaction,
 ): transaction is EvmTransaction & EvmNftTransaction =>
   ["erc1155", "erc721"].includes(transaction.mode);
+
+/**
+ * Helper adding when necessary a 0
+ * prefix if string length is odd
+ */
+export const padHexString = (str: string): string => {
+  return str.length % 2 !== 0 ? "0" + str : str;
+};

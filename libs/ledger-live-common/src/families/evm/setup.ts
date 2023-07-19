@@ -4,7 +4,7 @@ import { createBridges } from "@ledgerhq/coin-evm/bridge/js";
 import makeCliTools from "@ledgerhq/coin-evm/cli-transaction";
 import evmResolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { prepareMessageToSign, signMessage } from "@ledgerhq/coin-evm/hw-signMessage";
-import { Transaction } from "@ledgerhq/coin-evm/types";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import Eth from "@ledgerhq/hw-app-eth";
 import {
   CreateSigner,
@@ -20,7 +20,7 @@ const createSigner: CreateSigner<Eth> = (transport: Transport) => {
   return new Eth(transport);
 };
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+const bridge: Bridge<EvmTransaction> = createBridges(executeWithSigner(createSigner));
 
 const messageSigner = {
   prepareMessageToSign,

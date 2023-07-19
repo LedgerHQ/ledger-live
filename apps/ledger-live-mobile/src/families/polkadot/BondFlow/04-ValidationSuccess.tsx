@@ -69,7 +69,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="BondFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="BondFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action="bond"
+        currency="dot"
+      />
       <PreventNativeBack />
       {wasFirstBond.current ? (
         <ValidateSuccess

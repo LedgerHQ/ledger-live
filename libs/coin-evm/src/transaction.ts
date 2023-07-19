@@ -90,6 +90,10 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     };
   }
 
+  if (rawTx.customGasLimit) {
+    tx.customGasLimit = new BigNumber(rawTx.customGasLimit);
+  }
+
   return tx as EvmTransaction;
 };
 
@@ -136,6 +140,10 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
       quantity: tx.nft.quantity.toFixed(),
       collectionName: tx.nft.collectionName,
     };
+  }
+
+  if (tx.customGasLimit) {
+    txRaw.customGasLimit = tx.customGasLimit.toFixed();
   }
 
   return txRaw as EvmTransactionRaw;
@@ -193,9 +201,11 @@ export const getTransactionData = (
  * on the network compatiblity.
  */
 export const getTypedTransaction = (
-  transaction: EvmTransaction,
+  _transaction: EvmTransaction,
   feeData: FeeData,
 ): EvmTransaction => {
+  // Preventing mutation from the original transaction
+  const transaction = { ..._transaction };
   // If the blockchain is supporting EIP-1559, use maxFeePerGas & maxPriorityFeePerGas
   if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
     delete transaction.gasPrice;

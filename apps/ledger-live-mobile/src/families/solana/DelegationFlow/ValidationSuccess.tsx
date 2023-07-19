@@ -45,6 +45,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         validator,
         source,
         delegation,
+        flow: "stake",
       });
   }, [source, validator, delegation, ticker]);
 
@@ -65,7 +66,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="SendFunds" name="ValidationSuccess" />
+      <TrackScreen
+        category="SendFunds"
+        name="ValidationSuccess"
+        flow="stake"
+        action="delegation"
+        currency="sol"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
