@@ -47,18 +47,6 @@ const config: PlaywrightTestConfig = {
         ["allure-playwright"],
       ]
     : "list",
-
-  projects: [
-    {
-      name: "smoke",
-      testMatch: /.*smoke.spec.ts/,
-    },
-    {
-      name: "all",
-      testIgnore: [/.*smoke.spec.ts/, "specs/recorder.spec.ts"],
-      dependencies: ["smoke"],
-    },
-  ],
 };
 
 export default config;
