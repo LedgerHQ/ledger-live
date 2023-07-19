@@ -4,7 +4,6 @@ import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
 import BigNumber from "bignumber.js";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import {
   AppSpec,
   MutationSpec,
@@ -17,8 +16,10 @@ import {
 } from "@ledgerhq/coin-framework/currencies/index";
 import { CryptoCurrencyIds } from "@ledgerhq/types-live";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
+import { getEstimatedFees } from "./logic";
 
 const testTimeout = 10 * 60 * 1000;
 
@@ -177,14 +178,7 @@ const evmBasicMutations: ({
       status,
       optimisticOperation,
     }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s",
-      );
-      const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || transaction.maxFeePerGas || 0,
-      );
+      const estimatedGas = getEstimatedFees(transaction);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
       );
@@ -227,14 +221,7 @@ const evmBasicMutations: ({
       status,
       optimisticOperation,
     }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s",
-      );
-      const estimatedGas = transaction.gasLimit.times(
-        transaction.gasPrice || transaction.maxFeePerGas || 0,
-      );
+      const estimatedGas = getEstimatedFees(transaction);
       botTest("operation fee is not exceeding estimated gas", () =>
         expect(operation.fee.toNumber()).toBeLessThanOrEqual(estimatedGas.toNumber()),
       );
@@ -274,12 +261,7 @@ const evmBasicMutations: ({
         ],
       };
     },
-    test: ({ accountBeforeTransaction, account, transaction, operation }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date.getTime() > 60000,
-        "operation time to be older than 60s",
-      );
+    test: ({ accountBeforeTransaction, account, transaction }) => {
       invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
       const erc20accountBefore = accountBeforeTransaction.subAccounts?.find(
         s => s.id === transaction.subAccountId,

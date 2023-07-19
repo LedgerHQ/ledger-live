@@ -1,18 +1,17 @@
-import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/lib/types";
-import { LLDCoinFamily } from "../types";
 import {
-  injectNftIntoTransaction,
-  getNftTransactionProperties,
   getMessageProperties,
+  getNftTransactionProperties,
+  injectNftIntoTransaction,
 } from "./helpers";
+import sendAmountFields from "./SendAmountFields";
+import { EvmFamily } from "./types";
 
-const family: LLDCoinFamily<Account, Transaction, TransactionStatus> = {
+const family: EvmFamily = {
+  sendAmountFields,
   nft: {
     getNftTransactionProperties,
     injectNftIntoTransaction,
   },
-
   message: {
     getMessageProperties,
   },

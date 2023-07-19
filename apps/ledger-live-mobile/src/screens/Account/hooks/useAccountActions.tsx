@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { DefaultTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -40,6 +41,13 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const route = useRoute();
   const { t } = useTranslation();
+
+  const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
+
+  const isPtxServiceCtaScreensDisabled = useMemo(
+    () => !(ptxServiceCtaScreens?.enabled ?? true),
+    [ptxServiceCtaScreens],
+  );
 
   const currency = getAccountCurrency(account);
   const canShowStake = useCanShowStake(currency);
@@ -103,16 +111,19 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ],
     label: t("transfer.swap.main.header", { currency: currency.name }),
     Icon: iconSwap,
-    disabled: isZeroBalance,
-    modalOnDisabledClick: {
-      component: ZeroBalanceDisabledModalContent,
-    },
+    disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
+    modalOnDisabledClick: !isPtxServiceCtaScreensDisabled
+      ? {
+          component: ZeroBalanceDisabledModalContent,
+        }
+      : undefined,
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
   };
 
   const actionButtonBuy: ActionButtonEvent = {
     id: "buy",
+    disabled: isPtxServiceCtaScreensDisabled,
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -145,7 +156,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ],
     label: t("account.sell"),
     Icon: iconSell,
-    disabled: isZeroBalance,
+    disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {
       component: ZeroBalanceDisabledModalContent,
     },
@@ -220,6 +231,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         account,
         parentAccount,
         colors,
+        parentRoute: route,
       })) ||
     [];
 

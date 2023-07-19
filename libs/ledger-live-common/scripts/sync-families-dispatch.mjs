@@ -145,6 +145,7 @@ ${exprts};
 }
 
 async function genTypesFile(families) {
+  const libsDir = path.join(__dirname, "../..");
   const outpath = path.join("generated", "types.ts");
   let imprts = ``;
   let exprtsT = `export type Transaction =`;
@@ -153,11 +154,19 @@ async function genTypesFile(families) {
   let exprtsStatusRaw = `export type TransactionStatusRaw =`;
   for (const family of families) {
     const importPath = familiesWPackage.includes(family) ? "@ledgerhq/coin-" : "../families/";
+    const typesAsFolder = (() => {
+      if (!familiesWPackage.includes(family)) {
+        return "";
+      }
 
-    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types";
-import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types";
-import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types";
-import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types";
+      if (fs.existsSync(path.join(libsDir, `coin-${family}/src/types/index.ts`))) return "/index";
+
+      return "";
+    })();
+    imprts += `import { Transaction as ${family}Transaction } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionRaw as ${family}TransactionRaw } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionStatus as ${family}TransactionStatus } from "${importPath}${family}/types${typesAsFolder}";
+import { TransactionStatusRaw as ${family}TransactionStatusRaw } from "${importPath}${family}/types${typesAsFolder}";
 `;
     exprtsT += `
   | ${family}Transaction`;

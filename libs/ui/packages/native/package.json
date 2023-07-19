@@ -80,7 +80,7 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.0",
+    "@babel/core": "^7.22.8",
     "@babel/generator": "^7.17.2",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-export-namespace-from": "^7.16.0",
@@ -95,7 +95,7 @@
     "@emotion/native": "^10.0.27",
     "@expo/metro-config": "^0.7.1",
     "@expo/webpack-config": "^18.0.1",
-    "@react-native-async-storage/async-storage": "1.17.11",
+    "@react-native-async-storage/async-storage": "1.17.12",
     "@react-native-community/cli-server-api": "^7.0.3",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-native-community/slider": "^4.4.2",

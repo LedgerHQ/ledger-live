@@ -109,7 +109,13 @@ export default function ActivateSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ActivateFlow" name="Summary" />
+      <TrackScreen
+        category="ActivateFlow"
+        name="Summary"
+        flow="stake"
+        action="activate"
+        currency="celo"
+      />
       <View style={styles.body}>
         <View style={styles.summary}>
           <SummaryWords onChangeValidator={onChangeDelegator} validator={chosenValidator} />

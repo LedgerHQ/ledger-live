@@ -66,7 +66,13 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ActivateFlow" name="SelectValidator" />
+      <TrackScreen
+        category="ActivateFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="activate"
+        currency="celo"
+      />
       <View style={styles.header}>
         <ValidatorHead />
       </View>

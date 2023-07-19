@@ -21,9 +21,8 @@ on:
         required: true
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   test-docs:
@@ -34,7 +33,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -60,7 +59,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -80,7 +79,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -119,7 +118,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
           fetch-depth: 0
       - name: Setup the toolchain
@@ -132,15 +131,17 @@ jobs:
           ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
+        uses: ./tools/actions/turborepo-s3-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
+          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3

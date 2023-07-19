@@ -5,7 +5,8 @@ import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "bot-accounts" });
 
-test("Stability of the app with numerous real accounts", async ({ page }) => {
+// skipping as this as it's not valid for functional UI tests
+test.skip("Stability of the app with numerous real accounts", async ({ page }) => {
   const layout = new Layout(page);
   const accountsPage = new AccountsPage(page);
 

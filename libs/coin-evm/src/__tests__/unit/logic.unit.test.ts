@@ -3,8 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
-import * as RPC_API from "../../api/rpc/rpc.common";
+import * as RPC_API from "../../api/node/rpc.common";
 import {
   deepFreeze,
   makeAccount,
@@ -17,10 +16,17 @@ import {
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getEstimatedFees,
+  getGasLimit,
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
+  padHexString,
 } from "../../logic";
+import {
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  Transaction as EvmTransaction,
+} from "../../types";
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
@@ -99,17 +105,79 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getEstimatedFees", () => {
-      it("should return the right fee estimation for a legacy tx", () => {
-        const tx = {
-          type: 0,
-          gasLimit: new BigNumber(3),
-          gasPrice: new BigNumber(23),
-          maxFeePerGas: new BigNumber(100),
-          maxPriorityFeePerGas: new BigNumber(40),
+    describe("getGasLimit", () => {
+      it("should return the gasLimit when no customGasLimit provided", () => {
+        const tx: Partial<EvmTransaction> = {
+          gasLimit: new BigNumber(100),
+          customGasLimit: undefined,
         };
 
-        expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(69));
+        expect(getGasLimit(tx as any)).toEqual(new BigNumber(100));
+      });
+
+      it("should return the customGasLimit when provided", () => {
+        const tx: Partial<EvmTransaction> = {
+          gasLimit: new BigNumber(100),
+          customGasLimit: new BigNumber(200),
+        };
+
+        expect(getGasLimit(tx as any)).toEqual(new BigNumber(200));
+      });
+    });
+
+    describe("getEstimatedFees", () => {
+      describe("without customGasLimit", () => {
+        it("should return the right fee estimation for a legacy tx", () => {
+          const tx = {
+            type: 0,
+            gasLimit: new BigNumber(3),
+            gasPrice: new BigNumber(23),
+            maxFeePerGas: new BigNumber(100),
+            maxPriorityFeePerGas: new BigNumber(40),
+          };
+
+          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(69));
+        });
+
+        it("should return the right fee estimation for a 1559 tx", () => {
+          const tx = {
+            type: 2,
+            gasLimit: new BigNumber(42),
+            gasPrice: new BigNumber(23),
+            maxFeePerGas: new BigNumber(10),
+            maxPriorityFeePerGas: new BigNumber(40),
+          };
+
+          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(420));
+        });
+      });
+
+      describe("with customGasLimit", () => {
+        it("should return the right fee estimation for a legacy tx", () => {
+          const tx = {
+            type: 0,
+            gasLimit: new BigNumber(4),
+            customGasLimit: new BigNumber(3),
+            gasPrice: new BigNumber(23),
+            maxFeePerGas: new BigNumber(100),
+            maxPriorityFeePerGas: new BigNumber(40),
+          };
+
+          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(69));
+        });
+
+        it("should return the right fee estimation for a 1559 tx", () => {
+          const tx = {
+            type: 2,
+            gasLimit: new BigNumber(43),
+            customGasLimit: new BigNumber(42),
+            gasPrice: new BigNumber(23),
+            maxFeePerGas: new BigNumber(10),
+            maxPriorityFeePerGas: new BigNumber(40),
+          };
+
+          expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(420));
+        });
       });
 
       it("should fallback with tx without type", () => {
@@ -123,18 +191,6 @@ describe("EVM Family", () => {
         };
 
         expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
-      });
-
-      it("should return the right fee estimation for a 1559 tx", () => {
-        const tx = {
-          type: 2,
-          gasLimit: new BigNumber(42),
-          gasPrice: new BigNumber(23),
-          maxFeePerGas: new BigNumber(10),
-          maxPriorityFeePerGas: new BigNumber(40),
-        };
-
-        expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(420));
       });
 
       it("should fallback with badly formatted 1559 tx", () => {
@@ -379,6 +435,54 @@ describe("EVM Family", () => {
 
         expect(hash1).not.toEqual(hash2);
       });
+
+      it("should provide a new hash if currency is using a new node config", () => {
+        const hash1 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "eth" } },
+        });
+        const hash2 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "matic" } },
+        });
+        const hash3 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "anything" } },
+        });
+        const hash4 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "somethingelse" } },
+        });
+
+        const hashes = [hash1, hash2, hash3, hash4];
+        const uniqueSet = new Set(hashes);
+
+        expect(hashes).toEqual(Array.from(uniqueSet));
+      });
+
+      it("should provide a new hash if currency is using a new explorer config", () => {
+        const hash1 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "eth" } },
+        });
+        const hash2 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "matic" } },
+        });
+        const hash3 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "etherscan", uri: "anything" } },
+        });
+        const hash4 = getSyncHash({
+          ...currency,
+          ethereumLikeInfo: { chainId: 1, explorer: { type: "blockscout", uri: "somethingelse" } },
+        });
+
+        const hashes = [hash1, hash2, hash3, hash4];
+        const uniqueSet = new Set(hashes);
+
+        expect(hashes).toEqual(Array.from(uniqueSet));
+      });
     });
 
     describe("attachOperations", () => {
@@ -488,6 +592,13 @@ describe("EVM Family", () => {
           // @ts-expect-error purposely ignore readonly ts issue for this
           () => attachOperations(coinOperations, tokenOperations, nftOperations),
         ).not.toThrow(); // mutation prevented by deepFreeze method
+      });
+    });
+
+    describe("padHexString", () => {
+      it("should always return an odd number of characters", () => {
+        expect(padHexString("1")).toEqual("01");
+        expect(padHexString("01")).toEqual("01");
       });
     });
   });

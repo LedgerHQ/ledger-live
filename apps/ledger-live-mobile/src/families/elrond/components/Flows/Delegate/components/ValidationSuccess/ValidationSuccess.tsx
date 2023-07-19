@@ -47,6 +47,7 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
       validator,
       source,
       delegation: "delegation",
+      flow: "stake",
     });
   }, [source, validator, ticker]);
 
@@ -79,7 +80,13 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="ElrondDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
       <PreventNativeBack />
 
       <ValidateSuccess
