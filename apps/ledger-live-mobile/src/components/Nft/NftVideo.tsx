@@ -18,6 +18,7 @@ type Props = {
   resizeMode?: VideoProperties["resizeMode"] & ResizeMode;
   colors: Theme["colors"];
   children?: React.ReactNode | null;
+  transparency?: boolean;
 };
 
 class NftVideo extends React.PureComponent<Props> {
@@ -39,7 +40,7 @@ class NftVideo extends React.PureComponent<Props> {
   };
 
   onError = () => {
-    this.setState({ ...this.state, isPosterMode: true });
+    this.setState({ ...this.state, loaded: true, isPosterMode: true });
     this.startAnimation();
   };
 
@@ -52,7 +53,15 @@ class NftVideo extends React.PureComponent<Props> {
   };
 
   render() {
-    const { style, src, resizeMode = "cover", srcFallback, children } = this.props;
+    const {
+      style,
+      src,
+      colors,
+      transparency,
+      resizeMode = "cover",
+      srcFallback,
+      children,
+    } = this.props;
     const { isPosterMode } = this.state;
 
     return (
@@ -84,7 +93,14 @@ class NftVideo extends React.PureComponent<Props> {
                 ref={ref => {
                   this.videoRef = ref;
                 }}
-                style={styles.video}
+                style={[
+                  styles.video,
+                  !transparency
+                    ? {
+                        backgroundColor: colors.white,
+                      }
+                    : {},
+                ]}
                 resizeMode={resizeMode}
                 source={{
                   uri: src,
