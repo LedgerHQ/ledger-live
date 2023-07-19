@@ -12,11 +12,13 @@ import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framew
  */
 export const getNftMetadata = async (
   input: NftMetadataInput[],
-  chainId: number,
+  params: { chainId: number },
 ): Promise<NFTMetadataResponse[]> => {
   const { data }: { data: NFTMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${chainId}/contracts/tokens/infos`,
+    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${
+      params.chainId
+    }/contracts/tokens/infos`,
     data: input,
   });
 
@@ -32,11 +34,11 @@ export const getNftMetadata = async (
  */
 export const getNftCollectionMetadata = async (
   input: CollectionMetadataInput[],
-  chainId: number,
+  params: { chainId: number },
 ): Promise<NFTCollectionMetadataResponse[]> => {
   const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${chainId}/contracts/infos`,
+    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${params.chainId}/contracts/infos`,
     data: input,
   });
 

@@ -25,6 +25,12 @@ inputs:
   install_dotnet:
     description: "install dotnet on Windows"
     required: false
+  aws-access-key:
+    description: "aws access key"
+    required: false
+  aws-secret-key:
+    description: "aws secret key"
+    required: false
 
 runs:
   using: "composite"
@@ -58,14 +64,17 @@ runs:
       run: pnpm desktop test:playwright:setup
       shell: bash
     - name: TurboRepo local caching server
+      if: inputs.aws-access-key != '' && inputs.aws-secret-key != ''
       id: turborepo-cache-server
-      uses: ./tools/actions/turborepo-gh-cache
+      uses: ./tools/actions/turborepo-s3-cache
       with:
         server-token: "yolo"
         cleanup-cache-folder: "true"
+        aws-access-key: ${{ inputs.aws-access-key }}
+        aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: Build dependencies
       run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       shell: bash
     - name: Build LLD app for testing
       env:
@@ -77,5 +86,5 @@ runs:
     - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
       if: ${{ !inputs.skip_builds }}
       run: |
-        pnpm test-utils dummy-apps:build
+        pnpm --filter="dummy-*" build
       shell: bash

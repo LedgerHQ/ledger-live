@@ -8,6 +8,7 @@ import { Text, Flex, Icons, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "../../analytics";
@@ -56,6 +57,7 @@ type Props = {
 
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
+  filterByDeviceModelId?: DeviceModelId;
 };
 
 export default function SelectDevice({
@@ -65,6 +67,7 @@ export default function SelectDevice({
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
   withMyLedgerTracking,
+  filterByDeviceModelId,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -210,8 +213,10 @@ export default function SelectDevice({
       devices.push(ProxyDevice);
     }
 
-    return devices;
-  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice]);
+    return filterByDeviceModelId
+      ? devices.filter(d => d.modelId === filterByDeviceModelId)
+      : devices;
+  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
@@ -317,6 +322,7 @@ export default function SelectDevice({
           onGoBackFromScanning={closeBlePairingFlow}
           onPairingSuccessAddToKnownDevices
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          filterByDeviceModelId={filterByDeviceModelId}
         />
       ) : (
         <Flex flex={1}>

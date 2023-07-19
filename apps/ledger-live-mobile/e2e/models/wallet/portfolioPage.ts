@@ -16,6 +16,7 @@ export default class PortfolioPage {
   portfolioSettingsButton = () => getElementById("settings-icon");
   transferButton = () => getElementById("transfer-button");
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
+  marketTabButton = () => getElementById("tab-bar-market");
 
   async navigateToSettings() {
     await tapByElement(this.portfolioSettingsButton());
@@ -42,5 +43,9 @@ export default class PortfolioPage {
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
+  }
+
+  openMarketPage() {
+    return tapByElement(this.marketTabButton());
   }
 }

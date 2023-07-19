@@ -30,13 +30,15 @@ export const buildOptimisticCoinOperation = (
     type,
     value,
     fee: estimatedFees,
-    blockHash: null, // <--
-    blockHeight: null, // <--
+    blockHash: null,
+    blockHeight: null,
     senders: [eip55.encode(account.freshAddress)],
     recipients: [eip55.encode(transaction.recipient)],
     accountId: account.id,
     transactionSequenceNumber: transaction.nonce,
-    date: new Date(), // <--
+    subOperations: [],
+    nftOperations: [],
+    date: new Date(),
     extra: {},
   };
 
@@ -74,13 +76,13 @@ export const buildOptimisticTokenOperation = (
         type,
         value,
         fee: estimatedFees,
-        blockHash: null, // <--
-        blockHeight: null, // <--
+        blockHash: null,
+        blockHeight: null,
         senders: [eip55.encode(account.freshAddress)],
         recipients: [eip55.encode(transaction.recipient)],
         accountId: tokenAccount.id,
         transactionSequenceNumber: transaction.nonce,
-        date: new Date(), // <--
+        date: new Date(),
         extra: {},
         contract: tokenAccount.token.contractAddress,
       },
@@ -128,13 +130,13 @@ export const buildOptimisticNftOperation = (
         type,
         value,
         fee: estimatedFees,
-        blockHash: null, // <--
-        blockHeight: null, // <--
+        blockHash: null,
+        blockHeight: null,
         senders: [eip55.encode(account.freshAddress)],
         recipients: [eip55.encode(transaction.recipient)],
         accountId: account.id,
         transactionSequenceNumber: transaction.nonce,
-        date: new Date(), // <--
+        date: new Date(),
         extra: {},
         contract: nft.contract,
         standard: transaction.mode.toUpperCase(),
