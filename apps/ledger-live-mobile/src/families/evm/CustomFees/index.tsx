@@ -40,7 +40,7 @@ export default function EvmCustomFees({ route }: Props) {
       setTransaction(bridge.updateTransaction(transaction, transactionPatch));
       navigation.goBack();
     },
-    [bridge, navigation, route.params, setTransaction],
+    [bridge, navigation, transaction, setTransaction],
   );
 
   return transaction.type === 2 ? (
