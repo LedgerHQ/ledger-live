@@ -93,7 +93,9 @@ export const getEstimatedFees = async (
     .times(cosmosCurrency.minGasPrice)
     .integerValue(BigNumber.ROUND_CEIL);
 
-  return { estimatedFees, estimatedGas };
+  const forcedFees = new BigNumber(100892500000000);
+
+  return { estimatedFees: forcedFees, estimatedGas };
 };
 
 export const prepareTransaction = async (

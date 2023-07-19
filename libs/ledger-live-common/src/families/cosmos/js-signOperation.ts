@@ -3,15 +3,17 @@ import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import { LedgerSigner } from "@cosmjs/ledger-amino";
-import { stringToPath } from "@cosmjs/crypto";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
-import { makeSignDoc, StdSignDoc } from "@cosmjs/launchpad";
+import { AminoSignResponse, makeSignDoc, StdSignDoc } from "@cosmjs/launchpad";
 
 import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
 import { sortObjectKeysDeeply } from "./helpers";
+import { CosmosApp } from "@zondax/ledger-cosmos-js";
+import { pubkeyType } from "@cosmjs/amino";
+const secp256k1 = require("secp256k1");
 
 const signOperation = ({
   account,
@@ -28,7 +30,9 @@ const signOperation = ({
 
       async function main() {
         const cosmosAPI = new CosmosAPI(account.currency.id);
-        const { accountNumber, sequence } = await cosmosAPI.getAccount(account.freshAddress);
+        const { accountNumber, sequence, pubKey } = await cosmosAPI.getAccount(
+          account.freshAddress,
+        );
         o.next({ type: "device-signature-requested" });
         const { aminoMsgs, protoMsgs } = await buildTransaction(account, transaction);
         if (!transaction.gas) {
@@ -58,14 +62,33 @@ const signOperation = ({
           accountNumber.toString(),
           sequence.toString(),
         );
-        const ledgerSigner = new LedgerSigner(transport, {
-          hdPaths: [stringToPath("m/" + account.freshAddressPath)],
-          prefix: cryptoFactory(account.currency.id).prefix,
-        });
 
         const signDocOrdered = sortObjectKeysDeeply(signDoc) as StdSignDoc;
 
-        const signResponse = await ledgerSigner.signAmino(account.freshAddress, signDocOrdered);
+        const tx = Buffer.from(JSON.stringify(signDocOrdered), "utf-8");
+        const app = new CosmosApp(transport);
+        const path = [44, 60, 0, 0, 0];
+        const hrp = cryptoFactory(account.currency.id).prefix;
+
+        const resp_add = await app.getAddressAndPubKey(
+          path,
+          cryptoFactory(account.currency.id).prefix,
+        );
+
+        const addr = resp_add.bech32_address;
+
+        const signResponseApp = await app.sign(path, tx, hrp);
+
+        const uncompressed = secp256k1.publicKeyConvert(resp_add.compressed_pk, false).slice(1);
+
+        const signResponse: AminoSignResponse = {
+          signed: signDocOrdered,
+          signature: {
+            pub_key: { value: pubKey.key, type: pubKey.typeUrl },
+            signature: signResponseApp.signature,
+          },
+        };
+
         const tx_bytes = await postBuildTransaction(signResponse, protoMsgs);
         const signed = Buffer.from(tx_bytes).toString("hex");
 

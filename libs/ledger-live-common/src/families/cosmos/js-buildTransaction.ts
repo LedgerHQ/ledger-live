@@ -438,9 +438,14 @@ export const postBuildTransaction = async (
       signerInfos: [
         {
           publicKey: {
-            typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+            typeUrl: signResponse.signature.pub_key.type,
+            // typeUrl: "/injective.crypto.v1beta1.ethsecp256k1.PubKey",
+            // typeUrl: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+            //typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+            // value: signResponse.signature.pub_key.value,
             value: PubKey.encode({
-              key: Buffer.from(signResponse.signature.pub_key.value, "base64"),
+              key: signResponse.signature.pub_key.value,
+              // key: Buffer.from(signResponse.signature.pub_key.value, "base64"),
             }).finish(),
           },
           modeInfo: {

@@ -27,6 +27,7 @@ const defaultConfig = {
         ledgerValidator: "onomyvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxu9mtmf",
       },
       injective: {
+        // lcd: "https://rest-injective.architectnodes.com",
         lcd: "https://injective-api.polkachu.com",
         minGasPrice: 0.02,
       },

@@ -60,10 +60,23 @@ export class CosmosAPI {
     }
   };
 
-  getAccount = async (address: string): Promise<{ accountNumber: number; sequence: number }> => {
+  getAccount = async (
+    address: string,
+  ): Promise<{
+    accountNumber: number;
+    sequence: number;
+    pubKey: {
+      typeUrl: string;
+      key: string;
+    };
+  }> => {
     const response = {
       accountNumber: 0,
       sequence: 0,
+      pubKey: {
+        typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+        key: "",
+      },
     };
 
     try {
@@ -72,13 +85,14 @@ export class CosmosAPI {
         url: `${this.defaultEndpoint}/cosmos/auth/${this.version}/accounts/${address}`,
       });
 
-      if (data.account.account_number) {
-        response.accountNumber = parseInt(data.account.account_number);
-      }
+      // use data.account.base_account for ethermint, data.account otherwise
+      response.accountNumber = parseInt(data.account.base_account.account_number);
+      response.sequence = parseInt(data.account.base_account.sequence);
+      response.pubKey = {
+        typeUrl: data.account.base_account.pub_key["@type"],
+        key: data.account.base_account.pub_key.key,
+      };
 
-      if (data.account.sequence) {
-        response.sequence = parseInt(data.account.sequence);
-      }
       // eslint-disable-next-line no-empty
     } catch (e) {}
     return response;
