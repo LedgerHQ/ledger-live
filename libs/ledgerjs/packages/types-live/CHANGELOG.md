@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.37.0-nightly.3
+
+### Minor Changes
+
+- [#4040](https://github.com/LedgerHQ/ledger-live/pull/4040) [`95ac67a5e0`](https://github.com/LedgerHQ/ledger-live/commit/95ac67a5e0359b03c7d82c34fd1f2f3b6eb7df22) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add feature flags around ptx services in llm
+
 ## 6.37.0-nightly.2
 
 ### Minor Changes

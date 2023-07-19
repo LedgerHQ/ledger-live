@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 31.3.0-nightly.7
+
+### Minor Changes
+
+- [#3827](https://github.com/LedgerHQ/ledger-live/pull/3827) [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `Batcher` to be more agnostic
+
+### Patch Changes
+
+- Updated dependencies [[`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1)]:
+  - @ledgerhq/coin-framework@0.4.0-nightly.6
+  - @ledgerhq/coin-evm@0.4.0-nightly.6
+  - @ledgerhq/cryptoassets@9.10.0-nightly.5
+  - @ledgerhq/coin-algorand@0.2.4-nightly.6
+  - @ledgerhq/coin-polkadot@0.3.1-nightly.6
+  - @ledgerhq/domain-service@1.1.6-nightly.6
+  - @ledgerhq/evm-tools@1.0.1-nightly.4
+  - @ledgerhq/hw-app-eth@6.34.0-nightly.6
+
 ## 31.3.0-nightly.6
 
 ### Minor Changes

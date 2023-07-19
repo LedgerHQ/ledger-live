@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.27.0-nightly.9
+
+### Minor Changes
+
+- [#4040](https://github.com/LedgerHQ/ledger-live/pull/4040) [`95ac67a5e0`](https://github.com/LedgerHQ/ledger-live/commit/95ac67a5e0359b03c7d82c34fd1f2f3b6eb7df22) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add feature flags around ptx services in llm
+
+### Patch Changes
+
+- [#3792](https://github.com/LedgerHQ/ledger-live/pull/3792) [`9428e776cd`](https://github.com/LedgerHQ/ledger-live/commit/9428e776cd2f42f08472ab53a3c050d00a93b31c) Thanks [@grsoares21](https://github.com/grsoares21)! - Design polishes on the new UX for the firmware update feature
+
+- [#3999](https://github.com/LedgerHQ/ledger-live/pull/3999) [`795daf3898`](https://github.com/LedgerHQ/ledger-live/commit/795daf38985c3b4f18f9982bd09c2334469929f4) Thanks [@grsoares21](https://github.com/grsoares21)! - Filter for Stax devices during the "set NFT as custom lockscreen" flow
+
+- Updated dependencies [[`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1), [`95ac67a5e0`](https://github.com/LedgerHQ/ledger-live/commit/95ac67a5e0359b03c7d82c34fd1f2f3b6eb7df22), [`9428e776cd`](https://github.com/LedgerHQ/ledger-live/commit/9428e776cd2f42f08472ab53a3c050d00a93b31c)]:
+  - @ledgerhq/live-common@31.3.0-nightly.7
+  - @ledgerhq/coin-framework@0.4.0-nightly.6
+  - @ledgerhq/types-cryptoassets@7.4.0-nightly.3
+  - @ledgerhq/types-live@6.37.0-nightly.3
+  - @ledgerhq/native-ui@0.20.2-nightly.2
+  - @ledgerhq/domain-service@1.1.6-nightly.6
+  - @ledgerhq/evm-tools@1.0.1-nightly.4
+
 ## 3.27.0-nightly.8
 
 ### Minor Changes

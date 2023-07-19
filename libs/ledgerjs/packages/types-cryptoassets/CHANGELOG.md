@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.4.0-nightly.3
+
+### Minor Changes
+
+- [#3827](https://github.com/LedgerHQ/ledger-live/pull/3827) [`6a88b7f8a6`](https://github.com/LedgerHQ/ledger-live/commit/6a88b7f8a6b7c732be0c945131b6c1d9b3937cc1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating EthereumLikeInfo configurations & typing
+
 ## 7.4.0-nightly.2
 
 ### Minor Changes
