@@ -3,12 +3,14 @@
       "title": "Home",
       "display": "hidden",
       "theme": {
-        "breadcrumb": false,
+        "breadcrumb": true,
         "footer": true,
-        "sidebar": false,
         "toc": true,
         "pagination": false,
         "layout": "full"
       }
+    },
+    "getting-started": {
+        "title": "Getting Started"
     }
 }
