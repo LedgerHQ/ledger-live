@@ -21,9 +21,7 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
   if (!initialized) {
     switch (currencyId) {
       case "osmo":
-      case "osmosis":
-        cosmosChainParams["osmo"] = new Osmosis();
-        return cosmosChainParams["osmo"];
+        cosmosChainParams[currencyId] = new Osmosis();
       case "cosmos":
         cosmosChainParams[currencyId] = new Cosmos();
         break;
