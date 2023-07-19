@@ -6,6 +6,7 @@ import { Theme, withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Text } from "@ledgerhq/native-ui";
 
 const isAndroid = Platform.OS === "android";
 
@@ -22,6 +23,7 @@ type Props = {
 class NftVideo extends React.PureComponent<Props> {
   state = {
     isPosterMode: false,
+    loaded: false,
   };
 
   opacityAnim = new Animated.Value(0);
@@ -37,23 +39,25 @@ class NftVideo extends React.PureComponent<Props> {
   };
 
   onError = () => {
-    this.setState({ isPosterMode: true });
+    this.setState({ ...this.state, isPosterMode: true });
     this.startAnimation();
   };
 
   onLoad = (onLoadEvent: OnLoadData) => {
     if (!onLoadEvent?.duration) {
       this.onError();
+    } else {
+      this.setState({ ...this.state, loaded: true });
     }
   };
 
   render() {
-    const { style, src, colors, resizeMode = "cover", srcFallback, children } = this.props;
+    const { style, src, resizeMode = "cover", srcFallback, children } = this.props;
     const { isPosterMode } = this.state;
 
     return (
       <View style={[style, styles.root]}>
-        <Skeleton style={styles.skeleton} loading={true} />
+        <Skeleton style={styles.skeleton} loading={!this.state.loaded} />
         <Animated.View
           style={[
             styles.imageContainer,
@@ -63,7 +67,12 @@ class NftVideo extends React.PureComponent<Props> {
           ]}
         >
           {isPosterMode ? (
-            <NftImage {...this.props} status="loaded" src={srcFallback} />
+            <NftImage
+              {...this.props}
+              status="loaded"
+              style={styles.videoContainer}
+              src={srcFallback}
+            />
           ) : (
             <TouchableOpacity
               // Android video doesn't seem to support fullscreen without a custom
@@ -80,12 +89,7 @@ class NftVideo extends React.PureComponent<Props> {
                 ref={ref => {
                   this.videoRef = ref;
                 }}
-                style={[
-                  styles.video,
-                  {
-                    backgroundColor: colors.white,
-                  },
-                ]}
+                style={styles.video}
                 resizeMode={resizeMode}
                 source={{
                   uri: src,

@@ -281,6 +281,7 @@ const NftViewer = ({ route }: Props) => {
     () => (
       <>
         <NftMedia
+          transparency={true}
           resizeMode="contain"
           style={styles.image}
           metadata={nftMetadata}
