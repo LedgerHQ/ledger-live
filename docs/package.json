@@ -1,7 +1,15 @@
 {
-  "name": "ledger-libs-docs",
+  "name": "@ledgerhq/docs-libs",
   "version": "0.1.0",
   "description": "Documentation for the core libs used in Ledger Live",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/docs",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -10,7 +18,8 @@
   },
   "keywords": [
     "documentation",
-    "ledger"
+    "Ledger",
+    "LedgerWallet"
   ],
   "license": "ISC",
   "dependencies": {
