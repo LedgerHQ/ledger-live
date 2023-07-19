@@ -2812,6 +2812,11 @@
       "desc": "Get the latest updates on Ledger Live, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
       "allow": "Allow notifications",
       "later": "Maybe later"
+    },
+    "ptxServices": {
+      "toast": {
+        "title": "In order to comply with Apple’s recent updates on the App Store, this feature is temporarily unavailable. You can still access it on Ledger Live on desktop."
+      }
     }
   },
   "transfer": {

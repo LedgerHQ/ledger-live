@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -23,6 +23,7 @@ import WalletConnect from "../../../icons/WalletConnect";
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
 import { useCanShowStake } from "./useCanShowStake";
+import { Toast } from "../../../components/Toast/Toast";
 
 type Props = {
   account: AccountLike;
@@ -112,11 +113,18 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     label: t("transfer.swap.main.header", { currency: currency.name }),
     Icon: iconSwap,
     disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
-    modalOnDisabledClick: !isPtxServiceCtaScreensDisabled
-      ? {
-          component: ZeroBalanceDisabledModalContent,
-        }
-      : undefined,
+    modalOnDisabledClick: {
+      component: isPtxServiceCtaScreensDisabled
+        ? () => (
+            <Toast
+              id="ptx-services"
+              title={t("notifications.ptxServices.toast.title")}
+              icon="info"
+              type="success"
+            />
+          )
+        : ZeroBalanceDisabledModalContent,
+    },
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
   };
@@ -124,6 +132,16 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const actionButtonBuy: ActionButtonEvent = {
     id: "buy",
     disabled: isPtxServiceCtaScreensDisabled,
+    modalOnDisabledClick: {
+      component: () => (
+        <Toast
+          id="ptx-services"
+          type="success"
+          title={t("notifications.ptxServices.toast.title")}
+          icon="info"
+        />
+      ),
+    },
     navigationParams: [
       NavigatorName.Exchange,
       {
@@ -158,7 +176,16 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: iconSell,
     disabled: isPtxServiceCtaScreensDisabled || isZeroBalance,
     modalOnDisabledClick: {
-      component: ZeroBalanceDisabledModalContent,
+      component: isPtxServiceCtaScreensDisabled
+        ? () => (
+            <Toast
+              id="ptx-services"
+              title={t("notifications.ptxServices.toast.title")}
+              icon="info"
+              type="success"
+            />
+          )
+        : ZeroBalanceDisabledModalContent,
     },
     event: "Sell Crypto Account Button",
     eventProperties: {
