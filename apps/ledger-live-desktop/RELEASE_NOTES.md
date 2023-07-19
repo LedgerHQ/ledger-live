@@ -1,10 +1,9 @@
-
-# 2.64
+# 2.64.1
 
 ### 🚀 Features
 
 - Navigating the Discover section just got easier. A nifty search bar and categories will help you quickly find dApps and services you're looking for.
-- Ledger Live now supports an f4/t4 address format that allows you to directly transfer your FIL to an Ethereum-style (0x) address. 
+- Ledger Live now supports an f4/t4 address format that allows you to directly transfer your FIL to an Ethereum-style (0x) address.
 
 ### 🌷 Improvements
 
