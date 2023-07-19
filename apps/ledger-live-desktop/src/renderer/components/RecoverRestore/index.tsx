@@ -88,7 +88,7 @@ const RecoverRestore = () => {
           <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
           {renderError({
             t,
-            error: new DeviceOnboarded(t("errors.DeviceAlreadySetup")),
+            error: new DeviceOnboarded(t("errors.DeviceAlreadySetup.title")),
             device: currentDevice,
           })}
         </Flex>
