@@ -1,0 +1,14 @@
+{
+    "index": {
+      "title": "Home",
+      "display": "hidden",
+      "theme": {
+        "breadcrumb": false,
+        "footer": true,
+        "sidebar": false,
+        "toc": true,
+        "pagination": false,
+        "layout": "full"
+      }
+    }
+}
