@@ -1,5 +1,17 @@
 # @ledgerhq/errors
 
+## 6.13.0
+
+### Minor Changes
+
+- [#3815](https://github.com/LedgerHQ/ledger-live/pull/3815) [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support for Internet Computer blockchain
+
+## 6.13.0-next.0
+
+### Minor Changes
+
+- [#3815](https://github.com/LedgerHQ/ledger-live/pull/3815) [`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support for Internet Computer blockchain
+
 ## 6.12.7
 
 ### Patch Changes

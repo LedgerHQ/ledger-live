@@ -117,7 +117,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
-    "featureFlags" : "Marcas de funciones",
+    "featureFlags" : "Indicadores de funciones",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -187,7 +187,55 @@
       "REGISTER" : "Registrado",
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
-      "WITHDRAW_UNSTAKED" : "Retirado"
+      "WITHDRAW_UNSTAKED" : "Retirado",
+      "SENDING" : "Enviando"
+    },
+    "edit" : {
+      "title" : "Acelerar o cancelar",
+      "description" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla.",
+      "stuckDescription" : "Tu transacción se ha quedado atascada. Acelérala con una tarifa de red más alta o cancélala.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Información sobre las tarifas de transacciones pendientes: ",
+        "networkfee" : "Tarifa de red = ",
+        "maxFee" : "Tarifa máxima = ",
+        "maxPriorityFee" : "Tarifa de prioridad máxima = ",
+        "gasPrice" : "Precio del gas = "
+      },
+      "learnMore" : "Quiero saber más",
+      "panel" : {
+        "title" : "Acelerar o cancelar",
+        "description" : "Una de tus transacciones de envío más recientes se ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala."
+      },
+      "speedUp" : {
+        "title" : "Acelerar",
+        "description" : "Vuelve a enviar la transacción con una tarifa de red mayor."
+      },
+      "cancel" : {
+        "title" : "Cancelar",
+        "description" : "Enviando 0 {{ticker}} a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 30% más alta que la tarifa de la transacción que se pretende cancelar."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Método"
+        },
+        "fees" : {
+          "title" : "Tarifas"
+        },
+        "summary" : {
+          "title" : "Resumen"
+        },
+        "device" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmación"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "La cancelación de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+        "notEnoughFundsToSpeedup" : "La aceleración de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+        "notlowestNonceToSpeedup" : "La función de aceleración no está disponible. Tu transacción está pendiente porque hay una transacción anterior atascada. Puedes esperar a que se confirme, acelerarla o cancelarla."
+      }
     }
   },
   "byteSize" : {
@@ -255,7 +303,7 @@
       "kyc" : "KYC"
     },
     "form" : {
-      "changeCTA" : "Cambiar",
+      "changeCTA" : "Cambio",
       "rates" : {
         "title" : "Cotizaciones",
         "registration" : "Es necesario registrarse ",
@@ -333,6 +381,9 @@
         "withdrawalsBlockedError" : {
           "message" : "{{providerName}} ha bloqueado tu retiro.\n\n Para obtener más información, ponte en contacto con su equipo de soporte."
         }
+      },
+      "timeout" : {
+        "message" : "No se pudieron generar las cotizaciones por problemas técnicos. Intenta realizar de nuevo la permuta en unos instantes."
       }
     },
     "history" : {
@@ -648,6 +699,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "Prueba"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "Conectar Vault",
+      "info" : "Vincula las cuentas de tu espacio de trabajo de Ledger Vault y crea transacciones desde Ledger Live completando los siguientes campos. Busca la información en Ajustes > Firmante de billetera externa.",
+      "info_link" : "Más información",
+      "host" : {
+        "title" : "Endpoint de URL",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "Nombre del espacio de trabajo",
+        "placeholder" : "espacio de trabajo"
+      },
+      "token" : {
+        "title" : "Token de API de operador",
+        "placeholder" : "Token"
+      },
+      "submit" : "Conectar"
+    }
   },
   "fullNode" : {
     "status" : "Estado",
@@ -1396,6 +1467,10 @@
     "referralProgram" : {
       "title" : "Recomiéndanos y llévate $10 USD",
       "description" : "Refiere con éxito a un amigo para recibir $10 USD en Bitcoin cada uno."
+    },
+    "vaultSigner" : {
+      "title" : "Modo firmante de Vault",
+      "link" : "Centro de ayuda de Vault"
     }
   },
   "signmessage" : {
@@ -1522,7 +1597,7 @@
     "marketList" : {
       "crypto" : "Cripto",
       "price" : "Precio",
-      "change" : "Cambiar",
+      "change" : "Cambio",
       "marketCap" : "Capitalización de mercado",
       "last7d" : "Últimos 7 días"
     },
@@ -2219,6 +2294,8 @@
         "recipientAddress" : "Dirección de recepción",
         "amount" : "Importe",
         "fees" : "Tarifas de red",
+        "maxFees" : "Tarifas de red máx.",
+        "maxFeesInfo" : "Es la máxima cantidad que se puede pagar por esta transacción. Se reembolsará la diferencia entre las tarifas de red máx. y las tarifas reales.",
         "useMax" : "Utilizar máx",
         "sendMax" : "Enviar máx",
         "rippleTag" : "Etiqueta",
@@ -2297,7 +2374,8 @@
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Cambiar el idioma del dispositivo",
-    "changeLanguage" : "Cambiar idioma",
+    "changeLanguage" : "Cambio",
+    "dontChangeLanguage" : "No cambiar",
     "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
     "changeDeviceLanguagePrompt" : {
       "title" : "El idioma {{language}} también está disponible para tu {{deviceName}}.",
@@ -3725,7 +3803,7 @@
         },
         "validator" : {
           "title" : "Seleccionar validador",
-          "description" : "Puedes seleccionar un validador comparando los índices de recompensa estimados",
+          "description" : "Puedes seleccionar un validador comparando los índices de recompensa calculados",
           "customValidator" : "Validador personalizado",
           "providedBy" : "Tasas de rendimiento suministradas por <1><0>{{name}}</0></1>"
         },
@@ -3831,12 +3909,12 @@
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
       "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
       "customLockScreenCTA" : "Ejecutar",
-      "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
+      "featureFlagsTitle" : "Indicadores de funciones definidos que se usan en Ledger Live",
       "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
       "featureFlagsEdit" : "Editar",
       "featureFlagsRestore" : "Restaurar",
       "featureFlagsOverride" : "Anular",
-      "featureFlagsRestoreAll" : "Restaurar los valores de todas las marcas",
+      "featureFlagsRestoreAll" : "Restaurar los valores de todos los Indicadores",
       "showButtonDesc" : "Mostrar siempre el botón Marcas de funciones en la barra lateral",
       "buttonTitle" : "Señales de alarma anuladas localmente",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
@@ -3945,6 +4023,10 @@
         "1559DeactivateGate" : {
           "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
           "description" : "Esto permite enviar una transacción sin ninguna expectativa de tarifa de prioridad mínima. Optar por ello puede provocar que una transacción quede bloqueada en el pool de memoria para siempre."
+        },
+        "vaultSigner" : {
+          "title" : "Firmante de Vault",
+          "description" : "Usar Ledger Vault como firmante con tu token de API de operador"
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Umbral de tarifa de prioridad personalizada",
@@ -4061,7 +4143,7 @@
     "downloadInProgress" : "Descargando actualización...",
     "downloadProgress" : "{{progress}}% completado",
     "checking" : "Comprobando actualización...",
-    "checkSuccess" : "Actualización lista para instalar",
+    "checkSuccess" : "Nueva actualización de Ledger Live disponible, se instalará automáticamente cuando cierres la aplicación.",
     "quitAndInstall" : "Instalar ahora",
     "updateAvailable" : "Se encuentra disponible la actualización a la versión {{version}} de Ledger Live",
     "error" : "Error durante la actualización. Descárgala de nuevo",
@@ -4180,7 +4262,7 @@
       "whereToHide" : {
         "title" : "¿Dónde debo guardar mi Frase de recuperación?",
         "points" : {
-          "1" : "<0>NUNCA</0> lo ingreses en una PC, smartphone o cualquier otro dispositivo. No le tomes fotografías.",
+          "1" : "<0>NUNCA</0> la ingreses en una PC, smartphone o cualquier otro dispositivo. No le tomes fotografías.",
           "2" : "<0>NUNCA</0> compartas tus 24 Palabras con nadie.",
           "3" : "<0>SIEMPRE</0> guárdala en un lugar seguro, fuera de la vista.",
           "4" : "Ledger nunca te pedirá tu Frase de recuperación.",
@@ -4216,6 +4298,7 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
+        "recoverSignIn" : "Iniciar sesión para acceder a Ledger Recover",
         "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
@@ -4265,7 +4348,7 @@
           },
           "4" : {
             "title" : "Restaurar con Ledger Recover",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+            "description" : "Debes tener una suscripción a Ledger Recover."
           }
         }
       },
@@ -4451,7 +4534,7 @@
           "useRecoverySheet" : {
             "takeYourRecoverySheet" : {
               "title" : "Busca tu Hoja de recuperación (Recovery sheet)",
-              "descr" : "Elige una Hoja de recuperación en blanco, de las incluidas con tu Nano. Si las Hojas de Recuperación incluidas no están en blanco, ponte en contacto con el Soporte de Ledger."
+              "descr" : "Elige una Hoja de recuperación en blanco, de las incluidas con tu Nano. Si las Hojas de recuperación incluidas no están en blanco, ponte en contacto con el Soporte de Ledger."
             },
             "writeDownWords" : {
               "title" : "Escribe las 24 Palabras",
@@ -4468,10 +4551,10 @@
             }
           },
           "newRecoveryPhrase" : {
-            "title" : "Frase de recuperación",
-            "paragraph1" : "Tu Frase de recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas.",
-            "paragraph2" : "Tu Nano genera una Frase de recuperación única. Ledger no conserva copias de la misma.",
-            "disclaimer" : "Comprendo que si pierdo la Frase de recuperación no podré acceder a mis cripto en caso de no tener acceso a mi Nano.",
+            "title" : "Tu Frase de Recuperación Secreta",
+            "paragraph1" : "Tu Frase de Recuperación Secreta es una lista de 24 Palabras que genera una copia de respaldo de tus claves privadas.",
+            "paragraph2" : "Tu Ledger Nano genera una Frase de Recuperación Secreta única. Ledger no sabe cuál es.",
+            "disclaimer" : "Comprendo que si alguien accede a mi Frase de Recuperación Secreta, mis activos serán vulnerables.",
             "buttons" : {
               "next" : "Frase de recuperación",
               "prev" : "Paso anterior",
@@ -4611,7 +4694,7 @@
         "1" : {
           "text" : "Como usuario de Ledger, mis criptomonedas se almacenan:",
           "answers" : {
-            "1" : "En mi Nano",
+            "1" : "En mi Ledger Nano",
             "2" : "En la cadena de bloques"
           },
           "results" : {
@@ -4626,10 +4709,10 @@
           }
         },
         "2" : {
-          "text" : "Si mi Frase de recuperación deja de ser secreta o estar protegida...",
+          "text" : "Si otra persona accede a mi Frase de Recuperación Secreta...",
           "answers" : {
-            "1" : "Ningún problema, Ledger me manda una copia",
-            "2" : "Mis criptomonedas ya no están seguras y debo transferirlas a un lugar seguro"
+            "1" : "No pasa nada, siempre que yo sepa cuál es",
+            "2" : "Mis activos serán vulnerables y dicha persona podría acceder a ellos"
           },
           "results" : {
             "success" : {
@@ -4643,7 +4726,7 @@
           }
         },
         "3" : {
-          "text" : "Cuando conecto mi Nano a la aplicación Ledger, mi clave privada...",
+          "text" : "Cuando conecto mi Ledger Nano a la aplicación Ledger Live, mi clave privada es...",
           "answers" : {
             "1" : "Sigue sin conectarse a Internet",
             "2" : "Se conecta brevemente a Internet"
@@ -4876,6 +4959,16 @@
     "cardano" : {
       "memoPlaceholder" : "Opcional",
       "memo" : "Memo"
+    },
+    "internet_computer" : {
+      "memoPlaceholder" : "Opcional, predeterminado: 0",
+      "memo" : "Memo",
+      "memoWarningText" : "El valor del memo puede ser un número entre 0 y 9223372036854775807."
+    },
+    "stacks" : {
+      "memoPlaceholder" : "Opcional",
+      "memo" : "Memo",
+      "memoWarningText" : "Al utilizar un Memo, confirma cuidadosamente con el receptor el tipo a utilizar"
     },
     "stellar" : {
       "memo" : "Memo",
@@ -5328,11 +5421,17 @@
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
     },
+    "InvalidNonce" : {
+      "title" : "Es obligatorio añadir un nonce"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Tu cuenta ya está delegada a este validador"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource" : {
       "title" : "La dirección de recepción es la misma que la dirección de emisión"
+    },
+    "InvalidMemoICP" : {
+      "title" : "El memo debe ser un número."
     },
     "CantOpenDevice" : {
       "title" : "La conexión ha fallado",
@@ -5345,6 +5444,10 @@
     "EthAppNftNotSupported" : {
       "title" : "Operación no disponible en este dispositivo",
       "description" : "La función Enviar NFT sólo está disponible en el Nano X y el Nano S+. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
+    },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "No es posible acelerarla ni cancelarla",
+      "description" : "Esta transacción ya se ha validado"
     },
     "CantScanQRCode" : {
       "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática"
@@ -5583,6 +5686,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Asegúrate de tener fondos suficientes para pagar las tarifas"
     },
+    "StacksMemoTooLong" : {
+      "title" : "El memo es demasiado largo"
+    },
     "StellarWrongMemoFormat" : {
       "title" : "El formato de Memo es incorrecto"
     },
@@ -5760,6 +5866,7 @@
   },
   "customImage" : {
     "title" : "Pantalla de bloqueo personalizada",
+    "cta" : "Pantalla de bloqueo personalizada",
     "managerCTA" : "Imagen de pantalla de bloqueo",
     "managerCTARemove" : "Eliminar",
     "steps" : {
@@ -5851,5 +5958,8 @@
       "contactSupport" : "Ponte en contacto con el Soporte de Ledger",
       "saveLog" : "Guardar registro"
     }
+  },
+  "recoverRestore" : {
+    "title" : "Conecta y desbloquea tu Ledger"
   }
 }
