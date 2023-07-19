@@ -6,7 +6,6 @@ import { Theme, withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Text } from "@ledgerhq/native-ui";
 
 const isAndroid = Platform.OS === "android";
 
