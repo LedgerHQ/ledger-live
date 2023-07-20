@@ -17,7 +17,6 @@ import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
-  // env: { DEV_TOOLS: true },
 });
 
 // Tests to cover in Playwright test suite
