@@ -14,6 +14,7 @@ import { TrackScreen } from "../../../analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../../TabBar/BackgroundGradient";
 import ScrollToTopButton from "./ScrollToTopButton";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -38,7 +39,7 @@ const NB_COLUMNS = 2;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
 
-export function NftList({ data }: Props) {
+const NftList = ({ data }: Props) => {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
 
@@ -181,7 +182,9 @@ export function NftList({ data }: Props) {
       </Animated.View>
     </>
   );
-}
+};
+
+export default withDiscreetMode(NftList);
 
 const StyledButton = styled(Button)`
   padding: 0;
