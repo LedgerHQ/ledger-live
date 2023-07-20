@@ -1,4 +1,4 @@
-import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
 
@@ -30,7 +30,8 @@ export type GetDeviceInfoTaskEvent =
   | GetDeviceInfoTaskErrorEvent
   | SharedTaskEvent;
 
-function internalGetDeviceInfoTask({
+// Exported for tests
+export function internalGetDeviceInfoTask({
   deviceId,
 }: GetDeviceInfoTaskArgs): Observable<GetDeviceInfoTaskEvent> {
   return new Observable(subscriber => {
@@ -45,7 +46,11 @@ function internalGetDeviceInfoTask({
           }),
           map(value => {
             if (value.type === "unresponsive") {
-              return { type: "error" as const, error: new LockedDeviceError() };
+              return {
+                type: "error" as const,
+                error: new UnresponsiveDeviceError(),
+                retrying: true,
+              };
             }
 
             const { firmwareInfo } = value;
@@ -130,4 +135,10 @@ export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
   return deviceInfo;
 };
 
+/**
+ * Task to get the `DeviceInfo` of a device
+ *
+ * @param `deviceId` A device id, or an empty string if device is usb plugged
+ * @returns An observable that emits `GetDeviceInfoTaskEvent` events
+ */
 export const getDeviceInfoTask = sharedLogicTaskWrapper(internalGetDeviceInfoTask);

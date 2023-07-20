@@ -48,6 +48,7 @@ describe("sharedLogicTaskWrapper", () => {
             expect(event).toEqual({
               type: "error",
               error: new Error("Unhandled error"),
+              retrying: false,
             });
             done();
           } catch (expectError) {
@@ -81,6 +82,7 @@ describe("sharedLogicTaskWrapper", () => {
               expect(event).toEqual({
                 type: "error",
                 error: new LockedDeviceError("Handled error"),
+                retrying: true,
               });
             } else {
               expect(event).toEqual({ type: "data" });

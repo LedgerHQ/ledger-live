@@ -33,7 +33,10 @@ export type useGetLatestAvailableFirmwareResult = {
 };
 
 /**
+ * Deprecated: use `libs/ledger-live-common/src/deviceSDK/hooks/useGetLatestAvailableFirmware.ts`
+ *
  * Hook to get the latest available firmware for a device
+ *
  * @param getLatestAvailableFirmwareFromDeviceId An optional function to get the latest available firmware
  * for a given device id, by default set to live-common/hw/getLatestAvailableFirmwareFromDeviceId.
  * This dependency injection is needed for LLD to have the hook working on the internal thread
