@@ -33,7 +33,9 @@ export function startDummyServer(appPath: string, port = 0): Promise<number> {
   });
 }
 
-export function getLiveAppManifest(params: Partial<AppManifest> & Pick<AppManifest, "url" | "id">) {
+export function getLiveAppManifest(
+  params: Partial<AppManifest> & Pick<AppManifest, "id" & "url">,
+): AppManifest[] {
   const manifest = [
     {
       name: "Generic Live App",
@@ -75,7 +77,7 @@ export function getLiveAppManifest(params: Partial<AppManifest> & Pick<AppManife
       visibility: "complete",
       ...params,
     },
-  ];
+  ] as AppManifest[];
 
   return manifest;
 }
@@ -84,6 +86,7 @@ export function stopDummyServer(): Promise<void> {
   dummyAppServer.close();
   return new Promise(resolve => {
     dummyAppServer.on("close", () => {
+      console.info(`========> Live app stopped <=========`);
       resolve();
     });
   });

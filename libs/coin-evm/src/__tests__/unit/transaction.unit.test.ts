@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { transactionToEthersTransaction } from "../../adapters";
 import { Transaction as EvmTransaction } from "../../types";
-import * as rpcAPI from "../../api/rpc/rpc.common";
+import * as nodeApi from "../../api/node/rpc.common";
 import {
   account,
   eip1559Tx,
@@ -254,7 +254,7 @@ describe("EVM Family", () => {
 
     describe("getSerializedTransaction", () => {
       beforeAll(() => {
-        jest.spyOn(rpcAPI, "getTransactionCount").mockImplementation(() => Promise.resolve(0));
+        jest.spyOn(nodeApi, "getTransactionCount").mockImplementation(() => Promise.resolve(0));
       });
 
       describe("without customGasLimit", () => {

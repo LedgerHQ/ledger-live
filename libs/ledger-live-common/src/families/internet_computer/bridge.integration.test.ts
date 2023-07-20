@@ -24,6 +24,11 @@ const internet_computer: CurrenciesData<Transaction> = {
       => 11010000142c000080df000080010000800000000000000000
       <= 04fc89df2bb2677347117b550c9a66b9a54c384dfee78a83a1e3010fd2f5ce7418f6706102bc5611094702f64773fd5569ca5e24c44b77383e58e034f521f96bafe7b69dcf5141bfb119194185a296a11aa33c986f48369fac7ec6571b0202c1bf9b7b539ad8e39cf4df4881742be4fa2c4a6b1b97c1b735972665556742706e756a7566786877326f3436756b627836797273676b627177726a6e696932756d366a7133326967327032793777676b346e71659000
       `,
+      test: (expect, accounts) => {
+        for (const account of accounts) {
+          expect(account.derivationMode).toEqual("internet_computer");
+        }
+      },
     },
   ],
   accounts: [
@@ -31,7 +36,7 @@ const internet_computer: CurrenciesData<Transaction> = {
       raw: {
         balance: "1000000",
         currencyId: "internet_computer",
-        derivationMode: "",
+        derivationMode: "internet_computer",
         freshAddress: "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
         freshAddressPath: "44'/223'/0'/0/0",
         freshAddresses: [

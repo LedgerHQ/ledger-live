@@ -24,7 +24,7 @@
       }
     },
     "catalog" : {
-      "title" : "Entdecken",
+      "title" : "Neues entdecken",
       "section" : {
         "recentlyUsed" : "Kürzlich verwendet",
         "browse" : "Durchsuchen"
@@ -33,7 +33,7 @@
         "categories" : "Kategorien"
       },
       "branch" : {
-        "soon" : "In Kürze verfügbar",
+        "soon" : "Bald verfügbar",
         "experimental" : "Experimentell",
         "debug" : "debuggen"
       },
@@ -187,7 +187,55 @@
       "REGISTER" : "Registriert",
       "STAKE" : "Gestaked",
       "UNSTAKE" : "Nicht mehr gestaked",
-      "WITHDRAW_UNSTAKED" : "Ausgezahlt"
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt",
+      "SENDING" : "Senden"
+    },
+    "edit" : {
+      "title" : "Beschleunigen oder Abbrechen",
+      "description" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "stuckDescription" : "Ihre Transaktion ist stecken geblieben. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
+        "networkfee" : "Netzwerkgebühr: ",
+        "maxFee" : "Maximalgebühr: ",
+        "maxPriorityFee" : "Maximale Prioritätsgebühr: ",
+        "gasPrice" : "Gaspreis: "
+      },
+      "learnMore" : "Ich möchte mehr erfahren",
+      "panel" : {
+        "title" : "Beschleunigen oder Abbrechen",
+        "description" : "Eine Ihrer zuletzt „gesendeten“ Transaktionen ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+      },
+      "speedUp" : {
+        "title" : "Beschleunigen",
+        "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+      },
+      "cancel" : {
+        "title" : "Abbrechen",
+        "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 30 % höher als die Gebühr für die zu stornierende Transaktion."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Methode"
+        },
+        "fees" : {
+          "title" : "Gebühren"
+        },
+        "summary" : {
+          "title" : "Zusammenfassung"
+        },
+        "device" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+        "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+        "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren."
+      }
     }
   },
   "byteSize" : {
@@ -229,11 +277,11 @@
     "accounts" : "Konten",
     "manager" : "My Ledger",
     "earn" : "Verdienen",
-    "exchange" : "Kaufen / Verkaufen",
+    "exchange" : "Kaufen & Verkaufen",
     "swap" : "Umtauschen",
     "refer" : "Freunde werben",
     "lend" : "Leihen",
-    "catalog" : "Entdecken",
+    "catalog" : "Neues entdecken",
     "market" : "Markt",
     "recover" : "Ledger Recover"
   },
@@ -333,6 +381,9 @@
         "withdrawalsBlockedError" : {
           "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
         }
+      },
+      "timeout" : {
+        "message" : "Aus technischen Gründen konnten keine Angebote erstellt werden. Bitte wiederholen Sie den Tauschversuch in einigen Minuten noch einmal."
       }
     },
     "history" : {
@@ -554,7 +605,7 @@
     "resetThirdPartyDataModal" : {
       "title" : "Ihre lokalen Drittanbieterdaten löschen",
       "subtitle" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
-      "cta" : "Confirm"
+      "cta" : "Bestätigen"
     },
     "modal" : {
       "title" : "Umtauschen",
@@ -648,6 +699,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "Testen"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "Vault verbinden",
+      "info" : "Verknüpfen Sie Ihre Ledger Vault-Arbeitsbereichskonten und erstellen Sie Transaktionen aus Ledger Live. Hierzu müssen Sie die nachstehenden Felder ausfüllen. Informationen finden Sie unter „Settings“ (Einstellungen) > „External wallet signer“ (Externer Wallet-Unterzeichner).",
+      "info_link" : "Weitere Informationen",
+      "host" : {
+        "title" : "URL-Endpunkt",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "Arbeitsbereichsname",
+        "placeholder" : "Arbeitsbereich"
+      },
+      "token" : {
+        "title" : "Operator-API-Token",
+        "placeholder" : "Token"
+      },
+      "submit" : "Verbinden"
+    }
   },
   "fullNode" : {
     "status" : "Status",
@@ -1383,7 +1454,7 @@
     },
     "swap" : {
       "title" : "Kryptowährungen umtauschen",
-      "description" : "Tauschen Sie eine Kryptowährung gegen eine andere von Ledger Live mit unserem Partner."
+      "description" : "Mit unserem Partner eine Kryptowährung in eine andere über Ledger Live tauschen."
     },
     "lending" : {
       "title" : "Kryptowährungen verleihen",
@@ -1394,8 +1465,12 @@
       "description" : "Freuen Sie sich über 40 % Rabatt auf Ledger Hardware-Wallets mit dem Promo-Code BLACKFRIDAY20"
     },
     "referralProgram" : {
-      "title" : "Empfehlen und 10$ verdienen",
+      "title" : "Ledger empfehlen und 10$ verdienen",
       "description" : "Wenn Sie erfolgreich einen Freund empfehlen, verdienen Sie beide Bitcoin im Wert von 10$."
+    },
+    "vaultSigner" : {
+      "title" : "Vault-Unterzeichnermodus",
+      "link" : "Vault-Hilf–Center"
     }
   },
   "signmessage" : {
@@ -1451,7 +1526,7 @@
     "transactionsPendingConfirmation" : "Einige Transaktionen sind noch nicht bestätigt. Diese werden in Ihrem Guthaben angezeigt und können nach der Bestätigung verwendet werden.",
     "featuredButtons" : {
       "buySell" : {
-        "title" : "Kaufen / Verkaufen",
+        "title" : "Kaufen & Verkaufen",
         "description" : "Kaufen und verkaufen Sie bei vertrauenswürdigen Anbietern"
       },
       "swap" : {
@@ -2157,7 +2232,7 @@
         },
         "cosmos" : {
           "title" : "Vermehren Sie Ihre ATOM. Staken mit Ledger Validator.",
-          "description" : "Staken Sie Ihre ATOM mit dem vertrauenswürdigen Ledger Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+          "description" : "ATOM mit dem bewährten Ledger-Validator staken: Ihre Coins gehören stets Ihnen, dank der kompromisslosen Sicherheit von Ledger."
         },
         "osmo" : {
           "title" : "Vermehren Sie Ihre OSMO. Staken mit Ledger by Figment.",
@@ -2219,6 +2294,8 @@
         "recipientAddress" : "Adresse des Empfängers",
         "amount" : "Betrag",
         "fees" : "Netzgebühren",
+        "maxFees" : "Max. Netzwerkgebühren",
+        "maxFeesInfo" : "Dies ist der Betrag, den Sie maximal für diese Transaktion zahlen müssen. Die Differenz zwischen den maximalen Netzgebühren und den tatsächlichen Gebühren wird zurückerstattet.",
         "useMax" : "Max. verwenden",
         "sendMax" : "Maximum senden",
         "rippleTag" : "Tag",
@@ -2297,7 +2374,8 @@
   "deviceLocalization" : {
     "language" : "Sprache",
     "deviceLanguage" : "Gerätesprache wechseln",
-    "changeLanguage" : "Sprache wechseln",
+    "changeLanguage" : "Änderung",
+    "dontChangeLanguage" : "Nicht ändern",
     "changeDeviceLanguage" : "Möchten Sie die Sprache Ihres Geräts ändern?",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}} ist jetzt für {{deviceName}} verfügbar.",
@@ -2937,7 +3015,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "Betrag"
           },
           "validator" : {
             "title" : "Validatoren"
@@ -3946,6 +4024,10 @@
           "title" : "Deaktivierung der Mindestprioritätsgebühren (gemäß EIP1559)",
           "description" : "Dies ermöglicht die Übermittlung einer Transaktion, ohne dass eine Mindestprioritätsgebühr erhoben wird. Dies kann dazu führen, dass eine Transaktion für immer im Mempool stecken bleibt."
         },
+        "vaultSigner" : {
+          "title" : "Vault-Unterzeichner",
+          "description" : "Verwenden Sie Ledger Vault als Unterzeichner mit Ihrem Operator-API-Token"
+        },
         "1559CustomPriorityLowerGate" : {
           "title" : "Benutzerdefinierte Grenze für Prioritätsgebühren",
           "description" : "Passen Sie den Prozentsatz unserer voraussichtlichen Mindestprioritätsgebühr für eine erweiterte EIP1559-Transaktion an."
@@ -4061,7 +4143,7 @@
     "downloadInProgress" : "Herunterladen des Updates ...",
     "downloadProgress" : "{{progress}}% abgeschlossen",
     "checking" : "Prüfen des Updates ...",
-    "checkSuccess" : "Update bereit zur Installation",
+    "checkSuccess" : "Ein neues Update für Ledger Live ist verfügbar. Es wird automatisch installiert, wenn Sie die App schließen",
     "quitAndInstall" : "Jetzt installieren",
     "updateAvailable" : "Update auf Ledger Live Version {{version}} ist verfügbar",
     "error" : "Fehler beim Update. Bitte erneut herunterladen",
@@ -4216,7 +4298,8 @@
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
-        "byTapping" : "Indem Sie auf „Get Started\" (Loslegen) tippen, erklären Sie sich mit unserem",
+        "recoverSignIn" : "Für Ledger Recover anmelden",
+        "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
         "privacyPolicy" : "Datenschutzrichtlinie",
@@ -4265,7 +4348,7 @@
           },
           "4" : {
             "title" : "Wiederherstellen mit Ledger Recover",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+            "description" : "Sie brauchen ein Ledger Recover-Abonnement."
           }
         }
       },
@@ -4375,7 +4458,7 @@
           },
           "quizSuccess" : {
             "title" : "Schon ein Profi!",
-            "paragraph" : "Sie sind bereit, Ihre Kryptos sicher zu verwalten. \n\nNur noch ein kleiner Schritt!",
+            "paragraph" : "Sie sind startklar, Ihre Kryptos sicher zu verwalten. \n\nNur noch ein kleiner Schritt!",
             "buttons" : {
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt",
@@ -4384,7 +4467,7 @@
           },
           "quizFailure" : {
             "title" : "Sie werden bald zum Profi ...",
-            "paragraph" : "Keine Sorge, Ledger steht bereit, um Sie auf Ihrer Reise zu begleiten. Sie werden sich bald besonders gut fühlen, was Ihre Krypto-Sicherheit angeht. \n\nNur noch ein kleiner Schritt!",
+            "paragraph" : "Ledger ist der perfekte Begleiter was Ihre Krypto-Sicherheit betrifft. \n\nEs fehlt nur noch ein kleiner Schritt!",
             "buttons" : {
               "next" : "Nächster Schritt",
               "prev" : "Vorheriger Schritt"
@@ -4468,10 +4551,10 @@
             }
           },
           "newRecoveryPhrase" : {
-            "title" : "Wiederherstellungsphrase",
-            "paragraph1" : "Ihre Wiederherstellungsphrase ist eine geheime Liste von 24 Wörtern, die Ihre privaten Schlüssel sichern.",
-            "paragraph2" : "Ihr Nano erzeugt eine einzigartige Wiederherstellungsphrase. Ledger behält keine Kopie davon.",
-            "disclaimer" : "Ich verstehe, dass ich bei Verlust dieser Wiederherstellungsphrase nicht auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere.",
+            "title" : "Ihre geheime Wiederherstellungsphrase",
+            "paragraph1" : "Ihre geheime Wiederherstellungsphrase ist eine Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden.",
+            "paragraph2" : "Ihre Ledger Nano erzeugt eine eindeutige geheime Wiederherstellungsphrase. Ledger kennt diese Phrase nicht.",
+            "disclaimer" : "Ich habe zur Kenntnis genommen, dass, wenn jemand Zugriff auf meine geheime Wiederherstellungsphrase erhält, meine Vermögenswerte gefährdet sind.",
             "buttons" : {
               "next" : "Wiederherstellungsphrase",
               "prev" : "Vorheriger Schritt",
@@ -4611,7 +4694,7 @@
         "1" : {
           "text" : "Als Ledger-Benutzer werden meine Kryptos so gespeichert:",
           "answers" : {
-            "1" : "Auf meinem Nano",
+            "1" : "Auf meiner Ledger Nano",
             "2" : "Auf der Blockchain"
           },
           "results" : {
@@ -4626,10 +4709,10 @@
           }
         },
         "2" : {
-          "text" : "Wenn mein Wiederherstellungssatz nicht mehr sicher oder privat ist ...",
+          "text" : "Wenn jemand anderes Zugang zu meiner geheimen Wiederherstellungsphrase erhält …",
           "answers" : {
-            "1" : "Kein Problem, Ledger kann mir eine Kopie schicken",
-            "2" : "Meine Kryptos sind nicht mehr sicher und ich muss sie an einen sicheren Ort übertragen"
+            "1" : "Kein Problem, solange ich sie noch kenne",
+            "2" : "Meine Vermögenswerte sind dann jedoch gefährdet und diese Person könnte Zugriff darauf haben"
           },
           "results" : {
             "success" : {
@@ -4643,7 +4726,7 @@
           }
         },
         "3" : {
-          "text" : "Wenn ich meinen Nano mit der Ledger-App verbinde, ist mein privater Schlüssel ...",
+          "text" : "Wenn ich meine Ledger Nano mit der Ledger Live-App verbinde, ist mein privater Schlüssel …",
           "answers" : {
             "1" : "Noch offline",
             "2" : "Kurzzeitig mit dem Internet verbunden"
@@ -4876,6 +4959,16 @@
     "cardano" : {
       "memoPlaceholder" : "Optional",
       "memo" : "Memo"
+    },
+    "internet_computer" : {
+      "memoPlaceholder" : "Optional, Standard: 0",
+      "memo" : "Memo",
+      "memoWarningText" : "Der Memowert kann eine Zahl zwischen 0 und 9223372036854775807 sein"
+    },
+    "stacks" : {
+      "memoPlaceholder" : "Optional",
+      "memo" : "Memo",
+      "memoWarningText" : "Wenn Sie ein Memo verwenden, überprüfen Sie sorgfältig den verwendeten Typ mit dem Empfänger"
     },
     "stellar" : {
       "memo" : "Memo",
@@ -5328,11 +5421,17 @@
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
     },
+    "InvalidNonce" : {
+      "title" : "Nonce ist erforderlich"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Ihr Konto wurde bereits an diesen Validator delegiert"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource" : {
       "title" : "Empfängeradresse ist die gleiche wie die Absenderadresse"
+    },
+    "InvalidMemoICP" : {
+      "title" : "Memo muss eine Zahl sein"
     },
     "CantOpenDevice" : {
       "title" : "Entschuldigung, Verbindung fehlgeschlagen",
@@ -5345,6 +5444,10 @@
     "EthAppNftNotSupported" : {
       "title" : "Vorgang auf diesem Gerät nicht verfügbar",
       "description" : "Die Funktion zum Senden von NFTs ist nur für Nano X und Nano S+ verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
+    },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "Kann nicht beschleunigt oder abgebrochen werden",
+      "description" : "Diese Transaktion wurde bereits validiert"
     },
     "CantScanQRCode" : {
       "title" : "Dieser QR-Code konnte nicht gescannt werden: Auto-Verifizierung wird von dieser Adresse nicht unterstützt"
@@ -5583,6 +5686,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
     },
+    "StacksMemoTooLong" : {
+      "title" : "Memo ist zu lang"
+    },
     "StellarWrongMemoFormat" : {
       "title" : "Memo-Format ist falsch"
     },
@@ -5760,6 +5866,7 @@
   },
   "customImage" : {
     "title" : "Individueller Sperrbildschirm",
+    "cta" : "Individueller Sperrbildschirm",
     "managerCTA" : "Bild für Sperrbildschirm",
     "managerCTARemove" : "Entfernen",
     "steps" : {
@@ -5851,5 +5958,8 @@
       "contactSupport" : "Ledger-Kundenservice kontaktieren",
       "saveLog" : "Log speichern"
     }
+  },
+  "recoverRestore" : {
+    "title" : "Verbinden und entsperren Sie Ihr Ledger"
   }
 }
