@@ -116,7 +116,7 @@ export function EthStakingModalBody({
       <Flex flexDirection={"column"} mt={5} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
           {listProviders.map(item => (
-            <Flex key={item.liveAppId} width="100%" flexDirection={"column"}>
+            <Flex key={item.id} width="100%" flexDirection={"column"}>
               <ProviderItem
                 provider={item}
                 infoOnClick={infoOnClick}
