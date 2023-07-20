@@ -512,9 +512,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     ...Platform.select({
-      android: {
-        elevation: 1,
-      },
       ios: {
         shadowOpacity: 0.2,
         shadowRadius: 14,
