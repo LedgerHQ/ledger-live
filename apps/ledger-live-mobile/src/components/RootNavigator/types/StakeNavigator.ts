@@ -7,5 +7,6 @@ export type StakeNavigatorParamList = {
     currencies?: string[];
     parentRoute?: RouteProp<ParamListBase>;
     account?: Account;
+    alwaysShowNoFunds?: boolean;
   };
 };

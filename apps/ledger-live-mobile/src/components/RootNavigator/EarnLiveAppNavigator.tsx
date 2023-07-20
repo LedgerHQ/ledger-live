@@ -76,9 +76,9 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
         }
         case "get-funds": {
           if (currencyId) {
-            navigation.navigate(NavigatorName.Exchange, {
-              screen: ScreenName.ExchangeBuy,
-              params: { currency: currencyId },
+            navigation.navigate(NavigatorName.StakeFlow, {
+              screen: ScreenName.Stake,
+              params: { currencies: [currencyId], alwaysShowNoFunds: true },
             });
           }
           break;

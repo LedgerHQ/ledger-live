@@ -18,6 +18,8 @@ const StakeFlow = ({ route }: Props) => {
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;
   const account = route?.params?.account;
+  const alwaysShowNoFunds = route?.params?.alwaysShowNoFunds;
+
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
       currencies: currencies || [],
@@ -26,6 +28,21 @@ const StakeFlow = ({ route }: Props) => {
 
   const goToAccount = useCallback(
     (account: Account, parentAccount?: Account) => {
+      if (alwaysShowNoFunds) {
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.NoFundsFlow,
+          drawer: undefined,
+          params: {
+            screen: ScreenName.NoFunds,
+            params: {
+              account,
+              parentAccount,
+            },
+          },
+        });
+        return;
+      }
+
       // @ts-expect-error issue in typing
       const decorators = perFamilyAccountActions[account?.currency?.family];
       const familySpecificMainActions =
@@ -42,6 +59,7 @@ const StakeFlow = ({ route }: Props) => {
         (action: { id: string }) => action.id === "stake",
       )?.navigationParams;
       if (!stakeFlow) return null;
+
       const [name, options] = stakeFlow;
 
       navigation.navigate(NavigatorName.Base, {
@@ -57,7 +75,7 @@ const StakeFlow = ({ route }: Props) => {
         },
       });
     },
-    [navigation, parentRoute],
+    [navigation, parentRoute, alwaysShowNoFunds],
   );
 
   const requestAccount = useCallback(() => {
