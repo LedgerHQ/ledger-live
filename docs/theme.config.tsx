@@ -64,6 +64,7 @@ const themeConfig = {
         <p style={{ textAlign: "center" }}>Copyright © 2023 Ledger SAS. All rights reserved.</p>
       </div>
     ),
+    docsRepositoryBase: "https://github.com/LedgerHQ/ledger-live/tree/main/docs",
   },
 };
 
