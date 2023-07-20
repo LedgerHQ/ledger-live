@@ -112,7 +112,6 @@ export function formatCurrencyUnitFragment(
           ),
         ),
       );
-
   const fragValueByKind = {
     sign: alwaysShowSign || floatValue.isNegative() ? (floatValue.isNegative() ? "-" : "+") : null,
     code: showCode ? code : null,
@@ -141,18 +140,6 @@ export function formatCurrencyUnitFragment(
     });
   });
   frags.splice(nonSepIndex + 1); // remove extra space at the end
-
-  // if (
-  //   frags.some(frag => {
-  //     // frag.value === "ETH";
-  //   })
-  // ) {
-  console.log("FRAGSSSS", frags);
-  console.log("show all digits?", showAllDigits);
-  console.log("disable rounding?", disableRounding);
-  console.log("minimum fraction digits: ", minimumFractionDigits);
-  console.log("maximum fraction digits: ", maximumFractionDigits);
-  // }
 
   return frags;
 }

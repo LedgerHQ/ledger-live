@@ -104,7 +104,6 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
   });
 
   await test.step("choose Kiln", async () => {
-    await page.pause();
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked",
       properties: {

@@ -167,7 +167,7 @@ const SwapOperationDetails = ({
             showCode
             val={normalisedFromAmount}
             fontSize={6}
-            // disableRounding
+            disableRounding
             data-test-id="swap-amount-from"
           />
         </Box>
@@ -182,7 +182,7 @@ const SwapOperationDetails = ({
             showCode
             val={toAmount}
             fontSize={6}
-            // disableRounding
+            disableRounding
             color={statusColor}
             data-test-id="swap-amount-to"
           />
@@ -300,7 +300,7 @@ const SwapOperationDetails = ({
               unit={fromUnit}
               showCode
               val={fromAmount}
-              // disableRounding
+              disableRounding
               color={"palette.text.shade50"}
             />
           </Box>
@@ -343,7 +343,7 @@ const SwapOperationDetails = ({
               showCode
               val={toAmount}
               fontSize={6}
-              // disableRounding
+              disableRounding
               color={"palette.text.shade50"}
             />
           </Box>
