@@ -6268,7 +6268,7 @@
           "title": "New",
           "desc": "Stop worrying about getting locked out of your wallet.",
           "actions": {
-            "learnMore": "How does it benefit me?",
+            "learnMore": "Get to know Ledger Recover",
             "alreadySubscribed": "I already have a log in <LinkAccount>View my subscription</LinkAccount>"
           }
         }
