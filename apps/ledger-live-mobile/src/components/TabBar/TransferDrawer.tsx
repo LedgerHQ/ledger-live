@@ -159,6 +159,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onPress: onBuy,
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
           dismissToast(PTX_SERVICES_TOAST_ID);
           pushToast({
             id: PTX_SERVICES_TOAST_ID,
@@ -182,6 +183,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSell : null,
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
           dismissToast(PTX_SERVICES_TOAST_ID);
           pushToast({
             id: PTX_SERVICES_TOAST_ID,
@@ -226,6 +228,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSwap : null,
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
           dismissToast(PTX_SERVICES_TOAST_ID);
           pushToast({
             id: PTX_SERVICES_TOAST_ID,
