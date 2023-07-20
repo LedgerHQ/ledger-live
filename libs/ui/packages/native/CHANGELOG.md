@@ -1,24 +1,18 @@
 # @ledgerhq/native-ui
 
-## 0.20.2-nightly.2
-
-### Patch Changes
-
-- [#3792](https://github.com/LedgerHQ/ledger-live/pull/3792) [`9428e776cd`](https://github.com/LedgerHQ/ledger-live/commit/9428e776cd2f42f08472ab53a3c050d00a93b31c) Thanks [@grsoares21](https://github.com/grsoares21)! - Add background color as a configurable prop to the IconBadge component
-
-## 0.20.2-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86)]:
-  - @ledgerhq/crypto-icons-ui@0.4.0-nightly.1
-
-## 0.20.2-nightly.0
+## 0.20.2
 
 ### Patch Changes
 
 - Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
-  - @ledgerhq/crypto-icons-ui@0.4.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@0.4.0
+
+## 0.20.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/crypto-icons-ui@0.4.0-next.0
 
 ## 0.20.1
 
