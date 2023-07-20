@@ -37,20 +37,16 @@ export function RootDrawer({ drawer }: RootDrawerProps) {
 
   useEffect(() => {
     if (!drawer) {
-      getInitialDrawersToShow(initialDrawers)
-        .then(([id]) => {
-          if (id) {
-            setInitialDrawers(prev => prev.filter(d => d !== id));
-            navigate(NavigatorName.Base, {
-              drawer: {
-                id,
-              },
-            });
-          }
-        })
-        .catch(e => {
-          console.log("%cRootDrawer.tsx line:43 e", "color: #007acc;", e);
-        });
+      getInitialDrawersToShow(initialDrawers).then(([id]) => {
+        if (id) {
+          setInitialDrawers(prev => prev.filter(d => d !== id));
+          navigate(NavigatorName.Base, {
+            drawer: {
+              id,
+            },
+          });
+        }
+      });
     }
   }, [drawer, navigate, setInitialDrawers, initialDrawers]);
 

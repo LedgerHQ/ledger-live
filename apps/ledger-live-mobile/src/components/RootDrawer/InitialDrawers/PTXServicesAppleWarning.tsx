@@ -44,12 +44,7 @@ export function PTXServicesAppleWarning() {
   );
 
   const onLinkPress = useCallback(() => {
-    // TO-DO
-    console.log(
-      '%cPTXServicesAppleWarning.tsx line:45 "link clicked"',
-      "color: #007acc;",
-      "link clicked",
-    );
+    // TO-DO: find out where link should go
   }, []);
 
   return (
