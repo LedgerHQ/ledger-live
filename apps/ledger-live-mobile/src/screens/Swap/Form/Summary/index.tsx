@@ -13,7 +13,7 @@ import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
-import { providerIcons } from "../../../../icons/swap/index";
+import ProviderIcon from "../../../../components/ProviderIcon";
 import { StatusTag } from "./StatusTag";
 import { Item } from "./Item";
 import { Banner } from "../Banner";
@@ -54,8 +54,6 @@ export function Summary({ provider, swapTx: { swap, status, transaction }, kyc }
   const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
-
-  const ProviderIcon = useMemo(() => provider && providerIcons[provider.toLowerCase()], [provider]);
 
   const { from, to } = swap;
 
@@ -166,7 +164,6 @@ export function Summary({ provider, swapTx: { swap, status, transaction }, kyc }
     !mainAccountUnit ||
     !to.currency ||
     !estimatedFees ||
-    !ProviderIcon ||
     !exchangeRate
   ) {
     return null;
@@ -178,7 +175,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction }, kyc }
         <Flex flexDirection="row" alignItems="center">
           <StatusTag kyc={kyc} />
           <Flex paddingRight={2}>
-            <ProviderIcon size={14} />
+            <ProviderIcon size="XXS" name={provider} />
           </Flex>
 
           <Text>{name}</Text>
