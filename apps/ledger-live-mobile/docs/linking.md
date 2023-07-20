@@ -81,6 +81,16 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://custom-image` will redirect to custom lock screen page
 
+- **_earn_** 🠒 Earn Dashboard
+
+  `ledgerlive://earn` will redirect to earn dashboard page
+
+  `ledgerlive://earn?action=stake` will open staking flow
+
+  `ledgerlive://earn?action=stake-account&accountId=1` will open staking flow with selected account prefilled
+
+  `ledgerlive://earn?action=get-funds&currencyId=ethereum` will open buy drawer with specified currency
+
 **_Testing on android_** in order to test in debug your link run using [**_adb_**](https://developer.android.com/training/app-links/deep-linking#testing-filters)
 
 ```
