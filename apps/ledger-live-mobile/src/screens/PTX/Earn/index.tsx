@@ -13,7 +13,7 @@ import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
 import { EarnLiveAppNavigatorParamList } from "../../../components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
-import { counterValueCurrencySelector } from "../../../reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
@@ -25,6 +25,7 @@ export function EarnScreen({ route }: Props) {
   const { theme } = useTheme();
   const { locale } = useLocale();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
+  const discreet = useSelector(discreetModeSelector);
 
   const { platform: appId, ...params } = route.params || {};
   const searchParams = route.path
@@ -45,6 +46,7 @@ export function EarnScreen({ route }: Props) {
           theme,
           lang: locale,
           currencyTicker,
+          discreetMode: discreet ? "true" : "false",
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}
