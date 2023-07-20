@@ -1,4 +1,4 @@
-import { Transaction } from "@ledgerhq/coin-evm/lib/types";
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import React from "react";
 import { Trans } from "react-i18next";
 import WarnBox from "~/renderer/components/WarnBox";
