@@ -8,7 +8,8 @@ interface State {
 const INITIAL_STATE: State = {
   stepId: "withdraw",
 };
-class ClaimRewardsModal extends PureComponent<Data, State> {
+
+class WithdrawModal extends PureComponent<Data, State> {
   state: State = INITIAL_STATE;
   handleReset = () => this.setState({ ...INITIAL_STATE });
 
@@ -23,7 +24,7 @@ class ClaimRewardsModal extends PureComponent<Data, State> {
     const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
     return (
       <Modal
-        name="MODAL_ELROND_CLAIM_REWARDS"
+        name="MODAL_ELROND_WITHDRAW"
         centered
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
@@ -39,4 +40,4 @@ class ClaimRewardsModal extends PureComponent<Data, State> {
     );
   }
 }
-export default ClaimRewardsModal;
+export default WithdrawModal;
