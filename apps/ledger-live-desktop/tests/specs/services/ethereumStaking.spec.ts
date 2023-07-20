@@ -104,6 +104,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
   });
 
   await test.step("choose Kiln", async () => {
+    await page.pause();
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked",
       properties: {
@@ -118,7 +119,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
     await analyticsPromise;
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
-    await expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+    expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
     expect(dappURL).toContain("?focus=dedicated");
     await expect.soft(page).toHaveScreenshot("stake-provider-dapp-has-opened.png", {
       mask: [page.locator("webview")],

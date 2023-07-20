@@ -167,7 +167,8 @@ const SwapOperationDetails = ({
             showCode
             val={normalisedFromAmount}
             fontSize={6}
-            disableRounding
+            // disableRounding
+            data-test-id="swap-amount-from"
           />
         </Box>
         <Box my={1} color={"palette.text.shade50"}>
@@ -181,8 +182,9 @@ const SwapOperationDetails = ({
             showCode
             val={toAmount}
             fontSize={6}
-            disableRounding
+            // disableRounding
             color={statusColor}
+            data-test-id="swap-amount-to"
           />
         </Box>
       </Box>
@@ -280,7 +282,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={fromCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"}>
+            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-from">
               <Ellipsis>
                 <Link onClick={() => openAccount(fromAccount)}>{getAccountName(fromAccount)}</Link>
               </Ellipsis>
@@ -298,7 +300,7 @@ const SwapOperationDetails = ({
               unit={fromUnit}
               showCode
               val={fromAmount}
-              disableRounding
+              // disableRounding
               color={"palette.text.shade50"}
             />
           </Box>
@@ -322,7 +324,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={toCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"}>
+            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-to">
               <Ellipsis>
                 <Link onClick={() => openAccount(toAccount)}>{getAccountName(toAccount)}</Link>
               </Ellipsis>
@@ -341,7 +343,7 @@ const SwapOperationDetails = ({
               showCode
               val={toAmount}
               fontSize={6}
-              disableRounding
+              // disableRounding
               color={"palette.text.shade50"}
             />
           </Box>

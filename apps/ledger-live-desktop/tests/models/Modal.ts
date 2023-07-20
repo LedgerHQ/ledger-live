@@ -16,6 +16,9 @@ export class Modal {
   readonly backButton: Locator;
   readonly stakeProviderContainer: (stakeProvider: string) => Locator;
   readonly stakeProviderSupportLink: (stakeProvider: string) => Locator;
+  readonly signNetworkWarning: Locator;
+  readonly signContinueButton: Locator;
+  readonly confirmText: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -37,6 +40,11 @@ export class Modal {
       page.locator(`data-test-id=stake-provider-container-${stakeProviderID}`);
     this.stakeProviderSupportLink = stakeProviderID =>
       page.locator(`data-test-id=stake-provider-support-link-${stakeProviderID}`);
+    this.signNetworkWarning = page.locator("text=Network fees are above 10% of the amount").first();
+    this.signContinueButton = page.locator("text=Continue");
+    this.confirmText = page.locator(
+      "text=Please confirm the operation on your device to finalize it",
+    );
   }
 
   async continue() {
@@ -82,5 +90,13 @@ export class Modal {
 
   async chooseStakeSupportLink(stakeProvider: string) {
     await this.stakeProviderSupportLink(stakeProvider).dispatchEvent("click");
+  }
+
+  async continueToSignTransaction() {
+    await this.signContinueButton.click({ force: true });
+  }
+
+  async waitForConfirmationScreenToBeDisplayed() {
+    await this.confirmText.waitFor({ state: "visible" });
   }
 }
