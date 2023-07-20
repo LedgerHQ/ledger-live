@@ -2816,6 +2816,13 @@
     "ptxServices": {
       "toast": {
         "title": "In order to comply with Apple’s recent updates on the App Store, this feature is temporarily unavailable. You can still access it on Ledger Live on desktop."
+      },
+      "drawer": {
+        "title": "Buy, swap and sell disabled",
+        "description": "In order to comply with Apple’s recent updates on the App Store, these features are temporarily deactivated on iOS. <emphasized>You can still access them on Ledger Live on desktop.</emphasized>",
+        "checkboxLabel": "Do not remind me again",
+        "cta": "Got it",
+        "link": "Learn more"
       }
     }
   },
@@ -4181,7 +4188,7 @@
       "flash": "Flashing your device",
       "preparing": "Preparing update",
       "firmware": "Downloading update",
-      "prepareUpdate":  {
+      "prepareUpdate": {
         "titleBackingUp": "Backing up apps and settings",
         "titleTransferring": "Transferring update",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
