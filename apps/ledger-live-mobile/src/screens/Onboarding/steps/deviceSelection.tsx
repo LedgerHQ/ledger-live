@@ -22,22 +22,22 @@ import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
 
 const nanoX = {
-  source: require("../../../../assets/images/devices/NanoXCropped.png"),
+  source: require("../../../../assets/images/devices/NanoX.png"),
   id: DeviceModelId.nanoX,
   setupTime: 600000,
 };
 const nanoS = {
-  source: require("../../../../assets/images/devices/NanoSCropped.png"),
+  source: require("../../../../assets/images/devices/NanoS.png"),
   id: DeviceModelId.nanoS,
   setupTime: 600000,
 };
 const nanoSP = {
-  source: require("../../../../assets/images/devices/NanoSPCropped.png"),
+  source: require("../../../../assets/images/devices/NanoSP.png"),
   id: DeviceModelId.nanoSP,
   setupTime: 600000,
 };
 const stax = {
-  source: require("../../../../assets/images/devices/StaxCropped.png"),
+  source: require("../../../../assets/images/devices/Stax.png"),
   id: DeviceModelId.stax,
   setupTime: 300000,
 };
