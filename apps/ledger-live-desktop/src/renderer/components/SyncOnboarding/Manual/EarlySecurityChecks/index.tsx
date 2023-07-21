@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
+import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
-import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
 import Body from "./Body";
 import SoftwareCheckLockedDeviceDrawer, {
   Props as SoftwareCheckLockedDeviceModalProps,
@@ -91,8 +90,9 @@ const EarlySecurityChecks = ({
     deviceId,
   });
 
-  const { deviceInfo, latestFirmware, status, lockedDevice } = useGetLatestAvailableFirmware({
-    getLatestAvailableFirmwareFromDeviceId,
+  const {
+    state: { deviceInfo, firmwareUpdateContext: latestFirmware, status, lockedDevice },
+  } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
   });
