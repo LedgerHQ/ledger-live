@@ -27,11 +27,6 @@ export function PTXServicesAppleWarning() {
   const ctaScreensEnabled = useMemo(() => ctaScreens?.enabled ?? true, [ctaScreens]);
 
   const { isOpen, onModalHide, openDrawer, onClose } = useRootDrawerContext();
-  useEffect(() => {
-    if (!(exchangeDrawerEnabled && ctaScreensEnabled)) {
-      openDrawer();
-    }
-  }, [openDrawer, exchangeDrawerEnabled, ctaScreensEnabled]);
 
   const _onClose = useCallback(
     () =>
@@ -42,6 +37,14 @@ export function PTXServicesAppleWarning() {
       }),
     [persistentHide, onClose],
   );
+
+  useEffect(() => {
+    if (!exchangeDrawerEnabled && !ctaScreensEnabled) {
+      openDrawer();
+    } else {
+      _onClose();
+    }
+  }, [openDrawer, exchangeDrawerEnabled, ctaScreensEnabled, _onClose]);
 
   const onLinkPress = useCallback(() => {
     Linking.openURL("https://support.ledger.com/hc/articles/12309873917853?docs=true");
