@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { Divider, Flex, Icons, Log, Text } from "@ledgerhq/native-ui";
+import { Divider, Flex, IconsLegacy, Log, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -205,7 +205,7 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
           <Flex backgroundColor="background.main" style={StyleSheet.absoluteFillObject} />
           <AnimatedFlex style={doneContentStyle}>
             <Flex flexDirection="column" alignItems="center" p={8}>
-              <Icons.CircledCheckSolidMedium color="success.c50" size={54} />
+              <IconsLegacy.CircledCheckSolidMedium color="success.c50" size={54} />
               <Flex height={83} />
               <Log>{t("postOnboarding.hub.done")}</Log>
               <Flex height={100} />

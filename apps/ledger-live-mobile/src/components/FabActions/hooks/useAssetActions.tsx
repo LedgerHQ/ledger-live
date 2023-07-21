@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -23,13 +23,13 @@ type useAssetActionsProps = {
   accounts?: AccountLikeArray;
 };
 
-const iconBuy = Icons.PlusMedium;
-const iconSell = Icons.MinusMedium;
-const iconSwap = Icons.BuyCryptoMedium;
-const iconReceive = Icons.ArrowBottomMedium;
-const iconSend = Icons.ArrowTopMedium;
-const iconAddAccount = Icons.WalletMedium;
-const iconStake = Icons.ClaimRewardsMedium;
+const iconBuy = IconsLegacy.PlusMedium;
+const iconSell = IconsLegacy.MinusMedium;
+const iconSwap = IconsLegacy.BuyCryptoMedium;
+const iconReceive = IconsLegacy.ArrowBottomMedium;
+const iconSend = IconsLegacy.ArrowTopMedium;
+const iconAddAccount = IconsLegacy.WalletMedium;
+const iconStake = IconsLegacy.ClaimRewardsMedium;
 
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];

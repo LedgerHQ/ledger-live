@@ -4,7 +4,7 @@ import { useRootDrawerContext } from "../../../context/RootDrawerContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { InitialDrawerID } from "../types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Button, Checkbox, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import { Button, Checkbox, Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
@@ -84,7 +84,7 @@ export function PTXServicesAppleWarning() {
         <Button type="main" onPress={_onClose}>
           {t("notifications.ptxServices.drawer.cta")}
         </Button>
-        <Link onPress={onLinkPress} Icon={Icons.ExternalLinkMedium}>
+        <Link onPress={onLinkPress} Icon={IconsLegacy.ExternalLinkMedium}>
           {t("notifications.ptxServices.drawer.link")}
         </Link>
       </Flex>

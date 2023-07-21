@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text, InfiniteLoader, VerticalTimeline, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, InfiniteLoader, VerticalTimeline, IconsLegacy } from "@ledgerhq/react-ui";
 import styled, { StyledComponent, DefaultTheme, useTheme } from "styled-components";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
@@ -76,11 +76,11 @@ export const Bullet = ({ status, bulletText, text, subText, ...props }: BulletPr
         {status === Status.active ? (
           <InfiniteLoader color="primary.c60" size={24} />
         ) : status === Status.completed ? (
-          <Icons.CheckTickMedium size={20} color="success.c50" />
+          <IconsLegacy.CheckTickMedium size={20} color="success.c50" />
         ) : status === Status.updateAvailable ? (
           <InfoCircle size={20} color={colors.primary.c80} />
         ) : status === Status.failed ? (
-          <Icons.CircledCrossSolidMedium size={20} color="error.c50" />
+          <IconsLegacy.CircledCrossSolidMedium size={20} color="error.c50" />
         ) : (
           <Text variant="body">{bulletText}</Text>
         )}

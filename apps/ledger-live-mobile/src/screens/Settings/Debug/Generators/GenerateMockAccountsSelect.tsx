@@ -3,7 +3,7 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation } from "@react-navigation/native";
 import { Alert as Confirm, ScrollView } from "react-native";
-import { Button, Checkbox, Flex, Text, Icons, Alert } from "@ledgerhq/native-ui";
+import { Button, Checkbox, Flex, Text, IconsLegacy, Alert } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import SettingsRow from "../../../../components/SettingsRow";
@@ -129,7 +129,7 @@ export default function GenerateMockAccount() {
     <SettingsRow
       title="Accounts by currency"
       desc="Select for which currencies you want to generate accounts"
-      iconLeft={<Icons.ClipboardListCheckMedium size={24} color="black" />}
+      iconLeft={<IconsLegacy.ClipboardListCheckMedium size={24} color="black" />}
       onPress={() => navigation.navigate(ScreenName.DebugMockGenerateAccounts)}
     />
   );

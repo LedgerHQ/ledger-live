@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTheme } from "styled-components/native";
-import { Flex, Icons, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -44,7 +44,7 @@ export const BackButton = ({ navigation }: { navigation: NavigationProps["naviga
   <Button
     size="large"
     onPress={() => navigation.goBack()}
-    Icon={Icons.ArrowLeftMedium}
+    Icon={IconsLegacy.ArrowLeftMedium}
     testID="market-back-btn"
   />
 );

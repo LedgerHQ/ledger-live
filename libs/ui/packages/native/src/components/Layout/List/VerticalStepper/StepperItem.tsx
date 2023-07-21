@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Pressable } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
-import { CheckAloneMedium } from "@ledgerhq/icons-ui/native";
+import { CheckAloneMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 
 import { Item, ItemStatus } from "../types";
 import Flex from "../../Flex";
