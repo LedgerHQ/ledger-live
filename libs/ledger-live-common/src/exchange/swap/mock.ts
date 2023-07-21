@@ -107,6 +107,7 @@ export const mockGetExchangeRates = async (
       providerType: "DEX",
       expirationDate: new Date(),
       tradeMethod: "float",
+      providerURL: "/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=13",
     },
   ];
 };
