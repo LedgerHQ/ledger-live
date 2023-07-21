@@ -13,5 +13,5 @@ export default {
   solana,
   stellar,
   tezos,
-  tron
+  tron,
 };
