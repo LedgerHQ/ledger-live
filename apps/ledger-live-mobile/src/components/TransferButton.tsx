@@ -35,11 +35,10 @@ export default function TransferButton({
   testID,
 }: Props) {
   const handlePress = useCallback(() => {
-    if (onDisabledPress) {
-      onDisabledPress();
+    if (disabled) {
+      onDisabledPress?.();
       return;
     }
-    if (disabled) return;
     if (onPress) onPress();
     if (event) track(event, eventProperties ?? null);
   }, [onPress, event, eventProperties, disabled, onDisabledPress]);
