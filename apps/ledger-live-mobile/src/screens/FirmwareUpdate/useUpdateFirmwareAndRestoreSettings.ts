@@ -25,6 +25,8 @@ import {
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
   UserRefusedAllowManager,
+  WebsocketConnectionError,
+  WebsocketConnectionFailed,
 } from "@ledgerhq/errors";
 import {
   ConnectManagerTimeout,
@@ -41,6 +43,18 @@ export const reconnectDeviceErrors: LedgerErrorConstructor<{
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
   ConnectManagerTimeout,
+];
+
+export const retriableErrors: LedgerErrorConstructor<{
+  [key: string]: unknown;
+}>[] = [
+  ...reconnectDeviceErrors,
+  WebsocketConnectionError,
+  UserRefusedAllowManager,
+  LanguageInstallRefusedOnDevice,
+  ImageCommitRefusedOnDevice,
+  ImageLoadRefusedOnDevice,
+  WebsocketConnectionFailed,
 ];
 
 export type FirmwareUpdateParams = {
@@ -195,7 +209,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsBackup":
         unrecoverableError =
           connectManagerState.error &&
-          !reconnectDeviceErrors.some(err => connectManagerState.error instanceof err);
+          !retriableErrors.some(err => connectManagerState.error instanceof err);
         if (connectManagerState.result || unrecoverableError) {
           if (connectManagerState.error) {
             log("FirmwareUpdate", "error while backing up device apps", connectManagerState.error);
@@ -210,7 +224,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageBackup":
         unrecoverableError =
           staxFetchImageState.error &&
-          !reconnectDeviceErrors.some(err => staxFetchImageState.error instanceof err);
+          !retriableErrors.some(err => staxFetchImageState.error instanceof err);
         if (staxFetchImageState.imageFetched || unrecoverableError) {
           if (staxFetchImageState.error)
             log("FirmwareUpdate", "error while backing up stax image", staxFetchImageState.error);
@@ -227,8 +241,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "languageRestore":
         unrecoverableError =
           installLanguageState.error &&
-          !reconnectDeviceErrors.some(err => installLanguageState.error instanceof err) &&
-          !(installLanguageState.error instanceof LanguageInstallRefusedOnDevice);
+          !retriableErrors.some(err => installLanguageState.error instanceof err);
         if (installLanguageState.languageInstalled || unrecoverableError) {
           if (installLanguageState.error)
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
@@ -238,11 +251,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageRestore":
         unrecoverableError =
           staxLoadImageState.error &&
-          !reconnectDeviceErrors.some(err => staxLoadImageState.error instanceof err) &&
-          !(staxLoadImageState.error instanceof ImageLoadRefusedOnDevice) &&
-          // TypeScript doesn't work well with our custom error classes. It seems to think that if the error is not an
-          // instance of ImageLoadRefusedOnDevice then it's of type "never", this is why we're casting it here to unkown
-          !((staxLoadImageState.error as unknown) instanceof ImageCommitRefusedOnDevice);
+          !retriableErrors.some(err => staxLoadImageState.error instanceof err);
         if (staxLoadImageState.imageLoaded || unrecoverableError || !staxFetchImageState.hexImage) {
           if (staxLoadImageState.error) {
             log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
@@ -253,8 +262,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsRestore":
         unrecoverableError =
           restoreAppsState.error &&
-          !reconnectDeviceErrors.some(err => restoreAppsState.error instanceof err) &&
-          !(restoreAppsState.error instanceof UserRefusedAllowManager);
+          !retriableErrors.some(err => restoreAppsState.error instanceof err);
         if (restoreAppsState.opened || unrecoverableError) {
           if (restoreAppsState.error) {
             log("FirmwareUpdate", "error while restoring apps", restoreAppsState.error);
