@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Icons, Link, Log, Text } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, Link, Log, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
@@ -50,7 +50,7 @@ const TermOfUseUpdateBody = ({ onClose }: Props) => {
             justifyContent="center"
             mb="36px"
           >
-            <Icons.ClipboardListCheckMedium size={24} />
+            <IconsLegacy.ClipboardListCheckMedium size={24} />
           </Flex>
           <Log>{t("updatedTerms.title")}</Log>
           <Flex flexDirection="column">
@@ -68,7 +68,7 @@ const TermOfUseUpdateBody = ({ onClose }: Props) => {
       )}
       renderFooter={() => (
         <Flex justifyContent="flex-end">
-          <Link size="small" Icon={Icons.ExternalLinkMedium} onClick={handleExternalLink}>
+          <Link size="small" Icon={IconsLegacy.ExternalLinkMedium} onClick={handleExternalLink}>
             {t("updatedTerms.link")}
           </Link>
           <Button ml="24px" variant="main" outline={false} onClick={onClose}>

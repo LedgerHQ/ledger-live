@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Icons, Link as BaseLink } from "@ledgerhq/native-ui";
+import { IconsLegacy, Link as BaseLink } from "@ledgerhq/native-ui";
 import { LinkProps } from "@ledgerhq/native-ui/components/cta/Link/index";
 import { track } from "../analytics";
 
@@ -41,7 +41,7 @@ export default function ExternalLink({
     <BaseLink
       disabled={disabled}
       type={type || "color"}
-      Icon={Icon || Icons.ExternalLinkMedium}
+      Icon={Icon || IconsLegacy.ExternalLinkMedium}
       iconPosition={iconPosition || (iconFirst ? "left" : "right")}
       onPress={handlePress}
     >

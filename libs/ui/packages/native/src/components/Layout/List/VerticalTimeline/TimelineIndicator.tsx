@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, PixelRatio, Platform, StyleSheet } from "react-native";
-import { CircledCheckSolidMedium } from "@ledgerhq/icons-ui/native";
+import { CircledCheckSolidMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import styled, { useTheme } from "styled-components/native";
 import Svg, { Line } from "react-native-svg";
 

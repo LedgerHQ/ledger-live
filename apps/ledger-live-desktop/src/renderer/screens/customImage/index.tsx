@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { BoxedIcon, Flex, FlowStepper, Icons, Text } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -305,7 +305,7 @@ const CustomImage: React.FC<Props> = props => {
           />
           <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
             <BoxedIcon
-              Icon={Icons.CheckAloneMedium}
+              Icon={IconsLegacy.CheckAloneMedium}
               iconColor="success.c60"
               size={64}
               iconSize={24}

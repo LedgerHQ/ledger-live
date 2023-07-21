@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 
 import { useDispatch } from "react-redux";
-import { Text, Icons, BoxedIcon, Button, Flex } from "@ledgerhq/native-ui";
+import { Text, IconsLegacy, BoxedIcon, Button, Flex } from "@ledgerhq/native-ui";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { hideNftCollection } from "../../actions/settings";
@@ -26,7 +26,7 @@ const NftCollectionOptionsMenu = ({ isOpen, onClose, collection, account }: Prop
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       <Flex alignItems="center">
-        <BoxedIcon Icon={Icons.EyeNoneMedium} size={48} />
+        <BoxedIcon Icon={IconsLegacy.EyeNoneMedium} size={48} />
         <Text variant="h1" mt={20}>
           {t("settings.accounts.hideNFTCollectionModal.title")}
         </Text>

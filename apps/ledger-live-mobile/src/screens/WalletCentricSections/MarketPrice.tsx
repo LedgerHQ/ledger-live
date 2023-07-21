@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -63,7 +63,7 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
             </Text>
             <DeltaVariation percent value={selectedCoinData?.priceChangePercentage || 0} />
           </Flex>
-          <Icons.ChevronRightMedium size={24} />
+          <IconsLegacy.ChevronRightMedium size={24} />
         </Flex>
       </Touchable>
     </Flex>

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ImageBase64Data, ImageDimensions } from "./types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { Button, Flex, Icons } from "@ledgerhq/react-ui";
+import { Button, Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import Cropper, { Area, CropperProps } from "react-easy-crop";
 import { createCanvas, getRadianAngle, rotateSize } from "./imageUtils";
 import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
@@ -256,7 +256,7 @@ const ImageCropper: React.FC<Props> = props => {
         outline
         backgroundColor="transparent"
         onClick={rotateCounterClockwise}
-        Icon={Icons.ReverseMedium}
+        Icon={IconsLegacy.ReverseMedium}
         data-test-id="custom-image-crop-rotate-button"
       >
         Rotate

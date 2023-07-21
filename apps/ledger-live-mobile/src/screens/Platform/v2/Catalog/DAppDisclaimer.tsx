@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, IconBox, Text, Checkbox, Icons, Button } from "@ledgerhq/native-ui";
+import { Flex, IconBox, Text, Checkbox, IconsLegacy, Button } from "@ledgerhq/native-ui";
 import { Disclaimer } from "../hooks";
 import { AppIcon } from "../AppIcon";
 import LedgerIcon from "../../../../icons/Ledger";
@@ -44,7 +44,7 @@ export function DAppDisclaimer({
         backgroundColor="primary.c20"
         borderRadius={2}
       >
-        <Icons.InfoMedium color="primary.c90" size={20} />
+        <IconsLegacy.InfoMedium color="primary.c90" size={20} />
         <Text variant="body" color="primary.c90" ml={5}>
           {t("platform.disclaimer.legalAdviceShort")}
         </Text>

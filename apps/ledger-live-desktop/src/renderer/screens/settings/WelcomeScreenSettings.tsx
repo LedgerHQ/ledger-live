@@ -1,6 +1,6 @@
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Icons, Link } from "@ledgerhq/react-ui";
+import { IconsLegacy, Link } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import Page from "~/renderer/components/Page";
 import Settings from ".";
@@ -23,7 +23,7 @@ const WelcomeScreenSettings: React.FC<Props> = props => {
             props.history.push("/onboarding");
           }}
           mb={5}
-          Icon={Icons.ArrowLeftMedium}
+          Icon={IconsLegacy.ArrowLeftMedium}
           iconPosition="left"
         >
           Back

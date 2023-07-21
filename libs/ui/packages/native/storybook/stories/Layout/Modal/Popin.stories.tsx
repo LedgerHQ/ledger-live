@@ -4,7 +4,7 @@ import { ComponentStory } from "@storybook/react-native";
 import { action } from "@storybook/addon-actions";
 import Popin from "../../../../src/components/Layout/Modals/Popin";
 import Text from "../../../../src/components/Text";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 
 export default {
   title: "Layout/Modal/Popin",
@@ -30,7 +30,7 @@ export const Default: ComponentStory<typeof Popin> = (args: typeof DefaultStoryA
         title={args.title}
         description={args.description}
         subtitle={args.subtitle}
-        Icon={Icons.TrashMedium}
+        Icon={IconsLegacy.TrashMedium}
         iconColor={"red"}
         onLeftButtonPress={action("onLeftButtonPress")}
         onRightButtonPress={action("onRightButtonPress")}

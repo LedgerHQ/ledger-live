@@ -4,7 +4,7 @@ import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
-import { Icons } from "@ledgerhq/native-ui/assets/index";
+import { IconsLegacy } from "@ledgerhq/native-ui/assets/index";
 
 import Touchable from "../../../components/Touchable";
 import { TrackScreen } from "../../../analytics";
@@ -39,7 +39,7 @@ const LinkBox = React.memo(({ text, url, event, mb = 0 }: LinkBoxProps) => (
       <Text color="palette.primary.c80" variant="body" fontSize="14px" fontWeight="semiBold" mr={3}>
         {text}
       </Text>
-      <Icons.ExternalLinkMedium color="palette.primary.c80" size="18px" />
+      <IconsLegacy.ExternalLinkMedium color="palette.primary.c80" size="18px" />
     </Flex>
   </Touchable>
 ));

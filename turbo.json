@@ -67,7 +67,7 @@
     },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
-      "outputs": ["react/**", "native/**", "index.js"]
+      "outputs": ["react/**", "native/**", "reactLegacy/**", "nativeLegacy/**", "index.js"]
     },
     "@ledgerhq/crypto-icons-ui#build": {
       "dependsOn": ["^build"],

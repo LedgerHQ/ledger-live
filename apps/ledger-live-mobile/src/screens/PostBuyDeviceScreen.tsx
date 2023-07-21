@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Box } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -53,7 +53,7 @@ export default function PostBuyDeviceScreen() {
                 bg={"success.c40"}
                 borderRadius={999}
               >
-                <Icons.CheckAloneMedium size="48px" />
+                <IconsLegacy.CheckAloneMedium size="48px" />
               </Box>
             </Box>
           </Box>

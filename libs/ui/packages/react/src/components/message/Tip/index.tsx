@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import Text from "../../asorted/Text";
-import { CheckAloneMedium, CloseMedium, CircledAlertMedium } from "@ledgerhq/icons-ui/react";
+import { CheckAloneMedium, CloseMedium, CircledAlertMedium } from "@ledgerhq/icons-ui/reactLegacy";
 import { Flex } from "../../layout";
 
 type TipType = "success" | "warning" | "error";

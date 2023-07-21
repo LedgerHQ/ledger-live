@@ -4,7 +4,7 @@ import FlexBox, { FlexBoxProps } from "../../layout/Flex";
 import Text from "../../asorted/Text";
 import Badge from "./Badge";
 import Link, { LinkProps } from "../../cta/Link";
-import { ExternalLinkMedium } from "@ledgerhq/icons-ui/react";
+import { ExternalLinkMedium } from "@ledgerhq/icons-ui/reactLegacy";
 
 interface ContainerProps extends FlexBoxProps {
   /* Add the pre-selected background. */

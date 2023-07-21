@@ -10,7 +10,7 @@ import {
   Toggle,
   NumberInput,
 } from "../../../src/components";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 
 const description = `
 ### A customizable flow layout.
@@ -345,7 +345,7 @@ const ImageHeader = ({
   return (
     <Flex flex={0.5} backgroundColor="primary.c50">
       <Flex alignItems="flex-start" width="100%" height={30}>
-        {onBack && <Button Icon={Icons.ArrowLeftMedium} onPress={onBack} />}
+        {onBack && <Button Icon={IconsLegacy.ArrowLeftMedium} onPress={onBack} />}
       </Flex>
       {Platform.OS === "web" ? (
         <Animated.Image

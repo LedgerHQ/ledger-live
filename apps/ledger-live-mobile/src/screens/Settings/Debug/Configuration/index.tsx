@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Icons, Alert, Flex } from "@ledgerhq/native-ui";
+import { IconsLegacy, Alert, Flex } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
 
@@ -25,13 +25,13 @@ export default function Configuration() {
       <SettingsRow
         title="Feature flags"
         desc="Read and override any remote settings."
-        iconLeft={<Icons.ChartNetworkMedium size={32} color="black" />}
+        iconLeft={<IconsLegacy.ChartNetworkMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugFeatureFlags)}
       />
       <SettingsRow
         title="Environment variables"
         desc="Read and override any local settings."
-        iconLeft={<Icons.MobileMedium size={32} color="black" />}
+        iconLeft={<IconsLegacy.MobileMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugEnv)}
       />
       <Flex p={6}>

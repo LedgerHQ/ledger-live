@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
-import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 
 type Props = {
@@ -60,7 +60,7 @@ const QuitManagerModal = ({
     <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose} noCloseButton>
       <Flex alignItems="center">
         <IconContainer borderColor="neutral.c40">
-          <Icons.QuitMedium size={24} color="neutral.c100" />
+          <IconsLegacy.QuitMedium size={24} color="neutral.c100" />
         </IconContainer>
         <TextContainer>
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">

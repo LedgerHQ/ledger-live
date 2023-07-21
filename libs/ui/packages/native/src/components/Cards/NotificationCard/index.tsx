@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ExternalLinkMedium } from "@ledgerhq/icons-ui/native";
+import { ExternalLinkMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import Box from "../../Layout/Box";

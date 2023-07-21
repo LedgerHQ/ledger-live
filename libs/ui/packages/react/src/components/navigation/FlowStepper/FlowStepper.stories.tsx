@@ -4,7 +4,7 @@ import styled from "styled-components";
 // @ts-expect-error Typings…
 import { useArgs } from "@storybook/client-api";
 import { Props as FlowStepperProps } from "./index";
-import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons, Tag } from "../../..";
+import { Divider, Flex, FlowStepper, Text, Button, Box, Link, IconsLegacy, Tag } from "../../..";
 import type { Size as TagSize } from "../../Tag";
 import { lipsum, StoryTemplate } from "../../helpers";
 import { useState } from "react";
@@ -207,7 +207,7 @@ const Header = ({ activeIndex, onBack }: { activeIndex: number; onBack?: () => v
     <Box position="relative" my={6}>
       {onBack && (
         <Box position="absolute">
-          <Link onClick={onBack} Icon={Icons.ArrowLeftMedium} iconPosition="left">
+          <Link onClick={onBack} Icon={IconsLegacy.ArrowLeftMedium} iconPosition="left">
             Back
           </Link>
         </Box>

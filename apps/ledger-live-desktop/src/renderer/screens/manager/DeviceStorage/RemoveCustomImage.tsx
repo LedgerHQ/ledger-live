@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { BoxedIcon, Button, Divider, Flex, Icons, Text } from "@ledgerhq/react-ui";
+import { BoxedIcon, Button, Divider, Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
@@ -81,7 +81,7 @@ const RemoveCustomImage: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             data-test-id="custom-image-removed"
           >
             <BoxedIcon
-              Icon={Icons.CheckAloneMedium}
+              Icon={IconsLegacy.CheckAloneMedium}
               iconColor="success.c100"
               size={64}
               iconSize={24}

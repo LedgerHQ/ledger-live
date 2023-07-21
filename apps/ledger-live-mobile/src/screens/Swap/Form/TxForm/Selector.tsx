@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
@@ -55,7 +55,7 @@ export function Selector({ currency, title, subTitle, onPress, disabled = false,
         </Flex>
 
         <Flex>
-          <Icons.ChevronBottomMedium />
+          <IconsLegacy.ChevronBottomMedium />
         </Flex>
       </Flex>
     </TouchableOpacity>

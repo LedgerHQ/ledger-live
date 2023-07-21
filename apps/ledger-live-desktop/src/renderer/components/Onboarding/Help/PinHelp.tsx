@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Flex, Text, Button, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
@@ -123,7 +123,7 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
         width="248px"
         variant="main"
         onClick={props.handleNextInDrawer}
-        Icon={() => <Icons.ArrowRightMedium size={18} />}
+        Icon={() => <IconsLegacy.ArrowRightMedium size={18} />}
       >
         {t("onboarding.screens.welcome.nextButton")}
       </Button>

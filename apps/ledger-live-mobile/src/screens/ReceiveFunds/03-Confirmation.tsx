@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Button, Notification } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -210,7 +210,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           <Flex>
             {verified ? (
               <Flex alignItems="center" justifyContent="center" flexDirection="row">
-                <Icons.ShieldCheckMedium color="success.c50" size={16} />
+                <IconsLegacy.ShieldCheckMedium color="success.c50" size={16} />
                 <Text color="success.c50" fontWeight="medium" variant="paragraphLineHeight" ml={2}>
                   {t("transfer.receive.receiveConfirmation.addressVerified")}
                 </Text>
@@ -219,7 +219,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               <Flex>
                 <TouchableOpacity onPress={onRetry}>
                   <Flex alignItems="center" justifyContent="center" flexDirection="row">
-                    <Icons.ShieldSecurityMedium color="warning.c50" size={16} />
+                    <IconsLegacy.ShieldSecurityMedium color="warning.c50" size={16} />
                     <Text
                       color="warning.c50"
                       fontWeight="medium"
@@ -303,7 +303,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       <Flex m={6}>
         {isToastDisplayed ? (
           <Notification
-            Icon={Icons.CircledCheckMedium}
+            Icon={IconsLegacy.CircledCheckMedium}
             variant={"neutral"}
             title={t("transfer.receive.toastMessages.accountImported", {
               currencyTicker: currency.ticker,
@@ -314,7 +314,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           />
         ) : isVerifiedToastDisplayed ? (
           <Notification
-            Icon={Icons.CircledCheckMedium}
+            Icon={IconsLegacy.CircledCheckMedium}
             variant={"success"}
             title={t("transfer.receive.toastMessages.addressVerified")}
             onClose={hideVerifiedToast}

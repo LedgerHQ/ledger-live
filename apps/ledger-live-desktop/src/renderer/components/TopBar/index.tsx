@@ -19,7 +19,7 @@ import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { NotificationIndicator } from "~/renderer/components/TopBar/NotificationIndicator";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/WebPlatformPlayer/LiveAppDrawer";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 const Container = styled(Box).attrs(() => ({}))`
   height: ${p => p.theme.sizes.topBarHeight}px;
   box-sizing: content-box;
@@ -89,7 +89,11 @@ const TopBar = () => {
                 isInteractive
                 onClick={handleDiscreet}
               >
-                {discreetMode ? <Icons.EyeNoneMedium size={18} /> : <Icons.EyeMedium size={18} />}
+                {discreetMode ? (
+                  <IconsLegacy.EyeNoneMedium size={18} />
+                ) : (
+                  <IconsLegacy.EyeMedium size={18} />
+                )}
               </ItemContainer>
             </Tooltip>
             <Box justifyContent="center">
@@ -101,7 +105,7 @@ const TopBar = () => {
                 isInteractive
                 onClick={() => setHelpSideBarVisible(true)}
               >
-                <Icons.HelpMedium size={18} />
+                <IconsLegacy.HelpMedium size={18} />
               </ItemContainer>
             </Tooltip>
             <HelpSideBar
@@ -120,7 +124,7 @@ const TopBar = () => {
                     justifyContent="center"
                     onClick={handleLock}
                   >
-                    <Icons.LockAltMedium size={18} />
+                    <IconsLegacy.LockAltMedium size={18} />
                   </ItemContainer>
                 </Tooltip>
               </>
@@ -134,7 +138,7 @@ const TopBar = () => {
                 isInteractive
                 onClick={navigateToSettings}
               >
-                <Icons.SettingsMedium size={18} />
+                <IconsLegacy.SettingsMedium size={18} />
               </ItemContainer>
             </Tooltip>
           </Box>

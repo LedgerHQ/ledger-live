@@ -11,7 +11,7 @@ import UserEdit from "~/renderer/icons/UserEdit";
 import ArrowDown from "~/renderer/icons/ArrowDown";
 import StopCircle from "~/renderer/icons/StopCircle";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 
 const Container = styled.div`
   display: flex;
@@ -113,7 +113,7 @@ const ContextMenu = ({ account }: Props) => {
           }}
         >
           <Box horizontal flow={1} alignItems="center" justifyContent="center">
-            <Icons.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
+            <IconsLegacy.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
           </Box>
         </Container>
       )}

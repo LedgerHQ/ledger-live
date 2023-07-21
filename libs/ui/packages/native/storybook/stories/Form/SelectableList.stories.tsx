@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { action } from "@storybook/addon-actions";
 import { Flex, SelectableList } from "../../../src/components";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 import { TouchableOpacity } from "react-native";
 
 const description = `
@@ -52,24 +52,24 @@ export const Story = () => {
   return (
     <Flex alignSelf="stretch" p={4}>
       <SelectableList currentValue={selectedValue} onChange={setSelectedValue}>
-        <SelectableList.Element value="en" Icon={Icons.BedMedium}>
+        <SelectableList.Element value="en" Icon={IconsLegacy.BedMedium}>
           English
         </SelectableList.Element>
         <SelectableList.Element
           value="fr"
-          Icon={Icons.NanoXMedium}
+          Icon={IconsLegacy.NanoXMedium}
           renderRight={() => (
             <TouchableOpacity onPress={action("onMore")}>
-              <Icons.OthersMedium size={24} />
+              <IconsLegacy.OthersMedium size={24} />
             </TouchableOpacity>
           )}
         >
           French
         </SelectableList.Element>
-        <SelectableList.Element value="ru" Icon={Icons.NanoXFoldedMedium} disabled={true}>
+        <SelectableList.Element value="ru" Icon={IconsLegacy.NanoXFoldedMedium} disabled={true}>
           Russian
         </SelectableList.Element>
-        <SelectableList.Element value="cz" Icon={Icons.BlockchainMedium}>
+        <SelectableList.Element value="cz" Icon={IconsLegacy.BlockchainMedium}>
           Chinese
         </SelectableList.Element>
         <SelectableList.Element value="sp">Spanish</SelectableList.Element>

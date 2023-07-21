@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Account } from "@ledgerhq/types-live";
 import { decodeNftId } from "@ledgerhq/live-common/nft/index";
@@ -59,7 +59,7 @@ const HideNftDrawer = ({ nftId, nftContract, collection, isOpened, onClose }: Pr
     <QueuedDrawer
       isRequestingToBeOpened={isOpened}
       onClose={onPressClose}
-      Icon={Icons.EyeNoneMedium}
+      Icon={IconsLegacy.EyeNoneMedium}
       title={t("wallet.nftGallery.hideNftModal.title")}
       description={t("wallet.nftGallery.hideNftModal.desc", {
         collectionName: collection,

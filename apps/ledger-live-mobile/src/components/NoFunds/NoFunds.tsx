@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import { Text, Flex, Icons, Box } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { useTranslation } from "react-i18next";
@@ -110,7 +110,7 @@ export default function NoFunds({ route }: Props) {
     {
       title: t("stake.noFundsModal.options.buy.title"),
       description: t("stake.noFundsModal.options.buy.body"),
-      Icon: Icons.PlusMedium,
+      Icon: IconsLegacy.PlusMedium,
       onPress: onBuy,
       disabled: !availableOnBuy,
       rightArrow: true,
@@ -119,7 +119,7 @@ export default function NoFunds({ route }: Props) {
       title: t("stake.noFundsModal.options.swap.title"),
       description: t("stake.noFundsModal.options.swap.body"),
       tag: t("stake.noFundsModal.options.swap.label"),
-      Icon: Icons.BuyCryptoMedium,
+      Icon: IconsLegacy.BuyCryptoMedium,
       onPress: onSwap,
       disabled: !availableOnSwap,
       rightArrow: true,
@@ -128,7 +128,7 @@ export default function NoFunds({ route }: Props) {
       title: t("stake.noFundsModal.options.receive.title"),
       description: t("stake.noFundsModal.options.receive.body"),
       onPress: onReceiveFunds,
-      Icon: Icons.ArrowBottomMedium,
+      Icon: IconsLegacy.ArrowBottomMedium,
       disabled: !availableOnReceive,
       rightArrow: true,
     },

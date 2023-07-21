@@ -8,7 +8,7 @@ import {
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
@@ -31,9 +31,9 @@ type Props = {
   colors?: DefaultTheme["colors"];
 };
 
-const iconBuy = Icons.PlusMedium;
-const iconSell = Icons.MinusMedium;
-const iconSwap = Icons.BuyCryptoMedium;
+const iconBuy = IconsLegacy.PlusMedium;
+const iconSell = IconsLegacy.MinusMedium;
+const iconSwap = IconsLegacy.BuyCryptoMedium;
 
 export default function useAccountActions({ account, parentAccount, colors }: Props): {
   mainActions: ActionButtonEvent[];
@@ -203,7 +203,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ],
     label: t("account.send"),
     event: "AccountSend",
-    Icon: Icons.ArrowTopMedium,
+    Icon: IconsLegacy.ArrowTopMedium,
     disabled: isZeroBalance,
     modalOnDisabledClick: {
       component: ZeroBalanceDisabledModalContent,
@@ -225,7 +225,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ],
     label: t("account.receive"),
     event: "AccountReceive",
-    Icon: Icons.ArrowBottomMedium,
+    Icon: IconsLegacy.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
 

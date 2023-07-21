@@ -1,7 +1,7 @@
 import React from "react";
 import { action } from "@storybook/addon-actions";
 import { ComponentStory } from "@storybook/react-native";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 import Notification from "../../../../src/components/message/Notification";
 import FlexBox from "../../../../src/components/Layout/Flex";
 
@@ -15,7 +15,7 @@ export const NotificationSample: ComponentStory<typeof Notification> = (
 ) => (
   <FlexBox p={20} width={"100%"}>
     <Notification
-      Icon={Icons.InfoMedium}
+      Icon={IconsLegacy.InfoMedium}
       variant={args.variant}
       title={args.title}
       numberOfLines={args.numberOfLines}
@@ -42,7 +42,7 @@ export const NotificationNews: ComponentStory<typeof Notification> = (
 ) => (
   <FlexBox p={20} width={"100%"}>
     <Notification
-      Icon={args.showIcon ? Icons.InfoMedium : undefined}
+      Icon={args.showIcon ? IconsLegacy.InfoMedium : undefined}
       variant={args.variant}
       title={args.title}
       subtitle={args.subtitle}

@@ -3,7 +3,7 @@ import Video from "react-native-video";
 import { Dimensions } from "react-native";
 import Animated, { SlideInDown, SlideInLeft } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
+import { Button, Flex, IconsLegacy, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -18,7 +18,7 @@ const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
   return (
     <Flex flexDirection="row" mb={6} alignItems="center">
-      <Icons.CircledCheckSolidMedium color="primary.c80" />
+      <IconsLegacy.CircledCheckSolidMedium color="primary.c80" />
       <Text ml={4}>{t(textKey)}</Text>
     </Flex>
   );

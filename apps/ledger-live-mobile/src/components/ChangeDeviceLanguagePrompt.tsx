@@ -1,4 +1,4 @@
-import { Flex, Text, Button, Link, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, Link, IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { ImageSourcePropType, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -66,7 +66,7 @@ const ChangeDeviceLanguagePrompt: React.FC<Props> = ({
       <Flex mt={6}>
         <Link
           onPress={() => Linking.openURL(urls.deviceLocalization.learnMore)}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           iconPosition="right"
           type="color"
           style={{ justifyContent: "flex-start" }}

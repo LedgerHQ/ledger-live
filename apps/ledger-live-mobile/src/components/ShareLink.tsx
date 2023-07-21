@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, Share } from "react-native";
-import { Icons, Text } from "@ledgerhq/native-ui";
+import { IconsLegacy, Text } from "@ledgerhq/native-ui";
 import Touchable from "./Touchable";
 import { withTheme } from "../colors";
 
@@ -21,7 +21,7 @@ class ShareLink extends PureComponent<Props> {
     const { children } = this.props;
     return (
       <Touchable event="ShareLink" style={styles.linkContainer} onPress={this.onPress}>
-        <Icons.ShareMedium size={16} color="primary.c80" />
+        <IconsLegacy.ShareMedium size={16} color="primary.c80" />
         <Text variant="body" fontWeight="semiBold" color="primary.c80" ml={3}>
           {children}
         </Text>

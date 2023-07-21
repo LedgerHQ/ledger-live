@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
 import Button from "../../../components/wrappedUi/Button";
@@ -37,7 +37,7 @@ export default function ResetThirdPartyDataRow() {
       <QueuedDrawer
         isRequestingToBeOpened={isModalOpened}
         onClose={onRequestClose}
-        Icon={Icons.InfoMedium}
+        Icon={IconsLegacy.InfoMedium}
         iconColor={"primary.c80"}
         title={t("settings.help.resetThirdPartyDataModal")}
         description={t("settings.help.resetThirdPartyDataModalDesc")}

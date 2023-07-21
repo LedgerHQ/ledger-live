@@ -2,7 +2,7 @@ import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
 import React, { memo, useCallback, useContext } from "react";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { Animated, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -202,7 +202,7 @@ function WalletTabNavigatorTabBar({
 
             {referralProgramMobile?.enabled && referralProgramMobile?.params?.path && (
               <StyledReferral onPress={accessReferralProgram}>
-                <Icons.GiftMedium />
+                <IconsLegacy.GiftMedium />
                 <Text ml={"6px"} variant="small" fontWeight="semiBold">
                   {t("wallet.referralProgram")}
                 </Text>

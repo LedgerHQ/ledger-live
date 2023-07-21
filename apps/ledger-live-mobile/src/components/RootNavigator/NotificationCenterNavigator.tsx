@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
 import { createStackNavigator } from "@react-navigation/stack";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
@@ -69,7 +69,7 @@ export default function NotificationCenterNavigator() {
                 style={{ marginRight: space[6] }}
                 onPress={goToNotificationsSettings}
               >
-                <Icons.SettingsMedium size={24} />
+                <IconsLegacy.SettingsMedium size={24} />
               </TouchableOpacity>
             </Flex>
           ),

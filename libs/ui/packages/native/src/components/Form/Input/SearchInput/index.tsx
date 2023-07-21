@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { TextInput } from "react-native";
 import styled from "styled-components/native";
 import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";
-import SearchMedium from "@ledgerhq/icons-ui/native/SearchMedium";
+import SearchMedium from "@ledgerhq/icons-ui/nativeLegacy/SearchMedium";
 import Button from "../../../cta/Button";
 
 const Icon = styled(SearchMedium).attrs((p) => ({

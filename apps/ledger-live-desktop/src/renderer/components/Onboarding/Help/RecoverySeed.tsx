@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Text, Button, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import FakeLink from "~/renderer/components/FakeLink";
@@ -86,7 +86,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
         mt="auto"
         variant="main"
         onClick={props.handleNextInDrawer}
-        Icon={() => <Icons.ArrowRightMedium size={18} />}
+        Icon={() => <IconsLegacy.ArrowRightMedium size={18} />}
       >
         {t("onboarding.screens.welcome.nextButton")}
       </Button>

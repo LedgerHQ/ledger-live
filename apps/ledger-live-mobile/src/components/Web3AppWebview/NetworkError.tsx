@@ -3,7 +3,7 @@ import { Linking } from "react-native";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import GenericErrorView from "../GenericErrorView";
 import Button from "../Button";
 import ExternalLink from "../ExternalLink";
@@ -22,7 +22,7 @@ export const NetworkError = ({ handleTryAgain }: { handleTryAgain: () => void })
   return (
     <Flex flex={1} justifyContent="center">
       <GenericErrorView
-        exportLogIcon={Icons.ImportMedium}
+        exportLogIcon={IconsLegacy.ImportMedium}
         exportLogIconPosition="right"
         error={new WebPTXPlayerNetworkFail()}
         footerComponent={

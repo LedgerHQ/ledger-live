@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Button, Text, Icons, IconBox } from "@ledgerhq/native-ui";
+import { Flex, Button, Text, IconsLegacy, IconBox } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../../../const";
@@ -24,7 +24,7 @@ const OnboardingSetupDeviceInformation = () => {
   return (
     <Flex flex={1} justifyContent="space-between" backgroundColor="background.main">
       <Flex flex={1} alignItems="center" justifyContent="center">
-        <IconBox Icon={Icons.WarningMedium} color="warning.c50" iconSize={24} boxSize={64} />
+        <IconBox Icon={IconsLegacy.WarningMedium} color="warning.c50" iconSize={24} boxSize={64} />
         <Text variant="h2" color="neutral.c100" mt={8} uppercase textAlign="center">
           {t("onboarding.stepSetupDevice.start.warning.title")}
         </Text>

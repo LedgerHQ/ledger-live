@@ -5,7 +5,7 @@ import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation
 import {
   Flex,
   FlowStepper,
-  Icons,
+  IconsLegacy,
   Transitions,
   SlideIndicator,
   ScrollListContainer,
@@ -32,7 +32,7 @@ const InfoButton = ({ target }: { target: Metadata["drawer"] }) => {
   if (target)
     return (
       <Button
-        Icon={Icons.InfoMedium}
+        Icon={IconsLegacy.InfoMedium}
         onPress={() => navigation.navigate(target.route, { screen: target.screen })}
       />
     );
@@ -64,7 +64,7 @@ const ImageHeader = ({
       width="100%"
       height={48}
     >
-      <Button Icon={() => <Icons.ArrowLeftMedium size={24} />} onPress={onBack} />
+      <Button Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />} onPress={onBack} />
       {metadata.length <= 1 ? null : (
         <SlideIndicator
           slidesLength={metadata.length}

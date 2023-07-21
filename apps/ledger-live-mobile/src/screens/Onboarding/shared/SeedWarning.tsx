@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import { Text, Button, Alert, Flex, IconBox, Icons } from "@ledgerhq/native-ui";
+import { Text, Button, Alert, Flex, IconBox, IconsLegacy } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 
@@ -22,7 +22,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <Flex alignItems="center">
-        <IconBox Icon={Icons.WarningMedium} color="warning.c50" iconSize={24} boxSize={64} />
+        <IconBox Icon={IconsLegacy.WarningMedium} color="warning.c50" iconSize={24} boxSize={64} />
       </Flex>
 
       <Text variant="h2" mt={8} textAlign="center">

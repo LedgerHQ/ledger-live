@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, ProgressBar, Button, Text } from "../../../src/components";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 
 const description = `
 ### An animated progress bar.
@@ -66,8 +66,8 @@ export const Default = (args: typeof DefaultArgs): JSX.Element => {
           Active index: {index} / {length - 1}
         </Text>
         <Flex flexDirection="row" justifyContent="space-around" width="100%">
-          <Button Icon={Icons.MinusMedium} onPress={remove} mr={2} />
-          <Button Icon={Icons.PlusMedium} onPress={add} />
+          <Button Icon={IconsLegacy.MinusMedium} onPress={remove} mr={2} />
+          <Button Icon={IconsLegacy.PlusMedium} onPress={add} />
         </Flex>
       </Flex>
     </>

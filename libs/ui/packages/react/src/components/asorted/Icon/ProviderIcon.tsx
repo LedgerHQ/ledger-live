@@ -1,5 +1,5 @@
-import * as providers from "@ledgerhq/icons-ui/react/Providers/index";
-import * as providersBoxed from "@ledgerhq/icons-ui/react/ProvidersBoxed/index";
+import * as providers from "@ledgerhq/icons-ui/reactLegacy/Providers/index";
+import * as providersBoxed from "@ledgerhq/icons-ui/reactLegacy/ProvidersBoxed/index";
 
 import React from "react";
 import FlexBox from "../../layout/Flex";

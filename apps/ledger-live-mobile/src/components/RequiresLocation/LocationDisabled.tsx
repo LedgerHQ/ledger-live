@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-// import { Icons } from "@ledgerhq/native-ui";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import NoLocationImage from "../../icons/NoLocationImage";

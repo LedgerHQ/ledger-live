@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFloating, getScrollParents, shift, size, flip } from "@floating-ui/react-dom";
 import styled from "styled-components";
-import { Icons } from "../../../";
+import { IconsLegacy } from "../../../";
 import Flex from "../../layout/Flex";
 import Box from "../../layout/Flex";
 import Text from "../../asorted/Text";
@@ -170,7 +170,7 @@ const DropdownGeneric = ({
         <Text variant="paragraph" fontWeight="medium" color={color}>
           {label}
         </Text>
-        <Icons.DropdownMedium size={20} color={color} />
+        <IconsLegacy.DropdownMedium size={20} color={color} />
       </ButtonContainer>
       {opened && !disabled && (
         <DropdownContainer

@@ -7,7 +7,7 @@ import type { App } from "@ledgerhq/types-live";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
 
 import styled from "styled-components/native";
-import { Icons, Box } from "@ledgerhq/native-ui";
+import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 
 type Props = {
   app: App;
@@ -43,7 +43,7 @@ const AppUninstallButton = ({
   return (
     <TouchableOpacity onPress={uninstallApp}>
       <ButtonContainer width={size} height={size} borderRadius={size} borderColor="error.c50">
-        <Icons.TrashMedium size={size * 0.375} color="error.c50" />
+        <IconsLegacy.TrashMedium size={size * 0.375} color="error.c50" />
       </ButtonContainer>
     </TouchableOpacity>
   );

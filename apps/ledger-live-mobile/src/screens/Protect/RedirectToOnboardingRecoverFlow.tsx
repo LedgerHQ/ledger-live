@@ -9,7 +9,7 @@ import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getVersion from "@ledgerhq/live-common/hw/getVersion";
 import { BleError } from "@ledgerhq/live-common/ble/types";
-import { Flex, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
@@ -176,7 +176,7 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
             </Button>
             <Button
               iconPosition="right"
-              Icon={Icons.ExternalLinkMedium}
+              Icon={IconsLegacy.ExternalLinkMedium}
               onPress={onOpenHelp}
               mb={0}
             >
@@ -212,7 +212,7 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
             </Button>
             <Button
               iconPosition="right"
-              Icon={Icons.ExternalLinkMedium}
+              Icon={IconsLegacy.ExternalLinkMedium}
               onPress={onOpenHelp}
               mb={0}
             >

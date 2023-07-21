@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Flex, Text, Icons, Link, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
+import { Flex, Text, IconsLegacy, Link, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTranslation } from "react-i18next";
@@ -94,7 +94,7 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
         </Text>
         <Link
           iconPosition="right"
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           onClick={infoLink}
           type="color"
           color="primary.c80"

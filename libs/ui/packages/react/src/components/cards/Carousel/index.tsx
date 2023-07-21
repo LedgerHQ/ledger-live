@@ -8,9 +8,9 @@ import Text from "../../asorted/Text";
 import Flex from "../../layout/Flex";
 import Slide, { Props as SlideProps } from "./Slide";
 
-import IconLeft from "@ledgerhq/icons-ui/react/ArrowLeftMedium";
-import IconRight from "@ledgerhq/icons-ui/react/ArrowRightMedium";
-import IconClose from "@ledgerhq/icons-ui/react/CloseMedium";
+import IconLeft from "@ledgerhq/icons-ui/reactLegacy/ArrowLeftMedium";
+import IconRight from "@ledgerhq/icons-ui/reactLegacy/ArrowRightMedium";
+import IconClose from "@ledgerhq/icons-ui/reactLegacy/CloseMedium";
 
 const CarouselWrapper = styled.div`
   width: 100%;

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useNavigation, StackActions } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui/assets/index";
+import { IconsLegacy } from "@ledgerhq/native-ui/assets/index";
 import { Flex, Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";
@@ -61,14 +61,14 @@ function OnboardingView({
           <View>
             {hasBackButton ? (
               <TouchableOpacity onPress={handlecustomBackAction} hitSlop={hitSlop}>
-                <Icons.ArrowLeftMedium size="24px" />
+                <IconsLegacy.ArrowLeftMedium size="24px" />
               </TouchableOpacity>
             ) : null}
           </View>
           <View>
             {hasCloseButton ? (
               <TouchableOpacity onPress={handlecustomCloseAction} hitSlop={hitSlop}>
-                <Icons.CloseMedium size="24px" />
+                <IconsLegacy.CloseMedium size="24px" />
               </TouchableOpacity>
             ) : null}
           </View>

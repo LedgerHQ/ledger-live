@@ -11,7 +11,7 @@ import {
   isElectionOpen,
   isStash,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import BondIcon from "../../icons/LinkIcon";
@@ -87,7 +87,7 @@ const getMainActions = (args: {
       id: "stake",
       navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: IconsLegacy.ClaimRewardsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

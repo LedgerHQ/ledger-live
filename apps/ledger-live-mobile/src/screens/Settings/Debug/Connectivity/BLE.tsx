@@ -17,7 +17,7 @@ import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "@react-navigation/native";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import LText from "../../../../components/LText";
 import KeyboardView from "../../../../components/KeyboardView";
@@ -290,7 +290,7 @@ class DebugBLE extends Component<
             autoCorrect={false}
             onSubmitEditing={this.send}
           />
-          <Button type="main" Icon={Icons.ArrowRightMedium} onPress={this.send} />
+          <Button type="main" Icon={IconsLegacy.ArrowRightMedium} onPress={this.send} />
           <Switch value={useBLEframe} onValueChange={this.onBleFrameChange} />
         </View>
         <LText

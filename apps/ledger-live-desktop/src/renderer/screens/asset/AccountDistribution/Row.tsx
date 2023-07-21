@@ -19,7 +19,7 @@ import Bar from "~/renderer/screens/dashboard/AssetDistribution/Bar";
 import ToolTip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 export type AccountDistributionItem = {
   account: AccountLike;
   distribution: number;
@@ -115,7 +115,7 @@ export default function Row({
         </Value>
         <Dots>
           <AccountContextMenu leftClick account={account} parentAccount={parentAccount} withStar>
-            <Icons.OthersMedium size={16} />
+            <IconsLegacy.OthersMedium size={16} />
           </AccountContextMenu>
         </Dots>
       </Wrapper>

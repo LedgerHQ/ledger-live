@@ -3,10 +3,10 @@ import styled, { useTheme, DefaultTheme } from "styled-components";
 import Text from "../../asorted/Text";
 import { TextVariants } from "../../../styles/theme";
 import Flex from "../../layout/Flex";
-import InfoAltFillMedium from "@ledgerhq/icons-ui/react/InfoAltFillMedium";
-import CircledCheckSolidMedium from "@ledgerhq/icons-ui/react/CircledCheckSolidMedium";
-import WarningSolidMedium from "@ledgerhq/icons-ui/react/WarningSolidMedium";
-import CircledCrossSolidMedium from "@ledgerhq/icons-ui/react/CircledCrossSolidMedium";
+import InfoAltFillMedium from "@ledgerhq/icons-ui/reactLegacy/InfoAltFillMedium";
+import CircledCheckSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCheckSolidMedium";
+import WarningSolidMedium from "@ledgerhq/icons-ui/reactLegacy/WarningSolidMedium";
+import CircledCrossSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCrossSolidMedium";
 
 type AlertType = "info" | "secondary" | "success" | "warning" | "error";
 

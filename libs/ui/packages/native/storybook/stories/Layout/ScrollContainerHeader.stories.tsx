@@ -5,7 +5,7 @@ import Button, { ButtonProps } from "../../../src/components/cta/Button";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 import Badge from "../../../src/components/tags/Badge";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
 
 export default {
@@ -16,8 +16,8 @@ export default {
 const TopRightSection = ({ debug }: { debug: boolean }) => {
   return (
     <Flex flexDirection="row" border={debug ? "1px solid purple" : "none"}>
-      <Button mx={2} Icon={Icons.PlusMedium} onPress={action("plus icon pressed")} />
-      <Button Icon={Icons.CloseMedium} onPress={action("cross icon pressed")} />
+      <Button mx={2} Icon={IconsLegacy.PlusMedium} onPress={action("plus icon pressed")} />
+      <Button Icon={IconsLegacy.CloseMedium} onPress={action("cross icon pressed")} />
     </Flex>
   );
 };
@@ -56,7 +56,7 @@ export const ScrollContainerHeaderStory = (args: typeof ScrollContainerHeaderSto
             <Button
               mr={2}
               border={debug ? "1px solid purple" : "none"}
-              Icon={Icons.ArrowLeftMedium}
+              Icon={IconsLegacy.ArrowLeftMedium}
               size={"small" as ButtonProps["size"]}
             />
           ) : undefined

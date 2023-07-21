@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useState } from "react";
-import { Text, Icons, Button, SelectableList, Switch, Flex } from "@ledgerhq/native-ui";
+import { Text, IconsLegacy, Button, SelectableList, Switch, Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import SettingsRow from "../../../../components/SettingsRow";
@@ -98,7 +98,7 @@ export default () => {
   return (
     <SettingsRow
       title="BLE Pairing flow"
-      iconLeft={<Icons.BluetoothMedium size={32} color="black" />}
+      iconLeft={<IconsLegacy.BluetoothMedium size={32} color="black" />}
       onPress={onPress}
       desc={`Paired device: ${pairedDevice?.deviceName ?? pairedDevice?.deviceId ?? "no device"}`}
     >

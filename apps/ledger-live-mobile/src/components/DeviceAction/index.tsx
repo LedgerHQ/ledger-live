@@ -14,7 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import type { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -343,7 +343,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           theme,
           hasExportLogButton: false,
           iconColor: palette.neutral.c20,
-          Icon: () => <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />,
+          Icon: () => <IconsLegacy.InfoAltFillMedium size={28} color={palette.primary.c80} />,
           device: device ?? undefined,
         });
       }
@@ -466,7 +466,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         colors,
         theme,
         iconColor: palette.opacityDefault.c10,
-        Icon: () => <Icons.WarningSolidMedium size={28} color={colors.warning} />,
+        Icon: () => <IconsLegacy.WarningSolidMedium size={28} color={colors.warning} />,
         device: device ?? undefined,
       });
     }

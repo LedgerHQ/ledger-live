@@ -15,7 +15,7 @@ import invariant from "invariant";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { GraphTabs, Text, Icons } from "@ledgerhq/native-ui";
+import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction } from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
@@ -231,7 +231,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                 <Text variant={"paragraph"} color="neutral.c70" mr={3}>
                   <Trans i18nKey="freeze.amount.infoLabel" />
                 </Text>
-                <Icons.InfoMedium size={20} color="neutral.c70" />
+                <IconsLegacy.InfoMedium size={20} color="neutral.c70" />
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <CurrencyInput

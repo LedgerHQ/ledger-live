@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
@@ -31,7 +31,7 @@ export const AddNewItem = () => {
   return (
     <StyledTouchableOpacity testID="wallet-nft-gallery-add-new-list-item" onPress={openModal}>
       <Flex flexDirection="column" alignItems="center" justifyContent="center">
-        <Icons.PlusMedium size={24} color={colors.neutral.c100} />
+        <IconsLegacy.PlusMedium size={24} color={colors.neutral.c100} />
         <Text
           variant="body"
           fontWeight="semiBold"

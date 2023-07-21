@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
 
@@ -50,7 +50,7 @@ const getMainActions = ({
       id: "stake",
       navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: IconsLegacy.ClaimRewardsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

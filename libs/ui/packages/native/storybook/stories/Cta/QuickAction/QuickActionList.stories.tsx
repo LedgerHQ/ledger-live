@@ -5,7 +5,7 @@ import {
   LendMedium,
   MinusMedium,
   PlusMedium,
-} from "@ledgerhq/icons-ui/native";
+} from "@ledgerhq/icons-ui/nativeLegacy";
 import { action } from "@storybook/addon-actions";
 import React from "react";
 import Box from "../../../../src/components/Layout/Box";

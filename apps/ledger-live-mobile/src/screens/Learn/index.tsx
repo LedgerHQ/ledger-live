@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 
-import { Flex, InfiniteLoader, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, IconsLegacy } from "@ledgerhq/native-ui";
 
 import { useNavigation } from "@react-navigation/native";
 import WebViewScreen from "../../components/WebViewScreen";
@@ -66,7 +66,7 @@ function LearnWebView({ route }: NavigationProps) {
         >
           <Flex width="20%" />
           <Flex width="60%" alignItems="center" justifyContent="center" flexDirection="row">
-            <Icons.LockMedium size={16} color="neutral.c70" />
+            <IconsLegacy.LockMedium size={16} color="neutral.c70" />
             <Text textAlign="center" variant="small" fontWeight="medium" color="neutral.c70" ml={2}>
               ledger.com/academy
             </Text>

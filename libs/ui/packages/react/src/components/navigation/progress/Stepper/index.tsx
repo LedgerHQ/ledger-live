@@ -1,7 +1,7 @@
 import React, { memo, Fragment } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
-import { Icons } from "../../../../index";
+import { IconsLegacy } from "../../../../index";
 import Text from "../../../asorted/Text";
 import Flex, { FlexBoxProps } from "../../../layout/Flex";
 
@@ -88,9 +88,9 @@ export const Item = {
     border-radius: ${p => p.theme.space[2]}px;
     ${color}
   `,
-  Completed: (): JSX.Element => <Icons.CheckAloneMedium size={16} />,
-  Disabled: (): JSX.Element => <Icons.CloseMedium size={16} />,
-  Errored: (): JSX.Element => <Icons.CloseMedium size={16} />,
+  Completed: (): JSX.Element => <IconsLegacy.CheckAloneMedium size={16} />,
+  Disabled: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
+  Errored: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`

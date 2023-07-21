@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Flex, Icons } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -67,7 +67,7 @@ const DeviceName: React.FC<Props> = ({
           </Text>
           {editSupported ? (
             <PenIcon>
-              <Icons.PenMedium color={disabled ? "neutral.c50" : "neutral.c100"} size={17} />
+              <IconsLegacy.PenMedium color={disabled ? "neutral.c50" : "neutral.c100"} size={17} />
             </PenIcon>
           ) : null}
         </Flex>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTheme } from "styled-components";
 import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";
-import SearchMedium from "@ledgerhq/icons-ui/react/SearchMedium";
+import SearchMedium from "@ledgerhq/icons-ui/reactLegacy/SearchMedium";
 
 function SearchInput(props: InputProps, ref?: React.ForwardedRef<HTMLInputElement>): JSX.Element {
   const theme = useTheme();

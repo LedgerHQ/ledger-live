@@ -1,4 +1,4 @@
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTheme } from "styled-components/native";
 import styled from "@ledgerhq/native-ui/components/styled";
@@ -34,7 +34,7 @@ export const NftSelectionCheckbox = ({ isSelected }: Props) => {
   if (isSelected) {
     return (
       <StyledChecked>
-        <Icons.CheckTickMedium size={16} color={colors.neutral.c00} />
+        <IconsLegacy.CheckTickMedium size={16} color={colors.neutral.c00} />
       </StyledChecked>
     );
   }

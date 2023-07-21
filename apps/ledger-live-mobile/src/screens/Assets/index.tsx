@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { Flex, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { useTranslation } from "react-i18next";
@@ -100,7 +100,7 @@ function Assets() {
                   outline
                   mt={6}
                   iconPosition="left"
-                  Icon={Icons.PlusMedium}
+                  Icon={IconsLegacy.PlusMedium}
                   onPress={openAddModal}
                 >
                   {t("portfolio.emptyState.buttons.import")}

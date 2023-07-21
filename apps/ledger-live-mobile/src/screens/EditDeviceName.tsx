@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { Button, Text, Icons, Flex } from "@ledgerhq/native-ui";
+import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
@@ -151,7 +151,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
             {error ? (
               <Flex alignItems={"center"} flexDirection={"row"} mt={1}>
-                <Icons.WarningMedium color="error.c50" size={16} />
+                <IconsLegacy.WarningMedium color="error.c50" size={16} />
                 <Text variant="small" color="error.c50" ml={2} numberOfLines={2}>
                   <TranslatedError error={error} />
                 </Text>

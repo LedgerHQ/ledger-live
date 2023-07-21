@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, Icons, Tag, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
@@ -72,9 +72,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         </Flex>
         <Flex flexDirection="row" alignItems="center" flexShrink={0} flexGrow={1} pl={6}>
           {disabled ? null : completed ? (
-            <Icons.CheckAloneMedium color="success.c50" size={20} />
+            <IconsLegacy.CheckAloneMedium color="success.c50" size={20} />
           ) : (
-            <Icons.ChevronRightMedium color="neutral.c70" size={24} />
+            <IconsLegacy.ChevronRightMedium color="neutral.c70" size={24} />
           )}
         </Flex>
       </Flex>

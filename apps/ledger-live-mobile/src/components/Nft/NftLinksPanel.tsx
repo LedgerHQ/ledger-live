@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
@@ -170,7 +170,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
                 { backgroundColor: rgba(colors.primary.c90, 0.1) },
               ]}
             >
-              <Icons.EyeNoneMedium size={16} color={colors.primary.c90} />
+              <IconsLegacy.EyeNoneMedium size={16} color={colors.primary.c90} />
             </View>
           }
           title={t("nft.viewerModal.hide")}
@@ -189,7 +189,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
                     { backgroundColor: rgba(colors.primary.c90, 0.1) },
                   ]}
                 >
-                  <Icons.GlobeMedium size={16} color={colors.primary.c90} />
+                  <IconsLegacy.GlobeMedium size={16} color={colors.primary.c90} />
                 </View>
               }
               title={t("nft.viewerModal.viewInExplorer")}
@@ -210,7 +210,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
                     { backgroundColor: rgba(colors.primary.c90, 0.1) },
                   ]}
                 >
-                  <Icons.PhotographMedium size={16} color={colors.primary.c90} />
+                  <IconsLegacy.PhotographMedium size={16} color={colors.primary.c90} />
                 </View>
               }
               onPress={handlePressCustomImage}

@@ -3,10 +3,10 @@ import styled, { useTheme } from "styled-components/native";
 import FlexBox, { FlexBoxProps } from "../../Layout/Flex";
 import { TextProps, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import Text from "../../Text";
-import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
+import CloseMedium from "@ledgerhq/icons-ui/nativeLegacy/CloseMedium";
 import { Flex } from "../../Layout";
 import { space } from "styled-system";
-import { ExternalLinkMedium } from "@ledgerhq/icons-ui/native";
+import { ExternalLinkMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import { TextVariants } from "src/styles/theme";
 import { FontWeightTypes } from "src/components/Text/getTextStyle";
 

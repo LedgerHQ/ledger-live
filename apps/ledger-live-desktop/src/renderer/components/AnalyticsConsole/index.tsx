@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import EventList from "./EventList";
 import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
-import { Divider, Flex, Icons, Switch, Text } from "@ledgerhq/react-ui";
+import { Divider, Flex, IconsLegacy, Switch, Text } from "@ledgerhq/react-ui";
 
 const Root = styled.div`
   position: fixed;
@@ -102,13 +102,13 @@ function AnalyticsConsole() {
           <Flex alignSelf={"flex-end"} flexDirection={"column"} style={{ pointerEvents: "auto" }}>
             <ButtonContainer onClick={onClickArrowButton}>
               {position === "left" ? (
-                <Icons.ArrowRightMedium size={18} color="black" />
+                <IconsLegacy.ArrowRightMedium size={18} color="black" />
               ) : (
-                <Icons.ArrowLeftMedium size={18} color="black" />
+                <IconsLegacy.ArrowLeftMedium size={18} color="black" />
               )}
             </ButtonContainer>
             <ButtonContainer onClick={onClickDebugButton}>
-              <Icons.ActivityMedium size={18} color="black" />
+              <IconsLegacy.ActivityMedium size={18} color="black" />
             </ButtonContainer>
           </Flex>
         </Container>

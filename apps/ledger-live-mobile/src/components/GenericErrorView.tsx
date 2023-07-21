@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
-import { Flex, Icons, Link, Text, BoxedIcon } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Link, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -24,7 +24,7 @@ type Props = {
   iconColor?: string;
   children?: React.ReactNode;
   footerComponent?: React.ReactNode;
-  exportLogIcon?: typeof Icons.DownloadMedium | typeof Icons.ImportMedium;
+  exportLogIcon?: typeof IconsLegacy.DownloadMedium | typeof IconsLegacy.ImportMedium;
   exportLogIconPosition?: "left" | "right";
 };
 
@@ -44,7 +44,7 @@ const GenericErrorView = ({
   Icon = CloseMedium,
   iconColor = "error.c60",
   footerComponent,
-  exportLogIcon = Icons.DownloadMedium,
+  exportLogIcon = IconsLegacy.DownloadMedium,
   exportLogIconPosition = "left",
 }: Props) => {
   const { t } = useTranslation();

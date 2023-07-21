@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons, Text, BoxedIcon } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "@ledgerhq/live-common/account/index";
@@ -154,7 +154,7 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
               >
                 <BoxedIcon
                   size={24}
-                  Icon={<Icons.PlusMedium size={14} color={colors.primary} />}
+                  Icon={<IconsLegacy.PlusMedium size={14} color={colors.primary} />}
                   variant="circle"
                   backgroundColor="primary.c20"
                   borderColor="transparent"

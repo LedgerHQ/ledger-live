@@ -1,7 +1,7 @@
 import React, { memo, useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 
-import { Icons, Box } from "@ledgerhq/native-ui";
+import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
@@ -40,7 +40,7 @@ const AppFilter = ({ filter, setFilter, sort, setSort, order, setOrder, disabled
       <TouchableOpacity disabled={disabled} onPress={openModal}>
         <FilterButtonContainer borderColor="neutral.c40">
           <Box>
-            <Icons.FiltersMedium size={18} color="neutral.c100" />
+            <IconsLegacy.FiltersMedium size={18} color="neutral.c100" />
             {filter !== "all" && <NotifBadge />}
           </Box>
         </FilterButtonContainer>

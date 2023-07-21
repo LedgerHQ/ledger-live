@@ -14,7 +14,7 @@ import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { State } from "~/renderer/reducers";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
@@ -145,7 +145,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
                 onHideCollection={onHideCollection}
               >
                 <Dots>
-                  <Icons.OthersMedium size={20} />
+                  <IconsLegacy.OthersMedium size={20} />
                 </Dots>
               </NFTContextMenu>
             )}

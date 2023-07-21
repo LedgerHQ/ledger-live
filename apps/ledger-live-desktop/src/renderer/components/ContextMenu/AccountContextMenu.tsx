@@ -18,7 +18,7 @@ import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ContextMenuItemType } from "./ContextMenuWrapper";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 
 type Props = {
   account: AccountLike;
@@ -159,7 +159,7 @@ export default function AccountContextMenu({
     if (account.type === "TokenAccount") {
       items.push({
         label: "accounts.contextMenu.hideToken",
-        Icon: Icons.NoneMedium,
+        Icon: IconsLegacy.NoneMedium,
         id: "token-menu-hide",
         callback: () =>
           dispatch(

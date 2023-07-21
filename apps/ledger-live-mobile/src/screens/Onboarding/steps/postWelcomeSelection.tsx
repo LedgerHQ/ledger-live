@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, Flex, Box, Button, Icons } from "@ledgerhq/native-ui";
+import { Text, Flex, Box, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 
@@ -76,7 +76,7 @@ function PostWelcomeSelection() {
         }}
         testID={`Onboarding PostWelcome - Selection|Setup your Ledger`}
         onPress={setupLedger}
-        Icon={<Icons.PlusMedium color={colors.primary.c80} size={24} />}
+        Icon={<IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />}
       />
 
       <Box mt={6}>
@@ -89,7 +89,7 @@ function PostWelcomeSelection() {
           }}
           testID={`Onboarding PostWelcome - Selection|Access an existing wallet`}
           onPress={accessExistingWallet}
-          Icon={<Icons.PlusMedium color={colors.primary.c80} size={24} />}
+          Icon={<IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />}
         />
       </Box>
 

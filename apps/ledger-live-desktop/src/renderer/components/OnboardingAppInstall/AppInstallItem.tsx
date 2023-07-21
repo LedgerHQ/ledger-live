@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Icons, Flex, ProgressLoader, Text, InfiniteLoader } from "@ledgerhq/react-ui";
+import { IconsLegacy, Flex, ProgressLoader, Text, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 
@@ -43,9 +43,9 @@ const AppInstallItem = ({ appName, state, itemProgress, productName, i }: Props)
             />
           )
         ) : state === ItemState.Installed ? (
-          <Icons.CheckAloneMedium size={20} color={"success.c50"} />
+          <IconsLegacy.CheckAloneMedium size={20} color={"success.c50"} />
         ) : state === ItemState.Skipped ? (
-          <Icons.InfoAltMedium size={20} color={"neutral.c100"} />
+          <IconsLegacy.InfoAltMedium size={20} color={"neutral.c100"} />
         ) : (
           <Text color="neutral.c100" variant="body">
             {i + 1}

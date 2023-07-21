@@ -1,5 +1,5 @@
 import React from "react";
-import CircledCheckSolidMedium from "@ledgerhq/icons-ui/react/CircledCheckSolidMedium";
+import CircledCheckSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCheckSolidMedium";
 import styled, { useTheme } from "styled-components";
 
 import Flex, { FlexBoxProps as FlexProps } from "../../Flex";

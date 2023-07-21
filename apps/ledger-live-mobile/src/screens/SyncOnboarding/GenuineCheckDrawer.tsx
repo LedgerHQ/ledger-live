@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen } from "../../analytics";
@@ -23,7 +23,7 @@ const GenuineCheckDrawer = ({ isOpen, onPress, productName, onClose }: Props) =>
     >
       <TrackScreen category="Start Stax hardware check" type="drawer" refreshSource={false} />
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
-        <Icons.LedgerLogoMedium size={28} color="primary.c80" />
+        <IconsLegacy.LedgerLogoMedium size={28} color="primary.c80" />
       </Flex>
       <Text variant="paragraph" color="primary.c80" textAlign="center">
         {t("syncOnboarding.softwareChecksSteps.genuineCheckRequestDrawer.iconText")}

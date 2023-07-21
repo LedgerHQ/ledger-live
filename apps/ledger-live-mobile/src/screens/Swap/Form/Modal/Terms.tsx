@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
-import { Button, Icons, Link } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { urls } from "../../../../config/urls";
@@ -28,14 +28,14 @@ export function Terms({
     <QueuedDrawer
       isRequestingToBeOpened={isOpen}
       noCloseButton
-      Icon={Icons.InfoMedium}
+      Icon={IconsLegacy.InfoMedium}
       iconColor="warning.c50"
       title={t("transfer.swap2.form.disclaimer.title")}
       description={t("transfer.swap2.form.disclaimer.desc", {
         providerName: getProviderName(provider),
       })}
     >
-      <Link type="color" Icon={Icons.ExternalLinkMedium} onPress={onPressLink}>
+      <Link type="color" Icon={IconsLegacy.ExternalLinkMedium} onPress={onPressLink}>
         {t("transfer.swap2.form.disclaimer.tos")}
       </Link>
       <Button

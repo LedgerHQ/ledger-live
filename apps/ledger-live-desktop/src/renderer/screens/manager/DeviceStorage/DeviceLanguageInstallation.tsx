@@ -1,5 +1,13 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Button, Flex, Icons, Radio, Divider, Text, InfiniteLoader } from "@ledgerhq/react-ui";
+import {
+  Button,
+  Flex,
+  IconsLegacy,
+  Radio,
+  Divider,
+  Text,
+  InfiniteLoader,
+} from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
@@ -123,7 +131,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
                           {t(`deviceLocalization.languages.${language}`)}
                         </Radio.ListElement.Label>
                         {currentLanguage === language && (
-                          <Icons.CircledCheckSolidMedium color="primary.c80" size={24} />
+                          <IconsLegacy.CircledCheckSolidMedium color="primary.c80" size={24} />
                         )}
                       </Flex>
                     )}

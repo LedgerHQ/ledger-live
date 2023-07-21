@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
-import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Box } from "@ledgerhq/native-ui";
 import { StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -130,7 +130,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSendFunds : null,
-      Icon: Icons.ArrowTopMedium,
+      Icon: IconsLegacy.ArrowTopMedium,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
     },
     {
@@ -142,7 +142,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
       onPress: onReceiveFunds,
-      Icon: Icons.ArrowBottomMedium,
+      Icon: IconsLegacy.ArrowBottomMedium,
       disabled: readOnlyModeEnabled,
     },
     {
@@ -154,7 +154,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
       tag: t("common.popular"),
-      Icon: Icons.PlusMedium,
+      Icon: IconsLegacy.PlusMedium,
       onPress: onBuy,
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -178,7 +178,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
-      Icon: Icons.MinusMedium,
+      Icon: IconsLegacy.MinusMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSell : null,
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -209,7 +209,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             },
             title: t("transfer.stake.title"),
             description: t("transfer.stake.description"),
-            Icon: Icons.ClaimRewardsMedium,
+            Icon: IconsLegacy.ClaimRewardsMedium,
             onPress: onStake,
             disabled: readOnlyModeEnabled,
           },
@@ -223,7 +223,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
-      Icon: Icons.BuyCryptoMedium,
+      Icon: IconsLegacy.BuyCryptoMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSwap : null,
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
@@ -255,7 +255,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             },
             title: t("transfer.walletConnect.title"),
             description: t("transfer.walletConnect.description"),
-            Icon: Icons.WalletConnectMedium,
+            Icon: IconsLegacy.WalletConnectMedium,
             onPress: onWalletConnect,
             disabled: readOnlyModeEnabled,
           },

@@ -1,7 +1,7 @@
 import React from "react";
 import Input, { InputProps } from "../BaseInput";
 import FlexBox from "../../layout/Flex";
-import QrCodeMedium from "@ledgerhq/icons-ui/react/QrCodeMedium";
+import QrCodeMedium from "@ledgerhq/icons-ui/reactLegacy/QrCodeMedium";
 import styled from "styled-components";
 
 const QrCodeButton = styled.button`

@@ -7,7 +7,7 @@ import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { urls } from "~/config/urls";
 import { acceptTerms } from "~/renderer/terms";
-import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
+import { Text, Button, Logos, IconsLegacy, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 import { saveSettings } from "~/renderer/actions/settings";
 import BuyNanoX from "./assets/buyNanoX.webm";
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
@@ -185,7 +185,7 @@ export function Welcome() {
           <Button
             data-test-id="v3-onboarding-get-started-button"
             iconPosition="right"
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
             onClick={handleAcceptTermsAndGetStarted}
             mb="5"

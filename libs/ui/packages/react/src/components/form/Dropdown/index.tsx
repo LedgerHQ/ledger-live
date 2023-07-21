@@ -3,7 +3,7 @@ import { components, GroupBase, ControlProps, ValueContainerProps } from "react-
 import { useTheme } from "styled-components";
 import SelectInput, { Props as SelectInputProps } from "../../form/SelectInput";
 import Text from "../../asorted/Text";
-import { Icons } from "../../../";
+import { IconsLegacy } from "../../../";
 import { ValueContainer } from "../../form/SelectInput/ValueContainer";
 import FlexBox from "../../layout/Flex";
 
@@ -39,7 +39,7 @@ function DropdownValueContainer<O>(props: ValueContainerProps<O, false>) {
             <FlexBox>{props.children}</FlexBox>
           </Text>
           <FlexBox alignItems="center" style={{ transform: isOpen ? "rotate(180deg)" : "" }}>
-            <Icons.DropdownMedium size={20} />
+            <IconsLegacy.DropdownMedium size={20} />
           </FlexBox>
         </FlexBox>
       )}

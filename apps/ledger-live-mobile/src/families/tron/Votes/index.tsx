@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/live-common/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { Box, Button, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Button, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { urls } from "../../../config/urls";
 import Row from "./Row";
@@ -67,7 +67,10 @@ const Delegation = ({ account }: Props) => {
     <View style={styles.root}>
       {(hasRewards || (tronPower > 0 && formattedVotes.length > 0)) && (
         <>
-          <AccountSectionLabel name={t("tron.voting.rewards.title")} Icon={Icons.InfoMedium} />
+          <AccountSectionLabel
+            name={t("tron.voting.rewards.title")}
+            Icon={IconsLegacy.InfoMedium}
+          />
           <View style={[styles.rewardSection]}>
             <View style={styles.labelSection}>
               <Text fontWeight={"semiBold"} variant={"h4"}>

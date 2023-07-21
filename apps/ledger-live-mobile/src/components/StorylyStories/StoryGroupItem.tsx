@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
 import { Image, StyleProp, ViewStyle, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -101,7 +101,7 @@ const StoryGroupItem: React.FC<Props> = props => {
             backgroundColor="rgba(255,255,255,0.03)"
             borderRadius={innerImageSize}
           >
-            <Icons.PlayMedium size={24} color="constant.white" />
+            <IconsLegacy.PlayMedium size={24} color="constant.white" />
           </Flex>
         </Flex>
         <Border seen={seen} />

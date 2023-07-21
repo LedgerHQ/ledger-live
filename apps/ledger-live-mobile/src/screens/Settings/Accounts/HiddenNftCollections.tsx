@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
-import { Box, Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Account, NFTMetadata } from "@ledgerhq/types-live";
 import {
@@ -83,7 +83,7 @@ const HiddenNftCollectionRow = ({
           </CollectionNameSkeleton>
         </Flex>
         <TouchableOpacity onPress={onUnhide}>
-          <Icons.CloseMedium color="neutral.c100" size={24} />
+          <IconsLegacy.CloseMedium color="neutral.c100" size={24} />
         </TouchableOpacity>
       </Flex>
     </Flex>
