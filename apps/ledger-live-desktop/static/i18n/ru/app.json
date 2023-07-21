@@ -5127,6 +5127,9 @@
       "title" : "{{currencyName}} не поддерживается",
       "description" : "Этот криптоактив пока не поддерживается. Обратитесь в Поддержку."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
+    },
     "DeviceNotGenuine" : {
       "title" : "Возможно, устройство не подлинное.",
       "description" : "Вы можете получить помощь от Поддержки Ledger"
