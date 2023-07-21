@@ -215,13 +215,14 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     </Flex>
   );
 
-  if (currentStep !== "companion" && (fatalError || allowedError) !== null) {
+  const error = fatalError || allowedError;
+  if (currentStep !== "companion" && error !== null) {
     stepContent = (
       <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
         {renderError({
           t,
           device,
-          error: fatalError || allowedError,
+          error,
           onRetry: isPollingOn ? undefined : notifyOnboardingEarlyCheckShouldReset,
         })}
       </Flex>
