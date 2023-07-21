@@ -83,7 +83,33 @@
     "migrate-branch": "0.0.1",
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.1",
-    "@ledgerhq/react-devtools": "0.0.0"
+    "@ledgerhq/react-devtools": "0.0.0",
+    "@ledgerhq/test-utils": "0.0.1",
+    "@actions/turborepo-s3-cache": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "angry-apricots-tell",
+    "angry-poets-end",
+    "early-mice-brush",
+    "five-pots-learn",
+    "giant-mice-kneel",
+    "itchy-squids-sniff",
+    "new-planets-raise",
+    "orange-deers-guess",
+    "orange-eye-rush",
+    "perfect-cheetahs-hide",
+    "poor-oranges-sin",
+    "pretty-mugs-refuse",
+    "red-tigers-whisper",
+    "shiny-eggs-applaud",
+    "short-hounds-act",
+    "silver-dryers-sniff",
+    "slow-pianos-smoke",
+    "smart-keys-fetch",
+    "tasty-drinks-hide",
+    "tasty-timers-divide",
+    "thirty-pumas-sleep",
+    "wet-houses-study",
+    "witty-turtles-search"
+  ]
 }

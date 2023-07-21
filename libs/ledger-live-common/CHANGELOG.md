@@ -1,5 +1,39 @@
 # @ledgerhq/live-common
 
+## 31.4.0-hotfix.0
+
+### Minor Changes
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - feat(recover): restore check seeded [PROTECT-1711]
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add telos evm currency
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update `Batcher` to be more agnostic
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Create EVM send flow
+
+### Patch Changes
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove extra refresh effect when configuration change in swap llm
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove unnecessary check on tx networkInfo
+
+- Updated dependencies [[`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1)]:
+  - @ledgerhq/cryptoassets@9.11.0-hotfix.0
+  - @ledgerhq/live-env@0.4.1-hotfix.0
+  - @ledgerhq/coin-evm@0.5.0-hotfix.0
+  - @ledgerhq/coin-framework@0.5.0-hotfix.0
+  - @ledgerhq/evm-tools@1.0.2-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.1-hotfix.0
+  - @ledgerhq/coin-algorand@0.2.5-hotfix.0
+  - @ledgerhq/coin-polkadot@0.3.2-hotfix.0
+  - @ledgerhq/domain-service@1.1.7-hotfix.0
+  - @ledgerhq/live-network@1.1.4-hotfix.0
+
 ## 31.3.0
 
 ### Minor Changes
