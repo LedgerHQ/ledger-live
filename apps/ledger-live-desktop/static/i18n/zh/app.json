@@ -4298,7 +4298,7 @@
         "nextButton" : "开始",
         "noDevice" : "没有设备？",
         "buyLink" : "没有设备？购买 Ledger Nano X",
-        "recoverSignIn" : "登录使用 Ledger Recover",
+        "recoverSignIn" : "登录 Ledger Recover",
         "byTapping" : "点按“开始”即表示您应允并同意我们的",
         "termsAndConditions" : "条款与条件",
         "and" : "和",
@@ -5126,6 +5126,9 @@
     "CurrencyNotSupported" : {
       "title" : "不支持 {{currencyName}}",
       "description" : "尚不支持该加密资产。请联系 Ledger 客服。"
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "可能不是正版",
