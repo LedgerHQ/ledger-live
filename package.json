@@ -140,7 +140,8 @@
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
-      "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch"
+      "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
+      "usb@2.9.0": "patches/usb@2.9.0.patch"
     }
   }
 }
