@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.64.2-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49)]:
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.16-hotfix.0
+
 ## 2.64.2-hotfix.0
 
 ### Patch Changes

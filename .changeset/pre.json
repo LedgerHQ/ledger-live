@@ -86,6 +86,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
-    "smart-keys-fetch"
+    "smart-keys-fetch",
+    "tiny-shoes-burn"
   ]
 }
