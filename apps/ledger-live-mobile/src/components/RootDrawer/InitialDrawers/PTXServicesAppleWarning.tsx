@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { InitialDrawerID } from "../types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Button, Checkbox, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
-import { View } from "react-native";
+import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
 
@@ -44,7 +44,7 @@ export function PTXServicesAppleWarning() {
   );
 
   const onLinkPress = useCallback(() => {
-    // TO-DO: find out where link should go
+    Linking.openURL("https://support.ledger.com/hc/articles/12309873917853?docs=true");
   }, []);
 
   return (
