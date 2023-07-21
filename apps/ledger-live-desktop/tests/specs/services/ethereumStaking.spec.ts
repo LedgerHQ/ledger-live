@@ -108,7 +108,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
       event: "button_clicked",
       properties: {
         button: "kiln",
-        page: "account/mock:1:ethereum:true_ethereum_1:",
+        path: "account/mock:1:ethereum:true_ethereum_1:",
         modal: "stake",
         flow: "stake",
         value: "/platform/kiln",
@@ -176,7 +176,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
       event: "button_clicked",
       properties: {
         button: "kiln_pooling",
-        page: "account/mock:1:ethereum:true_ethereum_0:",
+        path: "account/mock:1:ethereum:true_ethereum_0:",
         modal: "stake",
         flow: "stake",
         value: "/platform/kiln",

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
@@ -104,7 +104,7 @@ export default function MainNavigator() {
           unmountOnBlur: true,
           tabBarIcon: props => (
             <TabIcon
-              Icon={Icons.GraphGrowMedium}
+              Icon={IconsLegacy.GraphGrowMedium}
               i18nKey="tabs.market"
               testID="tab-bar-market"
               {...props}
@@ -137,7 +137,7 @@ export default function MainNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: props => (
-            <TabIcon Icon={Icons.PlanetMedium} i18nKey="tabs.discover" {...props} />
+            <TabIcon Icon={IconsLegacy.PlanetMedium} i18nKey="tabs.discover" {...props} />
           ),
         }}
         listeners={({ navigation }) => ({

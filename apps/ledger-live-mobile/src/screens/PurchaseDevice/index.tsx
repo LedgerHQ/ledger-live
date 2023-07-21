@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useState, useMemo } from "react";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
@@ -117,9 +117,9 @@ const PurchaseDevice = () => {
             height={48}
             zIndex={1}
           >
-            <Button Icon={Icons.ArrowLeftMedium} onPress={handleBack} />
+            <Button Icon={IconsLegacy.ArrowLeftMedium} onPress={handleBack} />
             {buyDeviceFromLive?.params?.debug && (
-              <Button Icon={Icons.FiltersMedium} onPress={handleOpenDrawer} />
+              <Button Icon={IconsLegacy.FiltersMedium} onPress={handleOpenDrawer} />
             )}
           </Flex>
         )}

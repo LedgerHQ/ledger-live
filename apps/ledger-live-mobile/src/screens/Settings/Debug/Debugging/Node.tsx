@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
-import { Text, Icons, Flex } from "@ledgerhq/native-ui";
+import { Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { isEmpty } from "lodash";
 import { State } from "../../../../reducers/types";
@@ -82,14 +82,14 @@ const Node = ({ data = {}, path, onEdit }: Props) => {
         const isOpen = childVisibility[rowKey as keyof typeof childVisibility];
         const icon = isObject ? (
           empty ? (
-            <Icons.BracketsMedium size={18} />
+            <IconsLegacy.BracketsMedium size={18} />
           ) : isOpen ? (
-            <Icons.DropdownMedium size={18} />
+            <IconsLegacy.DropdownMedium size={18} />
           ) : (
-            <Icons.DroprightMedium size={18} />
+            <IconsLegacy.DroprightMedium size={18} />
           )
         ) : (
-          <Icons.PenMedium size={18} />
+          <IconsLegacy.PenMedium size={18} />
         );
 
         return (

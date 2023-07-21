@@ -6,7 +6,7 @@ import {
   isAccountDelegating,
 } from "@ledgerhq/live-common/families/tezos/bakers";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
@@ -80,7 +80,7 @@ const getMainActions = ({
       id: "stake",
       navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: IconsLegacy.ClaimRewardsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

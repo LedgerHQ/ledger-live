@@ -9,7 +9,7 @@ import {
   Alert,
   Flex,
   IconBadge,
-  Icons,
+  IconsLegacy,
   Text,
   VerticalStepper,
   ItemStatus,
@@ -81,7 +81,7 @@ const CloseWarning = ({
   return (
     <Flex alignItems="center" justifyContent="center" px={1} mt={7}>
       <TrackScreen category="Error: update not complete yet" type="drawer" refreshSource={false} />
-      <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
+      <IconBadge iconColor="warning.c100" iconSize={32} Icon={IconsLegacy.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateNotYetComplete")}
       </Text>
@@ -357,7 +357,7 @@ export const FirmwareUpdate = ({
               setIsCloseWarningOpen(true);
             }
           }}
-          Icon={Icons.CloseMedium}
+          Icon={IconsLegacy.CloseMedium}
         />
       ),
     });
@@ -463,7 +463,12 @@ export const FirmwareUpdate = ({
     // device actions that use different transport acquisition paradigms
     // the action should, however, retry to execute and resolve the error by itself
     // no need to present the error to the user
-    if (error && error.name !== "TransportRaceCondition") {
+    if (
+      error &&
+      !["TransportRaceCondition", "LockedDeviceError", "UnresponsiveDeviceError"].includes(
+        error.name,
+      )
+    ) {
       return (
         <DeviceActionError
           device={device}
@@ -652,7 +657,7 @@ export const FirmwareUpdate = ({
           <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex mb={7}>
               <IconBadge
-                Icon={Icons.CheckAloneMedium}
+                Icon={IconsLegacy.CheckAloneMedium}
                 iconColor="success.c50"
                 iconSize={32}
                 backgroundColor="neutral.c20"

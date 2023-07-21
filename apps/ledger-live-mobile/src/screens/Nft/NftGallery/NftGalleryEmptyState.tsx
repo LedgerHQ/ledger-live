@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { Linking } from "react-native";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import Button from "../../../components/wrappedUi/Button";
@@ -49,7 +49,7 @@ const NftGalleryEmptyState = () => {
       <Link
         onPress={openSupportLink}
         size={"medium"}
-        Icon={Icons.ExternalLinkMedium}
+        Icon={IconsLegacy.ExternalLinkMedium}
         iconPosition="right"
       >
         {t("wallet.nftGallery.empty.supportLink")}
