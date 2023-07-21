@@ -1,5 +1,55 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.0
+
+### Minor Changes
+
+- [#3926](https://github.com/LedgerHQ/ledger-live/pull/3926) [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330) Thanks [@Justkant](https://github.com/Justkant)! - feat(recover): restore check seeded [PROTECT-1711]
+
+### Patch Changes
+
+- [#3983](https://github.com/LedgerHQ/ledger-live/pull/3983) [`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5) Thanks [@cng-ledger](https://github.com/cng-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+
+- [#4042](https://github.com/LedgerHQ/ledger-live/pull/4042) [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new get latest available firmware action and hook
+
+  Created a getLatestAvailableFirmwareAction and a React adapter with a hook: useGetLatestAvailableFirmware
+  The need came from having a version of a "get latest available firmware" function that is resilient
+  to Transport race conditions (by catching and retrying).
+
+  Implemented using the new device SDK paradigm.
+
+  Also now propagating the following informations:
+
+  - does the current error that occurred in a task triggered an attempt to retry the task ?
+  - what kind of locked device error occurred: 0x5515 (LockedDeviceError) or device "unresponsive"
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1-nightly.0
+  - @ledgerhq/coin-algorand@0.2.5-nightly.0
+  - @ledgerhq/coin-evm@0.4.1-nightly.0
+  - @ledgerhq/coin-framework@0.4.1-nightly.0
+  - @ledgerhq/coin-polkadot@0.3.2-nightly.0
+  - @ledgerhq/domain-service@1.1.7-nightly.0
+  - @ledgerhq/devices@8.0.6-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.18-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.28.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.1-nightly.0
+  - @ledgerhq/hw-app-exchange@0.2.2-nightly.0
+  - @ledgerhq/hw-app-near@6.27.13-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.18-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.12-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.18-nightly.0
+  - @ledgerhq/hw-transport@6.28.7-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.18-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.18-nightly.0
+  - @ledgerhq/live-network@1.1.4-nightly.0
+  - @ledgerhq/hw-app-btc@10.0.7-nightly.0
+  - @ledgerhq/hw-app-str@6.27.18-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.18-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.18-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.18-nightly.0
+  - @ledgerhq/evm-tools@1.0.2-nightly.0
+
 ## 31.3.0
 
 ### Minor Changes

@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.65.0-nightly.0
+
+### Minor Changes
+
+- [#3926](https://github.com/LedgerHQ/ledger-live/pull/3926) [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330) Thanks [@Justkant](https://github.com/Justkant)! - feat(recover): restore check seeded [PROTECT-1711]
+
+### Patch Changes
+
+- [#4073](https://github.com/LedgerHQ/ledger-live/pull/4073) [`1eb3d3ab22`](https://github.com/LedgerHQ/ledger-live/commit/1eb3d3ab220756bd4f7352ea83d99cfe2ede3575) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix Lido/Kiln button analytics not working
+
+- [#3983](https://github.com/LedgerHQ/ledger-live/pull/3983) [`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5) Thanks [@cng-ledger](https://github.com/cng-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+
+- [#4076](https://github.com/LedgerHQ/ledger-live/pull/4076) [`c89a42356f`](https://github.com/LedgerHQ/ledger-live/commit/c89a42356feb1a7353a74c3c355d4ec9e9adace3) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix tests
+
+- Updated dependencies [[`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5), [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/live-common@31.4.0-nightly.0
+  - @ledgerhq/errors@6.13.1-nightly.0
+  - @ledgerhq/coin-evm@0.4.1-nightly.0
+  - @ledgerhq/coin-framework@0.4.1-nightly.0
+  - @ledgerhq/domain-service@1.1.7-nightly.0
+  - @ledgerhq/devices@8.0.6-nightly.0
+  - @ledgerhq/hw-transport@6.28.7-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.16-nightly.0
+  - @ledgerhq/hw-transport-vault@1.1.2-nightly.0
+  - @ledgerhq/live-network@1.1.4-nightly.0
+  - @ledgerhq/evm-tools@1.0.2-nightly.0
+
 ## 2.64.1
 
 ### Patch Changes

@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.28.0-nightly.0
+
+### Minor Changes
+
+- [#4013](https://github.com/LedgerHQ/ledger-live/pull/4013) [`fce9daab99`](https://github.com/LedgerHQ/ledger-live/commit/fce9daab99de0ca092ee3dbd9f578e7f5f8ffd86) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - adds earn dashboard screen and earn deeplinks
+
+### Patch Changes
+
+- [#4054](https://github.com/LedgerHQ/ledger-live/pull/4054) [`aba777d60a`](https://github.com/LedgerHQ/ledger-live/commit/aba777d60a389ace93eccfbd1b19f247c124bb3a) Thanks [@mderrick](https://github.com/mderrick)! - apply discreet mode to nft gallery
+
+- [#4042](https://github.com/LedgerHQ/ledger-live/pull/4042) [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: locked device errors handling in LLM new firmwre update
+
+- [#3983](https://github.com/LedgerHQ/ledger-live/pull/3983) [`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5) Thanks [@cng-ledger](https://github.com/cng-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+
+- Updated dependencies [[`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5), [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/live-common@31.4.0-nightly.0
+  - @ledgerhq/errors@6.13.1-nightly.0
+  - @ledgerhq/coin-framework@0.4.1-nightly.0
+  - @ledgerhq/domain-service@1.1.7-nightly.0
+  - @ledgerhq/devices@8.0.6-nightly.0
+  - @ledgerhq/hw-transport@6.28.7-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.2-nightly.0
+  - @ledgerhq/react-native-hid@6.29.6-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.29.4-nightly.0
+  - @ledgerhq/evm-tools@1.0.2-nightly.0
+
 ## 3.27.0
 
 ### Minor Changes

@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 22.10.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5), [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/live-common@31.4.0-nightly.0
+  - @ledgerhq/errors@6.13.1-nightly.0
+  - @ledgerhq/coin-framework@0.4.1-nightly.0
+  - @ledgerhq/hw-transport@6.28.7-nightly.0
+  - @ledgerhq/hw-transport-http@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-node-ble@6.27.18-nightly.0
+  - @ledgerhq/hw-transport-node-hid@6.27.19-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.18-nightly.0
+  - @ledgerhq/live-network@1.1.4-nightly.0
+  - @ledgerhq/hw-app-btc@10.0.7-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.18-nightly.0
+
 ## 22.10.0
 
 ### Minor Changes
