@@ -248,6 +248,26 @@ const linkingOptions = {
            * ie: "ledgerlive://swap" -> will redirect to the main swap page
            */
           [NavigatorName.Swap]: "swap",
+          [NavigatorName.Earn]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://earn" will open earn dashboard page
+               *
+               * @params ?action: string
+               * ie: "ledgerlive://earn?action=stake" will open staking flow
+               *
+               * * @params ?action: string
+               * * @params &accountId: string
+               * ie: "ledgerlive://earn?action=stake-account&accountId=XXXX" will open staking flow with specific account
+               *
+               * * @params ?action: string
+               * * @params ?currencyId: string
+               * ie: "ledgerlive://earn?action=get-funds&currencyId=ethereum" will open buy drawer with currency
+               *
+               */
+              [ScreenName.Earn]: "earn",
+            },
+          },
 
           [NavigatorName.SendFunds]: {
             screens: {

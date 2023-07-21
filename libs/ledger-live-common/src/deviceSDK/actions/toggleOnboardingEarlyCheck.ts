@@ -38,7 +38,7 @@ export const initialState: ToggleOnboardingEarlyCheckActionState = {
  * If the device is not in the WELCOME or WELCOME_STEP2 onboarding state, this action will emit
  * a "DeviceInInvalidState" event.
  *
- * @param deviceId The id of the targeted device that can be
+ * @param deviceId A device id, or an empty string if device is usb plugged
  * @param toggleType either "enter" or "exit"
  * @returns An observable that emits updates on the of the onboarding early check toggling state
  */
