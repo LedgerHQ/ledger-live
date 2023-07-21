@@ -191,7 +191,7 @@ function DelegationAmount({ navigation, route }: Props) {
                     <Trans
                       i18nKey={
                         isNotEnoughBalance
-                          ? "errors.NotEnoughBalance"
+                          ? "errors.NotEnoughBalance.title"
                           : value.gte(min)
                           ? "cosmos.delegation.flow.steps.amount.minAmount"
                           : "cosmos.delegation.flow.steps.amount.incorrectAmount"
