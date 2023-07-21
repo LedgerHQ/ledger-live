@@ -1,18 +1,14 @@
 import EventEmitter from "events";
 import React, { PropsWithChildren, createContext, useCallback, useContext, useState } from "react";
-import { RootDrawerProps } from "../components/RootDrawer";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "../const";
+import { DrawerProps, RootDrawerProps } from "../components/RootDrawer/types";
 
 const rootDrawerEmitter = new EventEmitter();
 
-type Props = {
-  drawer?: RootDrawerProps;
-};
-
 type RootDrawerContext = {
-  drawer: RootDrawerProps;
+  drawer: DrawerProps;
   isOpen: boolean;
   onModalHide(): void;
   onClose(cb?: () => void): void;
@@ -20,7 +16,7 @@ type RootDrawerContext = {
 };
 
 export const RootDrawerContext = createContext<RootDrawerContext>({
-  drawer: {} as RootDrawerProps,
+  drawer: {} as DrawerProps,
   isOpen: false,
   onModalHide: () => undefined,
   onClose: cb => {
@@ -34,7 +30,7 @@ export function useRootDrawerContext() {
   return ctx;
 }
 
-export function RootDrawerProvider({ drawer, children }: PropsWithChildren<Props>) {
+export function RootDrawerProvider({ drawer, children }: PropsWithChildren<RootDrawerProps>) {
   const [isOpen, setIsOpen] = useState(false);
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
