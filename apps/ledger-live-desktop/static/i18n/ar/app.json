@@ -5127,6 +5127,9 @@
       "title" : "{{currencyName}} غير مدعومة",
       "description" : "هذا الأصل المشفر غير مدعوم بعد. يرجى التواصل مع دعم Ledger."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
+    },
     "DeviceNotGenuine" : {
       "title" : "من الممكن ألا يكون أصلياً",
       "description" : "اطلب المساعدة من دعم Ledger"
