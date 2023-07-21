@@ -203,20 +203,34 @@ const SwapForm = () => {
       setIdleState(true);
     }, idleTime);
   }, [idleState]);
-  const swapWebAppRedirection = useCallback(() => {
+  const swapWebAppRedirection = useCallback(async () => {
     const { to, from } = swapTransaction.swap;
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
-    const feesStrategy = transaction?.feesStrategy;
-    const rateId = exchangeRate?.rateId || "1234";
+    const { feesStrategy, maxFeePerGas, maxPriorityFeePerGas, userGasLimit, feeCustomUnit } =
+      transaction;
+
+    const feeCustomUnitMagnitude = feeCustomUnit.magnitude;
+    const rateId = exchangeRate?.rateId || "12345";
     if (fromAccount && toAccount && feesStrategy) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromMagnitude =
-        (fromAccount as unknown as SwapSelectorStateType)?.currency?.units[0].magnitude || 0;
+        fromAccount.type === "TokenAccount"
+          ? fromAccount.token.units[0].magnitude || 0
+          : fromAccount.currency?.units[0].magnitude || 0;
       const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
 
+      const customParams = {
+        maxFeePerGas,
+        maxPriorityFeePerGas,
+        userGasLimit,
+      };
+      if ((fromParentAccount || fromAccount).currency.id) {
+        const { getGasLimit } = await import("@ledgerhq/live-common/families/ethereum/transaction");
+        customParams.gasLimit = getGasLimit(transaction);
+      }
       history.push({
         pathname: "/swap-web",
         state: {
@@ -225,7 +239,8 @@ const SwapForm = () => {
           toAccountId,
           fromAmount,
           quoteId: encodeURIComponent(rateId),
-          feeStrategy: feesStrategy.toUpperCase(), // Custom fee is not supported yet
+          feeStrategy: feesStrategy.toUpperCase(),
+          ...customParams,
         },
       });
     }
