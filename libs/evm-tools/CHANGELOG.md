@@ -1,5 +1,16 @@
 # @ledgerhq/evm-tools
 
+## 1.0.2
+
+### Patch Changes
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1)]:
+  - @ledgerhq/cryptoassets@9.11.0
+  - @ledgerhq/live-env@0.4.1
+  - @ledgerhq/live-network@1.1.4
+
 ## 1.0.2-hotfix.0
 
 ### Patch Changes

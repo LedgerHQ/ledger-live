@@ -1,5 +1,19 @@
 # @ledgerhq/live-cli
 
+## 22.11.0
+
+### Minor Changes
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add telos evm currency
+
+### Patch Changes
+
+- Updated dependencies [[`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1)]:
+  - @ledgerhq/cryptoassets@9.11.0
+  - @ledgerhq/live-common@31.4.0
+  - @ledgerhq/coin-framework@0.5.0
+  - @ledgerhq/live-network@1.1.4
+
 ## 22.11.0-hotfix.0
 
 ### Minor Changes

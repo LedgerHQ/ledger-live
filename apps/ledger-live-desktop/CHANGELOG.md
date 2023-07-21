@@ -1,5 +1,45 @@
 # ledger-live-desktop
 
+## 2.65.0
+
+### Minor Changes
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - feat(recover): restore check seeded [PROTECT-1711]
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add telos evm currency
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Create EVM send flow
+
+### Patch Changes
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix Lido/Kiln button analytics not working
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - rename optimism to op mainnet
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - quotes are not readable in light mode
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix tests
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove unnecessary check on tx networkInfo
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add algo claim reward track attributes
+
+- Updated dependencies [[`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1), [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1)]:
+  - @ledgerhq/live-env@0.4.1
+  - @ledgerhq/live-common@31.4.0
+  - @ledgerhq/types-cryptoassets@7.4.0
+  - @ledgerhq/types-live@6.38.0
+  - @ledgerhq/coin-evm@0.5.0
+  - @ledgerhq/coin-framework@0.5.0
+  - @ledgerhq/evm-tools@1.0.2
+  - @ledgerhq/domain-service@1.1.7
+  - @ledgerhq/live-network@1.1.4
+  - @ledgerhq/react-ui@0.14.4
+
 ## 2.65.0-hotfix.0
 
 ### Minor Changes

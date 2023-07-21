@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- [#4094](https://github.com/LedgerHQ/ledger-live/pull/4094) [`15c1348d54`](https://github.com/LedgerHQ/ledger-live/commit/15c1348d54a669d8d9e7cc9e97d23cd0c6431eb1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add telos evm currency
+
 ## 0.5.0-hotfix.0
 
 ### Minor Changes
