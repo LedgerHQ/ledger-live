@@ -139,22 +139,18 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   }, [onClickHide]);
 
   const openFilterDrawer = useCallback(() => {
-    track("button_clicked", {
-      button: "Filter Gallery NFTs",
-      screen: ScreenName.WalletNftGallery,
-    });
     dispatch(setGalleryFilterDrawerVisible(true));
-  }, [track, dispatch, setGalleryFilterDrawerVisible]);
+  }, [dispatch]);
 
   const closeFilterDrawer = useCallback(() => {
     dispatch(setGalleryFilterDrawerVisible(false));
-  }, [track, dispatch, setGalleryFilterDrawerVisible]);
+  }, [dispatch]);
 
   const toggleChainFilter = useCallback(
     (filter: keyof NftGalleryChainFiltersState) => {
       dispatch(setGalleryChainFilter([filter, !chainFilters[filter]]));
     },
-    [track, chainFilters, setGalleryChainFilter],
+    [chainFilters, dispatch],
   );
 
   const onCancelHide = useCallback(() => {

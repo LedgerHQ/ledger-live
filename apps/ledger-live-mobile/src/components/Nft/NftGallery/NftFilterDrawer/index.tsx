@@ -8,6 +8,7 @@ import { BottomDrawer } from "@ledgerhq/native-ui";
 import { NftGalleryChainFiltersState } from "../../../../reducers/types";
 import { NavigatorName, ScreenName } from "../../../../const/navigation";
 import { useNavigation } from "@react-navigation/native";
+import { track } from "../../../../analytics";
 
 type Props = {
   readonly isOpen: boolean;
@@ -19,7 +20,17 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
   const { t } = useTranslation();
   const navigation = useNavigation();
   return (
-    <BottomDrawer isOpen={isOpen} onClose={onClose}>
+    <BottomDrawer
+      isOpen={isOpen}
+      onClose={() => {
+        track("button_clicked", {
+          button: "Close Filter",
+          page: ScreenName.WalletNftGallery,
+          drawer: "Filter selection",
+        });
+        onClose();
+      }}
+    >
       <TrackScreen category="NFT Gallery Filters" type="drawer" refreshSource={false} />
       <NftFilterSection title={t("wallet.nftGallery.filters.blockchain")}>
         {Object.entries(filters).map(([key, value]) => {
@@ -39,6 +50,11 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
       <NftFilterSection
         title={t("wallet.nftGallery.filters.hiddenCollections")}
         onSeeAllPress={() => {
+          track("button_clicked", {
+            button: "See hidden collections",
+            page: ScreenName.WalletNftGallery,
+            drawer: "Filter selection",
+          });
           onClose();
           navigation.navigate(NavigatorName.NftNavigator, {
             screen: ScreenName.HiddenNftCollections,
