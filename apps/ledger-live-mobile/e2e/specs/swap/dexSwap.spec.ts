@@ -16,14 +16,16 @@ describe("Swap", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("should load the Swap page from the Transfer menu", async () => {
+  it("should be able to navigate to a DEX", async () => {
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToSwapFromTransferMenu();
-    await expect(swapPage.swapFormTab()).toBeVisible();
-  });
-
-  it("should be able to select a different source account", async () => {
     await swapPage.openSourceAccountSelector();
-    await swapPage.selectAccount("Ethereum");
+    await swapPage.selectAccount("Ethereum 2");
+    await swapPage.openDestinationAccountSelector();
+    await swapPage.selectAccount("Tether USD");
+    await swapPage.sendMax();
+    await swapPage.goToProviderSelection();
+    await swapPage.chooseProvider("1inch");
+    await swapPage.startExchange();
   });
 });

@@ -19,24 +19,6 @@ import type {
 import type { Transaction } from "../../generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-export const getMockExchangeRate = ({
-  provider = "ftx",
-  tradeMethod = "fixed",
-}: {
-  provider?: string;
-  tradeMethod?: "fixed" | "float";
-} = {}): ExchangeRate => ({
-  rate: new BigNumber("1"),
-  toAmount: new BigNumber("12"),
-  magnitudeAwareRate: new BigNumber(1)
-    .div(new BigNumber(10).pow(18))
-    .times(new BigNumber(10).pow(8)),
-  rateId: "mockedRateId",
-  provider,
-  providerType: "CEX",
-  tradeMethod,
-});
-
 export const mockGetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction,
@@ -158,6 +140,7 @@ export const mockGetProviders: GetProviders = async () => {
         { from: "bitcoin", to: "dogecoin", tradeMethod: "fixed" },
         { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
         { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+        { from: "ethereum", to: "ethereum/erc20/usd_tether__erc20_", tradeMethod: "float" },
       ],
     },
     {
