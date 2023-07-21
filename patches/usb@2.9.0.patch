@@ -1,0 +1,35 @@
+diff --git a/dist/usb/index.js b/dist/usb/index.js
+index 036c8ff942d29ef5703d4c47839f6d9ef2a288c4..cca233f361b1f2a0b8d1ecc10e9202aef535367d 100644
+--- a/dist/usb/index.js
++++ b/dist/usb/index.js
+@@ -86,6 +86,8 @@ var pollHotplug = function (start) {
+     setTimeout(function () { return pollHotplug(); }, usb.pollHotplugDelay);
+ };
+ // Devices changed event handler
++// Rolling back changes made in https://github.com/node-usb/node-usb/pull/577
++// as it is creating an delay on Windows when opening/closing a nano app and device detection
+ var devicesChanged = function () { return setTimeout(function () { return emitHotplugEvents(); }, usb.pollHotplugDelay); };
+ // Hotplug control
+ var hotplugSupported = 0;
+@@ -100,8 +102,8 @@ var startHotplug = function () {
+         usb._enableHotplugEvents();
+         if (hotplugSupported === 2) {
+             // Use hotplug ID events to trigger a change check
+-            usb.on('attachIds', devicesChanged);
+-            usb.on('detachIds', devicesChanged);
++            usb.on('attachIds', emitHotplugEvents);
++            usb.on('detachIds', emitHotplugEvents);
+         }
+     }
+     else {
+@@ -115,8 +117,8 @@ var stopHotplug = function () {
+         usb._disableHotplugEvents();
+         if (hotplugSupported === 2) {
+             // Remove hotplug ID event listeners
+-            usb.off('attachIds', devicesChanged);
+-            usb.off('detachIds', devicesChanged);
++            usb.off('attachIds', emitHotplugEvents);
++            usb.off('detachIds', emitHotplugEvents);
+         }
+     }
+     else {
