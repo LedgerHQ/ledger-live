@@ -18,6 +18,8 @@ import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";
 import { sharedSwapTracking } from "../../screens/Swap/utils";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { PTX_SERVICES_TOAST_ID } from "../../constants";
 
 type ButtonItem = {
   title: string;
@@ -25,6 +27,7 @@ type ButtonItem = {
   tag?: string;
   Icon: IconType;
   onPress?: (() => void) | null;
+  onDisabledPress?: () => void;
   disabled?: boolean;
   event?: string;
   eventProperties?: Parameters<typeof track>[1];
@@ -36,6 +39,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const navigation = useNavigation();
   const route = useRoute();
   const { t } = useTranslation();
+  const { pushToast, dismissToast } = useToasts();
 
   const { page, track } = useAnalytics();
 
@@ -152,6 +156,18 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       tag: t("common.popular"),
       Icon: Icons.PlusMedium,
       onPress: onBuy,
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
       disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
     },
     {
@@ -164,6 +180,18 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       description: t("transfer.sell.description"),
       Icon: Icons.MinusMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSell : null,
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
       disabled:
         isPtxServiceCtaExchangeDrawerDisabled ||
         !accountsCount ||
@@ -197,6 +225,18 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       description: t("transfer.swap.description"),
       Icon: Icons.BuyCryptoMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSwap : null,
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
       disabled:
         isPtxServiceCtaExchangeDrawerDisabled ||
         !accountsCount ||

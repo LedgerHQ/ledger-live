@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -16,6 +16,7 @@ import {
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
+import { Toast } from "../../Toast/Toast";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -86,6 +87,16 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
               disabled: isPtxServiceCtaScreensDisabled,
+              modalOnDisabledClick: {
+                component: () => (
+                  <Toast
+                    id="ptx-services"
+                    type="success"
+                    title={t("notifications.ptxServices.toast.title")}
+                    icon="info"
+                  />
+                ),
+              },
               testId: "market-buy-btn",
               navigationParams: [
                 NavigatorName.Exchange,
@@ -115,11 +126,18 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                 },
               ] as const,
               disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
-              modalOnDisabledClick: !readOnlyModeEnabled
-                ? {
-                    component: ZeroBalanceDisabledModalContent,
-                  }
-                : undefined,
+              modalOnDisabledClick: {
+                component: isPtxServiceCtaScreensDisabled
+                  ? () => (
+                      <Toast
+                        id="ptx-services"
+                        type="success"
+                        title={t("notifications.ptxServices.toast.title")}
+                        icon="info"
+                      />
+                    )
+                  : ZeroBalanceDisabledModalContent,
+              },
             },
           ]
         : []),
@@ -143,11 +161,18 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                       },
                     ] as const,
                     disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
-                    modalOnDisabledClick: !isPtxServiceCtaScreensDisabled
-                      ? {
-                          component: ZeroBalanceDisabledModalContent,
-                        }
-                      : undefined,
+                    modalOnDisabledClick: {
+                      component: isPtxServiceCtaScreensDisabled
+                        ? () => (
+                            <Toast
+                              id="ptx-services"
+                              type="success"
+                              title={t("notifications.ptxServices.toast.title")}
+                              icon="info"
+                            />
+                          )
+                        : ZeroBalanceDisabledModalContent,
+                    },
                   },
                 ]
               : []),

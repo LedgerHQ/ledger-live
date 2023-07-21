@@ -28,6 +28,7 @@ import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
+import ProviderIcon from "../ProviderIcon";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -40,7 +41,6 @@ import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../const/manager";
-import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { TrackScreen, track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
@@ -241,7 +241,6 @@ export function renderConfirmSwap({
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
 }) {
-  const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
@@ -287,7 +286,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.provider")}>
             <Flex flexDirection="row" alignItems="center">
               <Flex paddingRight={2}>
-                <ProviderIcon size={14} />
+                <ProviderIcon size="XXS" name={exchangeRate.provider} />
               </Flex>
 
               <Text>{providerName}</Text>
