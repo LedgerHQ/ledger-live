@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
-  - "apps/ledger-live-desktop/tests/utils/**"
   - "libs/*"
+  - "libs/test-utils/**"
   - "libs/ledgerjs/**"
   - "libs/ui/packages/*"
   - "libs/ledger-live-common/tools"

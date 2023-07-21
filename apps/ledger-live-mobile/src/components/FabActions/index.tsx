@@ -55,6 +55,7 @@ export type ActionButtonEvent = ActionButtonEventProps & {
   Component?: ComponentType;
   buttonProps?: ButtonProps;
   disabled?: boolean;
+  testId?: string;
 };
 
 export type ActionButtonProps = {
@@ -64,6 +65,7 @@ export type ActionButtonProps = {
   onPress?: TouchableOpacityProps["onPress"];
   children: React.ReactNode;
   buttonProps?: ButtonProps;
+  testId?: string;
 };
 
 export const FabButtonBarProvider = ({
@@ -163,6 +165,7 @@ export const FabButtonBarProvider = ({
         ? () => onPressWhenDisabled(action)
         : undefined,
       buttonProps: action.buttonProps,
+      testId: action.testId,
     }))
     .sort(a => (a.disabled ? 0 : -1));
 

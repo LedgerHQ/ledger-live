@@ -28,7 +28,7 @@ test.use({
 // could add pause to HTTP mock to test 'LOADING' component
 
 test.describe.parallel("Swap", () => {
-  test("Add accounts via Swap page", async ({ page }) => {
+  test("Add accounts via Swap page @smoke", async ({ page }) => {
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
@@ -85,7 +85,7 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Filter Rates", async ({ page }) => {
+  test("Filter Rates @smoke", async ({ page }) => {
     const swapPage = new SwapPage(page);
     const layout = new Layout(page);
 
@@ -132,11 +132,11 @@ test.describe.parallel("Swap", () => {
 
     await test.step("Fixed Centralised filtered", async () => {
       await swapPage.filterByFixedRateQuotes();
-      await expect.soft(page).toHaveScreenshot("fixed-centralised-quotes-displayed.png");
+      await expect.soft(page).toHaveScreenshot("fixed-centralised-quotes-diplayed.png");
     });
   });
 
-  test("Full Swap with Centralised Exchange", async ({ page }) => {
+  test("Full Swap with Centralised Exchange @smoke", async ({ page }) => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);
@@ -175,6 +175,7 @@ test.describe.parallel("Swap", () => {
 
     await test.step("Open Swap Page", async () => {
       await swapPage.navigate();
+      await swapPage.waitForSwapFormToLoad();
       await expect.soft(page).toHaveScreenshot("open-swap-page.png");
     });
 
@@ -237,5 +238,32 @@ test.describe.parallel("Swap", () => {
       await swapPage.verifyHistoricalSwapsHaveLoadedFully();
       await expect.soft(page).toHaveScreenshot("verify-swap-history.png", { timeout: 20000 });
     });
+  });
+
+  test("Swap not yet available due to API error", async ({ page }) => {
+    const swapPage = new SwapPage(page);
+
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      route.fulfill({ headers: { teststatus: "mocked" }, status: 404 });
+    });
+
+    await swapPage.navigate();
+    await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
+  });
+
+  test("Swap not yet available due to no valid providers", async ({ page }) => {
+    const swapPage = new SwapPage(page);
+
+    const providers = JSON.stringify({
+      currencies: {},
+      providers: {},
+    });
+
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      route.fulfill({ headers: { teststatus: "mocked" }, body: providers });
+    });
+
+    await swapPage.navigate();
+    await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
   });
 });

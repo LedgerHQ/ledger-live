@@ -13,6 +13,7 @@ import {
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { Icons } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 import BondIcon from "../../icons/LinkIcon";
 import UnbondIcon from "../../icons/Undelegate";
 import WithdrawUnbondedIcon from "../../icons/Coins";
@@ -26,8 +27,9 @@ type NavigationParamsType = readonly [name: string, options: object];
 const getMainActions = (args: {
   account: PolkadotAccount;
   parentAccount?: Account;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
-  const { account, parentAccount } = args;
+  const { account, parentAccount, parentRoute } = args;
   if (!account.polkadotResources) return null;
   const accountId = account.id;
   const { lockedBalance } = account.polkadotResources || {};
@@ -62,6 +64,7 @@ const getMainActions = (args: {
           screen: ScreenName.PolkadotNominateSelectValidators,
           params: {
             accountId,
+            source: parentRoute,
           },
         },
       ];
@@ -98,8 +101,9 @@ const getMainActions = (args: {
 const getSecondaryActions = (args: {
   account: PolkadotAccount;
   parentAccount?: Account;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
-  const { account } = args;
+  const { account, parentRoute } = args;
   if (!account.polkadotResources) return null;
   const accountId = account.id;
   const { unlockedBalance, lockedBalance, nominations } = account.polkadotResources || {};
@@ -180,6 +184,7 @@ const getSecondaryActions = (args: {
           screen: ScreenName.PolkadotNominateSelectValidators,
           params: {
             accountId,
+            source: parentRoute,
           },
         },
       ],

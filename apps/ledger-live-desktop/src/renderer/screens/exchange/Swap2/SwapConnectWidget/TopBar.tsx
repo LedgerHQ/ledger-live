@@ -9,9 +9,9 @@ import Box, { Tabbable } from "~/renderer/components/Box";
 import IconClose from "~/renderer/icons/Cross";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { rgba } from "~/renderer/styles/helpers";
-import { iconByProviderName } from "../utils";
 import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -107,12 +107,11 @@ const TopBar = ({ provider, onClose, webviewRef }: Props) => {
       webview.openDevTools();
     }
   };
-  const ProviderIcon = (provider && iconByProviderName[provider.toLowerCase()]) || null;
   const name = getProviderName(provider);
   return (
     <Container>
       <TitleContainer>
-        {ProviderIcon && <ProviderIcon size={19} />}
+        <ProviderIcon size="XXS" name={provider} />
         <ItemContent>{name}</ItemContent>
       </TitleContainer>
       <Separator />

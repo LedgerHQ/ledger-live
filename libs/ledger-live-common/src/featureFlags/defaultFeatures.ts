@@ -95,6 +95,9 @@ export const defaultFeatures = {
   currencyDesmos: {
     enabled: false,
   },
+  currencyTelosEvm: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {

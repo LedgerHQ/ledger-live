@@ -6,7 +6,7 @@ test.use({
   userdata: "skip-onboarding",
 });
 
-test("Discover deeplink hot load", async ({ page }) => {
+test("Discover deeplink hot load @smoke", async ({ page }) => {
   await test.step("on deeplink trigger", async () => {
     await sendDeepLink(page, "ledgerlive://discover");
     await expect.soft(page).toHaveScreenshot("loaded.png");

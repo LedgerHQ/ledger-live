@@ -18,9 +18,9 @@ import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getBalanceAndBlock, getBlock, getTokenBalance, getTransaction } from "./api/rpc";
 import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
 import { getExplorerApi } from "./api/explorer";
+import { getNodeApi } from "./api/node/index";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
@@ -34,7 +34,12 @@ export const SAFE_REORG_THRESHOLD = 80;
  */
 export const getAccountShape: GetAccountShape = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
-  const { blockHeight, balance } = await getBalanceAndBlock(currency, address);
+  const nodeApi = getNodeApi(currency);
+  const [latestBlock, balance] = await Promise.all([
+    nodeApi.getBlockByHeight(currency, "latest"),
+    nodeApi.getCoinBalance(currency, address),
+  ]);
+  const blockHeight = latestBlock.height;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -171,9 +176,10 @@ export const getSubAccountShape = async (
   token: TokenCurrency,
   operations: Operation[],
 ): Promise<Partial<SubAccount>> => {
+  const nodeApi = getNodeApi(currency);
   const { xpubOrAddress: address } = decodeAccountId(parentId);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
-  const balance = await getTokenBalance(currency, address, token.contractAddress);
+  const balance = await nodeApi.getTokenBalance(currency, address, token.contractAddress);
 
   return {
     type: "TokenAccount",
@@ -199,27 +205,15 @@ export const getOperationStatus = async (
   op: Operation,
 ): Promise<Operation | null> => {
   try {
-    const {
-      blockNumber: blockHeight,
-      blockHash,
-      timestamp,
-      nonce,
-    } = await getTransaction(currency, op.hash);
+    const nodeApi = getNodeApi(currency);
+    const { blockHeight, blockHash, nonce } = await nodeApi.getTransaction(currency, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
     }
 
-    const date = await (async () => {
-      // timestamp can be missing depending on the node
-      if (timestamp) {
-        return new Date(timestamp * 1000);
-      }
-
-      // Without timestamp, we directly look for the block
-      const { timestamp: blockTimestamp } = await getBlock(currency, blockHeight);
-      return new Date(blockTimestamp * 1000);
-    })();
+    const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
+    const date = new Date(timestamp * 1000);
 
     return {
       ...op,

@@ -22,8 +22,9 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { getEnv } from "@ledgerhq/live-common/env";
 
-const SEARCH_KEYS = ["name", "ticker"];
+const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
 type NavigationProps = StackNavigatorProps<
   AddAccountsNavigatorParamList,
@@ -77,6 +78,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
+  const telosEvm = useFeature("currencyTelosEvm");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -106,6 +108,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       velas_evm: velasEvm,
       syscoin,
       internet_computer: internetComputer,
+      telos: telosEvm,
     }),
     [
       avaxCChain,
@@ -134,6 +137,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       persistence,
       quicksilver,
       internetComputer,
+      telosEvm,
     ],
   );
 

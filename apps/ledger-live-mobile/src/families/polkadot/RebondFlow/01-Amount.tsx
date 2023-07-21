@@ -114,7 +114,13 @@ export default function PolkadotRebondAmount({ navigation, route }: NavigationPr
   const hasErrors = hasStatusError(status);
   return (
     <>
-      <TrackScreen category="RebondFlow" name="Amount" />
+      <TrackScreen
+        category="RebondFlow"
+        name="Amount"
+        flow="stake"
+        action="rebond"
+        currency="dot"
+      />
       <SafeAreaView
         style={[
           styles.root,

@@ -27,6 +27,8 @@ export default function ValidationError({ navigation, route }: Props) {
   const retry = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
+  const { mode, error } = route.params;
+  const action = mode.replace(/([A-Z])/g, "_$1").toLowerCase();
   return (
     <SafeAreaView
       style={[
@@ -36,8 +38,14 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="SimpleOperationFlow" name="ValidationError" />
-      <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
+      <TrackScreen
+        category="SimpleOperationFlow"
+        name="ValidationError"
+        flow="stake"
+        action={action}
+        currency="dot"
+      />
+      <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }
