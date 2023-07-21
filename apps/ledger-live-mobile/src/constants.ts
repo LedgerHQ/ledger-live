@@ -12,3 +12,6 @@ export const GET_CALLS_RETRY = 3;
 export const GET_CALLS_TIMEOUT = 60000;
 export const LEDGER_REST_API_BASE = "https://explorers.api.live.ledger.com";
 export const VIBRATION_PATTERN_ERROR = [0, 150];
+export const LEDGER_APPLE_WARNING_EXPLAINER_LINK =
+  "https://support.ledger.com/hc/articles/12309873917853?docs=true";
+export const PTX_SERVICES_TOAST_ID = "PTX_SERVICES_TOAST_ID";
