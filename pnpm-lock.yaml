@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -1192,7 +1188,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.6
-        version: 6.6.7(rxjs@6.6.7)
+        version: 6.6.7(rxjs@7.8.0)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -2292,7 +2288,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.7
-        version: 6.6.7(rxjs@6.6.7)
+        version: 6.6.7(rxjs@7.8.0)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -3425,7 +3421,7 @@ importers:
         specifier: ^2.1.2
         version: 2.1.2
       usb:
-        specifier: ^2.9.0
+        specifier: 2.9.0
         version: 2.9.0(patch_hash=d5pno5rjlboai2klvccu6wv334)
     devDependencies:
       '@types/jest':
@@ -3523,7 +3519,7 @@ importers:
         specifier: ^2.1.2
         version: 2.1.2
       usb:
-        specifier: ^2.9.0
+        specifier: 2.9.0
         version: 2.9.0(patch_hash=d5pno5rjlboai2klvccu6wv334)
     devDependencies:
       '@types/jest':
@@ -51319,7 +51315,7 @@ packages:
     dependencies:
       aproba: 1.2.0
 
-  /rxjs-compat@6.6.7(rxjs@6.6.7):
+  /rxjs-compat@6.6.7(rxjs@7.8.0):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
     peerDependencies:
       rxjs: '*'
@@ -51327,7 +51323,7 @@ packages:
       rxjs:
         optional: true
     dependencies:
-      rxjs: 6.6.7
+      rxjs: 7.8.0
     dev: false
 
   /rxjs@6.6.7:
@@ -58873,3 +58869,7 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
