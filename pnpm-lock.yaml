@@ -5210,8 +5210,8 @@ importers:
         specifier: ^1.3.2
         version: 1.3.3(metro-config@0.76.0)
       '@rnx-kit/metro-resolver-symlinks':
-        specifier: 0.1.27
-        version: 0.1.27
+        specifier: 0.1.30
+        version: 0.1.30
       metro-config:
         specifier: ^0.76.0
         version: 0.76.0
@@ -19012,16 +19012,20 @@ packages:
       - supports-color
     dev: false
 
-  /@rnx-kit/metro-resolver-symlinks@0.1.27:
-    resolution: {integrity: sha512-91g4S3O8878+AL6TeOC5lkSwztjohcBucCvfe4vbPEBTMjQTGGnUeh+ljQjbzDuoRrbpiYGNLdr2VPAiS/KQwQ==}
+  /@rnx-kit/metro-resolver-symlinks@0.1.30:
+    resolution: {integrity: sha512-boiKR2s5y2tsHzyz+WjzNEXpRxIidHxNi05HnFNv3SyY/ffqYx6GZ/WD52dVQ/suncXdy41/6Q8uJPFrz904bQ==}
     dependencies:
-      '@rnx-kit/tools-node': 1.3.1
-      '@rnx-kit/tools-react-native': 1.3.0
-      enhanced-resolve: 5.10.0
+      '@rnx-kit/tools-node': 2.0.0
+      '@rnx-kit/tools-react-native': 1.3.1
+      enhanced-resolve: 5.14.1
     dev: false
 
   /@rnx-kit/tools-language@1.3.1:
     resolution: {integrity: sha512-PI5ouRAAT1UavccKw0c/Ufe/jubenU/6TWSphpGK4XdJ4/gV8gz9KOrALbSPrVCr0exrAaqf5p9QyBiPIFpriw==}
+    dev: false
+
+  /@rnx-kit/tools-language@2.0.0:
+    resolution: {integrity: sha512-KUZf7MIWG4GFA2vskiG1Su3AMlTKighUqIi/T8J2OlANC5gKNflqAAYFhSgwj2I0XJ5nvxyJ4VRmDEf7DSjJIA==}
     dev: false
 
   /@rnx-kit/tools-node@1.3.1:
@@ -19033,10 +19037,19 @@ packages:
       pkg-up: 3.1.0
     dev: false
 
-  /@rnx-kit/tools-react-native@1.3.0:
-    resolution: {integrity: sha512-ZGPgPDww/KWLkdcmJCE7E7gGIyke5iTUyRFWhFvXRB+nmzlPY0ICuzzB1XBLoCdLUQIcaDdQsuzM6PO7UUVQ2w==}
+  /@rnx-kit/tools-node@2.0.0:
+    resolution: {integrity: sha512-BDTBaCifbxJJ5GM4scc+C/nwtznwEtjtNunFrKRlOFnQ2bLjbt3sTA0UnqIelWTztY71dD3zcKwlHFYi+yDTBQ==}
     dependencies:
-      '@rnx-kit/tools-node': 1.3.1
+      '@rnx-kit/tools-language': 2.0.0
+      find-up: 5.0.0
+      pkg-dir: 5.0.0
+      pkg-up: 3.1.0
+    dev: false
+
+  /@rnx-kit/tools-react-native@1.3.1:
+    resolution: {integrity: sha512-zip8tXSN6iV0v3LzbUjno1atJCDtC8gLrva9CN/gJRwpzkpZOlg1/aZlK0LbhvPs3P3t/3FUX5P3svMTi/fWdw==}
+    dependencies:
+      '@rnx-kit/tools-node': 2.0.0
     dev: false
 
   /@rnx-kit/tools-workspaces@0.1.3:
@@ -32874,7 +32887,6 @@ packages:
     dependencies:
       graceful-fs: 4.2.10
       tapable: 2.2.1
-    dev: true
 
   /enhanced-resolve@5.9.3:
     resolution: {integrity: sha512-Bq9VSor+kjvW3f9/MiiR4eE3XYgOl7/rS8lnSxbRbF3kS0B2r+Y9w5krBWxZgDxASVZbdYrn5wT4j/Wb0J9qow==}
