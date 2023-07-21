@@ -8,6 +8,7 @@ import { Button, Checkbox, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
+import { LEDGER_APPLE_WARNING_EXPLAINER_LINK } from "../../../constants";
 
 const CheckboxContainer = styled(View)(
   ({ theme }) => `
@@ -23,8 +24,11 @@ export function PTXServicesAppleWarning() {
   const exchangeDrawer = useFeature<{ enabled: boolean }>("ptxServiceCtaExchangeDrawer");
   const ctaScreens = useFeature<{ enabled: boolean }>("ptxServiceCtaScreens");
 
-  const exchangeDrawerEnabled = useMemo(() => exchangeDrawer?.enabled ?? true, [exchangeDrawer]);
-  const ctaScreensEnabled = useMemo(() => ctaScreens?.enabled ?? true, [ctaScreens]);
+  const exchangeDrawerEnabled = useMemo(
+    () => exchangeDrawer?.enabled ?? true,
+    [exchangeDrawer?.enabled],
+  );
+  const ctaScreensEnabled = useMemo(() => ctaScreens?.enabled ?? true, [ctaScreens?.enabled]);
 
   const { isOpen, onModalHide, openDrawer, onClose } = useRootDrawerContext();
 
@@ -47,7 +51,7 @@ export function PTXServicesAppleWarning() {
   }, [openDrawer, exchangeDrawerEnabled, ctaScreensEnabled, _onClose]);
 
   const onLinkPress = useCallback(() => {
-    Linking.openURL("https://support.ledger.com/hc/articles/12309873917853?docs=true");
+    Linking.openURL(LEDGER_APPLE_WARNING_EXPLAINER_LINK);
   }, []);
 
   return (

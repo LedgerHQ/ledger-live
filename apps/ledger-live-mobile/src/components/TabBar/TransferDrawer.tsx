@@ -19,6 +19,7 @@ import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";
 import { sharedSwapTracking } from "../../screens/Swap/utils";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { PTX_SERVICES_TOAST_ID } from "../../constants";
 
 type ButtonItem = {
   title: string;
@@ -33,8 +34,6 @@ type ButtonItem = {
   style?: StyleProp<ViewStyle>;
   testID?: string;
 };
-
-const PTX_SERVICES_TOAST_ID = "PTX_SERVICES_TOAST_ID";
 
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
