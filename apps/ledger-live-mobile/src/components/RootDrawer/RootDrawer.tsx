@@ -9,12 +9,23 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "../../const";
 import { PTXServicesAppleWarning } from "./InitialDrawers/PTXServicesAppleWarning";
+
 export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[]) {
   const initialDrawersToShow = await AsyncStorage.multiGet(initialDrawers);
 
   // if we have a value then the drawer should not be shown
   return initialDrawersToShow
-    .map(([key, value]) => (value ? undefined : key))
+    .map(([key, value]) => {
+      if (value) {
+        try {
+          const json = JSON.parse(value);
+          return json ? undefined : key;
+        } catch {
+          return undefined;
+        }
+      }
+      return key;
+    })
     .filter((drawer): drawer is InitialDrawerID => !!drawer);
 }
 
@@ -36,18 +47,24 @@ export function RootDrawer({ drawer }: RootDrawerProps) {
   const { navigate } = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
 
   useEffect(() => {
-    if (!drawer) {
-      getInitialDrawersToShow(initialDrawers).then(([id]) => {
-        if (id) {
-          setInitialDrawers(prev => prev.filter(d => d !== id));
-          navigate(NavigatorName.Base, {
-            drawer: {
-              id,
-            },
-          });
+    async function displayDrawers() {
+      if (!drawer) {
+        try {
+          const [id] = await getInitialDrawersToShow(initialDrawers);
+          if (id) {
+            setInitialDrawers(prev => prev.filter(d => d !== id));
+            navigate(NavigatorName.Base, {
+              drawer: {
+                id,
+              },
+            });
+          }
+        } catch {
+          return;
         }
-      });
+      }
     }
+    displayDrawers();
   }, [drawer, navigate, setInitialDrawers, initialDrawers]);
 
   return (
