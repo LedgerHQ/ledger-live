@@ -21,6 +21,7 @@ import ExitChecksDrawer, {
 import { renderError } from "../../DeviceAction/rendering";
 import { useTranslation } from "react-i18next";
 import { LockedDeviceError } from "@ledgerhq/errors";
+import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguagePrompt";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -178,6 +179,10 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     }
   }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
 
+  useChangeLanguagePrompt({
+    device: currentStep === "early-security-check" && device ? device : undefined,
+  });
+
   const onLostDevice = useCallback(() => {
     setTroubleshootingDrawerOpen(true);
   }, []);
@@ -210,7 +215,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     </Flex>
   );
 
-  if (currentStep !== "companion" && (fatalError || allowedError)) {
+  if (currentStep !== "companion" && (fatalError || allowedError) !== null) {
     stepContent = (
       <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
         {renderError({

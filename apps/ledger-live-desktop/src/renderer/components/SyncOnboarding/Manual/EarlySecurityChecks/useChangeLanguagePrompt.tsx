@@ -14,20 +14,21 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import ChangeDeviceLanguagePromptDrawer from "~/renderer/screens/settings/sections/General/ChangeDeviceLanguagePromptDrawer";
 
 type useChangeLanguagePromptParams = {
-  device: Device;
+  device: Device | undefined;
 };
 
 export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParams) => {
   const [deviceModelInfo, setDeviceModelInfo] = useState<DeviceModelInfo | null | undefined>();
 
   const refreshDeviceInfo = useCallback(() => {
+    if (!device) return;
     withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
       .toPromise()
       .then((deviceInfo: DeviceInfo) => {
         if (!isEqual(deviceInfo, deviceModelInfo?.deviceInfo))
           setDeviceModelInfo({ deviceInfo, modelId: device.modelId, apps: [] });
       });
-  }, [device.deviceId, device.modelId, deviceModelInfo?.deviceInfo]);
+  }, [device, deviceModelInfo?.deviceInfo]);
 
   const currentLanguage = useSelector(languageSelector) as Locale;
 

@@ -30,7 +30,6 @@ import DeviceNotGenuineDrawer, {
   Props as DeviceNotGenuineDrawerProps,
 } from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
-import { useChangeLanguagePrompt } from "./useChangeLanguagePrompt";
 
 export type Props = {
   onComplete: () => void;
@@ -96,8 +95,6 @@ const EarlySecurityChecks = ({
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
   });
-
-  useChangeLanguagePrompt({ device });
 
   const [completionLoading, setCompletionLoading] = useState(false);
   const handleCompletion = useCallback(() => {
