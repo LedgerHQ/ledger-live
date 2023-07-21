@@ -101,7 +101,7 @@ export const defaultFeatures = {
   deviceInitialApps: {
     enabled: false,
     params: {
-      apps: ["Bitcoin", "Ethereum", "Polygon"],
+      apps: ["Bitcoin", "Ethereum"],
     },
   },
   disableNftSend: {
