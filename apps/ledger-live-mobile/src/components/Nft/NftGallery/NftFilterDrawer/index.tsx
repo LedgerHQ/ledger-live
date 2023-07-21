@@ -42,7 +42,14 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
               key={key}
               currency={currencyId}
               isSelected={value}
-              onPress={() => toggleFilter(currencyId)}
+              onPress={() => {
+                track("button_clicked", {
+                  button: "Toggle Network Filter",
+                  page: ScreenName.WalletNftGallery,
+                  network: currencyId,
+                });
+                toggleFilter(currencyId);
+              }}
             />
           );
         })}
@@ -51,7 +58,7 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
         title={t("wallet.nftGallery.filters.hiddenCollections")}
         onSeeAllPress={() => {
           track("button_clicked", {
-            button: "See hidden collections",
+            button: "See Hidden Collections",
             page: ScreenName.WalletNftGallery,
             drawer: "Filter selection",
           });
