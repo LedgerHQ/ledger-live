@@ -9,7 +9,7 @@ import { IconOrElementType } from "../../../Icon/type";
 import { BoxedIcon } from "../../../Icon";
 import { Flex } from "../../index";
 import { space } from "styled-system";
-import { Icons } from "../../../../assets";
+import { Close } from "@ledgerhq/icons-ui/native";
 
 const { width, height } = sizes;
 
@@ -118,7 +118,7 @@ export function ModalHeaderCloseButton({
   return (
     <CloseContainer>
       <ClosePressableExtendedBounds onPress={onClose}>
-        <Icons.CloseMedium color="neutral.c100" size="20px" />
+        <Close color="neutral.c100" size="S" />
       </ClosePressableExtendedBounds>
     </CloseContainer>
   );

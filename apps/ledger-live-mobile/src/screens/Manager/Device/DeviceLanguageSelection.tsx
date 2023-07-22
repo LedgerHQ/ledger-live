@@ -1,5 +1,12 @@
 import React, { useCallback } from "react";
-import { Button, Flex, Icons, ScrollContainer, SelectableList, Text } from "@ledgerhq/native-ui";
+import {
+  Button,
+  Flex,
+  IconsLegacy,
+  ScrollContainer,
+  SelectableList,
+  Text,
+} from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
@@ -58,7 +65,7 @@ const DeviceLanguageSelection: React.FC<Props> = ({
                   value={currentLanguage}
                   renderRight={() =>
                     isCurrentDeviceLanguage ? (
-                      <Icons.CircledCheckSolidMedium color="primary.c80" size={24} />
+                      <IconsLegacy.CircledCheckSolidMedium color="primary.c80" size={24} />
                     ) : null
                   }
                 >

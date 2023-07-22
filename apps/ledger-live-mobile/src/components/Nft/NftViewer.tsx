@@ -26,7 +26,7 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Button, Icons, Text, Flex } from "@ledgerhq/native-ui";
+import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
 import { FloorPrice, Account } from "@ledgerhq/types-live";
@@ -132,7 +132,7 @@ const Section = ({
         {copyAvailable ? (
           <View>
             <TouchableOpacity onPress={copy} style={{ marginLeft: 10 }}>
-              <Icons.CopyMedium size={16} color={copied ? "neutral.c80" : "primary.c80"} />
+              <IconsLegacy.CopyMedium size={16} color={copied ? "neutral.c80" : "primary.c80"} />
             </TouchableOpacity>
             {copied ? (
               <Text variant={"body"} color="neutral.c80" marginLeft={3}>
@@ -436,7 +436,7 @@ const NftViewer = ({ route }: Props) => {
             <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
               <Button
                 type="main"
-                Icon={Icons.ArrowFromBottomMedium}
+                Icon={IconsLegacy.ArrowFromBottomMedium}
                 iconPosition="left"
                 onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
               >
@@ -447,7 +447,7 @@ const NftViewer = ({ route }: Props) => {
               <Box style={styles.ellipsisButtonContainer} flexShrink={0} width={"48px"}>
                 <Button
                   type="main"
-                  Icon={Icons.OthersMedium}
+                  Icon={IconsLegacy.OthersMedium}
                   onPress={() => {
                     track("button_clicked", {
                       button: "NFT Settings",

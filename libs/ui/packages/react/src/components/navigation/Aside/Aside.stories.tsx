@@ -3,7 +3,7 @@ import React from "react";
 import Text from "../../asorted/Text";
 import FlexBox from "../../layout/Flex";
 import Log from "../../message/Log";
-import { LifeRingMedium } from "@ledgerhq/icons-ui/react";
+import { LifeRingMedium } from "@ledgerhq/icons-ui/reactLegacy";
 import AsideComponent, { Props } from "./index";
 import { nanoIllustration, keyboardIllustration } from "./stories.helper";
 

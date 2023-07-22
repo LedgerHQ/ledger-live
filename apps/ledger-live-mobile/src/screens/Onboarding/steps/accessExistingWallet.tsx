@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, ScrollListContainer, Box, Flex, Icons } from "@ledgerhq/native-ui";
+import { Text, ScrollListContainer, Box, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { props } from "lodash/fp";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -101,7 +101,7 @@ function AccessExistingWallet() {
           }}
           testID={"Existing Wallet | Connect"}
           onPress={connect}
-          Icon={<Icons.BluetoothMedium color="primary.c80" size={30} />}
+          Icon={<IconsLegacy.BluetoothMedium color="primary.c80" size={30} />}
         />
       </Box>
       <Box mb={6}>
@@ -113,7 +113,7 @@ function AccessExistingWallet() {
           }}
           testID={"Existing Wallet | Sync"}
           onPress={sync}
-          Icon={<Icons.QrCodeMedium color="primary.c80" size={30} />}
+          Icon={<IconsLegacy.QrCodeMedium color="primary.c80" size={30} />}
         />
       </Box>
     </ScrollListContainer>

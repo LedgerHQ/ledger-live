@@ -10,7 +10,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { InfiniteLoader, Text, Flex, Tag, Icons, BoxedIcon, Log } from "@ledgerhq/native-ui";
+import { InfiniteLoader, Text, Flex, Tag, IconsLegacy, BoxedIcon, Log } from "@ledgerhq/native-ui";
 import { LockAltMedium, DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
@@ -780,7 +780,7 @@ export function renderDeviceNotOnboarded({
   return (
     <Wrapper>
       <Flex backgroundColor="neutral.c30" p={16} borderRadius={999}>
-        <Icons.InfoAltFillMedium color="primary.c80" size={28} />
+        <IconsLegacy.InfoAltFillMedium color="primary.c80" size={28} />
       </Flex>
       <Text variant="h4" textAlign="center" mt={6}>
         {t("DeviceAction.deviceNotOnboarded.title")}
@@ -842,7 +842,7 @@ export function renderConnectYourDevice({
         <ConnectDeviceExtraContentWrapper>
           <ExternalLink
             text={t("DeviceAction.useAnotherDevice")}
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             onPress={onSelectDeviceLink}
           />
         </ConnectDeviceExtraContentWrapper>
@@ -961,7 +961,7 @@ export function renderWarningOutdated({
     <Wrapper>
       <IconContainer>
         <Circle size={60} bg={lighten(colors.yellow, 0.4)}>
-          <Icons.WarningMedium size={28} color={colors.yellow} />
+          <IconsLegacy.WarningMedium size={28} color={colors.yellow} />
         </Circle>
       </IconContainer>
       <TitleText>{t("DeviceAction.outdated")}</TitleText>

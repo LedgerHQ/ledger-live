@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
@@ -34,7 +34,7 @@ const getSecondaryActions = ({
       ],
       label: <Trans i18nKey="tron.manage.freeze.title" />,
       description: <Trans i18nKey="tron.manage.freeze.description" />,
-      Icon: Icons.FreezeMedium,
+      Icon: IconsLegacy.FreezeMedium,
     },
     {
       id: "unfreeze",
@@ -50,7 +50,7 @@ const getSecondaryActions = ({
       ],
       label: <Trans i18nKey="tron.manage.unfreeze.title" />,
       description: <Trans i18nKey="tron.manage.unfreeze.description" />,
-      Icon: Icons.UnfreezeMedium,
+      Icon: IconsLegacy.UnfreezeMedium,
       buttonProps: {
         type: "main",
         outline: false,
@@ -70,7 +70,7 @@ const getSecondaryActions = ({
       ],
       label: <Trans i18nKey="tron.manage.vote.title" />,
       description: <Trans i18nKey="tron.manage.vote.description" />,
-      Icon: Icons.VoteMedium,
+      Icon: IconsLegacy.VoteMedium,
       buttonProps: {
         type: "main",
         outline: false,

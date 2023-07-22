@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "styled-components/native";
@@ -100,7 +100,7 @@ const OnboardingStepUseCaseSelection = () => {
         }}
         testID={`Onboarding UseCase - Selection|New Wallet`}
         onPress={onPressNew}
-        Icon={<Icons.PlusMedium color={colors.primary.c80} size={24} />}
+        Icon={<IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />}
       />
 
       <Box mt={6}>
@@ -113,7 +113,7 @@ const OnboardingStepUseCaseSelection = () => {
           }}
           testID={`Onboarding UseCase - Selection|Recovery phrase`}
           onPress={onPressRecoveryPhrase}
-          Icon={<Icons.ListMedium color={colors.primary.c80} size={24} />}
+          Icon={<IconsLegacy.ListMedium color={colors.primary.c80} size={24} />}
         />
       </Box>
 
@@ -128,7 +128,7 @@ const OnboardingStepUseCaseSelection = () => {
             }}
             testID={`Onboarding UseCase - Selection|Ledger Recover`}
             onPress={onPressProtect}
-            Icon={<Icons.ShieldMedium color={colors.primary.c80} size={24} />}
+            Icon={<IconsLegacy.ShieldMedium color={colors.primary.c80} size={24} />}
           />
         </Box>
       )}
