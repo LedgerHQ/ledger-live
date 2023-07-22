@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.1
+
+### Patch Changes
+
+- [#4086](https://github.com/LedgerHQ/ledger-live/pull/4086) [`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: remove Polygon from default list of apps installed on device as it is no longer needed for full setup of Stax (because we are dropping the claim NFT feature in the post onboarding)
+
+- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
+  - @ledgerhq/coin-evm@0.4.1-nightly.1
+  - @ledgerhq/evm-tools@1.0.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.1-nightly.1
+
 ## 31.4.0-nightly.0
 
 ### Minor Changes

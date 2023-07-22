@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.65.0-nightly.1
+
+### Patch Changes
+
+- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8), [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
+  - @ledgerhq/live-common@31.4.0-nightly.1
+  - @ledgerhq/react-ui@0.14.4-nightly.0
+  - @ledgerhq/coin-evm@0.4.1-nightly.1
+  - @ledgerhq/evm-tools@1.0.2-nightly.1
+
 ## 2.65.0-nightly.0
 
 ### Minor Changes

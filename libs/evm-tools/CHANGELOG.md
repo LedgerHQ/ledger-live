@@ -1,5 +1,11 @@
 # @ledgerhq/evm-tools
 
+## 1.0.2-nightly.1
+
+### Patch Changes
+
+- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
 ## 1.0.2-nightly.0
 
 ### Patch Changes
