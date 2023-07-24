@@ -21,7 +21,7 @@ const Container = styled(Box).attrs(() => ({
 
 type BodyProps = {
   modelId: DeviceModelId;
-  deviceHasPin: boolean;
+  deviceHasPin?: boolean | undefined;
 };
 
 export const Body = ({ modelId, deviceHasPin }: BodyProps) => {

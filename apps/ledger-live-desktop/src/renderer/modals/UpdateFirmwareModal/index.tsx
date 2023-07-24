@@ -48,7 +48,7 @@ export type StepProps = {
   finalStepSuccessDescription?: string;
   finalStepSuccessButtonLabel?: string;
   finalStepSuccessButtonOnClick?: () => void;
-  shouldReloadManagerIfUpdateRefused?: boolean;
+  shouldReloadManagerOnCloseIfUpdateRefused?: boolean;
   deviceHasPin?: boolean;
 };
 
