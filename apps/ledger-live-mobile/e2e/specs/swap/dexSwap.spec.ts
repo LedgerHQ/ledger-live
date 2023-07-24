@@ -3,9 +3,11 @@ import { loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import SwapFormPage from "../../models/trade/swapFormPage";
 import { isAndroid } from "../../helpers";
+import LiveAppWebview from "../../models/liveApps/liveAppWebview";
 
 let portfolioPage: PortfolioPage;
 let swapPage: SwapFormPage;
+let liveAppWebview: LiveAppWebview;
 
 describe("Swap", () => {
   beforeAll(async () => {
@@ -13,13 +15,14 @@ describe("Swap", () => {
 
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
+    liveAppWebview = new LiveAppWebview();
 
     await portfolioPage.waitForPortfolioPageToLoad();
-  });
-
-  it("should be able to navigate to a DEX", async () => {
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToSwapFromTransferMenu();
+  });
+
+  it("should be able to generate a quote with DEX providers available", async () => {
     await swapPage.openSourceAccountSelector();
     await swapPage.selectAccount("Ethereum 2");
     await swapPage.openDestinationAccountSelector();
@@ -27,7 +30,12 @@ describe("Swap", () => {
     await swapPage.sendMax();
     await swapPage.goToProviderSelection();
     await swapPage.chooseProvider("1inch");
+  });
+
+  it("should be able to navigate to a DEX with the correct params", async () => {
     await swapPage.startExchange();
+
+    await detox.expect(liveAppWebview.appTitle()).toHaveText(" https://1inch.io/"); // for some reason there is a space before the URL so this is required
 
     if (isAndroid()) {
       const title = await detox.web.element(detox.by.web.id("__next")).getTitle();
