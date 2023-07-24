@@ -2,17 +2,19 @@ import type { ElrondResourcesRaw, ElrondResources, ElrondAccountRaw, ElrondAccou
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toElrondResourcesRaw(r: ElrondResources): ElrondResourcesRaw {
-  const { nonce, delegations } = r;
+  const { nonce, delegations, isGuarded } = r;
   return {
     nonce,
     delegations,
+    isGuarded
   };
 }
 export function fromElrondResourcesRaw(r: ElrondResourcesRaw): ElrondResources {
-  const { nonce, delegations } = r;
+  const { nonce, delegations, isGuarded } = r;
   return {
     nonce,
     delegations,
+    isGuarded
   };
 }
 
