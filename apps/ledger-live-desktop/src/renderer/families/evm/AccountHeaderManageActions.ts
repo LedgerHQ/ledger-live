@@ -25,7 +25,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       );
     } else if (account.type === "Account") {
       dispatch(
-        openModal("MODAL_ETH_STAKE", {
+        openModal("MODAL_EVM_STAKE", {
           account,
         }),
       );

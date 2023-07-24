@@ -20,7 +20,7 @@ const DelegationModal = ({ account, hasCheckbox, singleProviderRedirectMode, sou
 
   return (
     <Modal
-      name="MODAL_ETH_STAKE"
+      name="MODAL_EVM_STAKE"
       centered
       width={500}
       render={({ onClose }) => (
