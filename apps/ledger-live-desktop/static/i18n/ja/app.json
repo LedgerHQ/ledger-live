@@ -2597,6 +2597,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "合計残高にはステーキング報酬は含まれません"
       }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "cost" : "費用",
+      "pool" : "プール",
+      "changeDelegation" : "デリゲートを変更する",
+      "assetsAlreadyStaked" : "お客様の資産はすでにステーキングされています",
+      "addFundsToStake" : "資金をステーキングに追加する",
+      "commission" : "コミッション",
+      "stakeKeyRegistrationDeposit" : "ステーキングキー登録デポジット",
+      "delegatingTo" : "デリゲート先：",
+      "flow" : {
+        "title" : "デリゲート",
+        "steps" : {
+          "starter" : {
+            "description" : "ADAをプールにデリゲートして報酬を獲得できます。",
+            "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "資産は別のプールに再デリゲートすることも、いつでもデリゲート解除を選択することもできます。"]
+          },
+          "validator" : {
+            "title" : "プール"
+          },
+          "summary" : {
+            "title" : "概要"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "デリゲートを解除すると、現在および今後のエポックを対象とした報酬を受け取ることができなくなります",
+      "refund" : "ステーキング登録デポジットの払い戻し",
+      "flow" : {
+        "title" : "デリゲート解除",
+        "steps" : {
+          "summary" : {
+            "title" : "概要"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "デリゲートが正常に解除されました",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -4298,7 +4360,7 @@
         "nextButton" : "はじめに",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
-        "recoverSignIn" : "Ledger Recoverにログイン",
+        "recoverSignIn" : "Log in to Ledger Recover",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
         "termsAndConditions" : "利用規約",
         "and" : "そして",
@@ -5126,6 +5188,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} には対応していません。",
       "description" : "この暗号資産には、未対応です。Ledgerサポートにお問合せください。"
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "正規品でない可能性があります",
