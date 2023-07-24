@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Alert, Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
+import { Alert, Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -178,7 +178,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
       {newFwUpdateUxFeatureFlag?.enabled ? (
         <Flex backgroundColor="neutral.c100" borderRadius={8} px={5} py={6}>
           <Flex flexDirection="row" alignItems="center" mb={5}>
-            <Icons.CloudDownloadMedium color="neutral.c00" size={32} />
+            <IconsLegacy.CloudDownloadMedium color="neutral.c00" size={32} />
             <Text ml={5} flexShrink={1} flexGrow={1} color="neutral.c00" fontWeight="semiBold">
               {t("FirmwareUpdate.newVersion", {
                 version,
@@ -257,7 +257,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
         onClose={() => setShowBatteryWarningDrawer(false)}
       >
         <Flex alignItems="center" justifyContent="center" px={1}>
-          <IconBadge iconColor="primary.c100" iconSize={32} Icon={Icons.BatteryHalfMedium} />
+          <IconBadge iconColor="primary.c100" iconSize={32} Icon={IconsLegacy.BatteryHalfMedium} />
           <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
             {t("FirmwareUpdate.staxBatteryLow")}
           </Text>

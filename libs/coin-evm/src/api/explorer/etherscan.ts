@@ -4,7 +4,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { EtherscanAPIError } from "../../errors";
+import { EtherscanAPIError, EtherscanLikeExplorerUsedIncorrectly } from "../../errors";
+import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
 import {
   etherscanOperationToOperations,
   etherscanERC20EventToOperations,
@@ -61,22 +62,21 @@ export const getLastCoinOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
-    return [];
-  }
-
-  let url = `${apiDomain}/api?module=account&action=txlist&address=${address}&tag=latest&page=1&sort=desc`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=txlist&address=${address}`,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
+    },
   });
 
   return ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
@@ -92,22 +92,21 @@ export const getLastTokenOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
-    return [];
-  }
-
-  let url = `${apiDomain}/api?module=account&action=tokentx&address=${address}&tag=latest&page=1&sort=desc`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=tokentx&address=${address}`,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
+    },
   });
 
   // Why this thing ?
@@ -144,22 +143,21 @@ export const getLastERC721Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
-    return [];
-  }
-
-  let url = `${apiDomain}/api?module=account&action=tokennfttx&address=${address}&tag=latest&page=1&sort=desc`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=tokennfttx&address=${address}`,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
+    },
   });
 
   // Why this thing ?
@@ -196,22 +194,21 @@ export const getLastERC1155Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-  if (!apiDomain) {
-    return [];
-  }
-
-  let url = `${apiDomain}/api?module=account&action=token1155tx&address=${address}&tag=latest&page=1&sort=desc`;
-  if (fromBlock) {
-    url += `&startBlock=${fromBlock}`;
-  }
-  if (toBlock) {
-    url += `&endBlock=${toBlock}`;
+  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
-    url,
+    url: `${explorer.uri}/api?module=account&action=token1155tx&address=${address}`,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
+    },
   });
 
   // Why this thing ?
@@ -270,7 +267,7 @@ export const getLastNftOperations = async (
  * do not use a Promise.all here, it would
  * break because of the rate limits
  */
-export const getLastOperations = makeLRUCache<
+export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
   [
     currency: CryptoCurrency,
     address: string,
@@ -315,11 +312,8 @@ export const getLastOperations = makeLRUCache<
   { ttl: ETHERSCAN_TIMEOUT },
 );
 
-export default {
-  getLastCoinOperations,
-  getLastTokenOperations,
-  getLastERC721Operations,
-  getLastERC1155Operations,
-  getLastNftOperations,
+const explorerApi: ExplorerApi = {
   getLastOperations,
 };
+
+export default explorerApi;

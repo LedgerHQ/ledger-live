@@ -49,7 +49,13 @@ const ValidationError = (props: ValidationErrorPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondWithdraw" name="ValidationError" />
+      <TrackScreen
+        category="ElrondWithdraw"
+        name="ValidationError"
+        flow="stake"
+        action="withdraw"
+        currency="egld"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </View>
   );

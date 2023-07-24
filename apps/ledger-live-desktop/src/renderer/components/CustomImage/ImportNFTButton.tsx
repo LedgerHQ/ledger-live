@@ -1,5 +1,5 @@
 import React from "react";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 import ImportButton from "./ImportButton";
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +13,7 @@ const ImportNFTButton: React.FC<Props> = ({ onClick }) => {
   return (
     <ImportButton
       text={t("customImage.steps.choose.chooseNft")}
-      Icon={Icons.TicketMedium}
+      Icon={IconsLegacy.TicketMedium}
       testId="custom-image-import-nft-button"
       onClick={onClick}
     />

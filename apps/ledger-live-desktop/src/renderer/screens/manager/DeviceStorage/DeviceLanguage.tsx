@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/react-ui";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { idsToLanguage, Language, DeviceInfo } from "@ledgerhq/types-live";
@@ -54,7 +54,7 @@ const DeviceLanguage: React.FC<Props> = ({
       <Link
         type="main"
         disabled={disabled}
-        Icon={Icons.ChevronRightMedium}
+        Icon={IconsLegacy.ChevronRightMedium}
         onClick={disabled ? undefined : openLanguageInstallation}
         data-test-id="manager-change-language-button"
       >

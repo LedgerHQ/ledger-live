@@ -1,12 +1,16 @@
+import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { BigNumber } from "bignumber.js";
+import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
+import { GasTrackerApi, isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
-import { GasTrackerDoesNotSupportEIP1559, NoGasTrackerFound } from "../../errors";
+import {
+  GasTrackerDoesNotSupportEIP1559,
+  LedgerGasTrackerUsedIncorrectly,
+  NoGasTrackerFound,
+} from "../../errors";
 
 type GasTracker = {
-  explorerId: string;
   compatibilty: {
     eip1559: boolean;
   };
@@ -16,14 +20,14 @@ type GasTracker = {
 // Shouldn't this be a dynamic / remote config? For example if there is an
 // update of the explorer backend to support EIP1559, we should be able to
 // update this config without having to release a new version of the app?
-const currencyIdGasTrackerMap = new Map<CryptoCurrency["id"], GasTracker>([
-  ["avalanche_c_chain", { explorerId: "avax", compatibilty: { eip1559: false } }],
-  ["bsc", { explorerId: "bnb", compatibilty: { eip1559: false } }],
-  ["ethereum", { explorerId: "eth", compatibilty: { eip1559: true } }],
-  ["ethereum_classic", { explorerId: "etc", compatibilty: { eip1559: false } }],
-  ["polygon", { explorerId: "matic", compatibilty: { eip1559: true } }],
-  ["ethereum_ropsten", { explorerId: "eth_ropsten", compatibilty: { eip1559: true } }],
-  ["ethereum_goerli", { explorerId: "eth_goerli", compatibilty: { eip1559: true } }],
+const explorerIdGasTrackerMap = new Map<LedgerExplorerId, GasTracker>([
+  ["avax", { compatibilty: { eip1559: false } }],
+  ["bnb", { compatibilty: { eip1559: false } }],
+  ["eth", { compatibilty: { eip1559: true } }],
+  ["etc", { compatibilty: { eip1559: false } }],
+  ["matic", { compatibilty: { eip1559: true } }],
+  ["eth_ropsten", { compatibilty: { eip1559: true } }],
+  ["eth_goerli", { compatibilty: { eip1559: true } }],
 ]);
 
 export const getGasOptions = async ({
@@ -35,13 +39,17 @@ export const getGasOptions = async ({
     useEIP1559: boolean;
   };
 }): Promise<GasOptions> => {
-  const gasTrackerConfig = currencyIdGasTrackerMap.get(currency.id);
+  const { gasTracker } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  if (!isLedgerGasTracker(gasTracker)) {
+    throw new LedgerGasTrackerUsedIncorrectly();
+  }
 
+  const gasTrackerConfig = explorerIdGasTrackerMap.get(gasTracker.explorerId);
   if (!gasTrackerConfig) {
     throw new NoGasTrackerFound(`No gas tracker found for ${currency.id}`);
   }
 
-  const { useEIP1559 = false } = options || {};
+  const { useEIP1559 = false } = options || /* istanbul ignore next */ {};
 
   if (useEIP1559 && !gasTrackerConfig.compatibilty.eip1559) {
     throw new GasTrackerDoesNotSupportEIP1559(
@@ -51,7 +59,7 @@ export const getGasOptions = async ({
 
   const { low, medium, high, next_base } = await network({
     method: "GET",
-    url: `${getEnv("EXPLORER")}/blockchain/v4/${gasTrackerConfig.explorerId}/gastracker/barometer${
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${gasTracker.explorerId}/gastracker/barometer${
       useEIP1559 ? "?display=eip1559" : ""
     }`,
   }).then(({ data }) => ({
@@ -69,16 +77,19 @@ export const getGasOptions = async ({
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(low),
         maxPriorityFeePerGas: low,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
       medium: {
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(medium),
         maxPriorityFeePerGas: medium,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
       fast: {
         maxFeePerGas: next_base.times(EIP1559_BASE_FEE_MULTIPLIER).plus(high),
         maxPriorityFeePerGas: high,
         gasPrice: null,
+        nextBaseFee: next_base,
       },
     };
   }
@@ -88,16 +99,25 @@ export const getGasOptions = async ({
       gasPrice: low,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
     medium: {
       gasPrice: medium,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
     fast: {
       gasPrice: high,
       maxFeePerGas: null,
       maxPriorityFeePerGas: null,
+      nextBaseFee: null,
     },
   };
 };
+
+const gasTracker: GasTrackerApi = {
+  getGasOptions,
+};
+
+export default gasTracker;

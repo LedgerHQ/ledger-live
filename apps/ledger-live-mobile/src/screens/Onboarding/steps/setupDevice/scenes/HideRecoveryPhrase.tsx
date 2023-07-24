@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
+import { Text, IconBoxList, IconsLegacy } from "@ledgerhq/native-ui";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
 const items = [
@@ -10,11 +10,11 @@ const items = [
      ** @TODO: Correct icon isn't included in the ui library yet.
      ** Replace this placeholder as soon as it's available.
      */
-    Icon: Icons.MinusMedium,
+    Icon: IconsLegacy.MinusMedium,
   },
   {
     title: "onboarding.stepSetupDevice.hideRecoveryPhrase.bullets.1.label",
-    Icon: Icons.EyeNoneMedium,
+    Icon: IconsLegacy.EyeNoneMedium,
   },
 ];
 

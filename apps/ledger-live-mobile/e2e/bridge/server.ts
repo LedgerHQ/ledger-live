@@ -2,6 +2,14 @@ import { Server } from "ws";
 import path from "path";
 import fs from "fs";
 import { NavigatorName } from "../../src/const";
+import { Subject } from "rxjs";
+
+type ServerData = {
+  type: "walletAPIResponse";
+  payload: string;
+};
+
+export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
 
@@ -70,10 +78,13 @@ export function open() {
 }
 
 function onMessage(messageStr: string) {
-  const msg = JSON.parse(messageStr);
+  const msg: ServerData = JSON.parse(messageStr);
   log(`Message\n${JSON.stringify(msg, null, 2)}`);
 
   switch (msg.type) {
+    case "walletAPIResponse":
+      e2eBridgeServer.next(msg);
+      break;
     default:
       break;
   }

@@ -85,6 +85,9 @@ export class SwapPage {
 
   async navigate() {
     await this.swapMenuButton.click();
+  }
+
+  async waitForSwapFormToLoad() {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
   }
 

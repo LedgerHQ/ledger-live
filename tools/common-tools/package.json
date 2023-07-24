@@ -1,6 +1,10 @@
 {
   "name": "live-common-tools",
+<<<<<<< HEAD
   "version": "0.6.1",
+=======
+  "version": "0.6.0",
+>>>>>>> ledger/develop
   "private": true,
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",

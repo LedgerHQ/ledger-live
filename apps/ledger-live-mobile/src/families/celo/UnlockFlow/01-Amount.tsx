@@ -124,7 +124,13 @@ export default function UnlockAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="UnlockFlow" name="Amount" />
+      <TrackScreen
+        category="UnlockFlow"
+        name="Amount"
+        flow="stake"
+        action="unlock"
+        currency="celo"
+      />
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>

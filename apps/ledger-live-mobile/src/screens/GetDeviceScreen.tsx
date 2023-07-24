@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import {
   Flex,
-  Icons,
+  IconsLegacy,
   Text,
   IconBoxList,
   Link as TextLink,
@@ -50,22 +50,22 @@ const items = [
   {
     title: "buyDevice.0.title",
     desc: "buyDevice.0.desc",
-    Icon: Icons.CrownMedium,
+    Icon: IconsLegacy.CrownMedium,
   },
   {
     title: "buyDevice.1.title",
     desc: "buyDevice.1.desc",
-    Icon: Icons.LendMedium,
+    Icon: IconsLegacy.LendMedium,
   },
   {
     title: "buyDevice.2.title",
     desc: "buyDevice.2.desc",
-    Icon: Icons.ClaimRewardsMedium,
+    Icon: IconsLegacy.ClaimRewardsMedium,
   },
   {
     title: "buyDevice.3.title",
     desc: "buyDevice.3.desc",
-    Icon: Icons.NanoXAltMedium,
+    Icon: IconsLegacy.NanoXAltMedium,
   },
 ];
 
@@ -149,7 +149,7 @@ export default function GetDeviceScreen() {
           <Flex width={24} />
         ) : (
           <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
-            <Icons.ArrowLeftMedium size="24px" />
+            <IconsLegacy.ArrowLeftMedium size="24px" />
           </TouchableOpacity>
         )}
         <Text variant="h3" lineHeight="20" uppercase>
@@ -157,7 +157,7 @@ export default function GetDeviceScreen() {
         </Text>
         {hasCompletedOnboarding ? (
           <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
-            <Icons.CloseMedium size="24px" />
+            <IconsLegacy.CloseMedium size="24px" />
           </TouchableOpacity>
         ) : (
           <Flex width={24} />
@@ -204,14 +204,27 @@ export default function GetDeviceScreen() {
         </Flex>
       </ScrollListContainer>
       <Flex borderTopColor="neutral.c40" borderTopWidth={1}>
-        <Button mx={6} my={6} type="main" outline={false} onPress={buyLedger} size="large">
+        <Button
+          mx={6}
+          my={6}
+          type="main"
+          outline={false}
+          event="button_clicked"
+          testID="market-place-btn"
+          eventProperties={{
+            button: "Buy your Ledger now",
+            screen: ScreenName.GetDevice,
+          }}
+          onPress={buyLedger}
+          size="large"
+        >
           {t("buyDevice.cta")}
         </Button>
         <Flex px={6} pt={0} pb={5}>
           <TextLink
             type="color"
             onPress={setupDevice}
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             iconPosition="right"
           >
             {t("buyDevice.footer")}

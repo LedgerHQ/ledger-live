@@ -19,10 +19,13 @@ export const currency: CryptoCurrency = Object.freeze({
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
-    rpc: "https://my-rpc.com",
+    node: {
+      type: "external" as const,
+      uri: "https://my-rpc.com",
+    },
     explorer: {
-      uri: "https://api.com",
       type: "etherscan" as const,
+      uri: "https://api.com",
     },
   },
 });

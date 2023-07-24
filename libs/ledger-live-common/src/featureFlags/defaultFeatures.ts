@@ -95,10 +95,13 @@ export const defaultFeatures = {
   currencyDesmos: {
     enabled: false,
   },
+  currencyTelosEvm: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
-      apps: ["Bitcoin", "Ethereum", "Polygon"],
+      apps: ["Bitcoin", "Ethereum"],
     },
   },
   disableNftSend: {

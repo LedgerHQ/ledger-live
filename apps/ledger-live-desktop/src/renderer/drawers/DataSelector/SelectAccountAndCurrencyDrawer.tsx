@@ -12,11 +12,13 @@ import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
 import { Observable } from "rxjs7";
+import { getEnv } from "@ledgerhq/live-common/env";
+
 const options = {
   includeScore: false,
   threshold: 0.1,
-  // Search in `ticker` and in `name` values
-  keys: ["name", "ticker"],
+  // Search in `ticker`, `name`, `keywords` values
+  keys: getEnv("CRYPTO_ASSET_SEARCH_KEYS"),
   shouldSort: false,
 };
 function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {

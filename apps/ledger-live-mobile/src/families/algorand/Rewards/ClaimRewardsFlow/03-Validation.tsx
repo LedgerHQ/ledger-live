@@ -51,7 +51,14 @@ export default function Validation({ route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="AlgorandClaimRewards" name="Validation" signed={signed} />
+      <TrackScreen
+        category="AlgorandClaimRewards"
+        name="Validation"
+        signed={signed}
+        flow="stake"
+        action="claim_rewards"
+        currency="algo"
+      />
       {signing && (
         <>
           <PreventNativeBack />

@@ -4,7 +4,7 @@ import { expect } from "detox";
 const baseLink = "discover/";
 
 export default class DiscoveryPage {
-  getDicoveryBanner = () => getElementById("discover-banner");
+  getDiscoveryBanner = () => getElementById("discover-banner");
   waitForSelectCrypto = () => waitForElementByText("Select crypto");
 
   async openViaDeeplink(discoverApps = "") {
@@ -12,6 +12,6 @@ export default class DiscoveryPage {
   }
 
   async expectDiscoveryPage() {
-    await expect(this.getDicoveryBanner()).toBeVisible();
+    await expect(this.getDiscoveryBanner()).toBeVisible();
   }
 }

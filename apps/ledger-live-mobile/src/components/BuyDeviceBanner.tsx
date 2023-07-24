@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Image, ImageStyle, StyleProp, ViewStyle } from "react-native";
-import { Flex, Text, Icons, Link } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -160,7 +160,7 @@ export default function BuyDeviceBanner({
         <Flex alignItems="center" justifyContent="center" mt={24} mx="auto">
           <Link
             type="color"
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             iconPosition="right"
             onPress={pressMessage}
           >

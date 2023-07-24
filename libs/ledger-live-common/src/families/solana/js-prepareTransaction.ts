@@ -110,9 +110,6 @@ const prepareTransaction = async (
     model,
   };
 
-  // LLM requires this field to be truthy to show fees
-  (patch as any).networkInfo = true;
-
   return defaultUpdateTransaction(tx, patch);
 };
 

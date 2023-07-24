@@ -112,17 +112,7 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
         {actions.length > 0 && <ManageDropDown actions={actions} onSelect={onSelect} />}
         {actions.length === 0 && (
           <S.ManageInfoIconWrapper>
-            <Tooltip
-              content={
-                <Trans
-                  i18nKey={"celo.delegation.manageMultipleVoteWarning"}
-                  count={2}
-                  values={{
-                    count: 2,
-                  }}
-                />
-              }
-            >
+            <Tooltip content={<Trans i18nKey={"celo.delegation.manageMultipleVoteWarning"} />}>
               <IconInfoCircle />
             </Tooltip>
           </S.ManageInfoIconWrapper>
