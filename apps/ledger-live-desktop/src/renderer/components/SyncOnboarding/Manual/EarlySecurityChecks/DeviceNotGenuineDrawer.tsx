@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Icons, Link } from "@ledgerhq/react-ui";
+import { Button, Flex, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -40,7 +40,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
       <Flex px={13} flex={1}>
         <ErrorDisplay
           error={displayedError}
-          Icon={({ size }) => <Icons.WarningSolidMedium size={size} color={"warning.c70"} />}
+          Icon={({ size }) => <IconsLegacy.WarningSolidMedium size={size} color={"warning.c70"} />}
         />
       </Flex>
       <DrawerFooter>
@@ -51,7 +51,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
           size="large"
           variant="main"
           onClick={() => openURL(supportUrl)}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
         >
           {t(
             "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.contactSupportCTA",

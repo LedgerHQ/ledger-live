@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Icons, Link } from "@ledgerhq/react-ui";
+import { Button, Flex, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -20,7 +20,7 @@ const ExitChecksDrawer: React.FC<Props> = ({ onClose, onClickExit }) => {
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
       <ErrorDisplay
         error={error}
-        Icon={({ size }) => <Icons.InfoAltFillMedium size={size} color={"primary.c80"} />}
+        Icon={({ size }) => <IconsLegacy.InfoAltFillMedium size={size} color={"primary.c80"} />}
       />
       <DrawerFooter>
         <Link mr={8} size="large" type="shade" onClick={onClickExit}>

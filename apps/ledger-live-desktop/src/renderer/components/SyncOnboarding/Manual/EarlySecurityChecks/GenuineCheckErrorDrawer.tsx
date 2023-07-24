@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Icons, Link } from "@ledgerhq/react-ui";
+import { Button, Flex, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -42,7 +42,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ error, onClickRetry }) => {
       <Flex px={13} flex={1}>
         <ErrorDisplay
           error={displayedError}
-          Icon={({ size }) => <Icons.InfoAltFillMedium size={size} color={"primary.c80"} />}
+          Icon={({ size }) => <IconsLegacy.InfoAltFillMedium size={size} color={"primary.c80"} />}
         />
       </Flex>
       <DrawerFooter>

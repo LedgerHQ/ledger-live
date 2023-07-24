@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Link, Flex, Text, Icons, InfiniteLoader } from "@ledgerhq/react-ui";
+import { Button, Link, Flex, Text, IconsLegacy, InfiniteLoader } from "@ledgerhq/react-ui";
 import { Bullet } from "./Bullet";
 import { Status as SoftwareCheckStatus } from "../types";
 
@@ -139,7 +139,7 @@ const SoftwareCheckContent = ({
       {genuineCheckStatus === SoftwareCheckStatus.inactive ? (
         <Flex flexDirection={"column"} mt={12} rowGap={12}>
           <Link
-            Icon={Icons.ExternalLinkMedium}
+            Icon={IconsLegacy.ExternalLinkMedium}
             alignSelf={"flex-start"}
             iconPosition="right"
             onClick={onClickWhyPerformSecurityChecks}
@@ -159,7 +159,7 @@ const SoftwareCheckContent = ({
             variant="main"
             size="large"
             outline={false}
-            Icon={loading ? InfiniteLoader : Icons.ArrowRightMedium}
+            Icon={loading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
             iconPosition="right"
           >
             {t("syncOnboarding.manual.softwareCheckContent.continueCTA")}

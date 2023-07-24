@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text, InfiniteLoader, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, InfiniteLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import styled, { StyledComponent, DefaultTheme } from "styled-components";
 import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
 import { Status } from "../types";
@@ -52,13 +52,13 @@ export const Bullet = ({
         {status === Status.active ? (
           <InfiniteLoader color="primary.c60" size={20} />
         ) : status === Status.completed ? (
-          <Icons.CheckTickMedium size={24} color="success.c70" />
+          <IconsLegacy.CheckTickMedium size={24} color="success.c70" />
         ) : status === Status.updateAvailable ? (
-          <Icons.InfoAltFillMedium size={20} color="primary.c80" />
+          <IconsLegacy.InfoAltFillMedium size={20} color="primary.c80" />
         ) : status === Status.failed ? (
-          <Icons.CircledCrossSolidMedium size={20} color="error.c50" />
+          <IconsLegacy.CircledCrossSolidMedium size={20} color="error.c50" />
         ) : status === Status.cancelled ? (
-          <Icons.WarningSolidMedium size={20} color="warning.c60" />
+          <IconsLegacy.WarningSolidMedium size={20} color="warning.c60" />
         ) : (
           <Text variant="body">{bulletText}</Text>
         )}
