@@ -2,12 +2,12 @@ import { isEqual } from "lodash";
 import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { EvmNftTransaction, Transaction as EvmTransaction } from "./types";
+import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
+import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, GasOptions } from "./types";
 import { getTransactionData, getTypedTransaction } from "./transaction";
 import { validateRecipient } from "./getTransactionStatus";
 import { getNftCollectionMetadata } from "./api/nft";
-import { getFeesEstimation, getGasEstimation, getTransactionCount } from "./api/rpc";
-import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
+import { getNodeApi } from "./api/node/index";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
@@ -18,6 +18,7 @@ export const prepareCoinTransaction = async (
   account: Account,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
+  const nodeApi = getNodeApi(account.currency);
   // A `useAllAmount` transaction is a specific case of the live, and because we're in the
   // context of a coinTransaction, no smart contract should be involed
   if (typedTransaction.useAllAmount) {
@@ -25,10 +26,12 @@ export const prepareCoinTransaction = async (
     // we should put in the simulation.
     // But as a coin transaction (no smart contract) should always consumme the same amount of gas, no matter
     // the amount of coin transfered, we can infer the gasLimit with any amount.
-    const gasLimit = await getGasEstimation(account, {
-      ...typedTransaction,
-      amount: new BigNumber(0),
-    });
+    const gasLimit = await nodeApi
+      .getGasEstimation(account, {
+        ...typedTransaction,
+        amount: new BigNumber(0),
+      })
+      .catch(() => new BigNumber(0)); // this catch returning 0 should be handled by the `getTransactionStatus` method
     const draftTransaction = {
       ...typedTransaction,
       gasLimit,
@@ -47,7 +50,7 @@ export const prepareCoinTransaction = async (
     };
   }
 
-  const gasLimit = await getGasEstimation(account, typedTransaction).catch(
+  const gasLimit = await nodeApi.getGasEstimation(account, typedTransaction).catch(
     // in case of a smart contract interaction, the gas estimation
     // (which is transaction simulation by the node) can fail.
     // E.g. A DApp is creating an invalid transaction, swaping more Tokens than the user actually have -> fail
@@ -76,6 +79,7 @@ export const prepareTokenTransaction = async (
   tokenAccount: TokenAccount,
   typedTransaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
+  const nodeApi = getNodeApi(account.currency);
   const [recipientErrors] = validateRecipient(account, typedTransaction);
   const amount = typedTransaction.useAllAmount ? tokenAccount.balance : typedTransaction.amount;
 
@@ -85,12 +89,14 @@ export const prepareTokenTransaction = async (
   // As we're interacting with a smart contract,
   // it's going to be the real recipient for the tx
   const gasLimit = data
-    ? await getGasEstimation(account, {
-        ...typedTransaction,
-        amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
-        recipient: tokenAccount.token.contractAddress, // recipient is then the token smart contract
-        data, // buffer containing the calldata bytecode
-      }).catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
+    ? await nodeApi
+        .getGasEstimation(account, {
+          ...typedTransaction,
+          amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+          recipient: tokenAccount.token.contractAddress, // recipient is then the token smart contract
+          data, // buffer containing the calldata bytecode
+        })
+        .catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
     : new BigNumber(0);
   const additionalFees = await getAdditionalLayer2Fees(account.currency, {
     ...typedTransaction,
@@ -121,6 +127,7 @@ export const prepareNftTransaction = async (
   typedTransaction: EvmNftTransaction & EvmTransaction,
 ): Promise<EvmTransaction> => {
   const { currency } = account;
+  const nodeApi = getNodeApi(currency);
   const [recipientErrors] = validateRecipient(account, typedTransaction);
 
   const data = !Object.keys(recipientErrors).length
@@ -129,12 +136,14 @@ export const prepareNftTransaction = async (
   // As we're interacting with a smart contract,
   // it's going to be the real recipient for the tx
   const gasLimit = data
-    ? await getGasEstimation(account, {
-        ...typedTransaction,
-        amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
-        recipient: typedTransaction.nft.contract, // recipient is then the nft smart contract
-        data, // buffer containing the calldata bytecode
-      }).catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
+    ? await nodeApi
+        .getGasEstimation(account, {
+          ...typedTransaction,
+          amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+          recipient: typedTransaction.nft.contract, // recipient is then the nft smart contract
+          data, // buffer containing the calldata bytecode
+        })
+        .catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
     : new BigNumber(0);
   const additionalFees = await getAdditionalLayer2Fees(account.currency, {
     ...typedTransaction,
@@ -148,7 +157,7 @@ export const prepareNftTransaction = async (
   // deviceTransactionConfig step (so purely UI)
   const [collectionMetadata] = await getNftCollectionMetadata(
     [{ contract: typedTransaction.nft.contract }],
-    currency?.ethereumLikeInfo?.chainId || 0,
+    { chainId: currency?.ethereumLikeInfo?.chainId || 0 },
   );
   const nft = {
     ...typedTransaction.nft,
@@ -176,23 +185,20 @@ export const prepareTransaction = async (
   transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
   const { currency } = account;
+  const nodeApi = getNodeApi(currency);
   // Get the current network status fees
-  const feeData = await (async () => {
+  const feeData: FeeData = await (async () => {
     if (transaction.feesStrategy === "custom") {
       return {
         gasPrice: transaction.gasPrice ?? null,
         maxFeePerGas: transaction.maxFeePerGas ?? null,
         maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+        nextBaseFee: transaction.gasOptions?.medium?.nextBaseFee ?? null,
       };
     }
 
-    if (!transaction.feesStrategy) {
-      return getFeesEstimation(currency);
-    }
-
-    const gasOption = transaction.gasOptions?.[transaction.feesStrategy];
-
-    return gasOption ?? getFeesEstimation(currency);
+    const gasOption = transaction.gasOptions?.[transaction.feesStrategy as keyof GasOptions];
+    return gasOption || nodeApi.getFeeData(currency, transaction);
   })();
 
   const subAccount = findSubAccountById(account, transaction.subAccountId || "");
@@ -222,7 +228,8 @@ export const prepareForSignOperation = async (
   account: Account,
   transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
-  const nonce = await getTransactionCount(account.currency, account.freshAddress);
+  const nodeApi = getNodeApi(account.currency);
+  const nonce = await nodeApi.getTransactionCount(account.currency, account.freshAddress);
 
   if (isNftTransaction(transaction)) {
     return {

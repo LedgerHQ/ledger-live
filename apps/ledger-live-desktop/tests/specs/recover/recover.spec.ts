@@ -11,7 +11,7 @@ test.use({
   env: { MOCK_NO_BYPASS: "1" },
 });
 
-test.describe.parallel("Recover", () => {
+test.describe.parallel("Recover @smoke", () => {
   test("Restore page with no device", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
     recoverPage.useDeepLink();

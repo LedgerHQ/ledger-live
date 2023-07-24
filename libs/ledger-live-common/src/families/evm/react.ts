@@ -1,9 +1,7 @@
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
-import type { GasOptions, Transaction } from "@ledgerhq/coin-evm/types";
+import type { GasOptions, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useEffect, useState } from "react";
-
-type ReturnType = GasOptions | Error | null;
+import { useEffect, useMemo, useState } from "react";
 
 /**
  * React hook to get gas options for a given currency
@@ -13,15 +11,16 @@ type ReturnType = GasOptions | Error | null;
 export const useGasOptions = ({
   currency,
   transaction,
-  interval,
+  // interval is the time in milliseconds between each call to the gas tracker
+  interval = 60 * 1000,
 }: {
   currency: CryptoCurrency;
   transaction: Transaction;
   interval?: number;
-}): ReturnType => {
-  const [gasOptions, setGasOptions] = useState<GasOptions | null>(null);
+}): [GasOptions | undefined, Error | null] => {
+  const [gasOptions, setGasOptions] = useState<GasOptions | undefined>(undefined);
   const [error, setError] = useState<Error | null>(null);
-  const gasTracker = getGasTracker(currency);
+  const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
 
   const shouldUseEip1559 = transaction.type === 2;
 
@@ -36,17 +35,15 @@ export const useGasOptions = ({
         .then(setGasOptions)
         .catch(setError);
 
-    if (!interval) {
-      getGasOptionsCallback();
-      return;
+    getGasOptionsCallback();
+    if (interval > 0) {
+      const intervalId = setInterval(() => getGasOptionsCallback(), interval);
+
+      return () => {
+        clearInterval(intervalId);
+      };
     }
-
-    const intervalId = setInterval(() => getGasOptionsCallback, interval);
-
-    return () => {
-      clearInterval(intervalId);
-    };
   }, [gasTracker, interval, currency, shouldUseEip1559]);
 
-  return gasOptions ?? error;
+  return [gasOptions, error];
 };

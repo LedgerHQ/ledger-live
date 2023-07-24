@@ -1,5 +1,6 @@
 import React from "react";
-import { CryptoIcon, Icon, ProviderIcon } from "@ledgerhq/react-ui";
+import { CryptoIcon, Icon } from "@ledgerhq/react-ui";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
 import styled from "styled-components";
 
 type Props = {

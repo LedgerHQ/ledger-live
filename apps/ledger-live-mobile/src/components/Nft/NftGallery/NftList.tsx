@@ -19,6 +19,7 @@ import ScrollToTopButton from "./ScrollToTopButton";
 import NftFilterChip from "./NftFilterChip";
 import FiltersIcon from "../../../icons/Filters";
 import { ScreenName } from "../../../const";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -43,7 +44,7 @@ const NB_COLUMNS = 2;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
 
-export function NftList({ data }: Props) {
+const NftList = ({ data }: Props) => {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
 
@@ -220,7 +221,9 @@ export function NftList({ data }: Props) {
       />
     </>
   );
-}
+};
+
+export default withDiscreetMode(NftList);
 
 const StyledButton = styled(Button)`
   padding: 0;

@@ -10,7 +10,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { InfiniteLoader, Text, Flex, Tag, Icons, BoxedIcon, Log } from "@ledgerhq/native-ui";
+import { InfiniteLoader, Text, Flex, Tag, IconsLegacy, BoxedIcon, Log } from "@ledgerhq/native-ui";
 import { LockAltMedium, DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
@@ -28,6 +28,7 @@ import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
+import ProviderIcon from "../ProviderIcon";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -40,7 +41,6 @@ import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../const/manager";
-import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { TrackScreen, track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
@@ -241,7 +241,6 @@ export function renderConfirmSwap({
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
 }) {
-  const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
@@ -287,7 +286,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.provider")}>
             <Flex flexDirection="row" alignItems="center">
               <Flex paddingRight={2}>
-                <ProviderIcon size={14} />
+                <ProviderIcon size="XXS" name={exchangeRate.provider} />
               </Flex>
 
               <Text>{providerName}</Text>
@@ -781,7 +780,7 @@ export function renderDeviceNotOnboarded({
   return (
     <Wrapper>
       <Flex backgroundColor="neutral.c30" p={16} borderRadius={999}>
-        <Icons.InfoAltFillMedium color="primary.c80" size={28} />
+        <IconsLegacy.InfoAltFillMedium color="primary.c80" size={28} />
       </Flex>
       <Text variant="h4" textAlign="center" mt={6}>
         {t("DeviceAction.deviceNotOnboarded.title")}
@@ -843,7 +842,7 @@ export function renderConnectYourDevice({
         <ConnectDeviceExtraContentWrapper>
           <ExternalLink
             text={t("DeviceAction.useAnotherDevice")}
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             onPress={onSelectDeviceLink}
           />
         </ConnectDeviceExtraContentWrapper>
@@ -962,7 +961,7 @@ export function renderWarningOutdated({
     <Wrapper>
       <IconContainer>
         <Circle size={60} bg={lighten(colors.yellow, 0.4)}>
-          <Icons.WarningMedium size={28} color={colors.yellow} />
+          <IconsLegacy.WarningMedium size={28} color={colors.yellow} />
         </Circle>
       </IconContainer>
       <TitleText>{t("DeviceAction.outdated")}</TitleText>

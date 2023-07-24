@@ -47,20 +47,6 @@ const config: PlaywrightTestConfig = {
         ["allure-playwright"],
       ]
     : "list",
-  // TODO: Introduce the idea of projects
-  // to have different level of depths in the 2e2 tests
-
-  // projects: [
-  //   {
-  //     name: "smoke",
-  //     testMatch: /.*smoke.spec.ts/,
-  //   },
-  //   {
-  //     name: "full",
-  //     testIgnore: [/.*smoke.spec.ts/, "specs/recorder.spec.ts"],
-  //     dependencies: ["smoke"],
-  //   },
-  // ],
 };
 
 export default config;

@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { memo } from "react";
 
 type Props = {
@@ -18,8 +18,8 @@ function DeltaVariation({ value, percent, ...props }: Props) {
   const [color, ArrowIcon, sign] =
     delta !== 0
       ? delta > 0
-        ? ["success.c50", Icons.ArrowEvolutionUpMedium, "+"]
-        : ["error.c50", Icons.ArrowEvolutionDownMedium, "-"]
+        ? ["success.c50", IconsLegacy.ArrowEvolutionUpMedium, "+"]
+        : ["error.c50", IconsLegacy.ArrowEvolutionDownMedium, "-"]
       : ["neutral.c100", null, ""];
 
   return (

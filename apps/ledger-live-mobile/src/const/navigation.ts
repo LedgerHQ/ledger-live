@@ -169,6 +169,7 @@ export enum ScreenName {
   SwapSelectFees = "SelectFees",
   SwapSelectProvider = "SelectProvider",
   SwapTab = "SwapTab",
+  Earn = "Earn",
   TezosDelegationFlow = "TezosDelegationFlow",
   Transfer = "Transfer",
   UnfreezeAmount = "UnfreezeAmount",
@@ -311,6 +312,9 @@ export enum ScreenName {
   OsmosisRedelegationConnectDevice = "OsmosisRedelegationConnectDevice",
   OsmosisRedelegationValidationError = "OsmosisRedelegationValidationError",
   OsmosisRedelegationValidationSuccess = "OsmosisRedelegationValidationSuccess",
+
+  // internet_computer
+  InternetComputerEditMemo = "InternetComputerEditMemo",
 
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
@@ -542,6 +546,7 @@ export enum NavigatorName {
   Settings = "Settings",
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
+  Earn = "EarnNavigator",
   TezosDelegationFlow = "TezosDelegationFlow",
   TronVoteFlow = "TronVoteFlow",
   Unfreeze = "Unfreeze",

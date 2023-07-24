@@ -233,7 +233,13 @@ export default function SelectValidator({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="DelegationFlow" name="SelectValidator" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
+      />
       <View style={styles.header}>
         {/* TODO SEARCH */}
         <BakerHead onPressHelp={displayInfos} />

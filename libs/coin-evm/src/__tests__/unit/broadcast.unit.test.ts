@@ -11,11 +11,22 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import buildOptimisticOperation from "../../buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../../types";
-import * as API from "../../api/rpc/rpc.common";
+import * as API from "../../api/node/rpc.common";
 import { getEstimatedFees } from "../../logic";
 import broadcast from "../../broadcast";
 
-const currency: CryptoCurrency = getCryptoCurrencyById("ethereum");
+jest.useFakeTimers();
+
+const currency: CryptoCurrency = {
+  ...getCryptoCurrencyById("ethereum"),
+  ethereumLikeInfo: {
+    ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
+    node: {
+      type: "external",
+      uri: "any-uri",
+    },
+  } as any,
+};
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
 const tokenAccount: TokenAccount = makeTokenAccount(
   "0x055C1e159E345cB4197e3844a86A61E0a801d856", // jacquie.eth
@@ -26,12 +37,7 @@ const account: Account = makeAccount(
   currency,
   [tokenAccount],
 );
-const mockedBroadcastResponse = {
-  hash: "0xH4sH",
-  blockNumber: 420,
-  blockHash: "0xBl0cKH4sH",
-  timestamp: Date.now() / 1000, // block timestamps are in seconds
-};
+const mockedBroadcastResponse = "0xH4sH";
 
 describe("EVM Family", () => {
   describe("broadcast.ts", () => {
@@ -76,11 +82,10 @@ describe("EVM Family", () => {
 
         expect(API.broadcastTransaction).toBeCalled();
         expect(finalOperation).toEqual({
-          id: encodeOperationId(account.id, mockedBroadcastResponse.hash, "OUT"),
-          hash: mockedBroadcastResponse.hash,
-          blockNumber: mockedBroadcastResponse.blockNumber,
-          blockHeight: mockedBroadcastResponse.blockNumber,
-          blockHash: mockedBroadcastResponse.blockHash,
+          id: encodeOperationId(account.id, mockedBroadcastResponse, "OUT"),
+          hash: mockedBroadcastResponse,
+          blockHeight: null,
+          blockHash: null,
           value: coinTransaction.amount.plus(estimatedFees),
           fee: estimatedFees,
           type: "OUT",
@@ -90,7 +95,7 @@ describe("EVM Family", () => {
           transactionSequenceNumber: 0,
           subOperations: [],
           nftOperations: [],
-          date: new Date(mockedBroadcastResponse.timestamp * 1000),
+          date: new Date(),
           extra: {},
         });
       });
@@ -129,11 +134,10 @@ describe("EVM Family", () => {
 
         expect(API.broadcastTransaction).toBeCalled();
         expect(finalOperation).toEqual({
-          id: encodeOperationId(account.id, mockedBroadcastResponse.hash, "FEES"),
-          hash: mockedBroadcastResponse.hash,
-          blockNumber: mockedBroadcastResponse.blockNumber,
-          blockHeight: mockedBroadcastResponse.blockNumber,
-          blockHash: mockedBroadcastResponse.blockHash,
+          id: encodeOperationId(account.id, mockedBroadcastResponse, "FEES"),
+          hash: mockedBroadcastResponse,
+          blockHeight: null,
+          blockHash: null,
           value: estimatedFees,
           fee: estimatedFees,
           type: "FEES",
@@ -141,15 +145,14 @@ describe("EVM Family", () => {
           recipients: [tokenCurrency?.contractAddress || ""],
           accountId: account.id,
           transactionSequenceNumber: 0,
-          date: new Date(mockedBroadcastResponse.timestamp * 1000),
+          date: new Date(),
           nftOperations: [],
           subOperations: [
             {
-              id: encodeOperationId(tokenAccount.id, mockedBroadcastResponse.hash, "OUT"),
-              hash: mockedBroadcastResponse.hash,
-              blockNumber: mockedBroadcastResponse.blockNumber,
-              blockHeight: mockedBroadcastResponse.blockNumber,
-              blockHash: mockedBroadcastResponse.blockHash,
+              id: encodeOperationId(tokenAccount.id, mockedBroadcastResponse, "OUT"),
+              hash: mockedBroadcastResponse,
+              blockHeight: null,
+              blockHash: null,
               value: new BigNumber(100),
               fee: estimatedFees,
               type: "OUT",
@@ -157,7 +160,7 @@ describe("EVM Family", () => {
               recipients: [tokenTransaction.recipient],
               accountId: tokenAccount.id,
               transactionSequenceNumber: 0,
-              date: new Date(mockedBroadcastResponse.timestamp * 1000),
+              date: new Date(),
               contract: tokenAccount.token.contractAddress,
               extra: {},
             },
@@ -208,11 +211,10 @@ describe("EVM Family", () => {
 
         expect(API.broadcastTransaction).toBeCalled();
         expect(finalOperation).toEqual({
-          id: encodeOperationId(account.id, mockedBroadcastResponse.hash, "FEES"),
-          hash: mockedBroadcastResponse.hash,
-          blockNumber: mockedBroadcastResponse.blockNumber,
-          blockHeight: mockedBroadcastResponse.blockNumber,
-          blockHash: mockedBroadcastResponse.blockHash,
+          id: encodeOperationId(account.id, mockedBroadcastResponse, "FEES"),
+          hash: mockedBroadcastResponse,
+          blockHeight: null,
+          blockHash: null,
           value: estimatedFees,
           fee: estimatedFees,
           type: "FEES",
@@ -220,15 +222,14 @@ describe("EVM Family", () => {
           recipients: [nft.contract],
           accountId: account.id,
           transactionSequenceNumber: 0,
-          date: new Date(mockedBroadcastResponse.timestamp * 1000),
+          date: new Date(),
           subOperations: [],
           nftOperations: [
             {
-              id: encodeERC721OperationId(nftId, mockedBroadcastResponse.hash, "NFT_OUT", 0),
-              hash: mockedBroadcastResponse.hash,
-              blockNumber: mockedBroadcastResponse.blockNumber,
-              blockHeight: mockedBroadcastResponse.blockNumber,
-              blockHash: mockedBroadcastResponse.blockHash,
+              id: encodeERC721OperationId(nftId, mockedBroadcastResponse, "NFT_OUT", 0),
+              hash: mockedBroadcastResponse,
+              blockHeight: null,
+              blockHash: null,
               value: nft.quantity,
               fee: estimatedFees,
               type: "NFT_OUT",
@@ -236,7 +237,7 @@ describe("EVM Family", () => {
               recipients: [erc721Transaction.recipient],
               accountId: account.id,
               transactionSequenceNumber: 0,
-              date: new Date(mockedBroadcastResponse.timestamp * 1000),
+              date: new Date(),
               contract: nft.contract,
               tokenId: nft.tokenId,
               standard: "ERC721",
@@ -289,11 +290,10 @@ describe("EVM Family", () => {
 
         expect(API.broadcastTransaction).toBeCalled();
         expect(finalOperation).toEqual({
-          id: encodeOperationId(account.id, mockedBroadcastResponse.hash, "FEES"),
-          hash: mockedBroadcastResponse.hash,
-          blockNumber: mockedBroadcastResponse.blockNumber,
-          blockHeight: mockedBroadcastResponse.blockNumber,
-          blockHash: mockedBroadcastResponse.blockHash,
+          id: encodeOperationId(account.id, mockedBroadcastResponse, "FEES"),
+          hash: mockedBroadcastResponse,
+          blockHeight: null,
+          blockHash: null,
           value: estimatedFees,
           fee: estimatedFees,
           type: "FEES",
@@ -301,15 +301,14 @@ describe("EVM Family", () => {
           recipients: [nft.contract],
           accountId: account.id,
           transactionSequenceNumber: 0,
-          date: new Date(mockedBroadcastResponse.timestamp * 1000),
+          date: new Date(),
           subOperations: [],
           nftOperations: [
             {
-              id: encodeERC1155OperationId(nftId, mockedBroadcastResponse.hash, "NFT_OUT", 0),
-              hash: mockedBroadcastResponse.hash,
-              blockNumber: mockedBroadcastResponse.blockNumber,
-              blockHeight: mockedBroadcastResponse.blockNumber,
-              blockHash: mockedBroadcastResponse.blockHash,
+              id: encodeERC1155OperationId(nftId, mockedBroadcastResponse, "NFT_OUT", 0),
+              hash: mockedBroadcastResponse,
+              blockHeight: null,
+              blockHash: null,
               value: nft.quantity,
               fee: estimatedFees,
               type: "NFT_OUT",
@@ -317,7 +316,7 @@ describe("EVM Family", () => {
               recipients: [erc1155Transaction.recipient],
               accountId: account.id,
               transactionSequenceNumber: 0,
-              date: new Date(mockedBroadcastResponse.timestamp * 1000),
+              date: new Date(),
               contract: nft.contract,
               tokenId: nft.tokenId,
               standard: "ERC1155",

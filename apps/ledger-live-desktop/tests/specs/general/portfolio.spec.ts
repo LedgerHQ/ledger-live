@@ -5,7 +5,7 @@ import { PortfolioPage } from "../../models/PortfolioPage";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
-test("Layout", async ({ page }) => {
+test("Portfolio @smoke", async ({ page }) => {
   const layout = new Layout(page);
   const portfolioPage = new PortfolioPage(page);
 

@@ -4314,7 +4314,7 @@
         "nextButton": "Get started",
         "noDevice": "No device?",
         "buyLink": "No device? Buy a Ledger Nano X",
-        "recoverSignIn": "Log in for Ledger Recover",
+        "recoverSignIn": "Log in to Ledger Recover",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",
         "termsAndConditions": "Terms and conditions",
         "and": "and",
@@ -4979,9 +4979,14 @@
       "memoPlaceholder": "Optional",
       "memo": "Memo"
     },
-    "stacks" : {
+    "internet_computer": {
+      "memoPlaceholder": "Optional, Default: 0",
+      "memo": "Memo",
+      "memoWarningText": "The value of memo can be a number between 0 and 9223372036854775807"
+    },
+    "stacks": {
       "memoPlaceholder": "Optional",
-      "memo" : "Memo",
+      "memo": "Memo",
       "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
     },
     "stellar": {
@@ -5140,6 +5145,9 @@
     "CurrencyNotSupported": {
       "title": "{{currencyName}} is not supported",
       "description": "This crypto asset is not yet supported. Please contact Ledger Support."
+    },
+    "DeviceAlreadySetup": {
+      "title": "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine": {
       "title": "Possibly not genuine",
@@ -5443,6 +5451,9 @@
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Recipient address is the same as the sender address"
+    },
+    "InvalidMemoICP": {
+      "title": "Memo is required to be a number"
     },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",

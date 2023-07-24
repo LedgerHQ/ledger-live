@@ -97,7 +97,7 @@ describe("DeepLinks Tests", () => {
   });
 
   it("should open Discover page and Mercuryo", async () => {
-    if (!(await isAndroid())) return;
+    if (!isAndroid()) return;
     await discoveryPage.openViaDeeplink();
     await discoveryPage.expectDiscoveryPage();
     await discoveryPage.openViaDeeplink(mercuryoDL.name);

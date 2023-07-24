@@ -5,7 +5,7 @@ import { ManualPage } from "../../models/ManualPage";
 
 test.use({ featureFlags: { syncOnboarding: { enabled: true } } });
 
-test("Manual", async ({ page }) => {
+test("Manual @smoke", async ({ page }) => {
   const manualPage = new ManualPage(page);
   const onboardingPage = new OnboardingPage(page);
 

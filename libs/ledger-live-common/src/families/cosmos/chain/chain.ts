@@ -16,16 +16,13 @@ import BinanceBeaconChain from "./BinanceBeaconChain";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
-  const initialized =
-    currencyId === "osmosis" || currencyId === "osmo"
-      ? cosmosChainParams["osmo"] != null
-      : cosmosChainParams[currencyId] != null;
+  currencyId = currencyId === "osmosis" ? "osmo" : currencyId;
+  const initialized = cosmosChainParams[currencyId] != null;
   if (!initialized) {
     switch (currencyId) {
       case "osmo":
-      case "osmosis":
-        cosmosChainParams["osmo"] = new Osmosis();
-        return cosmosChainParams["osmo"];
+        cosmosChainParams[currencyId] = new Osmosis();
+        break;
       case "cosmos":
         cosmosChainParams[currencyId] = new Cosmos();
         break;

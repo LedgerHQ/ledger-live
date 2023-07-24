@@ -32,7 +32,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="DelegationFlow" name="Started" />
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="delegation"
+          currency="sol"
+        />
         <IlluStaking />
         <Text fontWeight="semiBold" style={styles.title}>
           <Trans i18nKey="delegation.started.title" />

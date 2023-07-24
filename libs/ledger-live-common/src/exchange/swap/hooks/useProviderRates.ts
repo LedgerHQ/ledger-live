@@ -218,7 +218,7 @@ export const useProviderRates: UseProviderRates = ({
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fromAccount, toCurrency, transaction, getRatesDependency, onNoRates, setExchangeRate],
+    [fromAccount, toCurrency, transaction?.amount, getRatesDependency, onNoRates, setExchangeRate],
   );
 
   return {

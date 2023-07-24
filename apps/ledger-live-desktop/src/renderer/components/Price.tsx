@@ -66,23 +66,28 @@ export default function Price({
     : typeof rawCounterValue === "number"
     ? BigNumber(rawCounterValue)
     : rawCounterValue;
-  const bgColor = useTheme().colors.palette.background.paper;
+  const theme = useTheme();
+  const textColor = useMemo(
+    () => (color ? colors[color] : theme.colors.palette.text.shade100),
+    [color, theme],
+  );
+  const bgColor = theme.colors.palette.background.paper;
   const activityColor = useMemo(
     () =>
       withActivityColor
         ? colors[withActivityColor]
         : !withActivityCurrencyColor
-        ? color
-          ? colors[color]
+        ? textColor
+          ? textColor
           : undefined
         : getCurrencyColor(from, bgColor),
-    [bgColor, color, from, withActivityColor, withActivityCurrencyColor],
+    [bgColor, textColor, from, withActivityColor, withActivityCurrencyColor],
   );
   if (!counterValue || counterValue.isZero())
     return <NoCountervaluePlaceholder placeholder={placeholder} />;
   const subMagnitude = counterValue.lt(1) || showAllDigits ? 1 : 0;
   return (
-    <PriceWrapper color={color} fontSize={fontSize} fontWeight={fontWeight}>
+    <PriceWrapper color={textColor} fontSize={fontSize} fontWeight={fontWeight}>
       {withIcon ? (
         <IconActivity
           size={iconSize || 12}

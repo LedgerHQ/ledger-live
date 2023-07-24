@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { NFTStandard, AnyMessage, Account } from "@ledgerhq/types-live";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/lib/types";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { NftProperties, MessageProperties } from "../types";
 

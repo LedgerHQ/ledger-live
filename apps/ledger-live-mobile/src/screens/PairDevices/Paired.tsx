@@ -55,7 +55,13 @@ export default function Paired({ device, onContinue: onContinueProps }: Props) {
           values={getDeviceModel("nanoX" as DeviceModelId)}
         />
       </Text>
-      <Button event="PairDevicesContinue" type="main" onPress={onContinue} width={"100%"}>
+      <Button
+        event="PairDevicesContinue"
+        type="main"
+        onPress={onContinue}
+        width={"100%"}
+        testID="onboarding-paired-continue"
+      >
         <Trans i18nKey="PairDevices.Paired.action" />
       </Button>
     </Flex>

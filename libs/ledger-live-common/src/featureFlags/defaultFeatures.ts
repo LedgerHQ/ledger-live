@@ -80,6 +80,9 @@ export const defaultFeatures = {
   currencyPersistence: {
     enabled: false,
   },
+  currencyInternetComputer: {
+    enabled: false,
+  },
   currencySecretNetwork: {
     enabled: false,
   },
@@ -92,10 +95,13 @@ export const defaultFeatures = {
   currencyDesmos: {
     enabled: false,
   },
+  currencyTelosEvm: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
-      apps: ["Bitcoin", "Ethereum", "Polygon"],
+      apps: ["Bitcoin", "Ethereum"],
     },
   },
   disableNftSend: {

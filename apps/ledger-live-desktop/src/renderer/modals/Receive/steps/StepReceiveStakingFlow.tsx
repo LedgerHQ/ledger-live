@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { Flex, Text, Icons, Link } from "@ledgerhq/react-ui";
+import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
@@ -112,7 +112,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
         {description}
       </Text>
       {supportLink && (
-        <Link Icon={Icons.ExternalLinkMedium} onClick={openLink} mt={7} mb={7} type={"color"}>
+        <Link Icon={IconsLegacy.ExternalLinkMedium} onClick={openLink} mt={7} mb={7} type={"color"}>
           {t("receive.steps.staking.link")}
         </Link>
       )}

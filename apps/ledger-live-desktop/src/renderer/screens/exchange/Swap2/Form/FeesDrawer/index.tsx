@@ -52,7 +52,7 @@ export default function FeesDrawer({
       />
       <DrawerTitle i18nKey="swap2.form.details.label.fees" />
       <Box mt={3} flow={4} mx={3}>
-        {transaction && "networkInfo" in transaction && transaction.networkInfo && mainAccount && (
+        {transaction && mainAccount && (
           <SendAmountFields
             account={mainAccount as Account}
             parentAccount={parentAccount}
