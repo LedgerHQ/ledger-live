@@ -20,15 +20,19 @@ type DeviceCardProps = {
   testID?: string;
 };
 
-export const DeviceCards = ({ cards }: { cards: DeviceCardProps[] }) => (
-  <>
-    {cards.map((card, index) => (
-      <Box key={index} mb={cards.length - 1 !== index ? 6 : 0}>
-        <DeviceCard {...card} />
-      </Box>
-    ))}
-  </>
-);
+export const DeviceCards = ({ cards }: { cards: DeviceCardProps[] }) => {
+  const { space } = useTheme();
+
+  return (
+    <>
+      {cards.map((card, index) => (
+        <Box key={index} mb={cards.length - 1 !== index ? space[6] : 0}>
+          <DeviceCard {...card} />
+        </Box>
+      ))}
+    </>
+  );
+};
 
 const DeviceCard = ({
   title,
@@ -76,7 +80,7 @@ const CardHeader = ({ content }: { content: string }) => {
   const { colors } = useTheme();
 
   return (
-    <Text mt={2} variant="paragraphLineHeight" fontWeight="semiBold" color={colors.neutral.c60}>
+    <Text mt={2} variant="paragraphLineHeight" fontWeight="medium" color={colors.neutral.c60}>
       {content}
     </Text>
   );

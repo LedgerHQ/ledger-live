@@ -1,6 +1,6 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -104,7 +104,7 @@ const OnboardingStepUseCaseSelection = () => {
             },
             testID: `Onboarding UseCase - Selection|New Wallet`,
             onPress: onPressNew,
-            icon: <IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />,
+            icon: <Icons.PlusCircle color={colors.primary.c80} />,
           },
           {
             title: t("onboarding.stepUseCase.restoreDevice.title"),
@@ -115,7 +115,7 @@ const OnboardingStepUseCaseSelection = () => {
             },
             testID: `Onboarding UseCase - Selection|Recovery phrase`,
             onPress: onPressRecoveryPhrase,
-            icon: <IconsLegacy.ListMedium color={colors.primary.c80} size={24} />,
+            icon: <Icons.Note color={colors.primary.c80} />,
           },
           ...(servicesConfig?.enabled
             ? [
@@ -128,7 +128,7 @@ const OnboardingStepUseCaseSelection = () => {
                   },
                   testID: `Onboarding UseCase - Selection|Ledger Recover`,
                   onPress: onPressProtect,
-                  icon: <IconsLegacy.ShieldMedium color={colors.primary.c80} size={24} />,
+                  icon: <Icons.ShieldCheck color={colors.primary.c80} />,
                 },
               ]
             : []),

@@ -17,15 +17,19 @@ type SelectionCardProps = {
   testID: string;
 };
 
-export const SelectionCards = ({ cards }: { cards: SelectionCardProps[] }) => (
-  <>
-    {cards.map((props, index) => (
-      <Box key={index} mb={cards.length - 1 !== index ? 6 : 0}>
-        <SelectionCard {...props} />
-      </Box>
-    ))}
-  </>
-);
+export const SelectionCards = ({ cards }: { cards: SelectionCardProps[] }) => {
+  const { space } = useTheme();
+
+  return (
+    <>
+      {cards.map((props, index) => (
+        <Box key={index} mb={cards.length - 1 !== index ? space[6] : 0}>
+          <SelectionCard {...props} />
+        </Box>
+      ))}
+    </>
+  );
+};
 
 export const SelectionCard = ({
   title,
@@ -53,11 +57,11 @@ export const SelectionCard = ({
         pl={space[6]}
         borderRadius={space[4]}
       >
-        <Box mr={4}>{icon}</Box>
-        <Flex flexGrow={1} flexDirection="column" pr={space[7]}>
+        <Box mr={space[2]}>{icon}</Box>
+        <Box pr={space[7]}>
           <CardTitle content={title} />
           <CardText content={text} />
-        </Flex>
+        </Box>
       </Flex>
     </Touchable>
   );
@@ -67,18 +71,24 @@ const CardTitle = ({ content }: { content: string }) => {
   const { colors } = useTheme();
 
   return (
-    <Text variant="h5" fontWeight="semiBold" color={colors.neutral.c100}>
+    <Text variant="h5" fontWeight="medium" color={colors.neutral.c100} lineHeight="19.8px">
       {content}
     </Text>
   );
 };
 
 const CardText = ({ content }: { content?: string }) => {
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
 
   if (!content) return <></>;
   return (
-    <Text variant="body" fontWeight="medium" color={colors.opacityDefault.c70} mt={4}>
+    <Text
+      variant="paragraph"
+      fontWeight="medium"
+      color={colors.opacityDefault.c50}
+      mt={space[2]}
+      lineHeight="15.73px"
+    >
       {content}
     </Text>
   );

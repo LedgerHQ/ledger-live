@@ -1,4 +1,4 @@
-import { Button, IconsLegacy } from "@ledgerhq/native-ui";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -78,7 +78,7 @@ function PostWelcomeSelection() {
             },
             testID: `Onboarding PostWelcome - Selection|Setup your Ledger`,
             onPress: setupLedger,
-            icon: <IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />,
+            icon: <Icons.PlusCircle color={colors.primary.c80} />,
           },
           {
             title: t("onboarding.postWelcomeStep.accessWallet.title"),
@@ -89,7 +89,7 @@ function PostWelcomeSelection() {
             },
             testID: `Onboarding PostWelcome - Selection|Access an existing wallet`,
             onPress: accessExistingWallet,
-            icon: <IconsLegacy.WalletMedium color={colors.primary.c80} size={24} />,
+            icon: <Icons.WalletInput color={colors.primary.c80} />,
           },
         ]}
       />

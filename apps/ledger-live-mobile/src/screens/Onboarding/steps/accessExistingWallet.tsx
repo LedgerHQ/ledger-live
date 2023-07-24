@@ -1,4 +1,4 @@
-import { IconsLegacy } from "@ledgerhq/native-ui";
+import { Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -58,7 +58,7 @@ function AccessExistingWallet() {
             },
             testID: "Existing Wallet | Connect",
             onPress: connect,
-            icon: <IconsLegacy.BluetoothMedium color={colors.primary.c80} size={24} />,
+            icon: <Icons.Bluetooth color={colors.primary.c80} />,
           },
           {
             title: t("onboarding.welcomeBackStep.sync"),
@@ -68,7 +68,7 @@ function AccessExistingWallet() {
             },
             testID: "Existing Wallet | Sync",
             onPress: sync,
-            icon: <IconsLegacy.QrCodeMedium color={colors.primary.c80} size={24} />,
+            icon: <Icons.QrCodeScanner color={colors.primary.c80} />,
           },
         ]}
       />
