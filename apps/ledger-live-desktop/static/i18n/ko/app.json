@@ -2597,6 +2597,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "스테이킹 보상은 총 잔액에 포함되지 않습니다."
       }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "cost" : "비용",
+      "pool" : "풀",
+      "changeDelegation" : "위임 변경",
+      "assetsAlreadyStaked" : "이미 스테이킹된 자산입니다",
+      "addFundsToStake" : "스테이킹할 자산을 추가하세요",
+      "commission" : "커미션",
+      "stakeKeyRegistrationDeposit" : "키 등록 예치금을 스테이킹하세요",
+      "delegatingTo" : "피 위임인",
+      "flow" : {
+        "title" : "위임하기",
+        "steps" : {
+          "starter" : {
+            "description" : "풀에 ADA를 위임하여 보상을 받을 수 있습니다.",
+            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "언제든지 자산을 다른 풀에 다시 위임하거나 위임 취소를 선택할 수 있습니다."]
+          },
+          "validator" : {
+            "title" : "풀"
+          },
+          "summary" : {
+            "title" : "요약"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "위임을 취소하면 현재 및 향후 에포크에 대한 보상을 받을 수 없습니다.",
+      "refund" : "등록 예치금 환불액을 스테이킹하세요",
+      "flow" : {
+        "title" : "위임 해제",
+        "steps" : {
+          "summary" : {
+            "title" : "요약"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "위임을 성공적으로 취소했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -5126,6 +5188,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}}(은)는 지원되지 않습니다",
       "description" : "아직 지원되지 않는 암호화 자산입니다. Ledger 지원 부서로 문의하세요"
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "정품이 아닐 수 있습니다.",
