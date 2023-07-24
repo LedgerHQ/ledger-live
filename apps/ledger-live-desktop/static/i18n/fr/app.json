@@ -4013,7 +4013,7 @@
           "description" : "Testez toutes les animations utilisées dans Ledger Live."
         },
         "testStories" : {
-          "title" : "Testez les animations Storyly",
+          "title" : "Tester les animations Storyly",
           "description" : "Testez toutes les animations utilisées dans Ledger Live."
         },
         "testPostonboarding" : {
@@ -5126,6 +5126,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} non pris en charge",
       "description" : "Ce crypto-actif n’est pas encore pris en charge. Merci de contacter l’Assistance Ledger."
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "L’appareil peut ne pas être authentique.",
