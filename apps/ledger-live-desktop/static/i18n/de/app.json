@@ -2597,6 +2597,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "Der Gesamtkontostand enthält keine Stakingprämien"
       }
+    },
+    "delegation" : {
+      "totalStake" : "Staking-Gesamtbetrag",
+      "cost" : "Kosten",
+      "pool" : "Pool",
+      "changeDelegation" : "Delegierung ändern",
+      "assetsAlreadyStaked" : "Ihre Vermögenswerte werden bereits gestaket",
+      "addFundsToStake" : "Guthaben für Staking hinzufügen",
+      "commission" : "Provision",
+      "stakeKeyRegistrationDeposit" : "Kaution für Registrierung des Staking-Schlüssels",
+      "delegatingTo" : "Delegiert an",
+      "flow" : {
+        "title" : "Delegieren",
+        "steps" : {
+          "starter" : {
+            "description" : "Sie können Prämien verdienen, indem Sie Ihre ADA an einen Pool delegieren.",
+            "bullet" : ["Sie behalten das Eigentum an delegierten Vermögenswerten", "Delegieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte können an einen anderen Pool umdelegiert werden. Sie können die Delegierung auch jederzeit aufheben."]
+          },
+          "validator" : {
+            "title" : "Pools"
+          },
+          "summary" : {
+            "title" : "Zusammenfassung"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
+              "text" : "Ihr Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "Wenn Sie die Delegierung aufheben, erhalten Sie keine Prämien für laufende und kommende Epochen",
+      "refund" : "Erstattung der Staking-Registrierungskaution",
+      "flow" : {
+        "title" : "Delegierung aufheben",
+        "steps" : {
+          "summary" : {
+            "title" : "Zusammenfassung"
+          },
+          "connectDevice" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Sie haben die Delegierung erfolgreich aufgehoben",
+              "text" : "Ihr Kontostand wird aktualisiert, wenn die Blockchain die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -4298,7 +4360,7 @@
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
-        "recoverSignIn" : "Für Ledger Recover anmelden",
+        "recoverSignIn" : "Melden Sie sich bei Ledger Recover an",
         "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
@@ -5126,6 +5188,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} wird nicht unterstützt",
       "description" : "Dieser Krypto-Vermögenswert wird noch nicht unterstützt. Bitte kontaktieren Sie den Ledger-Support"
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "Möglicherweise nicht echt",
