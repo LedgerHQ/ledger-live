@@ -78,7 +78,7 @@ const CardTitle = ({ content }: { content: string }) => {
 };
 
 const CardText = ({ content }: { content?: string }) => {
-  const { colors, space } = useTheme();
+  const { colors } = useTheme();
 
   if (!content) return <></>;
   return (
