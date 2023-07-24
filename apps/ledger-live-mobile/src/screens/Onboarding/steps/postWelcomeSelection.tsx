@@ -1,20 +1,17 @@
-import React, { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Text, Flex, Box, Button, IconsLegacy } from "@ledgerhq/native-ui";
+import React, { useState } from "react";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-
 import { useTheme } from "styled-components/native";
-import { TrackScreen, track, updateIdentify } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import StyledStatusBar from "../../../components/StyledStatusBar";
-
 import { setOnboardingHasDevice, setReadOnlyMode } from "../../../actions/settings";
+import { track, updateIdentify } from "../../../analytics";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-
+import { ScreenName } from "../../../const";
+import { SelectionCards } from "./Cards/SelectionCard";
 import { NoLedgerYetModal } from "./NoLedgerYetModal";
-import { SelectionCard } from "./SelectionCard";
+import OnboardingView from "./OnboardingView";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -24,81 +21,81 @@ type NavigationProps = StackNavigatorProps<
 function PostWelcomeSelection() {
   const dispatch = useDispatch();
   const { colors } = useTheme();
-  const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
+  const navigation = useNavigation<NavigationProps["navigation"]>();
 
-  const [isNoLedgerModalOpen, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const identifyUser = useCallback(
-    (hasDevice: boolean) => {
-      dispatch(setOnboardingHasDevice(hasDevice));
-      updateIdentify();
-    },
-    [dispatch],
-  );
-
-  const openModal = useCallback(() => {
-    setOpen(true);
+  const openModal = () => {
+    setModalOpen(true);
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
     });
-  }, []);
+  };
 
-  const closeModal = useCallback(() => setOpen(false), []);
+  const closeModal = () => setModalOpen(false);
 
-  const setupLedger = useCallback(() => {
+  const identifyUser = (hasDevice: boolean) => {
+    dispatch(setOnboardingHasDevice(hasDevice));
+    updateIdentify();
+  };
+
+  const setupLedger = () => {
     dispatch(setReadOnlyMode(false));
     identifyUser(true);
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
-  }, [dispatch, identifyUser, navigation]);
+  };
 
-  const accessExistingWallet = useCallback(() => {
+  const accessExistingWallet = () => {
     dispatch(setReadOnlyMode(false));
     identifyUser(true);
     navigation.navigate(ScreenName.OnboardingWelcomeBack);
-  }, [dispatch, identifyUser, navigation]);
+  };
 
   return (
-    <Flex flex={1} mx={6} mt={3}>
-      <TrackScreen category="Onboarding" name="Get Started" />
-      <Text variant="h4" fontWeight="semiBold" mb={7}>
-        {t("onboarding.postWelcomeStep.title")}
-      </Text>
-
-      <StyledStatusBar barStyle="dark-content" />
-
-      <SelectionCard
-        title={t("onboarding.postWelcomeStep.setupLedger.title")}
-        subTitle={t("onboarding.postWelcomeStep.setupLedger.subtitle")}
-        event="button_clicked"
-        eventProperties={{
-          button: "Setup your Ledger",
-        }}
-        testID={`Onboarding PostWelcome - Selection|Setup your Ledger`}
-        onPress={setupLedger}
-        Icon={<IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />}
+    <OnboardingView
+      title={t("onboarding.postWelcomeStep.title")}
+      analytics={{
+        tracking: {
+          category: "Onboarding",
+          name: "Get Started",
+        },
+      }}
+      footer={
+        <Button type="default" mb={10} onPress={openModal} testID="onboarding-noLedgerYet">
+          {t("onboarding.postWelcomeStep.noLedgerYet")}
+        </Button>
+      }
+    >
+      <SelectionCards
+        cards={[
+          {
+            title: t("onboarding.postWelcomeStep.setupLedger.title"),
+            text: t("onboarding.postWelcomeStep.setupLedger.subtitle"),
+            event: "button_clicked",
+            eventProperties: {
+              button: "Setup your Ledger",
+            },
+            testID: `Onboarding PostWelcome - Selection|Setup your Ledger`,
+            onPress: setupLedger,
+            icon: <IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />,
+          },
+          {
+            title: t("onboarding.postWelcomeStep.accessWallet.title"),
+            text: t("onboarding.postWelcomeStep.accessWallet.subtitle"),
+            event: "button_clicked",
+            eventProperties: {
+              button: "Access an existing wallet",
+            },
+            testID: `Onboarding PostWelcome - Selection|Access an existing wallet`,
+            onPress: accessExistingWallet,
+            icon: <IconsLegacy.WalletMedium color={colors.primary.c80} size={24} />,
+          },
+        ]}
       />
 
-      <Box mt={6}>
-        <SelectionCard
-          title={t("onboarding.postWelcomeStep.accessWallet.title")}
-          subTitle={t("onboarding.postWelcomeStep.accessWallet.subtitle")}
-          event="button_clicked"
-          eventProperties={{
-            button: "Access an existing wallet",
-          }}
-          testID={`Onboarding PostWelcome - Selection|Access an existing wallet`}
-          onPress={accessExistingWallet}
-          Icon={<IconsLegacy.PlusMedium color={colors.primary.c80} size={24} />}
-        />
-      </Box>
-
-      <Button type="default" mt="auto" mb={11} onPress={openModal} testID="onboarding-noLedgerYet">
-        {t("onboarding.postWelcomeStep.noLedgerYet")}
-      </Button>
-
-      <NoLedgerYetModal isOpen={isNoLedgerModalOpen} onClose={closeModal} />
-    </Flex>
+      <NoLedgerYetModal isOpen={modalOpen} onClose={closeModal} />
+    </OnboardingView>
   );
 }
 

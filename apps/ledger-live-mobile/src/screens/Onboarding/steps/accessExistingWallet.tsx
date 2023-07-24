@@ -13,6 +13,8 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { setOnboardingType } from "../../../actions/settings";
 import { OnboardingType } from "../../../reducers/types";
+import OnboardingView from "./OnboardingView";
+import { SelectionCards } from "./Cards/SelectionCard";
 
 type CardProps = {
   title: string;
@@ -28,39 +30,6 @@ type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList & BaseNavigatorStackParamList,
   ScreenName.OnboardingWelcomeBack
 >;
-
-const Card = ({ title, event, eventProperties, testID, onPress, Icon }: CardProps) => {
-  const { colors, space } = useTheme();
-
-  const pressAndTrack = useCallback(() => {
-    track(event, {
-      ...eventProperties,
-    });
-    onPress?.();
-  }, [event, eventProperties, onPress]);
-
-  return (
-    <Touchable onPress={pressAndTrack} {...props} testID={testID}>
-      <Flex
-        flexDirection="row"
-        px={7}
-        alignItems="center"
-        bg={colors.opacityDefault.c05}
-        padding={space[7]}
-        borderRadius={space[4]}
-      >
-        <Box mr={4} pt={1}>
-          {Icon}
-        </Box>
-        <Box pr={space[7]}>
-          <Text variant="h5" fontWeight="medium" color="neutral.c100" flexWrap="wrap">
-            {title}
-          </Text>
-        </Box>
-      </Flex>
-    </Touchable>
-  );
-};
 
 function AccessExistingWallet() {
   const { t } = useTranslation();
@@ -82,41 +51,41 @@ function AccessExistingWallet() {
   }, [navigation]);
 
   return (
-    <ScrollListContainer flex={1} mx={6} mt={3}>
-      <TrackScreen category="Onboarding" name="Choose Access to Wallet" />
-      <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
-        {t("onboarding.welcomeBackStep.title")}
-      </Text>
-
-      <Text variant="paragraph" mb={7} mt={2} fontWeight="medium" color={colors.opacityDefault.c70}>
-        {t("onboarding.welcomeBackStep.subtitle")}
-      </Text>
-
-      <Box mb={6}>
-        <Card
-          title={t("onboarding.welcomeBackStep.connect")}
-          event={"button_clicked"}
-          eventProperties={{
-            button: "Connect your Ledger",
-          }}
-          testID={"Existing Wallet | Connect"}
-          onPress={connect}
-          Icon={<IconsLegacy.BluetoothMedium color="primary.c80" size={30} />}
-        />
-      </Box>
-      <Box mb={6}>
-        <Card
-          title={t("onboarding.welcomeBackStep.sync")}
-          event={"button_clicked"}
-          eventProperties={{
-            button: "Sync with Desktop",
-          }}
-          testID={"Existing Wallet | Sync"}
-          onPress={sync}
-          Icon={<IconsLegacy.QrCodeMedium color="primary.c80" size={30} />}
-        />
-      </Box>
-    </ScrollListContainer>
+    <OnboardingView
+      title={t("onboarding.welcomeBackStep.title")}
+      subTitle={t("onboarding.welcomeBackStep.subtitle")}
+      analytics={{
+        tracking: {
+          category: "Onboarding",
+          name: "Choose Access to Wallet",
+        },
+      }}
+    >
+      <SelectionCards
+        cards={[
+          {
+            title: t("onboarding.welcomeBackStep.connect"),
+            event: "button_clicked",
+            eventProperties: {
+              button: "Connect your Ledger",
+            },
+            testID: "Existing Wallet | Connect",
+            onPress: connect,
+            icon: <IconsLegacy.BluetoothMedium color={colors.primary.c80} size={24} />,
+          },
+          {
+            title: t("onboarding.welcomeBackStep.sync"),
+            event: "button_clicked",
+            eventProperties: {
+              button: "Sync with Desktop",
+            },
+            testID: "Existing Wallet | Sync",
+            onPress: sync,
+            icon: <IconsLegacy.QrCodeMedium color={colors.primary.c80} size={24} />,
+          },
+        ]}
+      />
+    </OnboardingView>
   );
 }
 
