@@ -4176,7 +4176,7 @@
       "flash": "Flashing your device",
       "preparing": "Preparing update",
       "firmware": "Downloading update",
-      "prepareUpdate":  {
+      "prepareUpdate": {
         "titleBackingUp": "Backing up apps and settings",
         "titleTransferring": "Transferring update",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
@@ -4865,6 +4865,7 @@
     }
   },
   "elrond": {
+    "guardedAccountWarning": "If you have a guardian set on your account, you won't be able to successfully send transactions via Ledger Live.",
     "info": {
       "available": {
         "title": "EGLD available",
