@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Buffer } from "buffer";
 import { useNavigation } from "@react-navigation/native";
 import Clipboard from "@react-native-community/clipboard";
@@ -53,7 +53,7 @@ export default function ImportBridgeStreamData({ title, dataStr }: Props) {
           ? "Import string detected. Press to import it. Long press to import the string from the clipboard."
           : "No import string detected. Press to import the string from the clipboard."
       }
-      iconLeft={<Icons.ImportMedium size={24} color="black" />}
+      iconLeft={<IconsLegacy.ImportMedium size={24} color="black" />}
       onPress={handlePress}
       onLongPress={importFromClipboard}
     />

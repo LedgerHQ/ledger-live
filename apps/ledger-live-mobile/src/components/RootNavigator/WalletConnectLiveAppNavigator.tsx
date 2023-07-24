@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -19,7 +19,7 @@ import { StackNavigatorProps } from "./types/helpers";
 const options = {
   headerBackImage: () => (
     <Flex pl="16px">
-      <Icons.CloseMedium color="neutral.c100" size="20px" />
+      <IconsLegacy.CloseMedium color="neutral.c100" size="20px" />
     </Flex>
   ),
   headerStyle: styles.headerNoShadow,

@@ -41,8 +41,8 @@ export type InferDynamicRangeOpts = {
   minMult: number;
   maxMult: number;
   targetSteps: number;
-  minValue?: BigNumber;
-  maxValue?: BigNumber;
+  minValue?: BigNumber | null;
+  maxValue?: BigNumber | null;
 };
 // infer a range from ONE estimated fees value.
 // e.g. we just have a "gasPrice" and we want a slider to move a gas value around it.

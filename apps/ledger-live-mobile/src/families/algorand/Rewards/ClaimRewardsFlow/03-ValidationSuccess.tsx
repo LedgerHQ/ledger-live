@@ -46,7 +46,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="AlgorandClaimRewards" name="ValidationSuccess" />
+      <TrackScreen
+        category="AlgorandClaimRewards"
+        name="ValidationSuccess"
+        flow="stake"
+        action="claim_rewards"
+        currency="algo"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

@@ -31,6 +31,7 @@ import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
+import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
@@ -88,8 +89,9 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
-import { RootDrawer, RootDrawerProps } from "../RootDrawer";
+import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
+import { DrawerProps } from "../RootDrawer/types";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -98,7 +100,7 @@ export default function BaseNavigator() {
   const route = useRoute<
     RouteProp<{
       params: {
-        drawer?: RootDrawerProps;
+        drawer?: DrawerProps;
       };
     }>
   >();
@@ -299,6 +301,11 @@ export default function BaseNavigator() {
               : { headerStyle: styles.headerNoShadow, headerLeft: () => null }
           }
           {...noNanoBuyNanoWallScreenOptions}
+        />
+        <Stack.Screen
+          name={NavigatorName.Earn}
+          component={EarnLiveAppNavigator}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.ProviderList}
@@ -544,7 +551,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.RedirectToOnboardingRecoverFlow}
-          options={{ headerShown: false }}
+          options={{ ...TransparentHeaderNavigationOptions, title: "" }}
           component={RedirectToOnboardingRecoverFlowScreen}
         />
         <Stack.Screen

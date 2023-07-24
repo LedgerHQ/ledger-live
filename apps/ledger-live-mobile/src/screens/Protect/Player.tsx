@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
@@ -6,26 +6,71 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
+import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import TrackScreen from "../../analytics/TrackScreen";
 import GenericErrorView from "../../components/GenericErrorView";
 import { useLocale } from "../../context/Locale";
 import WebRecoverPlayer from "../../components/WebRecoverPlayer";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../const";
+import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "../../const";
+import { DeviceModelId } from "@ledgerhq/devices";
 
-export type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>;
+export type Props = RootComposite<
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>
+>;
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
-export function RecoverPlayer({ route }: Props) {
+const pollingPeriodMs = 1000;
+
+export function RecoverPlayer({ navigation, route }: Props) {
   const { theme } = useTheme();
-  const { platform: appId, ...params } = route.params || {};
+  const { platform: appId, device, fromOnboarding, ...params } = route.params || {};
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
+
+  const { onboardingState } = useOnboardingStatePolling({
+    device: device || null,
+    pollingPeriodMs,
+    // stop polling if not coming from the onboarding
+    stopPolling: !fromOnboarding,
+  });
+
+  useEffect(() => {
+    if (
+      device &&
+      fromOnboarding &&
+      onboardingState &&
+      onboardingState.currentOnboardingStep !== OnboardingStep.RecoverRestore
+    ) {
+      if (device.modelId === DeviceModelId.stax) {
+        navigation.navigate(NavigatorName.BaseOnboarding, {
+          screen: NavigatorName.SyncOnboarding,
+          params: {
+            screen: ScreenName.SyncOnboardingCompanion,
+            params: {
+              device,
+            },
+          },
+        });
+      } else {
+        navigation.navigate(NavigatorName.BaseOnboarding, {
+          screen: NavigatorName.Onboarding,
+          params: {
+            screen: ScreenName.OnboardingProtectFlow,
+            params: {
+              deviceModelId: device.modelId,
+            },
+          },
+        });
+      }
+    }
+  }, [device, fromOnboarding, navigation, onboardingState]);
 
   return manifest ? (
     <>
@@ -35,6 +80,7 @@ export function RecoverPlayer({ route }: Props) {
         inputs={{
           theme,
           lang: locale,
+          deviceId: device?.deviceId || "",
           ...params,
         }}
       />

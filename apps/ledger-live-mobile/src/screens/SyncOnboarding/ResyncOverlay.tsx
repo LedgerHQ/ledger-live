@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -88,7 +88,7 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
             rowGap={4}
           >
             <Flex mr={4}>
-              <Icons.WarningSolidMedium color="warning.c40" size={20} />
+              <IconsLegacy.WarningSolidMedium color="warning.c40" size={20} />
             </Flex>
             <Text variant="body" flex={1} textBreakStrategy="balanced" color="neutral.c00">
               {t("syncOnboarding.resyncOverlay.content", { productName })}

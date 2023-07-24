@@ -181,6 +181,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
         renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
+        testID="PortfolioReadOnlyList"
       />
     </>
   );

@@ -30,7 +30,13 @@ export default function ValidationError({ navigation, route }: NavigationProps) 
         },
       ]}
     >
-      <TrackScreen category="RebondFlow" name="ValidationError" />
+      <TrackScreen
+        category="RebondFlow"
+        name="ValidationError"
+        flow="stake"
+        action="rebond"
+        currency="dot"
+      />
       <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

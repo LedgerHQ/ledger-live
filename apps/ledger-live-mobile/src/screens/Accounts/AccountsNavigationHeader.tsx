@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { Box, Flex, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import AddAccount from "./AddAccount";
 import Touchable from "../../components/Touchable";
@@ -35,7 +35,7 @@ function AccountsNavigationHeader({ readOnly, currencyId }: Props) {
     <Flex p={6} flexDirection="row" alignItems="center">
       <Box mr={3} flex={1}>
         <TouchableOpacity onPress={goBack}>
-          <Icons.ArrowLeftMedium size={24} />
+          <IconsLegacy.ArrowLeftMedium size={24} />
         </TouchableOpacity>
       </Box>
       <Flex flexDirection="row" alignItems={"center"}>
@@ -55,7 +55,7 @@ function AccountsNavigationHeader({ readOnly, currencyId }: Props) {
               justifyContent={"center"}
               borderRadius={32}
             >
-              <Icons.PlusMedium size={20} color={"neutral.c00"} />
+              <IconsLegacy.PlusMedium size={20} color={"neutral.c00"} />
             </Flex>
           </Touchable>
         ) : (

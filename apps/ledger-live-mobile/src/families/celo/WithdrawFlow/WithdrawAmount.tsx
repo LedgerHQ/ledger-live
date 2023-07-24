@@ -114,7 +114,13 @@ export default function WithdrawAmount({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloWithdraw" name="Amount" />
+      <TrackScreen
+        category="CeloWithdraw"
+        name="Amount"
+        flow="stake"
+        action="withdraw"
+        currency="celo"
+      />
       <View style={styles.body}>
         <View style={styles.amount}>
           <Line>

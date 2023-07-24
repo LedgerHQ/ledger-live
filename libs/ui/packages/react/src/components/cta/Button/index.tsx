@@ -5,7 +5,7 @@ import { fontSize, border, BordersProps, compose } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import { rgba } from "../../../styles/helpers";
-import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomMedium";
+import ChevronBottom from "@ledgerhq/icons-ui/reactLegacy/ChevronBottomMedium";
 
 export type ButtonVariants = "main" | "shade" | "error" | "color" | "neutral";
 export type IconPosition = "right" | "left";

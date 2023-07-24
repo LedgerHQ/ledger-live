@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from "react";
-import { Icons, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
+import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { Alert, TouchableWithoutFeedback, View } from "react-native";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
@@ -54,49 +54,49 @@ export default function DebugSettings({
         hasBorderTop
         title="Configuration"
         desc="Env variables, feature-flags, and toggles."
-        iconLeft={<Icons.SettingsMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.SettingsMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugConfiguration)}
       />
       <SettingsRow
         title="Features & flows"
         desc="Specific flows and tools"
-        iconLeft={<Icons.BoxMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.BoxMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugFeatures)}
       />
       <SettingsRow
         title="Connectivity"
         desc="Transports, proxy, benchmarking, repl"
-        iconLeft={<Icons.NanoXAltMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.NanoXAltMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugConnectivity)}
       />
       <SettingsRow
         title="Generators and Destructors"
         desc="Create new accounts, announcements, etc"
-        iconLeft={<Icons.MicrochipMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.MicrochipMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugGenerators)}
       />
       <SettingsRow
         title="Debugging"
         desc="Logs, application state, errors"
-        iconLeft={<Icons.LogsMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.LogsMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugDebugging)}
       />
       <SettingsRow
         title="Information"
         desc="Get information on your current setup"
-        iconLeft={<Icons.InfoAltMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.InfoAltMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugInformation)}
       />
       <SettingsRow
         title="Performance"
         desc="Get performance information about your setup"
-        iconLeft={<Icons.BarChartMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.BarChartMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPerformance)}
       />
       <SettingsRow
         title="Playground"
         desc="Easy to access blank debugging screen"
-        iconLeft={<Icons.EmojiHappyMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.EmojiHappyMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPlayground)}
       />
       <TouchableWithoutFeedback onPress={onDebugHiddenPress}>

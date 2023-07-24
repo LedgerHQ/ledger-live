@@ -2,7 +2,7 @@ import React from "react";
 import { canStake } from "@ledgerhq/live-common/families/near/logic";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "../../const";
@@ -46,7 +46,7 @@ const getMainActions = ({
       id: "stake",
       navigationParams,
       label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: IconsLegacy.ClaimRewardsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

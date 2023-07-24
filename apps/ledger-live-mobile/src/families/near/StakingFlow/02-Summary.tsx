@@ -179,7 +179,13 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="staking"
+        currency="near"
+      />
 
       <View style={styles.body}>
         <DelegatingContainer

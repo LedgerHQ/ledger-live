@@ -7,6 +7,7 @@ import elrond from "../families/elrond/transaction";
 import ethereum from "../families/ethereum/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
+import internet_computer from "../families/internet_computer/transaction";
 import near from "../families/near/transaction";
 import ripple from "../families/ripple/transaction";
 import solana from "../families/solana/transaction";
@@ -28,6 +29,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  internet_computer,
   near,
   ripple,
   solana,

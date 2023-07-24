@@ -1,4 +1,12 @@
-import React, { useMemo, useState, useCallback, useEffect, ReactNode, useRef } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  ReactNode,
+  useRef,
+  useContext,
+} from "react";
 
 import {
   View,
@@ -18,7 +26,7 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Button, Icons, Text, Flex } from "@ledgerhq/native-ui";
+import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
 import { FloorPrice, Account } from "@ledgerhq/types-live";
@@ -50,6 +58,7 @@ import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
 import { track, TrackScreen } from "../../analytics";
 import { DesignedForStaxDrawer, DesignedForStaxText } from "./DesignedForStax";
 import {
+  discreetModeSelector,
   hasSeenStaxEnabledNftsPopupSelector,
   knownDeviceModelIdsSelector,
 } from "../../reducers/settings";
@@ -58,6 +67,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import NftViewerBackground from "./NftViewerBackground";
 import NftViewerScreenHeader from "./NftViewerScreenHeader";
 import invariant from "invariant";
+import DiscreetModeContext, { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -122,7 +132,7 @@ const Section = ({
         {copyAvailable ? (
           <View>
             <TouchableOpacity onPress={copy} style={{ marginLeft: 10 }}>
-              <Icons.CopyMedium size={16} color={copied ? "neutral.c80" : "primary.c80"} />
+              <IconsLegacy.CopyMedium size={16} color={copied ? "neutral.c80" : "primary.c80"} />
             </TouchableOpacity>
             {copied ? (
               <Text variant={"body"} color="neutral.c80" marginLeft={3}>
@@ -281,6 +291,7 @@ const NftViewer = ({ route }: Props) => {
     () => (
       <>
         <NftMedia
+          transparency={true}
           resizeMode="contain"
           style={styles.image}
           metadata={nftMetadata}
@@ -299,6 +310,8 @@ const NftViewer = ({ route }: Props) => {
   );
 
   const [isStaxDrawerOpen, setStaxDrawerOpen] = useState<boolean>(false);
+  const discreet = useSelector(discreetModeSelector);
+  const shouldApplyDiscreetMode = useContext(DiscreetModeContext);
 
   const handleStaxModalClose = useCallback(() => {
     setStaxDrawerOpen(false);
@@ -424,7 +437,7 @@ const NftViewer = ({ route }: Props) => {
             <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
               <Button
                 type="main"
-                Icon={Icons.ArrowFromBottomMedium}
+                Icon={IconsLegacy.ArrowFromBottomMedium}
                 iconPosition="left"
                 onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
               >
@@ -435,7 +448,7 @@ const NftViewer = ({ route }: Props) => {
               <Box style={styles.ellipsisButtonContainer} flexShrink={0} width={"48px"}>
                 <Button
                   type="main"
-                  Icon={Icons.OthersMedium}
+                  Icon={IconsLegacy.OthersMedium}
                   onPress={() => {
                     track("button_clicked", {
                       button: "NFT Settings",
@@ -452,7 +465,7 @@ const NftViewer = ({ route }: Props) => {
           {!floorPriceLoading && floorPrice ? (
             <Section
               title={t("nft.viewer.attributes.floorPrice")}
-              value={`${floorPrice} ${ticker}`}
+              value={`${shouldApplyDiscreetMode && discreet ? "***" : floorPrice} ${ticker}`}
             />
           ) : null}
         </FeatureToggle>
@@ -511,9 +524,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     ...Platform.select({
-      android: {
-        elevation: 1,
-      },
       ios: {
         shadowOpacity: 0.2,
         shadowRadius: 14,
@@ -567,4 +577,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NftViewer;
+export default withDiscreetMode(NftViewer);

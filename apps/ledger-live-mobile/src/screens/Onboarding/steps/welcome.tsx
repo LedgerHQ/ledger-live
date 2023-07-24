@@ -197,7 +197,14 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.subtitle")}
           </Text>
-          <Button type="main" size="large" onPress={next} mt={0} mb={7}>
+          <Button
+            type="main"
+            size="large"
+            onPress={next}
+            mt={0}
+            mb={7}
+            testID="onboarding-getStarted-button"
+          >
             {t("onboarding.stepWelcome.start")}
           </Button>
           {recoverFeature?.enabled && recoverFeature?.params?.onboardingLogin ? (

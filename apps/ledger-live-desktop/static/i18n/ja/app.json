@@ -187,7 +187,55 @@
       "REGISTER" : "登録されました",
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
-      "WITHDRAW_UNSTAKED" : "引き出し済み"
+      "WITHDRAW_UNSTAKED" : "引き出し済み",
+      "SENDING" : "送信中"
+    },
+    "edit" : {
+      "title" : "速度を上げる、またはキャンセルする",
+      "description" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "stuckDescription" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報： ",
+        "networkfee" : "ネットワーク手数料＝ ",
+        "maxFee" : "最大手数料＝ ",
+        "maxPriorityFee" : "最大優先手数料＝ ",
+        "gasPrice" : "ガス代＝ "
+      },
+      "learnMore" : "詳細を知りたいです",
+      "panel" : {
+        "title" : "速度を上げる、またはキャンセルする",
+        "description" : "直近の「送信」トランザクションが滞っています。さらに高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。"
+      },
+      "speedUp" : {
+        "title" : "スピードアップ",
+        "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
+      },
+      "cancel" : {
+        "title" : "キャンセル",
+        "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+      },
+      "steps" : {
+        "method" : {
+          "title" : "方法"
+        },
+        "fees" : {
+          "title" : "手数料"
+        },
+        "summary" : {
+          "title" : "概要"
+        },
+        "device" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルできません。",
+        "notEnoughFundsToSpeedup" : "アカウントに十分な資金がないため、トランザクションの高速化は利用できません。",
+        "notlowestNonceToSpeedup" : "高速化機能は利用できません。以前のトランザクションが滞っているため、お客様のトランザクションは保留中です。承認されるのを待って、高速化してキャンセルすることができます。"
+      }
     }
   },
   "byteSize" : {
@@ -324,7 +372,7 @@
         },
         "login" : {
           "required" : "このプロバイダーでログインする必要があります",
-          "complete" : "Login"
+          "complete" : "ログイン"
         },
         "mfa" : {
           "required" : "このプロバイダーでMFA（多要素認証）を設定する必要があります",
@@ -333,6 +381,9 @@
         "withdrawalsBlockedError" : {
           "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
         }
+      },
+      "timeout" : {
+        "message" : "技術的な問題により、見積もりを作成できませんでした。しばらくしてから再度スワップをお試しください。"
       }
     },
     "history" : {
@@ -554,7 +605,7 @@
     "resetThirdPartyDataModal" : {
       "title" : "ローカルのサードパーティーのデータを削除",
       "subtitle" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC（本人確認）の再提出や再度ログインが必要になる場合があります。",
-      "cta" : "Confirm"
+      "cta" : "確認"
     },
     "modal" : {
       "title" : "スワップ",
@@ -648,6 +699,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "テスト"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "Vaultを接続する",
+      "info" : "以下のフィールドに入力してLedger Vaultワークスペースアカウントを連携し、Ledger Liveからトランザクションを作成してください。「Settings（設定）」>「External wallet（外部ウォレット署名者）」に移動して情報を見つけます。",
+      "info_link" : "詳細はこちら",
+      "host" : {
+        "title" : "URLエンドポイント",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "ワークスペース名",
+        "placeholder" : "ワークスペース"
+      },
+      "token" : {
+        "title" : "オペレーターAPIトークン",
+        "placeholder" : "トークン"
+      },
+      "submit" : "接続"
+    }
   },
   "fullNode" : {
     "status" : "ステータス",
@@ -1396,6 +1467,10 @@
     "referralProgram" : {
       "title" : "紹介して$10を獲得",
       "description" : "ご友人の紹介に成功すると、お客様とご友人の両者が$10相当のBitcoinを獲得できます。"
+    },
+    "vaultSigner" : {
+      "title" : "Vault署名者モード",
+      "link" : "Vaultヘルプセンター"
     }
   },
   "signmessage" : {
@@ -1979,7 +2054,7 @@
       "mcuPin" : "アップデートが完了するまでお待ちください",
       "mcuSecondNanoX" : "<1><0> {{bootloaderOption}}</0></1>が表示されるまで左ボタンを長押しする。両方のボタンを押して、デバイスを確認して再接続します。",
       "mcuBlueFirst" : "ボタンを10秒間長押しして、デバイスの電源をオフにする。ボタンから指を離す。",
-      "mcuBlueSecond" : "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
+      "mcuBlueSecond" : "ブートオプションが表示されるまで、少なくとも5秒間ボタンを押し続けます。Bootloaderモードをタップしてください。",
       "successTitle" : "OSアップデートが成功しました。",
       "successTextApps" : "デバイスにアプリを再インストールしてください。",
       "successTextNoApps" : "デバイスにアプリをインストールできるようになりました。",
@@ -2073,7 +2148,7 @@
         "title" : "確認",
         "success" : {
           "title" : "",
-          "text" : "Your assets were unfrozen successfully. Your {{resource}} points will be decreased, and your votes will be cancelled.",
+          "text" : "資産は正常に凍結解除されました。 {{resource}} ポイントが減少し、投票はキャンセルされます。",
           "continue" : "続行"
         },
         "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
@@ -2219,6 +2294,8 @@
         "recipientAddress" : "送付先アドレス",
         "amount" : "数量",
         "fees" : "ネットワーク手数料",
+        "maxFees" : "最大ネットワーク手数料",
+        "maxFeesInfo" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。",
         "useMax" : "全額を選択",
         "sendMax" : "最大数量を送付",
         "rippleTag" : "タグ",
@@ -2297,7 +2374,8 @@
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語を変更する",
-    "changeLanguage" : "言語の変更",
+    "changeLanguage" : "変更",
+    "dontChangeLanguage" : "変更しない",
     "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}}が{{deviceName}}でもご利用可能になりました",
@@ -2937,7 +3015,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "数量"
           },
           "validator" : {
             "title" : "バリデーター"
@@ -3009,7 +3087,7 @@
             "newDelegation" : "新しいデリゲート",
             "chooseValidator" : "バリデーターを選ぶ",
             "warning" : "新しいバリデーターから再デリゲートを希望する場合には<0>{{numberOfDays}}日間</0>待機する必要があります。",
-            "amountLabel" : "Amount to redelegate"
+            "amountLabel" : "再デリゲート額"
           },
           "device" : {
             "title" : "デバイス"
@@ -3793,7 +3871,7 @@
         "button" : "完了",
         "title" : "スキャンして、モバイルにエクスポートする",
         "listTitle" : "Ledger Live mobileアプリ：",
-        "step1" : "Tap the <highlight><icon>+</icon></highlight> button in <highlight>accounts</highlight>",
+        "step1" : "<highlight><icon>+</icon></highlight>ボタンをタップ（<highlight>アカウント</highlight>内）",
         "step2" : "<highlight>デスクトップアカウントのインポート</highlight>をタップ",
         "step3" : "ローダーが100%になるまで<highlight>LiveQRコード</highlight>をスキャンする"
       }
@@ -3946,6 +4024,10 @@
           "title" : "EIP1559最低優先手数料ゲートを無効にする",
           "description" : "最低優先手数料なしでトランザクションを送信できます。これにより、トランザクションがメモリプールに永久にスタック（停滞）する可能性があります。"
         },
+        "vaultSigner" : {
+          "title" : "Vault署名者",
+          "description" : "オペレーターAPIトークンを使ってLedger Vaultを署名者として使用する"
+        },
         "1559CustomPriorityLowerGate" : {
           "title" : "カスタム優先手数料ゲート",
           "description" : "高度なEIP1559トランザクションで許可される、当社の推定最小優先手数料の割合をカスタマイズします"
@@ -4061,7 +4143,7 @@
     "downloadInProgress" : "アップデートをダウンロード中...",
     "downloadProgress" : "{{progress}}%完了",
     "checking" : "アップデートの確認中...",
-    "checkSuccess" : "アップデートをインストールする準備ができました。",
+    "checkSuccess" : "新しいLedger Liveアップデートをご利用いただけます。アプリを終了すると自動的にインストールされます。",
     "quitAndInstall" : "今すぐインストールする",
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
@@ -4216,6 +4298,7 @@
         "nextButton" : "はじめに",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
+        "recoverSignIn" : "Ledger Recoverにログイン",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
         "termsAndConditions" : "利用規約",
         "and" : "そして",
@@ -4265,7 +4348,7 @@
           },
           "4" : {
             "title" : "Ledger Recoverを使用して復元",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+            "description" : "You need to have a Ledger Recover subscription."
           }
         }
       },
@@ -4468,10 +4551,10 @@
             }
           },
           "newRecoveryPhrase" : {
-            "title" : "リカバリーフレーズ",
-            "paragraph1" : "リカバリーフレーズは、秘密鍵をバックアップするための、24個の英単語の組み合わせです。",
-            "paragraph2" : "Nanoによって唯一無二のリカバリーフレーズが生成されます。Ledger社はお客様のリカバリーフレーズを保存しません。",
-            "disclaimer" : "このリカバリーフレーズを紛失すると、Nanoにアクセスできなくなった場合に、ウォレット内の暗号資産が永久に失われてしまうことを理解しました。",
+            "title" : "シークレットリカバリーフレーズ",
+            "paragraph1" : "シークレットリカバリーフレーズは、秘密鍵をバックアップする24単語のリストです。",
+            "paragraph2" : "Ledger Nanoは、一意のシークレットリカバリーフレーズを生成します。Ledgerにはフレーズは知らされません。",
+            "disclaimer" : "他者が私のシークレットリカバリーフレーズを入手した場合、資産が危険にさらされることを理解しています。",
             "buttons" : {
               "next" : "リカバリーフレーズ",
               "prev" : "前のステップ",
@@ -4558,7 +4641,7 @@
           },
           "pairMyNano" : {
             "title" : "正規品チェック",
-            "paragraph" : "お使いのNanoが正規品かどうかを確認します。短時間で簡単にチェックできます！",
+            "paragraph" : "Nanoデバイスが正規品であることを確認します。チェックは、短時間で完了します！",
             "buttons" : {
               "next" : "Nanoをチェックする",
               "prev" : "前のステップ",
@@ -4611,7 +4694,7 @@
         "1" : {
           "text" : "Ledgerユーザーの暗号資産が保管される場所は？",
           "answers" : {
-            "1" : "Nanoデバイス",
+            "1" : "Ledger Nanoについて",
             "2" : "ブロックチェーン"
           },
           "results" : {
@@ -4626,10 +4709,10 @@
           }
         },
         "2" : {
-          "text" : "リカバリーフレーズを誰かに知られてしまうと...",
+          "text" : "誰かが私のシークレットリカバリーフレーズにアクセスしたら...",
           "answers" : {
-            "1" : "Ledger社に確認すれば教えてもらえるので問題ない",
-            "2" : "暗号資産が危険にさらされるため、資産を別の安全な場所に移さなければならない"
+            "1" : "私がそのフレーズを忘れない限り問題はない",
+            "2" : "資産が危険にさらされ、第三者が私の資産にアクセスする可能性がある"
           },
           "results" : {
             "success" : {
@@ -4643,7 +4726,7 @@
           }
         },
         "3" : {
-          "text" : "NanoをLedgerアプリに接続すると、私の秘密鍵は...",
+          "text" : "Ledger NanoをLedger Liveアプリに接続すると、私の秘密鍵は...",
           "answers" : {
             "1" : "オフライン状態のまま",
             "2" : "短時間だけオンライン状態になる"
@@ -4876,6 +4959,16 @@
     "cardano" : {
       "memoPlaceholder" : "任意",
       "memo" : "メモ"
+    },
+    "internet_computer" : {
+      "memoPlaceholder" : "任意、デフォルト：0",
+      "memo" : "メモ",
+      "memoWarningText" : "メモの値には、0～9223372036854775807の数値を指定できます。"
+    },
+    "stacks" : {
+      "memoPlaceholder" : "任意",
+      "memo" : "メモ",
+      "memoWarningText" : "メモを使用する場合は、受取先とタイプを確認してください。"
     },
     "stellar" : {
       "memo" : "メモ",
@@ -5328,11 +5421,17 @@
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
     },
+    "InvalidNonce" : {
+      "title" : "ナンスは必須です"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "アカウントは既にバリデーターへデリゲート済みです"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource" : {
       "title" : "送付先アドレスが送付元アドレスと同じです。"
+    },
+    "InvalidMemoICP" : {
+      "title" : "メモは数字で記入してください"
     },
     "CantOpenDevice" : {
       "title" : "接続に失敗しました。",
@@ -5345,6 +5444,10 @@
     "EthAppNftNotSupported" : {
       "title" : "お使いのデバイスではこの操作をご利用いただけません",
       "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
+    },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "速度を上げたりキャンセルすることはできません",
+      "description" : "このトランザクションはすでに検証済みです"
     },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
@@ -5572,7 +5675,7 @@
       "title" : "前回のトランザクションはまだ処理されていません。しばらく待ってから、トランザクション履歴を確認した上でもう一度やり直してください。"
     },
     "SolanaTxConfirmationTimeout" : {
-      "title" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
     "NotEnoughNftOwned" : {
       "title" : "利用可能なトークン数を超えています"
@@ -5582,6 +5685,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "メモの長さが長すぎます"
     },
     "StellarWrongMemoFormat" : {
       "title" : "メモのフォーマットに誤りがあります。"
@@ -5760,6 +5866,7 @@
   },
   "customImage" : {
     "title" : "カスタムロック画面",
+    "cta" : "カスタムロック画面",
     "managerCTA" : "画面写真をロック",
     "managerCTARemove" : "削除",
     "steps" : {
@@ -5851,5 +5958,8 @@
       "contactSupport" : "Ledgerサポートへ問い合わせ",
       "saveLog" : "ログを保存"
     }
+  },
+  "recoverRestore" : {
+    "title" : "Ledgerを接続してロックを解除する"
   }
 }

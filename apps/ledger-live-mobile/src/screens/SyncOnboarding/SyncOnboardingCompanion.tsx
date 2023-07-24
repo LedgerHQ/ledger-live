@@ -157,6 +157,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     | "recover_seed"
   >("choice_new_or_restore");
 
+  const servicesConfig = useFeature("protectServicesMobile");
+
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
       if (step === CompanionStepKey.Exit) {
@@ -459,6 +461,23 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       }),
     [navigation],
   );
+
+  useEffect(() => {
+    if (seedPathStatus === "recover_seed" && servicesConfig?.enabled) {
+      navigation.navigate(ScreenName.Recover, {
+        fromOnboarding: true,
+        device,
+        platform: servicesConfig.params?.protectId,
+        redirectTo: "restore",
+      });
+    }
+  }, [
+    device,
+    navigation,
+    seedPathStatus,
+    servicesConfig?.enabled,
+    servicesConfig?.params?.protectId,
+  ]);
 
   const companionSteps: Step[] = useMemo(
     () =>

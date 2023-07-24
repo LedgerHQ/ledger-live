@@ -7,7 +7,7 @@ import {
   Button,
   Text,
   NumberedList,
-  Icons,
+  IconsLegacy,
   Link as TextLink,
   ScrollListContainer,
 } from "@ledgerhq/native-ui";
@@ -44,7 +44,7 @@ const OnboardingGeneralInformation = () => {
           </Text>
           <TextLink
             onPress={handlePress}
-            Icon={Icons.ExternalLinkMedium}
+            Icon={IconsLegacy.ExternalLinkMedium}
             iconPosition="right"
             type="color"
             style={{ justifyContent: "flex-start" }}

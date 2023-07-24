@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 
 type Props = {
@@ -21,7 +21,12 @@ const DeviceOptionRow: React.FC<Props> = props => {
       </Text>
       <Flex flex={1} />
       {right || (
-        <Link onPress={onPress} disabled={!onPress} type="color" Icon={Icons.ChevronRightMedium}>
+        <Link
+          onPress={onPress}
+          disabled={!onPress}
+          type="color"
+          Icon={IconsLegacy.ChevronRightMedium}
+        >
           {linkLabel}
         </Link>
       )}

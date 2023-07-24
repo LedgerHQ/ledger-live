@@ -22,6 +22,7 @@ import type { SettingsNavigatorStackParamList } from "./SettingsNavigator";
 import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator";
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
+import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { ExchangeNavigatorParamList } from "./ExchangeNavigator";
@@ -109,6 +110,8 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.Recover]: {
     platform?: string;
+    device?: Device;
+    fromOnboarding?: boolean;
     name?: string;
     source?: string;
     redirectTo?: string;
@@ -208,6 +211,7 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList>;
   [NavigatorName.Swap]: NavigatorScreenParams<SwapNavigatorParamList> | undefined;
+  [NavigatorName.Earn]: NavigatorScreenParams<EarnLiveAppNavigatorParamList> | undefined;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;

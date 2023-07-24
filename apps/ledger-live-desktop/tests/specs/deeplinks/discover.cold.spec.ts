@@ -8,7 +8,7 @@ test.use({
   },
 });
 
-test("Discover deeplink cold start", async ({ page }) => {
+test("Discover deeplink cold start @smoke", async ({ page }) => {
   await test.step("on load", async () => {
     await expect.soft(page).toHaveScreenshot("loaded.png");
   });
