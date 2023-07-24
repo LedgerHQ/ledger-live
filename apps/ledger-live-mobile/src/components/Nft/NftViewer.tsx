@@ -291,6 +291,7 @@ const NftViewer = ({ route }: Props) => {
     () => (
       <>
         <NftMedia
+          transparency={true}
           resizeMode="contain"
           style={styles.image}
           metadata={nftMetadata}
@@ -523,9 +524,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     ...Platform.select({
-      android: {
-        elevation: 1,
-      },
       ios: {
         shadowOpacity: 0.2,
         shadowRadius: 14,
