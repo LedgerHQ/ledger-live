@@ -12,6 +12,7 @@ import {
   ledgerERC1155EventToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const BATCH_SIZE = 10_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
@@ -126,6 +127,29 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
   };
 };
 
-export default {
+const getTransactionByHash = async (
+  currency: CryptoCurrency,
+  transactionHash: string,
+): Promise<{ confirmations?: number }> => {
+  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+
+  if (!isLedgerExplorerConfig(explorer)) {
+    throw new LedgerExplorerUsedIncorrectly(
+      `Ledger explorer used incorrectly with currency: ${currency.id}`,
+    );
+  }
+
+  const { data } = await axios.request({
+    method: "GET",
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${explorer.explorerId}/tx/${transactionHash}`,
+  });
+
+  return data;
+};
+
+const ledgerExplorerAPI: ExplorerApi = {
   getLastOperations,
-} as ExplorerApi;
+  getTransactionByHash,
+};
+
+export default ledgerExplorerAPI;
