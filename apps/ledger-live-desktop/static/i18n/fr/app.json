@@ -2597,6 +2597,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "Le solde total ne comprend pas les récompenses de staking"
       }
+    },
+    "delegation" : {
+      "totalStake" : "Stake total",
+      "cost" : "Coût",
+      "pool" : "Pool",
+      "changeDelegation" : "Changer la délégation",
+      "assetsAlreadyStaked" : "Vos actifs sont déjà stakés",
+      "addFundsToStake" : "Ajouter des fonds à staker",
+      "commission" : "Commission",
+      "stakeKeyRegistrationDeposit" : "Dépôt d’enregistrement de la clé de staking",
+      "delegatingTo" : "Délégué à",
+      "flow" : {
+        "title" : "Déléguer",
+        "steps" : {
+          "starter" : {
+            "description" : "Gagnez des récompenses en déléguant vos ADA à un pool.",
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Redéléguez vos actifs à un autre pool ou interrompez la délégation à tout moment."]
+          },
+          "validator" : {
+            "title" : "Pools"
+          },
+          "summary" : {
+            "title" : "Récapitulatif"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs délégués",
+              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "Si vous interrompez la délégation, vous ne recevrez pas de récompenses pour les epochs en cours et à venir.",
+      "refund" : "Remboursement du dépôt d’enregistrement au staking",
+      "flow" : {
+        "title" : "Arrêter la délégation",
+        "steps" : {
+          "summary" : {
+            "title" : "Récapitulatif"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Vous avez arrêté la délégation",
+              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -4013,7 +4075,7 @@
           "description" : "Testez toutes les animations utilisées dans Ledger Live."
         },
         "testStories" : {
-          "title" : "Testez les animations Storyly",
+          "title" : "Tester les animations Storyly",
           "description" : "Testez toutes les animations utilisées dans Ledger Live."
         },
         "testPostonboarding" : {
@@ -5126,6 +5188,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} non pris en charge",
       "description" : "Ce crypto-actif n’est pas encore pris en charge. Merci de contacter l’Assistance Ledger."
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "L’appareil peut ne pas être authentique.",
