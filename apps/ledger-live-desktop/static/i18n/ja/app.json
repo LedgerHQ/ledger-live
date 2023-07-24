@@ -4298,7 +4298,7 @@
         "nextButton" : "はじめに",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
-        "recoverSignIn" : "Ledger Recoverにログイン",
+        "recoverSignIn" : "Log in to Ledger Recover",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
         "termsAndConditions" : "利用規約",
         "and" : "そして",
@@ -5126,6 +5126,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} には対応していません。",
       "description" : "この暗号資産には、未対応です。Ledgerサポートにお問合せください。"
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "正規品でない可能性があります",
