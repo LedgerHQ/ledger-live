@@ -27,7 +27,7 @@ const NftGalleryEmptyState = () => {
   }, []);
 
   return (
-    <Flex testID="wallet-nft-gallery-empty" flex={1} alignItems="center" justifyContent="center">
+    <Flex flex={1} alignItems="center" justifyContent="center">
       <TrackScreen
         category={readOnlyModeEnabled ? "NFT Gallery Start Read-only" : "NFT Gallery Start"}
       />

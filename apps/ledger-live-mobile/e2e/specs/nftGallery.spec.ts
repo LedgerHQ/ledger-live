@@ -84,9 +84,9 @@ describe("NFT Gallery screen", () => {
     await expect(nftGalleryPage.emptyScreen()).toBeVisible();
   });
 
-  it('should show modal on "Receive NFT\'s" button tap', async () => {
-    await expect(nftGalleryPage.nftReceiveModal()).not.toBeVisible();
-    await tapByElement(nftGalleryPage.receiveNftButton());
-    await expect(nftGalleryPage.nftReceiveModal()).toBeVisible();
+  it('should show filters on "reset" button tap', async () => {
+    await expect(nftGalleryPage.nftFilterDrawer()).not.toBeVisible();
+    await tapByElement(nftGalleryPage.emptyScreenResetButton());
+    await expect(nftGalleryPage.nftFilterDrawer()).toBeVisible();
   });
 });

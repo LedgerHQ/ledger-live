@@ -11,12 +11,12 @@ export type Props = {
 const EmptyState: FC<Props> = ({ onPress }) => {
   const { t } = useTranslation();
   return (
-    <StyledRoot flexGrow={1} justifyContent="center">
+    <StyledRoot testID="wallet-nft-gallery-empty" flexGrow={1} justifyContent="center">
       <Flex alignItems="center">
         <Text variant="h5" fontWeight="semiBold" marginBottom={8} textAlign="center">
           {t("wallet.nftGallery.emptyFiltered.title")}
         </Text>
-        <Button type="primary" onPress={onPress}>
+        <Button testID="wallet-nft-gallery-empty-reset-button" type="primary" onPress={onPress}>
           {t("wallet.nftGallery.emptyFiltered.button")}
         </Button>
       </Flex>
