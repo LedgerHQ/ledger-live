@@ -71,7 +71,7 @@ const CardTitle = ({ content }: { content: string }) => {
   const { colors } = useTheme();
 
   return (
-    <Text variant="h5" fontWeight="medium" color={colors.neutral.c100} lineHeight="19.8px">
+    <Text variant="h5" fontWeight="medium" color={colors.neutral.c100}>
       {content}
     </Text>
   );
@@ -86,7 +86,7 @@ const CardText = ({ content }: { content?: string }) => {
       variant="paragraph"
       fontWeight="medium"
       color={colors.opacityDefault.c50}
-      mt={space[2]}
+      mt={"12px"}
       lineHeight="15.73px"
     >
       {content}
