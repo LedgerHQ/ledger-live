@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 
 import Link from "../../../wrappedUi/Link";
 import styled from "@ledgerhq/native-ui/components/styled";
@@ -26,7 +26,7 @@ const NftFilterSection: FC<Props> = ({ title, onSeeAllPress, footer, children })
           </Text>
         </Flex>
         {onSeeAllPress ? (
-          <StyledLink type="color" Icon={Icons.ChevronRightMedium} onPress={onSeeAllPress}>
+          <StyledLink type="color" Icon={IconsLegacy.ChevronRightMedium} onPress={onSeeAllPress}>
             {t("wallet.nftGallery.filters.seeAll")}
           </StyledLink>
         ) : null}
