@@ -88,6 +88,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   ethereum_as_evm_test_only: "0x0000000000000000000000000000000000000000",
   polygon_as_evm_test_only: "0x0000000000000000000000000000000000000000",
   telos_evm: "0x0000000000000000000000000000000000000000",
+  klaytn: "0x0000000000000000000000000000000000000000",
   stacks: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
   secret_network: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   stargaze: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",

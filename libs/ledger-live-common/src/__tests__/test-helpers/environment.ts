@@ -85,6 +85,7 @@ setSupportedCurrencies([
   "polygon_as_evm_test_only",
   "stacks",
   "telos_evm",
+  "klaytn",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

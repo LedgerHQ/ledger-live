@@ -152,7 +152,8 @@ export type CryptoCurrencyId =
   | "velas_evm"
   | "syscoin"
   | "internet_computer"
-  | "telos_evm";
+  | "telos_evm"
+  | "klaytn";
 
 export type LedgerExplorerId =
   | "btc"
@@ -270,7 +271,7 @@ export type EthereumLikeInfo = {
   // used by evm coin integration
   explorer?:
     | {
-        type: "etherscan" | "blockscout" | "teloscan";
+        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
         uri: string;
       }
     | {
@@ -325,6 +326,7 @@ export type CryptoCurrency = CurrencyCommon & {
   terminated?: {
     link: string;
   };
+  // used to override the `ticker` field in the bot context, since if `ticker` is not known on Speculos side, the bot stops and fails. If not defined, `ticker` is used.
   deviceTicker?: string;
   // Used to connect to the right endpoint url since it is different from currencyId and ticker
   explorerId?: LedgerExplorerId;
