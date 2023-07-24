@@ -5,8 +5,8 @@ import { TrackScreen } from "../../../analytics";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 
 type OnboardingViewProps = {
-  title: String;
-  subTitle?: String;
+  title: string;
+  subTitle?: string;
 
   analytics: {
     tracking: {
