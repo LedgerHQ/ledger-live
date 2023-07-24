@@ -123,10 +123,6 @@ export const StepFeesFooter = ({
 
   const mainAccount = getMainAccount(account, parentAccount);
 
-  if (mainAccount.currency.family !== "evm") {
-    return null;
-  }
-
   getTransactionByHash(mainAccount.currency, transactionHash).then(tx => {
     if (tx?.confirmations) {
       setTransactionHasBeenValidated(true);
