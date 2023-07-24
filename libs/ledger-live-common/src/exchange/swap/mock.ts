@@ -107,20 +107,7 @@ export const mockGetExchangeRates = async (
       providerType: "DEX",
       expirationDate: new Date(),
       tradeMethod: "float",
-      // providerURL: "/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=13902390248.97866"
-      providerURL: `/platform/1inch/#/1/unified/swap/eth/${currencyTo}?sourceTokenAmount=${transaction.amount}`,
-    },
-    // create paraswap mocked exchange
-    {
-      rate: new BigNumber("0.98"),
-      toAmount: amount.times(magnitudeAwareRate),
-      magnitudeAwareRate,
-      rateId: "paraswapRateId1",
-      provider: "paraswap",
-      providerType: "DEX",
-      expirationDate: new Date(),
-      tradeMethod: "float",
-      providerURL: `/platform/1inch/#/1/unified/swap/eth/${currencyTo}?sourceTokenAmount=${transaction.amount}`,
+      providerURL: `/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=${transaction.amount}`,
     },
   ];
 };

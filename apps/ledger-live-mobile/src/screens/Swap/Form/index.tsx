@@ -147,11 +147,6 @@ export function SwapForm({
     timeoutErrorMessage: t("errors.SwapTimeoutError.title"),
   });
 
-  useEffect(() => {
-    console.log("Swap Transaction outside DEX: ", { swapTransaction });
-    console.log("Exchange rate outside DEX: ", { exchangeRate });
-  }, [swapTransaction, exchangeRate]);
-
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
@@ -379,11 +374,6 @@ export function SwapForm({
       };
 
       const customDappUrl = getCustomDappUrl(customParams);
-
-      console.log("EXCHANGE RATE:", { exchangeRate });
-      console.log("CUSTOM DAPP URL ONE:", { customDappUrl });
-      console.log("PROVIDER URL ONE:", { provider });
-      console.log("PROVIDER ONE:", { providerURL });
 
       const getAccountId = ({
         accountId,
