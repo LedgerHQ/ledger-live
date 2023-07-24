@@ -1,21 +1,20 @@
-import React, { useCallback, useState } from "react";
-import { Linking } from "react-native";
-import { useTranslation } from "react-i18next";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useTheme } from "styled-components/native";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Linking } from "react-native";
 import { useDispatch } from "react-redux";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { useTheme } from "styled-components/native";
+import { setOnboardingType } from "../../../actions/settings";
 import Button from "../../../components/Button";
 import QueuedDrawer from "../../../components/QueuedDrawer";
-import { SelectionCard, SelectionCards } from "./Cards/SelectionCard";
-import { setOnboardingType } from "../../../actions/settings";
+import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "../../../const";
 import { OnboardingType } from "../../../reducers/types";
+import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
 
 type NavigationProps = StackNavigatorProps<

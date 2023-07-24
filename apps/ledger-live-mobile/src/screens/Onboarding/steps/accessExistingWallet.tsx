@@ -1,30 +1,17 @@
+import { IconsLegacy } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, ScrollListContainer, Box, Flex, IconsLegacy } from "@ledgerhq/native-ui";
-import { props } from "lodash/fp";
-import { useTheme } from "styled-components/native";
-import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import Touchable from "../../../components/Touchable";
-import { TrackScreen, track } from "../../../analytics";
-import { ScreenName } from "../../../const/navigation";
+import { useTheme } from "styled-components/native";
+import { setOnboardingType } from "../../../actions/settings";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import { setOnboardingType } from "../../../actions/settings";
+import { ScreenName } from "../../../const/navigation";
 import { OnboardingType } from "../../../reducers/types";
-import OnboardingView from "./OnboardingView";
 import { SelectionCards } from "./Cards/SelectionCard";
-
-type CardProps = {
-  title: string;
-  event: string;
-  eventProperties?: Record<string, unknown>;
-  testID: string;
-  onPress: React.ComponentProps<typeof Touchable>["onPress"];
-  style?: React.CSSProperties;
-  Icon?: React.ReactElement;
-};
+import OnboardingView from "./OnboardingView";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList & BaseNavigatorStackParamList,
