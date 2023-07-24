@@ -50,12 +50,6 @@ const Default = () => {
       </Row>
 
       <Row
-        title={t("settings.developer.catalogRampServer")}
-        desc={t("settings.developer.catalogRampServerDesc")}
-      >
-        <CatalogRampProviderSelect />
-      </Row>
-      <Row
         title={t("settings.developer.enablePlatformDevTools")}
         desc={t("settings.developer.enablePlatformDevToolsDesc")}
       >
