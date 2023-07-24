@@ -2597,6 +2597,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "El saldo total no incluye las recompensas de participación"
       }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "cost" : "Coste",
+      "pool" : "Pool",
+      "changeDelegation" : "Cambiar delegación",
+      "assetsAlreadyStaked" : "Tus activos ya están puestos en participación",
+      "addFundsToStake" : "Agregar fondos a la puesta en participación",
+      "commission" : "Comisión",
+      "stakeKeyRegistrationDeposit" : "Depósito de registro de clave de puesta en participación",
+      "delegatingTo" : "Delegando a",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes ganar recompensas delegando tus ADA en un pool.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Puedes volver a delegar los activos a otro pool u optar por dejar de delegarlos en cualquier momento."]
+          },
+          "validator" : {
+            "title" : "Pools"
+          },
+          "summary" : {
+            "title" : "Resumen"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has delegado tus activos con éxito",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "Si dejas de delegar los activos, no recibirás ninguna recompensa por la época en curso ni las futuras",
+      "refund" : "Reembolso del depósito de registro de puesta en participación",
+      "flow" : {
+        "title" : "Desdelegar",
+        "steps" : {
+          "summary" : {
+            "title" : "Resumen"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has dejado de delegar los activos correctamente",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -4298,7 +4360,7 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
-        "recoverSignIn" : "Iniciar sesión para acceder a Ledger Recover",
+        "recoverSignIn" : "Log in to Ledger Recover",
         "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
@@ -5126,6 +5188,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} no es compatible",
       "description" : "Todavía no se admite este activo cripto. contacta al Soporte de Ledger."
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "Posiblemente no auténtico",
