@@ -2597,6 +2597,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "O saldo total não inclui recompensas de staking"
       }
+    },
+    "delegation" : {
+      "totalStake" : "Total Aplicado",
+      "cost" : "Custo",
+      "pool" : "Reserva",
+      "changeDelegation" : "Alterar delegação",
+      "assetsAlreadyStaked" : "Seus ativos já estão aplicados",
+      "addFundsToStake" : "Adicionar fundos em staking",
+      "commission" : "Comissão",
+      "stakeKeyRegistrationDeposit" : "Depósito do registro da chave de staking",
+      "delegatingTo" : "Delegando a",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode ganhar recompensas ao delegar sua ADA a uma reserva.",
+            "bullet" : ["Você mantém a posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos podem ser redelegados a outra reserva ou você pode optar por desdelegar a qualquer momento."]
+          },
+          "validator" : {
+            "title" : "Reservas"
+          },
+          "summary" : {
+            "title" : "Resumo"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você delegou seus ativos com sucesso",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "Ao desdelegar, você não receberá nenhuma recompensa pela época atual e pelas próximas épocas",
+      "refund" : "Reembolso do Depósito de Registro de Staking",
+      "flow" : {
+        "title" : "Desdelegar",
+        "steps" : {
+          "summary" : {
+            "title" : "Resumo"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você desdelegou com sucesso",
+              "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -5126,6 +5188,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} não é compatível",
       "description" : "Este criptoativo ainda não é compatível. Entre em contato com o Suporte Ledger."
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "Possivelmente não autêntico",
