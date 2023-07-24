@@ -56,6 +56,7 @@
     "forgetDevice" : "Quitar dispositivo",
     "help" : "Ayuda",
     "saveLogs" : "Guardar registros",
+    "scrollToTop" : "Desplázate hacia arriba",
     "sync" : {
       "ago" : "Sincronizado {{time}}"
     },
@@ -333,6 +334,9 @@
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
     },
+    "InvalidNonce" : {
+      "title" : "Es obligatorio añadir un nonce"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Tu cuenta ya está delegada a este validador"
     },
@@ -412,6 +416,9 @@
     },
     "MaxFeeLow" : {
       "title" : "La tarifa máxima es demasiado baja. Es posible que tu transacción permanezca pendiente durante un tiempo."
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "Tarifa prioritaria demasiado baja. Ingresa una cantidad superior al valor de la tarifa prioritaria de la transacción inicial."
     },
     "NetworkDown" : {
       "title" : "Parece que no hay conexión a Internet",
@@ -496,6 +503,9 @@
     "TimeoutTagged" : {
       "title" : "El servidor ha tardado demasiado en responder ({{tag}})",
       "description" : "Se ha agotado el tiempo."
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "Transacción ya validada"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Transacción rechazada en el dispositivo",
@@ -642,6 +652,9 @@
       "title" : "Algo ha salido mal",
       "description" : "La transacción de intercambio no se realizó. Intenta de nuevo o ponte en contacto con soporte."
     },
+    "SwapTimeoutError" : {
+      "title" : "No se pudieron generar las cotizaciones por problemas técnicos. Intenta realizar de nuevo la permuta en unos instantes."
+    },
     "PolkadotElectionClosed" : {
       "title" : "La elección de los validadores debe estar cerrada"
     },
@@ -709,6 +722,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Asegúrate de tener fondos suficientes para pagar las tarifas"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "El memo es demasiado largo"
     },
     "StellarWrongMemoFormat" : {
       "title" : "El formato de Memo es incorrecto"
@@ -830,6 +846,9 @@
     },
     "GasEstimationError" : {
       "title" : "Se produjo un fallo en la estimación del gas"
+    },
+    "InvalidMemoICP" : {
+      "title" : "El memo debe ser un número."
     }
   },
   "crash" : {
@@ -1199,11 +1218,11 @@
       "start" : "Comenzar",
       "noDevice" : "¿No tienes un dispositivo?",
       "buy" : "Compra un {{fullDeviceName}}",
-      "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "terms" : "Al continuar, aceptas el siguiente documento de Ledger:",
+      "termsLink" : "Términos y Condiciones",
       "privacyLink" : "Política de Privacidad",
       "and" : "Y",
-      "recoverLogIn" : "Iniciar sesión para acceder a Ledger Recover"
+      "recoverLogIn" : "Log in to Ledger Recover"
     },
     "postWelcomeStep" : {
       "title" : "Comencemos",
@@ -1460,11 +1479,11 @@
         "cta" : "Siguiente paso"
       },
       "recoveryPhrase" : {
-        "title" : "Frase de recuperación",
-        "desc" : "Tu Frase de recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas.",
-        "desc_1" : "Tu Nano genera una Frase de recuperación única. Ledger no conserva copias de la misma.",
+        "title" : "Tu Frase de Recuperación Secreta",
+        "desc" : "Tu Frase de Recuperación Secreta es una lista de 24 Palabras que genera una copia de respaldo de tus claves privadas.",
+        "desc_1" : "Tu Ledger Nano genera una Frase de Recuperación Secreta única.  Ledger no sabe cuál es.",
         "cta" : "Siguiente paso",
-        "checkboxDesc" : "Comprendo que si pierdo la Frase de recuperación no podré acceder a mis cripto en caso de no tener acceso a mi Nano."
+        "checkboxDesc" : "Comprendo que si alguien accede a mi Frase de Recuperación Secreta, mis activos serán vulnerables."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1807,7 @@
         "title" : "Como usuario de Ledger, mis criptomonedas se almacenan:",
         "answers" : {
           "correct" : "En la cadena de bloques",
-          "wrong" : "En mi Nano"
+          "wrong" : "En mi Ledger Nano"
         },
         "modal" : {
           "text" : "Tus criptomonedas siempre se almacenan en la cadena de bloques. Tu billetera de hardware solo contiene tu clave privada, que te da acceso a tus criptomonedas.",
@@ -1796,10 +1815,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Si mi Frase de recuperación deja de ser secreta o estar protegida...",
+        "title" : "Si otra persona accede a mi Frase de Recuperación Secreta...",
         "answers" : {
-          "correct" : "Mis criptomonedas ya no están seguras y debo transferirlas a un lugar seguro",
-          "wrong" : "Ningún problema, Ledger me manda una copia"
+          "correct" : "Mis activos serán vulnerables y dicha persona podría acceder a ellos",
+          "wrong" : "No pasa nada, siempre que yo sepa cuál es"
         },
         "modal" : {
           "text" : "Cualquier persona que conozca tu Frase de recuperación puede robar tus activos cripto.\nSi la pierdes, debes transferir rápidamente tus criptomonedas a un lugar seguro.",
@@ -1807,7 +1826,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Cuando conecto mi Nano a la aplicación Ledger, mi clave privada...",
+        "title" : "Cuando conecto mi Ledger Nano a la aplicación Ledger Live, mi clave privada es...",
         "answers" : {
           "correct" : "Sigue sin conectarse a Internet",
           "wrong" : "Se conecta brevemente a Internet"
@@ -1860,7 +1879,7 @@
       },
       "loading" : {
         "title" : "Emparejando con {{deviceName}}...",
-        "subtitle" : "Confirma el código en tu {{productName}}"
+        "subtitle" : "Si se te pide, confirma el código en tu {{productName}}"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1918,7 @@
       },
       "loading" : {
         "title" : "Emparejando con {{deviceName}}",
-        "subtitle" : "Confirma el código en tu {{productName}}"
+        "subtitle" : "Si se te pide, confirma el código en tu {{productName}}"
       },
       "error" : {
         "title" : "Emparejamiento fallido",
@@ -2793,6 +2812,18 @@
       "desc" : "Recibe recomendaciones personalizadas y las últimas novedades sobre Ledger Live, los productos Ledger y el mercado. Puedes cancelar la suscripción en cualquier momento desde los ajustes.",
       "allow" : "Permitir notificaciones",
       "later" : "Quizás más tarde"
+    },
+    "ptxServices" : {
+      "toast" : {
+        "title" : "In order to comply with Apple’s recent updates on the App Store, this feature is temporarily unavailable. You can still access it on Ledger Live on desktop."
+      },
+      "drawer" : {
+        "title" : "Buy, swap and sell disabled",
+        "description" : "In order to comply with Apple’s recent updates on the App Store, these features are temporarily deactivated on iOS. <emphasized>You can still access them on Ledger Live on desktop.</emphasized>",
+        "checkboxLabel" : "Do not remind me again",
+        "cta" : "Got it",
+        "link" : "Learn more"
+      }
     }
   },
   "transfer" : {
@@ -3182,7 +3213,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "{{providerName}} ha bloqueado tu retiro.\n\n Para obtener más información, ponte en contacto con su equipo de soporte."
-          }
+          },
+          "noProviders" : "No se han encontrado resultados. No hay cotizaciones disponibles con las preferencias actuales."
         }
       }
     },
@@ -3513,6 +3545,39 @@
       "maxSpendable" : {
         "title" : "Importe máx. a gastar",
         "description" : "El importe máximo a gastar es el saldo total disponible en una cuenta para enviar en una transacción."
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Acelerar o cancelar",
+    "header" : "Editar transacción",
+    "learnMore" : "Quiero saber más",
+    "panel" : {
+      "stuckMessage" : "Tu transacción de \"envío\" más antigua se ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala.",
+      "speedupMessage" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "Información sobre las tarifas de transacciones pendientes: ",
+      "networkfee" : "Tarifa de red = {{amount}} {{unit}}",
+      "maxFee" : "Tarifa máxima = {{amount}} Gweis",
+      "maxPriorityFee" : "Tarifa de prioridad máxima = {{amount}} Gweis",
+      "gasPrice" : "Precio del gas = {{amount}} Gweis"
+    },
+    "speedUp" : {
+      "title" : "Acelerar",
+      "description" : "Vuelve a enviar la transacción con una tarifa de red mayor."
+    },
+    "cancel" : {
+      "title" : "Cancelar",
+      "description" : "Enviando 0 {{ticker}} a tu propia dirección.\nPara garantizar la cancelación, la tarifa de red es un 30% más alta que la tarifa de la transacción que se pretende cancelar."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "La cancelación de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notEnoughFundsToSpeedup" : "La aceleración de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notlowestNonceToSpeedup" : "La función de aceleración no está disponible. Tu transacción está pendiente porque hay una transacción anterior atascada. Puedes esperar a que se confirme, acelerarla o cancelarla.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "No es posible acelerarla ni cancelarla",
+        "description" : "Esta transacción ya se ha validado"
       }
     }
   },
@@ -4075,7 +4140,7 @@
   },
   "FirmwareUpdate" : {
     "title" : "Actualizar firmware",
-    "updateDevice" : "Actualizar {{deviceName}}",
+    "updateDevice" : "Actualización de SO de {{deviceName}}",
     "updateDone" : "¡Listo! Tu {{deviceName}} se ha actualizado",
     "updateDoneDescription" : "Nueva versión del sistema operativo: {{firmwareVersion}}",
     "preparing" : "Preparando la actualización de firmware. No desconectes ni dejes entrar en suspensión a tu dispositivo. Te informaremos del progreso",
@@ -4126,7 +4191,8 @@
       "preparing" : "Preparando actualización",
       "firmware" : "Descargando actualización",
       "prepareUpdate" : {
-        "titleActive" : "Preparando actualización para instalar",
+        "titleBackingUp" : "Haciendo copia de respaldo de aplicaciones y ajustes",
+        "titleTransferring" : "Transfiriendo actualización",
         "description" : "Estamos haciendo una copia de seguridad de la configuración y transfiriendo la actualización a {{deviceName}}."
       },
       "installUpdate" : {
@@ -4139,14 +4205,18 @@
         "description" : "Los ajustes y las aplicaciones de cadena de bloques se restaurarán.",
         "restoreLockScreenPicture" : "Restaurando imagen de pantalla de bloqueo",
         "restoreLanguage" : "Restaurando idioma",
-        "installingApps" : "Instalando aplicaciones",
+        "imageLoadRequested" : "Permitir la restauración de la imagen de pantalla de bloqueo en {{deviceName}}",
+        "imageCommitRequested" : "Confirma la imagen en tu {{deviceName}}",
+        "allowLanguageInstallation" : "Permitir la restauración del idioma en {{deviceName}}",
+        "allowAppsRestoration" : "Permitir la restauración de la aplicación en {{deviceName}}",
         "errors" : {
           "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso.",
           "LanguageInstallRefusedOnDevice" : "Cambio de idioma cancelado en {{deviceName}}",
           "ImageLoadRefusedOnDevice" : "La restauración de la imagen de pantalla de bloqueo se canceló en {{deviceName}}",
           "ImageCommitRefusedOnDevice" : "La restauración de la imagen de pantalla de bloqueo se canceló en {{deviceName}}",
           "UserRefusedAllowManager" : "La restauración de aplicaciones se canceló en {{deviceName}}"
-        }
+        },
+        "installingApps" : "Restaurando aplicaciones"
       }
     },
     "newVersion" : "Actualización {{version}} disponible para {{deviceName}}",
@@ -4156,10 +4226,26 @@
       "pleaseConnectUsbTitle" : "Es necesario un cable USB",
       "pleaseConnectUsbDescription" : "Para iniciar la actualización del firmware, conecta tu {{deviceName}} a tu teléfono mediante un cable USB."
     },
+    "batteryStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Dispositivo desconectado",
+          "description" : "No ha sido posible iniciar la actualización porque hemos perdido la conexión con {{deviceName}}"
+        },
+        "BatteryStatusNotRetrieved" : {
+          "title" : "No fue posible recuperar el estado de la batería",
+          "description" : "No fue posible iniciar la actualización porque no hemos podido recuperar el estado de la batería de {{deviceName}}"
+        }
+      }
+    },
     "errors" : {
       "TimeoutError" : {
         "title" : "Tiempo de actualización agotado",
         "description" : "No ha sido posible finalizar la actualización porque hemos perdido la conexión con {{deviceName}}"
+      },
+      "CantOpenDevice" : {
+        "title" : "La conexión ha fallado",
+        "description" : "No ha sido posible finalizar la actualización porque hemos perdido la conexión con {{deviceName}}."
       }
     }
   },
@@ -6198,10 +6284,10 @@
       "status" : {
         "new" : {
           "title" : "Nuevo",
-          "desc" : "Recupera el acceso a tu billetera sin tu Frase de recuperación secreta.",
+          "desc" : "Ya no tienes que preocuparte de perder el acceso a tu billetera.",
           "actions" : {
-            "learnMore" : "¿Qué beneficios me ofrece?",
-            "alreadySubscribed" : "¿Ya has ingresado? <LinkAccount>Ver mi suscripción</LinkAccount>"
+            "learnMore" : "Get to know Ledger Recover",
+            "alreadySubscribed" : "Ya tengo un inicio de sesión, <LinkAccount>ver mi suscripción</LinkAccount>"
           }
         }
       }
