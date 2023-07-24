@@ -2597,6 +2597,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "الرصيد الإجمالي لا يشمل مكافآت التكديس"
       }
+    },
+    "delegation" : {
+      "totalStake" : "إجمالي التكديس",
+      "cost" : "التكلفة",
+      "pool" : "المُجمِع",
+      "changeDelegation" : "تغيير التفويض",
+      "assetsAlreadyStaked" : "أصولك مُكدَّسة بالفعل",
+      "addFundsToStake" : "إضافة أموال إلى التكديس",
+      "commission" : "العمولة",
+      "stakeKeyRegistrationDeposit" : "تكديس إيداع تسجيل المفتاح",
+      "delegatingTo" : "التفويض إلى",
+      "flow" : {
+        "title" : "تفويض",
+        "steps" : {
+          "starter" : {
+            "description" : "يمكنك كسب المكافآت عن طريق تفويض ADA خاصتك إلى مُجمِع.",
+            "bullet" : ["أنت تحتفظ بملكية الأصول المفوضة", "قم بالتفويض باستخدام جهازك Ledger", "الأصول يمكن إعادة تفويضها إلى مُجمِع مختلف أو يمكنك اختيار إلغاء تفويضها في أي وقت."]
+          },
+          "validator" : {
+            "title" : "المُجمِعات"
+          },
+          "summary" : {
+            "title" : "الملخص"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل بتأكيد المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "بإلغاء التفويض لن تتلقى أي مكافآت عن العصر الحالي والعصور القادمة",
+      "refund" : "استرداد تكديس إيداع التسجيل",
+      "flow" : {
+        "title" : "إلغاء التفويض",
+        "steps" : {
+          "summary" : {
+            "title" : "الملخص"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بإلغاء التفويض بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل بتأكيد المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -5126,6 +5188,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} غير مدعومة",
       "description" : "هذا الأصل المشفر غير مدعوم بعد. يرجى التواصل مع دعم Ledger."
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "من الممكن ألا يكون أصلياً",
