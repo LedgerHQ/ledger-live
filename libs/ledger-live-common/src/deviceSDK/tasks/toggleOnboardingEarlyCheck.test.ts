@@ -5,6 +5,8 @@ import { toggleOnboardingEarlyCheckCmd } from "../commands/toggleOnboardingEarly
 import { withTransport } from "../transports/core";
 import { aTransportRefBuilder } from "../mocks/aTransportRef";
 
+jest.useFakeTimers();
+
 jest.mock("../commands/toggleOnboardingEarlyCheck");
 const mockedToggleOnboardingEarlyCheckCmd = jest.mocked(toggleOnboardingEarlyCheckCmd);
 

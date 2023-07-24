@@ -3,7 +3,7 @@ import {
   Button,
   Drawer,
   Flex,
-  Icons,
+  IconsLegacy,
   InfiniteLoader,
   Logos,
   ProgressBar,
@@ -151,7 +151,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               disabled={disableBack}
               variant="main"
               outline
-              Icon={() => <Icons.ArrowLeftMedium size={18} />}
+              Icon={() => <IconsLegacy.ArrowLeftMedium size={18} />}
             >
               {backLabel || t("common.back")}
             </Button>
@@ -161,7 +161,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               disabled={continueLoading || continueDisabled}
               variant="main"
               iconSize={18}
-              Icon={continueLoading ? InfiniteLoader : Icons.ArrowRightMedium}
+              Icon={continueLoading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
             >
               {continueLabel || t("common.continue")}
             </Button>

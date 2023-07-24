@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Button, List, Icons, Text, ScrollListContainer } from "@ledgerhq/native-ui";
+import { Flex, Button, List, IconsLegacy, Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 
 const content = [
@@ -27,14 +27,14 @@ const OnboardingSetupDeviceInformation = () => {
         <List
           items={[...content].slice(0, 4).map(item => ({
             title: t(item),
-            bullet: <Icons.CheckAloneMedium size={20} color="success.c50" />,
+            bullet: <IconsLegacy.CheckAloneMedium size={20} color="success.c50" />,
           }))}
         />
         <Flex my={8} borderBottomColor="neutral.c40" borderBottomWidth={1} />
         <List
           items={[...content].slice(4, 8).map(item => ({
             title: t(item),
-            bullet: <Icons.CloseMedium size={20} color="error.c50" />,
+            bullet: <IconsLegacy.CloseMedium size={20} color="error.c50" />,
           }))}
         />
       </ScrollListContainer>

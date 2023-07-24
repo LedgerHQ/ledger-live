@@ -1,7 +1,7 @@
 import React from "react";
 import { ComponentStory } from "@storybook/react-native";
 import { IconBoxList } from "../../../../src/components";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 
 export default {
   title: "Layout/List/IconBox",
@@ -22,17 +22,17 @@ export const Default: ComponentStory<typeof IconBoxList> = (args: typeof Default
           title: "Enter Word #1...",
           description:
             "Enter the first letters of Word #1 by selecting them with the right or left button. Press both buttons to validate each letter.",
-          Icon: Icons.ClockMedium,
+          Icon: IconsLegacy.ClockMedium,
         },
         {
           title: "Validate Word #1...",
           description: "Choose Word #1 from the suggestions. tPress both buttons to validate.",
-          Icon: Icons.EyeNoneMedium,
+          Icon: IconsLegacy.EyeNoneMedium,
         },
         {
           title: "Enter Word #1...",
           description: "Repeat for all words!",
-          Icon: Icons.TrophyMedium,
+          Icon: IconsLegacy.TrophyMedium,
         },
       ]}
       itemContainerProps={{ alignItems: args.alignItems }}
