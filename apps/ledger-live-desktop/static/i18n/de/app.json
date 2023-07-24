@@ -4298,7 +4298,7 @@
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
-        "recoverSignIn" : "Für Ledger Recover anmelden",
+        "recoverSignIn" : "Melden Sie sich bei Ledger Recover an",
         "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
@@ -5126,6 +5126,9 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} wird nicht unterstützt",
       "description" : "Dieser Krypto-Vermögenswert wird noch nicht unterstützt. Bitte kontaktieren Sie den Ledger-Support"
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "Your device is already setup with a Secret Recover Phrase"
     },
     "DeviceNotGenuine" : {
       "title" : "Möglicherweise nicht echt",
