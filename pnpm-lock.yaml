@@ -755,6 +755,9 @@ importers:
       '@formatjs/intl-relativetimeformat':
         specifier: ^11.1.8
         version: 11.1.8
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../../libs/coin-evm
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework

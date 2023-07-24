@@ -1,6 +1,10 @@
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import {
+  Transaction as EvmTransaction,
+  GasOptions,
+  Strategy,
+} from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
@@ -16,7 +20,7 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 
 type Props = {
-  onClick: (_: { feesStrategy: keyof GasOptions }) => void;
+  onClick: (_: { feesStrategy: Strategy }) => void;
   transaction: EvmTransaction;
   account: Account;
   gasOptions: GasOptions;
@@ -62,7 +66,7 @@ const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
   padding: 5px 6px;
 `;
 
-const strategies: (keyof GasOptions)[] = ["slow", "medium", "fast"];
+const strategies: Strategy[] = ["slow", "medium", "fast"];
 
 const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props) => {
   const accountUnit = getAccountUnit(account);
