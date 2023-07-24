@@ -9,9 +9,6 @@ import invariant from "invariant";
 axiosRetry(axios, {
   retries: getEnv("GET_CALLS_RETRY"),
   retryCondition: error => error.config.method?.toUpperCase() === "GET",
-  retryDelay: retryCount => {
-    return retryCount * 1000;
-  },
 });
 
 type Metadata = { startTime: number };

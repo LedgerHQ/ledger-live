@@ -72,10 +72,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         },
       );
     } catch (e) {
-      // since gas cannot be negative we will catch
-      // this in the get transaction status and treat
-      // it as a network fail.
-      estimatedGasLimit = BigNumber(-1);
+      estimatedGasLimit = BigNumber(0);
     }
   }
 

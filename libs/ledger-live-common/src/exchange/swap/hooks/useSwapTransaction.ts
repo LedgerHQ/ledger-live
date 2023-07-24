@@ -29,7 +29,7 @@ export const useFromAmountError = (
   errors: Record<string, Error | undefined>,
 ): Error | undefined => {
   const fromAmountError = useMemo(() => {
-    const [error] = [errors?.gasPrice, errors?.amount, errors?.gasNetwork]
+    const [error] = [errors?.gasPrice, errors?.amount, errors?.swapEstimatedGasFailed]
       .filter(Boolean)
       .filter(error => !(error instanceof AmountRequired));
 
@@ -38,7 +38,7 @@ export const useFromAmountError = (
     }
 
     return error;
-  }, [errors?.gasPrice, errors?.amount, errors?.gasNetwork]);
+  }, [errors?.gasPrice, errors?.amount, errors?.swapEstimatedGasFailed]);
 
   return fromAmountError;
 };
@@ -90,7 +90,10 @@ export const useSwapTransaction = ({
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
 
-  const fromAmountError = useFromAmountError(bridgeTransaction.status.errors);
+  const fromAmountError = useFromAmountError({
+    ...bridgeTransaction.status.errors,
+    ...bridgeTransaction.status.warnings,
+  });
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,

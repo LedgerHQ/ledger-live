@@ -1,8 +1,12 @@
-import { InvalidAddress, ETHAddressNonEIP, RecipientRequired, FeeEstimationFailed } from "@ledgerhq/errors";
+import {
+  InvalidAddress,
+  ETHAddressNonEIP,
+  RecipientRequired,
+  FeeEstimationFailed,
+} from "@ledgerhq/errors";
 import {
   FeeNotLoaded,
   FeeRequired,
-  SwapFeeEstimationFailed,
   GasLessThanEstimate,
   PriorityFeeHigherThanMaxFee,
   NotEnoughGas,
@@ -26,7 +30,6 @@ type TransactionErrors = {
   maxFee?: Error;
   maxPriorityFee?: Error;
   gasLimit?: Error;
-  gasNetwork?: Error;
   recipient?: Error;
 };
 
@@ -34,6 +37,7 @@ type TransactionWarnings = {
   maxFee?: Error;
   maxPriorityFee?: Error;
   gasLimit?: Error;
+  swapEstimatedGasFailed?: Error;
 };
 
 const isRecipientValid = (
@@ -158,9 +162,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     validateLegacyGas(account.currency, tx, status);
   }
 
-  if (gasLimit.lt(0)) {
-    errors.gasNetwork = new FeeEstimationFailed();
-  } else if (gasLimit.eq(0)) {
+  if (gasLimit.eq(0)) {
     errors.gasLimit = new FeeRequired();
   } else if (!errors.recipient) {
     if (estimatedFees.gt(account.balance)) {
@@ -168,8 +170,12 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     }
   }
 
-  if (tx.estimatedGasLimit && gasLimit.lt(tx.estimatedGasLimit)) {
-    warnings.gasLimit = new GasLessThanEstimate();
+  if (tx.estimatedGasLimit) {
+    if (gasLimit.lt(tx.estimatedGasLimit)) {
+      warnings.gasLimit = new GasLessThanEstimate();
+    } else if (tx.estimatedGasLimit.eq(0)) {
+      warnings.swapEstimatedGasFailed = new FeeEstimationFailed();
+    }
   }
 
   return Promise.resolve(status);
