@@ -10,6 +10,7 @@ import { BoxedIcon } from "../../../Icon";
 import { Flex } from "../../index";
 import { space } from "styled-system";
 import { Close } from "@ledgerhq/icons-ui/native";
+import { useTheme } from "styled-components/native";
 
 const { width, height } = sizes;
 
@@ -115,10 +116,12 @@ export function ModalHeader({
 export function ModalHeaderCloseButton({
   onClose,
 }: Pick<BaseModalProps, "onClose">): React.ReactElement {
+  const { colors } = useTheme();
+
   return (
     <CloseContainer>
       <ClosePressableExtendedBounds onPress={onClose}>
-        <Close color="neutral.c100" size="S" />
+        <Close color={colors.neutral.c100} size="S" />
       </ClosePressableExtendedBounds>
     </CloseContainer>
   );
