@@ -4356,6 +4356,33 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  polygon_zk_evm_testnet: {
+    type: "CryptoCurrency",
+    id: "polygon_zk_evm_testnet",
+    coinType: CoinType.ETH,
+    name: "Polygon zkEVM Testnet",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "polygon_zk_evm_testnet",
+    color: "#E58247",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: true,
+    isTestnetFor: "polygon_zk_evm",
+    ethereumLikeInfo: {
+      chainId: 1442,
+      node: { type: "external", uri: "https://rpc.public.zkevm-test.net" },
+      explorer: { type: "etherscan", uri: "https://api-testnet-zkevm.polygonscan.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet-zkevm.polygonscan.com/tx/$hash",
+        address: "https://testnet-zkevm.polygonscan.com/address/$address",
+        token: "https://testnet-zkevm.polygonscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   base: {
     type: "CryptoCurrency",
     id: "base",

@@ -156,6 +156,7 @@ export type CryptoCurrencyId =
   | "telos_evm"
   | "klaytn"
   | "polygon_zk_evm"
+  | "polygon_zk_evm_testnet"
   | "base"
   | "base_goerli";
 

@@ -58,6 +58,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
   const polygon_zk_evm = useFeature("currencyPolygonZkEvm");
+  const polygon_zk_evm_testnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
   const base_goerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
@@ -93,6 +94,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       telos: telosEvm,
       coreum,
       polygonZkEvm: polygon_zk_evm,
+      polygonZkEvmTestnet: polygon_zk_evm_testnet,
       base,
       baseGoerli: base_goerli,
       klaytn,
@@ -127,6 +129,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       telosEvm,
       coreum,
       polygon_zk_evm,
+      polygon_zk_evm_testnet,
       base,
       base_goerli,
       klaytn,

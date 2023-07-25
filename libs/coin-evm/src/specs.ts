@@ -36,6 +36,7 @@ const minBalancePerCurrencyId: Record<CryptoCurrencyIds, BigNumber> = {
   moonriver: parseCurrencyUnit(ETH_UNIT, "0.1"),
   rsk: parseCurrencyUnit(MBTC_UNIT, "0.05"),
   polygon_zkevm: parseCurrencyUnit(ETH_UNIT, "0.001"),
+  polygon_zkevm_testnet: parseCurrencyUnit(ETH_UNIT, "0.001"),
   base: parseCurrencyUnit(ETH_UNIT, "0.001"),
   base_goerli: parseCurrencyUnit(ETH_UNIT, "0.001"),
 };
