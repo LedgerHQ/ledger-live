@@ -53,3 +53,5 @@ export const FormNotAvailable = () => {
     </Box>
   );
 };
+
+export default FormNotAvailable;
