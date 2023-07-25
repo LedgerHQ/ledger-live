@@ -1,14 +1,20 @@
 # @ledgerhq/hw-transport-node-hid
 
-## 6.27.19-nightly.0
+## 6.27.19
 
 ### Patch Changes
 
-- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
-  - @ledgerhq/errors@6.13.1-nightly.0
-  - @ledgerhq/devices@8.0.6-nightly.0
-  - @ledgerhq/hw-transport@6.28.7-nightly.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.18-nightly.0
+- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
+
+  Patches the node-usb package
+
+## 6.27.19-hotfix.0
+
+### Patch Changes
+
+- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
+
+  Patches the node-usb package
 
 ## 6.27.18
 

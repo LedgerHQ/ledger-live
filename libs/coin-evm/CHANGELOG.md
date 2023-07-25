@@ -1,27 +1,24 @@
 # @ledgerhq/coin-evm
 
-## 0.4.1-nightly.1
+## 0.4.1
 
 ### Patch Changes
 
-- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
 
-- Updated dependencies [[`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
-  - @ledgerhq/evm-tools@1.0.2-nightly.1
-  - @ledgerhq/hw-app-eth@6.34.1-nightly.1
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/evm-tools@1.0.2
+  - @ledgerhq/hw-app-eth@6.34.1
 
-## 0.4.1-nightly.0
+## 0.4.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
-  - @ledgerhq/errors@6.13.1-nightly.0
-  - @ledgerhq/coin-framework@0.4.1-nightly.0
-  - @ledgerhq/domain-service@1.1.7-nightly.0
-  - @ledgerhq/devices@8.0.6-nightly.0
-  - @ledgerhq/hw-app-eth@6.34.1-nightly.0
-  - @ledgerhq/live-network@1.1.4-nightly.0
-  - @ledgerhq/evm-tools@1.0.2-nightly.0
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/evm-tools@1.0.2-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.1-hotfix.0
 
 ## 0.4.0
 

@@ -1,45 +1,24 @@
 # live-mobile
 
-## 3.28.0-nightly.1
+## 3.27.1
 
 ### Patch Changes
 
-- [#4084](https://github.com/LedgerHQ/ledger-live/pull/4084) [`0df5f85306`](https://github.com/LedgerHQ/ledger-live/commit/0df5f85306275adfc1efdb45243b2803b0367d41) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add toasts and drawer for apple warning about ptx services
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
 
-- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/evm-tools@1.0.2
+  - @ledgerhq/live-common@31.3.1
 
-- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
-
-- Updated dependencies [[`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8), [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
-  - @ledgerhq/live-common@31.4.0-nightly.1
-  - @ledgerhq/native-ui@0.20.3-nightly.0
-  - @ledgerhq/evm-tools@1.0.2-nightly.1
-
-## 3.28.0-nightly.0
-
-### Minor Changes
-
-- [#4013](https://github.com/LedgerHQ/ledger-live/pull/4013) [`fce9daab99`](https://github.com/LedgerHQ/ledger-live/commit/fce9daab99de0ca092ee3dbd9f578e7f5f8ffd86) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - adds earn dashboard screen and earn deeplinks
+## 3.27.1-hotfix.0
 
 ### Patch Changes
 
-- [#4054](https://github.com/LedgerHQ/ledger-live/pull/4054) [`aba777d60a`](https://github.com/LedgerHQ/ledger-live/commit/aba777d60a389ace93eccfbd1b19f247c124bb3a) Thanks [@mderrick](https://github.com/mderrick)! - apply discreet mode to nft gallery
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
 
-- [#4042](https://github.com/LedgerHQ/ledger-live/pull/4042) [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: locked device errors handling in LLM new firmwre update
-
-- [#3983](https://github.com/LedgerHQ/ledger-live/pull/3983) [`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5) Thanks [@cng-ledger](https://github.com/cng-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
-
-- Updated dependencies [[`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5), [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
-  - @ledgerhq/live-common@31.4.0-nightly.0
-  - @ledgerhq/errors@6.13.1-nightly.0
-  - @ledgerhq/coin-framework@0.4.1-nightly.0
-  - @ledgerhq/domain-service@1.1.7-nightly.0
-  - @ledgerhq/devices@8.0.6-nightly.0
-  - @ledgerhq/hw-transport@6.28.7-nightly.0
-  - @ledgerhq/hw-transport-http@6.28.2-nightly.0
-  - @ledgerhq/react-native-hid@6.29.6-nightly.0
-  - @ledgerhq/react-native-hw-transport-ble@6.29.4-nightly.0
-  - @ledgerhq/evm-tools@1.0.2-nightly.0
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/evm-tools@1.0.2-hotfix.0
+  - @ledgerhq/live-common@31.3.1-hotfix.0
 
 ## 3.27.0
 

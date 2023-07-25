@@ -1,20 +1,14 @@
-import BigNumber from "bignumber.js";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import * as RPC_API from "../../api/node/rpc.common";
-import {
-  deepFreeze,
-  makeAccount,
-  makeNftOperation,
-  makeOperation,
-  makeTokenAccount,
-} from "../fixtures/common.fixtures";
 import {
   attachOperations,
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
+  getDefaultFeeUnit,
   getEstimatedFees,
   getGasLimit,
   getSyncHash,
@@ -22,6 +16,15 @@ import {
   mergeSubAccounts,
   padHexString,
 } from "../../logic";
+
+import {
+  deepFreeze,
+  makeAccount,
+  makeNftOperation,
+  makeOperation,
+  makeTokenAccount,
+} from "../fixtures/common.fixtures";
+
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -199,6 +202,40 @@ describe("EVM Family", () => {
         };
 
         expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
+      });
+    });
+
+    describe("getDefaultFeeUnit", () => {
+      it("should return the unit when currency has only one", () => {
+        const expectedUnit: Unit = {
+          name: "name",
+          code: "code",
+          magnitude: 18,
+        };
+
+        const currency: Partial<CryptoCurrency> = {
+          units: [expectedUnit],
+        };
+
+        expect(getDefaultFeeUnit(currency as CryptoCurrency)).toEqual(expectedUnit);
+      });
+
+      it("should return the second unit when currency has multiple", () => {
+        const expectedUnit: Unit = {
+          name: "name",
+          code: "code",
+          magnitude: 18,
+        };
+
+        const currency: Partial<CryptoCurrency> = {
+          units: [
+            { ...expectedUnit, name: "unit0" },
+            expectedUnit,
+            { ...expectedUnit, name: "unit2" },
+          ],
+        };
+
+        expect(getDefaultFeeUnit(currency as CryptoCurrency)).toEqual(expectedUnit);
       });
     });
 

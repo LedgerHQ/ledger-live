@@ -1,44 +1,34 @@
 # ledger-live-desktop
 
-## 2.65.0-nightly.1
+## 2.64.2
 
 ### Patch Changes
 
-- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
 
-- Updated dependencies [[`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8), [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
-  - @ledgerhq/live-common@31.4.0-nightly.1
-  - @ledgerhq/react-ui@0.14.4-nightly.0
-  - @ledgerhq/coin-evm@0.4.1-nightly.1
-  - @ledgerhq/evm-tools@1.0.2-nightly.1
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4), [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49)]:
+  - @ledgerhq/coin-evm@0.4.1
+  - @ledgerhq/evm-tools@1.0.2
+  - @ledgerhq/live-common@31.3.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.16
 
-## 2.65.0-nightly.0
-
-### Minor Changes
-
-- [#3926](https://github.com/LedgerHQ/ledger-live/pull/3926) [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330) Thanks [@Justkant](https://github.com/Justkant)! - feat(recover): restore check seeded [PROTECT-1711]
+## 2.64.2-hotfix.1
 
 ### Patch Changes
 
-- [#4073](https://github.com/LedgerHQ/ledger-live/pull/4073) [`1eb3d3ab22`](https://github.com/LedgerHQ/ledger-live/commit/1eb3d3ab220756bd4f7352ea83d99cfe2ede3575) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix Lido/Kiln button analytics not working
+- Updated dependencies [[`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49)]:
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.16-hotfix.0
 
-- [#3983](https://github.com/LedgerHQ/ledger-live/pull/3983) [`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5) Thanks [@cng-ledger](https://github.com/cng-ledger)! - added ProviderIcon component to LLD & LLM which loads svg icons from CDN
+## 2.64.2-hotfix.0
 
-- [#4076](https://github.com/LedgerHQ/ledger-live/pull/4076) [`c89a42356f`](https://github.com/LedgerHQ/ledger-live/commit/c89a42356feb1a7353a74c3c355d4ec9e9adace3) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix tests
+### Patch Changes
 
-- Updated dependencies [[`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5), [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
-  - @ledgerhq/live-common@31.4.0-nightly.0
-  - @ledgerhq/errors@6.13.1-nightly.0
-  - @ledgerhq/coin-evm@0.4.1-nightly.0
-  - @ledgerhq/coin-framework@0.4.1-nightly.0
-  - @ledgerhq/domain-service@1.1.7-nightly.0
-  - @ledgerhq/devices@8.0.6-nightly.0
-  - @ledgerhq/hw-transport@6.28.7-nightly.0
-  - @ledgerhq/hw-transport-http@6.28.2-nightly.0
-  - @ledgerhq/hw-transport-node-hid-singleton@6.28.16-nightly.0
-  - @ledgerhq/hw-transport-vault@1.1.2-nightly.0
-  - @ledgerhq/live-network@1.1.4-nightly.0
-  - @ledgerhq/evm-tools@1.0.2-nightly.0
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/coin-evm@0.4.1-hotfix.0
+  - @ledgerhq/evm-tools@1.0.2-hotfix.0
+  - @ledgerhq/live-common@31.3.1-hotfix.0
 
 ## 2.64.1
 

@@ -1,31 +1,24 @@
 # live-common-tools
 
-## 0.6.1-nightly.1
+## 0.6.1
 
 ### Patch Changes
 
-- [#4090](https://github.com/LedgerHQ/ledger-live/pull/4090) [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
 
-- Updated dependencies [[`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8), [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
-  - @ledgerhq/live-common@31.4.0-nightly.1
-  - @ledgerhq/hw-app-eth@6.34.1-nightly.1
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/live-common@31.3.1
+  - @ledgerhq/hw-app-eth@6.34.1
 
-## 0.6.1-nightly.0
+## 0.6.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [[`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5), [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
-  - @ledgerhq/live-common@31.4.0-nightly.0
-  - @ledgerhq/errors@6.13.1-nightly.0
-  - @ledgerhq/coin-framework@0.4.1-nightly.0
-  - @ledgerhq/domain-service@1.1.7-nightly.0
-  - @ledgerhq/devices@8.0.6-nightly.0
-  - @ledgerhq/hw-app-eth@6.34.1-nightly.0
-  - @ledgerhq/hw-transport@6.28.7-nightly.0
-  - @ledgerhq/hw-transport-http@6.28.2-nightly.0
-  - @ledgerhq/hw-transport-web-ble@6.27.18-nightly.0
-  - @ledgerhq/hw-transport-webhid@6.27.18-nightly.0
-  - @ledgerhq/hw-transport-webusb@6.27.18-nightly.0
+- [#4103](https://github.com/LedgerHQ/ledger-live/pull/4103) [`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix building & bundling of `evm-tools` & `domain-service` libs due to .gitignore(s)
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/live-common@31.3.1-hotfix.0
+  - @ledgerhq/hw-app-eth@6.34.1-hotfix.0
 
 ## 0.6.0
 

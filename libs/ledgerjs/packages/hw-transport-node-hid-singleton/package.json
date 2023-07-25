@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid-singleton",
-  "version": "6.28.16-nightly.0",
+  "version": "6.28.16",
   "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid and node-usb",
   "keywords": [
     "Ledger",
@@ -34,7 +34,7 @@
     "@ledgerhq/logs": "workspace:^",
     "lodash": "^4.17.21",
     "node-hid": "^2.1.2",
-    "usb": "^2.9.0"
+    "usb": "2.9.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

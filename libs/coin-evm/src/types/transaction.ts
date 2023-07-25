@@ -137,6 +137,8 @@ export type GasOptions = {
   [key in "slow" | "medium" | "fast"]: FeeData;
 };
 
+export type Strategy = keyof GasOptions;
+
 export type EvmTransactionNftParam = {
   tokenId: ProtoNFT["tokenId"];
   contract: ProtoNFT["contract"];

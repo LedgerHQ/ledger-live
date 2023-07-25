@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.28.0-nightly.1",
+  "version": "3.27.1",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -67,6 +67,7 @@
     "@formatjs/intl-pluralrules": "^4.3.2",
     "@formatjs/intl-relativetimeformat": "^11.1.8",
     "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

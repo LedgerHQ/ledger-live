@@ -1,28 +1,26 @@
 # @ledgerhq/live-cli
 
-## 22.10.1-nightly.1
+## 22.10.1
 
 ### Patch Changes
 
-- Updated dependencies [[`2e5e37af96`](https://github.com/LedgerHQ/ledger-live/commit/2e5e37af96120b58fb56386cf77b6478cf06eed8), [`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
-  - @ledgerhq/live-common@31.4.0-nightly.1
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4), [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49)]:
+  - @ledgerhq/live-common@31.3.1
+  - @ledgerhq/hw-transport-node-hid@6.27.19
 
-## 22.10.1-nightly.0
+## 22.10.1-hotfix.1
 
 ### Patch Changes
 
-- Updated dependencies [[`5dba98a39d`](https://github.com/LedgerHQ/ledger-live/commit/5dba98a39de6765539f76446613f1a90ddb743d5), [`7901608c80`](https://github.com/LedgerHQ/ledger-live/commit/7901608c80343abb271cce495fce673c544e6330), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4), [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
-  - @ledgerhq/live-common@31.4.0-nightly.0
-  - @ledgerhq/errors@6.13.1-nightly.0
-  - @ledgerhq/coin-framework@0.4.1-nightly.0
-  - @ledgerhq/hw-transport@6.28.7-nightly.0
-  - @ledgerhq/hw-transport-http@6.28.2-nightly.0
-  - @ledgerhq/hw-transport-node-ble@6.27.18-nightly.0
-  - @ledgerhq/hw-transport-node-hid@6.27.19-nightly.0
-  - @ledgerhq/hw-transport-node-speculos@6.27.18-nightly.0
-  - @ledgerhq/live-network@1.1.4-nightly.0
-  - @ledgerhq/hw-app-btc@10.0.7-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.18-nightly.0
+- Updated dependencies [[`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49)]:
+  - @ledgerhq/hw-transport-node-hid@6.27.19-hotfix.0
+
+## 22.10.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/live-common@31.3.1-hotfix.0
 
 ## 22.10.0
 
