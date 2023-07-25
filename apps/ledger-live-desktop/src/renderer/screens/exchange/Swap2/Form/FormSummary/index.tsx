@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SectionFees from "./SectionFees";
 import SectionTarget from "./SectionTarget";
+
+// TODO fix the any types
 const Form = styled.section.attrs<{ ready?: boolean }>(({ ready }) => ({
   style: ready
     ? {
@@ -23,10 +25,12 @@ const Form = styled.section.attrs<{ ready?: boolean }>(({ ready }) => ({
   max-height: 0;
   overflow: hidden;
 `;
+
 type SwapFormSummaryProps = {
   swapTransaction: SwapTransactionType;
   provider?: string;
 };
+
 const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) => {
   const {
     transaction,
@@ -43,11 +47,14 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
   } = swapTransaction.swap.from;
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
-  const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0;
-  const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
+  const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0; // TODO why do we need this and the below line? They appear to be the same thing
+  const [hasFetchedRates, setHasFetchedRates] = useState<boolean>(hasRates);
+
   useEffect(() => setHasFetchedRates(v => (!v ? hasRates : v)), [hasRates]);
+
   return (
     <Form ready={!!hasFetchedRates}>
+      {/* TODO: why hasFetchedRates and hasRates ?  */}
       <SectionTarget
         account={toAccount}
         currency={toCurrency}
