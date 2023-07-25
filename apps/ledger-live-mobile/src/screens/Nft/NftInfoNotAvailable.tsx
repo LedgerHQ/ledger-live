@@ -1,4 +1,4 @@
-import { Box, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { Trans } from "react-i18next";
 import { Linking } from "react-native";
@@ -20,7 +20,7 @@ export const notAvailableModalInfo = (onClose?: () => void): ModalInfo[] => {
       title: <Trans i18nKey={"nft.modalDisabled.title"} />,
       Icon: () => (
         <IconInfoContainer>
-          {Icons.InfoAltFillMedium({ color: "#BBB0FF", size: 23 })}
+          {IconsLegacy.InfoAltFillMedium({ color: "#BBB0FF", size: 23 })}
         </IconInfoContainer>
       ),
       titleProps: { textAlign: "center", paddingLeft: 40, paddingRight: 40 },
@@ -38,7 +38,7 @@ export const notAvailableModalInfo = (onClose?: () => void): ModalInfo[] => {
             type="default"
             mt={2}
             iconPosition="right"
-            Icon={Icons.ExternalLinkMedium}
+            Icon={IconsLegacy.ExternalLinkMedium}
             onPress={() => Linking.openURL(urls.nft.supportDisableIos)}
           >
             <Trans i18nKey={"nft.modalDisabled.learnMore"} />

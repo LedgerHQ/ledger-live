@@ -1,4 +1,4 @@
-import { GasOptions, Transaction } from "@ledgerhq/coin-evm/types/index";
+import { Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AccountBridge } from "@ledgerhq/types-live";
@@ -44,7 +44,7 @@ const WhiteSpacedLabel = styled(Label)`
   color: ${p => p.theme.colors.neutral.c60};
 `;
 
-const strategies: (keyof GasOptions)[] = ["slow", "medium", "fast"];
+const strategies: Strategy[] = ["slow", "medium", "fast"];
 
 const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   account,

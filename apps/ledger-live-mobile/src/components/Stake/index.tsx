@@ -17,14 +17,32 @@ const StakeFlow = ({ route }: Props) => {
   const currencies = route?.params?.currencies || featureFlag?.params?.list;
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;
+  const account = route?.params?.account;
+  const alwaysShowNoFunds = route?.params?.alwaysShowNoFunds;
+
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
       currencies: currencies || [],
     });
   }, [currencies]);
 
-  const onSuccess = useCallback(
+  const goToAccount = useCallback(
     (account: Account, parentAccount?: Account) => {
+      if (alwaysShowNoFunds) {
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.NoFundsFlow,
+          drawer: undefined,
+          params: {
+            screen: ScreenName.NoFunds,
+            params: {
+              account,
+              parentAccount,
+            },
+          },
+        });
+        return;
+      }
+
       // @ts-expect-error issue in typing
       const decorators = perFamilyAccountActions[account?.currency?.family];
       const familySpecificMainActions =
@@ -41,6 +59,7 @@ const StakeFlow = ({ route }: Props) => {
         (action: { id: string }) => action.id === "stake",
       )?.navigationParams;
       if (!stakeFlow) return null;
+
       const [name, options] = stakeFlow;
 
       navigation.navigate(NavigatorName.Base, {
@@ -56,7 +75,7 @@ const StakeFlow = ({ route }: Props) => {
         },
       });
     },
-    [navigation, parentRoute],
+    [navigation, parentRoute, alwaysShowNoFunds],
   );
 
   const requestAccount = useCallback(() => {
@@ -66,7 +85,7 @@ const StakeFlow = ({ route }: Props) => {
         screen: ScreenName.RequestAccountsSelectAccount,
         params: {
           currency: cryptoCurrencies[0],
-          onSuccess,
+          onSuccess: goToAccount,
         },
       });
     } else {
@@ -75,15 +94,19 @@ const StakeFlow = ({ route }: Props) => {
         params: {
           currencies: cryptoCurrencies,
           allowAddAccount: true,
-          onSuccess,
+          onSuccess: goToAccount,
         },
       });
     }
-  }, [cryptoCurrencies, navigation, onSuccess]);
+  }, [cryptoCurrencies, navigation, goToAccount]);
 
   useLayoutEffect(() => {
-    requestAccount();
-  }, [requestAccount]);
+    if (account) {
+      goToAccount(account);
+    } else {
+      requestAccount();
+    }
+  }, [requestAccount, goToAccount, account]);
 
   return null;
 };

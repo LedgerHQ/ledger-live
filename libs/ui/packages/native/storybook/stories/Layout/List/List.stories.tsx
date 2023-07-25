@@ -1,7 +1,7 @@
 import React from "react";
 import { ComponentStory } from "@storybook/react-native";
 import { List } from "../../../../src/components";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 
 const description = `
 This is a simple bullet list component with fixed layout (text and description), that allows any kind of bullet point.
@@ -60,7 +60,7 @@ const DefaultArgs = {
 };
 Default.args = DefaultArgs;
 
-const Check = <Icons.CheckAloneMedium size={20} color={"#6EC85C"} />;
+const Check = <IconsLegacy.CheckAloneMedium size={20} color={"#6EC85C"} />;
 export const Bullets: ComponentStory<typeof List> = (args: typeof BulletArgs) => {
   return (
     <List

@@ -1,10 +1,10 @@
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 
 export const customImageAction: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
-  Icon: Icons.PhotographMedium,
+  Icon: IconsLegacy.PhotographMedium,
   featureFlagId: "customImage",
   title: "postOnboarding.actions.customImage.title",
   titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
@@ -25,7 +25,7 @@ export const customImageAction: PostOnboardingAction = {
 export const claimNftAction: PostOnboardingAction = {
   id: PostOnboardingActionId.claimNft,
   disabled: false,
-  Icon: Icons.GiftCardMedium,
+  Icon: IconsLegacy.GiftCardMedium,
   featureFlagId: "postOnboardingClaimNft",
   title: "postOnboarding.actions.claimNft.title",
   titleCompleted: "postOnboarding.actions.claimNft.titleCompleted",
@@ -45,7 +45,7 @@ export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
   disabled: true,
   featureFlagId: "postOnboardingAssetsTransfer",
-  Icon: Icons.LockClosedMedium,
+  Icon: IconsLegacy.LockClosedMedium,
   title: "postOnboarding.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
   description: "postOnboarding.actions.assetsTransfer.description",

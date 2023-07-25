@@ -1,6 +1,16 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import { Alert, Button, Divider, Flex, Icons, Link, Switch, Tag, Text } from "@ledgerhq/native-ui";
+import {
+  Alert,
+  Button,
+  Divider,
+  Flex,
+  IconsLegacy,
+  Link,
+  Switch,
+  Tag,
+  Text,
+} from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
@@ -58,7 +68,7 @@ const DebugStoryly = () => {
               <Flex flex={1} />
               <Link
                 type="color"
-                Icon={Icons.ChevronRightMedium}
+                Icon={IconsLegacy.ChevronRightMedium}
                 onPress={() => navigation.navigate(ScreenName.OnboardingLanguage)}
               >
                 {languages[locale]}

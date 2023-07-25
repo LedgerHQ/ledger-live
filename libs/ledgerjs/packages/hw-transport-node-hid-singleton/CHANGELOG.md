@@ -1,5 +1,21 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.28.16
+
+### Patch Changes
+
+- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
+
+  Patches the node-usb package
+
+## 6.28.16-hotfix.0
+
+### Patch Changes
+
+- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
+
+  Patches the node-usb package
+
 ## 6.28.15
 
 ### Patch Changes

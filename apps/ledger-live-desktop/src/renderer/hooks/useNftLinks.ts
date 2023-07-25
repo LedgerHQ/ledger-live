@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { TFunction, useTranslation } from "react-i18next";
 import { Account, ProtoNFT, NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
 import IconOpensea from "~/renderer/icons/Opensea";
 import IconRarible from "~/renderer/icons/Rarible";
@@ -52,7 +52,7 @@ const linksPerCurrency: Record<
         label: t("NFT.viewer.actions.open", {
           viewer: "Explorer",
         }),
-        Icon: Icons.GlobeMedium,
+        Icon: IconsLegacy.GlobeMedium,
         type: "external",
         callback: () => openURL(links.explorer),
       },
@@ -87,7 +87,7 @@ const linksPerCurrency: Record<
         label: t("NFT.viewer.actions.open", {
           viewer: "Explorer",
         }),
-        Icon: Icons.GlobeMedium,
+        Icon: IconsLegacy.GlobeMedium,
         type: "external",
         callback: () => openURL(links.explorer),
       },
@@ -107,7 +107,7 @@ export default (
     () => ({
       id: "hide-collection",
       label: t("hideNftCollection.hideCTA"),
-      Icon: Icons.NoneMedium,
+      Icon: IconsLegacy.NoneMedium,
       callback: () => {
         return dispatch(
           openModal("MODAL_HIDE_NFT_COLLECTION", {
@@ -136,7 +136,7 @@ export default (
     const img: ContextMenuItemType = {
       id: "custom-image",
       label: t("customImage.cta"),
-      Icon: Icons.PhotographMedium,
+      Icon: IconsLegacy.PhotographMedium,
       callback: () => {
         if (customImageUri)
           setDrawer(
