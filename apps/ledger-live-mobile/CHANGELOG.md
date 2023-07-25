@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.28.0-nightly.0
+
+### Minor Changes
+
+- [#3945](https://github.com/LedgerHQ/ledger-live/pull/3945) [`b4071d2957`](https://github.com/LedgerHQ/ledger-live/commit/b4071d2957cdf728c98fffb1deb542516019da9d) Thanks [@chabroA](https://github.com/chabroA)! - Create EVM send flow for LLM
+
+### Patch Changes
+
+- [#4070](https://github.com/LedgerHQ/ledger-live/pull/4070) [`0ac4ab5455`](https://github.com/LedgerHQ/ledger-live/commit/0ac4ab5455098f734fe51a9f5c71971fd2234d24) Thanks [@mderrick](https://github.com/mderrick)! - use transparent background on nft viewer screen
+
+- Updated dependencies [[`12c6004c2c`](https://github.com/LedgerHQ/ledger-live/commit/12c6004c2cbc97df13cd465e1a9a09e6114df2be)]:
+  - @ledgerhq/live-common@31.3.2-nightly.0
+
 ## 3.27.1
 
 ### Patch Changes

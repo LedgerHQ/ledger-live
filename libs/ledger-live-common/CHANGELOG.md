@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.3.2-nightly.0
+
+### Patch Changes
+
+- [#4065](https://github.com/LedgerHQ/ledger-live/pull/4065) [`12c6004c2c`](https://github.com/LedgerHQ/ledger-live/commit/12c6004c2cbc97df13cd465e1a9a09e6114df2be) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix osmo naming error
+
 ## 31.3.1
 
 ### Patch Changes

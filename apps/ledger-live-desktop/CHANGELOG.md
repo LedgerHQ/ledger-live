@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.64.3-nightly.0
+
+### Patch Changes
+
+- [#4115](https://github.com/LedgerHQ/ledger-live/pull/4115) [`4ea9b51ecc`](https://github.com/LedgerHQ/ledger-live/commit/4ea9b51ecc22513b06de9a8cd7639ede218b38a7) Thanks [@Justkant](https://github.com/Justkant)! - fix(discover): filtering on LLD [LIVE-8639]
+
+- Updated dependencies [[`12c6004c2c`](https://github.com/LedgerHQ/ledger-live/commit/12c6004c2cbc97df13cd465e1a9a09e6114df2be)]:
+  - @ledgerhq/live-common@31.3.2-nightly.0
+
 ## 2.64.2
 
 ### Patch Changes
