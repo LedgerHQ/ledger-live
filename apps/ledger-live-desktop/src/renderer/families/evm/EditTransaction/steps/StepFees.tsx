@@ -28,12 +28,13 @@ const StepFees = (props: StepProps) => {
     updateTransaction,
   } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  if (!mainAccount || !transaction) {
+
+  if (!mainAccount || !transaction || !transactionRaw) {
     return null;
   }
 
   const feePerGas = new BigNumber(
-    transaction?.type === 2 ? transactionRaw?.maxFeePerGas ?? 0 : transactionRaw?.gasPrice ?? 0,
+    transaction?.type === 2 ? transactionRaw.maxFeePerGas ?? 0 : transactionRaw.gasPrice ?? 0,
   );
   const feeValue = new BigNumber(transactionRaw.gasLimit || 0)
     .times(feePerGas)
@@ -45,18 +46,16 @@ const StepFees = (props: StepProps) => {
   logger.log(`transactionRaw.maxPriorityFeePerGas: ${transactionRaw.maxPriorityFeePerGas}`);
 
   let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
-  if (transaction?.type === 2) {
+  if (transaction.type === 2) {
     // dividedBy 1000000000 to convert from wei to gwei
-    maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw?.maxPriorityFeePerGas ?? 0)
+    maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw.maxPriorityFeePerGas ?? 0)
       .dividedBy(1000000000)
       .toFixed();
-    maxFeePerGasinGwei = new BigNumber(transactionRaw?.maxFeePerGas ?? 0)
+    maxFeePerGasinGwei = new BigNumber(transactionRaw.maxFeePerGas ?? 0)
       .dividedBy(1000000000)
       .toFixed();
   } else {
-    maxGasPriceinGwei = new BigNumber(transactionRaw?.gasPrice ?? 0)
-      .dividedBy(1000000000)
-      .toFixed();
+    maxGasPriceinGwei = new BigNumber(transactionRaw.gasPrice ?? 0).dividedBy(1000000000).toFixed();
   }
 
   return (
