@@ -1,4 +1,5 @@
 import { formatCountdown } from "~/renderer/screens/exchange/Swap2/Form/Rates/utils/formatCountdown";
+
 describe("formatCountdown", () => {
   it("formats countdown to timer", () => {
     expect(formatCountdown(1)).toBe("00:01");
