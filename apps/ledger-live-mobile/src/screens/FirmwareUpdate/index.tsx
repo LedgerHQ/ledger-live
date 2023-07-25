@@ -50,6 +50,7 @@ import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage
 import Button from "../../components/wrappedUi/Button";
 import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
+import UpdateReleaseNotes from "./UpdateReleaseNotes";
 
 type FirmwareUpdateProps = {
   device: Device;
@@ -152,6 +153,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
   const {
+    startUpdate,
     connectManagerState,
     updateActionState,
     updateStep,
@@ -660,7 +662,12 @@ export const FirmwareUpdate = ({
 
   return (
     <>
-      {fullUpdateComplete ? (
+      {updateStep === "start" ? (
+        <UpdateReleaseNotes
+          onContinue={startUpdate}
+          firmwareNotes={firmwareUpdateContext.osu?.notes}
+        />
+      ) : fullUpdateComplete ? (
         <Flex flex={1} px={7} pb={7}>
           <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
