@@ -81,6 +81,7 @@ const usePickDefaultAccount = (
     }
   }, [accounts, allCurrencies, fromAccount, setFromAccount]);
 };
+
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
   setFromAccount: SwapTransactionType["setFromAccount"];
@@ -94,6 +95,7 @@ type Props = {
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
 };
+
 /* @dev: Yeah, Im sorry if you read this, design asked us to
  override the input component when it is called from the swap form. */
 const InputSection = styled(Box)`
@@ -107,6 +109,7 @@ const InputSection = styled(Box)`
     margin-right: -15px;
   }
 `;
+
 function FromRow({
   fromAmount,
   setFromAmount,
@@ -160,6 +163,7 @@ function FromRow({
     });
     toggleMax();
   };
+
   return (
     <>
       <Box
