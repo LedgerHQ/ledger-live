@@ -1,5 +1,3 @@
-//used to build legacy icons - to be deprecated
-
 const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
@@ -62,8 +60,8 @@ import { system } from "styled-system";
 
 export default styled.svg\`
   \${system({
-    fill: {
-      property: "fill",
+    color: {
+      property: "color",
       scale: "colors",
     }
   })}
@@ -76,8 +74,8 @@ import { system } from "styled-system";
 import Svg, { SvgProps } from "react-native-svg";
 
 const fillSystem = system({
-  fill: {
-    property: "fill",
+  color: {
+    property: "color",
     scale: "colors",
   },
 });
@@ -136,7 +134,7 @@ function reactNativeTemplate(
     ${sizeInterface}
 
     const availableSizes: AvailableSizes = ${JSON.stringify(availableSizes)}
-    
+
     function ${componentName} ({ size = "M", color = "neutral.c100", style }: Props): JSX.Element {
         const strokeWidth = availableSizes[size]?.stroke
         const appliedSize = availableSizes[size]?.size
@@ -184,8 +182,8 @@ const convert = (svg, options, componentName, outputFile) => {
     .then(result => {
       let component = result.replace("xlinkHref=", "href=").replace("import Svg,", "import ");
 
-      component = component.replace(/fill="white"/g, "fill={color}");
-      component = component.replace(/stroke="white"/g, "stroke={color}");
+      component = component.replace(/fill="white"/g, 'fill="currentColor"');
+      component = component.replace(/stroke="white"/g, 'stroke="currentColor"');
       component = component.replace(/<path/g, '<path vector-effect="non-scaling-stroke"');
       component = component.replace(/<Path/g, '<Path vector-effect="non-scaling-stroke"');
 
