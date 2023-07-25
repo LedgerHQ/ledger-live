@@ -80,6 +80,7 @@ const idleTime = 60 * 60000; // 1 hour
 const Button = styled(ButtonBase)`
   justify-content: center;
 `;
+
 export const useProviders = () => {
   const dispatch = useDispatch();
   const { providers, error: providersError } = useSwapProviders();
@@ -98,6 +99,7 @@ export const useProviders = () => {
     providersError,
   };
 };
+
 const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState<string | null>(null);
@@ -112,15 +114,17 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const { storedProviders, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
+  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
+    "swapWalletApiPartnerList",
+  );
+
   const setExchangeRate = useCallback(
     rate => {
       dispatch(updateRateAction(rate));
     },
     [dispatch],
   );
-  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
-    "swapWalletApiPartnerList",
-  );
+
   const onNoRates = useCallback(
     ({ toState }) => {
       track("error_message", {
@@ -132,6 +136,7 @@ const SwapForm = () => {
     },
     [swapDefaultTrack],
   );
+
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
@@ -157,6 +162,7 @@ const SwapForm = () => {
     setCurrentFlow(null);
     setError(undefined);
   }, [provider]);
+
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
     if (error) {
@@ -191,7 +197,9 @@ const SwapForm = () => {
       setCurrentBanner("KYC");
     }
   }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
+
   const { setDrawer } = React.useContext(context);
+
   const pauseRefreshing = !!swapError || idleState;
   const refreshTime = useRefreshRates(swapTransaction.swap, {
     pause: pauseRefreshing,
@@ -203,6 +211,7 @@ const SwapForm = () => {
       setIdleState(true);
     }, idleTime);
   }, [idleState]);
+
   const swapWebAppRedirection = useCallback(() => {
     const { to, from } = swapTransaction.swap;
     const transaction = swapTransaction.transaction;
@@ -230,15 +239,17 @@ const SwapForm = () => {
       });
     }
   }, [history, swapTransaction, provider, exchangeRate?.rateId]);
+
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
     }
   }, [refreshIdle, swapTransaction.swap.rates.status]);
+
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [swapTransaction.transaction]);
+  }, [swapTransaction.transaction, dispatch]);
+
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
     // (possibly the one that got created)
@@ -483,6 +494,7 @@ const SwapForm = () => {
     // suppressing as swapTransaction is not memoized and causes infinite loop
     // eslint-disable-next-line
   }, [exchangeRate]);
+
   switch (currentFlow) {
     case "LOGIN":
       return <Login provider={provider} onClose={() => setCurrentFlow(null)} />;
@@ -505,6 +517,7 @@ const SwapForm = () => {
     default:
       break;
   }
+
   const setFromAccount = (account: AccountLike | undefined) => {
     swapTransaction.setFromAccount(account);
   };
@@ -517,6 +530,7 @@ const SwapForm = () => {
   const toggleMax = () => {
     swapTransaction.toggleMax();
   };
+
   if (storedProviders?.length)
     return (
       <Wrapper>
@@ -559,6 +573,7 @@ const SwapForm = () => {
             />
           </>
         )}
+
         {currentBanner === "LOGIN" ? (
           <FormLoginBanner provider={provider} onClick={() => setCurrentFlow("LOGIN")} />
         ) : null}
@@ -573,6 +588,7 @@ const SwapForm = () => {
           <FormMFABanner provider={provider} onClick={() => setCurrentFlow("MFA")} />
         ) : null}
         {error ? <FormErrorBanner provider={provider} error={error} /> : null}
+
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
             {t("common.exchange")}
@@ -591,4 +607,5 @@ const SwapForm = () => {
   }
   return <FormLoading />;
 };
+
 export default SwapForm;
