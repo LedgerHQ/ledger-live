@@ -4356,6 +4356,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  base: {
+    type: "CryptoCurrency",
+    id: "base",
+    coinType: CoinType.ETH,
+    name: "Base",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "base",
+    color: "#1755FE",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 8453,
+      node: { type: "external", uri: "https://developer-access-mainnet.base.org" },
+      explorer: { type: "etherscan", uri: "https://api.basescan.org" },
+    },
+    explorerViews: [
+      {
+        tx: "https://basescan.org/tx/$hash",
+        address: "https://basescan.org/address/$address",
+        token: "https://basescan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   klaytn: {
     type: "CryptoCurrency",
     id: "klaytn",

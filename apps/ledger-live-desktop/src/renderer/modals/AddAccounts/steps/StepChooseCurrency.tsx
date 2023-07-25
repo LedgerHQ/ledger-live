@@ -58,6 +58,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
   const polygon_zk_evm = useFeature("currencyPolygonZkEvm");
+  const base = useFeature("currencyBase");
   const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
@@ -91,6 +92,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       telos: telosEvm,
       coreum,
       polygonZkEvm: polygon_zk_evm,
+      base,
       klaytn,
     }),
     [
@@ -123,6 +125,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       telosEvm,
       coreum,
       polygon_zk_evm,
+      base,
       klaytn,
     ],
   );
