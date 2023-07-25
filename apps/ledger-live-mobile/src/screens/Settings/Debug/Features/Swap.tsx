@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Button from "../../../../components/Button";
 import CheckBox from "../../../../components/CheckBox";
 import { setSwapKYCStatus } from "../../../../actions/settings";
+import { swapKYCSelector } from "../../../../reducers/settings";
 import LText from "../../../../components/LText";
 import Touchable from "../../../../components/Touchable";
 
@@ -13,7 +14,6 @@ export default function DebugSwap() {
   const swapKYC = useSelector(swapKYCSelector);
   const [configWrapper, setConfigWrapper] = useState(Config.SWAP_DISABLED_PROVIDERS || "");
   const [configIDWrapper, setConfigIDWrapper] = useState(Config.SWAP_OVERRIDE_KYC_USER_ID || "");
-
   const onToggleWyreId = useCallback(() => {
     setConfigIDWrapper(configIDWrapper ? "" : "wadus");
   }, [configIDWrapper]);
@@ -24,9 +24,7 @@ export default function DebugSwap() {
       }),
     );
   }, [dispatch]);
-
   const currentDisabledProviders = useMemo(() => configWrapper.split(","), [configWrapper]);
-
   const onToggleProvider = useCallback(
     provider => {
       if (currentDisabledProviders.includes(provider)) {
@@ -37,14 +35,12 @@ export default function DebugSwap() {
     },
     [currentDisabledProviders],
   );
-
   useEffect(() => {
     Config.SWAP_DISABLED_PROVIDERS = configWrapper;
   }, [configWrapper]);
   useEffect(() => {
     Config.SWAP_OVERRIDE_KYC_USER_ID = configIDWrapper;
   }, [configIDWrapper]);
-
   return (
     <View style={styles.wrapper}>
       <Button
@@ -81,7 +77,6 @@ export default function DebugSwap() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     padding: 20,
