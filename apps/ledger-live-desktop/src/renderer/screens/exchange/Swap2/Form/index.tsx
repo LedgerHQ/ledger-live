@@ -1,4 +1,3 @@
-import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import {
   useSwapProviders,
   useSwapTransaction,
