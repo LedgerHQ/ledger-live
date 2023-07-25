@@ -114,6 +114,7 @@ export const SwapExchangeRateAmountTooLow = createCustomErrorClass("SwapExchange
 export const SwapExchangeRateAmountTooHigh = createCustomErrorClass(
   "SwapExchangeRateAmountTooHigh",
 );
+export const SwapFeeEstimationFailed = createCustomErrorClass("SwapFeeEstimationFailed");
 export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
   "SwapExchangeRateAmountTooLowOrTooHigh",
 );

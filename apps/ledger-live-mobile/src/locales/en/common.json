@@ -301,6 +301,9 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "SwapFeeEstimationFailed": {
+      "title": "Network fee estimation failed because of technical issues. Try again or change the assets."
+    },
     "FirmwareOrAppUpdateRequired": {
       "title": "Firmware or app update needed",
       "description": "Please use the Manager to uninstall all apps then check if a firmware update is available before reinstalling them."

@@ -15,6 +15,7 @@ import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
 import { Account } from "@ledgerhq/types-live";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
+import { useErrorState } from "./useErrorState";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -29,12 +30,12 @@ export const useFromAmountError = (
   errors: Record<string, Error | undefined>,
 ): Error | undefined => {
   const fromAmountError = useMemo(() => {
-    const [error] = [errors?.gasPrice, errors?.amount]
+    const [error] = [errors?.gasPrice, errors?.amount, errors?.gasNetworkError]
       .filter(Boolean)
       .filter(error => !(error instanceof AmountRequired));
 
     return error;
-  }, [errors?.gasPrice, errors?.amount]);
+  }, [errors?.gasPrice, errors?.amount, errors?.gasNetworkError]);
 
   return fromAmountError;
 };
@@ -85,8 +86,8 @@ export const useSwapTransaction = ({
   } = fromState;
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
-
-  const fromAmountError = useFromAmountError(bridgeTransaction.status.errors);
+  const errors = useErrorState(bridgeTransaction);
+  const fromAmountError = useFromAmountError(errors);
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,

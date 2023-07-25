@@ -5478,6 +5478,9 @@
     "FeeRequired": {
       "title": "Fees are required"
     },
+    "SwapFeeEstimationFailed": {
+      "title": "Network fee estimation failed because of technical issues. Try again or change the assets."
+    },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },

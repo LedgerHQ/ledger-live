@@ -321,6 +321,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "GET",
         url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limit`,
+        timeout: 10000,
       });
       return new BigNumber(data.estimated_gas_limit);
     },
@@ -330,6 +331,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         method: "POST",
         url: `${baseURL}/tx/estimate-gas-limit`,
         data: transaction,
+        timeout: 10000,
       });
 
       if (data.error_message) {
