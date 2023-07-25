@@ -78,7 +78,7 @@ const AccountSubHeader = ({ account }: AccountSubHeaderPropsType) => {
         />
       </Card>
 
-      {true && (
+      {elrondResources.isGuarded && (
         <Alert type="warning" mb={3}>
           <Trans i18nKey={`elrond.guardedAccountWarning`} />
         </Alert>
