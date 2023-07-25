@@ -55,6 +55,8 @@ test("Earn @smoke", async ({ page }) => {
     await expect(await liveAppWebview.waitForCorrectTextInWebview("currencyTicker: USD")).toBe(
       true,
     );
-    await expect.soft(page).toHaveScreenshot("earn-app-opened.png");
+    await expect
+      .soft(page)
+      .toHaveScreenshot("earn-app-opened.png", { mask: [page.locator("webview")] });
   });
 });
