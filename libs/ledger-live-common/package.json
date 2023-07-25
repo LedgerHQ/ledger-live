@@ -182,7 +182,7 @@
     "@types/pako": "^2.0.0",
     "@types/qs": "^6.9.7",
     "@types/redux-actions": "^2.6.2",
-    "@walletconnect/client": "1.7.3",
+    "@walletconnect/client": "1.7.8",
     "@xstate/react": "^1.6.3",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/izari-filecoin": "^1.2.0",
