@@ -20,6 +20,7 @@ import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
+
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
   toCurrency: SwapSelectorStateType["currency"];
@@ -28,6 +29,7 @@ type Props = {
   refreshTime: number;
   countdown: boolean;
 };
+
 const TableHeader = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
@@ -43,6 +45,7 @@ const TableHeader = styled(Box).attrs({
 })`
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
+
 export default function ProviderRate({
   fromCurrency,
   toCurrency,
@@ -57,6 +60,7 @@ export default function ProviderRate({
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
+
   const updateRate = useCallback(
     rate => {
       const value = rate ?? rate.provider;
@@ -72,6 +76,7 @@ export default function ProviderRate({
     },
     [defaultPartner, dispatch, swapDefaultTrack],
   );
+
   useEffect(() => {
     // if the selected rate in redux is not in the filtered rates, we need to update it
     if (
@@ -99,6 +104,7 @@ export default function ProviderRate({
       dispatch(updateRateAction(null));
     }
   }, [filteredRates, selectedRate, dispatch]);
+
   const updateFilter = useCallback(
     (newFilter: string[]) => {
       track("button_clicked", {
@@ -111,6 +117,7 @@ export default function ProviderRate({
     },
     [swapDefaultTrack],
   );
+
   return (
     <Box height="100%" width="100%">
       <TrackPage
