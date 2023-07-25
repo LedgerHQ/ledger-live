@@ -28,9 +28,10 @@ const StepFees = (props: StepProps) => {
     updateTransaction,
   } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  if (!mainAccount) {
+  if (!mainAccount || !transaction) {
     return null;
   }
+
   const feePerGas = new BigNumber(
     transaction?.type === 2 ? transactionRaw?.maxFeePerGas ?? 0 : transactionRaw?.gasPrice ?? 0,
   );
