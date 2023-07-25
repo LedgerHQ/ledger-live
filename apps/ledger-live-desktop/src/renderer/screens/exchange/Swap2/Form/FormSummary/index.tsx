@@ -48,7 +48,7 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
   const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0; // TODO why do we need this and the below line? They appear to be the same thing
-  const [hasFetchedRates, setHasFetchedRates] = useState<boolean>(hasRates);
+  const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
 
   useEffect(() => setHasFetchedRates(v => (!v ? hasRates : v)), [hasRates]);
 
