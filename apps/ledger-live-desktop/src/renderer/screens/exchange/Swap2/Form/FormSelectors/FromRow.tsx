@@ -29,6 +29,19 @@ import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currenci
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
+type Props = {
+  fromAccount: SwapSelectorStateType["account"];
+  setFromAccount: SwapTransactionType["setFromAccount"];
+  toggleMax: SwapTransactionType["toggleMax"];
+  fromAmount: SwapSelectorStateType["amount"];
+  setFromAmount: SwapTransactionType["setFromAmount"];
+  isMaxEnabled: boolean;
+  fromAmountError?: Error;
+  provider: string | undefined | null;
+  isSendMaxLoading: boolean;
+  updateSelectedRate: SwapDataType["updateSelectedRate"];
+};
+
 // Pick a default source account if none are selected.
 // TODO use live-common once its ready
 const usePickDefaultAccount = (
@@ -59,18 +72,7 @@ const usePickDefaultAccount = (
     }
   }, [accounts, allCurrencies, fromAccount, setFromAccount]);
 };
-type Props = {
-  fromAccount: SwapSelectorStateType["account"];
-  setFromAccount: SwapTransactionType["setFromAccount"];
-  toggleMax: SwapTransactionType["toggleMax"];
-  fromAmount: SwapSelectorStateType["amount"];
-  setFromAmount: SwapTransactionType["setFromAmount"];
-  isMaxEnabled: boolean;
-  fromAmountError?: Error;
-  provider: string | undefined | null;
-  isSendMaxLoading: boolean;
-  updateSelectedRate: SwapDataType["updateSelectedRate"];
-};
+
 /* @dev: Yeah, Im sorry if you read this, design asked us to
  override the input component when it is called from the swap form. */
 const InputSection = styled(Box)`
@@ -84,6 +86,7 @@ const InputSection = styled(Box)`
     margin-right: -15px;
   }
 `;
+
 function FromRow({
   fromAmount,
   setFromAmount,
@@ -136,6 +139,7 @@ function FromRow({
     });
     toggleMax();
   };
+
   return (
     <>
       <Box

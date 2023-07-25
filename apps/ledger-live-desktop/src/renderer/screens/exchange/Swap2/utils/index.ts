@@ -14,6 +14,7 @@ export const useGetSwapTrackingProperties = () => {
     [],
   );
 };
+
 export const useRedirectToSwapHistory = () => {
   const history = useHistory();
   return useCallback(

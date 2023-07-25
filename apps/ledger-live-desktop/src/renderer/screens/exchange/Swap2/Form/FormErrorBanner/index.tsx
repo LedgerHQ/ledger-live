@@ -4,14 +4,17 @@ import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
+
 const FormErrorBanner = ({ provider, error }: { provider?: string; error: string }) => {
   const { t } = useTranslation();
+
   const openProviderSupport = useCallback(() => {
     if (!provider) {
       return;
     }
     openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.support);
   }, [provider]);
+
   if (!provider) return null;
   const ctaLabel = t("common.getSupport");
   let message = `${t("crash.title")} - ${error}`;
@@ -25,6 +28,7 @@ const FormErrorBanner = ({ provider, error }: { provider?: string; error: string
     default:
       break;
   }
+
   return <SectionInformative message={message} ctaLabel={ctaLabel} onClick={openProviderSupport} />;
 };
 export default FormErrorBanner;
