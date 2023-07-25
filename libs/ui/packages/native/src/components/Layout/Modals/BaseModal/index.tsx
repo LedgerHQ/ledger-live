@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import ReactNativeModal, { ModalProps } from "react-native-modal";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { StyleProp, ViewStyle } from "react-native";
 
 import sizes from "../../../../helpers/getDeviceSize";
@@ -115,10 +115,11 @@ export function ModalHeader({
 export function ModalHeaderCloseButton({
   onClose,
 }: Pick<BaseModalProps, "onClose">): React.ReactElement {
+  const { colors } = useTheme();
   return (
     <CloseContainer>
       <ClosePressableExtendedBounds onPress={onClose}>
-        <Close color="neutral.c100" size="S" />
+        <Close color={colors.neutral.c100} size="S" />
       </ClosePressableExtendedBounds>
     </CloseContainer>
   );
