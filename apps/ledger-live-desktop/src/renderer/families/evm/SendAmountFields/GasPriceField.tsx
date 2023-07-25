@@ -47,6 +47,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   const range = networkGasPrice || lastNetworkGasPrice;
   const gasPrice = transaction.gasPrice || range.initial;
   const { units } = account.currency;
+
   return (
     <FeeSliderField
       range={range}
@@ -58,4 +59,5 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
     />
   );
 };
+
 export default memo(FeesField);
