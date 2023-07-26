@@ -1,6 +1,5 @@
 import { expect } from "detox";
 import PortfolioPage from "../models/wallet/portfolioPage";
-
 import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
