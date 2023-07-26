@@ -5145,7 +5145,8 @@
       "description": "This crypto asset is not yet supported. Please contact Ledger Support."
     },
     "DeviceAlreadySetup": {
-      "title": "Your device is already setup with a Secret Recover Phrase"
+      "title": "Your device is already set up with a Secret Recovery Phrase",
+      "description": null
     },
     "DeviceNotGenuine": {
       "title": "Possibly not genuine",

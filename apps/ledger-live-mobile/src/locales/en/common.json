@@ -240,6 +240,10 @@
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again."
     },
+    "DeviceAlreadySetup": {
+      "title": "Your device is already set up with a Secret Recovery Phrase",
+      "description": null
+    },
     "DeviceNotGenuine": {
       "title": "Device possibly not genuine",
       "description": "Please save your logs using the button below and provide them to Ledger Support."

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { DeviceOnboarded } from "@ledgerhq/live-common/errors";
@@ -34,6 +34,7 @@ type NavigationProps = RootComposite<
 >;
 
 export function RedirectToOnboardingRecoverFlowScreen({ navigation }: NavigationProps) {
+  const { t } = useTranslation();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
 
   // Not sure we need this,
@@ -196,9 +197,7 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
         <Flex px={16} py={5} flex={1} justifyContent="space-between">
           <Flex flex={1} justifyContent="center">
             <GenericErrorView
-              error={
-                new DeviceOnboarded("Your device is already setup with a Secret Recover Phrase")
-              }
+              error={new DeviceOnboarded(t("errors.DeviceAlreadySetup.title"))}
               withDescription
               hasExportLogButton={false}
               withIcon
