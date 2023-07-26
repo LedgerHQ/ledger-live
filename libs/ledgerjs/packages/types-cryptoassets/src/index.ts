@@ -23,6 +23,7 @@ export type CryptoCurrencyId =
   | "cardano_testnet"
   | "celo"
   | "clubcoin"
+  | "coreum"
   | "cosmos"
   | "cosmos_testnet"
   | "dash"
