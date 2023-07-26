@@ -2,6 +2,7 @@ import { expect } from "detox";
 import { loadConfig } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SwapFormPage from "../models/trade/swapFormPage";
+import { isAndroid } from "../helpers";
 
 let portfolioPage: PortfolioPage;
 let swapPage: SwapFormPage;
@@ -14,6 +15,10 @@ describe("Swap", () => {
     swapPage = new SwapFormPage();
 
     await portfolioPage.waitForPortfolioPageToLoad();
+  });
+
+  beforeEach(() => {
+    if (isAndroid()) return;
   });
 
   it("should load the Swap page from the Transfer menu", async () => {

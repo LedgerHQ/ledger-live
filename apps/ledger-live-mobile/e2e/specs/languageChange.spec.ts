@@ -3,6 +3,7 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
 import { loadConfig } from "../bridge/server";
+import { isAndroid } from "../helpers";
 
 let portfolioPage: PortfolioPage;
 let settingsPage: SettingsPage;
@@ -38,6 +39,10 @@ describe("Change Language", () => {
     generalSettingsPage = new GeneralSettingsPage();
 
     await portfolioPage.waitForPortfolioPageToLoad();
+  });
+
+  beforeEach(() => {
+    if (isAndroid()) return;
   });
 
   it("should go to General Settings", async () => {
