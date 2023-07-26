@@ -2053,6 +2053,7 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
+    "earn": "Earn",
     "learn": "Learn"
   },
   "learn": {
@@ -2630,8 +2631,6 @@
         "confirm": "Hide token"
       },
       "hideNFTCollectionCTA": "Hide collection",
-      "hiddenNFTCollections": "Hidden NFT collections",
-      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
       "hideNFTCollectionModal": {
         "title": "Hide Collection?",
         "desc": "You can unhide this collection in the setting options."
@@ -4223,6 +4222,18 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "batteryStatusErrors": {
+      "errors": {
+        "TimeoutError": {
+          "title": "Device disconnected",
+          "description": "The update was unable to start because we lost connection to {{deviceName}}"
+        },
+        "BatteryStatusNotRetrieved": {
+          "title": "Unable to retrieve battery status",
+          "description": "The update was unable to start because we weren't able to retrieve the battery status for {{deviceName}}"
+        }
+      }
     },
     "errors": {
       "TimeoutError": {
@@ -6239,11 +6250,20 @@
     },
     "nftGallery": {
       "filters": {
+        "select": "Select",
+        "filter": "Filter",
+        "blockchain": "Blockchain",
+        "seeAll": "See all",
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} collection",
+        "hiddenCollections": "Hidden collections",
         "hide_plural": "Hide {{count}} collections",
-        "alertHide": "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
-        "alertHide_plural": "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
+        "alertHide": "1 collection hidden. You can unhide them at any time in the gallery filter.",
+        "alertHide_plural": "{{count}} collections hidden. You can unhide them at any time in the gallery filter."
+      },
+      "emptyFiltered": {
+        "title": "There are no NFTs that meet your criteria",
+        "button": "Reset Filters"
       },
       "empty": {
         "title": "No NFTs to show, yet",
@@ -6262,7 +6282,7 @@
       },
       "hideNftModal": {
         "title": "Hide NFT collection",
-        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the app settings",
+        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the gallery filter",
         "cta": "Hide this NFT"
       },
       "media": {
