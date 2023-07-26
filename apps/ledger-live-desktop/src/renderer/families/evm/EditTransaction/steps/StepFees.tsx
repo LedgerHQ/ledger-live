@@ -1,19 +1,19 @@
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
+import { BigNumber } from "bignumber.js";
 import React, { Fragment, memo, useState } from "react";
 import { Trans } from "react-i18next";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
+import logger from "~/renderer/logger";
 import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import { StepProps } from "../types";
-import { BigNumber } from "bignumber.js";
-import { TransactionHasBeenValidatedError, NotEnoughGas } from "@ledgerhq/errors";
-import logger from "~/renderer/logger";
-import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
 
 const StepFees = (props: StepProps) => {
   const {

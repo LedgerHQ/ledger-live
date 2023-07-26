@@ -1,12 +1,12 @@
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
 import React, { useState } from "react";
 import { Trans } from "react-i18next";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Button from "~/renderer/components/Button";
-import { StepProps } from "../types";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
-import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
+import { StepProps } from "../types";
 
 export const StepSummaryFooter = (props: StepProps) => {
   const { account, parentAccount, transactionHash, status, bridgePending, transitionTo } = props;

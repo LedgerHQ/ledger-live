@@ -4,7 +4,7 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { StepId } from "./types";
-import { TransactionRaw } from "@ledgerhq/coin-evm/lib/types";
+import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 
 export type EditTransactionModalProps = {
   account: AccountLike | undefined | null;

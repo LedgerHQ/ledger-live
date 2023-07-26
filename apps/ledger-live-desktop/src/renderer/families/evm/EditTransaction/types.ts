@@ -3,7 +3,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction as TransactionCommon } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/lib/types";
+import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 
 export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
 

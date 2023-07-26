@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useMemo } from "react";
-import { Flex, Text, Icons, Link, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { Flex, Icon, Link, Tag as TagCore, Text } from "@ledgerhq/react-ui";
+import { ExternalLinkMedium } from "@ledgerhq/react-ui/assets/icons";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
-import { ListProvider } from "../types";
 import { StakeOnClickProps } from "../EthStakingModalBody";
 import { StakingIcon } from "../StakingIcon";
+import { ListProvider } from "../types";
 
 export const Container: StyledComponent<
   "div",
@@ -94,7 +95,7 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
         </Text>
         <Link
           iconPosition="right"
-          Icon={Icons.ExternalLinkMedium}
+          Icon={ExternalLinkMedium}
           onClick={infoLink}
           type="color"
           color="primary.c80"
