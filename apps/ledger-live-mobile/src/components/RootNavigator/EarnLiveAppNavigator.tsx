@@ -111,7 +111,7 @@ export default function EarnLiveAppNavigator(_props?: Record<string, unknown>) {
       <Stack.Screen
         name={ScreenName.Earn}
         options={{
-          headerStyle: styles.headerNoShadow,
+          headerShown: false,
         }}
       >
         {props => <Earn {...props} />}
