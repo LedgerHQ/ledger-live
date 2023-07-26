@@ -1,4 +1,4 @@
-import { Divider, Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import Button from "../../components/wrappedUi/Button";
 import SafeMarkdown from "../../components/SafeMarkdown";
