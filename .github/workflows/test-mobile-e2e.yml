@@ -169,10 +169,14 @@ jobs:
           aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*" --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
+        run: |
+          pnpm test-utils dummy-apps:build
+        shell: bash
       - name: Build Android app for Detox test run
         run: |
           pnpm mobile e2e:build -c android.emu.release

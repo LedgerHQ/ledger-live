@@ -71,7 +71,7 @@ module.exports = {
         avdName: "Pixel_5_API_31",
       },
       gpuMode: "swiftshader_indirect",
-      headless: true,
+      headless: process.env.CI ? true : false,
     },
   },
   configurations: {
