@@ -6,6 +6,9 @@ import { InfiniteLoader, Flex } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
+import { log } from "@ledgerhq/logs";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { LockedDeviceError } from "@ledgerhq/errors";
 import { ScreenName } from "../../const";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
@@ -20,7 +23,7 @@ import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDraw
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
-import { getDeviceModel } from "@ledgerhq/devices";
+import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 
 export type SyncOnboardingScreenProps = CompositeScreenProps<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
@@ -52,10 +55,10 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
+  const [isLockedDeviceDrawerOpen, setLockedDeviceDrawerOpen] = useState<boolean>(false);
 
   // Used to know if a first genuine check already happened and to pass the information to the ESC
-  // TODO: set to false for init value
-  const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(true);
+  const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(false);
 
   // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
@@ -97,6 +100,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     allowedError,
     fatalError,
     resetStates: resetPollingStates,
+    lockedDevice,
   } = useOnboardingStatePolling({
     device,
     pollingPeriodMs: POLLING_PERIOD_MS,
@@ -170,6 +174,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // A fatal error during polling triggers directly an error message
   useEffect(() => {
     if (fatalError) {
+      log("SyncOnboardingIndex", "Fatal error during polling", { fatalError });
       setIsPollingOn(false);
       setDesyncDrawerOpen(true);
     }
@@ -179,7 +184,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError) {
+    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
       timeout = setTimeout(() => {
         setIsPollingOn(false);
         setDesyncDrawerOpen(true);
@@ -192,6 +197,16 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       }
     };
   }, [allowedError]);
+
+  useEffect(() => {
+    if (lockedDevice) {
+      setLockedDeviceDrawerOpen(true);
+    }
+
+    return () => {
+      setLockedDeviceDrawerOpen(false);
+    };
+  }, [lockedDevice]);
 
   // Handles onboarding early check toggle result
   useEffect(() => {
@@ -277,6 +292,18 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
           setIsESCMandatoryDrawerOpen(false);
         }}
         onCancel={onCancelEarlySecurityCheck}
+      />
+      <UnlockDeviceDrawer
+        // isOpen={isLockedDeviceDrawerOpen}
+        isOpen={true}
+        onClose={() => {
+          // Closing because the user pressed on close button (the device is still locked)
+          if (lockedDevice) {
+            // Triggers the same close button behavior than closing the entire sync onboarding
+            onCloseButtonPress();
+          }
+        }}
+        device={device}
       />
       {stepContent}
     </>

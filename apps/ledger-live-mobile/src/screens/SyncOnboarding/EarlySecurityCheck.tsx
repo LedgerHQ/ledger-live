@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, InfiniteLoader, Text, Link } from "@ledgerhq/native-ui";
-import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import {
   CircledCheckSolidMedium,
@@ -16,7 +15,6 @@ import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
-// import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { Linking, ScrollView } from "react-native";
@@ -42,11 +40,7 @@ type UiCheckStatus =
 // TODO: no skipped anymore
 type GenuineCheckStatus = "unchecked" | "ongoing" | "completed" | "failed" | "skipped";
 // Defines which drawer should be displayed during the genuine check
-type GenuineCheckUiDrawerStatus =
-  | "none"
-  | "allow-manager"
-  | "unlock-needed"
-  | "genuine-check-failed";
+type GenuineCheckUiDrawerStatus = "none" | "allow-manager" | "genuine-check-failed";
 
 // Represents the status of the firmware check from which is derived the displayed UI and if the genuine check hook can be started or not
 type FirmwareUpdateCheckStatus =
@@ -57,7 +51,7 @@ type FirmwareUpdateCheckStatus =
   | "failed"
   | "refused";
 // Defines which drawer should be displayed during the firmware check
-type FirmwareUpdateUiDrawerStatus = "none" | "unlock-needed" | "new-firmware-available";
+type FirmwareUpdateUiDrawerStatus = "none" | "new-firmware-available";
 
 export type EarlySecurityCheckProps = {
   /**
@@ -125,15 +119,14 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     lockedDeviceTimeoutMs: LOCKED_DEVICE_TIMEOUT_MS,
   });
 
-  // TODO: rename latestFirmware ?
   const {
     state: {
       firmwareUpdateContext: latestFirmware,
       deviceInfo,
-      error: latestFirmwareGettingError,
-      lockedDevice: latestFirmwareGettingLockedDevice,
+      error: getLatestAvailableFirmwareError,
+      status: getLatestAvailableFirmwareStatus,
+      lockedDevice: getLatestAvailableFirmwareLockedDevice,
     },
-    status: latestFirmwareGettingStatus,
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
     deviceId: device.deviceId,
@@ -146,9 +139,9 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     })}
     \n
     Firmware update check output: ${JSON.stringify({
-      error: latestFirmwareGettingError,
-      status: latestFirmwareGettingStatus,
-      lockedDevice: latestFirmwareGettingLockedDevice,
+      error: getLatestAvailableFirmwareError,
+      status: getLatestAvailableFirmwareStatus,
+      lockedDevice: getLatestAvailableFirmwareLockedDevice,
       latestFirmware: !!latestFirmware,
     })}
   `);
@@ -183,22 +176,14 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   const onBackFromUpdate = useCallback(
     (updateState: UpdateStep) => {
       console.log(`🐊 COMING BACK TO ESC: update state = ${updateState}`);
+      log("EarlySecurityCheck", "Back from update", { updateState });
       navigation.goBack();
 
-      // TODO:
-      // TO REMOVE
+      // In the 3 following cases we resets the ESC:
+      // - user left the firmware update flow before the end
+      // - the fw update was successful
+      // - the user returned after an error during the fw update
       notifyEarlySecurityCheckShouldReset({ isAlreadyGenuine: true });
-
-      // TODO:
-      // TO PUT BACK
-      // // The device has restarted for sure
-      // if (updateState === "completed") {
-      //   notifyEarlySecurityCheckShouldReset({ isAlreadyGenuine: true });
-      // }
-      // // The user left the firmware update flow
-      // else {
-      //   setFirmwareUpdateCheckStatus("refused");
-      // }
     },
     [navigation, notifyEarlySecurityCheckShouldReset],
   );
@@ -237,7 +222,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     else {
       log(
         "EarlySecurityCheck",
-        `Trying to update firmware without a deviceInfo ${JSON.stringify(
+        `Error: trying to update firmware without a deviceInfo ${JSON.stringify(
           deviceInfo,
         )} or a firmwareUpdateContext: ${JSON.stringify(latestFirmware)}`,
       );
@@ -287,7 +272,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       if (devicePermissionState === "unlock-needed") {
         // As the PIN has not been set before the ESC, the "unlock-needed" happens if the device is powered off.
         // But an error `CantOpenDevice` should be triggered quickly after.
-        currentDisplayedDrawer = "unlock-needed";
+        log("EarlySecurityCheck", "Genuine check permission state set to unlock-needed");
       } else if (devicePermissionState === "requested") {
         currentDisplayedDrawer = "allow-manager";
       } else if (devicePermissionState === "refused") {
@@ -317,35 +302,41 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       currentDisplayedDrawer = "none";
 
       // Updates the firmwareUpdateCheckStatus
-      if (latestFirmwareGettingError && !latestFirmwareGettingLockedDevice) {
+      // If the current error triggered a retry attempt, does not display failure
+      if (
+        getLatestAvailableFirmwareError &&
+        !(
+          getLatestAvailableFirmwareError.type === "SharedError" &&
+          getLatestAvailableFirmwareError.retrying
+        )
+      ) {
         log(
           "EarlySecurityCheck",
           "Failed to retrieve latest firmware version with error:",
-          latestFirmwareGettingError,
+          getLatestAvailableFirmwareError.name,
         );
         setFirmwareUpdateCheckStatus("failed");
-      } else if (latestFirmwareGettingStatus === "no-available-firmware") {
+      } else if (getLatestAvailableFirmwareStatus === "no-available-firmware") {
         setFirmwareUpdateCheckStatus("completed");
       }
 
-      // Updates the UI
-      if (latestFirmwareGettingLockedDevice) {
-        console.log(
-          `🍕 latestFirmwareGettingLockedDevice: ${latestFirmwareGettingLockedDevice} | error: ${JSON.stringify(
-            latestFirmwareGettingError,
-          )}`,
+      if (getLatestAvailableFirmwareLockedDevice) {
+        // The device has no PIN in the ESC.
+        // Plus if the error is an `UnresponsiveDeviceError`: it would probably means the user
+        // cancelled a firmware update previously and came back to the ESC (with a device in an incorrect state).
+        log(
+          "EarlySecurityCheck",
+          "Device considered locked while getting latest available firmware",
+          { error: getLatestAvailableFirmwareError },
         );
-        // The device has no PIN in the ESC - and having an unresponsive device here probably means the user
-        // cancelled a firmware update previously and came back to the ESC.
-        // -> Not displaying a drawer in the case of unresponsive, and letting the device coming back to a normal state.
-        if (latestFirmwareGettingError?.name !== "UnresponsiveDeviceError") {
-          currentDisplayedDrawer = "unlock-needed";
-        }
-      } else if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
+      }
+
+      // Updates the UI
+      if (getLatestAvailableFirmwareStatus === "available-firmware" && latestFirmware) {
         // Only for QA to have always the same 1-way path: on infinite loop firmware
         // the path 1.2.1-il2 -> 1.2.1-il0 does not trigger a firmware update during the ESC
         if (
-          latestFirmwareGettingStatus === "available-firmware" &&
+          getLatestAvailableFirmwareStatus === "available-firmware" &&
           latestFirmware?.final.name === "1.2.1-il0" &&
           deviceInfo?.version === "1.2.1-il2"
         ) {
@@ -435,7 +426,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       );
       break;
     case "firmwareUpdateRefused":
-      if (latestFirmwareGettingStatus === "available-firmware" && latestFirmware) {
+      if (getLatestAvailableFirmwareStatus === "available-firmware" && latestFirmware) {
         firmwareUpdateCheckStepTitle = t(
           "earlySecurityCheck.firmwareUpdateCheckStep.refused.title",
           {
@@ -521,24 +512,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   return (
     <>
-      <UnlockDeviceDrawer
-        isOpen={currentDisplayedDrawer === "unlock-needed"}
-        onClose={() => {
-          // Closing because the user pressed on close button, and the genuine check is ongoing
-          if (genuineCheckStatus === "ongoing" && currentDisplayedDrawer === "unlock-needed") {
-            // Fails the genuine check entirely - not "skipped" so the GenuineCheckFailedDrawer is displayed
-            setGenuineCheckStatus("failed");
-          }
-          // Closing because the user pressed on close button, and the firmware check is ongoing
-          else if (
-            firmwareUpdateCheckStatus === "ongoing" &&
-            currentDisplayedDrawer === "unlock-needed"
-          ) {
-            setFirmwareUpdateCheckStatus("failed");
-          }
-        }}
-        device={device}
-      />
       <AllowManagerDrawer isOpen={currentDisplayedDrawer === "allow-manager"} device={device} />
       <GenuineCheckFailedDrawer
         productName={productName}
