@@ -56,7 +56,6 @@
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "coin:evm": "pnpm --filter coin-evm",
     "domain": "pnpm --filter domain-service",
-    "doc": "pnpm --filter docs",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",

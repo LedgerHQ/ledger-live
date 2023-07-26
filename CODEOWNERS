@@ -15,7 +15,7 @@ libs/ledgerjs/packages/hw-app-*                                      @ledgerhq/l
 libs/coin-*                                                          @ledgerhq/live-blockchain-support
 libs/domain-service                                                  @ledgerhq/live-blockchain-support
 ledgerjs/packages/evm-tools                                          @ledgerhq/live-blockchain-support
-docs                                                                 @ledgerhq/live-blockchain-support
+libs/docs                                                            @ledgerhq/live-blockchain-support
 
 
 # PTX
