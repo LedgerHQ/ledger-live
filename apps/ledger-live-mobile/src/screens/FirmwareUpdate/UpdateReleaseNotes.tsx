@@ -22,7 +22,6 @@ const UpdateReleaseNotes: React.FC<UpdateReleaseNotesProps> = ({ onContinue, fir
           {firmwareNotes ? <SafeMarkdown markdown={firmwareNotes} /> : null}
         </Flex>
       </ScrollView>
-      <Divider />
       <Button onPress={onContinue} type="main">
         {t("FirmwareUpdate.beginUpdate")}
       </Button>
