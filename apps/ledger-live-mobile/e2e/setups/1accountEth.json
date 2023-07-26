@@ -80,7 +80,7 @@
       },
       "starredMarketCoins": [],
       "overriddenFeatureFlags": {
-        "ptxEarn": false
+        "ptxEarn": { "enabled": false }
       },
       "featureFlagsButtonVisible": false
     },
