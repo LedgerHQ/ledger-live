@@ -15,7 +15,7 @@ import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
 import { Account } from "@ledgerhq/types-live";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
-import { useErrorState } from "./useErrorState";
+// import { useErrorState } from "./useErrorState";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -86,8 +86,8 @@ export const useSwapTransaction = ({
   } = fromState;
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
-  const errors = useErrorState(bridgeTransaction);
-  const fromAmountError = useFromAmountError(errors);
+  // const errors = useErrorState(bridgeTransaction);
+  const fromAmountError = useFromAmountError(bridgeTransaction.status.errors);
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,
