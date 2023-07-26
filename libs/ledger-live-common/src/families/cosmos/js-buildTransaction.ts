@@ -424,7 +424,7 @@ export const postBuildTransaction = async (
   signResponse: AminoSignResponse,
   protoMsgs: Array<ProtoMsg>,
 ): Promise<Uint8Array> => {
-  const signed_tx_bytes = TxRaw.encode({
+  const signedTx = {
     bodyBytes: TxBody.encode(
       TxBody.fromPartial({
         messages: protoMsgs,
@@ -443,10 +443,7 @@ export const postBuildTransaction = async (
             // typeUrl: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
             //typeUrl: "/cosmos.crypto.secp256k1.PubKey",
             // value: signResponse.signature.pub_key.value,
-            value: PubKey.encode({
-              key: signResponse.signature.pub_key.value,
-              // key: Buffer.from(signResponse.signature.pub_key.value, "base64"),
-            }).finish(),
+            value: signResponse.signature.pub_key.value,
           },
           modeInfo: {
             single: {
@@ -465,7 +462,9 @@ export const postBuildTransaction = async (
       }),
     }).finish(),
     signatures: [Buffer.from(signResponse.signature.signature, "base64")],
-  }).finish();
+  };
+
+  const signed_tx_bytes = TxRaw.encode(signedTx).finish();
 
   return signed_tx_bytes;
 };
@@ -496,7 +495,10 @@ export const postBuildUnsignedPayloadTransaction = async (
   ]);
 
   const cosmosAPI = new CosmosAPI(account.currency.id);
-  const { sequence } = await cosmosAPI.getAccount(account.freshAddress);
+  const { sequence } = await cosmosAPI.getAccount(
+    account.freshAddress,
+    account.currency.id === "injective",
+  );
 
   const txBodyBytes = registry.encode(txBodyFields);
 

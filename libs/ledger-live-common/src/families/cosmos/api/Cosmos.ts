@@ -62,6 +62,7 @@ export class CosmosAPI {
 
   getAccount = async (
     address: string,
+    isEthermint: boolean,
   ): Promise<{
     accountNumber: number;
     sequence: number;
@@ -85,16 +86,25 @@ export class CosmosAPI {
         url: `${this.defaultEndpoint}/cosmos/auth/${this.version}/accounts/${address}`,
       });
 
-      // use data.account.base_account for ethermint, data.account otherwise
-      response.accountNumber = parseInt(data.account.base_account.account_number);
-      response.sequence = parseInt(data.account.base_account.sequence);
-      response.pubKey = {
-        typeUrl: data.account.base_account.pub_key["@type"],
-        key: data.account.base_account.pub_key.key,
-      };
-
-      // eslint-disable-next-line no-empty
-    } catch (e) {}
+      if (isEthermint) {
+        // use data.account.base_account for ethermint, data.account otherwise
+        response.accountNumber = parseInt(data.account.base_account.account_number);
+        response.sequence = parseInt(data.account.base_account.sequence);
+        response.pubKey = {
+          typeUrl: data.account.base_account.pub_key["@type"],
+          key: data.account.base_account.pub_key.key,
+        };
+      } else {
+        response.accountNumber = parseInt(data.account.account_number);
+        response.sequence = parseInt(data.account.sequence);
+        response.pubKey = {
+          typeUrl: data.account.pub_key["@type"],
+          key: data.account.pub_key.key,
+        };
+      }
+    } catch (e) {
+      console.log("Could not fetch account info, using default values instead");
+    }
     return response;
   };
 

@@ -66,6 +66,7 @@ export const getEstimatedFees = async (
     const prefix = new Uint8Array([10, 33]);
 
     const pubkey = {
+      // TODO: make this dynamic
       typeUrl: "/cosmos.crypto.secp256k1.PubKey",
       value: new Uint8Array([...prefix, ...signature]),
     };
@@ -89,13 +90,14 @@ export const getEstimatedFees = async (
     }
   }
 
-  const estimatedFees = estimatedGas
-    .times(cosmosCurrency.minGasPrice)
-    .integerValue(BigNumber.ROUND_CEIL);
-
   const forcedFees = new BigNumber(100892500000000);
 
-  return { estimatedFees: forcedFees, estimatedGas };
+  const estimatedFees =
+    account.currency.id === "injective"
+      ? forcedFees
+      : estimatedGas.times(cosmosCurrency.minGasPrice).integerValue(BigNumber.ROUND_CEIL);
+
+  return { estimatedFees, estimatedGas };
 };
 
 export const prepareTransaction = async (

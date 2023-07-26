@@ -32,6 +32,7 @@ const signOperation = ({
         const cosmosAPI = new CosmosAPI(account.currency.id);
         const { accountNumber, sequence, pubKey } = await cosmosAPI.getAccount(
           account.freshAddress,
+          account.currency.id === "injective",
         );
         o.next({ type: "device-signature-requested" });
         const { aminoMsgs, protoMsgs } = await buildTransaction(account, transaction);
@@ -67,7 +68,11 @@ const signOperation = ({
 
         const tx = Buffer.from(JSON.stringify(signDocOrdered), "utf-8");
         const app = new CosmosApp(transport);
-        const path = [44, 60, 0, 0, 0];
+        // TODO: add address index last number
+        const path =
+          account.currency.id === "injective"
+            ? [44, 60, 0, 0, account.index]
+            : [44, 118, 0, 0, account.index];
         const hrp = cryptoFactory(account.currency.id).prefix;
 
         const resp_add = await app.getAddressAndPubKey(
@@ -77,14 +82,22 @@ const signOperation = ({
 
         const addr = resp_add.bech32_address;
 
-        const signResponseApp = await app.sign(path, tx, hrp);
+        let signResponseApp;
 
-        const uncompressed = secp256k1.publicKeyConvert(resp_add.compressed_pk, false).slice(1);
+        if (account.currency.id === "injective") {
+          signResponseApp = await app.sign(path, tx, hrp);
+        } else {
+          signResponseApp = await app.sign(path, tx);
+        }
+
+        const uncompressed = secp256k1.publicKeyConvert(resp_add.compressed_pk, false);
+
+        const pubKeyUint8 = Uint8Array.from(resp_add.compressed_pk);
 
         const signResponse: AminoSignResponse = {
           signed: signDocOrdered,
           signature: {
-            pub_key: { value: pubKey.key, type: pubKey.typeUrl },
+            pub_key: { value: uncompressed, type: pubKey.typeUrl },
             signature: signResponseApp.signature,
           },
         };
