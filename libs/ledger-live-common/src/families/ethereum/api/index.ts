@@ -320,7 +320,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getFallbackGasLimit(address: string): Promise<BigNumber> {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limitz`,
+        url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limit`,
         timeout: 10000,
       });
       return new BigNumber(data.estimated_gas_limit);
@@ -329,7 +329,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getDryRunGasLimit(transaction): Promise<BigNumber> {
       const { data } = await network({
         method: "POST",
-        url: `${baseURL}/tx/estimate-gas-limitz`,
+        url: `${baseURL}/tx/estimate-gas-limit`,
         data: transaction,
         timeout: 10000,
       });
