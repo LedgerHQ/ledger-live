@@ -1,22 +1,22 @@
+import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getEnv } from "@ledgerhq/live-env";
+import { Flex } from "@ledgerhq/react-ui";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import React, { memo, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
+import styled from "styled-components";
+import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import styled from "styled-components";
 import CheckBox from "~/renderer/components/CheckBox";
-import Text from "~/renderer/components/Text";
-import { StepProps } from "../types";
-import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Flex } from "@ledgerhq/react-ui";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
-import { getEnv } from "@ledgerhq/live-env";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
-import invariant from "invariant";
-import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
+import Text from "~/renderer/components/Text";
+import { openURL } from "~/renderer/linking";
+import { StepProps } from "../types";
 
 const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
   border: ${p =>

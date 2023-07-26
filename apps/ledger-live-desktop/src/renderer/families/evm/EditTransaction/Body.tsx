@@ -29,7 +29,7 @@ import StepConfirmation, {
 import { St, StepId } from "./types";
 import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
-import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/lib/types";
+import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 
 export type Data = {
