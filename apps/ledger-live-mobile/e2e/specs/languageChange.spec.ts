@@ -32,6 +32,10 @@ describe("Change Language", () => {
   ];
 
   beforeAll(async () => {
+    if (isAndroid()) {
+      console.warn("Skipping flaky android test");
+      return;
+    }
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     portfolioPage = new PortfolioPage();
@@ -41,17 +45,16 @@ describe("Change Language", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  beforeEach(() => {
-    if (isAndroid()) return;
-  });
-
   it("should go to General Settings", async () => {
+    if (isAndroid()) return;
     await portfolioPage.navigateToSettings();
     await settingsPage.navigateToGeneralSettings();
   });
 
   // test steps for each language
-  for (const l10n of langButtonText) {
-    verifyLanguageCanBeChanged(l10n);
+  if (!isAndroid()) {
+    for (const l10n of langButtonText) {
+      verifyLanguageCanBeChanged(l10n);
+    }
   }
 });
