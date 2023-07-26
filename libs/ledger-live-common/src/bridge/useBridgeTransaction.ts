@@ -17,12 +17,6 @@ export type State<T extends Transaction = Transaction> = {
   errorStatus: Error | null | undefined;
 };
 
-export type BridgeError = Error & {
-  config?: {
-    url: string;
-  };
-};
-
 export type Result<T extends Transaction = Transaction> = {
   transaction: T | null | undefined;
   setTransaction: (arg0: T) => void;
@@ -31,7 +25,7 @@ export type Result<T extends Transaction = Transaction> = {
   parentAccount: Account | null | undefined;
   setAccount: (arg0: AccountLike, arg1: Account | null | undefined) => void;
   status: TransactionStatus;
-  bridgeError: BridgeError | null | undefined;
+  bridgeError: Error | null | undefined;
   bridgePending: boolean;
 };
 
