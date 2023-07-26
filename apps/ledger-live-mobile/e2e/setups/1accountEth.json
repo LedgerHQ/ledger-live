@@ -79,7 +79,9 @@
         "KYC": {}
       },
       "starredMarketCoins": [],
-      "overriddenFeatureFlags": {},
+      "overriddenFeatureFlags": {
+        "ptxEarn": { "enabled": false }
+      },
       "featureFlagsButtonVisible": false
     },
     "user": { "id": "09bd3c68-18ed-4ecf-b9d9-534b38c21165" },
