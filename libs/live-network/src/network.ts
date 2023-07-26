@@ -1,7 +1,7 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
-import { changes, getEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@ledgerhq/live-env";
+import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import axiosRetry from "axios-retry";
 
 import type { AxiosError, AxiosRequestConfig, Method } from "axios";
 import axios, { AxiosPromise, AxiosResponse } from "axios";
@@ -9,16 +9,6 @@ import invariant from "invariant";
 
 type Metadata = { startTime: number };
 type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
-
-// taken from ledger-live/libs/promise/src/promise.ts
-const IntervalMultiplier = 1.5;
-const Interval = 300;
-
-axiosRetry(axios, {
-  retries: getEnv("GET_CALLS_RETRY"),
-  retryCondition: (error: AxiosError) => error.config.method === "GET",
-  retryDelay: retryCount => Interval * (retryCount * IntervalMultiplier),
-});
 
 export const requestInterceptor = (request: AxiosRequestConfig): ExtendedXHRConfig => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
@@ -165,27 +155,21 @@ const extractErrorMessage = (raw: string): string | undefined => {
 
 const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   invariant(typeof arg === "object", "network takes an object as parameter");
+  let promise;
+
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
       arg.timeout = getEnv("GET_CALLS_TIMEOUT");
     }
-  }
-  return axios(arg);
-};
 
-// attach the env "LEDGER_CLIENT_VERSION" to set the header globally for axios
-function setAxiosLedgerClientVersionHeader(value: string) {
-  if (value) {
-    axios.defaults.headers.common["X-Ledger-Client-Version"] = value;
+    promise = retry(() => axios(arg), {
+      maxRetry: getEnv("GET_CALLS_RETRY"),
+    });
   } else {
-    delete axios.defaults.headers.common["X-Ledger-Client-Version"];
+    promise = axios(arg);
   }
-}
-setAxiosLedgerClientVersionHeader(getEnv("LEDGER_CLIENT_VERSION"));
-changes.subscribe(e => {
-  if (e.name === "LEDGER_CLIENT_VERSION") {
-    setAxiosLedgerClientVersionHeader(e.value);
-  }
-});
+
+  return promise;
+};
 
 export default implementation;

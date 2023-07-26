@@ -4112,9 +4112,6 @@ importers:
       axios:
         specifier: 0.26.1
         version: 0.26.1
-      axios-retry:
-        specifier: ^3.2.4
-        version: 3.2.5
       invariant:
         specifier: ^2.2.2
         version: 2.2.4

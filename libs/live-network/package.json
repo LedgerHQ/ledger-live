@@ -55,7 +55,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@types/node": "^20.2.5",
     "axios": "0.26.1",
-    "axios-retry": "^3.2.4",
     "invariant": "^2.2.2",
     "lru-cache": "^7.14.1"
   },
