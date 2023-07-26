@@ -1,6 +1,6 @@
 import { device, expect } from "detox";
 import { loadConfig } from "../bridge/server";
-import { delay, getElementByText, isAndroid } from "../helpers";
+import { getElementByText, isAndroid } from "../helpers";
 import AccountPage from "../models/accounts/accountPage";
 import AccountsPage from "../models/accounts/accountsPage";
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
