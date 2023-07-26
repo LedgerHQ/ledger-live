@@ -77,24 +77,8 @@ export default function AccountsSettings({
             onPress={() => navigation.navigate(ScreenName.CryptoAssetsSettings)}
           />
         )}
-        {hiddenNftCollections.length > 0 && (
-          <SettingsRow
-            event="HiddenNftCollectionsSettings"
-            title={t("settings.accounts.hiddenNFTCollections")}
-            desc={t("settings.accounts.hiddenNFTCollectionsDesc")}
-            arrowRight
-            onPress={() => navigation.navigate(ScreenName.HiddenNftCollections)}
-          />
-        )}
         <HideEmptyTokenAccountsRow />
         <FilterTokenOperationsZeroAmountRow />
-        <SettingsRow
-          event="HideEmptyTokenAccountsRow"
-          title={t("settings.accounts.blacklistedTokens")}
-          desc={t("settings.accounts.blacklistedTokensDesc")}
-        >
-          {null}
-        </SettingsRow>
       </>
     ),
     [currencies.length, t, hiddenNftCollections.length, navigation],
