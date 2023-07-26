@@ -65,6 +65,7 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "coreum":
         cosmosChainParams[currencyId] = new Coreum();
+        break;
       default:
         throw new Error(`${currencyId} is not supported`);
     }

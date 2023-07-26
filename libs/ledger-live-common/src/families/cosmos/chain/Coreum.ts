@@ -10,7 +10,8 @@ class Coreum extends CosmosBase {
   ledgerValidator!: string;
   constructor() {
     super();
-    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-ATOM-staking-rewards-in-Ledger-Live?docs=true";
+    this.stakingDocUrl =
+      "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-ATOM-staking-rewards-in-Ledger-Live?docs=true";
     this.unbondingPeriod = 7;
     this.prefix = "core";
     this.validatorPrefix = `${this.prefix}valoper`;
