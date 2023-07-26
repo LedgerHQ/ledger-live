@@ -12,11 +12,12 @@ type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
 
 // taken from ledger-live/libs/promise/src/promise.ts
 const IntervalMultiplier = 1.5;
+const Interval = 300;
 
 axiosRetry(axios, {
   retries: getEnv("GET_CALLS_RETRY"),
   retryCondition: (error: AxiosError) => error.config.method === "GET",
-  retryDelay: retryCount => 1000 * (retryCount * IntervalMultiplier),
+  retryDelay: retryCount => Interval * (retryCount * IntervalMultiplier),
 });
 
 export const requestInterceptor = (request: AxiosRequestConfig): ExtendedXHRConfig => {
