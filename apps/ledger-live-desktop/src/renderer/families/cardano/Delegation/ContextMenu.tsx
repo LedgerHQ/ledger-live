@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import UserEdit from "~/renderer/icons/UserEdit";
 import StopCircle from "~/renderer/icons/StopCircle";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 
 const Container = styled.div`
   display: flex;
@@ -103,17 +103,13 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
     <DropDownSelector items={items} renderItem={renderItem}>
       {() => (
         <Container
-          horizontal
-          small
-          outlineGrey
-          flow={1}
           style={{
             width: 34,
             padding: 0,
           }}
         >
           <Box horizontal flow={1} alignItems="center" justifyContent="center">
-            <Icons.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
+            <IconsLegacy.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
           </Box>
         </Container>
       )}
