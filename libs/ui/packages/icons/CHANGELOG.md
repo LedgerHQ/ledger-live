@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.4.2-nightly.1
+
+### Patch Changes
+
+- [#4124](https://github.com/LedgerHQ/ledger-live/pull/4124) [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed color issue on new icon pack (Theme colors not working)
+
 ## 0.4.2-nightly.0
 
 ### Patch Changes

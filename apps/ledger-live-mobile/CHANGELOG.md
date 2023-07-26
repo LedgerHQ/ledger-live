@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.28.0-nightly.1
+
+### Patch Changes
+
+- [#3957](https://github.com/LedgerHQ/ledger-live/pull/3957) [`af7aa74fc5`](https://github.com/LedgerHQ/ledger-live/commit/af7aa74fc5aa11e73c7c5d2f9c1e33d2e870f89d) Thanks [@mderrick](https://github.com/mderrick)! - nft gallery blockchain filters
+
+- Updated dependencies []:
+  - @ledgerhq/native-ui@0.20.3-nightly.1
+
 ## 3.28.0-nightly.0
 
 ### Minor Changes

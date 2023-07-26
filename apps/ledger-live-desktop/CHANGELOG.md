@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.64.3-nightly.1
+
+### Patch Changes
+
+- [#4117](https://github.com/LedgerHQ/ledger-live/pull/4117) [`e0859f4158`](https://github.com/LedgerHQ/ledger-live/commit/e0859f4158c3280e2fce35046678d6be17733059) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Removed Onramp environment selection in Developer settings since the native buy/sell app has been removed
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.14.4-nightly.1
+
 ## 2.64.3-nightly.0
 
 ### Patch Changes
