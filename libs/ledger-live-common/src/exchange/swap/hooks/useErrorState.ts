@@ -9,15 +9,15 @@ export function useErrorState<T extends Transaction = Transaction>({
   bridgeError,
   transaction,
 }: Result<T>) {
+  const errors = { ...status.errors };
   if (!transaction?.amount.gt(0)) return {};
 
-  const statusErrors = status.errors;
   if (bridgeError?.config) {
     const bridgeErrorURL = bridgeError.config.url;
     if (bridgeErrorURL.includes(GAS_FEES_NETWORK_PATH)) {
-      statusErrors.gasNetworkError = new SwapFeeEstimationFailed();
+      errors.gasNetworkError = new SwapFeeEstimationFailed();
     }
   }
 
-  return statusErrors;
+  return errors;
 }
