@@ -136,6 +136,7 @@ export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency")
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
 export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");
+export const SwapFeeEstimationFailed = createCustomErrorClass("SwapFeeEstimationFailed");
 export const FeeRequired = createCustomErrorClass("FeeRequired");
 export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
