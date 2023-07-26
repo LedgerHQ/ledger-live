@@ -260,7 +260,7 @@ export type ExplorerView = {
 
 export type EthereumLikeInfo = {
   chainId: number;
-  networkId?: number; // FIXME To remove after the EVM merge
+  networkId?: number; // FIXME To remove after the EVM merge (only used by legacy ethereum family)
   baseChain?: "mainnet" | "goerli" | "ropsten"; // FIXME To remove after the EVM merge
   hardfork?: string; // FIXME To remove after the EVM merge
   // used by evm coin integration
