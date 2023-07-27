@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.1
+
+### Minor Changes
+
+- [#4061](https://github.com/LedgerHQ/ledger-live/pull/4061) [`a690f9802f`](https://github.com/LedgerHQ/ledger-live/commit/a690f9802f81643ac047d6626f691353953adca1) Thanks [@cng-ledger](https://github.com/cng-ledger)! - adding tron exchange support to ledger live common
+
+### Patch Changes
+
+- [#4113](https://github.com/LedgerHQ/ledger-live/pull/4113) [`4e47969867`](https://github.com/LedgerHQ/ledger-live/commit/4e4796986724579c8a9e405add44db6280878508) Thanks [@grsoares21](https://github.com/grsoares21)! - Add automatic retry mechanism for app installation operations
+
+- [#4000](https://github.com/LedgerHQ/ledger-live/pull/4000) [`e775c83ab7`](https://github.com/LedgerHQ/ledger-live/commit/e775c83ab7fa28b395c149d03679cdd93535b14a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Cosmos tx2op multiple event fix
+
 ## 31.3.2-nightly.0
 
 ### Patch Changes

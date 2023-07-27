@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.28.0-nightly.2
+
+### Patch Changes
+
+- [#4114](https://github.com/LedgerHQ/ledger-live/pull/4114) [`d560c16d14`](https://github.com/LedgerHQ/ledger-live/commit/d560c16d1403355f15d18d215d26d8c8bfe60cb4) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add earn entrypoint in mobile tab navigation
+
+- [#4113](https://github.com/LedgerHQ/ledger-live/pull/4113) [`4e47969867`](https://github.com/LedgerHQ/ledger-live/commit/4e4796986724579c8a9e405add44db6280878508) Thanks [@grsoares21](https://github.com/grsoares21)! - Add manual retry mechanism for app restoration errors during the firmware update
+
+- [#3581](https://github.com/LedgerHQ/ledger-live/pull/3581) [`f4111c10c3`](https://github.com/LedgerHQ/ledger-live/commit/f4111c10c3170952d87d31ed2f275a17e040cab4) Thanks [@grsoares21](https://github.com/grsoares21)! - Make the battery warning banner for firmware updates on Stax unskippable.
+
+- Updated dependencies [[`4e47969867`](https://github.com/LedgerHQ/ledger-live/commit/4e4796986724579c8a9e405add44db6280878508), [`a690f9802f`](https://github.com/LedgerHQ/ledger-live/commit/a690f9802f81643ac047d6626f691353953adca1), [`e775c83ab7`](https://github.com/LedgerHQ/ledger-live/commit/e775c83ab7fa28b395c149d03679cdd93535b14a)]:
+  - @ledgerhq/live-common@31.4.0-nightly.1
+
 ## 3.28.0-nightly.1
 
 ### Patch Changes
