@@ -121,6 +121,7 @@ const SwapForm = () => {
     timeout: SWAP_RATES_TIMEOUT,
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
+
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;

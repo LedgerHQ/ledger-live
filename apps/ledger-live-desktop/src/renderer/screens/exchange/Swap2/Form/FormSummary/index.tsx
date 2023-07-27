@@ -40,21 +40,19 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
     setToAccount,
     swap: { targetAccounts },
   } = swapTransaction;
+
   const {
     currency: fromCurrency,
     account: fromAccount,
     parentAccount: fromParentAccount,
   } = swapTransaction.swap.from;
+
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
-  const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0; // TODO why do we need this and the below line? They appear to be the same thing
-  const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
-
-  useEffect(() => setHasFetchedRates(v => (!v ? hasRates : v)), [hasRates]);
+  const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0;
 
   return (
-    <Form ready={!!hasFetchedRates}>
-      {/* TODO: why hasFetchedRates and hasRates ?  */}
+    <Form ready={!!hasRates}>
       <SectionTarget
         account={toAccount}
         currency={toCurrency}
