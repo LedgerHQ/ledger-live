@@ -8,12 +8,8 @@ import {
   SelectCurrency,
   SelectProvider,
   SelectFees,
-  Login,
-  KYC,
-  MFA,
   PendingOperation,
   OperationDetails,
-  StateSelect,
 } from "../../screens/Swap/index";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
@@ -81,42 +77,6 @@ export default function SwapNavigator() {
           headerTitle: () => <StepHeader title={t("transfer.swap2.form.details.label.fees")} />,
           headerRight: () => null,
         }}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapLogin}
-        component={Login}
-        options={({ route }) => ({
-          headerTitle: getProviderName(route.params.provider),
-          headerRight: () => null,
-        })}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapKYC}
-        component={KYC}
-        options={({ route }) => ({
-          headerTitle: getProviderName(route.params.provider),
-          headerRight: () => null,
-        })}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapKYCStates}
-        component={StateSelect}
-        options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap.kyc.states")} />,
-          headerRight: () => null,
-        }}
-      />
-
-      <Stack.Screen
-        name={ScreenName.SwapMFA}
-        component={MFA}
-        options={({ route }) => ({
-          headerTitle: getProviderName(route.params.provider),
-          headerRight: () => null,
-        })}
       />
 
       <Stack.Screen
