@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
+import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
@@ -9,12 +10,18 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import Header from "./Header";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 import EarlySecurityChecks from "./EarlySecurityChecks";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { DeviceInfo } from "@ledgerhq/types-live";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import { from } from "rxjs";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { getEnv } from "@ledgerhq/live-common/env";
 import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
 } from "./EarlySecurityChecks/ExitChecksDrawer";
@@ -22,9 +29,13 @@ import { renderError } from "../../DeviceAction/rendering";
 import { useTranslation } from "react-i18next";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguagePrompt";
+import DeviceAction from "../../DeviceAction";
+import TroubleshootingDrawer from "./TroubleshootingDrawer";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
+
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
 export type SyncOnboardingScreenProps = {
   /**
@@ -52,6 +63,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const device = useSelector(getCurrentDevice);
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
+  const [isBootloader, setIsBootloader] = useState<boolean | null>(null);
   // Needed because `device` object can be null or changed if disconnected/reconnected
   const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
   useEffect(() => {
@@ -75,13 +87,26 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
     device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn,
+    stopPolling: !isPollingOn || isBootloader === null || isBootloader,
   });
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: lastSeenDevice?.deviceId ?? "",
     toggleType: toggleOnboardingEarlyCheckType,
   });
+
+  const refreshIsBootloaderMode = useCallback(() => {
+    if (!device) return;
+    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
+      .toPromise()
+      .then((deviceInfo: DeviceInfo) => {
+        setIsBootloader(deviceInfo?.isBootloader);
+      });
+  }, [device]);
+
+  useEffect(() => {
+    refreshIsBootloaderMode();
+  }, [device, refreshIsBootloaderMode]);
 
   // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
@@ -246,15 +271,30 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     );
   }
 
+  const onDeviceActionResult = useCallback((result: Result) => {
+    setIsBootloader(result.deviceInfo.isBootloader);
+  }, []);
+
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
-      <TroubleshootingDrawer
-        lastKnownDeviceId={deviceModelId}
-        isOpen={isTroubleshootingDrawerOpen}
-        onClose={handleTroubleshootingDrawerClose}
-      />
-      {stepContent}
-      <Header onClose={handleClose} />
+      {isBootloader ? (
+        /**
+         * In case a firmware update gets interrupted and the device is in
+         * Bootloader mode, we display this device action which will prompt the
+         * user to finish the update.
+         * */
+        <DeviceAction onResult={onDeviceActionResult} action={action} request={null} />
+      ) : (
+        <>
+          <TroubleshootingDrawer
+            lastKnownDeviceId={deviceModelId}
+            isOpen={isTroubleshootingDrawerOpen}
+            onClose={handleTroubleshootingDrawerClose}
+          />
+          {stepContent}
+          <Header onClose={handleClose} />
+        </>
+      )}
     </Flex>
   );
 };
