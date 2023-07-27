@@ -86,7 +86,6 @@ export const estimateGasLimit: (
     value: string;
     data: string;
   },
-  gasFeeTimeout?: number,
 ) => Promise<BigNumber> = makeLRUCache(
   (
     account: Account,
@@ -96,17 +95,16 @@ export const estimateGasLimit: (
       value: string;
       data: string;
     },
-    gasFeeTimeout?: number,
   ) => {
     const api = apiForCurrency(account.currency);
     return api
-      .getDryRunGasLimit(transaction, gasFeeTimeout)
+      .getDryRunGasLimit(transaction)
       .then(value =>
         value.eq(21000) // regular ETH send should not be amplified
           ? value
           : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER")).integerValue(),
       )
-      .catch(() => api.getFallbackGasLimit(transaction.to, gasFeeTimeout));
+      .catch(() => api.getFallbackGasLimit(transaction.to));
   },
   (account, { from, to, value, data }) => `${from}+${to}+${value}+${data}`,
 );
