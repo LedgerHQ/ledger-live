@@ -240,26 +240,28 @@ Sign an EIP-721 formatted message following the specification here:
 ##### Examples
 
 ```javascript
-eth.signEIP721Message("44'/60'/0'/0/0", {
-domain: {
-chainId: 69,
-name: "Da Domain",
-verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
-version: "1"
-},
-types: {
-"EIP712Domain": [
-{ name: "name", type: "string" },
-{ name: "version", type: "string" },
-{ name: "chainId", type: "uint256" },
-{ name: "verifyingContract", type: "address" }
-],
-"Test": [
-{ name: "contents", type: "string" }
-]
-},
-primaryType: "Test",
-message: {contents: "Hello, Bob!"},
+eth.signEIP712Message("44'/60'/0'/0/0", {
+   domain: {
+      chainId: 69,
+      name: "Da Domain",
+      verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+      version: "1"
+   },
+   types: {
+      "EIP712Domain": [
+         { name: "name", type: "string" },
+         { name: "version", type: "string" },
+         { name: "chainId", type: "uint256" },
+         { name: "verifyingContract", type: "address" }
+      ],
+      "Test": [
+         { name: "contents", type: "string" }
+      ]
+   },
+   primaryType: "Test",
+   message: {
+      contents: "Hello, Bob!"
+   },
 })
 ```
 
