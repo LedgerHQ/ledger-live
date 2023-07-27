@@ -1,5 +1,5 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-env";
+import { changes, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 
@@ -171,5 +171,20 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
 
   return promise;
 };
+
+// attach the env "LEDGER_CLIENT_VERSION" to set the header globally for axios
+function setAxiosLedgerClientVersionHeader(value: string) {
+  if (value) {
+    axios.defaults.headers.common["X-Ledger-Client-Version"] = value;
+  } else {
+    delete axios.defaults.headers.common["X-Ledger-Client-Version"];
+  }
+}
+setAxiosLedgerClientVersionHeader(getEnv("LEDGER_CLIENT_VERSION"));
+changes.subscribe(e => {
+  if (e.name === "LEDGER_CLIENT_VERSION") {
+    setAxiosLedgerClientVersionHeader(e.value);
+  }
+});
 
 export default implementation;
