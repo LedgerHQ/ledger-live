@@ -16,7 +16,7 @@ import {
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { getLanguages, defaultLocaleForLanguage, Locale } from "~/config/languages";
+import { Languages, defaultLocaleForLanguage, Locale } from "~/config/languages";
 import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
@@ -103,7 +103,7 @@ export type SettingsState = {
 const DEFAULT_LANGUAGE_LOCALE = "en";
 export const getInitialLanguageLocale = (fallbackLocale: Locale = DEFAULT_LANGUAGE_LOCALE) => {
   const detectedLanguage = getSystemLocale() || fallbackLocale;
-  return getLanguages().find(lang => detectedLanguage.startsWith(lang)) || fallbackLocale;
+  return Languages.find(lang => detectedLanguage.startsWith(lang)) || fallbackLocale;
 };
 const DEFAULT_LOCALE = "en-US";
 export const getInitialLocale = () => {
@@ -490,7 +490,7 @@ type LanguageAndUseSystemLanguage = {
 
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
   const { language } = state.settings;
-  if (language && getLanguages().includes(language)) {
+  if (language && Languages.includes(language)) {
     return {
       language,
       useSystemLanguage: false,

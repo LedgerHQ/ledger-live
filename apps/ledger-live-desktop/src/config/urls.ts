@@ -13,7 +13,7 @@ export const supportLinkByTokenType = {
   nfts: "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?utm_medium=self_referral&utm_content=receive_account_flow",
 };
 
-const urlsErrors: Record<string, string> = {
+const errors = {
   CantOpenDevice:
     "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_cantopendevice",
   WrongDeviceForAccount:
@@ -53,7 +53,6 @@ const terms: { [key in Locale]: string } = {
   ja: "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-  // ar: "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
 };
 
 const privacyPolicy: { [key in Locale]: string } = {
@@ -67,7 +66,6 @@ const privacyPolicy: { [key in Locale]: string } = {
   ru: "https://www.ledger.com/ru/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   zh: "https://www.ledger.com/zh-hans/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   ko: "https://www.ledger.com/ko/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
-  // ar: "https://www.ledger.com/ar/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
 };
 
 const contactSupportWebview: { [key in Locale]: string } = {
@@ -81,7 +79,6 @@ const contactSupportWebview: { [key in Locale]: string } = {
   ru: "https://support.ledger.com/hc/ru/articles/4423020306705-%D0%A1%D0%B2%D1%8F%D0%B6%D0%B8%D1%82%D0%B5%D1%81%D1%8C-%D1%81-%D0%BD%D0%B0%D0%BC%D0%B8?support=true",
   tr: "https://support.ledger.com/hc/tr/articles/4423020306705-Bize-Ula%C5%9F%C4%B1n?support=true",
   zh: "https://support.ledger.com/hc/zh-cn/articles/4423020306705-%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC?support=true",
-  // ar: "https://support.ledger.com/hc/ar/articles/4423020306705-%D8%AA%D9%88%D8%A7%D8%B5%D9%84-%D9%85%D8%B9%D9%86%D8%A7?support=true",
 };
 
 const buyNew: { [key in Locale]: string } = {
@@ -120,8 +117,8 @@ export const urls = {
   syncErrors:
     "https://support.ledger.com/hc/en-us/articles/360012207759?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_syncerror",
   terms,
+  buyNew,
   noDevice: {
-    buyNew,
     learnMore:
       "https://www.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
     learnMoreCrypto:
@@ -242,7 +239,7 @@ export const urls = {
       "https://developers.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=catalog",
   },
   // Errors
-  errors: urlsErrors,
+  errors,
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true",
   cryptoOrg: {

@@ -1,20 +1,13 @@
 import { Language } from "@ledgerhq/types-live";
 
-// This is the only place where new language should be added
-export const Languages = [
-  //
-  "en",
-  "fr",
-  "de",
-  "ru",
-  "es",
-  "ja",
-  "tr",
-  "ko",
-  "zh",
-  "pt",
-] as const;
+/**
+ * This is the only place where new language should be added.
+ */
+export const Languages = ["en", "fr", "de", "ru", "es", "ja", "tr", "ko", "zh", "pt"] as const;
 
+/**
+ * This is the Locale type used accross the app.
+ */
 export type Locale = (typeof Languages)[number];
 
 /**
@@ -30,12 +23,13 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
 
 /**
  * List of languages that should be prompted to existing users once if they are
- * using LL in english.
+ * using LL in english. It reprensents all the Languages minus "en".
  * */
-export const pushedLanguages: Locale[] = ["fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
+export const pushedLanguages = Languages.filter(e => e !== "en");
 
-export const getLanguages = () => Languages;
-
+/**
+ * This variable maps each language to its default Locale.
+ */
 export const defaultLocaleForLanguage: { [key in Locale]: string } = {
   de: "de-DE",
   en: "en-US",
@@ -47,13 +41,4 @@ export const defaultLocaleForLanguage: { [key in Locale]: string } = {
   ru: "ru-RU",
   tr: "tr-TR",
   zh: "zh-CN",
-  // sv: "sv-SV",
-  // sr: "sr-SR",
-  // pl: "pl-PL",
-  // no: "no-NO",
-  // nl: "nl-NL",
-  // it: "it-IT",
-  // hu: "hu-HU",
-  // el: "el-GR",
-  // fi: "fi-FI",
 };

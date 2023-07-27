@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { languageSelector } from "~/renderer/reducers/settings";
 import { urls } from "~/config/urls";
 import logger from "~/renderer/logger";
+import { languageSelector } from "~/renderer/reducers/settings";
 const currentTermsRequired = "2022-05-10";
 const currentLendingTermsRequired = "2020-11-10";
 function isAcceptedVersionUpToDate(acceptedVersion: string | null, currentVersion: string) {
@@ -37,8 +37,13 @@ export function acceptLendingTerms() {
   return global.localStorage.setItem("acceptedLendingTermsVersion", currentLendingTermsRequired);
 }
 
-/* This hook dynamically returns correct url based on user language */
-export const useDynamicUrl = (key: keyof Pick<typeof urls, "terms" | "privacyPolicy">): string => {
+/* This hook dynamically returns the correct url based on user language */
+export const useDynamicUrl = (
+  key: keyof Pick<
+    typeof urls,
+    "faq" | "terms" | "privacyPolicy" | "contactSupportWebview" | "buyNew"
+  >,
+): string => {
   const [url, setUrl] = useState(urls[key].en);
   const language = useSelector(languageSelector);
 
