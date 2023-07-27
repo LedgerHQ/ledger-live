@@ -299,8 +299,7 @@
     "title": "Swap",
     "tabs": {
       "exchange": "Exchange",
-      "history": "History",
-      "kyc": "KYC"
+      "history": "History"
     },
     "form": {
       "changeCTA": "Change",
@@ -354,33 +353,6 @@
       "notAvailable": {
         "title": "Swap is not available yet in your area",
         "content": "Have a little more patience,<br/>we will launch this feature very soon"
-      },
-      "providers": {
-        "kyc": {
-          "required": "You need to complete your KYC",
-          "complete": "Complete KYC",
-          "update": "Refresh KYC",
-          "rejected": "KYC rejected, start the verification again",
-          "rejectedContactProviderSupport": "KYC rejected, please contact {{providerName}} support",
-          "updateRequired": "Complete or update your KYC",
-          "status": {
-            "pending": "KYC pending",
-            "approved": "KYC approved",
-            "closed": "KYC rejected",
-            "upgradeRequired": "KYC insufficient"
-          }
-        },
-        "login": {
-          "required": "You need to login with this provider",
-          "complete": "Login"
-        },
-        "mfa": {
-          "required": "You need to set up MFA with this provider",
-          "complete": "Set up MFA"
-        },
-        "withdrawalsBlockedError": {
-          "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
-        }
       },
       "timeout": {
         "message": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
