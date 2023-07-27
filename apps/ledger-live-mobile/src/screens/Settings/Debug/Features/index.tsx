@@ -16,7 +16,7 @@ export default function Features() {
     <SettingsNavigationScrollView>
       <SettingsRow
         title="Swap"
-        desc="KYC skips, toggle providers, etc"
+        desc="Enable/disable swap providers"
         iconLeft={<IconsLegacy.TradeMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugSwap)}
       />
