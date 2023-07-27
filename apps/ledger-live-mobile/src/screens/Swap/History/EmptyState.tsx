@@ -7,6 +7,7 @@ import LText from "../../../components/LText";
 
 const EmptyState = () => {
   const { colors } = useTheme();
+
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <LText secondary style={styles.title}>
