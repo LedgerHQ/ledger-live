@@ -1,5 +1,4 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { TrackScreen } from "../../../analytics";
 import LedgerSupportRow from "./LedgerSupportRow";
