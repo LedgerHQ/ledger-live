@@ -7,7 +7,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
-import styles from "../../navigation/styles";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { EarnScreen } from "../../screens/PTX/Earn";
