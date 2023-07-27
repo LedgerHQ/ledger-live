@@ -55,8 +55,8 @@ jobs:
         with:
           skip_builds: true
           install_dotnet: true
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: lint
         run: |
           pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
@@ -88,8 +88,8 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: check for dead code
         run: cd apps/ledger-live-desktop && npx unimported
         shell: bash
@@ -110,8 +110,8 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run unit tests
         run: pnpm desktop test:jest
 
@@ -143,8 +143,8 @@ jobs:
           install_playwright: true
           upgrade_npm: true
           install_dotnet: true
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests
         id: tests
         run: |
@@ -212,8 +212,8 @@ jobs:
           skip_python: true
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -285,8 +285,8 @@ jobs:
           skip_ruby: true
           install_playwright: true
           pnpm_dest: ${{ runner.temp }}/setup-pnpm
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests
         id: tests
         run: |

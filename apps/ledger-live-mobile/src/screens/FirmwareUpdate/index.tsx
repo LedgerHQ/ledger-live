@@ -457,7 +457,92 @@ export const FirmwareUpdate = ({
   ]);
 
   const deviceInteractionDisplay = useMemo(() => {
-    const error = updateActionState.error;
+    if (deviceLockedOrUnresponsive || hasReconnectErrors) {
+      return (
+        <Flex>
+          {renderConnectYourDevice({
+            t,
+            device,
+            theme,
+            fullScreen: false,
+          })}
+          <Button type="main" outline={false} onPress={retryCurrentStep} mt={6} alignSelf="stretch">
+            {t("common.retry")}
+          </Button>
+          <Button type="default" outline={false} onPress={quitUpdate} mt={6}>
+            {t("FirmwareUpdate.quitUpdate")}
+          </Button>
+        </Flex>
+      );
+    }
+
+    if (staxLoadImageState.imageLoadRequested) {
+      return renderImageLoadRequested({
+        t,
+        device,
+        fullScreen: false,
+        wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
+          deviceName: productName,
+        }),
+      });
+    }
+
+    if (staxLoadImageState.imageCommitRequested) {
+      return renderImageCommitRequested({
+        t,
+        device,
+        fullScreen: false,
+        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
+          deviceName: productName,
+        }),
+      });
+    }
+
+    if (restoreAppsState.allowManagerRequestedWording) {
+      return (
+        <AllowManager
+          device={device}
+          wording={t("FirmwareUpdate.steps.restoreSettings.allowAppsRestoration", {
+            deviceName: productName,
+          })}
+        />
+      );
+    }
+
+    if (connectManagerState.allowManagerRequestedWording) {
+      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+    }
+
+    if (installLanguageState.languageInstallationRequested) {
+      return renderAllowLanguageInstallation({
+        t,
+        device,
+        theme,
+        fullScreen: false,
+        wording: t("FirmwareUpdate.steps.restoreSettings.allowLanguageInstallation", {
+          deviceName: productName,
+        }),
+      });
+    }
+
+    if (restoreStepDeniedError) {
+      return (
+        <RestoreStepDenied
+          device={device}
+          onPressRetry={retryCurrentStep}
+          onPressSkip={skipCurrentRestoreStep}
+          stepDeniedError={restoreStepDeniedError}
+          t={t}
+        />
+      );
+    }
+
+    const error =
+      updateActionState.error ??
+      restoreAppsState.error ??
+      installLanguageState.error ??
+      staxLoadImageState.error ??
+      staxFetchImageState.error;
 
     // a TransportRaceCondition error is to be expected since we chain multiple
     // device actions that use different transport acquisition paradigms
@@ -545,108 +630,32 @@ export const FirmwareUpdate = ({
         break;
     }
 
-    if (deviceLockedOrUnresponsive || hasReconnectErrors) {
-      return (
-        <Flex>
-          {renderConnectYourDevice({
-            t,
-            device,
-            theme,
-            fullScreen: false,
-          })}
-          <Button type="main" outline={false} onPress={retryCurrentStep} mt={6} alignSelf="stretch">
-            {t("common.retry")}
-          </Button>
-          <Button type="default" outline={false} onPress={quitUpdate} mt={6}>
-            {t("FirmwareUpdate.quitUpdate")}
-          </Button>
-        </Flex>
-      );
-    }
-
-    if (staxLoadImageState.imageLoadRequested) {
-      return renderImageLoadRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
-          deviceName: productName,
-        }),
-      });
-    }
-
-    if (staxLoadImageState.imageCommitRequested) {
-      return renderImageCommitRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
-          deviceName: productName,
-        }),
-      });
-    }
-
-    if (restoreAppsState.allowManagerRequestedWording) {
-      return (
-        <AllowManager
-          device={device}
-          wording={t("FirmwareUpdate.steps.restoreSettings.allowAppsRestoration", {
-            deviceName: productName,
-          })}
-        />
-      );
-    }
-
-    if (connectManagerState.allowManagerRequestedWording) {
-      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
-    }
-
-    if (installLanguageState.languageInstallationRequested) {
-      return renderAllowLanguageInstallation({
-        t,
-        device,
-        theme,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.allowLanguageInstallation", {
-          deviceName: productName,
-        }),
-      });
-    }
-
-    if (restoreStepDeniedError) {
-      return (
-        <RestoreStepDenied
-          device={device}
-          onPressRetry={retryCurrentStep}
-          onPressSkip={skipCurrentRestoreStep}
-          stepDeniedError={restoreStepDeniedError}
-          t={t}
-        />
-      );
-    }
-
     return undefined;
   }, [
-    updateActionState.error,
-    updateActionState.step,
-    updateActionState.progress,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
+    staxLoadImageState.error,
     restoreAppsState.allowManagerRequestedWording,
     connectManagerState.allowManagerRequestedWording,
+    restoreAppsState.error,
     installLanguageState.languageInstallationRequested,
+    installLanguageState.error,
     restoreStepDeniedError,
-    device,
+    updateActionState.error,
+    updateActionState.step,
+    updateActionState.progress,
+    staxFetchImageState.error,
     t,
+    device,
+    theme,
     retryCurrentStep,
     quitUpdate,
-    firmwareUpdateContext.final.name,
-    firmwareUpdateContext.shouldFlashMCU,
-    theme,
     productName,
     skipCurrentRestoreStep,
+    firmwareUpdateContext.final.name,
+    firmwareUpdateContext.shouldFlashMCU,
   ]);
 
   return (

@@ -68,7 +68,9 @@ test("Buy / Sell @smoke", async ({ page }) => {
     await portfolioPage.startBuyFlow();
     await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
-    await expect.soft(page).toHaveScreenshot("buy-app-opened.png");
+    await expect
+      .soft(page)
+      .toHaveScreenshot("buy-app-opened.png", { mask: [page.locator("webview")] });
   });
 
   await test.step("Navigate to Buy app from market", async () => {

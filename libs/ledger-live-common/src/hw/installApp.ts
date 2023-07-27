@@ -5,6 +5,11 @@ import Transport from "@ledgerhq/hw-transport";
 import type { ApplicationVersion, App } from "@ledgerhq/types-live";
 import ManagerAPI from "../manager/api";
 import { getDependencies } from "../apps/polyfill";
+import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
+
+const APP_INSTALL_RETRY_DELAY = 500;
+const APP_INSTALL_RETRY_LIMIT = 5;
+
 export default function installApp(
   transport: Transport,
   targetId: string | number,
@@ -20,6 +25,7 @@ export default function installApp(
     firmwareKey: app.firmware_key,
     hash: app.hash,
   }).pipe(
+    retryWithDelay(APP_INSTALL_RETRY_DELAY, APP_INSTALL_RETRY_LIMIT),
     filter((e: any) => e.type === "bulk-progress"), // only bulk progress interests the UI
     throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
     map((e: any) => ({

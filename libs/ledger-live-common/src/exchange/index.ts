@@ -20,6 +20,7 @@ const exchangeSupportAppVersions = {
   stellar: "3.3.0",
   stratis: "1.5.0",
   tezos: "2.2.13",
+  tron: "0.4.100",
   zcash: "1.5.0",
   zencash: "1.5.0",
 };
