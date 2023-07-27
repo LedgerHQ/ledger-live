@@ -81,7 +81,6 @@ export const useProviders = () => {
 const SwapForm = () => {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
-  const [error, setError] = useState<ValidCheckQuoteErrorCodes | undefined>(); // TODO: delete?
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
