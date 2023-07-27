@@ -235,9 +235,10 @@ function Delegations({ account }: Props) {
 
       {d && d.poolId ? (
         <View style={styles.wrapper}>
-          <AccountSectionLabel name={t("account.delegation.sectionLabel")} />
+          <AccountSectionLabel name={t("cardano.delegation.header")} />
           <View key={d.poolId} style={[styles.delegationsWrapper]}>
             <DelegationRow
+              balance={account.balance}
               delegation={d}
               unit={unit}
               currency={account.currency}

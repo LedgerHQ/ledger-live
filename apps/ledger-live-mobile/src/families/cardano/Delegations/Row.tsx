@@ -11,8 +11,10 @@ import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import BigNumber from "bignumber.js";
 
 type Props = {
+  balance: BigNumber;
   delegation: CardanoDelegation;
   currency: Currency;
   unit: Unit;
@@ -21,6 +23,7 @@ type Props = {
 };
 
 export default function DelegationRow({
+  balance,
   delegation,
   currency,
   unit,
@@ -62,14 +65,14 @@ export default function DelegationRow({
 
       <View style={styles.rightWrapper}>
         <Text variant={"body"} fontWeight={"semiBold"}>
-          <CurrencyUnitValue value={delegation.rewards} unit={unit} />
+          <CurrencyUnitValue value={balance} unit={unit} />
         </Text>
 
         <LText color="grey">
           <CounterValue
             currency={currency}
             showCode
-            value={delegation.rewards}
+            value={balance}
             alwaysShowSign={false}
             withPlaceholder
           />
