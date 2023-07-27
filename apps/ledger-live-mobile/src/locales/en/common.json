@@ -241,7 +241,7 @@
       "description": "An unexpected error occurred. Please try again."
     },
     "DeviceAlreadySetup": {
-      "title": "Your device is already set up with a Secret Recovery Phrase",
+      "title": "Your device is already setup with a Secret Recovery Phrase",
       "description": null
     },
     "DeviceNotGenuine": {
