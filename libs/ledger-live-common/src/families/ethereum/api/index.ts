@@ -140,16 +140,13 @@ export type API = {
       value: string;
     }>
   >;
-  getDryRunGasLimit: (
-    transaction: {
-      from: string;
-      value: string;
-      data: string;
-      to: string;
-    },
-    gasFeeTimeout?: number,
-  ) => Promise<BigNumber>;
-  getFallbackGasLimit: (address: string, gasFeeTimeout?: number) => Promise<BigNumber>;
+  getDryRunGasLimit: (transaction: {
+    from: string;
+    value: string;
+    data: string;
+    to: string;
+  }) => Promise<BigNumber>;
+  getFallbackGasLimit: (address: string) => Promise<BigNumber>;
   getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
     low: BigNumber;
     medium: BigNumber;
@@ -320,21 +317,19 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     },
 
     // FIXME: Dirty fix that calls v3 gas limit estimation while we find a better solution
-    async getFallbackGasLimit(address: string, gasFeeTimeout): Promise<BigNumber> {
+    async getFallbackGasLimit(address: string): Promise<BigNumber> {
       const { data } = await network({
         method: "GET",
         url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limit`,
-        ...(gasFeeTimeout ? { timeout: gasFeeTimeout } : {}),
       });
       return new BigNumber(data.estimated_gas_limit);
     },
 
-    async getDryRunGasLimit(transaction, gasFeeTimeout): Promise<BigNumber> {
+    async getDryRunGasLimit(transaction): Promise<BigNumber> {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/tx/estimate-gas-limit`,
         data: transaction,
-        ...(gasFeeTimeout ? { timeout: gasFeeTimeout } : {}),
       });
 
       if (data.error_message) {
