@@ -86,18 +86,6 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.SwapLogin]: {
-    provider: string;
-  };
-  [ScreenName.SwapKYC]: {
-    provider: string;
-  };
-  [ScreenName.SwapKYCStates]: {
-    onStateSelect: (_: { value: string; label: string }) => void;
-  };
-  [ScreenName.SwapMFA]: {
-    provider: string;
-  };
   [ScreenName.SwapPendingOperation]: {
     swapOperation: SwapOperation;
   };

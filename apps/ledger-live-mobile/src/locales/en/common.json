@@ -620,10 +620,6 @@
       "title": "Cannot send from subaccounts yet",
       "description": "This feature will be added at a later stage due to changes recently introduced by the Babylon update."
     },
-    "AccessDeniedError": {
-      "title": "Ledger Live needs an update",
-      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre"
-    },
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
     },
@@ -2715,10 +2711,6 @@
       "clearCacheButton": "Clear",
       "exportLogs": "Save logs",
       "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
-      "resetThirdPartyData": "Reset third party data",
-      "resetThirdPartyDataDesc": "Erase all your local third party data, used to access third-party transaction provider.",
-      "resetThirdPartyDataModal": "Delete your local third party data",
-      "resetThirdPartyDataModalDesc": "Delete your local third party data. You may have to resubmit your KYC and/or login again to access services provided by our partners.",
       "hardReset": "Reset Ledger Live",
       "hardResetDesc": "This has no impact on your assets. Erases all data in Ledger Live, including account data, transaction histories and settings. Use your Ledger device to reload and manage your crypto assets on an empty Ledger Live.",
       "repairDevice": "Repair your Ledger device",
@@ -2951,66 +2943,8 @@
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
       },
-      "unauthorizedRates": {
-        "cta": "Reset verification",
-        "banner": "Reset your KYC and update Live to swap with Wyre.",
-        "bannerCTA": "Reset KYC"
-      },
       "main": {
         "header": "Swap"
-      },
-      "kyc": {
-        "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes.",
-        "cta": "Continue",
-        "wyre": {
-          "title": "Complete your KYC",
-          "subtitle": "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our Privacy Policy",
-          "pending": {
-            "cta": "Continue",
-            "title": "KYC submitted for approval",
-            "subtitle": "Your KYC has been submitted and is pending approval.",
-            "link": "Learn more about KYC"
-          },
-          "approved": {
-            "cta": "Continue",
-            "title": "KYC approved!",
-            "subtitle": "Your KYC has been submitted and has been approved.",
-            "link": "Learn more about KYC"
-          },
-          "closed": {
-            "cta": "Reset KYC",
-            "title": "KYC application rejected",
-            "subtitle": "Wyre rejected the data you provided for KYC purposes",
-            "link": "Learn more about KYC"
-          },
-          "form": {
-            "firstName": "First Name",
-            "lastName": "Last Name",
-            "street1": "Street Address Line 1",
-            "street2": "Street Address Line 2",
-            "city": "City",
-            "state": "State",
-            "country": "Country",
-            "postalCode": "Zip Code",
-            "dateOfBirth": "Date of birth",
-            "firstNamePlaceholder": "Enter your first name",
-            "lastNamePlaceholder": "Enter your last name",
-            "street1Placeholder": "Eg. 13, Maple street",
-            "street2Placeholder": "Eg. 13, Maple street",
-            "cityPlaceholder": "Eg. San José",
-            "postalCodePlaceholder": "Enter your 5 digit Zip code",
-            "statePlaceholder": "Select your state",
-            "dateOfBirthPlaceholder": "YYYY-MM-DD",
-            "firstNameError": "Enter your first name to continue",
-            "lastNameError": "Enter your last name to continue",
-            "street1Error": "Enter your address",
-            "cityError": "Enter the city you live in the USA",
-            "stateError": "Select your state to continue",
-            "postalCodeError": "Enter a valid US ZIP code",
-            "dateOfBirthError": "Enter your date of birth"
-          }
-        },
-        "states": "Select your state"
       },
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
@@ -3185,34 +3119,6 @@
           }
         },
         "providers": {
-          "kyc": {
-            "title": "KYC",
-            "required": "You need to complete your KYC",
-            "complete": "Complete KYC",
-            "update": "Refresh KYC",
-            "rejected": "KYC rejected, start the verification again",
-            "rejectedContactProviderSupport": "KYC rejected, please contact {{providerName}} support",
-            "updateRequired": "Complete or update your KYC",
-            "status": {
-              "pending": "KYC pending",
-              "approved": "KYC approved",
-              "closed": "KYC rejected",
-              "upgradeRequired": "KYC insufficient"
-            }
-          },
-          "login": {
-            "title": "Login",
-            "required": "You need to login with this provider",
-            "complete": "Login"
-          },
-          "mfa": {
-            "title": "MFA",
-            "required": "You need to set up MFA with this provider",
-            "complete": "Set up MFA"
-          },
-          "withdrawalsBlockedError": {
-            "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
-          },
           "noProviders": "No results found. There are no quotes available with the current preferences."
         }
       }
