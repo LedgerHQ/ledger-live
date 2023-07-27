@@ -1,5 +1,5 @@
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import SectionFees from "./SectionFees";
 import SectionTarget from "./SectionTarget";
