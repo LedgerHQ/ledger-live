@@ -149,6 +149,7 @@
     "@babel/preset-react": "^7.13.13",
     "@babel/preset-typescript": "^7.15.0",
     "@electron/notarize": "^2.0.0",
+    "@jest/globals": "^29.6.2",
     "@ledgerhq/react-devtools": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@octokit/rest": "^18.12.0",

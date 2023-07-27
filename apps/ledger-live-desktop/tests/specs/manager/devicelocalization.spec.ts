@@ -7,7 +7,7 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "tests/models/Drawer";
 
 test.use({ userdata: "skip-onboarding" });
-test.use({ env: { FORCE_PROVIDER: 12 } });
+test.use({ env: { FORCE_PROVIDER: "12" } });
 
 // eslint-disable-next-line jest/no-done-callback
 test("Manager", async ({ page }) => {

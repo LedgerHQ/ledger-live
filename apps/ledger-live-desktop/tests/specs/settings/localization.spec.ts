@@ -7,7 +7,7 @@ import { LanguageInstallation } from "../../models/LanguageInstallation";
 import { languagePacksData } from "./data";
 
 test.use({ userdata: "skip-onboarding" });
-test.use({ env: { FORCE_PROVIDER: 12 } });
+test.use({ env: { FORCE_PROVIDER: "12" } });
 
 test("Settings", async ({ page }) => {
   const deviceAction = new DeviceAction(page);
