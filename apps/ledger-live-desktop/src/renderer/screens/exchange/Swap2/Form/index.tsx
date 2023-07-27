@@ -37,7 +37,6 @@ import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import { AccountLike, Feature } from "@ledgerhq/types-live";
-import { ValidCheckQuoteErrorCodes } from "@ledgerhq/live-common/exchange/swap/types";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
@@ -128,11 +127,6 @@ const SwapForm = () => {
   const provider = exchangeRate?.provider;
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
 
-  // On provider change, reset banner and flow
-  useEffect(() => {
-    setError(undefined);
-  }, [provider]);
-
   const { setDrawer } = React.useContext(context);
 
   const pauseRefreshing = !!swapError || idleState;
@@ -210,7 +204,6 @@ const SwapForm = () => {
   );
 
   const isSwapReady =
-    !error &&
     !swapTransaction.bridgePending &&
     exchangeRatesState.status !== "loading" &&
     swapTransaction.transaction &&
