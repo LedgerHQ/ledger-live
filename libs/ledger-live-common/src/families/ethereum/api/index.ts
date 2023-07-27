@@ -321,20 +321,21 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
 
     // FIXME: Dirty fix that calls v3 gas limit estimation while we find a better solution
     async getFallbackGasLimit(address: string, gasFeeTimeout): Promise<BigNumber> {
+      console.log("%cindex.ts line:333 gasFeeTimeout", "color: #007acc;", gasFeeTimeout);
       const { data } = await network({
         method: "GET",
         url: `${baseURL.replace("v4", "v3")}/addresses/${address}/estimate-gas-limit`,
-        ...(gasFeeTimeout ? { timeout: gasFeeTimeout } : {}),
       });
       return new BigNumber(data.estimated_gas_limit);
     },
 
     async getDryRunGasLimit(transaction, gasFeeTimeout): Promise<BigNumber> {
+      console.log("%cindex.ts line:333 gasFeeTimeout", "color: #007acc;", gasFeeTimeout);
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/tx/estimate-gas-limit`,
         data: transaction,
-        ...(gasFeeTimeout ? { timeout: gasFeeTimeout } : {}),
+        // ...(gasFeeTimeout ? { timeout: gasFeeTimeout } : {}),
       });
 
       if (data.error_message) {
