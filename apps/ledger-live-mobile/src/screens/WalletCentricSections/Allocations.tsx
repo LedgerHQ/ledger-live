@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { getCurrencyColor, ColorableCurrency } from "@ledgerhq/live-common/currencies/index";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -127,7 +127,7 @@ const Allocations = () => {
           <Flex flex={1} ml={8} flexDirection="row" mt={3}>
             {allocations}
           </Flex>
-          <Icons.ChevronRightMedium size={24} />
+          <IconsLegacy.ChevronRightMedium size={24} />
         </Flex>
       </TouchableOpacity>
     </Flex>

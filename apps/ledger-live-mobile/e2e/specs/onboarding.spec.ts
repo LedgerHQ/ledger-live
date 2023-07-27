@@ -27,10 +27,6 @@ describe("Onboarding", () => {
     await onboardingSteps.chooseToPairMyNano();
   });
 
-  it("selects Pair with Bluetooth", async () => {
-    await onboardingSteps.selectPairWithBluetooth();
-  });
-
   it("adds device via Bluetooth", async () => {
     await onboardingSteps.addDeviceViaBluetooth("David");
   });

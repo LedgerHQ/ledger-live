@@ -45,7 +45,13 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
       ]}
     >
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="ClaimRewardsFlow" name="Started" />
+        <TrackScreen
+          category="ClaimRewardsFlow"
+          name="Started"
+          flow="stake"
+          action="claim_rewards"
+          currency="algo"
+        />
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}

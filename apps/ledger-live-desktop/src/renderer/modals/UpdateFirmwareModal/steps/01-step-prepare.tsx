@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Flex, ProgressLoader, Icons } from "@ledgerhq/react-ui";
+import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
@@ -125,7 +125,7 @@ const Body = ({
           <Flex flexDirection="row" alignItems="center" my={2}>
             <>
               <HighlightVersion>{`V ${from}`}</HighlightVersion>
-              <Icons.ArrowRightMedium size={14} />
+              <IconsLegacy.ArrowRightMedium size={14} />
               <HighlightVersion>{`V ${to}`}</HighlightVersion>
             </>
           </Flex>

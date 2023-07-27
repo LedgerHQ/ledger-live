@@ -4,10 +4,11 @@ import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
-import { Text, Flex, Icons, Box, ScrollContainer } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "../../analytics";
@@ -56,6 +57,7 @@ type Props = {
 
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
+  filterByDeviceModelId?: DeviceModelId;
 };
 
 export default function SelectDevice({
@@ -65,6 +67,7 @@ export default function SelectDevice({
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
   withMyLedgerTracking,
+  filterByDeviceModelId,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -210,8 +213,10 @@ export default function SelectDevice({
       devices.push(ProxyDevice);
     }
 
-    return devices;
-  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice]);
+    return filterByDeviceModelId
+      ? devices.filter(d => d.modelId === filterByDeviceModelId)
+      : devices;
+  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
@@ -317,6 +322,7 @@ export default function SelectDevice({
           onGoBackFromScanning={closeBlePairingFlow}
           onPairingSuccessAddToKnownDevices
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          filterByDeviceModelId={filterByDeviceModelId}
         />
       ) : (
         <Flex flex={1}>
@@ -342,7 +348,7 @@ export default function SelectDevice({
                       }`}
                     />
                   </Text>
-                  <Icons.PlusMedium color="primary.c90" size={15} />
+                  <IconsLegacy.PlusMedium color="primary.c90" size={15} />
                 </Flex>
               </Touchable>
             )}
@@ -367,7 +373,7 @@ export default function SelectDevice({
                   borderStyle="dashed"
                   borderWidth="1px"
                 >
-                  <Icons.PlusMedium color="neutral.c90" size={20} />
+                  <IconsLegacy.PlusMedium color="neutral.c90" size={20} />
                   <Text variant="large" fontWeight="semiBold" ml={5}>
                     {t(
                       `manager.selectDevice.${
@@ -426,7 +432,7 @@ export default function SelectDevice({
                     </Flex>
                     <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
                       <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
-                        <Icons.PlusMedium color="primary.c80" size={24} />
+                        <IconsLegacy.PlusMedium color="primary.c80" size={24} />
                       </Flex>
                     </Flex>
                   </Flex>
@@ -456,7 +462,7 @@ export default function SelectDevice({
                     </Flex>
                     <Flex justifyContent="center" alignItems="center" ml={5} mr={2}>
                       <Flex borderRadius="9999px" backgroundColor="neutral.c40" p={4}>
-                        <Icons.BluetoothMedium color="primary.c80" size={24} />
+                        <IconsLegacy.BluetoothMedium color="primary.c80" size={24} />
                       </Flex>
                     </Flex>
                   </Flex>

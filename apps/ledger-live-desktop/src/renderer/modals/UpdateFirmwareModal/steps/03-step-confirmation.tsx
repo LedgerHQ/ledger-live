@@ -11,7 +11,7 @@ import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "../";
 import { context } from "~/renderer/drawers/Provider";
-import { BoxedIcon, Button, Icons } from "@ledgerhq/react-ui";
+import { BoxedIcon, Button, IconsLegacy } from "@ledgerhq/react-ui";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -46,7 +46,12 @@ const StepConfirmation = ({ error, appsToBeReinstalled }: StepProps) => {
   return (
     <Container data-test-id="firmware-update-done">
       <TrackPage category="Manager" name="FirmwareConfirmation" />
-      <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c50" size={64} iconSize={24} />
+      <BoxedIcon
+        Icon={IconsLegacy.CheckAloneMedium}
+        iconColor="success.c50"
+        size={64}
+        iconSize={24}
+      />
       <Title mt={9}>{t("manager.modal.successTitle")}</Title>
       <Box mt={2} mb={5}>
         <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade80" textAlign="center">

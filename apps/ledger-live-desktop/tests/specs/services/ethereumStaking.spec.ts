@@ -4,7 +4,7 @@ import { Analytics } from "../../models/Analytics";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { PortfolioPage } from "../../models/PortfolioPage";
-import { DiscoverPage } from "../../models/DiscoverPage";
+import { LiveAppWebview } from "../../models/LiveAppWebview";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
 import { MarketCoinPage } from "../../models/MarketCoinPage";
@@ -65,11 +65,13 @@ test.use({
   },
 });
 
-test("Ethereum staking flows via portfolio, asset page and market page", async ({ page }) => {
+test("Ethereum staking flows via portfolio, asset page and market page @smoke", async ({
+  page,
+}) => {
   const portfolioPage = new PortfolioPage(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
-  const liveApp = new DiscoverPage(page);
+  const liveAppWebview = new LiveAppWebview(page);
   const assetPage = new AssetPage(page);
   const accountsPage = new AccountsPage(page);
   const accountPage = new AccountPage(page);
@@ -108,7 +110,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
       event: "button_clicked",
       properties: {
         button: "kiln",
-        page: "account/mock:1:ethereum:true_ethereum_1:",
+        path: "account/mock:1:ethereum:true_ethereum_1:",
         modal: "stake",
         flow: "stake",
         value: "/platform/kiln",
@@ -116,9 +118,9 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
     });
     await modal.chooseStakeProvider("kiln");
     await analyticsPromise;
-    await liveApp.waitForCorrectTextInWebview("Ethereum 2");
-    const dappURL = await liveApp.getLiveAppDappURL();
-    await expect(await liveApp.getLiveAppTitle()).toBe("Kiln");
+    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
+    const dappURL = await liveAppWebview.getLiveAppDappURL();
+    expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
     expect(dappURL).toContain("?focus=dedicated");
     await expect.soft(page).toHaveScreenshot("stake-provider-dapp-has-opened.png", {
       mask: [page.locator("webview")],
@@ -176,7 +178,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
       event: "button_clicked",
       properties: {
         button: "kiln_pooling",
-        page: "account/mock:1:ethereum:true_ethereum_0:",
+        path: "account/mock:1:ethereum:true_ethereum_0:",
         modal: "stake",
         flow: "stake",
         value: "/platform/kiln",
@@ -184,9 +186,9 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
     });
     await modal.chooseStakeProvider("kiln_pooling");
     await analyticsPromise;
-    const dappURL = await liveApp.getLiveAppDappURL();
-    await liveApp.waitForCorrectTextInWebview("Ethereum 1");
+    const dappURL = await liveAppWebview.getLiveAppDappURL();
+    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     expect(dappURL).toContain("?focus=pooled");
-    await expect(await liveApp.getLiveAppTitle()).toBe("Kiln");
+    await expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
   });
 });

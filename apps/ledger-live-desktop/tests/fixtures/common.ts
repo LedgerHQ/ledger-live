@@ -134,6 +134,8 @@ const test = base.extend<TestFixtures>({
 
     // use page in the test
     await use(page);
+
+    console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
   // below is used for the logging file at `artifacts/networkResponses.log`
   recordTestNamesForApiResponseLogging: [

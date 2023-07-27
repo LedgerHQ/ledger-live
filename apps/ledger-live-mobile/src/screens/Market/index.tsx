@@ -8,7 +8,7 @@ import {
   Icon,
   ScrollContainer,
   InfiniteLoader,
-  Icons,
+  IconsLegacy,
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -147,7 +147,7 @@ const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
 
-      <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
+      <TouchableOpacity onPress={toggleFilterByStarredAccounts} testID="starred">
         <Badge bg={filterByStarredAccount ? "primary.c80" : "neutral.c30"}>
           <Icon
             name={filterByStarredAccount ? "StarSolid" : "Star"}
@@ -163,10 +163,10 @@ const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation
         )}
         Icon={
           top100
-            ? Icons.GraphGrowMedium
+            ? IconsLegacy.GraphGrowMedium
             : order === "asc"
-            ? Icons.ArrowTopMedium
-            : Icons.ArrowBottomMedium
+            ? IconsLegacy.ArrowTopMedium
+            : IconsLegacy.ArrowBottomMedium
         }
         value={top100 ? "top100" : `${orderBy}_${order}`}
         options={[

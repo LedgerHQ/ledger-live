@@ -17,6 +17,7 @@ import {
   etherscanERC721EventToOperations,
   etherscanOperationToOperations,
 } from "../../../../adapters";
+import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -107,27 +108,33 @@ describe("EVM Family", () => {
         jest.clearAllMocks();
       });
 
-      it("should return an empty array if the currency is misconfigured", async () => {
+      it("should throw an error if the currency is misconfigured", async () => {
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanCoinOperations,
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastCoinOperations(
-          {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-              // no explorer
+        try {
+          await await ETHERSCAN_API.getLastCoinOperations(
+            {
+              ...currency,
+              ethereumLikeInfo: {
+                chainId: 1,
+                // no explorer
+              },
             },
-          },
-          account.freshAddress,
-          account.id,
-          0,
-        );
-
-        expect(response).toEqual([]);
+            account.freshAddress,
+            account.id,
+            0,
+          );
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeInstanceOf(EtherscanLikeExplorerUsedIncorrectly);
+        }
       });
 
       it("should return a flat list of coin transactions from block 0", async () => {
@@ -150,7 +157,13 @@ describe("EVM Family", () => {
         expect(response.length).toBe(4);
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}&tag=latest&page=1&sort=desc`,
+          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 0,
+          },
         });
       });
 
@@ -174,7 +187,13 @@ describe("EVM Family", () => {
         expect(response.length).toBe(4);
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
+          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+          },
         });
       });
 
@@ -199,7 +218,14 @@ describe("EVM Family", () => {
         expect(response.length).toBe(4);
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
+          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+            endBlock: 100,
+          },
         });
       });
     });
@@ -209,27 +235,33 @@ describe("EVM Family", () => {
         jest.clearAllMocks();
       });
 
-      it("should return an empty array if the currency is misconfigured", async () => {
+      it("should throw if the currency is misconfigured", async () => {
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanTokenOperations,
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastTokenOperations(
-          {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-              // no explorer
+        try {
+          await ETHERSCAN_API.getLastTokenOperations(
+            {
+              ...currency,
+              ethereumLikeInfo: {
+                chainId: 1,
+                // no explorer
+              },
             },
-          },
-          account.freshAddress,
-          account.id,
-          0,
-        );
-
-        expect(response).toEqual([]);
+            account.freshAddress,
+            account.id,
+            0,
+          );
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeInstanceOf(EtherscanLikeExplorerUsedIncorrectly);
+        }
       });
 
       it("should return a flat list of token transactions from block 0", async () => {
@@ -255,7 +287,13 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}&tag=latest&page=1&sort=desc`,
+          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 0,
+          },
         });
       });
 
@@ -282,7 +320,13 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
+          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+          },
         });
       });
 
@@ -310,7 +354,14 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
+          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+            endBlock: 100,
+          },
         });
       });
     });
@@ -327,20 +378,26 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC721Operations(
-          {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-              // no explorer
+        try {
+          await ETHERSCAN_API.getLastERC721Operations(
+            {
+              ...currency,
+              ethereumLikeInfo: {
+                chainId: 1,
+                // no explorer
+              },
             },
-          },
-          account.freshAddress,
-          account.id,
-          0,
-        );
-
-        expect(response).toEqual([]);
+            account.freshAddress,
+            account.id,
+            0,
+          );
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeInstanceOf(EtherscanLikeExplorerUsedIncorrectly);
+        }
       });
 
       it("should return a flat list of erc721 transactions from block 0", async () => {
@@ -366,7 +423,13 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}&tag=latest&page=1&sort=desc`,
+          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 0,
+          },
         });
       });
 
@@ -393,7 +456,13 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
+          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+          },
         });
       });
 
@@ -421,7 +490,14 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
+          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+            endBlock: 100,
+          },
         });
       });
     });
@@ -438,20 +514,26 @@ describe("EVM Family", () => {
           },
         }));
 
-        const response = await ETHERSCAN_API.getLastERC1155Operations(
-          {
-            ...currency,
-            ethereumLikeInfo: {
-              chainId: 1,
-              // no explorer
+        try {
+          await ETHERSCAN_API.getLastERC1155Operations(
+            {
+              ...currency,
+              ethereumLikeInfo: {
+                chainId: 1,
+                // no explorer
+              },
             },
-          },
-          account.freshAddress,
-          account.id,
-          0,
-        );
-
-        expect(response).toEqual([]);
+            account.freshAddress,
+            account.id,
+            0,
+          );
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeInstanceOf(EtherscanLikeExplorerUsedIncorrectly);
+        }
       });
 
       it("should return a flat list of erc1155 transactions from block 0", async () => {
@@ -477,7 +559,13 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}&tag=latest&page=1&sort=desc`,
+          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 0,
+          },
         });
       });
 
@@ -504,7 +592,13 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50`,
+          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+          },
         });
       });
 
@@ -532,7 +626,14 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}&tag=latest&page=1&sort=desc&startBlock=50&endBlock=100`,
+          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+            endBlock: 100,
+          },
         });
       });
     });

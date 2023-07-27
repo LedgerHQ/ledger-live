@@ -43,7 +43,7 @@ const OperationDetailsExtra = ({
         : null;
       return (
         <>
-          {type !== "ACTIVATE" && (
+          {type !== "ACTIVATE" && operation.extra && operation.extra.celoOperationValue && (
             <OpDetailsSection>
               <OpDetailsTitle>
                 <Trans i18nKey={`operation.type.${type}`} />
@@ -51,7 +51,7 @@ const OperationDetailsExtra = ({
               <OpDetailsData>
                 <Box>
                   <FormattedVal
-                    val={operation.extra.celoOperationValue}
+                    val={operation.extra.celoOperationValue.toFixed()}
                     unit={account.unit}
                     showCode
                     fontSize={4}
@@ -87,22 +87,24 @@ const OperationDetailsExtra = ({
     case "UNLOCK":
       return (
         <>
-          <OpDetailsSection>
-            <OpDetailsTitle>
-              <Trans i18nKey={`operation.type.${type}`} />
-            </OpDetailsTitle>
-            <OpDetailsData>
-              <Box>
-                <FormattedVal
-                  val={operation.extra.celoOperationValue}
-                  unit={account.unit}
-                  showCode
-                  fontSize={4}
-                  color="palette.text.shade60"
-                />
-              </Box>
-            </OpDetailsData>
-          </OpDetailsSection>
+          {operation.extra && operation.extra.celoOperationValue && (
+            <OpDetailsSection>
+              <OpDetailsTitle>
+                <Trans i18nKey={`operation.type.${type}`} />
+              </OpDetailsTitle>
+              <OpDetailsData>
+                <Box>
+                  <FormattedVal
+                    val={operation.extra.celoOperationValue.toFixed()}
+                    unit={account.unit}
+                    showCode
+                    fontSize={4}
+                    color="palette.text.shade60"
+                  />
+                </Box>
+              </OpDetailsData>
+            </OpDetailsSection>
+          )}
         </>
       );
     default:

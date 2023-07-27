@@ -10,9 +10,9 @@ import { Batch, BatchElement, Batcher } from "./types";
  *
  * Inspired by https://github.com/graphql/dataloader
  */
-export const makeBatcher = <I, R>(
-  call: (input: I[], chainId: number) => Promise<R[]>,
-  chainId: number,
+export const makeBatcher = <I, P, R>(
+  request: (input: I[], params: P) => Promise<R[]>,
+  params: P,
 ): Batcher<I, R> =>
   (() => {
     const queue: BatchElement<I, R>[] = [];
@@ -43,10 +43,10 @@ export const makeBatcher = <I, R>(
         queue.length = 0;
 
         // Make the call with all the couples of contract and tokenId at once
-        call(elements, chainId)
-          .then(res => {
+        request(elements, params)
+          .then(results => {
             // Resolve each batch element with its own resolver and only its response
-            res.forEach((metadata, index) => resolvers[index](metadata));
+            results.forEach((response, index) => resolvers[index](response));
           })
           .catch(err => {
             // Reject all batch element with the error

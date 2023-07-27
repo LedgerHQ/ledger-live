@@ -6,7 +6,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useSelector } from "react-redux";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import Section from "../../screens/OperationDetails/Section";
 import OperationStatusIcon from "../../icons/OperationStatusIcon";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
@@ -67,7 +67,7 @@ const OperationIcon = ({
       <OperationStatusIcon
         confirmed={confirmed}
         type={type}
-        Badge={Icons.ClaimRewardsMedium}
+        Badge={IconsLegacy.ClaimRewardsMedium}
         failed={hasFailed}
         size={size}
       />

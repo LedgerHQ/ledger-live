@@ -7,7 +7,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import { providerIcons } from "../../../icons/swap/index";
+import ProviderIcon from "../../../components/ProviderIcon";
 import { SelectProviderParamList } from "../types";
 import CounterValue from "../../../components/CounterValue";
 import { TrackScreen, useAnalytics } from "../../../analytics";
@@ -73,7 +73,6 @@ export function SelectProvider({ navigation, route }: SelectProviderParamList) {
 
       <Flex>
         {rates.value.map(rate => {
-          const ProviderIcon = providerIcons[rate.provider.toLowerCase()];
           const isSelected = selectedRate === rate;
 
           return (
@@ -93,7 +92,7 @@ export function SelectProvider({ navigation, route }: SelectProviderParamList) {
                 borderColor={isSelected ? "primary.c70" : "neutral.c30"}
               >
                 <Flex flexDirection="row" alignItems="center">
-                  <ProviderIcon size={24} />
+                  <ProviderIcon size="XS" name={rate.provider} />
                   <Flex marginLeft={4}>
                     <Text variant="large" paddingBottom={2}>
                       {getProviderName(rate.provider)}

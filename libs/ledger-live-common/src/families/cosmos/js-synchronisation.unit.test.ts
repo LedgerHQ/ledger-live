@@ -32,7 +32,7 @@ const baseTxMock = {
   tx: {
     auth_info: {
       signer_infos: [{ sequence: "seq" }],
-      fee: { amount: [{ denom: "uatom", amount: new BigNumber(0) }] },
+      fee: { amount: [{ denom: "uatom", amount: new BigNumber(1) }] },
     },
   },
 };
@@ -232,7 +232,7 @@ describe("getAccountShape", () => {
     expect((account.operations as Operation[])[0].extra.memo).toEqual(memo);
   });
 
-  it("should list claim reward operations correctly with multiple delegations", async () => {
+  it("should list claim reward operations correctly with one delegation", async () => {
     mockAccountInfo({
       txs: [
         mockCosmosTx({
@@ -323,6 +323,309 @@ describe("getAccountShape", () => {
       {
         address: "validatorAddressTwo",
         amount: new BigNumber(5),
+      },
+    ]);
+  });
+
+  it("should parse an operation correctly with multiple transfers(received operations)", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          logs: [
+            {
+              type: "transfer",
+              events: [
+                {
+                  type: "transfer",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "5uatom",
+                    },
+                    {
+                      key: "sender",
+                      value: "senderAddress",
+                    },
+                    {
+                      key: "recipient",
+                      value: "address",
+                    },
+                  ],
+                },
+                {
+                  type: "transfer",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "6uatom",
+                    },
+                    {
+                      key: "sender",
+                      value: "senderAddress",
+                    },
+                    {
+                      key: "recipient",
+                      value: "address",
+                    },
+                  ],
+                },
+              ],
+              attributes: [],
+            },
+          ],
+        } as Partial<CosmosTx>),
+      ],
+    });
+
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(11));
+    expect((account.operations as Operation[])[0].type).toEqual("IN");
+  });
+
+  it("should parse an operation correctly with multiple transfers(sent operations)", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: { memo: "memo" },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+          logs: [
+            {
+              type: "transfer",
+              events: [
+                {
+                  type: "transfer",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "5uatom",
+                    },
+                    {
+                      key: "recipient",
+                      value: "senderAddress",
+                    },
+                    {
+                      key: "sender",
+                      value: "address",
+                    },
+                  ],
+                },
+                {
+                  type: "transfer",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "6uatom",
+                    },
+                    {
+                      key: "recipient",
+                      value: "senderAddress",
+                    },
+                    {
+                      key: "sender",
+                      value: "address",
+                    },
+                  ],
+                },
+              ],
+              attributes: [],
+            },
+          ],
+        } as Partial<CosmosTx>),
+      ],
+    });
+
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(12)); // 1+ 5 + 6
+    expect((account.operations as Operation[])[0].type).toEqual("OUT");
+  });
+
+  it("should parse an operation correctly with multiple delegations", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: { memo: "memo" },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+          logs: [
+            {
+              type: "delegate",
+              events: [
+                {
+                  type: "delegate",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "5uatom",
+                    },
+                    {
+                      key: "validator",
+                      value: "address",
+                    },
+                  ],
+                },
+                {
+                  type: "delegate",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "6uatom",
+                    },
+                    {
+                      key: "validator",
+                      value: "address",
+                    },
+                  ],
+                },
+              ],
+              attributes: [],
+            },
+          ],
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(1)); // fees
+    expect((account.operations as Operation[])[0].type).toEqual("DELEGATE");
+    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+      {
+        address: "address",
+        amount: new BigNumber(5),
+      },
+      {
+        address: "address",
+        amount: new BigNumber(6),
+      },
+    ]);
+  });
+
+  it("should parse an operation correctly with multiple redelegate", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: { memo: "memo" },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+          logs: [
+            {
+              type: "redelegate",
+              events: [
+                {
+                  type: "redelegate",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "5uatom",
+                    },
+                    {
+                      key: "validator_src",
+                      value: "address_src",
+                    },
+                    {
+                      key: "validator_dst",
+                      value: "address1",
+                    },
+                  ],
+                },
+                {
+                  type: "redelegate",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "6uatom",
+                    },
+                    {
+                      key: "validator_src",
+                      value: "address_src",
+                    },
+                    {
+                      key: "validator_dst",
+                      value: "address2",
+                    },
+                  ],
+                },
+              ],
+              attributes: [],
+            },
+          ],
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(1)); // fees
+    expect((account.operations as Operation[])[0].type).toEqual("REDELEGATE");
+    expect((account.operations as Operation[])[0].extra.sourceValidator).toEqual("address_src");
+    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+      {
+        address: "address1",
+        amount: new BigNumber(5),
+      },
+      {
+        address: "address2",
+        amount: new BigNumber(6),
+      },
+    ]);
+  });
+
+  it("should parse an operation correctly with multiple unredelegate", async () => {
+    mockAccountInfo({
+      txs: [
+        mockCosmosTx({
+          tx: {
+            body: { memo: "memo" },
+            auth_info: baseTxMock.tx.auth_info,
+          },
+          logs: [
+            {
+              type: "unbond",
+              events: [
+                {
+                  type: "unbond",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "5uatom",
+                    },
+                    {
+                      key: "validator",
+                      value: "address1",
+                    },
+                  ],
+                },
+                {
+                  type: "unbond",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value: "6uatom",
+                    },
+                    {
+                      key: "validator",
+                      value: "address2",
+                    },
+                  ],
+                },
+              ],
+              attributes: [],
+            },
+          ],
+        } as Partial<CosmosTx>),
+      ],
+    });
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as Operation[])[0].value).toEqual(new BigNumber(1)); // fees
+    expect((account.operations as Operation[])[0].type).toEqual("UNDELEGATE");
+    expect((account.operations as Operation[])[0].extra.validators).toEqual([
+      {
+        address: "address1",
+        amount: new BigNumber(5),
+      },
+      {
+        address: "address2",
+        amount: new BigNumber(6),
       },
     ]);
   });

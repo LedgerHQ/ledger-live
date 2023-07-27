@@ -58,6 +58,8 @@ describe("EVM Family", () => {
           fee: estimatedFees,
           blockHash: null,
           blockHeight: null,
+          subOperations: [],
+          nftOperations: [],
           senders: [account.freshAddress],
           recipients: [coinTransaction.recipient],
           accountId: account.id,
@@ -103,6 +105,7 @@ describe("EVM Family", () => {
           accountId: account.id,
           transactionSequenceNumber: 0,
           date: expect.any(Date),
+          nftOperations: [],
           subOperations: [
             {
               id: encodeOperationId(tokenAccount.id, "", "OUT"),
@@ -161,6 +164,7 @@ describe("EVM Family", () => {
           accountId: account.id,
           transactionSequenceNumber: 0,
           date: expect.any(Date),
+          nftOperations: [],
           subOperations: [
             {
               id: encodeOperationId(tokenAccount.id, "", "OUT"),
@@ -226,6 +230,7 @@ describe("EVM Family", () => {
           accountId: account.id,
           transactionSequenceNumber: 0,
           date: expect.any(Date),
+          subOperations: [],
           nftOperations: [
             {
               id: encodeERC721OperationId(nftId, "", "NFT_OUT", 0),
@@ -288,6 +293,7 @@ describe("EVM Family", () => {
           fee: estimatedFees,
           blockHash: null,
           blockHeight: null,
+          subOperations: [],
           senders: [account.freshAddress],
           recipients: [nft.contract],
           accountId: account.id,

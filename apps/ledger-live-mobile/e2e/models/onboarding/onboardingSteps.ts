@@ -1,9 +1,7 @@
 import {
-  getElementByText,
   tapByText,
   tapByElement,
   getElementById,
-  waitForElementByText,
   waitForElementById,
   tapById,
   isAndroid,
@@ -26,7 +24,7 @@ export default class OnboardingSteps {
   continueButton = () => getElementById(this.devicePairedContinueButtonId);
   pairDeviceButton = () => getElementById("pair-device");
   pairNanoButton = () => getElementById("Onboarding-PairNewNano");
-  nanoDeviceButton = (name = "") => getElementByText(`Nano X de ${name}`);
+  deviceName = (name = "") => `Nano X de ${name}`;
   maybeLaterButton = () => getElementById("notifications-prompt-later");
 
   async startOnboarding() {
@@ -43,11 +41,10 @@ export default class OnboardingSteps {
   }
 
   async chooseToExploreApp() {
-    // Fixme : Found a way to skip discover carousel without disabling synchro (animations prevent click)
-    if (isAndroid()) await device.disableSynchronization();
+    await device.disableSynchronization(); // Animations prevent click
     await tapByElement(this.exploreAppButton());
-    if (!isAndroid()) await device.disableSynchronization();
-    for (let i = 0; i < 4; i++) {
+    // Fixme : Found a way to skip discover carousel first page on iOS
+    for (let i = isAndroid() ? 0 : 1; i < 4; i++) {
       await waitForElementById(this.discoverLiveTitle(i));
       await tapById(this.discoverLiveTitle(i));
     }
@@ -68,18 +65,13 @@ export default class OnboardingSteps {
     await tapByElement(this.pairNanoButton());
   }
 
-  async selectPairWithBluetooth() {
-    await tapByElement(this.pairDeviceButton());
-  }
-
   async addDeviceViaBluetooth(name = "David") {
+    await device.disableSynchronization(); // Scanning animation prevents launching mocks
+    await tapByElement(this.pairDeviceButton());
     bridge.addDevices();
-    await waitForElementByText(`Nano X de ${name}`);
-
-    await tapByElement(this.nanoDeviceButton(name));
-
+    await device.enableSynchronization();
+    await tapByText(this.deviceName(name));
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
-
     bridge.open(); // Mocked action open ledger manager on the Nano
   }
 

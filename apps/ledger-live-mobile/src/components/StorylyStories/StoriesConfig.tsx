@@ -3,7 +3,7 @@ import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import React, { useCallback, useState } from "react";
 import { Camera } from "expo-camera";
-import { Flex, Switch, BaseInput, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
 import { CameraType } from "expo-camera/build/Camera.types";
@@ -98,7 +98,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
         renderRight={
           <InputRenderRightContainer>
             <TouchableOpacity onPress={openCameraModal}>
-              <Icons.QrCodeMedium size={24} color={"neutral.c100"} />
+              <IconsLegacy.QrCodeMedium size={24} color={"neutral.c100"} />
             </TouchableOpacity>
           </InputRenderRightContainer>
         }

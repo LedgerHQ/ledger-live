@@ -23,7 +23,13 @@ function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="ClaimRewards Algorand Flow" name="Step Confirmed" />
+        <TrackPage
+          category="ClaimRewards Algorand Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="claim_rewards"
+          currency="algo"
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -45,7 +51,13 @@ function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="ClaimRewards Algorand Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="ClaimRewards Algorand Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="claim_rewards"
+          currency="algo"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="algorand.claimRewards.flow.steps.confirmation.broadcastError" />}

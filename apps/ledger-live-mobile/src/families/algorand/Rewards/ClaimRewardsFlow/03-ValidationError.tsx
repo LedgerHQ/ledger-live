@@ -38,7 +38,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="AlgorandClaimRewards" name="ValidationError" />
+      <TrackScreen
+        category="AlgorandClaimRewards"
+        name="ValidationError"
+        flow="stake"
+        action="claim_rewards"
+        currency="algo"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

@@ -9,7 +9,7 @@ import {
   Alert,
   Flex,
   IconBadge,
-  Icons,
+  IconsLegacy,
   Text,
   VerticalStepper,
   ItemStatus,
@@ -79,9 +79,9 @@ const CloseWarning = ({
   const { t } = useTranslation();
 
   return (
-    <Flex alignItems="center" justifyContent="center" px={1}>
+    <Flex alignItems="center" justifyContent="center" px={1} mt={7}>
       <TrackScreen category="Error: update not complete yet" type="drawer" refreshSource={false} />
-      <IconBadge iconColor="warning.c100" iconSize={32} Icon={Icons.WarningSolidMedium} />
+      <IconBadge iconColor="warning.c100" iconSize={32} Icon={IconsLegacy.WarningSolidMedium} />
       <Text fontSize={24} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateNotYetComplete")}
       </Text>
@@ -152,6 +152,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
   const {
+    connectManagerState,
     updateActionState,
     updateStep,
     retryCurrentStep,
@@ -251,7 +252,10 @@ export const FirmwareUpdate = ({
                 restoreAppsState.installQueue.length > 0
               ? noOfAppsToReinstall - (restoreAppsState.installQueue.length - 1)
               : noOfAppsToReinstall
-          }/${noOfAppsToReinstall}`,
+          }/${noOfAppsToReinstall}` +
+          (restoreAppsState.installQueue !== undefined && restoreAppsState.installQueue.length > 0
+            ? ` - ${restoreAppsState.installQueue[0]}`
+            : ""),
       });
     }
 
@@ -273,7 +277,7 @@ export const FirmwareUpdate = ({
     () => ({
       prepareUpdate: {
         status: ItemStatus.inactive,
-        title: t("FirmwareUpdate.steps.prepareUpdate.titleActive"),
+        title: t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
         renderBody: () => (
           <>
             <TrackScreen
@@ -353,7 +357,7 @@ export const FirmwareUpdate = ({
               setIsCloseWarningOpen(true);
             }
           }}
-          Icon={Icons.CloseMedium}
+          Icon={IconsLegacy.CloseMedium}
         />
       ),
     });
@@ -400,6 +404,7 @@ export const FirmwareUpdate = ({
     switch (updateActionState.step) {
       case "installingOsu":
         updatePrepareStepProgress();
+        newSteps.prepareUpdate.title = t("FirmwareUpdate.steps.prepareUpdate.titleTransferring");
         newSteps.prepareUpdate.status = ItemStatus.active;
         break;
       case "preparingUpdate":
@@ -452,90 +457,6 @@ export const FirmwareUpdate = ({
   ]);
 
   const deviceInteractionDisplay = useMemo(() => {
-    const error = updateActionState.error;
-
-    // a TransportRaceCondition error is to be expected since we chain multiple
-    // device actions that use different transport acquisition paradigms
-    // the action should, however, retry to execute and resolve the error by itself
-    // no need to present the error to the user
-    if (error && error.name !== "TransportRaceCondition") {
-      return (
-        <DeviceActionError
-          device={device}
-          t={t}
-          errorName={error.name}
-          translationContext="FirmwareUpdate"
-        >
-          <TrackScreen category={`Error: ${error.name}`} refreshSource={false} type="drawer" />
-          <Button
-            event="button_clicked"
-            eventProperties={{
-              button: "Retry flow",
-              screen: "Firmware update",
-              drawer: `Error: ${error.name}`,
-            }}
-            type="main"
-            outline={false}
-            onPress={retryCurrentStep}
-            mt={6}
-            alignSelf="stretch"
-          >
-            {t("common.retry")}
-          </Button>
-          <Flex mt={7} alignSelf="stretch">
-            <Link
-              event="button_clicked"
-              eventProperties={{
-                button: "Quit flow",
-                screen: "Firmware update",
-                drawer: `Error: ${error.name}`,
-              }}
-              type="main"
-              onPress={quitUpdate}
-            >
-              {t("FirmwareUpdate.quitUpdate")}
-            </Link>
-          </Flex>
-        </DeviceActionError>
-      );
-    }
-
-    switch (updateActionState.step) {
-      case "allowSecureChannelRequested":
-        return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
-      case "installOsuDevicePermissionRequested":
-        return (
-          <ConfirmFirmwareUpdate
-            device={device}
-            oldFirmwareVersion={deviceInfo.seVersion ?? ""}
-            newFirmwareVersion={firmwareUpdateContext.final.name}
-            t={t}
-          />
-        );
-      case "installOsuDevicePermissionDenied":
-        return (
-          <FirmwareUpdateDenied
-            device={device}
-            newFirmwareVersion={firmwareUpdateContext.final.name}
-            onPressRestart={retryCurrentStep}
-            onPressQuit={quitUpdate}
-            t={t}
-          />
-        );
-      case "installOsuDevicePermissionGranted":
-        if (!firmwareUpdateContext.shouldFlashMCU) {
-          return <FinishFirmwareUpdate device={device} t={t} />;
-        }
-        break;
-      case "flashingMcu":
-        if (updateActionState.progress === 1) {
-          return <FinishFirmwareUpdate device={device} t={t} />;
-        }
-        break;
-      default:
-        break;
-    }
-
     if (deviceLockedOrUnresponsive || hasReconnectErrors) {
       return (
         <Flex>
@@ -588,6 +509,10 @@ export const FirmwareUpdate = ({
       );
     }
 
+    if (connectManagerState.allowManagerRequestedWording) {
+      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+    }
+
     if (installLanguageState.languageInstallationRequested) {
       return renderAllowLanguageInstallation({
         t,
@@ -612,43 +537,145 @@ export const FirmwareUpdate = ({
       );
     }
 
+    const error =
+      updateActionState.error ??
+      restoreAppsState.error ??
+      installLanguageState.error ??
+      staxLoadImageState.error ??
+      staxFetchImageState.error;
+
+    // a TransportRaceCondition error is to be expected since we chain multiple
+    // device actions that use different transport acquisition paradigms
+    // the action should, however, retry to execute and resolve the error by itself
+    // no need to present the error to the user
+    if (
+      error &&
+      !["TransportRaceCondition", "LockedDeviceError", "UnresponsiveDeviceError"].includes(
+        error.name,
+      )
+    ) {
+      return (
+        <DeviceActionError
+          device={device}
+          t={t}
+          errorName={error.name}
+          translationContext="FirmwareUpdate"
+        >
+          <TrackScreen category={`Error: ${error.name}`} refreshSource={false} type="drawer" />
+          <Button
+            event="button_clicked"
+            eventProperties={{
+              button: "Retry flow",
+              screen: "Firmware update",
+              drawer: `Error: ${error.name}`,
+            }}
+            type="main"
+            outline={false}
+            onPress={retryCurrentStep}
+            my={6}
+            alignSelf="stretch"
+          >
+            {t("common.retry")}
+          </Button>
+          <Flex mt={7} alignSelf="stretch">
+            <Link
+              event="button_clicked"
+              eventProperties={{
+                button: "Quit flow",
+                screen: "Firmware update",
+                drawer: `Error: ${error.name}`,
+              }}
+              type="main"
+              onPress={quitUpdate}
+            >
+              {t("FirmwareUpdate.quitUpdate")}
+            </Link>
+          </Flex>
+        </DeviceActionError>
+      );
+    }
+
+    switch (updateActionState.step) {
+      case "allowSecureChannelRequested":
+        return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+      case "installOsuDevicePermissionRequested":
+        return (
+          <ConfirmFirmwareUpdate
+            device={device}
+            newFirmwareVersion={firmwareUpdateContext.final.name}
+            t={t}
+          />
+        );
+      case "installOsuDevicePermissionDenied":
+        return (
+          <FirmwareUpdateDenied
+            device={device}
+            newFirmwareVersion={firmwareUpdateContext.final.name}
+            onPressRestart={retryCurrentStep}
+            onPressQuit={quitUpdate}
+            t={t}
+          />
+        );
+      case "installOsuDevicePermissionGranted":
+        if (!firmwareUpdateContext.shouldFlashMCU) {
+          return <FinishFirmwareUpdate device={device} t={t} />;
+        }
+        break;
+      case "flashingMcu":
+        if (updateActionState.progress === 1) {
+          return <FinishFirmwareUpdate device={device} t={t} />;
+        }
+        break;
+      default:
+        break;
+    }
+
     return undefined;
   }, [
-    updateActionState.error,
-    updateActionState.step,
-    updateActionState.progress,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
+    staxLoadImageState.error,
     restoreAppsState.allowManagerRequestedWording,
+    connectManagerState.allowManagerRequestedWording,
+    restoreAppsState.error,
     installLanguageState.languageInstallationRequested,
+    installLanguageState.error,
     restoreStepDeniedError,
-    device,
+    updateActionState.error,
+    updateActionState.step,
+    updateActionState.progress,
+    staxFetchImageState.error,
     t,
+    device,
+    theme,
     retryCurrentStep,
     quitUpdate,
-    deviceInfo.seVersion,
-    firmwareUpdateContext.final.name,
-    firmwareUpdateContext.shouldFlashMCU,
-    theme,
     productName,
     skipCurrentRestoreStep,
+    firmwareUpdateContext.final.name,
+    firmwareUpdateContext.shouldFlashMCU,
   ]);
 
   return (
     <>
       {fullUpdateComplete ? (
-        <Flex flex={1} px={7}>
+        <Flex flex={1} px={7} pb={7}>
           <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
             <Flex mb={7}>
-              <Icons.CircledCheckSolidMedium color="success.c80" size={100} />
+              <IconBadge
+                Icon={IconsLegacy.CheckAloneMedium}
+                iconColor="success.c50"
+                iconSize={32}
+                backgroundColor="neutral.c20"
+              />
             </Flex>
-            <Text textAlign="center" fontSize={7} mb={3}>
+            <Text textAlign="center" fontSize={7} mb={3} fontWeight="semiBold">
               {t("FirmwareUpdate.updateDone", { deviceName: productName })}
             </Text>
-            <Text textAlign="center" fontSize={4} color="neutral.c80">
+            <Text textAlign="center" fontSize={4} color="neutral.c80" variant="largeLineHeight">
               {t("FirmwareUpdate.updateDoneDescription", {
                 firmwareVersion: firmwareUpdateContext.final.name,
               })}
@@ -678,9 +705,11 @@ export const FirmwareUpdate = ({
       )}
 
       <QueuedDrawer isRequestingToBeOpened={Boolean(deviceInteractionDisplay)} noCloseButton>
-        <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
-          {deviceInteractionDisplay}
-        </ImageSourceContext.Provider>
+        <Flex mt={7}>
+          <ImageSourceContext.Provider value={staxImageSourceProviderValue}>
+            {deviceInteractionDisplay}
+          </ImageSourceContext.Provider>
+        </Flex>
       </QueuedDrawer>
       <QueuedDrawer isRequestingToBeOpened={isCloseWarningOpen} noCloseButton>
         <CloseWarning

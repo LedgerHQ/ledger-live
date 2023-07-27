@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useNavigation } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -59,7 +59,7 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
   return (
     <>
       <DeviceOptionRow
-        Icon={Icons.PhotographMedium}
+        Icon={IconsLegacy.PhotographMedium}
         iconSize={20}
         label={t("customImage.title")}
         onPress={disabled ? undefined : handleStartCustomImage}

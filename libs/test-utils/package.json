@@ -12,7 +12,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
-    "dummy-apps:build": "pnpm --filter='dummy-*' build",
+    "dummy-apps:build": "pnpm --filter='dummy-live-app' --filter='dummy-wallet-app' build",
     "dummy-apps:start-ptx-app": "cd dummy-ptx-app && npx http-server"
   },
   "dependencies": {

@@ -1,25 +1,11 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { GasOptions } from "../../types";
-import { getGasOptions as ledgerGetGasOptions } from "./ledger";
-
-export type GasTrackerApi = {
-  getGasOptions: ({
-    currency,
-    options,
-  }: {
-    currency: CryptoCurrency;
-    options?: {
-      useEIP1559: boolean;
-    };
-  }) => Promise<GasOptions>;
-};
+import ledgerGasTracker from "./ledger";
+import { GasTrackerApi } from "./types";
 
 export const getGasTracker = (currency: CryptoCurrency): GasTrackerApi | null => {
   switch (currency.ethereumLikeInfo?.gasTracker?.type) {
     case "ledger":
-      return {
-        getGasOptions: ledgerGetGasOptions,
-      };
+      return ledgerGasTracker;
 
     /**
      * We return null instead of throwing an error because not having a gas tracker

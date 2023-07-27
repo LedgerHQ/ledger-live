@@ -2,8 +2,8 @@ import React, { useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { space, SpaceProps, color, ColorProps } from "styled-system";
 import Text from "../../Text";
-import CheckAlone from "@ledgerhq/icons-ui/native/CheckAloneMedium";
-import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
+import CheckAlone from "@ledgerhq/icons-ui/nativeLegacy/CheckAloneMedium";
+import CloseMedium from "@ledgerhq/icons-ui/nativeLegacy/CloseMedium";
 import Animated, { useAnimatedStyle, withTiming, withDelay, Easing } from "react-native-reanimated";
 
 // #region Separator
