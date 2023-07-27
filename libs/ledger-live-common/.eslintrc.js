@@ -24,6 +24,7 @@ module.exports = {
     "linebreak-style": ["error", "unix"],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
+    "@typescript-eslint/no-explicit-any": "warn",
   },
   overrides: [
     {
