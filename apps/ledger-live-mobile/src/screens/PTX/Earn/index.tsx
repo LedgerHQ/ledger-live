@@ -15,6 +15,7 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 import { ScreenName } from "../../../const";
 import { counterValueCurrencySelector, discreetModeSelector } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
+import { TAB_BAR_HEIGHT } from "../../../components/TabBar/shared";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -38,10 +39,18 @@ export function EarnScreen({ route }: Props) {
   const manifest = localManifest || remoteManifest;
 
   return manifest ? (
-    <>
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      mb={TAB_BAR_HEIGHT}
+    >
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer
         manifest={manifest}
+        disableHeader
         inputs={{
           theme,
           lang: locale,
@@ -51,7 +60,7 @@ export function EarnScreen({ route }: Props) {
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
-    </>
+    </Flex>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (
