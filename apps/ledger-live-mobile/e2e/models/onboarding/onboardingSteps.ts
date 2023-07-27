@@ -73,6 +73,7 @@ export default class OnboardingSteps {
     await tapByText(this.deviceName(name));
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
     bridge.open(); // Mocked action open ledger manager on the Nano
+    await waitForElementById("onboarding-paired-continue");
   }
 
   async openLedgerLive() {

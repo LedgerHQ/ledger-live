@@ -144,7 +144,7 @@ const mapSubscanTransfer = (
     blockHeight: transfer.block_num,
     date: new Date(transfer.block_timestamp * 1000),
     extra: {
-      palletMethod: "balances.transfer",
+      palletMethod: "balances.transfer_allow_death",
       // FIXME subscan plz
       transferAmount: amount,
     },
