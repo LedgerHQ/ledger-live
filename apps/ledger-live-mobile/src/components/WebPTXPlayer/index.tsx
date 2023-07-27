@@ -143,11 +143,11 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
     }
   }, [handleHardwareBackPress]);
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  };
+  }, [navigation]);
 
   useEffect(() => {
     const handler = (e: { preventDefault: () => void }) => {
@@ -179,7 +179,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
         headerTitle: () => null,
       });
     }
-  }, [manifest, navigation, webviewState, isWhitelistedDomain, disableHeader]);
+  }, [manifest, navigation, webviewState, isWhitelistedDomain, disableHeader, onClose]);
 
   return (
     <SafeAreaView style={[styles.root]}>

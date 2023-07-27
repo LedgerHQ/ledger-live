@@ -51,11 +51,13 @@ export default function VoteStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="celo.vote.flow.steps.starter.bullet.0" />,
-            <Trans i18nKey="celo.vote.flow.steps.starter.bullet.1" />,
-            <Trans i18nKey="celo.vote.flow.steps.starter.bullet.2" />,
+            <Trans i18nKey="celo.vote.flow.steps.starter.bullet.0" key="VoteText1" />,
+            <Trans i18nKey="celo.vote.flow.steps.starter.bullet.1" key="VoteText2" />,
+            <Trans i18nKey="celo.vote.flow.steps.starter.bullet.2" key="VoteText3" />,
           ].map(wording => (
-            <LText semiBold>{wording}</LText>
+            <LText semiBold key={wording.key}>
+              {wording}
+            </LText>
           ))}
         />
         <View style={[styles.howDelegationWorks]}>

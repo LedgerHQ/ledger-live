@@ -131,7 +131,9 @@ const Ethereum1559CustomFees = ({
   useEffect(() => {
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, transactionPatch));
-  }, [maxPriorityFeePerGas, maxFeePerGas, transactionPatch]);
+    // TODO: Some of the dependencies were ommitted, is that by choice ?
+    // }, [maxPriorityFeePerGas, maxFeePerGas, transactionPatch]);
+  }, [maxPriorityFeePerGas, maxFeePerGas, transactionPatch, bridge, transaction, setTransaction]);
 
   return (
     <View style={styles.root}>
