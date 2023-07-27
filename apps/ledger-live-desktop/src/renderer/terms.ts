@@ -38,13 +38,13 @@ export function acceptLendingTerms() {
 }
 
 /* This hook dynamically returns correct url based on user language */
-export const useDynamicUrl = (key: string): string => {
-  // @ts-expect-error this is untypable
+export const useDynamicUrl = (key: keyof Pick<typeof urls, "terms" | "privacyPolicy">): string => {
   const [url, setUrl] = useState(urls[key].en);
   const language = useSelector(languageSelector);
+
   useEffect(() => {
-    // @ts-expect-error this is untypable
     setUrl(urls[key][language] || urls[key].en);
   }, [key, language]);
+
   return url;
 };

@@ -41,7 +41,7 @@ export type SettingsState = {
   lastSeenDevice: DeviceModelInfo | undefined | null;
   devicesModelList: DeviceModelId[];
   latestFirmware: FirmwareUpdateContext | null;
-  language: string | undefined | null;
+  language: Locale | undefined | null;
   theme: string | undefined | null;
   /** DEPRECATED, use field `locale` instead */
   region: string | undefined | null;
@@ -101,7 +101,7 @@ export type SettingsState = {
 };
 
 const DEFAULT_LANGUAGE_LOCALE = "en";
-export const getInitialLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) => {
+export const getInitialLanguageLocale = (fallbackLocale: Locale = DEFAULT_LANGUAGE_LOCALE) => {
   const detectedLanguage = getSystemLocale() || fallbackLocale;
   return getLanguages().find(lang => detectedLanguage.startsWith(lang)) || fallbackLocale;
 };
@@ -484,13 +484,13 @@ export const userThemeSelector = (state: State): "dark" | "light" | undefined | 
 };
 
 type LanguageAndUseSystemLanguage = {
-  language: string;
+  language: Locale;
   useSystemLanguage: boolean;
 };
 
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
   const { language } = state.settings;
-  if (language && getLanguages().includes(language as Locale)) {
+  if (language && getLanguages().includes(language)) {
     return {
       language,
       useSystemLanguage: false,

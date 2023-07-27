@@ -84,12 +84,12 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const languages = useMemo(
     () =>
       [{ value: null as Locale | null, label: t(`language.system`) }].concat(
-        (debugLanguage ? allLanguages : prodStableLanguages).map(key => ({
+        prodStableLanguages.map(key => ({
           value: key,
           label: languageLabels[key],
         })),
       ),
-    [t, debugLanguage],
+    [t],
   );
 
   const currentLanguage = useMemo(
