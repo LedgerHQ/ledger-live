@@ -6103,6 +6103,7 @@
       "viewOn": "View on",
       "viewInExplorer": "View in explorer",
       "hide": "Hide NFT collection",
+      "unhide": "Unhide NFT collection",
       "txDetails": "Transaction details"
     },
     "modalDisabled": {

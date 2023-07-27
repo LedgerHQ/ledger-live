@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlatList } from "react-native";
-import { Box, Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
+import { Box, Flex, Text, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import { Account, NFTMetadata } from "@ledgerhq/types-live";
+import { Account, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
@@ -13,54 +13,59 @@ import {
   NFTResource,
   NFTResourceLoaded,
 } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
-import { accountSelector } from "../../../reducers/accounts";
+import { hiddenNftsSelector } from "../../../reducers/accounts";
 import NftMedia from "../../../components/Nft/NftMedia";
 import Skeleton from "../../../components/Skeleton";
 import { unhideNftCollection } from "../../../actions/settings";
-import { State } from "../../../reducers/types";
+import useFloorPrice from "../../../hooks/useFloorPrice";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import CurrencyIcon from "../../../components/CurrencyIcon";
+import HiddenNftLinkPanel from "../../../components/Nft/HiddenNftLinkPanel";
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
+  padding: ${props => props.theme.space[6]}px;
 ` as unknown as typeof FlatList;
 
 const CollectionImage = styled(NftMedia)`
   border-radius: 4px;
-  width: 36px;
+  width: 48px;
   aspect-ratio: 1;
   overflow: hidden;
 `;
 
 const CollectionNameSkeleton = styled(Skeleton)`
-  height: 8px;
+  height: 16px;
   width: 113px;
   border-radius: 4px;
   margin-left: 10px;
 `;
 
-const HiddenNftCollectionRow = ({
-  contractAddress,
-  accountId,
-  onUnhide,
-}: {
-  contractAddress: string;
-  accountId: string;
-  onUnhide: () => void;
-}) => {
-  const account = useSelector<State, Account | undefined>(state =>
-    accountSelector(state, { accountId }),
-  );
-  const nfts = account?.nfts || [];
-  const nft = nfts.find(nft => nft?.contract === contractAddress);
+const RowRoot = styled(Flex)`
+  background-color: ${props => props.theme.colors.opacityDefault.c05};
+  border-radius: 12px;
+  margin-bottom: ${props => props.theme.space[4]}px;
+`;
 
+// NOTE: The Crypto icon has so much whitespace it breaks the alignment
+// of this price vertically against the image and also horizontally against
+// the NFT title. This "fixes" it.
+const RowPrice = styled(Flex)`
+  margin-left: -6px;
+  margin-bottom: -6px;
+`;
+
+const HiddenNftCollectionRow = ({ nft, onUnhide }: { nft: ProtoNFT; onUnhide: () => void }) => {
+  const [isOpen, setOpen] = useState<boolean>(false);
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
-    contractAddress,
-    nft?.currencyId,
+    nft.contract,
+    nft.currencyId,
   ) as NFTResource & { metadata?: NFTResourceLoaded["metadata"] };
+  const { floorPriceCurrency, currency, floorPrice } = useFloorPrice(nft);
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
-    contractAddress,
-    nft?.tokenId,
-    nft?.currencyId,
+    nft.contract,
+    nft.tokenId,
+    nft.currencyId,
   ) as NFTResource & { metadata?: NFTResourceLoaded["metadata"] };
   const loading = useMemo(
     () => nftStatus === "loading" || collectionStatus === "loading",
@@ -68,54 +73,71 @@ const HiddenNftCollectionRow = ({
   );
 
   return (
-    <Flex p={6} flexDirection="row" alignItems="center">
-      <CollectionImage
-        status={nftStatus}
-        metadata={nftMetadata as NFTMetadata}
-        mediaFormat={"preview"}
-      />
-      <Flex flexDirection="row" alignItems="center" flexShrink={1} justifyContent="space-between">
-        <Flex mx={6} flexGrow={1} flexShrink={1} flexDirection="column">
-          <CollectionNameSkeleton loading={loading}>
-            <Text fontWeight={"semiBold"} variant={"large"} ellipsizeMode="tail" numberOfLines={2}>
-              {collectionMetadata?.tokenName || contractAddress}
-            </Text>
-          </CollectionNameSkeleton>
+    <>
+      <RowRoot p={6} flexDirection="row" alignItems="center">
+        <CollectionImage
+          status={nftStatus}
+          metadata={nftMetadata as NFTMetadata}
+          mediaFormat={"preview"}
+        />
+        <Flex flexDirection="row" alignItems="center" flexShrink={1} justifyContent="space-between">
+          <Flex mx={6} flexGrow={1} flexShrink={1} flexDirection="column">
+            <CollectionNameSkeleton loading={loading}>
+              <Text
+                fontWeight={"semiBold"}
+                variant={"large"}
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                {collectionMetadata?.tokenName || nft.contract}
+              </Text>
+            </CollectionNameSkeleton>
+            <RowPrice flexDirection="row" alignItems="center">
+              <CurrencyIcon currency={currency} size={25} />
+              <Text variant="small" color="neutral.c70">
+                {(floorPrice || floorPrice === 0) && floorPriceCurrency ? (
+                  <>
+                    <CurrencyUnitValue
+                      showCode={false}
+                      unit={floorPriceCurrency.units[0]}
+                      value={floorPrice}
+                      dynamicSignificantDigits={4}
+                    />
+                  </>
+                ) : (
+                  "--"
+                )}
+              </Text>
+            </RowPrice>
+          </Flex>
+          <TouchableOpacity onPress={() => setOpen(true)}>
+            <Icons.MoreHorizontal color="neutral.c100" />
+          </TouchableOpacity>
         </Flex>
-        <TouchableOpacity onPress={onUnhide}>
-          <IconsLegacy.CloseMedium color="neutral.c100" size={24} />
-        </TouchableOpacity>
-      </Flex>
-    </Flex>
+      </RowRoot>
+      <HiddenNftLinkPanel
+        onClose={() => setOpen(false)}
+        isOpen={isOpen}
+        onUnhide={onUnhide}
+        nft={nft}
+        metaData={nftMetadata as NFTMetadata}
+      />
+    </>
   );
 };
 
 const HiddenNftCollections = () => {
-  const hiddenCollections = useSelector(hiddenNftCollectionsSelector);
+  const hiddenCollections = useSelector(hiddenNftsSelector);
   const dispatch = useDispatch();
-
-  const renderItem = useCallback(
-    ({ item }: { item: string }) => {
-      const [accountId, contractAddress] = item.split("|");
-      return (
-        <HiddenNftCollectionRow
-          accountId={accountId}
-          contractAddress={contractAddress}
-          onUnhide={() => dispatch(unhideNftCollection(item))}
-        />
-      );
-    },
-    [dispatch],
-  );
-
-  const keyExtractor = useCallback(item => item, []);
-
+  const keyExtractor = useCallback(item => item.id, []);
   return (
     <Box backgroundColor={"background.main"} height={"100%"}>
       <Flex p={2}>
         <CollectionFlatList
           data={hiddenCollections}
-          renderItem={renderItem}
+          renderItem={({ item: { nft, id } }) => (
+            <HiddenNftCollectionRow nft={nft} onUnhide={() => dispatch(unhideNftCollection(id))} />
+          )}
           keyExtractor={keyExtractor}
         />
       </Flex>

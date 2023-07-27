@@ -2,19 +2,19 @@ import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NFTMetadata } from "@ledgerhq/types-live";
-import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
+import { View, StyleSheet, Linking, Platform } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import styled, { useTheme } from "styled-components/native";
+import { Box } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";
 import RaribleIcon from "../../icons/Rarible";
 import QueuedDrawer from "../QueuedDrawer";
-import { rgba } from "../../colors";
 import HideNftDrawer from "./HideNftDrawer";
 import { track, TrackScreen } from "../../analytics";
 import { extractImageUrlFromNftMetadata } from "../CustomImage/imageUtils";
+import NftLink, { NftLinkRoundIcon } from "./NftLink";
 
 type Props = {
   links?: NFTMetadata["links"] | null;
@@ -24,47 +24,6 @@ type Props = {
   nftId?: string;
   nftContract?: string;
 };
-
-const LinkTouchable = styled(TouchableOpacity)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const NftLink = ({
-  style,
-  leftIcon,
-  rightIcon,
-  title,
-  subtitle,
-  onPress,
-  primary,
-}: {
-  style?: React.ComponentProps<typeof TouchableOpacity>["style"];
-  leftIcon: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  title: string;
-  subtitle?: string;
-  onPress?: React.ComponentProps<typeof TouchableOpacity>["onPress"];
-  primary?: boolean;
-}) => (
-  <LinkTouchable style={style} onPress={onPress}>
-    <Flex flexDirection="row" alignItems="center">
-      <Box mr={16}>{leftIcon}</Box>
-      <Flex flexDirection="column">
-        <Text fontWeight="semiBold" fontSize={16} color={primary ? "primary.c90" : "neutral.c100"}>
-          {title}
-        </Text>
-        {subtitle && (
-          <Text fontSize={13} color={primary ? "primary.c90" : "neutral.c100"}>
-            {subtitle}
-          </Text>
-        )}
-      </Flex>
-    </Flex>
-    {rightIcon}
-  </LinkTouchable>
-);
 
 const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata }: Props) => {
   const { colors } = useTheme();
@@ -163,16 +122,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
         <NftLink
           key="nftLinkHide"
           primary
-          leftIcon={
-            <View
-              style={[
-                styles.roundIconContainer,
-                { backgroundColor: rgba(colors.primary.c90, 0.1) },
-              ]}
-            >
-              <IconsLegacy.EyeNoneMedium size={16} color={colors.primary.c90} />
-            </View>
-          }
+          leftIcon={<NftLinkRoundIcon icon="EyeNoneMedium" />}
           title={t("nft.viewerModal.hide")}
           onPress={hide}
         />,
@@ -182,16 +132,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
             <NftLink
               key="nftLinkViewInExplorer"
               primary
-              leftIcon={
-                <View
-                  style={[
-                    styles.roundIconContainer,
-                    { backgroundColor: rgba(colors.primary.c90, 0.1) },
-                  ]}
-                >
-                  <IconsLegacy.GlobeMedium size={16} color={colors.primary.c90} />
-                </View>
-              }
+              leftIcon={<NftLinkRoundIcon icon="GlobeMedium" />}
               title={t("nft.viewerModal.viewInExplorer")}
               onPress={handleOpenExplorer}
             />,
@@ -203,16 +144,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
               key="nftLinkCLS"
               primary
               title={t("customImage.nftEntryPointButtonLabel")}
-              leftIcon={
-                <View
-                  style={[
-                    styles.roundIconContainer,
-                    { backgroundColor: rgba(colors.primary.c90, 0.1) },
-                  ]}
-                >
-                  <IconsLegacy.PhotographMedium size={16} color={colors.primary.c90} />
-                </View>
-              }
+              leftIcon={<NftLinkRoundIcon icon="PhotographMedium" />}
               onPress={handlePressCustomImage}
             />,
           ]
@@ -291,13 +223,6 @@ const styles = StyleSheet.create({
   },
   sectionMargin: {
     marginBottom: 30,
-  },
-  roundIconContainer: {
-    height: 36,
-    width: 36,
-    borderRadius: 36,
-    justifyContent: "center",
-    alignItems: "center",
   },
   hr: {
     borderBottomWidth: 1,

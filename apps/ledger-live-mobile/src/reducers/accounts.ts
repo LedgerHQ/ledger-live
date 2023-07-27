@@ -2,7 +2,7 @@ import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
 import { createSelector, createSelectorCreator, defaultMemoize, OutputSelector } from "reselect";
 import uniq from "lodash/uniq";
-import { Account, AccountLike, AccountLikeArray, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, AccountLikeArray, ProtoNFT, SubAccount } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   CryptoOrTokenCurrency,
@@ -448,6 +448,23 @@ export const orderedNftsSelector = createSelector(
   accountsSelector,
   nftsSelector,
   (accounts, nfts) => orderByLastReceived(accounts, nfts),
+);
+
+export const hiddenNftsSelector = createSelector(
+  hiddenNftCollectionsSelector,
+  accountsSelector,
+  (hiddenNFts, accounts) =>
+    hiddenNFts.reduce<{ nft: ProtoNFT; id: string }[]>((p, c) => {
+      const [accountId, contractAddress] = c.split("|");
+      const account = accounts.find(({ id }) => id === accountId);
+      if (account) {
+        const nft = account.nfts?.find(({ contract }) => contract === contractAddress);
+        if (nft) {
+          p.push({ id: c, nft });
+        }
+      }
+      return p;
+    }, []),
 );
 
 /**
