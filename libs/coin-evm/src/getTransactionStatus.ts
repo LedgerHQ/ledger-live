@@ -136,7 +136,11 @@ export const validateGas = (
   ) {
     errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
   } else if (tx.recipient && estimatedFees.gt(account.balance)) {
-    errors.gasPrice = new NotEnoughGas(); // "The parent account balance is insufficient for network fees"
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      ticker: account.currency.ticker,
+      cryptoName: account.currency.name,
+      links: ["platform/multibuy"],
+    }); // "The parent account balance is insufficient for network fees"
   }
 
   // Gas Price for EIP-1559
