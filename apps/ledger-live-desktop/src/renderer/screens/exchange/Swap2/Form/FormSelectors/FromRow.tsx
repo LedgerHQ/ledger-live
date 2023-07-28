@@ -28,6 +28,20 @@ import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortB
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
+import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
+
+const SwapStatusText = styled(Text)(
+  ({ theme: { space } }) => `
+  display: flex;
+  align-items: center;
+  column-gap: 2px;
+  & button, a {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`,
+);
 
 // Pick a default source account if none are selected.
 // TODO use live-common once its ready
@@ -67,6 +81,7 @@ type Props = {
   setFromAmount: SwapTransactionType["setFromAmount"];
   isMaxEnabled: boolean;
   fromAmountError?: Error;
+  fromAmountWarning?: Error;
   provider: string | undefined | null;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
@@ -92,6 +107,7 @@ function FromRow({
   isMaxEnabled,
   toggleMax,
   fromAmountError,
+  fromAmountWarning,
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {
@@ -188,9 +204,20 @@ function FromRow({
             unit={unit}
             // Flow complains if this prop is missing…
             renderRight={null}
-            error={fromAmountError}
           />
         </InputSection>
+      </Box>
+      <Box paddingTop={1}>
+        <SwapStatusText
+          color={fromAmountError ? "error.c70" : "warning"}
+          fontWeight={500}
+          fontFamily="Inter"
+          fontSize={12}
+          lineHeight="14px"
+        >
+          <WarningSolidMedium />
+          <TranslatedError error={fromAmountError || fromAmountWarning} />
+        </SwapStatusText>
       </Box>
     </>
   );

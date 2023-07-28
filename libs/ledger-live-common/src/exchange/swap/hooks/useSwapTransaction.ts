@@ -25,18 +25,23 @@ export const selectorStateDefaultValues = {
 
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
-export const useFromAmountError = (
-  errors: Record<string, Error | undefined>,
+export const useFromAmountStatusMessage = (
+  status: Record<string, Error | undefined>,
+  statusToInclude: string[],
 ): Error | undefined => {
-  const fromAmountError = useMemo(() => {
-    const [error] = [errors?.gasPrice, errors?.amount]
+  const statusEntries = useMemo(
+    () => statusToInclude.map(s => status?.[s]),
+    [status, statusToInclude],
+  );
+
+  return useMemo(() => {
+    // The order of errors/warnings here will determine the precedence
+    const [relevantStatus] = statusEntries
       .filter(Boolean)
-      .filter(error => !(error instanceof AmountRequired));
+      .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
 
-    return error;
-  }, [errors?.gasPrice, errors?.amount]);
-
-  return fromAmountError;
+    return relevantStatus;
+  }, [statusEntries]);
 };
 
 export const useSwapTransaction = ({
@@ -86,7 +91,11 @@ export const useSwapTransaction = ({
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
 
-  const fromAmountError = useFromAmountError(bridgeTransaction.status.errors);
+  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction.status.errors, ["amount"]);
+  // treat the gasPrice error as a warning for swap.
+  const fromAmountWarning = useFromAmountStatusMessage(bridgeTransaction.status.errors, [
+    "gasPrice",
+  ]);
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,
@@ -140,6 +149,7 @@ export const useSwapTransaction = ({
     setFromAmount,
     toggleMax,
     fromAmountError,
+    fromAmountWarning,
     setToAccount,
     setToCurrency,
     setFromAccount,

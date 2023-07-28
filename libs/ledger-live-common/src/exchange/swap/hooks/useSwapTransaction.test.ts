@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks";
 import { AmountRequired } from "@ledgerhq/errors";
 
-import { useFromAmountError } from "./useSwapTransaction";
+import { useFromAmountStatusMessage } from "./useSwapTransaction";
 
 /**
  * @DEV: The useSwapTransaction hook is a composition hook. It doesn't own specific
@@ -12,7 +12,10 @@ import { useFromAmountError } from "./useSwapTransaction";
 describe("useSwapTransaction", () => {
   test("useFromAmountError - returns nothing when no errors are caught", () => {
     const { result } = renderHook(() =>
-      useFromAmountError({ gasPrice: undefined, amount: undefined }),
+      useFromAmountStatusMessage({ gasPrice: undefined, amount: undefined }, [
+        "gasPrice",
+        "amount",
+      ]),
     );
 
     expect(result.current).toBeUndefined();
@@ -37,7 +40,9 @@ describe("useSwapTransaction", () => {
     ];
 
     tests.forEach(({ input, output }) => {
-      const { result } = renderHook(() => useFromAmountError(input));
+      const { result } = renderHook(() =>
+        useFromAmountStatusMessage(input, ["gasPrice", "amount"]),
+      );
       expect(result.current).toEqual(output);
     });
   });
@@ -46,7 +51,10 @@ describe("useSwapTransaction", () => {
     const amountError = new AmountRequired("This error will be filtered");
 
     const { result } = renderHook(() =>
-      useFromAmountError({ gasPrice: undefined, amount: amountError }),
+      useFromAmountStatusMessage({ gasPrice: undefined, amount: amountError }, [
+        "gasPrice",
+        "amount",
+      ]),
     );
 
     expect(result.current).toBeUndefined();
