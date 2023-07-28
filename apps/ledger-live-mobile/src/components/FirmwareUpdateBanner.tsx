@@ -61,6 +61,16 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
 
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
 
+  const {
+    requestCompleted: batteryRequestCompleted,
+    batteryStatusesState,
+    triggerRequest: triggerBatteryCheck,
+    cancelRequest: cancelBatteryCheck,
+  } = useBatteryStatuses({
+    deviceId: lastConnectedDevice?.deviceId,
+    statuses: requiredBatteryStatuses,
+  });
+
   const onExperimentalFirmwareUpdate = useCallback(() => {
     if (newFwUpdateUxFeatureFlag?.enabled) {
       navigation.navigate(NavigatorName.Manager, {
@@ -69,7 +79,10 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
           device: lastConnectedDevice,
           deviceInfo: lastSeenDevice?.deviceInfo,
           firmwareUpdateContext: latestFirmware,
-          onBackFromUpdate,
+          onBackFromUpdate: () => {
+            cancelBatteryCheck();
+            if (onBackFromUpdate) onBackFromUpdate();
+          },
         },
       });
       return;
@@ -93,18 +106,9 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     lastConnectedDevice,
     lastSeenDevice?.deviceInfo,
     latestFirmware,
+    cancelBatteryCheck,
     onBackFromUpdate,
   ]);
-
-  const {
-    requestCompleted: batteryRequestCompleted,
-    batteryStatusesState,
-    triggerRequest: triggerBatteryCheck,
-    cancelRequest: cancelBatteryCheck,
-  } = useBatteryStatuses({
-    deviceId: lastConnectedDevice?.deviceId,
-    statuses: requiredBatteryStatuses,
-  });
 
   // Effect that will check the battery of stax before triggering the update and display a warning preventing the update
   // in case the battery is too low and the device is not charging
