@@ -521,11 +521,11 @@ describe("getAccountShape", () => {
                       value: "5uatom",
                     },
                     {
-                      key: "validator_src",
+                      key: "source_validator",
                       value: "address_src",
                     },
                     {
-                      key: "validator_dst",
+                      key: "destination_validator",
                       value: "address1",
                     },
                   ],
@@ -538,11 +538,11 @@ describe("getAccountShape", () => {
                       value: "6uatom",
                     },
                     {
-                      key: "validator_src",
+                      key: "source_validator",
                       value: "address_src",
                     },
                     {
-                      key: "validator_dst",
+                      key: "destination_validator",
                       value: "address2",
                     },
                   ],
