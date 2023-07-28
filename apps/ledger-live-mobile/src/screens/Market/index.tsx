@@ -19,6 +19,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
@@ -264,6 +265,7 @@ export default function Market({ navigation }: NavigationProps) {
   const { isConnected } = useNetInfo();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
+  const ptxEarnFeature = useFeature("ptxEarn");
 
   useProviders();
 
@@ -423,6 +425,26 @@ export default function Market({ navigation }: NavigationProps) {
     [isLoading],
   );
 
+  const MarketHeader = useCallback(
+    () =>
+      ptxEarnFeature?.enabled ? (
+        <Flex px={6} marginTop="20px">
+          <SearchHeader search={search} refresh={refresh} />
+          <BottomSection navigation={navigation} />
+        </Flex>
+      ) : (
+        <Flex px={6}>
+          <Text my={3} variant="h4" fontWeight="semiBold">
+            {t("market.title")}
+          </Text>
+
+          <SearchHeader search={search} refresh={refresh} />
+          <BottomSection navigation={navigation} />
+        </Flex>
+      ),
+    [ptxEarnFeature?.enabled],
+  );
+
   const [refreshControlVisible, setRefreshControlVisible] = useState(false);
 
   const handlePullToRefresh = useCallback(() => {
@@ -458,13 +480,7 @@ export default function Market({ navigation }: NavigationProps) {
       mt={insets.top}
       bg="background.main"
     >
-      <Flex px={6}>
-        <Text my={3} variant="h4" fontWeight="semiBold">
-          {t("market.title")}
-        </Text>
-        <SearchHeader search={search} refresh={refresh} />
-        <BottomSection navigation={navigation} />
-      </Flex>
+      <MarketHeader />
 
       <FlatList
         contentContainerStyle={{
