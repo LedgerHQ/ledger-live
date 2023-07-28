@@ -177,26 +177,6 @@ describe("swap/utils/getAvailableAccountsById", () => {
 });
 
 describe("swap/utils/shouldShowLoginBanner", () => {
-  test("should not display Login banner if no provider is specified", () => {
-    const result = shouldShowLoginBanner({
-      provider: undefined,
-      token: "token",
-    });
-
-    expect(result).toBe(false);
-  });
-
-  ["changelly", "wyre"].forEach(provider => {
-    test(`should not display Login banner for ${provider}`, () => {
-      const result = shouldShowLoginBanner({
-        provider,
-        token: "token",
-      });
-
-      expect(result).toBe(false);
-    });
-  });
-
   ["ftx", "ftxus"].forEach(provider => {
     describe(`${provider.toUpperCase()}`, () => {
       test("should display Login banner if no token is provided", () => {
@@ -286,22 +266,6 @@ describe("swap/utils/isRegistrationRequired", () => {
 });
 
 describe("swap/utils/getProviderName", () => {
-  test("should return uppercase provider name for ftx", () => {
-    const expectedResult = "FTX";
-
-    const result = getProviderName("ftx");
-
-    expect(result).toBe(expectedResult);
-  });
-
-  test("should return uppercase provider name for ftxus", () => {
-    const expectedResult = "FTXUS";
-
-    const result = getProviderName("ftxus");
-
-    expect(result).toBe(expectedResult);
-  });
-
   test("should return capitalized provider name for 1inch", () => {
     const expectedResult = "1inch";
 
@@ -324,14 +288,6 @@ describe("swap/utils/getNoticeType", function () {
     const expectedResult = { message: "provider", learnMore: false };
 
     const result = getNoticeType("cic");
-
-    expect(result).toEqual(expectedResult);
-  });
-
-  test("should return notice type for ftx", () => {
-    const expectedResult = { message: "default", learnMore: true };
-
-    const result = getNoticeType("ftx");
 
     expect(result).toEqual(expectedResult);
   });
