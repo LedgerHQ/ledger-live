@@ -62,12 +62,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         const swapProviderConfig = getProviderConfig(provider);
 
-        const { needsBearerToken } = swapProviderConfig;
-
         const headers = {
           EquipmentId: getEnv("USER_ID"),
-          ...(needsBearerToken ? { Authorization: `Bearer ${userId}` } : {}),
-          ...(userId ? { userId } : {}), // NB: only for Wyre AFAIK
         };
 
         const data = {

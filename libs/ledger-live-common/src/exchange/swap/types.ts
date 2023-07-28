@@ -82,7 +82,6 @@ export type AvailableProvider = AvailableProviderV3;
 export type GetExchangeRates = (
   arg0: Exchange,
   arg1: Transaction,
-  wyreUserId?: string,
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
   providers?: AvailableProviderV3[],
   timeout?: number,
@@ -210,7 +209,6 @@ export type InitSwapInput = {
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
   deviceId: string;
-  userId?: string; // Nb for kyc purposes
 };
 
 export type InitSwapInputRaw = {
@@ -218,7 +216,6 @@ export type InitSwapInputRaw = {
   exchangeRate: ExchangeRateRaw;
   transaction: TransactionRaw;
   deviceId: string;
-  userId?: string;
 };
 
 export interface CustomMinOrMaxError extends Error {
