@@ -48,6 +48,8 @@ const getSwapAPIVersion: () => number = () => {
 type CEXProviderConfig = SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = {
   type: "DEX";
+  needsKYC: boolean;
+  needsBearerToken: boolean;
 };
 type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
@@ -60,6 +62,8 @@ const swapProviders: Record<string, ProviderConfig> = {
       signature:
         "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
     }),
+    needsKYC: false,
+    needsBearerToken: false,
     type: "CEX",
   },
   cic: {
@@ -70,13 +74,19 @@ const swapProviders: Record<string, ProviderConfig> = {
       signature:
         "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
     }),
+    needsKYC: false,
+    needsBearerToken: false,
     type: "CEX",
   },
   oneinch: {
     type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
   },
   paraswap: {
     type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
   },
 };
 

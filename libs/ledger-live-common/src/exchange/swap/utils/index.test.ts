@@ -203,50 +203,6 @@ describe("swap/utils/shouldShowLoginBanner", () => {
   });
 });
 
-describe("swap/utils/shouldShowKYCBanner", () => {
-  test("should not display KYC banner if no provider is specified", () => {
-    const result = shouldShowKYCBanner({
-      provider: undefined,
-      kycStatus: "rejected",
-    });
-
-    expect(result).toBe(false);
-  });
-
-  test("should not display KYC banner if provider does not require KYC", () => {
-    const result = shouldShowKYCBanner({
-      provider: "changelly",
-      kycStatus: "rejected",
-    });
-
-    expect(result).toBe(false);
-  });
-
-  ["ftx", "ftxus", "wyre"].forEach(provider => {
-    describe(`${provider.toUpperCase()}`, () => {
-      ["pending", "upgradeRequired", "rejected"].forEach(status => {
-        test(`should display KYC banner if kycStatus is ${status}`, () => {
-          const result = shouldShowKYCBanner({
-            provider,
-            kycStatus: status as ValidKYCStatus,
-          });
-
-          expect(result).toBe(true);
-        });
-      });
-
-      test("should not display KYC banner if kycStatus is approved", () => {
-        const result = shouldShowKYCBanner({
-          provider,
-          kycStatus: "approved",
-        });
-
-        expect(result).toBe(false);
-      });
-    });
-  });
-});
-
 describe("swap/utils/isRegistrationRequired", () => {
   test("should return registration is required for ftx", () => {
     const expectedResult = true;

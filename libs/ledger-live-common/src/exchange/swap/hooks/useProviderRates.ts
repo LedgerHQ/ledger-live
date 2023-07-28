@@ -98,7 +98,6 @@ export const useProviderRates: UseProviderRates = ({
               toParentAccount,
             } as Exchange,
             transaction,
-            undefined,
             toCurrency,
             providers,
             timeout,
