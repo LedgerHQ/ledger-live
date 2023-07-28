@@ -15,7 +15,7 @@ import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
 
 test.use({
   env: {
-    SEGMENT_TEST: true,
+    SEGMENT_TEST: "true",
   },
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {

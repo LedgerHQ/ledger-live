@@ -11,7 +11,8 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
-  discreetModeSelector,
+  // TODO: discreetMode is never used 😱 is it safe to remove
+  // discreetModeSelector,
   hasBeenUpsoldProtectSelector,
   lastConnectedDeviceSelector,
 } from "../../reducers/settings";
@@ -61,8 +62,8 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(Collapsibl
 function PortfolioScreen({ navigation }: NavigationProps) {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const { t } = useTranslation();
-
-  const discreetMode = useSelector(discreetModeSelector);
+  // TODO: discreetMode is never used 😱 is it safe to remove
+  // const discreetMode = useSelector(discreetModeSelector);
   const hasBeenUpsoldProtect = useSelector(hasBeenUpsoldProtectSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
@@ -116,12 +117,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <Flex px={6} py={4}>
+      <Flex px={6} py={4} key="FirmwareUpdateBanner">
         <FirmwareUpdateBanner />
       </Flex>,
-      <PortfolioGraphCard showAssets={showAssets} />,
+      <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
       showAssets ? (
-        <Box background={colors.background.main} px={6} mt={6}>
+        <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
           <PortfolioAssets
             hideEmptyTokenAccount={hideEmptyTokenAccount}
             openAddModal={openAddModal}
@@ -130,7 +131,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       ) : null,
       ...(showAssets && isAWalletCardDisplayed
         ? [
-            <Box background={colors.background.main}>
+            <Box background={colors.background.main} key="CarouselTitle">
               <SectionContainer px={0} minHeight={240} isFirst>
                 <SectionTitle
                   title={t("portfolio.carousel.title")}
@@ -143,20 +144,20 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         : []),
       ...(showAssets
         ? [
-            <SectionContainer px={6} isFirst={!isAWalletCardDisplayed}>
+            <SectionContainer px={6} isFirst={!isAWalletCardDisplayed} key="AllocationsSection">
               <SectionTitle title={t("analytics.allocation.title")} />
               <Flex minHeight={94}>
                 <AllocationsSection />
               </Flex>
             </SectionContainer>,
-            <SectionContainer px={6} mb={8}>
+            <SectionContainer px={6} mb={8} key="PortfolioOperationsHistorySection">
               <SectionTitle title={t("analytics.operations.title")} />
               <PortfolioOperationsHistorySection />
             </SectionContainer>,
           ]
         : [
             // If the user has no accounts we display an empty state
-            <Box mx={6} mt={12}>
+            <Box mx={6} mt={12} key="PortfolioEmptyState">
               <PortfolioEmptyState openAddAccountModal={openAddModal} />
             </Box>,
           ]),
@@ -166,7 +167,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
-      discreetMode,
+      // TODO: discreetMode is never used 😱 is it safe to remove
+      // discreetMode,
       isAWalletCardDisplayed,
       t,
     ],

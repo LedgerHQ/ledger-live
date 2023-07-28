@@ -10,10 +10,11 @@ import test from "../fixtures/common";
 process.env.PWDEBUG = "1";
 
 // Use specific userdata
+// eslint-disable-next-line
 // test.use({ userdata: "skip-onboarding" });
 
 // app env
-test.use({ env: { DEV_TOOLS: true, HIDE_DEBUG_MOCK: undefined, DEBUG_UPDATE: true } });
+test.use({ env: { DEV_TOOLS: "true", HIDE_DEBUG_MOCK: "", DEBUG_UPDATE: "true" } });
 
 test("My test", async ({ page }) => {
   test.setTimeout(6000000);

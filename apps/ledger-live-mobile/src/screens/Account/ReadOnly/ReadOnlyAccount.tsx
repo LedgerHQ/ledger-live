@@ -62,7 +62,7 @@ function ReadOnlyAccount({ route }: Props) {
   if (!currency) return null;
 
   const data = [
-    <Box mx={6} my={6}>
+    <Box mx={6} my={6} key="ReadOnlyGraphCard">
       <ReadOnlyGraphCard
         counterValueCurrency={counterValueCurrency}
         headerText={
@@ -70,10 +70,10 @@ function ReadOnlyAccount({ route }: Props) {
         }
       />
     </Box>,
-    <Box py={3}>
+    <Box py={3} key="ReadOnlyFabActions">
       <ReadOnlyFabActions />
     </Box>,
-    <Box mt={8}>
+    <Box mt={8} key="GradientContainer">
       <GradientContainer containerStyle={{ marginHorizontal: 16 }}>
         <Flex flex={1} px={10} py={11} alignItems="center" justifyContent="center">
           <Text variant="large" fontWeight="semiBold" color="neutral.c100" textAlign="center">
@@ -88,7 +88,7 @@ function ReadOnlyAccount({ route }: Props) {
         </Flex>
       </GradientContainer>
     </Box>,
-    <Box mt={8} mx={6}>
+    <Box mt={8} mx={6} key="Banner">
       {hasOrderedNano ? (
         <SetupDeviceBanner screen="Assets" />
       ) : (
