@@ -3,20 +3,23 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 import MarketPage from "../models/market/marketPage";
 import { loadConfig } from "../bridge/server";
 import { isAndroid, getElementByText } from "../helpers";
+import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 
 let portfolioPage: PortfolioPage;
 let marketPage: MarketPage;
+let walletTabNavigatorPage: WalletTabNavigatorPage;
 
 describe("Market page for user with no device", () => {
   beforeAll(async () => {
     loadConfig("1accountEth", true);
     portfolioPage = new PortfolioPage();
+    walletTabNavigatorPage = new WalletTabNavigatorPage();
     marketPage = new MarketPage();
   });
 
   it("should find the researched crypto", async () => {
     await portfolioPage.waitForPortfolioPageToLoad();
-    await portfolioPage.openMarketPage();
+    await walletTabNavigatorPage.marketTab();
     await marketPage.searchAsset("btc\n");
     await detox.expect(getElementByText("Bitcoin (BTC)")).toBeVisible();
   });
