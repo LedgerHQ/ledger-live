@@ -145,6 +145,7 @@
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
+      "detox@20.11.0": "patches/detox@20.11.0.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch"
     },
     "packageExtensions": {

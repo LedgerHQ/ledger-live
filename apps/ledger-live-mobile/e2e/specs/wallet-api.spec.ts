@@ -2,13 +2,13 @@ import { by, device, web } from "detox"; // this is because we need to use both 
 import { loadConfig } from "../bridge/server";
 import { isAndroid } from "../helpers";
 import PortfolioPage from "../models/wallet/portfolioPage";
-import DiscoveryPage from "../models/discovery/discoveryPage";
+import DiscoverPage from "../models/discover/discoverPage";
 import LiveAppWebview from "../models/liveApps/liveAppWebview";
 import CryptoDrawer from "../models/liveApps/cryptoDrawer";
 import { stopDummyServer } from "@ledgerhq/test-utils";
 
 let portfolioPage: PortfolioPage;
-let discoverPage: DiscoveryPage;
+let discoverPage: DiscoverPage;
 let liveAppWebview: LiveAppWebview;
 let cryptoDrawer: CryptoDrawer;
 
@@ -17,7 +17,7 @@ let continueTest: boolean;
 describe("Wallet API methods", () => {
   beforeAll(async () => {
     portfolioPage = new PortfolioPage();
-    discoverPage = new DiscoveryPage();
+    discoverPage = new DiscoverPage();
     liveAppWebview = new LiveAppWebview();
     cryptoDrawer = new CryptoDrawer();
 

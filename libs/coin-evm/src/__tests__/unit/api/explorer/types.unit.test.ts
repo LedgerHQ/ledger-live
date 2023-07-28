@@ -13,6 +13,7 @@ describe("EVM Family", () => {
       it("should narrow the param to an Etherscan-like explorer type", () => {
         expect(isEtherscanLikeExplorerConfig({ type: "etherscan", uri: "anything" })).toBe(true);
         expect(isEtherscanLikeExplorerConfig({ type: "blockscout", uri: "anything" })).toBe(true);
+        expect(isEtherscanLikeExplorerConfig({ type: "teloscan", uri: "anything" })).toBe(true);
       });
     });
   });
