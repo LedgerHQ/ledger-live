@@ -17,7 +17,6 @@ import type { AvailableProviderV3, CustomMinOrMaxError, Exchange, GetExchangeRat
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction,
-  userId?: string, // TODO remove when wyre doesn't require this for rates
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
   providers: AvailableProviderV3[] = [],
   timeout = undefined,
@@ -47,9 +46,6 @@ const getExchangeRates: GetExchangeRates = async (
   const res = await network({
     method: "POST",
     url: `${getSwapAPIBaseURL()}/rate`,
-    headers: {
-      ...(userId ? { userId } : {}),
-    },
     ...(timeout ? { timeout } : {}),
     ...(timeoutErrorMessage ? { timeoutErrorMessage } : {}),
     data: request,
