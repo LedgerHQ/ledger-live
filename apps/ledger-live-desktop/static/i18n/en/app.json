@@ -306,7 +306,6 @@
       "changeCTA": "Change",
       "rates": {
         "title": "Quotes",
-        "registration": "Registration required ",
         "noRegistration": "No registration required",
         "fixed": "Fixed",
         "float": "Floating",
@@ -314,10 +313,6 @@
         "loading": "Loading...",
         "loadingQuotes": "Loading quotes now",
         "loadingDescription": "It will only take a moment to find the best options for you.",
-        "name": {
-          "title": "Provider",
-          "tooltip": "Depending on the provider, you have to register with them by creating an account."
-        },
         "rate": {
           "title": "Exchange rate",
           "tooltip": "A <0>floating rate</0> fluctuates depending on market conditions, so you might receive more or less than what you estimated.<br/><br/>A <0>fixed rate</0> matches the amount displayed at the beginning of the exchange."
