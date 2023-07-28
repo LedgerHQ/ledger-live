@@ -8,7 +8,7 @@ import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState"
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { DeviceExtractOnboardingStateError, LockedDeviceError } from "@ledgerhq/errors";
 import { ScreenName } from "../../const";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
@@ -24,6 +24,7 @@ import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
+import AutoRepairDrawer from "./AutoRepairDrawer";
 
 export type SyncOnboardingScreenProps = CompositeScreenProps<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
@@ -53,7 +54,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     null | "enter" | "exit"
   >(null);
 
-  const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
+  const [isDesyncDrawerOpen, setIsDesyncDrawerOpen] = useState<boolean>(false);
+  const [isAutoRepairOpen, setIsAutoRepairOpen] = useState<boolean>(false);
   const [isESCMandatoryDrawerOpen, setIsESCMandatoryDrawerOpen] = useState<boolean>(false);
   const [isLockedDeviceDrawerOpen, setLockedDeviceDrawerOpen] = useState<boolean>(false);
 
@@ -106,6 +108,12 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
   });
+
+  console.log(
+    `🐊 onboarding state: ${JSON.stringify(onboardingState)} | allowed error: ${JSON.stringify(
+      allowedError,
+    )}`,
+  );
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: device.deviceId,
@@ -176,7 +184,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     if (fatalError) {
       log("SyncOnboardingIndex", "Fatal error during polling", { fatalError });
       setIsPollingOn(false);
-      setDesyncDrawerOpen(true);
+      setIsDesyncDrawerOpen(true);
     }
   }, [fatalError]);
 
@@ -185,10 +193,17 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     let timeout: ReturnType<typeof setTimeout>;
 
     if (allowedError && !(allowedError instanceof LockedDeviceError)) {
-      timeout = setTimeout(() => {
+      // TODO: not a DeviceExtractOnboardingStateError but a specific error.
+      if ((allowedError as unknown) instanceof DeviceExtractOnboardingStateError) {
+        log("SyncOnboardingIndex", "Device in bootloader mode. Trying to auto repair");
         setIsPollingOn(false);
-        setDesyncDrawerOpen(true);
-      }, DESYNC_TIMEOUT_MS);
+        setIsAutoRepairOpen(true);
+      } else {
+        timeout = setTimeout(() => {
+          setIsPollingOn(false);
+          setIsDesyncDrawerOpen(true);
+        }, DESYNC_TIMEOUT_MS);
+      }
     }
 
     return () => {
@@ -232,7 +247,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
 
   const onLostDevice = useCallback(() => {
-    setDesyncDrawerOpen(true);
+    setIsDesyncDrawerOpen(true);
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
@@ -241,13 +256,19 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       drawer: "Could not connect to Stax",
     });
     // handleDesyncClose is then called once the drawer is fully closed
-    setDesyncDrawerOpen(false);
+    setIsDesyncDrawerOpen(false);
   }, []);
 
   const handleDesyncClose = useCallback(() => {
-    setDesyncDrawerOpen(false);
+    setIsDesyncDrawerOpen(false);
     navigation.goBack();
   }, [navigation]);
+
+  const handleAutoRepairClose = useCallback(() => {
+    setIsAutoRepairOpen(false);
+    setIsPollingOn(true);
+    // TODO: reset polling ?
+  }, []);
 
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
@@ -285,6 +306,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         onRetry={handleDesyncRetry}
         device={device}
       />
+      <AutoRepairDrawer isOpen={isAutoRepairOpen} onDone={handleAutoRepairClose} device={device} />
       <EarlySecurityCheckMandatoryDrawer
         productName={productName}
         isOpen={isESCMandatoryDrawerOpen}
