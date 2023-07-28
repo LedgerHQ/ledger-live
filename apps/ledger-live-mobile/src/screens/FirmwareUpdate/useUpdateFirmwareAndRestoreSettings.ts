@@ -200,17 +200,17 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   // this hook controls the chaining of device actions by updating the current step
   // when needed. It basically implements a state macgine
   useEffect(() => {
-    let unrecoverableError;
+    let retriableError;
 
     switch (updateStep) {
       case "start":
         proceedToAppsBackup();
         break;
       case "appsBackup":
-        unrecoverableError =
+        retriableError =
           connectManagerState.error &&
           !retriableErrors.some(err => connectManagerState.error instanceof err);
-        if (connectManagerState.result || unrecoverableError) {
+        if (connectManagerState.result || retriableError) {
           if (connectManagerState.error) {
             log("FirmwareUpdate", "error while backing up device apps", connectManagerState.error);
           }
@@ -222,10 +222,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
       case "imageBackup":
-        unrecoverableError =
+        retriableError =
           staxFetchImageState.error &&
           !retriableErrors.some(err => staxFetchImageState.error instanceof err);
-        if (staxFetchImageState.imageFetched || unrecoverableError) {
+        if (staxFetchImageState.imageFetched || retriableError) {
           if (staxFetchImageState.error)
             log("FirmwareUpdate", "error while backing up stax image", staxFetchImageState.error);
           proceedToFirmwareUpdate();
@@ -239,20 +239,20 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
       case "languageRestore":
-        unrecoverableError =
+        retriableError =
           installLanguageState.error &&
           !retriableErrors.some(err => installLanguageState.error instanceof err);
-        if (installLanguageState.languageInstalled || unrecoverableError) {
+        if (installLanguageState.languageInstalled || retriableError) {
           if (installLanguageState.error)
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
           proceedToImageRestore();
         }
         break;
       case "imageRestore":
-        unrecoverableError =
+        retriableError =
           staxLoadImageState.error &&
           !retriableErrors.some(err => staxLoadImageState.error instanceof err);
-        if (staxLoadImageState.imageLoaded || unrecoverableError || !staxFetchImageState.hexImage) {
+        if (staxLoadImageState.imageLoaded || retriableError || !staxFetchImageState.hexImage) {
           if (staxLoadImageState.error) {
             log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
           }
@@ -260,10 +260,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
       case "appsRestore":
-        unrecoverableError =
+        retriableError =
           restoreAppsState.error &&
           !retriableErrors.some(err => restoreAppsState.error instanceof err);
-        if (restoreAppsState.opened || unrecoverableError) {
+        if (restoreAppsState.opened || retriableError) {
           if (restoreAppsState.error) {
             log("FirmwareUpdate", "error while restoring apps", restoreAppsState.error);
           }
@@ -316,6 +316,25 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       staxLoadImageState.error,
       restoreAppsState.error,
       installLanguageState.error,
+    ],
+  );
+
+  const hasRetriableErrors = useMemo(
+    () =>
+      retriableErrors.some(
+        err =>
+          connectManagerState.error instanceof err ||
+          staxFetchImageState.error instanceof err ||
+          staxLoadImageState.error instanceof err ||
+          restoreAppsState.error instanceof err ||
+          installLanguageState.error instanceof err,
+      ),
+    [
+      connectManagerState.error,
+      installLanguageState.error,
+      restoreAppsState.error,
+      staxFetchImageState.error,
+      staxLoadImageState.error,
     ],
   );
 
@@ -428,6 +447,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     noOfAppsToReinstall: installedApps.length,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
+    hasRetriableErrors,
     restoreStepDeniedError,
   };
 };
