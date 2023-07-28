@@ -4139,6 +4139,10 @@
       "preparing": "Preparing update",
       "firmware": "Downloading update",
       "prepareUpdate": {
+        "earlySecurityCheck": {
+          "titlePreparingUpdate": "Preparing update for install",
+          "description": "Transferring the update to {{deviceName}}."
+        },
         "titleBackingUp": "Backing up apps and settings",
         "titleTransferring": "Transferring update",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
@@ -4149,6 +4153,10 @@
         "description": "{{deviceName}} will restart multiple times.\n\nAfter installation is finished on your {{deviceName}}, unlock your device to complete installation"
       },
       "restoreSettings": {
+        "earlySecurityCheck": {
+          "titleInactive": "Restore settings",
+          "description": "Your settings will be restored."
+        },
         "titleInactive": "Restore apps and settings",
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",

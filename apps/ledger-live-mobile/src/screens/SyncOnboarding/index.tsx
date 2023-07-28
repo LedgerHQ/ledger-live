@@ -294,8 +294,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         onCancel={onCancelEarlySecurityCheck}
       />
       <UnlockDeviceDrawer
-        // isOpen={isLockedDeviceDrawerOpen}
-        isOpen={true}
+        isOpen={isLockedDeviceDrawerOpen}
         onClose={() => {
           // Closing because the user pressed on close button (the device is still locked)
           if (lockedDevice) {

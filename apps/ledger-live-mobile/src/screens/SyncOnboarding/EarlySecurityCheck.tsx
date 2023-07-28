@@ -213,6 +213,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
               deviceInfo,
               firmwareUpdateContext: latestFirmware,
               onBackFromUpdate,
+              isBeforeOnboarding: true,
             },
           },
         },
@@ -617,13 +618,3 @@ const CheckCard = ({ title, description, index, status, ...props }: CheckCardPro
     </Flex>
   );
 };
-
-// https://www.youtube.com/watch?v=VRgB1I3HNYg
-//   const openLink = useCallback(() => {
-//     track("button_clicked", {
-//       button: "learn_more",
-//       ...getTrackProperties(),
-//       link: supportLink,
-//     });
-//     openURL(supportLink, "OpenURL", getTrackProperties());
-//   }, [getTrackProperties, supportLink]);
