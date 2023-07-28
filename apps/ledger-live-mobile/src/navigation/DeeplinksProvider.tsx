@@ -415,7 +415,7 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = { ptxEarnFeature };
+  const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
   const wcContext = useContext(_wcContext);
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
@@ -513,6 +513,7 @@ export const DeeplinksProvider = ({
       liveAppProviderInitialized,
       manifests,
       userAcceptedTerms,
+      features,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
