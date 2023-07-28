@@ -160,7 +160,11 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     errors.gasLimit = new FeeRequired();
   } else if (!errors.recipient) {
     if (estimatedFees.gt(account.balance)) {
-      errors.gasPrice = new NotEnoughGas();
+      errors.gasPrice = new NotEnoughGas(undefined, {
+        ticker: account.currency.ticker,
+        cryptoName: account.currency.name,
+        links: ["platform/multibuy"],
+      });
     }
   }
 
