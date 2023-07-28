@@ -198,15 +198,10 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
           <Flex flex={1} justifyContent="center">
             <GenericErrorView
               error={new DeviceAlreadySetup("", { device: device?.modelId ?? "device" })}
-              withDescription={false}
               hasExportLogButton={false}
               withIcon
               withHelp={false}
-            >
-              <Text textAlign="center" variant="large" color="palette.neutral.c80">
-                {t("errors.DeviceAlreadySetup.description")}
-              </Text>
-            </GenericErrorView>
+            />
           </Flex>
 
           <Flex mt={30} flexDirection="column" width="100%">
