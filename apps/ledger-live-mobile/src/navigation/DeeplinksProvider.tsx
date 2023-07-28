@@ -86,7 +86,7 @@ function getProxyURL(url: string) {
   return url;
 }
 
-type FeatureFlags = Record<string, Feature<any> | null>;
+type FeatureFlags = Record<string, Feature<undefined> | null>;
 
 // DeepLinking
 const linkingOptions = (featureFlags: FeatureFlags) => ({
