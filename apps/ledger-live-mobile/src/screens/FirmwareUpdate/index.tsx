@@ -164,6 +164,7 @@ export const FirmwareUpdate = ({
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
     restoreStepDeniedError,
+    hasRetriableErrors,
     skipCurrentRestoreStep,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
@@ -537,12 +538,13 @@ export const FirmwareUpdate = ({
       );
     }
 
-    const error =
-      updateActionState.error ??
-      restoreAppsState.error ??
-      installLanguageState.error ??
-      staxLoadImageState.error ??
-      staxFetchImageState.error;
+    const error = hasRetriableErrors
+      ? updateActionState.error ??
+        restoreAppsState.error ??
+        installLanguageState.error ??
+        staxLoadImageState.error ??
+        staxFetchImageState.error
+      : undefined;
 
     // a TransportRaceCondition error is to be expected since we chain multiple
     // device actions that use different transport acquisition paradigms
@@ -638,11 +640,12 @@ export const FirmwareUpdate = ({
     staxLoadImageState.imageCommitRequested,
     staxLoadImageState.error,
     restoreAppsState.allowManagerRequestedWording,
-    connectManagerState.allowManagerRequestedWording,
     restoreAppsState.error,
+    connectManagerState.allowManagerRequestedWording,
     installLanguageState.languageInstallationRequested,
     installLanguageState.error,
     restoreStepDeniedError,
+    hasRetriableErrors,
     updateActionState.error,
     updateActionState.step,
     updateActionState.progress,
