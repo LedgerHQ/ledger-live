@@ -41,7 +41,7 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
   const translationKey = useMemo(() => `errors.${errorName}.${field}`, [errorName, field]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const isValidError = useMemo(() => error instanceof Error, [errorName]);
+  const isValidError = useMemo(() => error instanceof Error, [error]);
   const links = useErrorLinks(error);
 
   const args = useMemo(() => {
@@ -53,8 +53,7 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
       };
     }
     return {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorName, isValidError]);
+  }, [error, isValidError]);
 
   const translation = useMemo(
     (): string | Object | false =>
@@ -66,8 +65,7 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
     if (!isValidError) {
       logger.critical(`TranslatedError invalid usage: ${String(error)}`);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValidError, errorName]);
+  }, [isValidError, error]);
 
   if (!error || !isValidError) return <></>;
 

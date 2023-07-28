@@ -24,6 +24,7 @@ import {
 } from "./types";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
 import { DEFAULT_GAS_LIMIT } from "./transaction";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 type ValidatedTransactionFields =
   | "recipient"
@@ -139,6 +140,7 @@ export const validateGas = (
     errors.gasPrice = new NotEnoughGas(undefined, {
       ticker: account.currency.ticker,
       cryptoName: account.currency.name,
+      fees: formatCurrencyUnit(account.unit, estimatedFees),
       links: ["platform/multibuy"],
     }); // "The parent account balance is insufficient for network fees"
   }

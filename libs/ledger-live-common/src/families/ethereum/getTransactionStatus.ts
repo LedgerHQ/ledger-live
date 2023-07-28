@@ -19,6 +19,7 @@ import { Transaction, TransactionStatus } from "./types";
 import { isEthereumAddress } from "./logic";
 import { getEnv } from "../../env";
 import { modes } from "./modules";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 type TransactionErrors = {
   gasPrice?: Error;
@@ -163,6 +164,7 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
       errors.gasPrice = new NotEnoughGas(undefined, {
         ticker: account.currency.ticker,
         cryptoName: account.currency.name,
+        fees: formatCurrencyUnit(account.unit, estimatedFees),
         links: ["platform/multibuy"],
       });
     }
