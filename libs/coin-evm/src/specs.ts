@@ -301,7 +301,7 @@ export default Object.values(cryptocurrenciesById)
       appQuery: {
         model: DeviceModelId.nanoS,
         appName: "Ethereum",
-        appVersion: "1.10.2",
+        appVersion: "1.10.3",
       },
       testTimeout,
       transactionCheck: transactionCheck(currency.id),

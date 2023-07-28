@@ -21,15 +21,15 @@ describe("Support.ts", () => {
     });
 
     it("should not ask any upgrade for the latest Ethereum nano app", () => {
-      expect(mustUpgrade("Ethereum", "1.10.2")).toBe(false);
+      expect(mustUpgrade("Ethereum", "1.10.3")).toBe(false);
     });
 
     it("should not ask any upgrade for the latest Ethereum nano app with a pre-release tag for a version equal to the minimum version", () => {
-      expect(mustUpgrade("Ethereum", "1.10.2-dev")).toBe(false);
+      expect(mustUpgrade("Ethereum", "1.10.3-dev")).toBe(false);
     });
 
     it("should not ask any upgrade for the latest Ethereum nano app with a pre-release tag for a version superior to the minimum version", () => {
-      expect(mustUpgrade("Ethereum", "1.10.3-dev")).toBe(false);
+      expect(mustUpgrade("Ethereum", "1.10.4-dev")).toBe(false);
     });
   });
 });
