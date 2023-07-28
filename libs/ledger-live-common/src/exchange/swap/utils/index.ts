@@ -54,6 +54,11 @@ export const getAvailableAccountsById = (
     .filter(acc => getAccountCurrency(acc)?.id === id && !acc.disabled)
     .sort((a, b) => b.balance.minus(a.balance).toNumber());
 
+export const isRegistrationRequired = (provider: string): boolean => {
+  const { needsBearerToken, needsKYC } = getProviderConfig(provider);
+  return needsBearerToken || needsKYC;
+};
+
 export const getProviderName = (provider: string): string => {
   switch (provider) {
     case "cic":
