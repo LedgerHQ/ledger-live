@@ -33,12 +33,7 @@ function ErrorList({ translation }: ErrorListProps) {
   );
 }
 
-export default function TranslatedError({
-  error,
-  fallback,
-  field = "title",
-  noLink,
-}: Props): JSX.Element {
+export function TranslatedError({ error, fallback, field = "title", noLink }: Props): JSX.Element {
   const { t, i18n } = useTranslation();
 
   const errorName = error?.name;
