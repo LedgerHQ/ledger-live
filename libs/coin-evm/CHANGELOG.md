@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 0.4.2-nightly.0
+
+### Patch Changes
+
+- [#4143](https://github.com/LedgerHQ/ledger-live/pull/4143) [`c2fd7e2e3d`](https://github.com/LedgerHQ/ledger-live/commit/c2fd7e2e3d684da831a7eafe6b22b5e2c96a3722) Thanks [@chabroA](https://github.com/chabroA)! - Add missing teloscan in type guard
+
+- Updated dependencies [[`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470)]:
+  - @ledgerhq/cryptoassets@9.10.1-nightly.0
+  - @ledgerhq/coin-framework@0.4.1-nightly.1
+  - @ledgerhq/domain-service@1.1.7-nightly.1
+  - @ledgerhq/evm-tools@1.0.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.0
+
 ## 0.4.1
 
 ### Patch Changes

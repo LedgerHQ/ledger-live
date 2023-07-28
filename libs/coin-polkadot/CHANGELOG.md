@@ -1,5 +1,15 @@
 # @ledgerhq/coin-polkadot
 
+## 0.3.2-nightly.1
+
+### Patch Changes
+
+- [#4018](https://github.com/LedgerHQ/ledger-live/pull/4018) [`a59028f761`](https://github.com/LedgerHQ/ledger-live/commit/a59028f761c84d257eca72be7668af5fbc981c3a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - replace pallet.transfer with pallet.transfer_allow_death for polkadot
+
+- Updated dependencies [[`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470)]:
+  - @ledgerhq/cryptoassets@9.10.1-nightly.0
+  - @ledgerhq/coin-framework@0.4.1-nightly.1
+
 ## 0.3.2-nightly.0
 
 ### Patch Changes

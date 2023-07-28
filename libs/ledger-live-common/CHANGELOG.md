@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.2
+
+### Patch Changes
+
+- [#4096](https://github.com/LedgerHQ/ledger-live/pull/4096) [`03896700ca`](https://github.com/LedgerHQ/ledger-live/commit/03896700ca019b5a0b6a2d68b49abb80e47d3d02) Thanks [@lawRathod](https://github.com/lawRathod)! - Update scanAccount and snapshot for icp bridge integration tests.
+
+- Updated dependencies [[`a59028f761`](https://github.com/LedgerHQ/ledger-live/commit/a59028f761c84d257eca72be7668af5fbc981c3a), [`c2fd7e2e3d`](https://github.com/LedgerHQ/ledger-live/commit/c2fd7e2e3d684da831a7eafe6b22b5e2c96a3722), [`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470)]:
+  - @ledgerhq/coin-polkadot@0.3.2-nightly.1
+  - @ledgerhq/coin-evm@0.4.2-nightly.0
+  - @ledgerhq/cryptoassets@9.10.1-nightly.0
+  - @ledgerhq/coin-algorand@0.2.5-nightly.1
+  - @ledgerhq/coin-framework@0.4.1-nightly.1
+  - @ledgerhq/domain-service@1.1.7-nightly.1
+  - @ledgerhq/evm-tools@1.0.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.0
+
 ## 31.4.0-nightly.1
 
 ### Minor Changes

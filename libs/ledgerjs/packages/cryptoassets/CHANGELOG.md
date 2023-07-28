@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.10.1-nightly.0
+
+### Patch Changes
+
+- [#4074](https://github.com/LedgerHQ/ledger-live/pull/4074) [`66769a98e6`](https://github.com/LedgerHQ/ledger-live/commit/66769a98e69f2b8156417e464e90d9162272b470) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Disable dynamic CAL CDN workflows, now handled in CAL repository
+
 ## 9.10.0
 
 ### Minor Changes

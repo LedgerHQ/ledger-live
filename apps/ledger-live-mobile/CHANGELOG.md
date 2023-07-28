@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.28.0-nightly.3
+
+### Patch Changes
+
+- [#4108](https://github.com/LedgerHQ/ledger-live/pull/4108) [`77cd8b8d46`](https://github.com/LedgerHQ/ledger-live/commit/77cd8b8d46774432a1a43d176cba428d0021db2e) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - give users notEnoughBalance error when available balance is too low for cosmos llm
+
+- [#4137](https://github.com/LedgerHQ/ledger-live/pull/4137) [`4c093f90ed`](https://github.com/LedgerHQ/ledger-live/commit/4c093f90edd41b146a8310a3d9d0f469b5bad23d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - remove header from earn dashboard
+
+- Updated dependencies [[`03896700ca`](https://github.com/LedgerHQ/ledger-live/commit/03896700ca019b5a0b6a2d68b49abb80e47d3d02), [`c2fd7e2e3d`](https://github.com/LedgerHQ/ledger-live/commit/c2fd7e2e3d684da831a7eafe6b22b5e2c96a3722)]:
+  - @ledgerhq/live-common@31.4.0-nightly.2
+  - @ledgerhq/coin-evm@0.4.2-nightly.0
+  - @ledgerhq/coin-framework@0.4.1-nightly.1
+  - @ledgerhq/domain-service@1.1.7-nightly.1
+  - @ledgerhq/evm-tools@1.0.3-nightly.0
+
 ## 3.28.0-nightly.2
 
 ### Patch Changes
