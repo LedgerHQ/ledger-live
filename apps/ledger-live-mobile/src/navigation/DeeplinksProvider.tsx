@@ -7,6 +7,7 @@ import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import Braze from "react-native-appboy-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import * as Sentry from "@sentry/react-native";
 import { hasCompletedOnboardingSelector } from "../reducers/settings";
@@ -18,6 +19,7 @@ import { TermsContext } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
+import { Feature } from "@ledgerhq/types-live/lib/feature";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -83,8 +85,11 @@ function getProxyURL(url: string) {
 
   return url;
 }
+
+type FeatureFlags = Record<string, Feature<any> | null>;
+
 // DeepLinking
-const linkingOptions = {
+const linkingOptions = (featureFlags: FeatureFlags) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -199,18 +204,30 @@ const linkingOptions = {
                           [ScreenName.Accounts]: "account",
                         },
                       },
+                      ...(featureFlags.ptxEarnFeature?.enabled && {
+                        [NavigatorName.Market]: {
+                          screens: {
+                            /**
+                             * ie: "ledgerlive://market" will open the market screen
+                             */
+                            [ScreenName.MarketList]: "market",
+                          },
+                        },
+                      }),
                     },
                   },
                 },
               },
-              [NavigatorName.Market]: {
-                screens: {
-                  /**
-                   * ie: "ledgerlive://market" will open the market screen
-                   */
-                  [ScreenName.MarketList]: "market",
+              ...(!featureFlags.ptxEarnFeature?.enabled && {
+                [NavigatorName.Market]: {
+                  screens: {
+                    /**
+                     * ie: "ledgerlive://market" will open the market screen
+                     */
+                    [ScreenName.MarketList]: "market",
+                  },
                 },
-              },
+              }),
               [NavigatorName.Earn]: {
                 screens: {
                   /**
@@ -360,10 +377,10 @@ const linkingOptions = {
       },
     },
   },
-};
+});
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
-  ...linkingOptions,
+const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: FeatureFlags) => ({
+  ...linkingOptions(featureFlags),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
@@ -397,6 +414,8 @@ export const DeeplinksProvider = ({
 }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const ptxEarnFeature = useFeature("ptxEarn");
+  const features = { ptxEarnFeature };
   const wcContext = useContext(_wcContext);
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
@@ -408,8 +427,8 @@ export const DeeplinksProvider = ({
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions
-          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
+          ? linkingOptions(features)
+          : getOnboardingLinkingOptions(!!userAcceptedTerms, features)),
         enabled: wcContext.initDone && !wcContext.session.session,
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
