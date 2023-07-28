@@ -8,6 +8,7 @@ Array [
     "derivationMode": "",
     "elrondResources": Object {
       "delegations": Array [],
+      "isGuarded": false,
       "nonce": 3,
     },
     "freshAddress": "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2",
@@ -39,6 +40,7 @@ Array [
     "derivationMode": "",
     "elrondResources": Object {
       "delegations": Array [],
+      "isGuarded": false,
       "nonce": 0,
     },
     "freshAddress": "erd1pm3gje2lmd5vyldcvuy6jpxgde4rapjpujvujkee6a7jw2zmh4tqre796z",
