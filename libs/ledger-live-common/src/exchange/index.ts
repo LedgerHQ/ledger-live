@@ -49,10 +49,7 @@ export type ExchangeProviderNameAndSignature = {
   signature: Buffer;
 };
 
-export type SwapProviderConfig = ExchangeProviderNameAndSignature & {
-  needsKYC: boolean;
-  needsBearerToken: boolean;
-};
+export type SwapProviderConfig = ExchangeProviderNameAndSignature;
 
 export const isExchangeSupportedByApp = (appName: string, appVersion: string): boolean => {
   const minVersion = exchangeSupportAppVersions[appName];
