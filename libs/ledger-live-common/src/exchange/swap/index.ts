@@ -16,14 +16,11 @@ import {
   UnexpectedError,
   ValidationError,
 } from "../../errors";
-import checkQuote from "./checkQuote";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import getExchangeRates from "./getExchangeRates";
-import getKYCStatus from "./getKYCStatus";
 import getProviders from "./getProviders";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
-import submitKYC from "./submitKYC";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -184,9 +181,6 @@ export {
   postSwapAccepted,
   postSwapCancelled,
   initSwap,
-  getKYCStatus,
-  submitKYC,
-  checkQuote,
   USStates,
   countries,
 };
