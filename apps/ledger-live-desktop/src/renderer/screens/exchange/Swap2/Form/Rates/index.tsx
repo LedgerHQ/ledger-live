@@ -148,19 +148,6 @@ export default function ProviderRate({
           <Text mr={1}>
             <Trans i18nKey="swap2.form.rates.name.title" />
           </Text>
-          <Tooltip
-            content={
-              <Box
-                style={{
-                  maxWidth: 250,
-                }}
-              >
-                <Trans i18nKey="swap2.form.rates.name.tooltip" />
-              </Box>
-            }
-          >
-            <IconInfoCircle size={12} />
-          </Tooltip>
         </Box>
         <Box horizontal flex="1" alignItems="center" justifyContent="flex-start">
           <Text mr={1}>
