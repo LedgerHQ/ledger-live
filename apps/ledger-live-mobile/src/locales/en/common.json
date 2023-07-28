@@ -1925,14 +1925,18 @@
       "title": "Tap 'Allow' to enable Genuine Check and OS update check"
     },
     "genuineCheckStep": {
+      "learnMore": "Learn more about Genuine Check",
       "inactive": {
-        "title": "Authenticity check"
+        "title": "Genuine Check",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
       },
       "active": {
-        "title": "Genuine Check"
+        "title": "Genuine Check",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
       },
       "completed": {
-        "title": "{{productName}} is genuine"
+        "title": "{{productName}} is genuine",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
       },
       "refused": {
         "title": "Genuine Check declined",
@@ -1945,18 +1949,17 @@
     },
     "firmwareUpdateCheckStep": {
       "active": {
-        "title": "Check for OS update"
+        "title": "OS update check",
+        "description": "OS update check makes sure {{productName}} Operating System is up to date."
       },
       "completed": {
-        "updateAvailable": {
-          "title": "Software version {{firmwareVersion}} available"
-        },
         "noUpdateAvailable": {
-          "title": "{{productName}} is up to date"
+          "title": "OS update check",
+          "description": "OS update check makes sure {{productName}} Operating System is up to date."
         }
       },
       "failed": {
-        "title": "Software update failed",
+        "title": "Software update check failed",
         "skipCta": "Skip update"
       },
       "refused": {
@@ -1964,6 +1967,10 @@
         "description": "We recommend performing this update to benefit from the latest security and functionality.",
         "updateCta": "Update Ledger Stax",
         "skipCta": "Skip update"
+      },
+      "inactive": {
+        "title": "OS update check",
+        "description": "OS update check makes sure {{productName}} Operating System is up to date."
       }
     },
     "firmwareUpdateAvailableDrawer": {

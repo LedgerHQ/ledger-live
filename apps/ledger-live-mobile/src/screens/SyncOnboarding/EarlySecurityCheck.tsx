@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { Button, Flex, InfiniteLoader, Text, Link } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, Link, BoxedIcon } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import {
   CircledCheckSolidMedium,
+  CheckTickMedium,
   ExternalLinkMedium,
   WarningSolidMedium,
   InfoAltFillMedium,
@@ -13,6 +14,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
+import Button from "../../components/wrappedUi/Button";
 import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
@@ -150,7 +152,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     setCurrentStep("genuine-check");
   }, []);
 
-  const onLearnMore = useCallback(() => {
+  const onGenuineCheckLearnMore = useCallback(() => {
     track("button_clicked", {
       button: "Learn more about Genuine Check",
     });
@@ -369,13 +371,22 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   // Updates the genuine check UI step
   let genuineCheckStepTitle;
   let genuineCheckStepDescription: string | null = null;
+  // Always displays the learn more section on the genuine check
+  const genuineCheckStepLearnMore = t("earlySecurityCheck.genuineCheckStep.learnMore");
+  const genuineCheckOnLearnMore = onGenuineCheckLearnMore;
 
   switch (genuineCheckUiStepStatus) {
     case "active":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.active.title");
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.active.description", {
+        productName,
+      });
       break;
     case "completed":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.completed.title", {
+        productName,
+      });
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.completed.description", {
         productName,
       });
       break;
@@ -393,6 +404,9 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       break;
     default:
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.inactive.title");
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.inactive.description", {
+        productName,
+      });
       break;
   }
 
@@ -403,11 +417,23 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   switch (firmwareUpdateUiStepStatus) {
     case "active":
       firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
+      firmwareUpdateCheckStepDescription = t(
+        "earlySecurityCheck.firmwareUpdateCheckStep.active.description",
+        {
+          productName,
+        },
+      );
       break;
     case "completed":
       firmwareUpdateCheckStepTitle = t(
         "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.title",
         { productName },
+      );
+      firmwareUpdateCheckStepDescription = t(
+        "earlySecurityCheck.firmwareUpdateCheckStep.completed.noUpdateAvailable.description",
+        {
+          productName,
+        },
       );
 
       primaryBottomCta = (
@@ -459,43 +485,19 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       );
 
       break;
+    case "inactive":
     default:
-      firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.active.title");
+      firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.inactive.title");
+      firmwareUpdateCheckStepDescription = t(
+        "earlySecurityCheck.firmwareUpdateCheckStep.inactive.description",
+        {
+          productName,
+        },
+      );
       break;
   }
 
-  let stepContent = (
-    <Flex width="100%" mt="4">
-      <CheckCard
-        title={genuineCheckStepTitle}
-        description={genuineCheckStepDescription}
-        status={genuineCheckUiStepStatus}
-        index={1}
-        mb={6}
-      />
-      <CheckCard
-        title={firmwareUpdateCheckStepTitle}
-        description={firmwareUpdateCheckStepDescription}
-        status={firmwareUpdateUiStepStatus}
-        index={2}
-      />
-    </Flex>
-  );
-
   if (currentStep === "idle") {
-    stepContent = (
-      <Flex width="100%" mt="4">
-        <Text mb="4">{t("earlySecurityCheck.idle.description")}</Text>
-        <Link
-          Icon={ExternalLinkMedium}
-          onPress={onLearnMore}
-          style={{ justifyContent: "flex-start" }}
-        >
-          {t("earlySecurityCheck.idle.learnMore")}
-        </Link>
-      </Flex>
-    );
-
     primaryBottomCta = (
       <Button type="main" onPress={onStartChecks}>
         {t("earlySecurityCheck.idle.checkCta")}
@@ -545,7 +547,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           flexDirection: "column",
         }}
       >
-        <Flex border="1px dashed #606060" borderRadius="16px" height="300px" mx="5"></Flex>
         <Flex
           flex={1}
           mt="5"
@@ -554,8 +555,26 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           justifyContent="space-between"
         >
           <Flex paddingX="4">
-            <Text variant="h4">{t("earlySecurityCheck.title")}</Text>
-            {stepContent}
+            <Text variant="h4" mb="4">
+              {t("earlySecurityCheck.title")}
+            </Text>
+            <Flex width="100%" mt="4">
+              <CheckCard
+                title={genuineCheckStepTitle}
+                description={genuineCheckStepDescription}
+                status={genuineCheckUiStepStatus}
+                learnMore={genuineCheckStepLearnMore}
+                onLearnMore={genuineCheckOnLearnMore}
+                index={1}
+                mb={6}
+              />
+              <CheckCard
+                title={firmwareUpdateCheckStepTitle}
+                description={firmwareUpdateCheckStepDescription}
+                status={firmwareUpdateUiStepStatus}
+                index={2}
+              />
+            </Flex>
           </Flex>
           <Flex mx="5" mb="4">
             {primaryBottomCta}
@@ -570,49 +589,69 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
 type CheckCardProps = FlexBoxProps & {
   title: string;
-  description: string | null;
+  description?: string | null;
+  learnMore?: string | null;
+  onLearnMore?: () => void;
   index: number;
   status: UiCheckStatus;
 };
 
-/**
- * TODO:
- * - another status `info` ? Not sure how we are going to handle a user refusing to install a fw update
- *   after going to the fw update screen <- maybe it won't be implemented
- * - title and optional description message ?
- */
-const CheckCard = ({ title, description, index, status, ...props }: CheckCardProps) => {
+const CheckCard = ({
+  title,
+  description,
+  learnMore,
+  onLearnMore,
+  index,
+  status,
+  ...props
+}: CheckCardProps) => {
   let checkIcon;
   switch (status) {
     case "active":
-      checkIcon = <InfiniteLoader color="primary.c80" size={24} />;
+      checkIcon = <InfiniteLoader color="primary.c80" size={20} />;
       break;
     case "completed":
-      checkIcon = <CircledCheckSolidMedium color="success.c50" size={24} />;
+      checkIcon = <CheckTickMedium color="success.c50" size={20} />;
       break;
     case "failed":
     case "genuineCheckRefused":
-      checkIcon = <WarningSolidMedium color="warning.c60" size={24} />;
+      checkIcon = <WarningSolidMedium color="warning.c60" size={20} />;
       break;
     case "firmwareUpdateRefused":
-      checkIcon = <InfoAltFillMedium color="primary.c80" size={24} />;
+      checkIcon = <InfoAltFillMedium color="primary.c80" size={20} />;
       break;
     case "inactive":
     default:
-      checkIcon = <InfiniteLoader opacity="0" color="primary.c80" size={24} />;
+      checkIcon = <Text variant="body">{index}</Text>;
   }
 
   return (
     <Flex flexDirection="row" alignItems="flex-start" {...props}>
-      {checkIcon}
+      <BoxedIcon
+        backgroundColor="neutral.c30"
+        borderColor="neutral.c30"
+        variant="circle"
+        Icon={checkIcon}
+      />
       <Flex flexDirection="column" flex={1} justifyContent="flex-end">
         <Text ml={4} variant="large">
           {title}
         </Text>
         {description ? (
-          <Text ml={4} mt={5} mb={4} variant="body" color="neutral.c70">
+          <Text ml={4} mt={2} mb={4} variant="body" color="neutral.c70">
             {description}
           </Text>
+        ) : null}
+        {learnMore && onLearnMore ? (
+          <Flex ml={4} mb={4}>
+            <Link
+              Icon={ExternalLinkMedium}
+              onPress={onLearnMore}
+              style={{ justifyContent: "flex-start" }}
+            >
+              {learnMore}
+            </Link>
+          </Flex>
         ) : null}
       </Flex>
     </Flex>
