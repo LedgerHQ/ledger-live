@@ -4,7 +4,10 @@ import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { ExchangeRate, SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
-import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import {
+  getProviderName,
+  isRegistrationRequired,
+} from "@ledgerhq/live-common/exchange/swap/utils/index";
 import Price from "~/renderer/components/Price";
 import CounterValue from "~/renderer/components/CounterValue";
 import { Trans } from "react-i18next";
@@ -35,7 +38,15 @@ function SwapRate({ value, selected, onSelect, fromCurrency, toCurrency }: Props
       onSelect={onSelect}
       icon={provider.toLowerCase()}
       title={getProviderName(value.provider)}
-      subtitle={<Trans i18nKey={"swap2.form.rates.noRegistration"} />}
+      subtitle={
+        <Trans
+          i18nKey={
+            isRegistrationRequired(value.provider)
+              ? "swap2.form.rates.registration"
+              : "swap2.form.rates.noRegistration"
+          }
+        />
+      }
       centerContainer={
         <Box>
           <Box
