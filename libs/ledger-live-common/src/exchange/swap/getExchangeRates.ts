@@ -27,8 +27,8 @@ const getExchangeRates: GetExchangeRates = async (
 
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
-  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountUnit(exchange.toAccount);
   const to = (currencyTo ?? getAccountCurrency(exchange.toAccount)).id;
+  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountUnit(exchange.toAccount);
   const amountFrom = transaction.amount;
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
