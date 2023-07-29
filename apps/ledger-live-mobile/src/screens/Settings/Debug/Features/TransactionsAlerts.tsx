@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Flex, Text, Alert, Tag, Divider } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
@@ -31,7 +31,10 @@ export default function DebugTransactionsAlerts() {
   }>("transactionsAlerts");
   const notifications = useSelector(notificationsSelector);
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
-  const supportedChains: ChainwatchNetwork[] = featureTransactionsAlerts?.params?.networks || [];
+  const supportedChains: ChainwatchNetwork[] = useMemo(
+    () => featureTransactionsAlerts?.params?.networks || [],
+    [featureTransactionsAlerts?.params],
+  );
 
   const [chainsData, setChainsData] = useState<Record<string, ChainwatchAccount | undefined>>({});
 

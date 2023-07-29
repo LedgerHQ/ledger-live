@@ -15,7 +15,7 @@ type TestFixtures = {
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
-  userdataFile: unknown;
+  userdataFile: string;
   env: Record<string, string>;
   electronApp: ElectronApplication;
   page: Page;

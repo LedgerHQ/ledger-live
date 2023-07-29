@@ -9,7 +9,8 @@ import SettingsRow from "../../../components/SettingsRow";
 import { showToken } from "../../../actions/settings";
 import {
   blacklistedTokenIdsSelector,
-  hiddenNftCollectionsSelector,
+  // TODO: hiddenNftCollection is never used 😱 is it safe to remove
+  // hiddenNftCollectionsSelector,
 } from "../../../reducers/settings";
 import { cryptoCurrenciesSelector } from "../../../reducers/accounts";
 import LText from "../../../components/LText";
@@ -30,7 +31,8 @@ export default function AccountsSettings({
   const { t } = useTranslation();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const currencies = useSelector(cryptoCurrenciesSelector);
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  // TODO: hiddenNftCollection is never used 😱 is it safe to remove
+  // const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const dispatch = useDispatch();
 
   const renderSectionHeader = useCallback(
@@ -81,7 +83,9 @@ export default function AccountsSettings({
         <FilterTokenOperationsZeroAmountRow />
       </>
     ),
-    [currencies.length, t, hiddenNftCollections.length, navigation],
+    // TODO: hiddenNftCollection is never used 😱 is it safe to remove
+    // [currencies.length, t, hiddenNftCollections.length, navigation],
+    [currencies.length, t, navigation],
   );
 
   const sections = useMemo(() => {
