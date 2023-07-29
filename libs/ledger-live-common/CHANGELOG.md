@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.3
+
+### Patch Changes
+
+- [#4153](https://github.com/LedgerHQ/ledger-live/pull/4153) [`cd00fe93c5`](https://github.com/LedgerHQ/ledger-live/commit/cd00fe93c599dfd8d71c49adf538c0c8fd2e4280) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos operation detail fields names destination_validator and source_validator
+
 ## 31.4.0-nightly.2
 
 ### Patch Changes
