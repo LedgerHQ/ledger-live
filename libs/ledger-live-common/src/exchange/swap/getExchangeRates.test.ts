@@ -191,7 +191,6 @@ describe("swap/getExchangeRates", () => {
         providers: ["changelly", "oneinch"],
         to: "ethereum",
       },
-      // headers: expect.anything(),
     });
   });
 
@@ -203,7 +202,11 @@ describe("swap/getExchangeRates", () => {
       },
       {
         provider: "oneinch",
-        pairs: [{ from: "shitcoin", to: "ethereum", tradeMethod: "float" }],
+        pairs: [{ from: "binance", to: "ethereum", tradeMethod: "float" }],
+      },
+      {
+        provider: "otherProvider",
+        pairs: [{ from: "bitcoin", to: "ripple", tradeMethod: "float" }],
       },
     ];
 
