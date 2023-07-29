@@ -28,7 +28,7 @@ const withDevicePromise = (deviceId, fn) =>
 const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
   let swapId;
   let { transaction } = input;
-  const { exchange, exchangeRate, deviceId, userId } = input;
+  const { exchange, exchangeRate, deviceId } = input;
 
   if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, transaction);
   return new Observable(o => {
