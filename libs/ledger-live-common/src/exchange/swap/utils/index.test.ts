@@ -176,42 +176,7 @@ describe("swap/utils/getAvailableAccountsById", () => {
   });
 });
 
-describe("swap/utils/shouldShowLoginBanner", () => {
-  ["ftx", "ftxus"].forEach(provider => {
-    describe(`${provider.toUpperCase()}`, () => {
-      test("should display Login banner if no token is provided", () => {
-        const result = shouldShowLoginBanner({
-          provider: provider,
-          token: undefined,
-        });
-
-        expect(result).toBe(true);
-      });
-
-      test("should display Login banner if token is expired", () => {
-        /**
-         * TODO: add test by mocking `isJwtExpired`
-         */
-      });
-
-      test("should not display Login banner if token is not expired", () => {
-        /**
-         * TODO: add test by mocking `isJwtExpired`
-         */
-      });
-    });
-  });
-});
-
 describe("swap/utils/isRegistrationRequired", () => {
-  test("should return registration is required for ftx", () => {
-    const expectedResult = true;
-
-    const result = isRegistrationRequired("ftx");
-
-    expect(result).toBe(expectedResult);
-  });
-
   test("should return registration is not required for changelly", () => {
     const expectedResult = false;
 
