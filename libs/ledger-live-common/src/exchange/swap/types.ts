@@ -269,15 +269,3 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   reverseSwap: () => void;
   fromAmountError?: Error;
 };
-
-export enum ActionRequired {
-  Login = "Login",
-  KYC = "KYC",
-  MFA = "MFA",
-  None = "None",
-}
-
-export type Message =
-  | { type: "navigation" }
-  | { type: "setToken"; token: string }
-  | { type: "closeWidget" };
