@@ -21,6 +21,10 @@ const providers = [
     provider: "oneinch",
     pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
   },
+  {
+    provider: "otherProvider",
+    pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
+  },
 ];
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
@@ -195,7 +199,7 @@ describe("swap/getExchangeRates", () => {
   });
 
   test("should not query for providers which is not compatible with the requested pair", async () => {
-    const providers = [
+    const providers1 = [
       {
         provider: "changelly",
         pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
@@ -206,7 +210,7 @@ describe("swap/getExchangeRates", () => {
       },
       {
         provider: "otherProvider",
-        pairs: [{ from: "bitcoin", to: "ripple", tradeMethod: "float" }],
+        pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
       },
     ];
 
@@ -221,7 +225,7 @@ describe("swap/getExchangeRates", () => {
     mockedAxios.mockResolvedValue(Promise.resolve(resp));
     mockedProviders.mockResolvedValue(Promise.resolve([]));
 
-    await getExchangeRates(exchange, transaction, undefined, providers);
+    await getExchangeRates(exchange, transaction, undefined, providers1);
     expect(mockedAxios).toHaveBeenCalledWith({
       method: "POST",
       url: "https://swap.ledger.com/v4/rate",
