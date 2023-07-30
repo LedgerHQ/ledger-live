@@ -473,16 +473,6 @@
       "outdatedApp": "{{currencyName}} app update available.",
       "loadingRates": "Loading rates..."
     },
-    "unauthorizedRatesModal": {
-      "title": "Ledger Live needs an update",
-      "subtitle": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre",
-      "cta": "Reset verification"
-    },
-    "resetThirdPartyDataModal": {
-      "title": "Delete your local third party data",
-      "subtitle": "Delete your local third party data. You may have to resubmit your KYC and/or login again to access services provided by our partners.",
-      "cta": "Confirm"
-    },
     "modal": {
       "title": "Swap",
       "steps": {
