@@ -1,4 +1,4 @@
-import { CurrenciesByProviderId, MappedAsset } from "./type";
+import { CurrenciesByProviderId } from "./type";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -8,6 +8,7 @@ import {
   currenciesByMarketcap,
 } from "../currencies";
 import { getMappedAssets } from "./api";
+import { groupCurrenciesByProvider } from "./helper";
 
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
@@ -27,24 +28,7 @@ export const useGroupedCurrenciesByProvider = () => {
       currenciesByMarketcap(coinsAndTokensSupported),
       getMappedAssets(),
     ]);
-    const assetsByLedgerId: Record<string, MappedAsset> = {};
-    for (const asset of assets) {
-      assetsByLedgerId[asset.ledgerId] = asset;
-    }
-    const assetsByProviderId: Record<string, CurrenciesByProviderId> = {};
-    for (const ledgerCurrency of sortedCurrenciesSupported) {
-      const asset = assetsByLedgerId[ledgerCurrency.id];
-      if (asset) {
-        if (!assetsByProviderId[asset.providerId]) {
-          assetsByProviderId[asset.providerId] = {
-            providerId: asset.providerId,
-            currenciesByNetwork: [],
-          };
-        }
-        assetsByProviderId[asset.providerId].currenciesByNetwork.push(ledgerCurrency);
-      }
-    }
-    const currenciesByProvider = Object.values(assetsByProviderId);
+    const currenciesByProvider = groupCurrenciesByProvider(assets, sortedCurrenciesSupported)
     setCurrenciesByProvider(currenciesByProvider);
     setCurrencies(
       currenciesByProvider

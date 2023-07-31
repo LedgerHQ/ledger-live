@@ -1,38 +1,25 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { currenciesByMarketcap, findCryptoCurrencyById, findTokenById } from "../currencies";
-import { MappedAsset, GroupedCurrency } from "./type";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { MappedAsset, CurrenciesByProviderId } from "./type";
 
-const groupedCurrenciesByProvider = async (data: MappedAsset[]) => {
-  const groupedCurrencies = new Map<string, GroupedCurrency>();
-
-  for (const currency of data) {
-    let groupedCurrency = groupedCurrencies.get(currency.providerId);
-    if (!groupedCurrency) {
-      groupedCurrency = {
-        providerId: currency.providerId,
-        currenciesByNetwork: [],
-      };
-      groupedCurrencies.set(currency.providerId, groupedCurrency);
-    }
-    groupedCurrency.currenciesByNetwork.push({
-      ...currency,
-      ledgerCurrency: (findCryptoCurrencyById(currency.ledgerId) ||
-        findTokenById(currency.ledgerId)) as CryptoCurrency | TokenCurrency,
-    });
+const groupCurrenciesByProvider = (assets: MappedAsset[], currenciesSupported: CryptoOrTokenCurrency[]) => {
+  const assetsByLedgerId: Record<string, MappedAsset> = {};
+  for (const asset of assets) {
+    assetsByLedgerId[asset.ledgerId] = asset;
   }
-
-  const mapValues = Array.from(groupedCurrencies.entries()).map(async ([_, value]) => {
-    const currencies = value.currenciesByNetwork.map(
-      e => e.ledgerCurrency as CryptoCurrency | TokenCurrency,
-    );
-    const res = await currenciesByMarketcap(currencies);
-    return {
-      ...value,
-      currenciesByNetwork: res,
-    };
-  });
-
-  return Promise.all(mapValues);
+  const assetsByProviderId: Record<string, CurrenciesByProviderId> = {};
+  for (const ledgerCurrency of currenciesSupported) {
+    const asset = assetsByLedgerId[ledgerCurrency.id];
+    if (asset) {
+      if (!assetsByProviderId[asset.providerId]) {
+        assetsByProviderId[asset.providerId] = {
+          providerId: asset.providerId,
+          currenciesByNetwork: [],
+        };
+      }
+      assetsByProviderId[asset.providerId].currenciesByNetwork.push(ledgerCurrency);
+    }
+  }
+  return Object.values(assetsByProviderId);
 };
 
 const searchByProviderId = (list: MappedAsset[], providerId: string) =>
@@ -45,4 +32,4 @@ const searchByNameOrTicker = (list: MappedAsset[], nameOrTicker: string) =>
       elem.ticker.toLowerCase().includes(nameOrTicker.toLowerCase()),
   );
 
-export { searchByProviderId, searchByNameOrTicker, groupedCurrenciesByProvider };
+export { searchByProviderId, searchByNameOrTicker, groupCurrenciesByProvider };
