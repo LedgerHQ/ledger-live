@@ -1035,8 +1035,8 @@ importers:
         specifier: ^6.0.1
         version: 6.1.0(react-native@0.71.6)(react@18.0.0)
       react-native-qrcode-svg:
-        specifier: 6.1.1
-        version: 6.1.1(react-native-svg@13.4.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.1.2
+        version: 6.1.2(react-native-svg@13.4.0)(react-native@0.71.6)(react@18.0.0)
       react-native-randombytes:
         specifier: ^3.6.1
         version: 3.6.1
@@ -53363,8 +53363,8 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
-  /react-native-qrcode-svg@6.1.1(react-native-svg@13.4.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-98cc8fkl61g2V5cesmxjlMr1WaJZcB6dyeN8T9d/shIWtJxU8KRCinNCZNBlIvO9fxbIpo5SgK+pqSItK0+vow==}
+  /react-native-qrcode-svg@6.1.2(react-native-svg@13.4.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-lMbbxoPVybXCp9SYm73Aj/0iZ9OlSZl2u+zpdbjgC4DYHBm9m9tDQxISNg1OPeR7AAzmyx8IV4JTFmk8G5R22g==}
     peerDependencies:
       react: '*'
       react-native: '>=0.63.4'
