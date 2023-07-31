@@ -90,7 +90,7 @@ export const getEstimatedFees = async (
     }
   }
 
-  const forcedFees = new BigNumber(100892500000000);
+  const forcedFees = new BigNumber(201265500000000);
 
   const estimatedFees =
     account.currency.id === "injective"
