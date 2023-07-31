@@ -463,9 +463,9 @@ PODS:
   - react-native-ble-plx (2.0.3):
     - MultiplatformBleAdapter (= 0.1.9)
     - React-Core
-  - react-native-config (1.4.4):
-    - react-native-config/App (= 1.4.4)
-  - react-native-config/App (1.4.4):
+  - react-native-config (1.4.12):
+    - react-native-config/App (= 1.4.12)
+  - react-native-config/App (1.4.12):
     - React-Core
   - react-native-fast-crypto (2.2.0):
     - React
@@ -760,7 +760,7 @@ DEPENDENCIES:
   - "react-native-appboy-sdk (from `../../../node_modules/.pnpm/react-native-appboy-sdk@1.40.0/node_modules/react-native-appboy-sdk`)"
   - "react-native-biometrics (from `../../../node_modules/.pnpm/react-native-biometrics@3.0.1_react-native@0.71.6/node_modules/react-native-biometrics`)"
   - "react-native-ble-plx (from `../../../node_modules/.pnpm/react-native-ble-plx@2.0.3/node_modules/react-native-ble-plx`)"
-  - "react-native-config (from `../../../node_modules/.pnpm/react-native-config@1.4.4/node_modules/react-native-config`)"
+  - "react-native-config (from `../../../node_modules/.pnpm/react-native-config@1.4.12/node_modules/react-native-config`)"
   - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_patch_hash=jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.71.6/node_modules/react-native-fast-crypto`)"
   - "react-native-flipper (from `../../../node_modules/.pnpm/react-native-flipper@0.164.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-flipper`)"
   - "react-native-flipper-performance-plugin (from `../../../node_modules/.pnpm/react-native-flipper-performance-plugin@0.4.0/node_modules/react-native-flipper-performance-plugin`)"
@@ -925,7 +925,7 @@ EXTERNAL SOURCES:
   react-native-ble-plx:
     :path: "../../../node_modules/.pnpm/react-native-ble-plx@2.0.3/node_modules/react-native-ble-plx"
   react-native-config:
-    :path: "../../../node_modules/.pnpm/react-native-config@1.4.4/node_modules/react-native-config"
+    :path: "../../../node_modules/.pnpm/react-native-config@1.4.12/node_modules/react-native-config"
   react-native-fast-crypto:
     :path: "../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_patch_hash=jdmv3zyvsaug2f6l23zgrmwdli_react-native@0.71.6/node_modules/react-native-fast-crypto"
   react-native-flipper:
@@ -1098,7 +1098,7 @@ SPEC CHECKSUMS:
   react-native-appboy-sdk: 60b4dbb70486426ccc00cd04ab105f8f9afc83fa
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
   react-native-ble-plx: f10240444452dfb2d2a13a0e4f58d7783e92d76e
-  react-native-config: 72d948053a442779b3178fddd571e37f118ef606
+  react-native-config: 5e3e0c7798522b1a0d7641f7ffa5363044e16397
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
   react-native-flipper: c33a4995958ef12a2b2f8290d63bed7adeed7634
   react-native-flipper-performance-plugin: 42ec5017abd26e7c5a1f527f2db92c14a90cabdb
