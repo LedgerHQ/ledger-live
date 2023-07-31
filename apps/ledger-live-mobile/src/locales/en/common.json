@@ -6252,7 +6252,8 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
-      "nft": "NFTs"
+      "nft": "NFTs",
+      "market": "Market"
     },
     "nftGallery": {
       "filters": {
