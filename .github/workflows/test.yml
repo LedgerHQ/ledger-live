@@ -75,6 +75,7 @@ jobs:
       FORCE_COLOR: 3
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
+      test-fail: ${{ steps.test.outcome }}
     runs-on: ubuntu-latest
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
@@ -88,6 +89,7 @@ jobs:
       - name: build cli
         run: pnpm build:cli
       - name: test cli
+        id: test
         run: pnpm test --filter="live-cli"
       - name: get diff
         id: diff
@@ -192,7 +194,7 @@ jobs:
                 status: "${{ needs.test-docs.result }}",
               },
               cli: {
-                pass: ${{ needs.test-cli.outputs.fail != '1' }},
+                pass: ${{ needs.test-cli.outputs.test-fail != 'success' && needs.test-cli.outputs.fail != '1' }},
                 status: "${{ needs.test-docs.result }}",
               },
               libraries: {
