@@ -6,6 +6,7 @@ import { LedgerSigner } from "@cosmjs/ledger-amino";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
 import { AminoSignResponse, makeSignDoc, StdSignDoc } from "@cosmjs/launchpad";
+import { HdPath, Secp256k1Signature } from "@cosmjs/crypto";
 
 import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
@@ -68,19 +69,18 @@ const signOperation = ({
 
         const tx = Buffer.from(JSON.stringify(signDocOrdered), "utf-8");
         const app = new CosmosApp(transport);
-        // TODO: add address index last number
+
         const path =
           account.currency.id === "injective"
             ? [44, 60, 0, 0, account.index]
             : [44, 118, 0, 0, account.index];
+
         const hrp = cryptoFactory(account.currency.id).prefix;
 
         const resp_add = await app.getAddressAndPubKey(
           path,
           cryptoFactory(account.currency.id).prefix,
         );
-
-        const addr = resp_add.bech32_address;
 
         let signResponseApp;
 
@@ -90,15 +90,16 @@ const signOperation = ({
           signResponseApp = await app.sign(path, tx);
         }
 
-        const uncompressed = secp256k1.publicKeyConvert(resp_add.compressed_pk, false);
-
-        const pubKeyUint8 = Uint8Array.from(resp_add.compressed_pk);
-
         const signResponse: AminoSignResponse = {
           signed: signDocOrdered,
           signature: {
-            pub_key: { value: uncompressed, type: pubKey.typeUrl },
-            signature: signResponseApp.signature,
+            pub_key: {
+              value: Buffer.from(resp_add.compressed_pk).toString("base64"),
+              type: pubKey.typeUrl,
+            },
+            signature: Buffer.from(
+              Secp256k1Signature.fromDer(signResponseApp.signature).toFixedLength(),
+            ).toString("base64"),
           },
         };
 
