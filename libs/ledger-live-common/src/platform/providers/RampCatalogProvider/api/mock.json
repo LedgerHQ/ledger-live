@@ -347,37 +347,6 @@
         }
       ],
       "fiatCurrencies": ["eur", "usd"]
-    },
-    {
-      "type": "LIVE_APP",
-      "appId": "wyre_buy",
-      "name": "Wyre",
-      "paramsMapping": {
-        "accountId": "accountId",
-        "cryptoCurrencyId": "cryptoCurrencyId",
-        "fiatCurrencyId": "fiatCurrencyId",
-        "fiatAmount": "fiatAmount",
-        "cryptoAmount": "cryptoAmount"
-      },
-      "paymentProviders": ["visa", "mastercard", "sepa"],
-      "cryptoCurrencies": [
-        {
-          "id": "bitcoin",
-          "providerId": "btc",
-          "ticker": "BTC"
-        },
-        {
-          "id": "ethereum",
-          "providerId": "eth",
-          "ticker": "ETH"
-        },
-        {
-          "id": "polkadot",
-          "providerId": "dot",
-          "ticker": "DOT"
-        }
-      ],
-      "fiatCurrencies": ["eur", "usd"]
     }
   ],
   "offRamp": [
