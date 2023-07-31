@@ -21,10 +21,6 @@ const providers = [
     provider: "oneinch",
     pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
   },
-  {
-    provider: "otherProvider",
-    pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
-  },
 ];
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
@@ -210,7 +206,7 @@ describe("swap/getExchangeRates", () => {
       },
       {
         provider: "otherProvider",
-        pairs: [{ from: "bitcoin", to: "ethereum", tradeMethod: "float" }],
+        pairs: [{ from: "bitcoin", to: "ripple", tradeMethod: "float" }],
       },
     ];
 
