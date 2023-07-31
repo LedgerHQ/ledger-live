@@ -2060,8 +2060,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       '@walletconnect/client':
-        specifier: 1.7.3
-        version: 1.7.3
+        specifier: 1.7.8
+        version: 1.7.8
       '@xstate/react':
         specifier: ^1.6.3
         version: 1.6.3(@types/react@17.0.53)(react@17.0.2)(xstate@4.32.0)
@@ -26265,8 +26265,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@walletconnect/client@1.7.3:
-    resolution: {integrity: sha512-jXdkVC2JhpWymsR4G9l4E+OmnlXT6lr+/112QDWIjYmpWD1vfMBvCQiqYEJ5UfZl14U3xvzVlyMf2pL9uaxKDg==}
+  /@walletconnect/client@1.7.8:
+    resolution: {integrity: sha512-pBroM6jZAaUM0SoXJZg5U7aPTiU3ljQAw3Xh/i2pxFDeN/oPKao7husZ5rdxS5xuGSV6YpqqRb0RxW1IeoR2Pg==}
     deprecated: 'WalletConnect''s v1 SDKs are now deprecated. Please upgrade to a v2 SDK. For details see: https://docs.walletconnect.com/'
     dependencies:
       '@walletconnect/core': 1.7.8
@@ -26274,19 +26274,6 @@ packages:
       '@walletconnect/types': 1.7.8
       '@walletconnect/utils': 1.7.8
       tslib: 2.5.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@walletconnect/client@1.7.8:
-    resolution: {integrity: sha512-pBroM6jZAaUM0SoXJZg5U7aPTiU3ljQAw3Xh/i2pxFDeN/oPKao7husZ5rdxS5xuGSV6YpqqRb0RxW1IeoR2Pg==}
-    dependencies:
-      '@walletconnect/core': 1.7.8
-      '@walletconnect/iso-crypto': 1.7.8
-      '@walletconnect/types': 1.7.8
-      '@walletconnect/utils': 1.7.8
-      tslib: 2.4.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -26312,21 +26299,21 @@ packages:
       '@walletconnect/randombytes': 1.0.2
       aes-js: 3.1.2
       hash.js: 1.1.7
-      tslib: 2.5.0
+      tslib: 1.14.1
     dev: false
 
   /@walletconnect/encoding@1.0.1:
     resolution: {integrity: sha512-8opL2rs6N6E3tJfsqwS82aZQDL3gmupWUgmvuZ3CGU7z/InZs3R9jkzH8wmYtpbq0sFK3WkJkQRZFFk4BkrmFA==}
     dependencies:
       is-typedarray: 1.0.0
-      tslib: 2.5.0
+      tslib: 1.14.1
       typedarray-to-buffer: 3.1.5
     dev: false
 
   /@walletconnect/environment@1.0.0:
     resolution: {integrity: sha512-4BwqyWy6KpSvkocSaV7WR3BlZfrxLbJSLkg+j7Gl6pTDE+U55lLhJvQaMuDVazXYxcjBsG09k7UlH7cGiUI5vQ==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 1.14.1
     dev: false
 
   /@walletconnect/iso-crypto@1.7.8:
@@ -26360,13 +26347,13 @@ packages:
       '@walletconnect/encoding': 1.0.1
       '@walletconnect/environment': 1.0.0
       randombytes: 2.1.0
-      tslib: 2.5.0
+      tslib: 1.14.1
     dev: false
 
   /@walletconnect/safe-json@1.0.0:
     resolution: {integrity: sha512-QJzp/S/86sUAgWY6eh5MKYmSfZaRpIlmCJdi5uG4DJlKkZrHEF7ye7gA+VtbVzvTtpM/gRwO2plQuiooIeXjfg==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 1.14.1
     dev: false
 
   /@walletconnect/socket-transport@1.7.8:
@@ -26404,14 +26391,14 @@ packages:
   /@walletconnect/window-getters@1.0.0:
     resolution: {integrity: sha512-xB0SQsLaleIYIkSsl43vm8EwETpBzJ2gnzk7e0wMF3ktqiTGS6TFHxcprMl5R44KKh4tCcHCJwolMCaDSwtAaA==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 1.14.1
     dev: false
 
   /@walletconnect/window-metadata@1.0.0:
     resolution: {integrity: sha512-9eFvmJxIKCC3YWOL97SgRkKhlyGXkrHwamfechmqszbypFspaSk+t2jQXAEU7YClHF6Qjw5eYOmy1//zFi9/GA==}
     dependencies:
       '@walletconnect/window-getters': 1.0.0
-      tslib: 2.5.0
+      tslib: 1.14.1
     dev: false
 
   /@webassemblyjs/ast@1.11.1:
@@ -49749,6 +49736,7 @@ packages:
   /path-exists@2.1.0:
     resolution: {integrity: sha512-yTltuKuhtNeFJKa1PiRzfLAU5182q1y4Eb4XCJ3PBqyzEDkAZRzBrKKBct682ls9reBVHf9udYLN5Nd+K1B9BQ==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       pinkie-promise: 2.0.1
 
@@ -59288,6 +59276,7 @@ packages:
 
   /tslib@2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
+    dev: true
 
   /tslib@2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
