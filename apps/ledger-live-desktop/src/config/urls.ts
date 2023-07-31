@@ -1,6 +1,6 @@
 // FIXME live-common
 
-import { Locale } from "./languages";
+import { Language } from "./languages";
 
 export const supportLinkByTokenType = {
   erc20:
@@ -29,7 +29,7 @@ const errors = {
   OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
 };
 
-const faq: { [key in Locale]: string } = {
+const faq: { [key in Language]: string } = {
   en: "https://support.ledger.com/hc/en-us/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
   fr: "https://support.ledger.com/hc/fr-fr/categories/4404369571601-Assistance?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
   es: "https://support.ledger.com/hc/es/categories/4404369571601-Soporte?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
@@ -42,7 +42,7 @@ const faq: { [key in Locale]: string } = {
   ko: "https://support.ledger.com/hc/ko/categories/4404369571601-%EC%A7%80%EC%9B%90?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
 };
 
-const terms: { [key in Locale]: string } = {
+const terms: { [key in Language]: string } = {
   en: "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   fr: "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   de: "https://shop.ledger.com/de/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
@@ -55,7 +55,7 @@ const terms: { [key in Locale]: string } = {
   ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
 };
 
-const privacyPolicy: { [key in Locale]: string } = {
+const privacyPolicy: { [key in Language]: string } = {
   en: "https://www.ledger.com/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   fr: "https://www.ledger.com/fr/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   de: "https://www.ledger.com/de/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
@@ -68,7 +68,7 @@ const privacyPolicy: { [key in Locale]: string } = {
   ko: "https://www.ledger.com/ko/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
 };
 
-const contactSupportWebview: { [key in Locale]: string } = {
+const contactSupportWebview: { [key in Language]: string } = {
   de: "https://support.ledger.com/hc/de/articles/4423020306705-Kontakt?support=true",
   en: "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
   es: "https://support.ledger.com/hc/es/articles/4423020306705-Contacto?support=true",
@@ -81,7 +81,7 @@ const contactSupportWebview: { [key in Locale]: string } = {
   zh: "https://support.ledger.com/hc/zh-cn/articles/4423020306705-%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC?support=true",
 };
 
-const buyNew: { [key in Locale]: string } = {
+const buyNew: { [key in Language]: string } = {
   en: "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
   fr: "https://shop.ledger.com/fr/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
   es: "https://shop.ledger.com/es/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",

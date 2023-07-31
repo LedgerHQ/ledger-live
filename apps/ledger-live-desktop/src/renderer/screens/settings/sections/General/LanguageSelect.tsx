@@ -1,56 +1,30 @@
-import React, { useMemo, useCallback, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  allLanguages,
-  prodStableLanguages,
-  Locale,
-  localeIdToDeviceLanguage,
-} from "~/config/languages";
-import useEnv from "~/renderer/hooks/useEnv";
-import { setLanguage, setLastSeenDevice } from "~/renderer/actions/settings";
-import {
-  useSystemLanguageSelector,
-  lastSeenDeviceSelector,
-  languageSelector,
-  getInitialLanguageLocale,
-} from "~/renderer/reducers/settings";
-import Select from "~/renderer/components/Select";
-import { track } from "~/renderer/analytics/segment";
-import Track from "~/renderer/analytics/Track";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
-import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { from } from "rxjs";
-import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import isEqual from "lodash/isEqual";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { Languages, Language } from "~/config/languages";
+import { from } from "rxjs";
+import { setLanguage, setLastSeenDevice } from "~/renderer/actions/settings";
+import Track from "~/renderer/analytics/Track";
+import { track } from "~/renderer/analytics/segment";
+import Select from "~/renderer/components/Select";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import useEnv from "~/renderer/hooks/useEnv";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import {
+  getInitialLanguageAndLocale,
+  languageSelector,
+  lastSeenDeviceSelector,
+  useSystemLanguageSelector,
+} from "~/renderer/reducers/settings";
+import ChangeDeviceLanguagePromptDrawer from "./ChangeDeviceLanguagePromptDrawer";
 
-export const languageLabels: { [key in Locale]: string } = {
-  de: "Deutsch",
-  el: "Ελληνικά",
-  en: "English",
-  es: "Español",
-  fi: "suomi",
-  fr: "Français",
-  hu: "magyar",
-  it: "italiano",
-  ja: "日本語",
-  ko: "한국어",
-  nl: "Nederlands",
-  no: "Norsk",
-  pl: "polski",
-  pt: "Português (Brasil)",
-  ru: "Русский",
-  sr: "српски",
-  sv: "svenska",
-  tr: "Türkçe",
-  zh: "简体中文",
-};
-
-type ChangeLangArgs = { value: Locale | null; label: string };
+type ChangeLangArgs = { value: Language | null; label: string };
 
 type Props = {
   disableLanguagePrompt?: boolean;
@@ -83,20 +57,22 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
 
   const languages = useMemo(
     () =>
-      [{ value: null as Locale | null, label: t(`language.system`) }].concat(
-        prodStableLanguages.map(key => ({
-          value: key,
-          label: languageLabels[key],
-        })),
+      [{ value: null as Language | null, label: t(`language.system`) }].concat(
+        (Object.keys(Languages) as Array<keyof typeof Languages>).map(language => {
+          return {
+            value: language,
+            label: Languages[language].label,
+          };
+        }),
       ),
     [t],
   );
 
-  const currentLanguage = useMemo(
+  const selectedLanguage = useMemo(
     () => (useSystem ? languages[0] : languages.find(l => l.value === language)),
     [language, languages, useSystem],
   ) as {
-    value: Locale | null;
+    value: Language | null;
     label: string;
   };
 
@@ -109,11 +85,12 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
       setDrawer(
         ChangeDeviceLanguagePromptDrawer,
         {
-          currentLanguage: (language ?? getInitialLanguageLocale()) as Locale,
           deviceModeInfo: lastSeenDevice,
           analyticsContext: "Page LiveLanguageChange",
           onSuccess: refreshDeviceInfo,
           onError: refreshDeviceInfo,
+          deviceModelId: lastSeenDevice?.modelId ?? DeviceModelId.nanoX,
+          currentLanguage: language ?? getInitialLanguageAndLocale().language,
         },
         {},
       );
@@ -127,9 +104,8 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const handleChangeLanguage = useCallback(
     (language?: ChangeLangArgs) => {
       const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
-      const key = language?.value ?? getInitialLanguageLocale();
-      const potentialDeviceLanguage =
-        localeIdToDeviceLanguage[key as keyof typeof localeIdToDeviceLanguage];
+      const key = language?.value ?? getInitialLanguageAndLocale().language;
+      const potentialDeviceLanguage = Languages[key].deviceSupport?.label;
       const langAvailableOnDevice =
         potentialDeviceLanguage !== undefined &&
         availableDeviceLanguages.includes(potentialDeviceLanguage);
@@ -161,7 +137,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
 
   return (
     <>
-      <Track onUpdate event="LanguageSelect" currentRegion={currentLanguage.value} />
+      <Track onUpdate event="LanguageSelect" currentRegion={selectedLanguage.value} />
 
       <Select
         aria-label="Select language"
@@ -170,7 +146,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         isSearchable={false}
         onChange={avoidEmptyValue}
         renderSelected={(item: { name: unknown } | undefined) => item && item.name}
-        value={currentLanguage}
+        value={selectedLanguage}
         options={languages}
       />
     </>

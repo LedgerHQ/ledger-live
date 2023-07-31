@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import { Languages } from "~/config/languages";
+import { LanguageIds } from "~/config/languages";
 import { LangAndRegion } from "~/renderer/reducers/settings";
 import { Handlers } from "./types";
 export type ApplicationState = {
@@ -15,7 +15,7 @@ export type ApplicationState = {
   };
 };
 const { language, region } = getParsedSystemLocale();
-const osLangSupported = Languages.includes(language);
+const osLangSupported = LanguageIds.includes(language);
 const state: ApplicationState = {
   osDarkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
   osLanguage: {
