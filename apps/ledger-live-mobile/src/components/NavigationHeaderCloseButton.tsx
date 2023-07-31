@@ -1,4 +1,4 @@
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useCallback, useState } from "react";
@@ -35,8 +35,8 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
       event="HeaderRightClose"
       onPress={() => (onPress ? onPress() : navigation.popToTop())}
     >
-      <Flex pr={6}>
-        <Icons.CloseMedium size={24} color={color || "neutral.c100"} />
+      <Flex p={6}>
+        <IconsLegacy.CloseMedium size={24} color={color || "neutral.c100"} />
       </Flex>
     </Touchable>
   );

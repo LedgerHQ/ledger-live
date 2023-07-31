@@ -10,7 +10,7 @@ export function Result({
   search,
   disclaimer,
 }: {
-  categories: Pick<Categories, "manifests">;
+  categories: Pick<Categories, "manifests" | "selected">;
   search: Pick<Search, "result" | "input" | "isSearching">;
   disclaimer: Pick<DisclaimerRaw, "onSelect">;
 }) {
@@ -28,7 +28,10 @@ export function Result({
 
   return (
     <Grid columns={3} gridGap={4}>
-      {(search.input ? search.result : categories.manifests.complete).map(m => (
+      {(search.input || categories.selected !== "all"
+        ? search.result
+        : categories.manifests.complete
+      ).map(m => (
         <FullCard key={m.id} manifest={m} onClick={disclaimer.onSelect} />
       ))}
     </Grid>

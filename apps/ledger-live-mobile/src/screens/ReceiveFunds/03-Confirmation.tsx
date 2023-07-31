@@ -14,7 +14,7 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, Icons, Button, Notification, Box, BannerCard } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Button, Notification, Box, BannerCard } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -79,7 +79,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
   const [isToastDisplayed, setIsToastDisplayed] = useState(false);
-  const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] = useState(verified);
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
   const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
@@ -90,9 +89,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
-  }, []);
-  const hideVerifiedToast = useCallback(() => {
-    setIsVerifiedToastDisplayed(false);
   }, []);
 
   const openAdditionalInfoModal = useCallback(() => {
@@ -178,7 +174,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   }, [colors, navigation, account, currency]);
 
   useEffect(() => {
-    setIsVerifiedToastDisplayed(verified);
     if (verified && currency) {
       track("Verification Success", { currency: currency.name });
     }
@@ -271,14 +266,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 >
                   {mainAccount.name}
                 </Text>
-                {verified && (
-                  <Flex alignItems="center" justifyContent="center" flexDirection="row">
-                    <Icons.ShieldSecurityMedium color="success.c60" size={16} />
-                    <Text variant={"small"} color="success.c60" fontWeight="medium" ml={2}>
-                      {t("transfer.receive.receiveConfirmation.addressVerified")}
-                    </Text>
-                  </Flex>
-                )}
               </Box>
               <Flex
                 p={6}
@@ -321,7 +308,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               mr={4}
               onPress={onShare}
             >
-              <Icons.ShareMedium size={20}></Icons.ShareMedium>
+              <IconsLegacy.ShareMedium size={20}></IconsLegacy.ShareMedium>
             </StyledTouchableOpacity>
             <StyledTouchableOpacity
               p={4}
@@ -333,7 +320,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               borderRadius={2}
               onPress={onCopyAddress}
             >
-              <Icons.CopyMedium size={20}></Icons.CopyMedium>
+              <IconsLegacy.CopyMedium size={20}></IconsLegacy.CopyMedium>
               <Text variant={"body"} fontWeight={"medium"} pl={3}>
                 {t("transfer.receive.receiveConfirmation.copyAdress")}
               </Text>
@@ -360,7 +347,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       <Flex m={6}>
         {isToastDisplayed ? (
           <Notification
-            Icon={Icons.CircledCheckMedium}
+            Icon={IconsLegacy.CircledCheckMedium}
             variant={"neutral"}
             title={t("transfer.receive.toastMessages.accountImported", {
               currencyTicker: currency.ticker,
@@ -368,13 +355,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             onClose={hideToast}
             linkText={t("transfer.receive.toastMessages.why")}
             onLinkPress={openAdditionalInfoModal}
-          />
-        ) : isVerifiedToastDisplayed ? (
-          <Notification
-            Icon={Icons.CircledCheckMedium}
-            variant={"success"}
-            title={t("transfer.receive.toastMessages.addressVerified")}
-            onClose={hideVerifiedToast}
           />
         ) : (
           <Flex>

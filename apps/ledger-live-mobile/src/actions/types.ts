@@ -31,6 +31,7 @@ import type {
   SwapStateType,
   DynamicContentState,
   ProtectState,
+  NftState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -477,3 +478,16 @@ export type ActionsPayload =
   | Action<PostOnboardingPayload>
   | Action<SwapPayload>
   | Action<ProtectPayload>;
+
+// === NFT ACTIONS ===
+export enum NftStateActionTypes {
+  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
+  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
+}
+
+export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
+export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
+
+export type NftStatePayload =
+  | NftStateGalleryChainFiltersPayload
+  | NftStateGalleryFilterDrawerVisiblePayload;

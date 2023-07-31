@@ -131,15 +131,17 @@ jobs:
           ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
+        uses: ./tools/actions/turborepo-s3-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
@@ -163,6 +165,7 @@ jobs:
             const fs = require("fs");
             fs.writeFileSync("summary-${{ matrix.os }}.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-${{ matrix.os }}.txt

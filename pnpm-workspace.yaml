@@ -6,3 +6,4 @@ packages:
   - "libs/ui/packages/*"
   - "libs/ledger-live-common/tools"
   - "tools/**"
+  - "docs"

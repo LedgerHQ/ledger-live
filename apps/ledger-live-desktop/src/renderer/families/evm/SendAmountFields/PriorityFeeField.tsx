@@ -1,4 +1,4 @@
-import { GasOptions, Transaction } from "@ledgerhq/coin-evm/types";
+import { Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AccountBridge } from "@ledgerhq/types-live";
@@ -44,7 +44,7 @@ const WhiteSpacedLabel = styled(Label)`
   color: ${p => p.theme.colors.neutral.c60};
 `;
 
-const strategies: (keyof GasOptions)[] = ["slow", "medium", "fast"];
+const strategies: Strategy[] = ["slow", "medium", "fast"];
 
 const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   account,
@@ -76,7 +76,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   strategies.forEach(strategy => {
     invariant(
       gasOptions[strategy].maxPriorityFeePerGas,
-      `PriorityFeeField: 'gasOptions[${strategy}].maxPriorityFeePerGas' should be defined`,
+      `PriorityFeeField: 'gasOptions[${strategy.toString()}].maxPriorityFeePerGas' should be defined`,
     );
   });
 

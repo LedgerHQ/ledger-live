@@ -64,6 +64,8 @@ export type FeatureId =
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile"
   | "protectServicesDesktop"
+  | "ptxServiceCtaExchangeDrawer"
+  | "ptxServiceCtaScreens"
   | "swapWalletApiPartnerList"
   | "stakePrograms"
   | "portfolioExchangeBanner"

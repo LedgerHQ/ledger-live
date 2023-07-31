@@ -49,11 +49,11 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="delegation.started.steps.0" />,
-            <Trans i18nKey="delegation.started.steps.1" />,
-            <Trans i18nKey="delegation.started.steps.2" />,
+            <Trans i18nKey="delegation.started.steps.0" key="DelegationText1" />,
+            <Trans i18nKey="delegation.started.steps.1" key="DelegationText2" />,
+            <Trans i18nKey="delegation.started.steps.2" key="DelegationText3" />,
           ].map(wording => (
-            <Text fontWeight="semiBold" style={styles.bulletItem} color="black">
+            <Text fontWeight="semiBold" style={styles.bulletItem} color="black" key={wording.key}>
               {wording}
             </Text>
           ))}

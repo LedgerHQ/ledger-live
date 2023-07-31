@@ -35,32 +35,16 @@ runs:
         echo ${{ steps.status.outputs.status }}
         echo "changes=$(git status -s)"
       shell: bash
-    - name: Commit snapshots (Linux | macOS)
-      if: steps.status.outputs.status != 0
+    - name: Commit snapshots
+      if: steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0
       run: |
         git add ./apps/ledger-live-desktop/tests/specs &&
-        git commit -m "test(lld): update screenshots (${{ inputs.os }})
-
-        ${{ steps.changes.outputs.changes }}
-        lld, test, screenshot" &&
+        git commit -m "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot" &&
         git restore . &&
         git pull --rebase &&
         git push ||
         echo ""
       shell: bash
-    - name: Commit snapshots (Windows)
-      if: steps.status-windows.outputs.status != 0
-      run: |
-        git add ./apps/ledger-live-desktop/tests/specs &&
-        git commit -m "test(lld): update screenshots (${{ inputs.os }})
-
-        ${{ steps.changes.outputs.changes }}
-        lld, test, screenshot" &&
-        git restore . &&
-        git pull --rebase &&
-        git push ||
-        echo ""
-      shell: pwsh
     - name: Upload playwright results [On Failure]
       uses: actions/upload-artifact@v3
       if: failure() && !cancelled()

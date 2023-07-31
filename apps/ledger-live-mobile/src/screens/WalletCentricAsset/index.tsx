@@ -102,7 +102,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const data = useMemo(
     () => [
-      <Box mt={6} onLayout={onGraphCardLayout}>
+      <Box mt={6} onLayout={onGraphCardLayout} key="AssetGraph">
         <AssetGraph
           accounts={cryptoAccounts}
           currency={currency}
@@ -115,9 +115,9 @@ const AssetScreen = ({ route }: NavigationProps) => {
       featureReferralProgramMobile?.enabled &&
       featureReferralProgramMobile?.params?.path &&
       currency.ticker === "BTC" ? (
-        <ReferralProgram />
+        <ReferralProgram key="ReferralProgram" />
       ) : null,
-      <SectionContainer px={6} isFirst>
+      <SectionContainer px={6} isFirst key="AssetDynamicContent">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
           currency={currency}
@@ -131,7 +131,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           </Flex>
         ) : null}
       </SectionContainer>,
-      <SectionContainer px={6}>
+      <SectionContainer px={6} key="AccountsSection">
         <SectionTitle
           title={t("asset.accountsSection.title", {
             currencyName: currency.ticker,
@@ -145,7 +145,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currencyTicker={currency.ticker}
         />
       </SectionContainer>,
-      <AssetMarketSection currency={currency} />,
+      <AssetMarketSection currency={currency} key="AssetMarketSection" />,
       cryptoAccountsEmpty ? null : (
         <SectionContainer px={6}>
           <SectionTitle title={t("analytics.operations.title")} />

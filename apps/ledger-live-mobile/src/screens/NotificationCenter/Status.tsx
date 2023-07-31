@@ -1,6 +1,6 @@
 import React from "react";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 
@@ -22,7 +22,7 @@ export default function StatusCenter() {
     return (
       <IncidentBox flexDirection="row" px={7} justifyContent="center">
         <Box mr={3} pt={1}>
-          <Icons.WarningSolidMedium
+          <IconsLegacy.WarningSolidMedium
             color={incident.impact === "critical" ? colors.error.c60 : colors.warning.c70}
             size={14}
           />

@@ -201,9 +201,11 @@ export const getTransactionData = (
  * on the network compatiblity.
  */
 export const getTypedTransaction = (
-  transaction: EvmTransaction,
+  _transaction: EvmTransaction,
   feeData: FeeData,
 ): EvmTransaction => {
+  // Preventing mutation from the original transaction
+  const transaction = { ..._transaction };
   // If the blockchain is supporting EIP-1559, use maxFeePerGas & maxPriorityFeePerGas
   if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
     delete transaction.gasPrice;

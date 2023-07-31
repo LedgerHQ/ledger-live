@@ -13,7 +13,8 @@
       "~/*": ["src/*"],
       "tests/*": ["./tests/*"]
     },
-    "outDir": "dist"
+    "outDir": "dist",
+    "typeRoots": ["index-types.d.ts"]
   },
   "exclude": ["**/node_modules/*"],
   "include": [
@@ -23,6 +24,8 @@
     "src/renderer/animations/*/*.json",
     "src/renderer/screens/settings/sections/General/regions.json",
     "package.json",
-    "release-notes.json"
+    "release-notes.json",
+    "tests",
+    "index-types.d.ts"
   ]
 }

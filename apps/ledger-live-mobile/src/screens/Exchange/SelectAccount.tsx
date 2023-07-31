@@ -4,7 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -155,7 +155,7 @@ export default function SelectAccount({ navigation, route }: Props) {
           ListFooterComponent={
             <Button
               type="main"
-              Icon={Icons.PlusMedium}
+              Icon={IconsLegacy.PlusMedium}
               iconPosition="left"
               onPress={onAddAccount}
               mt={3}

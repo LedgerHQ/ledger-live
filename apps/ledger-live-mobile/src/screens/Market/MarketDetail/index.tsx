@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTheme } from "styled-components/native";
-import { Flex, Icons, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -41,7 +41,12 @@ type NavigationProps = BaseComposite<
 >;
 
 export const BackButton = ({ navigation }: { navigation: NavigationProps["navigation"] }) => (
-  <Button size="large" onPress={() => navigation.goBack()} Icon={Icons.ArrowLeftMedium} />
+  <Button
+    size="large"
+    onPress={() => navigation.goBack()}
+    Icon={IconsLegacy.ArrowLeftMedium}
+    testID="market-back-btn"
+  />
 );
 
 function MarketDetail({ navigation, route }: NavigationProps) {
@@ -192,7 +197,12 @@ function MarketDetail({ navigation, route }: NavigationProps) {
           </Flex>
         }
         TopRightSection={
-          <Button size="large" onPress={toggleStar} iconName={isStarred ? "StarSolid" : "Star"} />
+          <Button
+            testID="star-asset"
+            size="large"
+            onPress={toggleStar}
+            iconName={isStarred ? "StarSolid" : "Star"}
+          />
         }
         BottomSection={
           <>

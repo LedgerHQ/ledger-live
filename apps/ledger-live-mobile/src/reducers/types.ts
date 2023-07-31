@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import {
@@ -291,6 +291,18 @@ export type ProtectState = {
   protectStatus: ProtectStateNumberEnum;
 };
 
+// === NFT STATE ===
+
+export type NftState = {
+  filterDrawerVisible: boolean;
+  galleryChainFilters: NftGalleryChainFiltersState;
+};
+
+export type NftGalleryChainFiltersState = Pick<
+  Record<CryptoCurrencyId, boolean>,
+  "polygon" | "ethereum"
+>;
+
 // === ROOT STATE ===
 
 export type State = {
@@ -305,4 +317,5 @@ export type State = {
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
+  nft: NftState;
 };

@@ -187,7 +187,55 @@
       "REGISTER" : "مُسجّل",
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
-      "WITHDRAW_UNSTAKED" : "مسحوب"
+      "WITHDRAW_UNSTAKED" : "مسحوب",
+      "SENDING" : "إرسال"
+    },
+    "edit" : {
+      "title" : "التسريع أو الإلغاء",
+      "description" : "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى، أو إلغائها.",
+      "stuckDescription" : "معاملتك عالقة. قم بتسريعها برسوم شبكة أعلى أو قم بإلغائها.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "معلومات رسوم المعاملة المُعلَّقة: ",
+        "networkfee" : "رسوم الشبكة = ",
+        "maxFee" : "الحد الأقصى للرسوم = ",
+        "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية = ",
+        "gasPrice" : "سعر الغاز = "
+      },
+      "learnMore" : "أرغب في معرفة المزيد",
+      "panel" : {
+        "title" : "التسريع أو الإلغاء",
+        "description" : "واحدة من أحدث معاملات 'الإرسال' لديك عالقة. قم بتسريع المعاملة برسوم شبكة أعلى أو قم بإلغائها."
+      },
+      "speedUp" : {
+        "title" : "تسريع",
+        "description" : "أعد تقديم المعاملة برسوم شبكة أعلى."
+      },
+      "cancel" : {
+        "title" : "إلغاء",
+        "description" : "إرسال 0 {{ticker}} إلى عنوانك. لضمان الإلغاء، رسوم الشبكة أعلى بـ %30 من رسوم المعاملة المراد إلغاؤها."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "الطريقة"
+        },
+        "fees" : {
+          "title" : "رسوم"
+        },
+        "summary" : {
+          "title" : "الملخص"
+        },
+        "device" : {
+          "title" : "الجهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "إلغاء المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+        "notEnoughFundsToSpeedup" : "تسريع المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+        "notlowestNonceToSpeedup" : "ميزة التسريع غير متاحة. معاملتك مُعلَّقة لأن هناك معاملة سابقة عالقة. يمكنك الانتظار حتى يتم تأكيدها وتسريعها وإلغائها."
+      }
     }
   },
   "byteSize" : {
@@ -324,7 +372,7 @@
         },
         "login" : {
           "required" : "تحتاج لتسجيل الدخول مع هذا المزود",
-          "complete" : "Login"
+          "complete" : "تسجيل الدخول"
         },
         "mfa" : {
           "required" : "تحتاج لإعداد المصادقة متعددة العوامل (MFA) مع هذا المزود",
@@ -333,6 +381,9 @@
         "withdrawalsBlockedError" : {
           "message" : "تم حظر عملية السحب خاصتك من قِبل {{providerName}}.\n\n يرجى التواصل مع فريق الدعم لديهم للمزيد من المعلومات."
         }
+      },
+      "timeout" : {
+        "message" : "تعذّر إنشاء عروض الأسعار بسبب مشكلات تقنية. حاول المبادلة مجدداً خلال بضع لحظات."
       }
     },
     "history" : {
@@ -554,7 +605,7 @@
     "resetThirdPartyDataModal" : {
       "title" : "حذف بياناتك لدى الطرف الثالث المحلي",
       "subtitle" : "قم بحذف بياناتك لدى الطرف الثالث المحلي. قد تحتاج لإعادة تقديم بيانات اعرف عميلك (KYC) و/أو تسجيل الدخول مجدداً للوصول إلى الخدمات التي يُقدّمها شركائنا.",
-      "cta" : "Confirm"
+      "cta" : "تأكيد"
     },
     "modal" : {
       "title" : "مبادلة",
@@ -648,6 +699,26 @@
   },
   "postOnboardingDebugger" : {
     "buttonTitle" : "اختبر"
+  },
+  "vaultSigner" : {
+    "modal" : {
+      "title" : "توصيل Vault",
+      "info" : "اربط حسابات مساحة عمل Ledger Vault الخاصة بك وأنشئ معاملات من Ledger Live عن طريق إكمال الحقول أدناه. حدِّد المعلومات في Settings (الإعدادات) > External wallet signer (مُوقِّع المحفظة الخارجية).",
+      "info_link" : "تعرّف على المزيد",
+      "host" : {
+        "title" : "نقطة نهاية عنوان URL",
+        "placeholder" : "ws://localhost:3030"
+      },
+      "workspace" : {
+        "title" : "اسم مساحة العمل",
+        "placeholder" : "مساحة العمل"
+      },
+      "token" : {
+        "title" : "رمز توكن واجهة برمجة التطبيقات (API) الخاص بالمُشغِّل",
+        "placeholder" : "رمز توكن"
+      },
+      "submit" : "اتصال"
+    }
   },
   "fullNode" : {
     "status" : "الوضع الحالي",
@@ -1396,6 +1467,10 @@
     "referralProgram" : {
       "title" : "رشّح واكسب 10$",
       "description" : "قم بترشيح صديق بنجاح وكلاكما سيكسب ما قيمته 10$ من بيتكوين."
+    },
+    "vaultSigner" : {
+      "title" : "وضع مُوقِّع Vault",
+      "link" : "مركز مساعدة Vault"
     }
   },
   "signmessage" : {
@@ -2219,6 +2294,8 @@
         "recipientAddress" : "عنوان المستلم",
         "amount" : "المبلغ",
         "fees" : "رسوم الشبكة",
+        "maxFees" : "الحد الأقصى لرسوم الشبكة",
+        "maxFeesInfo" : "هذا هو الحد الأقصى للمبلغ الذي قد تدفعه مقابل هذه المعاملة. سيتم رد أي فرق بين الحد الأقصى لرسوم الشبكة والرسوم الفعلية.",
         "useMax" : "استخدم الحد الأقصى",
         "sendMax" : "إرسال الحد الأقصى",
         "rippleTag" : "علامة",
@@ -2297,7 +2374,8 @@
   "deviceLocalization" : {
     "language" : "اللغة",
     "deviceLanguage" : "تغيير لغة الجهاز",
-    "changeLanguage" : "تغيير اللغة",
+    "changeLanguage" : "تغيير",
+    "dontChangeLanguage" : "لا تُغيّر",
     "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}} متاحة أيضاً لجهازك {{deviceName}}",
@@ -2937,7 +3015,7 @@
             }
           },
           "amount" : {
-            "title" : "Amount"
+            "title" : "المبلغ"
           },
           "validator" : {
             "title" : "المدققون"
@@ -3009,7 +3087,7 @@
             "newDelegation" : "تفويض جديد",
             "chooseValidator" : "اختر مدقق",
             "warning" : "سيجب عليك الانتظار لمدة <0>{{numberOfDays}}</0> يوماً لإعادة التفويض من المدقق الجديد، إذا غيرت رأيك مجدداً",
-            "amountLabel" : "Amount to redelegate"
+            "amountLabel" : "المبلغ المطلوب إعادة تفويضه"
           },
           "device" : {
             "title" : "جهاز"
@@ -3946,6 +4024,10 @@
           "title" : "إلغاء تنشيط بوابة EIP1559 للحد الأدنى لرسوم الأولوية",
           "description" : "هذا سيسمح بإرسال معاملة دون أي حد أدنى متوقع لرسوم الأولوية. قد يؤدي هذا إلى أن تُعلّق المعاملات في مجمَع الذاكرة (mempool) إلى الأبد."
         },
+        "vaultSigner" : {
+          "title" : "مُوقِّع Vault",
+          "description" : "استخدم Ledger Vault كمُوقِّع مع رمز توكن واجهة برمجة التطبيقات (API) الخاص بالمُشغِّل"
+        },
         "1559CustomPriorityLowerGate" : {
           "title" : "بوابة رسوم أولوية مخصصة",
           "description" : "خصِّص النسبة المئوية من الحد الأدنى لرسوم الأولوية المُقدَّرة لدينا المسموح بها لمعاملات EIP1559 المتقدمة"
@@ -4061,7 +4143,7 @@
     "downloadInProgress" : "جاري تنزيل التحديث...",
     "downloadProgress" : "اكتمل {{progress}}%",
     "checking" : "جاري التحقق من التحديث...",
-    "checkSuccess" : "التحديث جاهز للتثبيت",
+    "checkSuccess" : "متاح تحديث Ledger Live جديد، سيتم تثبيته تلقائياً عندما تغلق التطبيق",
     "quitAndInstall" : "تثبيت الآن",
     "updateAvailable" : "التحديث إلى إصدار {{version}} من Ledger Live متاح",
     "error" : "حدث خطأ أثناء التحديث. يرجى التنزيل مرة أخرى",
@@ -4216,6 +4298,7 @@
         "nextButton" : "بدء الاستخدام",
         "noDevice" : "ليس لديك جهاز؟",
         "buyLink" : "ليس لديك جهاز؟ قم بشراء Ledger Nano X",
+        "recoverSignIn" : "تسجيل الدخول إلى Ledger Recover",
         "byTapping" : "بالضغط على \"Get Started (بدء الاستخدام)\" أنت توافق على وتقبل",
         "termsAndConditions" : "الشروط والأحكام",
         "and" : "و",
@@ -4265,7 +4348,7 @@
           },
           "4" : {
             "title" : "استعادة باستخدام Ledger Recover",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
+            "description" : "يجب أن يكون لديك اشتراك Ledger Recover."
           }
         }
       },
@@ -4468,10 +4551,10 @@
             }
           },
           "newRecoveryPhrase" : {
-            "title" : "عبارة الاسترداد",
-            "paragraph1" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً.",
-            "paragraph2" : "Nano الخاصة بك تقوم بإنشاء عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها.",
-            "disclaimer" : "أفهم أنني إذا فقدت عبارة الاسترداد هذه فلن أتمكن من الوصول إلى أصولي المشفرة في حالة أن فقدت الوصول إلى Nano الخاصة بي.",
+            "title" : "عبارة الاسترداد السرية الخاصة بك",
+            "paragraph1" : "عبارة الاسترداد السرية الخاصة بك هي قائمة من 24 كلمة تنسخ احتياطياً مفاتيحك الخاصة.",
+            "paragraph2" : "Ledger Nano خاصتك تنشئ عبارة استرداد سرية فريدة. Ledger لا تعرف ماذا تكون.",
+            "disclaimer" : "أفهم أنه إذا حصل شخص ما على عبارة الاسترداد السرية الخاصة بي، ستصبح أصولي مُعرضة للخطر.",
             "buttons" : {
               "next" : "عبارة الاسترداد",
               "prev" : "الخطوة السابقة",
@@ -4611,7 +4694,7 @@
         "1" : {
           "text" : "كمستخدم Ledger، يتم حفظ أصولي المشفرة:",
           "answers" : {
-            "1" : "على Nano الخاصة بي",
+            "1" : "على Ledger Nano خاصتي",
             "2" : "على سلسلة الكتل (blockchain)"
           },
           "results" : {
@@ -4626,10 +4709,10 @@
           }
         },
         "2" : {
-          "text" : "إذا لم تعد عبارة الاسترداد الخاصة بي سرية وآمنة...",
+          "text" : "إذا تمكن شخص آخر من الوصول إلى عبارة الاسترداد السرية الخاصة بي...",
           "answers" : {
-            "1" : "ليست مشكلة، Ledger يمكن أن تُرسل لي نسخة",
-            "2" : "أصولي المشفرة لم تعد آمنة وأحتاج إلى نقلها إلى مكان آمن"
+            "1" : "ليست مشكلة، طالما أنني مازلت أعرف ما هي",
+            "2" : "أصولي تصبح معرضةً للخطر وهذا الشخص قد يتمكن من الوصول إليها"
           },
           "results" : {
             "success" : {
@@ -4643,7 +4726,7 @@
           }
         },
         "3" : {
-          "text" : "عندما أقوم بتوصيل Nano الخاصة بي بتطبيق Ledger، فإن مفتاحي الخاص...",
+          "text" : "عندما أقوم بتوصيل Ledger Nano الخاصة بي بتطبيق Ledger Live، فإن مفتاحي الخاص يكون...",
           "answers" : {
             "1" : "لا يزال غير متصل بالإنترنت",
             "2" : "متصل بالإنترنت لفترة قصيرة"
@@ -4876,6 +4959,16 @@
     "cardano" : {
       "memoPlaceholder" : "اختياري",
       "memo" : "ملاحظة (تسمية الوجهة)"
+    },
+    "internet_computer" : {
+      "memoPlaceholder" : "اختياري، القيمة الافتراضية: 0",
+      "memo" : "ملاحظة (تسمية الوجهة)",
+      "memoWarningText" : "قيمة الملاحظة يمكن أن تكون رقماً بين 0 و 9223372036854775807"
+    },
+    "stacks" : {
+      "memoPlaceholder" : "اختياري",
+      "memo" : "ملاحظة (تسمية الوجهة)",
+      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من النوع المستخدم مع المستلم"
     },
     "stellar" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
@@ -5328,11 +5421,17 @@
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
     },
+    "InvalidNonce" : {
+      "title" : "الرقم الخاص (nonce) مطلوب"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "تم تفويض حسابك بالفعل إلى هذا المدقق"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource" : {
       "title" : "عنوان المستلم هو نفسه عنوان المرسل"
+    },
+    "InvalidMemoICP" : {
+      "title" : "الملاحظة يجب أن تكون رقماً"
     },
     "CantOpenDevice" : {
       "title" : "عذراً، فشل الاتصال",
@@ -5345,6 +5444,10 @@
     "EthAppNftNotSupported" : {
       "title" : "العملية غير متوفرة لهذا الجهاز",
       "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
+    },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "لا يمكن تسريعها أو إلغائها",
+      "description" : "هذه المعاملة تم تأكيدها بالفعل"
     },
     "CantScanQRCode" : {
       "title" : "تعذر فحص كود الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
@@ -5572,7 +5675,7 @@
       "title" : "معاملتك السابقة لم تتم معالجتها بعد. يُرجى الانتظار لحظة ثم التحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     },
     "SolanaTxConfirmationTimeout" : {
-      "title" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+      "title" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     },
     "NotEnoughNftOwned" : {
       "title" : "لقد تجاوزت عدد رموز التوكن المتاحة"
@@ -5582,6 +5685,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "يرجى التأكد أن لديك أرصدة مالية كافية لدفع الرسوم."
+    },
+    "StacksMemoTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
     },
     "StellarWrongMemoFormat" : {
       "title" : "صيغة الملاحظة خاطئة"
@@ -5760,6 +5866,7 @@
   },
   "customImage" : {
     "title" : "شاشة قَفل مُخصّصة",
+    "cta" : "شاشة قَفل مُخصّصة",
     "managerCTA" : "صورة شاشة القَفل",
     "managerCTARemove" : "حذف",
     "steps" : {
@@ -5851,5 +5958,8 @@
       "contactSupport" : "تواصل مع دعم Ledger",
       "saveLog" : "حفظ السجل"
     }
+  },
+  "recoverRestore" : {
+    "title" : "قم بتوصيل وإلغاء قفل جهازك Ledger"
   }
 }

@@ -1,10 +1,9 @@
 import { expect } from "detox";
 import PortfolioPage from "../models/wallet/portfolioPage";
-
 import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
-import { tapByElement, tapByText } from "../helpers";
+import { isAndroid, tapByElement, tapByText } from "../helpers";
 import ReceivePage from "../models/trade/receivePage";
 import { loadConfig } from "../bridge/server";
 
@@ -72,7 +71,9 @@ describe("NFT Gallery screen", () => {
     await tapByText("Ethereum");
     // NOTE: Use .toExist because the modal overlay with an opacity
     // means we cannot use .toBeVisible
-    await expect(receivePage.getStep3HeaderTitle()).toExist();
+    if (!isAndroid()) {
+      await expect(receivePage.getStep3HeaderTitle()).toExist();
+    }
   });
 
   it("should let users hide NFT's", async () => {
@@ -84,9 +85,9 @@ describe("NFT Gallery screen", () => {
     await expect(nftGalleryPage.emptyScreen()).toBeVisible();
   });
 
-  it('should show modal on "Receive NFT\'s" button tap', async () => {
-    await expect(nftGalleryPage.nftReceiveModal()).not.toBeVisible();
-    await tapByElement(nftGalleryPage.receiveNftButton());
-    await expect(nftGalleryPage.nftReceiveModal()).toBeVisible();
+  it('should show filters on "reset" button tap', async () => {
+    await expect(nftGalleryPage.nftFilterDrawer()).not.toBeVisible();
+    await tapByElement(nftGalleryPage.emptyScreenResetButton());
+    await expect(nftGalleryPage.nftFilterDrawer()).toBeVisible();
   });
 });

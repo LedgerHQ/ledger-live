@@ -22,8 +22,6 @@ There are two modes of usage of this library.
 *   [abandonSeedAddresses](#abandonseedaddresses)
 *   [getAbandonSeedAddress](#getabandonseedaddress)
     *   [Parameters](#parameters)
-*   [ethereum_as_evm_test_only](#ethereum_as_evm_test_only)
-*   [polygon_as_evm_test_only](#polygon_as_evm_test_only)
 *   [registerCryptoCurrency](#registercryptocurrency)
     *   [Parameters](#parameters-1)
 *   [listCryptoCurrencies](#listcryptocurrencies)
@@ -95,16 +93,6 @@ DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 ###
-
-### ethereum_as_evm_test_only
-
-FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
-when ethereum_as_evm_test_only is removed from the currencies list
-
-### polygon_as_evm_test_only
-
-FIXME: cleanup libs/coin-evm/src/api/gasTracker/ledger.ts currencyIdGasTrackerMap
-when polygon_as_evm_test_only is removed from the currencies list
 
 ### registerCryptoCurrency
 
