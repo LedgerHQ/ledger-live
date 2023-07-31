@@ -416,15 +416,6 @@
       "title": "Choose a provider to swap crypto",
       "learnMore": "What is Swap?",
       "cta": "Continue",
-      "kyc": {
-        "notAvailable": "{{provider}} is unavailable in your location",
-        "status": {
-          "required": "KYC Required",
-          "pending": "KYC Pending",
-          "approved": "KYC Approved!",
-          "closed": "KYC Rejected"
-        }
-      },
       "filter": {
         "centralised": "Centralised",
         "decentralised": "Decentralised",
