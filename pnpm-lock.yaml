@@ -4475,17 +4475,17 @@ importers:
         specifier: ^6.5.16
         version: 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/addon-ondevice-actions':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-backgrounds':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-controls':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-notes':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-react-native-web':
         specifier: ^0.0.19
         version: 0.0.19(babel-plugin-react-native-web@0.18.12)(metro-react-native-babel-preset@0.76.0)(react-dom@18.0.0)(react@18.0.0)(webpack@5.76.1)
@@ -4502,8 +4502,8 @@ importers:
         specifier: ^6.5.16
         version: 6.5.16(@babel/core@7.22.8)(@storybook/builder-webpack5@6.5.14)(@storybook/manager-webpack5@6.5.14)(eslint@8.41.0)(metro@0.76.0)(react-dom@18.0.0)(react@18.0.0)(typescript@5.1.3)(webpack-dev-server@4.12.0)
       '@storybook/react-native':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
+        specifier: 6.5.4
+        version: 6.5.4(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0(@svgr/plugin-svgo@5.5.0)
@@ -21095,8 +21095,8 @@ packages:
       react-dom: 18.0.0(react@18.0.0)
     dev: true
 
-  /@storybook/addon-ondevice-actions@6.5.0-rc.11(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-8N2XV0UQxtnvee7MTKNG270I9AFTzypmGwJUUBBiHb7VF0FSRwZ4JO+xYWyXo8fzMTPGGn26TAsq0cLYEEVuGw==}
+  /@storybook/addon-ondevice-actions@6.5.4(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-4ZN+eiYLzeBZyj7B+Ujda7N1pOFm63S8RWrgscjwdka/3+eQ8i0zRRndKeiM7jSBLlhUfd8MyCQ2l6ooScToBg==}
     peerDependencies:
       '@storybook/addon-actions': ^6.5.14
       react: '*'
@@ -21112,8 +21112,8 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-backgrounds@6.5.0-rc.11(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-H5FDVMinewdJukpNVBOhGjsZqP6jd+L6k7vHqtdRvi/HJEOYCke8tLnT4GtxCWLiytUvRRJVV93iOH8tnpfH1A==}
+  /@storybook/addon-ondevice-backgrounds@6.5.4(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-HAd5RJHZbD2bKCTu3sivFIlmZ+WmAQ1aRBb2qR/fACbQHJhDGNC6ack2INOmrtx9UIlrPxOe3P8n6+0TL8xwRg==}
     peerDependencies:
       '@emotion/native': '*'
       react: '*'
@@ -21134,8 +21134,8 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-controls@6.5.0-rc.11(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-yQE5CGBRt07L42iZSbBayLlTs7tcTE9uXk29B1Y97JOrMQ+HagNuGmWrQe6L7QdBjuS3m7G7jTE2sF8cWUa8fw==}
+  /@storybook/addon-ondevice-controls@6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-wlhTT7Lh3+Oj9ug6JsBp3WfyRcGlIKHO8KVgHiXKn53Pi066aBsDmt5EdPYqT838sJ5FVu+rJsFUhQ4b9fSFiA==}
     peerDependencies:
       '@react-native-community/datetimepicker': '*'
       '@react-native-community/slider': '*'
@@ -21163,8 +21163,8 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-notes@6.5.0-rc.11(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-izxgVAHmSbixlM1RsWdDQALCC5zCP+GdJeaaMZvYuaD32i6hXSA3Vv7RzhrCWt0p5BQ5yZNdJZ52/rteoFNNXQ==}
+  /@storybook/addon-ondevice-notes@6.5.4(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-tDu4KiI/mcnfUjTTMaLjMA7fqWq7G87Fpr5gEu6M+/T/aPEcBc3YIOwKShU7NmA0ghlrnohQe6JAbLAZC+0cBw==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -23171,8 +23171,8 @@ packages:
       - supports-color
     dev: true
 
-  /@storybook/react-native@6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1):
-    resolution: {integrity: sha512-uZzuzTA3P3g4XSYEOCkh38oAndlBmdmTk9ANP+16q7Fotn6N20JHb3ly1YZnV/Ud8QM3MDiI9Tc2tLGzKwwxbA==}
+  /@storybook/react-native@6.5.4(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1):
+    resolution: {integrity: sha512-8H5deEacilMdLXq7gEmZ4NAm5IsWzjIvoAjxJItq4SLYnz/E9XgflqXT/tgpyspYlOFgjBMRa5s8ILqo/ebRuQ==}
     engines: {node: '>=8.0.0'}
     hasBin: true
     peerDependencies:
@@ -23186,7 +23186,7 @@ packages:
       '@react-native-async-storage/async-storage': 1.17.12(react-native@0.71.6)
       '@storybook/addons': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/channel-websocket': 6.5.16
-      '@storybook/channels': 6.5.14
+      '@storybook/channels': 6.5.16
       '@storybook/client-api': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/client-logger': 6.5.16
       '@storybook/core-client': 6.5.16(react-dom@18.0.0)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
@@ -31324,7 +31324,7 @@ packages:
 
   /core-js@2.6.12:
     resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==}
-    deprecated: core-js@<3.4 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Please, upgrade your dependencies to the actual version of core-js.
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
     requiresBuild: true
 
   /core-js@3.22.5:
