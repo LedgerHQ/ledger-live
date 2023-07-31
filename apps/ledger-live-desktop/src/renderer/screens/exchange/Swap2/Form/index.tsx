@@ -271,7 +271,7 @@ const SwapForm = () => {
   useEffect(
     () => {
       (swapError || swapWarning) &&
-        trackSwapError(swapError || swapWarning, {
+        trackSwapError(swapError! || swapWarning!, {
           page: "Page Swap Form",
           ...swapDefaultTrack,
           sourcecurrency: swapTransaction.swap.from.currency?.name,
