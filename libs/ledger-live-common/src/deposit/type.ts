@@ -1,4 +1,4 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type MappedAsset = {
   $type: "Token" | "Coin";
@@ -14,10 +14,15 @@ export type MappedAsset = {
     img: string;
     marketCapRank: number | null;
   };
-  ledgerCurrency?: CryptoCurrency | TokenCurrency;
+  ledgerCurrency?: CryptoOrTokenCurrency;
 };
 
 export type GroupedCurrency = {
   providerId: string;
   currenciesByNetwork: MappedAsset[];
+};
+
+export type CurrenciesByProviderId = {
+  currenciesByNetwork: CryptoOrTokenCurrency[];
+  providerId: string;
 };
