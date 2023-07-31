@@ -244,7 +244,7 @@
     "rlp": "^3.0.0",
     "rxjs": "6",
     "rxjs-compat": "^6.6.7",
-    "rxjs7": "npm:rxjs@7.8.0",
+    "rxjs7": "npm:rxjs@7.8.1",
     "secp256k1": "^4.0.3",
     "semver": "^7.3.5",
     "sha.js": "^2.4.11",

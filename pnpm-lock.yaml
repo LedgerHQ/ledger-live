@@ -455,8 +455,8 @@ importers:
         specifier: ^6.6.7
         version: 6.6.7
       rxjs7:
-        specifier: npm:rxjs@7.8.0
-        version: /rxjs@7.8.0
+        specifier: npm:rxjs@7.8.1
+        version: /rxjs@7.8.1
       secp256k1:
         specifier: ^4.0.2
         version: 4.0.3
@@ -1119,8 +1119,8 @@ importers:
         specifier: ^6.6.6
         version: 6.6.7(rxjs@6.6.7)
       rxjs7:
-        specifier: npm:rxjs@7.8.0
-        version: /rxjs@7.8.0
+        specifier: npm:rxjs@7.8.1
+        version: /rxjs@7.8.1
       semver:
         specifier: ^7.3.7
         version: 7.3.7
@@ -2250,8 +2250,8 @@ importers:
         specifier: ^6.6.7
         version: 6.6.7(rxjs@6.6.7)
       rxjs7:
-        specifier: npm:rxjs@7.8.0
-        version: /rxjs@7.8.0
+        specifier: npm:rxjs@7.8.1
+        version: /rxjs@7.8.1
       secp256k1:
         specifier: ^4.0.3
         version: 4.0.3
@@ -55615,6 +55615,12 @@ packages:
     resolution: {integrity: sha512-F2+gxDshqmIub1KdvZkaEfGDwLNpPvk9Fs6LD/MyQxNgMds/WH9OdDDXOmxUZpME+iSK3rQCctkL0DYyytUqMg==}
     dependencies:
       tslib: 2.5.0
+
+  /rxjs@7.8.1:
+    resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
+    dependencies:
+      tslib: 2.5.0
+    dev: false
 
   /sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
