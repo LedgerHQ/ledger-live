@@ -31,11 +31,19 @@ import BigNumber from "bignumber.js";
 import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 
-const SwapStatusText = styled(Text)(
-  ({ theme: { space } }) => `
-  display: flex;
+const SwapStatusContainer = styled.div<{ isError: boolean }>(
+  ({ theme: { space, colors }, isError }) => `
+  margin-top: ${space[1]}px;
+  display: grid;
+  grid-template-columns: 16px auto;
   align-items: center;
-  column-gap: 2px;
+  column-gap: ${space[1]}px;
+  color: ${isError ? colors.error.c70 : colors.warning};
+`,
+);
+
+const SwapStatusText = styled(Text)(
+  () => `
   & button, a {
     text-decoration: underline;
     cursor: pointer;
@@ -207,18 +215,15 @@ function FromRow({
           />
         </InputSection>
       </Box>
-      <Box paddingTop={1}>
-        <SwapStatusText
-          color={fromAmountError ? "error.c70" : "warning"}
-          fontWeight={500}
-          fontFamily="Inter"
-          fontSize={12}
-          lineHeight="14px"
-        >
-          <WarningSolidMedium />
-          <TranslatedError error={fromAmountError || fromAmountWarning} />
-        </SwapStatusText>
-      </Box>
+
+      {(!!fromAmountError || !!fromAmountWarning) && (
+        <SwapStatusContainer isError={!!fromAmountError}>
+          <WarningSolidMedium size={16} />
+          <SwapStatusText fontWeight={500} fontFamily="Inter" fontSize={12} lineHeight="14px">
+            <TranslatedError error={fromAmountError || fromAmountWarning} />
+          </SwapStatusText>
+        </SwapStatusContainer>
+      )}
     </>
   );
 }

@@ -5320,6 +5320,9 @@
       "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
     },
     "NotEnoughGas": {
+      "title": "The parent account balance is insufficient for network fees"
+    },
+    "NotEnoughGasSwap": {
       "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
     },
     "OperatingSystemOutdated": {
