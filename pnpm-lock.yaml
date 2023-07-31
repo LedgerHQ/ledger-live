@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -1113,7 +1117,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.6
-        version: 6.6.7(rxjs@7.8.0)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -2019,10 +2023,10 @@ importers:
         version: 0.13.4(react@17.0.2)
       '@solana/spl-token':
         specifier: ^0.3.7
-        version: 0.3.8(@solana/web3.js@1.77.2)
+        version: 0.3.8(@solana/web3.js@1.77.3)
       '@solana/web3.js':
-        specifier: 1.77.2
-        version: 1.77.2
+        specifier: 1.77.3
+        version: 1.77.3
       '@stacks/network':
         specifier: 1.2.2
         version: 1.2.2
@@ -2244,7 +2248,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.7
-        version: 6.6.7(rxjs@7.8.0)
+        version: 6.6.7(rxjs@6.6.7)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -16277,7 +16281,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.1
       '@sinonjs/fake-timers': 10.2.0
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       jest-message-util: 29.6.2
       jest-mock: 29.6.2
       jest-util: 29.6.2
@@ -20285,7 +20289,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       '@solana/buffer-layout': 4.0.0
-      '@solana/web3.js': 1.77.2
+      '@solana/web3.js': 1.77.3
       bigint-buffer: 1.1.5
       bignumber.js: 9.1.0
     transitivePeerDependencies:
@@ -20302,7 +20306,7 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@solana/spl-token@0.3.8(@solana/web3.js@1.77.2):
+  /@solana/spl-token@0.3.8(@solana/web3.js@1.77.3):
     resolution: {integrity: sha512-ogwGDcunP9Lkj+9CODOWMiVJEdRtqHAtX2rWF62KxnnSWtMZtV9rDhTrZFshiyJmxDnRL/1nKE1yJHg4jjs3gg==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -20310,7 +20314,7 @@ packages:
     dependencies:
       '@solana/buffer-layout': 4.0.0
       '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.77.2
+      '@solana/web3.js': 1.77.3
       buffer: 6.0.3
     transitivePeerDependencies:
       - bufferutil
@@ -20319,9 +20323,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@solana/web3.js@1.77.2:
-    resolution: {integrity: sha512-pKu9S21NGAi6Nsayz2KEdhqOlPUJIr3L911bgQvPg2Dbk/U4gJsk41XGdxyfsfnwKPEI/KbitcByterst4VQ3g==}
-    deprecated: This build contains a bad TypeScript definition for getProgramAccounts
+  /@solana/web3.js@1.77.3:
+    resolution: {integrity: sha512-PHaO0BdoiQRPpieC1p31wJsBaxwIOWLh8j2ocXNKX8boCQVldt26Jqm2tZE4KlrvnCIV78owPLv1pEUgqhxZ3w==}
     dependencies:
       '@babel/runtime': 7.20.13
       '@noble/curves': 1.1.0
@@ -20334,7 +20337,7 @@ packages:
       bs58: 4.0.1
       buffer: 6.0.3
       fast-stable-stringify: 1.0.0
-      jayson: 3.6.6
+      jayson: 4.1.0
       node-fetch: 2.6.9
       rpc-websockets: 7.5.1
       superstruct: 0.14.2
@@ -24860,6 +24863,7 @@ packages:
 
   /@types/lodash@4.14.191:
     resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
+    dev: true
 
   /@types/long@4.0.2:
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
@@ -26299,21 +26303,21 @@ packages:
       '@walletconnect/randombytes': 1.0.2
       aes-js: 3.1.2
       hash.js: 1.1.7
-      tslib: 1.14.1
+      tslib: 2.5.0
     dev: false
 
   /@walletconnect/encoding@1.0.1:
     resolution: {integrity: sha512-8opL2rs6N6E3tJfsqwS82aZQDL3gmupWUgmvuZ3CGU7z/InZs3R9jkzH8wmYtpbq0sFK3WkJkQRZFFk4BkrmFA==}
     dependencies:
       is-typedarray: 1.0.0
-      tslib: 1.14.1
+      tslib: 2.5.0
       typedarray-to-buffer: 3.1.5
     dev: false
 
   /@walletconnect/environment@1.0.0:
     resolution: {integrity: sha512-4BwqyWy6KpSvkocSaV7WR3BlZfrxLbJSLkg+j7Gl6pTDE+U55lLhJvQaMuDVazXYxcjBsG09k7UlH7cGiUI5vQ==}
     dependencies:
-      tslib: 1.14.1
+      tslib: 2.5.0
     dev: false
 
   /@walletconnect/iso-crypto@1.7.8:
@@ -26347,13 +26351,13 @@ packages:
       '@walletconnect/encoding': 1.0.1
       '@walletconnect/environment': 1.0.0
       randombytes: 2.1.0
-      tslib: 1.14.1
+      tslib: 2.5.0
     dev: false
 
   /@walletconnect/safe-json@1.0.0:
     resolution: {integrity: sha512-QJzp/S/86sUAgWY6eh5MKYmSfZaRpIlmCJdi5uG4DJlKkZrHEF7ye7gA+VtbVzvTtpM/gRwO2plQuiooIeXjfg==}
     dependencies:
-      tslib: 1.14.1
+      tslib: 2.5.0
     dev: false
 
   /@walletconnect/socket-transport@1.7.8:
@@ -26391,14 +26395,14 @@ packages:
   /@walletconnect/window-getters@1.0.0:
     resolution: {integrity: sha512-xB0SQsLaleIYIkSsl43vm8EwETpBzJ2gnzk7e0wMF3ktqiTGS6TFHxcprMl5R44KKh4tCcHCJwolMCaDSwtAaA==}
     dependencies:
-      tslib: 1.14.1
+      tslib: 2.5.0
     dev: false
 
   /@walletconnect/window-metadata@1.0.0:
     resolution: {integrity: sha512-9eFvmJxIKCC3YWOL97SgRkKhlyGXkrHwamfechmqszbypFspaSk+t2jQXAEU7YClHF6Qjw5eYOmy1//zFi9/GA==}
     dependencies:
       '@walletconnect/window-getters': 1.0.0
-      tslib: 1.14.1
+      tslib: 2.5.0
     dev: false
 
   /@webassemblyjs/ast@1.11.1:
@@ -36131,7 +36135,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/expect-utils': 29.6.2
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       jest-get-type: 29.4.3
       jest-matcher-utils: 29.6.2
       jest-message-util: 29.6.2
@@ -40740,14 +40744,12 @@ packages:
       filelist: 1.0.3
       minimatch: 3.1.2
 
-  /jayson@3.6.6:
-    resolution: {integrity: sha512-f71uvrAWTtrwoww6MKcl9phQTC+56AopLyEenWvKVAIMz+q0oVGj6tenLZ7Z6UiPBkJtKLj4kt0tACllFQruGQ==}
+  /jayson@4.1.0:
+    resolution: {integrity: sha512-R6JlbyLN53Mjku329XoRT2zJAE6ZgOQ8f91ucYdMCD4nkGCF9kZSrcGXpHIU4jeKj58zUZke2p+cdQchU7Ly7A==}
     engines: {node: '>=8'}
     hasBin: true
     dependencies:
       '@types/connect': 3.4.35
-      '@types/express-serve-static-core': 4.17.28
-      '@types/lodash': 4.14.191
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
       JSONStream: 1.3.5
@@ -40757,7 +40759,6 @@ packages:
       eyes: 0.1.8
       isomorphic-ws: 4.0.1(ws@7.5.7)
       json-stringify-safe: 5.0.1
-      lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.7
     transitivePeerDependencies:
@@ -42242,7 +42243,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.1
       '@types/graceful-fs': 4.1.5
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.11
@@ -42541,7 +42542,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3(metro@0.76.0)
     dev: true
 
   /jest-regex-util@24.9.0:
@@ -43164,7 +43165,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.1
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       chalk: 4.1.2
       ci-info: 3.3.2
       graceful-fs: 4.2.11
@@ -43462,7 +43463,7 @@ packages:
       metro:
         optional: true
     dependencies:
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       jest-util: 29.6.2
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -55598,7 +55599,7 @@ packages:
     resolution: {integrity: sha512-PdhdWy89SiZogBLaw42zdeqtRJ//zFd2PgQavcICDUgJT5oW10QCRKbJ6bg4r0/UY2M6BWd5tkxuGFRvCkgfHQ==}
     dev: false
 
-  /rxjs-compat@6.6.7(rxjs@7.8.0):
+  /rxjs-compat@6.6.7(rxjs@6.6.7):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
     peerDependencies:
       rxjs: '*'
@@ -55606,7 +55607,7 @@ packages:
       rxjs:
         optional: true
     dependencies:
-      rxjs: 7.8.0
+      rxjs: 6.6.7
     dev: false
 
   /rxjs@6.6.7:
@@ -63367,7 +63368,3 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
