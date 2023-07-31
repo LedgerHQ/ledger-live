@@ -9,6 +9,8 @@ import useEnv from "~/renderer/hooks/useEnv";
 import { useHistory } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 
 export type Props = {
   error: Error;
@@ -27,6 +29,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ error, onClickRetry }) => {
     ? { ...new NotFoundEntityError(), providerNumber: forcedProvider }
     : error;
 
+  const drawerAnalyticsName = `Error: ${
+    isNotFoundEntityError ? "couldn't check if the device was genuine" : error.name
+  }`;
+
   const goToExperimentalSettings = () => {
     setDrawer();
     history.push("/settings/experimental");
@@ -39,6 +45,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ error, onClickRetry }) => {
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
+      <TrackPage category={drawerAnalyticsName} type="drawer" refreshSource={false} />
       <Flex px={13} flex={1}>
         <ErrorDisplay
           error={displayedError}
@@ -46,20 +53,42 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ error, onClickRetry }) => {
         />
       </Flex>
       <DrawerFooter>
-        <Link mr={8} size="large" type="shade" onClick={exit}>
+        <Link
+          mr={8}
+          size="large"
+          type="shade"
+          onClick={() => {
+            track("button_clicked", { button: "Quit setup", drawer: drawerAnalyticsName });
+            exit();
+          }}
+        >
           {t("syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.quitSetupCTA")}
         </Link>
-        <Button
-          size="large"
-          variant="main"
-          onClick={isNotFoundEntityError ? goToExperimentalSettings : onClickRetry}
-        >
-          {isNotFoundEntityError
-            ? t(
-                "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.goToSettingsCTA",
-              )
-            : t("syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.retryCTA")}
-        </Button>
+        {isNotFoundEntityError ? (
+          <Button
+            size="large"
+            variant="main"
+            onClick={() => {
+              track("button_clicked", { button: "Go to settings", drawer: drawerAnalyticsName });
+              goToExperimentalSettings();
+            }}
+          >
+            {t(
+              "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.goToSettingsCTA",
+            )}
+          </Button>
+        ) : (
+          <Button
+            size="large"
+            variant="main"
+            onClick={() => {
+              track("button_clicked", { button: "Retry", drawer: drawerAnalyticsName });
+              onClickRetry();
+            }}
+          >
+            {t("syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.retryCTA")}
+          </Button>
+        )}
       </DrawerFooter>
       <DeviceBlocker />
     </Flex>

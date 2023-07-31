@@ -12,12 +12,16 @@ import { openURL } from "~/renderer/linking";
 import { useSelector } from "react-redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { urls } from "~/config/urls";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 
 export type Props = {
   productName: string;
 };
 
 const DeviceNotGenuineError = createCustomErrorClass("DeviceNotGenuineError");
+
+const analyticsDrawerName = "Error: this Ledger Stax is not genuine";
 
 const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
   const { t } = useTranslation();
@@ -37,6 +41,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
+      <TrackPage category={analyticsDrawerName} type="drawer" refreshSource={false} />
       <Flex px={13} flex={1}>
         <ErrorDisplay
           error={displayedError}
@@ -50,7 +55,13 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
         <Button
           size="large"
           variant="main"
-          onClick={() => openURL(supportUrl)}
+          onClick={() => {
+            track("button_clicked", {
+              button: "Contact Ledger support",
+              drawer: analyticsDrawerName,
+            });
+            openURL(supportUrl);
+          }}
           Icon={IconsLegacy.ExternalLinkMedium}
         >
           {t(

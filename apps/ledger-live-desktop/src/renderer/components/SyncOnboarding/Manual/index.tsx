@@ -82,7 +82,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     null | "enter" | "exit"
   >(null);
 
-  const [autoStartChecks, setAutoStartChecks] = useState(false);
+  /* The early security checks are run again after a firmware update. */
+  const [isInitialRunOfSecurityChecks, setIsInitialRunOfSecurityChecks] = useState(true);
 
   const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
     device: lastSeenDevice,
@@ -120,7 +121,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   }, []);
 
   const restartChecksAfterUpdate = useCallback(() => {
-    setAutoStartChecks(true);
+    setIsInitialRunOfSecurityChecks(false);
     notifyOnboardingEarlyCheckShouldReset();
   }, [notifyOnboardingEarlyCheckShouldReset]);
 
@@ -258,7 +259,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         device={lastSeenDevice}
         onComplete={notifyOnboardingEarlyCheckEnded}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
-        optimisticGenuineCheck={autoStartChecks}
+        isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}
       />
     );
   } else if (currentStep === "companion" && lastSeenDevice) {

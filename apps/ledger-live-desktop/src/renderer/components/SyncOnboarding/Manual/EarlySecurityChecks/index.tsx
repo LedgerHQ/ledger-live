@@ -30,12 +30,21 @@ import DeviceNotGenuineDrawer, {
   Props as DeviceNotGenuineDrawerProps,
 } from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 
 export type Props = {
   onComplete: () => void;
   device: Device;
-  /** display the genuine check as validated but still check it */
-  optimisticGenuineCheck: boolean;
+  /**
+   * Security checks re-run after a firmware update.
+   * The difference between the first and subsequent runs is that:
+   * - on the first run, the checks are started manually by a user action
+   * - on the subsequent runs, the checks start automatically
+   * - on the subsequent runs, the genuine check step is displayed as "validated",
+   * but we still do that check in the background (optimistic strategy)
+   * */
+  isInitialRunOfSecurityChecks: boolean;
   restartChecksAfterUpdate: () => void;
 };
 
@@ -46,13 +55,17 @@ const commonDrawerProps = {
 
 /**
  * Component representing the early security checks step, which polls the current device state
- * to display correctly information about the onboarding to the user
+ * to display correctly information about the onboarding to the user.
+ * It has two steps:
+ * - Genuine check
+ * - Firmware update availibity check. If a firmware update is available, offers
+ * the user to perform that update. Then the checks are restarted.
  */
 const EarlySecurityChecks = ({
   onComplete,
   device,
-  optimisticGenuineCheck,
   restartChecksAfterUpdate,
+  isInitialRunOfSecurityChecks,
 }: Props) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -61,6 +74,7 @@ const EarlySecurityChecks = ({
       ? urls.genuineCheck[locale as keyof typeof urls.genuineCheck]
       : urls.genuineCheck.en;
 
+  const optimisticGenuineCheck = !isInitialRunOfSecurityChecks;
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
     optimisticGenuineCheck ? SoftwareCheckStatus.optimisticCompleted : SoftwareCheckStatus.inactive,
   );
@@ -97,10 +111,10 @@ const EarlySecurityChecks = ({
   });
 
   const [completionLoading, setCompletionLoading] = useState(false);
-  const handleCompletion = useCallback(() => {
+  const handleCompletion = () => {
     setCompletionLoading(true);
     onComplete();
-  }, [onComplete]);
+  };
 
   const closeFwUpdateDrawer = useCallback(() => {
     setDrawer();
@@ -255,6 +269,22 @@ const EarlySecurityChecks = ({
 
   return (
     <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+      {isInitialRunOfSecurityChecks && (
+        <TrackPage category="Genuine check and OS update check start" />
+      )}
+      {isInitialRunOfSecurityChecks && genuineCheckStatus === SoftwareCheckStatus.cancelled && (
+        <TrackPage category="Error: user declined genuine check on their device" />
+      )}
+      {isInitialRunOfSecurityChecks && genuineCheckStatus === SoftwareCheckStatus.completed && (
+        <TrackPage category="The genuine check is successful" />
+      )}
+      {genuineCheckStatus === SoftwareCheckStatus.completed &&
+        firmwareUpdateStatus === SoftwareCheckStatus.completed && (
+          <TrackPage category="The Stax is genuine and up to date" />
+        )}
+      {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
+        <TrackPage category="Download OS update" />
+      )}
       <Body
         genuineCheckStatus={
           genuineCheckStatus === SoftwareCheckStatus.optimisticCompleted
@@ -270,17 +300,31 @@ const EarlySecurityChecks = ({
         modelName={productName}
         updateSkippable={updateInterrupted}
         onClickStartChecks={() => {
+          track("button_clicked", { button: "Start checks" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);
           resetGenuineCheckState();
         }}
-        onClickWhyPerformSecurityChecks={() => openURL(whySecurityChecksUrl)}
+        onClickWhyPerformSecurityChecks={() => {
+          track("button_clicked", { button: "Why perform these security checks" });
+          openURL(whySecurityChecksUrl);
+        }}
         onClickResumeGenuineCheck={() => {
+          track("button_clicked", { button: "Resume genuine check" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);
           resetGenuineCheckState();
         }}
-        onClickViewUpdate={startFirmwareUpdate}
-        onClickSkipUpdate={handleCompletion}
-        onClickContinueToSetup={handleCompletion}
+        onClickViewUpdate={() => {
+          track("button_clicked", { button: "View update" });
+          startFirmwareUpdate();
+        }}
+        onClickSkipUpdate={() => {
+          track("button_clicked", { button: "Skip update" });
+          handleCompletion();
+        }}
+        onClickContinueToSetup={() => {
+          track("button_clicked", { button: "Continue to setup" });
+          handleCompletion();
+        }}
         loading={completionLoading}
       />
     </Flex>
