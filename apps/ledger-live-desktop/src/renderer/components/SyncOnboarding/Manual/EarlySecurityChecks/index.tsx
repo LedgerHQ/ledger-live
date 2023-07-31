@@ -3,7 +3,6 @@ import { Flex } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
-import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
 import Body from "./Body";
 import SoftwareCheckLockedDeviceDrawer, {
   Props as SoftwareCheckLockedDeviceModalProps,
@@ -98,7 +97,6 @@ const EarlySecurityChecks = ({
     devicePermissionState,
     resetGenuineCheckState,
   } = useGenuineCheck({
-    getGenuineCheckFromDeviceId,
     isHookEnabled: genuineCheckActive,
     deviceId,
   });
