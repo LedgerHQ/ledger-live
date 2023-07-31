@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
+import { MessageData } from "./client";
 
 type ServerData = {
   type: "walletAPIResponse";
@@ -74,7 +75,7 @@ export function setInstalledApps(apps: string[] = []) {
 }
 
 export function open() {
-  postMessage({ type: "open", payload: null });
+  postMessage({ type: "open" });
 }
 
 function onMessage(messageStr: string) {
@@ -96,10 +97,10 @@ function log(message: string) {
 }
 
 function acceptTerms() {
-  postMessage({ type: "acceptTerms", payload: null });
+  postMessage({ type: "acceptTerms" });
 }
 
-function postMessage(message: { type: string; payload: unknown }) {
+function postMessage(message: MessageData) {
   for (const ws of wss.clients.values()) {
     ws.send(JSON.stringify(message));
   }

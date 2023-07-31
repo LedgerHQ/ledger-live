@@ -8,15 +8,31 @@ import { setAccounts } from "../../src/actions/accounts";
 import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
+import { SettingsState } from "../../src/reducers/types";
+import { AccountRaw } from "@ledgerhq/types-live";
 
-type ClientData =
+export type MessageData =
   | {
       type: DescriptorEventType;
       payload: { id: string; name: string; serviceUUID: string };
     }
-  | { type: "open" };
+  | { type: "open" }
+  | { type: "acceptTerms" }
+  | { type: "navigate"; payload: string }
+  | { type: "importSettings"; payload: Partial<SettingsState> }
+  | {
+      type: "importAccounts";
+      payload: {
+        data: AccountRaw;
+        version: number;
+      }[];
+    }
+  | {
+      type: "setGlobals";
+      payload: { [key: string]: unknown };
+    };
 
-export const e2eBridgeClient = new Subject<ClientData>();
+export const e2eBridgeClient = new Subject<MessageData>();
 
 let ws: WebSocket;
 
@@ -35,19 +51,17 @@ export function init(port = 8099) {
   ws.onmessage = onMessage;
 }
 
-function onMessage(event: { data: unknown }) {
+function onMessage(event: WebSocketMessageEvent) {
   invariant(typeof event.data === "string", "[E2E Bridge Client]: Message data must be string");
-  const msg = JSON.parse(event.data);
+  const msg: MessageData = JSON.parse(event.data);
   invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
   log(`Message\n${JSON.stringify(msg, null, 2)}`);
   log(`Message type: ${msg.type}`);
 
+  e2eBridgeClient.next(msg);
+
   switch (msg.type) {
-    case "add":
-    case "open":
-      e2eBridgeClient.next(msg);
-      break;
     case "setGlobals":
       Object.entries(msg.payload).forEach(([k, v]) => {
         //  @ts-expect-error global bullshit
