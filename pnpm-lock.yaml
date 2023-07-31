@@ -4461,8 +4461,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       '@react-native-community/datetimepicker':
-        specifier: 6.7.3
-        version: 6.7.3
+        specifier: 6.7.5
+        version: 6.7.5
       '@react-native-community/slider':
         specifier: ^4.4.2
         version: 4.4.2
@@ -4486,7 +4486,7 @@ importers:
         version: 6.5.4(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-controls':
         specifier: 6.5.4
-        version: 6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        version: 6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.5)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-notes':
         specifier: 6.5.4
         version: 6.5.4(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
@@ -19079,8 +19079,8 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /@react-native-community/datetimepicker@6.7.3:
-    resolution: {integrity: sha512-fXWbEdHMLW/e8cts3snEsbOTbnFXfUHeO2pkiDFX3fWpFoDtUrRWvn50xbY13IJUUKHDhoJ+mj24nMRVIXfX1A==}
+  /@react-native-community/datetimepicker@6.7.5:
+    resolution: {integrity: sha512-E2Zh6mwvZ6CFEMKP++rdxxjJiB45fYPpdZhJwdZ2vUVwqovqu1cQRDLZmz4XrcHSyuacgR4WUnkYFf0F2nnNIg==}
     dependencies:
       invariant: 2.2.4
     dev: true
@@ -21125,7 +21125,7 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-controls@6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+  /@storybook/addon-ondevice-controls@6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.5)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-wlhTT7Lh3+Oj9ug6JsBp3WfyRcGlIKHO8KVgHiXKn53Pi066aBsDmt5EdPYqT838sJ5FVu+rJsFUhQ4b9fSFiA==}
     peerDependencies:
       '@react-native-community/datetimepicker': '*'
@@ -21135,7 +21135,7 @@ packages:
       react-native: '*'
     dependencies:
       '@emotion/native': 10.0.27(@emotion/core@10.3.1)(react-native@0.71.6)(react@18.0.0)
-      '@react-native-community/datetimepicker': 6.7.3
+      '@react-native-community/datetimepicker': 6.7.5
       '@react-native-community/slider': 4.4.2
       '@storybook/addon-controls': 6.5.16(eslint@8.41.0)(react-dom@18.0.0)(react@18.0.0)(typescript@5.1.3)
       '@storybook/addons': 6.5.16(react-dom@18.0.0)(react@18.0.0)
@@ -21146,7 +21146,7 @@ packages:
       prop-types: 15.8.1
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
-      react-native-modal-datetime-picker: 14.0.1(@react-native-community/datetimepicker@6.7.3)(react-native@0.71.6)
+      react-native-modal-datetime-picker: 14.0.1(@react-native-community/datetimepicker@6.7.5)(react-native@0.71.6)
       react-native-modal-selector: 2.1.2
       tinycolor2: 1.4.2
     transitivePeerDependencies:
@@ -53291,13 +53291,13 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /react-native-modal-datetime-picker@14.0.1(@react-native-community/datetimepicker@6.7.3)(react-native@0.71.6):
+  /react-native-modal-datetime-picker@14.0.1(@react-native-community/datetimepicker@6.7.5)(react-native@0.71.6):
     resolution: {integrity: sha512-wQt4Pjxt2jiTsVhLMG0E7WrRTYBEQx2d/nUrFVCbRqJ7lrXocXaT5UZsyMpV93TnKcyut62OprbO88wYq/vh0g==}
     peerDependencies:
       '@react-native-community/datetimepicker': '>=3.0.0'
       react-native: '>=0.65.0'
     dependencies:
-      '@react-native-community/datetimepicker': 6.7.3
+      '@react-native-community/datetimepicker': 6.7.5
       prop-types: 15.8.1
       react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
