@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
@@ -743,18 +739,9 @@ importers:
       '@azure/core-asynciterator-polyfill':
         specifier: ^1.0.2
         version: 1.0.2
-      '@formatjs/intl-datetimeformat':
-        specifier: ^5.0.0
-        version: 5.0.2
-      '@formatjs/intl-getcanonicallocales':
-        specifier: ^1.9.1
-        version: 1.9.2
       '@formatjs/intl-locale':
         specifier: ^2.4.46
         version: 2.4.47
-      '@formatjs/intl-numberformat':
-        specifier: ^7.4.2
-        version: 7.4.3
       '@formatjs/intl-pluralrules':
         specifier: ^4.3.2
         version: 4.3.3
@@ -1126,7 +1113,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.6
-        version: 6.6.7(rxjs@6.6.7)
+        version: 6.6.7(rxjs@7.8.0)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -2257,7 +2244,7 @@ importers:
         version: 6.6.7
       rxjs-compat:
         specifier: ^6.6.7
-        version: 6.6.7(rxjs@6.6.7)
+        version: 6.6.7(rxjs@7.8.0)
       rxjs7:
         specifier: npm:rxjs@7.8.0
         version: /rxjs@7.8.0
@@ -15509,14 +15496,6 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@formatjs/intl-datetimeformat@5.0.2:
-    resolution: {integrity: sha512-yk7CItBMgtUsub123+iqOfXoqG6JHJIl3Pke7eOYb7QFAPsOZliAJb2i0+Tr1FXWcm1PdWZVHEv6C2l4nEmQdw==}
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.11.4
-      '@formatjs/intl-localematcher': 0.2.25
-      tslib: 2.5.0
-    dev: false
-
   /@formatjs/intl-getcanonicallocales@1.9.2:
     resolution: {integrity: sha512-69WTStIJI2ikErOU1Il4NQKLVV8f2x6awr7+/dZz0uihuI7uQRcZtI6k/BBt4EtYaEl6w65YjUF93VuE015C0w==}
     dependencies:
@@ -15540,14 +15519,6 @@ packages:
   /@formatjs/intl-localematcher@0.2.32:
     resolution: {integrity: sha512-k/MEBstff4sttohyEpXxCmC3MqbUn9VvHGlZ8fauLzkbwXmVrEeyzS+4uhrvAk9DWU9/7otYWxyDox4nT/KVLQ==}
     dependencies:
-      tslib: 2.5.0
-    dev: false
-
-  /@formatjs/intl-numberformat@7.4.3:
-    resolution: {integrity: sha512-oxhLCw00YO7brwMPqGD+ui5gdeWoMiRhqsRSqwsDSRd03aJ/N3/VZQDoxGIn3IM9bhlPM5W0ckXiXuOMFLszjw==}
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.11.4
-      '@formatjs/intl-localematcher': 0.2.25
       tslib: 2.5.0
     dev: false
 
@@ -55639,7 +55610,7 @@ packages:
     resolution: {integrity: sha512-PdhdWy89SiZogBLaw42zdeqtRJ//zFd2PgQavcICDUgJT5oW10QCRKbJ6bg4r0/UY2M6BWd5tkxuGFRvCkgfHQ==}
     dev: false
 
-  /rxjs-compat@6.6.7(rxjs@6.6.7):
+  /rxjs-compat@6.6.7(rxjs@7.8.0):
     resolution: {integrity: sha512-szN4fK+TqBPOFBcBcsR0g2cmTTUF/vaFEOZNuSdfU8/pGFnNmmn2u8SystYXG1QMrjOPBc6XTKHMVfENDf6hHw==}
     peerDependencies:
       rxjs: '*'
@@ -55647,7 +55618,7 @@ packages:
       rxjs:
         optional: true
     dependencies:
-      rxjs: 6.6.7
+      rxjs: 7.8.0
     dev: false
 
   /rxjs@6.6.7:
@@ -63407,3 +63378,7 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
