@@ -703,6 +703,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "club",
   },
+  coreum: {
+    type: "CryptoCurrency",
+    id: "coreum",
+    coinType: CoinType.ATOM,
+    name: "Coreum",
+    managerAppName: "Cosmos",
+    ticker: "CORE",
+    scheme: "coreum",
+    color: "#6DD39A",
+    family: "cosmos",
+    units: [
+      {
+        name: "Core",
+        code: "CORE",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Core",
+        code: "ucore",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/coreum/txs/$hash",
+        address: "https://www.mintscan.io/coreum/validators/$address",
+      },
+    ],
+  },
   cosmos: {
     type: "CryptoCurrency",
     id: "cosmos",

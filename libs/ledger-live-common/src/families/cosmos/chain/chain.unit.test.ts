@@ -8,6 +8,7 @@ describe("cryptoFactory test", () => {
       "osmo",
       "axelar",
       "binance_beacon_chain",
+      "coreum",
       "desmos",
       "nyx",
       "onomy",

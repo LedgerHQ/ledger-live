@@ -56,6 +56,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
+  const coreum = useFeature("currencyCoreum");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -86,6 +87,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       syscoin,
       internet_computer: internetComputer,
       telos: telosEvm,
+      coreum,
     }),
     [
       avaxCChain,
@@ -115,6 +117,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       quicksilver,
       internetComputer,
       telosEvm,
+      coreum,
     ],
   );
   const currencies = useMemo(() => {
