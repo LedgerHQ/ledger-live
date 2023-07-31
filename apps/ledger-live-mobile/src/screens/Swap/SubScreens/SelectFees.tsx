@@ -26,7 +26,7 @@ export function SelectFees({ navigation, route }: SelectFeesParamList) {
         merge: true,
       });
     },
-    [navigation, route.params],
+    [navigation],
   );
 
   return (

@@ -77,7 +77,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
         <BulletList
           Bullet={BulletGreenCheck}
           list={bulletList.map(item => (
-            <LText semiBold={true}>
+            <LText semiBold={true} key={item}>
               <Trans i18nKey={item} />
             </LText>
           ))}

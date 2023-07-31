@@ -132,7 +132,7 @@ const NftCollection = ({ route }: NavigationProps) => {
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   const data = [
-    <View style={styles.buttonContainer}>
+    <View style={styles.buttonContainer} key="SendButton">
       <Button
         type="primary"
         IconLeft={SendIcon}
@@ -141,7 +141,7 @@ const NftCollection = ({ route }: NavigationProps) => {
         onPress={isNFTDisabled ? onOpenModal : sendToken}
       />
     </View>,
-    <View style={styles.nftList}>
+    <View style={styles.nftList} key="NFTItems">
       <FlatList
         data={nfts}
         numColumns={2}
@@ -151,7 +151,7 @@ const NftCollection = ({ route }: NavigationProps) => {
         ListFooterComponent={renderNftListFooter}
       />
     </View>,
-    <View style={styles.contentContainer}>
+    <View style={styles.contentContainer} key="SectionList">
       <SectionList
         sections={sections}
         style={[styles.sectionList, { backgroundColor: colors.background }]}
