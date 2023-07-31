@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-web-ble",
-  "version": "6.27.17",
+  "version": "6.27.18-next.0",
   "description": "Ledger Hardware Wallet Web Bluetooth implementation of the communication layer",
   "keywords": [
     "Ledger",
