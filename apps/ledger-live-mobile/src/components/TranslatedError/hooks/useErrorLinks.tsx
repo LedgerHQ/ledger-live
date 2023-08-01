@@ -5,15 +5,16 @@ import { ScreenName } from "../../../const";
 
 export function useErrorLinks(error?: Error | null) {
   const { navigate } = useNavigation();
-  const errorName = error?.name;
 
   const onErrorLinkPress = useCallback(
     async (errorLink: string) => {
-      const canOpenURL = await Linking.canOpenURL(errorLink);
+      if (errorLink.startsWith("http")) {
+        const canOpenURL = await Linking.canOpenURL(errorLink);
 
-      if (canOpenURL) {
-        Linking.openURL(errorLink);
-        return;
+        if (canOpenURL) {
+          Linking.openURL(errorLink);
+          return;
+        }
       }
 
       if (errorLink === "/platform/multibuy") {
@@ -35,12 +36,17 @@ export function useErrorLinks(error?: Error | null) {
       return safeStringLinks.reduce((prev, curr, index) => {
         return {
           ...prev,
-          [`link${index}`]: <Text onPress={() => onErrorLinkPress(curr)} />,
+          [`link${index}`]: (
+            <Text
+              style={{ textDecorationLine: "underline" }}
+              onPress={() => onErrorLinkPress(curr)}
+            />
+          ),
         };
       }, {});
     }
 
     return {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorName]);
+  }, [error]);
 }

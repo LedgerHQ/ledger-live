@@ -6,6 +6,7 @@ import { getAccountName, getAccountUnit } from "@ledgerhq/live-common/account/in
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePickDefaultAccount } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSelector } from "react-redux";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
@@ -79,8 +80,6 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
     [track],
   );
 
-  console.log("%cFrom.tsx line:82 swapWarning", "color: #007acc;", swapWarning);
-
   return (
     <Flex borderBottomWidth={1} borderColor="neutral.c70" paddingBottom={2} marginBottom={4}>
       <Text variant="small" marginBottom={2}>
@@ -113,9 +112,21 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
           </Flex>
         </Flex>
 
-        <Text color={swapError ? "error.c50" : "warning"} textAlign="right" variant="tiny">
-          {swapError ? <TranslatedError error={swapError || swapWarning} /> : ""}
-        </Text>
+        {swapError || swapWarning ? (
+          <Flex flexDirection="row" columnGap={8} alignItems="center">
+            <WarningSolidMedium size={20} color={swapError ? "error.c50" : "orange"} />
+            <Text
+              marginY={4}
+              color={swapError ? "error.c50" : "orange"}
+              textAlign="left"
+              fontWeight="medium"
+              lineHeight="20.4px"
+              variant="small"
+            >
+              <TranslatedError error={swapError || swapWarning} />
+            </Text>
+          </Flex>
+        ) : null}
       </Flex>
     </Flex>
   );
