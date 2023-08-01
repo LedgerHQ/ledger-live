@@ -20,15 +20,14 @@ import UpdateFirmwareModal, {
 } from "~/renderer/modals/UpdateFirmwareModal";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
-import GenuineCheckErrorDrawer, {
-  Props as GenuineCheckErrorDrawerProps,
-} from "./GenuineCheckErrorDrawer";
+import ErrorDrawer, { Props as ErrorDrawerProps } from "./ErrorDrawer";
 import DeviceNotGenuineDrawer, {
   Props as DeviceNotGenuineDrawerProps,
 } from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { log } from "@ledgerhq/logs";
 
 export type Props = {
   onComplete: () => void;
@@ -100,7 +99,13 @@ const EarlySecurityChecks = ({
   });
 
   const {
-    state: { deviceInfo, firmwareUpdateContext: latestFirmware, status, lockedDevice },
+    state: {
+      deviceInfo,
+      firmwareUpdateContext: latestFirmware,
+      status,
+      lockedDevice,
+      error: getLatestAvailableFirmwareError,
+    },
   } = useGetLatestAvailableFirmware({
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
@@ -210,7 +215,14 @@ const EarlySecurityChecks = ({
       setAvailableFirmwareVersion(latestFirmware?.final.name || "");
       setFirmwareUpdateStatus(SoftwareCheckStatus.updateAvailable);
     }
-  }, [firmwareUpdateStatus, status, genuineCheckStatus, latestFirmware, deviceInfo?.version]);
+  }, [
+    firmwareUpdateStatus,
+    status,
+    genuineCheckStatus,
+    latestFirmware,
+    deviceInfo?.version,
+    getLatestAvailableFirmwareError,
+  ]);
 
   const lockedDeviceModalIsOpen =
     (devicePermissionState === "unlock-needed" && genuineCheckActive) ||
@@ -242,20 +254,43 @@ const EarlySecurityChecks = ({
       setDrawer(DeviceNotGenuineDrawer, props, commonDrawerProps);
     } else if (genuineCheckError) {
       setGenuineCheckStatus(SoftwareCheckStatus.failed);
-      const props: GenuineCheckErrorDrawerProps = {
+      const props: ErrorDrawerProps = {
         onClickRetry: () => {
           resetGenuineCheckState();
           setGenuineCheckStatus(SoftwareCheckStatus.active);
         },
         error: genuineCheckError,
       };
-      setDrawer(GenuineCheckErrorDrawer, props, commonDrawerProps);
+      setDrawer(ErrorDrawer, props, commonDrawerProps);
+    } else if (
+      getLatestAvailableFirmwareError &&
+      !(
+        getLatestAvailableFirmwareError.type === "SharedError" &&
+        // If the current error triggered a retry attempt, does not display failure
+        getLatestAvailableFirmwareError.retrying
+      )
+    ) {
+      log(
+        "EarlySecurityCheck",
+        "Failed to retrieve latest firmware version with error:",
+        getLatestAvailableFirmwareError.name,
+      );
+      setFirmwareUpdateStatus(SoftwareCheckStatus.failed);
+      const props: ErrorDrawerProps = {
+        onClickRetry: () => {
+          setFirmwareUpdateStatus(SoftwareCheckStatus.active);
+        },
+        error: { message: "Unknown error", ...getLatestAvailableFirmwareError },
+        closeable: true,
+      };
+      setDrawer(ErrorDrawer, props, { forceDisableFocusTrap: true });
     }
     return () => setDrawer();
   }, [
     allowSecureChannelIsOpen,
     deviceModelId,
     genuineCheckError,
+    getLatestAvailableFirmwareError,
     lockedDeviceModalIsOpen,
     notGenuineIsOpen,
     productName,
@@ -319,6 +354,9 @@ const EarlySecurityChecks = ({
         onClickContinueToSetup={() => {
           track("button_clicked", { button: "Continue to setup" });
           handleCompletion();
+        }}
+        onClickRetryUpdate={() => {
+          setFirmwareUpdateStatus(SoftwareCheckStatus.active);
         }}
         loading={completionLoading}
       />

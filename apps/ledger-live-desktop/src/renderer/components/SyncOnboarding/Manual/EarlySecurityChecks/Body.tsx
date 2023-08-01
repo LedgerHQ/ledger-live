@@ -17,6 +17,7 @@ export type Props = {
   onClickViewUpdate: () => void;
   onClickSkipUpdate: () => void;
   onClickContinueToSetup: () => void;
+  onClickRetryUpdate: () => void;
 };
 
 const SoftwareCheckContent = ({
@@ -31,6 +32,7 @@ const SoftwareCheckContent = ({
   onClickResumeGenuineCheck,
   onClickViewUpdate,
   onClickSkipUpdate,
+  onClickRetryUpdate,
   onClickContinueToSetup,
 }: Props) => {
   const { t } = useTranslation();
@@ -115,7 +117,7 @@ const SoftwareCheckContent = ({
               })
         }
       >
-        {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
+        {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable ? (
           <Flex flexDirection="row" alignItems="center" columnGap={6}>
             <Button variant="main" size="small" outline={false} onClick={onClickViewUpdate}>
               {updateSkippable
@@ -134,7 +136,22 @@ const SoftwareCheckContent = ({
               </Button>
             ) : null}
           </Flex>
-        )}
+        ) : firmwareUpdateStatus === SoftwareCheckStatus.failed ? (
+          <Flex flexDirection="row" alignItems="center" columnGap={6}>
+            <Button variant="main" size="small" outline={false} onClick={onClickRetryUpdate}>
+              {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.retryUpdateCTA")}
+            </Button>
+            <Button
+              variant="shade"
+              size="small"
+              outline
+              onClick={onClickSkipUpdate}
+              Icon={loading ? InfiniteLoader : undefined}
+            >
+              {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.skipUpdateCTA")}
+            </Button>
+          </Flex>
+        ) : null}
       </Bullet>
       {genuineCheckStatus === SoftwareCheckStatus.inactive ? (
         <Flex flexDirection={"column"} mt={12} rowGap={12}>

@@ -15,11 +15,12 @@ import { track } from "~/renderer/analytics/segment";
 export type Props = {
   error: Error;
   onClickRetry: () => void;
+  closeable?: boolean;
 };
 
 const NotFoundEntityError = createCustomErrorClass("NotFoundEntityError");
 
-const GenuineCheckErrorDrawer: React.FC<Props> = ({ error, onClickRetry }) => {
+const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const isNotFoundEntityError = error.message === "not found entity";
@@ -90,9 +91,9 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ error, onClickRetry }) => {
           </Button>
         )}
       </DrawerFooter>
-      <DeviceBlocker />
+      {closeable ? null : <DeviceBlocker />}
     </Flex>
   );
 };
 
-export default withV3StyleProvider(GenuineCheckErrorDrawer);
+export default withV3StyleProvider(ErrorDrawer);

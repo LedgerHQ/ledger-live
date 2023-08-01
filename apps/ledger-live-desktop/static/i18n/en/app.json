@@ -1363,6 +1363,7 @@
           "viewUpdateCTA": "View update",
           "resumeUpdateCTA": "Resume update",
           "skipUpdateCTA": "Skip update",
+          "retryUpdateCTA": "Retry",
           "finalStepSuccessDescription": "Back to OS check",
           "finalStepSuccessButtonLabel": "Continue"
         }
@@ -5879,6 +5880,10 @@
     "DeviceNotGenuineError": {
       "title": "This {{productName}} is not genuine",
       "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+    },
+    "FailedToRetrieveFirmwareUpdateInfo": {
+      "title": "OS update check failed",
+      "description": "Something went wrong. Please try again or contact Ledger Support if in doubt."
     }
   },
   "cryptoOrg": {
