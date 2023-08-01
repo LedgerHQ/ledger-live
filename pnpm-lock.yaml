@@ -900,8 +900,8 @@ importers:
         specifier: 4.17.21
         version: 4.17.21
       lottie-react-native:
-        specifier: 6.0.0-rc.6
-        version: 6.0.0-rc.6(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.0.1
+        version: 6.0.1(react-native@0.71.6)(react@18.0.0)
       moment:
         specifier: ^2.29.1
         version: 2.29.3
@@ -28277,7 +28277,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
+      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -45375,8 +45375,8 @@ packages:
     dependencies:
       js-tokens: 4.0.0
 
-  /lottie-react-native@6.0.0-rc.6(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-P0xyb/2MtWo+JVWq3eY2TYomfhefDAxa3N4+jw2UP248g7X1k/TqmmuNrztgQwsJzcubxY/Ro/PVVOupIAWCcg==}
+  /lottie-react-native@6.0.1(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-XOVBiDcLLRZVwcXk4cBfyAOZTaXj8dD8iL932Fu+NEdsEpvLACta1YheZmq+tVGo8fLCGJfOlva+gpDfo09k4Q==}
     peerDependencies:
       react: '*'
       react-native: '>=0.46'
@@ -57540,6 +57540,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-jsx@5.1.1(react@18.2.0):
     resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
