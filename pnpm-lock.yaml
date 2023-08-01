@@ -1057,7 +1057,7 @@ importers:
         version: 11.26.1(patch_hash=no3vzt46yoww4w2wn7ciytbsoy)(react-native@0.71.6)(react@18.0.0)
       react-redux:
         specifier: ^7.2.9
-        version: 7.2.9(@types/react@17.0.53)(react-native@0.71.6)(react@18.0.0)
+        version: 7.2.9(@types/react@17.0.53)(react@18.0.0)
       redux:
         specifier: ^4.1.2
         version: 4.2.0
@@ -2363,7 +2363,7 @@ importers:
         version: 13.4.0(react-native@0.71.6)(react@17.0.2)
       react-redux:
         specifier: ^7.2.9
-        version: 7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react-native@0.71.6)(react@17.0.2)
+        version: 7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2)
       react-test-renderer:
         specifier: ^17.0.2
         version: 17.0.2(react@17.0.2)
@@ -4481,6 +4481,9 @@ importers:
       '@svgr/plugin-svgo':
         specifier: ^5.5.0
         version: 5.5.0
+      '@types/hoist-non-react-statics':
+        specifier: ^3.3.1
+        version: 3.3.1(@types/react@17.0.53)
       '@types/node':
         specifier: ^17.0.31
         version: 17.0.32
@@ -53823,41 +53826,13 @@ packages:
       fsevents: 2.3.2
     dev: false
 
-  /react-redux@7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react-native@0.71.6)(react@17.0.2):
-    resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
-    peerDependencies:
-      react: ^16.8.3 || ^17 || ^18
-      react-dom: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@types/react-redux': 7.1.24(@types/react@17.0.53)
-      hoist-non-react-statics: 3.3.2
-      loose-envify: 1.4.0
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-      react-is: 17.0.2
-      react-native: 0.71.6(react@17.0.2)
-    transitivePeerDependencies:
-      - '@types/react'
-    dev: true
-
   /react-redux@7.2.9(@types/react@17.0.53)(react-dom@17.0.2)(react@17.0.2):
     resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
     peerDependencies:
       react: ^16.8.3 || ^17 || ^18
       react-dom: '*'
-      react-native: '*'
     peerDependenciesMeta:
       react-dom:
-        optional: true
-      react-native:
         optional: true
     dependencies:
       '@babel/runtime': 7.18.9
@@ -53870,18 +53845,14 @@ packages:
       react-is: 17.0.2
     transitivePeerDependencies:
       - '@types/react'
-    dev: false
 
-  /react-redux@7.2.9(@types/react@17.0.53)(react-native@0.71.6)(react@18.0.0):
+  /react-redux@7.2.9(@types/react@17.0.53)(react@18.0.0):
     resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
     peerDependencies:
       react: ^16.8.3 || ^17 || ^18
       react-dom: '*'
-      react-native: '*'
     peerDependenciesMeta:
       react-dom:
-        optional: true
-      react-native:
         optional: true
     dependencies:
       '@babel/runtime': 7.18.9
@@ -53891,7 +53862,6 @@ packages:
       prop-types: 15.8.1
       react: 18.0.0
       react-is: 17.0.2
-      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -53901,11 +53871,8 @@ packages:
     peerDependencies:
       react: ^16.8.3 || ^17 || ^18
       react-dom: '*'
-      react-native: '*'
     peerDependenciesMeta:
       react-dom:
-        optional: true
-      react-native:
         optional: true
     dependencies:
       '@babel/runtime': 7.18.9

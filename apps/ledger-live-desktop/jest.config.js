@@ -51,9 +51,8 @@ module.exports = {
       displayName: "dom",
       testEnvironment: "jsdom",
       transform: {
-        "^.+\\.(ts|tsx)?$": ["ts-jest", { useESM: true }],
         "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-          "<rootDir>/tests/fileTransformer.ts",
+          "<rootDir>/tests/fileTransformer.js",
       },
       testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
       testPathIgnorePatterns,

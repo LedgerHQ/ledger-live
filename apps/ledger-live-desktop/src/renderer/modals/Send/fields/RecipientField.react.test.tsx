@@ -29,6 +29,8 @@ jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   useFeature: jest.fn(),
 }));
 
+const mockedUseFeature = jest.mocked(useFeature);
+
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);
 
 const eth = getCryptoCurrencyById("ethereum");
@@ -210,7 +212,7 @@ describe("RecipientField", () => {
   describe("Feature Flag", () => {
     describe("Flag on", () => {
       beforeEach(() => {
-        useFeature.mockReturnValue({
+        mockedUseFeature.mockReturnValue({
           enabled: true,
           params: { supportedCurrencyIds: ["ethereum"] },
         });
@@ -370,7 +372,7 @@ describe("RecipientField", () => {
 
     describe("Flag off", () => {
       beforeEach(() => {
-        useFeature.mockReturnValue({ enabled: false });
+        mockedUseFeature.mockReturnValue({ enabled: false });
       });
 
       it("should not change domain", async () => {
