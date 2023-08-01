@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList } from "react-native";
 import type {
@@ -6,12 +6,9 @@ import type {
   CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import {
-  useCurrenciesByMarketcap,
-  findCryptoCurrencyByKeyword,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
@@ -23,8 +20,7 @@ import { StackNavigatorProps } from "../../components/RootNavigator/types/helper
 import { getEnv } from "@ledgerhq/live-common/env";
 import { findAccountByCurrency } from "../../logic/deposit";
 
-import { useMappedAssets } from "@ledgerhq/live-common/deposit/index";
-import { groupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/helper";
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -46,26 +42,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
 
   const { t } = useTranslation();
-  const [currenciesByProvider, setCurrencies] = useState<CryptoOrTokenCurrency[]>([]);
-  const [currenciesAndProvider, setCurrenciesAndProvider] = useState<
-    {
-      currenciesByNetwork: CryptoOrTokenCurrency[];
-      providerId: string;
-    }[]
-  >([]);
-
   const accounts = useSelector(flattenAccountsSelector);
 
-  const { displayableCoinsAndTokens } = useMappedAssets();
-
-  useEffect(() => {
-    groupedCurrenciesByProvider(displayableCoinsAndTokens).then(res => {
-      setCurrenciesAndProvider(res);
-      setCurrencies(Object.values(res).map(value => value.currenciesByNetwork[0]));
-    });
-  }, [displayableCoinsAndTokens]);
-
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(currenciesByProvider);
+  const { currenciesByProvider, sortedCryptoCurrencies } = useGroupedCurrenciesByProvider();
 
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
@@ -74,7 +53,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         page: "Choose a crypto to secure",
       });
 
-      const provider = currenciesAndProvider.find(elem =>
+      const provider = currenciesByProvider.find(elem =>
         elem.currenciesByNetwork.some(
           currencyByNetwork =>
             (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
@@ -132,7 +111,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         }
       }
     },
-    [accounts, navigation, currenciesAndProvider],
+    [accounts, navigation, currenciesByProvider],
   );
 
   useEffect(() => {
@@ -166,14 +145,20 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       <Text variant="h4" fontWeight="semiBold" mx={6} mb={3} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
       </Text>
-      <FilteredSearchBar
-        keys={SEARCH_KEYS}
-        inputWrapperStyle={{ marginHorizontal: 16, marginBottom: 8 }}
-        list={sortedCryptoCurrencies as CryptoOrTokenCurrency[]}
-        renderList={renderList}
-        renderEmptySearch={renderEmptyList}
-        newSearchBar
-      />
+      {sortedCryptoCurrencies.length > 0 ? (
+        <FilteredSearchBar
+          keys={SEARCH_KEYS}
+          inputWrapperStyle={{ marginHorizontal: 16, marginBottom: 8 }}
+          list={sortedCryptoCurrencies}
+          renderList={renderList}
+          renderEmptySearch={renderEmptyList}
+          newSearchBar
+        />
+      ) : (
+        <Flex flex={1} mt={6}>
+          <InfiniteLoader />
+        </Flex>
+      )}
     </>
   );
 }

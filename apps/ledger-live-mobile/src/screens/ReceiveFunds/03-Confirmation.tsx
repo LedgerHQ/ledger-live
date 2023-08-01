@@ -14,7 +14,15 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, IconsLegacy, Button, Notification, Box, BannerCard } from "@ledgerhq/native-ui";
+import {
+  Flex,
+  Text,
+  IconsLegacy,
+  Button,
+  Notification,
+  Box,
+  BannerCard,
+} from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";

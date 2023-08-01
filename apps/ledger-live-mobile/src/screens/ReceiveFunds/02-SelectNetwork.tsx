@@ -144,7 +144,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
           currency={item}
           onPress={onPressItem}
           subTitle={
-            accs.length > 1
+            accs.length > 0
               ? t("transfer.receive.selectNetwork.accounts", { count: accs.length })
               : ""
           }
@@ -182,7 +182,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
       {depositNetworkBannerMobile?.enabled && displayBanner && (
         <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-          <Flex pb={insets.bottom + 2} px={6}>
+          <Flex pb={insets.bottom + 2} px={6} mb={6}>
             <BannerCard
               typeOfRightIcon="close"
               title={t("transfer.receive.selectNetwork.bannerTitle")}
@@ -200,9 +200,5 @@ export default function SelectNetwork({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   list: {
     paddingBottom: 32,
-  },
-  filteredSearchInputWrapperStyle: {
-    marginHorizontal: 16,
-    marginBottom: 16,
   },
 });

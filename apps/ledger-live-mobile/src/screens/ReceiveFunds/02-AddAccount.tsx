@@ -230,10 +230,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
           stopSubscription={stopSubscription}
         />
       ) : addingAccount ? (
-        <AddingAccountLoading
-          currency={currency}
-          stopSubscription={stopSubscription}
-        />
+        <AddingAccountLoading currency={currency} stopSubscription={stopSubscription} />
       ) : (
         <FlatList
           data={scannedAccounts}
