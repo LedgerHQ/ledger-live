@@ -115,7 +115,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="Receive" name="Choose a crypto to secure" />
+      <TrackScreen category="Deposit" name="Choose a crypto to secure" />
       <Text variant="h4" fontWeight="semiBold" mx={6} mb={3} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
       </Text>

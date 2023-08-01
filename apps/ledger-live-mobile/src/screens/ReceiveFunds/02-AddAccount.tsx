@@ -221,7 +221,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
+      <TrackScreen category="Deposit" name="Accounts" currencyName={currency.name} />
       <PreventNativeBack />
       {scanning ? (
         <ScanLoading

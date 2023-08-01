@@ -166,7 +166,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen name="Choose a network" />
+      <TrackScreen category="Deposit" name="Choose a network" />
       <Flex px={6} py={2}>
         <Text variant="h4" fontWeight="semiBold" testID="receive-header-step2-title" mb={2}>
           {t("transfer.receive.selectNetwork.title")}

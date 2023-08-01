@@ -364,7 +364,7 @@ export const screen = async (
    */
   avoidDuplicates?: boolean,
 ) => {
-  const fullScreenName = category + (name ? ` ${name}` : "");
+  const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
   const eventName = `Page ${fullScreenName}`;
   if (avoidDuplicates && eventName === lastScreenEventName.current) return;
   lastScreenEventName.current = eventName;

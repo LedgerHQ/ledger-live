@@ -29,7 +29,7 @@ const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
-      <TrackScreen category="Receive" name="Explication Account Import/Creation" type="drawer" />
+      <TrackScreen category="Deposit" name="Explication Account Import/Creation" type="drawer" />
       <Text variant="h4" fontWeight="semiBold" color="neutral.c100" lineHeight="31.2px">
         <Trans i18nKey="transfer.receive.additionalInfoModal.title" />
       </Text>

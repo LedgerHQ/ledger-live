@@ -145,7 +145,7 @@ function ReceiveSelectAccount({
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>
       <TrackScreen
-        category="Deposit flow"
+        category="Deposit"
         name="Select account to deposit to"
         currency={currency.name}
       />
