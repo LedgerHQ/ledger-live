@@ -37,7 +37,7 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
       ]}
     >
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-        <TrackScreen category="BondFlow" name="Started" />
+        <TrackScreen category="BondFlow" name="Started" flow="stake" action="bond" currency="dot" />
         <Flex alignItems="center" mb={6}>
           <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
@@ -49,11 +49,11 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
           itemContainerStyle={styles.bulletItemContainer}
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="polkadot.bond.steps.starter.bullet.0" />,
-            <Trans i18nKey="polkadot.bond.steps.starter.bullet.1" />,
-            <Trans i18nKey="polkadot.bond.steps.starter.bullet.2" />,
+            <Trans i18nKey="polkadot.bond.steps.starter.bullet.0" key="BondingText1" />,
+            <Trans i18nKey="polkadot.bond.steps.starter.bullet.1" key="BondingText2" />,
+            <Trans i18nKey="polkadot.bond.steps.starter.bullet.2" key="BondingText2" />,
           ].map(wording => (
-            <LText secondary semiBold style={styles.bulletItem}>
+            <LText secondary semiBold style={styles.bulletItem} key={wording.key}>
               {wording}
             </LText>
           ))}

@@ -6,12 +6,14 @@ const baseLink = "nftgallery";
 export default class NftGalleryPage {
   root = () => getElementById("wallet-nft-gallery-screen");
   emptyScreen = () => getElementById("wallet-nft-gallery-empty");
-  nftListComponent = () => getElementById(`wallet-nft-gallery-list`);
+  emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
+  nftListComponent = () => getElementById("wallet-nft-gallery-list");
   nftAddNewListItem = () => getElementById("wallet-nft-gallery-add-new-list-item");
   receiveNftButton = () => getElementById("wallet-nft-gallery-receive-nft-button");
   nftReceiveModalContinueButton = () =>
     getElementById("wallet-nft-gallery-receive-modal-continue-button");
   nftReceiveModal = () => getElementById("wallet-nft-gallery-receive-modal");
+  nftFilterDrawer = () => getElementById("wallet-nft-gallery-filter-drawer");
   selectAndHide = () => getElementById("wallet-nft-gallery-select-and-hide");
   confirmHide = () => getElementById("wallet-nft-gallery-confirm-hide");
   nftListItem = (index: number) => getElementById(`wallet-nft-gallery-list-item-${index}`);

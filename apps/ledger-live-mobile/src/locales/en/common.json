@@ -240,6 +240,10 @@
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again."
     },
+    "DeviceAlreadySetup": {
+      "title": "Your {{device}} is already setup with a Secret Recovery Phrase",
+      "description": "Connect a Ledger that's not set up."
+    },
     "DeviceNotGenuine": {
       "title": "Device possibly not genuine",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
@@ -1222,7 +1226,7 @@
       "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
       "and": "and",
-      "recoverLogIn": "Log in for Ledger Recover"
+      "recoverLogIn": "Log in to Ledger Recover"
     },
     "postWelcomeStep": {
       "title": "Let’s get started",
@@ -1583,7 +1587,8 @@
         "title": "The OS on your Ledger Nano X needs to be updated",
         "desc": "You can try updating the OS or contact Ledger support for assistance.",
         "cta": "Learn how to update",
-        "supportLink": "Contact Ledger Support"
+        "supportLink": "Contact Ledger Support",
+        "buyLedger": "Buy a Ledger"
       }
     },
     "stepRecoveryPhrase": {
@@ -2053,6 +2058,7 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
+    "earn": "Earn",
     "learn": "Learn"
   },
   "learn": {
@@ -2630,8 +2636,6 @@
         "confirm": "Hide token"
       },
       "hideNFTCollectionCTA": "Hide collection",
-      "hiddenNFTCollections": "Hidden NFT collections",
-      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
       "hideNFTCollectionModal": {
         "title": "Hide Collection?",
         "desc": "You can unhide this collection in the setting options."
@@ -2812,6 +2816,18 @@
       "desc": "Get the latest updates on Ledger Live, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
       "allow": "Allow notifications",
       "later": "Maybe later"
+    },
+    "ptxServices": {
+      "toast": {
+        "title": "In order to comply with Apple’s recent updates on the App Store, this feature is temporarily unavailable. You can still access it on Ledger Live on desktop."
+      },
+      "drawer": {
+        "title": "Buy, swap and sell disabled",
+        "description": "In order to comply with Apple’s recent updates on the App Store, these features are temporarily deactivated on iOS. <emphasized>You can still access them on Ledger Live on desktop.</emphasized>",
+        "checkboxLabel": "Do not remind me again",
+        "cta": "Got it",
+        "link": "Learn more"
+      }
     }
   },
   "transfer": {
@@ -3778,6 +3794,7 @@
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
+    "connectAnotherDevice": "Connect another Ledger",
     "unlockDevice": "Unlock your device",
     "outdated": "App version outdated",
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
@@ -4126,7 +4143,7 @@
   },
   "FirmwareUpdate": {
     "title": "Update firmware",
-    "updateDevice": "Update {{deviceName}}",
+    "updateDevice": "{{deviceName}} OS Update",
     "updateDone": "All done! Your {{deviceName}} is up to date",
     "updateDoneDescription": "New OS Version: {{firmwareVersion}}",
     "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
@@ -4177,7 +4194,8 @@
       "preparing": "Preparing update",
       "firmware": "Downloading update",
       "prepareUpdate": {
-        "titleActive": "Preparing update for install",
+        "titleBackingUp": "Backing up apps and settings",
+        "titleTransferring": "Transferring update",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
       },
       "installUpdate": {
@@ -4190,7 +4208,6 @@
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",
         "restoreLanguage": "Restoring language",
-        "installingApps": "Installing apps",
         "imageLoadRequested": "Allow lock screen picture restoration on {{deviceName}}",
         "imageCommitRequested": "Confirm the picture on your {{deviceName}}",
         "allowLanguageInstallation": "Allow language restoration on {{deviceName}}",
@@ -4201,7 +4218,8 @@
           "ImageLoadRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
           "ImageCommitRefusedOnDevice": "Restoration of lock screen picture was cancelled on {{deviceName}}",
           "UserRefusedAllowManager": "Restoration of apps was cancelled on {{deviceName}}"
-        }
+        },
+        "installingApps": "Restoring apps"
       }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
@@ -4210,6 +4228,18 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "batteryStatusErrors": {
+      "errors": {
+        "TimeoutError": {
+          "title": "Device disconnected",
+          "description": "The update was unable to start because we lost connection to {{deviceName}}"
+        },
+        "BatteryStatusNotRetrieved": {
+          "title": "Unable to retrieve battery status",
+          "description": "The update was unable to start because we weren't able to retrieve the battery status for {{deviceName}}"
+        }
+      }
     },
     "errors": {
       "TimeoutError": {
@@ -6222,15 +6252,25 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
-      "nft": "NFTs"
+      "nft": "NFTs",
+      "market": "Market"
     },
     "nftGallery": {
       "filters": {
+        "select": "Select",
+        "filter": "Filter",
+        "blockchain": "Blockchain",
+        "seeAll": "See all",
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} collection",
+        "hiddenCollections": "Hidden collections",
         "hide_plural": "Hide {{count}} collections",
-        "alertHide": "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
-        "alertHide_plural": "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
+        "alertHide": "1 collection hidden. You can unhide them at any time in the gallery filter.",
+        "alertHide_plural": "{{count}} collections hidden. You can unhide them at any time in the gallery filter."
+      },
+      "emptyFiltered": {
+        "title": "There are no NFTs that meet your criteria",
+        "button": "Reset Filters"
       },
       "empty": {
         "title": "No NFTs to show, yet",
@@ -6249,7 +6289,7 @@
       },
       "hideNftModal": {
         "title": "Hide NFT collection",
-        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the app settings",
+        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the gallery filter",
         "cta": "Hide this NFT"
       },
       "media": {
@@ -6265,10 +6305,10 @@
       "status": {
         "new": {
           "title": "New",
-          "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
+          "desc": "Stop worrying about getting locked out of your wallet.",
           "actions": {
-            "learnMore": "How does it benefit me?",
-            "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
+            "learnMore": "Get to know Ledger Recover",
+            "alreadySubscribed": "I already have a log in <LinkAccount>View my subscription</LinkAccount>"
           }
         }
       }

@@ -119,13 +119,16 @@ export function SwapForm({
     "swapWalletApiPartnerList",
   );
   const navigation = useNavigation<Navigation["navigation"]>();
-  const onNoRates: OnNoRatesCallback = useCallback(({ toState }) => {
-    track("error_message", {
-      ...sharedSwapTracking,
-      message: "no_rates",
-      sourceCurrency: toState.currency?.name,
-    });
-  }, []);
+  const onNoRates: OnNoRatesCallback = useCallback(
+    ({ toState }) => {
+      track("error_message", {
+        ...sharedSwapTracking,
+        message: "no_rates",
+        sourceCurrency: toState.currency?.name,
+      });
+    },
+    [track],
+  );
 
   const onBeforeTransaction = useCallback(() => {
     setCurrentBanner(ActionRequired.None);

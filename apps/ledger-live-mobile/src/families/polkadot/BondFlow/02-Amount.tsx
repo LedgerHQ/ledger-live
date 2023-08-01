@@ -177,7 +177,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const hasErrors = hasStatusError(status);
   return (
     <>
-      <TrackScreen category="BondFlow" name="Amount" />
+      <TrackScreen category="BondFlow" name="Amount" flow="stake" action="bond" currency="dot" />
       <SafeAreaView
         style={[
           styles.root,

@@ -1,9 +1,9 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
+import { Text, IconBoxList, IconsLegacy } from "@ledgerhq/native-ui";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
-const { ComputerMedium, QrCodeMedium, ListMedium } = Icons;
+const { ComputerMedium, QrCodeMedium, ListMedium } = IconsLegacy;
 const items = [
   {
     title: "onboarding.stepImportAccounts.bullets.0.label",

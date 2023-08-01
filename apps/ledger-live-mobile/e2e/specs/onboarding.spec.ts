@@ -19,16 +19,12 @@ describe("Onboarding", () => {
     await onboardingSteps.chooseToAccessYourWallet();
   });
 
-  it("choosesto connect Ledger", async () => {
+  it("chooses to connect Ledger", async () => {
     await onboardingSteps.chooseToConnectYourLedger();
   });
 
   it("choses to Pair Nano", async () => {
     await onboardingSteps.chooseToPairMyNano();
-  });
-
-  it("selects Pair with Bluetooth", async () => {
-    await onboardingSteps.selectPairWithBluetooth();
   });
 
   it("adds device via Bluetooth", async () => {

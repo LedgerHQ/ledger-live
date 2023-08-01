@@ -6,7 +6,7 @@ import type { Observer as TransportObserver, DescriptorEvent } from "@ledgerhq/h
 import { HwTransportError } from "@ledgerhq/errors";
 import type { ApduMock } from "../logic/createAPDUMock";
 import { hookRejections } from "../logic/debugReject";
-import { e2eBridgeSubject } from "../../e2e/bridge/client";
+import { e2eBridgeClient } from "../../e2e/bridge/client";
 
 export type DeviceMock = {
   id: string;
@@ -39,7 +39,7 @@ export default (opts: Opts) => {
     static setLogLevel = (_param: string) => {};
 
     static listen(observer: TransportObserver<DescriptorEvent<Device>, HwTransportError>) {
-      return e2eBridgeSubject
+      return e2eBridgeClient
         .pipe(
           filter(msg => msg.type === "add"),
           take(3),
@@ -59,7 +59,7 @@ export default (opts: Opts) => {
     }
 
     static async open(device: string | Device) {
-      await e2eBridgeSubject
+      await e2eBridgeClient
         .pipe(
           filter(msg => msg.type === "open"),
           first(),

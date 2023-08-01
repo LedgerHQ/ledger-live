@@ -1,21 +1,32 @@
 import BigNumber from "bignumber.js";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
 import { estimateMaxSpendable } from "../../estimateMaxSpendable";
-import * as rpcAPI from "../../api/rpc/rpc.common";
+import * as nodeApi from "../../api/node/rpc.common";
 
+const currency: CryptoCurrency = {
+  ...getCryptoCurrencyById("ethereum"),
+  ethereumLikeInfo: {
+    ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
+    node: {
+      type: "external",
+      uri: "any-uri",
+    },
+  } as any,
+};
 const tokenAccount = {
   ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
   balance: new BigNumber(6969),
 };
 const account = {
-  ...makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount]),
+  ...makeAccount("0xkvn", currency, [tokenAccount]),
   balance: new BigNumber(42069000000),
 };
 
-jest.spyOn(rpcAPI, "getGasEstimation").mockImplementation(async () => new BigNumber(21000));
-jest.spyOn(rpcAPI, "getFeesEstimation").mockImplementation(async () => ({
+jest.spyOn(nodeApi, "getGasEstimation").mockImplementation(async () => new BigNumber(21000));
+jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
   gasPrice: new BigNumber(10000),
   maxFeePerGas: new BigNumber(10000),
   maxPriorityFeePerGas: new BigNumber(0),
@@ -42,8 +53,8 @@ describe("EVM Family", () => {
         account,
         transaction: eip1559Tx,
       });
-      const gasLimit = await rpcAPI.getGasEstimation(account, eip1559Tx);
-      const { maxFeePerGas } = await rpcAPI.getFeesEstimation(account.currency);
+      const gasLimit = await nodeApi.getGasEstimation(account, eip1559Tx);
+      const { maxFeePerGas } = await nodeApi.getFeeData(account.currency, eip1559Tx);
       const estimatedFees = gasLimit.times(maxFeePerGas!);
       expect(amount).toEqual(account.balance.minus(estimatedFees));
     });
@@ -65,8 +76,8 @@ describe("EVM Family", () => {
         account,
         transaction: legacyTx,
       });
-      const gasLimit = await rpcAPI.getGasEstimation(account, legacyTx);
-      const { gasPrice } = await rpcAPI.getFeesEstimation(account.currency);
+      const gasLimit = await nodeApi.getGasEstimation(account, legacyTx);
+      const { gasPrice } = await nodeApi.getFeeData(account.currency, legacyTx);
       const estimatedFees = gasLimit.times(gasPrice!);
       expect(amount).toEqual(account.balance.minus(estimatedFees));
     });

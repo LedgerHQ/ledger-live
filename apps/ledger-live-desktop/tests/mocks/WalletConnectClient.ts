@@ -1,7 +1,12 @@
 import EventEmitter from "events";
 class WalletConnectClient extends EventEmitter {
   session: any;
-  _transport: any;
+  _transport?: {
+    _socket: {
+      readyState: number;
+    };
+  } | null;
+
   constructor() {
     super();
     this._transport = {

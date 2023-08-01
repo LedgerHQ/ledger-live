@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { EvmNftTransaction, Transaction as EvmTransaction } from "../../types";
 import { makeAccount, makeTokenAccount } from "./common.fixtures";
@@ -9,7 +10,16 @@ import ERC721ABI from "../../abis/erc721.abi.json";
 import ERC20ABI from "../../abis/erc20.abi.json";
 import { Account } from "@ledgerhq/types-live";
 
-const currency = getCryptoCurrencyById("ethereum");
+const currency: CryptoCurrency = {
+  ...getCryptoCurrencyById("ethereum"),
+  ethereumLikeInfo: {
+    ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
+    node: {
+      type: "external",
+      uri: "any-uri",
+    },
+  } as any,
+};
 export const tokenAccount = makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin"));
 export const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency, [
   tokenAccount,

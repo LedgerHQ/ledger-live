@@ -23,6 +23,7 @@ import Box from "~/renderer/components/Box";
 import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { AnnouncementDeviceModelId } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 
 const mockListAppsResult = (
   appDesc: string,
@@ -275,7 +276,7 @@ const localizationEvents = [
 ];
 
 interface RawEvents {
-  [key: string]: RawEvents | RawEvents[];
+  [key: string]: unknown;
 }
 
 if (getEnv("MOCK")) {
@@ -445,9 +446,9 @@ const DebugMock = () => {
     addMockAnnouncement({
       ...formattedParams,
       device: {
-        modelIds: formatInputValue(notifDeviceModelId),
-        versions: formatInputValue(notifDeviceVersion),
-        apps: formatInputValue(notifDeviceApps),
+        modelIds: formatInputValue(notifDeviceModelId) as AnnouncementDeviceModelId,
+        versions: formatInputValue(notifDeviceVersion) as string[],
+        apps: formatInputValue(notifDeviceApps) as string[],
       },
       ...extra,
     });

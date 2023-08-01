@@ -21,9 +21,8 @@ on:
         required: true
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   test-docs:
@@ -34,7 +33,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -60,7 +59,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -76,11 +75,12 @@ jobs:
       FORCE_COLOR: 3
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
+      test-fail: ${{ steps.test.outcome }}
     runs-on: ubuntu-latest
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -89,6 +89,7 @@ jobs:
       - name: build cli
         run: pnpm build:cli
       - name: test cli
+        id: test
         run: pnpm test --filter="live-cli"
       - name: get diff
         id: diff
@@ -119,7 +120,7 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.since_branch }}
           fetch-depth: 0
       - name: Setup the toolchain
@@ -132,15 +133,17 @@ jobs:
           ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
+        uses: ./tools/actions/turborepo-s3-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" --output-logs="errors-only"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
@@ -164,6 +167,7 @@ jobs:
             const fs = require("fs");
             fs.writeFileSync("summary-${{ matrix.os }}.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-${{ matrix.os }}.txt
@@ -190,7 +194,7 @@ jobs:
                 status: "${{ needs.test-docs.result }}",
               },
               cli: {
-                pass: ${{ needs.test-cli.outputs.fail != '1' }},
+                pass: ${{ needs.test-cli.outputs.test-fail != 'success' && needs.test-cli.outputs.fail != '1' }},
                 status: "${{ needs.test-docs.result }}",
               },
               libraries: {

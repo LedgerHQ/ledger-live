@@ -64,7 +64,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="SendFunds" name="ValidationSuccess" />
+      <TrackScreen
+        category="SendFunds"
+        name="ValidationSuccess"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}

@@ -30,13 +30,12 @@ on:
         default: false
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 env:
   RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
-  REFNAME: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+  REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
 
 jobs:
   codechecks:
@@ -56,6 +55,8 @@ jobs:
         with:
           skip_builds: true
           install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: lint
         run: |
           pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
@@ -87,6 +88,8 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: check for dead code
         run: cd apps/ledger-live-desktop && npx unimported
         shell: bash
@@ -107,6 +110,8 @@ jobs:
         id: setup-test-desktop
         with:
           skip_builds: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run unit tests
         run: pnpm desktop test:jest
 
@@ -138,10 +143,12 @@ jobs:
           install_playwright: true
           upgrade_npm: true
           install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests
         id: tests
         run: |
-          pnpm desktop test:playwright:all
+          pnpm desktop test:playwright
         shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
@@ -205,11 +212,13 @@ jobs:
           skip_python: true
           skip_ruby: true
           install_playwright: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
           if [[ $RUN_FULL_SUITE == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:all
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
           else
             xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
           fi
@@ -276,10 +285,12 @@ jobs:
           skip_ruby: true
           install_playwright: true
           pnpm_dest: ${{ runner.temp }}/setup-pnpm
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests
         id: tests
         run: |
-          pnpm desktop test:playwright:all
+          pnpm desktop test:playwright
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -515,6 +526,13 @@ jobs:
                 identifier: "regen_screenshots",
                 // 40 chars max
                 description: "Will regenerate playwright screenshots",
+              }, {
+                // 20 chars max
+                label: "Run full LLD suite",
+                // 20 chars max
+                identifier: "lld_full_suite",
+                // 40 chars max
+                description: "Run the full e2e test suite for LLD",
               }],
             };
 
@@ -614,7 +632,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - name: Download Allure Report - Windows
         uses: actions/download-artifact@v3
         with:

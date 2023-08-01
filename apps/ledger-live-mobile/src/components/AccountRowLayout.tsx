@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { ValueChange } from "@ledgerhq/types-live";
-import { Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, Tag, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -94,7 +94,7 @@ const AccountRowLayout = ({
               </Text>
             ) : null}
           </Flex>
-          <Icons.ChevronRightMedium size={24} />
+          <IconsLegacy.ChevronRightMedium size={24} />
         </Flex>
       </Flex>
       {bottomLink && (

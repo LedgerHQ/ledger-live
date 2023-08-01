@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, SubAccount, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { getOptimismAdditionalFees } from "./api/rpc/rpc.common";
+import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,
@@ -45,6 +45,12 @@ export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
 };
 
 /**
+ * Helper to get the currency unit to be used for the fee field
+ */
+export const getDefaultFeeUnit = (currency: CryptoCurrency): Unit =>
+  currency.units.length > 1 ? currency.units[1] : currency.units[0];
+
+/**
  * Helper returning the potential additional fees necessary for layer twos
  * to settle the transaction on layer 1.
  */
@@ -54,8 +60,11 @@ export const getAdditionalLayer2Fees = async (
 ): Promise<BigNumber | undefined> => {
   switch (currency.id) {
     case "optimism":
-    case "optimism_goerli": {
-      const additionalFees = await getOptimismAdditionalFees(currency, transaction);
+    case "optimism_goerli":
+    case "base":
+    case "base_goerli": {
+      const nodeApi = getNodeApi(currency);
+      const additionalFees = await nodeApi.getOptimismAdditionalFees(currency, transaction);
       return additionalFees;
     }
     default:
@@ -147,8 +156,12 @@ export const getSyncHash = (currency: CryptoCurrency): string => {
     .map(token => token.id + token.contractAddress + token.name + token.ticker + token.delisted)
     .join("");
   const isNftSupported = isNFTActive(currency);
-
-  return ethers.utils.sha256(Buffer.from(basicTokensListString + isNftSupported));
+  const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
+  return ethers.utils.sha256(
+    Buffer.from(
+      basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer),
+    ),
+  );
 };
 
 /**
@@ -260,3 +273,11 @@ export const isNftTransaction = (
   transaction: EvmTransaction,
 ): transaction is EvmTransaction & EvmNftTransaction =>
   ["erc1155", "erc721"].includes(transaction.mode);
+
+/**
+ * Helper adding when necessary a 0
+ * prefix if string length is odd
+ */
+export const padHexString = (str: string): string => {
+  return str.length % 2 !== 0 ? "0" + str : str;
+};

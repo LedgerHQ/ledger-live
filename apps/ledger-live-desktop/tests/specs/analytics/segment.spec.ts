@@ -6,7 +6,7 @@ test.use({ userdata: "skip-onboarding" });
 
 test.use({
   env: {
-    SEGMENT_TEST: true,
+    SEGMENT_TEST: "true",
   },
 });
 
@@ -34,11 +34,11 @@ test("Segment", async ({ page }) => {
   });
 
   await test.step("has analytics settled", async () => {
-    const hasAnalytics = await page.evaluate(() => !!(window as any).analytics);
+    const hasAnalytics = await page.evaluate(() => !!window.analytics);
     expect(hasAnalytics).toBe(true);
     await page.waitForTimeout(1000); // give 1s more for analytics.min.js in case it doesn't load
     await layout.goToSettings();
-    const hasIntegrations = await page.evaluate(() => "Integrations" in (window as any).analytics);
+    const hasIntegrations = await page.evaluate(() => "Integrations" in window.analytics);
     expect(hasIntegrations).toBe(true);
   });
 

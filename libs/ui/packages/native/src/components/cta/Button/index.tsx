@@ -22,7 +22,7 @@ export type ButtonProps = TouchableOpacityProps &
     children?: React.ReactNode;
     pending?: boolean;
     displayContentWhenPending?: boolean;
-    testID?: string;
+    buttonTestId?: string;
   };
 
 const IconContainer = styled.View<{
@@ -94,6 +94,7 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
     iconName,
     pending,
     displayContentWhenPending,
+    buttonTestId,
   } = props;
   const theme = useTheme();
   const { text } = getButtonColorStyle(theme.colors, props);
@@ -113,7 +114,12 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
   return (
     <Container hide={hide}>
       {iconPosition === "right" && children ? (
-        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={textColor}>
+        <Text
+          testID={buttonTestId}
+          variant={ctaTextType[size]}
+          fontWeight={"semiBold"}
+          color={textColor}
+        >
           {children}
         </Text>
       ) : null}

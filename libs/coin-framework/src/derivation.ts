@@ -360,6 +360,7 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  internet_computer: true,
 };
 type SeedInfo = {
   purpose: number;

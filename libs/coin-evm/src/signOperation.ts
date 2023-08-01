@@ -97,7 +97,7 @@ export const buildSignOperation =
 
         o.next({ type: "device-signature-granted" }); // Signature is done
 
-        const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
+        const { chainId = 0 } = account.currency.ethereumLikeInfo || /* istanbul ignore next */ {};
         // Create a new serialized tx with the signature now
         const signature = await getSerializedTransaction(preparedTransaction, {
           r: "0x" + sig.r,

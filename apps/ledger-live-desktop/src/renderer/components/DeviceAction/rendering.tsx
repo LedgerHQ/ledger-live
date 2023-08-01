@@ -6,6 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -38,7 +39,6 @@ import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { Rotating } from "~/renderer/components/Spinner";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import CrossCircle from "~/renderer/icons/CrossCircle";
-import { getProviderIcon } from "~/renderer/screens/exchange/Swap2/utils";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
@@ -57,6 +57,8 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
+import LinkWithExternalIcon from "../LinkWithExternalIcon";
+import { openURL } from "~/renderer/linking";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -625,6 +627,7 @@ export const renderError = ({
   withExportLogs,
   list,
   supportLink,
+  buyLedger,
   warning,
   info,
   managerAppName,
@@ -640,6 +643,7 @@ export const renderError = ({
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
+  buyLedger?: string;
   warning?: boolean;
   info?: boolean;
   managerAppName?: string;
@@ -708,6 +712,12 @@ export const renderError = ({
               </Button>
             ) : null}
             {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
+            {buyLedger ? (
+              <LinkWithExternalIcon
+                label={t("common.buyLedger")}
+                onClick={() => openURL(buyLedger)}
+              />
+            ) : null}
           </>
         )}
       </ButtonContainer>
@@ -838,7 +848,6 @@ export const renderSwapDeviceConfirmation = ({
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
 }) => {
-  const ProviderIcon = getProviderIcon(exchangeRate);
   const [sourceAccountName, sourceAccountCurrency] = [
     getAccountName(exchange.fromAccount),
     getAccountCurrency(exchange.fromAccount),
@@ -890,7 +899,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               provider: (
                 <Box horizontal alignItems="center" style={{ gap: "6px" }}>
-                  <ProviderIcon size={18} />
+                  <ProviderIcon size="XXS" name={exchangeRate.provider} />
                   <Text>{providerName}</Text>
                 </Box>
               ),

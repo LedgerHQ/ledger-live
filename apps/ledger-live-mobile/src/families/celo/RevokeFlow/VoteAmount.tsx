@@ -102,7 +102,13 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="CeloRevoke" name="Amount" />
+      <TrackScreen
+        category="CeloRevoke"
+        name="Amount"
+        flow="stake"
+        action="revoke"
+        currency="celo"
+      />
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
