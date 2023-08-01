@@ -1,7 +1,10 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { MappedAsset, CurrenciesByProviderId } from "./type";
 
-const groupCurrenciesByProvider = (assets: MappedAsset[], currenciesSupported: CryptoOrTokenCurrency[]) => {
+const groupCurrenciesByProvider = (
+  assets: MappedAsset[],
+  currenciesSupported: CryptoOrTokenCurrency[],
+) => {
   const assetsByLedgerId: Record<string, MappedAsset> = {};
   for (const asset of assets) {
     assetsByLedgerId[asset.ledgerId] = asset;

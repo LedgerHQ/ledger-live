@@ -28,7 +28,7 @@ export const useGroupedCurrenciesByProvider = () => {
       currenciesByMarketcap(coinsAndTokensSupported),
       getMappedAssets(),
     ]);
-    const currenciesByProvider = groupCurrenciesByProvider(assets, sortedCurrenciesSupported)
+    const currenciesByProvider = groupCurrenciesByProvider(assets, sortedCurrenciesSupported);
     setCurrenciesByProvider(currenciesByProvider);
     setCurrencies(
       currenciesByProvider

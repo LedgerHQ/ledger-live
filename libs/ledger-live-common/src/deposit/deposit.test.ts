@@ -18,11 +18,13 @@ describe("Deposit logic", () => {
   });
 
   test("groupCurrenciesByProvider", () => {
-    const currencies = MAPPED_ASSETS.map(asset => getTokenById(asset.ledgerId))
+    const currencies = MAPPED_ASSETS.map(asset => getTokenById(asset.ledgerId));
     const result = groupCurrenciesByProvider(MAPPED_ASSETS, currencies);
-    expect(result).toEqual([{
-      providerId: 'tether',
-      currenciesByNetwork: currencies,
-    }]);
+    expect(result).toEqual([
+      {
+        providerId: "tether",
+        currenciesByNetwork: currencies,
+      },
+    ]);
   });
 });
