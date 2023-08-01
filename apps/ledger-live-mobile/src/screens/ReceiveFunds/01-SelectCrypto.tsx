@@ -47,68 +47,42 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { currenciesByProvider, sortedCryptoCurrencies } = useGroupedCurrenciesByProvider();
 
   const onPressItem = useCallback(
-    (currency: CryptoCurrency | TokenCurrency) => {
+    (curr: CryptoCurrency | TokenCurrency) => {
       track("asset_clicked", {
-        asset: currency.name,
+        asset: curr.name,
         page: "Choose a crypto to secure",
       });
 
       const provider = currenciesByProvider.find(elem =>
         elem.currenciesByNetwork.some(
           currencyByNetwork =>
-            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
+            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === curr.id,
         ),
       );
 
-      const accs = findAccountByCurrency(accounts, currency);
-      if (accs.length > 0) {
-        // if we found one or more accounts of the given currency we select account
+      // If the selected currency exists on multiple networks we redirect to the SelectNetwork screen
+      if (provider && provider?.currenciesByNetwork.length > 1) {
+        navigation.navigate(ScreenName.DepositSelectNetwork, {
+          provider,
+        });
+        return;
+      }
 
-        if (provider && provider?.currenciesByNetwork.length > 1) {
-          navigation.navigate(ScreenName.DepositSelectNetwork, {
-            provider,
-          });
-        } else {
-          navigation.navigate(ScreenName.ReceiveSelectAccount, {
-            currency,
-            createTokenAccount: true,
-          });
-        }
-      } else if (currency.type === "TokenCurrency") {
-        // cases for token currencies
-        const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
-
-        if (parentAccounts.length > 0) {
-          // if we found one or more accounts of the parent currency we select account
-          if (provider && provider?.currenciesByNetwork.length > 1) {
-            navigation.navigate(ScreenName.DepositSelectNetwork, {
-              provider,
-            });
-          } else {
-            navigation.navigate(ScreenName.ReceiveSelectAccount, {
-              currency,
-              createTokenAccount: true,
-            });
-          }
-        } else {
-          // if we didn't find any account of the parent currency we add and create one
-          navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-            currency: currency.parentCurrency,
-            createTokenAccount: true,
-          });
-        }
+      const isToken = curr.type === "TokenCurrency";
+      const currency = isToken ? curr.parentCurrency : curr;
+      const currencyAccounts = findAccountByCurrency(accounts, currency);
+      
+      if (currencyAccounts.length > 0) {
+        // If we found one or more accounts of the currency then we select account
+        navigation.navigate(ScreenName.ReceiveSelectAccount, {
+          currency,
+        });
       } else {
-        if (provider && provider?.currenciesByNetwork.length > 1) {
-          // we redirect to choose network on wich one you want to create the account
-          navigation.navigate(ScreenName.DepositSelectNetwork, {
-            provider,
-          });
-        } else {
-          // else we create a currency account
-          navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-            currency,
-          });
-        }
+        // If we didn't find any account of the parent currency then we add one
+        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
+          currency,
+          createTokenAccount: isToken || undefined,
+        });
       }
     },
     [accounts, navigation, currenciesByProvider],
