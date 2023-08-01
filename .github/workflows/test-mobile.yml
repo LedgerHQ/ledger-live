@@ -47,8 +47,8 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter

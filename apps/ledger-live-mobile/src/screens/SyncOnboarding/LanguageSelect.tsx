@@ -76,7 +76,7 @@ const LanguageSelect = () => {
       dispatch(setLanguage(selectedLanguage));
       updateIdentify();
     }
-  }, [dispatch, selectedLanguage]);
+  }, [dispatch, selectedLanguage, toggleModal]);
 
   const handleLanguageSelectOnChange = useCallback((l: Locale) => {
     setSelectedLanguage(l);

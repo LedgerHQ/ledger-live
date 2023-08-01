@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -16,19 +16,20 @@ import {
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "../../../screens/Swap/utils";
+import { Toast } from "../../Toast/Toast";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
   accounts?: AccountLikeArray;
 };
 
-const iconBuy = Icons.PlusMedium;
-const iconSell = Icons.MinusMedium;
-const iconSwap = Icons.BuyCryptoMedium;
-const iconReceive = Icons.ArrowBottomMedium;
-const iconSend = Icons.ArrowTopMedium;
-const iconAddAccount = Icons.WalletMedium;
-const iconStake = Icons.ClaimRewardsMedium;
+const iconBuy = IconsLegacy.PlusMedium;
+const iconSell = IconsLegacy.MinusMedium;
+const iconSwap = IconsLegacy.BuyCryptoMedium;
+const iconReceive = IconsLegacy.ArrowBottomMedium;
+const iconSend = IconsLegacy.ArrowTopMedium;
+const iconAddAccount = IconsLegacy.WalletMedium;
+const iconStake = IconsLegacy.ClaimRewardsMedium;
 
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
@@ -86,6 +87,16 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
               disabled: isPtxServiceCtaScreensDisabled,
+              modalOnDisabledClick: {
+                component: () => (
+                  <Toast
+                    id="ptx-services"
+                    type="success"
+                    title={t("notifications.ptxServices.toast.title")}
+                    icon="info"
+                  />
+                ),
+              },
               testId: "market-buy-btn",
               navigationParams: [
                 NavigatorName.Exchange,
@@ -115,11 +126,18 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                 },
               ] as const,
               disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
-              modalOnDisabledClick: !readOnlyModeEnabled
-                ? {
-                    component: ZeroBalanceDisabledModalContent,
-                  }
-                : undefined,
+              modalOnDisabledClick: {
+                component: isPtxServiceCtaScreensDisabled
+                  ? () => (
+                      <Toast
+                        id="ptx-services"
+                        type="success"
+                        title={t("notifications.ptxServices.toast.title")}
+                        icon="info"
+                      />
+                    )
+                  : ZeroBalanceDisabledModalContent,
+              },
             },
           ]
         : []),
@@ -143,11 +161,18 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                       },
                     ] as const,
                     disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
-                    modalOnDisabledClick: !isPtxServiceCtaScreensDisabled
-                      ? {
-                          component: ZeroBalanceDisabledModalContent,
-                        }
-                      : undefined,
+                    modalOnDisabledClick: {
+                      component: isPtxServiceCtaScreensDisabled
+                        ? () => (
+                            <Toast
+                              id="ptx-services"
+                              type="success"
+                              title={t("notifications.ptxServices.toast.title")}
+                              icon="info"
+                            />
+                          )
+                        : ZeroBalanceDisabledModalContent,
+                    },
                   },
                 ]
               : []),

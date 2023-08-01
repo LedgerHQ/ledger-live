@@ -75,6 +75,7 @@ jobs:
       FORCE_COLOR: 3
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
+      test-fail: ${{ steps.test.outcome }}
     runs-on: ubuntu-latest
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
@@ -88,6 +89,7 @@ jobs:
       - name: build cli
         run: pnpm build:cli
       - name: test cli
+        id: test
         run: pnpm test --filter="live-cli"
       - name: get diff
         id: diff
@@ -135,8 +137,8 @@ jobs:
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
@@ -165,6 +167,7 @@ jobs:
             const fs = require("fs");
             fs.writeFileSync("summary-${{ matrix.os }}.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
+        if: always()
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-${{ matrix.os }}.txt
@@ -191,7 +194,7 @@ jobs:
                 status: "${{ needs.test-docs.result }}",
               },
               cli: {
-                pass: ${{ needs.test-cli.outputs.fail != '1' }},
+                pass: ${{ needs.test-cli.outputs.test-fail != 'success' && needs.test-cli.outputs.fail != '1' }},
                 status: "${{ needs.test-docs.result }}",
               },
               libraries: {

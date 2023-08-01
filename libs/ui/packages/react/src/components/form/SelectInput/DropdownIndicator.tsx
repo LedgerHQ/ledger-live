@@ -2,7 +2,7 @@ import React from "react";
 import { components, GroupBase, StylesConfig, DropdownIndicatorProps } from "react-select";
 import { useTheme } from "styled-components";
 import Text from "../../asorted/Text";
-import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/react";
+import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/reactLegacy";
 
 export function getStyles<
   O = unknown,

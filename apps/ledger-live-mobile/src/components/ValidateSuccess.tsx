@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
-import { Icons, IconBox, Text, Flex, Log } from "@ledgerhq/native-ui";
+import { IconsLegacy, IconBox, Text, Flex, Log } from "@ledgerhq/native-ui";
 
 import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import Alert from "./Alert";
@@ -28,7 +28,7 @@ function ValidateSuccess({
   description,
   primaryButton,
   secondaryButton,
-  icon = Icons.CheckAloneMedium,
+  icon = IconsLegacy.CheckAloneMedium,
   iconColor = "success.c50",
   iconBoxSize = 64,
   iconSize = 24,

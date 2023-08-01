@@ -127,7 +127,7 @@ export default function DebugFirmwareUpdate() {
     ) =>
       setActionState((oldState: UpdateFirmwareActionState) => ({
         ...oldState,
-        error: { type: errorType, name: error, message: error },
+        error: { type: errorType, name: error, message: error, retrying: false },
       })),
     [],
   );

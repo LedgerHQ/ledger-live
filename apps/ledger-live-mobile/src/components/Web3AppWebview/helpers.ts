@@ -371,6 +371,13 @@ function useUiHook(): Partial<UiHook> {
           onClose: onCancel,
         });
       },
+      "device.select": ({ appName, onSuccess, onCancel }) => {
+        navigation.navigate(ScreenName.DeviceConnect, {
+          appName,
+          onSuccess,
+          onClose: onCancel,
+        });
+      },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
         navigation.navigate(NavigatorName.PlatformExchange, {
           screen: ScreenName.PlatformStartExchange,

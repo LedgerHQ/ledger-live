@@ -10,7 +10,7 @@ import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
 import { shouldUpdateYet } from "~/helpers/user";
 import { useRemoteConfig } from "~/renderer/components/RemoteConfig";
 import { VISIBLE_STATUS } from "./Updater/Banner";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const history = useHistory();
   const location = useLocation();
@@ -43,7 +43,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.Rea
     <TopBanner
       id={"fw-update-banner"}
       content={{
-        Icon: Icons.NanoFoldedMedium,
+        Icon: IconsLegacy.NanoFoldedMedium,
         message: (
           <Trans
             i18nKey={

@@ -1,5 +1,27 @@
 # @ledgerhq/live-cli
 
+## 22.10.1
+
+### Patch Changes
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4), [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49)]:
+  - @ledgerhq/live-common@31.3.1
+  - @ledgerhq/hw-transport-node-hid@6.27.19
+
+## 22.10.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49)]:
+  - @ledgerhq/hw-transport-node-hid@6.27.19-hotfix.0
+
+## 22.10.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`2317fccb67`](https://github.com/LedgerHQ/ledger-live/commit/2317fccb6776a077eaca8828da8371d402323be4)]:
+  - @ledgerhq/live-common@31.3.1-hotfix.0
+
 ## 22.10.0
 
 ### Minor Changes

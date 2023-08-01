@@ -2,7 +2,7 @@ import React from "react";
 import { ComponentStory } from "@storybook/react-native";
 import Tooltip from "../../../../src/components/Layout/Modals/Tooltip";
 import Text from "../../../../src/components/Text";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 
 export default {
   title: "Layout/Modal/Tooltip",
@@ -15,7 +15,7 @@ export const Default: ComponentStory<typeof Tooltip> = (args: typeof DefaultArgs
       title={args.title}
       description={args.description}
       subtitle={args.subtitle}
-      Icon={Icons.WarningMedium}
+      Icon={IconsLegacy.WarningMedium}
       tooltipContent={
         <>
           <Text>Tooltip323</Text>

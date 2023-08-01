@@ -1,3 +1,7 @@
+# 2.64.2
+
+Some users reported issues when adding accounts and trying to swap crypto. We've patched this up, and everything is running smoothly again.
+
 # 2.64.1
 
 ### 🚀 Features

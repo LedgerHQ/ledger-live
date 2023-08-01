@@ -142,9 +142,6 @@ test.describe.parallel("Swap", () => {
     const drawer = new Drawer(page);
     const layout = new Layout(page);
 
-    let swapId: string;
-    let detailsSwapId: string;
-
     await page.route("https://swap.ledger.com/v4/providers**", async route => {
       const mockProvidersResponse = getProvidersMock();
       route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
@@ -221,16 +218,22 @@ test.describe.parallel("Swap", () => {
     await test.step("Confirm swap with Nano App", async () => {
       await deviceAction.confirmSwap();
       await deviceAction.silentSign();
-      const originalSwapId = await swapPage.verifySuccessfulExchange();
-      swapId = originalSwapId.replace("#", "");
+      await swapPage.waitForSuccessfulExchange();
+      await expect.soft(swapPage.swapId).toHaveText("#12345");
       await expect.soft(drawer.content).toHaveScreenshot("confirmed-swap.png");
     });
 
     await test.step("Verify Swap details are present in the exchange drawer", async () => {
       await swapPage.navigateToExchangeDetails();
-      detailsSwapId = await swapPage.verifyExchangeDetails();
-      await expect(detailsSwapId).toEqual(swapId);
-      await expect.soft(drawer.content).toHaveScreenshot("verify-swap-details.png");
+      await swapPage.waitForExchangeDetails();
+      await expect.soft(swapPage.detailsSwapId).toHaveText("12345");
+      await expect.soft(drawer.swapAmountFrom).toContainText("-1.280"); // regex /-1.280\d+ BTC/ not working with toHaveText() and value can change after the first 3 decimals so this will have to do for now - see LIVE-8642
+      await expect.soft(drawer.swapAmountTo).toContainText("+17.898");
+      await expect.soft(drawer.swapAccountFrom).toHaveText("Bitcoin 2 (legacy)");
+      await expect.soft(drawer.swapAccountTo).toHaveText("Ethereum 2");
+
+      // Flaky due to LIVE-8642 - the formatting is sometimes different values - therefore we are doing the above text checks
+      // await expect.soft(drawer.content).toHaveScreenshot("verify-swap-details.png");
     });
 
     await test.step("Verify Swap details are present in the swap history", async () => {

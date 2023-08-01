@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-evm",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Ledger EVM Coin integration",
   "keywords": [
     "Ledger",
@@ -59,7 +59,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "axios": "0.26.1",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
     "eip55": "^2.1.1",
     "ethers": "5.7.2",
     "expect": "^27.4.6",
