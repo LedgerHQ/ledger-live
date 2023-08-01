@@ -76,9 +76,7 @@ const SelectFeeStrategy = ({ transaction, account, onClick, gasOptions }: Props)
     () =>
       strategies.map(strategy => {
         const selected = transaction.feesStrategy === strategy;
-
         const gasOption = gasOptions[strategy];
-
         const estimatedFees = getEstimatedFees(getTypedTransaction(transaction, gasOption));
 
         return (

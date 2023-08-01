@@ -64,6 +64,7 @@ const StepFees = (props: StepProps) => {
       .dividedBy(1000000000)
       .toFixed();
   }
+
   return (
     <Box flow={4}>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
