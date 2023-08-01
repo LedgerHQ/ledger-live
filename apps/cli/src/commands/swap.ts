@@ -172,7 +172,7 @@ const exec = async (opts: SwapJobOpts) => {
     toParentAccount,
   };
 
-  const exchangeRates = await getExchangeRates(exchange, transaction);
+  const exchangeRates = await getExchangeRates({ exchange, transaction });
 
   console.log({ exchangeRates });
 
