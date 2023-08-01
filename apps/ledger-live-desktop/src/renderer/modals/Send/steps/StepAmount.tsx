@@ -159,4 +159,5 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     );
   }
 }
+
 export default StepAmount;

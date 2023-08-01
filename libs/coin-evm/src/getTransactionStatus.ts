@@ -96,7 +96,7 @@ export const validateAmount = (
   // if no amount or 0
   if ((!transaction.amount || transaction.amount.isZero()) && !canHaveZeroAmount) {
     errors.amount = new AmountRequired(); // "Amount required"
-  } else if (totalSpent.isGreaterThan(account.balance)) {
+  } else if (!transaction.nft && totalSpent.isGreaterThan(account.balance)) {
     // if not enough to make the transaction
     errors.amount = new NotEnoughBalance(); // "Sorry, insufficient funds"
   }
