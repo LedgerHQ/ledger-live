@@ -13,6 +13,7 @@ const HelpButton = ({ enabled, url, eventButton }: Props) => {
   const onClickButton = useCallback(() => {
     track("button_clicked", {
       button: eventButton,
+      type: "{?}"
     });
     Linking.openURL(url);
   }, [url, eventButton]);

@@ -88,6 +88,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
     (currency: CryptoCurrency | TokenCurrency) => {
       track("network_clicked", {
         network: currency.name,
+        page: "Choose a network",
       });
 
       const cryptoToSend = provider?.currenciesByNetwork.find(curByNetwork =>
@@ -136,6 +137,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
   const hideBanner = useCallback(() => {
     track("button_clicked", {
       button: "Close network article",
+      page: "Choose a network",
     });
     dispatch(setCloseNetworkBanner(true));
     setBanner(false);
@@ -145,6 +147,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
     track("button_clicked", {
       button: "Choose a network article",
       type: "card",
+      page: "Choose a network",
     });
     Linking.openURL(depositNetworkBannerMobile?.params.url);
   }, [depositNetworkBannerMobile?.params.url]);

@@ -102,6 +102,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const openAdditionalInfoModal = useCallback(() => {
     track("notification_clicked", {
       button: "Imported and created account",
+      page: "Receive Account Qr Code",
     });
     setIsAddionalInfoModalOpen(true);
     hideToast();
@@ -114,6 +115,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const onRetry = useCallback(() => {
     track("button_clicked", {
       button: "Verify address",
+      page: "Receive Account Qr Code",
     });
     const params = { ...route.params, notSkippable: true };
     setIsModalOpened(false);
@@ -130,6 +132,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const hideBanner = useCallback(() => {
     track("button_clicked", {
       button: "How to withdraw from exchange",
+      page: "Receive Account Qr Code",
     });
     dispatch(setCloseWithdrawBanner(true));
     setBanner(false);
@@ -139,6 +142,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     track("button_clicked", {
       button: "How to withdraw from exchange",
       type: "card",
+      page: "Receive Account Qr Code",
     });
     Linking.openURL(depositWithdrawBannerMobile?.params.url);
   }, [depositWithdrawBannerMobile?.params.url]);
@@ -183,13 +187,17 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   useEffect(() => {
     if (verified && currency) {
-      track("Verification Success", { currency: currency.name });
+      track("Verification Success", {
+        currency: currency.name,
+        page: "Receive Account Qr Code",
+      });
     }
   }, [verified, currency]);
 
   const onShare = useCallback(() => {
     track("button_clicked", {
       button: "Share address",
+      page: "Receive Account Qr Code",
     });
     if (mainAccount?.freshAddress) {
       Share.share({ message: mainAccount?.freshAddress });
@@ -201,6 +209,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     Clipboard.setString(mainAccount.freshAddress);
     track("button_clicked", {
       button: "Copy address",
+      page: "Receive Account Qr Code",
     });
     const options = {
       enableVibrateFallback: false,
@@ -250,7 +259,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     <Flex flex={1} mb={insets.bottom}>
       <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
-        <TrackScreen category="Deposit" name="Qr Code" currency={currency.name} />
+        <TrackScreen category="Deposit" name="Receive Account Qr Code" asset={currency.name} network={currency?.parentCurrency?.name} />
         <Flex p={0} alignItems="center" justifyContent="center">
           <StyledTouchableHightlight
             activeOpacity={1}

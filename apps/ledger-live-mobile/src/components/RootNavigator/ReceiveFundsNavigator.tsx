@@ -99,7 +99,7 @@ export default function ReceiveFundsNavigator() {
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               <HelpButton
-                eventButton="Choose a network"
+                eventButton="Choose a network article"
                 url={depositNetworkBannerMobile?.params.url}
                 enabled={depositNetworkBannerMobile?.enabled ?? false}
               />

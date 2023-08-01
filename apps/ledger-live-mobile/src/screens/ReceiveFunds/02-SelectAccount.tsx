@@ -84,7 +84,8 @@ function ReceiveSelectAccount({
       if (!selectedAccount && currency) {
         setSelectedAccount(account.id);
         track("account_clicked", {
-          currency: currency.name,
+          asset: currency.name,
+          page: "Select account to deposit to",
         });
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           ...route.params,
@@ -124,6 +125,7 @@ function ReceiveSelectAccount({
   const createNewAccount = useCallback(() => {
     track("button_clicked", {
       button: "Create a new account",
+      page: "Select account to deposit to",
     });
     if (currency && currency.type === "TokenCurrency") {
       navigationAccount.navigate(NavigatorName.AddAccounts, {
@@ -147,7 +149,7 @@ function ReceiveSelectAccount({
       <TrackScreen
         category="Deposit"
         name="Select account to deposit to"
-        currency={currency.name}
+        asset={currency.name}
       />
       <Flex p={6}>
         <Text
