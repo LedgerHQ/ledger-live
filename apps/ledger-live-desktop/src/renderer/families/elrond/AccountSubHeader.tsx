@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { Trans, useTranslation } from "react-i18next";
+import { SubAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
 
 import Box, { Card } from "~/renderer/components/Box";
@@ -12,7 +13,7 @@ import AccountSubHeaderDrawer from "~/renderer/components/AccountSubHeader/Accou
 import Alert from "~/renderer/components/Alert";
 
 export interface AccountSubHeaderPropsType {
-  account: ElrondAccount;
+  account: ElrondAccount | SubAccount;
 }
 
 const CardContent = styled(Box)`
@@ -40,7 +41,11 @@ const CustomButton = styled(Button)`
 const AccountSubHeader = ({ account }: AccountSubHeaderPropsType) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { t } = useTranslation();
-  const { elrondResources } = account;
+
+  const isGuarded =
+    account.type === "Account" && account.elrondResources
+      ? account.elrondResources.isGuarded
+      : false;
 
   const openDrawer = () => {
     setIsDrawerOpen(true);
@@ -78,7 +83,7 @@ const AccountSubHeader = ({ account }: AccountSubHeaderPropsType) => {
         />
       </Card>
 
-      {elrondResources.isGuarded && (
+      {isGuarded && (
         <Alert type="warning" mb={3}>
           <Trans i18nKey={`elrond.guardedAccountWarning`} />
         </Alert>
