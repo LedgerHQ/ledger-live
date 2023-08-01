@@ -1,4 +1,4 @@
-import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import React, { FC } from "react";
 import QueuedDrawer from "../QueuedDrawer";
 import { TrackScreen } from "../../analytics";
