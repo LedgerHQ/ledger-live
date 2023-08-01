@@ -2923,11 +2923,6 @@
         "why": "Tell me why.",
         "addressVerified": "Your address is verified"
       },
-      "additionalInfoModal": {
-        "title": "Why we imported an account?",
-        "subtitle": "We detected that you had a previous {{currencyTicker}} account on your seed. We imported this account for you.",
-        "closeCta": "Ok, got it"
-      },
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."

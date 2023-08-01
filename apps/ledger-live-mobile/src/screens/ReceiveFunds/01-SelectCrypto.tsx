@@ -55,8 +55,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
       const provider = currenciesByProvider.find(elem =>
         elem.currenciesByNetwork.some(
-          currencyByNetwork =>
-            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === curr.id,
+          currencyByNetwork => (currencyByNetwork as CryptoCurrency | TokenCurrency).id === curr.id,
         ),
       );
 
@@ -71,7 +70,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       const isToken = curr.type === "TokenCurrency";
       const currency = isToken ? curr.parentCurrency : curr;
       const currencyAccounts = findAccountByCurrency(accounts, currency);
-      
+
       if (currencyAccounts.length > 0) {
         // If we found one or more accounts of the currency then we select account
         navigation.navigate(ScreenName.ReceiveSelectAccount, {

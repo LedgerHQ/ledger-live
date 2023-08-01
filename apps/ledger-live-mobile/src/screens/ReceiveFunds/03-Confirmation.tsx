@@ -14,22 +14,13 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
-import {
-  Flex,
-  Text,
-  IconsLegacy,
-  Button,
-  Notification,
-  Box,
-  BannerCard,
-} from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Button, Box, BannerCard } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
-import AdditionalInfoModal from "./AdditionalInfoModal";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
@@ -86,31 +77,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
-  const [isToastDisplayed, setIsToastDisplayed] = useState(false);
-  const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
   const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
   const insets = useSafeAreaInsets();
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setBanner] = useState(!hasClosedWithdrawBanner);
-
-  const hideToast = useCallback(() => {
-    setIsToastDisplayed(false);
-  }, []);
-
-  const openAdditionalInfoModal = useCallback(() => {
-    track("notification_clicked", {
-      button: "Imported and created account",
-      page: "Receive Account Qr Code",
-    });
-    setIsAddionalInfoModalOpen(true);
-    hideToast();
-  }, [setIsAddionalInfoModalOpen, hideToast]);
-
-  const closeAdditionalInfoModal = useCallback(() => {
-    setIsAddionalInfoModalOpen(false);
-  }, [setIsAddionalInfoModalOpen]);
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -170,7 +142,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             renamings: {},
           }),
         );
-        setIsToastDisplayed(true);
         setHasAddedTokenAccount(true);
       }
     }
@@ -259,7 +230,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     <Flex flex={1} mb={insets.bottom}>
       <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
-        <TrackScreen category="Deposit" name="Receive Account Qr Code" asset={currency.name} network={currency?.parentCurrency?.name} />
+        <TrackScreen
+          category="Deposit"
+          name="Receive Account Qr Code"
+          asset={currency.name}
+          network={currency?.parentCurrency?.name}
+        />
         <Flex p={0} alignItems="center" justifyContent="center">
           <StyledTouchableHightlight
             activeOpacity={1}
@@ -362,46 +338,27 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         </Flex>
       </NavigationScrollView>
       <Flex m={6}>
-        {isToastDisplayed ? (
-          <Notification
-            Icon={IconsLegacy.CircledCheckMedium}
-            variant={"neutral"}
-            title={t("transfer.receive.toastMessages.accountImported", {
-              currencyTicker: currency.ticker,
-            })}
-            onClose={hideToast}
-            linkText={t("transfer.receive.toastMessages.why")}
-            onLinkPress={openAdditionalInfoModal}
-          />
-        ) : (
-          <Flex>
-            <Button type="main" size="large" onPress={onRetry}>
-              {t("transfer.receive.receiveConfirmation.verifyAddress")}
-            </Button>
+        <Flex>
+          <Button type="main" size="large" onPress={onRetry}>
+            {t("transfer.receive.receiveConfirmation.verifyAddress")}
+          </Button>
 
-            {depositWithdrawBannerMobile?.enabled && displayBanner && (
-              <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-                <Flex pb={insets.bottom} mt={6}>
-                  <BannerCard
-                    typeOfRightIcon="close"
-                    title={t("transfer.receive.receiveConfirmation.bannerTitle")}
-                    LeftElement={<BankMedium />}
-                    onPressDismiss={hideBanner}
-                    onPress={clickLearn}
-                  />
-                </Flex>
-              </Animated.View>
-            )}
-          </Flex>
-        )}
+          {depositWithdrawBannerMobile?.enabled && displayBanner && (
+            <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+              <Flex pb={insets.bottom} mt={6}>
+                <BannerCard
+                  typeOfRightIcon="close"
+                  title={t("transfer.receive.receiveConfirmation.bannerTitle")}
+                  LeftElement={<BankMedium />}
+                  onPressDismiss={hideBanner}
+                  onPress={clickLearn}
+                />
+              </Flex>
+            </Animated.View>
+          )}
+        </Flex>
       </Flex>
       {verified ? null : isModalOpened ? <ReceiveSecurityModal onVerifyAddress={onRetry} /> : null}
-
-      <AdditionalInfoModal
-        isOpen={isAddionalInfoModalOpen}
-        onClose={closeAdditionalInfoModal}
-        currencyTicker={currency.ticker}
-      />
     </Flex>
   );
 }
