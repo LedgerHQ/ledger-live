@@ -2,7 +2,7 @@ import { timer, of } from "rxjs";
 import { map, delayWhen } from "rxjs/operators";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice, LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { useOnboardingStatePolling } from "./useOnboardingStatePolling";
 import { OnboardingState, OnboardingStep } from "../../hw/extractOnboardingState";
 import { SeedPhraseType } from "@ledgerhq/types-live";
@@ -432,6 +432,82 @@ describe("useOnboardingStatePolling", () => {
       // Fatal error on the second run
       expect(result.current.allowedError).toBeNull();
       expect(result.current.fatalError).toBeInstanceOf(Error);
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+      expect(result.current.lockedDevice).toBe(false);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      // The polling should have been stopped, and we never update the onboardingState
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.fatalError).toBeInstanceOf(Error);
+      expect(result.current.onboardingState).not.toEqual(anOnboardingStateThatShouldNeverBeReached);
+      expect(result.current.lockedDevice).toBe(false);
+    });
+  });
+
+  describe("When the device is in bootloader mode while polling the device state", () => {
+    const anOnboardingStateThatShouldNeverBeReached = {
+      ...aSecondOnboardingState,
+    };
+
+    beforeEach(() => {
+      mockedGetOnboardingStatePolling.mockReturnValue(
+        of(
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+            lockedDevice: false,
+          },
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+            lockedDevice: false,
+          },
+          {
+            // It should never be reached
+            onboardingState: { ...anOnboardingStateThatShouldNeverBeReached },
+            allowedError: null,
+            lockedDevice: false,
+          },
+        ).pipe(
+          delayWhen((_, index) => {
+            return timer(index * pollingPeriodMs);
+          }),
+          map((value, index) => {
+            // Throws an "unexpected bootloader" error the second time
+            if (index === 1) {
+              throw new UnexpectedBootloader("Device in bootloader during the polling");
+            }
+            return value;
+          }),
+        ),
+      );
+    });
+
+    it("should be considered a fatal error, and it should update the allowed error to null, keep the previous onboarding state and stop the polling", async () => {
+      const device = aDevice;
+
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      // Everything is ok on the first run
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+      expect(result.current.lockedDevice).toBe(false);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      // Unexpected bootloader fatal error on the second run
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.fatalError).toBeInstanceOf(UnexpectedBootloader);
       expect(result.current.onboardingState).toEqual(anOnboardingState);
       expect(result.current.lockedDevice).toBe(false);
 
