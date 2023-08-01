@@ -13,10 +13,13 @@ type Props = {
   source?: string;
   hasCheckbox?: boolean;
 };
-const DelegationModal = ({ account, hasCheckbox, singleProviderRedirectMode, source }: Props) => {
+
+const StakingModal = ({ account, hasCheckbox, singleProviderRedirectMode, source }: Props) => {
   const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
 
-  if (!ethStakingProviders?.enabled) return null;
+  if (!ethStakingProviders?.enabled) {
+    return null;
+  }
 
   return (
     <Modal
@@ -45,4 +48,5 @@ const DelegationModal = ({ account, hasCheckbox, singleProviderRedirectMode, sou
     />
   );
 };
-export default DelegationModal;
+
+export default StakingModal;

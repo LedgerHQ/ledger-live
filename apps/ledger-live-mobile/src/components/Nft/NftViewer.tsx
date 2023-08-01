@@ -223,8 +223,8 @@ const NftViewer = ({ route }: Props) => {
           contract: nft?.contract,
         },
       });
-      // TODO: should be "evm" before doing the merge
-    } else if (defaultTransaction.family === "ethereum") {
+      // TODO: should remove "ethereum" before merge
+    } else if (defaultTransaction.family === "ethereum" || defaultTransaction.family === "evm") {
       transaction = bridge.updateTransaction(defaultTransaction, {
         tokenIds: [nft?.tokenId],
         // Quantity is set to Infinity first to allow the user to change it on the amount page

@@ -60,6 +60,7 @@ const StepAmount = (props: StepProps) => {
   }, [specific.nft, transaction]);
 
   if (!status) return null;
+
   return (
     <Box flow={4}>
       <TrackPage
@@ -136,6 +137,7 @@ export class StepAmountFooter extends PureComponent<StepProps> {
       maxPriorityFee: maxPriorityFeeError,
       maxFee: maxFeeError,
     } = errors;
+
     return (
       <>
         {!isNFTSend ? (
