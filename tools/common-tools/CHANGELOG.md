@@ -1,5 +1,18 @@
 # live-common-tools
 
+## 0.6.2-nightly.4
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+- Updated dependencies [[`28068a5333`](https://github.com/LedgerHQ/ledger-live/commit/28068a53336eb51936c529e0a06605b64ece24ec), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce), [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85)]:
+  - @ledgerhq/live-common@31.4.0-nightly.4
+  - @ledgerhq/cryptoassets@9.11.0-nightly.1
+  - @ledgerhq/coin-framework@0.4.1-nightly.2
+  - @ledgerhq/domain-service@1.1.7-nightly.2
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.1
+
 ## 0.6.2-nightly.3
 
 ### Patch Changes

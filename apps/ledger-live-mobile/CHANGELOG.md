@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.28.0-nightly.5
+
+### Minor Changes
+
+- [#4139](https://github.com/LedgerHQ/ledger-live/pull/4139) [`28068a5333`](https://github.com/LedgerHQ/ledger-live/commit/28068a53336eb51936c529e0a06605b64ece24ec) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - add generic error and add error screen recover device already seeded
+
+- [#4139](https://github.com/LedgerHQ/ledger-live/pull/4139) [`89de3b7659`](https://github.com/LedgerHQ/ledger-live/commit/89de3b76593fe1f6df7634ed3638267c90517851) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - change wording error device already seeded on recover onboarding
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+- [#4151](https://github.com/LedgerHQ/ledger-live/pull/4151) [`37d5cd4d43`](https://github.com/LedgerHQ/ledger-live/commit/37d5cd4d43738b182d8c3066689434aab1962c60) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - market screen entrypoint in wallet screen on feature flag. Deeplink mutations on feature flag changes.
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+- Updated dependencies [[`28068a5333`](https://github.com/LedgerHQ/ledger-live/commit/28068a53336eb51936c529e0a06605b64ece24ec), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce), [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85)]:
+  - @ledgerhq/live-common@31.4.0-nightly.4
+  - @ledgerhq/types-cryptoassets@7.4.0-nightly.0
+  - @ledgerhq/types-live@6.38.0-nightly.0
+  - @ledgerhq/coin-evm@0.5.0-nightly.1
+  - @ledgerhq/coin-framework@0.4.1-nightly.2
+  - @ledgerhq/domain-service@1.1.7-nightly.2
+  - @ledgerhq/evm-tools@1.0.3-nightly.1
+  - @ledgerhq/native-ui@0.20.3-nightly.2
+
 ## 3.28.0-nightly.4
 
 ### Patch Changes

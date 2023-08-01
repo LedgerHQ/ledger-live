@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.4
+
+### Minor Changes
+
+- [#4139](https://github.com/LedgerHQ/ledger-live/pull/4139) [`28068a5333`](https://github.com/LedgerHQ/ledger-live/commit/28068a53336eb51936c529e0a06605b64ece24ec) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - add generic error and add error screen recover device already seeded
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+- Updated dependencies [[`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce), [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85)]:
+  - @ledgerhq/cryptoassets@9.11.0-nightly.1
+  - @ledgerhq/coin-evm@0.5.0-nightly.1
+  - @ledgerhq/coin-algorand@0.2.5-nightly.2
+  - @ledgerhq/coin-framework@0.4.1-nightly.2
+  - @ledgerhq/coin-polkadot@0.3.2-nightly.2
+  - @ledgerhq/domain-service@1.1.7-nightly.2
+  - @ledgerhq/evm-tools@1.0.3-nightly.1
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.1
+
 ## 31.4.0-nightly.3
 
 ### Patch Changes

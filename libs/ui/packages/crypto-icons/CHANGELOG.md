@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.4.1-nightly.0
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
 ## 0.4.0
 
 ### Minor Changes
