@@ -33,6 +33,7 @@ import TroubleshootingDrawer, {
   Props as TroubleshootingDrawerProps,
 } from "./TroubleshootingDrawer";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import { LockedDeviceError } from "@ledgerhq/errors";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -192,7 +193,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError) {
+    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
       timeout = setTimeout(() => {
         setIsPollingOn(false);
         setTroubleshootingDrawerOpen(true);

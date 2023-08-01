@@ -33,6 +33,7 @@ import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import { LockedDeviceError } from "@ledgerhq/errors";
 
 const READY_REDIRECT_DELAY_MS = 2500;
 const POLLING_PERIOD_MS = 1000;
@@ -445,7 +446,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   useEffect(() => {
     let desyncTimer: NodeJS.Timeout | null = null;
 
-    if (allowedError) {
+    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
       setIsDesyncOverlayOpen(true);
       desyncTimer = setTimeout(handleDesyncTimerRunsOut, desyncTimeout);
     } else {

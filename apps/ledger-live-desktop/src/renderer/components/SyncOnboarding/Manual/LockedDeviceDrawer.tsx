@@ -6,6 +6,7 @@ import { useTheme } from "styled-components";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { DeviceBlocker } from "../../DeviceAction/DeviceBlocker";
 
 export type Props = {
   deviceModelId: DeviceModelId;
@@ -26,6 +27,7 @@ const LockedDeviceDrawer = ({ deviceModelId }: Props) => {
           deviceName: productName,
         })}
       </Text>
+      <DeviceBlocker />
     </Flex>
   );
 };
