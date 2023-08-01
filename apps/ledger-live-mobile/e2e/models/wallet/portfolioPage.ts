@@ -16,6 +16,8 @@ export default class PortfolioPage {
   portfolioSettingsButton = () => getElementById("settings-icon");
   transferButton = () => getElementById("transfer-button");
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
+  sendTransferMenuButton = () => getElementById("transfer-send-button");
+  sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
 
   navigateToSettings() {
@@ -35,6 +37,20 @@ export default class PortfolioPage {
     return waitForElementById("settings-icon", 120000);
   }
 
+  async navigateToSendFromTransferMenu() {
+    await tapByElement(this.sendTransferMenuButton());
+  }
+
+  async openAddAccount() {
+    const element = getElementById("add-account-button");
+    await element.tap();
+  }
+
+  async receive() {
+    const element = getElementById("receive-button");
+    await element.tap();
+  }
+
   async waitForPortfolioReadOnly() {
     await waitForElementById(this.readOnlyPortfolioId);
     expect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
@@ -48,5 +64,9 @@ export default class PortfolioPage {
 
   openMarketPage() {
     return tapByElement(this.marketTabButton());
+  }
+
+  openMyLedger() {
+    return tapByElement(getElementById("TabBarManager"));
   }
 }

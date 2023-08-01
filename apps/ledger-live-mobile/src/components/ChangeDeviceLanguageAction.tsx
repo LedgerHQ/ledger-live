@@ -2,12 +2,11 @@ import React, { useEffect, useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
-import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { useTranslation } from "react-i18next";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import DeviceAction from "./DeviceAction";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
+import { useInstallLanguageDeviceAction } from "../hooks/deviceActions";
 
 type Props = {
   device: Device;
@@ -18,7 +17,6 @@ type Props = {
   onError?: (err: Error) => void;
 };
 
-const action = createAction(installLanguage);
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
   device,
   language,
@@ -27,6 +25,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
   onResult,
   onError,
 }) => {
+  const action = useInstallLanguageDeviceAction();
   const showAlert = !device?.wired;
   const { t } = useTranslation();
   const request = useMemo(() => ({ language }), [language]);

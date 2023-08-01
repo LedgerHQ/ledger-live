@@ -1,9 +1,12 @@
 import { Server } from "ws";
 import path from "path";
 import fs from "fs";
+import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
-import { MessageData } from "./client";
+import { MessageData, MockDeviceEvent } from "./client";
+import { BleState } from "../../src/reducers/types";
+import { Account } from "@ledgerhq/types-live";
 
 type ServerData = {
   type: "walletAPIResponse";
@@ -48,10 +51,31 @@ export function loadConfig(fileName: string, agreed: true = true): void {
   }
 }
 
+export function loadBleState(bleState: BleState) {
+  postMessage({ type: "importBle", payload: bleState });
+}
+
+export function loadAccounts(accounts: Account[]) {
+  postMessage({
+    type: "importAccounts",
+    payload: accounts.map(account => ({
+      version: 1,
+      data: toAccountRaw(account),
+    })),
+  });
+}
+
 function navigate(name: string) {
   postMessage({
     type: "navigate",
     payload: name,
+  });
+}
+
+export function mockDeviceEvent(...args: MockDeviceEvent[]) {
+  postMessage({
+    type: "mockDeviceEvent",
+    payload: args,
   });
 }
 

@@ -2,10 +2,9 @@ import React, { useMemo } from "react";
 
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
-import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import DeviceActionModal from "./DeviceActionModal";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
+import { useInstallLanguageDeviceAction } from "../hooks/deviceActions";
 
 type Props = {
   device: Device | null;
@@ -15,7 +14,6 @@ type Props = {
   onResult?: () => void;
 };
 
-const action = createAction(installLanguage);
 const ChangeDeviceLanguageActionModal: React.FC<Props> = ({
   device,
   language,
@@ -23,6 +21,7 @@ const ChangeDeviceLanguageActionModal: React.FC<Props> = ({
   onError,
   onResult,
 }) => {
+  const action = useInstallLanguageDeviceAction();
   const request = useMemo(() => ({ language }), [language]);
 
   return (

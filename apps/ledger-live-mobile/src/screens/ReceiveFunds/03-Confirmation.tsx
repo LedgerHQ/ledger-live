@@ -280,7 +280,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             width="100%"
             justifyContent={"space-between"}
           >
-            <Text numberOfLines={4} flex={1} fontWeight="semiBold">
+            <Text testID="receive-fresh-address" numberOfLines={4} flex={1} fontWeight="semiBold">
               {mainAccount.freshAddress}
             </Text>
             <CopyLink

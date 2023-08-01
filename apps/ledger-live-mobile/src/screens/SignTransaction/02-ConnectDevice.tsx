@@ -4,8 +4,6 @@ import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -16,8 +14,7 @@ import { navigateToSelectDevice } from "../ConnectDevice";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { ScreenName } from "../../const";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-
-const action = createAction(connectApp);
+import { useTransactionDeviceAction } from "../../hooks/deviceActions";
 
 function ConnectDevice({
   navigation,
@@ -26,6 +23,7 @@ function ConnectDevice({
   SignTransactionNavigatorParamList,
   ScreenName.SignTransactionConnectDevice
 >) {
+  const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");

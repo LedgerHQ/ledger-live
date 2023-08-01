@@ -58,6 +58,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
           ml={3}
           onPress={goToReceiveFunds}
           flex={1}
+          testID="receive-button"
         >
           {t("account.receive")}
         </Button>
@@ -79,6 +80,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
         width={"100%"}
         mt={7}
         mb={11}
+        testID="add-account-button"
       >
         {t("account.emptyState.addAccountCta")}
       </Button>

@@ -22,6 +22,8 @@
       "loaded": true,
       "shareAnalytics": true,
       "sentryLogs": true,
+      "readOnlyModeEnabled": false,
+      "hasOrderedNano": true,
       "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],
       "accountsViewMode": "list",
