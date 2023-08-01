@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import { Observable, of } from "rxjs";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { getEnv } from "../../env";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
 import type {
   Exchange,
