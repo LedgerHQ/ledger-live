@@ -29,7 +29,7 @@ export const selectorStateDefaultValues = {
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
 export const useFromAmountStatusMessage = (
-  { account, parentAccount, status }: Result<Transaction>,
+  { account, parentAccount, status, transaction }: Result<Transaction>,
   // The order of errors/warnings here will determine the precedence
   statusToInclude: string[],
 ): Error | undefined => {
@@ -53,6 +53,9 @@ export const useFromAmountStatusMessage = (
   }, [status]);
 
   return useMemo(() => {
+    // don't return an error/warning if we have no transaction or if transaction.amount <= 0
+    if (transaction?.amount.lte(0)) return undefined;
+
     const [relevantStatus] = statusEntries
       .filter(Boolean)
       .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
@@ -67,7 +70,7 @@ export const useFromAmountStatusMessage = (
     }
 
     return relevantStatus;
-  }, [statusEntries, currency, estimatedFees]);
+  }, [statusEntries, currency, estimatedFees, transaction?.amount]);
 };
 
 export const useSwapTransaction = ({
