@@ -55,7 +55,10 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
     return {};
   }, [error, isValidError]);
 
-  const translation = useMemo(() => t(translationKey, { ...args }), [args, t, translationKey]);
+  const translation = useMemo(() => {
+    const translation = t(translationKey, { ...args });
+    return translation === translationKey ? undefined : translation;
+  }, [args, t, translationKey]);
 
   useEffect(() => {
     if (!isValidError) {
@@ -67,7 +70,9 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
 
   if (!translation) {
     if (fallback) return <>{fallback}</>;
-    return t(`errors.generic.${field}`, args) || <></>;
+    const errorKey = `errors.generic.${field}`;
+    const errorTranslation = t(errorKey, args);
+    return errorKey === errorTranslation ? <></> : <>{errorTranslation}</>;
   }
 
   if (typeof translation !== "string") {
