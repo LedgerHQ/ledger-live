@@ -61,7 +61,7 @@ export const useProviderRates: UseProviderRates = ({
   timeoutErrorMessage,
 }) => {
   const { account: fromAccount, parentAccount: fromParentAccount } = fromState;
-  const { currency: toCurrency, parentAccount: toParentAccount, account: toAccount } = toState;
+  const { currency: currencyTo, parentAccount: toParentAccount, account: toAccount } = toState;
 
   const [rates, dispatchRates] = useReducer(ratesReducer, ratesReducerInitialState);
   const [getRatesDependency, setGetRatesDependency] = useState<unknown | null>(null);
@@ -82,7 +82,7 @@ export const useProviderRates: UseProviderRates = ({
           !transaction ||
           !transaction?.amount ||
           !transaction?.amount.gt(0) ||
-          !toCurrency ||
+          !currencyTo ||
           !fromAccount
         ) {
           setExchangeRate && setExchangeRate();
@@ -90,19 +90,21 @@ export const useProviderRates: UseProviderRates = ({
         }
         dispatchRates({ type: "loading" });
         try {
-          let rates: ExchangeRate[] = await getExchangeRates(
-            {
-              fromAccount,
-              toAccount,
-              fromParentAccount,
-              toParentAccount,
-            } as Exchange,
+          const exchange = {
+            fromAccount,
+            toAccount,
+            fromParentAccount,
+            toParentAccount,
+          } as Exchange;
+
+          let rates: ExchangeRate[] = await getExchangeRates({
+            exchange,
             transaction,
-            toCurrency,
+            currencyTo,
             providers,
             timeout,
             timeoutErrorMessage,
-          );
+          });
 
           if (abort) return;
           if (rates.length === 0) {
@@ -217,7 +219,7 @@ export const useProviderRates: UseProviderRates = ({
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fromAccount, toCurrency, transaction?.amount, getRatesDependency, onNoRates, setExchangeRate],
+    [fromAccount, currencyTo, transaction?.amount, getRatesDependency, onNoRates, setExchangeRate],
   );
 
   return {

@@ -79,14 +79,18 @@ export type ProvidersResponseV4 = {
 
 export type AvailableProvider = AvailableProviderV3;
 
+export type ExchangeObject = {
+  exchange: Exchange;
+  transaction: Transaction;
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null;
+  providers?: AvailableProviderV3[];
+  timeout?: number;
+  timeoutErrorMessage?: string;
+};
+
 export type GetExchangeRates = (
-  arg0: Exchange,
-  arg1: Transaction,
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
-  providers?: AvailableProviderV3[],
-  timeout?: number,
-  timeoutErrorMessage?: string,
-) => Promise<ExchangeRate[]>;
+  exchangeObject: ExchangeObject,
+) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
 
 export type GetProviders = () => Promise<AvailableProvider[]>;
 
