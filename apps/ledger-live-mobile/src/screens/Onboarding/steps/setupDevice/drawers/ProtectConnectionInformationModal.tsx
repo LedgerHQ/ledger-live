@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Linking } from "react-native";
-import { Flex, Icons, ScrollListContainer, Box, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, ScrollListContainer, Box, Text } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { urls } from "../../../../../config/urls";
 import Button from "../../../../../components/wrappedUi/Button";
@@ -56,7 +56,7 @@ const ProtectConnectionInformationModal = () => {
           type="main"
           size="large"
           onPress={handlePressLearnHowToUpdate}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           event={"button_clicked"}
           eventProperties={{
             button: "Learn more",
@@ -69,7 +69,7 @@ const ProtectConnectionInformationModal = () => {
           type={"default"}
           size="large"
           onPress={handlePressContactSupport}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           event={"link_clicked"}
           eventProperties={{
             button: "Contact Ledger Support",

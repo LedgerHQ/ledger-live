@@ -15,6 +15,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import type { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 
 type Opts = ScanCommonOpts &
   Partial<{
@@ -134,7 +135,7 @@ const start = async (opts: Opts) => {
     log("walletconnect", "session_request", payload);
     connector.approveSession({
       accounts: [account.freshAddress],
-      chainId: (account.currency.ethereumLikeInfo as any).chainId,
+      chainId: (account.currency.ethereumLikeInfo as EthereumLikeInfo).chainId,
     });
   });
   connector.on("call_request", async (error, payload: WCPayload) => {

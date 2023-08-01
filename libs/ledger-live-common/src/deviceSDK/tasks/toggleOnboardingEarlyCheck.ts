@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId } from "@ledgerhq/types-live";
-import { SharedTaskEvent } from "./core";
+import { sharedLogicTaskWrapper, SharedTaskEvent } from "./core";
 import { withTransport } from "../transports/core";
 import {
   toggleOnboardingEarlyCheckCmd,
@@ -29,20 +29,7 @@ export type ToggleOnboardingEarlyCheckTaskArgs = {
   toggleType: "enter" | "exit";
 };
 
-/**
- * During the onboarding, makes the device enter or exit the early security check steps
- *
- * This task only puts (or moves out) the device to the state/step of the early security check.
- * It does not starts any "security checks".
- *
- * If the device is not in the WELCOME or WELCOME_STEP2 onboarding state, this task will emit
- * a "DeviceInInvalidState" event.
- *
- * @param deviceId The id of the targeted device
- * @param toggleType either "enter" or "exit"
- * @returns An observable that emits a success, error or shared-task event
- */
-export function toggleOnboardingEarlyCheckTask({
+function internalToggleOnboardingEarlyCheckTask({
   deviceId,
   toggleType,
 }: ToggleOnboardingEarlyCheckTaskArgs): Observable<ToggleOnboardingEarlyCheckTaskEvent> {
@@ -87,3 +74,20 @@ export function toggleOnboardingEarlyCheckTask({
     });
   });
 }
+
+/**
+ * During the onboarding, makes the device enter or exit the early security check steps
+ *
+ * This task only puts (or moves out) the device to the state/step of the early security check.
+ * It does not starts any "security checks".
+ *
+ * If the device is not in the WELCOME or WELCOME_STEP2 onboarding state, this task will emit
+ * a "DeviceInInvalidState" event.
+ *
+ * @param deviceId The id of the targeted device
+ * @param toggleType either "enter" or "exit"
+ * @returns An observable that emits a success, error or shared-task event
+ */
+export const toggleOnboardingEarlyCheckTask = sharedLogicTaskWrapper(
+  internalToggleOnboardingEarlyCheckTask,
+);

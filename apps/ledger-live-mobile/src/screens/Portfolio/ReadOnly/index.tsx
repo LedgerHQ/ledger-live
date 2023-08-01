@@ -97,7 +97,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <Box onLayout={onPortfolioCardLayout}>
+      <Box onLayout={onPortfolioCardLayout} key="GraphCardContainer">
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
@@ -109,12 +109,12 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       </Box>,
       ...(hasOrderedNano
         ? [
-            <Box mx={6} mt={7}>
+            <Box mx={6} mt={7} key="SetupDeviceBanner">
               <SetupDeviceBanner screen="Wallet" />
             </Box>,
           ]
         : []),
-      <Box background={colors.background.main} px={6} mt={6}>
+      <Box background={colors.background.main} px={6} mt={6} key="Assets">
         <Assets assets={assetsToDisplay} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
           {t("portfolio.seelAllAssets")}
@@ -137,6 +137,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
               }}
               screen="Wallet"
               {...IMAGE_PROPS_BIG_NANO}
+              key="BuyDeviceBanner"
             />,
           ]
         : []),

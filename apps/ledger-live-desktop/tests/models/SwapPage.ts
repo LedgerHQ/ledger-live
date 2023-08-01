@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import { waitFor } from "tests/utils/waitFor";
+import { waitFor } from "../utils/waitFor";
 
 export class SwapPage {
   readonly page: Page;
@@ -170,9 +170,8 @@ export class SwapPage {
     await this.exchangeButton.click();
   }
 
-  async verifySuccessfulExchange() {
+  async waitForSuccessfulExchange() {
     await this.swapId.waitFor({ state: "visible" });
-    return this.swapId.innerText();
   }
 
   async navigateToExchangeDetails() {
@@ -180,7 +179,7 @@ export class SwapPage {
     await this.swapId.waitFor({ state: "hidden" }); // for some reason the detailsSwapId visible check below is not sufficient and we need to check that this element is gone before checking the new page is available.
   }
 
-  async verifyExchangeDetails() {
+  async waitForExchangeDetails() {
     await this.detailsSwapId.waitFor({ state: "visible" });
     return this.detailsSwapId.innerText();
   }

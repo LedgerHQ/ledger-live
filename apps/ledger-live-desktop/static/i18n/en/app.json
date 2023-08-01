@@ -142,7 +142,8 @@
     "connectDevice": "Connect your device",
     "add": "Add",
     "or": "OR",
-    "clearAll": "Clear all"
+    "clearAll": "Clear all",
+    "buyLedger": "Buy a Ledger"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -3918,8 +3919,6 @@
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "catalogUrl": "Set the catalog apps provider",
       "catalogUrlDesc": "Enter your custom catalog provider URL",
-      "catalogRampServer": "Set the buy / sell providers",
-      "catalogRampServerDesc": "Switch between multiple trading providers",
       "enablePlatformDevTools": "Enable platform dev tools",
       "enablePlatformDevToolsDesc": "Enable opening platform apps dev tools window",
       "customLockScreen": "Custom lock-screen assets",
@@ -5145,6 +5144,10 @@
     "CurrencyNotSupported": {
       "title": "{{currencyName}} is not supported",
       "description": "This crypto asset is not yet supported. Please contact Ledger Support."
+    },
+    "DeviceAlreadySetup": {
+      "title": "Your {{device}} is already setup with a Secret Recovery Phrase",
+      "description": "Connect a Ledger that's not set up."
     },
     "DeviceNotGenuine": {
       "title": "Possibly not genuine",

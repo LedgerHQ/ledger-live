@@ -1,4 +1,13 @@
-import { Divider, Flex, Text, Link, Icons, Button, Checkbox, Alert } from "@ledgerhq/native-ui";
+import {
+  Divider,
+  Flex,
+  Text,
+  Link,
+  IconsLegacy,
+  Button,
+  Checkbox,
+  Alert,
+} from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -52,7 +61,7 @@ const ConfirmRecoveryStep = ({ firmwareVersion, firmwareNotes, onContinue, devic
           <Flex mt={6}>
             <Link
               onPress={openRecoveryPhraseInfo}
-              Icon={Icons.ExternalLinkMedium}
+              Icon={IconsLegacy.ExternalLinkMedium}
               iconPosition="right"
               type="color"
               style={{ justifyContent: "flex-start" }}

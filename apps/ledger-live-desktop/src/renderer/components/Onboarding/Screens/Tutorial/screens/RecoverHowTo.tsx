@@ -9,7 +9,7 @@ import { useTheme } from "styled-components";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { OnboardingContext } from "../../../index";
-import { Icons, Link, Box, Button, Popin, Text } from "@ledgerhq/react-ui";
+import { IconsLegacy, Link, Box, Button, Popin, Text } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
@@ -53,7 +53,7 @@ export function RecoverHowTo() {
         <Bullet key={index} bulletText={index + 1} text={step.text} subText={step.subText} />
       ))}
       <Box>
-        <Link type={"color"} Icon={Icons.InfoAltMedium} onClick={() => setIsDrawerOpen(true)}>
+        <Link type={"color"} Icon={IconsLegacy.InfoAltMedium} onClick={() => setIsDrawerOpen(true)}>
           <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.iDontSee" />
         </Link>
       </Box>
@@ -71,12 +71,17 @@ export function RecoverHowTo() {
           <Button
             variant="main"
             size={"large"}
-            Icon={Icons.ExternalLinkMedium}
+            Icon={IconsLegacy.ExternalLinkMedium}
             onClick={onClickArticleLink}
           >
             <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.modal.learnHowToUpdate" />
           </Button>
-          <Link mt={8} size={"medium"} Icon={Icons.ExternalLinkMedium} onClick={onClickSupportLink}>
+          <Link
+            mt={8}
+            size={"medium"}
+            Icon={IconsLegacy.ExternalLinkMedium}
+            onClick={onClickSupportLink}
+          >
             <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.modal.contactLedgerSupport" />
           </Link>
         </Popin.Footer>

@@ -6,7 +6,7 @@ import { AppUpdater } from "../../models/AppUpdater";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",
-  env: { DEBUG_UPDATE: true },
+  env: { DEBUG_UPDATE: "true" },
 });
 
 test("Updater", async ({ page }) => {

@@ -23,7 +23,7 @@ export function EthereumStakingDrawer() {
     }
   }, [ethStakingProviders, openDrawer]);
 
-  if (!ethStakingProviders) return null;
+  if (!ethStakingProviders || drawer.id !== "EthStakingDrawer") return null;
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>

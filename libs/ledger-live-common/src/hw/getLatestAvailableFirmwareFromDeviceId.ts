@@ -23,7 +23,10 @@ export type GetLatestAvailableFirmwareFromDeviceIdOutput =
   Observable<GetLatestAvailableFirmwareFromDeviceIdResult>;
 
 /**
+ * Deprecated: use `libs/ledger-live-common/src/deviceSDK/actions/getLatestAvailableFirmware.ts`
+ *
  * Get the latest available firmware for a device only from its id
+ *
  * @param deviceId A device id, or an empty string if device is usb plugged
  * @returns An Observable pushing objects containing:
  * - firmwareUpdateContext: a FirmwareUpdateContext if found, or null or undefined otherwise

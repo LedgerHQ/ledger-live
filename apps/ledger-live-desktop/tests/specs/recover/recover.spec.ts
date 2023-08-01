@@ -2,9 +2,6 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { RecoverRestorePage } from "../../models/RecoverRestorePage";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-// importing manually until we correctly include the test directory
-// in the default tsconfig for the IDE
-import "../../../src/index-types.d.ts";
 
 test.use({
   userdata: "skip-onboarding",

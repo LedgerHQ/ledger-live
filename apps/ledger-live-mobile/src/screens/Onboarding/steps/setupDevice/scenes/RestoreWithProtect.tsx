@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Icons, NumberedList, Text } from "@ledgerhq/native-ui";
+import { IconsLegacy, NumberedList, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 import Button from "../../../../../components/wrappedUi/Button";
@@ -73,7 +73,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
           type="main"
           size="large"
           onPress={onLearnToUpdate}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           mt={0}
           mb={6}
           event={"button_clicked"}
@@ -85,7 +85,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
           type="default"
           size="large"
           onPress={onSupportLink}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           event={"button_clicked"}
           eventProperties={{ button: "Contact Ledger support" }}
         >

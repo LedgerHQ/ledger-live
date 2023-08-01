@@ -17,7 +17,7 @@ inputs:
   bucket-name:
     description: "aws bucket name"
     required: false
-    default: "ll-cache-github-sbx"
+    default: "ll-gha-s3-cache"
 outputs:
   port:
     description: "The port the local server runs on"

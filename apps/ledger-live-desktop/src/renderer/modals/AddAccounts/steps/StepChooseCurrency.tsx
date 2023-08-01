@@ -56,6 +56,12 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
+  const coreum = useFeature("currencyCoreum");
+  const polygon_zk_evm = useFeature("currencyPolygonZkEvm");
+  const polygon_zk_evm_testnet = useFeature("currencyPolygonZkEvmTestnet");
+  const base = useFeature("currencyBase");
+  const base_goerli = useFeature("currencyBaseGoerli");
+  const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -86,8 +92,22 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       syscoin,
       internet_computer: internetComputer,
       telos: telosEvm,
+      coreum,
+      polygonZkEvm: polygon_zk_evm,
+      polygonZkEvmTestnet: polygon_zk_evm_testnet,
+      base,
+      baseGoerli: base_goerli,
+      klaytn,
     }),
     [
+      axelar,
+      stargaze,
+      secretNetwork,
+      umee,
+      desmos,
+      onomy,
+      quicksilver,
+      persistence,
       avaxCChain,
       stacks,
       optimism,
@@ -105,16 +125,14 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       moonriver,
       velasEvm,
       syscoin,
-      axelar,
-      stargaze,
-      desmos,
-      umee,
-      secretNetwork,
-      onomy,
-      persistence,
-      quicksilver,
       internetComputer,
       telosEvm,
+      coreum,
+      polygon_zk_evm,
+      polygon_zk_evm_testnet,
+      base,
+      base_goerli,
+      klaytn,
     ],
   );
   const currencies = useMemo(() => {
