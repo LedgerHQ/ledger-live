@@ -14,6 +14,7 @@ export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
     case "etherscan":
     case "blockscout":
     case "teloscan":
+    case "klaytnfinder":
       return etherscanLikeApi;
     case "ledger":
       return ledgerExplorerApi;

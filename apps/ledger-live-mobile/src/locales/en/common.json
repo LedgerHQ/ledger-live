@@ -240,6 +240,10 @@
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again."
     },
+    "DeviceAlreadySetup": {
+      "title": "Your {{device}} is already setup with a Secret Recovery Phrase",
+      "description": "Connect a Ledger that's not set up."
+    },
     "DeviceNotGenuine": {
       "title": "Device possibly not genuine",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
@@ -1583,7 +1587,8 @@
         "title": "The OS on your Ledger Nano X needs to be updated",
         "desc": "You can try updating the OS or contact Ledger support for assistance.",
         "cta": "Learn how to update",
-        "supportLink": "Contact Ledger Support"
+        "supportLink": "Contact Ledger Support",
+        "buyLedger": "Buy a Ledger"
       }
     },
     "stepRecoveryPhrase": {
@@ -3800,6 +3805,7 @@
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
+    "connectAnotherDevice": "Connect another Ledger",
     "unlockDevice": "Unlock your device",
     "outdated": "App version outdated",
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
@@ -6257,7 +6263,8 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
-      "nft": "NFTs"
+      "nft": "NFTs",
+      "market": "Market"
     },
     "nftGallery": {
       "filters": {

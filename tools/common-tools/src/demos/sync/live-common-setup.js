@@ -58,4 +58,5 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "coreum",
 ]);

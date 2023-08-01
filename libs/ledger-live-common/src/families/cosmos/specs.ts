@@ -480,6 +480,10 @@ const stargaze = {
   ...generateGenericCosmosTest("stargaze"),
 };
 
+const coreum = {
+  ...generateGenericCosmosTest("coreum"),
+};
+
 export default {
   axelar,
   cosmos,
@@ -491,4 +495,5 @@ export default {
   onomy,
   secretNetwork,
   stargaze,
+  coreum,
 };

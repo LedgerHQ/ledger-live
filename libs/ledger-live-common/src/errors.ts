@@ -30,6 +30,7 @@ export const LanguageInstallTimeout = createCustomErrorClass("LanguageInstallTim
 
 export const DeviceOnboarded = createCustomErrorClass("DeviceOnboarded");
 export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
+export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
   "InvalidAddressBecauseAlreadyDelegated",
 );

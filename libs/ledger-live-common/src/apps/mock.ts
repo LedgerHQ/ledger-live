@@ -38,8 +38,8 @@ export const deviceInfo210lo5: DeviceInfo = {
   version: "2.1.0-lo5",
 };
 
-export const deviceInfo210 = {
-  version: "2.1.0",
+export const deviceInfo222 = {
+  version: "2.2.2",
   mcuVersion: "2.30",
   seVersion: "2.1.0",
   mcuBlVersion: undefined,

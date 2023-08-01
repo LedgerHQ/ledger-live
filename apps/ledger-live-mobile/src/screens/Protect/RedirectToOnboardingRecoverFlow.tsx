@@ -3,7 +3,7 @@ import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { DeviceOnboarded } from "@ledgerhq/live-common/errors";
+import { DeviceAlreadySetup } from "@ledgerhq/live-common/errors";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -128,8 +128,8 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
     [goBack, navigation],
   );
 
-  const onOpenHelp = useCallback(() => {
-    Linking.openURL(urls.errors.PairingFailed);
+  const onClickBuyLedger = useCallback(() => {
+    Linking.openURL(urls.buyNanoX);
   }, []);
 
   const onRetry = useCallback(() => {
@@ -177,7 +177,7 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
             <Button
               iconPosition="right"
               Icon={IconsLegacy.ExternalLinkMedium}
-              onPress={onOpenHelp}
+              onPress={onClickBuyLedger}
               mb={0}
             >
               <Trans i18nKey="help.helpCenter.desc" />
@@ -196,10 +196,7 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
         <Flex px={16} py={5} flex={1} justifyContent="space-between">
           <Flex flex={1} justifyContent="center">
             <GenericErrorView
-              error={
-                new DeviceOnboarded("Your device is already setup with a Secret Recover Phrase")
-              }
-              withDescription
+              error={new DeviceAlreadySetup("", { device: device?.modelId ?? "device" })}
               hasExportLogButton={false}
               withIcon
               withHelp={false}
@@ -208,15 +205,15 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
 
           <Flex mt={30} flexDirection="column" width="100%">
             <Button type="main" onPress={onRetry} mt={6}>
-              <Trans i18nKey="common.retry" />
+              <Trans i18nKey="DeviceAction.connectAnotherDevice" />
             </Button>
             <Button
               iconPosition="right"
               Icon={IconsLegacy.ExternalLinkMedium}
-              onPress={onOpenHelp}
+              onPress={onClickBuyLedger}
               mb={0}
             >
-              <Trans i18nKey="help.helpCenter.desc" />
+              <Trans i18nKey="onboarding.stepProtect.extraInfo.buyLedger" />
             </Button>
           </Flex>
         </Flex>
