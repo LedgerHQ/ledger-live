@@ -6,7 +6,7 @@ export function toElrondResourcesRaw(r: ElrondResources): ElrondResourcesRaw {
   return {
     nonce,
     delegations,
-    isGuarded
+    isGuarded,
   };
 }
 export function fromElrondResourcesRaw(r: ElrondResourcesRaw): ElrondResources {
@@ -14,7 +14,7 @@ export function fromElrondResourcesRaw(r: ElrondResourcesRaw): ElrondResources {
   return {
     nonce,
     delegations,
-    isGuarded
+    isGuarded,
   };
 }
 

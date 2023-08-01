@@ -43,12 +43,7 @@ export const getAccount = async (addr: string): Promise<MultiversXAccount> => {
   const { balance, nonce, isGuarded } = await api.getAccountDetails(addr);
   const blockHeight = await api.getBlockchainBlockHeight();
 
-  const account = new MultiversXAccount(
-    new BigNumber(balance),
-    nonce,
-    isGuarded,
-    blockHeight
-  );
+  const account = new MultiversXAccount(new BigNumber(balance), nonce, isGuarded, blockHeight);
   return account;
 };
 
@@ -206,8 +201,8 @@ function transactionToEGLDOperation(
       ? fee
       : new BigNumber(0)
     : transaction.mode === "claimRewards"
-      ? delegationAmount.minus(fee)
-      : getEGLDOperationValue(transaction, addr);
+    ? delegationAmount.minus(fee)
+    : getEGLDOperationValue(transaction, addr);
 
   const subOperations = subAccounts
     ? inferSubOperations(transaction.txHash ?? "", subAccounts)
