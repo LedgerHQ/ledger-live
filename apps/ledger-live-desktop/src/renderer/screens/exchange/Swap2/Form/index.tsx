@@ -62,7 +62,6 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 
 const Wrapper = styled(Box).attrs({
@@ -157,6 +156,7 @@ const SwapForm = () => {
     setCurrentFlow(null);
     setError(undefined);
   }, [provider]);
+
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
     if (error) {
@@ -196,6 +196,40 @@ const SwapForm = () => {
   const refreshTime = useRefreshRates(swapTransaction.swap, {
     pause: pauseRefreshing,
   });
+
+  const getCustomFeesPerFamily = useCallback(async transaction => {
+    const { family, maxFeePerGas, maxPriorityFeePerGas, userGasLimit, customGasLimit, feePerByte } =
+      transaction;
+
+    switch (family) {
+      case "ethereum": {
+        const { getGasLimit } = await import("@ledgerhq/live-common/families/ethereum/transaction");
+        return {
+          maxFeePerGas,
+          maxPriorityFeePerGas,
+          userGasLimit,
+          gasLimit: getGasLimit(transaction),
+        };
+      }
+      case "evm": {
+        const { getGasLimit } = await import("@ledgerhq/coin-evm/logic");
+        return {
+          maxFeePerGas,
+          maxPriorityFeePerGas,
+          gasLimit: getGasLimit(transaction),
+          customGasLimit,
+        };
+      }
+      case "bitcoin": {
+        return {
+          feePerByte,
+        };
+      }
+      default:
+        return {};
+    }
+  }, []);
+
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
@@ -208,10 +242,8 @@ const SwapForm = () => {
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
-    const { feesStrategy, maxFeePerGas, maxPriorityFeePerGas, userGasLimit, feeCustomUnit } =
-      transaction;
+    const { feesStrategy } = transaction;
 
-    const feeCustomUnitMagnitude = feeCustomUnit.magnitude;
     const rateId = exchangeRate?.rateId || "12345";
     if (fromAccount && toAccount && feesStrategy) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
@@ -222,15 +254,7 @@ const SwapForm = () => {
           : fromAccount.currency?.units[0].magnitude || 0;
       const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
 
-      const customParams = {
-        maxFeePerGas,
-        maxPriorityFeePerGas,
-        userGasLimit,
-      };
-      if ((fromParentAccount || fromAccount).currency.id) {
-        const { getGasLimit } = await import("@ledgerhq/live-common/families/ethereum/transaction");
-        customParams.gasLimit = getGasLimit(transaction);
-      }
+      const customFeesParams = feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : {};
       history.push({
         pathname: "/swap-web",
         state: {
@@ -240,20 +264,30 @@ const SwapForm = () => {
           fromAmount,
           quoteId: encodeURIComponent(rateId),
           feeStrategy: feesStrategy.toUpperCase(),
-          ...customParams,
+          ...customFeesParams,
         },
       });
     }
-  }, [history, swapTransaction, provider, exchangeRate?.rateId]);
+  }, [
+    swapTransaction.swap,
+    swapTransaction.transaction,
+    exchangeRate?.rateId,
+    getCustomFeesPerFamily,
+    history,
+    provider,
+  ]);
+
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
       refreshIdle();
     }
   }, [refreshIdle, swapTransaction.swap.rates.status]);
+
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapTransaction.transaction]);
+
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
     // (possibly the one that got created)
