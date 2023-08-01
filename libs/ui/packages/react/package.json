@@ -109,7 +109,7 @@
     "@types/styled-system": "^5.1.12",
     "babel-loader": "^8.0.0",
     "csstype": "^3.0.11",
-    "esbuild": "^0.17.14",
+    "esbuild": "^0.18.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "fs-extra": "^10.0.1",
