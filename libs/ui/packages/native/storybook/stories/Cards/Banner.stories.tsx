@@ -3,7 +3,7 @@ import type { ComponentMeta, ComponentStory } from "@storybook/react-native";
 import BannerCard from "../../../src/components/Cards/BannerCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { descriptionBannerCard } from "./descriptionsCards";
-import { WalletConnectMedium } from "@ledgerhq/icons-ui/native";
+import { WalletConnectMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 
 export default {
   title: "Cards",
