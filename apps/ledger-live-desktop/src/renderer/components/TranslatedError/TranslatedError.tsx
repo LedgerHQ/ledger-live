@@ -34,7 +34,7 @@ function ErrorList({ translation }: ErrorListProps) {
 }
 
 export function TranslatedError({ error, fallback, field = "title", noLink }: Props): JSX.Element {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const errorName = error?.name;
 
@@ -55,11 +55,7 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
     return {};
   }, [error, isValidError]);
 
-  const translation = useMemo(
-    (): string | Object | false =>
-      i18n.exists(translationKey, { ...args }) && t(translationKey, { ...args }),
-    [args, t, translationKey, i18n],
-  );
+  const translation = useMemo(() => t(translationKey, { ...args }), [args, t, translationKey]);
 
   useEffect(() => {
     if (!isValidError) {
@@ -71,11 +67,7 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
 
   if (!translation) {
     if (fallback) return <>{fallback}</>;
-    return i18n.exists(`errors.generic.${field}`, args) ? (
-      t(`errors.generic.${field}`, args)
-    ) : (
-      <></>
-    );
+    return t(`errors.generic.${field}`, args) || <></>;
   }
 
   if (typeof translation !== "string") {
