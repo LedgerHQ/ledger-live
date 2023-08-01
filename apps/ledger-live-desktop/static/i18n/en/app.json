@@ -5438,12 +5438,12 @@
       "description": "Please navigate back to the Dashboard on your device"
     },
     "WebsocketConnectionError": {
-      "title": "Sorry, try again (connection error)",
-      "description": null
+      "title": "Network error",
+      "description": "Make sure you are connected to the internet and try again."
     },
     "WebsocketConnectionFailed": {
-      "title": "Sorry, try again (connection closed)",
-      "description": null
+      "title": "Network error",
+      "description": "Make sure you are connected to the internet and try again."
     },
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
