@@ -66,6 +66,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const device = useSelector(getCurrentDevice);
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
+  const [mustRecoverIfBootloader, setMustRecoverIfBootloader] = useState(true);
   const [isBootloader, setIsBootloader] = useState<boolean | null>(null);
   // Needed because `device` object can be null or changed if disconnected/reconnected
   const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
@@ -121,6 +122,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const notifyOnboardingEarlyCheckShouldReset = useCallback(() => {
     setIsPollingOn(true);
     setCurrentStep("loading");
+    setMustRecoverIfBootloader(true);
   }, []);
 
   const restartChecksAfterUpdate = useCallback(() => {
@@ -175,6 +177,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
       // check type == "exit" and toggle status still being == "success" from the previous toggle
       setToggleOnboardingEarlyCheckType(null);
       setCurrentStep("early-security-check");
+      setMustRecoverIfBootloader(false);
     } else {
       setIsPollingOn(false);
       setCurrentStep("companion");
@@ -281,6 +284,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         onComplete={notifyOnboardingEarlyCheckEnded}
         restartChecksAfterUpdate={restartChecksAfterUpdate}
         isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}
+        isBootloader={isBootloader}
       />
     );
   } else if (currentStep === "companion" && lastSeenDevice) {
@@ -299,7 +303,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
-      {isBootloader ? (
+      {isBootloader && mustRecoverIfBootloader ? (
         /**
          * In case a firmware update gets interrupted and the device is in
          * Bootloader mode, we display this device action which will prompt the

@@ -42,6 +42,7 @@ export type Props = {
    * */
   isInitialRunOfSecurityChecks: boolean;
   restartChecksAfterUpdate: () => void;
+  isBootloader: boolean | null;
 };
 
 const commonDrawerProps = {
@@ -62,6 +63,7 @@ const EarlySecurityChecks = ({
   device,
   restartChecksAfterUpdate,
   isInitialRunOfSecurityChecks,
+  isBootloader,
 }: Props) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
@@ -174,6 +176,12 @@ const EarlySecurityChecks = ({
     restartChecksAfterUpdate,
     t,
   ]);
+
+  useEffect(() => {
+    if (updateInterrupted && isBootloader) {
+      restartChecksAfterUpdate();
+    }
+  }, [isBootloader, restartChecksAfterUpdate, updateInterrupted]);
 
   useEffect(() => {
     if (devicePermissionState === "refused") {
