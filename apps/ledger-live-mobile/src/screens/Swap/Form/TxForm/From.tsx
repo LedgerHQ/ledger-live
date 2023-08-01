@@ -21,10 +21,11 @@ interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
   swapError?: Error;
+  swapWarning?: Error;
   isSendMaxLoading: boolean;
 }
 
-export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
+export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoading }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
@@ -78,6 +79,8 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
     [track],
   );
 
+  console.log("%cFrom.tsx line:82 swapWarning", "color: #007acc;", swapWarning);
+
   return (
     <Flex borderBottomWidth={1} borderColor="neutral.c70" paddingBottom={2} marginBottom={4}>
       <Text variant="small" marginBottom={2}>
@@ -104,13 +107,14 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               onChange={swapTx.setFromAmount}
               onFocus={onFocus}
               error={swapError}
+              warning={swapWarning}
               testID="swap-source-amount-textbox"
             />
           </Flex>
         </Flex>
 
-        <Text color="error.c50" textAlign="right" variant="tiny">
-          {swapError ? <TranslatedError error={swapError} /> : ""}
+        <Text color={swapError ? "error.c50" : "warning"} textAlign="right" variant="tiny">
+          {swapError ? <TranslatedError error={swapError || swapWarning} /> : ""}
         </Text>
       </Flex>
     </Flex>

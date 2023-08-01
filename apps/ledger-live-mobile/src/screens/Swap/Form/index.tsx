@@ -149,7 +149,9 @@ export function SwapForm({
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
-  const pageState = usePageState(swapTransaction, swapError);
+  const swapWarning = swapTransaction.fromAmountWarning;
+  const pageState = usePageState(swapTransaction, swapError || swapWarning);
+
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
   const providerKYC = provider ? swapKYC?.[provider] : undefined;
@@ -214,18 +216,19 @@ export function SwapForm({
   // Track errors
   useEffect(
     () => {
-      if (swapError) {
-        trackSwapError(swapError, {
+      const swapErrorOrWarning = swapError || swapWarning;
+      if (swapErrorOrWarning) {
+        trackSwapError(swapErrorOrWarning, {
           sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
         });
         // eslint-disable-next-line no-console
-        console.log("Swap Error", swapError);
-        log("swap", "failed to fetch swaps", swapError);
+        console.log("Swap Error", swapErrorOrWarning);
+        log("swap", "failed to fetch swaps", swapErrorOrWarning);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [swapError],
+    [swapError, swapWarning],
   );
 
   // close login widget once we get a bearer token (i.e: the user is logged in)
@@ -340,6 +343,7 @@ export function SwapForm({
     swapTransaction.transaction &&
     !providersError &&
     !swapError &&
+    !swapWarning &&
     currentBanner === ActionRequired.None &&
     exchangeRate &&
     swapTransaction.swap.to.account;
@@ -488,6 +492,7 @@ export function SwapForm({
               provider={provider}
               exchangeRate={exchangeRate}
               swapError={swapError}
+              swapWarning={swapWarning}
               isSendMaxLoading={swapTransaction.swap.isMaxLoading}
             />
             {(pageState === "empty" || pageState === "loading") && (
