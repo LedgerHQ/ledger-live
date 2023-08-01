@@ -1,11 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, FlatList, Linking } from "react-native";
-import type {
-  CryptoCurrency,
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   useCurrenciesByMarketcap,
   findCryptoCurrencyById,
@@ -26,12 +22,15 @@ import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import BigCurrencyRow from "../../components/BigCurrencyRow";
 import { findAccountByCurrency } from "../../logic/deposit";
+import { AccountLike } from "@ledgerhq/types-live";
+
+type CryptoWithAccounts = { crypto: CryptoCurrency; accounts: AccountLike[] };
 
 type Props = {
   devMode?: boolean;
 } & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.DepositSelectNetwork>;
 
-const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
+const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
 
 export default function SelectNetwork({ navigation, route }: Props) {
   const provider = route?.params?.provider;
@@ -69,6 +68,20 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(
     cryptoCurrencies.filter(e => !!e) as CryptoCurrency[],
+  );
+
+  const sortedCryptoCurrenciesWithAccounts: CryptoWithAccounts[] = useMemo(
+    () =>
+      sortedCryptoCurrencies
+        .map(crypto => {
+          const accs = findAccountByCurrency(accounts, crypto);
+          return {
+            crypto,
+            accounts: accs,
+          };
+        })
+        .sort((a, b) => b.accounts.length - a.accounts.length),
+    [accounts, sortedCryptoCurrencies],
   );
 
   const onPressItem = useCallback(
@@ -137,21 +150,18 @@ export default function SelectNetwork({ navigation, route }: Props) {
   }, [depositNetworkBannerMobile?.params.url]);
 
   const renderItem = useCallback(
-    ({ item }: { item: CryptoOrTokenCurrency }) => {
-      const accs = findAccountByCurrency(accounts, item);
-      return (
-        <BigCurrencyRow
-          currency={item}
-          onPress={onPressItem}
-          subTitle={
-            accs.length > 0
-              ? t("transfer.receive.selectNetwork.accounts", { count: accs.length })
-              : ""
-          }
-        />
-      );
-    },
-    [accounts, onPressItem, t],
+    ({ item }: { item: CryptoWithAccounts }) => (
+      <BigCurrencyRow
+        currency={item.crypto}
+        onPress={onPressItem}
+        subTitle={
+          item.accounts.length > 0
+            ? t("transfer.receive.selectNetwork.account", { count: item.accounts.length })
+            : ""
+        }
+      />
+    ),
+    [onPressItem, t],
   );
 
   return (
@@ -173,7 +183,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
       <FlatList
         contentContainerStyle={styles.list}
-        data={sortedCryptoCurrencies}
+        data={sortedCryptoCurrenciesWithAccounts}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}

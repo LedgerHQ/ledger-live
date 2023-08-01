@@ -2863,7 +2863,8 @@
       },
       "selectNetwork": {
         "title": "Choose a network",
-        "accounts": "{{count}} accounts",
+        "account": "{{count}} account",
+        "account_plural": "{{count}} accounts",
         "subtitle": "Where do you want to deposit your assets ?\nYou must choose the same as the sender.",
         "bannerTitle": "Learn how to choose a network?"
       },
