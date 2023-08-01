@@ -5191,8 +5191,8 @@ importers:
   tools/esbuild-utils:
     devDependencies:
       '@craftamap/esbuild-plugin-html':
-        specifier: ^0.4.0
-        version: 0.4.0(esbuild@0.17.5)
+        specifier: ^0.6.0
+        version: 0.6.1(esbuild@0.17.5)
       dotenv:
         specifier: ^8.2.0
         version: 8.6.0
@@ -12278,11 +12278,11 @@ packages:
     resolution: {integrity: sha512-lb3TU6833arPoPZF8HTeG9V418CpurvqH5Aa/ls0I0wYdPDEMO6622+PQNQhQ8Vw8Az2MXoSyc8jsqrgawT84Q==}
     dev: false
 
-  /@craftamap/esbuild-plugin-html@0.4.0(esbuild@0.17.5):
-    resolution: {integrity: sha512-8k9oyOBritQ0cjE/ugajijU4KME4ZwgHrpeVSltV2PQ21XEnTxXLaU3HcBGGFhyLHs9dLeOOsfezwCd+7bh3Cw==}
+  /@craftamap/esbuild-plugin-html@0.6.1(esbuild@0.17.5):
+    resolution: {integrity: sha512-FNOxFrdAozLgNbV1HZH2gVjLDax4hFxFfVH/qntvkMEkcBO2ZCIBjqlSmmmuLLi3/QyCJAaFnduBJ74jIw8zUg==}
     engines: {node: '>13'}
     peerDependencies:
-      esbuild: '>=0.12.28'
+      esbuild: '>=0.15.10'
     dependencies:
       esbuild: 0.17.5
       jsdom: 17.0.0
