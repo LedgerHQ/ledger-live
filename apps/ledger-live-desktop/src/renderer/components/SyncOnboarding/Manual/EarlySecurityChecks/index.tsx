@@ -4,9 +4,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import Body from "./Body";
-import SoftwareCheckLockedDeviceDrawer, {
-  Props as SoftwareCheckLockedDeviceModalProps,
-} from "./SoftwareCheckLockedDeviceDrawer";
+import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "../LockedDeviceDrawer";
 import SoftwareCheckAllowSecureChannelDrawer, {
   Props as SoftwareCheckAllowSecureChannelDrawerProps,
 } from "./SoftwareCheckAllowSecureChannelDrawer";
@@ -227,11 +225,10 @@ const EarlySecurityChecks = ({
   /** Opening and closing of drawers */
   useEffect(() => {
     if (lockedDeviceModalIsOpen) {
-      const props: SoftwareCheckLockedDeviceModalProps = {
+      const props: LockedDeviceDrawerProps = {
         deviceModelId,
-        productName,
       };
-      setDrawer(SoftwareCheckLockedDeviceDrawer, props, commonDrawerProps);
+      setDrawer(LockedDeviceDrawer, props, commonDrawerProps);
     } else if (allowSecureChannelIsOpen) {
       const props: SoftwareCheckAllowSecureChannelDrawerProps = {
         deviceModelId,

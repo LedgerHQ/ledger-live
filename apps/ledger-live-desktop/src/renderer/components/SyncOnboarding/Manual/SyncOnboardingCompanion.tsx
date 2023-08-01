@@ -31,6 +31,8 @@ import { RecoverState } from "~/renderer/screens/recover/Player";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 
 const READY_REDIRECT_DELAY_MS = 2500;
 const POLLING_PERIOD_MS = 1000;
@@ -223,6 +225,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     onboardingState: deviceOnboardingState,
     allowedError,
     fatalError,
+    lockedDevice,
   } = useOnboardingStatePolling({
     getOnboardingStatePolling,
     device: device || null,
@@ -298,6 +301,19 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     }
     lastCompanionStepKey.current = stepKey;
   }, [productName, stepKey]);
+
+  useEffect(() => {
+    if (lockedDevice) {
+      const props: LockedDeviceDrawerProps = {
+        deviceModelId: device.modelId,
+      };
+      setDrawer(LockedDeviceDrawer, props, {
+        forceDisableFocusTrap: true,
+        preventBackdropClick: true,
+      });
+    }
+    return () => setDrawer();
+  }, [device.modelId, history, lockedDevice]);
 
   useEffect(() => {
     // When the device is seeded, there are 2 cases before triggering the application install step:

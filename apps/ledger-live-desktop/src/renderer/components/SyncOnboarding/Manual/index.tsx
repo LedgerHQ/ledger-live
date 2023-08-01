@@ -27,10 +27,12 @@ import ExitChecksDrawer, {
 } from "./EarlySecurityChecks/ExitChecksDrawer";
 import { renderError } from "../../DeviceAction/rendering";
 import { useTranslation } from "react-i18next";
-import { LockedDeviceError } from "@ledgerhq/errors";
 import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguagePrompt";
 import DeviceAction from "../../DeviceAction";
-import TroubleshootingDrawer from "./TroubleshootingDrawer";
+import TroubleshootingDrawer, {
+  Props as TroubleshootingDrawerProps,
+} from "./TroubleshootingDrawer";
+import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -85,7 +87,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   /* The early security checks are run again after a firmware update. */
   const [isInitialRunOfSecurityChecks, setIsInitialRunOfSecurityChecks] = useState(true);
 
-  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
+  const { onboardingState, allowedError, fatalError, lockedDevice } = useOnboardingStatePolling({
     device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn || isBootloader === null || isBootloader,
@@ -124,6 +126,28 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     setIsInitialRunOfSecurityChecks(false);
     notifyOnboardingEarlyCheckShouldReset();
   }, [notifyOnboardingEarlyCheckShouldReset]);
+
+  useEffect(() => {
+    if (lockedDevice) {
+      const props: LockedDeviceDrawerProps = {
+        deviceModelId,
+      };
+      setDrawer(LockedDeviceDrawer, props, {
+        forceDisableFocusTrap: true,
+        preventBackdropClick: true,
+      });
+    } else if (isTroubleshootingDrawerOpen) {
+      const props: TroubleshootingDrawerProps = {
+        lastKnownDeviceId: deviceModelId,
+        onClose: () => {
+          history.push("/onboarding/select-device");
+          setDrawer();
+        },
+      };
+      setDrawer(TroubleshootingDrawer, props, { forceDisableFocusTrap: true });
+    }
+    return () => setDrawer();
+  }, [deviceModelId, history, isTroubleshootingDrawerOpen, lockedDevice]);
 
   // Handles current step and toggling onboarding early check logics
   useEffect(() => {
@@ -168,7 +192,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
+    if (allowedError) {
       timeout = setTimeout(() => {
         setIsPollingOn(false);
         setTroubleshootingDrawerOpen(true);
@@ -231,10 +255,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     }
   }, [history, isEarlySecurityChecks]);
 
-  const handleTroubleshootingDrawerClose = useCallback(() => {
-    history.push("/onboarding/select-device");
-  }, [history]);
-
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
       <InfiniteLoader />
@@ -287,11 +307,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
         <DeviceAction onResult={onDeviceActionResult} action={action} request={null} />
       ) : (
         <>
-          <TroubleshootingDrawer
-            lastKnownDeviceId={deviceModelId}
-            isOpen={isTroubleshootingDrawerOpen}
-            onClose={handleTroubleshootingDrawerClose}
-          />
           {stepContent}
           <Header onClose={handleClose} />
         </>
