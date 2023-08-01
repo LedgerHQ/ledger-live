@@ -743,18 +743,9 @@ importers:
       '@azure/core-asynciterator-polyfill':
         specifier: ^1.0.2
         version: 1.0.2
-      '@formatjs/intl-datetimeformat':
-        specifier: ^5.0.0
-        version: 5.0.2
-      '@formatjs/intl-getcanonicallocales':
-        specifier: ^1.9.1
-        version: 1.9.2
       '@formatjs/intl-locale':
         specifier: ^2.4.46
         version: 2.4.47
-      '@formatjs/intl-numberformat':
-        specifier: ^7.4.2
-        version: 7.4.3
       '@formatjs/intl-pluralrules':
         specifier: ^4.3.2
         version: 4.3.3
@@ -1403,8 +1394,8 @@ importers:
         specifier: ^20.4.2
         version: 20.4.2
       eslint-config-next:
-        specifier: 13.4.10
-        version: 13.4.10(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3)
+        specifier: 13.4.12
+        version: 13.4.12(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3)
       typescript:
         specifier: ^5.1.3
         version: 5.1.3
@@ -1439,8 +1430,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       algosdk:
-        specifier: 1.13.0
-        version: 1.13.0
+        specifier: 1.13.1
+        version: 1.13.1
       bignumber.js:
         specifier: ^9.1.0
         version: 9.1.0
@@ -1673,11 +1664,11 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       '@polkadot/types':
-        specifier: 9.8.1
-        version: 9.8.1
+        specifier: 9.8.2
+        version: 9.8.2
       '@polkadot/types-known':
-        specifier: 9.8.1
-        version: 9.8.1
+        specifier: 9.8.2
+        version: 9.8.2
       '@polkadot/util':
         specifier: 10.3.1
         version: 10.3.1
@@ -2032,10 +2023,10 @@ importers:
         version: 0.13.4(react@17.0.2)
       '@solana/spl-token':
         specifier: ^0.3.7
-        version: 0.3.8(@solana/web3.js@1.77.2)
+        version: 0.3.8(@solana/web3.js@1.77.3)
       '@solana/web3.js':
-        specifier: 1.77.2
-        version: 1.77.2
+        specifier: 1.77.3
+        version: 1.77.3
       '@stacks/network':
         specifier: 1.2.2
         version: 1.2.2
@@ -2073,8 +2064,8 @@ importers:
         specifier: ^2.6.2
         version: 2.6.2
       '@walletconnect/client':
-        specifier: 1.7.3
-        version: 1.7.3
+        specifier: 1.7.8
+        version: 1.7.8
       '@xstate/react':
         specifier: ^1.6.3
         version: 1.6.3(@types/react@17.0.53)(react@17.0.2)(xstate@4.32.0)
@@ -3320,8 +3311,8 @@ importers:
   libs/ledgerjs/packages/hw-transport-node-ble:
     dependencies:
       '@abandonware/noble':
-        specifier: 1.9.2-21
-        version: 1.9.2-21
+        specifier: 1.9.2-23
+        version: 1.9.2-23
       '@ledgerhq/devices':
         specifier: workspace:^
         version: link:../devices
@@ -4470,8 +4461,8 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       '@react-native-community/datetimepicker':
-        specifier: 6.7.3
-        version: 6.7.3
+        specifier: 6.7.5
+        version: 6.7.5
       '@react-native-community/slider':
         specifier: ^4.4.2
         version: 4.4.2
@@ -4488,17 +4479,17 @@ importers:
         specifier: ^6.5.16
         version: 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/addon-ondevice-actions':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-backgrounds':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-controls':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.5)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-ondevice-notes':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
+        specifier: 6.5.4
+        version: 6.5.4(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0)
       '@storybook/addon-react-native-web':
         specifier: ^0.0.19
         version: 0.0.19(babel-plugin-react-native-web@0.18.12)(metro-react-native-babel-preset@0.76.0)(react-dom@18.0.0)(react@18.0.0)(webpack@5.76.1)
@@ -4515,8 +4506,8 @@ importers:
         specifier: ^6.5.16
         version: 6.5.16(@babel/core@7.22.8)(@storybook/builder-webpack5@6.5.14)(@storybook/manager-webpack5@6.5.14)(eslint@8.41.0)(metro@0.76.0)(react-dom@18.0.0)(react@18.0.0)(typescript@5.1.3)(webpack-dev-server@4.12.0)
       '@storybook/react-native':
-        specifier: 6.5.0-rc.11
-        version: 6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
+        specifier: 6.5.4
+        version: 6.5.4(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0(@svgr/plugin-svgo@5.5.0)
@@ -5298,8 +5289,8 @@ packages:
     dev: false
     optional: true
 
-  /@abandonware/noble@1.9.2-21:
-    resolution: {integrity: sha512-A4Y3RYewdhpMje29nGfzw+OIUb4qQaD/hlkO8pDuh8eN87A3PZ8oY7w+dp9wAZ01GL547oCjGvVyC17LX0E2cw==}
+  /@abandonware/noble@1.9.2-23:
+    resolution: {integrity: sha512-BPb/a2s+t6SIZRU4oNfY61cPM91/+dH0t8Ulb4QpQ1zBfKtR+n4r/r6j+vPcnAOiQ5hWC2lDj+Mc/iiZPAYLRw==}
     engines: {node: '>=6'}
     os: [darwin, linux, freebsd, win32]
     requiresBuild: true
@@ -14669,7 +14660,7 @@ packages:
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
-      semver: 7.5.3
+      semver: 7.5.4
       slash: 3.0.0
       xcode: 3.0.1
       xml2js: 0.4.23
@@ -14690,7 +14681,7 @@ packages:
       getenv: 1.0.0
       glob: 7.1.6
       resolve-from: 5.0.0
-      semver: 7.5.3
+      semver: 7.5.4
       slash: 3.0.0
       xcode: 3.0.1
       xml2js: 0.4.23
@@ -15509,14 +15500,6 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@formatjs/intl-datetimeformat@5.0.2:
-    resolution: {integrity: sha512-yk7CItBMgtUsub123+iqOfXoqG6JHJIl3Pke7eOYb7QFAPsOZliAJb2i0+Tr1FXWcm1PdWZVHEv6C2l4nEmQdw==}
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.11.4
-      '@formatjs/intl-localematcher': 0.2.25
-      tslib: 2.5.0
-    dev: false
-
   /@formatjs/intl-getcanonicallocales@1.9.2:
     resolution: {integrity: sha512-69WTStIJI2ikErOU1Il4NQKLVV8f2x6awr7+/dZz0uihuI7uQRcZtI6k/BBt4EtYaEl6w65YjUF93VuE015C0w==}
     dependencies:
@@ -15540,14 +15523,6 @@ packages:
   /@formatjs/intl-localematcher@0.2.32:
     resolution: {integrity: sha512-k/MEBstff4sttohyEpXxCmC3MqbUn9VvHGlZ8fauLzkbwXmVrEeyzS+4uhrvAk9DWU9/7otYWxyDox4nT/KVLQ==}
     dependencies:
-      tslib: 2.5.0
-    dev: false
-
-  /@formatjs/intl-numberformat@7.4.3:
-    resolution: {integrity: sha512-oxhLCw00YO7brwMPqGD+ui5gdeWoMiRhqsRSqwsDSRd03aJ/N3/VZQDoxGIn3IM9bhlPM5W0ckXiXuOMFLszjw==}
-    dependencies:
-      '@formatjs/ecma402-abstract': 1.11.4
-      '@formatjs/intl-localematcher': 0.2.25
       tslib: 2.5.0
     dev: false
 
@@ -16306,7 +16281,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.1
       '@sinonjs/fake-timers': 10.2.0
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       jest-message-util: 29.6.2
       jest-mock: 29.6.2
       jest-util: 29.6.2
@@ -17052,7 +17027,7 @@ packages:
       '@ledgerhq/errors': 5.50.0
       '@ledgerhq/logs': 5.50.0
       rxjs: 6.6.7
-      semver: 7.5.3
+      semver: 7.5.4
     dev: false
 
   /@ledgerhq/devices@8.0.4:
@@ -17556,8 +17531,8 @@ packages:
   /@next/env@13.4.10:
     resolution: {integrity: sha512-3G1yD/XKTSLdihyDSa8JEsaWOELY+OWe08o0LUYzfuHp1zHDA8SObQlzKt+v+wrkkPcnPweoLH1ImZeUa0A1NQ==}
 
-  /@next/eslint-plugin-next@13.4.10:
-    resolution: {integrity: sha512-YJqyq6vk39JQfvaNtN83t/p5Jy45+bazRL+V4QI8FPd3FBqFYMEsULiwRLgSJMgFqkk4t4JbeZurz+gILEAFpA==}
+  /@next/eslint-plugin-next@13.4.12:
+    resolution: {integrity: sha512-6rhK9CdxEgj/j1qvXIyLTWEaeFv7zOK8yJMulz3Owel0uek0U9MJCGzmKgYxM3aAUBo3gKeywCZKyQnJKto60A==}
     dependencies:
       glob: 7.1.7
     dev: true
@@ -18089,18 +18064,6 @@ packages:
       webpack: 4.46.0
     dev: true
 
-  /@polkadot/keyring@10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1):
-    resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
-    dependencies:
-      '@babel/runtime': 7.20.13
-      '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
-    dev: false
-
   /@polkadot/keyring@10.4.2:
     resolution: {integrity: sha512-7iHhJuXaHrRTG6cJDbZE9G+c1ts1dujp0qbO4RfAPmT7YUvphHvAtCKueN9UKPz5+TYDL+rP/jDEaSKU8jl/qQ==}
     engines: {node: '>=14.0.0'}
@@ -18167,55 +18130,55 @@ packages:
       react-native-svg: 12.5.1(react-native@0.71.6)(react@18.0.0)
     dev: false
 
-  /@polkadot/types-augment@9.8.1:
-    resolution: {integrity: sha512-EvCQvIYFAQzXLZn5mzT6JOsynYMcDgvZqZ9itWmxnHdnQ0LfwaM6nS0fPVMjDfWmcrMjCKRJJe37eO0sNXl8MQ==}
+  /@polkadot/types-augment@9.8.2:
+    resolution: {integrity: sha512-x2bzcDIdGL5GYA5XkzE/HiVKf/Rfw19N4BBTt0kFMZOn11oPluD1XU+dijg5vDFf1p45935E4JRMeGEV4S1MLQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/types': 9.8.1
-      '@polkadot/types-codec': 9.8.1
+      '@polkadot/types': 9.8.2
+      '@polkadot/types-codec': 9.8.2
       '@polkadot/util': 10.3.1
     dev: false
 
-  /@polkadot/types-codec@9.8.1:
-    resolution: {integrity: sha512-ZN6zyRWzvfD6KrOjieVODDlJ+yMFRNPhX/PC2OFY1mpuXgETs5PM9YqIxkc3pmVi+UI4KfL7T516C2NC63LEsA==}
+  /@polkadot/types-codec@9.8.2:
+    resolution: {integrity: sha512-3ZtPE4gneR0OMR91dnBhTM6NKUHhvdldXcHdl5lT6kMI1gbfsekioJFKgNoM1bcucdno8sFtaGIeknlAney+CA==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-bigint': 10.4.2
     dev: false
 
-  /@polkadot/types-create@9.8.1:
-    resolution: {integrity: sha512-275aFbTaK4Hpx3sflSS7i0jYfzwu3GfI41w49XF94UlevY6XtJr7pW3asMDVgOMkchbHAQ1DJqGXPm00GOLc6A==}
+  /@polkadot/types-create@9.8.2:
+    resolution: {integrity: sha512-4mn+uu0pjh29+XR6K3bMZN6rZLWIW+R5wCpoJVOkp2p4WTVWfVTwI23mQhOpPfPDwx4N7bQfihlm4wRwSXsRYQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/types-codec': 9.8.1
+      '@polkadot/types-codec': 9.8.2
       '@polkadot/util': 10.3.1
     dev: false
 
-  /@polkadot/types-known@9.8.1:
-    resolution: {integrity: sha512-R0pUPn9KOVdHWoeZy9vXvZNCzF9sM6thgrfAVA9mD4HSdhIhxBjc4FluR5/KwfQ9NXSSqZGGv1btASW1bYVhpA==}
+  /@polkadot/types-known@9.8.2:
+    resolution: {integrity: sha512-OO7j1n+i0agk56omcJ29aNtcFUMHKSkeASeNnVK6sy9V7ywOJdx7qfEreeWf1fhWKPwwLb9J5o5ReyvSN4dVKA==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/networks': 10.3.1
-      '@polkadot/types': 9.8.1
-      '@polkadot/types-codec': 9.8.1
-      '@polkadot/types-create': 9.8.1
+      '@polkadot/networks': 10.4.2
+      '@polkadot/types': 9.8.2
+      '@polkadot/types-codec': 9.8.2
+      '@polkadot/types-create': 9.8.2
       '@polkadot/util': 10.3.1
     dev: false
 
-  /@polkadot/types@9.8.1:
-    resolution: {integrity: sha512-u1pMk2uQX2Q+9DwdXLUmXRG16l8p1ZGZSYv735FeSUEYQfr07C+gE0bLlYFH3I9k/EJJw8nyp30KUOS2rW/qHw==}
+  /@polkadot/types@9.8.2:
+    resolution: {integrity: sha512-klbqJZTobNSZ8zXhPWV0ICrYlSAcooyclTRv3fYSdVUYwGF8K1zkPUImDHlnlQQ2mGQFi+8JiBUOcbAp/JgLWw==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
-      '@polkadot/types-augment': 9.8.1
-      '@polkadot/types-codec': 9.8.1
-      '@polkadot/types-create': 9.8.1
+      '@polkadot/keyring': 10.4.2
+      '@polkadot/types-augment': 9.8.2
+      '@polkadot/types-codec': 9.8.2
+      '@polkadot/types-create': 9.8.2
       '@polkadot/util': 10.3.1
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
       rxjs: 7.8.0
@@ -19116,8 +19079,8 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /@react-native-community/datetimepicker@6.7.3:
-    resolution: {integrity: sha512-fXWbEdHMLW/e8cts3snEsbOTbnFXfUHeO2pkiDFX3fWpFoDtUrRWvn50xbY13IJUUKHDhoJ+mj24nMRVIXfX1A==}
+  /@react-native-community/datetimepicker@6.7.5:
+    resolution: {integrity: sha512-E2Zh6mwvZ6CFEMKP++rdxxjJiB45fYPpdZhJwdZ2vUVwqovqu1cQRDLZmz4XrcHSyuacgR4WUnkYFf0F2nnNIg==}
     dependencies:
       invariant: 2.2.4
     dev: true
@@ -20314,7 +20277,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       '@solana/buffer-layout': 4.0.0
-      '@solana/web3.js': 1.77.2
+      '@solana/web3.js': 1.77.3
       bigint-buffer: 1.1.5
       bignumber.js: 9.1.0
     transitivePeerDependencies:
@@ -20331,7 +20294,7 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@solana/spl-token@0.3.8(@solana/web3.js@1.77.2):
+  /@solana/spl-token@0.3.8(@solana/web3.js@1.77.3):
     resolution: {integrity: sha512-ogwGDcunP9Lkj+9CODOWMiVJEdRtqHAtX2rWF62KxnnSWtMZtV9rDhTrZFshiyJmxDnRL/1nKE1yJHg4jjs3gg==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -20339,7 +20302,7 @@ packages:
     dependencies:
       '@solana/buffer-layout': 4.0.0
       '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.77.2
+      '@solana/web3.js': 1.77.3
       buffer: 6.0.3
     transitivePeerDependencies:
       - bufferutil
@@ -20348,9 +20311,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@solana/web3.js@1.77.2:
-    resolution: {integrity: sha512-pKu9S21NGAi6Nsayz2KEdhqOlPUJIr3L911bgQvPg2Dbk/U4gJsk41XGdxyfsfnwKPEI/KbitcByterst4VQ3g==}
-    deprecated: This build contains a bad TypeScript definition for getProgramAccounts
+  /@solana/web3.js@1.77.3:
+    resolution: {integrity: sha512-PHaO0BdoiQRPpieC1p31wJsBaxwIOWLh8j2ocXNKX8boCQVldt26Jqm2tZE4KlrvnCIV78owPLv1pEUgqhxZ3w==}
     dependencies:
       '@babel/runtime': 7.20.13
       '@noble/curves': 1.1.0
@@ -20363,7 +20325,7 @@ packages:
       bs58: 4.0.1
       buffer: 6.0.3
       fast-stable-stringify: 1.0.0
-      jayson: 3.6.6
+      jayson: 4.1.0
       node-fetch: 2.6.9
       rpc-websockets: 7.5.1
       superstruct: 0.14.2
@@ -21124,8 +21086,8 @@ packages:
       react-dom: 18.0.0(react@18.0.0)
     dev: true
 
-  /@storybook/addon-ondevice-actions@6.5.0-rc.11(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-8N2XV0UQxtnvee7MTKNG270I9AFTzypmGwJUUBBiHb7VF0FSRwZ4JO+xYWyXo8fzMTPGGn26TAsq0cLYEEVuGw==}
+  /@storybook/addon-ondevice-actions@6.5.4(@storybook/addon-actions@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-4ZN+eiYLzeBZyj7B+Ujda7N1pOFm63S8RWrgscjwdka/3+eQ8i0zRRndKeiM7jSBLlhUfd8MyCQ2l6ooScToBg==}
     peerDependencies:
       '@storybook/addon-actions': ^6.5.14
       react: '*'
@@ -21141,8 +21103,8 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-backgrounds@6.5.0-rc.11(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-H5FDVMinewdJukpNVBOhGjsZqP6jd+L6k7vHqtdRvi/HJEOYCke8tLnT4GtxCWLiytUvRRJVV93iOH8tnpfH1A==}
+  /@storybook/addon-ondevice-backgrounds@6.5.4(@emotion/native@10.0.27)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-HAd5RJHZbD2bKCTu3sivFIlmZ+WmAQ1aRBb2qR/fACbQHJhDGNC6ack2INOmrtx9UIlrPxOe3P8n6+0TL8xwRg==}
     peerDependencies:
       '@emotion/native': '*'
       react: '*'
@@ -21163,8 +21125,8 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-controls@6.5.0-rc.11(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.3)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-yQE5CGBRt07L42iZSbBayLlTs7tcTE9uXk29B1Y97JOrMQ+HagNuGmWrQe6L7QdBjuS3m7G7jTE2sF8cWUa8fw==}
+  /@storybook/addon-ondevice-controls@6.5.4(@emotion/core@10.3.1)(@react-native-community/datetimepicker@6.7.5)(@react-native-community/slider@4.4.2)(@storybook/addon-controls@6.5.16)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-wlhTT7Lh3+Oj9ug6JsBp3WfyRcGlIKHO8KVgHiXKn53Pi066aBsDmt5EdPYqT838sJ5FVu+rJsFUhQ4b9fSFiA==}
     peerDependencies:
       '@react-native-community/datetimepicker': '*'
       '@react-native-community/slider': '*'
@@ -21173,7 +21135,7 @@ packages:
       react-native: '*'
     dependencies:
       '@emotion/native': 10.0.27(@emotion/core@10.3.1)(react-native@0.71.6)(react@18.0.0)
-      '@react-native-community/datetimepicker': 6.7.3
+      '@react-native-community/datetimepicker': 6.7.5
       '@react-native-community/slider': 4.4.2
       '@storybook/addon-controls': 6.5.16(eslint@8.41.0)(react-dom@18.0.0)(react@18.0.0)(typescript@5.1.3)
       '@storybook/addons': 6.5.16(react-dom@18.0.0)(react@18.0.0)
@@ -21184,7 +21146,7 @@ packages:
       prop-types: 15.8.1
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
-      react-native-modal-datetime-picker: 14.0.1(@react-native-community/datetimepicker@6.7.3)(react-native@0.71.6)
+      react-native-modal-datetime-picker: 14.0.1(@react-native-community/datetimepicker@6.7.5)(react-native@0.71.6)
       react-native-modal-selector: 2.1.2
       tinycolor2: 1.4.2
     transitivePeerDependencies:
@@ -21192,8 +21154,8 @@ packages:
       - react-dom
     dev: true
 
-  /@storybook/addon-ondevice-notes@6.5.0-rc.11(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-izxgVAHmSbixlM1RsWdDQALCC5zCP+GdJeaaMZvYuaD32i6hXSA3Vv7RzhrCWt0p5BQ5yZNdJZ52/rteoFNNXQ==}
+  /@storybook/addon-ondevice-notes@6.5.4(@types/react@17.0.53)(react-dom@18.0.0)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-tDu4KiI/mcnfUjTTMaLjMA7fqWq7G87Fpr5gEu6M+/T/aPEcBc3YIOwKShU7NmA0ghlrnohQe6JAbLAZC+0cBw==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -23200,8 +23162,8 @@ packages:
       - supports-color
     dev: true
 
-  /@storybook/react-native@6.5.0-rc.11(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1):
-    resolution: {integrity: sha512-uZzuzTA3P3g4XSYEOCkh38oAndlBmdmTk9ANP+16q7Fotn6N20JHb3ly1YZnV/Ud8QM3MDiI9Tc2tLGzKwwxbA==}
+  /@storybook/react-native@6.5.4(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.0.0)(react-native-safe-area-context@4.5.0)(react-native@0.71.6)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1):
+    resolution: {integrity: sha512-8H5deEacilMdLXq7gEmZ4NAm5IsWzjIvoAjxJItq4SLYnz/E9XgflqXT/tgpyspYlOFgjBMRa5s8ILqo/ebRuQ==}
     engines: {node: '>=8.0.0'}
     hasBin: true
     peerDependencies:
@@ -23215,7 +23177,7 @@ packages:
       '@react-native-async-storage/async-storage': 1.17.12(react-native@0.71.6)
       '@storybook/addons': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/channel-websocket': 6.5.16
-      '@storybook/channels': 6.5.14
+      '@storybook/channels': 6.5.16
       '@storybook/client-api': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       '@storybook/client-logger': 6.5.16
       '@storybook/core-client': 6.5.16(react-dom@18.0.0)(react@18.0.0)(typescript@5.1.3)(webpack@5.76.1)
@@ -24889,6 +24851,7 @@ packages:
 
   /@types/lodash@4.14.191:
     resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
+    dev: true
 
   /@types/long@4.0.2:
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
@@ -26101,7 +26064,7 @@ packages:
       '@typescript-eslint/typescript-estree': 5.57.0(typescript@5.1.3)
       eslint: 8.41.0
       eslint-scope: 5.1.1
-      semver: 7.5.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -26294,8 +26257,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@walletconnect/client@1.7.3:
-    resolution: {integrity: sha512-jXdkVC2JhpWymsR4G9l4E+OmnlXT6lr+/112QDWIjYmpWD1vfMBvCQiqYEJ5UfZl14U3xvzVlyMf2pL9uaxKDg==}
+  /@walletconnect/client@1.7.8:
+    resolution: {integrity: sha512-pBroM6jZAaUM0SoXJZg5U7aPTiU3ljQAw3Xh/i2pxFDeN/oPKao7husZ5rdxS5xuGSV6YpqqRb0RxW1IeoR2Pg==}
     deprecated: 'WalletConnect''s v1 SDKs are now deprecated. Please upgrade to a v2 SDK. For details see: https://docs.walletconnect.com/'
     dependencies:
       '@walletconnect/core': 1.7.8
@@ -26303,19 +26266,6 @@ packages:
       '@walletconnect/types': 1.7.8
       '@walletconnect/utils': 1.7.8
       tslib: 2.5.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@walletconnect/client@1.7.8:
-    resolution: {integrity: sha512-pBroM6jZAaUM0SoXJZg5U7aPTiU3ljQAw3Xh/i2pxFDeN/oPKao7husZ5rdxS5xuGSV6YpqqRb0RxW1IeoR2Pg==}
-    dependencies:
-      '@walletconnect/core': 1.7.8
-      '@walletconnect/iso-crypto': 1.7.8
-      '@walletconnect/types': 1.7.8
-      '@walletconnect/utils': 1.7.8
-      tslib: 2.4.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -27100,8 +27050,8 @@ packages:
     engines: {node: '>= 10'}
     dev: false
 
-  /algosdk@1.13.0:
-    resolution: {integrity: sha512-0hknXiP3sc/KxRUvoI1d14x2H/hM7LJZ1zA9DmEUX76z508QPgzjxyQag7THHu5rAW0VuzCgWcFlwI0lsTJMoQ==}
+  /algosdk@1.13.1:
+    resolution: {integrity: sha512-htyJI1/zVcOzpNZVT8PHn4K0yXXTS+b7RXplc7nmFqGVThbM8+ufbnBLChxVPh3BVxqqpqS13VTsQcNArK10jg==}
     dependencies:
       algo-msgpack-with-bigint: 2.1.1
       buffer: 6.0.3
@@ -27341,7 +27291,7 @@ packages:
       minimatch: 3.1.2
       read-config-file: 6.2.0
       sanitize-filename: 1.6.3
-      semver: 7.5.3
+      semver: 7.5.4
       tar: 6.1.11
       temp-file: 3.4.0
     transitivePeerDependencies:
@@ -29179,7 +29129,7 @@ packages:
     engines: {node: '>= 8.0.0'}
     requiresBuild: true
     dependencies:
-      nan: 2.15.0
+      nan: 2.17.0
     dev: false
 
   /blake2b-wasm@1.1.7:
@@ -31003,7 +30953,7 @@ packages:
       json-schema-typed: 7.0.3
       onetime: 5.1.2
       pkg-up: 3.1.0
-      semver: 7.5.3
+      semver: 7.5.4
     dev: false
 
   /configstore@5.0.1:
@@ -31353,7 +31303,7 @@ packages:
 
   /core-js@2.6.12:
     resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==}
-    deprecated: core-js@<3.4 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Please, upgrade your dependencies to the actual version of core-js.
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
     requiresBuild: true
 
   /core-js@3.22.5:
@@ -31800,7 +31750,7 @@ packages:
       postcss-modules-scope: 3.0.0(postcss@8.4.21)
       postcss-modules-values: 4.0.0(postcss@8.4.21)
       postcss-value-parser: 4.2.0
-      semver: 7.5.3
+      semver: 7.5.4
       webpack: 5.76.1
 
   /css-minimizer-webpack-plugin@3.4.1(metro@0.76.0)(webpack@5.76.1):
@@ -34640,8 +34590,8 @@ packages:
     optionalDependencies:
       source-map: 0.6.1
 
-  /eslint-config-next@13.4.10(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3):
-    resolution: {integrity: sha512-+JjcM6lQmFR5Mw0ORm9o1CR29+z/uajgSfYAPEGIBxOhTHBgCMs7ysuwi72o7LkMmA8E3N7/h09pSGZxs0s85g==}
+  /eslint-config-next@13.4.12(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-ZF0r5vxKaVazyZH/37Au/XItiG7qUOBw+HaH3PeyXltIMwXorsn6bdrl0Nn9N5v5v9spc+6GM2ryjugbjF6X2g==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0
       typescript: '>=3.3.1'
@@ -34649,7 +34599,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 13.4.10
+      '@next/eslint-plugin-next': 13.4.12
       '@rushstack/eslint-patch': 1.1.4
       '@typescript-eslint/parser': 5.60.0(eslint@8.41.0)(typescript@5.1.3)
       eslint: 8.41.0
@@ -36173,7 +36123,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/expect-utils': 29.6.2
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       jest-get-type: 29.4.3
       jest-matcher-utils: 29.6.2
       jest-message-util: 29.6.2
@@ -40782,14 +40732,12 @@ packages:
       filelist: 1.0.3
       minimatch: 3.1.2
 
-  /jayson@3.6.6:
-    resolution: {integrity: sha512-f71uvrAWTtrwoww6MKcl9phQTC+56AopLyEenWvKVAIMz+q0oVGj6tenLZ7Z6UiPBkJtKLj4kt0tACllFQruGQ==}
+  /jayson@4.1.0:
+    resolution: {integrity: sha512-R6JlbyLN53Mjku329XoRT2zJAE6ZgOQ8f91ucYdMCD4nkGCF9kZSrcGXpHIU4jeKj58zUZke2p+cdQchU7Ly7A==}
     engines: {node: '>=8'}
     hasBin: true
     dependencies:
       '@types/connect': 3.4.35
-      '@types/express-serve-static-core': 4.17.28
-      '@types/lodash': 4.14.191
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
       JSONStream: 1.3.5
@@ -40799,7 +40747,6 @@ packages:
       eyes: 0.1.8
       isomorphic-ws: 4.0.1(ws@7.5.7)
       json-stringify-safe: 5.0.1
-      lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.7
     transitivePeerDependencies:
@@ -42284,7 +42231,7 @@ packages:
     dependencies:
       '@jest/types': 29.6.1
       '@types/graceful-fs': 4.1.5
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.11
@@ -42583,7 +42530,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3(metro@0.76.0)
     dev: true
 
   /jest-regex-util@24.9.0:
@@ -43059,7 +43006,7 @@ packages:
       jest-util: 28.1.3
       natural-compare: 1.4.0
       pretty-format: 28.1.3
-      semver: 7.5.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -43091,7 +43038,7 @@ packages:
       jest-util: 28.1.3
       natural-compare: 1.4.0
       pretty-format: 28.1.3
-      semver: 7.5.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -43206,7 +43153,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.6.1
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       chalk: 4.1.2
       ci-info: 3.3.2
       graceful-fs: 4.2.11
@@ -43504,7 +43451,7 @@ packages:
       metro:
         optional: true
     dependencies:
-      '@types/node': 20.4.2
+      '@types/node': 18.16.19
       jest-util: 29.6.2
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -44217,6 +44164,7 @@ packages:
 
   /json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
+    requiresBuild: true
 
   /json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
@@ -48355,7 +48303,6 @@ packages:
   /nan@2.17.0:
     resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
     requiresBuild: true
-    optional: true
 
   /nano-json-stream-parser@0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
@@ -48651,7 +48598,7 @@ packages:
     resolution: {integrity: sha512-7GGVawqyHF4pfd0YFybhv/eM9JwTtPqx0mAanQ146O3FlSh3pA24zf9IRQTOsfTSqXTNzPSP5iagAJ94jjuVog==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.5.3
+      semver: 7.5.4
 
   /node-addon-api@1.7.2:
     resolution: {integrity: sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==}
@@ -48891,7 +48838,7 @@ packages:
     dev: false
 
   /nopt@1.0.10:
-    resolution: {integrity: sha1-bd0hvSoxQXuScn3Vhfim83YI6+4=}
+    resolution: {integrity: sha512-NWmpvLSqUrgrAC9HCuxEvb+PSloHpqVu+FqcO4eeF2h5qYRhA7ev6KvelyQAKtegUbC6RypJnlEOhd8vloNKYg==}
     hasBin: true
     dependencies:
       abbrev: 1.1.1
@@ -49778,6 +49725,7 @@ packages:
   /path-exists@2.1.0:
     resolution: {integrity: sha512-yTltuKuhtNeFJKa1PiRzfLAU5182q1y4Eb4XCJ3PBqyzEDkAZRzBrKKBct682ls9reBVHf9udYLN5Nd+K1B9BQ==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
     dependencies:
       pinkie-promise: 2.0.1
 
@@ -49956,6 +49904,7 @@ packages:
   /pinkie@2.0.4:
     resolution: {integrity: sha512-MnUuEycAemtSaeFSjXKW/aroV7akBbY+Sv+RkyqFjgAe73F+MR0TBWKBRDkmfWq/HiFmdavfZ1G7h4SPZXaCSg==}
     engines: {node: '>=0.10.0'}
+    requiresBuild: true
 
   /pino-http@5.8.0:
     resolution: {integrity: sha512-YwXiyRb9y0WCD1P9PcxuJuh3Dc5qmXde/paJE86UGYRdiFOi828hR9iUGmk5gaw6NBT9gLtKANOHFimvh19U5w==}
@@ -50899,7 +50848,7 @@ packages:
       postcss-flexbugs-fixes: 5.0.2(postcss@8.4.21)
       postcss-normalize: 10.0.1(browserslist@4.21.5)(postcss@8.4.21)
       postcss-preset-env: 7.7.2(postcss@8.4.21)
-      semver: 7.5.3
+      semver: 7.5.4
       webpack: 5.76.1
     transitivePeerDependencies:
       - browserslist
@@ -53342,13 +53291,13 @@ packages:
       react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /react-native-modal-datetime-picker@14.0.1(@react-native-community/datetimepicker@6.7.3)(react-native@0.71.6):
+  /react-native-modal-datetime-picker@14.0.1(@react-native-community/datetimepicker@6.7.5)(react-native@0.71.6):
     resolution: {integrity: sha512-wQt4Pjxt2jiTsVhLMG0E7WrRTYBEQx2d/nUrFVCbRqJ7lrXocXaT5UZsyMpV93TnKcyut62OprbO88wYq/vh0g==}
     peerDependencies:
       '@react-native-community/datetimepicker': '>=3.0.0'
       react-native: '>=0.65.0'
     dependencies:
-      '@react-native-community/datetimepicker': 6.7.3
+      '@react-native-community/datetimepicker': 6.7.5
       prop-types: 15.8.1
       react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
@@ -57786,7 +57735,7 @@ packages:
       mime: 2.6.0
       qs: 6.11.0
       readable-stream: 3.6.2
-      semver: 7.5.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -57805,7 +57754,7 @@ packages:
       mime: 2.6.0
       qs: 6.11.0
       readable-stream: 3.6.2
-      semver: 7.5.3
+      semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -59317,6 +59266,7 @@ packages:
 
   /tslib@2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
+    dev: true
 
   /tslib@2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
@@ -60202,7 +60152,7 @@ packages:
       is-yarn-global: 0.3.0
       latest-version: 5.1.0
       pupa: 2.1.1
-      semver: 7.5.3
+      semver: 7.5.4
       semver-diff: 3.1.1
       xdg-basedir: 4.0.0
 
@@ -63213,6 +63163,7 @@ packages:
 
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
+    requiresBuild: true
 
   /yaml@1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}

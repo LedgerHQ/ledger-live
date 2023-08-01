@@ -18,7 +18,7 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
   const state = getAccountBannerState(account);
-  const { redelegate, ledgerValidator, validatorSrcAddress } = state;
+  const { redelegate, ledgerValidator, validatorSrcAddress, display } = state;
 
   if (redelegate && !stakeAccountBannerParams?.cosmos?.redelegate) return null;
   if (!redelegate && !(stakeAccountBannerParams?.cosmos?.delegate && canDelegate(account)))
@@ -71,7 +71,7 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
       description={description}
       cta={cta}
       onClick={onClick}
-      display={true}
+      display={display}
       linkText={t("account.banner.delegation.linkText")}
       linkUrl={"https://www.ledger.com/staking-ethereum"}
     />

@@ -53,7 +53,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "algo-msgpack-with-bigint": "^2.1.1",
-    "algosdk": "1.13.0",
+    "algosdk": "1.13.1",
     "bignumber.js": "^9.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",

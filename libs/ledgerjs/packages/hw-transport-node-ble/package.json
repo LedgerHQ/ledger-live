@@ -28,7 +28,7 @@
   "types": "lib/TransportNodeBle.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@abandonware/noble": "1.9.2-21",
+    "@abandonware/noble": "1.9.2-23",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
