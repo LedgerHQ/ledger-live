@@ -17,9 +17,9 @@ export function useErrorLinks(error?: Error | null) {
   const history = useHistory();
   return useMemo(() => {
     if (!!error && "links" in error && Array.isArray(error.links)) {
-      const safeStringLinks = error.links
-        .filter((link): link is string => typeof link === "string")
-        .map(link => link);
+      const safeStringLinks = error.links.filter(
+        (link): link is string => typeof link === "string",
+      );
 
       return safeStringLinks.reduce((prev, curr, index) => {
         const link = isAbsoluteUrl(curr) ? (
