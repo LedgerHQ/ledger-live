@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.28.0-next.1
+
+### Patch Changes
+
+- [#4185](https://github.com/LedgerHQ/ledger-live/pull/4185) [`73d24bb470`](https://github.com/LedgerHQ/ledger-live/commit/73d24bb47009befb5be9719d523382eac2b94e30) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLM - Rephrase refer a friend banner in BTC account
+
 ## 3.28.0-next.0
 
 ### Minor Changes
