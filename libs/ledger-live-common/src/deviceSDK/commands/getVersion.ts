@@ -18,13 +18,11 @@ export function getVersion({ transport }: GetVersionCmdArgs): Observable<GetVers
     // TODO: defines actual value
     const oldTimeout = transport.unresponsiveTimeout;
     transport.setExchangeUnresponsiveTimeout(1000);
-
     const unresponsiveCallback = () => {
       // Needs to push a value and not an error to allow the command to continue once
       // the device is not unresponsive anymore. Pushing an error would stop the command.
       subscriber.next({ type: "unresponsive" });
     };
-
     transport.on("unresponsive", unresponsiveCallback);
 
     return from(transport.send(0xe0, 0x01, 0x00, 0x00))
@@ -154,7 +152,12 @@ export function getVersion({ transport }: GetVersionCmdArgs): Observable<GetVers
             },
           });
         }),
-        finalize(() => transport.setExchangeUnresponsiveTimeout(oldTimeout)),
+        finalize(() => {
+          // Cleans the unresponsive timeout on complete and error
+          // Note: careful if this command is called sequentially several time (in a `concat`)
+          // as the beginning of the next command could happen before this cleaning `finalize` is called.
+          transport.setExchangeUnresponsiveTimeout(oldTimeout);
+        }),
       )
       .subscribe(subscriber);
   });
