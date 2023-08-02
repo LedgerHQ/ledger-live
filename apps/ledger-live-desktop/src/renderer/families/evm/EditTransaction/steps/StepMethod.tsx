@@ -1,9 +1,15 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+import {
+  Transaction as EvmTransaction,
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+} from "@ledgerhq/coin-evm/types/index";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { Flex } from "@ledgerhq/react-ui";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useState } from "react";
@@ -42,6 +48,55 @@ const Description = styled(Box)<{ selected: boolean }>`
   margin-left: 15px;
   width: 400px;
 `;
+
+// build the appropriate patch for cancel flow depending on the transaction type
+const buildCancelTxPatch = ({
+  transactionRaw,
+  account,
+}: {
+  transactionRaw: StepProps["transactionRaw"];
+  account: Account;
+}): Partial<EvmTransaction> => {
+  let patch: Partial<EvmTransaction> = {
+    amount: new BigNumber(0),
+    data: undefined,
+    nonce: transactionRaw.nonce,
+    mode: "send",
+    recipient: account.freshAddress,
+    feesStrategy: "custom",
+    useAllAmount: false,
+  };
+
+  // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
+  if (patch.type === 2) {
+    const type2Patch: Partial<EvmTransactionEIP1559> = {
+      ...patch,
+      maxFeePerGas: transactionRaw.maxFeePerGas
+        ? new BigNumber(transactionRaw.maxFeePerGas)
+            .times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
+            .integerValue()
+        : undefined,
+      maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
+        ? new BigNumber(transactionRaw.maxPriorityFeePerGas)
+            .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
+            .integerValue()
+        : undefined,
+    };
+    patch = type2Patch;
+  } else if (patch.type === 1 || patch.type === 0) {
+    const type1Patch: Partial<EvmTransactionLegacy> = {
+      ...patch,
+      gasPrice: transactionRaw.gasPrice
+        ? new BigNumber(transactionRaw.gasPrice)
+            .times(1 + getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR"))
+            .integerValue()
+        : undefined,
+    };
+    patch = type1Patch;
+  }
+
+  return patch;
+};
 
 const StepMethod = ({
   account,
@@ -159,54 +214,29 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
 
   const handleContinueClick = () => {
     invariant(account && transactionRaw, "account and transactionRaw required");
-    const bridge = getAccountBridge(account, parentAccount);
+    const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount);
 
     if (editType === "speedup") {
-      updateTransaction(tx =>
-        bridge.updateTransaction(tx, {
-          amount: new BigNumber(transactionRaw.amount),
-          data: transactionRaw.data ? Buffer.from(transactionRaw.data, "hex") : undefined,
-          nonce: transactionRaw.nonce,
-          recipient: transactionRaw.recipient,
-          mode: transactionRaw.mode,
-          networkInfo: null, // force to update network fee
-          feesStrategy: "fast", // set "fast" as default option for speedup flow
-          maxFeePerGas: null,
-          maxPriorityFeePerGas: null,
-          gasPrice: null,
-          useAllAmount: false,
-        }),
-      );
+      const patch: Partial<EvmTransaction> = {
+        amount: new BigNumber(transactionRaw.amount),
+        data: transactionRaw.data ? Buffer.from(transactionRaw.data, "hex") : undefined,
+        nonce: transactionRaw.nonce,
+        recipient: transactionRaw.recipient,
+        mode: transactionRaw.mode,
+        feesStrategy: "fast", // set "fast" as default option for speedup flow
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
+        gasPrice: undefined,
+        useAllAmount: false,
+      };
+
+      updateTransaction(tx => bridge.updateTransaction(tx, patch));
     } else {
       const mainAccount = getMainAccount(account, parentAccount);
-      updateTransaction(tx =>
-        bridge.updateTransaction(tx, {
-          amount: new BigNumber(0),
-          allowZeroAmount: true,
-          data: undefined,
-          nonce: transactionRaw.nonce,
-          mode: "send",
-          recipient: mainAccount.freshAddress,
-          // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
-          maxFeePerGas: transactionRaw.maxFeePerGas
-            ? new BigNumber(transactionRaw.maxFeePerGas)
-                .times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
-                .integerValue()
-            : null,
-          maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
-            ? new BigNumber(transactionRaw.maxPriorityFeePerGas)
-                .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
-                .integerValue()
-            : null,
-          gasPrice: transactionRaw.gasPrice
-            ? new BigNumber(transactionRaw.gasPrice)
-                .times(1 + getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR"))
-                .integerValue()
-            : null,
-          feesStrategy: "custom",
-          useAllAmount: false,
-        }),
-      );
+
+      const patch = buildCancelTxPatch({ transactionRaw, account: mainAccount });
+
+      updateTransaction(tx => bridge.updateTransaction(tx, patch));
     }
 
     // skip fees input screen for cancel flow
