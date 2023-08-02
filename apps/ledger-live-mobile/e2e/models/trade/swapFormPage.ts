@@ -5,7 +5,6 @@ import {
   tapByElement,
   tapByText,
   typeTextByElement,
-  waitForElementById,
 } from "../../helpers";
 
 const baseLink = "swap";
@@ -24,10 +23,6 @@ export default class SwapFormPage {
 
   openViaDeeplink() {
     return openDeeplink(baseLink);
-  }
-
-  waitForSwapForm() {
-    return waitForElementById("swap-form-tab");
   }
 
   navigateToSwapForm() {
