@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { TrackScreen } from "../../../../analytics";
 import NftFilterSection from "./NftFilterSection";
-import { NftFilterCurrencyItem } from "./NftFilterItem";
+import { NftFilterCurrencyItem, NftFilterTagItem } from "./NftFilterItem";
 import { BottomDrawer } from "@ledgerhq/native-ui";
 import { NftGalleryChainFiltersState } from "../../../../reducers/types";
 import { NavigatorName, ScreenName } from "../../../../const/navigation";
@@ -16,8 +16,17 @@ type Props = {
   readonly onClose: () => void;
   readonly toggleFilter: (filter: keyof NftGalleryChainFiltersState) => void;
   readonly filters: NftGalleryChainFiltersState;
+  readonly spamFilter: boolean;
+  readonly toggleSpamFilter: () => void;
 };
-const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) => {
+const NftFilterDraw: FC<Props> = ({
+  onClose,
+  isOpen,
+  filters,
+  toggleFilter,
+  toggleSpamFilter,
+  spamFilter,
+}) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   return (
@@ -55,6 +64,18 @@ const NftFilterDraw: FC<Props> = ({ onClose, isOpen, filters, toggleFilter }) =>
               />
             );
           })}
+        </NftFilterSection>
+        <NftFilterSection
+          title={t("wallet.nftGallery.filters.spam")}
+          footer={t("wallet.nftGallery.filters.spamNote")}
+        >
+          <NftFilterTagItem
+            tag={t("wallet.nftGallery.filters.beta")}
+            isSelected={spamFilter}
+            onPress={toggleSpamFilter}
+          >
+            {t("wallet.nftGallery.filters.spamFilter")}
+          </NftFilterTagItem>
         </NftFilterSection>
         <NftFilterSection
           title={t("wallet.nftGallery.filters.hiddenCollections")}

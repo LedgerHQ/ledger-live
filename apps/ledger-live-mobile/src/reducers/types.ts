@@ -292,6 +292,7 @@ export type ProtectState = {
 export type NftState = {
   filterDrawerVisible: boolean;
   galleryChainFilters: NftGalleryChainFiltersState;
+  spamFilter: boolean;
 };
 
 export type NftGalleryChainFiltersState = Pick<

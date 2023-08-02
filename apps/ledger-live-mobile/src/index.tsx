@@ -82,6 +82,7 @@ import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
 import TransactionsAlerts from "./components/TransactionsAlerts";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -239,6 +240,8 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const queryClient = new QueryClient();
+
 export default class Root extends Component {
   initTimeout: ReturnType<typeof setTimeout> | undefined;
 
@@ -298,7 +301,9 @@ export default class Root extends Component {
                                                     <SnackbarContainer />
                                                     <NftMetadataProvider>
                                                       <MarketDataProvider>
-                                                        <App />
+                                                        <QueryClientProvider client={queryClient}>
+                                                          <App />
+                                                        </QueryClientProvider>
                                                       </MarketDataProvider>
                                                     </NftMetadataProvider>
                                                   </NotificationsProvider>

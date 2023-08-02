@@ -21,6 +21,7 @@ const NftMetadataContext = createContext<NFTMetadataContextType>({
   loadNFTMetadata: () => Promise.resolve(),
   loadCollectionMetadata: () => Promise.resolve(),
   clearCache: () => {},
+  primeCache: () => {},
 });
 
 export function useNftMetadata(
@@ -99,9 +100,11 @@ export function useNft(protoNft: ProtoNFT): UseNFTResponse {
 }
 
 export function useNftAPI(): NFTMetadataContextAPI {
-  const { clearCache, loadNFTMetadata, loadCollectionMetadata } = useContext(NftMetadataContext);
+  const { clearCache, primeCache, loadNFTMetadata, loadCollectionMetadata } =
+    useContext(NftMetadataContext);
 
   return {
+    primeCache,
     clearCache,
     loadNFTMetadata,
     loadCollectionMetadata,
@@ -273,6 +276,20 @@ export function NftMetadataProvider({ children }: NFTMetadataProviderProps): Rea
         setState(oldState => ({
           ...oldState,
           cache: {},
+        }));
+      },
+      primeCache: (metadata, currencyId) => {
+        const key = getNftKey(metadata.contract, metadata.tokenId, currencyId);
+        setState(oldState => ({
+          ...oldState,
+          cache: {
+            ...oldState.cache,
+            [key]: {
+              status: "loaded",
+              metadata,
+              updatedAt: Date.now(),
+            } as NFTResource<NonNullable<NFTMetadataResponse["result"]>>,
+          },
         }));
       },
     }),

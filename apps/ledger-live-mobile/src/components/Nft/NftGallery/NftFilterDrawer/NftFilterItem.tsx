@@ -53,7 +53,6 @@ export default NftFilterItem;
 export type NftFilterCurrencyItemProps = {
   readonly currency: CryptoCurrencyId;
   readonly isSelected: boolean;
-  readonly onPress: () => void;
 } & Omit<NftFilterItemProps, "leftComponent" | "rightComponent">;
 
 export const NftFilterCurrencyItem: FC<NftFilterCurrencyItemProps> = ({
@@ -76,15 +75,20 @@ export const NftFilterCurrencyItem: FC<NftFilterCurrencyItemProps> = ({
 export type NftFilterTagItemProps = {
   readonly isSelected: boolean;
   readonly tag: string;
-  readonly onPress: () => void;
 } & Omit<NftFilterItemProps, "leftComponent" | "rightComponent">;
 
-export const NftFilterTagItem: FC<NftFilterTagItemProps> = ({ isSelected, tag, ...rest }) => {
+export const NftFilterTagItem: FC<NftFilterTagItemProps> = ({
+  isSelected,
+  tag,
+  onPress,
+  ...rest
+}) => {
   return (
     <NftFilterItem
       {...rest}
+      onPress={onPress}
       leftComponent={<StyledTag uppercase={false}>{tag}</StyledTag>}
-      rightComponent={<Switch value={isSelected} />}
+      rightComponent={<Switch value={isSelected} onChange={() => onPress()} />}
     />
   );
 };

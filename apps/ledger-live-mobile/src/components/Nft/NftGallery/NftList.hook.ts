@@ -14,8 +14,13 @@ import { updateMainNavigatorVisibility } from "../../../actions/appstate";
 import {
   galleryFilterDrawerVisibleSelector,
   galleryChainFiltersSelector,
+  gallerySpamFilterSelector,
 } from "../../../reducers/nft";
-import { setGalleryChainFilter, setGalleryFilterDrawerVisible } from "../../../actions/nft";
+import {
+  setGalleryChainFilter,
+  setGalleryFilterDrawerVisible,
+  setSpamFilter,
+} from "../../../actions/nft";
 import { NftGalleryChainFiltersState } from "../../../reducers/types";
 
 const TOAST_ID = "SUCCESS_HIDE";
@@ -29,6 +34,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const [multiSelectModeEnabled, setMultiSelectMode] = useState<boolean>(false);
   const isFilterDrawerVisible = useSelector(galleryFilterDrawerVisibleSelector);
   const chainFilters = useSelector(galleryChainFiltersSelector);
+  const spamFilter = useSelector(gallerySpamFilterSelector);
 
   const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
 
@@ -153,6 +159,10 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
     [chainFilters, dispatch],
   );
 
+  const toggleSpamFilter = useCallback(() => {
+    dispatch(setSpamFilter(!spamFilter));
+  }, [spamFilter, dispatch]);
+
   const onCancelHide = useCallback(() => {
     track("button_clicked", {
       button: "Cancel  Hide NFTs",
@@ -178,5 +188,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
     toggleChainFilter,
     closeFilterDrawer,
     openFilterDrawer,
+    spamFilter,
+    toggleSpamFilter,
   };
 }

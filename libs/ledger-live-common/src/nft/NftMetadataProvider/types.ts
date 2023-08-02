@@ -50,6 +50,7 @@ export type NFTMetadataContextAPI = {
   loadNFTMetadata: (contract: string, tokenId: string, currencyId: string) => Promise<void>;
   loadCollectionMetadata: (contract: string, currencyId: string) => Promise<void>;
   clearCache: () => void;
+  primeCache: (metadata: NonNullable<NFTMetadataResponse["result"]>, currencyId: string) => void;
 };
 
 export type NFTMetadataContextType<T extends Record<string, unknown> = DefaultResource> =

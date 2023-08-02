@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { FlatListProps } from "react-native";
+import { ActivityIndicator, FlatListProps } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
@@ -27,7 +27,9 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListPr
 );
 
 type Props = {
-  data: ProtoNFT[];
+  readonly data: ProtoNFT[];
+  readonly fetchNextPage: () => void;
+  readonly hasNextPage: boolean;
 };
 
 // Fake ProtoNFT to be able to display "Add new" button at the end of the list
@@ -44,7 +46,7 @@ const NB_COLUMNS = 2;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
 
-const NftList = ({ data }: Props) => {
+const NftList = ({ data, fetchNextPage, hasNextPage }: Props) => {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
 
@@ -63,6 +65,8 @@ const NftList = ({ data }: Props) => {
     chainFilters,
     toggleChainFilter,
     isFilterDrawerVisible,
+    spamFilter,
+    toggleSpamFilter,
   } = useNftList({ nftList: data });
 
   const gradient = {
@@ -156,6 +160,13 @@ const NftList = ({ data }: Props) => {
             )}
           </Animated.View>
         }
+        ListFooterComponent={
+          hasNextPage ? (
+            <Flex paddingBottom={100} paddingTop={50}>
+              <ActivityIndicator />
+            </Flex>
+          ) : null
+        }
         ListHeaderComponentStyle={{
           marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
@@ -178,6 +189,8 @@ const NftList = ({ data }: Props) => {
         windowSize={11}
         contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
         testID={"wallet-nft-gallery-list"}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.2}
       />
       {data.length > 12 ? <ScrollToTopButton /> : null}
       <Animated.View>
@@ -218,6 +231,8 @@ const NftList = ({ data }: Props) => {
         isOpen={isFilterDrawerVisible}
         toggleFilter={toggleChainFilter}
         onClose={closeFilterDrawer}
+        spamFilter={spamFilter}
+        toggleSpamFilter={toggleSpamFilter}
       />
     </>
   );

@@ -488,6 +488,10 @@ export const filteredNftsSelector = createSelector(
   },
 );
 
+export const accountAddressesSelector = createSelector(accountsSelector, accounts =>
+  accounts.map(account => account.freshAddress),
+);
+
 /**
  * Returns a boolean that is true if and only if some of the accounts have an
  * unconfirmed balance

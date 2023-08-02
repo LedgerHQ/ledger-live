@@ -98,6 +98,10 @@
     }
   },
   "errors": {
+    "NFtGalleryRequest": {
+      "title": "Sorry, something went wrong",
+      "button": "Try again"
+    },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
     },
@@ -6258,6 +6262,10 @@
         "hide": "Hide {{count}} collection",
         "hiddenCollections": "Hidden collections",
         "hide_plural": "Hide {{count}} collections",
+        "spam": "Spam",
+        "beta": "Beta",
+        "spamFilter": "Smart spam filter",
+        "spamNote": "The smart spam filter automatically hides spam collection from your gallery.",
         "alertHide": "1 collection hidden. You can unhide them at any time in the gallery filter.",
         "alertHide_plural": "{{count}} collections hidden. You can unhide them at any time in the gallery filter."
       },
