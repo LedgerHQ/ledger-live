@@ -1,5 +1,5 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { AmountRequired, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
 import React, { useState } from "react";
@@ -37,7 +37,8 @@ export const StepSummaryFooter = (props: StepProps) => {
   if (
     errors.amount &&
     ((errors.amount as Error) instanceof NotOwnedNft ||
-      (errors.amount as Error) instanceof NotEnoughNftOwned)
+      (errors.amount as Error) instanceof NotEnoughNftOwned ||
+      (errors.amount as Error) instanceof AmountRequired)
   ) {
     errorCount = errorCount - 1;
   }
