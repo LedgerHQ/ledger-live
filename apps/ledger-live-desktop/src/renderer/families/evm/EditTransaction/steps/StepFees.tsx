@@ -76,6 +76,7 @@ const StepFees = (props: StepProps) => {
         </Fragment>
       )}
       <Alert type="primary">
+        {/* FIXME: fix i18n (value as param for propper formatting) */}
         {transaction?.type === 2 ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
           <ul style={{ marginLeft: "5px" }}>
             {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}

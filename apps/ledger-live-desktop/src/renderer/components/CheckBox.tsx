@@ -83,6 +83,13 @@ type Props = {
   inverted?: boolean;
   label?: string;
 };
+
+/**
+ * FIXME: inverted does not seem to work properly
+ * use selectedPalette provided to `StyleProvider` here
+ * apps/ledger-live-desktop/src/renderer/App.tsx instead of inverted
+ */
+
 function CheckBox({ label, ...props }: Props) {
   const { isChecked, onChange, isRadio, disabled } = props;
   const onClick = useCallback(
