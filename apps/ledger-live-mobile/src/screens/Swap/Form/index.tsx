@@ -112,8 +112,6 @@ export function SwapForm({
       track("error_message", {
         ...sharedSwapTracking,
         message: "no_rates",
-        partnersList: [],
-        exchangeRatesState: [],
         sourceCurrency: fromState.currency?.name,
         targetCurrency: toState.currency?.name,
       });
