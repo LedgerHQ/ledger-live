@@ -60,12 +60,42 @@ function AddAccountsAccounts({ navigation, route }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const selectAccount = useCallback(
+    (account: Account, addingAccountDelayMs?: number) => {
+      if (!selectedAccount) {
+        setSelectedAccount(account.id);
+        dispatch(
+          replaceAccounts({
+            scannedAccounts,
+            selectedIds: [account.id],
+            renamings: {},
+          }),
+        );
+        if (addingAccountDelayMs) {
+          setTimeout(() => {
+            setAddingAccount(false);
+            navigation.navigate(ScreenName.ReceiveConfirmation, {
+              ...route.params,
+              accountId: account.id,
+            });
+          }, addingAccountDelayMs);
+        } else {
+          navigation.navigate(ScreenName.ReceiveConfirmation, {
+            ...route.params,
+            accountId: account.id,
+          });
+        }
+      }
+    },
+    [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
+  );
+
   useEffect(() => {
     if (!scanning && scannedAccounts.length === 1) {
       setAddingAccount(true);
       selectAccount(scannedAccounts[0], 4000);
     }
-  }, [scanning, scannedAccounts]);
+  }, [scanning, scannedAccounts, selectAccount]);
 
   const startSubscription = useCallback(() => {
     const c = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
@@ -146,36 +176,6 @@ function AddAccountsAccounts({ navigation, route }: Props) {
       navigation.getParent<StackNavigatorNavigation<RootStackParamList>>()?.pop();
     }
   }, [cancelled, navigation]);
-
-  const selectAccount = useCallback(
-    (account: Account, addingAccountDelayMs?: number) => {
-      if (!selectedAccount) {
-        setSelectedAccount(account.id);
-        dispatch(
-          replaceAccounts({
-            scannedAccounts,
-            selectedIds: [account.id],
-            renamings: {},
-          }),
-        );
-        if (addingAccountDelayMs) {
-          setTimeout(() => {
-            setAddingAccount(false);
-            navigation.navigate(ScreenName.ReceiveConfirmation, {
-              ...route.params,
-              accountId: account.id,
-            });
-          }, addingAccountDelayMs);
-        } else {
-          navigation.navigate(ScreenName.ReceiveConfirmation, {
-            ...route.params,
-            accountId: account.id,
-          });
-        }
-      }
-    },
-    [dispatch, navigation, route.params, scannedAccounts, selectedAccount],
-  );
 
   const renderItem = useCallback(
     ({ item: account }: { item: Account }) => {

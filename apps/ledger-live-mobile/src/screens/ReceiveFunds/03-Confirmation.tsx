@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Linking, Share, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
@@ -100,6 +100,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
+
+  const network = useMemo(() => {
+    if (currency && currency.type === "TokenCurrency") {
+      return currency.parentCurrency?.name;
+    }
+  }, [currency]);
 
   const hideBanner = useCallback(() => {
     track("button_clicked", {
@@ -234,7 +240,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           category="Deposit"
           name="Receive Account Qr Code"
           asset={currency.name}
-          network={currency?.parentCurrency?.name}
+          network={network}
         />
         <Flex p={0} alignItems="center" justifyContent="center">
           <StyledTouchableHightlight
