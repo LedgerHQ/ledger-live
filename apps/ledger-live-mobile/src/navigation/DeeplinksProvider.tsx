@@ -83,6 +83,11 @@ function getProxyURL(url: string) {
     return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
 
+  // This is to handle links set in the useFromAmountStatusMessage in LLC.
+  if (hostname === "platform" && platform) {
+    return url.replace("://platform", "://discover");
+  }
+
   return url;
 }
 
@@ -466,7 +471,7 @@ export const DeeplinksProvider = ({
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
           const { hostname, pathname } = url;
-          const platform = pathname.split("/")[1];
+          const [platform] = pathname.split("/");
 
           if ((hostname === "discover" || hostname === "recover") && platform) {
             const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =

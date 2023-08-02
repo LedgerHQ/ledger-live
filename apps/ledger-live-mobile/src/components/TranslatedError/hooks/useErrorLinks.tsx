@@ -1,31 +1,22 @@
-import { useNavigation } from "@react-navigation/core";
 import React, { useCallback, useMemo } from "react";
 import { Linking, Text } from "react-native";
-import { ScreenName } from "../../../const";
 
 export function useErrorLinks(error?: Error | null) {
-  const { navigate } = useNavigation();
+  const onErrorLinkPress = useCallback(async (errorLink: string) => {
+    if (errorLink.startsWith("http")) {
+      const canOpenURL = await Linking.canOpenURL(errorLink);
 
-  const onErrorLinkPress = useCallback(
-    async (errorLink: string) => {
-      if (errorLink.startsWith("http")) {
-        const canOpenURL = await Linking.canOpenURL(errorLink);
-
-        if (canOpenURL) {
-          Linking.openURL(errorLink);
-          return;
-        }
-      }
-
-      if (errorLink === "/platform/multibuy") {
-        navigate(ScreenName.PlatformApp, {
-          platform: "multibuy",
-        });
+      if (canOpenURL) {
+        Linking.openURL(errorLink);
         return;
       }
-    },
-    [navigate],
-  );
+    }
+
+    if (errorLink === "/platform/multibuy") {
+      Linking.openURL(`ledgerlive:/${errorLink}`);
+      return;
+    }
+  }, []);
 
   return useMemo(() => {
     if (!!error && "links" in error && Array.isArray(error.links)) {
