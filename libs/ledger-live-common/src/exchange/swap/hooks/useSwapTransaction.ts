@@ -31,11 +31,11 @@ export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 export const useFromAmountStatusMessage = (
   { account, parentAccount, status, transaction }: Result<Transaction>,
   // The order of errors/warnings here will determine the precedence
-  statusToInclude: string[],
+  statusTypeToInclude: string[],
 ): Error | undefined => {
   const statusEntries = useMemo(
-    () => statusToInclude.map(s => (status.errors || status.warnings)?.[s]),
-    [status.errors, status.warnings, statusToInclude],
+    () => statusTypeToInclude.map(statusType => (status.errors || status.warnings)?.[statusType]),
+    [status.errors, status.warnings, statusTypeToInclude],
   );
 
   const currency = useMemo(() => {
