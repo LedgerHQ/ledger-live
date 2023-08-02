@@ -2844,7 +2844,7 @@
     },
     "receive": {
       "title": "Deposit",
-      "description": "Receive crypto from another wallet.",
+      "description": "Deposit crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
@@ -2859,21 +2859,21 @@
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
       "selectCrypto": {
-        "title": "Choose a crypto to receive"
+        "title": "Choose a crypto you want to receive"
       },
       "selectNetwork": {
-        "title": "Choose a network",
+        "title": "Select network for the chosen crypto",
         "account": "{{count}} account",
         "account_plural": "{{count}} accounts",
-        "subtitle": "Where do you want to deposit your assets ?\nYou must choose the same as the sender.",
-        "bannerTitle": "Learn how to choose a network?"
+        "subtitle": "Selected network must match the network from where you withdraw or get crypto sent.",
+        "bannerTitle": "Make sure to select the right network. Learn how."
       },
       "stepperHeader": {
         "range": "Step {{currentStep}} of {{totalSteps}}",
         "connectDevice": "Connect Device"
       },
       "selectAccount": {
-        "title": "Select an account",
+        "title": "Select or create new account",
         "subtitle": "Your {{currencyTicker}} will be deposited into this account.",
         "cta": "Create a new account"
       },
@@ -2900,23 +2900,23 @@
         "addressVerified": "Address verified",
         "verifyAddress": "Verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
-        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other crypto to this address may result in the loss of your crypto.",
         "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards",
-        "bannerTitle": "Learn how to withdraw from an exchange."
+        "bannerTitle": "Learn how to withdraw from an exchange"
       },
       "securityVerify": {
-        "title": "For security we recommend verifying this address with your Ledger device.",
-        "subtitle1": "Verifying your address provides you security. The address displayed on your ledger device cannot be compromised.",
-        "subtitle2": "By verifying the address, you will be able to confirm that the address shown on your device is the same as the address shown in Ledger Live.",
+        "title": "Address verification is critical for securing this transaction",
+        "subtitle1": "Make sure to only compare the pasted address (after you have copied it from Ledger Live) with the address appearing on your Ledger’s Trusted Display (the Ledger device screen). They both must be the same.",
+        "subtitle2": "This verification will help stop address replacement attacks.",
         "verifyCta": "Verify my address",
-        "dontVerifyCta": "Reveal my address without verifying"
+        "dontVerifyCta": "Reveal address without verifying"
       },
       "securityDontVerify": {
-        "title": "Are you sure?",
-        "subtitle": "The address displayed on Ledger Live will not be verified.",
+        "title": "Don't verify?",
+        "subtitle": "Not verifying increases chances of getting scammed into sending assets to the wrong address.",
         "doNotRemindAgain": "Do not remind me again",
-        "no": "No",
-        "yes": "Yes"
+        "no": "Verify",
+        "yes": "Don't verify"
       },
       "toastMessages": {
         "accountImported": "We've imported a {{currencyTicker}} account for you. ",
