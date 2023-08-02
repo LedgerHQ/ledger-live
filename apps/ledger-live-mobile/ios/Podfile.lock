@@ -708,7 +708,7 @@ DEPENDENCIES:
   - "EXCamera (from `../../../node_modules/.pnpm/expo-camera@13.2.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-camera/ios`)"
   - "EXFileSystem (from `../../../node_modules/.pnpm/expo-file-system@15.2.2_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-file-system/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-loader/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.22.8_metro@0.76.0_react-native@0.71.6_react@18.0.0/node_modules/expo`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.22.8_metro@0.77.0_react-native@0.71.6_react@18.0.0/node_modules/expo`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@11.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-manipulator/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.2.2_react-native@0.71.6_react@18.0.0/node_modules/expo-modules-core`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native/Libraries/FBLazyVector`)"
@@ -871,7 +871,7 @@ EXTERNAL SOURCES:
   EXImageLoader:
     :path: "../../../node_modules/.pnpm/expo-image-loader@4.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.22.8_metro@0.76.0_react-native@0.71.6_react@18.0.0/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.22.8_metro@0.77.0_react-native@0.71.6_react@18.0.0/node_modules/expo"
   ExpoImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@11.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-manipulator/ios"
   ExpoModulesCore:
