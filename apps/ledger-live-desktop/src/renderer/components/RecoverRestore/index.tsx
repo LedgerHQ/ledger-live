@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -22,6 +22,8 @@ import { FirmwareInfo } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
 import { urls } from "~/config/urls";
 import { languageSelector } from "~/renderer/reducers/settings";
+import { LockedDeviceError } from "@ledgerhq/errors";
+import { Subscription } from "@xstate/react/lib/types";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -32,14 +34,15 @@ const RecoverRestore = () => {
   const { setDeviceModelId } = useContext(OnboardingContext);
   const locale = useSelector(languageSelector) || "en";
 
-  // check if device is seeded when selected
-  useEffect(() => {
+  const checkDeviceState = useCallback((): Subscription | undefined => {
+    let sub: Subscription | undefined;
+
     if (currentDevice) {
       const requestObservable = withDevice(currentDevice.deviceId)(t => from(getVersion(t))).pipe(
         first(),
       );
 
-      const sub = requestObservable.subscribe({
+      sub = requestObservable.subscribe({
         next: (firmware: FirmwareInfo) => {
           try {
             setState(extractOnboardingState(firmware.flags));
@@ -53,12 +56,24 @@ const RecoverRestore = () => {
           setError(error);
         },
       });
-
-      return () => {
-        sub.unsubscribe();
-      };
     }
+
+    return sub;
   }, [currentDevice]);
+
+  const onRetry = useCallback(() => {
+    checkDeviceState();
+    setError(undefined);
+  }, [checkDeviceState]);
+
+  // check if device is seeded when selected
+  useEffect(() => {
+    const sub = checkDeviceState();
+
+    return () => {
+      if (sub) sub.unsubscribe();
+    };
+  }, [checkDeviceState]);
 
   useEffect(() => {
     if (state && !state.isOnboarded) {
@@ -76,12 +91,34 @@ const RecoverRestore = () => {
     }
   }, [currentDevice?.modelId, history, setDeviceModelId, state]);
 
+  // retry if device is locked
+  if (error instanceof LockedDeviceError) {
+    return (
+      <Flex width="100%" height="100%" position="relative">
+        <Flex position="relative" height="100%" width="100%" flexDirection="column">
+          {renderError({
+            t,
+            error,
+            onRetry,
+            device: currentDevice,
+          })}
+        </Flex>
+      </Flex>
+    );
+  }
+
   if (error) {
-    return renderError({
-      t,
-      error,
-      device: currentDevice,
-    });
+    return (
+      <Flex width="100%" height="100%" position="relative">
+        <Flex position="relative" height="100%" width="100%" flexDirection="column">
+          {renderError({
+            t,
+            error,
+            device: currentDevice,
+          })}
+        </Flex>
+      </Flex>
+    );
   }
 
   if (state?.isOnboarded) {
