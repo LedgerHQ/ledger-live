@@ -40,7 +40,6 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
 
   const translationKey = useMemo(() => `errors.${errorName}.${field}`, [errorName, field]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const isValidError = useMemo(() => error instanceof Error, [error]);
   const links = useErrorLinks(error);
 
