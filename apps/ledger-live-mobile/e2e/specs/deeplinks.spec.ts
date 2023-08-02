@@ -25,6 +25,8 @@ let receivePage: ReceivePage;
 
 const ethereumLong = "Ethereum";
 const bitcoinLong = "Bitcoin";
+const arbitrumLong = "Arbitrum";
+const bobaLong = "Boba";
 
 const mercuryoDL = { name: "Mercuryo", url: " https://www.mercuryo.io/" };
 const discoverApps = [
@@ -133,9 +135,9 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.openViaDeeplink();
     await receivePage.receiveViaDeeplink(ethereumLong);
     await expect(receivePage.getStep2HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep2Accounts()).toBeVisible();
-    await expect(getElementByText(ethereumLong + " 1")).toBeVisible();
-    await expect(getElementByText(ethereumLong + " 2")).toBeVisible();
-    await expect(getElementByText(ethereumLong + " 3")).toBeVisible();
+    await expect(receivePage.getStep2Networks()).toBeVisible();
+    await expect(getElementByText(ethereumLong)).toBeVisible();
+    await expect(getElementByText(arbitrumLong)).toBeVisible();
+    await expect(getElementByText(bobaLong)).toBeVisible();
   });
 });

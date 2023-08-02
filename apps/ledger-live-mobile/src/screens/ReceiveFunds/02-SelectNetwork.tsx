@@ -185,6 +185,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
       </Flex>
 
       <FlatList
+        testID="receive-header-step2-networks"
         contentContainerStyle={styles.list}
         data={sortedCryptoCurrenciesWithAccounts}
         renderItem={renderItem}
