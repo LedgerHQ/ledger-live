@@ -142,7 +142,8 @@
     "connectDevice" : "Cihazınızı bağlayın",
     "add" : "Ekle",
     "or" : "VEYA",
-    "clearAll" : "Tümünü temizle"
+    "clearAll" : "Tümünü temizle",
+    "buyLedger" : "Ledger satın alın"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -299,8 +300,7 @@
     "title" : "Takas edin",
     "tabs" : {
       "exchange" : "Takas edin",
-      "history" : "Geçmiş",
-      "kyc" : "KYC"
+      "history" : "Geçmiş"
     },
     "form" : {
       "changeCTA" : "Değiştir",
@@ -355,33 +355,6 @@
         "title" : "Bulunduğunuz yerde takas işlemleri henüz mevcut değil",
         "content" : "Lütfen biraz daha sabredin;<br/>bu özelliği çok yakında başlatacağız"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "KYC işlemini tamamlamalısınız",
-          "complete" : "KYC'yi tamamla",
-          "update" : "KYC'yi yenile",
-          "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
-          "rejectedContactProviderSupport" : "KYC reddedildi, lütfen {{providerName}} desteğiyle iletişime geçin",
-          "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
-          "status" : {
-            "pending" : "KYC beklemede",
-            "approved" : "KYC onaylandı",
-            "closed" : "KYC reddedildi",
-            "upgradeRequired" : "KYC eksik"
-          }
-        },
-        "login" : {
-          "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
-          "complete" : "Oturum aç"
-        },
-        "mfa" : {
-          "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
-          "complete" : "MFA kur"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
-        }
-      },
       "timeout" : {
         "message" : "Teknik sorunlar nedeniyle teklifler oluşturulamıyor. Kısa bir süre sonra tekrar takas etmeyi deneyin."
       }
@@ -394,54 +367,6 @@
       },
       "export" : "Dışa aktarma işlemleri",
       "exporting" : "Dışa aktarılıyor..."
-    },
-    "kyc" : {
-      "updateRequired" : "Uygulamayı güncelleyene kadar KYC işleminizi tamamlayamıyoruz",
-      "wyre" : {
-        "disclaimer" : "Bilgileriniz LEDGER tarafından KYC amacıyla WYRE adına toplanır ve aktarılır. Daha fazla bilgi için lütfen bakın:",
-        "policy" : "Gizlilik Politikası",
-        "title" : "Kimliğinizi doğrulayın",
-        "subtitle" : "Wyre ile takas işlemi yapmak için lütfen bilgilerinizi girin.",
-        "cta" : "Devam",
-        "pending" : {
-          "cta" : "Devam",
-          "title" : "Bilgileriniz onaylanmak üzere gönderildi",
-          "subtitle" : "İncelemenin tamamlanması birkaç dakika sürebilir.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin",
-          "info" : "Kimlik doğrulama: Gönderildi"
-        },
-        "closed" : {
-          "cta" : "KYC'yi sıfırla",
-          "title" : "KYC başvurusu reddedildi",
-          "subtitle" : "KYC işlemi için gönderdiğiniz veriler Wyre tarafından reddedildi.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-        },
-        "form" : {
-          "firstName" : "Adı",
-          "lastName" : "Soyadı",
-          "street1" : "Adres 1. Satır",
-          "street2" : "Adres 2. Satır",
-          "city" : "Şehir",
-          "state" : "Eyalet",
-          "country" : "Ülke",
-          "postalCode" : "Posta Kodu",
-          "dateOfBirth" : "Doğum tarihi",
-          "firstNamePlaceholder" : "Adınızı girin",
-          "lastNamePlaceholder" : "Soyadınızı girin",
-          "street1Placeholder" : "Örn. 13, Maple Street",
-          "street2Placeholder" : "Örn. 13, Maple Street",
-          "cityPlaceholder" : "Örn. San José",
-          "postalCodePlaceholder" : "5 haneli Posta Kodunuzu girin",
-          "dateOfBirthPlaceholder" : "AA/GG/YYYY",
-          "firstNameError" : "Devam etmek için adınızı girin",
-          "lastNameError" : "Devam etmek için soyadınızı girin",
-          "street1Error" : "Adresinizi girin",
-          "cityError" : "ABD'de yaşadığınız şehri girin",
-          "postalCodeError" : "Geçerli bir ABD Posta Kodu girin",
-          "dateOfBirthError" : "Doğum tarihinizi girin",
-          "dateOfBirthValidationError" : "Geçerli bir doğum tarihi girin"
-        }
-      }
     },
     "exchangeDrawer" : {
       "title" : "Takas işleminizi onaylayın",
@@ -491,17 +416,7 @@
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
       "learnMore" : "Takas (Swap) nedir?",
-      "kycRequired" : "KYC Gerekli",
       "cta" : "Devam",
-      "kyc" : {
-        "notAvailable" : "{{provider}} konumunuzda mevcut değil",
-        "status" : {
-          "required" : "KYC Gerekli",
-          "pending" : "KYC Beklemede",
-          "approved" : "KYC Onaylandı!",
-          "closed" : "KYC Reddedildi"
-        }
-      },
       "filter" : {
         "centralised" : "Merkezi",
         "decentralised" : "Merkeziyetsiz",
@@ -516,55 +431,7 @@
       "subtitle" : "Kripto varlıkları doğrudan Ledger cihazınızdan takas edin.",
       "disclaimer" : "Devam ettiğinizde konum verilerinizin, kendi AML/KYC prosedürlerine uymaları için üçüncü taraf hizmet sağlayıcılarıyla paylaşılmasını kabul etmiş olursunuz."
     },
-    "kyc" : {
-      "updateRequired" : "Uygulamayı güncelleyene kadar KYC işleminizi tamamlayamıyoruz",
-      "wyre" : {
-        "disclaimer" : "Bilgileriniz LEDGER tarafından KYC amacıyla WYRE adına toplanır ve aktarılır. Daha fazla bilgi için lütfen bakın:",
-        "policy" : "Gizlilik Politikası",
-        "title" : "Kimliğinizi doğrulayın",
-        "subtitle" : "Wyre ile takas işlemi yapmak için lütfen bilgilerinizi girin.",
-        "pending" : {
-          "cta" : "Devam",
-          "title" : "Onay bekliyor",
-          "subtitle" : "Bilgileriniz Wyre tarafından onaylanmak üzere iletildi.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-        },
-        "closed" : {
-          "cta" : "KYC'yi sıfırla",
-          "title" : "KYC başvurusu reddedildi",
-          "subtitle" : "KYC işlemi için gönderdiğiniz veriler Wyre tarafından reddedildi.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-        },
-        "form" : {
-          "firstName" : "Adı",
-          "lastName" : "Soyadı",
-          "street1" : "Adres 1. Satır",
-          "street2" : "Adres 2. Satır",
-          "city" : "Şehir",
-          "state" : "Eyalet",
-          "country" : "Ülke",
-          "postalCode" : "Posta Kodu",
-          "dateOfBirth" : "Doğum tarihi",
-          "firstNamePlaceholder" : "Adınızı girin",
-          "lastNamePlaceholder" : "Soyadınızı girin",
-          "street1Placeholder" : "Örn. 13, Maple Street",
-          "street2Placeholder" : "Örn. 13, Maple Street",
-          "cityPlaceholder" : "Örn. San José",
-          "postalCodePlaceholder" : "5 haneli Posta Kodunuzu girin",
-          "dateOfBirthPlaceholder" : "AA/GG/YYYY",
-          "firstNameError" : "Devam etmek için adınızı girin",
-          "lastNameError" : "Devam etmek için soyadınızı girin",
-          "street1Error" : "Adresinizi girin",
-          "cityError" : "ABD'de yaşadığınız şehri girin",
-          "postalCodeError" : "Geçerli bir ABD Posta Kodu girin",
-          "dateOfBirthError" : "Doğum tarihinizi girin",
-          "dateOfBirthValidationError" : "Geçerli bir doğum tarihi girin"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Wyre ile takas işlemleri için KYC'nizi sıfırlayın ve Live'ı güncelleyin",
-      "resetKYCCTA" : "KYC'yi sıfırla",
       "amount" : "Tutar",
       "from" : {
         "title" : "Gönderici",
@@ -596,16 +463,6 @@
       "noApp" : "{{currencyName}} uygulaması yüklü değil.",
       "outdatedApp" : "{{currencyName}} uygulama güncellesi mevcut.",
       "loadingRates" : "Kurlar yükleniyor..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Ledger Live'ın güncellenmesi gerekiyor",
-      "subtitle" : "Wyre ile takas işlemleri yapmak için lütfen Ledger Live uygulamasını son sürümüne güncelleyin ve kimliğinizi tekrar doğrulayın",
-      "cta" : "Doğrulamayı sıfırla"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "Yerel üçüncü taraf verilerinizi silin",
-      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sunulan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
-      "cta" : "Onayla"
     },
     "modal" : {
       "title" : "Takas edin",
@@ -3902,8 +3759,6 @@
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
       "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
-      "catalogRampServer" : "Al / sat sağlayıcılarını belirle",
-      "catalogRampServerDesc" : "Farklı alım satım sağlayıcıları arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
       "customLockScreen" : "Özel kilitli ekran varlıkları",
@@ -4298,7 +4153,7 @@
         "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
-        "recoverSignIn" : "Ledger Recover için giriş yapın",
+        "recoverSignIn" : "Ledger Recover'a giriş yapın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
         "termsAndConditions" : "Hüküm ve Koşullar",
         "and" : "ve",
@@ -5126,6 +4981,10 @@
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} desteklenmiyor",
       "description" : "Bu kripto varlık henüz desteklenmiyor. Lütfen Ledger Destek ile iletişime geçin."
+    },
+    "DeviceAlreadySetup" : {
+      "title" : "{{device}} cihazınız zaten bir Gizli Kurtarma İfadesi ile kurulmuş",
+      "description" : "Kurulumu yapılmamış bir Ledger bağlayın."
     },
     "DeviceNotGenuine" : {
       "title" : "Muhtemelen orijinal değil",
