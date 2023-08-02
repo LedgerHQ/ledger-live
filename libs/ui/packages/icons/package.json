@@ -17,10 +17,6 @@
     "index.js"
   ],
   "exports": {
-    "./react/": {
-      "require": "./react/cjs/",
-      "default": "./react/"
-    },
     "./react/*": {
       "require": "./react/cjs/*.js",
       "default": "./react/*.js"
@@ -28,10 +24,6 @@
     "./react": {
       "require": "./react/cjs/index.js",
       "default": "./react/index.js"
-    },
-    "./reactLegacy/": {
-      "require": "./reactLegacy/cjs/",
-      "default": "./reactLegacy/"
     },
     "./reactLegacy/*": {
       "require": "./reactLegacy/cjs/*.js",
@@ -41,10 +33,8 @@
       "require": "./reactLegacy/cjs/index.js",
       "default": "./reactLegacy/index.js"
     },
-    "./native/": "./native/",
     "./native/*": "./native/*.js",
     "./native": "./native/index.js",
-    "./nativeLegacy/": "./nativeLegacy/",
     "./nativeLegacy/*": "./nativeLegacy/*.js",
     "./nativeLegacy": "./nativeLegacy/index.js",
     "./package.json": "./package.json"
