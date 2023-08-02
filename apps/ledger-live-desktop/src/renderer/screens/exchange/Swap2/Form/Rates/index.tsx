@@ -22,8 +22,6 @@ import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
 import { getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import BigNumber from "bignumber.js";
-import C from "~/renderer/modals/Receive/Body";
 
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
