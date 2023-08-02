@@ -15,6 +15,8 @@ import logger from "~/renderer/logger";
 import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import { StepProps } from "../types";
 
+const ONE_WEI_IN_GWEI = 1_000_000_000;
+
 const StepFees = (props: StepProps) => {
   const {
     account,
@@ -47,15 +49,17 @@ const StepFees = (props: StepProps) => {
 
   let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
   if (transaction.type === 2) {
-    // dividedBy 1000000000 to convert from wei to gwei
+    // convert from wei to gwei
     maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw.maxPriorityFeePerGas ?? 0)
-      .dividedBy(1000000000)
+      .dividedBy(ONE_WEI_IN_GWEI)
       .toFixed();
     maxFeePerGasinGwei = new BigNumber(transactionRaw.maxFeePerGas ?? 0)
-      .dividedBy(1000000000)
+      .dividedBy(ONE_WEI_IN_GWEI)
       .toFixed();
   } else {
-    maxGasPriceinGwei = new BigNumber(transactionRaw.gasPrice ?? 0).dividedBy(1000000000).toFixed();
+    maxGasPriceinGwei = new BigNumber(transactionRaw.gasPrice ?? 0)
+      .dividedBy(ONE_WEI_IN_GWEI)
+      .toFixed();
   }
 
   return (
