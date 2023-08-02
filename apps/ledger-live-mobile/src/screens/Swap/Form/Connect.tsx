@@ -22,7 +22,7 @@ export function Connect({
   provider?: string;
 }) {
   const [device, setDevice] = useState<Device>();
-  const [result] = useState(); // WTF
+  const [result] = useState();
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
