@@ -221,7 +221,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="Deposit" name="Accounts" currencyName={currency.name} />
+      <TrackScreen category="Deposit" name="Accounts" asset={currency.name} />
       <PreventNativeBack />
       {scanning ? (
         <ScanLoading
@@ -271,6 +271,7 @@ function ScanLoading({
         currencyName: currency.name,
       })}
     >
+      <TrackScreen category="Deposit" name="Create account" asset={currency.name} />
       <Flex
         minHeight={120}
         flexDirection="column"

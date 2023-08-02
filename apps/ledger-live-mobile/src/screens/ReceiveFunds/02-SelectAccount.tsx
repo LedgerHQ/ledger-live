@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -36,7 +36,6 @@ function ReceiveSelectAccount({
   const currency = route?.params?.currency;
   const { t } = useTranslation();
   const navigationAccount = useNavigation<NavigationProps["navigation"]>();
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
@@ -81,10 +80,10 @@ function ReceiveSelectAccount({
 
   const selectAccount = useCallback(
     (account: AccountLike) => {
-      if (!selectedAccount && currency) {
-        setSelectedAccount(account.id);
+      if (currency) {
         track("account_clicked", {
-          currency: currency.name,
+          asset: currency.name,
+          page: "Select account to deposit to",
         });
         navigation.navigate(ScreenName.ReceiveConfirmation, {
           ...route.params,
@@ -93,7 +92,7 @@ function ReceiveSelectAccount({
         });
       }
     },
-    [currency, navigation, route.params, selectedAccount],
+    [currency, navigation, route.params],
   );
 
   const renderItem = useCallback(
@@ -124,6 +123,7 @@ function ReceiveSelectAccount({
   const createNewAccount = useCallback(() => {
     track("button_clicked", {
       button: "Create a new account",
+      page: "Select account to deposit to",
     });
     if (currency && currency.type === "TokenCurrency") {
       navigationAccount.navigate(NavigatorName.AddAccounts, {
@@ -144,11 +144,7 @@ function ReceiveSelectAccount({
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>
-      <TrackScreen
-        category="Deposit"
-        name="Select account to deposit to"
-        currency={currency.name}
-      />
+      <TrackScreen category="Deposit" name="Select account to deposit to" asset={currency.name} />
       <Flex p={6}>
         <Text
           variant="h4"
