@@ -20,6 +20,10 @@ import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
+import { getFeesUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import BigNumber from "bignumber.js";
+import C from "~/renderer/modals/Receive/Body";
 
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
@@ -60,7 +64,11 @@ export default function ProviderRate({
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
-
+  const providers = rates?.map(rate => rate.provider) ?? [];
+  const exchangeRates =
+    toCurrency && rates
+      ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
+      : [];
   const updateRate = useCallback(
     rate => {
       const value = rate ?? rate.provider;
@@ -124,6 +132,10 @@ export default function ProviderRate({
         category="Swap"
         name="Form - Edit Rates"
         provider={provider}
+        partnersList={providers}
+        exchangeRateList={exchangeRates}
+        sourceCurrency={fromCurrency?.id}
+        targetCurrency={toCurrency?.id}
         {...swapDefaultTrack}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
