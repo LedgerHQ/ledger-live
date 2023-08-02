@@ -2,6 +2,7 @@ import React from "react";
 import { getProviderIconUrl } from "@ledgerhq/live-common/icons/providers/providers";
 import { ProviderIconSize } from "@ledgerhq/live-common/icons/providers/sizes";
 import * as Styles from "./styles";
+import { SvgUri } from "react-native-svg";
 
 export type Props = {
   name: string;
@@ -11,7 +12,11 @@ export type Props = {
 
 const ProviderIcon = ({ name, size = "S", boxed = true }: Props): JSX.Element | null => {
   const iconUrl = getProviderIconUrl({ boxed, name });
-  return <Styles.Icon uri={iconUrl} size={size} />;
+  return (
+    <Styles.Contianer size={size}>
+      <SvgUri uri={iconUrl} />
+    </Styles.Contianer>
+  );
 };
 
 export default ProviderIcon;
