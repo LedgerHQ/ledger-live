@@ -77,6 +77,7 @@ import type {
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
   SettingsSetClosedNetworkBannerPayload,
+  SettingsSetClosedWithdrawBannerPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -578,7 +579,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     depositFlow: {
       ...state.depositFlow,
-      hasClosedWithdrawBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
+      hasClosedWithdrawBanner: (action as Action<SettingsSetClosedWithdrawBannerPayload>).payload,
     },
   }),
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({

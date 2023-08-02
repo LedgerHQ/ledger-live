@@ -240,10 +240,10 @@ export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
 );
 export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
-  SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
+  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
 );
 export const setCloseWithdrawBanner = createAction<SettingsSetClosedNetworkBannerPayload>(
-  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
+  SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
 );
 export const setWalletTabNavigatorLastVisitedTab =
   createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
