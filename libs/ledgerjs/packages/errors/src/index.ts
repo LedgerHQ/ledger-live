@@ -87,6 +87,7 @@ export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorCla
 );
 export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
+// Error message specifically for the PTX swap flow
 export const NotEnoughGasSwap = createCustomErrorClass("NotEnoughGasSwap");
 export const NotSupportedLegacyAddress = createCustomErrorClass("NotSupportedLegacyAddress");
 export const GasLessThanEstimate = createCustomErrorClass("GasLessThanEstimate");
