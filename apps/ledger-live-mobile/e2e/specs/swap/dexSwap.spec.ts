@@ -20,6 +20,7 @@ describe("Swap", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToSwapFromTransferMenu();
+    await swapPage.waitForSwapForm();
   });
 
   it("should be able to generate a quote with DEX providers available", async () => {
