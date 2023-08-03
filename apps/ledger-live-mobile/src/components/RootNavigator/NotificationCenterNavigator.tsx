@@ -29,7 +29,7 @@ export default function NotificationCenterNavigator() {
   const goToNotificationsSettings = useCallback(() => {
     track("button_clicked", {
       button: "Settings",
-      screen: ScreenName.NotificationCenter,
+      page: ScreenName.NotificationCenter,
     });
     navigation.navigate(NavigatorName.Settings, {
       screen: ScreenName.NotificationsSettings,
@@ -39,7 +39,7 @@ export default function NotificationCenterNavigator() {
   const goToStatusCenter = useCallback(() => {
     track("button_clicked", {
       button: "Notification Center Status",
-      screen: ScreenName.NotificationCenterStatus,
+      page: ScreenName.NotificationCenterStatus,
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenterStatus,

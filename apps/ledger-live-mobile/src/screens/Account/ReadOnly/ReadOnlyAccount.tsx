@@ -103,7 +103,7 @@ function ReadOnlyAccount({ route }: Props) {
           event="button_clicked"
           eventProperties={{
             button: "Discover the Nano",
-            screen: "Account",
+            page: "Account",
             currency: currency.name,
           }}
           screen="Account"
