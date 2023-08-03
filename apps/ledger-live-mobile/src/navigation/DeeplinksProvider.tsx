@@ -84,7 +84,7 @@ function getProxyURL(url: string) {
   }
 
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
-  if (hostname === "platform" && platform) {
+  if (pathname.includes("//platform/multibuy")) {
     return url.replace("://platform", "://discover");
   }
 
