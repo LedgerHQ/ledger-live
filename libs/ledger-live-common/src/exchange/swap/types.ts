@@ -321,6 +321,7 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   toggleMax: () => void;
   reverseSwap: () => void;
   fromAmountError?: Error;
+  fromAmountWarning?: Error;
 };
 
 export enum ActionRequired {
