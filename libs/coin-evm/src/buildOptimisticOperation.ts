@@ -10,6 +10,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { EvmNftTransaction, Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees, isNftTransaction } from "./logic";
+import { toTransactionRaw } from "./transaction";
 
 /**
  * Build an optimistic operation for the coin of the integration (e.g. Ether for Ethereum)
@@ -40,6 +41,7 @@ export const buildOptimisticCoinOperation = (
     nftOperations: [],
     date: new Date(),
     extra: {},
+    transactionRaw: toTransactionRaw(transaction), // to allow edit / cancel flows
   };
 
   return operation;
