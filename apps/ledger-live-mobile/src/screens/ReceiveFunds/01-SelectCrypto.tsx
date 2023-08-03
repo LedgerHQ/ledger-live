@@ -7,6 +7,7 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import debounce from "lodash/debounce";
 
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
@@ -97,6 +98,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   }, [onPressItem, paramsCurrency]);
 
+  const debounceTrackOnSearchChange = debounce((newQuery: string) => {
+    track("asset_searched", { page: "Choose a crypto to secure", asset: newQuery });
+  }, 1500);
+
   const renderList = useCallback(
     (items: CryptoOrTokenCurrency[]) => (
       <FlatList
@@ -126,6 +131,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           renderList={renderList}
           renderEmptySearch={renderEmptyList}
           newSearchBar
+          onSearchChange={debounceTrackOnSearchChange}
         />
       ) : (
         <Flex flex={1} mt={6}>
