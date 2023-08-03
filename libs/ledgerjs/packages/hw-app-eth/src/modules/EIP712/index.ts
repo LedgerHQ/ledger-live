@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-duplicate-enum-values: 1 */
 import {
   FilteringInfoContractName,
   FilteringInfoShowField,

@@ -149,7 +149,7 @@ function WalletTabNavigatorTabBar({
 
       track("button_clicked", {
         button: "Referral program",
-        screen: ScreenName.Portfolio,
+        page: ScreenName.Portfolio,
       });
     }
   }, [referralProgramMobile]);

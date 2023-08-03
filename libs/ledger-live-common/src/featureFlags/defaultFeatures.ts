@@ -98,6 +98,24 @@ export const defaultFeatures = {
   currencyTelosEvm: {
     enabled: false,
   },
+  currencyCoreum: {
+    enabled: false,
+  },
+  currencyPolygonZkEvm: {
+    enabled: false,
+  },
+  currencyPolygonZkEvmTestnet: {
+    enabled: false,
+  },
+  currencyBase: {
+    enabled: false,
+  },
+  currencyBaseGoerli: {
+    enabled: false,
+  },
+  currencyKlaytn: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {

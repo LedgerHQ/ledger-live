@@ -25,6 +25,7 @@ type FormInputsProps = {
   reverseSwap: SwapTransactionType["reverseSwap"];
   isMaxEnabled?: boolean;
   fromAmountError?: Error;
+  fromAmountWarning?: Error;
   isSwapReversable: boolean;
   provider: string | undefined | null;
   loadingRates: boolean;
@@ -70,6 +71,7 @@ export default function FormInputs({
   setToCurrency,
   toggleMax,
   fromAmountError,
+  fromAmountWarning,
   reverseSwap,
   isSwapReversable,
   provider,
@@ -97,6 +99,7 @@ export default function FormInputs({
           isMaxEnabled={isMaxEnabled}
           toggleMax={toggleMax}
           fromAmountError={fromAmountError}
+          fromAmountWarning={fromAmountWarning}
           provider={provider}
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={updateSelectedRate}

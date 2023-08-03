@@ -65,14 +65,17 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.0" />,
+            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.0" key="DelegationText0" />,
             <Trans
               i18nKey="cosmos.delegation.flow.steps.starter.steps.1"
               values={{ numberOfDays: crypto.unbondingPeriod }}
+              key="DelegationText1"
             />,
-            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" />,
+            <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" key="DelegationText2" />,
           ].map(wording => (
-            <LText semiBold>{wording}</LText>
+            <LText semiBold key={wording.key}>
+              {wording}
+            </LText>
           ))}
         />
         <View style={[styles.howDelegationWorks]}>

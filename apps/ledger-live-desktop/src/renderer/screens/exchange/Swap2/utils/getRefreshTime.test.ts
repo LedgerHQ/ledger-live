@@ -1,3 +1,4 @@
+import { describe, it, expect, jest } from "@jest/globals";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { getRefreshTime } from "~/renderer/screens/exchange/Swap2/utils/getRefreshTime";
 const mockDate = new Date("2020-01-01");

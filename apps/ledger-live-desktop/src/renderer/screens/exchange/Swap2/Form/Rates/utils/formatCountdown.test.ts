@@ -1,3 +1,4 @@
+import { describe, it, expect } from "@jest/globals";
 import { formatCountdown } from "~/renderer/screens/exchange/Swap2/Form/Rates/utils/formatCountdown";
 describe("formatCountdown", () => {
   it("formats countdown to timer", () => {

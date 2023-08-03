@@ -85,7 +85,7 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
       }
     }
     deeplinkRouting();
-  }, [paramAction, ptxEarn?.enabled]);
+  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route]);
 
   return (
     <EarnScreen

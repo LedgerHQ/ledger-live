@@ -27,7 +27,7 @@ export class FirmwareUpdateModal extends Modal {
       args => {
         const [deviceInfo] = args;
 
-        (window as any).mock.events.mockDeviceEvent(
+        window.mock.events.mockDeviceEvent(
           {
             ...deviceInfo,
           },

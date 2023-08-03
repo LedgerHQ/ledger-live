@@ -1,4 +1,4 @@
-import { AmountRequired } from "@ledgerhq/errors";
+import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors";
 import { useMemo } from "react";
 import {
   ExchangeRate,
@@ -8,13 +8,16 @@ import {
   AvailableProviderV3,
   OnBeforeTransaction,
 } from "../types";
-import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
+import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
 import { useFromState } from "./useFromState";
 import { useProviderRates } from "./useProviderRates";
 import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
 import { Account } from "@ledgerhq/types-live";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
+import { Transaction } from "../../../generated/types";
+import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -25,18 +28,49 @@ export const selectorStateDefaultValues = {
 
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
-export const useFromAmountError = (
-  errors: Record<string, Error | undefined>,
+export const useFromAmountStatusMessage = (
+  { account, parentAccount, status, transaction }: Result<Transaction>,
+  // The order of errors/warnings here will determine the precedence
+  statusTypeToInclude: string[],
 ): Error | undefined => {
-  const fromAmountError = useMemo(() => {
-    const [error] = [errors?.gasPrice, errors?.amount]
+  const statusEntries = useMemo(
+    () => statusTypeToInclude.map(statusType => (status.errors || status.warnings)?.[statusType]),
+    [status.errors, status.warnings, statusTypeToInclude],
+  );
+
+  const currency = useMemo(() => {
+    if (parentAccount) {
+      return getAccountCurrency(parentAccount);
+    }
+    if (account) {
+      return getAccountCurrency(account);
+    }
+    return undefined;
+  }, [account, parentAccount]);
+
+  const estimatedFees = useMemo(() => {
+    return status.estimatedFees;
+  }, [status]);
+
+  return useMemo(() => {
+    // don't return an error/warning if we have no transaction or if transaction.amount <= 0
+    if (transaction?.amount.lte(0)) return undefined;
+
+    const [relevantStatus] = statusEntries
       .filter(Boolean)
-      .filter(error => !(error instanceof AmountRequired));
+      .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
 
-    return error;
-  }, [errors?.gasPrice, errors?.amount]);
+    if (relevantStatus instanceof NotEnoughGas && currency && estimatedFees) {
+      return new NotEnoughGasSwap(undefined, {
+        fees: formatCurrencyUnit(getFeesUnit(currency), estimatedFees),
+        ticker: currency.ticker,
+        cryptoName: currency.name,
+        links: ["/platform/multibuy"],
+      });
+    }
 
-  return fromAmountError;
+    return relevantStatus;
+  }, [statusEntries, currency, estimatedFees, transaction?.amount]);
 };
 
 export const useSwapTransaction = ({
@@ -86,7 +120,9 @@ export const useSwapTransaction = ({
   const { account: toAccount } = toState;
   const transaction = bridgeTransaction?.transaction;
 
-  const fromAmountError = useFromAmountError(bridgeTransaction.status.errors);
+  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, ["amount"]);
+  // treat the gasPrice error as a warning for swap.
+  const fromAmountWarning = useFromAmountStatusMessage(bridgeTransaction, ["gasPrice"]);
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,
@@ -140,6 +176,7 @@ export const useSwapTransaction = ({
     setFromAmount,
     toggleMax,
     fromAmountError,
+    fromAmountWarning,
     setToAccount,
     setToCurrency,
     setFromAccount,

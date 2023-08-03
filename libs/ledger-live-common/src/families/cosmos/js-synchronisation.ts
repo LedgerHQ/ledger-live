@@ -120,8 +120,12 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
         const redelegateShards: { amount: BigNumber; address: string }[] = [];
         for (const message of correspondingMessages) {
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          const validatorDst = message.attributes.find(attr => attr.key === "validator_dst")?.value;
-          const validatorSrc = message.attributes.find(attr => attr.key === "validator_src")?.value;
+          const validatorDst = message.attributes.find(
+            attr => attr.key === "destination_validator",
+          )?.value;
+          const validatorSrc = message.attributes.find(
+            attr => attr.key === "source_validator",
+          )?.value;
           if (amount && validatorDst && validatorSrc && amount.endsWith(unitCode)) {
             op.extra.sourceValidator = validatorSrc;
             redelegateShards.push({

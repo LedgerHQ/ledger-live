@@ -127,7 +127,7 @@ export const FirmwareUpdateDenied = ({
         event="button_clicked"
         eventProperties={{
           button: "Restart OS update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: drawerName,
         }}
         outline={false}
@@ -142,7 +142,7 @@ export const FirmwareUpdateDenied = ({
         event="button_clicked"
         eventProperties={{
           button: "Exit update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: drawerName,
         }}
         onPress={onPressQuit}

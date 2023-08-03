@@ -168,6 +168,18 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     deviceTransportFail: (manifest: AppManifest) => {
       track("WalletAPI device transport fail", getEventData(manifest));
     },
+    deviceSelectRequested: (manifest: AppManifest) => {
+      track("WalletAPI device select requested", getEventData(manifest));
+    },
+    deviceSelectSuccess: (manifest: AppManifest) => {
+      track("WalletAPI device select success", getEventData(manifest));
+    },
+    deviceSelectFail: (manifest: AppManifest) => {
+      track("WalletAPI device select fail", getEventData(manifest));
+    },
+    deviceOpenRequested: (manifest: AppManifest) => {
+      track("WalletAPI device open requested", getEventData(manifest));
+    },
     deviceExchangeRequested: (manifest: AppManifest) => {
       track("WalletAPI device exchange requested", getEventData(manifest));
     },

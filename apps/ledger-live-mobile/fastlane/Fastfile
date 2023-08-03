@@ -92,8 +92,12 @@ platform :ios do
   private_lane :refresh_ios_profiles do
     match(
       type: "development",
-      app_identifier: ["com.ledger.live", "com.ledger.live.dev", "com.ledger.live.ledgerconnect"],
+      app_identifier: ["com.ledger.live", "com.ledger.live.dev"],
+      force: true,
       force_for_new_devices: true,
+      include_all_certificates: true,
+      force_for_new_certificates: true,
+      generate_apple_certs: true,
       git_url: ENV["GIT_REPO_URL"],
       username: ENV["APPLE_ID"],
       team_id: ENV["DEVELOPER_TEAM_ID"],
@@ -103,8 +107,10 @@ platform :ios do
     )
     match(
       type: "adhoc",
-      app_identifier: ["com.ledger.live", "com.ledger.live.dev", "com.ledger.live.ledgerconnect"],
+      app_identifier: ["com.ledger.live", "com.ledger.live.dev"],
+      force: true,
       force_for_new_devices: true,
+      generate_apple_certs: true,
       git_url: ENV["GIT_REPO_URL"],
       username: ENV["APPLE_ID"],
       team_id: ENV["DEVELOPER_TEAM_ID"],
@@ -115,6 +121,8 @@ platform :ios do
     match(
       type: "appstore",
       app_identifier: "com.ledger.live",
+      force: true,
+      generate_apple_certs: true,
       git_url: ENV["GIT_REPO_URL"],
       username: ENV["APPLE_ID"],
       team_id: ENV["DEVELOPER_TEAM_ID"],
