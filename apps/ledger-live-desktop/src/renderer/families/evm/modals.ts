@@ -10,12 +10,12 @@ export type ModalsData = {
     singleProviderRedirectMode?: boolean;
     source?: string;
   };
-  MODAL_EDIT_TRANSACTION: EditTransactionModalProps;
+  MODAL_EVM_EDIT_TRANSACTION: EditTransactionModalProps;
 };
 
 const modals: MakeModalsType<ModalsData> = {
   MODAL_EVM_STAKE,
-  MODAL_EDIT_TRANSACTION: EditTransactionModal,
+  MODAL_EVM_EDIT_TRANSACTION: EditTransactionModal,
 };
 
 export default modals;

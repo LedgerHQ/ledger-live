@@ -7,6 +7,7 @@ import { openModal, closeModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import invariant from "invariant";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
 type Props = {
   operation: Operation;
@@ -20,9 +21,16 @@ const EditOperationPanel = (props: Props) => {
   const editEthTx = useFeature("editEthTx");
   const handleOpenEditModal = useCallback(() => {
     invariant(operation.transactionRaw, "operation.transactionRaw is required");
+    const currency = getAccountCurrency(account);
+
+    const { family } = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
+
+    const modalName =
+      family === "evm" ? "MODAL_EVM_EDIT_TRANSACTION" : "MODAL_ETH_EDIT_TRANSACTION";
+
     dispatch(closeModal("MODAL_SEND"));
     dispatch(
-      openModal("MODAL_EDIT_TRANSACTION", {
+      openModal(modalName, {
         account,
         parentAccount,
         transactionRaw: operation.transactionRaw,

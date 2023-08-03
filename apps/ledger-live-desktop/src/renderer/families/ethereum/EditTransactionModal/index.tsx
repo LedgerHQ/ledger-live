@@ -25,7 +25,7 @@ const EditTransactionModal = ({
   return (
     <DomainServiceProvider>
       <Modal
-        name="MODAL_EDIT_TRANSACTION"
+        name="MODAL_ETH_EDIT_TRANSACTION"
         centered
         preventBackdropClick={true}
         onHide={handleReset}

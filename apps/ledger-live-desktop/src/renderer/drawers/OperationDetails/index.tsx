@@ -247,12 +247,19 @@ const OperationD = (props: Props) => {
   const dispatch = useDispatch();
   const handleOpenEditModal = useCallback(
     (account, parentAccount, transactionRaw, transactionHash) => {
+      const currency = getAccountCurrency(account);
+
+      const { family } = currency.type === "CryptoCurrency" ? currency : currency.parentCurrency;
+
+      const modalName =
+        family === "evm" ? "MODAL_EVM_EDIT_TRANSACTION" : "MODAL_ETH_EDIT_TRANSACTION";
+
       setDrawer(undefined);
       if (subOperations.length > 0 && isToken) {
         // if the operation is a token operation,(ERC-20 send), in order to speedup/cancel we need to find the subAccount
         const opAccount = findSubAccountById(account, subOperations[0].accountId);
         dispatch(
-          openModal("MODAL_EDIT_TRANSACTION", {
+          openModal(modalName, {
             account: opAccount,
             parentAccount: account,
             transactionRaw,
@@ -261,7 +268,7 @@ const OperationD = (props: Props) => {
         );
       } else {
         dispatch(
-          openModal("MODAL_EDIT_TRANSACTION", {
+          openModal(modalName, {
             account,
             parentAccount,
             transactionRaw,

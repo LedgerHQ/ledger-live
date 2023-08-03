@@ -151,7 +151,7 @@ const Body = ({
   const currencyName = getAccountCurrency(account).name;
 
   const handleCloseModal = useCallback(() => {
-    closeModal("MODAL_EDIT_TRANSACTION");
+    closeModal("MODAL_EVM_EDIT_TRANSACTION");
   }, [closeModal]);
 
   const handleRetry = useCallback(() => {
