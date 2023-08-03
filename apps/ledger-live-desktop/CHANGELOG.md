@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.65.0-next.1
+
+### Patch Changes
+
+- [#4175](https://github.com/LedgerHQ/ledger-live/pull/4175) [`865b0d4256`](https://github.com/LedgerHQ/ledger-live/commit/865b0d42561c02b56f4852b3e7b6a229487da599) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix feature flag for Polygon Zk EVM
+
 ## 2.65.0-next.0
 
 ### Minor Changes
