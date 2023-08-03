@@ -1,49 +1,46 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
+import type { OperationType } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useSelector } from "react-redux";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import Section from "../../screens/OperationDetails/Section";
 import OperationStatusIcon from "../../icons/OperationStatusIcon";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import { AlgorandOperation, AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 
 type Props = {
-  extra: {
-    rewards?: BigNumber;
-    memo?: string;
-    assetId?: string;
-  };
-  account: Account;
+  operation: AlgorandOperation;
+  account: AlgorandAccount;
 };
 
-function OperationDetailsExtra({ extra, account }: Props) {
+function OperationDetailsExtra({ operation, account }: Props) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
-  const formattedRewards =
-    extra.rewards && extra.rewards.gt(0)
-      ? formatCurrencyUnit(unit, extra.rewards, {
-          locale,
-          disableRounding: true,
-          alwaysShowSign: false,
-          showCode: true,
-          discreet,
-        })
-      : null;
+  const formattedRewards = operation.extra.rewards?.gt(0)
+    ? formatCurrencyUnit(unit, operation.extra.rewards, {
+        locale,
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+        discreet,
+      })
+    : null;
   return (
     <>
       {formattedRewards && (
         <Section title={t("operationDetails.extra.rewards")} value={formattedRewards} />
       )}
-      {extra.assetId && (
-        <Section title={t("operationDetails.extra.assetId")} value={extra.assetId} />
+      {operation.extra.assetId && (
+        <Section title={t("operationDetails.extra.assetId")} value={operation.extra.assetId} />
       )}
-      {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
+      {operation.extra.memo && (
+        <Section title={t("operationDetails.extra.memo")} value={operation.extra.memo} />
+      )}
     </>
   );
 }
@@ -52,7 +49,7 @@ type OperationIconProps = {
   type: OperationType;
   size: number;
   confirmed: boolean;
-  operation: Operation;
+  operation: AlgorandOperation;
 };
 
 const OperationIcon = ({
@@ -61,7 +58,7 @@ const OperationIcon = ({
   confirmed,
   operation: { hasFailed, extra },
 }: OperationIconProps) => {
-  const rewards = extra.rewards && extra.rewards.gt(0) ? extra.rewards : null;
+  const rewards = extra.rewards?.gt(0) ? extra.rewards : null;
   return rewards ? (
     <View style={styles.operationIconContainer}>
       <OperationStatusIcon

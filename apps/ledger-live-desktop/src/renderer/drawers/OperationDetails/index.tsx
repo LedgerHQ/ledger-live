@@ -679,12 +679,7 @@ const OperationD = (props: Props) => {
         </OpDetailsSection>
       ) : null}
       {OpDetailsExtra && (
-        <OpDetailsExtra
-          operation={operation}
-          extra={extra}
-          type={type}
-          account={account as Account}
-        />
+        <OpDetailsExtra operation={operation} type={type} account={account as Account} />
       )}
       <B />
     </Box>
@@ -709,12 +704,9 @@ type OperationDetailsExtraProps = {
   operation: Operation;
   account: Account;
   type: OperationType;
-  extra: {
-    [key: string]: string;
-  };
 };
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
-  const jsx = Object.entries(extra).map(([key, value]) => {
+const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
+  const jsx = Object.entries(operation.extra).map(([key, value]) => {
     if (typeof value === "object" || typeof value === "function") return null;
     return (
       <OpDetailsSection key={key}>

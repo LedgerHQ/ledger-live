@@ -4,10 +4,16 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import type { AlgorandAccount, AlgorandResources } from "./types";
+import type {
+  AlgorandAccount,
+  AlgorandOperation,
+  AlgorandOperationExtra,
+  AlgorandOperationExtraRaw,
+  AlgorandResources,
+} from "./types";
 
 function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
-  const { rewards } = op.extra;
+  const { rewards } = (op as AlgorandOperation).extra;
   return rewards
     ? " REWARDS : " +
         `${
@@ -42,20 +48,22 @@ function formatAccountSpecifics(account: Account): string {
   return str;
 }
 
-export function fromOperationExtraRaw(extra: Record<string, any> | null | undefined) {
-  if (extra && extra.rewards) {
-    return { ...extra, rewards: new BigNumber(extra.rewards) };
+export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
+  const extra: AlgorandOperationExtra = {};
+  if (extraRaw.rewards) {
+    extra.rewards = new BigNumber(extraRaw.rewards);
   }
-
   return extra;
 }
-export function toOperationExtraRaw(extra: Record<string, any> | null | undefined) {
-  if (extra && extra.rewards) {
-    return { ...extra, rewards: extra.rewards.toString() };
-  }
 
-  return extra;
+export function toOperationExtraRaw(extra: AlgorandOperationExtra) {
+  const extraRaw: AlgorandOperationExtraRaw = {};
+  if (extra.rewards) {
+    extraRaw.rewards = extra.rewards.toString();
+  }
+  return extraRaw;
 }
+
 export default {
   formatAccountSpecifics,
   formatOperationSpecifics,

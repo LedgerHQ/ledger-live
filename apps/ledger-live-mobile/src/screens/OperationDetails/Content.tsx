@@ -160,7 +160,6 @@ export default function Content({
               type: typeof type;
               account: AccountLike;
               operation: Operation;
-              extra: Record<string, unknown>;
             }>;
           }
         ).OperationDetailsExtra
@@ -433,7 +432,7 @@ export default function Content({
         </View>
       ) : null}
 
-      <Extra operation={operation} extra={extra} type={type} account={account} />
+      <Extra operation={operation} type={type} account={account} />
 
       <Modal isOpened={isModalOpened} onClose={onModalClose} currency={currency} />
     </>

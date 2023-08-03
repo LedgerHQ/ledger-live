@@ -46,17 +46,24 @@ export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type Transaction = AlgorandTransaction;
 export type TransactionRaw = AlgorandTransactionRaw;
-export type AlgorandOperation = Operation & {
-  extra: AlgorandExtraTxInfo;
+
+export type AlgorandOperation = Omit<Operation, "extra"> & {
+  extra: AlgorandOperationExtra;
 };
-export type AlgorandOperationRaw = OperationRaw & {
-  extra: AlgorandExtraTxInfo;
+export type AlgorandOperationRaw = Omit<OperationRaw, "extra"> & {
+  extra: AlgorandOperationExtraRaw;
 };
-export type AlgorandExtraTxInfo = {
+export type AlgorandOperationExtra = {
   rewards?: BigNumber;
   memo?: string;
   assetId?: string;
 };
+export type AlgorandOperationExtraRaw = {
+  rewards?: string;
+  memo?: string;
+  assetId?: string;
+};
+
 export type AlgorandAccount = Account & {
   algorandResources: AlgorandResources;
 };
