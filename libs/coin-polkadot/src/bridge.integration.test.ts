@@ -237,7 +237,7 @@ const polkadot: CurrenciesData<Transaction> = {
             amount: "2000000000000000000",
             mode: "bond",
             era: null,
-            validators: null,
+            validators: undefined,
             fees: null,
             rewardDestination: null,
             numSlashingSpans: 0,

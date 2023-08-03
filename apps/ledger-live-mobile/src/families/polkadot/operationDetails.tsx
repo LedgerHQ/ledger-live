@@ -7,11 +7,15 @@ import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
-import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
+import {
+  PolkadotAccount,
+  PolkadotOperation,
+  PolkadotValidator,
+} from "@ledgerhq/live-common/families/polkadot/types";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Section from "../../screens/OperationDetails/Section";
@@ -30,11 +34,7 @@ import OperationStatusWrapper from "../../icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
 
-function getURLWhatIsThis(
-  op: Operation,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  currencyId: string,
-): string | undefined {
+function getURLWhatIsThis(op: PolkadotOperation): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return urls.polkadotStaking;
   }
@@ -48,28 +48,21 @@ function formatPalletMethod(palletMethod?: string): string {
 }
 
 type OperationDetailsExtraProps = {
-  extra: {
-    palletMethod: string;
-    validators: string[];
-    transferAmount: BigNumber;
-    bondedAmount: BigNumber;
-    unbondedAmount: BigNumber;
-    withdrawUnbondedAmount: BigNumber;
-    validatorStash: string;
-  };
+  operation: PolkadotOperation;
+  account: PolkadotAccount;
   type: string;
-  account: Account;
 };
 
-function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraProps) {
+function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
+  const { extra } = operation;
 
   switch (type) {
     case "OUT":
     case "IN": {
-      const value = formatCurrencyUnit(account.unit, BigNumber(extra.transferAmount), {
+      const value = formatCurrencyUnit(account.unit, extra.transferAmount ?? new BigNumber(0), {
         showCode: true,
         discreet,
         disableRounding: true,
@@ -94,7 +87,7 @@ function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraPr
       );
     }
     case "BOND": {
-      const value = formatCurrencyUnit(account.unit, BigNumber(extra.bondedAmount), {
+      const value = formatCurrencyUnit(account.unit, extra.bondedAmount ?? new BigNumber(0), {
         showCode: true,
         discreet,
         disableRounding: true,
@@ -108,7 +101,7 @@ function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraPr
       );
     }
     case "UNBOND": {
-      const value = formatCurrencyUnit(account.unit, BigNumber(extra.unbondedAmount), {
+      const value = formatCurrencyUnit(account.unit, extra.unbondedAmount ?? new BigNumber(0), {
         showCode: true,
         discreet,
         disableRounding: true,
@@ -122,12 +115,16 @@ function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraPr
       );
     }
     case "WITHDRAW_UNBONDED": {
-      const value = formatCurrencyUnit(account.unit, BigNumber(extra.withdrawUnbondedAmount), {
-        showCode: true,
-        discreet,
-        disableRounding: true,
-        locale,
-      });
+      const value = formatCurrencyUnit(
+        account.unit,
+        extra.withdrawUnbondedAmount ?? new BigNumber(0),
+        {
+          showCode: true,
+          discreet,
+          disableRounding: true,
+          locale,
+        },
+      );
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
@@ -151,7 +148,7 @@ function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraPr
 }
 type OperationDetailsRewardFromProps = {
   validatorStash: string;
-  account: Account;
+  account: PolkadotAccount;
   isTransactionField?: boolean;
 };
 
@@ -204,7 +201,7 @@ export const OperationDetailsPalletMethod = ({
 
 type OperationDetailsValidatorsProps = {
   validators: string[];
-  account: Account;
+  account: PolkadotAccount;
 };
 
 export function OperationDetailsValidators({
@@ -251,13 +248,20 @@ export function OperationDetailsValidators({
   );
 }
 
-type Props = {
+type AmountCellProps = {
+  // Need better typing in apps/ledger-live-mobile/src/components/OperationRow/index.tsx
+  // to use PolkadotOperation here
   operation: Operation;
   currency: Currency;
   unit: Unit;
 };
 
-const AmountCell = ({ amount, unit, currency, operation }: Props & { amount: BigNumber }) =>
+const AmountCell = ({
+  amount,
+  unit,
+  currency,
+  operation,
+}: AmountCellProps & { amount: BigNumber }) =>
   !amount.isZero() ? (
     <>
       <Text numberOfLines={1} color={"neutral.c100"} variant="body" fontWeight="semiBold">
@@ -277,26 +281,23 @@ const AmountCell = ({ amount, unit, currency, operation }: Props & { amount: Big
     </>
   ) : null;
 
-const BondAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.bondedAmount : 0);
-
+const BondAmountCell = ({ operation, currency, unit }: AmountCellProps) => {
+  const amount = (operation as PolkadotOperation).extra.bondedAmount ?? new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
-const UnbondAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.unbondedAmount : 0);
-
+const UnbondAmountCell = ({ operation, currency, unit }: AmountCellProps) => {
+  const amount = (operation as PolkadotOperation).extra.unbondedAmount ?? new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
-const WithdrawUnbondAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.withdrawUnbondedAmount : 0);
-
+const WithdrawUnbondAmountCell = ({ operation, currency, unit }: AmountCellProps) => {
+  const amount = (operation as PolkadotOperation).extra.withdrawUnbondedAmount ?? new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
-const NominateAmountCell = ({ operation }: Props) => {
-  const amount = operation.extra?.validators?.length || 0;
+const NominateAmountCell = ({ operation }: AmountCellProps) => {
+  const amount = (operation as PolkadotOperation).extra.validators?.length || 0;
 
   return amount > 0 ? (
     <Text numberOfLines={1} variant={"paragraph"} fontWeight={"semiBold"}>

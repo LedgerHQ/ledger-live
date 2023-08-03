@@ -4,8 +4,9 @@ import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { getOperationType } from "./common";
-import type { OperationType, Operation } from "@ledgerhq/types-live";
+import type { OperationType } from "@ledgerhq/types-live";
 import { isValidAddress } from "../address";
+import { PolkadotOperation, PolkadotOperationExtra } from "../types";
 
 const LIMIT = 200;
 
@@ -46,11 +47,6 @@ const getWithdrawUnbondedAmount = (extrinsic: any) => {
   );
 };
 
-const getController = (_extrinsic: any) => {
-  // TODO: ask BisonTrails to provide the info
-  return "";
-};
-
 /**
  * add Extra info for operation details
  *
@@ -59,18 +55,8 @@ const getController = (_extrinsic: any) => {
  *
  * @returns {Object}
  */
-const getExtra = (type: OperationType, extrinsic: any): Record<string, any> => {
-  let extra: {
-    transferAmount?: BigNumber;
-    palletMethod: string;
-    bondedAmount?: BigNumber;
-    unbondedAmount?: BigNumber;
-    amount?: BigNumber;
-    withdrawUnbondedAmount?: any;
-    validatorStash?: any;
-    validators?: any;
-    controller?: any;
-  } = {
+const getExtra = (type: OperationType, extrinsic: any): PolkadotOperationExtra => {
+  const extra: PolkadotOperationExtra = {
     palletMethod: `${extrinsic.section}.${extrinsic.method}`,
   };
 
@@ -78,56 +64,36 @@ const getExtra = (type: OperationType, extrinsic: any): Record<string, any> => {
     case "IN":
     case "OUT":
       if (extrinsic.amount || extrinsic.amount === 0) {
-        extra = { ...extra, transferAmount: new BigNumber(extrinsic.amount) };
+        extra.transferAmount = new BigNumber(extrinsic.amount);
       }
-
       break;
 
     case "BOND":
       if (extrinsic.amount || extrinsic.amount === 0) {
-        extra = { ...extra, bondedAmount: new BigNumber(extrinsic.amount) };
+        extra.bondedAmount = new BigNumber(extrinsic.amount);
       }
-
       break;
 
     case "UNBOND":
       if (extrinsic.amount || extrinsic.amount === 0) {
-        extra = { ...extra, unbondedAmount: new BigNumber(extrinsic.amount) };
+        extra.unbondedAmount = new BigNumber(extrinsic.amount);
       }
-
       break;
 
     case "WITHDRAW_UNBONDED":
-      extra = {
-        ...extra,
-        withdrawUnbondedAmount: getWithdrawUnbondedAmount(extrinsic),
-      };
-      break;
-
-    case "SET_CONTROLLER":
-      extra = {
-        ...extra,
-        controller: getController(extrinsic),
-      };
+      extra.withdrawUnbondedAmount = getWithdrawUnbondedAmount(extrinsic);
       break;
 
     case "REWARD_PAYOUT":
     case "SLASH":
-      extra = {
-        ...extra,
-        validatorStash: extrinsic.validatorStash,
-        amount: new BigNumber(extrinsic.value),
-      };
+      extra.validatorStash = extrinsic.validatorStash;
       break;
 
     case "NOMINATE":
-      extra = {
-        ...extra,
-        validators:
-          extrinsic.staking?.validators?.reduce((acc: any, current: any) => {
-            return [...acc, current.address];
-          }, []) ?? [],
-      };
+      extra.validators =
+        extrinsic.staking?.validators?.reduce((acc: any, current: any) => {
+          return [...acc, current.address];
+        }, []) ?? [];
       break;
   }
 
@@ -169,13 +135,13 @@ const getValue = (extrinsic: any, type: OperationType): BigNumber => {
  * @param {string} accountId
  * @param {*} extrinsic
  *
- * @returns {Operation | null}
+ * @returns {PolkadotOperation | null}
  */
 const extrinsicToOperation = (
   addr: string,
   accountId: string,
   extrinsic: any,
-): Partial<Operation> | null => {
+): PolkadotOperation | null => {
   let type = getOperationType(extrinsic.section, extrinsic.method);
 
   if (type === "OUT" && extrinsic.affectedAddress1 === addr && extrinsic.signer !== addr) {
@@ -194,6 +160,7 @@ const extrinsicToOperation = (
     type,
     hash: extrinsic.hash,
     blockHeight: extrinsic.blockNumber,
+    blockHash: null,
     date: new Date(extrinsic.timestamp),
     extra: getExtra(type, extrinsic),
     senders: [extrinsic.signer],
@@ -212,9 +179,9 @@ const extrinsicToOperation = (
  * @param {string} accountId
  * @param {*} reward
  *
- * @returns {Operation | null}
+ * @returns {PolkadotOperation}
  */
-const rewardToOperation = (addr: string, accountId: string, reward: any): Partial<Operation> => {
+const rewardToOperation = (addr: string, accountId: string, reward: any): PolkadotOperation => {
   const hash = reward.extrinsicHash;
   const type = "REWARD_PAYOUT";
   return {
@@ -225,6 +192,7 @@ const rewardToOperation = (addr: string, accountId: string, reward: any): Partia
     type: type,
     hash,
     blockHeight: reward.blockNumber,
+    blockHash: null,
     date: new Date(reward.timestamp),
     extra: getExtra(type, reward),
     senders: [reward.validatorStash].filter(Boolean),
@@ -239,9 +207,9 @@ const rewardToOperation = (addr: string, accountId: string, reward: any): Partia
  * @param {string} accountId
  * @param {*} slash
  *
- * @returns {Operation | null}
+ * @returns {PolkadotOperation}
  */
-const slashToOperation = (addr: string, accountId: string, slash: any): Partial<Operation> => {
+const slashToOperation = (addr: string, accountId: string, slash: any): PolkadotOperation => {
   const hash = `${slash.blockNumber}`;
   const type = "SLASH";
   return {
@@ -252,6 +220,7 @@ const slashToOperation = (addr: string, accountId: string, slash: any): Partial<
     type: type,
     hash: hash,
     blockHeight: slash.blockNumber,
+    blockHash: null,
     senders: [slash.validatorStash].filter(Boolean),
     recipients: [slash.accountId].filter(Boolean),
     date: new Date(slash.timestamp),
@@ -266,8 +235,7 @@ const slashToOperation = (addr: string, accountId: string, slash: any): Partial<
  * @param {string} addr
  * @param {number} startAt
  * @param {number} offset
- *
- * @param {Operation[]} prevOperations
+ * @param {PolkadotOperation[]} prevOperations
  */
 const fetchOperationList =
   (network: NetworkRequestCall) =>
@@ -276,8 +244,8 @@ const fetchOperationList =
     addr: string,
     startAt: number,
     offset = 0,
-    prevOperations: Operation[] = [],
-  ): Promise<Operation[]> => {
+    prevOperations: PolkadotOperation[] = [],
+  ): Promise<PolkadotOperation[]> => {
     const { data } = await network({
       method: "GET",
       url: getAccountOperationUrl(addr, offset, startAt),
@@ -303,7 +271,7 @@ const fetchOperationList =
  * @param {string} addr
  * @param {number} startAt - blockHeight after which you fetch this op (included)
  *
- * @return {Operation[]}
+ * @return {PolkadotOperation[]}
  */
 export const getOperations =
   (network: NetworkRequestCall) =>
