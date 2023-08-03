@@ -273,7 +273,7 @@ export function getStuckAccountAndOperation(
   let stuckParentAccount;
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const SUPPORTED_FAMILIES = ["ethereum"];
+  const SUPPORTED_FAMILIES = ["ethereum", "evm"];
 
   if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
     return undefined;
