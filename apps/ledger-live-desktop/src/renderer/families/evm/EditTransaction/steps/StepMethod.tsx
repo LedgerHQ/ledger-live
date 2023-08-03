@@ -51,16 +51,16 @@ const Description = styled(Box)<{ selected: boolean }>`
 
 // build the appropriate patch for cancel flow depending on the transaction type
 const buildCancelTxPatch = ({
-  transactionRaw,
+  transaction,
   account,
 }: {
-  transactionRaw: StepProps["transactionRaw"];
+  transaction: StepProps["transaction"];
   account: Account;
 }): Partial<EvmTransaction> => {
   let patch: Partial<EvmTransaction> = {
     amount: new BigNumber(0),
     data: undefined,
-    nonce: transactionRaw.nonce,
+    nonce: transaction.nonce,
     mode: "send",
     recipient: account.freshAddress,
     feesStrategy: "custom",
@@ -71,26 +71,20 @@ const buildCancelTxPatch = ({
   if (patch.type === 2) {
     const type2Patch: Partial<EvmTransactionEIP1559> = {
       ...patch,
-      maxFeePerGas: transactionRaw.maxFeePerGas
-        ? new BigNumber(transactionRaw.maxFeePerGas)
-            .times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
-            .integerValue()
-        : undefined,
-      maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
-        ? new BigNumber(transactionRaw.maxPriorityFeePerGas)
-            .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
-            .integerValue()
-        : undefined,
+      maxFeePerGas: transaction.maxFeePerGas
+        ?.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
+        .integerValue(),
+      maxPriorityFeePerGas: transaction.maxPriorityFeePerGas
+        ?.times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
+        .integerValue(),
     };
     patch = type2Patch;
   } else if (patch.type === 1 || patch.type === 0) {
     const type1Patch: Partial<EvmTransactionLegacy> = {
       ...patch,
-      gasPrice: transactionRaw.gasPrice
-        ? new BigNumber(transactionRaw.gasPrice)
-            .times(1 + getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR"))
-            .integerValue()
-        : undefined,
+      gasPrice: transaction.gasPrice
+        ?.times(1 + getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR"))
+        .integerValue(),
     };
     patch = type1Patch;
   }
@@ -201,8 +195,8 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
     editType,
     account,
     parentAccount,
-    transactionRaw,
     transaction,
+    transactionToUpdate,
     transactionHash,
     haveFundToSpeedup,
     haveFundToCancel,
@@ -213,16 +207,18 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
   } = props;
 
   const handleContinueClick = () => {
-    invariant(account && transactionRaw, "account and transactionRaw required");
+    invariant(account, "account required");
+    invariant(transaction, "transaction required");
+    invariant(transactionToUpdate, "transactionToUpdate required");
     const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount);
 
     if (editType === "speedup") {
       const patch: Partial<EvmTransaction> = {
-        amount: new BigNumber(transactionRaw.amount),
-        data: transactionRaw.data ? Buffer.from(transactionRaw.data, "hex") : undefined,
-        nonce: transactionRaw.nonce,
-        recipient: transactionRaw.recipient,
-        mode: transactionRaw.mode,
+        amount: transactionToUpdate.amount,
+        data: transactionToUpdate.data,
+        nonce: transactionToUpdate.nonce,
+        recipient: transactionToUpdate.recipient,
+        mode: transactionToUpdate.mode,
         feesStrategy: "fast", // set "fast" as default option for speedup flow
         maxFeePerGas: undefined,
         maxPriorityFeePerGas: undefined,
@@ -234,7 +230,7 @@ export const StepMethodFooter: React.FC<StepProps> = (props: StepProps) => {
     } else {
       const mainAccount = getMainAccount(account, parentAccount);
 
-      const patch = buildCancelTxPatch({ transactionRaw, account: mainAccount });
+      const patch = buildCancelTxPatch({ transaction: transactionToUpdate, account: mainAccount });
 
       updateTransaction(tx => bridge.updateTransaction(tx, patch));
     }

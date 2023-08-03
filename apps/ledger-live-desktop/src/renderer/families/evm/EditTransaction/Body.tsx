@@ -1,36 +1,37 @@
-import React, { useCallback, useState } from "react";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
+import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
+import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { getEnv } from "@ledgerhq/live-env";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import React, { useCallback, useState } from "react";
+import { TFunction, Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
-import { Trans, withTranslation, TFunction } from "react-i18next";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import logger from "~/renderer/logger";
-import Stepper from "~/renderer/components/Stepper";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { closeModal, openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
-import StepFees, { StepFeesFooter } from "./steps/StepFees";
-import StepConnectDevice from "~/renderer/modals/Send/steps/StepConnectDevice";
-import StepSummary from "~/renderer/modals/Send/steps/StepSummary";
-import { StepSummaryFooter } from "./steps/StepSummaryFooter";
+import { closeModal, openModal } from "~/renderer/actions/modals";
+import Stepper from "~/renderer/components/Stepper";
+import logger from "~/renderer/logger";
 import StepConfirmation, {
   StepConfirmationFooter,
 } from "~/renderer/modals/Send/steps/StepConfirmation";
+import StepConnectDevice from "~/renderer/modals/Send/steps/StepConnectDevice";
+import StepSummary from "~/renderer/modals/Send/steps/StepSummary";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import StepFees, { StepFeesFooter } from "./steps/StepFees";
+import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
+import { StepSummaryFooter } from "./steps/StepSummaryFooter";
 import { St, StepId } from "./types";
-import invariant from "invariant";
-import { getEnv } from "@ledgerhq/live-env";
-import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
-import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 
 export type Data = {
   account: AccountLike | undefined | null;
@@ -124,6 +125,9 @@ const Body = ({
   updateAccountWithUpdater,
 }: Props) => {
   const [steps] = useState(() => createSteps());
+
+  const transactionToUpdate = fromTransactionRaw(params.transactionRaw);
+
   const {
     transaction,
     setTransaction,
@@ -139,11 +143,12 @@ const Body = ({
     return {
       account,
       parentAccount,
-      transaction: fromTransactionRaw(params.transactionRaw as TransactionRaw),
+      transaction: transactionToUpdate,
     };
   });
 
   invariant(account, "account required");
+  invariant(transactionToUpdate, "transactionToUpdate required");
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
@@ -182,15 +187,8 @@ const Body = ({
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const error = transactionError || bridgeError;
   const mainAccount = getMainAccount(account, parentAccount);
-  const feePerGas = new BigNumber(
-    transaction?.type === 2
-      ? (params.transactionRaw as TransactionRaw).maxFeePerGas ?? "0"
-      : (params.transactionRaw as TransactionRaw).gasPrice ?? "0",
-  );
 
-  const feeValue = new BigNumber((params.transactionRaw as TransactionRaw).gasLimit || 0).times(
-    feePerGas,
-  );
+  const feeValue = getEstimatedFees(transactionToUpdate);
 
   const haveFundToCancel = mainAccount.balance.gt(
     feeValue.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
@@ -199,28 +197,30 @@ const Body = ({
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue
       .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
-      .plus(account.type === "Account" ? new BigNumber(params.transactionRaw.amount) : 0),
+      .plus(account.type === "Account" ? transactionToUpdate.amount : 0),
   );
 
   // log account and fees info
   logger.log(`main account address: ${mainAccount.freshAddress}`);
   logger.log(`main account balance: ${mainAccount.balance.toFixed()}`);
   logger.log(`feeValue: ${feeValue.toFixed()}`);
-  logger.log(`pending transaction amount: ${params.transactionRaw.amount}`);
+  logger.log(`pending transaction amount: ${transactionToUpdate.amount.toFixed()}`);
 
   let isOldestEditableOperation = true;
   mainAccount.pendingOperations.forEach((operation: Operation) => {
     if (isEditableOperation(account, operation)) {
       if (
         operation.transactionSequenceNumber !== undefined &&
-        params.transactionRaw.nonce !== undefined &&
-        operation.transactionSequenceNumber < params.transactionRaw.nonce
+        /* nonce is always defined in evm type as of today */
+        transactionToUpdate.nonce !== undefined &&
+        operation.transactionSequenceNumber < transactionToUpdate.nonce
       ) {
         isOldestEditableOperation = false;
       }
     }
   });
 
+  // FIXME: should be enmu (or TS type) instead of string
   const [editType, setEditType] = useState(
     isOldestEditableOperation && haveFundToSpeedup ? "speedup" : haveFundToCancel ? "cancel" : "",
   );
@@ -242,11 +242,11 @@ const Body = ({
     bridgePending,
     optimisticOperation,
     editType,
-    transactionRaw: params.transactionRaw,
     transactionHash: params.transactionHash,
     haveFundToSpeedup,
     haveFundToCancel,
     isOldestEditableOperation,
+    transactionToUpdate,
     openModal,
     onClose,
     setSigned,

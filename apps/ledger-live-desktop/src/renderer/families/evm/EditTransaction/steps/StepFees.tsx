@@ -1,8 +1,9 @@
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction/index";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { NotEnoughNftOwned, NotOwnedNft } from "@ledgerhq/live-common/errors";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import React, { Fragment, memo, useState } from "react";
 import { Trans } from "react-i18next";
 import Alert from "~/renderer/components/Alert";
@@ -22,50 +23,49 @@ const StepFees = (props: StepProps) => {
     account,
     parentAccount,
     transaction,
+    transactionToUpdate,
     status,
     bridgePending,
-    transactionRaw,
     t,
     onChangeTransaction,
     updateTransaction,
   } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
-  if (!mainAccount || !transaction || !transactionRaw) {
+  if (!mainAccount || !transaction || !transactionToUpdate) {
     return null;
   }
 
-  const feePerGas = new BigNumber(
-    transaction?.type === 2 ? transactionRaw.maxFeePerGas ?? 0 : transactionRaw.gasPrice ?? 0,
+  const feeValue = getEstimatedFees(transactionToUpdate).div(
+    new BigNumber(10).pow(mainAccount.unit.magnitude),
   );
-  const feeValue = new BigNumber(transactionRaw.gasLimit || 0)
-    .times(feePerGas)
-    .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
 
   // log fees info
-  logger.log(`transactionRaw.maxFeePerGas: ${transactionRaw.maxFeePerGas}`);
-  logger.log(`transactionRaw.gasPrice: ${transactionRaw.gasPrice}`);
-  logger.log(`transactionRaw.maxPriorityFeePerGas: ${transactionRaw.maxPriorityFeePerGas}`);
+  logger.log(`transactionToUpdate.maxFeePerGas: ${transactionToUpdate.maxFeePerGas?.toFixed()}`);
+  logger.log(`transactionToUpdate.gasPrice: ${transactionToUpdate.gasPrice?.toFixed()}`);
+  logger.log(
+    `transactionToUpdate.maxPriorityFeePerGas: ${transactionToUpdate.maxPriorityFeePerGas?.toFixed()}`,
+  );
 
   let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
-  if (transaction.type === 2) {
+  if (transactionToUpdate.type === 2) {
     // convert from wei to gwei
-    maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw.maxPriorityFeePerGas ?? 0)
+    /**
+     * FIXME: should not be done here but through usage of FormattedVal component
+     * for display, cf. FIXME bellow
+     */
+    maxPriorityFeePerGasinGwei = transactionToUpdate.maxPriorityFeePerGas
       .dividedBy(ONE_WEI_IN_GWEI)
       .toFixed();
-    maxFeePerGasinGwei = new BigNumber(transactionRaw.maxFeePerGas ?? 0)
-      .dividedBy(ONE_WEI_IN_GWEI)
-      .toFixed();
+    maxFeePerGasinGwei = transactionToUpdate.maxFeePerGas.dividedBy(ONE_WEI_IN_GWEI).toFixed();
   } else {
-    maxGasPriceinGwei = new BigNumber(transactionRaw.gasPrice ?? 0)
-      .dividedBy(ONE_WEI_IN_GWEI)
-      .toFixed();
+    maxGasPriceinGwei = transactionToUpdate.gasPrice.dividedBy(ONE_WEI_IN_GWEI).toFixed();
   }
 
   return (
     <Box flow={4}>
-      {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
-      {account && transaction && mainAccount && (
+      <CurrencyDownStatusAlert currencies={[mainAccount.currency]} />
+      {account && (
         <Fragment key={account.id}>
           <SendAmountFields
             account={mainAccount}
@@ -75,13 +75,17 @@ const StepFees = (props: StepProps) => {
             onChange={onChangeTransaction}
             bridgePending={bridgePending}
             updateTransaction={updateTransaction}
-            transactionRaw={transactionRaw}
           />
         </Fragment>
       )}
+      {/* FIXME: this whole UI bit displaying pending tx fees info should be
+      it's own independant dumb react ui component */}
       <Alert type="primary">
         {/* FIXME: fix i18n (value as param for propper formatting) */}
-        {transaction?.type === 2 ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
+        {/* FIXME: use FormattedVal src/renderer/components/FormattedVal.tsx component to display fees related values
+          cf. usage in src/renderer/drawers/OperationDetails/index.tsx
+        */}
+        {transactionToUpdate.type === 2 ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
           <ul style={{ marginLeft: "5px" }}>
             {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
             <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${

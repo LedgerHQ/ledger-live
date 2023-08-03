@@ -3,7 +3,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction as TransactionCommon } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-import { Transaction, TransactionRaw, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 
 export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
 
@@ -11,19 +11,20 @@ export type StepProps = {
   device: Device | undefined | null;
   account: AccountLike | undefined | null;
   parentAccount: Account | undefined | null;
-  transaction: Transaction | undefined | null;
+  transaction: Transaction;
   status: TransactionStatus;
   bridgePending: boolean;
   error: Error | undefined | null;
   optimisticOperation: Operation | undefined | null;
   signed: boolean;
   currencyName: string | undefined | null;
-  transactionRaw: TransactionRaw;
   transactionHash: string;
   editType: "cancel" | "speedup" | undefined;
   haveFundToSpeedup: boolean;
   haveFundToCancel: boolean;
   isOldestEditableOperation: boolean;
+  // `transactionToUpdate` is needed because `transaction` above is updated through the stepper by the bridge
+  transactionToUpdate: Transaction;
   t: TFunction;
   closeModal: (a: void) => void;
   openModal: (b: string, a: unknown) => void;
