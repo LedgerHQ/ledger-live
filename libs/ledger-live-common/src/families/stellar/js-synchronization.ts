@@ -1,10 +1,9 @@
 import type { Operation } from "@ledgerhq/types-live";
-import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
 import { buildSubAccounts } from "./tokens";
-import { inferSubOperations } from "../../account";
+import { inferSubOperations, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { STELLAR_BURN_ADDRESS } from "./logic";
 import { StellarBurnAddressError } from "./errors";
 

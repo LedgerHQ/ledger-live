@@ -1,6 +1,6 @@
 import { GetAccountShape, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { makeSync } from "../../bridge/jsHelpers";
-import { encodeAccountId, inferSubOperations } from "../../account";
+import { encodeAccountId, inferSubOperations } from "@ledgerhq/coin-framework/account/index";
 
 import BigNumber from "bignumber.js";
 import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
