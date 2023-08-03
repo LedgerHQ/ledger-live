@@ -1,20 +1,19 @@
 name: "[Bot] Testing with 'Nitrogen'"
-run-name: Test with 🤖 Nitrogen by @${{github.actor}} with ${{inputs.family}}
+run-name: Test with 🤖 Nitrogen by @${{github.actor}} ${{inputs.families &&  format('family={0}',inputs.families) || ''}} ${{inputs.currencies && format('currency={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:
     inputs:
-      family:
-        description: coin family to filter with (if any)
+      families:
+        description: coin family filter, separated with commas (,)
+        required: false
+      currencies:
+        description: currency ids to filter, separated with commas (,)
         required: false
       speculos_websocket:
         description: check to use speculos with Websocket
         type: boolean
         required: false
         default: false
-  push:
-    branches:
-      - support/bot-nitrogen
-      - support/bot-nitrogen-*
 
 concurrency:
   group: bot-seed7
@@ -23,7 +22,7 @@ jobs:
   run-bot:
     runs-on: [ledger-live-medium-linux]
     steps:
-      - name: generate token
+      - name: Generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
         with:
@@ -37,7 +36,8 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
-      - uses: ./tools/actions/composites/bot
+      - name: Run the bot
+        uses: ./tools/actions/composites/bot
         id: bot
         timeout-minutes: 120
         with:
@@ -46,5 +46,6 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed7:"
           SEED: ${{ secrets.SEED7 }}
           BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILY: ${{github.event.inputs.family}}
+          BOT_FILTER_FAMILIES: ${{github.event.inputs.families}}
+          BOT_FILTER_CURRENCIES: ${{github.event.inputs.currencies}}
           SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}

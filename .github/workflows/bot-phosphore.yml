@@ -1,15 +1,19 @@
 name: "[Bot] Testing with 'Phosphore'"
-run-name: Test with 🤖 Phosphore by @${{github.actor}} with ${{inputs.family}}
+run-name: Test with 🤖 Phosphore by @${{github.actor}} ${{inputs.families &&  format('family={0}',inputs.families) || ''}} ${{inputs.currencies && format('currency={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:
     inputs:
-      family:
-        description: coin family to filter with (if any)
+      families:
+        description: coin family filter, separated with commas (,)
         required: false
-  push:
-    branches:
-      - support/bot-phosphore
-      - support/bot-phosphore-*
+      currencies:
+        description: currency ids to filter, separated with commas (,)
+        required: false
+      speculos_websocket:
+        description: check to use speculos with Websocket
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: bot-seed6
@@ -41,4 +45,6 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed6:"
           SEED: ${{ secrets.SEED6 }}
           BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILY: ${{inputs.family}}
+          BOT_FILTER_FAMILIES: ${{github.event.inputs.families}}
+          BOT_FILTER_CURRENCIES: ${{github.event.inputs.currencies}}
+          SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}

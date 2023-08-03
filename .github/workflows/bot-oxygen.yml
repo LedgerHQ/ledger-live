@@ -1,15 +1,19 @@
 name: "[Bot] Testing with 'Oxygen'"
-run-name: Test with 🤖 Oxygen by @${{github.actor}} with ${{inputs.family}}
+run-name: Test with 🤖 Oxygen by @${{github.actor}} ${{inputs.families &&  format('family={0}',inputs.families) || ''}} ${{inputs.currencies && format('currency={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:
     inputs:
-      family:
-        description: coin family to filter with (if any)
+      families:
+        description: coin family filter, separated with commas (,)
         required: false
-  push:
-    branches:
-      - support/bot-oxygen
-      - support/bot-oxygen-*
+      currencies:
+        description: currency ids to filter, separated with commas (,)
+        required: false
+      speculos_websocket:
+        description: check to use speculos with Websocket
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: bot-seed5
@@ -41,4 +45,5 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed5:"
           SEED: ${{ secrets.SEED5 }}
           BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILY: ${{inputs.family}}
+          BOT_FILTER_FAMILIES: ${{inputs.families}}
+          BOT_FILTER_CURRENCIES: ${{inputs.currencies}}

@@ -1,7 +1,7 @@
-name: "[Bot] non-reg on develop with 'Oxygen'"
+name: "[Bot] Weekly non-reg on develop with 'Oxygen'"
 on:
   schedule:
-    - cron: "9 5 * * 4" # Thursday – daily rotation of bots
+    - cron: "9 5 * * 4" # Thursday – weekly non-reg
 
 concurrency:
   group: bot-seed5
@@ -33,3 +33,4 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed5:"
           SEED: ${{ secrets.SEED5 }}
           BOT_ENVIRONMENT: production
+          BOT_FILTER_CURRENCIES: qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,telos_evm,polygon_zk_evm,polkadot
