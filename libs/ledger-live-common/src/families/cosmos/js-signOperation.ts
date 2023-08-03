@@ -13,8 +13,6 @@ import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
 import { sortObjectKeysDeeply } from "./helpers";
 import { CosmosApp } from "@zondax/ledger-cosmos-js";
-import { pubkeyType } from "@cosmjs/amino";
-const secp256k1 = require("secp256k1");
 
 const signOperation = ({
   account,
@@ -30,6 +28,7 @@ const signOperation = ({
       let cancelled;
 
       async function main() {
+        const chainInstance = cryptoFactory(account.currency.id);
         const cosmosAPI = new CosmosAPI(account.currency.id);
         const { accountNumber, sequence, pubKey } = await cosmosAPI.getAccount(
           account.freshAddress,
@@ -56,7 +55,7 @@ const signOperation = ({
         // Cosmos Nano App sign data in Amino way only, not Protobuf.
         // This is a legacy outdated standard and a long-term blocking point.
         const chainId = await cosmosAPI.getChainId();
-        const signDoc = makeSignDoc(
+        let signDoc = makeSignDoc(
           aminoMsgs,
           feeToEncode,
           chainId,
@@ -65,9 +64,12 @@ const signOperation = ({
           sequence.toString(),
         );
 
-        const signDocOrdered = sortObjectKeysDeeply(signDoc) as StdSignDoc;
+        if (account.currency.id === "injective") {
+          signDoc = sortObjectKeysDeeply(signDoc) as StdSignDoc;
+        }
 
-        const tx = Buffer.from(JSON.stringify(signDocOrdered), "utf-8");
+        const tx = Buffer.from(JSON.stringify(signDoc), "utf-8");
+
         const app = new CosmosApp(transport);
 
         const path =
@@ -75,23 +77,18 @@ const signOperation = ({
             ? [44, 60, 0, 0, account.index]
             : [44, 118, 0, 0, account.index];
 
-        const hrp = cryptoFactory(account.currency.id).prefix;
-
-        const resp_add = await app.getAddressAndPubKey(
-          path,
-          cryptoFactory(account.currency.id).prefix,
-        );
+        const resp_add = await app.getAddressAndPubKey(path, chainInstance.prefix);
 
         let signResponseApp;
 
         if (account.currency.id === "injective") {
-          signResponseApp = await app.sign(path, tx, hrp);
+          signResponseApp = await app.sign(path, tx, chainInstance.prefix);
         } else {
           signResponseApp = await app.sign(path, tx);
         }
 
         const signResponse: AminoSignResponse = {
-          signed: signDocOrdered,
+          signed: signDoc,
           signature: {
             pub_key: {
               value: Buffer.from(resp_add.compressed_pk).toString("base64"),
@@ -104,6 +101,7 @@ const signOperation = ({
         };
 
         const tx_bytes = await postBuildTransaction(signResponse, protoMsgs);
+
         const signed = Buffer.from(tx_bytes).toString("hex");
 
         if (cancelled) {
