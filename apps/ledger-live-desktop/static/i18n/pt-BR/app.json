@@ -142,7 +142,8 @@
     "connectDevice" : "Conecte seu dispositivo",
     "add" : "Adicionar",
     "or" : "OU",
-    "clearAll" : "Limpar tudo"
+    "clearAll" : "Limpar tudo",
+    "buyLedger" : "Comprar uma Ledger"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -299,8 +300,7 @@
     "title" : "Trocar",
     "tabs" : {
       "exchange" : "Negociar",
-      "history" : "Histórico",
-      "kyc" : "KYC"
+      "history" : "Histórico"
     },
     "form" : {
       "changeCTA" : "Alterar",
@@ -355,33 +355,6 @@
         "title" : "A troca ainda não está disponível na sua região",
         "content" : "Aguarde mais um pouco,<br/>lançaremos este recurso muito em breve"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "Você precisa concluir seu KYC",
-          "complete" : "Concluir KYC",
-          "update" : "Atualizar KYC",
-          "rejected" : "KYC reprovado, inicie novamente a verificação",
-          "rejectedContactProviderSupport" : "KYC rejeitada, contate o suporte {{providerName}}",
-          "updateRequired" : "Conclua ou atualize seu KYC",
-          "status" : {
-            "pending" : "KYC pendente",
-            "approved" : "KYC aprovado",
-            "closed" : "KYC rejeitado",
-            "upgradeRequired" : "KYC Insuficiente"
-          }
-        },
-        "login" : {
-          "required" : "Você precisa fazer login com este provedor",
-          "complete" : "Login"
-        },
-        "mfa" : {
-          "required" : "Você precisa configurar o MFA com este provedor",
-          "complete" : "Configurar MFA"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "Seu saque foi bloqueado por {{providerName}}.\n\n Entre em contato com o suporte deles para obter mais informações."
-        }
-      },
       "timeout" : {
         "message" : "As cotações não foram geradas devido a problemas técnicos. Tente fazer a troca novamente em alguns instantes."
       }
@@ -394,54 +367,6 @@
       },
       "export" : "Exportar Operações",
       "exporting" : "Exportando..."
-    },
-    "kyc" : {
-      "updateRequired" : "Você precisar atualizar o aplicativo para que possamos concluir o processo de KYC",
-      "wyre" : {
-        "disclaimer" : "Suas informações são coletadas pela LEDGER em nome da WYRE e transferidas para a WYRE para fins de KYC. Para mais informações, consulte nossa",
-        "policy" : "Política de privacidade",
-        "title" : "Verifique sua identidade",
-        "subtitle" : "Insira suas informações para trocar com a Wyre.",
-        "cta" : "Continuar",
-        "pending" : {
-          "cta" : "Continuar",
-          "title" : "Suas informações foram submetidas para aprovação",
-          "subtitle" : "Normalmente leva alguns minutos para que a análise seja concluída.",
-          "link" : "Saiba mais sobre o KYC",
-          "info" : "Verificação de identidade: enviada"
-        },
-        "closed" : {
-          "cta" : "Redefinir KYC",
-          "title" : "Solicitação de KYC rejeitada",
-          "subtitle" : "A Wyre rejeitou os dados que você forneceu para fins de KYC",
-          "link" : "Saiba mais sobre o KYC"
-        },
-        "form" : {
-          "firstName" : "Primeiro Nome",
-          "lastName" : "Sobrenome",
-          "street1" : "Linha 1 de endereço de rua",
-          "street2" : "Endereço linha 2",
-          "city" : "Cidade",
-          "state" : "Estado",
-          "country" : "País",
-          "postalCode" : "Código Postal",
-          "dateOfBirth" : "Data de nascimento",
-          "firstNamePlaceholder" : "Insira seu primeiro nome",
-          "lastNamePlaceholder" : "Insira seu sobrenome",
-          "street1Placeholder" : "Ex. Avenida Paulista 1578",
-          "street2Placeholder" : "Ex. Avenida Paulista 1578",
-          "cityPlaceholder" : "Ex. São Paulo",
-          "postalCodePlaceholder" : "Insira seu código postal de 8 dígitos",
-          "dateOfBirthPlaceholder" : "MM/DD/AAAA",
-          "firstNameError" : "Insira seu primeiro nome para continuar",
-          "lastNameError" : "Insira seu sobrenome para continuar",
-          "street1Error" : "Insira seu endereço",
-          "cityError" : "Insira a cidade em que você mora no Brasil",
-          "postalCodeError" : "Insira um código postal válido do Brasil",
-          "dateOfBirthError" : "Insira sua data de nascimento",
-          "dateOfBirthValidationError" : "Insira uma data de nascimento válida"
-        }
-      }
     },
     "exchangeDrawer" : {
       "title" : "Confirme sua negociação",
@@ -491,17 +416,7 @@
     "providers" : {
       "title" : "Escolha um provedor para trocar criptos",
       "learnMore" : "O que é Troca (Swap)?",
-      "kycRequired" : "KYC Necessário",
       "cta" : "Continuar",
-      "kyc" : {
-        "notAvailable" : "{{provider}} não está disponível na sua localização",
-        "status" : {
-          "required" : "KYC Necessário",
-          "pending" : "KYC Pendente",
-          "approved" : "KYC Aprovado!",
-          "closed" : "KYC Rejeitado"
-        }
-      },
       "filter" : {
         "centralised" : "Centralizado",
         "decentralised" : "Descentralizado",
@@ -516,55 +431,7 @@
       "subtitle" : "Negocie criptoativos diretamente do seu dispositivo Ledger.",
       "disclaimer" : "Ao continuar, você aceita que seus dados de localização sejam compartilhados com provedores de serviços terceirizados para que eles cumpram seus procedimentos de AML/KYC."
     },
-    "kyc" : {
-      "updateRequired" : "Você precisar atualizar o aplicativo para que possamos concluir o processo de KYC",
-      "wyre" : {
-        "disclaimer" : "Suas informações são coletadas pela LEDGER em nome da WYRE e transferidas para a WYRE para fins de KYC. Para mais informações, consulte nossa",
-        "policy" : "Política de privacidade",
-        "title" : "Verifique sua identidade",
-        "subtitle" : "Insira suas informações para trocar com a Wyre.",
-        "pending" : {
-          "cta" : "Continuar",
-          "title" : "Aprovação Pendente",
-          "subtitle" : "Suas informações foram submetidas para aprovação da Wyre.",
-          "link" : "Saiba mais sobre o KYC"
-        },
-        "closed" : {
-          "cta" : "Redefinir KYC",
-          "title" : "Solicitação de KYC rejeitada",
-          "subtitle" : "A Wyre rejeitou os dados que você forneceu para fins de KYC",
-          "link" : "Saiba mais sobre o KYC"
-        },
-        "form" : {
-          "firstName" : "Primeiro Nome",
-          "lastName" : "Sobrenome",
-          "street1" : "Endereço linha 1",
-          "street2" : "Endereço linha 2",
-          "city" : "Cidade",
-          "state" : "Estado",
-          "country" : "País",
-          "postalCode" : "Código Postal",
-          "dateOfBirth" : "Data de nascimento",
-          "firstNamePlaceholder" : "Insira seu primeiro nome",
-          "lastNamePlaceholder" : "Insira seu sobrenome",
-          "street1Placeholder" : "Ex. Avenida Paulista 1578",
-          "street2Placeholder" : "Ex. Avenida Paulista 1578",
-          "cityPlaceholder" : "Ex. São Paulo",
-          "postalCodePlaceholder" : "Insira seu código postal de 8 dígitos",
-          "dateOfBirthPlaceholder" : "MM/DD/AAAA",
-          "firstNameError" : "Insira seu primeiro nome para continuar",
-          "lastNameError" : "Insira seu sobrenome para continuar",
-          "street1Error" : "Insira seu endereço",
-          "cityError" : "Insira a cidade em que você mora no Brasil",
-          "postalCodeError" : "Insira um código postal válido do Brasil",
-          "dateOfBirthError" : "Insira sua data de nascimento",
-          "dateOfBirthValidationError" : "Insira uma data de nascimento válida"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Redefine seu KYC e atualize o Live para trocar com a Wyre",
-      "resetKYCCTA" : "Redefinir KYC",
       "amount" : "Quantia",
       "from" : {
         "title" : "De",
@@ -596,16 +463,6 @@
       "noApp" : "Aplicativo {{currencyName}} não instalado.",
       "outdatedApp" : "Atualização disponível para aplicativo {{currencyName}}.",
       "loadingRates" : "Carregando Taxas..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "O Ledger Live precisa ser atualizado",
-      "subtitle" : "Atualize o Ledger Live para a versão mais recente e verifique sua identidade novamente para trocar com a Wyre",
-      "cta" : "Redefinir Verificação"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "Exclua seus dados locais de terceiros",
-      "subtitle" : "Exclua seus dados locais de terceiros Você pode precisar reenviar seu KYC e/ou fazer login novamente para acessar os serviços fornecidos por nossos parceiros.",
-      "cta" : "Confirmar"
     },
     "modal" : {
       "title" : "Trocar",
@@ -3902,8 +3759,6 @@
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
       "catalogUrl" : "Definir o provedor do catálogo de aplicativos",
       "catalogUrlDesc" : "Insira a URL do provedor de aplicativos da sua escolha",
-      "catalogRampServer" : "Definir os provedores de compra e venda",
-      "catalogRampServerDesc" : "Alterne entre vários provedores de compra, venda e troca",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilite a janela de ferramentas para desenvolvedores de aplicativos da plataforma",
       "customLockScreen" : "Ativos personalizados da tela de bloqueio",
@@ -5127,6 +4982,10 @@
       "title" : "{{currencyName}} não é compatível",
       "description" : "Este criptoativo ainda não é compatível. Entre em contato com o Suporte Ledger."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Sua {{device}} já está configurada com a Frase Secreta de Recuperação",
+      "description" : "Conecte uma Ledger que não esteja configurada."
+    },
     "DeviceNotGenuine" : {
       "title" : "Possivelmente não autêntico",
       "description" : "Solicitar assistência do Suporte Ledger"
@@ -5299,6 +5158,9 @@
     },
     "NotEnoughGas" : {
       "title" : "O saldo da conta principal é insuficiente para as taxas de rede"
+    },
+    "NotEnoughGasSwap" : {
+      "title" : "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "A versão do seu sistema operacional está desatualizada",
