@@ -232,13 +232,20 @@ function AddAccountsAccounts({ navigation, route }: Props) {
       ) : addingAccount ? (
         <AddingAccountLoading currency={currency} />
       ) : (
-        <FlatList
-          data={scannedAccounts}
-          renderItem={renderItem}
-          ListHeaderComponent={renderHeader}
-          keyExtractor={keyExtractor}
-          showsVerticalScrollIndicator={false}
-        />
+        <>
+          <TrackScreen
+            category="Deposit"
+            name="Select account to deposit to"
+            asset={currency.name}
+          />
+          <FlatList
+            data={scannedAccounts}
+            renderItem={renderItem}
+            ListHeaderComponent={renderHeader}
+            keyExtractor={keyExtractor}
+            showsVerticalScrollIndicator={false}
+          />
+        </>
       )}
       <GenericErrorBottomModal
         error={error}

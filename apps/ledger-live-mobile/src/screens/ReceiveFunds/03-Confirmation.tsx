@@ -24,7 +24,6 @@ import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
-import PreventNativeBack from "../../components/PreventNativeBack";
 import byFamily from "../../generated/Confirmation";
 import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 
@@ -166,11 +165,25 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   useEffect(() => {
     if (verified && currency) {
       track("Verification Success", {
-        currency: currency.name,
+        asset: currency.name,
         page: "Receive Account Qr Code",
       });
     }
   }, [verified, currency]);
+
+  const triggerSuccessEvent = useCallback(() => {
+    track("receive_done", {
+      asset: currency.name,
+      network,
+      page: "Receive Account Qr Code",
+    });
+  }, [network, currency.name]);
+
+  useEffect(() => {
+    if (verified || !isModalOpened) {
+      triggerSuccessEvent();
+    }
+  }, [verified, isModalOpened, triggerSuccessEvent]);
 
   const onShare = useCallback(() => {
     track("button_clicked", {
@@ -182,31 +195,34 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     }
   }, [mainAccount?.freshAddress]);
 
-  const onCopyAddress = useCallback(() => {
-    if (!mainAccount?.freshAddress) return;
-    Clipboard.setString(mainAccount.freshAddress);
-    setCopied(true);
-    track("button_clicked", {
-      button: "Copy address",
-      page: "Receive Account Qr Code",
-    });
-    const options = {
-      enableVibrateFallback: false,
-      ignoreAndroidSystemSettings: false,
-    };
+  const onCopyAddress = useCallback(
+    (eventName: string) => {
+      if (!mainAccount?.freshAddress) return;
+      Clipboard.setString(mainAccount.freshAddress);
+      setCopied(true);
+      track("button_clicked", {
+        button: eventName,
+        page: "Receive Account Qr Code",
+      });
+      const options = {
+        enableVibrateFallback: false,
+        ignoreAndroidSystemSettings: false,
+      };
 
-    setTimeout(() => {
-      setCopied(false);
-    }, 3000);
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000);
 
-    ReactNativeHapticFeedback.trigger("soft", options);
-    pushToast({
-      id: `copy-receive`,
-      type: "success",
-      icon: "success",
-      title: t("transfer.receive.addressCopied"),
-    });
-  }, [mainAccount?.freshAddress, pushToast, t]);
+      ReactNativeHapticFeedback.trigger("soft", options);
+      pushToast({
+        id: `copy-receive`,
+        type: "success",
+        icon: "success",
+        title: t("transfer.receive.addressCopied"),
+      });
+    },
+    [mainAccount?.freshAddress, pushToast, t],
+  );
 
   if (!account || !currency || !mainAccount) return null;
 
@@ -240,7 +256,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   return (
     <Flex flex={1} mb={insets.bottom}>
-      <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
         <TrackScreen
           category="Deposit"
@@ -259,7 +274,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             mt={10}
             bg={"opacityDefault.c05"}
             borderRadius={2}
-            onPress={onCopyAddress}
+            onPress={() => onCopyAddress("Qr code copy address")}
           >
             <View>
               <Box mb={6}>
@@ -323,7 +338,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               flexDirection="row"
               flex={1}
               borderRadius={2}
-              onPress={onCopyAddress}
+              onPress={() => onCopyAddress("Copy address")}
             >
               {hasCopied ? (
                 <>
@@ -381,7 +396,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
           )}
         </Flex>
       </Flex>
-      {verified ? null : isModalOpened ? <ReceiveSecurityModal onVerifyAddress={onRetry} /> : null}
+      {verified ? null : isModalOpened ? (
+        <ReceiveSecurityModal onVerifyAddress={onRetry} triggerSuccessEvent={triggerSuccessEvent} />
+      ) : null}
     </Flex>
   );
 }

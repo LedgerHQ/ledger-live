@@ -8,7 +8,13 @@ import ConfirmUnverified from "./ConfirmUnverified";
 const shouldNotRemindUserAgainToVerifyAddressOnReceive =
   "shouldNotRemindUserAgainToVerifyAddressOnReceive";
 
-const ReceiveSecurityModal = ({ onVerifyAddress }: { onVerifyAddress: () => void }) => {
+const ReceiveSecurityModal = ({
+  onVerifyAddress,
+  triggerSuccessEvent,
+}: {
+  onVerifyAddress: () => void;
+  triggerSuccessEvent: () => void;
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function getShouldNotRemindUserAgain() {
@@ -31,9 +37,11 @@ const ReceiveSecurityModal = ({ onVerifyAddress }: { onVerifyAddress: () => void
         setTimeout(() => {
           setIsModalOpen(true);
         }, 800);
+      } else {
+        triggerSuccessEvent();
       }
     });
-  }, []);
+  }, [triggerSuccessEvent]);
 
   const [step, setStep] = useState("initMessage");
   const sharedHeight = useSharedValue(0);
