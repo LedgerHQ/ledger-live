@@ -14,7 +14,7 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, IconsLegacy, Button, Box, BannerCard } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -77,6 +77,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
+  const [hasCopied, setCopied] = useState(false);
   const dispatch = useDispatch();
   const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
   const insets = useSafeAreaInsets();
@@ -184,6 +185,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const onCopyAddress = useCallback(() => {
     if (!mainAccount?.freshAddress) return;
     Clipboard.setString(mainAccount.freshAddress);
+    setCopied(true);
     track("button_clicked", {
       button: "Copy address",
       page: "Receive Account Qr Code",
@@ -192,6 +194,10 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       enableVibrateFallback: false,
       ignoreAndroidSystemSettings: false,
     };
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 3000);
 
     ReactNativeHapticFeedback.trigger("soft", options);
     pushToast({
@@ -307,7 +313,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               mr={4}
               onPress={onShare}
             >
-              <IconsLegacy.ShareMedium size={20}></IconsLegacy.ShareMedium>
+              <IconsLegacy.ShareMedium size={20} />
             </StyledTouchableOpacity>
             <StyledTouchableOpacity
               p={4}
@@ -319,10 +325,21 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               borderRadius={2}
               onPress={onCopyAddress}
             >
-              <IconsLegacy.CopyMedium size={20}></IconsLegacy.CopyMedium>
-              <Text variant={"body"} fontWeight={"medium"} pl={3}>
-                {t("transfer.receive.receiveConfirmation.copyAdress")}
-              </Text>
+              {hasCopied ? (
+                <>
+                  <Icons.Check color="success.c70" size="S" />
+                  <Text variant={"body"} fontWeight={"medium"} pl={3}>
+                    {t("transfer.receive.receiveConfirmation.addressCopied")}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <IconsLegacy.CopyMedium size={20} />
+                  <Text variant={"body"} fontWeight={"medium"} pl={3}>
+                    {t("transfer.receive.receiveConfirmation.copyAdress")}
+                  </Text>
+                </>
+              )}
             </StyledTouchableOpacity>
           </Flex>
           <Flex px={6}>

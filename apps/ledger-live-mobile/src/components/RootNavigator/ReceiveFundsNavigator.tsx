@@ -27,6 +27,11 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "../../screens/ReceiveFunds/HelpButton";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useSelector } from "react-redux";
+import {
+  hasClosedNetworkBannerSelector,
+  hasClosedWithdrawBannerSelector,
+} from "../../reducers/settings";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -34,7 +39,9 @@ export default function ReceiveFundsNavigator() {
   const route = useRoute();
   const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
   const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
-  depositWithdrawBannerMobile;
+  const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
+  const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
+
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
@@ -98,11 +105,13 @@ export default function ReceiveFundsNavigator() {
           headerTitle: "",
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
-              <HelpButton
-                eventButton="Choose a network article"
-                url={depositNetworkBannerMobile?.params.url}
-                enabled={depositNetworkBannerMobile?.enabled ?? false}
-              />
+              {hasClosedNetworkBanner && (
+                <HelpButton
+                  eventButton="Choose a network article"
+                  url={depositNetworkBannerMobile?.params.url}
+                  enabled={depositNetworkBannerMobile?.enabled ?? false}
+                />
+              )}
               <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
             </Flex>
           ),
@@ -182,11 +191,13 @@ export default function ReceiveFundsNavigator() {
           headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
-              <HelpButton
-                url={depositWithdrawBannerMobile?.params.url}
-                enabled={depositWithdrawBannerMobile?.enabled ?? false}
-                eventButton="How to withdraw from exchange"
-              />
+              {hasClosedWithdrawBanner && (
+                <HelpButton
+                  url={depositWithdrawBannerMobile?.params.url}
+                  enabled={depositWithdrawBannerMobile?.enabled ?? false}
+                  eventButton="How to withdraw from exchange"
+                />
+              )}
               <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />
             </Flex>
           ),
@@ -201,11 +212,13 @@ export default function ReceiveFundsNavigator() {
           headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
-              <HelpButton
-                url={depositWithdrawBannerMobile?.params.url}
-                enabled={depositWithdrawBannerMobile?.enabled ?? false}
-                eventButton="How to withdraw from exchange"
-              />
+              {hasClosedWithdrawBanner && (
+                <HelpButton
+                  url={depositWithdrawBannerMobile?.params.url}
+                  enabled={depositWithdrawBannerMobile?.enabled ?? false}
+                  eventButton="How to withdraw from exchange"
+                />
+              )}
               <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
             </Flex>
           ),
