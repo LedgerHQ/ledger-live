@@ -177,6 +177,14 @@ export function SwapForm({
         targetCurrency: swapTransaction.swap.from.currency?.id,
       });
     }
+    /*
+     * By stringify-ing editRatesTrackingProps we are guaranteeing that the useEffect will
+     * only be rerun if there is a change in the editRatesTrackingProps keys & values.
+     * If we were to pass an object here the useEffect would re-run on
+     * each new creation of that object even if all the keys and values
+     * are the same. Causing unnecessary sends to segment/mixpanel.
+     */
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageState, editRatesTrackingProps]);
 
