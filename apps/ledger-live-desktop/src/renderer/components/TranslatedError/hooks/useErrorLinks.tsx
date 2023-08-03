@@ -20,22 +20,32 @@ export function useErrorLinks(error?: Error | null) {
       const safeStringLinks = errorLinks.filter((link): link is string => typeof link === "string");
 
       return safeStringLinks.reduce((prev, curr, index) => {
-        const link = isAbsoluteUrl(curr) ? (
-          <a onClick={() => openURL(curr)} data-test-id={`translated-error-link-${index}`} />
-        ) : (
-          <S.Button
-            onClick={() =>
-              history.push({
-                pathname: curr,
-              })
-            }
-            data-test-id={`translated-error-link-${index}`}
-          />
-        );
+        if (isAbsoluteUrl(curr)) {
+          return {
+            ...prev,
+            [`link${index}`]: (
+              <a onClick={() => openURL(curr)} data-test-id={`translated-error-link-${index}`} />
+            ),
+          };
+        }
+
+        // ledgerlive needed here to "mock" a valid url.
+        // Allows easier splitting of pathname and searchParams.
+        const { pathname, searchParams } = new URL(curr, "ledgerlive:/");
 
         return {
           ...prev,
-          [`link${index}`]: link,
+          [`link${index}`]: (
+            <S.Button
+              onClick={() =>
+                history.push({
+                  pathname,
+                  state: Object.fromEntries(searchParams.entries()),
+                })
+              }
+              data-test-id={`translated-error-link-${index}`}
+            />
+          ),
         };
       }, {});
     }

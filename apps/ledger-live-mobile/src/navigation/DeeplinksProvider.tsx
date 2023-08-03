@@ -84,7 +84,9 @@ function getProxyURL(url: string) {
   }
 
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
-  if (pathname.includes("//platform/multibuy")) {
+  // Also handles a difference in paths between LLD on LLD /platform/:app_id
+  // but on LLM /discover/:app_id
+  if (hostname === "platform" && !!platform) {
     return url.replace("://platform", "://discover");
   }
 
