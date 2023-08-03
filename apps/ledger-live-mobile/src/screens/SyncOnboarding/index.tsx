@@ -286,6 +286,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         isAlreadyGenuine={isAlreadyGenuine}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
+        onCancelOnboarding={onCancelEarlySecurityCheck}
       />
     );
   } else if (currentStep === "companion") {

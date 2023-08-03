@@ -1913,13 +1913,18 @@
       "title": "Genuine Check is mandatory",
       "description": "You cannot setup your {{productName}} without allowing this Check.",
       "resumeCta": "Resume Check",
-      "skipCta": "Cancel Check"
+      "cancelCta": "Cancel Checks"
     },
-    "genuineCheckFailedDrawer": {
+    "genuineCheckErrorDrawer": {
       "title": "Genuine Check error",
       "description": "An error occurred while running the genuine check on {{productName}}.",
       "retryCta": "Retry Check",
-      "cancelCta": "Cancel Check"
+      "cancelCta": "Cancel set up"
+    },
+    "genuineCheckNonGenuineDrawer": {
+      "title": "This Ledger Stax failed the Genuine Check",
+      "description": "This {{productName}} is not safe to use. Please contact Ledger Support.",
+      "supportCta": "Contact Ledger Support"
     },
     "allowManagerDrawer": {
       "title": "Tap 'Allow' to enable Genuine Check and OS update check"
@@ -1943,8 +1948,9 @@
         "description": "You cannot setup your Ledger Stax without allowing this Check.",
         "cta": "Resume Check"
       },
-      "failed": {
-        "title": "Genuine Check failed"
+      "error": {
+        "title": "Genuine Check",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
       }
     },
     "firmwareUpdateCheckStep": {
@@ -1958,7 +1964,7 @@
           "description": "OS update check makes sure {{productName}} Operating System is up to date."
         }
       },
-      "failed": {
+      "error": {
         "title": "Software update check failed",
         "skipCta": "Skip update"
       },

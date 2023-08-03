@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader, Text, Link, BoxedIcon } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import {
-  CircledCheckSolidMedium,
   CheckTickMedium,
   ExternalLinkMedium,
   WarningSolidMedium,
@@ -13,7 +12,8 @@ import {
 import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import AllowManagerDrawer from "./AllowManagerDrawer";
-import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
+import GenuineCheckErrorDrawer from "./GenuineCheckErrorDrawer";
+import GenuineCheckNonGenuineDrawer from "./GenuineCheckNonGenuineDrawer";
 import Button from "../../components/wrappedUi/Button";
 import { track } from "../../analytics";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
@@ -36,13 +36,12 @@ type UiCheckStatus =
   | "completed"
   | "genuineCheckRefused"
   | "firmwareUpdateRefused"
-  | "failed";
+  | "error";
 
 // Represents the status of the genuine check from which is derived the displayed UI and if the genuine check hook can be started or not
-// TODO: no skipped anymore
-type GenuineCheckStatus = "unchecked" | "ongoing" | "completed" | "failed" | "skipped";
+type GenuineCheckStatus = "unchecked" | "ongoing" | "completed" | "error" | "non-genuine";
 // Defines which drawer should be displayed during the genuine check
-type GenuineCheckUiDrawerStatus = "none" | "allow-manager" | "genuine-check-failed";
+type GenuineCheckUiDrawerStatus = "none" | "allow-manager" | "non-genuine" | "genuine-check-error";
 
 // Represents the status of the firmware check from which is derived the displayed UI and if the genuine check hook can be started or not
 type FirmwareUpdateCheckStatus =
@@ -50,7 +49,7 @@ type FirmwareUpdateCheckStatus =
   | "ongoing"
   | "updating"
   | "completed"
-  | "failed"
+  | "error"
   | "refused";
 // Defines which drawer should be displayed during the firmware check
 type FirmwareUpdateUiDrawerStatus = "none" | "new-firmware-available";
@@ -78,6 +77,11 @@ export type EarlySecurityCheckProps = {
    * Only useful when the EarlySecurityCheck component is mounting.
    */
   isAlreadyGenuine?: boolean;
+
+  /**
+   * Function to cancel the onboarding
+   */
+  onCancelOnboarding: () => void;
 };
 
 /**
@@ -89,6 +93,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   notifyOnboardingEarlyCheckEnded,
   notifyEarlySecurityCheckShouldReset,
   isAlreadyGenuine = false,
+  onCancelOnboarding,
 }) => {
   // const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
   const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
@@ -166,6 +171,14 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     resetGenuineCheckState();
     setGenuineCheckStatus("unchecked");
   }, [resetGenuineCheckState]);
+
+  const onCancelGenuineCheck = useCallback(() => {
+    track("button_clicked", {
+      button: "Cancel onboarding",
+    });
+    
+    onCancelOnboarding();
+  }, [onCancelOnboarding]);
 
   const onSkipUpdate = useCallback(() => {
     track("button_clicked", {
@@ -264,11 +277,12 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       // Updates the genuineCheckStatus
       if (genuineCheckError) {
         log("EarlySecurityCheck", "Failed to run genuine check:", genuineCheckError.message);
-        setGenuineCheckStatus("failed");
+        setGenuineCheckStatus("error");
       } else if (genuineState === "genuine") {
         setGenuineCheckStatus("completed");
       } else if (genuineState === "non-genuine") {
-        setGenuineCheckStatus("failed");
+        log("EarlySecurityCheck", "Device not genuine");
+        setGenuineCheckStatus("non-genuine");
       }
 
       // Updates the displayed drawer and UI state
@@ -279,23 +293,21 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       } else if (devicePermissionState === "requested") {
         currentDisplayedDrawer = "allow-manager";
       } else if (devicePermissionState === "refused") {
-        // TODO: no drawer
         currentDisplayedDrawer = "none";
         genuineCheckUiStepStatus = "genuineCheckRefused";
-        // currentDisplayedDrawer = "genuine-check-failed";
       }
-    } else if (genuineCheckStatus === "failed") {
-      // Currently genuine check failed or refused is handled in the same way. This can be changed in the future.
-      currentDisplayedDrawer = "genuine-check-failed";
+    } else if (genuineCheckStatus === "error") {
+      // Currently genuine check error or refused is handled in the same way. This can be changed in the future.
+      currentDisplayedDrawer = "genuine-check-error";
+    } else if (genuineCheckStatus === "non-genuine") {
+      currentDisplayedDrawer = "non-genuine";
     }
   }
   // `currentStep` can be any value for those UI updates
   if (genuineCheckStatus === "completed") {
     genuineCheckUiStepStatus = "completed";
-  } else if (genuineCheckStatus === "skipped" || genuineCheckStatus === "failed") {
-    // "skipped" represents the user skipping the genuine check because they refused it (on) or it failed
-    // TODO: no skipped anymore
-    genuineCheckUiStepStatus = "failed";
+  } else if (["error", "non-genuine"].includes(genuineCheckStatus)) {
+    genuineCheckUiStepStatus = "error";
   }
 
   // Handles firmware update check UI logic
@@ -318,7 +330,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
           "Failed to retrieve latest firmware version with error:",
           getLatestAvailableFirmwareError.name,
         );
-        setFirmwareUpdateCheckStatus("failed");
+        setFirmwareUpdateCheckStatus("error");
       } else if (getLatestAvailableFirmwareStatus === "no-available-firmware") {
         setFirmwareUpdateCheckStatus("completed");
       }
@@ -359,8 +371,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   // `currentStep` can be any value for those UI updates
   if (firmwareUpdateCheckStatus === "completed") {
     firmwareUpdateUiStepStatus = "completed";
-  } else if (firmwareUpdateCheckStatus === "failed") {
-    firmwareUpdateUiStepStatus = "failed";
+  } else if (firmwareUpdateCheckStatus === "error") {
+    firmwareUpdateUiStepStatus = "error";
   }
 
   // ***** Updates UI *****
@@ -390,8 +402,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         productName,
       });
       break;
-    case "failed":
-      genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.failed.title");
+    case "error":
+      genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.error.title");
+      genuineCheckStepDescription = t("earlySecurityCheck.genuineCheckStep.error.description", {
+        productName,
+      });
       break;
     case "genuineCheckRefused":
       genuineCheckStepTitle = t("earlySecurityCheck.genuineCheckStep.refused.title");
@@ -442,13 +457,13 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         </Button>
       );
       break;
-    case "failed":
-      firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.failed.title");
+    case "error":
+      firmwareUpdateCheckStepTitle = t("earlySecurityCheck.firmwareUpdateCheckStep.error.title");
 
       // So the user can continue the onboarding in case of failure
       primaryBottomCta = (
         <Button type="main" onPress={onSkipUpdate} mt="2">
-          {t("earlySecurityCheck.firmwareUpdateCheckStep.failed.skipCta")}
+          {t("earlySecurityCheck.firmwareUpdateCheckStep.error.skipCta")}
         </Button>
       );
       break;
@@ -516,19 +531,17 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   return (
     <>
       <AllowManagerDrawer isOpen={currentDisplayedDrawer === "allow-manager"} device={device} />
-      <GenuineCheckFailedDrawer
+      <GenuineCheckErrorDrawer
         productName={productName}
-        isOpen={currentDisplayedDrawer === "genuine-check-failed"}
+        isOpen={currentDisplayedDrawer === "genuine-check-error"}
         error={genuineCheckError}
         onRetry={onRetryGenuineCheck}
-        onSkip={() => {
-          // TODO: to remove -> or to actually go to the sync onboarding
-          track("button_clicked", {
-            button: "check if hardware genuine later",
-            drawer: "Failed Stax hardware check",
-          });
-          setGenuineCheckStatus("skipped");
-        }}
+        onCancel={onCancelGenuineCheck}
+      />
+      <GenuineCheckNonGenuineDrawer
+        productName={productName}
+        isOpen={currentDisplayedDrawer === "non-genuine"}
+        onClose={onCancelGenuineCheck}
       />
       <FirmwareUpdateAvailableDrawer
         productName={productName}
@@ -613,7 +626,7 @@ const CheckCard = ({
     case "completed":
       checkIcon = <CheckTickMedium color="success.c50" size={20} />;
       break;
-    case "failed":
+    case "error":
     case "genuineCheckRefused":
       checkIcon = <WarningSolidMedium color="warning.c60" size={20} />;
       break;

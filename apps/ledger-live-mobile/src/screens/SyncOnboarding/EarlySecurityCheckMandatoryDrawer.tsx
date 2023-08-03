@@ -79,7 +79,7 @@ const EarlySecurityCheckMandatoryDrawer: React.FC<Props> = ({
         {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.resumeCta")}
       </Button>
       <Button onPress={onCancel}>
-        {t("earlySecurityCheck.genuineCheckFailedDrawer.cancelCta")}
+        {t("earlySecurityCheck.earlySecurityCheckMandatoryDrawer.cancelCta")}
       </Button>
     </QueuedDrawer>
   );

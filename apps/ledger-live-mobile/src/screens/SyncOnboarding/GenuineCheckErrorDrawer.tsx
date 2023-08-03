@@ -18,9 +18,9 @@ export type Props = {
   onRetry?: () => void;
 
   /**
-   * Callback when the user wants to skip the genuine check step and presses on the skip button
+   * Callback when the user wants to cancel the genuine check step and presses on the cancel button
    */
-  onSkip?: () => void;
+  onCancel?: () => void;
 
   /**
    * Callback when the drawer is closed
@@ -38,19 +38,19 @@ export type Props = {
 };
 
 /**
- * Drawer displayed on a failed genuine check during the early security check
+ * Drawer displayed when an error occurred during the genuine check during the early security check
  *
- * The failed genuine check can come from an error that happened during the genuine check
- * or if the user cancelled/did not allow the genuine check.
+ * The failed genuine check can come from an error that happened during the genuine check.
  *
  * If `error` is set, displays the associated `GenericErrorView` with the translated message defined in common.json
+ * TODO: specific error cases
  *
  * Otherwise displays an error message informing the user that they cancelled the genuine check
  */
 const GenuineCheckFailedDrawer: React.FC<Props> = ({
   isOpen,
   onRetry,
-  onSkip,
+  onCancel,
   onClose,
   productName,
   error,
@@ -73,7 +73,9 @@ const GenuineCheckFailedDrawer: React.FC<Props> = ({
           <Button type="main" mt={4} mb={4} onPress={onRetry}>
             {t("common.retry")}
           </Button>
-          <Button onPress={onSkip}>{t("common.skip")}</Button>
+          <Button onPress={onCancel}>
+            {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
+          </Button>
         </>
       ) : (
         <>
@@ -87,18 +89,18 @@ const GenuineCheckFailedDrawer: React.FC<Props> = ({
             />
           </Flex>
           <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-            {t("earlySecurityCheck.genuineCheckFailedDrawer.title")}
+            {t("earlySecurityCheck.genuineCheckErrorDrawer.title")}
           </Text>
           <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
-            {t("earlySecurityCheck.genuineCheckFailedDrawer.description", {
+            {t("earlySecurityCheck.genuineCheckErrorDrawer.description", {
               productName,
             })}
           </Text>
           <Button type="main" mb={4} onPress={onRetry}>
-            {t("earlySecurityCheck.genuineCheckFailedDrawer.retryCta")}
+            {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
           </Button>
-          <Button onPress={onSkip}>
-            {t("earlySecurityCheck.genuineCheckFailedDrawer.skipCta")}
+          <Button onPress={onCancel}>
+            {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
           </Button>
         </>
       )}
