@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.14.0-nightly.1
+
+### Minor Changes
+
+- [#4154](https://github.com/LedgerHQ/ledger-live/pull/4154) [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Added NotEnoughGasSwap to errors, will return amountFromWarning from useSwapTransaction and display and interpolate NotEnoughGasSwap in LLD
+
 ## 6.13.1-nightly.0
 
 ### Patch Changes

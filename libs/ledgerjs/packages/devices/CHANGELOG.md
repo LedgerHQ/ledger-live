@@ -1,5 +1,12 @@
 # @ledgerhq/devices
 
+## 8.0.6-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0-nightly.1
+
 ## 8.0.6-nightly.0
 
 ### Patch Changes

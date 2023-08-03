@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.65.0-nightly.7
+
+### Patch Changes
+
+- [#4196](https://github.com/LedgerHQ/ledger-live/pull/4196) [`8b730c5945`](https://github.com/LedgerHQ/ledger-live/commit/8b730c594567efa53ce6edbda172a58a0b626d21) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix validator name display issue in MultiversX claim rewards flow
+
+- [#4154](https://github.com/LedgerHQ/ledger-live/pull/4154) [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Added NotEnoughGasSwap to errors, will return amountFromWarning from useSwapTransaction and display and interpolate NotEnoughGasSwap in LLD
+
+- Updated dependencies [[`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0-nightly.1
+  - @ledgerhq/live-common@31.4.0-nightly.6
+  - @ledgerhq/coin-evm@0.5.0-nightly.2
+  - @ledgerhq/coin-framework@0.4.1-nightly.3
+  - @ledgerhq/domain-service@1.1.7-nightly.3
+  - @ledgerhq/evm-tools@1.0.3-nightly.2
+  - @ledgerhq/devices@8.0.6-nightly.1
+  - @ledgerhq/hw-transport@6.28.7-nightly.1
+  - @ledgerhq/hw-transport-http@6.28.2-nightly.1
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.17-nightly.0
+  - @ledgerhq/hw-transport-vault@1.1.2-nightly.1
+  - @ledgerhq/live-network@1.1.4-nightly.1
+
 ## 2.65.0-nightly.6
 
 ### Minor Changes

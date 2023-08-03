@@ -1,5 +1,41 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.6
+
+### Minor Changes
+
+- [#4154](https://github.com/LedgerHQ/ledger-live/pull/4154) [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Added NotEnoughGasSwap to errors, will return amountFromWarning from useSwapTransaction and display and interpolate NotEnoughGasSwap in LLD
+
+### Patch Changes
+
+- Updated dependencies [[`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/cryptoassets@9.11.0-nightly.2
+  - @ledgerhq/errors@6.14.0-nightly.1
+  - @ledgerhq/coin-algorand@0.2.5-nightly.3
+  - @ledgerhq/coin-evm@0.5.0-nightly.2
+  - @ledgerhq/coin-framework@0.4.1-nightly.3
+  - @ledgerhq/coin-polkadot@0.3.2-nightly.3
+  - @ledgerhq/domain-service@1.1.7-nightly.3
+  - @ledgerhq/evm-tools@1.0.3-nightly.2
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.2
+  - @ledgerhq/devices@8.0.6-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.18-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.28.4-nightly.1
+  - @ledgerhq/hw-app-exchange@0.2.2-nightly.1
+  - @ledgerhq/hw-app-near@6.27.13-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.27.18-nightly.1
+  - @ledgerhq/hw-app-solana@7.0.12-nightly.1
+  - @ledgerhq/hw-app-trx@6.27.18-nightly.1
+  - @ledgerhq/hw-transport@6.28.7-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.18-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.18-nightly.1
+  - @ledgerhq/live-network@1.1.4-nightly.1
+  - @ledgerhq/hw-app-btc@10.0.7-nightly.1
+  - @ledgerhq/hw-app-str@6.27.18-nightly.1
+  - @ledgerhq/hw-app-tezos@6.27.18-nightly.1
+  - @ledgerhq/hw-app-xrp@6.27.18-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.18-nightly.1
+
 ## 31.4.0-nightly.5
 
 ### Minor Changes

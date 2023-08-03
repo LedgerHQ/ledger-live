@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-trx",
-  "version": "6.27.18-nightly.0",
+  "version": "6.27.18-nightly.1",
   "description": "Ledger Hardware Wallet Tron Application API",
   "keywords": [
     "Ledger",

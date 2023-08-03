@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.4.1-nightly.2",
+  "version": "0.4.1-nightly.3",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -75,7 +75,6 @@
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
     },
-
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
