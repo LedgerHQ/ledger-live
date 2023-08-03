@@ -40,7 +40,6 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
 
   const translationKey = useMemo(() => `errors.${errorName}.${field}`, [errorName, field]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const isValidError = useMemo(() => error instanceof Error, [error]);
   const links = useErrorLinks(error);
 
@@ -79,7 +78,12 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
     return <ErrorList translation={translation} />;
   }
 
-  // Compatibility with older implementation
+  // This is from the previous implementation of this function and has been kept
+  // for compatibility reasons with previously defined errors.
+  // This section modifies the error message by appending a 'Learn More' link.
+  // The link appears only when two conditions are satisfied:
+  // 1) A URL corresponding to the error name exists in 'urls.errors' map.
+  // 2) The 'noLink' prop is falsy, indicating that the link should be displayed.
   if (urls.errors[error.name] && !noLink) {
     return (
       <Text>

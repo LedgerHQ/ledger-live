@@ -13,13 +13,11 @@ function isAbsoluteUrl(url: string): boolean {
 }
 
 export function useErrorLinks(error?: Error | null) {
-  const errorName = error?.name;
+  const errorLinks = error && "links" in error && Array.isArray(error.links) && error?.links;
   const history = useHistory();
   return useMemo(() => {
-    if (!!error && "links" in error && Array.isArray(error.links)) {
-      const safeStringLinks = error.links.filter(
-        (link): link is string => typeof link === "string",
-      );
+    if (errorLinks) {
+      const safeStringLinks = errorLinks.filter((link): link is string => typeof link === "string");
 
       return safeStringLinks.reduce((prev, curr, index) => {
         const link = isAbsoluteUrl(curr) ? (
@@ -44,5 +42,5 @@ export function useErrorLinks(error?: Error | null) {
 
     return {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorName]);
+  }, [errorLinks]);
 }
