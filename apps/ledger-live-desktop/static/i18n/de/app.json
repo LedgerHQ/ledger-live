@@ -142,7 +142,8 @@
     "connectDevice" : "Verbinden Sie Ihr Gerät",
     "add" : "Hinzufügen",
     "or" : "ODER",
-    "clearAll" : "Alle löschen"
+    "clearAll" : "Alle löschen",
+    "buyLedger" : "Ledger-Gerät kaufen"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -299,8 +300,7 @@
     "title" : "Umtauschen",
     "tabs" : {
       "exchange" : "Umtauschen",
-      "history" : "Verlauf",
-      "kyc" : "KYC"
+      "history" : "Verlauf"
     },
     "form" : {
       "changeCTA" : "Änderung",
@@ -355,33 +355,6 @@
         "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
         "content" : "Haben Sie noch etwas Geduld,<br/>wir werden diese Funktion sehr bald einführen"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "Sie müssen Ihr KYC vervollständigen",
-          "complete" : "Vervollständigen Sie Ihr KYC",
-          "update" : "KYC aktualisieren",
-          "rejected" : "KYC abgelehnt, erneute Überprüfung starten",
-          "rejectedContactProviderSupport" : "KYC-Prüfung abgelehnt, bitte wenden Sie sich an den {{providerName}} Support",
-          "updateRequired" : "Vervollständigen oder aktualisieren Sie Ihr KYC",
-          "status" : {
-            "pending" : "KYC ausstehend",
-            "approved" : "KYC genehmigt",
-            "closed" : "KYC abgelehnt",
-            "upgradeRequired" : "KYC unzureichend"
-          }
-        },
-        "login" : {
-          "required" : "Sie müssen sich bei diesem Anbieter anmelden",
-          "complete" : "Login"
-        },
-        "mfa" : {
-          "required" : "Sie müssen bei diesem Anbieter eine Multi-Faktor-Authentifizierung (MFA) einrichten",
-          "complete" : "MFA einrichten"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
-        }
-      },
       "timeout" : {
         "message" : "Aus technischen Gründen konnten keine Angebote erstellt werden. Bitte wiederholen Sie den Tauschversuch in einigen Minuten noch einmal."
       }
@@ -394,54 +367,6 @@
       },
       "export" : "Exportvorgänge",
       "exporting" : "Wird exportiert..."
-    },
-    "kyc" : {
-      "updateRequired" : "Wir sind nicht in der Lage, den KYC-Prozess abzuschließen, bis Sie die Anwendung aktualisieren",
-      "wyre" : {
-        "disclaimer" : "Ihre Daten werden von LEDGER im Auftrag von WYRE gesammelt und an WYRE für KYC-Zwecke übertragen. Für weitere Informationen lesen Sie bitte unsere",
-        "policy" : "Datenschutzrichtlinie",
-        "title" : "Verifizieren Sie Ihre Identität",
-        "subtitle" : "Bitte geben Sie Ihre Daten ein, um mit Wyre zu tauschen.",
-        "cta" : "Weiter",
-        "pending" : {
-          "cta" : "Weiter",
-          "title" : "Ihre Daten wurden zur Bestätigung übermittelt",
-          "subtitle" : "Normalerweise dauert es ein paar Minuten, bis die Überprüfung abgeschlossen ist.",
-          "link" : "Erfahren Sie mehr über KYC",
-          "info" : "Identitätsüberprüfung: Übermittelt"
-        },
-        "closed" : {
-          "cta" : "KYC zurücksetzen",
-          "title" : "KYC-Antrag abgelehnt",
-          "subtitle" : "Wyre hat die von Ihnen für KYC-Zwecke angegebenen Daten abgelehnt",
-          "link" : "Erfahren Sie mehr über KYC"
-        },
-        "form" : {
-          "firstName" : "Vorname",
-          "lastName" : "Nachname",
-          "street1" : "Straße Adresse Zeile 1",
-          "street2" : "Straße Adresse Zeile 2",
-          "city" : "Stadt",
-          "state" : "Bundesland",
-          "country" : "Land",
-          "postalCode" : "Postleitzahl",
-          "dateOfBirth" : "Geburtsdatum",
-          "firstNamePlaceholder" : "Geben Sie Ihren Vornamen ein",
-          "lastNamePlaceholder" : "Geben Sie Ihren Nachnamen ein",
-          "street1Placeholder" : "z. B. Musterstraße 21",
-          "street2Placeholder" : "z. B. Musterstraße 21",
-          "cityPlaceholder" : "z. B. Berlin",
-          "postalCodePlaceholder" : "Geben Sie Ihre 5-stellige Postleitzahl ein",
-          "dateOfBirthPlaceholder" : "TT.MM.JJJJ",
-          "firstNameError" : "Geben Sie Ihren Vornamen ein, um fortzufahren",
-          "lastNameError" : "Geben Sie Ihren Nachnamen ein, um fortzufahren",
-          "street1Error" : "Geben Sie Ihre Adresse ein",
-          "cityError" : "Geben Sie die Stadt ein, in der Sie in den USA leben",
-          "postalCodeError" : "Geben Sie eine gültige US-Postleitzahl ein",
-          "dateOfBirthError" : "Geben Sie Ihr Geburtsdatum ein",
-          "dateOfBirthValidationError" : "Geben Sie ein gültiges Geburtsdatum ein"
-        }
-      }
     },
     "exchangeDrawer" : {
       "title" : "Swap bestätigen",
@@ -491,17 +416,7 @@
     "providers" : {
       "title" : "Wählen Sie einen Anbieter für den Tausch von Kryptowährungen",
       "learnMore" : "Was ist Swap?",
-      "kycRequired" : "KYC erforderlich",
       "cta" : "Weiter",
-      "kyc" : {
-        "notAvailable" : "{{provider}} ist an Ihrem Standort nicht verfügbar",
-        "status" : {
-          "required" : "KYC erforderlich",
-          "pending" : "KYC ausstehend",
-          "approved" : "KYC genehmigt!",
-          "closed" : "KYC abgelehnt"
-        }
-      },
       "filter" : {
         "centralised" : "Zentralisiert",
         "decentralised" : "Dezentralisiert",
@@ -516,55 +431,7 @@
       "subtitle" : "Tauschen Sie Krypto-Vermögenswerte direkt von Ihrem Ledger-Gerät aus.",
       "disclaimer" : "Wenn Sie fortfahren, akzeptieren Sie, dass Ihre Standortdaten an Drittanbieter weitergegeben werden, damit diese ihre AML/KYC-Verfahren einhalten können."
     },
-    "kyc" : {
-      "updateRequired" : "Wir sind nicht in der Lage, den KYC-Prozess abzuschließen, bis Sie die Anwendung aktualisieren",
-      "wyre" : {
-        "disclaimer" : "Ihre Daten werden von LEDGER im Auftrag von WYRE gesammelt und an WYRE für KYC-Zwecke übertragen. Für weitere Informationen lesen Sie bitte unsere",
-        "policy" : "Datenschutzrichtlinie",
-        "title" : "Verifizieren Sie Ihre Identität",
-        "subtitle" : "Bitte geben Sie Ihre Daten ein, um mit Wyre zu tauschen.",
-        "pending" : {
-          "cta" : "Weiter",
-          "title" : "Freigabe ausstehend",
-          "subtitle" : "Ihre Informationen wurden von Wyre zur Genehmigung vorgelegt.",
-          "link" : "Erfahren Sie mehr über KYC"
-        },
-        "closed" : {
-          "cta" : "KYC zurücksetzen",
-          "title" : "KYC-Antrag abgelehnt",
-          "subtitle" : "Wyre hat die von Ihnen für KYC-Zwecke angegebenen Daten abgelehnt",
-          "link" : "Erfahren Sie mehr über KYC"
-        },
-        "form" : {
-          "firstName" : "Vorname",
-          "lastName" : "Nachname",
-          "street1" : "Straße Adresse Zeile 1",
-          "street2" : "Straße Adresse Zeile 2",
-          "city" : "Stadt",
-          "state" : "Bundesland",
-          "country" : "Land",
-          "postalCode" : "Postleitzahl",
-          "dateOfBirth" : "Geburtsdatum",
-          "firstNamePlaceholder" : "Geben Sie Ihren Vornamen ein",
-          "lastNamePlaceholder" : "Geben Sie Ihren Nachnamen ein",
-          "street1Placeholder" : "z. B. Musterstraße 21",
-          "street2Placeholder" : "z. B. Musterstraße 21",
-          "cityPlaceholder" : "z. B. Berlin",
-          "postalCodePlaceholder" : "Geben Sie Ihre 5-stellige Postleitzahl ein",
-          "dateOfBirthPlaceholder" : "TT.MM.JJJJ",
-          "firstNameError" : "Geben Sie Ihren Vornamen ein, um fortzufahren",
-          "lastNameError" : "Geben Sie Ihren Nachnamen ein, um fortzufahren",
-          "street1Error" : "Geben Sie Ihre Adresse ein",
-          "cityError" : "Geben Sie die Stadt ein, in der Sie in den USA leben",
-          "postalCodeError" : "Geben Sie eine gültige US-Postleitzahl ein",
-          "dateOfBirthError" : "Geben Sie Ihr Geburtsdatum ein",
-          "dateOfBirthValidationError" : "Geben Sie ein gültiges Geburtsdatum ein"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Setzen Sie Ihr KYC zurück und aktualisieren Sie Live, um mit Wyre zu tauschen",
-      "resetKYCCTA" : "KYC zurücksetzen",
       "amount" : "Betrag",
       "from" : {
         "title" : "Von",
@@ -596,16 +463,6 @@
       "noApp" : "{{currencyName}} App nicht installiert.",
       "outdatedApp" : "{{currencyName}} App-Aktualisierung verfügbar.",
       "loadingRates" : "Raten werden geladen..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Ledger Live benötigt ein Update",
-      "subtitle" : "Bitte aktualisieren Sie Ledger Live auf die neueste Version, und verifizieren Sie Ihre Identität erneut, um mit wyre zu tauschen",
-      "cta" : "Verifizierung zurücksetzen"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "Ihre lokalen Drittanbieterdaten löschen",
-      "subtitle" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
-      "cta" : "Bestätigen"
     },
     "modal" : {
       "title" : "Umtauschen",
@@ -3902,8 +3759,6 @@
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "catalogUrl" : "Anbieter Katalog-Apps festlegen",
       "catalogUrlDesc" : "Geben Sie die benutzerdefinierte URL Ihres Kataloganbieters ein",
-      "catalogRampServer" : "Anbieter Kaufen/Verkaufen festlegen",
-      "catalogRampServerDesc" : "Zwischen mehreren Handelsanbietern wechseln",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
       "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
@@ -4298,7 +4153,7 @@
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
-        "recoverSignIn" : "Für Ledger Recover anmelden",
+        "recoverSignIn" : "Melden Sie sich bei Ledger Recover an",
         "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
@@ -5127,6 +4982,10 @@
       "title" : "{{currencyName}} wird nicht unterstützt",
       "description" : "Dieser Krypto-Vermögenswert wird noch nicht unterstützt. Bitte kontaktieren Sie den Ledger-Support"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Auf Ihrem Gerät ({{device}}) ist bereits eine geheime Wiederherstellungsphrase eingerichtet",
+      "description" : "Verbinden Sie ein Ledger-Gerät, das noch nicht eingerichtet ist."
+    },
     "DeviceNotGenuine" : {
       "title" : "Möglicherweise nicht echt",
       "description" : "Hilfe vom Ledger-Support anfordern"
@@ -5299,6 +5158,9 @@
     },
     "NotEnoughGas" : {
       "title" : "Der übergeordnete Kontostand reicht für Netzwerkgebühren nicht aus"
+    },
+    "NotEnoughGasSwap" : {
+      "title" : "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Die Version Ihres Betriebssystems ist veraltet",
