@@ -293,6 +293,7 @@ export type NftState = {
   filterDrawerVisible: boolean;
   galleryChainFilters: NftGalleryChainFiltersState;
   spamFilter: boolean;
+  infoDrawerVisible: boolean; // TODO: Store this so it doesn't show again
 };
 
 export type NftGalleryChainFiltersState = Pick<

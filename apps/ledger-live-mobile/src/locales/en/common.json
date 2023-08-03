@@ -2821,6 +2821,10 @@
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
+    "spamFilter": {
+      "title": "Smart spam filter",
+      "desc": " Keep your wallet clean from unsolicited NFTs. Our new filter auto-hides spam collections before they reach your gallery!"
+    },
     "ptxServices": {
       "toast": {
         "title": "In order to comply with Apple’s recent updates on the App Store, this feature is temporarily unavailable. You can still access it on Ledger Live on desktop."

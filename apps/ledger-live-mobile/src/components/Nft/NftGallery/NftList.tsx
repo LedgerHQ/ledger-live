@@ -20,6 +20,7 @@ import NftFilterChip from "./NftFilterChip";
 import FiltersIcon from "../../../icons/Filters";
 import { ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import SpamFeatureInfoDrawer from "./SpamFeatureInfoDrawer";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
@@ -70,6 +71,8 @@ const NftList = ({ data, fetchNextPage, hasNextPage, isLoading, error, refetch }
     isFilterDrawerVisible,
     spamFilter,
     toggleSpamFilter,
+    infoDrawerVisible,
+    closeInfoDrawer,
   } = useNftList({ nftList: data });
 
   const gradient = {
@@ -121,7 +124,7 @@ const NftList = ({ data, fetchNextPage, hasNextPage, isLoading, error, refetch }
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
-
+      <SpamFeatureInfoDrawer isOpen={infoDrawerVisible} onClose={closeInfoDrawer} />
       {error ? (
         // TODO: Get real designs/UX
         <Flex flex={1} justifyContent="center" alignItems="center">

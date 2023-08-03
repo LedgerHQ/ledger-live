@@ -477,11 +477,13 @@ export type ActionsPayload =
 export enum NftStateActionTypes {
   SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
   SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
+  SET_INFO_DRAWER_VISIBLE = "SET_INFO_DRAWER_VISIBLE",
   SET_SPAM_FILTER = "SET_SPAM_FILTER",
 }
 
 export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
 export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
+export type NftStateGalleryInfoDrawerVisiblePayload = NftState["infoDrawerVisible"];
 export type NftStateGallerySpamFilterPayload = NftState["spamFilter"];
 
 export type NftStatePayload =

@@ -6,11 +6,13 @@ import type {
   NftStateGalleryChainFiltersPayload,
   NftStateGallerySpamFilterPayload,
   NftStatePayload,
+  NftStateGalleryInfoDrawerVisiblePayload,
 } from "../actions/types";
 import { NftStateActionTypes } from "../actions/types";
 
 export const INITIAL_STATE: NftState = {
   filterDrawerVisible: false,
+  infoDrawerVisible: true,
   spamFilter: false,
   galleryChainFilters: {
     ethereum: true,
@@ -22,6 +24,10 @@ const handlers: ReducerMap<NftState, NftStatePayload> = {
   [NftStateActionTypes.SET_SPAM_FILTER]: (state, action) => ({
     ...state,
     spamFilter: (action as Action<NftStateGallerySpamFilterPayload>).payload,
+  }),
+  [NftStateActionTypes.SET_INFO_DRAWER_VISIBLE]: (state, action) => ({
+    ...state,
+    infoDrawerVisible: (action as Action<NftStateGalleryInfoDrawerVisiblePayload>).payload,
   }),
   [NftStateActionTypes.SET_GALLERY_FILTER_DRAWER_VISIBLE]: (state, action) => ({
     ...state,
@@ -42,5 +48,6 @@ const handlers: ReducerMap<NftState, NftStatePayload> = {
 export const galleryChainFiltersSelector = (state: State) => state.nft.galleryChainFilters;
 export const galleryFilterDrawerVisibleSelector = (state: State) => state.nft.filterDrawerVisible;
 export const gallerySpamFilterSelector = (state: State) => state.nft.spamFilter;
+export const galleryInfoDrawerVisibleSelector = (state: State) => state.nft.infoDrawerVisible;
 
 export default handleActions<NftState, NftStatePayload>(handlers, INITIAL_STATE);

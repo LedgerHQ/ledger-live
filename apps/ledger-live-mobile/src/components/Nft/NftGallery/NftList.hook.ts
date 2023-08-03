@@ -15,10 +15,12 @@ import {
   galleryFilterDrawerVisibleSelector,
   galleryChainFiltersSelector,
   gallerySpamFilterSelector,
+  galleryInfoDrawerVisibleSelector,
 } from "../../../reducers/nft";
 import {
   setGalleryChainFilter,
   setGalleryFilterDrawerVisible,
+  setInfoDrawerVisible,
   setSpamFilter,
 } from "../../../actions/nft";
 import { NftGalleryChainFiltersState } from "../../../reducers/types";
@@ -35,6 +37,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const isFilterDrawerVisible = useSelector(galleryFilterDrawerVisibleSelector);
   const chainFilters = useSelector(galleryChainFiltersSelector);
   const spamFilter = useSelector(gallerySpamFilterSelector);
+  const infoDrawerVisible = useSelector(galleryInfoDrawerVisibleSelector);
 
   const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
 
@@ -152,6 +155,10 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
     dispatch(setGalleryFilterDrawerVisible(false));
   }, [dispatch]);
 
+  const closeInfoDrawer = useCallback(() => {
+    dispatch(setInfoDrawerVisible(false));
+  }, [dispatch]);
+
   const toggleChainFilter = useCallback(
     (filter: keyof NftGalleryChainFiltersState) => {
       dispatch(setGalleryChainFilter([filter, !chainFilters[filter]]));
@@ -190,5 +197,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
     openFilterDrawer,
     spamFilter,
     toggleSpamFilter,
+    infoDrawerVisible,
+    closeInfoDrawer,
   };
 }
