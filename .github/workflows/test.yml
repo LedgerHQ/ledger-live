@@ -114,10 +114,14 @@ jobs:
           # Commenting because of random node-gyp failures on windows…
           # See:
           #  * https://github.com/serialport/node-serialport/issues/2322
-          # - windows-latest
+          - windows-latest
 
     runs-on: ${{ matrix.os }}
     steps:
+      - name: setup Git config
+        if: matrix.os == 'windows-latest'
+        run: |
+          git config --global core.autocrlf false
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
@@ -125,6 +129,8 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          install_dotnet: ${{ matrix.os == 'windows-latest' }}
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
