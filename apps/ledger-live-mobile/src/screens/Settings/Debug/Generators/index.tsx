@@ -95,7 +95,7 @@ export default function Generators() {
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
       <ImportBridgeStreamData
         title="Import .env BRIDGESTREAM_DATA"
-        dataStr={config.BRIDGESTREAM_DATA}
+        dataStr={config.BRIDGESTREAM_DATA as string}
       />
       <Flex p={6}>
         <Alert

@@ -101,7 +101,7 @@ export default function BuyDeviceBanner({
       handleOnPress();
       track("button_clicked", {
         button: "Discover the Nano",
-        screen,
+        page: screen,
       });
     }
   }, [handleOnPress, handleSetupCtaOnPress, screen, variant]);
@@ -109,7 +109,7 @@ export default function BuyDeviceBanner({
   const pressMessage = useCallback(() => {
     track("message_clicked", {
       message: "I already have a device, set it up",
-      screen,
+      page: screen,
       currency: eventProperties?.currency,
     });
     handleSetupCtaOnPress();

@@ -47,6 +47,35 @@
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
+    "./account/*": {
+      "require": "./lib/account/*.js",
+      "default": "./lib-es/account/*.js"
+    },
+    "./batcher/*": {
+      "require": "./lib/batcher/*.js",
+      "default": "./lib-es/batcher/*.js"
+    },
+    "./bot/*": {
+      "require": "./lib/bot/*.js",
+      "default": "./lib-es/bot/*.js"
+    },
+    "./bridge/*": {
+      "require": "./lib/bridge/*.js",
+      "default": "./lib-es/bridge/*.js"
+    },
+    "./currencies/*": {
+      "require": "./lib/currencies/*.js",
+      "default": "./lib-es/currencies/*.js"
+    },
+    "./nft/*": {
+      "require": "./lib/nft/*.js",
+      "default": "./lib-es/nft/*.js"
+    },
+    "./transaction/*": {
+      "require": "./lib/transaction/*.js",
+      "default": "./lib-es/transaction/*.js"
+    },
+
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",

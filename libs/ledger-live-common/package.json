@@ -46,6 +46,14 @@
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
+    "./currencies/*": {
+      "require": "./lib/currencies/*.js",
+      "default": "./lib-es/currencies/*.js"
+    },
+    "./featureFlags": {
+      "require": "./lib/featureFlags/*.js",
+      "default": "./lib-es/featureFlags/*.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
