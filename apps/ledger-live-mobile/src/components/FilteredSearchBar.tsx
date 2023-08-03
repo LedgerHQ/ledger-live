@@ -17,6 +17,7 @@ type Props<T> = {
   list: T[];
   inputWrapperStyle?: StyleProp<ViewStyle>;
   newSearchBar?: boolean;
+  onSearchChange?: (newQuery: string) => void;
 };
 
 const FilteredSearchBar = <T,>({
@@ -27,6 +28,7 @@ const FilteredSearchBar = <T,>({
   renderEmptySearch,
   inputWrapperStyle,
   newSearchBar,
+  onSearchChange,
 }: Props<T>) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -36,11 +38,9 @@ const FilteredSearchBar = <T,>({
   const onChange = useCallback(
     (newQuery: string) => {
       setQuery(newQuery);
-      if (route.name === ScreenName.ReceiveSelectCrypto) {
-        track("asset_searched", { page: "Choose a crypto to secure", asset: newQuery });
-      }
+      onSearchChange?.(newQuery);
     },
-    [route.name],
+    [route.name, onSearchChange],
   );
 
   return (
