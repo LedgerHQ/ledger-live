@@ -86,8 +86,6 @@ export const useNftsByWallet = () => {
       return result;
     },
     {
-      keepPreviousData: true,
-      cacheTime: 0,
       enabled: !!addresses.length,
       getNextPageParam: lastPage => {
         const cursor = (lastPage || {}).next_cursor;
