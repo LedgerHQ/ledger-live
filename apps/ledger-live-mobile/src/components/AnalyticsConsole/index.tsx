@@ -122,7 +122,11 @@ const AnalyticsConsole = () => {
             ) : null}
           </AnimatedFlex>
           <AnimatedFlex flexShrink={1} layout={Layout}>
-            <EventList showExtraProps={showExtraProps} hideSyncEvents={hideSyncEvents} />
+            <EventList
+              hidden={visibility === Visibility.hidden}
+              showExtraProps={showExtraProps}
+              hideSyncEvents={hideSyncEvents}
+            />
           </AnimatedFlex>
         </SafeAreaView>
       </Flex>
