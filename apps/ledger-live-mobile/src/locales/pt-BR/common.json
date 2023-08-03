@@ -56,6 +56,7 @@
     "forgetDevice" : "Remover Dispositivo",
     "help" : "Ajuda",
     "saveLogs" : "Salvar Registros",
+    "scrollToTop" : "Deslizar para o topo",
     "sync" : {
       "ago" : "Sincronizado {{time}}"
     },
@@ -239,6 +240,10 @@
       "title" : "Reinicie seu dispositivo Ledger e tente novamente",
       "description" : "Erro inesperado. Tente Novamente."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Sua {{device}} já está configurada com a Frase Secreta de Recuperação",
+      "description" : "Conecte uma Ledger que não esteja configurada."
+    },
     "DeviceNotGenuine" : {
       "title" : "Dispositivo possivelmente não autêntico",
       "description" : "Salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
@@ -333,6 +338,9 @@
     "InvalidAddress" : {
       "title" : "Este não é um endereço válido de {{currencyName}}"
     },
+    "InvalidNonce" : {
+      "title" : "Requer o nonce"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Sua conta já está delegada a este validador"
     },
@@ -413,6 +421,9 @@
     "MaxFeeLow" : {
       "title" : "A sua taxa máxima é muito baixa. Sua transação pode ficar pendente por um tempo"
     },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "Taxa de prioridade muito baixa, insira uma quantia superior ao valor da taxa de prioridade da transação inicial"
+    },
     "NetworkDown" : {
       "title" : "A internet parece estar desconectada",
       "description" : "Verifique sua conexão à internet."
@@ -449,6 +460,9 @@
     "NotEnoughGas" : {
       "title" : "ETH insuficiente para a taxa de rede",
       "description" : "Envie um pouco de ETH à sua conta para pagar por transações de tokens ERC20."
+    },
+    "NotEnoughGasSwap" : {
+      "title" : "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
     },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Saldo insuficiente para delegar"
@@ -496,6 +510,9 @@
     "TimeoutTagged" : {
       "title" : "O servidor demorou muito para responder ({{tag}})",
       "description" : "Tempo limite atingido."
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "Transação já validada"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Transação recusada no dispositivo",
@@ -610,10 +627,6 @@
       "title" : "Ainda não é possível enviar de subcontas",
       "description" : "Este recurso será adicionado posteriormente devido a mudanças introduzidas recentemente pela atualização Babylon."
     },
-    "AccessDeniedError" : {
-      "title" : "O Ledger Live precisa ser atualizado",
-      "description" : "Atualize o Ledger Live para a versão mais recente e verifique sua identidade novamente para trocar com a Wyre"
-    },
     "RecommendUndelegation" : {
       "title" : "Desdelegue a conta antes de esvaziá-la"
     },
@@ -641,6 +654,9 @@
     "SwapGenericAPIError" : {
       "title" : "Algo deu errado",
       "description" : "A transação de negociação não foi concluída. Tente novamente ou contate o suporte."
+    },
+    "SwapTimeoutError" : {
+      "title" : "As cotações não foram geradas devido a problemas técnicos. Tente fazer a troca novamente em alguns instantes."
     },
     "PolkadotElectionClosed" : {
       "title" : "A eleição dos validadores deve ser encerrada"
@@ -709,6 +725,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Certifique-se de ter fundos suficientes para pagar as taxas"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "O memo é muito longo"
     },
     "StellarWrongMemoFormat" : {
       "title" : "O formato do memo está incorreto"
@@ -830,6 +849,9 @@
     },
     "GasEstimationError" : {
       "title" : "Falha em estimar o gás"
+    },
+    "InvalidMemoICP" : {
+      "title" : "O memo deve ser um número"
     }
   },
   "crash" : {
@@ -1199,8 +1221,8 @@
       "start" : "Começar",
       "noDevice" : "Sem dispositivo?",
       "buy" : "Comprar uma {{fullDeviceName}}",
-      "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "terms" : "Ao continuar, você concorda com os nossos",
+      "termsLink" : "Termos e condições",
       "privacyLink" : "Política de privacidade",
       "and" : "e",
       "recoverLogIn" : "Entrar no Ledger Recover"
@@ -1209,7 +1231,7 @@
       "title" : "Vamos começar",
       "noLedgerYet" : "Ainda não tenho uma Ledger",
       "noLedgerYetModal" : {
-        "title" : "Milhões de usuários. 0 hacks.",
+        "title" : "Milhões de usuários.<br />0 hacks.",
         "desc" : "Tenha paz de espírito protegendo seus ativos digitais com uma Ledger.",
         "buy" : "Comprar uma Ledger",
         "explore" : "Explorar o aplicativo"
@@ -1219,7 +1241,7 @@
         "subtitle" : "Selecione se sua Ledger é nova ou foi redefinida."
       },
       "accessWallet" : {
-        "title" : "Acesse sua carteira",
+        "title" : "Acessar sua carteira",
         "subtitle" : "Selecione se sua Ledger já está configurada."
       },
       "buyNano" : {
@@ -1460,11 +1482,11 @@
         "cta" : "Próximo passo"
       },
       "recoveryPhrase" : {
-        "title" : "Frase de recuperação",
-        "desc" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas.",
-        "desc_1" : "Sua Nano gera uma frase de recuperação única. A Ledger não guarda uma cópia dela.",
+        "title" : "Sua Frase de Recuperação Secreta",
+        "desc" : "Sua Frase de Recuperação Secreta é uma lista de 24 palavras que respaldam as suas chaves privadas.",
+        "desc_1" : "Sua Ledger Nano gera uma Frase de Recuperação Secreta única. A Ledger não sabe qual é.",
         "cta" : "Próximo passo",
-        "checkboxDesc" : "Eu entendo que, se perder esta frase de recuperação, não poderei acessar meus criptoativos caso perca o acesso à minha Nano."
+        "checkboxDesc" : "Entendo que, se alguém obtiver minha Frase Secreta de Recuperação, meus ativos se tornarão vulneráveis."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1564,7 +1586,8 @@
         "title" : "O sistema operacional em sua Ledger Nano X precisa ser atualizado",
         "desc" : "Tente atualizar o sistema operacional ou entre em contato com o Suporte Ledger para assistência.",
         "cta" : "Aprenda como atualizar",
-        "supportLink" : "Contate o Suporte Ledger"
+        "supportLink" : "Contate o Suporte Ledger",
+        "buyLedger" : "Comprar uma Ledger"
       }
     },
     "stepRecoveryPhrase" : {
@@ -1788,7 +1811,7 @@
         "title" : "Como usuário Ledger, meus criptoativos estão armazenados:",
         "answers" : {
           "correct" : "Na blockchain",
-          "wrong" : "Na minha Nano"
+          "wrong" : "Em minha Ledger Nano"
         },
         "modal" : {
           "text" : "Seus criptoativos são sempre armazenados na blockchain. A sua carteira hardware guarda somente sua chave privada, que lhe dá acesso aos seus criptoativos.",
@@ -1796,10 +1819,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "Se minha frase de recuperação não estiver mais secreta e segura...",
+        "title" : "Se alguém obtiver acesso à minha Frase de Recuperação Secreta...",
         "answers" : {
-          "correct" : "Minhas criptomoedas não estão mais seguras e preciso transferi-las para um lugar seguro",
-          "wrong" : "Sem problemas, a Ledger pode me enviar uma cópia"
+          "correct" : "Meus ativos se tornam vulneráveis e essa pessoa pode ter acesso a eles",
+          "wrong" : "Não tem problema, desde que eu ainda saiba qual é"
         },
         "modal" : {
           "text" : "Qualquer pessoa que souber sua frase de recuperação poderá tomar seus criptoativos. \nCaso a perca, você deve transferir rapidamente seus criptoativos para um local seguro.",
@@ -1807,7 +1830,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Ao conectar minha Nano ao aplicativo Ledger, minha chave privada...",
+        "title" : "Quando conecto minha Ledger Nano ao aplicativo Ledger Live, minha chave privada...",
         "answers" : {
           "correct" : "permanece desconectada",
           "wrong" : "se conecta brevemente à internet"
@@ -1860,7 +1883,7 @@
       },
       "loading" : {
         "title" : "Emparelhando com {{deviceName}}...",
-        "subtitle" : "Confirme o código em sua {{productName}}"
+        "subtitle" : "Se solicitado, confirme o código em sua {{productName}}"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1922,7 @@
       },
       "loading" : {
         "title" : "Emparelhando com {{deviceName}}",
-        "subtitle" : "Confirme o código em sua {{productName}}"
+        "subtitle" : "Se solicitado, confirme o código em sua {{productName}}"
       },
       "error" : {
         "title" : "Emparelhamento sem sucesso",
@@ -2034,6 +2057,7 @@
     "discover" : "Explorar",
     "nanoX" : "Nano X",
     "market" : "Mercado",
+    "earn" : "Ganhar",
     "learn" : "Aprender"
   },
   "learn" : {
@@ -2611,8 +2635,6 @@
         "confirm" : "Ocultar token"
       },
       "hideNFTCollectionCTA" : "Ocultar coleção",
-      "hiddenNFTCollections" : "Coleções NFT ocultas",
-      "hiddenNFTCollectionsDesc" : "Para ocultar tokens, vá à respectiva conta, dê um toque longo sobre a coleção e selecione \"Ocultar coleção\".",
       "hideNFTCollectionModal" : {
         "title" : "Esconder coleção?",
         "desc" : "Você pode desocultar a coleção nas opções de configuração."
@@ -2697,10 +2719,6 @@
       "clearCacheButton" : "Limpar",
       "exportLogs" : "Salvar registros",
       "exportLogsDesc" : "Salvar os registros do Ledger Live pode ser necessário para solucionar problemas.",
-      "resetThirdPartyData" : "Redefinir dados de terceiros",
-      "resetThirdPartyDataDesc" : "Apague todos seus dados locais de provedores externos, usados para acessar serviços de transação.",
-      "resetThirdPartyDataModal" : "Exclua seus dados locais de terceiros",
-      "resetThirdPartyDataModalDesc" : "Exclua seus dados locais de terceiros Você pode precisar reenviar seu KYC e/ou fazer login novamente para acessar os serviços fornecidos por nossos parceiros.",
       "hardReset" : "Redefinir o Ledger Live",
       "hardResetDesc" : "Isso não afeta seus ativos. Apaga todos os dados no Ledger Live, incluindo dados de conta, históricos de transações e configurações. Use seu dispositivo Ledger para restaurar e gerenciar seus criptoativos em um Ledger Live vazio.",
       "repairDevice" : "Reparar seu dispositivo Ledger",
@@ -2793,6 +2811,18 @@
       "desc" : "Receba as últimas atualizações sobre o Ledger Live, os produtos Ledger, o mercado e recomendações personalizadas. Cancele a qualquer momento nas configurações",
       "allow" : "Permitir Notificações",
       "later" : "Talvez mais tarde"
+    },
+    "ptxServices" : {
+      "toast" : {
+        "title" : "Para estar em conformidade com as recentes atualizações da Apple na App Store, esse recurso está temporariamente indisponível. Você ainda pode acessá-lo pelo Ledger Live desktop."
+      },
+      "drawer" : {
+        "title" : "Compras, trocas e vendas desativadas",
+        "description" : "Para estar em conformidade com as últimas atualizações da Apple na App Store, esses recursos estão temporariamente desativados para iOS. <emphasized>Você ainda pode acessá-los pelo Ledger Live desktop.</emphasized>",
+        "checkboxLabel" : "Não me lembre de novo",
+        "cta" : "Entendi",
+        "link" : "Saiba mais"
+      }
     }
   },
   "transfer" : {
@@ -2921,66 +2951,8 @@
         "whatIsSwap" : "O que é Troca (Swap)?",
         "disclaimer" : "Negocie criptoativos diretamente no seu dispositivo Ledger. Este serviço não está disponível em alguns países, incluindo os EUA."
       },
-      "unauthorizedRates" : {
-        "cta" : "Redefinir Verificação",
-        "banner" : "Redefina seu KYC e atualize o Live para trocar com a Wyre.",
-        "bannerCTA" : "Redefinir KYC"
-      },
       "main" : {
         "header" : "Trocar"
-      },
-      "kyc" : {
-        "disclaimer" : "Reconheço que meus dados de localização serão compartilhados com terceiros para fins de conformidade com a lei.",
-        "cta" : "Continuar",
-        "wyre" : {
-          "title" : "Complete seu KYC",
-          "subtitle" : "Suas informações são coletadas pela LEDGER em nome da WYRE e transferidas para a WYRE para fins de KYC. Para mais informações, consulte a nossa Política de Privacidade",
-          "pending" : {
-            "cta" : "Continuar",
-            "title" : "KYC submetido para aprovação",
-            "subtitle" : "Seu KYC foi submetido e está pendente de aprovação.",
-            "link" : "Saiba mais sobre KYC"
-          },
-          "approved" : {
-            "cta" : "Continuar",
-            "title" : "KYC Aprovado!",
-            "subtitle" : "Seu KYC foi submetido e foi aprovado.",
-            "link" : "Saiba mais sobre KYC"
-          },
-          "closed" : {
-            "cta" : "Redefinir KYC",
-            "title" : "Solicitação de KYC rejeitada",
-            "subtitle" : "A Wyre rejeitou os dados que você forneceu para fins de KYC",
-            "link" : "Saiba mais sobre KYC"
-          },
-          "form" : {
-            "firstName" : "Primeiro Nome",
-            "lastName" : "Sobrenome",
-            "street1" : "Endereço linha 1",
-            "street2" : "Endereço linha 2",
-            "city" : "Cidade",
-            "state" : "Estado",
-            "country" : "País",
-            "postalCode" : "Código Postal",
-            "dateOfBirth" : "Data de nascimento",
-            "firstNamePlaceholder" : "Insira seu primeiro nome",
-            "lastNamePlaceholder" : "Insira seu sobrenome",
-            "street1Placeholder" : "Ex. Avenida Paulista 1578",
-            "street2Placeholder" : "Ex. Avenida Paulista 1578",
-            "cityPlaceholder" : "Ex. São Paulo",
-            "postalCodePlaceholder" : "Insira seu código postal de 8 dígitos",
-            "statePlaceholder" : "Selecione seu estado",
-            "dateOfBirthPlaceholder" : "AAAA-MM-DD",
-            "firstNameError" : "Insira seu primeiro nome para continuar",
-            "lastNameError" : "Insira seu sobrenome para continuar",
-            "street1Error" : "Insira seu endereço",
-            "cityError" : "Insira a cidade em que você mora no Brasil",
-            "stateError" : "Selecione seu estado para continuar",
-            "postalCodeError" : "Insira um código postal válido do Brasil",
-            "dateOfBirthError" : "Insira sua data de nascimento"
-          }
-        },
-        "states" : "Selecione seu estado"
       },
       "notAvailable" : {
         "title" : "Serviço temporariamente indisponível, ou indisponível no seu país"
@@ -3155,34 +3127,7 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC",
-            "required" : "Você precisa concluir seu KYC",
-            "complete" : "Concluir KYC",
-            "update" : "Atualizar KYC",
-            "rejected" : "KYC reprovado, inicie novamente a verificação",
-            "rejectedContactProviderSupport" : "KYC rejeitada, contate o suporte {{providerName}}.",
-            "updateRequired" : "Conclua ou atualize seu KYC",
-            "status" : {
-              "pending" : "KYC pendente",
-              "approved" : "KYC aprovado",
-              "closed" : "KYC rejeitado",
-              "upgradeRequired" : "KYC insuficiente"
-            }
-          },
-          "login" : {
-            "title" : "Login",
-            "required" : "Você precisa fazer login com este provedor",
-            "complete" : "Login"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "Você precisa configurar o MFA com este provedor",
-            "complete" : "Configurar MFA"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "Seu saque foi bloqueado por {{providerName}}.\n\n Entre em contato com o suporte deles para obter mais informações."
-          }
+          "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
         }
       }
     },
@@ -3516,6 +3461,39 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "Acelerar ou Cancelar",
+    "header" : "Editar Transação",
+    "learnMore" : "Quero saber mais.",
+    "panel" : {
+      "stuckMessage" : "Sua transação de envio mais antiga está travada. Acelere a transação com uma taxa de rede maior ou a cancele.",
+      "speedupMessage" : "A transação está em andamento. Você pode acelerá-la com uma taxa de rede maior ou cancelá-la."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "Informações sobre taxas de transação pendentes: ",
+      "networkfee" : "Taxa de rede = {{amount}} {{unit}}",
+      "maxFee" : "Taxa máxima = {{amount}} Gwei",
+      "maxPriorityFee" : "Taxa de Prioridade Máxima = {{amount}} Gwei",
+      "gasPrice" : "Preço do Gás = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "Acelerar",
+      "description" : "Reenviar a transação com uma taxa de rede maior."
+    },
+    "cancel" : {
+      "title" : "Cancelar",
+      "description" : "Enviando 0 {{ticker}} para seu próprio endereço. Para garantir o cancelamento, a taxa de rede é 30% maior do que a taxa da transação a ser cancelada."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Você não tem a opção de cancelar a transação porque não há fundos suficientes em sua conta.",
+      "notEnoughFundsToSpeedup" : "Você não tem a opção de acelerar a transação porque não há fundos suficientes em sua conta.",
+      "notlowestNonceToSpeedup" : "O recurso de aceleração não está disponível. Sua transação está pendente porque uma transação anterior está presa. Você pode esperar até que ela seja confirmada, acelerá-la ou cancelá-la.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "Não pode ser acelerada ou cancelada",
+        "description" : "Essa transação já foi validada"
+      }
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Selecionar Cripto",
@@ -3727,6 +3705,7 @@
     "loading" : "Carregando...",
     "turnOnAndUnlockDevice" : "Ligue e desbloqueie seu dispositivo",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
+    "connectAnotherDevice" : "Conectar outra Ledger",
     "unlockDevice" : "Desbloqueie seu dispositivo",
     "outdated" : "Versão do aplicativo desatualizada",
     "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá ao Manager para atualizá-lo.",
@@ -4075,7 +4054,7 @@
   },
   "FirmwareUpdate" : {
     "title" : "Atualizar Firmware",
-    "updateDevice" : "Atualize a {{deviceName}}",
+    "updateDevice" : "Atualização do OS da {{deviceName}}",
     "updateDone" : "Tudo pronto! A {{deviceName}} está atualizada",
     "updateDoneDescription" : "Nova versão do sistema operacional: {{firmwareVersion}}",
     "preparing" : "Preparando a atualização de firmware, mantenha seu dispositivo desperto e conectado. Avisaremos sobre o progresso",
@@ -4126,7 +4105,8 @@
       "preparing" : "Preparando Atualização",
       "firmware" : "Baixando Atualização",
       "prepareUpdate" : {
-        "titleActive" : "Preparando para instalar atualização",
+        "titleBackingUp" : "Fazendo backup dos aplicativos e configurações",
+        "titleTransferring" : "Transferindo a atualização",
         "description" : "Fazer o backup de suas configurações e transferir a atualização para a {{deviceName}}."
       },
       "installUpdate" : {
@@ -4139,14 +4119,18 @@
         "description" : "Suas configurações e aplicativos blockchain serão restaurados.",
         "restoreLockScreenPicture" : "Restaurando a imagem da tela de bloqueio",
         "restoreLanguage" : "Restaurando o idioma",
-        "installingApps" : "Instalando aplicativos",
+        "imageLoadRequested" : "Permitir restauração da imagem da tela de bloqueio em {{deviceName}}",
+        "imageCommitRequested" : "Confirme a imagem em sua {{deviceName}}",
+        "allowLanguageInstallation" : "Permitir restauração de idioma em {{deviceName}}",
+        "allowAppsRestoration" : "Permitir restauração de aplicativos em {{deviceName}}",
         "errors" : {
           "description" : "Se isso foi um engano, você pode tentar restaurar novamente ou pode pular esta etapa.",
           "LanguageInstallRefusedOnDevice" : "Mudança de idioma cancelada na {{deviceName}}",
           "ImageLoadRefusedOnDevice" : "A restauração da imagem da tela de bloqueio foi cancelada na {{deviceName}}",
           "ImageCommitRefusedOnDevice" : "A restauração da imagem da tela de bloqueio foi cancelada na {{deviceName}}",
           "UserRefusedAllowManager" : "A restauração dos aplicativos foi cancelada na {{deviceName}}"
-        }
+        },
+        "installingApps" : "Restaurando aplicativos"
       }
     },
     "newVersion" : "Atualização {{version}} disponível para sua {{deviceName}}",
@@ -4156,10 +4140,26 @@
       "pleaseConnectUsbTitle" : "Necessário cabo USB",
       "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
     },
+    "batteryStatusErrors" : {
+      "errors" : {
+        "TimeoutError" : {
+          "title" : "Dispositivo desconectado",
+          "description" : "A atualização não pôde ser iniciada porque perdemos a conexão com a {{deviceName}}"
+        },
+        "BatteryStatusNotRetrieved" : {
+          "title" : "Não é possível buscar o status da bateria",
+          "description" : "A atualização não pôde ser iniciada porque não foi possível recuperar o status da bateria da {{deviceName}}"
+        }
+      }
+    },
     "errors" : {
       "TimeoutError" : {
         "title" : "Tempo de atualização expirado",
         "description" : "A atualização não pôde ser concluída porque perdemos a conexão com a {{deviceName}}"
+      },
+      "CantOpenDevice" : {
+        "title" : "Desculpe, falha de conexão",
+        "description" : "A atualização não pôde ser concluída porque perdemos a conexão com a {{deviceName}}."
       }
     }
   },
@@ -5806,8 +5806,8 @@
     "news" : {
       "title" : "Notificações",
       "emptyState" : {
-        "title" : "Por enquanto não há com o que se preocupar",
-        "desc" : "Avisaremos a você se algo surgir."
+        "title" : "Tudo tranquilo por enquanto",
+        "desc" : "Avisaremos se algo acontecer."
       },
       "time" : {
         "second" : "Há 1 segundo",
@@ -6155,15 +6155,25 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Cripto",
-      "nft" : "NFTs"
+      "nft" : "NFTs",
+      "market" : "Mercado"
     },
     "nftGallery" : {
       "filters" : {
+        "select" : "Selecionar",
+        "filter" : "Filtrar",
+        "blockchain" : "Blockchain",
+        "seeAll" : "Ver todos",
         "selectAndHide" : "Selecionar e ocultar",
         "hide" : "Ocultar {{count}} coleção",
+        "hiddenCollections" : "Coleções ocultas",
         "hide_plural" : "Ocultar {{count}} coleções",
-        "alertHide" : "1 Coleção ocultada. Vá para a seção Conta em Configurações para exibi-las e mostrá-las a qualquer momento",
-        "alertHide_plural" : "{{count}} Coleções ocultadas. Vá para a seção Conta em Configurações para exibi-las e mostrá-las a qualquer momento"
+        "alertHide" : "1 coleção oculta. Você pode desoculta-las a qualquer momento no filtro da galeria.",
+        "alertHide_plural" : "{{count}} coleções ocultas. Você pode desoculta-las a qualquer momento no filtro da galeria."
+      },
+      "emptyFiltered" : {
+        "title" : "Não há NFTs que atendam aos seus critérios",
+        "button" : "Redefinir filtros"
       },
       "empty" : {
         "title" : "Não há NFTs para mostrar... ainda",
@@ -6182,7 +6192,7 @@
       },
       "hideNftModal" : {
         "title" : "Ocultar coleção de NFT",
-        "desc" : "Esta ação esconderá todos os NFTs da coleção {{collectionName}}. Você pode reverter esta opção nas configurações do aplicativo.",
+        "desc" : "Esta ação ocultará todos os NFTs da coleção {{collectionName}}. Você pode desoculta-los no filtro da galeria",
         "cta" : "Ocultar este NFT"
       },
       "media" : {
@@ -6198,10 +6208,10 @@
       "status" : {
         "new" : {
           "title" : "Novo",
-          "desc" : "Recuperar acesso a sua carteira sem sua Frase de Recuperação Secreta.",
+          "desc" : "Nunca mais se preocupe em perder acesso à sua carteira.",
           "actions" : {
-            "learnMore" : "Como isso me beneficia?",
-            "alreadySubscribed" : "Já entrou? <LinkAccount>Ver minha inscrição</LinkAccount>"
+            "learnMore" : "Conhecer o Ledger Recover",
+            "alreadySubscribed" : "Já tenho um login <LinkAccount>Ver minha inscrição</LinkAccount>"
           }
         }
       }
