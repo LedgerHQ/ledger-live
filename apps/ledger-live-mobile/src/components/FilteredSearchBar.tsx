@@ -3,11 +3,7 @@ import { StyleProp, ViewStyle } from "react-native";
 import { SearchInput, SquaredSearchBar, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-
-import { useRoute } from "@react-navigation/native";
 import Search from "./Search";
-import { track } from "../analytics";
-import { ScreenName } from "../const";
 
 type Props<T> = {
   initialQuery?: string;
@@ -33,14 +29,13 @@ const FilteredSearchBar = <T,>({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [query, setQuery] = useState<string>(initialQuery || "");
-  const route = useRoute();
 
   const onChange = useCallback(
     (newQuery: string) => {
       setQuery(newQuery);
       onSearchChange?.(newQuery);
     },
-    [route.name, onSearchChange],
+    [onSearchChange],
   );
 
   return (
