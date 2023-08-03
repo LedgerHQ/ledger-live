@@ -442,7 +442,7 @@ export default function Market({ navigation }: NavigationProps) {
           <BottomSection navigation={navigation} />
         </Flex>
       ),
-    [ptxEarnFeature?.enabled],
+    [ptxEarnFeature?.enabled, t, refresh, search, navigation],
   );
 
   const [refreshControlVisible, setRefreshControlVisible] = useState(false);

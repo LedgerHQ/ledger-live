@@ -13,7 +13,7 @@ test("Page loads and runs", async ({ page }) => {
 test("Light theme", async ({ page }) => {
   const flexElement = page.locator("div#root > div, div#__next > div");
   await expect(flexElement).toHaveCSS("background-color", "rgb(255, 255, 255)");
-  expect(await page.screenshot()).toMatchSnapshot("light.png");
+  await expect(page).toHaveScreenshot("light.png");
 });
 
 test("Dark theme", async ({ page }) => {
@@ -21,6 +21,6 @@ test("Dark theme", async ({ page }) => {
   await page.click("input + div", { timeout: 1000 });
   await expect(flexElement).toHaveCSS("background-color", "rgb(0, 0, 0)");
   // Wait for the animation to complete
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  expect(await page.screenshot()).toMatchSnapshot("dark.png");
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await expect(page).toHaveScreenshot("dark.png");
 });

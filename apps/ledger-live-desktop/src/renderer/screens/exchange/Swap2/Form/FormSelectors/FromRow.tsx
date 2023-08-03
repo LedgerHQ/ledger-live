@@ -28,6 +28,28 @@ import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortB
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
+import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
+
+const SwapStatusContainer = styled.div<{ isError: boolean }>(
+  ({ theme: { space, colors }, isError }) => `
+  margin-top: ${space[1]}px;
+  display: grid;
+  grid-template-columns: 16px auto;
+  align-items: center;
+  column-gap: ${space[1]}px;
+  color: ${isError ? colors.error.c70 : colors.warning};
+`,
+);
+
+const SwapStatusText = styled(Text)(
+  () => `
+  & button, a {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`,
+);
 
 // Pick a default source account if none are selected.
 // TODO use live-common once its ready
@@ -67,6 +89,7 @@ type Props = {
   setFromAmount: SwapTransactionType["setFromAmount"];
   isMaxEnabled: boolean;
   fromAmountError?: Error;
+  fromAmountWarning?: Error;
   provider: string | undefined | null;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
@@ -92,6 +115,7 @@ function FromRow({
   isMaxEnabled,
   toggleMax,
   fromAmountError,
+  fromAmountWarning,
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {
@@ -188,10 +212,18 @@ function FromRow({
             unit={unit}
             // Flow complains if this prop is missing…
             renderRight={null}
-            error={fromAmountError}
           />
         </InputSection>
       </Box>
+
+      {(!!fromAmountError || !!fromAmountWarning) && (
+        <SwapStatusContainer isError={!!fromAmountError}>
+          <WarningSolidMedium size={16} />
+          <SwapStatusText fontWeight={500} fontFamily="Inter" fontSize={12} lineHeight="14px">
+            <TranslatedError error={fromAmountError || fromAmountWarning} />
+          </SwapStatusText>
+        </SwapStatusContainer>
+      )}
     </>
   );
 }

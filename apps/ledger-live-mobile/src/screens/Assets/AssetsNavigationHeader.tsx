@@ -17,7 +17,7 @@ function AssetsNavigationHeader({ readOnly }: Props) {
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
     track("button_clicked", {
       button: "Add Account '+'",
-      screen: "Assets",
+      page: "Assets",
     });
     navigation.navigate(ScreenName.NoDeviceWallScreen);
   }, [navigation]);
@@ -25,7 +25,7 @@ function AssetsNavigationHeader({ readOnly }: Props) {
   const goBack = useCallback(() => {
     track("button_clicked", {
       button: "Back",
-      screen: "Assets",
+      page: "Assets",
     });
     navigation.goBack();
   }, [navigation]);

@@ -260,11 +260,11 @@ export const track = async (
     return;
   }
 
-  const screen = currentRouteNameRef.current;
+  const page = currentRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const propertiesWithoutExtra = {
-    screen,
+    page,
     ...eventProperties,
   };
   const allProperties = {

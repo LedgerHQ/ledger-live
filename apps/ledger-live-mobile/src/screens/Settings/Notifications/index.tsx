@@ -83,7 +83,7 @@ function NotificationsSettings() {
   const allowPushNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Go to system settings",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
     });
     handlePushNotificationsPermission();
   }, [pushNotificationsOldRoute, handlePushNotificationsPermission]);

@@ -143,6 +143,7 @@ const SwapForm = () => {
   });
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
@@ -269,8 +270,8 @@ const SwapForm = () => {
   // Track errors
   useEffect(
     () => {
-      swapError &&
-        trackSwapError(swapError, {
+      (swapError || swapWarning) &&
+        trackSwapError(swapError! || swapWarning!, {
           page: "Page Swap Form",
           ...swapDefaultTrack,
           sourcecurrency: swapTransaction.swap.from.currency?.name,
@@ -278,7 +279,7 @@ const SwapForm = () => {
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [swapError],
+    [swapError, swapWarning],
   );
 
   // close login widget once we get a bearer token (i.e: the user is logged in)
@@ -388,6 +389,7 @@ const SwapForm = () => {
     swapTransaction.transaction &&
     !providersError &&
     !swapError &&
+    !swapWarning &&
     !currentBanner &&
     exchangeRate &&
     swapTransaction.swap.to.account &&
@@ -533,6 +535,7 @@ const SwapForm = () => {
           isMaxEnabled={swapTransaction.swap.isMaxEnabled}
           toggleMax={toggleMax}
           fromAmountError={swapError}
+          fromAmountWarning={swapWarning}
           isSwapReversable={swapTransaction.swap.isSwapReversable}
           reverseSwap={swapTransaction.reverseSwap}
           provider={provider}

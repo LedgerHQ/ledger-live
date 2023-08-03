@@ -83,6 +83,11 @@ function getProxyURL(url: string) {
     return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
 
+  // This is to handle links set in the useFromAmountStatusMessage in LLC.
+  if (pathname.includes("//platform/multibuy")) {
+    return url.replace("://platform", "://discover");
+  }
+
   return url;
 }
 
