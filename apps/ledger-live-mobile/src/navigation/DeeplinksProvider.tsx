@@ -471,7 +471,7 @@ export const DeeplinksProvider = ({
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
           const { hostname, pathname } = url;
-          const [platform] = pathname.split("/");
+          const platform = pathname.split("/")[1];
 
           if ((hostname === "discover" || hostname === "recover") && platform) {
             const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
