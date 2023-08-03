@@ -1,13 +1,15 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { Platform, Text } from "react-native";
+import { useErrorLinks } from "./hooks/useErrorLinks";
 
 type Props = {
   error: Error | null | undefined;
   field?: "title" | "description";
 };
-export default function TranslatedError({ error, field = "title" }: Props): JSX.Element | null {
+export function TranslatedError({ error, field = "title" }: Props): JSX.Element | null {
   const { t } = useTranslation();
+  const links = useErrorLinks(error);
   if (!error) return null;
 
   if (typeof error !== "object") {
@@ -55,7 +57,11 @@ export default function TranslatedError({ error, field = "title" }: Props): JSX.
           return <Text>{translation}</Text>;
         }
       } else if (typeof translation === "string") {
-        return <Text>{translation}</Text>;
+        return (
+          <Text>
+            <Trans i18nKey={simpleTranslationStringId} components={{ ...links }} values={arg} />
+          </Text>
+        );
       }
     }
   }
