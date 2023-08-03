@@ -38,10 +38,10 @@ export const getGasLimit = (tx: EvmTransaction): BigNumber => tx.customGasLimit 
 export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
   const gasLimit = getGasLimit(tx);
 
-  if (tx.type !== 2) {
-    return tx.gasPrice?.multipliedBy(gasLimit) || new BigNumber(0);
+  if (tx.type === 2) {
+    return tx.maxFeePerGas.multipliedBy(gasLimit) || new BigNumber(0);
   }
-  return tx.maxFeePerGas?.multipliedBy(gasLimit) || new BigNumber(0);
+  return tx.gasPrice.multipliedBy(gasLimit) || new BigNumber(0);
 };
 
 /**
