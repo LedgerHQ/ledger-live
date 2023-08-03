@@ -1,10 +1,18 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Platform, Linking } from "react-native";
+import { Platform, Pressable } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Alert, Text, Flex, IconsLegacy, IconBadge, ProgressLoader } from "@ledgerhq/native-ui";
+import {
+  Alert,
+  Text,
+  Flex,
+  IconsLegacy,
+  IconBadge,
+  Icons,
+  InfiniteLoader,
+} from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -24,8 +32,6 @@ import {
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import QueuedDrawer from "./QueuedDrawer";
-import InvertTheme from "./theme/InvertTheme";
-import { urls } from "../config/urls";
 import { renderConnectYourDevice } from "./DeviceAction/rendering";
 import { DeviceActionError } from "./DeviceAction/common";
 import { UpdateStep } from "../screens/FirmwareUpdate";
@@ -140,12 +146,6 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     setShowUnsupportedUpdateDrawer(false);
   }, []);
 
-  const onOpenReleaseNotes = useCallback(() => {
-    if (lastConnectedDevice) {
-      Linking.openURL(urls.fwUpdateReleaseNotes[lastConnectedDevice?.modelId]);
-    }
-  }, [lastConnectedDevice]);
-
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
     isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, lastSeenDevice.modelId);
@@ -179,50 +179,60 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     onExperimentalFirmwareUpdate,
   ]);
 
-  const deviceName = lastConnectedDevice
+  const productName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
-    : "";
+    : undefined;
+
+  const deviceName = lastConnectedDevice?.deviceName;
+
+  /**
+   * TODO: what about loading state ? seems like in the new design there's none
+   * because we just navigate to the changelog and then only we do the battery
+   * check etc. So this button would just do a plain navigation ?
+   * */
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
       {newFwUpdateUxFeatureFlag?.enabled ? (
-        <Flex backgroundColor="neutral.c100" borderRadius={8} px={5} py={6}>
-          <Flex flexDirection="row" alignItems="center" mb={5}>
-            <IconsLegacy.CloudDownloadMedium color="neutral.c00" size={32} />
-            <Text ml={5} flexShrink={1} flexGrow={1} color="neutral.c00" fontWeight="semiBold">
-              {t("FirmwareUpdate.newVersion", {
-                version,
-                deviceName,
-              })}
-            </Text>
-          </Flex>
-          <InvertTheme>
-            <Flex flexDirection="row">
-              <Button
-                flex={1}
-                outline
-                event="button_clicked"
-                eventProperties={{ button: "Learn more" }}
-                type="main"
-                title={t("common.learnMore")}
-                onPress={onOpenReleaseNotes}
-              />
-              <Button
-                ml={3}
-                flex={1}
-                event="button_clicked"
-                eventProperties={{ button: "Update" }}
-                disabled={disableUpdateButton}
-                type="main"
-                title={!disableUpdateButton ? t("FirmwareUpdate.update") : null}
-                onPress={onClickUpdate}
-                outline={false}
-              >
-                {disableUpdateButton && <ProgressLoader infinite radius={10} strokeWidth={2} />}
-              </Button>
+        <Pressable onPress={onClickUpdate} disabled={disableUpdateButton}>
+          <Flex
+            flexDirection="row"
+            alignItems="flex-start"
+            columnGap={4}
+            backgroundColor="opacityDefault.c05"
+            borderRadius={12}
+            p={7}
+            pl={5}
+          >
+            <Flex flexDirection="row" alignItems="center" mb={5}>
+              {lastConnectedDevice?.modelId === DeviceModelId.stax ? (
+                <Icons.Stax color="primary.c80" size="M" />
+              ) : (
+                <Icons.Nano color="primary.c80" size="M" />
+              )}
             </Flex>
-          </InvertTheme>
-        </Flex>
+            <Flex flexDirection="column" rowGap={4} alignItems={"flex-start"} flexShrink={1}>
+              <Text variant="h5" fontWeight="semiBold">
+                {t("FirmwareUpdate.banner.title")}
+              </Text>
+              {disableUpdateButton ? (
+                <InfiniteLoader size={20} />
+              ) : (
+                <Text variant="paragraph" fontWeight="medium" color="opacityDefault.c70">
+                  {deviceName
+                    ? t("FirmwareUpdate.banner.descriptionDeviceName", {
+                        deviceName,
+                        firmwareVersion: version,
+                      })
+                    : t("FirmwareUpdate.banner.descriptionProductName", {
+                        productName,
+                        firmwareVersion: version,
+                      })}
+                </Text>
+              )}
+            </Flex>
+          </Flex>
+        </Pressable>
       ) : (
         <Flex mt={5}>
           <Alert type="info" showIcon={false}>

@@ -4115,6 +4115,11 @@
     "action": "Update"
   },
   "FirmwareUpdate": {
+    "banner": {
+      "title": "OS update available",
+      "descriptionDeviceName": "Tap to update “{{deviceName}}” to OS version {{firmwareVersion}}.",
+      "descriptionProductName": "Tap to update your {{productName}} to OS version {{firmwareVersion}}."
+    },
     "title": "Update firmware",
     "beginUpdate": "Begin update",
     "updateDevice": "{{deviceName}} OS Update",
