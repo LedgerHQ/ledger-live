@@ -43,7 +43,7 @@ function NewsfeedPage() {
       const url = news?.source?.url || news.url;
       track("card_clicked", {
         url,
-        screen: ScreenName.Newsfeed,
+        page: ScreenName.Newsfeed,
       });
       if (await InAppBrowser.isAvailable()) {
         await InAppBrowser.open(url, {

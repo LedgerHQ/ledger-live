@@ -52,7 +52,7 @@ export function DateFormatDrawer({ isOpen, closeModal }: Props) {
       dispatch(setDateFormat(value));
       track("button_clicked", {
         button: value,
-        screen: ScreenName.SettingsScreen,
+        page: ScreenName.SettingsScreen,
         drawer: drawerNameAnalytics,
       });
       closeModal();
