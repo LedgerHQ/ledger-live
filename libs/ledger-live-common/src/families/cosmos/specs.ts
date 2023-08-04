@@ -1,6 +1,4 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
@@ -18,6 +16,10 @@ import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData
 import type {
   CosmosAccount,
   CosmosDelegation,
+  CosmosOperation,
+  CosmosOperationRaw,
+  CosmosOperationExtraRaw,
+  CosmosDelegationInfoRaw,
   CosmosRedelegation,
   CosmosResources,
   CosmosUnbonding,
@@ -30,18 +32,14 @@ import { acceptTransaction } from "./speculos-deviceActions";
 const maxAccounts = 16;
 
 // amounts of delegation are not exact so we are applying an approximation
-function approximateValue(value) {
+function approximateValue(value): string {
   return "~" + value.div(100).integerValue().times(100).toString();
 }
 
-function approximateExtra(extra) {
-  extra = { ...extra };
+function approximateExtra(extra: CosmosOperationExtraRaw) {
   if (extra.validators && Array.isArray(extra.validators)) {
-    extra.validators = extra.validators.map(v => {
-      if (!v) return v;
-      const { amount, ...rest } = v;
-      if (!amount || typeof amount !== "string") return v;
-      return { ...rest, amount: approximateValue(new BigNumber(amount)) };
+    extra.validators = extra.validators.map((validator: CosmosDelegationInfoRaw) => {
+      return { ...validator, amount: approximateValue(validator.amount) };
     });
   }
   return extra;
@@ -52,9 +50,9 @@ const cosmosLikeTest: ({
   operation,
   optimisticOperation,
 }: {
-  account: Account;
-  operation: Operation;
-  optimisticOperation: Operation;
+  account: CosmosAccount;
+  operation: CosmosOperation;
+  optimisticOperation: CosmosOperation;
 }) => void = ({ account, operation, optimisticOperation }) => {
   const allOperationsMatchingId = account.operations.filter(op => op.id === operation.id);
   if (allOperationsMatchingId.length > 1) {
@@ -65,7 +63,7 @@ const cosmosLikeTest: ({
       allOperationsMatchingId: [operation],
     }),
   );
-  const opExpected: Record<string, any> = toOperationRaw({
+  const opExpected: Partial<CosmosOperationRaw> = toOperationRaw({
     ...optimisticOperation,
   });
   delete opExpected.value;
@@ -73,7 +71,7 @@ const cosmosLikeTest: ({
   delete opExpected.date;
   delete opExpected.blockHash;
   delete opExpected.blockHeight;
-  const extra = opExpected.extra;
+  const extra: CosmosOperationExtraRaw = opExpected.extra || {};
   delete opExpected.extra;
   delete opExpected.transactionSequenceNumber;
   const op = toOperationRaw(operation);

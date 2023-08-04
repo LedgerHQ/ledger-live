@@ -130,17 +130,26 @@ export type NetworkInfoRaw = CosmosLikeNetworkInfoRaw & {
   family: "cosmos";
 };
 
-export type CosmosOperation = Operation & {
-  extra: CosmosExtraTxInfo;
+export type CosmosOperation = Omit<Operation, "extra"> & {
+  extra: CosmosOperationExtra;
 };
-export type CosmosOperationRaw = OperationRaw & {
-  extra: CosmosExtraTxInfo;
+export type CosmosOperationRaw = Omit<OperationRaw, "extra"> & {
+  extra: CosmosOperationExtraRaw;
 };
-export type CosmosExtraTxInfo = {
+export type CosmosOperationExtra = {
   validators?: CosmosDelegationInfo[];
-  sourceValidator?: string | null | undefined;
   validator?: CosmosDelegationInfo;
-  autoClaimedRewards?: string | null | undefined; // this is experimental to better represent auto claimed rewards
+  sourceValidator?: string;
+  autoClaimedRewards?: string; // this is experimental to better represent auto claimed rewards
+  memo?: string;
+};
+
+export type CosmosOperationExtraRaw = {
+  validators?: CosmosDelegationInfoRaw[];
+  validator?: CosmosDelegationInfoRaw;
+  sourceValidator?: string;
+  autoClaimedRewards?: string; // this is experimental to better represent auto claimed rewards
+  memo?: string;
 };
 
 export type CosmosDelegationInfo = {
@@ -151,10 +160,6 @@ export type CosmosDelegationInfo = {
 export type CosmosDelegationInfoRaw = {
   address: string;
   amount: string;
-};
-
-export type CosmosClaimedRewardInfo = {
-  amount: BigNumber;
 };
 
 export type CosmosLikeTransaction = TransactionCommon & {
