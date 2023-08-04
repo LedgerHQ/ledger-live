@@ -1,6 +1,8 @@
 import type {
   Account,
   AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -206,4 +208,20 @@ export type ElrondProvider = {
     twitter: string;
     url: string;
   };
+};
+
+export type ElrondOperation = Omit<Operation, "extra"> & {
+  extra: ElrondOperationExtra;
+};
+
+export type ElrondOperationRaw = Omit<OperationRaw, "extra"> & {
+  extra: ElrondOperationExtraRaw;
+};
+
+export type ElrondOperationExtra = {
+  amount?: BigNumber;
+};
+
+export type ElrondOperationExtraRaw = {
+  amount?: string;
 };

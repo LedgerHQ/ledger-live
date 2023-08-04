@@ -8,13 +8,7 @@ import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
 import { buildTransactionToSign } from "./js-buildTransaction";
 import { CHAIN_ID } from "./constants";
-import {
-  Account,
-  Operation,
-  OperationType,
-  SignedOperation,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import { Account, Operation, OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { BinaryUtils } from "./utils/binary.utils";
 import { decodeTokenAccountId } from "../../account";
 import { extractTokenId } from "./logic";
@@ -125,15 +119,7 @@ const buildOptimisticOperation = (
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(transport =>
     Observable.create(o => {
       async function main() {
@@ -187,7 +173,7 @@ const signOperation = ({
             signature: r,
             expirationDate: null,
             signatureRaw: parsedUnsignedTx,
-          } as SignedOperation,
+          },
         });
       }
 

@@ -1,4 +1,4 @@
-import type { ElrondAccount, Transaction } from "../../families/elrond/types";
+import type { ElrondAccount, ElrondOperationRaw, Transaction } from "../../families/elrond/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, pickSiblings, genericTestDestination } from "../../bot/specs";
@@ -59,7 +59,7 @@ function expectCorrectEsdtBalanceChange(input: TransactionTestInput<Transaction>
 function expectCorrectOptimisticOperation(input: TransactionTestInput<Transaction>) {
   const { operation, optimisticOperation, transaction } = input;
 
-  const opExpected: Record<string, any> = toOperationRaw({
+  const opExpected: Partial<ElrondOperationRaw> = toOperationRaw({
     ...optimisticOperation,
   });
   delete opExpected.value;
