@@ -16,14 +16,11 @@ import {
   UnexpectedError,
   ValidationError,
 } from "../../errors";
-import checkQuote from "./checkQuote";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import getExchangeRates from "./getExchangeRates";
-import getKYCStatus from "./getKYCStatus";
 import getProviders from "./getProviders";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
-import submitKYC from "./submitKYC";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -48,24 +45,11 @@ const getSwapAPIVersion: () => number = () => {
   return version;
 };
 
-const ftx: ProviderConfig = {
-  ...createExchangeProviderNameAndSignature({
-    name: "FTX",
-    publicKey:
-      "04c89f3e48cde252f6cd6fcccc47c2f6ca6cf05f9f921703d31b7a7dddbf0bd6a690744662fe599f8761612021ba1fc0e8a5a4b7d5910c625b6dd09aa40762e5cd",
-    signature:
-      "3044022029c0fb80d6e524f811f30cc04a349fa7f8896ce1ba84010da55f7be5eb9d528802202727985361cab969ad9b4f56570f3f6120c1d77d04ba10e5d99366d8eecee8e2",
-  }),
-  needsKYC: true,
-  needsBearerToken: true,
-  type: "CEX",
-};
-
 type CEXProviderConfig = SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = {
+  type: "DEX";
   needsKYC: boolean;
   needsBearerToken: boolean;
-  type: "DEX";
 };
 type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
@@ -94,29 +78,15 @@ const swapProviders: Record<string, ProviderConfig> = {
     needsBearerToken: false,
     type: "CEX",
   },
-  wyre: {
-    ...createExchangeProviderNameAndSignature({
-      name: "Wyre",
-      publicKey:
-        "04AD01A6241929A5EC331046868FBACB424696FD7C8A4D824FEE61268374E9F4F87FFC5301F0E0A84CEA69FFED46E14C771F9CA1EEA345F6531994291C816E8AE6",
-      signature:
-        "304402207b49e46d458a55daee9bc8ed96e1b404c2d99dbbc3d3c3c15430026eb7e01a05022011ab86db08a4c956874a83f23d918319a073fdd9df23a1c7eed8a0a22c98b1e3",
-    }),
-    needsKYC: true,
-    needsBearerToken: false,
-    type: "CEX",
-  },
-  ftx,
-  ftxus: ftx,
   oneinch: {
+    type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    type: "DEX",
   },
   paraswap: {
+    type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    type: "DEX",
   },
 };
 
@@ -221,9 +191,6 @@ export {
   postSwapAccepted,
   postSwapCancelled,
   initSwap,
-  getKYCStatus,
-  submitKYC,
-  checkQuote,
   USStates,
   countries,
 };

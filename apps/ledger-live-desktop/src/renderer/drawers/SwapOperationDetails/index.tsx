@@ -43,6 +43,7 @@ import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
+
 const Value = styled(Box).attrs(() => ({
   fontSize: 4,
   color: "palette.text.shade50",
@@ -100,6 +101,7 @@ const SelectableTextWrapper = styled(Box).attrs(p => ({
   }
 }
 `;
+
 const SwapOperationDetails = ({
   mappedSwapOperation,
   onClose,
@@ -122,6 +124,7 @@ const SwapOperationDetails = ({
   const url =
     fromCurrency.type === "CryptoCurrency" &&
     getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
+
   const openAccount = useCallback(
     account => {
       const parentAccount =
@@ -145,6 +148,7 @@ const SwapOperationDetails = ({
       ? fromCurrency.parentCurrency.name
       : fromCurrency.name
     : undefined;
+
   return (
     <Box flow={3} px={20} mt={20}>
       <Status status={status}>
@@ -360,4 +364,5 @@ const SwapOperationDetails = ({
     </Box>
   );
 };
+
 export default SwapOperationDetails;

@@ -41,7 +41,6 @@ import {
   SettingsSetReportErrorsPayload,
   SettingsSetSelectedTimeRangePayload,
   SettingsSetSensitiveAnalyticsPayload,
-  SettingsSetSwapKycPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetThemePayload,
   SettingsShowTokenPayload,
@@ -162,12 +161,6 @@ export const setLocale = createAction<SettingsSetLocalePayload>(
 );
 export const setSwapSelectableCurrencies = createAction<SettingsSetSwapSelectableCurrenciesPayload>(
   SettingsActionTypes.SET_SWAP_SELECTABLE_CURRENCIES,
-);
-export const setSwapKYCStatus = createAction<SettingsSetSwapKycPayload>(
-  SettingsActionTypes.SET_SWAP_KYC,
-);
-export const resetSwapLoginAndKYCData = createAction(
-  SettingsActionTypes.RESET_SWAP_LOGIN_AND_KYC_DATA,
 );
 export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
   SettingsActionTypes.ACCEPT_SWAP_PROVIDER,

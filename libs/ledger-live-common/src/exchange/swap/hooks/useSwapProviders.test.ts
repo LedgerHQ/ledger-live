@@ -20,7 +20,7 @@ describe("useSwapProviders", () => {
       ],
     },
     {
-      provider: "wyre",
+      provider: "cic",
       pairs: [
         { from: "ETH", to: "BTC", tradeMethod: "fixed" },
         { from: "BTC", to: "ETH", tradeMethod: "float" },
@@ -71,7 +71,7 @@ describe("useSwapProviders", () => {
 
   test("only returns no-filtered fetched providers", async () => {
     // set the SWAP_DISABLED_PROVIDERS env variable for this test
-    process.env.SWAP_DISABLED_PROVIDERS = "wyre";
+    process.env.SWAP_DISABLED_PROVIDERS = "cic";
     const { result, waitForNextUpdate } = renderHook(() => useSwapProviders());
 
     await waitForNextUpdate();
@@ -80,7 +80,7 @@ describe("useSwapProviders", () => {
     expect(result.current.isLoading).toBeFalsy();
     expect(result.current.error).toBeNull();
     expect(result.current.providers).toEqual(
-      mockedProviders.filter(provider => provider.provider !== "wyre"),
+      mockedProviders.filter(provider => provider.provider !== "cic"),
     );
   });
 

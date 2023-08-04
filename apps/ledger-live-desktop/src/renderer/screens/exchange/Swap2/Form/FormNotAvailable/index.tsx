@@ -19,9 +19,11 @@ const TextSection = styled(Box)`
 const IconContainer = styled.div`
   color: ${p => p.theme.colors.palette.primary.main};
 `;
+
 const FormNotAvailable = () => {
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
+
   return (
     <Box justifyContent="center" alignItems="center">
       <TrackPage category="Swap" name="NotAvailable" {...swapDefaultTrack} />
@@ -51,4 +53,5 @@ const FormNotAvailable = () => {
     </Box>
   );
 };
+
 export default FormNotAvailable;

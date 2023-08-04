@@ -49,7 +49,6 @@ export type GlobalModalData = {
   MODAL_BLACKLIST_TOKEN: {
     token: TokenCurrency;
   };
-  MODAL_SWAP_RESET_KYC: undefined;
   MODAL_STORYLY_DEBUGGER: undefined;
   MODAL_LOTTIE_DEBUGGER: undefined;
   MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;

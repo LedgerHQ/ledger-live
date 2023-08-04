@@ -42,9 +42,11 @@ const History = () => {
   const [sections, setSections] = useState<SwapHistorySection[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const ref = useRef(null);
+
   useEffect(() => {
     setSections(getCompleteSwapHistory(accounts));
   }, [accounts, setSections]);
+
   const updateSwapStatus = useCallback(() => {
     let cancelled = false;
     async function fetchUpdatedSwapStatus() {
@@ -68,11 +70,13 @@ const History = () => {
     fetchUpdatedSwapStatus();
     return () => (cancelled = true);
   }, [accounts, dispatch]);
+
   useEffect(() => {
     if (isRefreshing) {
       updateSwapStatus();
     }
   }, [isRefreshing, updateSwapStatus]);
+
   const hasPendingSwapOperations = useMemo(() => {
     if (sections) {
       for (const section of sections) {
