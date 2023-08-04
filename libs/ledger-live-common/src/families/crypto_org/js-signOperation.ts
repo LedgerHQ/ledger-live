@@ -4,8 +4,8 @@ import { utils } from "@crypto-org-chain/chain-jslib";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
 import { CryptoOrgWrongSignatureHeader, CryptoOrgSignatureSize } from "./errors";
-import type { Transaction } from "./types";
-import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import type { CryptoOrgOperation, Transaction } from "./types";
+import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../operation";
 import { withDevice } from "../../hw/deviceAccess";
 import { buildTransaction } from "./js-buildTransaction";
@@ -15,10 +15,10 @@ const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
   fee: BigNumber,
-): Operation => {
+): CryptoOrgOperation => {
   const type = "OUT";
   const value = new BigNumber(transaction.amount).plus(fee);
-  const operation: Operation = {
+  const operation: CryptoOrgOperation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
@@ -31,7 +31,7 @@ const buildOptimisticOperation = (
     accountId: account.id,
     date: new Date(),
     extra: {
-      additionalField: transaction.amount,
+      memo: transaction.memo,
     },
   };
   return operation;
