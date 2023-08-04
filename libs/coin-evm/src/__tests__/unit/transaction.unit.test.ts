@@ -55,52 +55,52 @@ describe("EVM Family", () => {
           expect(fromTransactionRaw(rawNftEip1559Tx)).toEqual(nftEip1559tx);
         });
       });
+
+      describe("with customGasLimit", () => {
+        it("should deserialize a raw EIP1559 transaction into a ledger live transaction", () => {
+          expect(fromTransactionRaw({ ...rawEip1559Tx, customGasLimit: "22000" })).toEqual({
+            ...eip1559Tx,
+            customGasLimit: new BigNumber(22000),
+          });
+        });
+
+        it("should deserialize a raw legacy transaction into a ledger live transaction", () => {
+          expect(fromTransactionRaw({ ...rawLegacyTx, customGasLimit: "22000" })).toEqual({
+            ...legacyTx,
+            customGasLimit: new BigNumber(22000),
+          });
+        });
+
+        it("should deserialize a raw legacy transaction without type into a ledger live transaction", () => {
+          expect(
+            fromTransactionRaw({
+              ...rawLegacyTx,
+              type: undefined,
+              customGasLimit: "22000",
+            }),
+          ).toEqual({
+            ...legacyTx,
+            customGasLimit: new BigNumber(22000),
+          });
+        });
+
+        it("should deserialize an nft legacy transaction into a ledger live transaction", () => {
+          expect(fromTransactionRaw({ ...nftRawLegacyTx, customGasLimit: "22000" })).toEqual({
+            ...nftLegacyTx,
+            customGasLimit: new BigNumber(22000),
+          });
+        });
+
+        it("should deserialize an nft EIP1559 transaction into a ledger live transaction", () => {
+          expect(fromTransactionRaw({ ...rawNftEip1559Tx, customGasLimit: "22000" })).toEqual({
+            ...nftEip1559tx,
+            customGasLimit: new BigNumber(22000),
+          });
+        });
+      });
     });
 
-    describe("with customGasLimit", () => {
-      it("should deserialize a raw EIP1559 transaction into a ledger live transaction", () => {
-        expect(fromTransactionRaw({ ...rawEip1559Tx, customGasLimit: "22000" })).toEqual({
-          ...eip1559Tx,
-          customGasLimit: new BigNumber(22000),
-        });
-      });
-
-      it("should deserialize a raw legacy transaction into a ledger live transaction", () => {
-        expect(fromTransactionRaw({ ...rawLegacyTx, customGasLimit: "22000" })).toEqual({
-          ...legacyTx,
-          customGasLimit: new BigNumber(22000),
-        });
-      });
-
-      it("should deserialize a raw legacy transaction without type into a ledger live transaction", () => {
-        expect(
-          fromTransactionRaw({
-            ...rawLegacyTx,
-            type: undefined,
-            customGasLimit: "22000",
-          }),
-        ).toEqual({
-          ...legacyTx,
-          customGasLimit: new BigNumber(22000),
-        });
-      });
-
-      it("should deserialize an nft legacy transaction into a ledger live transaction", () => {
-        expect(fromTransactionRaw({ ...nftRawLegacyTx, customGasLimit: "22000" })).toEqual({
-          ...nftLegacyTx,
-          customGasLimit: new BigNumber(22000),
-        });
-      });
-
-      it("should deserialize an nft EIP1559 transaction into a ledger live transaction", () => {
-        expect(fromTransactionRaw({ ...rawNftEip1559Tx, customGasLimit: "22000" })).toEqual({
-          ...nftEip1559tx,
-          customGasLimit: new BigNumber(22000),
-        });
-      });
-    });
-
-    describe("toTransaction", () => {
+    describe("toTransactionRaw", () => {
       describe("without customGasLimit", () => {
         it("should serialize a ledger live EIP1559 transaction into a raw transaction", () => {
           expect(toTransactionRaw(eip1559Tx)).toEqual(rawEip1559Tx);
