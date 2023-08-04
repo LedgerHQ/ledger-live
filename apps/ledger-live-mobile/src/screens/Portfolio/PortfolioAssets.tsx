@@ -1,4 +1,4 @@
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -68,7 +68,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           outline
           mt={6}
           iconPosition="left"
-          Icon={Icons.PlusMedium}
+          Icon={IconsLegacy.PlusMedium}
           onPress={openAddModal}
         >
           {t("account.emptyState.addAccountCta")}

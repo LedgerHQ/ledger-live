@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import QueuedDrawer from "../QueuedDrawer";
 
@@ -21,7 +21,7 @@ const LedgerLogo = ({
 } & DesignedForStaxTextProps) => {
   return (
     <Flex px={size === "small" ? 1 : 2}>
-      <Icons.LedgerLogoMedium
+      <IconsLegacy.LedgerLogoMedium
         size={size === "medium" ? 24 : size === "large" ? 36 : 16}
         color={hideBackground ? "neutral.c100" : "constant.white"}
       />

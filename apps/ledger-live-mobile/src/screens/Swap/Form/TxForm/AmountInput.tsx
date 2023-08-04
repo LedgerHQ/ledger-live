@@ -10,7 +10,8 @@ interface Props {
   editable: boolean;
   unit: Unit | undefined;
   onChange: (_: BigNumber) => void;
-  error: Error | undefined;
+  error?: Error;
+  warning?: Error;
   loading: boolean;
   onFocus?: (_: boolean) => void;
   testID?: string;
@@ -23,6 +24,7 @@ export function AmountInput({
   editable,
   unit,
   error,
+  warning,
   loading,
   testID,
 }: Props) {
@@ -40,6 +42,7 @@ export function AmountInput({
           value={value}
           inputStyle={styles.inputText}
           hasError={!!error}
+          hasWarning={!!warning}
           dynamicFontRatio={0.3}
           onFocus={onFocus}
           testID={testID}

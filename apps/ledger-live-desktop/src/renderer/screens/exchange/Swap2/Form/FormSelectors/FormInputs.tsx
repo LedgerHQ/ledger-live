@@ -12,6 +12,7 @@ import {
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+
 type FormInputsProps = {
   fromAccount: SwapSelectorStateType["account"];
   toAccount: SwapSelectorStateType["account"];
@@ -25,12 +26,18 @@ type FormInputsProps = {
   reverseSwap: SwapTransactionType["reverseSwap"];
   isMaxEnabled?: boolean;
   fromAmountError?: Error;
+  fromAmountWarning?: Error;
   isSwapReversable: boolean;
   provider: string | undefined | null;
   loadingRates: boolean;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
 };
+type SwapButtonProps = {
+  onClick: SwapTransactionType["reverseSwap"];
+  disabled: boolean;
+};
+
 const RoundButton = styled(Button)`
   padding: 8px;
   border-radius: 9999px;
@@ -42,10 +49,7 @@ const Main = styled.section`
   row-gap: 12px;
   margin-bottom: 5px;
 `;
-type SwapButtonProps = {
-  onClick: SwapTransactionType["reverseSwap"];
-  disabled: boolean;
-};
+
 function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
   return (
     <RoundButton
@@ -58,6 +62,7 @@ function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
     </RoundButton>
   );
 }
+
 export default function FormInputs({
   fromAccount = undefined,
   toAccount,
@@ -70,6 +75,7 @@ export default function FormInputs({
   setToCurrency,
   toggleMax,
   fromAmountError,
+  fromAmountWarning,
   reverseSwap,
   isSwapReversable,
   provider,
@@ -86,6 +92,7 @@ export default function FormInputs({
     });
     reverseSwap();
   };
+
   return (
     <Main>
       <Box>
@@ -97,6 +104,7 @@ export default function FormInputs({
           isMaxEnabled={isMaxEnabled}
           toggleMax={toggleMax}
           fromAmountError={fromAmountError}
+          fromAmountWarning={fromAmountWarning}
           provider={provider}
           isSendMaxLoading={isSendMaxLoading}
           updateSelectedRate={updateSelectedRate}

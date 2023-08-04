@@ -33,7 +33,7 @@ const MODE_TO_TYPE = {
 };
 const MODE_TO_PALLET_METHOD = {
   send: "balances.transferKeepAlive",
-  sendMax: "balances.transfer",
+  sendMax: "balances.transferAllowDeath",
   bond: "staking.bond",
   bondExtra: "staking.bondExtra",
   unbond: "staking.unbond",

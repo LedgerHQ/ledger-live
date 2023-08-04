@@ -22,7 +22,7 @@ const NotificationsButton = () => {
   const onNotificationButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "notification bell",
-      screen: ScreenName.Portfolio,
+      page: ScreenName.Portfolio,
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenter,
@@ -109,7 +109,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
             event="button_clicked"
             eventProperties={{
               button: "card",
-              screen: ScreenName.Portfolio,
+              page: ScreenName.Portfolio,
             }}
           >
             <CardMedium size={24} color={"neutral.c100"} />
@@ -122,7 +122,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
               event="button_clicked"
               eventProperties={{
                 button: "Wallet Connect",
-                screen: ScreenName.WalletConnectConnect,
+                page: ScreenName.WalletConnectConnect,
               }}
             >
               <WalletConnectMedium size={24} color={"neutral.c100"} />

@@ -88,29 +88,6 @@ const buildViteConfig = argv =>
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
         ),
-        // This is not the best way to do this, but it works for now.
-        // The problem is that vitejs has trouble resolving everything under the /bridge subfolder.
-        // Even though the files are there, it can't find them - and it manages to resolve other paths just fine.
-        "@ledgerhq/coin-framework": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-framework"),
-          "lib-es",
-        ),
-        "@ledgerhq/coin-polkadot": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-polkadot"),
-          "lib-es",
-        ),
-        "@ledgerhq/coin-algorand": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-algorand"),
-          "lib-es",
-        ),
-        "@ledgerhq/coin-evm": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-evm"),
-          "lib-es",
-        ),
-        "@ledgerhq/live-network": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "live-network"),
-          "lib-es",
-        ),
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },

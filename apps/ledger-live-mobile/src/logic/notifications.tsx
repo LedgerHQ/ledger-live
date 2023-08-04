@@ -331,7 +331,7 @@ const useNotifications = () => {
   const modalAllowNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Allow",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);
@@ -352,7 +352,7 @@ const useNotifications = () => {
   const modalDelayLater = useCallback(() => {
     track("button_clicked", {
       button: "Maybe Later",
-      screen: pushNotificationsOldRoute,
+      page: pushNotificationsOldRoute,
       drawer: "Notif",
     });
     setPushNotificationsModalOpenCallback(false);

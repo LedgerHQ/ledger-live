@@ -176,7 +176,7 @@ export default function SelectDevice({
   const onPairNewDevice = useCallback(() => {
     track("button_clicked", {
       button: "Pair with bluetooth",
-      screen: route.name,
+      page: route.name,
     });
 
     // We should not pass non-serializable param like onDone when navigating.

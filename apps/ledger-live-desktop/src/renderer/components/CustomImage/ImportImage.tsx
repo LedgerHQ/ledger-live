@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 import {
   ImageIncorrectFileTypeError,
   ImageLoadFromFileError,
@@ -74,7 +74,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
   return (
     <ImportButton
       text={t("customImage.steps.choose.upload")}
-      Icon={Icons.UploadMedium}
+      Icon={IconsLegacy.UploadMedium}
       data-test-id="custom-image-import-image-button"
       onClick={onClick}
     >

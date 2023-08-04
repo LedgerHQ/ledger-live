@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text, Icons, Box } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 
 type Props = {
@@ -35,9 +35,9 @@ export default function BalanceSummaryInfoItem({
           {onPress && (
             <>
               {warning ? (
-                <Icons.WarningMedium size={16} color={"warning.c30"} />
+                <IconsLegacy.WarningMedium size={16} color={"warning.c30"} />
               ) : (
-                <Icons.InfoMedium size={16} color={"neutral.c70"} />
+                <IconsLegacy.InfoMedium size={16} color={"neutral.c70"} />
               )}
             </>
           )}
