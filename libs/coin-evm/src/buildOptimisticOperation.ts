@@ -41,6 +41,7 @@ export const buildOptimisticCoinOperation = (
     nftOperations: [],
     date: new Date(),
     extra: {},
+    // FIXME: Operation["transactionRaw"] is a TransactionCommonRaw, not a TransactionRaw
     transactionRaw: toTransactionRaw(transaction), // to allow edit / cancel flows
   };
 

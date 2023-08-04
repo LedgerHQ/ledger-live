@@ -17,7 +17,8 @@ export const createTransaction: AccountBridge<EvmTransaction>["createTransaction
   maxFeePerGas: new BigNumber(0),
   maxPriorityFeePerGas: new BigNumber(0),
   gasLimit: DEFAULT_GAS_LIMIT,
-  nonce: account.operationsCount + 1,
+  // should / could be undefined but then would conflict with type of "ethers.Transaction" used in libs/coin-evm/src/adapters/ethers.ts
+  nonce: -1, // hacky way to know if the transaction is signed or not
   chainId: (account as Account).currency?.ethereumLikeInfo?.chainId || 0,
   feesStrategy: "medium",
   type: 2,

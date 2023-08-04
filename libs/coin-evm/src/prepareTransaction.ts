@@ -229,7 +229,14 @@ export const prepareForSignOperation = async (
   transaction: EvmTransaction,
 ): Promise<EvmTransaction> => {
   const nodeApi = getNodeApi(account.currency);
-  const nonce = await nodeApi.getTransactionCount(account.currency, account.freshAddress);
+
+  /**
+   * If there is already a nonce, we are editing or cancelling an existing
+   * transaction, so we don't update the nonce
+   */
+  const nonce =
+    transaction.nonce ??
+    (await nodeApi.getTransactionCount(account.currency, account.freshAddress));
 
   if (isNftTransaction(transaction)) {
     return {
