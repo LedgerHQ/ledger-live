@@ -20,7 +20,7 @@ const IconContainer = styled.div`
   color: ${p => p.theme.colors.palette.primary.main};
 `;
 
-export const FormNotAvailable = () => {
+const FormNotAvailable = () => {
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
