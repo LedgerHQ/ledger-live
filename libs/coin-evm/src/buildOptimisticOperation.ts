@@ -41,6 +41,10 @@ export const buildOptimisticCoinOperation = (
     nftOperations: [],
     date: new Date(),
     extra: {},
+    // Not sure it's the right way of doing it...
+    // We should be able to recreate the transaction from the operation fields
+    // (using a reverse logic of buildOptimisticOperation)
+    // Also, won't work with the sync logic since there is no transactionRaw provided by the API
     // FIXME: Operation["transactionRaw"] is a TransactionCommonRaw, not a TransactionRaw
     transactionRaw: toTransactionRaw(transaction), // to allow edit / cancel flows
   };
