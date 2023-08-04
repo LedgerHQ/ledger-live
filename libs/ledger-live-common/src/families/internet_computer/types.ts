@@ -1,4 +1,5 @@
 import {
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -22,3 +23,11 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type InternetComputerOperation = Omit<Operation, "extra"> & {
+  extra: InternetComputerOperationExtra;
+};
+
+export type InternetComputerOperationExtra = {
+  memo?: string;
+};

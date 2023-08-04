@@ -5,11 +5,9 @@ import {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
-  Operation,
-  SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "../types";
+import { InternetComputerOperation, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "./bridgeHelpers/account";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
@@ -176,7 +174,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             type: "device-signature-granted",
           });
 
-          const operation: Operation = {
+          const operation: InternetComputerOperation = {
             id: encodeOperationId(accountId, hash, "OUT"),
             hash,
             type: "OUT",
