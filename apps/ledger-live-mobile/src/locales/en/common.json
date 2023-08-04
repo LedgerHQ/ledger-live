@@ -1918,8 +1918,13 @@
     "genuineCheckErrorDrawer": {
       "title": "Genuine Check error",
       "description": "An error occurred while running the genuine check on {{productName}}.",
-      "retryCta": "Retry Check",
-      "cancelCta": "Cancel set up"
+      "retryCta": "Try again",
+      "cancelCta": "Cancel set up",
+      "notFoundEntity": {
+        "title": "Initiate Genuine Check again",
+        "description": "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"Manager provider\".",
+        "settingsCta": "Go to settings"
+      }
     },
     "genuineCheckNonGenuineDrawer": {
       "title": "This Ledger Stax failed the Genuine Check",

@@ -176,7 +176,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     track("button_clicked", {
       button: "Cancel onboarding",
     });
-    
+
     onCancelOnboarding();
   }, [onCancelOnboarding]);
 

@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
-import { InfoAltFillMedium } from "@ledgerhq/native-ui/assets/icons";
+import { CircledCrossSolidMedium, WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { TrackScreen } from "../../analytics";
 import GenericErrorView from "../../components/GenericErrorView";
+import { FirmwareNotRecognized } from "@ledgerhq/errors";
+import { useNavigation } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "../../const";
+import type { SyncOnboardingScreenProps } from ".";
 
 export type Props = {
   /**
@@ -40,14 +44,12 @@ export type Props = {
 /**
  * Drawer displayed when an error occurred during the genuine check during the early security check
  *
- * The failed genuine check can come from an error that happened during the genuine check.
- *
- * If `error` is set, displays the associated `GenericErrorView` with the translated message defined in common.json
- * TODO: specific error cases
- *
- * Otherwise displays an error message informing the user that they cancelled the genuine check
+ * If `error` is set:
+ * - special case when the wrong provider was set and the entity was not found
+ * - otherwise displays the associated `GenericErrorView` with the translated message defined in common.json
+ * Otherwise displays a generic error message
  */
-const GenuineCheckFailedDrawer: React.FC<Props> = ({
+const GenuineCheckErrorDrawer: React.FC<Props> = ({
   isOpen,
   onRetry,
   onCancel,
@@ -56,6 +58,102 @@ const GenuineCheckFailedDrawer: React.FC<Props> = ({
   error,
 }) => {
   const { t } = useTranslation();
+  const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
+
+  const isNotFoundEntity = error && error instanceof FirmwareNotRecognized;
+
+  const onGoToSettings = useCallback(() => {
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.Settings,
+      params: {
+        screen: ScreenName.ExperimentalSettings,
+      },
+    });
+  }, [navigation]);
+
+  let content;
+
+  // Special case for the genuine check during the ESC
+  if (isNotFoundEntity) {
+    content = (
+      <>
+        <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
+          <BoxedIcon
+            Icon={<CircledCrossSolidMedium color="error.c60" size={32} />}
+            variant="circle"
+            backgroundColor="neutral.c30"
+            borderColor="transparent"
+            size={64}
+          />
+        </Flex>
+        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.title")}
+        </Text>
+        <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.description", {
+            productName,
+          })}
+        </Text>
+        <Button type="main" mb={4} onPress={onGoToSettings}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.notFoundEntity.settingsCta")}
+        </Button>
+        <Button onPress={onCancel}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
+        </Button>
+      </>
+    );
+  }
+  // Generic error management
+  else if (error) {
+    content = (
+      <>
+        <Flex p={3}>
+          <GenericErrorView
+            error={error}
+            Icon={WarningSolidMedium}
+            iconColor="warning.c70"
+            hasExportLogButton={false}
+          />
+        </Flex>
+        <Button type="main" mb={4} onPress={onRetry}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
+        </Button>
+        <Button onPress={onCancel}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
+        </Button>
+      </>
+    );
+  }
+  // Default content if no error is provided
+  else {
+    content = (
+      <>
+        <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
+          <BoxedIcon
+            Icon={<WarningSolidMedium color="warning.c70" size={32} />}
+            variant="circle"
+            backgroundColor="neutral.c30"
+            borderColor="transparent"
+            size={64}
+          />
+        </Flex>
+        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.title")}
+        </Text>
+        <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.description", {
+            productName,
+          })}
+        </Text>
+        <Button type="main" mb={4} onPress={onRetry}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
+        </Button>
+        <Button onPress={onCancel}>
+          {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
+        </Button>
+      </>
+    );
+  }
 
   return (
     <QueuedDrawer
@@ -64,48 +162,10 @@ const GenuineCheckFailedDrawer: React.FC<Props> = ({
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen category="Failed Stax hardware check" type="drawer" refreshSource={false} />
-      {error ? (
-        <>
-          <Flex p={3}>
-            <GenericErrorView error={error} />
-          </Flex>
-          <Button type="main" mt={4} mb={4} onPress={onRetry}>
-            {t("common.retry")}
-          </Button>
-          <Button onPress={onCancel}>
-            {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
-          </Button>
-        </>
-      ) : (
-        <>
-          <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
-            <BoxedIcon
-              Icon={<InfoAltFillMedium color="primary.c70" size={32} />}
-              variant="circle"
-              backgroundColor="neutral.c30"
-              borderColor="transparent"
-              size={64}
-            />
-          </Flex>
-          <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
-            {t("earlySecurityCheck.genuineCheckErrorDrawer.title")}
-          </Text>
-          <Text textAlign="center" variant="bodyLineHeight" mb={8} color="neutral.c80">
-            {t("earlySecurityCheck.genuineCheckErrorDrawer.description", {
-              productName,
-            })}
-          </Text>
-          <Button type="main" mb={4} onPress={onRetry}>
-            {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
-          </Button>
-          <Button onPress={onCancel}>
-            {t("earlySecurityCheck.genuineCheckErrorDrawer.cancelCta")}
-          </Button>
-        </>
-      )}
+      <TrackScreen category="Error during genuine check" type="drawer" refreshSource={false} />
+      {content}
     </QueuedDrawer>
   );
 };
 
-export default GenuineCheckFailedDrawer;
+export default GenuineCheckErrorDrawer;

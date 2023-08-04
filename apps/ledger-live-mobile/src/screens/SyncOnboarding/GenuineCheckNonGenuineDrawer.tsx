@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BoxedIcon, Flex, Link, Text } from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, Link, Text } from "@ledgerhq/native-ui";
 import { CircledCrossSolidMedium, ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
@@ -47,9 +47,9 @@ const GenuineCheckNonGenuineDrawer: React.FC<Props> = ({ isOpen, onClose, produc
       <TrackScreen category="Device not genuine" type="drawer" refreshSource={false} />
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
         <BoxedIcon
-          Icon={<CircledCrossSolidMedium color="primary.c70" size={32} />}
+          Icon={<CircledCrossSolidMedium color="error.c60" size={32} />}
           variant="circle"
-          backgroundColor="error.c60"
+          backgroundColor="neutral.c30"
           borderColor="transparent"
           size={64}
         />
@@ -64,13 +64,15 @@ const GenuineCheckNonGenuineDrawer: React.FC<Props> = ({ isOpen, onClose, produc
       </Text>
 
       <Flex ml={4} mb={4}>
-        <Link
-          Icon={ExternalLinkMedium}
+        <Button
+          type="main"
+          mb={4}
           onPress={onContactSupport}
-          style={{ justifyContent: "flex-start" }}
+          Icon={ExternalLinkMedium}
+          iconPosition="right"
         >
           {t("earlySecurityCheck.genuineCheckNonGenuineDrawer.supportCta")}
-        </Link>
+        </Button>
       </Flex>
     </QueuedDrawer>
   );
