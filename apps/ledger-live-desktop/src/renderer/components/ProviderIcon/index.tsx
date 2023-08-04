@@ -13,7 +13,7 @@ export type Props = {
 const ProviderIcon = ({
   name,
   size = "S",
-  boxed = false,
+  boxed = true,
   alt = `${name} icon`,
 }: Props): JSX.Element | null => {
   const iconUrl = getProviderIconUrl({ boxed, name });
