@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "styled-components/native";
 import { renderConnectYourDevice as ConnectYourDevice } from "../../components/DeviceAction/rendering";

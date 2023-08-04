@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { BoxedIcon, Button, Flex, Link, Text } from "@ledgerhq/native-ui";
+import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { CircledCrossSolidMedium, ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
