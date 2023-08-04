@@ -61,16 +61,22 @@ export const useFromAmountStatusMessage = (
       .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
 
     if (relevantStatus instanceof NotEnoughGas && currency && estimatedFees) {
+      const query = new URLSearchParams({
+        // get account id first and set it equal to account.
+        // if parent account exists then overwrite the former.
+        ...(account?.id ? { account: account.id } : {}),
+        ...(parentAccount?.id ? { account: parentAccount.id } : {}),
+      });
       return new NotEnoughGasSwap(undefined, {
         fees: formatCurrencyUnit(getFeesUnit(currency), estimatedFees),
         ticker: currency.ticker,
         cryptoName: currency.name,
-        links: ["/platform/multibuy"],
+        links: [`/platform/multibuy?${query.toString()}`],
       });
     }
 
     return relevantStatus;
-  }, [statusEntries, currency, estimatedFees, transaction?.amount]);
+  }, [statusEntries, currency, estimatedFees, transaction?.amount, account?.id, parentAccount?.id]);
 };
 
 export const useSwapTransaction = ({
