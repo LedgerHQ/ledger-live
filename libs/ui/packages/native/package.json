@@ -145,7 +145,7 @@
     "metro-core": "^0.77.0",
     "metro-extra-config": "workspace:*",
     "metro-minify-uglify": "^0.76.0",
-    "metro-react-native-babel-preset": "^0.76.0",
+    "metro-react-native-babel-preset": "^0.77.0",
     "metro-react-native-babel-transformer": "^0.76.0",
     "metro-resolver": "^0.76.0",
     "metro-runtime": "^0.76.0",
