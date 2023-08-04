@@ -31,13 +31,12 @@ import {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
-  Operation,
   SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./utils/api.types";
-import { Transaction, TransactionStatus } from "../types";
+import { StacksOperation, Transaction, TransactionStatus } from "../types";
 import { findNextNonce, getAccountShape, getTxToBroadcast } from "./utils/misc";
 import { broadcastTx } from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
@@ -252,7 +251,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           // build signature on the correct format
           const signature = `${result.signatureVRS.toString("hex")}`;
 
-          const operation: Operation = {
+          const operation: StacksOperation = {
             id: encodeOperationId(accountId, txHash, "OUT"),
             hash: txHash,
             type: "OUT",

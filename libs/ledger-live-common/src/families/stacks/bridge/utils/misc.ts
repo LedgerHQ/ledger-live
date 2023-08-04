@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import BN from "bn.js";
 import flatMap from "lodash/flatMap";
-import { Account, Address, Operation } from "@ledgerhq/types-live";
+import { Account, Address } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
@@ -20,9 +20,10 @@ import {
 import { StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId } from "../../../../operation";
+import { StacksOperation } from "../../types";
 
 export const getTxToBroadcast = async (
-  operation: Operation,
+  operation: StacksOperation,
   signature: string,
   signatureRaw: Record<string, any>,
 ): Promise<Buffer> => {
@@ -64,12 +65,12 @@ export const getAddress = (a: Account): Address =>
 
 export const mapTxToOps =
   (accountID, { address }: AccountShapeInfo) =>
-  (tx: TransactionResponse): Operation[] => {
+  (tx: TransactionResponse): StacksOperation[] => {
     const { sender, recipient, amount } = tx.stx_transfers[0];
     const { tx_id, fee_rate, nonce, block_height, burn_block_time, token_transfer } = tx.tx;
     const { memo: memoHex } = token_transfer;
 
-    const ops: Operation[] = [];
+    const ops: StacksOperation[] = [];
 
     const date = new Date(burn_block_time * 1000);
     const value = new BigNumber(amount || "0");
@@ -176,7 +177,7 @@ function reconciliatePublicKey(
 
 export const findNextNonce = async (
   senderAddress: string,
-  pendingOps: Operation[],
+  pendingOps: StacksOperation[],
 ): Promise<BigNumber> => {
   let nextNonce = BigNumber(0);
 
