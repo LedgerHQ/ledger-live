@@ -173,11 +173,11 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   const triggerSuccessEvent = useCallback(() => {
     track("receive_done", {
-      asset: currency.name,
+      asset: currency?.name,
       network,
       page: "Receive Account Qr Code",
     });
-  }, [network, currency.name]);
+  }, [network, currency?.name]);
 
   useEffect(() => {
     if (verified || !isModalOpened) {
