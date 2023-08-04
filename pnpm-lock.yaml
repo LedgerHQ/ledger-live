@@ -4578,8 +4578,8 @@ importers:
         specifier: ^0.76.0
         version: 0.76.0
       metro-runtime:
-        specifier: ^0.76.0
-        version: 0.76.0
+        specifier: ^0.77.0
+        version: 0.77.0
       metro-source-map:
         specifier: ^0.76.0
         version: 0.76.0
@@ -47066,6 +47066,14 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       react-refresh: 0.4.3
+
+  /metro-runtime@0.77.0:
+    resolution: {integrity: sha512-A4MCtMbrB7RoWDaIJSm32d7TcKLBHrjG/3mXx4pDnFgfmIQcKb/GNXcFJtE2tEjQxWJvZHhQYZh1l/49wQMDcA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      react-refresh: 0.4.3
+    dev: true
 
   /metro-source-map@0.67.0:
     resolution: {integrity: sha512-yxypInsRo3SfS00IgTuL6a2W2tfwLY//vA2E+GeqGBF5zTbJZAhwNGIEl8S87XXZhwzJcxf5/8LjJC1YDzabww==}
