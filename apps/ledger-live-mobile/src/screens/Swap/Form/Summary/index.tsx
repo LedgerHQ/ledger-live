@@ -169,7 +169,11 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
 
   return (
     <Flex>
-      <Item title={t("transfer.swap2.form.details.label.provider")} onEdit={onEditProvider}>
+      <Item
+        title={t("transfer.swap2.form.details.label.provider")}
+        onEdit={onEditProvider}
+        testID="choose-provider-button"
+      >
         <Flex flexDirection="row" alignItems="center">
           <Flex paddingRight={2}>
             <ProviderIcon size="XXS" name={provider} />

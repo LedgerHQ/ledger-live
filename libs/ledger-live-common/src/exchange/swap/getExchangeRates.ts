@@ -42,6 +42,7 @@ const getExchangeRates: GetExchangeRates = async ({
     amountFrom: apiAmount.toString(),
     providers: providerList,
   };
+
   const res = await network({
     method: "POST",
     url: `${getSwapAPIBaseURL()}/rate`,
