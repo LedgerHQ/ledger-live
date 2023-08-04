@@ -231,12 +231,14 @@ export const prepareForSignOperation = async (
   const nodeApi = getNodeApi(account.currency);
 
   /**
-   * If there is already a nonce, we are editing or cancelling an existing
-   * transaction, so we don't update the nonce
+   * If there is already a nonce (nonce different than default value of -1),
+   * we are editing or cancelling an existing transaction, so we don't update
+   * the nonce
    */
   const nonce =
-    transaction.nonce ??
-    (await nodeApi.getTransactionCount(account.currency, account.freshAddress));
+    transaction.nonce < 0
+      ? await nodeApi.getTransactionCount(account.currency, account.freshAddress)
+      : transaction.nonce;
 
   if (isNftTransaction(transaction)) {
     return {
