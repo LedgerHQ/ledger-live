@@ -1,5 +1,38 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.7
+
+### Patch Changes
+
+- [#4186](https://github.com/LedgerHQ/ledger-live/pull/4186) [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add linked errors to LLM
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921)]:
+  - @ledgerhq/errors@6.14.0-nightly.2
+  - @ledgerhq/coin-algorand@0.2.5-nightly.4
+  - @ledgerhq/coin-evm@0.5.0-nightly.3
+  - @ledgerhq/coin-framework@0.4.1-nightly.4
+  - @ledgerhq/coin-polkadot@0.3.2-nightly.4
+  - @ledgerhq/domain-service@1.1.7-nightly.4
+  - @ledgerhq/devices@8.0.6-nightly.2
+  - @ledgerhq/hw-app-algorand@6.27.18-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.28.4-nightly.2
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.3
+  - @ledgerhq/hw-app-exchange@0.2.2-nightly.2
+  - @ledgerhq/hw-app-near@6.27.13-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.27.18-nightly.2
+  - @ledgerhq/hw-app-solana@7.0.12-nightly.2
+  - @ledgerhq/hw-app-trx@6.27.18-nightly.2
+  - @ledgerhq/hw-transport@6.28.7-nightly.2
+  - @ledgerhq/hw-transport-node-speculos@6.27.18-nightly.2
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.18-nightly.2
+  - @ledgerhq/live-network@1.1.4-nightly.2
+  - @ledgerhq/hw-app-btc@10.0.7-nightly.2
+  - @ledgerhq/hw-app-str@6.27.18-nightly.2
+  - @ledgerhq/hw-app-tezos@6.27.18-nightly.2
+  - @ledgerhq/hw-app-xrp@6.27.18-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.18-nightly.2
+  - @ledgerhq/evm-tools@1.0.3-nightly.3
+
 ## 31.4.0-nightly.6
 
 ### Minor Changes

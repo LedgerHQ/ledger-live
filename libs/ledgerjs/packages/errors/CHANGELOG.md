@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.14.0-nightly.2
+
+### Patch Changes
+
+- [#4186](https://github.com/LedgerHQ/ledger-live/pull/4186) [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add linked errors to LLM
+
 ## 6.14.0-nightly.1
 
 ### Minor Changes

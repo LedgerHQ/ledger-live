@@ -1,6 +1,6 @@
 {
   "name": "dummy-wallet-app",
-  "version": "0.1.19-nightly.6",
+  "version": "0.1.19-nightly.7",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",

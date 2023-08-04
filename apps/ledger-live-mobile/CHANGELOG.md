@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.28.0-nightly.8
+
+### Patch Changes
+
+- [#4203](https://github.com/LedgerHQ/ledger-live/pull/4203) [`ec75bf3fa6`](https://github.com/LedgerHQ/ledger-live/commit/ec75bf3fa6f3506fcd96bafca87967b0a711f62f) Thanks [@cng-ledger](https://github.com/cng-ledger)! - Default ProviderIcon to boxed mode in order to support light and dark mode out of the box
+
+- [#4186](https://github.com/LedgerHQ/ledger-live/pull/4186) [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add linked errors to LLM
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921)]:
+  - @ledgerhq/errors@6.14.0-nightly.2
+  - @ledgerhq/live-common@31.4.0-nightly.7
+  - @ledgerhq/coin-evm@0.5.0-nightly.3
+  - @ledgerhq/coin-framework@0.4.1-nightly.4
+  - @ledgerhq/domain-service@1.1.7-nightly.4
+  - @ledgerhq/devices@8.0.6-nightly.2
+  - @ledgerhq/hw-transport@6.28.7-nightly.2
+  - @ledgerhq/hw-transport-http@6.28.2-nightly.2
+  - @ledgerhq/react-native-hid@6.30.0-nightly.2
+  - @ledgerhq/react-native-hw-transport-ble@6.29.4-nightly.2
+  - @ledgerhq/evm-tools@1.0.3-nightly.3
+
 ## 3.28.0-nightly.7
 
 ### Patch Changes
