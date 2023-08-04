@@ -109,12 +109,6 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     stopPolling: !isPollingOn,
   });
 
-  console.log(
-    `🐊 onboarding state: ${JSON.stringify(onboardingState)} | allowed error: ${JSON.stringify(
-      allowedError,
-    )}`,
-  );
-
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
     deviceId: device.deviceId,
     toggleType: toggleOnboardingEarlyCheckType,
@@ -130,7 +124,6 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // If the caller knows that the device is already genuine, save this information.
   const notifyEarlySecurityCheckShouldReset = useCallback(
     ({ isAlreadyGenuine }: { isAlreadyGenuine: boolean } = { isAlreadyGenuine: false }) => {
-      console.log(`🥦 notifyEarlySecurityCheckShouldReset: isAlreadyGenuine = ${isAlreadyGenuine}`);
       setIsAlreadyGenuine(isAlreadyGenuine);
       setCurrentStep("loading");
       // Resets the polling state because it could return the same result object (and so no state has changed)

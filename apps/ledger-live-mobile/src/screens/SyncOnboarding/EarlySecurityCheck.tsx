@@ -139,20 +139,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
     deviceId: device.deviceId,
   });
 
-  console.log(`🦕 !
-    Firmware update check input: ${JSON.stringify({
-      isHookEnabled: firmwareUpdateCheckStatus === "ongoing",
-      deviceId: device.deviceId,
-    })}
-    \n
-    Firmware update check output: ${JSON.stringify({
-      error: getLatestAvailableFirmwareError,
-      status: getLatestAvailableFirmwareStatus,
-      lockedDevice: getLatestAvailableFirmwareLockedDevice,
-      latestFirmware: !!latestFirmware,
-    })}
-  `);
-
   const onStartChecks = useCallback(() => {
     setCurrentStep("genuine-check");
   }, []);
@@ -190,7 +176,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
   const onBackFromUpdate = useCallback(
     (updateState: UpdateStep) => {
-      console.log(`🐊 COMING BACK TO ESC: update state = ${updateState}`);
       log("EarlySecurityCheck", "Back from update", { updateState });
       navigation.goBack();
 
