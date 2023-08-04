@@ -110,7 +110,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               recipients: [transaction.recipient],
               date: new Date(),
               transactionSequenceNumber: nextSequenceNumber,
-              extra: {} as any,
+              extra: {},
             };
 
             o.next({

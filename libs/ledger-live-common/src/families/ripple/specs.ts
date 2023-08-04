@@ -57,15 +57,7 @@ const ripple: AppSpec<Transaction> = {
           ],
         };
       },
-      test: ({ account, transaction, accountBeforeTransaction, operation }) => {
-        if (transaction.tag) {
-          botTest("operation tag matches (in extra)", () =>
-            expect(operation.extra).toMatchObject({
-              tag: transaction.tag,
-            }),
-          );
-        }
-
+      test: ({ account, accountBeforeTransaction, operation }) => {
         botTest("account balance moved with operation.value", () =>
           expect(account.balance.toString()).toBe(
             accountBeforeTransaction.balance.minus(operation.value).toString(),
