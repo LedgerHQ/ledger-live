@@ -13,11 +13,14 @@ export const fromSignedOperationRaw = (
   const out: SignedOperation = {
     operation: fromOperationRaw(operation, accountId),
     signature,
-    expirationDate: expirationDate ? new Date(expirationDate) : null,
   };
 
   if (signatureRaw) {
     out.signatureRaw = signatureRaw;
+  }
+
+  if (expirationDate) {
+    out.expirationDate = new Date(expirationDate);
   }
 
   return out;
@@ -30,11 +33,14 @@ export const toSignedOperationRaw = (
   const out: SignedOperationRaw = {
     operation: toOperationRaw(operation, preserveSubOperation),
     signature,
-    expirationDate: expirationDate ? expirationDate.toISOString() : null,
   };
 
   if (signatureRaw) {
     out.signatureRaw = signatureRaw;
+  }
+
+  if (expirationDate) {
+    out.expirationDate = expirationDate.toISOString();
   }
 
   return out;

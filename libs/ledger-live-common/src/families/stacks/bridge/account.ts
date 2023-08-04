@@ -280,7 +280,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
                 network,
                 anchorMode,
               },
-              expirationDate: null,
             },
           });
         }

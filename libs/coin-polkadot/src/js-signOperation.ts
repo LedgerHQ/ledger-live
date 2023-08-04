@@ -215,7 +215,6 @@ const buildSignOperation =
           signedOperation: {
             operation,
             signature: signed,
-            expirationDate: null,
           },
         });
       }

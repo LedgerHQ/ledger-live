@@ -87,7 +87,6 @@ export const signOperationWithAPI = (
             signedOperation: {
               operation: buildOptimisticOperation(account, transaction),
               signature: Buffer.from(signedTx.serialize()).toString("hex"),
-              expirationDate: null,
             },
           });
         };

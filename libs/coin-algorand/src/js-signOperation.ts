@@ -12,6 +12,7 @@ import { AlgorandAPI } from "./api";
 import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
 import type { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
 import type { Transaction, AlgorandOperation } from "./types";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -67,8 +68,7 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature: toBroadcast.toString("hex"),
-            expirationDate: null,
-          } as SignedOperation,
+          },
         });
       }
 
@@ -105,7 +105,7 @@ const buildOptimisticOperation = (
   const type = subAccountId ? "FEES" : transaction.mode === "optIn" ? "OPT_IN" : "OUT";
 
   const op: AlgorandOperation = {
-    id: `${id}--${type}`,
+    id: encodeOperationId(id, "", type),
     hash: "",
     type,
     value,

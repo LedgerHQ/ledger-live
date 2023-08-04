@@ -5,7 +5,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
 import { CryptoOrgWrongSignatureHeader, CryptoOrgSignatureSize } from "./errors";
 import type { CryptoOrgOperation, Transaction } from "./types";
-import type { Account, SignOperationEvent } from "@ledgerhq/types-live";
+import type { Account, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../operation";
 import { withDevice } from "../../hw/deviceAccess";
 import { buildTransaction } from "./js-buildTransaction";
@@ -92,69 +92,61 @@ function padZero(original_array: Uint8Array, wanted_length: number) {
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(transport =>
-    Observable.create(o => {
-      async function main() {
-        o.next({
-          type: "device-signature-requested",
-        });
-
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
-        }
-
-        // Get the public key
-        const hwApp = new CryptoOrgApp(transport);
-        const cointype = isTestNet(account.currency.id) ? "tcro" : "cro";
-        const { publicKey } = await hwApp.getAddress(account.freshAddressPath, cointype, false);
-        const unsigned = await buildTransaction(account, transaction, publicKey);
-        // Sign by device
-        const { signature } = await hwApp.sign(
-          account.freshAddressPath,
-          unsigned.toSignDocument(0).toUint8Array(),
-        );
-
-        // Ledger has encoded the sig in ASN1 DER format, but we need a 64-byte buffer of <r,s>
-        // DER-encoded signature from Ledger
-        if (signature != null) {
-          const base64Sig = convertASN1toBase64(signature);
-          const signed = unsigned
-            .setSignature(0, utils.Bytes.fromUint8Array(new Uint8Array(base64Sig)))
-            .toSigned()
-            .getHexEncoded();
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
+  withDevice(deviceId)(
+    transport =>
+      new Observable(o => {
+        async function main() {
           o.next({
-            type: "device-signature-granted",
+            type: "device-signature-requested",
           });
-          const operation = buildOptimisticOperation(
-            account,
-            transaction,
-            transaction.fees ?? new BigNumber(0),
+
+          if (!transaction.fees) {
+            throw new FeeNotLoaded();
+          }
+
+          // Get the public key
+          const hwApp = new CryptoOrgApp(transport);
+          const cointype = isTestNet(account.currency.id) ? "tcro" : "cro";
+          const { publicKey } = await hwApp.getAddress(account.freshAddressPath, cointype, false);
+          const unsigned = await buildTransaction(account, transaction, publicKey);
+          // Sign by device
+          const { signature } = await hwApp.sign(
+            account.freshAddressPath,
+            unsigned.toSignDocument(0).toUint8Array(),
           );
-          o.next({
-            type: "signed",
-            signedOperation: {
-              operation,
-              signature: signed,
-              expirationDate: null,
-            },
-          });
-        }
-      }
 
-      main().then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    }),
+          // Ledger has encoded the sig in ASN1 DER format, but we need a 64-byte buffer of <r,s>
+          // DER-encoded signature from Ledger
+          if (signature != null) {
+            const base64Sig = convertASN1toBase64(signature);
+            const signed = unsigned
+              .setSignature(0, utils.Bytes.fromUint8Array(new Uint8Array(base64Sig)))
+              .toSigned()
+              .getHexEncoded();
+            o.next({
+              type: "device-signature-granted",
+            });
+            const operation = buildOptimisticOperation(
+              account,
+              transaction,
+              transaction.fees ?? new BigNumber(0),
+            );
+            o.next({
+              type: "signed",
+              signedOperation: {
+                operation,
+                signature: signed,
+              },
+            });
+          }
+        }
+
+        main().then(
+          () => o.complete(),
+          e => o.error(e),
+        );
+      }),
   );
 
 export default signOperation;

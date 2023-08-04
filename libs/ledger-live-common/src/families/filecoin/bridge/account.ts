@@ -15,8 +15,8 @@ import {
   Account,
   AccountBridge,
   AccountLike,
-  BroadcastFnSignature,
   Operation,
+  BroadcastFnSignature,
   SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
@@ -167,15 +167,15 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
 
 const sync = makeSync({ getAccountShape });
 
-const broadcast: BroadcastFnSignature = async ({ signedOperation: { operation, signature } }) => {
+const broadcast: BroadcastFnSignature = async ({ signedOperation }) => {
   // log("debug", "[broadcast] start fn");
-
-  const tx = getTxToBroadcast(operation, signature);
+  const { operation, signature, signatureRaw } = signedOperation;
+  const tx = getTxToBroadcast(operation, signature, signatureRaw as Record<any, unknown>);
 
   const resp = await broadcastTx(tx);
   const { hash } = resp;
 
-  const result = patchOperationWithHash(operation, hash);
+  const result = patchOperationWithHash(signedOperation.operation, hash);
 
   // log("debug", "[broadcast] finish fn");
 
@@ -247,15 +247,18 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               blockHash: null,
               blockHeight: null,
               date: new Date(),
-              extra: {
-                gasLimit,
-                gasFeeCap,
-                gasPremium,
-                method,
-                version,
-                nonce,
-                signatureType: 1,
-              },
+              extra: {},
+            };
+
+            // Necessary for broadcast
+            const additionalTxFields = {
+              gasLimit,
+              gasFeeCap,
+              gasPremium,
+              method,
+              version,
+              nonce,
+              signatureType: 1,
             };
 
             o.next({
@@ -263,7 +266,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               signedOperation: {
                 operation,
                 signature,
-                expirationDate: null,
+                signatureRaw: additionalTxFields,
               },
             });
           } finally {

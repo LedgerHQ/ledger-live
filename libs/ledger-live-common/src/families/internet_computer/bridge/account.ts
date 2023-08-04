@@ -144,11 +144,7 @@ const estimateMaxSpendable = async ({
   return maxSpendable;
 };
 
-const signOperation: SignOperationFnSignature<Transaction> = ({
-  account,
-  deviceId,
-  transaction,
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {

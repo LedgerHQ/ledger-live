@@ -120,68 +120,68 @@ const buildOptimisticOperation = (
  * Sign Transaction with Ledger hardware
  */
 const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
-  withDevice(deviceId)(transport =>
-    Observable.create(o => {
-      async function main() {
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
-        }
-        // Collect data for an ESDT transfer
-        const { subAccounts } = account;
-        const { subAccountId } = transaction;
-        const tokenAccount = !subAccountId
-          ? null
-          : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
-
-        const elrond = new Elrond(transport);
-        await elrond.setAddress(account.freshAddressPath);
-
-        if (tokenAccount) {
-          const { token } = decodeTokenAccountId(tokenAccount.id);
-
-          if (token?.name && token.id && token.ledgerSignature) {
-            await elrond.provideESDTInfo(
-              token.name,
-              extractTokenId(token.id),
-              token?.units[0].magnitude,
-              CHAIN_ID,
-              token.ledgerSignature,
-            );
+  withDevice(deviceId)(
+    transport =>
+      new Observable(o => {
+        async function main() {
+          if (!transaction.fees) {
+            throw new FeeNotLoaded();
           }
+          // Collect data for an ESDT transfer
+          const { subAccounts } = account;
+          const { subAccountId } = transaction;
+          const tokenAccount = !subAccountId
+            ? null
+            : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
+
+          const elrond = new Elrond(transport);
+          await elrond.setAddress(account.freshAddressPath);
+
+          if (tokenAccount) {
+            const { token } = decodeTokenAccountId(tokenAccount.id);
+
+            if (token?.name && token.id && token.ledgerSignature) {
+              await elrond.provideESDTInfo(
+                token.name,
+                extractTokenId(token.id),
+                token?.units[0].magnitude,
+                CHAIN_ID,
+                token.ledgerSignature,
+              );
+            }
+          }
+
+          const unsignedTx: string = await buildTransactionToSign(account, transaction);
+
+          o.next({
+            type: "device-signature-requested",
+          });
+
+          const r = await elrond.signTransaction(account.freshAddressPath, unsignedTx, true);
+
+          o.next({
+            type: "device-signature-granted",
+          });
+
+          const parsedUnsignedTx = JSON.parse(unsignedTx);
+
+          const operation = buildOptimisticOperation(account, transaction, parsedUnsignedTx);
+
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: r,
+              signatureRaw: parsedUnsignedTx,
+            },
+          });
         }
 
-        const unsignedTx: string = await buildTransactionToSign(account, transaction);
-
-        o.next({
-          type: "device-signature-requested",
-        });
-
-        const r = await elrond.signTransaction(account.freshAddressPath, unsignedTx, true);
-
-        o.next({
-          type: "device-signature-granted",
-        });
-
-        const parsedUnsignedTx = JSON.parse(unsignedTx);
-
-        const operation = buildOptimisticOperation(account, transaction, parsedUnsignedTx);
-
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature: r,
-            expirationDate: null,
-            signatureRaw: parsedUnsignedTx,
-          },
-        });
-      }
-
-      main().then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    }),
+        main().then(
+          () => o.complete(),
+          e => o.error(e),
+        );
+      }),
   );
 
 export default signOperation;

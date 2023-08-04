@@ -101,7 +101,6 @@ export const signOperation: AccountBridge<any>["signOperation"] = ({ account, tr
         type: "signed",
         signedOperation: {
           operation: { ...op },
-          expirationDate: null,
           signature: "",
         },
       });

@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Account, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
+import type { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import type { Transaction, CeloOperationMode, CeloAccount, CeloOperation } from "./types";
 import { encodeOperationId } from "../../operation";
 import { CeloApp } from "./hw-app-celo";
@@ -90,15 +90,7 @@ const parseSigningResponse = (
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
@@ -145,7 +137,6 @@ const signOperation = ({
             signedOperation: {
               operation,
               signature: encodedTransaction.raw,
-              expirationDate: null,
             },
           });
         }
