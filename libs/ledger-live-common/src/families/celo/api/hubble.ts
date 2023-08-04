@@ -1,10 +1,10 @@
 import network from "@ledgerhq/live-network/network";
-import { Operation, OperationType } from "@ledgerhq/types-live";
+import { OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import { isDefaultValidatorGroup } from "../logic";
-import { CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
+import { CeloOperation, CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
 import { celoKit } from "./sdk";
 
 const DEFAULT_TRANSACTIONS_LIMIT = 200;
@@ -69,10 +69,9 @@ const getOperationType = (type: string): OperationType => {
 };
 
 const transactionToOperation = (
-  address: string,
   accountId: string,
   transaction: FigmentIndexerTransaction,
-): Operation => {
+): CeloOperation => {
   const type: OperationType = getOperationType(transaction.kind);
   const hasFailed = transaction.data?.success ? !transaction.data?.success : false;
   const data = transaction.data;
@@ -117,7 +116,7 @@ export const getAccountDetails = async (
   blockHeight: any;
   balance: BigNumber;
   spendableBalance: BigNumber;
-  operations: Operation[];
+  operations: CeloOperation[];
   lockedBalance: BigNumber;
   nonvotingLockedBalance: BigNumber;
 }> => {
@@ -137,8 +136,8 @@ export const getAccountDetails = async (
     )
     .concat(accountDetails.transactions);
 
-  const operations: Operation[] = allTransactions.map((transaction: FigmentIndexerTransaction) =>
-    transactionToOperation(address, accountId, transaction),
+  const operations: CeloOperation[] = allTransactions.map(
+    (transaction: FigmentIndexerTransaction) => transactionToOperation(accountId, transaction),
   );
 
   return {

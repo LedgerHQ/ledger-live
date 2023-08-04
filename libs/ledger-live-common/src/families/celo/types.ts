@@ -1,6 +1,8 @@
 import type {
   Account,
   AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -130,4 +132,19 @@ export type CeloAccountRaw = AccountRaw & { celoResources: CeloResourcesRaw };
 export type PendingStakingOperationAmounts = {
   vote: BigNumber;
   lock: BigNumber;
+};
+
+export type CeloOperation = Omit<Operation, "extra"> & {
+  extra: CeloOperationExtra;
+};
+export type CeloOperationRaw = Omit<OperationRaw, "extra"> & {
+  extra: CeloOperationExtraRaw;
+};
+export type CeloOperationExtra = {
+  celoOperationValue: BigNumber;
+  celoSourceValidator?: string;
+};
+export type CeloOperationExtraRaw = {
+  celoOperationValue: string;
+  celoSourceValidator?: string;
 };

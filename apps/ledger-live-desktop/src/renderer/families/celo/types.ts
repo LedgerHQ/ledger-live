@@ -2,6 +2,7 @@ import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   CeloAccount,
+  CeloOperation,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/celo/types";
@@ -33,4 +34,4 @@ export type CoreStakingFlowModalStepProps = {
   source?: string;
 };
 
-export type CeloFamily = LLDCoinFamily<CeloAccount, Transaction, TransactionStatus>;
+export type CeloFamily = LLDCoinFamily<CeloAccount, Transaction, TransactionStatus, CeloOperation>;

@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Transaction, CeloOperationMode, CeloAccount } from "./types";
+import type { Account, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
+import type { Transaction, CeloOperationMode, CeloAccount, CeloOperation } from "./types";
 import { encodeOperationId } from "../../operation";
 import { CeloApp } from "./hw-app-celo";
 import buildTransaction from "./js-buildTransaction";
@@ -20,13 +21,12 @@ const MODE_TO_TYPE: { [key in CeloOperationMode | "default"]: string } = {
   register: "REGISTER",
   default: "FEE",
 };
-import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 
 const buildOptimisticOperation = (
-  account: Account,
+  account: CeloAccount,
   transaction: Transaction,
   fee: BigNumber,
-): Operation => {
+): CeloOperation => {
   const type = (MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default) as OperationType;
 
   const value =
@@ -34,7 +34,7 @@ const buildOptimisticOperation = (
       ? new BigNumber(transaction.amount).plus(fee)
       : new BigNumber(transaction.amount);
 
-  const operation: Operation = {
+  const operation: CeloOperation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
@@ -46,7 +46,14 @@ const buildOptimisticOperation = (
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      celoOperationValue: new BigNumber(transaction.amount),
+      ...(["ACTIVATE", "VOTE", "REVOKE"].includes(type)
+        ? {
+            celoSourceValidator: transaction.recipient,
+          }
+        : {}),
+    },
   };
 
   return operation;
@@ -128,7 +135,7 @@ const signOperation = ({
           const encodedTransaction = await encodeTransaction(rlpEncodedTransaction, signature);
 
           const operation = buildOptimisticOperation(
-            account,
+            account as CeloAccount,
             transaction,
             transaction.fees ?? new BigNumber(0),
           );
