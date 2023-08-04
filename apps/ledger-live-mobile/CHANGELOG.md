@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.28.0-next.3
+
+### Patch Changes
+
+- [#4215](https://github.com/LedgerHQ/ledger-live/pull/4215) [`8a777071ed`](https://github.com/LedgerHQ/ledger-live/commit/8a777071edd501f785f230b17a7dcd06381cb3a9) Thanks [@cng-ledger](https://github.com/cng-ledger)! - Default ProviderIcon to boxed mode in order to support light and dark mode out of the box
+
 ## 3.28.0-next.2
 
 ### Patch Changes
