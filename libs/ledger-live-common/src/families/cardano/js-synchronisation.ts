@@ -7,7 +7,14 @@ import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-card
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction } from "./api/api-types";
-import { CardanoAccount, CardanoOutput, PaymentCredential, Transaction } from "./types";
+import {
+  CardanoAccount,
+  CardanoOperation,
+  CardanoOperationExtra,
+  CardanoOutput,
+  PaymentCredential,
+  Transaction,
+} from "./types";
 import {
   getAccountChange,
   getAccountStakeCredential,
@@ -34,7 +41,7 @@ function mapTxToAccountOperation(
   accountId: string,
   accountCredentialsMap: Record<string, PaymentCredential>,
   subAccounts: Array<TokenAccount>,
-): Operation {
+): CardanoOperation {
   const accountChange = getAccountChange(tx, accountCredentialsMap);
   const mainOperationType = getOperationType({
     valueChange: accountChange.ada,
@@ -43,9 +50,9 @@ function mapTxToAccountOperation(
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);
-  const extra = {};
+  const extra: CardanoOperationExtra = {};
   if (memo) {
-    extra["memo"] = memo;
+    extra.memo = memo;
   }
 
   return {

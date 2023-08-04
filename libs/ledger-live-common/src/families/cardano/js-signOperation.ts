@@ -2,7 +2,13 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
-import type { CardanoAccount, CardanoResources, Transaction } from "./types";
+import type {
+  CardanoAccount,
+  CardanoOperation,
+  CardanoOperationExtra,
+  CardanoResources,
+  Transaction,
+} from "./types";
 
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -27,13 +33,13 @@ import {
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import { getNetworkParameters } from "./networks";
 import { MEMO_LABEL } from "./constants";
-import { Account, Operation, SignedOperation, SignOperationEvent } from "@ledgerhq/types-live";
+import { SignOperationFnSignature } from "@ledgerhq/types-live";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
   transaction: TyphonTransaction,
   t: Transaction,
-): Operation => {
+): CardanoOperation => {
   const cardanoResources = account.cardanoResources as CardanoResources;
   const accountCreds = new Set(
     [...cardanoResources.externalCredentials, ...cardanoResources.internalCredentials].map(
@@ -67,22 +73,18 @@ const buildOptimisticOperation = (
   });
   const transactionHash = transaction.getTransactionHash().toString("hex");
   const auxiliaryData = transaction.getAuxiliaryData();
-  let memo;
+  const extra: CardanoOperationExtra = {};
   if (auxiliaryData) {
     const memoMetadata = auxiliaryData.metadata.find(m => m.label === MEMO_LABEL);
     if (memoMetadata && memoMetadata.data instanceof Map) {
       const msg = memoMetadata.data.get("msg");
       if (Array.isArray(msg) && msg.length) {
-        memo = msg.join(", ");
+        extra.memo = msg.join(", ");
       }
     }
   }
 
-  const extra = {};
-  if (memo) {
-    extra["memo"] = memo;
-  }
-  const op: Operation = {
+  const op: CardanoOperation = {
     id: encodeOperationId(account.id, transactionHash, opType),
     hash: transactionHash,
     type: opType,
@@ -94,7 +96,7 @@ const buildOptimisticOperation = (
     recipients: transaction.getOutputs().map(o => o.address.getBech32()),
     accountId: account.id,
     date: new Date(),
-    extra: extra,
+    extra,
   };
 
   const tokenAccount = t.subAccountId
@@ -147,15 +149,7 @@ const signTx = (
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: string;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
@@ -228,8 +222,7 @@ const signOperation = ({
             signedOperation: {
               operation,
               signature: signed.payload,
-              expirationDate: null,
-            } as SignedOperation,
+            },
           });
         }
         main().then(
