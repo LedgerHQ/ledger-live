@@ -221,7 +221,6 @@ export const FirmwareUpdate = ({
     const steps = [];
 
     if (deviceInfo.languageId !== languageIds.english) {
-      console.log(`🍕 restore steps language: ${deviceInfo.languageId}`);
       steps.push({
         status: {
           start: ItemStatus.inactive,
@@ -284,7 +283,6 @@ export const FirmwareUpdate = ({
       });
     }
 
-    console.log(`🍕 restore steps: ${JSON.stringify(steps)}`);
     return steps;
   }, [
     updateStep,
@@ -643,12 +641,13 @@ export const FirmwareUpdate = ({
           />
         );
       case "installOsuDevicePermissionGranted":
-        if (!firmwareUpdateContext.shouldFlashMCU) {
+        // If the device is not yet onboarded, there is no PIN code: no need to display this content
+        if (!firmwareUpdateContext.shouldFlashMCU && !isBeforeOnboarding) {
           return <FinishFirmwareUpdate device={device} t={t} />;
         }
         break;
       case "flashingMcu":
-        // If the device is not yet onboarded, there is no PIN code
+        // If the device is not yet onboarded, there is no PIN code: no need to display this content
         if (updateActionState.progress === 1 && !isBeforeOnboarding) {
           return <FinishFirmwareUpdate device={device} t={t} />;
         }
