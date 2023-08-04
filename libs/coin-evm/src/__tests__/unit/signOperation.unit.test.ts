@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getCryptoCurrencyById, listCryptoCurrencies } from "@ledgerhq/cryptoassets";
@@ -101,7 +101,7 @@ describe("EVM Family", () => {
               signedOperation: { signature, operation },
             } = obs;
 
-            expect(operation).toEqual({
+            const expectedOpearation: Operation = {
               id: "js:2:ethereum:0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176:--OUT",
               hash: "",
               type: "OUT",
@@ -117,7 +117,9 @@ describe("EVM Family", () => {
               subOperations: [],
               nftOperations: [],
               extra: {},
-            });
+            };
+
+            expect(operation).toEqual(expectedOpearation);
             expect(signature).toBe(
               "0x02e601016464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c080820123820abc",
             );

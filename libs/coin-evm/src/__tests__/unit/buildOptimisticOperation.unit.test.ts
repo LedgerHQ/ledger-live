@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { Operation } from "@ledgerhq/types-live";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
@@ -50,7 +51,7 @@ describe("EVM Family", () => {
         const estimatedFees = getEstimatedFees(coinTransaction);
         const type = "OUT";
 
-        expect(optimistic).toEqual({
+        const expected: Operation = {
           id: encodeOperationId(account.id, "", type),
           hash: "",
           type,
@@ -66,7 +67,9 @@ describe("EVM Family", () => {
           transactionSequenceNumber: 0,
           date: expect.any(Date),
           extra: {},
-        });
+        };
+
+        expect(optimistic).toEqual(expected);
       });
 
       it("should create a token optimistic transaction waiting for the broadcast to be completed", () => {
@@ -92,7 +95,7 @@ describe("EVM Family", () => {
         const estimatedFees = getEstimatedFees(tokenTransaction);
         const optimistic = buildOptimisticOperation(account, tokenTransaction);
 
-        expect(optimistic).toEqual({
+        const expected: Operation = {
           id: encodeOperationId(account.id, "", "FEES"),
           hash: "",
           type: "FEES",
@@ -125,7 +128,9 @@ describe("EVM Family", () => {
             },
           ],
           extra: {},
-        });
+        };
+
+        expect(optimistic).toEqual(expected);
       });
 
       it("should create a token optimistic transaction with useAllAmount waiting for the broadcast to be completed", () => {
@@ -151,7 +156,7 @@ describe("EVM Family", () => {
         const estimatedFees = getEstimatedFees(tokenTransaction);
         const optimistic = buildOptimisticOperation(account, tokenTransaction);
 
-        expect(optimistic).toEqual({
+        const expected: Operation = {
           id: encodeOperationId(account.id, "", "FEES"),
           hash: "",
           type: "FEES",
@@ -184,7 +189,9 @@ describe("EVM Family", () => {
             },
           ],
           extra: {},
-        });
+        };
+
+        expect(optimistic).toEqual(expected);
       });
 
       it("should create an ERC721 optimistic transaction waiting for the broadcast to be completed", () => {
@@ -217,7 +224,7 @@ describe("EVM Family", () => {
         const optimistic = buildOptimisticOperation(account, erc721Transaction);
         const nftId = encodeNftId(account.id, nft.contract, nft.tokenId, account.currency.id);
 
-        expect(optimistic).toEqual({
+        const expected: Operation = {
           id: encodeOperationId(account.id, "", "FEES"),
           hash: "",
           type: "FEES",
@@ -252,7 +259,9 @@ describe("EVM Family", () => {
             },
           ],
           extra: {},
-        });
+        };
+
+        expect(optimistic).toEqual(expected);
       });
 
       it("should create an ERC1155 optimistic transaction waiting for the broadcast to be completed", () => {
@@ -285,7 +294,7 @@ describe("EVM Family", () => {
         const optimistic = buildOptimisticOperation(account, erc1155Transaction);
         const nftId = encodeNftId(account.id, nft.contract, nft.tokenId, account.currency.id);
 
-        expect(optimistic).toEqual({
+        const expected: Operation = {
           id: encodeOperationId(account.id, "", "FEES"),
           hash: "",
           type: "FEES",
@@ -320,7 +329,9 @@ describe("EVM Family", () => {
             },
           ],
           extra: {},
-        });
+        };
+
+        expect(optimistic).toEqual(expected);
       });
     });
   });

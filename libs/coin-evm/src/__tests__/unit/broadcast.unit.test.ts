@@ -3,7 +3,7 @@ import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -81,7 +81,8 @@ describe("EVM Family", () => {
         });
 
         expect(API.broadcastTransaction).toBeCalled();
-        expect(finalOperation).toEqual({
+
+        const expectedFinalOperation: Operation = {
           id: encodeOperationId(account.id, mockedBroadcastResponse, "OUT"),
           hash: mockedBroadcastResponse,
           blockHeight: null,
@@ -97,7 +98,9 @@ describe("EVM Family", () => {
           nftOperations: [],
           date: new Date(),
           extra: {},
-        });
+        };
+
+        expect(finalOperation).toEqual(expectedFinalOperation);
       });
 
       it("should broadcast the token transaction and fill the blank in the optimistic transaction", async () => {
@@ -133,7 +136,8 @@ describe("EVM Family", () => {
         });
 
         expect(API.broadcastTransaction).toBeCalled();
-        expect(finalOperation).toEqual({
+
+        const expectedFinalOperation: Operation = {
           id: encodeOperationId(account.id, mockedBroadcastResponse, "FEES"),
           hash: mockedBroadcastResponse,
           blockHeight: null,
@@ -166,7 +170,9 @@ describe("EVM Family", () => {
             },
           ],
           extra: {},
-        });
+        };
+
+        expect(finalOperation).toEqual(expectedFinalOperation);
       });
 
       it("should broadcast the ERC721 transaction and fill the blank in the optimistic transaction", async () => {
@@ -210,7 +216,8 @@ describe("EVM Family", () => {
         const nftId = encodeNftId(account.id, nft.contract, nft.tokenId, account.currency.id);
 
         expect(API.broadcastTransaction).toBeCalled();
-        expect(finalOperation).toEqual({
+
+        const expectedFinalOperation: Operation = {
           id: encodeOperationId(account.id, mockedBroadcastResponse, "FEES"),
           hash: mockedBroadcastResponse,
           blockHeight: null,
@@ -245,7 +252,9 @@ describe("EVM Family", () => {
             },
           ],
           extra: {},
-        });
+        };
+
+        expect(finalOperation).toEqual(expectedFinalOperation);
       });
 
       it("should broadcast the ERC1155 transaction and fill the blank in the optimistic transaction", async () => {
@@ -289,7 +298,8 @@ describe("EVM Family", () => {
         const nftId = encodeNftId(account.id, nft.contract, nft.tokenId, account.currency.id);
 
         expect(API.broadcastTransaction).toBeCalled();
-        expect(finalOperation).toEqual({
+
+        const expectedFinalOperation: Operation = {
           id: encodeOperationId(account.id, mockedBroadcastResponse, "FEES"),
           hash: mockedBroadcastResponse,
           blockHeight: null,
@@ -324,7 +334,9 @@ describe("EVM Family", () => {
             },
           ],
           extra: {},
-        });
+        };
+
+        expect(finalOperation).toEqual(expectedFinalOperation);
       });
     });
   });
