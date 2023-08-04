@@ -47,7 +47,7 @@ import {
   toTokenAccountWithInfo,
 } from "./api/chain/web3";
 import { drainSeq } from "./utils";
-import { SolanaAccount, SolanaStake } from "./types";
+import { SolanaAccount, SolanaOperationExtra, SolanaStake } from "./types";
 import { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 
 type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts"][number];
@@ -379,8 +379,8 @@ function txToMainAccOperation(
   };
 }
 
-function getOpExtra(tx: TransactionDescriptor): Record<string, any> {
-  const extra: Record<string, any> = {};
+function getOpExtra(tx: TransactionDescriptor): SolanaOperationExtra {
+  const extra: SolanaOperationExtra = {};
   if (tx.info.memo !== null) {
     extra.memo = dropMemoLengthPrefixIfAny(tx.info.memo);
   }

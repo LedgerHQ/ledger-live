@@ -1,9 +1,11 @@
 import { Observable } from "rxjs";
-import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
+import type { Account, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import type {
   Command,
   CommandDescriptor,
+  SolanaOperation,
+  SolanaOperationExtra,
   StakeCreateAccountCommand,
   StakeDelegateCommand,
   StakeSplitCommand,
@@ -20,7 +22,7 @@ import { encodeOperationId } from "../../operation";
 import { assertUnreachable } from "./utils";
 import { ChainAPI } from "./api";
 
-const buildOptimisticOperation = (account: Account, transaction: Transaction): Operation => {
+const buildOptimisticOperation = (account: Account, transaction: Transaction): SolanaOperation => {
   if (transaction.model.commandDescriptor === undefined) {
     throw new Error("command descriptor is missing");
   }
@@ -102,7 +104,7 @@ function buildOptimisticOperationForCommand(
   account: Account,
   transaction: Transaction,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   const { command } = commandDescriptor;
   switch (command.kind) {
     case "transfer":
@@ -130,7 +132,7 @@ function optimisticOpForTransfer(
   transaction: Transaction,
   command: TransferCommand,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   const commons = optimisticOpcommons(commandDescriptor);
   return {
     ...commons,
@@ -139,7 +141,7 @@ function optimisticOpForTransfer(
     accountId: account.id,
     senders: [account.freshAddress],
     recipients: [transaction.recipient],
-    value: new BigNumber(command.amount).plus(commons.fee),
+    value: new BigNumber(command.amount).plus(commons.fee ?? 0),
     extra: getOpExtras(command),
   };
 }
@@ -149,7 +151,7 @@ function optimisticOpForTokenTransfer(
   transaction: Transaction,
   command: TokenTransferCommand,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   if (!transaction.subAccountId) {
     throw new Error("sub account id is required for token transfer");
   }
@@ -177,7 +179,10 @@ function optimisticOpForTokenTransfer(
   };
 }
 
-function optimisticOpForCATA(account: Account, commandDescriptor: CommandDescriptor): Operation {
+function optimisticOpForCATA(
+  account: Account,
+  commandDescriptor: CommandDescriptor,
+): SolanaOperation {
   const opType: OperationType = "OPT_IN";
 
   return {
@@ -202,8 +207,8 @@ function optimisticOpcommons(commandDescriptor: CommandDescriptor) {
   };
 }
 
-function getOpExtras(command: Command): Record<string, any> {
-  const extra: Record<string, any> = {};
+function getOpExtras(command: Command): SolanaOperationExtra {
+  const extra: SolanaOperationExtra = {};
   switch (command.kind) {
     case "transfer":
     case "token.transfer":
@@ -229,7 +234,7 @@ function optimisticOpForStakeCreateAccount(
   transaction: Transaction,
   command: StakeCreateAccountCommand,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   const opType: OperationType = "DELEGATE";
   const commons = optimisticOpcommons(commandDescriptor);
 
@@ -249,7 +254,7 @@ function optimisticOpForStakeDelegate(
   account: Account,
   command: StakeDelegateCommand,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "DELEGATE";
   return {
@@ -268,7 +273,7 @@ function optimisticOpForStakeUndelegate(
   account: Account,
   command: StakeUndelegateCommand,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "UNDELEGATE";
   return {
@@ -287,7 +292,7 @@ function optimisticOpForStakeWithdraw(
   account: Account,
   command: StakeWithdrawCommand,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "IN";
   return {
@@ -306,7 +311,7 @@ function optimisticOpForStakeSplit(
   account: Account,
   command: StakeSplitCommand,
   commandDescriptor: CommandDescriptor,
-): Operation {
+): SolanaOperation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "OUT";
   return {
