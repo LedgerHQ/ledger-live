@@ -4,7 +4,6 @@
     "src/renderer/index.ts",
     "src/preloader/index.ts",
     "src/renderer/webworkers/workers/*.ts",
-    "src/swapConnectWebviewPreloader/index.ts",
     "src/webviewPreloader/index.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
