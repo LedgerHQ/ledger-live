@@ -19,7 +19,7 @@ const buildStellarTokenAccount = ({
   parentAccountId: string;
   stellarAsset: BalanceAsset;
   token: TokenCurrency;
-  operations: Operation[];
+  operations: StellarOperation[];
 }): TokenAccount => {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
@@ -64,7 +64,7 @@ export const buildSubAccounts = ({
   accountId: string;
   assets: BalanceAsset[];
   syncConfig: SyncConfig;
-  operations: Operation[];
+  operations: StellarOperation[];
 }): TokenAccount[] | undefined => {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);

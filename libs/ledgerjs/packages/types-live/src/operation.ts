@@ -51,7 +51,7 @@ export type OperationType =
   | "WITHDRAW_UNSTAKED";
 
 /**
- *
+ * An Operation is the Ledger Live abstraction of a transaction for any blockchain
  */
 export type Operation = {
   // unique identifier (usually hash)
@@ -92,8 +92,6 @@ export type Operation = {
   // --------------------------------------------- specific operation raw fields
   // transaction date
   date: Date;
-  // Extra crypto specific fields
-  extra: Record<string, any>;
   // Has the transaction actually failed? (some blockchain like ethereum will have failed tx appearing)
   hasFailed?: boolean;
   // in context of accounts that can have tokens, an operation can contains itself operations
@@ -105,11 +103,10 @@ export type Operation = {
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: Operation[];
   transactionRaw?: TransactionCommonRaw;
+  // Extra crypto specific fields
+  extra: OperationExtra;
 };
 
-/**
- *
- */
 export type OperationRaw = {
   id: string;
   hash: string;
@@ -130,8 +127,6 @@ export type OperationRaw = {
   tokenId?: string;
   // --------------------------------------------- specific operation raw fields
   date: string;
-  extra: Record<string, any>;
-  // would be a serializable version of the extra
   subOperations?: OperationRaw[];
   // in context of accounts that have internal transactions that belong to a parent transaction
   // we have internal operations. Those are not included in the top level operations but can be presented to UI at that same level
@@ -139,22 +134,21 @@ export type OperationRaw = {
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: OperationRaw[];
   transactionRaw?: TransactionCommonRaw;
+  // would be a serializable version of the extra
+  extra: OperationExtraRaw;
 };
 
-/**
- *
- */
 export type DailyOperationsSection = {
   day: Date;
   data: Operation[];
 };
 
-/**
- *
- */
 export type DailyOperations = {
   // operations grouped by day
   sections: DailyOperationsSection[];
   // Is the sections complete? means there is no more operations to pull
   completed: boolean;
 };
+
+type OperationExtra = Record<string, unknown>;
+type OperationExtraRaw = Record<string, unknown>;
