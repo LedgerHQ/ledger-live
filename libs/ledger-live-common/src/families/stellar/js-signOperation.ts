@@ -2,9 +2,9 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import Stellar from "@ledgerhq/hw-app-str";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Account, Operation, SignOperationFnSignature } from "@ledgerhq/types-live";
+import type { Account, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
-import type { Transaction } from "./types";
+import type { StellarOperation, Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { fetchSequence } from "./api";
 import { getAmountValue } from "./logic";
@@ -13,12 +13,12 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 const buildOptimisticOperation = async (
   account: Account,
   transaction: Transaction,
-): Promise<Operation> => {
+): Promise<StellarOperation> => {
   const transactionSequenceNumber = await fetchSequence(account);
   const fees = transaction.fees ?? new BigNumber(0);
   const type = transaction.mode === "changeTrust" ? "OPT_IN" : "OUT";
 
-  const operation: Operation = {
+  const operation: StellarOperation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
@@ -32,7 +32,9 @@ const buildOptimisticOperation = async (
     date: new Date(),
     // FIXME: Javascript number may be not precise enough
     transactionSequenceNumber: transactionSequenceNumber?.plus(1).toNumber(),
-    extra: {},
+    extra: {
+      ledgerOpType: type,
+    },
   };
 
   const { subAccountId } = transaction;
@@ -56,7 +58,9 @@ const buildOptimisticOperation = async (
         recipients: [transaction.recipient],
         accountId: subAccountId,
         date: new Date(),
-        extra: {},
+        extra: {
+          ledgerOpType: type,
+        },
       },
     ];
   }

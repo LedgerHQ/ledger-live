@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "../../account";
 import { listTokensForCryptoCurrency, findTokenById, parseCurrencyUnit } from "../../currencies";
-import type { BalanceAsset } from "./types";
+import type { BalanceAsset, StellarOperation } from "./types";
 import { encodeOperationId } from "../../operation";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 
 export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
@@ -42,7 +42,7 @@ const buildStellarTokenAccount = ({
       id: encodeOperationId(id, op.hash, op.extra.ledgerOpType),
       accountId: id,
       type: op.extra.ledgerOpType,
-      value: new BigNumber(op.extra.assetAmount) ?? op.value,
+      value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
     })),
     pendingOperations: [],
     balance,
