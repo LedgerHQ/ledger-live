@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.8
+
+### Patch Changes
+
+- [#4145](https://github.com/LedgerHQ/ledger-live/pull/4145) [`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Removing FTX and Wyre related code from LLD, LLM and LLC
+
+- [#4209](https://github.com/LedgerHQ/ledger-live/pull/4209) [`90d7c237a4`](https://github.com/LedgerHQ/ledger-live/commit/90d7c237a4380ad91134f24d0c39c10079896725) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add account as query param to multibuy redirect on NotEnoughGasSwap link click
+
+- Updated dependencies [[`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808)]:
+  - @ledgerhq/live-env@0.4.1-nightly.0
+  - @ledgerhq/coin-algorand@0.2.5-nightly.5
+  - @ledgerhq/coin-evm@0.5.0-nightly.4
+  - @ledgerhq/coin-framework@0.4.1-nightly.5
+  - @ledgerhq/coin-polkadot@0.3.2-nightly.5
+  - @ledgerhq/evm-tools@1.0.3-nightly.4
+  - @ledgerhq/live-network@1.1.4-nightly.3
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.4
+
 ## 31.4.0-nightly.7
 
 ### Patch Changes

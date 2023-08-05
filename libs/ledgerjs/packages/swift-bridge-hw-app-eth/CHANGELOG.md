@@ -1,5 +1,12 @@
 # @ledgerhq/swift-bridge-hw-app-eth
 
+## 1.0.13-nightly.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.4
+
 ## 1.0.13-nightly.3
 
 ### Patch Changes

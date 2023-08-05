@@ -1,5 +1,12 @@
 # @ledgerhq/live-network
 
+## 1.1.4-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808)]:
+  - @ledgerhq/live-env@0.4.1-nightly.0
+
 ## 1.1.4-nightly.2
 
 ### Patch Changes

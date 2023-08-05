@@ -1,5 +1,16 @@
 # @ledgerhq/live-cli
 
+## 22.11.0-nightly.8
+
+### Patch Changes
+
+- [#4145](https://github.com/LedgerHQ/ledger-live/pull/4145) [`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Removing FTX and Wyre related code from LLD, LLM and LLC
+
+- Updated dependencies [[`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808), [`90d7c237a4`](https://github.com/LedgerHQ/ledger-live/commit/90d7c237a4380ad91134f24d0c39c10079896725)]:
+  - @ledgerhq/live-common@31.4.0-nightly.8
+  - @ledgerhq/coin-framework@0.4.1-nightly.5
+  - @ledgerhq/live-network@1.1.4-nightly.3
+
 ## 22.11.0-nightly.7
 
 ### Patch Changes
