@@ -9,10 +9,11 @@ import { mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { encodeOperationId } from "../../operation";
 import { areAllOperationsLoaded, decodeAccountId } from "../../account";
-import type { Operation, Account } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
 import { getEnv } from "../../env";
+import { TezosOperation } from "./types";
 
 function reconciliatePublicKey(
   publicKey: string | undefined,
@@ -139,7 +140,7 @@ export const getAccountShape: GetAccountShape = async infoInput => {
 
 const txToOp =
   ({ address, accountId }) =>
-  (tx: APIOperation): Operation | null | undefined => {
+  (tx: APIOperation): TezosOperation | null | undefined => {
     let type;
     let maybeValue;
     let senders: string[] = [];
@@ -219,8 +220,6 @@ const txToOp =
       level: blockHeight,
       block: blockHash,
       timestamp,
-      storageLimit,
-      gasLimit,
     } = tx;
 
     if (!hash) {
@@ -255,7 +254,7 @@ const txToOp =
       blockHash,
       accountId,
       date: new Date(timestamp),
-      extra: { gasLimit: gasLimit, storageLimit: storageLimit, id },
+      extra: { id },
       hasFailed,
     };
   };

@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { LedgerSigner, DerivationType } from "@taquito/ledger-signer";
 import { TezosToolkit } from "@taquito/taquito";
-import type { Transaction } from "./types";
+import type { TezosOperation, Transaction } from "./types";
 import type { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { getEnv } from "../../env";
@@ -107,16 +107,13 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
           const accountId = account.id;
 
           // currently, all mode are always at least one OUT tx on ETH parent
-          const operation = {
+          const operation: TezosOperation = {
             id: encodeOperationId(accountId, txHash, type),
             hash: txHash,
             type,
             value: transaction.amount,
             fee: fees,
-            extra: {
-              storageLimit: transaction.storageLimit,
-              gasLimit: transaction.gasLimit,
-            },
+            extra: {},
             blockHash: null,
             blockHeight: null,
             senders,

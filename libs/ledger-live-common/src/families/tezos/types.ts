@@ -1,6 +1,7 @@
 import type {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -57,3 +58,11 @@ export type TezosAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type TezosOperation = Omit<Operation, "extra"> & {
+  extra: TezosOperationExtra;
+};
+
+export type TezosOperationExtra = {
+  id?: number; // Used as most recent id for incremental sync
+};
