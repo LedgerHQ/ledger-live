@@ -126,12 +126,10 @@ With Ledger Live, you can (including without limitation)
 - [Banxa Terms of use](https://banxa.com/terms-of-use/)
 - [Transak Terms of service](https://www.notion.so/Transak-Terms-of-Service-6d89598211644402b3be63bc3f1468b4)
 - [Mercuryo Legal terms](https://mercuryo.io/legal/terms/)
-- [Wyre User agreement](https://www.sendwyre.com/user-agreement/)
 - [Simplex Terms of use](https://www.simplex.com/terms-of-use)
 - [Zerion Terms](https://zerion.io/terms.pdf)
 - [Bitrefill Terms](https://www.bitrefill.com/terms/?hl=en)
 - [Changelly Terms of use](https://changelly.com/terms-of-use)
-- [FTX Terms of service](https://help.ftx.com/hc/en-us/articles/360024788391-FTX-Terms-of-Service)
 - [Paraswap Terms of service](https://psdocs.fra1.digitaloceanspaces.com/tos_v2.pdf)
 
 **5.2.2 No warranty.** Ledger is not responsible for the content, accuracy, security, availability, any performance, or failure to perform of the Third Party Services or any issue in relation with the use of Third Party Services. Ledger does not provide any guarantees that access to Third Party Services will not be interrupted or that there will be no delays, failures, errors, omissions, corruption or loss of transmitted information, data or funds, and Ledger shall not be liable for any such Third Party Services. You agree to use the Third Party Services at your own risk. It is your responsibility to review the third party’s terms and policies before using a Third Party Service. Third Party Services may not be available in all languages and may not be appropriate or available for use in any particular location. To the extent you choose to use such Third Party Services, you are solely responsible for compliance with any applicable laws in relation to such use. In addition, Ledger reserves the right to block access to these Third Party Services through Ledger Live in particular, but not exclusively, in the event of non-compliance with the applicable regulations by the Third Party partner. We retain the exclusive right to suspend, remove, or cancel the availability of any such Third Party Service for any reason and without prior notice.

@@ -297,7 +297,11 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
-      <ScrollView alwaysBounceVertical={false} style={{ width: "100%" }}>
+      <ScrollView
+        alwaysBounceVertical={false}
+        style={{ width: "100%" }}
+        testID="transfer-scroll-list"
+      >
         {buttonsList.map((button, index) => (
           <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
             <TransferButton {...button} testID={button.testID} />

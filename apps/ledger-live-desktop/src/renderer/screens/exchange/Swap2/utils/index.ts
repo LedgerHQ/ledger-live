@@ -5,6 +5,7 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import { track } from "~/renderer/analytics/segment";
 
 export const SWAP_VERSION = "2.35";
+
 export const useGetSwapTrackingProperties = () => {
   return useMemo(
     () => ({
@@ -14,6 +15,7 @@ export const useGetSwapTrackingProperties = () => {
     [],
   );
 };
+
 export const useRedirectToSwapHistory = () => {
   const history = useHistory();
   return useCallback(

@@ -432,37 +432,6 @@
     "domains": []
   },
   {
-    "id": "wyre_buy",
-    "name": "Wyre",
-    "url": "https://platform.apps.ledger.com/app/wyre",
-    "homepageUrl": "https://www.sendwyre.com/",
-    "icon": "https://cdn.live.ledger.com/icons/platform/wyre.png",
-    "platforms": ["ios", "android", "desktop"],
-    "apiVersion": "^1.0.0 || ~0.0.1",
-    "manifestVersion": "1",
-    "branch": "stable",
-    "categories": ["exchange", "buy"],
-    "currencies": ["ethereum", "bitcoin", "algorand"],
-    "content": {
-      "shortDescription": {
-        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
-      },
-      "description": {
-        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
-      }
-    },
-    "permissions": [
-      {
-        "method": "account.request",
-        "params": {
-          "currencies": ["ethereum", "bitcoin", "algorand"]
-        }
-      }
-    ],
-    "domains": ["https://*"],
-    "visibility": "complete"
-  },
-  {
     "id": "zerion",
     "name": "Zerion",
     "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fapp.zerion.io%2F%3Fembed%3Dledgerdappbrowser%22%2C%22nanoApp%22%3A%22Paraswap%22%2C%22dappName%22%3A%22Zerion%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%5D%7D",

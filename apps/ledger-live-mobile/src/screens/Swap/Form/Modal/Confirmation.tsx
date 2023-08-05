@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -29,7 +29,6 @@ import DeviceAction from "../../../../components/DeviceAction";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
 import ModalBottomAction from "../../../../components/ModalBottomAction";
 import { useBroadcast } from "../../../../components/useBroadcast";
-import { swapKYCSelector } from "../../../../reducers/settings";
 import { UnionToIntersection } from "../../../../types/helpers";
 import type { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../../const";
@@ -82,9 +81,6 @@ export function Confirmation({
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
   );
-
-  const swapKYC = useSelector(swapKYCSelector);
-  const providerKYC = swapKYC[provider];
 
   const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
   const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
@@ -204,7 +200,6 @@ export function Confirmation({
                   exchange,
                   exchangeRate: exchangeRate.current,
                   transaction: swapTx.current.transaction as SwapTransaction,
-                  userId: providerKYC?.id,
                 }}
                 onResult={result => {
                   const { initSwapResult, initSwapError, swapId } = result as UnionToIntersection<
