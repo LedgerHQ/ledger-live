@@ -117,11 +117,6 @@ export function getSpecs({ disabled, filter }) {
     disabledCurrencies = [];
   }
 
-  console.log("filteredFamilies", filteredFamilies);
-  console.log("filteredCurrencies", filteredCurrencies);
-  console.log("disabledFamilies", disabledFamilies);
-  console.log("disabledCurrencies", disabledCurrencies);
-
   for (const family in allSpecs) {
     if (filteredFamilies.length > 0 && !filteredFamilies.includes(family)) {
       // We only want to test specific families when we use a filter
@@ -162,7 +157,6 @@ export function getSpecs({ disabled, filter }) {
       specs.push(spec);
     }
   }
-  console.log(specs);
   return specs;
 }
 
