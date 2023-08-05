@@ -59,4 +59,13 @@ describe("getSpecs", () => {
     });
     expect(specs.length).toBeGreaterThan(0);
   });
+
+  it("should not return unsupported currencies", () => {
+    setSupportedCurrencies([]);
+    const specs = getSpecs({
+      disabled: {},
+      filter: { currencies: ["bitcoin"] },
+    });
+    expect(specs.length).toEqual(0);
+  });
 });
