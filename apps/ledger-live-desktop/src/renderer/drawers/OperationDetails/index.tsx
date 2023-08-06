@@ -136,17 +136,7 @@ const OperationD = (props: Props) => {
   const history = useHistory();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const {
-    extra,
-    hash,
-    date,
-    senders,
-    type,
-    fee,
-    recipients: _recipients,
-    contract,
-    tokenId,
-  } = operation;
+  const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
