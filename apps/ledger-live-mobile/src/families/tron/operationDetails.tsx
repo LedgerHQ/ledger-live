@@ -149,20 +149,19 @@ const AmountCell = ({
   ) : null;
 
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.frozenAmount : 0);
+  const amount = (operation.extra.frozenAmount as BigNumber) ?? new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.unfreezeAmount : 0);
+  const amount = (operation.extra.unfreezeAmount as BigNumber) ?? new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const VoteAmountCell = ({ operation }: Props) => {
-  const amount =
-    operation.extra && operation.extra.votes
-      ? (operation.extra.votes as Vote[]).reduce((sum, { voteCount }) => sum + voteCount, 0)
-      : 0;
+  const amount = operation.extra.votes
+    ? (operation.extra.votes as Vote[]).reduce((sum, { voteCount }) => sum + voteCount, 0)
+    : 0;
   return amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>
       <Trans

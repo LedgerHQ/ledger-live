@@ -11,8 +11,9 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import AccountSubHeader from "./AccountSubHeader";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
+import { Operation } from "@ledgerhq/types-live";
 
-const family: LLDCoinFamily<TronAccount, Transaction, TransactionStatus> = {
+const family: LLDCoinFamily<TronAccount, Transaction, TransactionStatus, Operation> = {
   operationDetails,
   accountHeaderManageActions,
   transactionConfirmFields,
