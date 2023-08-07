@@ -240,6 +240,10 @@
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again."
     },
+    "DeviceAlreadySetup": {
+      "title": "Your {{device}} is already setup with a Secret Recovery Phrase",
+      "description": "Connect a Ledger that's not set up."
+    },
     "DeviceNotGenuine": {
       "title": "Device possibly not genuine",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
@@ -457,6 +461,9 @@
       "title": "Insufficient ETH for network fee",
       "description": "Please send some ETH to your account to pay for ERC20 token transactions."
     },
+    "NotEnoughGasSwap": {
+      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+    },
     "NotEnoughBalanceToDelegate": {
       "title": "Insufficient balance to delegate"
     },
@@ -619,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend": {
       "title": "Cannot send from subaccounts yet",
       "description": "This feature will be added at a later stage due to changes recently introduced by the Babylon update."
-    },
-    "AccessDeniedError": {
-      "title": "Ledger Live needs an update",
-      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre"
     },
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
@@ -1583,7 +1586,8 @@
         "title": "The OS on your Ledger Nano X needs to be updated",
         "desc": "You can try updating the OS or contact Ledger support for assistance.",
         "cta": "Learn how to update",
-        "supportLink": "Contact Ledger Support"
+        "supportLink": "Contact Ledger Support",
+        "buyLedger": "Buy a Ledger"
       }
     },
     "stepRecoveryPhrase": {
@@ -2053,6 +2057,7 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
+    "earn": "Earn",
     "learn": "Learn"
   },
   "learn": {
@@ -2630,8 +2635,6 @@
         "confirm": "Hide token"
       },
       "hideNFTCollectionCTA": "Hide collection",
-      "hiddenNFTCollections": "Hidden NFT collections",
-      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
       "hideNFTCollectionModal": {
         "title": "Hide Collection?",
         "desc": "You can unhide this collection in the setting options."
@@ -2716,10 +2719,6 @@
       "clearCacheButton": "Clear",
       "exportLogs": "Save logs",
       "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
-      "resetThirdPartyData": "Reset third party data",
-      "resetThirdPartyDataDesc": "Erase all your local third party data, used to access third-party transaction provider.",
-      "resetThirdPartyDataModal": "Delete your local third party data",
-      "resetThirdPartyDataModalDesc": "Delete your local third party data. You may have to resubmit your KYC and/or login again to access services provided by our partners.",
       "hardReset": "Reset Ledger Live",
       "hardResetDesc": "This has no impact on your assets. Erases all data in Ledger Live, including account data, transaction histories and settings. Use your Ledger device to reload and manage your crypto assets on an empty Ledger Live.",
       "repairDevice": "Repair your Ledger device",
@@ -2952,66 +2951,8 @@
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
       },
-      "unauthorizedRates": {
-        "cta": "Reset verification",
-        "banner": "Reset your KYC and update Live to swap with Wyre.",
-        "bannerCTA": "Reset KYC"
-      },
       "main": {
         "header": "Swap"
-      },
-      "kyc": {
-        "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes.",
-        "cta": "Continue",
-        "wyre": {
-          "title": "Complete your KYC",
-          "subtitle": "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our Privacy Policy",
-          "pending": {
-            "cta": "Continue",
-            "title": "KYC submitted for approval",
-            "subtitle": "Your KYC has been submitted and is pending approval.",
-            "link": "Learn more about KYC"
-          },
-          "approved": {
-            "cta": "Continue",
-            "title": "KYC approved!",
-            "subtitle": "Your KYC has been submitted and has been approved.",
-            "link": "Learn more about KYC"
-          },
-          "closed": {
-            "cta": "Reset KYC",
-            "title": "KYC application rejected",
-            "subtitle": "Wyre rejected the data you provided for KYC purposes",
-            "link": "Learn more about KYC"
-          },
-          "form": {
-            "firstName": "First Name",
-            "lastName": "Last Name",
-            "street1": "Street Address Line 1",
-            "street2": "Street Address Line 2",
-            "city": "City",
-            "state": "State",
-            "country": "Country",
-            "postalCode": "Zip Code",
-            "dateOfBirth": "Date of birth",
-            "firstNamePlaceholder": "Enter your first name",
-            "lastNamePlaceholder": "Enter your last name",
-            "street1Placeholder": "Eg. 13, Maple street",
-            "street2Placeholder": "Eg. 13, Maple street",
-            "cityPlaceholder": "Eg. San José",
-            "postalCodePlaceholder": "Enter your 5 digit Zip code",
-            "statePlaceholder": "Select your state",
-            "dateOfBirthPlaceholder": "YYYY-MM-DD",
-            "firstNameError": "Enter your first name to continue",
-            "lastNameError": "Enter your last name to continue",
-            "street1Error": "Enter your address",
-            "cityError": "Enter the city you live in the USA",
-            "stateError": "Select your state to continue",
-            "postalCodeError": "Enter a valid US ZIP code",
-            "dateOfBirthError": "Enter your date of birth"
-          }
-        },
-        "states": "Select your state"
       },
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
@@ -3186,34 +3127,6 @@
           }
         },
         "providers": {
-          "kyc": {
-            "title": "KYC",
-            "required": "You need to complete your KYC",
-            "complete": "Complete KYC",
-            "update": "Refresh KYC",
-            "rejected": "KYC rejected, start the verification again",
-            "rejectedContactProviderSupport": "KYC rejected, please contact {{providerName}} support",
-            "updateRequired": "Complete or update your KYC",
-            "status": {
-              "pending": "KYC pending",
-              "approved": "KYC approved",
-              "closed": "KYC rejected",
-              "upgradeRequired": "KYC insufficient"
-            }
-          },
-          "login": {
-            "title": "Login",
-            "required": "You need to login with this provider",
-            "complete": "Login"
-          },
-          "mfa": {
-            "title": "MFA",
-            "required": "You need to set up MFA with this provider",
-            "complete": "Set up MFA"
-          },
-          "withdrawalsBlockedError": {
-            "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
-          },
           "noProviders": "No results found. There are no quotes available with the current preferences."
         }
       }
@@ -3790,6 +3703,7 @@
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
+    "connectAnotherDevice": "Connect another Ledger",
     "unlockDevice": "Unlock your device",
     "outdated": "App version outdated",
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
@@ -4223,6 +4137,18 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "batteryStatusErrors": {
+      "errors": {
+        "TimeoutError": {
+          "title": "Device disconnected",
+          "description": "The update was unable to start because we lost connection to {{deviceName}}"
+        },
+        "BatteryStatusNotRetrieved": {
+          "title": "Unable to retrieve battery status",
+          "description": "The update was unable to start because we weren't able to retrieve the battery status for {{deviceName}}"
+        }
+      }
     },
     "errors": {
       "TimeoutError": {
@@ -6315,15 +6241,25 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
-      "nft": "NFTs"
+      "nft": "NFTs",
+      "market": "Market"
     },
     "nftGallery": {
       "filters": {
+        "select": "Select",
+        "filter": "Filter",
+        "blockchain": "Blockchain",
+        "seeAll": "See all",
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} collection",
+        "hiddenCollections": "Hidden collections",
         "hide_plural": "Hide {{count}} collections",
-        "alertHide": "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
-        "alertHide_plural": "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
+        "alertHide": "1 collection hidden. You can unhide them at any time in the gallery filter.",
+        "alertHide_plural": "{{count}} collections hidden. You can unhide them at any time in the gallery filter."
+      },
+      "emptyFiltered": {
+        "title": "There are no NFTs that meet your criteria",
+        "button": "Reset Filters"
       },
       "empty": {
         "title": "No NFTs to show, yet",
@@ -6342,7 +6278,7 @@
       },
       "hideNftModal": {
         "title": "Hide NFT collection",
-        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the app settings",
+        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the gallery filter",
         "cta": "Hide this NFT"
       },
       "media": {

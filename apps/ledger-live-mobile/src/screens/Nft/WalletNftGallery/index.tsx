@@ -7,18 +7,16 @@ import NftList from "../../../components/Nft/NftGallery/NftList";
 
 import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
 import CollapsibleHeaderScrollView from "../../../components/WalletTab/CollapsibleHeaderScrollView";
-import { orderedVisibleNftsSelector } from "../../../reducers/accounts";
+import { filteredNftsSelector, hasNftsSelector } from "../../../reducers/accounts";
 
 const WalletNftGallery = () => {
   const { space } = useTheme();
-  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
-
-  const hasNFTs = nftsOrdered.length > 0;
-
+  const data = useSelector(filteredNftsSelector, isEqual);
+  const hasNFTs = useSelector(hasNftsSelector);
   return (
     <Flex flex={1} testID="wallet-nft-gallery-screen">
       {hasNFTs ? (
-        <NftList data={nftsOrdered} />
+        <NftList data={data} />
       ) : (
         <CollapsibleHeaderScrollView
           contentContainerStyle={{

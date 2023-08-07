@@ -31,6 +31,7 @@ import type {
   SwapStateType,
   DynamicContentState,
   ProtectState,
+  NftState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -242,7 +243,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   SET_SWAP_SELECTABLE_CURRENCIES = "SET_SWAP_SELECTABLE_CURRENCIES",
-  SET_SWAP_KYC = "SET_SWAP_KYC",
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
@@ -262,7 +262,6 @@ export enum SettingsActionTypes {
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_STATUS_CENTER = "SET_STATUS_CENTER",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
@@ -272,6 +271,7 @@ export enum SettingsActionTypes {
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
   SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
+  SET_USER_NPS = "SET_USER_NPS",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -310,11 +310,6 @@ export type SettingsSetLanguagePayload = SettingsState["language"];
 export type SettingsSetLocalePayload = SettingsState["locale"];
 export type SettingsSetSwapSelectableCurrenciesPayload =
   SettingsState["swap"]["selectableCurrencies"];
-export type SettingsSetSwapKycPayload = {
-  provider?: string;
-  id?: string;
-  status?: string | null;
-};
 export type SettingsAcceptSwapProviderPayload = Unpacked<
   SettingsState["swap"]["acceptedProviders"]
 >;
@@ -370,6 +365,7 @@ export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsol
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
+export type SettingsSetUserNps = number;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -398,7 +394,6 @@ export type SettingsPayload =
   | SettingsSetLanguagePayload
   | SettingsSetLocalePayload
   | SettingsSetSwapSelectableCurrenciesPayload
-  | SettingsSetSwapKycPayload
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
   | SettingsLastSeenDeviceLanguagePayload
@@ -423,7 +418,8 @@ export type SettingsPayload =
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
-  | SettingsSetOnboardingTypePayload;
+  | SettingsSetOnboardingTypePayload
+  | SettingsSetUserNps;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
@@ -471,3 +467,16 @@ export type ActionsPayload =
   | Action<PostOnboardingPayload>
   | Action<SwapPayload>
   | Action<ProtectPayload>;
+
+// === NFT ACTIONS ===
+export enum NftStateActionTypes {
+  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
+  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
+}
+
+export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
+export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
+
+export type NftStatePayload =
+  | NftStateGalleryChainFiltersPayload
+  | NftStateGalleryFilterDrawerVisiblePayload;

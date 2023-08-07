@@ -131,6 +131,9 @@ const Ethereum1559CustomFees = ({
   useEffect(() => {
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, transactionPatch));
+
+    // https://github.com/LedgerHQ/ledger-live/pull/4147#discussion_r1277351782
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxPriorityFeePerGas, maxFeePerGas, transactionPatch]);
 
   return (

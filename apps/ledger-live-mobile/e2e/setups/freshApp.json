@@ -48,8 +48,7 @@
       "swap": {
         "hasAcceptedIPSharing": false,
         "acceptedProviders": [],
-        "selectableCurrencies": [],
-        "KYC": {}
+        "selectableCurrencies": []
       },
       "starredMarketCoins": []
     },

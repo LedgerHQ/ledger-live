@@ -8,14 +8,10 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import {
-  AvailableProviderV3,
-  ExchangeRate,
-  KYCStatus,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
@@ -208,9 +204,6 @@ export type SettingsState = {
     hasAcceptedIPSharing: false;
     acceptedProviders: string[];
     selectableCurrencies: string[];
-    KYC: {
-      [key: string]: KYCStatus;
-    };
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
@@ -237,6 +230,7 @@ export type SettingsState = {
   dateFormat: string;
   hasBeenUpsoldProtect: boolean;
   generalTermsVersionAccepted?: string;
+  userNps: number | null;
 };
 
 export type NotificationsSettings = {
@@ -287,6 +281,18 @@ export type ProtectState = {
   protectStatus: ProtectStateNumberEnum;
 };
 
+// === NFT STATE ===
+
+export type NftState = {
+  filterDrawerVisible: boolean;
+  galleryChainFilters: NftGalleryChainFiltersState;
+};
+
+export type NftGalleryChainFiltersState = Pick<
+  Record<CryptoCurrencyId, boolean>,
+  "polygon" | "ethereum"
+>;
+
 // === ROOT STATE ===
 
 export type State = {
@@ -301,4 +307,5 @@ export type State = {
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
+  nft: NftState;
 };

@@ -29,7 +29,7 @@ export default function TrackScreen({
         screen(category, name, props, true, refreshSource, avoidDuplicates);
       }
     }
-  }, [category, name, props, isFocused, refreshSource]);
+  }, [category, name, props, isFocused, refreshSource, avoidDuplicates]);
 
   return null;
 }

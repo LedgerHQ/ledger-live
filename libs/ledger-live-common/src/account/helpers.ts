@@ -117,6 +117,7 @@ export const getVotesCount = (
     case "binance_beacon_chain":
     case "osmosis":
     case "cosmos":
+    case "coreum":
       return (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0;
     default:
       return 0;

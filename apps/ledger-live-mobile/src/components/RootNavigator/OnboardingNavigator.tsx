@@ -206,7 +206,14 @@ export default function OnboardingNavigator() {
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
       />
-      <Stack.Screen name={ScreenName.OnboardingUseCase} component={OnboardingUseCase} />
+      <Stack.Screen
+        name={ScreenName.OnboardingUseCase}
+        component={OnboardingUseCase}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
       <Stack.Screen
         name={NavigatorName.OnboardingCarefulWarning}
         component={OnboardingCarefulWarning}

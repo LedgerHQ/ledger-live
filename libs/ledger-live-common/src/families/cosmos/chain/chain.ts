@@ -13,6 +13,7 @@ import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Umee from "./Umee";
 import BinanceBeaconChain from "./BinanceBeaconChain";
+import Coreum from "./Coreum";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -61,6 +62,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "umee":
         cosmosChainParams[currencyId] = new Umee();
+        break;
+      case "coreum":
+        cosmosChainParams[currencyId] = new Coreum();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);

@@ -23,7 +23,7 @@ const CarouselRow = () => {
       track("toggle_clicked", {
         toggle: "Content Cards",
         enabled: checked,
-        screen: ScreenName.GeneralSettings,
+        page: ScreenName.GeneralSettings,
       }); // TODO Handle Analytics correclty
     },
     [dispatch, walletCards, assetsCards],

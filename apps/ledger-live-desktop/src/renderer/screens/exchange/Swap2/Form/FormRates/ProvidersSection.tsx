@@ -10,5 +10,6 @@ const Container = styled.div`
 type ProvidersSectionProps = {
   children: React.ReactNode;
 };
+
 const ProvidersSection = ({ children }: ProvidersSectionProps) => <Container>{children}</Container>;
 export default ProvidersSection;

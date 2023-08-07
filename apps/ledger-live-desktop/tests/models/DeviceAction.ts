@@ -6,11 +6,16 @@ import {
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 import { AppOp } from "@ledgerhq/live-common/apps/types";
-import { AppType } from "@ledgerhq/types-live/lib/manager";
+import { AppType, DeviceInfo } from "@ledgerhq/types-live/lib/manager";
 
-const mockListAppsResult = (...params) => {
+const mockListAppsResult = (
+  appDesc: string,
+  installedDesc: string,
+  deviceInfo: DeviceInfo,
+  deviceModelId?: DeviceModelId,
+) => {
   // Nb Should move this polyfill to live-common eventually.
-  const result = innerMockListAppResult(...params);
+  const result = innerMockListAppResult(appDesc, installedDesc, deviceInfo, deviceModelId);
   Object.keys(result?.appByName).forEach(key => {
     result.appByName[key] = { ...result.appByName[key], type: AppType.currency };
   });
@@ -30,7 +35,7 @@ export class DeviceAction {
 
   async openApp() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "opened" });
+      window.mock.events.mockDeviceEvent({ type: "opened" });
     });
 
     await this.loader.waitFor({ state: "visible" });
@@ -45,7 +50,7 @@ export class DeviceAction {
       args => {
         const [deviceInfo, result, modelId] = args;
 
-        (window as any).mock.events.mockDeviceEvent(
+        window.mock.events.mockDeviceEvent(
           {
             type: "deviceChange",
             device: {
@@ -84,7 +89,7 @@ export class DeviceAction {
       args => {
         const [deviceInfo, result, modelId] = args;
 
-        (window as any).mock.events.mockDeviceEvent(
+        window.mock.events.mockDeviceEvent(
           {
             type: "deviceChange",
             device: {
@@ -122,7 +127,7 @@ export class DeviceAction {
       args => {
         const [deviceInfo210lo5, result, modelId] = args;
 
-        (window as any).mock.events.mockDeviceEvent(
+        window.mock.events.mockDeviceEvent(
           {
             type: "deviceChange",
             device: {
@@ -151,19 +156,19 @@ export class DeviceAction {
 
   async complete() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "complete" });
+      window.mock.events.mockDeviceEvent({ type: "complete" });
     });
   }
 
   async initiateLanguageInstallation() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "devicePermissionRequested" });
+      window.mock.events.mockDeviceEvent({ type: "devicePermissionRequested" });
     });
   }
 
   async add50ProgressToLanguageInstallation() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "progress", progress: 0.5 });
+      window.mock.events.mockDeviceEvent({ type: "progress", progress: 0.5 });
     });
   }
 
@@ -177,7 +182,7 @@ export class DeviceAction {
       args => {
         const [progress, itemProgress, currentAppOp, installQueue] = args;
 
-        (window as any).mock.events.mockDeviceEvent({
+        window.mock.events.mockDeviceEvent({
           type: "inline-install",
           progress: progress,
           itemProgress: itemProgress,
@@ -194,7 +199,7 @@ export class DeviceAction {
       args => {
         const [installQueue] = args;
 
-        (window as any).mock.events.mockDeviceEvent({
+        window.mock.events.mockDeviceEvent({
           type: "listed-apps",
           installQueue: installQueue,
         });
@@ -205,26 +210,26 @@ export class DeviceAction {
 
   async mockOpened() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "opened" });
+      window.mock.events.mockDeviceEvent({ type: "opened" });
     });
   }
 
   async completeLanguageInstallation() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "languageInstalled" });
+      window.mock.events.mockDeviceEvent({ type: "languageInstalled" });
     });
   }
 
   async requestImageLoad() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "loadImagePermissionRequested" });
+      window.mock.events.mockDeviceEvent({ type: "loadImagePermissionRequested" });
     });
   }
 
   async loadImageWithProgress(progress: number) {
     await this.page.evaluate(
       ([progress]) => {
-        (window as any).mock.events.mockDeviceEvent({ type: "progress", progress });
+        window.mock.events.mockDeviceEvent({ type: "progress", progress });
       },
       [progress],
     );
@@ -232,26 +237,26 @@ export class DeviceAction {
 
   async requestImageCommit() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "commitImagePermissionRequested" });
+      window.mock.events.mockDeviceEvent({ type: "commitImagePermissionRequested" });
     });
   }
 
   async confirmImageLoaded() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "imageLoaded", imageSize: 35305 });
+      window.mock.events.mockDeviceEvent({ type: "imageLoaded", imageSize: 35305 });
     });
   }
 
   async initiateSwap() {
-    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "opened" }));
+    await this.page.evaluate(() => window.mock.events.mockDeviceEvent({ type: "opened" }));
     await this.page.waitForTimeout(500);
     // Keeping the same subject because it's too close and it's failing and I don't want to cry.
     // await this.page.evaluate(() =>
-    //   (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
+    //   window.mock.events.mockDeviceEvent({ type: "complete" }),
     // );
     await this.page.waitForTimeout(2000);
     await this.page.evaluate(() =>
-      (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }),
+      window.mock.events.mockDeviceEvent({ type: "init-swap-requested" }),
     );
 
     await this.loader.waitFor({ state: "detached" });
@@ -260,7 +265,7 @@ export class DeviceAction {
 
   async confirmSwap() {
     await this.page.evaluate(() => {
-      const mock = (window as any).mock;
+      const mock = window.mock;
       const transaction = mock.fromTransactionRaw({
         family: "bitcoin",
         recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
@@ -300,7 +305,7 @@ export class DeviceAction {
 
   async silentSign() {
     await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "opened" }, { type: "complete" });
+      window.mock.events.mockDeviceEvent({ type: "opened" }, { type: "complete" });
     });
   }
 }

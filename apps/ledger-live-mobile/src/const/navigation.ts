@@ -158,10 +158,6 @@ export enum ScreenName {
   SwapFormSelectCrypto = "SwapFormSelectCrypto",
   SwapFormSelectProviderRate = "SwapFormSelectProviderRate",
   SwapHistory = "SwapHistory",
-  SwapKYC = "KYC",
-  SwapKYCStates = "SwapKYCStates",
-  SwapLogin = "Login",
-  SwapMFA = "MFA",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
   SwapSelectAccount = "SelectAccount",
@@ -339,6 +335,10 @@ export enum ScreenName {
   EthereumCustomFees = "EthereumCustomFees",
   EthereumEditGasLimit = "EthereumEditGasLimit",
   EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
+
+  // Evm
+  EvmEditGasLimit = "EvmEditGasLimit",
+  EvmCustomFees = "EvmCustomFees",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",

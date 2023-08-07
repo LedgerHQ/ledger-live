@@ -11,7 +11,6 @@ import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { ValidKYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
@@ -22,7 +21,6 @@ import type {
   SettingsAddStarredMarketcoinsPayload,
   SettingsBlacklistTokenPayload,
   SettingsDismissBannerPayload,
-  SettingsSetSwapKycPayload,
   SettingsHideEmptyTokenAccountsPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
   SettingsHideNftCollectionPayload,
@@ -76,6 +74,7 @@ import type {
   SettingsSetOnboardingHasDevicePayload,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
+  SettingsSetUserNps,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -98,6 +97,7 @@ export const timeRangeDaysByKey = {
   year: 365,
   all: -1,
 };
+
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
@@ -139,7 +139,6 @@ export const INITIAL_STATE: SettingsState = {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
     selectableCurrencies: [],
-    KYC: {},
   },
   lastSeenDevice: null,
   knownDeviceModelIds: {
@@ -178,6 +177,7 @@ export const INITIAL_STATE: SettingsState = {
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
   onboardingType: null,
+  userNps: null,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -418,23 +418,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.SET_SWAP_KYC]: (state, action) => {
-    const { provider, id, status } = (action as Action<SettingsSetSwapKycPayload>).payload;
-    const KYC = { ...state.swap.KYC };
-
-    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
-    if (id && typeof status !== "undefined") {
-      KYC[provider as keyof typeof KYC] = {
-        id,
-        status: status as ValidKYCStatus,
-      };
-    } else {
-      delete KYC[provider as keyof typeof KYC];
-    }
-
-    return { ...state, swap: { ...state.swap, KYC } };
-  },
-
   [SettingsActionTypes.ACCEPT_SWAP_PROVIDER]: (state, action) => ({
     ...state,
     swap: {
@@ -570,14 +553,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.RESET_SWAP_LOGIN_AND_KYC_DATA]: (state: SettingsState) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      KYC: {},
-    },
-  }),
-
   [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
     ...state,
     walletTabNavigatorLastVisitedTab: (
@@ -625,6 +600,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (state, action) => ({
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
+  }),
+  [SettingsActionTypes.SET_USER_NPS]: (state, action) => ({
+    ...state,
+    userNps: (action as Action<SettingsSetUserNps>).payload,
   }),
 };
 
@@ -758,7 +737,6 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
 export const lastSeenDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
   // to be removed in a while.
@@ -810,3 +788,4 @@ export const debugAppLevelDrawerOpenedSelector = (state: State) =>
 export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.hasBeenUpsoldProtect;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
+export const userNpsSelector = (state: State) => state.settings.userNps;

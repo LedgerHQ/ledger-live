@@ -13,6 +13,7 @@ import { TrackScreen } from "../../analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
+import useNpsRatings from "../../logic/npsRatings";
 import { SettingsNavigatorStackParamList } from "../../components/RootNavigator/types/SettingsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { openDebugMenu } from "../../actions/appstate";
@@ -24,7 +25,8 @@ export default function Settings({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
-  const { handleSettingsRateApp } = useRatings();
+  const { handleSettingsRateApp: handleLegacyRatingsRateApp } = useRatings();
+  const { handleSettingsRateApp: handleNpsRatingsRateApp } = useNpsRatings();
 
   const debugVisible = useSelector(isDebugMenuVisible) || Config.FORCE_DEBUG_VISIBLE;
   const count = useRef(0);
@@ -102,7 +104,15 @@ export default function Settings({
           title={t("settings.about.liveReview.title")}
           desc={t("settings.about.liveReview.desc")}
           Icon={IconsLegacy.StarMedium}
-          onClick={handleSettingsRateApp}
+          onClick={handleLegacyRatingsRateApp}
+        />
+      </FeatureToggle>
+      <FeatureToggle feature="npsRatingsPrompt">
+        <SettingsCard
+          title={t("settings.about.liveReview.title")}
+          desc={t("settings.about.liveReview.desc")}
+          Icon={IconsLegacy.StarMedium}
+          onClick={handleNpsRatingsRateApp}
         />
       </FeatureToggle>
       <SettingsCard

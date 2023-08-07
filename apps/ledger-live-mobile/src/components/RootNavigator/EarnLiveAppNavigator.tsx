@@ -7,7 +7,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
-import styles from "../../navigation/styles";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { EarnScreen } from "../../screens/PTX/Earn";
@@ -86,7 +85,7 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
       }
     }
     deeplinkRouting();
-  }, [paramAction, ptxEarn?.enabled]);
+  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route]);
 
   return (
     <EarnScreen
@@ -111,7 +110,7 @@ export default function EarnLiveAppNavigator(_props?: Record<string, unknown>) {
       <Stack.Screen
         name={ScreenName.Earn}
         options={{
-          headerStyle: styles.headerNoShadow,
+          headerShown: false,
         }}
       >
         {props => <Earn {...props} />}

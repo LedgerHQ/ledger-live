@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Button from "~/renderer/components/Button";
 import TextBase from "~/renderer/components/Text";
+
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
@@ -32,11 +33,13 @@ const ButtonAddAccount = styled(Button).attrs(() => ({
 }))`
   height: 40px;
 `;
+
 type SectionInformativeProps = {
   message: string;
   ctaLabel: string;
   onClick: () => void;
 };
+
 const SectionInformative = ({ message, ctaLabel, onClick }: SectionInformativeProps) => (
   <Container>
     <TextWrappper>
@@ -47,4 +50,5 @@ const SectionInformative = ({ message, ctaLabel, onClick }: SectionInformativePr
     </ButtonAddAccount>
   </Container>
 );
+
 export default SectionInformative;

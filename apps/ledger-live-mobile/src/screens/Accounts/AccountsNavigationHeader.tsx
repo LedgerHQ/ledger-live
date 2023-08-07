@@ -18,7 +18,7 @@ function AccountsNavigationHeader({ readOnly, currencyId }: Props) {
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
     track("button_clicked", {
       button: "Add Account '+'",
-      screen: "Accounts",
+      page: "Accounts",
     });
     navigation.navigate(ScreenName.NoDeviceWallScreen);
   }, [navigation]);
@@ -26,7 +26,7 @@ function AccountsNavigationHeader({ readOnly, currencyId }: Props) {
   const goBack = useCallback(() => {
     track("button_clicked", {
       button: "Back",
-      screen: "Accounts",
+      page: "Accounts",
     });
     navigation.goBack();
   }, [navigation]);

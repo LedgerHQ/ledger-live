@@ -16,7 +16,10 @@ const TransactionsAlerts = () => {
     networks: ChainwatchNetwork[];
   }>("transactionsAlerts");
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
-  const supportedChains = featureTransactionsAlerts?.params?.networks || [];
+  const supportedChains = useMemo(
+    () => featureTransactionsAlerts?.params?.networks || [],
+    [featureTransactionsAlerts?.params],
+  );
   const supportedChainsIds = supportedChains.map((chain: ChainwatchNetwork) => chain.ledgerLiveId);
 
   const notifications = useSelector(notificationsSelector);
@@ -76,6 +79,7 @@ const TransactionsAlerts = () => {
     chainwatchBaseUrl,
     accountsFilteredBySupportedChains,
     notifications.transactionsAlertsCategory,
+    supportedChains,
   ]);
 
   return null;

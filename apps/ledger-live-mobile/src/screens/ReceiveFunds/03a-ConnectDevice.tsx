@@ -99,7 +99,7 @@ export default function ConnectDevice({
   const onHeaderBackButtonPress = useCallback(() => {
     track("button_clicked", {
       button: "Back arrow",
-      screen: ScreenName.ReceiveConnectDevice,
+      page: ScreenName.ReceiveConnectDevice,
     });
     navigation.goBack();
   }, [navigation]);

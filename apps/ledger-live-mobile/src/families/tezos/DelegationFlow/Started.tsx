@@ -50,9 +50,9 @@ export default function DelegationStarted({ navigation, route }: Props) {
           </Text>
           <List
             items={[
-              <Trans i18nKey="delegation.started.steps.0" />,
-              <Trans i18nKey="delegation.started.steps.1" />,
-              <Trans i18nKey="delegation.started.steps.2" />,
+              <Trans i18nKey="delegation.started.steps.0" key="DelegationText1" />,
+              <Trans i18nKey="delegation.started.steps.1" key="DelegationText2" />,
+              <Trans i18nKey="delegation.started.steps.2" key="DelegationText3" />,
             ].map(wording => ({ title: wording, bullet: Check }))}
             itemContainerProps={{
               alignItems: "center",

@@ -79,9 +79,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
+  const coreum = useFeature("currencyCoreum");
+  const polygonZkEvm = useFeature("currencyPolygonZkEvm");
+  const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
+  const base = useFeature("currencyBase");
+  const baseGoerli = useFeature("currencyBaseGoerli");
+  const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
+      // Keys in this list must match an existing currency.id
+      // Pay attention to the case!
       axelar,
       stargaze,
       umee,
@@ -109,8 +117,22 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       syscoin,
       internet_computer: internetComputer,
       telos: telosEvm,
+      coreum,
+      polygon_zk_evm: polygonZkEvm,
+      polygon_zk_evm_testnet: polygonZkEvmTestnet,
+      base,
+      base_goerli: baseGoerli,
+      klaytn,
     }),
     [
+      axelar,
+      stargaze,
+      umee,
+      desmos,
+      secretNetwork,
+      onomy,
+      quicksilver,
+      persistence,
       avaxCChain,
       stacks,
       optimism,
@@ -128,16 +150,14 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       moonriver,
       velasEvm,
       syscoin,
-      axelar,
-      stargaze,
-      umee,
-      desmos,
-      secretNetwork,
-      onomy,
-      persistence,
-      quicksilver,
       internetComputer,
       telosEvm,
+      coreum,
+      polygonZkEvm,
+      polygonZkEvmTestnet,
+      base,
+      baseGoerli,
+      klaytn,
     ],
   );
 

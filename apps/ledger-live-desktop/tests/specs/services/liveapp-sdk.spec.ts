@@ -60,17 +60,18 @@ test("Live App SDK methods @smoke", async ({ page }) => {
 
   await test.step("Request Account drawer - open", async () => {
     await liveAppWebview.requestAsset();
+    await drawer.verifyAssetIsReady();
     await expect(liveAppWebview.selectAssetTitle).toBeVisible();
   });
 
   await test.step("Request Account - select asset", async () => {
-    await liveAppWebview.selectAsset();
+    await drawer.selectCurrency("Bitcoin");
     await expect(liveAppWebview.selectAccountTitle).toBeVisible();
     await expect(liveAppWebview.selectAssetSearchBar).toBeEnabled();
   });
 
   await test.step("Request Account - select BTC", async () => {
-    await liveAppWebview.selectAccount();
+    await drawer.selectAccount("Bitcoin", 0);
     await drawer.waitForDrawerToDisappear();
     await liveAppWebview.waitForCorrectTextInWebview("mock:1:bitcoin:true_bitcoin_0:");
   });
@@ -99,9 +100,9 @@ test("Live App SDK methods @smoke", async ({ page }) => {
   });
 
   await test.step("Sign Transaction - confirmation modal", async () => {
-    await liveAppWebview.continueToSignTransaction();
+    await modal.continueToSignTransaction();
     await layout.waitForLoadingSpinnerToHaveDisappeared();
-    await liveAppWebview.waitForConfirmationScreenToBeDisplayed();
+    await modal.waitForConfirmationScreenToBeDisplayed();
     await expect(page.locator("text=0.0000123")).toBeVisible();
     await expect(page.locator("text=0.0000025")).toBeVisible();
     // This screenshot is flaky as the loading spinner appears again after this confirm modal, and on slow CI runners the screenshot can take a picture of this instead of the confirm.

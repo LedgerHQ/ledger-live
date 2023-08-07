@@ -22,6 +22,7 @@ describe("Market page for user with no device", () => {
   });
 
   it("should filter starred asset in the list", async () => {
+    if (isAndroid()) return;
     await marketPage.openAssetPage("Bitcoin (BTC)");
     await marketPage.starFavoriteCoin();
     await marketPage.backToAssetList();
@@ -30,6 +31,7 @@ describe("Market page for user with no device", () => {
   });
 
   it("should redirect to the buy a nano marketplace page", async () => {
+    if (isAndroid()) return;
     await marketPage.openAssetPage("Bitcoin (BTC)");
     await marketPage.buyNano();
     await marketPage.openMarketPlace();

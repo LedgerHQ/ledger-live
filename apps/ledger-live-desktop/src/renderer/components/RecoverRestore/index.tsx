@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { DeviceOnboarded } from "@ledgerhq/live-common/errors";
+import { DeviceAlreadySetup } from "@ledgerhq/live-common/errors";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import OnboardingNavHeader from "../Onboarding/OnboardingNavHeader";
@@ -20,6 +20,8 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
+import { urls } from "~/config/urls";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -28,6 +30,7 @@ const RecoverRestore = () => {
   const [state, setState] = useState<OnboardingState>();
   const [error, setError] = useState<Error>();
   const { setDeviceModelId } = useContext(OnboardingContext);
+  const locale = useSelector(languageSelector) || "en";
 
   // check if device is seeded when selected
   useEffect(() => {
@@ -88,8 +91,11 @@ const RecoverRestore = () => {
           <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
           {renderError({
             t,
-            error: new DeviceOnboarded(t("errors.DeviceAlreadySetup.title")),
-            device: currentDevice,
+            error: new DeviceAlreadySetup("", { device: currentDevice?.modelId ?? "device" }),
+            buyLedger:
+              urls.noDevice.buyNew[
+                locale in urls.terms ? (locale as keyof typeof urls.noDevice.buyNew) : "en"
+              ],
           })}
         </Flex>
       </Flex>

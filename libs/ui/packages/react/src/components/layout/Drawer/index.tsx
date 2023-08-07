@@ -203,7 +203,7 @@ const Drawer = (
 ): React.ReactElement => {
   const $root = React.useMemo(
     () =>
-      menuPortalTarget === undefined && typeof document !== undefined
+      menuPortalTarget === undefined && typeof document !== "undefined"
         ? document.querySelector("body")
         : menuPortalTarget,
     [menuPortalTarget],

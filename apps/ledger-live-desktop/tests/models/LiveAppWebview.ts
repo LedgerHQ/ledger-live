@@ -8,37 +8,19 @@ export class LiveAppWebview {
   readonly page: Page;
   readonly liveAppTitle: Locator;
   readonly liveAppLoadingSpinner: Locator;
-  readonly getAllAccountsButton: Locator;
-  readonly requestAccountButton: Locator;
+  readonly webview: Locator;
   readonly selectAssetTitle: Locator;
   readonly selectAssetSearchBar: Locator;
   readonly selectAccountTitle: Locator;
-  readonly selectBtcAsset: Locator;
-  readonly selectBtcAccount: Locator;
-  readonly disclaimerCheckbox: Locator;
-  readonly signNetworkWarning: Locator;
-  readonly signContinueButton: Locator;
-  readonly confirmText: Locator;
-  readonly webview: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.webview = page.locator("webview");
     this.liveAppTitle = page.locator("data-test-id=live-app-title");
     this.liveAppLoadingSpinner = page.locator("data-test-id=live-app-loading-spinner");
-    this.getAllAccountsButton = page.locator("data-test-id=get-all-accounts-button"); // TODO: make this into its own model
-    this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
     this.selectAssetTitle = page.locator("data-test-id=select-asset-drawer-title");
     this.selectAssetSearchBar = page.locator("data-test-id=select-asset-drawer-search-input");
     this.selectAccountTitle = page.locator("data-test-id=select-account-drawer-title");
-    this.selectBtcAsset = page.locator("text=Bitcoin").first();
-    this.selectBtcAccount = page.locator("text=Bitcoin 1 (legacy)").first();
-    this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
-    this.signNetworkWarning = page.locator("text=Network fees are above 10% of the amount").first();
-    this.signContinueButton = page.locator("text=Continue");
-    this.confirmText = page.locator(
-      "text=Please confirm the operation on your device to finalize it",
-    );
   }
 
   static async startLiveApp(
@@ -95,18 +77,6 @@ export class LiveAppWebview {
 
   async requestAsset() {
     await this.clickWebviewElement("[data-test-id=request-single-account-button]");
-    await this.selectAssetTitle.isVisible();
-    await this.selectAssetSearchBar.isEnabled();
-  }
-
-  async selectAsset() {
-    await this.selectBtcAsset.click();
-  }
-
-  async selectAccount() {
-    await this.selectAccountTitle.isVisible();
-    // TODO: make this dynamic with passed in variable
-    await this.selectBtcAccount.click();
   }
 
   async verifyAddress() {
@@ -119,15 +89,6 @@ export class LiveAppWebview {
 
   async signTransaction() {
     await this.clickWebviewElement("[data-test-id=sign-transaction-button]");
-    await this.signNetworkWarning.waitFor({ state: "visible" });
-  }
-
-  async continueToSignTransaction() {
-    await this.signContinueButton.click({ force: true });
-  }
-
-  async waitForConfirmationScreenToBeDisplayed() {
-    await this.confirmText.waitFor({ state: "visible" });
   }
 
   async clickWebviewElement(elementName: string) {
