@@ -44,9 +44,8 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
       setLedgerPoolsLoading(true);
-      fetchPoolDetails(account.currency, LEDGER_POOL_IDS).then(
-        (apiRes: { pools: Array<StakePool> }) => {
-          setLedgerPoolsLoading(false);
+      fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
+        .then((apiRes: { pools: Array<StakePool> }) => {
           const filteredLedgerPools = apiRes.pools.filter(
             pool => pool.poolId !== delegation?.poolId,
           );
@@ -54,10 +53,12 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
             setLedgerPools(filteredLedgerPools);
             onChangeValidator(filteredLedgerPools[0]);
           }
-        },
-      );
+        })
+        .finally(() => {
+          setLedgerPoolsLoading(false);
+        });
     }
-  }, [account, delegation?.poolId, onChangeValidator]);
+  }, []);
   const onSearch = useCallback(evt => setSearchQuery(evt.target.value), [setSearchQuery]);
   const renderItem = (validator: StakePool, validatorIdx: number) => {
     return (
