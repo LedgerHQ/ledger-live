@@ -62,7 +62,7 @@ export default function ProviderRate({
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
-  const providers = rates?.map(rate => rate.provider) ?? [];
+  const providers = [...new Set(rates?.map(rate => rate.provider) ?? [])];
   const exchangeRates =
     toCurrency && rates
       ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
