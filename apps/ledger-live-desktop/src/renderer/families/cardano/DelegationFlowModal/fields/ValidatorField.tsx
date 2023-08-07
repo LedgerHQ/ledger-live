@@ -58,6 +58,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
           setLedgerPoolsLoading(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onSearch = useCallback(evt => setSearchQuery(evt.target.value), [setSearchQuery]);
   const renderItem = (validator: StakePool, validatorIdx: number) => {

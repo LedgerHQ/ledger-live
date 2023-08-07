@@ -77,6 +77,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         .finally(() => {
           setIsFetchingPoolDetails(false);
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const chosenPool = useMemo(() => {
@@ -126,6 +127,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           poolId: chosenPool.poolId,
         }),
       );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params, updateTransaction, bridge, setTransaction, chosenPool]);
 
   const onChangePool = useCallback(() => {
@@ -361,6 +363,7 @@ function SummaryWords({
           },
         ]
       : [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chosenPool]);
 
   return (
