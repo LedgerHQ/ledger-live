@@ -23,7 +23,6 @@ type Props = {
   active?: boolean;
   onClick?: (v: StakePool) => void;
   unit: Unit;
-  disabled: boolean;
 };
 
 function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Props) {
@@ -48,7 +47,6 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
   return (
     <StyledValidatorRow
       onClick={disabled ? undefined : onClick}
-      disabled={disabled}
       key={pool.poolId}
       validator={{
         ...pool,
