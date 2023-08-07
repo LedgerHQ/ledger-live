@@ -4,7 +4,6 @@ import AccountFooter from "./AccountFooter";
 import operationDetails from "./operationDetails";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import transactionConfirmFields from "./TransactionConfirmFields";
-import AccountBodyHeader from "./AccountBodyHeader";
 import sendAmountFields from "./SendAmountFields";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
 import StakeBanner from "./StakeBanner";
@@ -15,7 +14,6 @@ const family: EvmFamily = {
   operationDetails,
   accountHeaderManageActions,
   transactionConfirmFields,
-  AccountBodyHeader,
   sendAmountFields,
   StepSummaryNetworkFeesRow,
   StakeBanner,

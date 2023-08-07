@@ -211,6 +211,7 @@ const NftViewer = ({ route }: Props) => {
   const goToRecipientSelection = useCallback(() => {
     const bridge = getAccountBridge(account);
 
+    // FIXME: fix typing (defaultTransaction and transaction are "EthTransaction | EvmTransaction" until Ethereum / evm family merge)
     const defaultTransaction = bridge.createTransaction(account);
     let transaction;
     if (defaultTransaction.family === "evm") {
@@ -223,8 +224,8 @@ const NftViewer = ({ route }: Props) => {
           contract: nft?.contract,
         },
       });
-      // TODO: should remove "ethereum" before merge
-    } else if (defaultTransaction.family === "ethereum" || defaultTransaction.family === "evm") {
+      // TODO: should be deleted after doing the merge
+    } else if (defaultTransaction.family === "ethereum") {
       transaction = bridge.updateTransaction(defaultTransaction, {
         tokenIds: [nft?.tokenId],
         // Quantity is set to Infinity first to allow the user to change it on the amount page

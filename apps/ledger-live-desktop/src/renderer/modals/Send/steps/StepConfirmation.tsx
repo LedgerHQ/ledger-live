@@ -62,7 +62,7 @@ function StepConfirmation({
     // Edit ethereum transaction nonce error because transaction has been validated
     if (error.name === "LedgerAPI4xx" && error.message.includes("nonce too low")) {
       const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-      if (mainAccount?.currency?.family === "ethereum" || mainAccount?.currency?.family === "evm") {
+      if (mainAccount?.currency?.family === "ethereum") {
         error = new TransactionHasBeenValidatedError();
       }
     }

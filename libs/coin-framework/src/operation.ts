@@ -242,20 +242,15 @@ export const isAddressPoisoningOperation = (
 
 export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
   let isEthFamily = false;
-  let isEvmFamily = false;
   if (account.type === "Account") {
     // TODO: should remove "ethereum" after the merge
     isEthFamily = account.currency.family === "ethereum";
-    isEvmFamily = account.currency.family === "evm";
   } else if (account.type === "TokenAccount") {
     // TODO: should remove "ethereum" after the merge
     isEthFamily = account.token.parentCurrency.family === "ethereum";
-    isEvmFamily = account.token.parentCurrency.family === "evm";
   }
 
-  return (
-    (isEthFamily || isEvmFamily) && operation.blockHeight === null && !!operation.transactionRaw
-  );
+  return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
 }
 
 // return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
