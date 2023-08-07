@@ -56,6 +56,7 @@
     "forgetDevice" : "デバイスの削除",
     "help" : "ヘルプ",
     "saveLogs" : "ログを保存",
+    "scrollToTop" : "上部にスクロール",
     "sync" : {
       "ago" : "{{time}}に同期済み"
     },
@@ -333,6 +334,9 @@
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
     },
+    "InvalidNonce" : {
+      "title" : "ナンスは必須です"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "アカウントは既にバリデーターへデリゲート済みです"
     },
@@ -412,6 +416,9 @@
     },
     "MaxFeeLow" : {
       "title" : "最大手数料が低すぎます。トランザクションがしばらく保留状態になる場合があります"
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "優先手数料が低すぎるため、最初の取引の優先手数料の値以上の金額を入力してください"
     },
     "NetworkDown" : {
       "title" : "インターネットがダウンしているようです。",
@@ -496,6 +503,9 @@
     "TimeoutTagged" : {
       "title" : "サーバーからの応答時間が長すぎます。（{{tag}}）",
       "description" : "タイムアウトが発生しました。"
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "トランザクション検証済み"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "トランザクションがデバイス上で拒否されました",
@@ -642,6 +652,9 @@
       "title" : "問題が発生しました。",
       "description" : "トランザクションが成立しませんでした。もう一度お試しいただくか、サポートまでご連絡ください。"
     },
+    "SwapTimeoutError" : {
+      "title" : "技術的な問題により、見積もりを作成できませんでした。しばらくしてから再度スワップをお試しください。"
+    },
     "PolkadotElectionClosed" : {
       "title" : "バリデータの選出を終了しなければなりません。"
     },
@@ -709,6 +722,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "メモの長さが長すぎます"
     },
     "StellarWrongMemoFormat" : {
       "title" : "メモのフォーマットに誤りがあります。"
@@ -830,6 +846,9 @@
     },
     "GasEstimationError" : {
       "title" : "ガスの見積もりに失敗しました"
+    },
+    "InvalidMemoICP" : {
+      "title" : "メモは数字で記入してください"
     }
   },
   "crash" : {
@@ -1460,11 +1479,11 @@
         "cta" : "次のステップ"
       },
       "recoveryPhrase" : {
-        "title" : "リカバリーフレーズ",
-        "desc" : "リカバリーフレーズは、秘密鍵をバックアップするための、24個の英単語の組み合わせです。",
-        "desc_1" : "Nanoによって唯一無二のリカバリーフレーズが生成されます。Ledger社はお客様のリカバリーフレーズを保存しません。",
+        "title" : "シークレットリカバリーフレーズ",
+        "desc" : "シークレットリカバリーフレーズは、秘密鍵をバックアップする24単語のリストです。",
+        "desc_1" : "Ledger Nanoは、一意のシークレットリカバリーフレーズを生成します。Ledgerにはフレーズは知らされません。",
         "cta" : "次のステップ",
-        "checkboxDesc" : "このリカバリーフレーズを紛失すると、Nanoにアクセスできなくなった場合に、ウォレット内の暗号資産が永久に失われてしまうことを理解しました。"
+        "checkboxDesc" : "他者が私のシークレットリカバリーフレーズを入手した場合、資産が危険にさらされることを理解しています。"
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1807,7 @@
         "title" : "Ledgerユーザーの暗号資産が保管される場所は？",
         "answers" : {
           "correct" : "ブロックチェーン",
-          "wrong" : "Nanoデバイス"
+          "wrong" : "Ledger Nanoについて"
         },
         "modal" : {
           "text" : "あなたの暗号資産は、常にブロックチェーンに保存されています。ハードウェアウォレットに保存されているのは、暗号資産へのアクセスを可能にする秘密鍵だけです。",
@@ -1796,10 +1815,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "リカバリーフレーズを誰かに知られてしまうと...",
+        "title" : "誰かが私のシークレットリカバリーフレーズにアクセスしたら...",
         "answers" : {
-          "correct" : "暗号資産が危険にさらされるため、別の安全な場所に移さなければならない",
-          "wrong" : "Ledgerに確認すれば教えてもらえるので問題ない"
+          "correct" : "資産が危険にさらされ、第三者が私の資産にアクセスする可能性がある",
+          "wrong" : "私がそのフレーズを忘れない限り問題はない"
         },
         "modal" : {
           "text" : "リカバリーフレーズを他人に知られてしまうと、簡単に暗号資産を盗まれてしまいます。\n紛失した場合は、すぐに暗号資産を安全な場所に移さなければなりません。",
@@ -1807,7 +1826,7 @@
         }
       },
       "privateKey" : {
-        "title" : "NanoをLedgerアプリに接続すると、私の秘密鍵は...",
+        "title" : "Ledger NanoをLedger Liveアプリに接続すると、私の秘密鍵は...",
         "answers" : {
           "correct" : "オフライン状態のまま",
           "wrong" : "短時間だけオンライン状態になる"
@@ -1860,7 +1879,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}}とペアリング中...",
-        "subtitle" : "{{productName}}のコードを確認してください"
+        "subtitle" : "必要に応じて、{{productName}}のコードを確認してください"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1918,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}}とペアリング中",
-        "subtitle" : "{{productName}}のコードを確認してください"
+        "subtitle" : "必要に応じて、{{productName}}のコードを確認してください"
       },
       "error" : {
         "title" : "ペアリング失敗",
@@ -2793,6 +2812,18 @@
       "desc" : "Ledger Live、Ledger製品、マーケット、おすすめに関する最新情報を入手しましょう。設定でいつでも購読解除できます",
       "allow" : "通知を許可",
       "later" : "後で"
+    },
+    "ptxServices" : {
+      "toast" : {
+        "title" : "AppleのApp Storeにおける最新のアップデートに準拠するため、この機能は一時的に利用不可となっております。デスクトップのLedger Liveでは、引き続きご利用いただけます。"
+      },
+      "drawer" : {
+        "title" : "購入・スワップ・売却の無効化",
+        "description" : "AppleのApp Storeにおける最新のアップデートに準拠するため、これらの機能はiOSでは一時的に無効化となっております。<emphasized>デスクトップのLedger Liveでは、引き続きご利用いただけます。</emphasized>",
+        "checkboxLabel" : "今後、このメッセージを表示しない",
+        "cta" : "了解",
+        "link" : "詳細はこちら"
+      }
     }
   },
   "transfer" : {
@@ -3182,7 +3213,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
-          }
+          },
+          "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
       }
     },
@@ -3513,6 +3545,39 @@
       "maxSpendable" : {
         "title" : "最大利用可能額",
         "description" : "最大利用可能額は、1回のトランザクションで送金できる、1つのアカウントの合計残高です。"
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "速度を上げる、またはキャンセルする",
+    "header" : "トランザクションを編集",
+    "learnMore" : "詳細が知りたいです",
+    "panel" : {
+      "stuckMessage" : "最も古い「送信」トランザクションが滞っています。より高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。",
+      "speedupMessage" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。"
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報： ",
+      "networkfee" : "ネットワーク手数料 = {{amount}} {{unit}}",
+      "maxFee" : "最大手数料 = {{amount}} Gwei",
+      "maxPriorityFee" : "最大優先手数料 = {{amount}} Gwei",
+      "gasPrice" : "ガス代 = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "スピードアップ",
+      "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
+    },
+    "cancel" : {
+      "title" : "キャンセル",
+      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルすることはできません。",
+      "notEnoughFundsToSpeedup" : "アカウントに十分な資金がないため、トランザクションの高速化は利用できません。",
+      "notlowestNonceToSpeedup" : "高速化機能は利用できません。以前のトランザクションが滞っているため、お客様のトランザクションは保留中です。承認されるのを待って、高速化してキャンセルすることができます。",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "速度を上げる、またはキャンセルすることはできません",
+        "description" : "このトランザクションはすでに検証済みです"
       }
     }
   },
@@ -4075,7 +4140,7 @@
   },
   "FirmwareUpdate" : {
     "title" : "ファームウェアをアップデート",
-    "updateDevice" : "{{deviceName}}をアップデートする",
+    "updateDevice" : "{{deviceName}}OSアップデート",
     "updateDone" : "完了です！お客様の{{deviceName}}は、最新の状態です",
     "updateDoneDescription" : "新しいOSバージョン：{{firmwareVersion}}",
     "preparing" : "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
@@ -4126,7 +4191,8 @@
       "preparing" : "アップデートを準備しています",
       "firmware" : "アップデートをダウンロードしています",
       "prepareUpdate" : {
-        "titleActive" : "インストール用のアップデートを準備しています",
+        "titleBackingUp" : "アプリと設定のバックアップ",
+        "titleTransferring" : "アップデートの転送",
         "description" : "構成をバックアップし、アップデートを{{deviceName}}に転送します。"
       },
       "installUpdate" : {
@@ -4139,14 +4205,18 @@
         "description" : "設定とブロックチェーンアプリが復元されます。",
         "restoreLockScreenPicture" : "ロック画面の画像を復元",
         "restoreLanguage" : "言語を復元",
-        "installingApps" : "アプリをインストール",
+        "imageLoadRequested" : "{{deviceName}}でロック画面の画像の復元を許可する",
+        "imageCommitRequested" : "{{deviceName}}の画像を確定する",
+        "allowLanguageInstallation" : "{{deviceName}}で言語の復元を許可する",
+        "allowAppsRestoration" : "{{deviceName}}でアプリの復元を許可する",
         "errors" : {
           "description" : "それが間違いであった場合は、復元を再試行できます。または、この手順をスキップすることもできます。",
           "LanguageInstallRefusedOnDevice" : "{{deviceName}}で言語の変更がキャンセルされました",
           "ImageLoadRefusedOnDevice" : "{{deviceName}}でロック画面の画像の復元がキャンセルされました",
           "ImageCommitRefusedOnDevice" : "{{deviceName}}でロック画面の画像の復元がキャンセルされました",
           "UserRefusedAllowManager" : "{{deviceName}}でアプリの復元がキャンセルされました"
-        }
+        },
+        "installingApps" : "アプリの復元"
       }
     },
     "newVersion" : "お使いの{{deviceName}}で{{version}}のアップデートが利用可能です",
@@ -4160,6 +4230,10 @@
       "TimeoutError" : {
         "title" : "アップデートタイムアウト",
         "description" : "{{deviceName}}への接続が失われたため、アップデートを完了できませんでした"
+      },
+      "CantOpenDevice" : {
+        "title" : "接続に失敗しました",
+        "description" : "{{deviceName}}への接続が失われたため、アップデートを完了できませんでした。"
       }
     }
   },
@@ -4320,6 +4394,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "合計残高にはステーキング報酬は含まれません"
+      },
+      "delegationUnavailable" : {
+        "title" : "デリゲート不可",
+        "description" : "アカウントの利用可能残高が不足しているため、新たなデリゲートを開始できません。"
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "デリゲート解除",
+      "undelegationMessage" : "デリゲートを解除すると、現在および今後のエポックを対象とした報酬を受け取ることができなくなります",
+      "verificationSuccessTitle" : "資産のデリゲートを正常に解除しました。"
+    },
+    "delegation" : {
+      "pool" : "プール",
+      "poolId" : "プールID",
+      "selectPool" : "プールを選択",
+      "pools" : "プール",
+      "delegationEarn" : "資産をデリゲートすることで、ADA報酬を獲得できます。",
+      "delegatingFrom" : "デリゲート元：",
+      "delegatingTo" : "デリゲート先：",
+      "info" : "デリゲートの仕組み",
+      "header" : "デリゲート",
+      "delegate" : "デリゲート",
+      "redelegate" : "再デリゲート",
+      "estYield" : "推定利回り",
+      "totalStake" : "合計ステーキング量",
+      "commission" : "コミッション",
+      "cost" : "費用",
+      "select" : "選択",
+      "change" : "変更",
+      "networkFees" : "ネットワーク手数料",
+      "stakeKeyRegistrationDeposit" : "ステーキングキー登録デポジット",
+      "stakeKeyRegistrationDepositRefund" : "ステーキング登録デポジットの払い戻し",
+      "stepperHeader" : {
+        "starter" : "報酬を獲得する",
+        "validator" : "資産をデリゲートする",
+        "summary" : "概要",
+        "verification" : "認証",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "ADAをプールにデリゲートして報酬を獲得できます。",
+            "steps" : {
+              "0" : "デリゲートされた資産の所有権を保持する",
+              "1" : "Ledgerデバイスを使ってデリゲートしましょう",
+              "2" : "資産は別のプールに再デリゲートすることも、いつでもデリゲート解除を選択することもできます。"
+            },
+            "cta" : "続行"
+          },
+          "validator" : {
+            "validators" : "バリデーター",
+            "myDelegations" : "デリゲート",
+            "cta" : "続行",
+            "estYield" : "推定利回り：{{amount}}",
+            "totalAvailable" : "合計利用可能額：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "noResultsFound" : "<0>{{search}}</0>のバリデーターが見つかりませんでした。"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "rewards" : "報酬",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "redelegatedFrom" : "再デリゲート元"
       }
     }
   },
@@ -6198,10 +6352,10 @@
       "status" : {
         "new" : {
           "title" : "新商品",
-          "desc" : "秘密のリカバリーフレーズなしでウォレットへのアクセスを復元します。",
+          "desc" : "ウォレットへのアクセス権を失う不安を解消しましょう。",
           "actions" : {
-            "learnMore" : "どのようなメリットがあるのでしょうか？",
-            "alreadySubscribed" : "ログイン済みですか？<LinkAccount>サブスクリプションを見る</LinkAccount>"
+            "learnMore" : "Ledger Recoverの詳細を確認",
+            "alreadySubscribed" : "すでにログイン済みの場合<LinkAccount>サブスクリプションを表示</LinkAccount>"
           }
         }
       }
