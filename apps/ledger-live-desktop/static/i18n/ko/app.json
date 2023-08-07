@@ -142,7 +142,8 @@
     "connectDevice" : "내 장치 연결하기",
     "add" : "추가",
     "or" : "또는",
-    "clearAll" : "모두 지우기"
+    "clearAll" : "모두 지우기",
+    "buyLedger" : "Ledger 구매"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -299,8 +300,7 @@
     "title" : "스왑",
     "tabs" : {
       "exchange" : "교환",
-      "history" : "내역",
-      "kyc" : "고객확인제도"
+      "history" : "내역"
     },
     "form" : {
       "changeCTA" : "변경",
@@ -355,33 +355,6 @@
         "title" : "아직 스왑이 불가능한 지역입니다",
         "content" : "조금만 기다려 주세요. <br/>조만간 해당 기능을 런칭을 앞두고 있습니다"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "고객확인제도를 완료해야 합니다",
-          "complete" : "고객확인제도 완료",
-          "update" : "고객확인제도 업데이트",
-          "rejected" : "고객확인제도가 거부되었습니다. 인증을 다시 시작하세요",
-          "rejectedContactProviderSupport" : "고객확인제도가 거부되었습니다. {{providerName}}지원팀에 문의해 주세요.",
-          "updateRequired" : "고객확인제도를 완료하거나 업데이트하세요",
-          "status" : {
-            "pending" : "고객확인제도 대기 중",
-            "approved" : "고객확인제도 승인됨",
-            "closed" : "고객확인제도 거부됨",
-            "upgradeRequired" : "고객확인제도 불충분"
-          }
-        },
-        "login" : {
-          "required" : "이 공급자로 로그인해야 합니다.",
-          "complete" : "Login"
-        },
-        "mfa" : {
-          "required" : "이 공급자와 다중인증(MFA)을 설정해야 합니다.",
-          "complete" : "다중인증(MFA) 설정"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "고객님의 출금이 {{providerName}}에 의해 차단되었습니다.\n\n 자세한 내용은 해당 지원팀에 문의하세요."
-        }
-      },
       "timeout" : {
         "message" : "기술적인 문제로 인해 견적을 생성할 수 없습니다. 잠시 후 다시 스왑을 시도해보세요."
       }
@@ -394,54 +367,6 @@
       },
       "export" : "거래 내보내기",
       "exporting" : "내보내기 중..."
-    },
-    "kyc" : {
-      "updateRequired" : "고객확인제도를 완료하려면 사용자가 애플리케이션을 업데이트해야 합니다",
-      "wyre" : {
-        "disclaimer" : "Ledger는 고객확인제도를 목적으로 Wyre를 대신하여 수집한 사용자 정보를 Wyre로 전송합니다. 자세한 정보는 ",
-        "policy" : "개인 정보 보호 정책",
-        "title" : "신원 인증",
-        "subtitle" : "Wyre로 스왑 하시려면 사용자 정보를 입력하세요.",
-        "cta" : "계속",
-        "pending" : {
-          "cta" : "계속",
-          "title" : "승인 요청을 위해 사용자 정보를 제출했습니다",
-          "subtitle" : "일반적으로 검토 완료까지 몇 분이 소요됩니다.",
-          "link" : "고객확인제도 자세히 알아보기",
-          "info" : "신원 인증: 제출 완료"
-        },
-        "closed" : {
-          "cta" : "고객확인제도 리셋",
-          "title" : "고객확인제도 신청 거부",
-          "subtitle" : "Wyre에서 고객확인제도를 위해 귀하가 제공한 데이터를 거부했습니다",
-          "link" : "고객확인제도 자세히 알아보기"
-        },
-        "form" : {
-          "firstName" : "이름",
-          "lastName" : "성",
-          "street1" : "주소 입력란 1",
-          "street2" : "주소 입력란 2",
-          "city" : "시",
-          "state" : "주",
-          "country" : "국가",
-          "postalCode" : "우편번호",
-          "dateOfBirth" : "생년월일",
-          "firstNamePlaceholder" : "이름을 입력하세요",
-          "lastNamePlaceholder" : "성을 입력하세요",
-          "street1Placeholder" : "예: 13, 메이플 스트리트",
-          "street2Placeholder" : "예: 13, 메이플 스트리트",
-          "cityPlaceholder" : "예: 산호세",
-          "postalCodePlaceholder" : "5자리 우편번호를 입력하세요",
-          "dateOfBirthPlaceholder" : "연도/월/일",
-          "firstNameError" : "계속 하려면 이름을 입력하세요",
-          "lastNameError" : "계속 하려면 성을 입력하세요",
-          "street1Error" : "주소를 입력하세요",
-          "cityError" : "미국 내 거주 도시를 입력하세요",
-          "postalCodeError" : "유효한 미국 우편번호를 입력하세요",
-          "dateOfBirthError" : "생년월일을 입력하세요",
-          "dateOfBirthValidationError" : "유효한 생년월일을 입력하세요"
-        }
-      }
     },
     "exchangeDrawer" : {
       "title" : "교환을 확인해 주세요",
@@ -491,17 +416,7 @@
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
       "learnMore" : "스왑이란?",
-      "kycRequired" : "고객확인제도 필수",
       "cta" : "계속",
-      "kyc" : {
-        "notAvailable" : "현재 위치에서 {{provider}}를 이용할 수 없습니다",
-        "status" : {
-          "required" : "고객확인제도 필수",
-          "pending" : "고객확인제도 대기 중",
-          "approved" : "고객확인제도 승인됨!",
-          "closed" : "고객확인제도 거부됨"
-        }
-      },
       "filter" : {
         "centralised" : "중앙화",
         "decentralised" : "탈중앙화",
@@ -516,55 +431,7 @@
       "subtitle" : "나의 Ledger 장치에서 암호화폐를 바로 교환하세요.",
       "disclaimer" : "계속함으로써 공급자의 고객확인제도 절차 준수를 위해 사용자의 위치 데이터가 제3자 서비스 공급자와 공유될 수 있음을 수락합니다."
     },
-    "kyc" : {
-      "updateRequired" : "고객확인제도를 완료하려면 사용자가 애플리케이션을 업데이트해야 합니다",
-      "wyre" : {
-        "disclaimer" : "Ledger는 고객확인제도를 목적으로 Wyre를 대신하여 수집한 사용자 정보를 Wyre로 전송합니다. 자세한 정보는 ",
-        "policy" : "개인 정보 보호 정책",
-        "title" : "신원 인증",
-        "subtitle" : "Wyre로 스왑 하시려면 사용자 정보를 입력하세요.",
-        "pending" : {
-          "cta" : "계속",
-          "title" : "승인 대기 중",
-          "subtitle" : "사용자의 정보가 Wyre의 승인을 위해 제출되었습니다.",
-          "link" : "고객확인제도 자세히 알아보기"
-        },
-        "closed" : {
-          "cta" : "고객확인제도 리셋",
-          "title" : "고객확인제도 신청 거부",
-          "subtitle" : "Wyre에서 고객확인제도를 위해 귀하가 제공한 데이터를 거부했습니다",
-          "link" : "고객확인제도 자세히 알아보기"
-        },
-        "form" : {
-          "firstName" : "이름",
-          "lastName" : "성",
-          "street1" : "주소 입력란 1",
-          "street2" : "주소 입력란 2",
-          "city" : "시",
-          "state" : "주",
-          "country" : "국가",
-          "postalCode" : "우편번호",
-          "dateOfBirth" : "생년월일",
-          "firstNamePlaceholder" : "이름을 입력하세요",
-          "lastNamePlaceholder" : "성을 입력하세요",
-          "street1Placeholder" : "예: 13, 메이플 스트리트",
-          "street2Placeholder" : "예: 13, 메이플 스트리트",
-          "cityPlaceholder" : "예: 산호세",
-          "postalCodePlaceholder" : "5자리 우편번호를 입력하세요",
-          "dateOfBirthPlaceholder" : "연도/월/일",
-          "firstNameError" : "계속 하려면 이름을 입력하세요",
-          "lastNameError" : "계속 하려면 성을 입력하세요",
-          "street1Error" : "주소를 입력하세요",
-          "cityError" : "미국 내 거주 도시를 입력하세요",
-          "postalCodeError" : "유효한 미국 우편번호를 입력하세요",
-          "dateOfBirthError" : "생년월일을 입력하세요",
-          "dateOfBirthValidationError" : "유효한 생년월일을 입력하세요"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Wyre로 스왑 하시려면 고객확인제도를 리셋하고 Live를 업데이트하세요",
-      "resetKYCCTA" : "고객확인제도 리셋",
       "amount" : "금액",
       "from" : {
         "title" : "수신",
@@ -596,16 +463,6 @@
       "noApp" : "{{currencyName}} 앱이 설치되지 않았습니다.",
       "outdatedApp" : "{{currencyName}} 앱 업데이트가 가능합니다.",
       "loadingRates" : "요율 로딩중..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Ledger Live의 업데이트가 필요합니다",
-      "subtitle" : "Wyre로 스왑 하시려면 Ledger Live를 최신 버전으로 업데이트하고 다시 신원 인증을 해 주세요",
-      "cta" : "인증 리셋"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "타사 로컬 데이터 삭제",
-      "subtitle" : "타사 로컬 데이터 삭제 고객확인제도를 다시 제출하거나 다시 로그인해야 파트너가 제공하는 서비스를 이용할 수 있습니다.",
-      "cta" : "Confirm"
     },
     "modal" : {
       "title" : "스왑",
@@ -2597,6 +2454,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "스테이킹 보상은 총 잔액에 포함되지 않습니다."
       }
+    },
+    "delegation" : {
+      "totalStake" : "총 스테이킹",
+      "cost" : "비용",
+      "pool" : "풀",
+      "changeDelegation" : "위임 변경",
+      "assetsAlreadyStaked" : "이미 스테이킹된 자산입니다",
+      "addFundsToStake" : "스테이킹할 자산을 추가하세요",
+      "commission" : "커미션",
+      "stakeKeyRegistrationDeposit" : "키 등록 예치금을 스테이킹하세요",
+      "delegatingTo" : "피 위임인",
+      "flow" : {
+        "title" : "위임하기",
+        "steps" : {
+          "starter" : {
+            "description" : "풀에 ADA를 위임하여 보상을 받을 수 있습니다.",
+            "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "언제든지 자산을 다른 풀에 다시 위임하거나 위임 취소를 선택할 수 있습니다."]
+          },
+          "validator" : {
+            "title" : "풀"
+          },
+          "summary" : {
+            "title" : "요약"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "위임을 취소하면 현재 및 향후 에포크에 대한 보상을 받을 수 없습니다.",
+      "refund" : "등록 예치금 환불액을 스테이킹하세요",
+      "flow" : {
+        "title" : "위임 해제",
+        "steps" : {
+          "summary" : {
+            "title" : "요약"
+          },
+          "connectDevice" : {
+            "title" : "장치"
+          },
+          "confirmation" : {
+            "title" : "확인",
+            "success" : {
+              "title" : "위임을 성공적으로 취소했습니다",
+              "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -3902,8 +3821,6 @@
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
       "catalogUrl" : "카탈로그 앱 공급자 설정",
       "catalogUrlDesc" : "사용자 지정 카탈로그 제공자 URL를 입력하세요",
-      "catalogRampServer" : "구매 / 판매 공급자 설정",
-      "catalogRampServerDesc" : "다중 거래 공급자 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
       "customLockScreen" : "맞춤식 잠금 화면 자산",
@@ -5127,6 +5044,10 @@
       "title" : "{{currencyName}}(은)는 지원되지 않습니다",
       "description" : "아직 지원되지 않는 암호화 자산입니다. Ledger 지원 부서로 문의하세요"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "사용 중인 {{device}}에 이미 비밀 복구 문구 설정이 되어 있습니다",
+      "description" : "아직 설정하지 않은 Ledger 장치를 연결하세요."
+    },
     "DeviceNotGenuine" : {
       "title" : "정품이 아닐 수 있습니다.",
       "description" : "Ledger 지원 부서로 도움을 요청하세요"
@@ -5299,6 +5220,9 @@
     },
     "NotEnoughGas" : {
       "title" : "상위 계정 잔액이 네트워크 수수료에 충분하지 않습니다"
+    },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "사용 중이신 운영 시스템이 최신 버전이 아닙니다",
