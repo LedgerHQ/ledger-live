@@ -23,7 +23,7 @@ function ReadOnlyFabActions() {
     (buttonTitle: string) => {
       track("button_clicked", {
         button: buttonTitle,
-        screen: "Account",
+        page: "Account",
         currency,
       });
       buyDevice();

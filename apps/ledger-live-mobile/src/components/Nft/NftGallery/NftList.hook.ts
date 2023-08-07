@@ -125,7 +125,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const onPressMultiselect = useCallback(() => {
     track("button_clicked", {
       button: "Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
+      page: ScreenName.WalletNftGallery,
     });
     triggerMultiSelectMode();
   }, [triggerMultiSelectMode]);
@@ -133,7 +133,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const onPressHide = useCallback(() => {
     track("button_clicked", {
       button: "Multi Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
+      page: ScreenName.WalletNftGallery,
     });
     onClickHide();
   }, [onClickHide]);
@@ -156,7 +156,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const onCancelHide = useCallback(() => {
     track("button_clicked", {
       button: "Cancel  Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
+      page: ScreenName.WalletNftGallery,
     });
     exitMultiSelectMode();
   }, [exitMultiSelectMode]);

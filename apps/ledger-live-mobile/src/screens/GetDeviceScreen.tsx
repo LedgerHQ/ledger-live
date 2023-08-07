@@ -98,7 +98,7 @@ export default function GetDeviceScreen() {
     if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "close",
-        screen: "Upsell Nano",
+        page: "Upsell Nano",
       });
     }
   }, [readOnlyModeEnabled, navigation]);
@@ -115,7 +115,7 @@ export default function GetDeviceScreen() {
     if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
-        screen: "Upsell Nano",
+        page: "Upsell Nano",
       });
     }
   }, [readOnlyModeEnabled, navigation, setFirstTimeOnboarding, setShowWelcome]);
@@ -213,7 +213,7 @@ export default function GetDeviceScreen() {
           testID="market-place-btn"
           eventProperties={{
             button: "Buy your Ledger now",
-            screen: ScreenName.GetDevice,
+            page: ScreenName.GetDevice,
           }}
           onPress={buyLedger}
           size="large"
