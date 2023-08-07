@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.13.1
+
+### Patch Changes
+
+- [#4042](https://github.com/LedgerHQ/ledger-live/pull/4042) [`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new error (only used in the device SDK) `UnresponsiveDeviceError`
+
 ## 6.13.1-next.0
 
 ### Patch Changes

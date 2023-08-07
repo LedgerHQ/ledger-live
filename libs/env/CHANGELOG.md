@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 0.4.1
+
+### Patch Changes
+
+- [#3964](https://github.com/LedgerHQ/ledger-live/pull/3964) [`770842cdbe`](https://github.com/LedgerHQ/ledger-live/commit/770842cdbe94c629b6844f93d1b5d94d381931b1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - rename optimism to op mainnet
+
 ## 0.4.1-next.0
 
 ### Patch Changes
