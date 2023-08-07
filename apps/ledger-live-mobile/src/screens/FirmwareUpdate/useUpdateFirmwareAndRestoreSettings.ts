@@ -24,6 +24,7 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
+  UnresponsiveDeviceError,
   UserRefusedAllowManager,
   WebsocketConnectionError,
   WebsocketConnectionFailed,
@@ -35,6 +36,7 @@ import {
   LanguageInstallRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
 
+// Errors related to the device connection
 export const reconnectDeviceErrors: LedgerErrorConstructor<{
   [key: string]: unknown;
 }>[] = [
@@ -42,10 +44,12 @@ export const reconnectDeviceErrors: LedgerErrorConstructor<{
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
+  UnresponsiveDeviceError,
   ConnectManagerTimeout,
 ];
 
-export const retriableErrors: LedgerErrorConstructor<{
+// Errors that could be solved by the user: either on their phone or on their device
+export const userSolvableErrors: LedgerErrorConstructor<{
   [key: string]: unknown;
 }>[] = [
   ...reconnectDeviceErrors,
@@ -197,20 +201,23 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     }
   }, [proceedToImageRestore, deviceInfo.languageId]);
 
-  // this hook controls the chaining of device actions by updating the current step
-  // when needed. It basically implements a state macgine
+  // Controls the chaining of device actions by updating the current step when needed.
+  // You can see it as a state machine.
+  // On "unrecoverable" errors we try to go to the next step to avoid letting the device is an unknown state
   useEffect(() => {
-    let retriableError;
+    let hasUnrecoverableError;
 
     switch (updateStep) {
       case "start":
         proceedToAppsBackup();
         break;
+
       case "appsBackup":
-        retriableError =
+        hasUnrecoverableError =
           connectManagerState.error &&
-          !retriableErrors.some(err => connectManagerState.error instanceof err);
-        if (connectManagerState.result || retriableError) {
+          !userSolvableErrors.some(err => connectManagerState.error instanceof err);
+
+        if (connectManagerState.result || hasUnrecoverableError) {
           if (connectManagerState.error) {
             log("FirmwareUpdate", "error while backing up device apps", connectManagerState.error);
           }
@@ -221,16 +228,20 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           proceedToImageBackup();
         }
         break;
+
       case "imageBackup":
-        retriableError =
+        hasUnrecoverableError =
           staxFetchImageState.error &&
-          !retriableErrors.some(err => staxFetchImageState.error instanceof err);
-        if (staxFetchImageState.imageFetched || retriableError) {
-          if (staxFetchImageState.error)
+          !userSolvableErrors.some(err => staxFetchImageState.error instanceof err);
+
+        if (staxFetchImageState.imageFetched || hasUnrecoverableError) {
+          if (staxFetchImageState.error) {
             log("FirmwareUpdate", "error while backing up stax image", staxFetchImageState.error);
+          }
           proceedToFirmwareUpdate();
         }
         break;
+
       case "firmwareUpdate":
         if (updateActionState.step === "preparingUpdate" && !updateActionState.lockedDevice) {
           triggerUpdate();
@@ -238,38 +249,50 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           proceedToLanguageRestore();
         }
         break;
+
       case "languageRestore":
-        retriableError =
+        hasUnrecoverableError =
           installLanguageState.error &&
-          !retriableErrors.some(err => installLanguageState.error instanceof err);
-        if (installLanguageState.languageInstalled || retriableError) {
-          if (installLanguageState.error)
+          !userSolvableErrors.some(err => installLanguageState.error instanceof err);
+
+        if (installLanguageState.languageInstalled || hasUnrecoverableError) {
+          if (installLanguageState.error) {
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
+          }
           proceedToImageRestore();
         }
         break;
+
       case "imageRestore":
-        retriableError =
+        hasUnrecoverableError =
           staxLoadImageState.error &&
-          !retriableErrors.some(err => staxLoadImageState.error instanceof err);
-        if (staxLoadImageState.imageLoaded || retriableError || !staxFetchImageState.hexImage) {
+          !userSolvableErrors.some(err => staxLoadImageState.error instanceof err);
+
+        if (
+          staxLoadImageState.imageLoaded ||
+          hasUnrecoverableError ||
+          !staxFetchImageState.hexImage
+        ) {
           if (staxLoadImageState.error) {
             log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
           }
           proceedToAppsRestore();
         }
         break;
+
       case "appsRestore":
-        retriableError =
+        hasUnrecoverableError =
           restoreAppsState.error &&
-          !retriableErrors.some(err => restoreAppsState.error instanceof err);
-        if (restoreAppsState.opened || retriableError) {
+          !userSolvableErrors.some(err => restoreAppsState.error instanceof err);
+
+        if (restoreAppsState.opened || hasUnrecoverableError) {
           if (restoreAppsState.error) {
             log("FirmwareUpdate", "error while restoring apps", restoreAppsState.error);
           }
           proceedToUpdateCompleted();
         }
         break;
+
       default:
         break;
     }
@@ -319,9 +342,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     ],
   );
 
-  const hasRetriableErrors = useMemo(
+  // An error that can be solved by a user action exists
+  const hasUserSolvableErrors = useMemo(
     () =>
-      retriableErrors.some(
+      userSolvableErrors.some(
         err =>
           connectManagerState.error instanceof err ||
           staxFetchImageState.error instanceof err ||
@@ -447,7 +471,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     noOfAppsToReinstall: installedApps.length,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
-    hasRetriableErrors,
+    hasUserSolvableErrors,
     restoreStepDeniedError,
   };
 };
