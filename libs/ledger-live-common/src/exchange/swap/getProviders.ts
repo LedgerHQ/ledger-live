@@ -23,6 +23,8 @@ const getProviders: GetProviders = async () => {
     throw new SwapNoAvailableProviders();
   }
 
+  const { currencies } = responseV4;
+
   return Object.entries(responseV4.providers).flatMap(([provider, groups]) => {
     return {
       provider: provider,
@@ -30,8 +32,8 @@ const getProviders: GetProviders = async () => {
         group.methods.flatMap(tradeMethod =>
           Object.entries(group.pairs).flatMap(([from, toArray]) =>
             toArray.map(to => ({
-              from: responseV4.currencies[from],
-              to: responseV4.currencies[to.toString()],
+              from: currencies[from],
+              to: currencies[to],
               tradeMethod,
             })),
           ),
