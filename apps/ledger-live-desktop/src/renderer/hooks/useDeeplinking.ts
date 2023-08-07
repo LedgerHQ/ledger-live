@@ -115,7 +115,7 @@ export function useDeepLinkHandler() {
           currency,
           installApp,
           appName,
-          ...ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {},
+          ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
         });
       }
       switch (url) {
