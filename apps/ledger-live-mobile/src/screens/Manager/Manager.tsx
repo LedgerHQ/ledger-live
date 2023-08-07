@@ -180,10 +180,11 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   );
 
   const onBackFromNewUpdateUx = useCallback(() => {
-    navigation.replace(ScreenName.Manager, {
-      device,
-    });
-  }, [device, navigation]);
+    // Navigating back to the main manager screen without settings a device
+    // so it does not try to automatically connect to the device while it
+    // might still be on an unknown state because the fw update was just stopped
+    navigation.replace(ScreenName.Manager);
+  }, [navigation]);
 
   return (
     <>
