@@ -16,7 +16,14 @@ import {
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { LanguageIds, Languages, Language, Locale, DEFAULT_LANGUAGE } from "~/config/languages";
+import {
+  LanguageIds,
+  Languages,
+  Language,
+  Locale,
+  DEFAULT_LANGUAGE,
+  Locales,
+} from "~/config/languages";
 import { State } from ".";
 import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
@@ -108,9 +115,11 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
 
   // If language found, try to find corresponding locale
   if (languageId) {
-    const a: Language = "de";
+    // const localeId = Languages[languageId].locales.find(lang => systemLocal.startsWith(lang));
+    // TODO Hack because the typing on the commented line above doesn't work
+    const languageLocales = Languages[languageId].locales as Locales;
 
-    const localeId = Languages[a].locales.find(lang => systemLocal.startsWith(lang));
+    const localeId = languageLocales.find(lang => systemLocal.startsWith(lang));
 
     // If locale matched returns it, if not returns the default locale of the language
     if (localeId) return { language: languageId, locale: localeId };

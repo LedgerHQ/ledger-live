@@ -7,6 +7,7 @@ export const LanguageIds = ["en", "fr", "de", "ru", "es", "ja", "tr", "ko", "zh"
 
 /**
  * This is the only place new locale should be added.
+ * @dev The first element is the default locale of the language.
  */
 export const LocaleIds = {
   en: ["en-US"],
@@ -32,14 +33,25 @@ export type Language = (typeof LanguageIds)[number];
 export type Locale = (typeof LocaleIds)[keyof typeof LocaleIds][number];
 
 /**
+ * This is the Locales type.
+ * @dev It includes a custom `default` field. It refers to the default
+ * locale of the language.
+ */
+export type Locales = readonly Locale[] & { readonly default: Locale };
+
+/**
  * This is the Language definition type.
  */
 export type LanguageDefinition = {
   id: Language;
+
+  // Locales
+  locales: Locales;
+
+  // Metadata
   label: string;
 
-  locales: readonly Locale[] & { readonly default: Locale };
-
+  // Language device information
   deviceSupport?: { label: DeviceLanguages; id: number };
 };
 
@@ -50,21 +62,21 @@ export const Languages = {
   en: {
     id: "en",
     label: "English",
-    locales: addDefault(LocaleIds.en),
+    locales: buildLocales(LocaleIds.en),
 
     deviceSupport: { label: "english", id: languageIds.english },
   },
   fr: {
     id: "fr",
     label: "Français",
-    locales: addDefault(LocaleIds.fr),
+    locales: buildLocales(LocaleIds.fr),
 
     deviceSupport: { label: "french", id: languageIds.french },
   },
   es: {
     id: "es",
     label: "Español",
-    locales: addDefault(LocaleIds.es),
+    locales: buildLocales(LocaleIds.es),
 
     deviceSupport: { label: "spanish", id: languageIds.spanish },
   },
@@ -72,44 +84,37 @@ export const Languages = {
   de: {
     id: "de",
     label: "Deutsch",
-    locales: addDefault(LocaleIds.de),
-    deviceSupport: undefined,
+    locales: buildLocales(LocaleIds.de),
   },
   ja: {
     id: "ja",
     label: "日本語",
-    locales: addDefault(LocaleIds.ja),
-    deviceSupport: undefined,
+    locales: buildLocales(LocaleIds.ja),
   },
   ko: {
     id: "ko",
     label: "한국어",
-    locales: addDefault(LocaleIds.ko),
-    deviceSupport: undefined,
+    locales: buildLocales(LocaleIds.ko),
   },
   pt: {
     id: "pt",
     label: "Português (Brasil)",
-    locales: addDefault(LocaleIds.pt),
-    deviceSupport: undefined,
+    locales: buildLocales(LocaleIds.pt),
   },
   ru: {
     id: "ru",
     label: "Русский",
-    locales: addDefault(LocaleIds.ru),
-    deviceSupport: undefined,
+    locales: buildLocales(LocaleIds.ru),
   },
   tr: {
     id: "tr",
     label: "Türkçe",
-    locales: addDefault(LocaleIds.tr),
-    deviceSupport: undefined,
+    locales: buildLocales(LocaleIds.tr),
   },
   zh: {
     id: "zh",
     label: "简体中文",
-    locales: addDefault(LocaleIds.zh),
-    deviceSupport: undefined,
+    locales: buildLocales(LocaleIds.zh),
   },
 } as const satisfies LocaleMap<LanguageDefinition>;
 
@@ -122,12 +127,12 @@ export const DEFAULT_LANGUAGE = Languages.en;
  * List of languages that should be prompted to existing users once if they are
  * using LL in english. It basically reprensents all the Languages minus "en".
  * */
-export const pushedLanguages = LanguageIds.filter(e => e !== "en");
+export const pushedLanguages = LanguageIds.filter(e => e !== "en") as Exclude<Language, "en">[];
 
 /**
  * Utils functions
  */
-function addDefault<T extends readonly unknown[]>(src: T): T & { default: T[0] } {
+function buildLocales<T extends readonly unknown[]>(src: T): T & { default: T[0] } {
   return Object.assign(src, { default: src[0] });
 }
 
@@ -135,4 +140,4 @@ function addDefault<T extends readonly unknown[]>(src: T): T & { default: T[0] }
  * Utils types
  */
 type LanguagePrefixed = `${Language}-${string}`;
-type LocaleMap<T = string> = { [key in Language]: T };
+type LocaleMap<T> = { [key in Language]: T };

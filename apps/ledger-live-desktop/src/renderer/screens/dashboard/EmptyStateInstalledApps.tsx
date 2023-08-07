@@ -9,7 +9,6 @@ import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
 import { DefaultTheme, withTheme } from "styled-components";
-import { urls } from "~/config/urls";
 import { useDynamicUrl } from "~/renderer/terms";
 
 const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {

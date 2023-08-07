@@ -56,7 +56,7 @@ const LanguageBox = styled(Box).attrs(() => ({
 }))``;
 const SystemLanguageAvailableBody = (props: Props) => {
   const { onClose, data } = props;
-  const { osLanguage, currentLanguage } = data;
+  const { osLanguage } = data;
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const targetLanguageTranslated = t(`language.switcher.${osLanguage}`);
