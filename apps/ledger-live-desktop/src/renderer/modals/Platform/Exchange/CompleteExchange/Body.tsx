@@ -56,13 +56,16 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     }
   }, [onCancel, error]);
   const signRequest = useMemo(
-    () => (transaction ? {
-      tokenCurrency,
-      parentAccount,
-      account,
-      transaction,
-      appName: "Exchange",
-    } : null),
+    () =>
+      transaction
+        ? {
+            tokenCurrency,
+            parentAccount,
+            account,
+            transaction,
+            appName: "Exchange",
+          }
+        : null,
     [account, parentAccount, tokenCurrency, transaction],
   );
   return (
