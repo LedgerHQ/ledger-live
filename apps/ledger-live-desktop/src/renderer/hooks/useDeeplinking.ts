@@ -104,10 +104,10 @@ export function useDeepLinkHandler() {
       // Track deeplink only when ajsPropSource attribute exists.
       const ajsPropSource = searchParams.get("ajs_prop_source");
       const ajsPropCampaign = searchParams.get("ajs_prop_campaign");
-      const ajsPropTrackData= searchParams.get("ajs_prop_track_data");
+      const ajsPropTrackData = searchParams.get("ajs_prop_track_data");
 
       if (ajsPropSource) {
-        const { currency, installApp, appName, deeplinkCampaign, trackData } = query;
+        const { currency, installApp, appName } = query;
         track("deeplink_clicked", {
           deeplinkSource: ajsPropSource,
           deeplinkCampaign: ajsPropCampaign,
