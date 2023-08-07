@@ -80,10 +80,11 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
     if (result && "result" in result) {
       // FIXME: nullable stuff not taken into account here?
+      // `result` overrides values from `params` (prop `device` for ex)
       // @ts-expect-error Result has nullable fields
       navigation.navigate(ScreenName.ManagerMain, {
-        ...result,
         ...params,
+        ...result,
         searchQuery: params?.searchQuery || params?.installApp,
       });
     }
