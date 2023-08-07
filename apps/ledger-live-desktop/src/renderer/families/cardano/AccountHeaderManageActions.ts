@@ -20,7 +20,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { cardanoResources } = mainAccount as CardanoAccount;
   invariant(cardanoResources, "cardano account expected");
   const disableStakeButton =
-    (cardanoResources.delegation && cardanoResources.delegation.poolId) ||
+    (cardanoResources.delegation && !!cardanoResources.delegation.poolId) ||
     mainAccount.balance.isZero();
   const disabledLabel =
     cardanoResources.delegation && cardanoResources.delegation.poolId
@@ -32,6 +32,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     dispatch(
       openModal("MODAL_CARDANO_REWARDS_INFO", {
         account,
+        name: "MODAL_CARDANO_REWARDS_INFO",
       }),
     );
   }, [dispatch, account]);
