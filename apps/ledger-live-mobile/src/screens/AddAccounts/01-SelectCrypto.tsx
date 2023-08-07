@@ -80,14 +80,16 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
   const coreum = useFeature("currencyCoreum");
-  const polygon_zk_evm = useFeature("currencyPolygonZkEvm");
-  const polygon_zk_evm_testnet = useFeature("currencyPolygonZkEvmTestnet");
+  const polygonZkEvm = useFeature("currencyPolygonZkEvm");
+  const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
-  const base_goerli = useFeature("currencyBaseGoerli");
+  const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
+      // Keys in this list must match an existing currency.id
+      // Pay attention to the case!
       axelar,
       stargaze,
       umee,
@@ -116,10 +118,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       internet_computer: internetComputer,
       telos: telosEvm,
       coreum,
-      polygonZkEvm: polygon_zk_evm,
-      polygonZkEvmTestnet: polygon_zk_evm_testnet,
+      polygon_zk_evm: polygonZkEvm,
+      polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
-      baseGoerli: base_goerli,
+      base_goerli: baseGoerli,
       klaytn,
     }),
     [
@@ -151,10 +153,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       internetComputer,
       telosEvm,
       coreum,
-      polygon_zk_evm,
-      polygon_zk_evm_testnet,
+      polygonZkEvm,
+      polygonZkEvmTestnet,
       base,
-      base_goerli,
+      baseGoerli,
       klaytn,
     ],
   );

@@ -52,7 +52,7 @@ export const RestoreStepDenied = ({
         event="button_clicked"
         eventProperties={{
           button: "Retry",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: analyticsDrawerName,
         }}
         type="main"
@@ -68,7 +68,7 @@ export const RestoreStepDenied = ({
           event="button_clicked"
           eventProperties={{
             button: "Skip",
-            screen: "Firmware update",
+            page: "Firmware update",
             drawer: analyticsDrawerName,
           }}
           onPress={onPressSkip}

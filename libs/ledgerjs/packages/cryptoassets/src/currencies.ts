@@ -3622,8 +3622,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.icpexplorer.org/#/tx/$hash",
-        address: "https://www.icpexplorer.org/#/acct/$address",
+        tx: "https://dashboard.internetcomputer.org/transaction/$hash",
+        address: "https://dashboard.internetcomputer.org/account/$address",
       },
     ],
   },

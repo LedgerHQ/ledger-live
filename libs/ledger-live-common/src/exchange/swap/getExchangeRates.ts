@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -9,27 +9,25 @@ import {
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
-import type { Transaction } from "../../generated/types";
 import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
-import type { AvailableProviderV3, CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
+import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
 
-const getExchangeRates: GetExchangeRates = async (
-  exchange: Exchange,
-  transaction: Transaction,
-  userId?: string, // TODO remove when wyre doesn't require this for rates
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
-  providers: AvailableProviderV3[] = [],
-  timeout = undefined,
-  timeoutErrorMessage = undefined,
-) => {
+const getExchangeRates: GetExchangeRates = async ({
+  exchange,
+  transaction,
+  currencyTo,
+  providers = [],
+  timeout,
+  timeoutErrorMessage,
+}) => {
   if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
     return mockGetExchangeRates(exchange, transaction, currencyTo);
 
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
-  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountUnit(exchange.toAccount);
   const to = (currencyTo ?? getAccountCurrency(exchange.toAccount)).id;
+  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountUnit(exchange.toAccount);
   const amountFrom = transaction.amount;
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
@@ -44,12 +42,10 @@ const getExchangeRates: GetExchangeRates = async (
     amountFrom: apiAmount.toString(),
     providers: providerList,
   };
+
   const res = await network({
     method: "POST",
     url: `${getSwapAPIBaseURL()}/rate`,
-    headers: {
-      ...(userId ? { userId } : {}),
-    },
     ...(timeout ? { timeout } : {}),
     ...(timeoutErrorMessage ? { timeoutErrorMessage } : {}),
     data: request,

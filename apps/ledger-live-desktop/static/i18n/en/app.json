@@ -300,8 +300,7 @@
     "title": "Swap",
     "tabs": {
       "exchange": "Exchange",
-      "history": "History",
-      "kyc": "KYC"
+      "history": "History"
     },
     "form": {
       "changeCTA": "Change",
@@ -356,33 +355,6 @@
         "title": "Swap is not available yet in your area",
         "content": "Have a little more patience,<br/>we will launch this feature very soon"
       },
-      "providers": {
-        "kyc": {
-          "required": "You need to complete your KYC",
-          "complete": "Complete KYC",
-          "update": "Refresh KYC",
-          "rejected": "KYC rejected, start the verification again",
-          "rejectedContactProviderSupport": "KYC rejected, please contact {{providerName}} support",
-          "updateRequired": "Complete or update your KYC",
-          "status": {
-            "pending": "KYC pending",
-            "approved": "KYC approved",
-            "closed": "KYC rejected",
-            "upgradeRequired": "KYC insufficient"
-          }
-        },
-        "login": {
-          "required": "You need to login with this provider",
-          "complete": "Login"
-        },
-        "mfa": {
-          "required": "You need to set up MFA with this provider",
-          "complete": "Set up MFA"
-        },
-        "withdrawalsBlockedError": {
-          "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
-        }
-      },
       "timeout": {
         "message": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
       }
@@ -395,54 +367,6 @@
       },
       "export": "Export operations",
       "exporting": "Exporting..."
-    },
-    "kyc": {
-      "updateRequired": "We are unable to complete the KYC process until you update the application",
-      "wyre": {
-        "disclaimer": "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our",
-        "policy": "Privacy Policy",
-        "title": "Verify your identity",
-        "subtitle": "Please enter your information to swap with Wyre.",
-        "cta": "Continue",
-        "pending": {
-          "cta": "Continue",
-          "title": "Your information has been submitted for approval",
-          "subtitle": "It usually takes a few minutes for the review to be completed.",
-          "link": "Learn more about KYC",
-          "info": "Identity verification: Submitted"
-        },
-        "closed": {
-          "cta": "Reset KYC",
-          "title": "KYC application rejected",
-          "subtitle": "Wyre rejected the data you provided for KYC purposes",
-          "link": "Learn more about KYC"
-        },
-        "form": {
-          "firstName": "First Name",
-          "lastName": "Last Name",
-          "street1": "Street Address Line 1",
-          "street2": "Street Address Line 2",
-          "city": "City",
-          "state": "State",
-          "country": "Country",
-          "postalCode": "Zip Code",
-          "dateOfBirth": "Date of birth",
-          "firstNamePlaceholder": "Enter your first name",
-          "lastNamePlaceholder": "Enter your last name",
-          "street1Placeholder": "Eg. 13, Maple street",
-          "street2Placeholder": "Eg. 13, Maple street",
-          "cityPlaceholder": "Eg. San José",
-          "postalCodePlaceholder": "Enter your 5 digit Zip code",
-          "dateOfBirthPlaceholder": "MM/DD/YYYY",
-          "firstNameError": "Enter your first name to continue",
-          "lastNameError": "Enter your last name to continue",
-          "street1Error": "Enter your address",
-          "cityError": "Enter the city you live in the USA",
-          "postalCodeError": "Enter a valid US ZIP code",
-          "dateOfBirthError": "Enter your date of birth",
-          "dateOfBirthValidationError": "Enter a valid date of birth"
-        }
-      }
     },
     "exchangeDrawer": {
       "title": "Confirm your Exchange",
@@ -492,17 +416,7 @@
     "providers": {
       "title": "Choose a provider to swap crypto",
       "learnMore": "What is Swap?",
-      "kycRequired": "KYC Required",
       "cta": "Continue",
-      "kyc": {
-        "notAvailable": "{{provider}} is unavailable in your location",
-        "status": {
-          "required": "KYC Required",
-          "pending": "KYC Pending",
-          "approved": "KYC Approved!",
-          "closed": "KYC Rejected"
-        }
-      },
       "filter": {
         "centralised": "Centralised",
         "decentralised": "Decentralised",
@@ -517,55 +431,7 @@
       "subtitle": "Exchange crypto assets directly from your Ledger device.",
       "disclaimer": "By continuing, you accept that your location data will be shared with third party service providers in order for them to comply with their AML/KYC procedures."
     },
-    "kyc": {
-      "updateRequired": "We are unable to complete the KYC process until you update the application",
-      "wyre": {
-        "disclaimer": "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our",
-        "policy": "Privacy Policy",
-        "title": "Verify your identity",
-        "subtitle": "Please enter your information to swap with Wyre.",
-        "pending": {
-          "cta": "Continue",
-          "title": "Pending approval",
-          "subtitle": "Your information was submitted for approval by Wyre.",
-          "link": "Learn more about KYC"
-        },
-        "closed": {
-          "cta": "Reset KYC",
-          "title": "KYC application rejected",
-          "subtitle": "Wyre rejected the data you provided for KYC purposes",
-          "link": "Learn more about KYC"
-        },
-        "form": {
-          "firstName": "First Name",
-          "lastName": "Last Name",
-          "street1": "Street Address Line 1",
-          "street2": "Street Address Line 2",
-          "city": "City",
-          "state": "State",
-          "country": "Country",
-          "postalCode": "Zip Code",
-          "dateOfBirth": "Date of birth",
-          "firstNamePlaceholder": "Enter your first name",
-          "lastNamePlaceholder": "Enter your last name",
-          "street1Placeholder": "Eg. 13, Maple street",
-          "street2Placeholder": "Eg. 13, Maple street",
-          "cityPlaceholder": "Eg. San José",
-          "postalCodePlaceholder": "Enter your 5 digit Zip code",
-          "dateOfBirthPlaceholder": "MM/DD/YYYY",
-          "firstNameError": "Enter your first name to continue",
-          "lastNameError": "Enter your last name to continue",
-          "street1Error": "Enter your address",
-          "cityError": "Enter the city you live in the USA",
-          "postalCodeError": "Enter a valid US ZIP code",
-          "dateOfBirthError": "Enter your date of birth",
-          "dateOfBirthValidationError": "Enter a valid date of birth"
-        }
-      }
-    },
     "form": {
-      "resetKYC": "Reset your KYC and Update Live to Swap with Wyre",
-      "resetKYCCTA": "Reset KYC",
       "amount": "Amount",
       "from": {
         "title": "From",
@@ -597,16 +463,6 @@
       "noApp": "{{currencyName}} app not installed.",
       "outdatedApp": "{{currencyName}} app update available.",
       "loadingRates": "Loading rates..."
-    },
-    "unauthorizedRatesModal": {
-      "title": "Ledger Live needs an update",
-      "subtitle": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre",
-      "cta": "Reset verification"
-    },
-    "resetThirdPartyDataModal": {
-      "title": "Delete your local third party data",
-      "subtitle": "Delete your local third party data. You may have to resubmit your KYC and/or login again to access services provided by our partners.",
-      "cta": "Confirm"
     },
     "modal": {
       "title": "Swap",
@@ -5322,6 +5178,9 @@
     },
     "NotEnoughGas": {
       "title": "The parent account balance is insufficient for network fees"
+    },
+    "NotEnoughGasSwap": {
+      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
     },
     "OperatingSystemOutdated": {
       "title": "Your Operating System version is outdated",
