@@ -91,22 +91,7 @@ const RecoverRestore = () => {
     }
   }, [currentDevice?.modelId, history, setDeviceModelId, state]);
 
-  // retry if device is locked
-  if (error instanceof LockedDeviceError) {
-    return (
-      <Flex width="100%" height="100%" position="relative">
-        <Flex position="relative" height="100%" width="100%" flexDirection="column">
-          {renderError({
-            t,
-            error,
-            onRetry,
-            device: currentDevice,
-          })}
-        </Flex>
-      </Flex>
-    );
-  }
-
+  // retry if device error
   if (error) {
     return (
       <Flex width="100%" height="100%" position="relative">
@@ -114,6 +99,7 @@ const RecoverRestore = () => {
           {renderError({
             t,
             error,
+            onRetry,
             device: currentDevice,
           })}
         </Flex>
