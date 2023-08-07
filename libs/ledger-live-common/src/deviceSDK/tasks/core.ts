@@ -3,6 +3,7 @@ import {
   DisconnectedDevice,
   LockedDeviceError,
   TransportRaceCondition,
+  UnresponsiveDeviceError,
   createCustomErrorClass,
 } from "@ledgerhq/errors";
 import { Observable, from, of, throwError, timer } from "rxjs";
@@ -38,12 +39,13 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
               concatMap(error => {
                 let acceptedError = false;
 
-                // - LockedDeviceError: on every transport if there is a device but it is locked
+                // - LockedDeviceError and UnresponsiveDeviceError: on every transport if there is a device but it is locked
                 // - CantOpenDevice: it can come from hw-transport-node-hid-singleton/TransportNodeHid
                 //   or react-native-hw-transport-ble/BleTransport when no device is found
                 // - DisconnectedDevice: it can come from TransportNodeHid while switching app
                 if (
                   error instanceof LockedDeviceError ||
+                  error instanceof UnresponsiveDeviceError ||
                   error instanceof CantOpenDevice ||
                   error instanceof DisconnectedDevice ||
                   error instanceof TransportRaceCondition
