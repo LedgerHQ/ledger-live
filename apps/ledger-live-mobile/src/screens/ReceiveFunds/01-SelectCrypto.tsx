@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList } from "react-native";
 import type {
@@ -41,6 +41,7 @@ const renderEmptyList = () => (
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
+  const filterCurrencyIds = route?.params?.filterCurrencyIds;
 
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
@@ -64,6 +65,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       if (provider && provider?.currenciesByNetwork.length > 1) {
         navigation.navigate(ScreenName.DepositSelectNetwork, {
           provider,
+          filterCurrencyIds,
         });
         return;
       }
@@ -85,7 +87,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         });
       }
     },
-    [accounts, navigation, currenciesByProvider],
+    [currenciesByProvider, accounts, navigation, filterCurrencyIds],
   );
 
   useEffect(() => {
@@ -117,17 +119,25 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     [onPressItem],
   );
 
+  const list = useMemo(
+    () =>
+      filterCurrencyIds
+        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIds.includes(crypto.id))
+        : sortedCryptoCurrencies,
+    [filterCurrencyIds, sortedCryptoCurrencies],
+  );
+
   return (
     <>
       <TrackScreen category="Deposit" name="Choose a crypto to secure" />
       <Text variant="h4" fontWeight="semiBold" mx={6} mb={3} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
       </Text>
-      {sortedCryptoCurrencies.length > 0 ? (
+      {list.length > 0 ? (
         <FilteredSearchBar
           keys={SEARCH_KEYS}
           inputWrapperStyle={{ marginHorizontal: 16, marginBottom: 8 }}
-          list={sortedCryptoCurrencies}
+          list={list}
           renderList={renderList}
           renderEmptySearch={renderEmptyList}
           newSearchBar
