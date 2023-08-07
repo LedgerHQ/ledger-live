@@ -162,9 +162,9 @@ export const FirmwareUpdate = ({
     restoreAppsState,
     noOfAppsToReinstall,
     deviceLockedOrUnresponsive,
-    hasReconnectErrors,
     restoreStepDeniedError,
-    hasRetriableErrors,
+    hasReconnectErrors,
+    hasUserSolvableErrors,
     skipCurrentRestoreStep,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
@@ -538,7 +538,19 @@ export const FirmwareUpdate = ({
       );
     }
 
-    const error = hasRetriableErrors
+    /**
+     * Finds the user-solvable error from the (current) fw update step, if there is one.
+     * If there is an error during the current fw update step but it is not user-solvable,
+     * then either: this current fw update step is skipped or this error is ignored
+     * (logic handled in `useUpdateFirmwareAndRestoreSettings`).
+     * And in both cases: nothing is displayed to the user (logs are saved from the hook).
+     *
+     * Especially: a `TransportRaceCondition` error is to be expected since we chain multiple
+     * device actions that use different transport acquisition paradigms the action should,
+     * however, retry to execute and resolve the error by itself.
+     * There is no need to present the error to the user.
+     */
+    const error = hasUserSolvableErrors
       ? updateActionState.error ??
         restoreAppsState.error ??
         installLanguageState.error ??
@@ -546,16 +558,7 @@ export const FirmwareUpdate = ({
         staxFetchImageState.error
       : undefined;
 
-    // a TransportRaceCondition error is to be expected since we chain multiple
-    // device actions that use different transport acquisition paradigms
-    // the action should, however, retry to execute and resolve the error by itself
-    // no need to present the error to the user
-    if (
-      error &&
-      !["TransportRaceCondition", "LockedDeviceError", "UnresponsiveDeviceError"].includes(
-        error.name,
-      )
-    ) {
+    if (error) {
       return (
         <DeviceActionError
           device={device}
@@ -645,7 +648,7 @@ export const FirmwareUpdate = ({
     installLanguageState.languageInstallationRequested,
     installLanguageState.error,
     restoreStepDeniedError,
-    hasRetriableErrors,
+    hasUserSolvableErrors,
     updateActionState.error,
     updateActionState.step,
     updateActionState.progress,
