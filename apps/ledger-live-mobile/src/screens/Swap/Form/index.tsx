@@ -142,7 +142,7 @@ export function SwapForm({
         exchangeRateList: string[];
       }>((prev, curr) => {
         return {
-          partnersList: [...prev.partnersList, curr.provider],
+          partnersList: [...new Set([...prev.partnersList, curr.provider])],
           exchangeRateList: [
             ...prev.exchangeRateList,
             formatCurrencyUnit(getFeesUnit(swapTransaction.swap.to.currency!), curr.toAmount),
