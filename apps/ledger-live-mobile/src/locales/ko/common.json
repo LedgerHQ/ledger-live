@@ -56,6 +56,7 @@
     "forgetDevice" : "장치 제거",
     "help" : "도움말",
     "saveLogs" : "로그 저장",
+    "scrollToTop" : "맨위로 스크롤하기",
     "sync" : {
       "ago" : "{{time}}에 동기화됨"
     },
@@ -333,6 +334,9 @@
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
     },
+    "InvalidNonce" : {
+      "title" : "논스가 필요합니다"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "귀하의 계정은 이미 이 검증인에게 위임되었습니다"
     },
@@ -412,6 +416,9 @@
     },
     "MaxFeeLow" : {
       "title" : "최대 비용이 너무 낮습니다. 트랜잭션이 당분간 보류 상태일 수 있습니다."
+    },
+    "MaxPriorityFeeLowerThanInitial" : {
+      "title" : "우선 수수료가 너무 낮습니다. 초기 트랜잭션의 우선 수수료 값보다 높은 금액을 입력하세요."
     },
     "NetworkDown" : {
       "title" : "죄송하지만 인터넷이 끊긴 것 같습니다",
@@ -496,6 +503,9 @@
     "TimeoutTagged" : {
       "title" : "죄송하지만 서버 응답에 너무 많은 시간이 소요되었습니다 ({{tag}})",
       "description" : "타임아웃이 발생했습니다."
+    },
+    "TransactionAlreadyValidated" : {
+      "title" : "트랜잭션이 이미 검증되었습니다"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "장치에서 트랜잭션이 거부되었습니다",
@@ -642,6 +652,9 @@
       "title" : "문제가 발생했습니다",
       "description" : "교환 트랜잭션이 완료되지 않았습니다. 다시 시도하거나 지원에 연락하세요."
     },
+    "SwapTimeoutError" : {
+      "title" : "기술적인 문제로 인해 견적을 생성할 수 없습니다. 잠시 후 다시 스왑을 시도해보세요."
+    },
     "PolkadotElectionClosed" : {
       "title" : "검증인 선출을 종료해야 합니다"
     },
@@ -709,6 +722,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "수수료 지불에 필요한 충분한 자금이 있는지 반드시 확인해 주세요"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "메모 길이가 너무 깁니다"
     },
     "StellarWrongMemoFormat" : {
       "title" : "메모 형식이 잘못되었습니다"
@@ -830,6 +846,9 @@
     },
     "GasEstimationError" : {
       "title" : "가스비를 추정하지 못했습니다"
+    },
+    "InvalidMemoICP" : {
+      "title" : "메모는 숫자여야 합니다"
     }
   },
   "crash" : {
@@ -1199,8 +1218,8 @@
       "start" : "시작하기",
       "noDevice" : "장치가 없나요?",
       "buy" : "{{fullDeviceName}} 구매",
-      "terms" : "By continuing, you agree to Ledger's",
-      "termsLink" : "Terms & Conditions",
+      "terms" : "계속 진행하면 Ledger의 다음 약관에 동의하는 것입니다",
+      "termsLink" : "이용약관",
       "privacyLink" : "개인 정보 보호 정책",
       "and" : "및",
       "recoverLogIn" : "Ledger Recover 로그인"
@@ -1460,11 +1479,11 @@
         "cta" : "다음 단계"
       },
       "recoveryPhrase" : {
-        "title" : "복구 문구",
+        "title" : "비밀 복구 문구",
         "desc" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다.",
-        "desc_1" : "Nano는 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다.",
+        "desc_1" : "Ledger Nano는 고유한 비밀 복구 문구를 생성하며, Ledger는 이를 알 수 없습니다.",
         "cta" : "다음 단계",
-        "checkboxDesc" : "복구 문구를 분실할 경우, Nano에 액세스 할 수 없을 때 내 암호 화폐에 대한 액세스도 불가능함을 잘 인지하고 있습니다."
+        "checkboxDesc" : "누군가 나의 비밀 복구 문구를 손에 넣으면 내 자산이 취약해진다는 사실을 이해합니다."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1788,7 +1807,7 @@
         "title" : "Ledger 사용자로서, 내 암호화폐가 저장된 곳은:",
         "answers" : {
           "correct" : "블록체인에서",
-          "wrong" : "내 Nano 장치"
+          "wrong" : "내 Ledger Nano에서"
         },
         "modal" : {
           "text" : "사용자의 암호화폐는 언제나 블록체인에 저장됩니다. 사용자의 하드웨어 지갑은 개인 키만을 저장하고, 이 개인 키로 암호화폐에 액세스 할 수 있습니다.",
@@ -1796,10 +1815,10 @@
         }
       },
       "recoveryPhrase" : {
-        "title" : "복구 문구가 더 이상 안전하지 않거나 노출되었다면...",
+        "title" : "다른 사람이 내 비밀 복구 문구에 대한 액세스 권한을 가질 경우...",
         "answers" : {
-          "correct" : "현재 제 암호화폐가 안전하지 않아서 안전한 곳으로 전송해야 합니다",
-          "wrong" : "Ledger가 제게 복사본을 보내줄 수 있으니 괜찮습니다"
+          "correct" : "자산이 취약해지고 그 사람이 내 자산에 액세스할 수 있습니다",
+          "wrong" : "복구 문구를 기억하는 한 전혀 문제가 되지 않습니다"
         },
         "modal" : {
           "text" : "복구 문구를 알고 있는 사람이라면 누구나 귀하의 암호화폐를 가져갈 수 있습니다.\n복구 문구를 분실한 경우, 암호화폐를 안전한 장소로 신속하게 전송해야 합니다.",
@@ -1807,7 +1826,7 @@
         }
       },
       "privateKey" : {
-        "title" : "Nano를 Ledger 앱에 연결할 때, 내 개인 키는...",
+        "title" : "내 Ledger Nano를 Ledger Live 앱에 연결할 때, 내 개인 키는...",
         "answers" : {
           "correct" : "여전히 오프라인 상태입니다",
           "wrong" : "잠시 인터넷에 연결됩니다"
@@ -1860,7 +1879,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}}와 페어링...",
-        "subtitle" : "{{productName}}에서 코드를 확인합니다"
+        "subtitle" : "메시지가 표시되면 {{productName}}에서 코드를 확인합니다"
       },
       "error" : {
         "generic" : {
@@ -1899,7 +1918,7 @@
       },
       "loading" : {
         "title" : "{{deviceName}} 장치와 페어링",
-        "subtitle" : "{{productName}}에서 코드를 확인합니다"
+        "subtitle" : "메시지가 표시되면 {{productName}}에서 코드를 확인합니다"
       },
       "error" : {
         "title" : "페어링 실패",
@@ -2611,8 +2630,6 @@
         "confirm" : "토큰 숨기기"
       },
       "hideNFTCollectionCTA" : "컬렉션 숨기기",
-      "hiddenNFTCollections" : "숨겨진 NFT 컬렉션",
-      "hiddenNFTCollectionsDesc" : "계정으로 이동한 다음 컬렉션을 길게 누르고 \"컬렉션 숨기기\"를 선택하여 토큰을 숨길 수 있습니다.",
       "hideNFTCollectionModal" : {
         "title" : "컬렉션을 숨기시겠습니까?",
         "desc" : "설정 옵션에서 이 컬렉션을 숨김 해제할 수 있습니다."
@@ -2793,6 +2810,18 @@
       "desc" : "Ledger Live, Ledger 제품, 맞춤형 제안 및 시장에 대한 최신 업데이트를 받아보세요. 해제는 언제든지 가능합니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기"
+    },
+    "ptxServices" : {
+      "toast" : {
+        "title" : "애플 앱스토어의 최신 업데이트 사항 준수를 위해 이 기능을 일시적으로 사용하실 수 없습니다. 그러나 데스크탑의 Ledger Live에서는 계속 액세스하실 수 있습니다."
+      },
+      "drawer" : {
+        "title" : "매매 및 스왑 기능이 비활성화됨",
+        "description" : "애플 앱스토어의 최신 업데이트 사항 준수를 위해 이러한 기능이 iOS에서 일시적으로 비활성화됩니다. <emphasized>그러나 데스크탑의 Ledger Live에서는 계속 액세스할 수 있습니다.</emphasized>",
+        "checkboxLabel" : "추가 알림을 보내지 마세요.",
+        "cta" : "알겠습니다",
+        "link" : "자세히 알아보기"
+      }
     }
   },
   "transfer" : {
@@ -3182,7 +3211,8 @@
           },
           "withdrawalsBlockedError" : {
             "message" : "고객님의 출금이 {{providerName}}에 의해 차단되었습니다.\n\n 자세한 내용은 해당 지원팀에 문의하세요."
-          }
+          },
+          "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
       }
     },
@@ -3513,6 +3543,39 @@
       "maxSpendable" : {
         "title" : "최대 사용 가능 금액",
         "description" : "최대 사용 가능 금액은 한 트랜잭션에 보낼 수 있는 계정의 총 잔금입니다."
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "속도 올리기 또는 취소",
+    "header" : "트랜잭션 수정",
+    "learnMore" : "더 자세히 알고 싶어요",
+    "panel" : {
+      "stuckMessage" : "가장 오래 전에 실행한 '전송' 트랜잭션이 멈춘 상태입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "speedupMessage" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+    },
+    "previousFeesInfo" : {
+      "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보: ",
+      "networkfee" : "네트워크 수수료 = {{amount}} {{unit}}",
+      "maxFee" : "최대 수수료 = {{amount}} Gwei",
+      "maxPriorityFee" : "최대 우선 수수료 = {{amount}} Gwei",
+      "gasPrice" : "가스비 = {{amount}} Gwei"
+    },
+    "speedUp" : {
+      "title" : "스피드 업",
+      "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+    },
+    "cancel" : {
+      "title" : "취소",
+      "description" : "0의 {{ticker}}를 본인 주소로 전송합니다.\n취소를 보장하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
+      "notEnoughFundsToSpeedup" : "계정에 충분한 자금이 없기 때문에 트랜잭션 속도를 높일 수 없습니다.",
+      "notlowestNonceToSpeedup" : "속도 향상 기능을 사용할 수 없습니다. 이전 트랜잭션이 중단되어 현재 트랜잭션이 보류 중입니다. 확인될 때까지 기다렸다가 속도를 높이거나 취소할 수 있습니다.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "속도를 높이거나 취소할 수 없습니다",
+        "description" : "이 트랜잭션은 이미 검증되었습니다"
       }
     }
   },
@@ -4075,7 +4138,7 @@
   },
   "FirmwareUpdate" : {
     "title" : "펌웨어를 업데이트하세요",
-    "updateDevice" : "{{deviceName}} 업데이트",
+    "updateDevice" : "{{deviceName}} OS 업데이트",
     "updateDone" : "모두 완료되었습니다! {{deviceName}}가 최신 상태입니다",
     "updateDoneDescription" : "신규 OS 버전: {{firmwareVersion}}",
     "preparing" : "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
@@ -4126,7 +4189,8 @@
       "preparing" : "Preparing update",
       "firmware" : "Downloading update",
       "prepareUpdate" : {
-        "titleActive" : "업데이트 설치 준비 중",
+        "titleBackingUp" : "앱 및 설정 백업",
+        "titleTransferring" : "업데이트 전송 중",
         "description" : "구성을 백업하고 업데이트를 {{deviceName}} 장치로 전송합니다."
       },
       "installUpdate" : {
@@ -4139,14 +4203,18 @@
         "description" : "설정과 블록체인 앱이 복원됩니다.",
         "restoreLockScreenPicture" : "잠금 화면 이미지 복원",
         "restoreLanguage" : "언어 복원",
-        "installingApps" : "앱 설치",
+        "imageLoadRequested" : "{{deviceName}}에서 잠금 화면 이미지 복원 허용",
+        "imageCommitRequested" : "{{deviceName}}에서 사진을 확인하세요",
+        "allowLanguageInstallation" : "{{deviceName}}에서 언어 복구를 허용하세요",
+        "allowAppsRestoration" : "{{deviceName}}에서 앱 복구를 허용하세요",
         "errors" : {
           "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다",
           "LanguageInstallRefusedOnDevice" : "{{deviceName}}에서 언어 변경이 취소되었습니다",
           "ImageLoadRefusedOnDevice" : "{{deviceName}}에서 잠금 화면 이미지 복구가 취소되었습니다",
           "ImageCommitRefusedOnDevice" : "{{deviceName}}에서 잠금 화면 이미지 복구가 취소되었습니다",
           "UserRefusedAllowManager" : "{{deviceName}}에서 앱 복구가 취소되었습니다"
-        }
+        },
+        "installingApps" : "앱 복원"
       }
     },
     "newVersion" : "Update {{version}} available for your {{deviceName}}",
@@ -4160,6 +4228,10 @@
       "TimeoutError" : {
         "title" : "업데이트 타임아웃",
         "description" : "{{deviceName}}의 연결이 끊어져 업데이트를 완료하지 못했습니다"
+      },
+      "CantOpenDevice" : {
+        "title" : "죄송하지만, 연결에 실패했습니다",
+        "description" : "{{deviceName}}의 연결이 끊어져 업데이트를 완료하지 못했습니다."
       }
     }
   },
@@ -6025,6 +6097,7 @@
       "viewOn" : "다음에서 보기:",
       "viewInExplorer" : "탐색기에서 보기",
       "hide" : "NFT 컬렉션 숨기기",
+      "unhide" : "NFT 컬렉션 숨김 해제",
       "txDetails" : "트랜잭션 세부 사항"
     },
     "modalDisabled" : {
@@ -6159,11 +6232,20 @@
     },
     "nftGallery" : {
       "filters" : {
+        "select" : "선택",
+        "filter" : "필터",
+        "blockchain" : "블록체인",
+        "seeAll" : "모두 보기",
         "selectAndHide" : "선택 및 숨기기",
         "hide" : "{{count}}개의 컬렉션 숨기기",
+        "hiddenCollections" : "숨겨진 컬렉션",
         "hide_plural" : "{{count}}개의 컬렉션 숨기기",
-        "alertHide" : "1개의 컬렉션을 숨겼습니다. 설정의 계정 섹션으로 이동해 언제든지 숨김을 해제하고 다시 표시하세요",
-        "alertHide_plural" : "{{count}}개의 컬렉션을 숨겼습니다. 설정의 계정 섹션으로 이동해 언제든지 숨김을 해제하고 다시 표시하세요"
+        "alertHide" : "1개의 컬렉션을 숨겼습니다. 갤러리 필터에서 언제든지 숨김을 해제할 수 있습니다.",
+        "alertHide_plural" : "{{count}}개의 컬렉션을 숨겼습니다. 갤러리 필터에서 언제든지 숨김을 해제할 수 있습니다."
+      },
+      "emptyFiltered" : {
+        "title" : "기준에 맞는 NFT가 없습니다.",
+        "button" : "필터 재설정"
       },
       "empty" : {
         "title" : "아직 표시할 NFT가 없습니다",
@@ -6182,7 +6264,7 @@
       },
       "hideNftModal" : {
         "title" : "NFT 컬렉션 숨기기",
-        "desc" : "이 작업은 {{collectionName}}에서 모든 NFT를 숨김 처리합니다. 앱 설정에서 숨김 해제하여 다시 표시할 수 있습니다",
+        "desc" : "이 작업은 {{collectionName}}에서 모든 NFT를 숨김 처리합니다. 갤러리 필터에서 숨김 해제하여 다시 표시할 수 있습니다",
         "cta" : "이 NFT 숨기기"
       },
       "media" : {
@@ -6198,10 +6280,10 @@
       "status" : {
         "new" : {
           "title" : "신규",
-          "desc" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
+          "desc" : "지갑 잠김에 대해 걱정하지 마세요.",
           "actions" : {
-            "learnMore" : "그것이 제게 어떤 도움이 되나요?",
-            "alreadySubscribed" : "이미 로그인하셨나요? <LinkAccount>내 구독 보기</LinkAccount>"
+            "learnMore" : "Ledger Recover 알아보기",
+            "alreadySubscribed" : "<LinkAccount>내 구독 보기</LinkAccount>에 이미 로그인되어 있습니다"
           }
         }
       }
