@@ -92,6 +92,7 @@ export const buildOptimisticTokenOperation = (
         date: new Date(),
         extra: {},
         contract: tokenAccount.token.contractAddress,
+        transactionRaw: toTransactionRaw(transaction),
       },
     ],
   };
