@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
+import { Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -25,6 +25,7 @@ export type Data = {
   onResult: (a: Operation) => void;
   onCancel: (a: Error) => void;
   exchangeType: number;
+  rateType: number;
 };
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
@@ -55,13 +56,13 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     }
   }, [onCancel, error]);
   const signRequest = useMemo(
-    () => ({
+    () => (transaction ? {
       tokenCurrency,
       parentAccount,
       account,
       transaction,
       appName: "Exchange",
-    }),
+    } : null),
     [account, parentAccount, tokenCurrency, transaction],
   );
   return (
@@ -77,12 +78,10 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
               <ErrorDisplay error={error} />
             ) : signedOperation ? (
               <BigSpinner size={40} />
-            ) : !transaction ? (
+            ) : !signRequest ? (
               <DeviceAction
                 key="completeExchange"
                 action={exchangeAction}
-                // TODO: the proper team should investigate why the types mismatch
-                // @ts-expect-error This type is not compatible with the one expected by the action
                 request={request}
                 onResult={result => {
                   if ("completeExchangeError" in result) {
@@ -96,8 +95,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
               <DeviceAction
                 key="sign"
                 action={sendAction}
-                // TODO: the proper team should investigate why the types mismatch
-                // @ts-expect-error This type is not compatible with the one expected by the action
                 request={signRequest}
                 onResult={result => {
                   if ("transactionSignError" in result) {
