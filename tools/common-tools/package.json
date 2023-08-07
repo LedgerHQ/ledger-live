@@ -33,7 +33,7 @@
     "react-redux": "*",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "3.4.4",
     "react-select": "^5.3.2",
     "react-table": "^6.11.4",
     "rxjs": "*",

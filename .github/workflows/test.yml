@@ -194,7 +194,7 @@ jobs:
                 status: "${{ needs.test-docs.result }}",
               },
               cli: {
-                pass: ${{ needs.test-cli.outputs.test-fail != 'success' && needs.test-cli.outputs.fail != '1' }},
+                pass: ${{ needs.test-cli.outputs.test-fail == 'success' && needs.test-cli.outputs.fail != '1' }},
                 status: "${{ needs.test-docs.result }}",
               },
               libraries: {

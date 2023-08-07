@@ -17,7 +17,7 @@ const DateFormatRow = () => {
   const onClick = useCallback(() => {
     track("button_clicked", {
       button: "Date format",
-      screen: ScreenName.SettingsScreen,
+      page: ScreenName.SettingsScreen,
     });
     setModalOpen(true);
   }, []);

@@ -92,7 +92,7 @@ const CloseWarning = ({
         event="button_clicked"
         eventProperties={{
           button: "Continue update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: "Error: update not complete yet",
         }}
         type="main"
@@ -107,7 +107,7 @@ const CloseWarning = ({
         event="button_clicked"
         eventProperties={{
           button: "Exit update",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: "Error: update not complete yet",
         }}
         type="default"
@@ -566,7 +566,7 @@ export const FirmwareUpdate = ({
             event="button_clicked"
             eventProperties={{
               button: "Retry flow",
-              screen: "Firmware update",
+              page: "Firmware update",
               drawer: `Error: ${error.name}`,
             }}
             type="main"
@@ -582,7 +582,7 @@ export const FirmwareUpdate = ({
               event="button_clicked"
               eventProperties={{
                 button: "Quit flow",
-                screen: "Firmware update",
+                page: "Firmware update",
                 drawer: `Error: ${error.name}`,
               }}
               type="main"

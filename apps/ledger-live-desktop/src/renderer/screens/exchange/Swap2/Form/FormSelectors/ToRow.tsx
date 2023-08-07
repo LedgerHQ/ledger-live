@@ -26,6 +26,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
   toAccount: SwapSelectorStateType["account"];
@@ -36,6 +37,7 @@ type Props = {
   loadingRates: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
 };
+
 const InputCurrencyContainer = styled(Box)`
   ${InputContainer} {
     display: flex;
@@ -49,6 +51,7 @@ const InputCurrencyContainer = styled(Box)`
     flex: 0;
   }
 `;
+
 function ToRow({
   toCurrency,
   setToCurrency,
@@ -81,6 +84,7 @@ function ToRow({
     });
     setToCurrency(currency || undefined);
   };
+
   return (
     <>
       <Box horizontal color={"palette.text.shade40"} fontSize={3} mb={1}>

@@ -91,12 +91,6 @@ export type SettingsState = {
     hasAcceptedIPSharing: boolean;
     selectableCurrencies: string[];
     acceptedProviders: string[];
-    KYC: {
-      [x: string]: {
-        id: string;
-        status: string;
-      };
-    };
   };
   starredMarketCoins: string[];
   overriddenFeatureFlags: {
@@ -173,7 +167,6 @@ const INITIAL_STATE: SettingsState = {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
     selectableCurrencies: [],
-    KYC: {},
   },
   starredMarketCoins: [],
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
@@ -207,17 +200,11 @@ type HandlersPayloads = {
   SET_DEEPLINK_URL: string | null | undefined;
   SET_FIRST_TIME_LEND: never;
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
-  SET_SWAP_KYC: {
-    provider: string;
-    id?: string;
-    status?: string;
-  };
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
   DEBUG_TICK: never;
   ADD_STARRED_MARKET_COINS: string;
   REMOVE_STARRED_MARKET_COINS: string;
-  RESET_SWAP_LOGIN_AND_KYC_DATA: never;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -342,29 +329,6 @@ const handlers: SettingsHandlers = {
       selectableCurrencies: payload,
     },
   }),
-  SET_SWAP_KYC: (state, { payload }) => {
-    const { provider, id, status } = payload;
-    const KYC = {
-      ...state.swap.KYC,
-    };
-
-    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
-    if (id && typeof status !== "undefined") {
-      KYC[provider] = {
-        id,
-        status,
-      };
-    } else {
-      delete KYC[provider];
-    }
-    return {
-      ...state,
-      swap: {
-        ...state.swap,
-        KYC,
-      },
-    };
-  },
   SET_SWAP_ACCEPTED_IP_SHARING: (state: SettingsState, { payload }) => ({
     ...state,
     swap: {
@@ -390,13 +354,6 @@ const handlers: SettingsHandlers = {
   REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
-  }),
-  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      KYC: {},
-    },
   }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
@@ -694,7 +651,6 @@ export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,

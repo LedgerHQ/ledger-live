@@ -47,6 +47,35 @@
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
+    "./account/*": {
+      "require": "./lib/account/*.js",
+      "default": "./lib-es/account/*.js"
+    },
+    "./batcher/*": {
+      "require": "./lib/batcher/*.js",
+      "default": "./lib-es/batcher/*.js"
+    },
+    "./bot/*": {
+      "require": "./lib/bot/*.js",
+      "default": "./lib-es/bot/*.js"
+    },
+    "./bridge/*": {
+      "require": "./lib/bridge/*.js",
+      "default": "./lib-es/bridge/*.js"
+    },
+    "./currencies/*": {
+      "require": "./lib/currencies/*.js",
+      "default": "./lib-es/currencies/*.js"
+    },
+    "./nft/*": {
+      "require": "./lib/nft/*.js",
+      "default": "./lib-es/nft/*.js"
+    },
+    "./transaction/*": {
+      "require": "./lib/transaction/*.js",
+      "default": "./lib-es/transaction/*.js"
+    },
+
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
@@ -59,7 +88,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
     "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
