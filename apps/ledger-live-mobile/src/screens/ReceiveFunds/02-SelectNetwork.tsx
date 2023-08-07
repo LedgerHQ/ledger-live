@@ -34,6 +34,7 @@ const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
 
 export default function SelectNetwork({ navigation, route }: Props) {
   const provider = route?.params?.provider;
+  const filterCurrencyIds = route?.params?.filterCurrencyIds;
 
   const networks = useMemo(
     () =>
@@ -56,13 +57,17 @@ export default function SelectNetwork({ navigation, route }: Props) {
     if (!networks) {
       return [];
     } else {
-      return networks.map(net => {
+      const list = filterCurrencyIds
+        ? networks.filter(network => filterCurrencyIds.includes(network))
+        : networks;
+
+      return list.map(net => {
         const selectedCurrency = findCryptoCurrencyById(net);
         if (selectedCurrency) return selectedCurrency;
         else return null;
       });
     }
-  }, [networks]);
+  }, [filterCurrencyIds, networks]);
 
   const accounts = useSelector(flattenAccountsSelector);
 
