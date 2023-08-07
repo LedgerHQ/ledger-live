@@ -142,7 +142,8 @@
     "connectDevice" : "Conecta tu dispositivo",
     "add" : "Agregar",
     "or" : "O",
-    "clearAll" : "Borrar todo"
+    "clearAll" : "Borrar todo",
+    "buyLedger" : "Compra un Ledger"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -276,7 +277,7 @@
     "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
     "manager" : "Mi Ledger",
-    "earn" : "Gana",
+    "earn" : "Earn",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "refer" : "Refer a friend",
@@ -299,8 +300,7 @@
     "title" : "Permutar",
     "tabs" : {
       "exchange" : "Cambia",
-      "history" : "Historial",
-      "kyc" : "KYC"
+      "history" : "Historial"
     },
     "form" : {
       "changeCTA" : "Cambio",
@@ -355,33 +355,6 @@
         "title" : "La permuta aún no está disponible en tu área",
         "content" : "Ten un poco más de paciencia,<br/>implementaremos esta función muy pronto"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "Debes completar tu KYC",
-          "complete" : "Completa tu KYC",
-          "update" : "Actualiza tu KYC",
-          "rejected" : "KYC rechazado, vuelve a iniciar la verificación",
-          "rejectedContactProviderSupport" : "KYC rechazado, ponte en contacto con el soporte de {{providerName}}",
-          "updateRequired" : "Completa o actualiza tu KYC",
-          "status" : {
-            "pending" : "KYC pendiente",
-            "approved" : "KYC aprobado",
-            "closed" : "KYC rechazado",
-            "upgradeRequired" : "KYC insuficiente"
-          }
-        },
-        "login" : {
-          "required" : "Necesitas iniciar sesión con este proveedor",
-          "complete" : "Inicio de sesión"
-        },
-        "mfa" : {
-          "required" : "Necesitas configurar la MFA con este proveedor",
-          "complete" : "Configurar la MFA"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "{{providerName}} ha bloqueado tu retiro.\n\n Para obtener más información, ponte en contacto con su equipo de soporte."
-        }
-      },
       "timeout" : {
         "message" : "No se pudieron generar las cotizaciones por problemas técnicos. Intenta realizar de nuevo la permuta en unos instantes."
       }
@@ -394,54 +367,6 @@
       },
       "export" : "Exportar operaciones",
       "exporting" : "Exportando..."
-    },
-    "kyc" : {
-      "updateRequired" : "No podemos completar el proceso KYC hasta que actualices la aplicación",
-      "wyre" : {
-        "disclaimer" : "Ledger recopila tu información en nombre de WYRE y se la transfiere a WYRE con fines de KYC. Para obtener más información, ingresa a nuestro",
-        "policy" : "Política de Privacidad",
-        "title" : "Verifica tu identidad",
-        "subtitle" : "Ingresa tus datos para permutar con Wyre.",
-        "cta" : "Continuar",
-        "pending" : {
-          "cta" : "Continuar",
-          "title" : "Tus datos han sido enviados para su aprobación",
-          "subtitle" : "Completar la revisión normalmente lleva algunos minutos.",
-          "link" : "Más información sobre KYC",
-          "info" : "Verificación de identidad: Enviada"
-        },
-        "closed" : {
-          "cta" : "Restablecer KYC",
-          "title" : "Solicitud de KYC rechazada",
-          "subtitle" : "Wyre ha rechazado los datos que has proporcionado para fines de KYC",
-          "link" : "Más información sobre KYC"
-        },
-        "form" : {
-          "firstName" : "Nombre",
-          "lastName" : "Apellido",
-          "street1" : "Dirección postal línea 1",
-          "street2" : "Dirección postal línea 2",
-          "city" : "Ciudad",
-          "state" : "Provincia",
-          "country" : "País",
-          "postalCode" : "Código postal",
-          "dateOfBirth" : "Fecha de nacimiento",
-          "firstNamePlaceholder" : "Ingresa tu nombre",
-          "lastNamePlaceholder" : "Ingresa tu apellido",
-          "street1Placeholder" : "Ejemplo: Calle Maple, 13",
-          "street2Placeholder" : "Ejemplo: Calle Maple, 13",
-          "cityPlaceholder" : "Ejemplo: San José",
-          "postalCodePlaceholder" : "Ingresa tu código postal de 5 dígitos",
-          "dateOfBirthPlaceholder" : "MM/DD/AAAA",
-          "firstNameError" : "Ingresa tu nombre para continuar",
-          "lastNameError" : "Ingresa tu apellido para continuar",
-          "street1Error" : "Ingresa tu dirección",
-          "cityError" : "Ingresa la ciudad en la que vives en EE.UU.",
-          "postalCodeError" : "Ingresa un código postal de EE.UU. válido",
-          "dateOfBirthError" : "Ingresa tu fecha de nacimiento",
-          "dateOfBirthValidationError" : "Ingresa una fecha de nacimiento válida"
-        }
-      }
     },
     "exchangeDrawer" : {
       "title" : "Confirma tu Exchange",
@@ -491,17 +416,7 @@
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
       "learnMore" : "¿Qué es la permuta?",
-      "kycRequired" : "KYC necesario",
       "cta" : "Continuar",
-      "kyc" : {
-        "notAvailable" : "{{provider}} no está disponible en tu ubicación",
-        "status" : {
-          "required" : "KYC necesario",
-          "pending" : "KYC pendiente",
-          "approved" : "¡KYC aprobado!",
-          "closed" : "KYC rechazado"
-        }
-      },
       "filter" : {
         "centralised" : "Centralizado",
         "decentralised" : "Descentralizado",
@@ -516,55 +431,7 @@
       "subtitle" : "Intercambia activos cripto directamente desde tu dispositivo Ledger.",
       "disclaimer" : "Al continuar, aceptas que tus datos de ubicación serán compartidos con terceros proveedores de servicios para que cumplan con sus procedimientos de AML/KYC."
     },
-    "kyc" : {
-      "updateRequired" : "No podemos completar el proceso KYC hasta que actualices la aplicación",
-      "wyre" : {
-        "disclaimer" : "Ledger recopila tu información en nombre de WYRE y se la transfiere a WYRE con fines de KYC. Para obtener más información, ingresa a nuestro",
-        "policy" : "Política de Privacidad",
-        "title" : "Verifica tu identidad",
-        "subtitle" : "Ingresa tus datos para permutar con Wyre.",
-        "pending" : {
-          "cta" : "Continuar",
-          "title" : "Aprobación pendiente",
-          "subtitle" : "Tu información fue enviada para su aprobación por Wyre.",
-          "link" : "Más información sobre KYC"
-        },
-        "closed" : {
-          "cta" : "Restablecer KYC",
-          "title" : "Solicitud de KYC rechazada",
-          "subtitle" : "Wyre ha rechazado los datos que has proporcionado para fines de KYC",
-          "link" : "Más información sobre KYC"
-        },
-        "form" : {
-          "firstName" : "Nombre",
-          "lastName" : "Apellidos",
-          "street1" : "Dirección postal línea 1",
-          "street2" : "Dirección postal línea 2",
-          "city" : "Ciudad",
-          "state" : "Provincia",
-          "country" : "País",
-          "postalCode" : "Código postal",
-          "dateOfBirth" : "Fecha de nacimiento",
-          "firstNamePlaceholder" : "Ingresa tu nombre",
-          "lastNamePlaceholder" : "Ingresa tu apellido",
-          "street1Placeholder" : "Ejemplo: Calle Maple, 13",
-          "street2Placeholder" : "Ejemplo: Calle Maple, 13",
-          "cityPlaceholder" : "Ejemplo: San José",
-          "postalCodePlaceholder" : "Ingresa tu código postal de 5 dígitos",
-          "dateOfBirthPlaceholder" : "MM/DD/AAAA",
-          "firstNameError" : "Ingresa tu nombre para continuar",
-          "lastNameError" : "Ingresa tu apellido para continuar",
-          "street1Error" : "Ingresa tu dirección",
-          "cityError" : "Ingresa la ciudad en la que vives en EE.UU.",
-          "postalCodeError" : "Ingresa un código postal de EE.UU. válido",
-          "dateOfBirthError" : "Ingresa tu fecha de nacimiento",
-          "dateOfBirthValidationError" : "Ingresa una fecha de nacimiento válida"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Restablece tu KYC y actualiza Live para permutar con Wyre",
-      "resetKYCCTA" : "Restablecer KYC",
       "amount" : "Importe",
       "from" : {
         "title" : "De",
@@ -596,16 +463,6 @@
       "noApp" : "Aplicación de {{currencyName}} no instalada.",
       "outdatedApp" : "Actualización de la aplicación {{currencyName}} disponible.",
       "loadingRates" : "Cargando tasas..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Ledger Live requiere de una actualización",
-      "subtitle" : "Actualiza Ledger Live a la última versión y vuelve a verificar tu identidad para permutar con Wyre",
-      "cta" : "Restablece la verificación"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "Eliminar los datos locales de terceros",
-      "subtitle" : "Elimina los datos locales de terceros. Es posible que tengas que volver a realizar el KYC o iniciar sesión de nuevo para acceder a los servicios proporcionados por nuestros socios.",
-      "cta" : "Confirmar"
     },
     "modal" : {
       "title" : "Permutar",
@@ -2597,6 +2454,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "El saldo total no incluye las recompensas de participación"
       }
+    },
+    "delegation" : {
+      "totalStake" : "Participación total",
+      "cost" : "Coste",
+      "pool" : "Pool",
+      "changeDelegation" : "Cambiar delegación",
+      "assetsAlreadyStaked" : "Tus activos ya están puestos en participación",
+      "addFundsToStake" : "Agregar fondos a la puesta en participación",
+      "commission" : "Comisión",
+      "stakeKeyRegistrationDeposit" : "Depósito de registro de clave de puesta en participación",
+      "delegatingTo" : "Delegando a",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes ganar recompensas delegando tus ADA en un pool.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Puedes volver a delegar los activos a otro pool u optar por dejar de delegarlos en cualquier momento."]
+          },
+          "validator" : {
+            "title" : "Pools"
+          },
+          "summary" : {
+            "title" : "Resumen"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has delegado tus activos con éxito",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "Si dejas de delegar los activos, no recibirás ninguna recompensa por la época en curso ni las futuras",
+      "refund" : "Reembolso del depósito de registro de puesta en participación",
+      "flow" : {
+        "title" : "Desdelegar",
+        "steps" : {
+          "summary" : {
+            "title" : "Resumen"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has dejado de delegar los activos correctamente",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -3902,8 +3821,6 @@
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
       "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
       "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
-      "catalogRampServer" : "Definir los proveedores de compra y venta",
-      "catalogRampServerDesc" : "Cambiar entre varios proveedores de operaciones",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
@@ -4298,7 +4215,7 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
-        "recoverSignIn" : "Iniciar sesión para acceder a Ledger Recover",
+        "recoverSignIn" : "Iniciar sesión en Ledger Recover",
         "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
@@ -5127,6 +5044,10 @@
       "title" : "{{currencyName}} no es compatible",
       "description" : "Todavía no se admite este activo cripto. contacta al Soporte de Ledger."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Tu {{device}} ya está configurado con una Frase de recuperación secreta.",
+      "description" : "Conecta un Ledger que aún no esté configurado."
+    },
     "DeviceNotGenuine" : {
       "title" : "Posiblemente no auténtico",
       "description" : "Solicita asistencia del Soporte de Ledger"
@@ -5299,6 +5220,9 @@
     },
     "NotEnoughGas" : {
       "title" : "El saldo de la cuenta principal es insuficiente para las comisiones de red"
+    },
+    "NotEnoughGasSwap" : {
+      "title" : "En la red {{cryptoName}} es necesaria una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "La versión de tu sistema operativo está obsoleta.",
