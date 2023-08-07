@@ -22,7 +22,7 @@ export function ReferralProgram() {
       Linking.canOpenURL(path).then(() => Linking.openURL(path));
       track("banner_clicked", {
         button: "Referral program",
-        screen: ScreenName.Asset,
+        page: ScreenName.Asset,
       });
     }
   }, [referralProgramMobile]);

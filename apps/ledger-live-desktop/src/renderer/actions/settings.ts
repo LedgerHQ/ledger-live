@@ -303,17 +303,6 @@ export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
   type: "SET_SWAP_ACCEPTED_IP_SHARING",
   payload: hasAcceptedIPSharing,
 });
-export const setSwapKYCStatus = (payload: {
-  provider: string;
-  id?: string;
-  status?: string | null;
-}) => ({
-  type: "SET_SWAP_KYC",
-  payload,
-});
-export const resetSwapLoginAndKYCData = () => ({
-  type: "RESET_SWAP_LOGIN_AND_KYC_DATA",
-});
 export const addStarredMarketCoins = (payload: string) => ({
   type: "ADD_STARRED_MARKET_COINS",
   payload,

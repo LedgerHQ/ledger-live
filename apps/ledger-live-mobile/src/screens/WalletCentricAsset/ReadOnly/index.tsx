@@ -103,7 +103,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
             event="button_clicked"
             eventProperties={{
               button: "Discover the Nano",
-              screen: "Account",
+              page: "Account",
               currency: currency.name,
             }}
             screen="Account"

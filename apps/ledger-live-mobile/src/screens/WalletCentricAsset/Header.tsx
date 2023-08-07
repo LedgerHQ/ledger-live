@@ -38,7 +38,7 @@ function Header({
     if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "Back",
-        screen: "Account",
+        page: "Account",
       });
     }
     navigation.goBack();

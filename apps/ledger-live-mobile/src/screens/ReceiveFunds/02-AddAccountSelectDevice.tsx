@@ -82,7 +82,7 @@ export default function AddAccountsSelectDevice({
   const onHeaderCloseButton = useCallback(() => {
     track("button_clicked", {
       button: "Close 'x'",
-      screen: route.name,
+      page: route.name,
     });
   }, [route]);
 

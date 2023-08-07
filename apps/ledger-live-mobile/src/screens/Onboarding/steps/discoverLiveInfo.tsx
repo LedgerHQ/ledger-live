@@ -61,7 +61,7 @@ const Item = ({
     (value: string) => {
       track("button_clicked", {
         button: value,
-        screen: screenName,
+        page: screenName,
       });
     },
     [screenName],

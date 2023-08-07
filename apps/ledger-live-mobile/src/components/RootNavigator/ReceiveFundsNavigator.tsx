@@ -32,7 +32,7 @@ export default function ReceiveFundsNavigator() {
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close 'x'",
-      screen: route.name,
+      page: route.name,
     });
   }, [route]);
 
@@ -47,7 +47,7 @@ export default function ReceiveFundsNavigator() {
   const onConnectDeviceBack = useCallback((navigation: NavigationProp<Record<string, unknown>>) => {
     track("button_clicked", {
       button: "Back arrow",
-      screen: ScreenName.ReceiveConnectDevice,
+      page: ScreenName.ReceiveConnectDevice,
     });
     navigation.goBack();
   }, []);
@@ -55,14 +55,14 @@ export default function ReceiveFundsNavigator() {
   const onConfirmationClose = useCallback(() => {
     track("button_clicked", {
       button: "HeaderRight Close",
-      screen: ScreenName.ReceiveConfirmation,
+      page: ScreenName.ReceiveConfirmation,
     });
   }, []);
 
   const onVerificationConfirmationClose = useCallback(() => {
     track("button_clicked", {
       button: "HeaderRight Close",
-      screen: ScreenName.ReceiveVerificationConfirmation,
+      page: ScreenName.ReceiveVerificationConfirmation,
     });
   }, []);
 
