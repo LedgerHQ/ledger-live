@@ -55,7 +55,8 @@
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html",
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
-    "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts"
+    "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
+    "e2e:mockApiServer": "mocks-server"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
@@ -205,6 +206,7 @@
     "@babel/runtime": "^7.12.5",
     "@jest/reporters": "^29.3.1",
     "@ledgerhq/test-utils": "workspace:^",
+    "@mocks-server/main": "^4.1.0",
     "@react-native-community/cli": "^7.0.1",
     "@react-native-community/cli-platform-android": "^7.0.1",
     "@react-native-community/cli-platform-ios": "^7.0.1",

@@ -32,7 +32,21 @@ export const isSwapOperationPending: (status: string) => boolean = status =>
   !operationStatusList.finishedOK.includes(status) &&
   !operationStatusList.finishedKO.includes(status);
 
-const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
+const getSwapAPIBaseURL: () => string = () => {
+  console.log("exchange swap index - getting mock providers");
+  console.log("exchange swap index - MOCK", getEnv("MOCK"));
+  console.log("exchange swap index - APP Name", getEnv("APP_NAME"));
+  console.log("exchange swap index - PLAYWRIGHT_RUN", getEnv("PLAYWRIGHT_RUN"));
+  console.log("exchange swap index - DETOX_RUN", getEnv("DETOX_RUN"));
+  console.log("exchange swap index - SWAP_MOCK_SERVER_BASE", getEnv("SWAP_MOCK_SERVER_BASE"));
+
+  if (getEnv("MOCK") && getEnv("DETOX_RUN")) {
+    console.log("returning SWAP_MOCK_SERVER_BASE: ", getEnv("SWAP_MOCK_SERVER_BASE"));
+    return getEnv("SWAP_MOCK_SERVER_BASE");
+  }
+  console.log("returning SWAP_API_BASE: ", getEnv("SWAP_API_BASE"));
+  return getEnv("SWAP_API_BASE");
+};
 
 const SWAP_API_BASE_PATTERN = /.*\/v(?<version>\d+)\/*$/;
 const getSwapAPIVersion: () => number = () => {

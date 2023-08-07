@@ -156,6 +156,9 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   invariant(typeof arg === "object", "network takes an object as parameter");
   let promise;
 
+  console.log("request url: ", arg.url);
+  console.log("request params: ", arg.params);
+
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
       arg.timeout = getEnv("GET_CALLS_TIMEOUT");

@@ -54,6 +54,7 @@ target 'ledgerlivemobile' do
   )
 
   pod 'React-RCTText', :path => rct_text, :modular_headers => true
+  pod 'FlipperKit/SKIOSNetworkPlugin', '=' + '0.125.0'
 
   post_install do |installer|
     react_native_post_install(

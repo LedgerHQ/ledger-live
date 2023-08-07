@@ -34,6 +34,7 @@
   // Initialize Braze
   NSString *brazeApiKeyFromEnv = [ReactNativeConfig envFor:@"BRAZE_IOS_API_KEY"];
   [Appboy startWithApiKey:brazeApiKeyFromEnv inApplication:application withLaunchOptions:launchOptions];
+  [[FlipperClient sharedClient] addPlugin: [[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
 
   if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_9_x_Max) {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];

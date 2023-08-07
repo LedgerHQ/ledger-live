@@ -257,6 +257,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: boolParser,
     desc: "includes HTTP response body in logs",
   },
+  DETOX_RUN: {
+    def: false,
+    parser: boolParser,
+    desc: "true when launched for E2E Mobile testing",
+  },
   DEVICE_CANCEL_APDU_FLUSH_MECHANISM: {
     def: true,
     parser: boolParser,
@@ -570,6 +575,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: "https://swap-stg.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base staging version 5",
+  },
+  SWAP_MOCK_SERVER_BASE: {
+    def: "",
+    parser: stringParser,
+    desc: "Swap Mock Server API base",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
