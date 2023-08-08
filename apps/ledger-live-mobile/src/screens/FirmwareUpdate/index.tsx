@@ -196,7 +196,6 @@ export const FirmwareUpdate = ({
 
   const quitUpdate = useCallback(() => {
     if (onBackFromUpdate) {
-      console.log(`🦀 QUIT UPDATE ! updateStep: ${updateStep}`);
       onBackFromUpdate(updateStep);
     } else {
       navigation.goBack();
@@ -546,6 +545,8 @@ export const FirmwareUpdate = ({
     }
 
     if (restoreStepDeniedError) {
+      console.log(`restore step denied: ${JSON.stringify(restoreStepDeniedError)}`);
+
       return (
         <RestoreStepDenied
           device={device}
@@ -569,29 +570,34 @@ export const FirmwareUpdate = ({
      * however, retry to execute and resolve the error by itself.
      * There is no need to present the error to the user.
      */
-    const error = hasUserSolvableErrors
-      ? updateActionState.error ??
+    const userSolvableError = hasUserSolvableErrors
+      ? connectManagerState.error ??
+        updateActionState.error ??
         restoreAppsState.error ??
         installLanguageState.error ??
         staxLoadImageState.error ??
         staxFetchImageState.error
       : undefined;
 
-    if (error) {
+    if (userSolvableError) {
       return (
         <DeviceActionError
           device={device}
           t={t}
-          errorName={error.name}
+          errorName={userSolvableError.name}
           translationContext="FirmwareUpdate"
         >
-          <TrackScreen category={`Error: ${error.name}`} refreshSource={false} type="drawer" />
+          <TrackScreen
+            category={`Error: ${userSolvableError.name}`}
+            refreshSource={false}
+            type="drawer"
+          />
           <Button
             event="button_clicked"
             eventProperties={{
               button: "Retry flow",
               page: "Firmware update",
-              drawer: `Error: ${error.name}`,
+              drawer: `Error: ${userSolvableError.name}`,
             }}
             type="main"
             outline={false}
@@ -607,7 +613,7 @@ export const FirmwareUpdate = ({
               eventProperties={{
                 button: "Quit flow",
                 page: "Firmware update",
-                drawer: `Error: ${error.name}`,
+                drawer: `Error: ${userSolvableError.name}`,
               }}
               type="main"
               onPress={quitUpdate}
@@ -664,6 +670,7 @@ export const FirmwareUpdate = ({
     restoreAppsState.allowManagerRequestedWording,
     restoreAppsState.error,
     connectManagerState.allowManagerRequestedWording,
+    connectManagerState.error,
     installLanguageState.languageInstallationRequested,
     installLanguageState.error,
     restoreStepDeniedError,
