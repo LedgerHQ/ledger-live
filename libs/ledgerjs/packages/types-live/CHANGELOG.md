@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.38.0-nightly.1
+
+### Patch Changes
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
 ## 6.38.0-nightly.0
 
 ### Minor Changes

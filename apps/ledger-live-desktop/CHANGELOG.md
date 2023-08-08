@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.65.0-nightly.10
+
+### Patch Changes
+
+- [#4228](https://github.com/LedgerHQ/ledger-live/pull/4228) [`d4e87cb783`](https://github.com/LedgerHQ/ledger-live/commit/d4e87cb783972ac027540de8aeb7386feb6fe5e6) Thanks [@sarneijim](https://github.com/sarneijim)! - Add track properties to deeplink
+
+- Updated dependencies [[`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387)]:
+  - @ledgerhq/types-live@6.38.0-nightly.1
+  - @ledgerhq/live-common@31.4.0-nightly.9
+  - @ledgerhq/coin-evm@0.5.0-nightly.5
+  - @ledgerhq/coin-framework@0.4.1-nightly.6
+  - @ledgerhq/domain-service@1.1.7-nightly.5
+  - @ledgerhq/evm-tools@1.0.3-nightly.4
+
 ## 2.65.0-nightly.9
 
 ### Patch Changes

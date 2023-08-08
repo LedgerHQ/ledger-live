@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.28.0-nightly.10
+
+### Patch Changes
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
+- Updated dependencies [[`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387)]:
+  - @ledgerhq/types-live@6.38.0-nightly.1
+  - @ledgerhq/live-common@31.4.0-nightly.9
+  - @ledgerhq/coin-evm@0.5.0-nightly.5
+  - @ledgerhq/coin-framework@0.4.1-nightly.6
+  - @ledgerhq/domain-service@1.1.7-nightly.5
+  - @ledgerhq/evm-tools@1.0.3-nightly.4
+
 ## 3.28.0-nightly.9
 
 ### Patch Changes

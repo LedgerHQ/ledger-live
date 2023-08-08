@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 31.4.0-nightly.9
+
+### Patch Changes
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.2.5-nightly.6
+  - @ledgerhq/coin-evm@0.5.0-nightly.5
+  - @ledgerhq/coin-framework@0.4.1-nightly.6
+  - @ledgerhq/coin-polkadot@0.3.2-nightly.6
+  - @ledgerhq/domain-service@1.1.7-nightly.5
+  - @ledgerhq/evm-tools@1.0.3-nightly.4
+  - @ledgerhq/hw-app-eth@6.34.2-nightly.5
+
 ## 31.4.0-nightly.8
 
 ### Patch Changes
