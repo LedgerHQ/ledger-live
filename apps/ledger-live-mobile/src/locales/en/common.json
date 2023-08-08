@@ -6209,7 +6209,7 @@
       "title": "Next up, use your {{productName}} to...",
       "allDoneTitle": "and that’s a wrap!",
       "skip": "I’ll do this later",
-      "done": "You've just secured your future"
+      "viewWallet": "View my wallet"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
