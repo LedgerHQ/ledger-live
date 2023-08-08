@@ -461,6 +461,9 @@
       "title" : "ネットワーク手数料に必要なETHが不足しています",
       "description" : "アカウントに、ERC20トークンのトランザクションに十分なETHを送金してください。"
     },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "デリゲートに必要な残高が不足しています。"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "まだサブアカウントから送金することはできません。",
       "description" : "この機能は、最近のBabylonアップデートで導入された変更のため、後から追加される予定です。"
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Liveのアップデートが必要です。",
-      "description" : "Wyreでスワップを実行するには、Ledger Liveを最新バージョンにアップデートし、本人確認を再度行ってください"
     },
     "RecommendUndelegation" : {
       "title" : "アカウントを空にする前に、デリゲートを解除してください。"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "クリア",
       "exportLogs" : "ログを保存",
       "exportLogsDesc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
-      "resetThirdPartyData" : "サードパーティーのデータをリセット",
-      "resetThirdPartyDataDesc" : "サードパーティーのトランザクションプロバイダーへのアクセスに使用される、ローカルのサードパーティーのデータをすべて削除します。",
-      "resetThirdPartyDataModal" : "ローカルのサードパーティーのデータを削除",
-      "resetThirdPartyDataModalDesc" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC(本人確認手続き)の再提出やログインが必要になる場合があります。",
       "hardReset" : "Ledger Liveをリセット",
       "hardResetDesc" : "これは、あなたの資産には影響しません。アカウントデータ、トランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理できます。",
       "repairDevice" : "Ledgerデバイスを修理する",
@@ -2956,66 +2951,8 @@
         "whatIsSwap" : "スワップとは？",
         "disclaimer" : "Ledgerデバイスから暗号資産を直接取引できます。このサービスは、米国を含む一部の国ではご利用いただけません。"
       },
-      "unauthorizedRates" : {
-        "cta" : "認証をリセット",
-        "banner" : "Wyreでスワップを行うには、KYCをリセットしてLedger Liveをアップデートする必要があります。",
-        "bannerCTA" : "KYC（本人確認）をリセット"
-      },
       "main" : {
         "header" : "スワップ"
-      },
-      "kyc" : {
-        "disclaimer" : "位置情報データが、コンプライアンスの目的で第三者団体と共有されることに同意します。",
-        "cta" : "続行",
-        "wyre" : {
-          "title" : "KYC（本人確認）を完了する",
-          "subtitle" : "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくはプライバシーポリシーをご確認ください。",
-          "pending" : {
-            "cta" : "続行",
-            "title" : "KYC（本人確認）が提出されました。",
-            "subtitle" : "KYC（本人確認）が提出され、承認待ちの状態です。",
-            "link" : "KYC（本人確認）についての詳細"
-          },
-          "approved" : {
-            "cta" : "続行",
-            "title" : "KYC（本人確認）が承認されました！",
-            "subtitle" : "KYC（本人確認）が提出され、承認されました。",
-            "link" : "KYC（本人確認）についての詳細"
-          },
-          "closed" : {
-            "cta" : "KYC（本人確認）をリセット",
-            "title" : "KYC（本人確認）の申請却下",
-            "subtitle" : "KYC（本人確認）用に提出したデータがWyreによって却下されました。",
-            "link" : "KYC（本人確認）についての詳細"
-          },
-          "form" : {
-            "firstName" : "名前（名）",
-            "lastName" : "名前（姓）",
-            "street1" : "住所1",
-            "street2" : "住所2",
-            "city" : "市区町村",
-            "state" : "都道府県",
-            "country" : "国",
-            "postalCode" : "郵便番号",
-            "dateOfBirth" : "生年月日",
-            "firstNamePlaceholder" : "名前（名）を入力",
-            "lastNamePlaceholder" : "名前（姓）を入力",
-            "street1Placeholder" : "Eg. 13, Maple street",
-            "street2Placeholder" : "Eg. 13, Maple street",
-            "cityPlaceholder" : "Eg. San José",
-            "postalCodePlaceholder" : "5桁の郵便番号を入力",
-            "statePlaceholder" : "州を選択",
-            "dateOfBirthPlaceholder" : "YYYY-MM-DD",
-            "firstNameError" : "名前（名）を入力して続行",
-            "lastNameError" : "名前（姓）を入力して続行",
-            "street1Error" : "住所を入力",
-            "cityError" : "米国の州を入力",
-            "stateError" : "州を選択して続行",
-            "postalCodeError" : "有効な米国の郵便番号を入力してください。",
-            "dateOfBirthError" : "生年月日を入力"
-          }
-        },
-        "states" : "州を選択"
       },
       "notAvailable" : {
         "title" : "サービスが一時的に利用できない状態であるか、お住まいの国では利用できません。"
@@ -3190,34 +3127,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC(本人確認手続き)",
-            "required" : "KYCを完了する必要があります",
-            "complete" : "KYCを完了",
-            "update" : "KYCを更新",
-            "rejected" : "KYCが却下されたため、承認申請をやり直す必要があります。",
-            "rejectedContactProviderSupport" : "KYCが拒否されました。{{providerName}}サポートにお問い合わせください。",
-            "updateRequired" : "KYCを完了または更新する",
-            "status" : {
-              "pending" : "KYC申請中",
-              "approved" : "KYC承認済み",
-              "closed" : "KYC却下",
-              "upgradeRequired" : "KYC未完了"
-            }
-          },
-          "login" : {
-            "title" : "ログイン",
-            "required" : "このプロバイダーでログインする必要があります",
-            "complete" : "ログイン"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "このプロバイダーでMFA(多要素認証)を設定する必要があります",
-            "complete" : "MFAを設定"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
-          },
           "noProviders" : "結果が見つかりません。現在の設定で利用できる見積もりはありません。"
         }
       }
@@ -4145,7 +4054,9 @@
   },
   "FirmwareUpdate" : {
     "title" : "ファームウェアをアップデート",
+    "beginUpdate" : "アップデートを開始",
     "updateDevice" : "{{deviceName}}OSアップデート",
+    "releaseNotesTitle" : "OSアップデートの内容は？",
     "updateDone" : "完了です！お客様の{{deviceName}}は、最新の状態です",
     "updateDoneDescription" : "新しいOSバージョン：{{firmwareVersion}}",
     "preparing" : "ファームウェアアップデートの準備中はデバイスをスリープ状態にせず、接続を維持してください。進捗状況をお知らせします",
