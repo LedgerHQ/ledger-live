@@ -171,12 +171,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           ]),
     ],
     [
+      onBackFromUpdate,
       showAssets,
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
-      // TODO: discreetMode is never used 😱 is it safe to remove
-      // discreetMode,
       isAWalletCardDisplayed,
       t,
     ],
