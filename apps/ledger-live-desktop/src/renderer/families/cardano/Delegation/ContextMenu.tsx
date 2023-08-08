@@ -49,8 +49,6 @@ const ContextMenu = ({ account }: Props) => {
         dispatch(
           openModal("MODAL_CARDANO_DELEGATE", {
             account,
-            eventType: "redelegate",
-            stepId: "summary",
           }),
         ),
     },
@@ -70,9 +68,6 @@ const ContextMenu = ({ account }: Props) => {
         dispatch(
           openModal("MODAL_CARDANO_UNDELEGATE", {
             account,
-            eventType: "undelegate",
-            mode: "undelegate",
-            stepId: "summary",
           }),
         ),
     },

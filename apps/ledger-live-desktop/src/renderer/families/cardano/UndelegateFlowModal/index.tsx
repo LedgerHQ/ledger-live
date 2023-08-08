@@ -33,6 +33,7 @@ class UndelegationModal extends PureComponent<UnDelegationModalProps, State> {
     return (
       <Modal
         centered
+        name="MODAL_CARDANO_UNDELEGATE"
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
         width={550}

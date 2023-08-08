@@ -8,28 +8,27 @@ import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
-export type DelegationInfoModalProps = {
-  name: string;
+export type CardanoEarnRewardsInfoModalProps = {
   account: CardanoAccount;
 };
 
-export default function CardanoEarnRewardsInfoModal({ name, account }: DelegationInfoModalProps) {
+export default function CardanoEarnRewardsInfoModal({ account }: CardanoEarnRewardsInfoModalProps) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(closeModal(name));
+    dispatch(closeModal("MODAL_CARDANO_REWARDS_INFO"));
     dispatch(
       openModal("MODAL_CARDANO_DELEGATE", {
         account,
       }),
     );
-  }, [account, dispatch, name]);
+  }, [account, dispatch]);
   const onLearnMore = useCallback(() => {
     openURL(urls.cardanoStakingRewards);
   }, []);
   return (
     <EarnRewardsInfoModal
-      name={name}
+      name="MODAL_CARDANO_REWARDS_INFO"
       onNext={onNext}
       description={t("cardano.delegation.flow.steps.starter.description")}
       bullets={[
