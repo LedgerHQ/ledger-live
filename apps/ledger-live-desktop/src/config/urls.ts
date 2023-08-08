@@ -13,7 +13,7 @@ export const supportLinkByTokenType = {
   nfts: "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?utm_medium=self_referral&utm_content=receive_account_flow",
 };
 
-const errors = {
+const errors: Record<string, string> = {
   CantOpenDevice:
     "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_cantopendevice",
   WrongDeviceForAccount:

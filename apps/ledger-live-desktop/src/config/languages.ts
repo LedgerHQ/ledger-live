@@ -52,7 +52,8 @@ export type LanguageDefinition = {
   label: string;
 
   // Language device information
-  deviceSupport?: { label: DeviceLanguages; id: number };
+  // @dev enforcing `undefined`
+  deviceSupport: { label: DeviceLanguages; id: number } | undefined;
 };
 
 /**
@@ -85,36 +86,50 @@ export const Languages = {
     id: "de",
     label: "Deutsch",
     locales: buildLocales(LocaleIds.de),
+
+    deviceSupport: undefined,
   },
   ja: {
     id: "ja",
     label: "日本語",
     locales: buildLocales(LocaleIds.ja),
+
+    deviceSupport: undefined,
   },
   ko: {
     id: "ko",
     label: "한국어",
     locales: buildLocales(LocaleIds.ko),
+
+    deviceSupport: undefined,
   },
   pt: {
     id: "pt",
     label: "Português (Brasil)",
     locales: buildLocales(LocaleIds.pt),
+
+    deviceSupport: undefined,
   },
   ru: {
     id: "ru",
     label: "Русский",
     locales: buildLocales(LocaleIds.ru),
+
+    deviceSupport: undefined,
   },
   tr: {
     id: "tr",
     label: "Türkçe",
     locales: buildLocales(LocaleIds.tr),
+
+    deviceSupport: undefined,
   },
   zh: {
     id: "zh",
     label: "简体中文",
     locales: buildLocales(LocaleIds.zh),
+
+    deviceSupport: undefined,
   },
 } as const satisfies LocaleMap<LanguageDefinition>;
 
