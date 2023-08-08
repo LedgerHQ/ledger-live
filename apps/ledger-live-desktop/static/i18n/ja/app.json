@@ -1280,6 +1280,7 @@
     "hideCTA" : "トークンを非表示"
   },
   "syncOnboarding" : {
+    "exitCTA" : "設定を終了",
     "connection" : {
       "searching" : {
         "title" : "{{deviceModelName}}をコンピュータに接続",
@@ -1293,7 +1294,7 @@
       "title" : "{{deviceName}}をセットアップ",
       "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
-        "title" : "{{deviceName}}接続済み",
+        "title" : "{{deviceName}}は安全です",
         "description" : "{{deviceName}}でセットアップを続行する",
         "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。",
         "continueOnDevice" : "{{productName}}をタップして、次の画面を表示します。"
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "Ledgerアカウントにログインして本人確認を行い、リカバリーフレーズのバックアップを復元します。"
       },
       "softwareCheckContent" : {
-        "title" : "ソフトウェアのチェック",
+        "title" : {
+          "active" : "正規品チェックと\nOSアップデートチェック",
+          "completed" : "お客様の{{modelName}}は正規品で最新のものです"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "チェックをキャンセル",
+          "resumeCheckCTA" : "チェックを再開"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "セットアップを終了する",
+          "goToSettingsCTA" : "設定を開く",
+          "retryCTA" : "再試行",
+          "contactSupportCTA" : "Ledgerサポートへ問い合わせ"
+        },
+        "whyPerformChecksLink" : "これらのセキュリティチェックを実行する理由は？",
+        "startChecksCTA" : "チェックを開始",
+        "continueCTA" : "セットアップを続行する",
         "genuineCheck" : {
-          "active" : "{{deviceName}}をチェックしています",
-          "completed" : "{{deviceName}}は正規品です"
+          "title" : {
+            "active" : "正規品チェック",
+            "completed" : "お客様の{{modelName}}は正規品です",
+            "cancelled" : "正規品チェックが拒否されました"
+          },
+          "subtitle" : {
+            "active" : "このチェックにより、お持ちの{{modelName}}が公式のLedgerハードウェアであることが保証されます",
+            "cancelled" : "このチェックを許可されない場合、お客様の{{modelName}}をセットアップできません"
+          },
+          "resumeCTA" : "正規品チェックを再開"
         },
         "firmwareUpdate" : {
-          "inactive" : "ソフトウェアのチェック",
-          "active" : "ソフトウェアの更新をチェックしています",
-          "updateAvailable" : "ソフトウェアのアップデートが利用可能です{{firmwareVersion}}",
-          "recommendation" : "今すぐアップデートをダウンロードすることをお勧めします",
-          "downloadUpdate" : "アップデートをダウンロード",
-          "skipUpdate" : "今はしない",
-          "completed" : "ソフトウェアは最新です"
+          "title" : {
+            "active" : "OSアップデートチェック",
+            "completed" : "{{modelName}}のOSは最新です",
+            "updateAvailable" : "OSアップデート{{firmwareVersion}}がご利用可能です"
+          },
+          "subtitle" : {
+            "active" : "このチェックにより、お持ちの{{modelName}}のOSが最新であることが保証されます",
+            "updateAvailable" : "最新のセキュリティ機能にアクセスするために、このアップデートを実行することをお勧めします"
+          },
+          "viewUpdateCTA" : "アップデートを見る",
+          "resumeUpdateCTA" : "アップデートを再開する",
+          "skipUpdateCTA" : "アップデートをスキップする",
+          "retryUpdateCTA" : "再試行",
+          "finalStepSuccessDescription" : "OSチェックに戻る",
+          "finalStepSuccessButtonLabel" : "続行"
         }
       },
       "installApplications" : {
@@ -1344,30 +1377,10 @@
       "endOfSetup" : {
         "title" : "セットアップの終了"
       },
-      "genuineCheckModal" : {
-        "title" : "真正性確認",
-        "paragraph1" : "{{deviceName}}が正規品で安全に使用できることを確認しましょう",
-        "paragraph2" : "お客様のデバイスが改ざんされていないことを確認するためのチェックを行います。お使いの{{deviceName}}でこれを承諾していただく必要があります。",
-        "checkDeviceButton" : "デバイスをチェック"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Ledgerとの安全な接続を許可する"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "正規品チェック",
-        "paragraph1" : "正規品チェックがキャンセルされました",
-        "paragraph2" : "このチェックは、お客様の{{deviceName}}が安全に使用できることを確認するために重要です。",
-        "checkDeviceButton" : "再度チェックを実行する",
-        "cancelButton" : "後で"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "正規品チェック",
-        "paragraph1" : "お使いのデバイスは正規品ではありません",
-        "paragraph2" : "真正性チェックに失敗しました",
-        "checkDeviceButton" : "再度チェックを実行する",
-        "cancelButton" : "後で"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "{{deviceName}}でマネージャーを許可する"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "デバイスのロックを解除する"
       },
       "helpDrawer" : {
@@ -4348,7 +4361,7 @@
           },
           "4" : {
             "title" : "Ledger Recoverを使用して復元",
-            "description" : "You need to have a Ledger Recover subscription."
+            "description" : "Ledger Recoverの登録が必要です。"
           }
         }
       },
@@ -5127,6 +5140,9 @@
       "title" : "{{currencyName}} には対応していません。",
       "description" : "この暗号資産には、未対応です。Ledgerサポートにお問合せください。"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "お客様のデバイスはすでに、シークレットリカバリーフレーズを使用して設定されています"
+    },
     "DeviceNotGenuine" : {
       "title" : "正規品でない可能性があります",
       "description" : "Ledgerサポートのアシスタントを依頼する。"
@@ -5403,12 +5419,12 @@
       "description" : "デバイスのダッシュボードに戻ってください。"
     },
     "WebsocketConnectionError" : {
-      "title" : "もう一度お試しください。（接続エラー）",
-      "description" : null
+      "title" : "ネットワークエラー",
+      "description" : "インターネットに接続していることを確認し、もう一度お試しください。"
     },
     "WebsocketConnectionFailed" : {
-      "title" : "申し訳ありませんが、もう一度お試しください。（接続が切断されました）",
-      "description" : null
+      "title" : "ネットワークエラー",
+      "description" : "インターネットに接続していることを確認し、もう一度お試しください。"
     },
     "WrongDeviceForAccount" : {
       "title" : "問題が発生しました。",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "ガスの見積もりに失敗しました"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "セットアップを終了してもよろしいですか？",
+      "description" : "このチェックを許可されない場合、Ledger Staxをセットアップできません。"
+    },
+    "NotFoundEntityError" : {
+      "title" : "このデバイスが正規品かどうかをチェックできませんでした。",
+      "description" : "試験的な設定「My Ledgerプロバイダー({{providerNumber}}」が、正規品チェックと競合している可能性があります。設定で無効にできます。"
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "この{{productName}}は正規品ではありません",
+      "description" : "この{{productName}}は安全に使用できません。\nLedgerサポートにご連絡ください。"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "OSアップデートチェックに失敗しました",
+      "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
     }
   },
   "cryptoOrg" : {
