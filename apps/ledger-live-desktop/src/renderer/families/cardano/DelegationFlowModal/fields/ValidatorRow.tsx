@@ -20,7 +20,7 @@ type Props = {
   currency: CryptoCurrency;
   pool: StakePool;
   active?: boolean;
-  onClick?: (v: StakePool) => void;
+  onClick: (v: StakePool) => void;
   unit: Unit;
 };
 
@@ -45,7 +45,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
   const poolCost = formatCurrencyUnit(unit, new BigNumber(pool.cost), formatConfig);
   return (
     <StyledValidatorRow
-      onClick={onClick}
+      onClick={() => onClick(pool)}
       key={pool.poolId}
       validator={{
         ...pool,
