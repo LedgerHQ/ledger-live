@@ -4318,6 +4318,86 @@
     "info": {
       "balanceDoesNotIncludeRewards": {
         "title": "Total balance doesn't include staking rewards"
+      },
+      "delegationUnavailable": {
+        "title": "Delegation unavailable",
+        "description": "Not enough available balance in your account to start a new delegation."
+      }
+    },
+    "undelegation": {
+      "undelegate": "Undelegate",
+      "undelegationMessage": "By un-delegating you will not receive any rewards for current and upcoming epochs",
+      "verificationSuccessTitle": "You have successfully undelegated your assets"
+    },
+    "delegation": {
+      "pool": "Pool",
+      "poolId": "Pool Id",
+      "selectPool": "Select pool",
+      "pools": "Pools",
+      "delegationEarn": "You can earn ADA rewards by delegating your assets.",
+      "delegatingFrom": "Delegating from",
+      "delegatingTo": "Delegating to",
+      "info": "How Delegation works",
+      "header": "Delegation",
+      "delegate": "Delegate",
+      "redelegate": "Redelegate",
+      "estYield": "Est. yield",
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "cost": "Cost",
+      "select": "Select",
+      "change": "Change",
+      "networkFees": "Network Fees",
+      "stakeKeyRegistrationDeposit": "Stake Key Registration deposit",
+      "stakeKeyRegistrationDepositRefund": "Stake Key Registration deposit refund",
+      "stepperHeader": {
+        "starter": "Earn rewards",
+        "validator": "Delegate assets",
+        "summary": "Summary",
+        "verification": "Verification",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your ADA to a pool.",
+            "steps": {
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "Assets can be re-delegated to different pool or you can choose to un-delegate at anytime."
+            },
+            "cta": "Continue"
+          },
+          "validator": {
+            "validators": "Validators",
+            "myDelegations": "My delegations",
+            "cta": "Continue",
+            "estYield": "Est. yield: {{amount}}",
+            "totalAvailable": "Total available: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "noResultsFound": "No validator found for <0>{{search}}</0>"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated once the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      },
+      "drawer": {
+        "status": "Status",
+        "rewards": "Rewards",
+        "active": "Active",
+        "inactive": "Inactive",
+        "redelegatedFrom": "Redelegated from"
       }
     }
   },
