@@ -21,7 +21,7 @@ const SyncOnboardingDeviceConnectionSearching = ({
 
   const handleConnectionTrouble = useCallback(() => {
     setDeviceModelId(deviceModelId);
-    history.push("/onboarding/select-use-case");
+    history.push("/USBTroubleshooting");
   }, [deviceModelId, history, setDeviceModelId]);
 
   return (
