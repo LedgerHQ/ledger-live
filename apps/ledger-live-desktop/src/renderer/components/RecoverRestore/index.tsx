@@ -20,8 +20,6 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
-import { urls } from "~/config/urls";
-import { languageSelector } from "~/renderer/reducers/settings";
 import { useDynamicUrl } from "~/renderer/terms";
 
 const RecoverRestore = () => {
