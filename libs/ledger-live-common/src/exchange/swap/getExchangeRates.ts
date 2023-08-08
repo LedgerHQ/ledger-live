@@ -21,7 +21,9 @@ const getExchangeRates: GetExchangeRates = async ({
   timeout,
   timeoutErrorMessage,
 }) => {
-  if (isPlaywrightEnv()) return mockGetExchangeRates(exchange, transaction, currencyTo);
+  if (isPlaywrightEnv() && !getEnv("DETOX_RUN")) {
+    return mockGetExchangeRates(exchange, transaction, currencyTo);
+  }
 
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
@@ -49,6 +51,8 @@ const getExchangeRates: GetExchangeRates = async ({
     ...(timeoutErrorMessage ? { timeoutErrorMessage } : {}),
     data: request,
   });
+
+  console.log("rate response: ", { res });
 
   const rates = res.data.map(responseData => {
     const {

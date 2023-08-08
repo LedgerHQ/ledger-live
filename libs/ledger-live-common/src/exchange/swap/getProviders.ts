@@ -30,12 +30,16 @@ const getProviders: GetProviders = async () => {
     paramsSerializer: params => qs.stringify(params, { arrayFormat: "comma" }),
   });
 
+  console.log("here's the response");
   console.log("response!: ", { res });
 
   const responseV4 = res.data as ProvidersResponseV4;
+  console.log("reponseV4: ", { responseV4 });
   if (!responseV4.providers || !Object.keys(responseV4.providers).length) {
+    console.log("throwing swapNoAvailableProvider error!!!!");
     throw new SwapNoAvailableProviders();
   }
+
   return Object.entries(responseV4.providers).flatMap(([provider, groups]) => ({
     provider: provider,
     pairs: groups.flatMap(group =>

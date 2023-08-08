@@ -72,7 +72,10 @@ export const useProviders = () => {
   }, [providers]);
 
   useEffect(() => {
-    if (providersError) dispatch(resetSwapAction());
+    if (providersError) {
+      console.log("providers error: ", { providersError });
+      dispatch(resetSwapAction());
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providersError]);
 

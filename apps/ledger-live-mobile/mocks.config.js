@@ -4,7 +4,7 @@
 
 module.exports = {
   // Log level. Can be one of silly, debug, verbose, info, warn or error
-  //log: "info",
+  log: "debug",
   config: {
     // Allow unknown arguments
     //allowUnknownArguments: false,
@@ -12,8 +12,7 @@ module.exports = {
   plugins: {
     // Plugins to be registered
     //register: [],
-    proxyRoutesHandler: {
-    },
+    proxyRoutesHandler: {},
     adminApi: {
       // Port number for the admin API server to be listening at
       //port: 3110,
@@ -50,12 +49,12 @@ module.exports = {
     },
     collections: {
       // Selected collection
-      //selected: "base",
+      selected: "base",
     },
   },
   server: {
     // Port number for the server to be listening at
-    //port: 3100,
+    port: 3100,
     // Host for the server
     //host: "0.0.0.0",
     cors: {
@@ -78,7 +77,7 @@ module.exports = {
     },
     https: {
       // Use https protocol or not
-      //enabled: false,
+      enabled: false,
       // Path to a TLS/SSL certificate
       //cert: undefined,
       // Path to the certificate private key
