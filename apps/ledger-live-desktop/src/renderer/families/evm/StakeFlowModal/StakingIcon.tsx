@@ -26,7 +26,9 @@ const ProviderIconContainer = styled.div(
 );
 
 export function StakingIcon({ icon }: Props) {
-  if (!icon) return null;
+  if (!icon) {
+    return null;
+  }
 
   const [iconName, iconType] = icon.split(":");
 
