@@ -12,15 +12,5 @@
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "live-mobile",
-    "ledger-live-desktop",
-    "@ledgerhq/live-common",
-    "@ledgerhq/live-cli",
-    "@ledgerhq/live-env",
-    "@ledgerhq/errors",
-    "@ledgerhq/react-native-hid",
-    "@ledgerhq/cryptoassets",
-    "@ledgerhq/types-live"
-  ]
+  "ignore": ["live-mobile", "ledger-live-desktop"]
 }
