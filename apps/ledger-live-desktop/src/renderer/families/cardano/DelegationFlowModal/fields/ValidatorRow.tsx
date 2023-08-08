@@ -107,7 +107,7 @@ const ChosenMark = styled(Check).attrs<{
 }>(p => ({
   color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-})) <{
+}))<{
   active?: boolean;
   size?: number;
 }>``;
