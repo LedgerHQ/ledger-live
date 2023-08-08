@@ -4,8 +4,6 @@ import type { GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
