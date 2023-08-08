@@ -461,6 +461,9 @@
       "title" : "Nicht genügend ETH für Netzwerkgebühr",
       "description" : "Bitte senden Sie einige ETH auf Ihr Konto, um ERC20-Token-Transaktionen zu bezahlen."
     },
+    "NotEnoughGasSwap" : {
+      "title" : "Für den Umtausch benötigen Sie {{fees}} {{ticker}} für Netzwerkgebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Unzureichender Saldo zum übertragen"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "Kann noch nicht von Unterkonten senden",
       "description" : "Diese Funktion wird zu einem späteren Zeitpunkt aufgrund von Änderungen, die kürzlich durch das Babylon-Update eingeführt wurden, hinzugefügt."
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Live benötigt ein Update",
-      "description" : "Bitte aktualisieren Sie Ledger Live auf die neueste Version, und verifizieren Sie Ihre Identität erneut, um mit wyre zu tauschen"
     },
     "RecommendUndelegation" : {
       "title" : "Bitte heben Sie die Übertragung des Kontos auf, bevor Sie es leeren"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "Löschen",
       "exportLogs" : "Protokolle speichern",
       "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
-      "resetThirdPartyData" : "Drittanbieterdaten zurücksetzen",
-      "resetThirdPartyDataDesc" : "Löschen Sie alle lokalen Drittanbieterdaten, die für den Zugriff auf Transaktionsservices von Drittanbietern verwendet wurden.",
-      "resetThirdPartyDataModal" : "Ihre lokalen Drittanbieterdaten löschen",
-      "resetThirdPartyDataModalDesc" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
       "hardReset" : "Ledger Live zurücksetzen",
       "hardResetDesc" : "Dies hat keine Auswirkung auf Ihre Vermögenswerte. Löscht alle Daten in Ledger Live, einschließlich Kontodaten, Transaktionsverläufe und Einstellungen. Verwenden Sie Ihr Ledger-Gerät, um Ihre Krypto-Vermögenswerte auf einem leeren Ledger Live neu zu laden und zu verwalten.",
       "repairDevice" : "Reparieren Sie Ihr Ledger-Gerät",
@@ -2956,66 +2951,8 @@
         "whatIsSwap" : "Was ist Swap?",
         "disclaimer" : "Tauschen Sie Krypto direkt von Ihrem Ledger-Gerät aus. Dieser Service ist in einigen Ländern, einschließlich den USA, nicht verfügbar."
       },
-      "unauthorizedRates" : {
-        "cta" : "Verifizierung zurücksetzen",
-        "banner" : "Setzen Sie Ihr KYC zurück und aktualisieren Sie Live, um mit Wyre zu tauschen.",
-        "bannerCTA" : "KYC zurücksetzen"
-      },
       "main" : {
         "header" : "Umtauschen"
-      },
-      "kyc" : {
-        "disclaimer" : "Ich erkenne an, dass meine Standortdaten zu Compliance-Zwecken an Dritte weitergegeben werden.",
-        "cta" : "Weiter",
-        "wyre" : {
-          "title" : "Vervollständigen Sie Ihr KYC",
-          "subtitle" : "Ihre Daten werden von LEDGER im Auftrag von WYRE gesammelt und zu KYC-Zwecken an WYRE übertragen. Für weitere Informationen lesen Sie bitte unsere Datenschutzrichtlinie",
-          "pending" : {
-            "cta" : "Weiter",
-            "title" : "KYC zur Freigabe eingereicht",
-            "subtitle" : "Ihr KYC wurde eingereicht und ist in Bearbeitung.",
-            "link" : "Erfahren Sie mehr über KYC"
-          },
-          "approved" : {
-            "cta" : "Weiter",
-            "title" : "KYC genehmigt!",
-            "subtitle" : "Ihr KYC wurde eingereicht und ist genehmigt worden.",
-            "link" : "Erfahren Sie mehr über KYC"
-          },
-          "closed" : {
-            "cta" : "KYC zurücksetzen",
-            "title" : "KYC-Antrag abgelehnt",
-            "subtitle" : "Wyre hat die von Ihnen für KYC-Zwecke angegebenen Daten abgelehnt",
-            "link" : "Erfahren Sie mehr über KYC"
-          },
-          "form" : {
-            "firstName" : "Vorname",
-            "lastName" : "Nachname",
-            "street1" : "Straße Adresse Zeile 1",
-            "street2" : "Straße Adresse Zeile 2",
-            "city" : "Stadt",
-            "state" : "Bundesland",
-            "country" : "Land",
-            "postalCode" : "Postleitzahl",
-            "dateOfBirth" : "Geburtsdatum",
-            "firstNamePlaceholder" : "Geben Sie Ihren Vornamen ein",
-            "lastNamePlaceholder" : "Geben Sie Ihren Nachnamen ein",
-            "street1Placeholder" : "z. B. Musterstraße 21",
-            "street2Placeholder" : "z. B. Musterstraße 21",
-            "cityPlaceholder" : "z. B. Berlin",
-            "postalCodePlaceholder" : "Geben Sie Ihre 5-stellige Postleitzahl ein",
-            "statePlaceholder" : "Wählen Sie Ihr Bundesland",
-            "dateOfBirthPlaceholder" : "JJJJ-MM-TT",
-            "firstNameError" : "Geben Sie Ihren Vornamen ein, um fortzufahren",
-            "lastNameError" : "Geben Sie Ihren Nachnamen ein, um fortzufahren",
-            "street1Error" : "Geben Sie Ihre Adresse ein",
-            "cityError" : "Geben Sie die Stadt ein, in der Sie in den USA leben",
-            "stateError" : "Wählen Sie Ihr Bundesland, um fortzufahren",
-            "postalCodeError" : "Geben Sie eine gültige US-Postleitzahl ein",
-            "dateOfBirthError" : "Geben Sie Ihr Geburtsdatum ein"
-          }
-        },
-        "states" : "Wählen Sie Ihr Bundesland"
       },
       "notAvailable" : {
         "title" : "Service vorübergehend oder in Ihrem Land nicht verfügbar"
@@ -3190,34 +3127,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC",
-            "required" : "Sie müssen Ihr KYC vervollständigen",
-            "complete" : "Vervollständigen Sie Ihr KYC",
-            "update" : "KYC aktualisieren",
-            "rejected" : "KYC abgelehnt, erneute Überprüfung starten",
-            "rejectedContactProviderSupport" : "KYC-Prüfung abgelehnt, bitte wenden Sie sich an den {{providerName}} Support",
-            "updateRequired" : "Vervollständigen oder aktualisieren Sie Ihr KYC",
-            "status" : {
-              "pending" : "KYC ausstehend",
-              "approved" : "KYC genehmigt",
-              "closed" : "KYC abgelehnt",
-              "upgradeRequired" : "KYC unzureichend"
-            }
-          },
-          "login" : {
-            "title" : "Anmeldename",
-            "required" : "Sie müssen sich bei diesem Anbieter anmelden",
-            "complete" : "Anmeldename"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "Sie müssen bei diesem Anbieter eine Multi-Faktor-Authentifizierung (MFA) einrichten",
-            "complete" : "MFA einrichten"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
-          },
           "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
         }
       }
@@ -4145,7 +4054,9 @@
   },
   "FirmwareUpdate" : {
     "title" : "Firmware aktualisieren",
+    "beginUpdate" : "Update starten",
     "updateDevice" : "Betriebssystem-Update für {{deviceName}}",
+    "releaseNotesTitle" : "Was ist in diesem Betriebssystem-Update enthalten?",
     "updateDone" : "Fertig! Ihr Gerät {{deviceName}} ist auf dem neuesten Stand",
     "updateDoneDescription" : "Neue Betriebssystemversion: {{firmwareVersion}}",
     "preparing" : "Das Firmware-Update wird vorbereitet. Bitte stellen Sie sicher, dass Ihr Gerät während des Updates entsperrt und verbunden ist. Wir informieren Sie über den Fortschritt des Vorgangs.",
