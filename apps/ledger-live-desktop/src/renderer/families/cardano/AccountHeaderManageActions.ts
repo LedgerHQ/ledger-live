@@ -32,7 +32,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     dispatch(
       openModal("MODAL_CARDANO_REWARDS_INFO", {
         account: account as CardanoAccount,
-        name: "MODAL_CARDANO_REWARDS_INFO",
       }),
     );
   }, [dispatch, account]);

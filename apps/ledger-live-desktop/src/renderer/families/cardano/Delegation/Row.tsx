@@ -12,13 +12,11 @@ type Props = {
   account: CardanoAccount;
 };
 
-const Wrapper = styled.div<{
-  isPending: boolean;
-}>`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 16px 20px;
-  opacity: ${p => (p.isPending ? 0.5 : 1)};
+  opacity: 1;
   > * {
     display: flex;
     align-items: center;
