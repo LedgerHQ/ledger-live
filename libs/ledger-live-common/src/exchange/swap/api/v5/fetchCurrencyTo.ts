@@ -31,11 +31,6 @@ export async function fetchCurrencyTo({ currencyFrom, additionalCoinsFlag = fals
     });
     return data;
   } catch (e) {
-    console.log(
-      "%cerror fetchCurrencyTo.ts line:37 ",
-      "color: red; display: block; width: 100%;",
-      e,
-    );
-    throw Error();
+    throw Error(`Something went wrong in fetchCurrencyTo call`);
   }
 }
