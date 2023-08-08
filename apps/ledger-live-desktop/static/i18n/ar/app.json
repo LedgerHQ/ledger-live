@@ -1280,6 +1280,7 @@
     "hideCTA" : "إخفاء رمز التوكن"
   },
   "syncOnboarding" : {
+    "exitCTA" : "الخروج من الإعداد",
     "connection" : {
       "searching" : {
         "title" : "قم بتوصيل {{deviceModelName}} بالكمبيوتر الخاص بك",
@@ -1293,7 +1294,7 @@
       "title" : "إعداد {{deviceName}}",
       "continueOnDevice" : "قم بهذا الإجراء على جهازك {{productName}}",
       "pairedContent" : {
-        "title" : "{{deviceName}} متصلة",
+        "title" : "{{deviceName}} آمن",
         "description" : "متابعة الإعداد على {{deviceName}}",
         "text" : "هذه الشاشة ستتغير ديناميكيا لتزويدك بالمعلومات ذات الصلة ينما تقوم بإعداد {{deviceName}} خاصتك",
         "continueOnDevice" : "انقر على {{productName}} لرؤية الشاشة التالية."
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "استعد النسخة الاحتياطية لعبارة الاسترداد الخاصة بك عن طريق تسجيل الدخول إلى حساب Ledger الخاص بك وتأكيد هويتك."
       },
       "softwareCheckContent" : {
-        "title" : "التحقق من البرامج",
+        "title" : {
+          "active" : "اختبار الأصالة\nوالتحقق من تحديث نظام التشغيل",
+          "completed" : "جهازك {{modelName}} أصلي ومُحدَّث إلى آخر إصدار"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "إلغاء الفحص",
+          "resumeCheckCTA" : "استئناف الفحص"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "إنهاء الإعداد",
+          "goToSettingsCTA" : "انتقل إلى الإعدادات",
+          "retryCTA" : "إعادة المحاولة",
+          "contactSupportCTA" : "تواصل مع دعم Ledger"
+        },
+        "whyPerformChecksLink" : "لماذا إجراء فحوصات الأمان هذه؟",
+        "startChecksCTA" : "بدء عمليات الفحص",
+        "continueCTA" : "المتابعة إلى الإعداد",
         "genuineCheck" : {
-          "active" : "يتم التحقق من {{deviceName}}",
-          "completed" : "{{deviceName}} أصلية"
+          "title" : {
+            "active" : "اختبار الأصالة",
+            "completed" : "جهازك {{modelName}} أصلي",
+            "cancelled" : "اختبار الأصالة تم رفضه"
+          },
+          "subtitle" : {
+            "active" : "هذا الفحص يضمن أن جهازك {{modelName}} هو جهاز Ledger أصلي",
+            "cancelled" : "لا يمكنك إعداد جهازك {{modelName}} بدون السماح بهذا الفحص"
+          },
+          "resumeCTA" : "استئناف اختبار الأصالة"
         },
         "firmwareUpdate" : {
-          "inactive" : "التحقق من البرامج",
-          "active" : "يتم التحقق من وجود تحديثات للبرامج",
-          "updateAvailable" : "متوفر تحديث البرامج {{firmwareVersion}}",
-          "recommendation" : "نوصي بتنزيل التحديث الآن",
-          "downloadUpdate" : "تنزيل التحديث",
-          "skipUpdate" : "التخطي في الوقت الحالي",
-          "completed" : "البرامج مُحدثة"
+          "title" : {
+            "active" : "التحقق من تحديث نظام التشغيل",
+            "completed" : "نظام تشغيل {{modelName}} مُحدَّث إلى آخر إصدار",
+            "updateAvailable" : "تحديث نظام التشغيل {{firmwareVersion}} متاح"
+          },
+          "subtitle" : {
+            "active" : "هذا الفحص يضمن أن نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار",
+            "updateAvailable" : "نوصي بإجراء هذا التحديث ليكون لديك إمكانية الوصول إلى أحدث ميزات الأمان"
+          },
+          "viewUpdateCTA" : "عرض التحديث",
+          "resumeUpdateCTA" : "استئناف التحديث",
+          "skipUpdateCTA" : "تخطي التحديث",
+          "retryUpdateCTA" : "إعادة المحاولة",
+          "finalStepSuccessDescription" : "الرجوع إلى التحقق من نظام التشغيل",
+          "finalStepSuccessButtonLabel" : "متابعة"
         }
       },
       "installApplications" : {
@@ -1344,30 +1377,10 @@
       "endOfSetup" : {
         "title" : "نهاية الإعداد"
       },
-      "genuineCheckModal" : {
-        "title" : "اختبار الأصالة",
-        "paragraph1" : "دعنا نتأكد من أن {{deviceName}} الخاصة بك أصلية وآمنة للاستخدام",
-        "paragraph2" : "سنُجري فحص للتأكد من أن جهازك لم يتم العبث به. سيجب عليك أن تقبل هذا على {{deviceName}} الخاصة بك.",
-        "checkDeviceButton" : "تحقق من الجهاز"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "السماح بالاتصال الآمن مع Ledger"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "اختبار الأصالة",
-        "paragraph1" : "تم إلغاء اختبار الأصالة",
-        "paragraph2" : "هذا الفحص ضروري للغاية للتأكد أن {{deviceName}} خاصتك آمنة للاستخدام.",
-        "checkDeviceButton" : "إجراء الاختبار مرةً اخرى",
-        "cancelButton" : "ربّما في وقت لاحق"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "اختبار الأصالة",
-        "paragraph1" : "جهازك غير أصلي",
-        "paragraph2" : "فشل اختبار الأصالة",
-        "checkDeviceButton" : "إجراء الاختبار مرةً أخرى",
-        "cancelButton" : "ربّما في وقت لاحق"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "قم بتمكين المدير على {{deviceName}}"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "قم بإلغاء قفل جهازك"
       },
       "helpDrawer" : {
@@ -5127,6 +5140,9 @@
       "title" : "{{currencyName}} غير مدعومة",
       "description" : "هذا الأصل المشفر غير مدعوم بعد. يرجى التواصل مع دعم Ledger."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "جهازك تم إعداده بالفعل بعبارة استرداد سرية"
+    },
     "DeviceNotGenuine" : {
       "title" : "من الممكن ألا يكون أصلياً",
       "description" : "اطلب المساعدة من دعم Ledger"
@@ -5403,12 +5419,12 @@
       "description" : "يرجى الإنتقال إلى اللوحة الرئيسية على جهازك"
     },
     "WebsocketConnectionError" : {
-      "title" : "عذراً، حاول مرة أخرى (خطأ في الاتصال)",
-      "description" : null
+      "title" : "خطأ في الشبكة",
+      "description" : "تأكد من أنك متصل بالإنترنت وأعد المحاولة."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "عذراً، حاول مرة أخرى (الاتصال مغلق)",
-      "description" : null
+      "title" : "خطأ في الشبكة",
+      "description" : "تأكد من أنك متصل بالإنترنت وأعد المحاولة."
     },
     "WrongDeviceForAccount" : {
       "title" : "حدث خطأ ما",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "فشل تقدير الغاز"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "هل أنت متأكد أنك تريد الخروج من الإعداد؟",
+      "description" : "لا يمكنك إعداد Ledger Stax الخاص بك بدون السماح بهذا الفحص."
+    },
+    "NotFoundEntityError" : {
+      "title" : "لم نتمكن من التحقق مما إذا كان هذا الجهاز أصلياً.",
+      "description" : "الإعداد التجريبي \"My Ledger provider ({{providerNumber}})\" ربما يكون يتعارض مع اختبار الأصالة. يمكنك تعطيله في الإعدادات."
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "{{productName}} هذا غير أصلي",
+      "description" : "{{productName}} هذا غير آمن للاستخدام.\nيُرجى التواصل مع دعم Ledger."
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "فشل التحقق من تحديث نظام التشغيل",
+      "description" : "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك."
     }
   },
   "cryptoOrg" : {
