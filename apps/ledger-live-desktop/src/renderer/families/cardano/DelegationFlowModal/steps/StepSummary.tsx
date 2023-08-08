@@ -1,11 +1,7 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -26,13 +22,12 @@ const Separator = styled.div`
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
-    const { account, parentAccount, transaction, status, selectedPool } = this.props;
+    const { account, transaction, status, selectedPool } = this.props;
     if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount);
     if (!transaction) return null;
     const { estimatedFees } = status;
-    const feesUnit = getAccountUnit(mainAccount);
-    const feesCurrency = getAccountCurrency(mainAccount);
+    const feesUnit = getAccountUnit(account);
+    const feesCurrency = getAccountCurrency(account);
     const showDeposit = !account.cardanoResources?.delegation?.status;
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
     return (

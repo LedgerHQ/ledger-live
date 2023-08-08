@@ -1,23 +1,20 @@
 import React from "react";
 import styled from "styled-components";
 import { getAccountUnit, shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
+import { CardanoAccount, CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import ContextMenu from "./ContextMenu";
 
 type Props = {
   delegation: CardanoDelegation;
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+  account: CardanoAccount;
 };
 
-const Wrapper: ThemedComponent<{
+const Wrapper = styled.div<{
   isPending: boolean;
-}> = styled.div`
+}>`
   display: flex;
   flex-direction: row;
   padding: 16px 20px;
@@ -36,7 +33,7 @@ const CTA = styled.div`
   justify-content: flex-end;
 `;
 
-const Value: ThemedComponent<{}> = styled.div`
+const Value = styled.div`
   width: 30%;
   box-sizing: border-box;
   justify-content: flex-start;
@@ -45,7 +42,7 @@ const Value: ThemedComponent<{}> = styled.div`
   text-overflow: ellipsis;
 `;
 
-const Row = ({ account, parentAccount, delegation }: Props) => {
+const Row = ({ account, delegation }: Props) => {
   const unit = getAccountUnit(account);
   let name = "";
   if (delegation && delegation.poolId) {
@@ -82,7 +79,7 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
         />
       </Value>
       <CTA>
-        <ContextMenu account={account} parentAccount={parentAccount} />
+        <ContextMenu account={account} />
       </CTA>
     </Wrapper>
   );

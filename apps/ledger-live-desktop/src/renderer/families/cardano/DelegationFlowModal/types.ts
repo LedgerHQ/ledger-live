@@ -16,7 +16,6 @@ export type StepProps = {
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
   account: CardanoAccount | undefined | null;
-  parentAccount: CardanoAccount | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: (key: string, config?: unknown) => void;

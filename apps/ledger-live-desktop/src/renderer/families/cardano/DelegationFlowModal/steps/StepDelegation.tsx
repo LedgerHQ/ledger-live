@@ -17,7 +17,6 @@ import Text from "~/renderer/components/Text";
 
 export default function StepDelegation({
   account,
-  parentAccount,
   onUpdateTransaction,
   transaction,
   status,
@@ -31,7 +30,7 @@ export default function StepDelegation({
   const delegation = cardanoResources.delegation;
   const selectPool = (stakePool: StakePool) => {
     setSelectedPool(stakePool);
-    const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account, parentAccount);
+    const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account);
     onUpdateTransaction(() => {
       const updatedTransaction = bridge.updateTransaction(transaction as CardanoTransaction, {
         mode: "delegate",
@@ -60,7 +59,6 @@ export default function StepDelegation({
 export function StepDelegationFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,
@@ -79,7 +77,7 @@ export function StepDelegationFooter({
           </Text>
         </Box>
       ) : (
-        <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+        <AccountFooter account={account} status={status} />
       )}
 
       <Box horizontal>

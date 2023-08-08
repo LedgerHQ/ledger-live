@@ -31,7 +31,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const onClick = useCallback(() => {
     dispatch(
       openModal("MODAL_CARDANO_REWARDS_INFO", {
-        account,
+        account: account as CardanoAccount,
         name: "MODAL_CARDANO_REWARDS_INFO",
       }),
     );

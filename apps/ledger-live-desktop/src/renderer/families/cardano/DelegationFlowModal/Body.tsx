@@ -32,7 +32,6 @@ type OwnProps = {
   onChangeStepId: (a: StepId) => void;
   params: {
     account: CardanoAccount;
-    parentAccount: CardanoAccount | undefined | null;
   };
   name: string;
 };
@@ -105,7 +104,6 @@ const Body = ({
     setTransaction,
     updateTransaction,
     account,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
@@ -120,7 +118,6 @@ const Body = ({
 
     return {
       account,
-      parentAccount: undefined,
       transaction,
     };
   });
@@ -164,7 +161,6 @@ const Body = ({
     title: t("cardano.delegation.flow.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,
