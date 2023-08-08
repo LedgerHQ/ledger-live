@@ -8,12 +8,11 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import ValidatorRow, { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import LedgerPoolIcon from "../LedgerPoolIcon";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import { localeSelector } from "~/renderer/reducers/settings";
 
@@ -25,7 +24,7 @@ type Props = {
   unit: Unit;
 };
 
-function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Props) {
+function CardanoPoolRow({ pool, active, onClick, unit, currency }: Props) {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const explorerView = getDefaultExplorerView(currency);
@@ -46,7 +45,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
   const poolCost = formatCurrencyUnit(unit, new BigNumber(pool.cost), formatConfig);
   return (
     <StyledValidatorRow
-      onClick={disabled ? undefined : onClick}
+      onClick={onClick}
       key={pool.poolId}
       validator={{
         ...pool,
@@ -77,7 +76,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
-            <ChosenMark active={active ?? false} disabled={disabled} />
+            <ChosenMark active={active ?? false} />
           </Box>
         </Box>
       }
@@ -98,20 +97,19 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
     ></StyledValidatorRow>
   );
 }
-const StyledValidatorRow: ThemedComponent<ValidatorRowProps> = styled(ValidatorRow)`
+const StyledValidatorRow = styled(ValidatorRow)`
   border-color: transparent;
   margin-bottom: 0;
 `;
 
-const ChosenMark: ThemedComponent<{
+const ChosenMark = styled(Check).attrs<{
   active: boolean;
-}> = styled(Check).attrs(p => ({
-  color: p.active
-    ? p.disabled
-      ? p.theme.colors.palette.action.disabled
-      : p.theme.colors.palette.primary.main
-    : "transparent",
+}>(p => ({
+  color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-}))``;
+})) <{
+  active?: boolean;
+  size?: number;
+}>``;
 
 export default CardanoPoolRow;

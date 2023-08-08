@@ -1,23 +1,19 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StepProps } from "../types";
 import CardanoLedgerPoolIcon from "../LedgerPoolIcon";
+import BigNumber from "bignumber.js";
 
-const FromToWrapper: ThemedComponent<{}> = styled.div``;
-const Separator: ThemedComponent<{}> = styled.div`
+const FromToWrapper = styled.div``;
+const Separator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;
@@ -26,13 +22,12 @@ const Separator: ThemedComponent<{}> = styled.div`
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
-    const { account, parentAccount, transaction, status, selectedPool } = this.props;
+    const { account, transaction, status, selectedPool } = this.props;
     if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount);
     if (!transaction) return null;
     const { estimatedFees } = status;
-    const feesUnit = getAccountUnit(mainAccount);
-    const feesCurrency = getAccountCurrency(mainAccount);
+    const feesUnit = getAccountUnit(account);
+    const feesCurrency = getAccountCurrency(account);
     const showDeposit = !account.cardanoResources?.delegation?.status;
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
     return (
@@ -65,7 +60,7 @@ export default class StepSummary extends PureComponent<StepProps> {
                 disableRounding
                 unit={feesUnit}
                 alwaysShowValue
-                val={selectedPool.cost}
+                val={new BigNumber(selectedPool.cost)}
                 fontSize={4}
                 inline
                 showCode
@@ -94,7 +89,7 @@ export default class StepSummary extends PureComponent<StepProps> {
                   disableRounding
                   unit={feesUnit}
                   alwaysShowValue
-                  val={stakeKeyDeposit}
+                  val={new BigNumber(stakeKeyDeposit)}
                   fontSize={4}
                   inline
                   showCode

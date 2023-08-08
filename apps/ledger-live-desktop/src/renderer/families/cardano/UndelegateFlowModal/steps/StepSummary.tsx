@@ -1,22 +1,18 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import {
-  getAccountUnit,
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StepProps } from "../types";
+import BigNumber from "bignumber.js";
 
-const FromToWrapper: ThemedComponent<{}> = styled.div``;
-const Separator: ThemedComponent<{}> = styled.div`
+const FromToWrapper = styled.div``;
+const Separator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;
@@ -25,13 +21,12 @@ const Separator: ThemedComponent<{}> = styled.div`
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
-    const { account, parentAccount, transaction, status, error } = this.props;
+    const { account, transaction, status, error } = this.props;
     const { estimatedFees } = status;
     if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount);
     if (!transaction) return null;
-    const accountUnit = getAccountUnit(mainAccount);
-    const feesCurrency = getAccountCurrency(mainAccount);
+    const accountUnit = getAccountUnit(account);
+    const feesCurrency = getAccountCurrency(account);
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
     return (
       <Box flow={4} mx={40}>
@@ -59,7 +54,7 @@ export default class StepSummary extends PureComponent<StepProps> {
                 disableRounding
                 unit={accountUnit}
                 alwaysShowValue
-                val={stakeKeyDeposit}
+                val={new BigNumber(stakeKeyDeposit)}
                 fontSize={4}
                 inline
                 showCode

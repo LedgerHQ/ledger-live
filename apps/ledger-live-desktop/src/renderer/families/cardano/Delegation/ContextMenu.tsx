@@ -2,7 +2,6 @@ import React from "react";
 import styled, { useTheme } from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { AccountLike, Account } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -10,6 +9,7 @@ import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSe
 import UserEdit from "~/renderer/icons/UserEdit";
 import StopCircle from "~/renderer/icons/StopCircle";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
 const Container = styled.div`
   display: flex;
@@ -26,11 +26,10 @@ const Item = styled(DropDownItem)`
   align-items: center;
 `;
 type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+  account: CardanoAccount;
 };
 
-const ContextMenu = ({ account, parentAccount }: Props) => {
+const ContextMenu = ({ account }: Props) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const items = [
@@ -49,10 +48,7 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       onClick: () =>
         dispatch(
           openModal("MODAL_CARDANO_DELEGATE", {
-            parentAccount,
             account,
-            eventType: "redelegate",
-            stepId: "summary",
           }),
         ),
     },
@@ -71,11 +67,7 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       onClick: () =>
         dispatch(
           openModal("MODAL_CARDANO_UNDELEGATE", {
-            parentAccount,
             account,
-            eventType: "undelegate",
-            mode: "undelegate",
-            stepId: "summary",
           }),
         ),
     },

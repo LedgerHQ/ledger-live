@@ -2,10 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
 
-const Wrapper: ThemedComponent<{}> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;

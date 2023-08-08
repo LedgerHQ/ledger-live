@@ -30,7 +30,6 @@ type OwnProps = {
   onChangeStepId: (a: StepId) => void;
   params: {
     account: CardanoAccount;
-    parentAccount: CardanoAccount | undefined | null;
   };
   name: string;
 };
@@ -91,7 +90,6 @@ const Body = ({
     setTransaction,
     updateTransaction,
     account,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
@@ -108,7 +106,6 @@ const Body = ({
     });
     return {
       account,
-      parentAccount: undefined,
       transaction: updatedTransaction,
     };
   });
@@ -150,7 +147,6 @@ const Body = ({
     title: t("cardano.unDelegation.flow.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,
@@ -181,9 +177,9 @@ const Body = ({
   );
 };
 
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(Body);
+)(Body) as React.ComponentType<OwnProps>;
 
 export default C;
