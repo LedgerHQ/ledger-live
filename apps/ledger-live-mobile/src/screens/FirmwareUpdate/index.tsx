@@ -1,4 +1,4 @@
-import { Image, Linking } from "react-native";
+import { Image } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
   updateFirmwareActionArgs,
@@ -44,7 +44,6 @@ import {
   UpdateStep,
   useUpdateFirmwareAndRestoreSettings,
 } from "./useUpdateFirmwareAndRestoreSettings";
-import { urls } from "../../config/urls";
 import { TrackScreen } from "../../analytics";
 import ImageHexProcessor from "../../components/CustomImage/ImageHexProcessor";
 import { targetDataDimensions } from "../CustomImage/shared";
@@ -153,10 +152,6 @@ export const FirmwareUpdate = ({
   const { dark } = useTheme();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const dispatch = useDispatch();
-
-  const onOpenReleaseNotes = useCallback(() => {
-    Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
-  }, [device.modelId]);
 
   const productName = getDeviceModel(device.modelId).productName;
 
@@ -547,8 +542,6 @@ export const FirmwareUpdate = ({
     }
 
     if (restoreStepDeniedError) {
-      console.log(`restore step denied: ${JSON.stringify(restoreStepDeniedError)}`);
-
       return (
         <RestoreStepDenied
           device={device}
