@@ -1280,6 +1280,7 @@
     "hideCTA" : "Ocultar Token"
   },
   "syncOnboarding" : {
+    "exitCTA" : "Sair das configurações",
     "connection" : {
       "searching" : {
         "title" : "Conecte a {{deviceModelName}} ao seu computador",
@@ -1293,7 +1294,7 @@
       "title" : "Configurar {{deviceName}}",
       "continueOnDevice" : "Execute essa ação em sua {{productName}}",
       "pairedContent" : {
-        "title" : "{{deviceName}} está conectada",
+        "title" : "A {{deviceName}} está segura",
         "description" : "Continuar a configuração em {{deviceName}}",
         "text" : "Esta tela mudará dinamicamente para fornecer a você informações relevantes enquanto você configura sua {{deviceName}}",
         "continueOnDevice" : "Toque em {{productName}} para ver a próxima tela."
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "Restaure o backup da sua frase de recuperação entrando na sua conta Ledger e confirmando sua identidade."
       },
       "softwareCheckContent" : {
-        "title" : "Verificação de software",
+        "title" : {
+          "active" : "Verificação de autenticidade e\nde atualização do sistema operacional",
+          "completed" : "A sua {{modelName}} é autêntica e está atualizada"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "Cancelar verificação",
+          "resumeCheckCTA" : "Retomar a verificação"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "Sair das configurações",
+          "goToSettingsCTA" : "Ir para Configurações",
+          "retryCTA" : "Tentar Novamente",
+          "contactSupportCTA" : "Fale com o Suporte Ledger"
+        },
+        "whyPerformChecksLink" : "Por que realizar essas verificações de segurança?",
+        "startChecksCTA" : "Iniciar verificações",
+        "continueCTA" : "Seguir para configuração",
         "genuineCheck" : {
-          "active" : "Verificando {{deviceName}}",
-          "completed" : "Sua {{deviceName}} é autêntica"
+          "title" : {
+            "active" : "Verificação de Autenticidade",
+            "completed" : "A {{modelName}} é autêntica",
+            "cancelled" : "Verificação de autenticidade recusada"
+          },
+          "subtitle" : {
+            "active" : "Esta verificação certifica que sua {{modelName}} é um hardware Ledger oficial",
+            "cancelled" : "Não é possível configurar sua {{modelName}} sem permitir essa verificação"
+          },
+          "resumeCTA" : "Retomar verificação de autenticidade"
         },
         "firmwareUpdate" : {
-          "inactive" : "Verificação de software",
-          "active" : "Verificando atualizações de software",
-          "updateAvailable" : "Atualização {{firmwareVersion}} do software disponível",
-          "recommendation" : "Recomendamos que você baixe a atualização agora",
-          "downloadUpdate" : "Baixar Atualização",
-          "skipUpdate" : "Pular por enquanto",
-          "completed" : "O software está atualizado"
+          "title" : {
+            "active" : "Verificação de atualização do sistema operacional",
+            "completed" : "O sistema operacional da {{modelName}} está atualizado",
+            "updateAvailable" : "A atualização do sistema operacional da {{firmwareVersion}} está disponível"
+          },
+          "subtitle" : {
+            "active" : "Esta verificação certifica que o sistema operacional da {{modelName}} está atualizado",
+            "updateAvailable" : "Recomendamos executar essa atualização para ter acesso aos recursos de segurança mais recentes"
+          },
+          "viewUpdateCTA" : "Visualizar atualização",
+          "resumeUpdateCTA" : "Retomar atualização",
+          "skipUpdateCTA" : "Pular atualização",
+          "retryUpdateCTA" : "Tentar Novamente",
+          "finalStepSuccessDescription" : "Voltar para a verificação do sistema operacional",
+          "finalStepSuccessButtonLabel" : "Continuar"
         }
       },
       "installApplications" : {
@@ -1344,31 +1377,11 @@
       "endOfSetup" : {
         "title" : "Fim da configuração"
       },
-      "genuineCheckModal" : {
-        "title" : "Verificação de autenticidade",
-        "paragraph1" : "Vamos nos certificar de que sua {{deviceName}} é autêntica e segura para usar",
-        "paragraph2" : "Realizaremos uma verificação para garantir que o seu dispositivo não foi adulterado. Você precisará aceitar isso em sua {{deviceName}}.",
-        "checkDeviceButton" : "Verificar Dispositivo"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Permitir uma conexão segura com a Ledger"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "Verificação de autenticidade",
-        "paragraph1" : "A verificação de autenticidade foi cancelada",
-        "paragraph2" : "Esta verificação é muito importante para garantir que sua {{deviceName}} é segura para usar.",
-        "checkDeviceButton" : "Fazer verificação novamente",
-        "cancelButton" : "Talvez mais tarde"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "Verificação de autenticidade",
-        "paragraph1" : "Seu dispositivo não é autêntico",
-        "paragraph2" : "Falha na verificação de autenticidade",
-        "checkDeviceButton" : "Fazer verificação novamente",
-        "cancelButton" : "Talvez mais tarde"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "Permitir Minha Ledger em {{deviceName}}"
-      },
-      "softwareCheckLockedDeviceModal" : {
-        "title" : "Desbloqueie seu dispositivo"
+      "softwareCheckLockedDeviceDrawer" : {
+        "title" : "Desbloquear seu dispositivo"
       },
       "helpDrawer" : {
         "title" : "Precisa de ajuda com o seu manual de configuração?",
@@ -5127,6 +5140,9 @@
       "title" : "{{currencyName}} não é compatível",
       "description" : "Este criptoativo ainda não é compatível. Entre em contato com o Suporte Ledger."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Seu dispositivo já está configurado com uma Frase de Recuperação Secreta"
+    },
     "DeviceNotGenuine" : {
       "title" : "Possivelmente não autêntico",
       "description" : "Solicitar assistência do Suporte Ledger"
@@ -5403,12 +5419,12 @@
       "description" : "Navegue de volta ao Painel Principal no seu dispositivo"
     },
     "WebsocketConnectionError" : {
-      "title" : "Tente novamente (erro de conexão)",
-      "description" : null
+      "title" : "Erro de rede",
+      "description" : "Verifique sua conexão com a internet e tente novamente."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "Tente novamente (conexão encerrada)",
-      "description" : null
+      "title" : "Erro de rede",
+      "description" : "Verifique sua conexão com a internet e tente novamente."
     },
     "WrongDeviceForAccount" : {
       "title" : "Algo deu errado",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "Falha em estimar o gás"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "Tem certeza de que deseja sair das configurações?",
+      "description" : "Não é possível configurar a Ledger Stax sem permitir essa verificação."
+    },
+    "NotFoundEntityError" : {
+      "title" : "Não foi possível verificar se este dispositivo é autêntico.",
+      "description" : "A configuração experimental \"Provedor da Minha Ledger ({{providerNumber}})\" pode estar em conflito com a verificação de autenticidade. Você pode desativá-la nas configurações."
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "A {{productName}} não é autêntica",
+      "description" : "A {{productName}} não é segura para usar.\nEntre em contato com o Suporte Ledger."
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "Falha em verificar a atualização do sistema operacional",
+      "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida."
     }
   },
   "cryptoOrg" : {
