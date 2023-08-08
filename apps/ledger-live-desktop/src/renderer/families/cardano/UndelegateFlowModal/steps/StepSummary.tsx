@@ -12,11 +12,11 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StepProps } from "../types";
+import BigNumber from "bignumber.js";
 
-const FromToWrapper: ThemedComponent<{}> = styled.div``;
-const Separator: ThemedComponent<{}> = styled.div`
+const FromToWrapper = styled.div``;
+const Separator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;
@@ -59,7 +59,7 @@ export default class StepSummary extends PureComponent<StepProps> {
                 disableRounding
                 unit={accountUnit}
                 alwaysShowValue
-                val={stakeKeyDeposit}
+                val={new BigNumber(stakeKeyDeposit)}
                 fontSize={4}
                 inline
                 showCode

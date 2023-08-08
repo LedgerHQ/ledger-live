@@ -7,7 +7,6 @@ import ScrollLoadingList from "../ScrollLoadingList";
 import { Trans, TFunction } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "./ValidatorRow";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
@@ -115,14 +114,14 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   );
 };
 
-const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
+const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;
 
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;

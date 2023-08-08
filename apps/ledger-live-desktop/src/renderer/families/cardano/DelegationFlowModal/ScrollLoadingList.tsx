@@ -2,7 +2,6 @@ import React, { useCallback, useState, useRef, memo, useEffect } from "react";
 import debounce from "lodash/debounce";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import styled from "styled-components";
-import { StyleProp, ViewStyle } from "react-native";
 import Box from "~/renderer/components/Box";
 import BigSpinner from "~/renderer/components/BigSpinner";
 
@@ -20,7 +19,7 @@ type ScrollLoadingListProps = {
   noResultPlaceholder: React.ReactNode | undefined | null;
   scrollEndThreshold?: number;
   bufferSize?: number;
-  style?: StyleProp<ViewStyle>;
+  style?: React.CSSProperties;
   fetchPoolsFromNextPage: () => void;
   search: string;
   isPaginating: boolean;
@@ -37,7 +36,7 @@ const ScrollLoadingList = ({
   search,
   isPaginating,
 }: ScrollLoadingListProps) => {
-  const scrollRef = useRef<HTMLInputElement>();
+  const scrollRef = useRef<HTMLInputElement | null>(null);
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
   useEffect(() => {
     // $FlowFixMe

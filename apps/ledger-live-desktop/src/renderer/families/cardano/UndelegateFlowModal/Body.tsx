@@ -181,9 +181,9 @@ const Body = ({
   );
 };
 
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(Body);
+)(Body) as React.ComponentType<OwnProps>;
 
 export default C;

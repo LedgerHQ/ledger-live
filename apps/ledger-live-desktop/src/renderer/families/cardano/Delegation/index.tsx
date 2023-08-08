@@ -77,6 +77,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                   openModal("MODAL_CARDANO_REWARDS_INFO", {
                     parentAccount,
                     account,
+                    name: "MODAL_CARDANO_REWARDS_INFO"
                   }),
                 );
               }}

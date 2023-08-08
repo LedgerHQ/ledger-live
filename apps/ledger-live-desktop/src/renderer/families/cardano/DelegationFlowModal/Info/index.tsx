@@ -9,7 +9,7 @@ import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 
 type Props = {
-  name?: string;
+  name: string;
   account: AccountLike;
   parentAccount: Account | undefined | null;
 };
