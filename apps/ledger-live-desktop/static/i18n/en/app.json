@@ -1326,6 +1326,8 @@
           "completed": "Your {{modelName}} is genuine and up to date"
         },
         "exitWarningDrawer": {
+          "title": "Are you sure you want to exit setup?",
+          "description": "You cannot setup your Ledger Stax without allowing this check.",
           "cancelCheckCTA": "Cancel check",
           "resumeCheckCTA": "Resume check"
         },
@@ -1333,7 +1335,15 @@
           "quitSetupCTA": "Quit setup",
           "goToSettingsCTA": "Go to settings",
           "retryCTA": "Retry",
-          "contactSupportCTA": "Contact Ledger support"
+          "contactSupportCTA": "Contact Ledger support",
+          "notFoundEntityError": {
+            "title": "We could not check if this device was genuine.",
+            "description": "The experimental setting “My Ledger provider ({{providerNumber}})” may be conflicting with the genuine check. You can disable it in settings."
+          },
+          "deviceNotGenuineError": {
+            "title": "This {{productName}} is not genuine",
+            "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+          }
         },
         "whyPerformChecksLink": "Why perform these security checks?",
         "startChecksCTA": "Start checks",
@@ -5868,18 +5878,6 @@
     },
     "GasEstimationError": {
       "title": "Gas estimation failed"
-    },
-    "ExitEarlySecurityChecksWarning": {
-      "title": "Are you sure you want to exit setup?",
-      "description": "You cannot setup your Ledger Stax without allowing this check."
-    },
-    "NotFoundEntityError": {
-      "title": "We could not check if this device was genuine.",
-      "description": "The experimental setting “My Ledger provider ({{providerNumber}})” may be conflicting with the genuine check. You can disable it in settings."
-    },
-    "DeviceNotGenuineError": {
-      "title": "This {{productName}} is not genuine",
-      "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
     },
     "FailedToRetrieveFirmwareUpdateInfo": {
       "title": "OS update check failed",

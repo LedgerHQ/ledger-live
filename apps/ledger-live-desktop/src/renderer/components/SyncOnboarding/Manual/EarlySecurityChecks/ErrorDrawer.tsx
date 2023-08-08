@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import ErrorDisplay from "../../../ErrorDisplay";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import useEnv from "~/renderer/hooks/useEnv";
 import { useHistory } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
 
 export type Props = {
   error: Error;
@@ -18,17 +18,15 @@ export type Props = {
   closeable?: boolean;
 };
 
-const NotFoundEntityError = createCustomErrorClass("NotFoundEntityError");
+const ErrorIcon = ({ size }: { size?: number }) => (
+  <IconsLegacy.InfoAltFillMedium size={size} color={"primary.c80"} />
+);
 
 const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const isNotFoundEntityError = error.message === "not found entity";
-  const forcedProvider = useEnv("FORCE_PROVIDER");
-
-  const displayedError = isNotFoundEntityError
-    ? { ...new NotFoundEntityError(), providerNumber: forcedProvider }
-    : error;
+  const providerNumber = useEnv("FORCE_PROVIDER");
 
   const drawerAnalyticsName = `Error: ${
     isNotFoundEntityError ? "couldn't check if the device was genuine" : error.name
@@ -48,10 +46,20 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
       <TrackPage category={drawerAnalyticsName} type="drawer" refreshSource={false} />
       <Flex px={13} flex={1}>
-        <ErrorDisplay
-          error={displayedError}
-          Icon={({ size }) => <IconsLegacy.InfoAltFillMedium size={size} color={"primary.c80"} />}
-        />
+        {isNotFoundEntityError ? (
+          <ErrorBody
+            Icon={ErrorIcon}
+            title={t(
+              "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.notFoundEntityError.title",
+            )}
+            description={t(
+              "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.notFoundEntityError.description",
+              { providerNumber },
+            )}
+          />
+        ) : (
+          <ErrorDisplay error={error} Icon={ErrorIcon} />
+        )}
       </Flex>
       <DrawerFooter>
         <Link

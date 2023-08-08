@@ -625,6 +625,23 @@ export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; dev
   );
 };
 
+/** Renders an error icon, title and description */
+export const ErrorBody: React.FC<{
+  Icon: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
+  title: string | React.ReactNode;
+  description: string | React.ReactNode;
+  list?: string | React.ReactNode;
+}> = ({ Icon, title, description, list }) => {
+  return (
+    <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+      <BoxedIcon Icon={Icon} size={64} iconSize={24} />
+      <ErrorTitle>{title}</ErrorTitle>
+      <ErrorDescription>{description}</ErrorDescription>
+      {list ? <ErrorDescription>{list}</ErrorDescription> : null}
+    </Flex>
+  );
+};
+
 export const renderError = ({
   error,
   t,
@@ -668,7 +685,7 @@ export const renderError = ({
 
   return (
     <Wrapper id={`error-${error.name}`}>
-      <BoxedIcon
+      <ErrorBody
         Icon={
           Icon
             ? Icon
@@ -678,22 +695,16 @@ export const renderError = ({
                 </Logo>
               )
         }
-        size={64}
-        iconSize={24}
+        title={<TranslatedError error={error as unknown as Error} noLink />}
+        description={<TranslatedError error={error as unknown as Error} field="description" />}
+        list={
+          list ? (
+            <ol style={{ textAlign: "justify" }}>
+              <TranslatedError error={error as unknown as Error} field="list" />
+            </ol>
+          ) : undefined
+        }
       />
-      <ErrorTitle>
-        <TranslatedError error={error as unknown as Error} noLink />
-      </ErrorTitle>
-      <ErrorDescription>
-        <TranslatedError error={error as unknown as Error} field="description" />
-      </ErrorDescription>
-      {list ? (
-        <ErrorDescription>
-          <ol style={{ textAlign: "justify" }}>
-            <TranslatedError error={error as unknown as Error} field="list" />
-          </ol>
-        </ErrorDescription>
-      ) : null}
       <ButtonContainer>
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton

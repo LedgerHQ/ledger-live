@@ -3,8 +3,6 @@ import { Button, Flex, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import ErrorDisplay from "../../../ErrorDisplay";
-import { createCustomErrorClass } from "@ledgerhq/errors";
 import { useHistory } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -14,14 +12,17 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
 
 export type Props = {
   productName: string;
 };
 
-const DeviceNotGenuineError = createCustomErrorClass("DeviceNotGenuineError");
-
 const analyticsDrawerName = "Error: this Ledger Stax is not genuine";
+
+const ErrorIcon = ({ size }: { size?: number }) => (
+  <IconsLegacy.WarningSolidMedium size={size} color={"warning.c70"} />
+);
 
 const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
   const { t } = useTranslation();
@@ -32,8 +33,6 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
       ? urls.contactSupportWebview[locale as keyof typeof urls.contactSupportWebview]
       : urls.contactSupportWebview.en;
 
-  const displayedError = { ...new DeviceNotGenuineError(), productName };
-
   const exit = () => {
     setDrawer();
     history.push("/onboarding/select-device");
@@ -43,9 +42,16 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
       <TrackPage category={analyticsDrawerName} type="drawer" refreshSource={false} />
       <Flex px={13} flex={1}>
-        <ErrorDisplay
-          error={displayedError}
-          Icon={({ size }) => <IconsLegacy.WarningSolidMedium size={size} color={"warning.c70"} />}
+        <ErrorBody
+          Icon={ErrorIcon}
+          title={t(
+            "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.deviceNotGenuineError.title",
+            { productName },
+          )}
+          description={t(
+            "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.deviceNotGenuineError.description",
+            { productName },
+          )}
         />
       </Flex>
       <DrawerFooter>
