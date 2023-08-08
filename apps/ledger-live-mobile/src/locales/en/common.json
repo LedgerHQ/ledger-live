@@ -1187,7 +1187,7 @@
       },
       "referralProgram": {
         "title": "Refer a friend",
-        "desc": "When your friend buys a Ledger, you both earn $10 of BTC."
+        "desc": "When your friend buys a Ledger, you both earn $20 of BTC."
       }
     },
     "comingSoon": "Coming soon",
@@ -2451,7 +2451,7 @@
     },
     "earn": "Earn",
     "quickActions": "Quick actions",
-    "referralProgram": "Refer a friend and get $10 of Bitcoin",
+    "referralProgram": "Refer a friend and get $20 of Bitcoin",
     "banner": {
       "redelegation": {
         "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
@@ -6205,7 +6205,7 @@
         "tag": "{{count}} NFTs"
       }
     },
-    "referralProgram": "$10"
+    "referralProgram": "$20"
   },
   "servicesWidget": {
     "title": "Services",

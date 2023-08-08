@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-tezos
 
+## 6.27.18
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.7
+
+## 6.27.18-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.7-next.0
+
 ## 6.27.17
 
 ### Patch Changes
