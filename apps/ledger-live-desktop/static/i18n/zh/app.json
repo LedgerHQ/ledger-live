@@ -1280,6 +1280,7 @@
     "hideCTA" : "隐藏代币"
   },
   "syncOnboarding" : {
+    "exitCTA" : "退出设置",
     "connection" : {
       "searching" : {
         "title" : "将 {{deviceModelName}} 连接到您的计算机",
@@ -1293,7 +1294,7 @@
       "title" : "设置 {{deviceName}}",
       "continueOnDevice" : "在您的 {{productName}} 上执行此操作",
       "pairedContent" : {
-        "title" : "{{deviceName}} 已连接",
+        "title" : "{{deviceName}} 是安全的",
         "description" : "在 {{deviceName}} 上继续设置",
         "text" : "在您设置 {{deviceName}} 时，此屏幕将动态变化，向您提供相关信息",
         "continueOnDevice" : "在 {{productName}} 点按查看下一页。"
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "登录您的 Ledger 账户并确认您的身份来恢复您的恢复短语备份。"
       },
       "softwareCheckContent" : {
-        "title" : "软件检查",
+        "title" : {
+          "active" : "正品检查和\n操作系统更新检查",
+          "completed" : "您的 {{modelName}} 是正品，并且是最新的"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "取消检查",
+          "resumeCheckCTA" : "继续检查"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "退出设置",
+          "goToSettingsCTA" : "前往设置选项",
+          "retryCTA" : "重试",
+          "contactSupportCTA" : "联系 Ledger 客服"
+        },
+        "whyPerformChecksLink" : "为什么要进行这些安全检查？",
+        "startChecksCTA" : "开始检查",
+        "continueCTA" : "继续设置",
         "genuineCheck" : {
-          "active" : "正在检查 {{deviceName}}",
-          "completed" : "{{deviceName}} 是正品"
+          "title" : {
+            "active" : "检验真伪",
+            "completed" : "您的 {{modelName}} 是正品",
+            "cancelled" : "正品检查被拒绝"
+          },
+          "subtitle" : {
+            "active" : "此检查可确保您的 {{modelName}} 是官方 Ledger 硬件",
+            "cancelled" : "如不允许此检查，您就无法设置 {{modelName}}"
+          },
+          "resumeCTA" : "继续正品检查"
         },
         "firmwareUpdate" : {
-          "inactive" : "软件检查",
-          "active" : "检查软件更新",
-          "updateAvailable" : "有可用的软件更新 {{firmwareVersion}}",
-          "recommendation" : "我们建议立即下载更新",
-          "downloadUpdate" : "下载更新",
-          "skipUpdate" : "暂时跳过",
-          "completed" : "软件是最新的"
+          "title" : {
+            "active" : "操作系统更新检查",
+            "completed" : "{{modelName}} 操作系统是最新的",
+            "updateAvailable" : "操作系统更新 {{firmwareVersion}} 可用"
+          },
+          "subtitle" : {
+            "active" : "此检查可确保您的 {{modelName}} 操作系统是最新的",
+            "updateAvailable" : "我们建议执行此更新以使用最新的安全功能"
+          },
+          "viewUpdateCTA" : "查看更新",
+          "resumeUpdateCTA" : "继续更新",
+          "skipUpdateCTA" : "跳过更新",
+          "retryUpdateCTA" : "重试",
+          "finalStepSuccessDescription" : "返回操作系统检查",
+          "finalStepSuccessButtonLabel" : "继续"
         }
       },
       "installApplications" : {
@@ -1344,30 +1377,10 @@
       "endOfSetup" : {
         "title" : "设置结束"
       },
-      "genuineCheckModal" : {
-        "title" : "真伪检查",
-        "paragraph1" : "我们要确保 {{deviceName}} 为正品，可以安全使用",
-        "paragraph2" : "我们将进行检查，确保设备未被篡改。您需要在 {{deviceName}} 上接受此检查。",
-        "checkDeviceButton" : "检查设备"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "允许与 Ledger 设备建立安全连接"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "真伪检查",
-        "paragraph1" : "正品检查已取消",
-        "paragraph2" : "该检查对确保 {{deviceName}} 能够安全使用至关重要。",
-        "checkDeviceButton" : "再次运行检查",
-        "cancelButton" : "以后再说"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "真伪检查",
-        "paragraph1" : "您的设备不是正品",
-        "paragraph2" : "真伪检查失败",
-        "checkDeviceButton" : "再次运行检查",
-        "cancelButton" : "以后再说"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "在 {{deviceName}} 上允许使用管理器"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "解锁您的设备"
       },
       "helpDrawer" : {
@@ -4298,7 +4311,7 @@
         "nextButton" : "开始",
         "noDevice" : "没有设备？",
         "buyLink" : "没有设备？购买 Ledger Nano X",
-        "recoverSignIn" : "登录使用 Ledger Recover",
+        "recoverSignIn" : "登录 Ledger Recover",
         "byTapping" : "点按“开始”即表示您应允并同意我们的",
         "termsAndConditions" : "条款与条件",
         "and" : "和",
@@ -5127,6 +5140,9 @@
       "title" : "不支持 {{currencyName}}",
       "description" : "尚不支持该加密资产。请联系 Ledger 客服。"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "您的设备已用秘密恢复短语设置"
+    },
     "DeviceNotGenuine" : {
       "title" : "可能不是正版",
       "description" : "向 Ledger 客服寻求帮助"
@@ -5403,12 +5419,12 @@
       "description" : "请返回设备上的功能面板"
     },
     "WebsocketConnectionError" : {
-      "title" : "抱歉，请重试 (连接错误)",
-      "description" : null
+      "title" : "网络错误",
+      "description" : "确保您已连接到互联网，然后重试。"
     },
     "WebsocketConnectionFailed" : {
-      "title" : "抱歉，请重试 (连接已关闭)",
-      "description" : null
+      "title" : "网络错误",
+      "description" : "确保您已连接到互联网，然后重试。"
     },
     "WrongDeviceForAccount" : {
       "title" : "出错了",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "未能估计 Gas 费用"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "确定要退出设置吗？",
+      "description" : "如不允许此检查，您就无法设置 Ledger Stax。"
+    },
+    "NotFoundEntityError" : {
+      "title" : "我们无法检查该设备是否为正品。",
+      "description" : "实验性设置“我的 Ledger 提供商（{{providerNumber}}）”可能与正品检查冲突。您可以在设置中禁用此设置。"
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "此 {{productName}} 不是正品",
+      "description" : "此 {{productName}} 不能安全使用。\n请联系 Ledger 客服。"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "操作系统更新检查失败",
+      "description" : "出错了。请重试。如有疑问，请联系 Ledger 客服。"
     }
   },
   "cryptoOrg" : {
