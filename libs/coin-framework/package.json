@@ -75,7 +75,6 @@
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
     },
-
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",

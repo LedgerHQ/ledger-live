@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.20.4-next.0
+
+### Patch Changes
+
+- [#4253](https://github.com/LedgerHQ/ledger-live/pull/4253) [`5fc1521cb4`](https://github.com/LedgerHQ/ledger-live/commit/5fc1521cb4b2821516f5991275f335cb7313cf34) Thanks [@valpinkman](https://github.com/valpinkman)! - publish new version to npm
+
+- Updated dependencies [[`5fc1521cb4`](https://github.com/LedgerHQ/ledger-live/commit/5fc1521cb4b2821516f5991275f335cb7313cf34)]:
+  - @ledgerhq/crypto-icons-ui@0.5.1-next.0
+  - @ledgerhq/icons-ui@0.4.3-next.0
+  - @ledgerhq/ui-shared@0.2.1-next.0
+
 ## 0.20.3
 
 ### Patch Changes

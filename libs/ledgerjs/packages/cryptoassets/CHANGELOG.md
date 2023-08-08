@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.11.1-next.0
+
+### Patch Changes
+
+- [#4193](https://github.com/LedgerHQ/ledger-live/pull/4193) [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996) Thanks [@lawRathod](https://github.com/lawRathod)! - Update explorer view url for internet_computer
+
 ## 9.11.0
 
 ### Minor Changes

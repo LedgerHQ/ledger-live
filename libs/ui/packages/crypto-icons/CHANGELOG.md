@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- [#4253](https://github.com/LedgerHQ/ledger-live/pull/4253) [`5fc1521cb4`](https://github.com/LedgerHQ/ledger-live/commit/5fc1521cb4b2821516f5991275f335cb7313cf34) Thanks [@valpinkman](https://github.com/valpinkman)! - publish new version to npm
+
 ## 0.5.0
 
 ### Minor Changes
