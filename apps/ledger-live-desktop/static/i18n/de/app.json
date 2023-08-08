@@ -1280,6 +1280,7 @@
     "hideCTA" : "Token ausblenden"
   },
   "syncOnboarding" : {
+    "exitCTA" : "Einrichtung beenden",
     "connection" : {
       "searching" : {
         "title" : "Verbinden Sie {{deviceModelName}} mit Ihrem Computer",
@@ -1293,7 +1294,7 @@
       "title" : "{{deviceName}} einrichten",
       "continueOnDevice" : "Diese Aktion für {{productName}} durchführen",
       "pairedContent" : {
-        "title" : "{{deviceName}} ist verbunden",
+        "title" : "{{deviceName}} ist sicher",
         "description" : "Fortfahren der Einrichtung auf {{deviceName}}",
         "text" : "Dieser Bildschirm ändert sich dynamisch, um Ihnen während der Einrichtung Ihres {{deviceName}} relevante Informationen zur Verfügung zu stellen.",
         "continueOnDevice" : "Tippen Sie auf „{{productName}}“, um den nächsten Bildschirm anzuzeigen."
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "Stellen Sie die Sicherheitskopie Ihrer Wiederherstellungsphrase wieder her, indem Sie sich bei Ihrem Ledger-Konto anmelden und Ihre Identität bestätigen."
       },
       "softwareCheckContent" : {
-        "title" : "Prüfung der Software",
+        "title" : {
+          "active" : "Echtheitsprüfung und \nPrüfung auf Betriebssystem-Update",
+          "completed" : "Ihr Gerät {{modelName}} ist echt und auf dem neusten Stand"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "Prüfung abbrechen",
+          "resumeCheckCTA" : "Prüfung fortsetzen"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "Einrichtung beenden",
+          "goToSettingsCTA" : "Gehen Sie zu Einstellungen",
+          "retryCTA" : "Wiederholen",
+          "contactSupportCTA" : "Ledger-Kundenservice kontaktieren"
+        },
+        "whyPerformChecksLink" : "Warum sollten diese Sicherheitsprüfungen durchgeführt werden?",
+        "startChecksCTA" : "Prüfungen starten",
+        "continueCTA" : "Weiter zur Einrichtung",
         "genuineCheck" : {
-          "active" : "{{deviceName}} wird überprüft",
-          "completed" : "{{deviceName}} ist ein Originalgerät"
+          "title" : {
+            "active" : "Echtheitsprüfung",
+            "completed" : "Ihr Gerät {{modelName}} ist echt",
+            "cancelled" : "Echtheitsprüfung abgelehnt"
+          },
+          "subtitle" : {
+            "active" : "Diese Prüfung bestätigt, dass Ihr Gerät {{modelName}} eine offizielle Ledger-Hardware ist",
+            "cancelled" : "Ohne diese Prüfung lässt sich Ihr Gerät {{modelName}} nicht einrichten"
+          },
+          "resumeCTA" : "Echtheitsprüfung fortsetzen"
         },
         "firmwareUpdate" : {
-          "inactive" : "Prüfung der Software",
-          "active" : "Auf Softwareupdates prüfen",
-          "updateAvailable" : "Software-Update verfügbar {{firmwareVersion}}",
-          "recommendation" : "Wir empfehlen, das Update jetzt herunterzuladen",
-          "downloadUpdate" : "Update herunterladen",
-          "skipUpdate" : "Vorerst überspringen",
-          "completed" : "Software ist auf dem neuesten Stand"
+          "title" : {
+            "active" : "Prüfung auf Betriebssystem-Update",
+            "completed" : "Das Betriebssystem Ihres Geräts {{modelName}} ist auf dem neusten Stand",
+            "updateAvailable" : "Betriebssystem-Update {{firmwareVersion}} ist verfügbar"
+          },
+          "subtitle" : {
+            "active" : "Hiermit wird sichergestellt dass das Betriebssystem Ihres Geräts {{modelName}} auf dem neusten Stand ist",
+            "updateAvailable" : "Wir empfehlen, dieses Update durchzuführen, um Zugang zu den neuesten Sicherheitsfunktionen zu erhalten"
+          },
+          "viewUpdateCTA" : "Update anzeigen",
+          "resumeUpdateCTA" : "Update fortsetzen",
+          "skipUpdateCTA" : "Update überspringen",
+          "retryUpdateCTA" : "Wiederholen",
+          "finalStepSuccessDescription" : "Zurück zur Betriebssystemprüfung",
+          "finalStepSuccessButtonLabel" : "Weiter"
         }
       },
       "installApplications" : {
@@ -1344,30 +1377,10 @@
       "endOfSetup" : {
         "title" : "Einrichtung beendet"
       },
-      "genuineCheckModal" : {
-        "title" : "Echtheitsprüfung",
-        "paragraph1" : "Lassen Sie uns sicherstellen, dass Ihr {{deviceName}} echt ist und sicher verwendet werden kann",
-        "paragraph2" : "Wir führen eine Überprüfung durch, um sicherzustellen, dass Ihr Gerät nicht manipuliert wurde. Sie müssen dies auf Ihrem {{deviceName}} akzeptieren.",
-        "checkDeviceButton" : "Gerät überprüfen"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Lassen Sie eine sichere Verbindung mit Ledger zu"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "Echtheitsprüfung",
-        "paragraph1" : "Die Echtheitsprüfung wurde abgebrochen",
-        "paragraph2" : "Diese Überprüfung ist unverzichtbar, um dafür zu sorgen, dass Ihr {{deviceName}} sicher verwendet werden kann.",
-        "checkDeviceButton" : "Überprüfung erneut durchführen",
-        "cancelButton" : "Vielleicht später"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "Echtheitsprüfung",
-        "paragraph1" : "Ihr Gerät ist nicht echt",
-        "paragraph2" : "Echtheitsprüfung fehlgeschlagen",
-        "checkDeviceButton" : "Überprüfung erneut durchführen",
-        "cancelButton" : "Vielleicht später"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "Manager aktivieren auf {{deviceName}}"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "Entsperren Sie Ihr Gerät"
       },
       "helpDrawer" : {
@@ -4298,7 +4311,7 @@
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Kaufen Sie eine Ledger Nano X",
-        "recoverSignIn" : "Für Ledger Recover anmelden",
+        "recoverSignIn" : "Melden Sie sich bei Ledger Recover an",
         "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
         "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
         "and" : "Hinzu kommt:",
@@ -5127,6 +5140,9 @@
       "title" : "{{currencyName}} wird nicht unterstützt",
       "description" : "Dieser Krypto-Vermögenswert wird noch nicht unterstützt. Bitte kontaktieren Sie den Ledger-Support"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Auf Ihrem Gerät ist bereits eine geheime Wiederherstellungsphrase eingerichtet"
+    },
     "DeviceNotGenuine" : {
       "title" : "Möglicherweise nicht echt",
       "description" : "Hilfe vom Ledger-Support anfordern"
@@ -5403,12 +5419,12 @@
       "description" : "Bitte navigieren Sie auf Ihrem Gerät zurück zum Dashboard"
     },
     "WebsocketConnectionError" : {
-      "title" : "Entschuldigung, versuchen Sie es erneut (Verbindungsfehler)",
-      "description" : null
+      "title" : "Netzwerkfehler",
+      "description" : "Stellen Sie sicher, dass Sie mit dem Internet verbunden sind, und versuchen Sie es noch einmal."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "Entschuldigung, versuchen Sie es erneut (Verbindung geschlossen)",
-      "description" : null
+      "title" : "Netzwerkfehler",
+      "description" : "Stellen Sie sicher, dass Sie mit dem Internet verbunden sind, und versuchen Sie es noch einmal."
     },
     "WrongDeviceForAccount" : {
       "title" : "Etwas ist schief gelaufen",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "Gasgebührenschätzung fehlgeschlagen"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "Möchten Sie die Einrichtung wirklich beenden?",
+      "description" : "Ohne diese Prüfung lässt sich Ihr Ledger Stax nicht einrichten."
+    },
+    "NotFoundEntityError" : {
+      "title" : "Wir konnten die Echtheit dieses Geräts nicht prüfen.",
+      "description" : "Die experimentelle Einstellung „My Ledger provider ({{providerNumber}})“ könnte mit der Echtheitsprüfung in Konflikt stehen. Sie können sie daher in den Einstellungen deaktivieren."
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "Dieses Gerät {{productName}} ist nicht echt",
+      "description" : "Die Nutzung dieses Geräts {{productName}} ist nicht sicher.\nBitte kontaktieren Sie den Ledger-Kundenservice."
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "Prüfung auf Betriebssystem-Update fehlgeschlagen",
+      "description" : "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut oder wenden Sie sich im Zweifelsfall an den Ledger-Support."
     }
   },
   "cryptoOrg" : {
