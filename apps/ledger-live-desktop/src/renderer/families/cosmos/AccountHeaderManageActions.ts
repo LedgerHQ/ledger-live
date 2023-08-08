@@ -57,6 +57,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button-cosmos",
     },
   ];
 };
