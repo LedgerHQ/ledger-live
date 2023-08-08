@@ -2,6 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../../../env";
 import { fetchCurrencyToMock } from "./__mocks__/fetchCurrencyTo.mocks";
 import { isPlaywrightEnv } from "../../utils/isPlaywrightEnv";
+import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 
 type Props = {
   currencyFrom: string;
@@ -34,7 +35,7 @@ export async function fetchCurrencyTo({
     const { data } = await network<ResponseData>({
       method: "GET",
       url: url.toString(),
-      timeout: 10000,
+      timeout: DEFAULT_SWAP_TIMEOUT_MS,
     });
     return data;
   } catch (e) {
