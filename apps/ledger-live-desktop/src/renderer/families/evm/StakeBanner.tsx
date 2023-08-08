@@ -10,9 +10,6 @@ import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { urls } from "~/config/urls";
 
-const kilnAppId = "kiln";
-const lidoAppId = "lido";
-
 const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const history = useHistory();
   const { t } = useTranslation();
@@ -24,7 +21,7 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   if (stakeProvider === "lido" && !stakeAccountBannerParams?.eth?.lido) return null;
   if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return null;
 
-  const stakeOnClick = (providerLiveAppId: string) => {
+  const stakeOnClick = (providerLiveAppId: typeof stakeProvider) => {
     track("button_clicked", {
       ...stakeDefaultTrack,
       delegation: "stake",
@@ -53,7 +50,7 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       : t("account.banner.delegation.ethereum.lido.cta");
 
   const onClick =
-    stakeProvider === "kiln" ? () => stakeOnClick(kilnAppId) : () => stakeOnClick(lidoAppId);
+    stakeProvider === "kiln" ? () => stakeOnClick("kiln") : () => stakeOnClick("lido");
 
   const display = ethStakingProviders?.params?.listProvider?.some(
     (provider: { liveAppId: string }) => provider.liveAppId === stakeProvider,
