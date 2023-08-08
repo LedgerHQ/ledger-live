@@ -1280,6 +1280,7 @@
     "hideCTA" : "Token'ı gizle"
   },
   "syncOnboarding" : {
+    "exitCTA" : "Kurulumdan çık",
     "connection" : {
       "searching" : {
         "title" : "{{deviceModelName}} cihazınızı bilgisayarınıza bağlayın",
@@ -1293,7 +1294,7 @@
       "title" : "{{deviceName}} cihazını kurun",
       "continueOnDevice" : "Bu eylemi {{productName}} cihazında yapın",
       "pairedContent" : {
-        "title" : "{{deviceName}} bağlandı",
+        "title" : "{{deviceName}} güvenli",
         "description" : "{{deviceName}} üzerinde kuruluma devam edin",
         "text" : "Bu ekran, {{deviceName}} cihazınızın kurulumunu yaparken ilgili bilgileri sunmak üzere dinamik olarak değişecek",
         "continueOnDevice" : "Bir sonraki ekranı görmek için {{productName}} cihazına dokunun."
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "Ledger hesabınıza giriş yapıp kimliğinizi doğrulayarak Kurtarma İfadesi Yedeğinizi geri yükleyin."
       },
       "softwareCheckContent" : {
-        "title" : "Yazılım kontrolü",
+        "title" : {
+          "active" : "Orijinallik denetimi ve\nişletim sistemi güncellemesi denetimi",
+          "completed" : "{{modelName}} cihazınız orijinal ve güncel"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "Denetimi iptal et",
+          "resumeCheckCTA" : "Denetimi sürdür"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "Kurulumdan çık",
+          "goToSettingsCTA" : "Ayarlara git",
+          "retryCTA" : "Tekrar dene",
+          "contactSupportCTA" : "Ledger Destek ile iletişime geçin"
+        },
+        "whyPerformChecksLink" : "Bu güvenlik denetimlerini neden gerçekleştirmeliyim?",
+        "startChecksCTA" : "Denetimleri başlat",
+        "continueCTA" : "Kuruluma devam et",
         "genuineCheck" : {
-          "active" : "{{deviceName}} kontrol ediliyor",
-          "completed" : "{{deviceName}} cihazınız orijinal"
+          "title" : {
+            "active" : "Orijinallik denetimi",
+            "completed" : "{{modelName}} cihazınız orijinal",
+            "cancelled" : "Orijinallik denetimi reddedildi"
+          },
+          "subtitle" : {
+            "active" : "Bu denetim, {{modelName}} cihazınızın resmî bir Ledger donanımı olduğundan emin olmanızı sağlar",
+            "cancelled" : "Bu denetime izin vermezseniz {{modelName}} kurulumunu gerçekleştiremezsiniz"
+          },
+          "resumeCTA" : "Orijinallik denetimini sürdür"
         },
         "firmwareUpdate" : {
-          "inactive" : "Yazılım kontrolü",
-          "active" : "Yazılım güncellemeleri kontrol ediliyor",
-          "updateAvailable" : "Yazılım güncellemesi mevcut {{firmwareVersion}}",
-          "recommendation" : "Güncellemeyi şimdi indirmenizi öneririz",
-          "downloadUpdate" : "Güncellemeyi indir",
-          "skipUpdate" : "Şimdilik atla",
-          "completed" : "Yazılım güncel"
+          "title" : {
+            "active" : "İşletim sistemi güncellemesi denetimi",
+            "completed" : "{{modelName}} işletim sistemi güncel",
+            "updateAvailable" : "{{firmwareVersion}} için işletim sistemi güncellemesi mevcut"
+          },
+          "subtitle" : {
+            "active" : "Bu denetim, {{modelName}} işletim sisteminizin güncel olduğundan emin olmanızı sağlar",
+            "updateAvailable" : "En yeni güvenlik özelliklerine erişebilmeniz için bu güncellemeyi yapmanızı öneririz"
+          },
+          "viewUpdateCTA" : "Güncellemeyi görüntüle",
+          "resumeUpdateCTA" : "Güncellemeyi sürdür",
+          "skipUpdateCTA" : "Güncellemeyi atla",
+          "retryUpdateCTA" : "Tekrar dene",
+          "finalStepSuccessDescription" : "İşletim sistemi denetimine dön",
+          "finalStepSuccessButtonLabel" : "Devam"
         }
       },
       "installApplications" : {
@@ -1344,30 +1377,10 @@
       "endOfSetup" : {
         "title" : "Kurulum sonu"
       },
-      "genuineCheckModal" : {
-        "title" : "Orijinallik Denetimi",
-        "paragraph1" : "{{deviceName}} cihazınızın Orijinal ve güvenli olduğundan emin olalım",
-        "paragraph2" : "Cihazınızın kurcalanmadığından emin olmak için bir kontrol yapacağız. Bunu {{deviceName}} cihazınızda kabul etmeniz gerekecek.",
-        "checkDeviceButton" : "Cihazı kontrol et"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Ledger ile güvenli bağlantı kurulmasına izin verin"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "Orijinallik Denetimi",
-        "paragraph1" : "Orijinallik denetimi iptal edildi",
-        "paragraph2" : "Bu kontrol, {{deviceName}} cihazınızın güvenli bir şekilde kullanılabileceğinden emin olmak için çok önemlidir.",
-        "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
-        "cancelButton" : "Belki sonra"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "Orijinallik Denetimi",
-        "paragraph1" : "Cihazınız orijinal değil",
-        "paragraph2" : "Orijinallik denetimi başarısız oldu",
-        "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
-        "cancelButton" : "Belki sonra"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "{{deviceName}} cihazında yöneticiye izin verin"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "Cihazınızın kilidini açın"
       },
       "helpDrawer" : {
@@ -4298,7 +4311,7 @@
         "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
-        "recoverSignIn" : "Ledger Recover için giriş yapın",
+        "recoverSignIn" : "Ledger Recover'a giriş yapın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
         "termsAndConditions" : "Hüküm ve Koşullar",
         "and" : "ve",
@@ -5127,6 +5140,9 @@
       "title" : "{{currencyName}} desteklenmiyor",
       "description" : "Bu kripto varlık henüz desteklenmiyor. Lütfen Ledger Destek ile iletişime geçin."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Cihazınız zaten bir Gizli Kurtarma İfadesi ile kurulmuş"
+    },
     "DeviceNotGenuine" : {
       "title" : "Muhtemelen orijinal değil",
       "description" : "Ledger Destek'ten yardım isteyin"
@@ -5403,12 +5419,12 @@
       "description" : "Lütfen cihazınızdaki Kontrol Paneline geri dönün"
     },
     "WebsocketConnectionError" : {
-      "title" : "Üzgünüz, tekrar deneyin (bağlantı hatası)",
-      "description" : null
+      "title" : "Ağ hatası",
+      "description" : "İnternet bağlantınızı kontrol edip tekrar deneyin."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "Üzgünüz, tekrar deneyin (bağlantı kapalı)",
-      "description" : null
+      "title" : "Ağ hatası",
+      "description" : "İnternet bağlantınızı kontrol edip tekrar deneyin."
     },
     "WrongDeviceForAccount" : {
       "title" : "Bir hata oluştu",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "Tahmini Gas ücreti hesaplanamadı"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "Kurulumdan çıkmak istediğinizden emin misiniz?",
+      "description" : "Bu denetime izin vermezseniz Ledger Stax kurulumunu gerçekleştiremezsiniz."
+    },
+    "NotFoundEntityError" : {
+      "title" : "Bu cihazın orijinal olup olmadığını kontrol edemedik.",
+      "description" : "\"My Ledger sağlayıcısı ({{providerNumber}})\" deneysel ayarı, orijinallik denetimiyle çakışıyor olabilir. Bunu ayarlardan devre dışı bırakabilirsiniz."
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "Bu {{productName}} orijinal değil",
+      "description" : "Bu {{productName}} cihazını kullanmak güvenli değil.\nLütfen Ledger Destek ile iletişime geçin."
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "İşletim sistemi güncellemesi denetlenemedi",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     }
   },
   "cryptoOrg" : {
