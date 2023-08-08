@@ -177,7 +177,7 @@
       "SLASH" : "Штраф",
       "WITHDRAW_UNBONDED" : "Вывод",
       "NOMINATE" : "Назначение",
-      "CHILL" : "Очистить голоса",
+      "CHILL" : "Отзыв голосов",
       "SET_CONTROLLER" : "Назначить контроллер",
       "LOCK" : "Заблокировано",
       "UNLOCK" : "Разблокировано",
@@ -1280,6 +1280,7 @@
     "hideCTA" : "Скрыть токен"
   },
   "syncOnboarding" : {
+    "exitCTA" : "Выйти",
     "connection" : {
       "searching" : {
         "title" : "Подключите {{deviceModelName}} к ПК.",
@@ -1293,7 +1294,7 @@
       "title" : "Настройка {{deviceName}}",
       "continueOnDevice" : "Выполните это действие на {{productName}}",
       "pairedContent" : {
-        "title" : "Устройство {{deviceName}} подключено",
+        "title" : "{{deviceName}} безопасен",
         "description" : "Продолжите настройку на {{deviceName}}",
         "text" : "Содержимое экрана будет меняться. Таким образом вы получите актуальную информацию по ходу настройки вашего устройства {{deviceName}}",
         "continueOnDevice" : "Нажмите по {{productName}} для просмотра следующего экрана."
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "Восстановите резервную копию вашей секретной фразы, войдя в учётную запись Ledger и подтвердив личность."
       },
       "softwareCheckContent" : {
-        "title" : "Проверка ПО",
+        "title" : {
+          "active" : "Проверка подлинности и\nактуальности прошивки",
+          "completed" : "Этот {{modelName}} подлинный и актуальный"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "Отменить проверку",
+          "resumeCheckCTA" : "Продолжить проверку"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "Выйти",
+          "goToSettingsCTA" : "Перейти в Настройки",
+          "retryCTA" : "Повторить",
+          "contactSupportCTA" : "Связаться с Поддержкой"
+        },
+        "whyPerformChecksLink" : "Зачем нужна проверка безопасности?",
+        "startChecksCTA" : "Начать проверку",
+        "continueCTA" : "Продолжить настройку",
         "genuineCheck" : {
-          "active" : "Проверка {{deviceName}}",
-          "completed" : "Подлинность {{deviceName}} подтверждена"
+          "title" : {
+            "active" : "Проверка подлинности",
+            "completed" : "Этот {{modelName}} подлинный",
+            "cancelled" : "Проверка подлинности отменена"
+          },
+          "subtitle" : {
+            "active" : "Эта проверка позволяет убедиться в подлинности вашего {{modelName}}",
+            "cancelled" : "Нельзя настроить {{modelName}} без этой проверки"
+          },
+          "resumeCTA" : "Продолжить проверку подлинности"
         },
         "firmwareUpdate" : {
-          "inactive" : "Проверка ПО",
-          "active" : "Проверяем обновления ПО",
-          "updateAvailable" : "Доступно обновление ПО версии {{firmwareVersion}}",
-          "recommendation" : "Рекомендуем загрузить обновление",
-          "downloadUpdate" : "Загрузить обновление",
-          "skipUpdate" : "Отложить",
-          "completed" : "ПО актуально"
+          "title" : {
+            "active" : "Проверка обновления прошивки",
+            "completed" : "Прошивка {{modelName}} актуальна",
+            "updateAvailable" : "Доступно обновление прошивки {{firmwareVersion}}"
+          },
+          "subtitle" : {
+            "active" : "Эта проверка позволяет убедиться в актуальности прошивки {{modelName}}",
+            "updateAvailable" : "Рекомендуем обновляться для получения актуальных функций безопасности"
+          },
+          "viewUpdateCTA" : "Открыть обновление",
+          "resumeUpdateCTA" : "Продолжить обновление",
+          "skipUpdateCTA" : "Пропустить обновление",
+          "retryUpdateCTA" : "Повторить",
+          "finalStepSuccessDescription" : "Назад к проверке прошивки",
+          "finalStepSuccessButtonLabel" : "Продолжить"
         }
       },
       "installApplications" : {
@@ -1344,30 +1377,10 @@
       "endOfSetup" : {
         "title" : "Завершение настройки"
       },
-      "genuineCheckModal" : {
-        "title" : "Проверка подлинности",
-        "paragraph1" : "Давайте убедимся в подлинности устройства {{deviceName}} и безопасности взаимодействия с ним",
-        "paragraph2" : "Мы проведём проверку и подтвердим, что ваше устройство не было взломано. Согласитесь на проведение операции на самом {{deviceName}}.",
-        "checkDeviceButton" : "Проверить устройство"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Разрешите безопасное подключение на устройстве"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "Проверка подлинности",
-        "paragraph1" : "Проверка подлинности была отменена",
-        "paragraph2" : "Проверка позволяет быть уверенным в том, что пользоваться устройством {{deviceName}} абсолютно безопасно.",
-        "checkDeviceButton" : "Запустите проверку снова",
-        "cancelButton" : "Не сейчас"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "Проверка подлинности",
-        "paragraph1" : "Устройство не является подлинным",
-        "paragraph2" : "Проверка подлинности не удалась",
-        "checkDeviceButton" : "Запустите проверку снова",
-        "cancelButton" : "Не сейчас"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "Одобрите работу «Мой Ledger» на {{deviceName}}"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "Разблокируйте устройство"
       },
       "helpDrawer" : {
@@ -3290,7 +3303,7 @@
       "steps" : {
         "validators" : {
           "title" : "Валидаторы",
-          "notValidatorsRemoved" : "Вы указали {{count}} адресов, которые больше не являются валидаторами. Они будут автоматически удалены из назначающей транзакции.",
+          "notValidatorsRemoved" : "Вы отметили которые адреса, которые больше не являются валидаторами. Они будут автоматически удалены из назначающей транзакции.",
           "maybeChill" : "Также можно отозвать назначения"
         },
         "connectDevice" : {
@@ -5127,6 +5140,9 @@
       "title" : "{{currencyName}} не поддерживается",
       "description" : "Этот криптоактив пока не поддерживается. Обратитесь в Поддержку."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "В вашем устройстве уже есть секретная фраза восстановления"
+    },
     "DeviceNotGenuine" : {
       "title" : "Возможно, устройство не подлинное.",
       "description" : "Вы можете получить помощь от Поддержки Ledger"
@@ -5403,12 +5419,12 @@
       "description" : "Пожалуйста, переключитесь на Консоль на устройстве."
     },
     "WebsocketConnectionError" : {
-      "title" : "Пожалуйста, попробуйте ещё раз (ошибка соединения)",
-      "description" : null
+      "title" : "Ошибка сети",
+      "description" : "Проверьте интернет-подключение и попробуйте снова."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "Пожалуйста, попробуйте ещё раз (соединение разорвано).",
-      "description" : null
+      "title" : "Ошибка сети",
+      "description" : "Проверьте интернет-подключение и попробуйте снова."
     },
     "WrongDeviceForAccount" : {
       "title" : "Что-то пошло не так",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "Сбой расчёта стоимости Газа"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "Точно хотите прекратить настройку?",
+      "description" : "Нельзя настроить Ledger Stax без этой проверки"
+    },
+    "NotFoundEntityError" : {
+      "title" : "Не удалось проверить подлинность устройства.",
+      "description" : "Экспериментальная настройка «Поставщик приложений в «Мой Ledger» ({{providerNumber}})» может помешать проверке подлинности. Отключить её можно в Настройках."
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "Это устройство {{productName}} не является подлинным",
+      "description" : "Это устройство {{productName}} небезопасно для использования\nОбратитесь в Поддержку Ledger"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "Сбой проверки обновления ОС",
+      "description" : "Что-то пошло не так. Повторите попытку или свяжитесь с Поддержкой, если возникнут дополнительные вопросы."
     }
   },
   "cryptoOrg" : {
