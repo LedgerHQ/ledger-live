@@ -208,10 +208,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     let hasUnrecoverableError;
 
     switch (updateStep) {
-      case "start":
-        proceedToAppsBackup();
-        break;
-
       case "appsBackup":
         hasUnrecoverableError =
           connectManagerState.error &&
@@ -459,6 +455,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, [updateStep, proceedToImageRestore, proceedToAppsRestore, proceedToUpdateCompleted]);
 
   return {
+    startUpdate: proceedToAppsBackup,
     updateStep,
     connectManagerState,
     staxFetchImageState,
