@@ -10,8 +10,17 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { InfiniteLoader, Text, Flex, Tag, IconsLegacy, BoxedIcon, Log } from "@ledgerhq/native-ui";
-import { LockAltMedium, DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  InfiniteLoader,
+  Text,
+  Flex,
+  Tag,
+  IconsLegacy,
+  BoxedIcon,
+  Log,
+  Icons,
+} from "@ledgerhq/native-ui";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import {
@@ -420,7 +429,7 @@ export function renderAllowLanguageInstallation({
             deviceName,
           })}
       </Text>
-      <AnimationContainer>
+      <AnimationContainer my={8}>
         <Animation
           source={getDeviceAnimation({ device, key, theme })}
           style={animationStyles(device.modelId)}
@@ -568,8 +577,16 @@ export function renderLockedDeviceError({
   return (
     <Wrapper>
       <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
-        <Flex mb={5}>
-          <BoxedIcon size={64} Icon={LockAltMedium} iconSize={24} iconColor="neutral.c100" />
+        <Flex mb={7}>
+          <BoxedIcon
+            Icon={Icons.InformationFill}
+            backgroundColor={"opacityDefault.c05"}
+            size={64}
+            variant="circle"
+            borderColor="transparent"
+            iconSize={"L"}
+            iconColor="primary.c80"
+          />
         </Flex>
 
         <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>

@@ -49,8 +49,8 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
     <Flex flexDirection={"row"} flexWrap={"nowrap"} alignItems="center">
       <Text
         maxWidth="90%"
-        variant="large"
-        fontSize={24}
+        fontWeight="semiBold"
+        variant="h4"
         uppercase={false}
         numberOfLines={2}
         ellipsizeMode="tail"
