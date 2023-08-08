@@ -1,5 +1,29 @@
 # @ledgerhq/native-ui
 
+## 0.20.3
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#3792](https://github.com/LedgerHQ/ledger-live/pull/3792) [`9428e776cd`](https://github.com/LedgerHQ/ledger-live/commit/9428e776cd2f42f08472ab53a3c050d00a93b31c) Thanks [@grsoares21](https://github.com/grsoares21)! - Add background color as a configurable prop to the IconBadge component
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2
+  - @ledgerhq/crypto-icons-ui@0.5.0
+
+## 0.20.3-next.0
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#3792](https://github.com/LedgerHQ/ledger-live/pull/3792) [`9428e776cd`](https://github.com/LedgerHQ/ledger-live/commit/9428e776cd2f42f08472ab53a3c050d00a93b31c) Thanks [@grsoares21](https://github.com/grsoares21)! - Add background color as a configurable prop to the IconBadge component
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2-next.0
+  - @ledgerhq/crypto-icons-ui@0.5.0-next.0
+
 ## 0.20.2
 
 ### Patch Changes
