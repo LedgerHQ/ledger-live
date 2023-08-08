@@ -53,6 +53,7 @@ import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage
 import Button from "../../components/wrappedUi/Button";
 import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
+import UpdateReleaseNotes from "./UpdateReleaseNotes";
 
 // Screens/components navigating to this screen shouldn't know the implementation fw update
 // -> re-exporting useful types.
@@ -162,6 +163,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
   const {
+    startUpdate,
     connectManagerState,
     updateActionState,
     updateStep,
@@ -692,7 +694,12 @@ export const FirmwareUpdate = ({
 
   return (
     <>
-      {fullUpdateComplete ? (
+      {updateStep === "start" ? (
+        <UpdateReleaseNotes
+          onContinue={startUpdate}
+          firmwareNotes={firmwareUpdateContext.osu?.notes}
+        />
+      ) : fullUpdateComplete ? (
         <Flex flex={1} px={7} pb={7}>
           <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
@@ -716,9 +723,6 @@ export const FirmwareUpdate = ({
           <Flex>
             <Button type="main" outline={false} onPress={quitUpdate}>
               {t("FirmwareUpdate.finishUpdateCTA")}
-            </Button>
-            <Button type="default" mt={5} mb={9} outline={false} onPress={onOpenReleaseNotes}>
-              {t("FirmwareUpdate.viewUpdateChangelog")}
             </Button>
           </Flex>
         </Flex>
