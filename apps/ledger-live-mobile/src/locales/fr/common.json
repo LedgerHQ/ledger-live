@@ -461,6 +461,9 @@
       "title" : "ETH insuffisants pour couvrir les frais de réseau",
       "description" : "Envoyez des ETH sur votre compte pour régler vos transactions de tokens ERC-20."
     },
+    "NotEnoughGasSwap" : {
+      "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Solde insuffisant pour déléguer"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "Impossible d’envoyer depuis des sous-comptes pour l’instant",
       "description" : "Cette fonctionnalité sera ajoutée ultérieurement suite aux changements introduits par la mise à jour Babylon."
-    },
-    "AccessDeniedError" : {
-      "title" : "Mise à jour de Ledger Live nécessaire",
-      "description" : "Veuillez mettre à jour Ledger Live et vérifier à nouveau votre identité pour échanger avec Wyre"
     },
     "RecommendUndelegation" : {
       "title" : "Arrêtez la délégation du compte avant de le vider."
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "Effacer",
       "exportLogs" : "Enregistrer les logs",
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
-      "resetThirdPartyData" : "Réinitialiser les données fournies à des tiers",
-      "resetThirdPartyDataDesc" : "Supprimez toutes vos données stockées localement et partagées avec des tiers, qui sont utilisées pour accéder aux prestataires de transactions tiers.",
-      "resetThirdPartyDataModal" : "Supprimer vos données locales partagées avec des tiers",
-      "resetThirdPartyDataModalDesc" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos partenaires.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
       "repairDevice" : "Réparer votre appareil Ledger",
@@ -2956,66 +2951,8 @@
         "whatIsSwap" : "Qu’est-ce que le Swap ?",
         "disclaimer" : "Échangez des cryptos directement à partir de votre appareil Ledger. Ce service n’est pas disponible dans certains pays, y compris aux États-Unis."
       },
-      "unauthorizedRates" : {
-        "cta" : "Réinitialiser la vérification",
-        "banner" : "Réinitialisez le processus et mettez à jour Ledger Live.",
-        "bannerCTA" : "Réinitialiser"
-      },
       "main" : {
         "header" : "Swap"
-      },
-      "kyc" : {
-        "disclaimer" : "J’accepte que mes données de localisation soient partagées avec des tiers à des fins de conformité.",
-        "cta" : "Continuer",
-        "wyre" : {
-          "title" : "Finir la vérification",
-          "subtitle" : "LEDGER recueille vos données pour le compte de WYRE et les lui transfère pour réaliser votre vérification d’identité. Consultez notre Politique de confidentialité.",
-          "pending" : {
-            "cta" : "Continuer",
-            "title" : "Vérification soumise pour validation",
-            "subtitle" : "Votre vérification a été envoyée et est en attente de validation.",
-            "link" : "En savoir plus sur la vérification d’identité"
-          },
-          "approved" : {
-            "cta" : "Continuer",
-            "title" : "Vérification d’identité approuvée",
-            "subtitle" : "Votre vérification a été envoyée et a été validée.",
-            "link" : "En savoir plus sur la vérification d’identité"
-          },
-          "closed" : {
-            "cta" : "Réinitialiser",
-            "title" : "Demande de vérification rejetée",
-            "subtitle" : "Wyre a refusé les données que vous avez fournies.",
-            "link" : "En savoir plus sur la vérification d’identité"
-          },
-          "form" : {
-            "firstName" : "Prénom",
-            "lastName" : "Nom de famille",
-            "street1" : "Adresse postale ligne 1",
-            "street2" : "Adresse postale ligne 2",
-            "city" : "Ville",
-            "state" : "État–région",
-            "country" : "Pays",
-            "postalCode" : "Code postal",
-            "dateOfBirth" : "Date de naissance",
-            "firstNamePlaceholder" : "Saisissez votre prénom",
-            "lastNamePlaceholder" : "Saisissez votre nom",
-            "street1Placeholder" : "Ex : 13 rue Rosa Parks",
-            "street2Placeholder" : "Ex : 13 rue Rosa Parks",
-            "cityPlaceholder" : "Ex : Abbeville",
-            "postalCodePlaceholder" : "Saisissez votre code postal",
-            "statePlaceholder" : "Sélectionnez votre état",
-            "dateOfBirthPlaceholder" : "AAAA-MM-JJ",
-            "firstNameError" : "Entrez votre prénom pour continuer.",
-            "lastNameError" : "Entrez votre nom pour continuer.",
-            "street1Error" : "Entrez votre adresse.",
-            "cityError" : "Entrez la ville où vous habitez aux États-Unis.",
-            "stateError" : "Choisissez votre état pour continuer",
-            "postalCodeError" : "Saisissez un code postal américain valide.",
-            "dateOfBirthError" : "Entrez votre date de naissance."
-          }
-        },
-        "states" : "Sélectionnez votre état"
       },
       "notAvailable" : {
         "title" : "Service temporairement indisponible ou non disponible dans votre région"
@@ -3190,34 +3127,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "Vérification",
-            "required" : "Vous devez passer la vérification d’identité.",
-            "complete" : "Vérifier",
-            "update" : "Actualiser",
-            "rejected" : "Vérification d’identité rejetée, merci de recommencer.",
-            "rejectedContactProviderSupport" : "Vérification rejetée, contactez l’assistance de {{providerName}}",
-            "updateRequired" : "Complétez ou mettez à jour votre vérification d’identité",
-            "status" : {
-              "pending" : "En attente",
-              "approved" : "Approuvé",
-              "closed" : "Rejeté",
-              "upgradeRequired" : "Incomplet"
-            }
-          },
-          "login" : {
-            "title" : "Connexion",
-            "required" : "Connectez-vous pour utiliser ce prestataire.",
-            "complete" : "Me connecter"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "Configurez une authentification multifactorielle pour utiliser ce prestataire.",
-            "complete" : "Configurer une MFA"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
-          },
           "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
       }
@@ -4411,6 +4320,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "Le solde total ne comprend pas les récompenses de staking"
+      },
+      "delegationUnavailable" : {
+        "title" : "Délégation indisponible",
+        "description" : "Solde du compte insuffisant pour démarrer une nouvelle délégation."
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "Arrêter la délégation",
+      "undelegationMessage" : "Si vous interrompez la délégation, vous ne recevrez pas de récompenses pour les epochs en cours et à venir.",
+      "verificationSuccessTitle" : "Délégation des actifs arrêtée"
+    },
+    "delegation" : {
+      "pool" : "Pool",
+      "poolId" : "Identifiant du pool",
+      "selectPool" : "Sélectionner un pool",
+      "pools" : "Pools",
+      "delegationEarn" : "Vous pouvez gagner des récompenses en ADA en déléguant vos actifs.",
+      "delegatingFrom" : "Délégué de",
+      "delegatingTo" : "Délégué à",
+      "info" : "Fonctionnement de la délégation",
+      "header" : "Délégation",
+      "delegate" : "Déléguer",
+      "redelegate" : "Redéléguer",
+      "estYield" : "Rendement estimé",
+      "totalStake" : "Stake total",
+      "commission" : "Commission",
+      "cost" : "Coût",
+      "select" : "Sélectionner",
+      "change" : "Modifier",
+      "networkFees" : "Frais de réseau",
+      "stakeKeyRegistrationDeposit" : "Dépôt d’enregistrement de la clé de staking",
+      "stakeKeyRegistrationDepositRefund" : "Remboursement du dépôt d’enregistrement au staking",
+      "stepperHeader" : {
+        "starter" : "Gagner des récompenses",
+        "validator" : "Déléguer des actifs",
+        "summary" : "Récapitulatif",
+        "verification" : "Vérification",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Gagnez des récompenses en déléguant vos ADA à un pool.",
+            "steps" : {
+              "0" : "Vous gardez la propriété de vos actifs délégués.",
+              "1" : "Déléguez avec votre appareil Ledger.",
+              "2" : "Redéléguez vos actifs à un autre pool ou interrompez la délégation à tout moment."
+            },
+            "cta" : "Continuer"
+          },
+          "validator" : {
+            "validators" : "Validateurs",
+            "myDelegations" : "Mes délégations",
+            "cta" : "Continuer",
+            "estYield" : "Rendement estimé : {{amount}}",
+            "totalAvailable" : "Total disponible : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés.",
+            "noResultsFound" : "Aucun validateur trouvé pour <0>{{search}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs délégués",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "pending" : {
+              "title" : "Diffusion de la transaction..."
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Statut",
+        "rewards" : "Récompenses",
+        "active" : "Actif",
+        "inactive" : "Inactif",
+        "redelegatedFrom" : "Redéléguée de"
       }
     }
   },
