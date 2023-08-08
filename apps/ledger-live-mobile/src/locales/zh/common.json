@@ -461,6 +461,9 @@
       "title" : "以太币 ETH 不足以支付网络费用",
       "description" : "请向您的账户发送一些以太币 ETH 以支付 ERC20 代币交易。"
     },
+    "NotEnoughGasSwap" : {
+      "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "余额不足，无法委托"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "尚无法从子账户发送",
       "description" : "由于近期 Babylon 更新而引入的变化，此功能将在稍后阶段被添加。"
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Live 需要更新",
-      "description" : "请将 Ledger Live 更新到最新版本，并重新验证您的身份，以便与 Wyre 进行互换"
     },
     "RecommendUndelegation" : {
       "title" : "请在清空账户之前将其解除委托"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "清除",
       "exportLogs" : "保存日志",
       "exportLogsDesc" : "出于排除故障目的所需，可能需要保存 Ledger Live 日志。",
-      "resetThirdPartyData" : "重置第三方数据",
-      "resetThirdPartyDataDesc" : "擦除您用于访问第三方交易服务提供方的所有本地第三方数据。",
-      "resetThirdPartyDataModal" : "删除您的本地第三方数据",
-      "resetThirdPartyDataModalDesc" : "删除您的本地第三方数据。您可能需要重新提交了解您的客户 (KYC) 信息并/或重新登录，从而访问我们的合作伙伴提供的服务。",
       "hardReset" : "重置 Ledger Live",
       "hardResetDesc" : "重置不会影响您的资产。清除 Ledger Live 中的所有数据，包括账户数据、交易历史记录和设置信息。使用您的 Ledger 设备，在清空的 Ledger Live 上重新加载并管理您的加密资产。",
       "repairDevice" : "修复您的 Ledger 设备",
@@ -2956,66 +2951,8 @@
         "whatIsSwap" : "什么是互换（Swap）？",
         "disclaimer" : "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
       },
-      "unauthorizedRates" : {
-        "cta" : "重置验证",
-        "banner" : "请重置您的 KYC 并更新 Live 以便使用 Wyre 进行 swap 互换。",
-        "bannerCTA" : "重置 KYC"
-      },
       "main" : {
         "header" : "互换"
-      },
-      "kyc" : {
-        "disclaimer" : "我确认：出于合规目的，我的位置数据将会分享给第三方。",
-        "cta" : "继续",
-        "wyre" : {
-          "title" : "完成您的 KYC",
-          "subtitle" : "您的信息由 LEDGER 代表收集并传输给 WYRE 用于 KYC 目的。如需了解更多信息，请查看我们的隐私政策",
-          "pending" : {
-            "cta" : "继续",
-            "title" : "KYC 已被提交以供审批",
-            "subtitle" : "您的 KYC 已被提交，正在等待批准。",
-            "link" : "了解关于 KYC 的更多信息"
-          },
-          "approved" : {
-            "cta" : "继续",
-            "title" : "KYC 已批准！",
-            "subtitle" : "您的 KYC 已被提交并已获得批准。",
-            "link" : "了解关于 KYC 的更多信息"
-          },
-          "closed" : {
-            "cta" : "重置 KYC",
-            "title" : "KYC 申请被拒绝",
-            "subtitle" : "Wyre 拒绝了您为 KYC 目的提供的数据",
-            "link" : "了解关于 KYC 的更多信息"
-          },
-          "form" : {
-            "firstName" : "名字",
-            "lastName" : "姓氏",
-            "street1" : "街道地址第 1 行",
-            "street2" : "街道地址第 2 行",
-            "city" : "城市",
-            "state" : "州/省/直辖市/自治区",
-            "country" : "国家/地区",
-            "postalCode" : "邮政编码",
-            "dateOfBirth" : "出生日期",
-            "firstNamePlaceholder" : "输入您的名字",
-            "lastNamePlaceholder" : "输入您的姓氏",
-            "street1Placeholder" : "例如：枫树街 13 号",
-            "street2Placeholder" : "例如：枫树街 13 号",
-            "cityPlaceholder" : "例如：圣何塞",
-            "postalCodePlaceholder" : "输入您的 5 位数邮政编码",
-            "statePlaceholder" : "选择您所在的州",
-            "dateOfBirthPlaceholder" : "年-月-日",
-            "firstNameError" : "输入您的名字以继续",
-            "lastNameError" : "输入您的姓氏以继续",
-            "street1Error" : "输入您的地址",
-            "cityError" : "输入您在美国居住的城市",
-            "stateError" : "选择您所在的州以继续",
-            "postalCodeError" : "输入一个有效的美国邮政编码",
-            "dateOfBirthError" : "输入您的出生日期"
-          }
-        },
-        "states" : "选择您所在的州"
       },
       "notAvailable" : {
         "title" : "服务暂时不可用，或在您的国家不可用"
@@ -3190,34 +3127,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC（了解您的客户）",
-            "required" : "您需要完成您的 KYC（了解您的客户）",
-            "complete" : "完成 KYC",
-            "update" : "刷新 KYC",
-            "rejected" : "KYC 被拒绝，重新开始验证",
-            "rejectedContactProviderSupport" : "KYC 被拒绝，请联系 {{providerName}} 客服",
-            "updateRequired" : "完成或更新您的 KYC（了解您的客户）",
-            "status" : {
-              "pending" : "KYC 待处理",
-              "approved" : "KYC 已批准",
-              "closed" : "KYC 被拒绝",
-              "upgradeRequired" : "KYC（了解您的客户）不足"
-            }
-          },
-          "login" : {
-            "title" : "登录",
-            "required" : "您需要登录此供应方",
-            "complete" : "登录"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "您需要在此供应方处设置 MFA 多重身份验证",
-            "complete" : "设置 MFA 多重身份验证"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "您的提取请求已被 {{providerName}} 阻止。\n\n请联系对方客服了解更多信息。"
-          },
           "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
       }
@@ -4145,7 +4054,9 @@
   },
   "FirmwareUpdate" : {
     "title" : "更新固件",
+    "beginUpdate" : "开始更新",
     "updateDevice" : "{{deviceName}} 操作系统更新",
+    "releaseNotesTitle" : "此操作系统更新包含哪些内容？",
     "updateDone" : "操作完成！您的 {{deviceName}} 是最新的",
     "updateDoneDescription" : "新操作系统版本：{{firmwareVersion}}",
     "preparing" : "正在准备固件更新，请确保设备处于唤醒状态并保持连接。我们会通知您更新进度",
