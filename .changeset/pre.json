@@ -90,5 +90,25 @@
     "pnpm-utils": "1.0.1",
     "@ledgerhq/react-devtools": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "beige-needles-sip",
+    "cool-months-carry",
+    "eight-rockets-behave",
+    "fast-actors-cry",
+    "four-glasses-behave",
+    "fuzzy-cheetahs-punch",
+    "hip-crabs-judge",
+    "lemon-pigs-promise",
+    "light-jobs-exercise",
+    "modern-spiders-wait",
+    "neat-timers-shave",
+    "new-dogs-sort",
+    "rare-ladybugs-worry",
+    "real-jeans-begin",
+    "shiny-dogs-invite",
+    "six-parents-bathe",
+    "tasty-weeks-clap",
+    "witty-tips-tell",
+    "yellow-cougars-love"
+  ]
 }
