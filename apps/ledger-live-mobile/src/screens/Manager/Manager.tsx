@@ -24,6 +24,7 @@ import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "../../reducers/settings";
+import { UpdateStep } from "../FirmwareUpdate";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -179,12 +180,23 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     [device, installedApps, navigation, refreshDeviceInfo],
   );
 
-  const onBackFromNewUpdateUx = useCallback(() => {
-    // Navigating back to the main manager screen without settings a device
-    // so it does not try to automatically connect to the device while it
-    // might still be on an unknown state because the fw update was just stopped
-    navigation.replace(ScreenName.Manager);
-  }, [navigation]);
+  const onBackFromNewUpdateUx = useCallback(
+    (updateState: UpdateStep) => {
+      // If the fw update was completed, we know the device in a correct state
+      if (updateState === "completed") {
+        navigation.replace(ScreenName.Manager, {
+          device,
+        });
+        return;
+      }
+
+      // Otherwise navigating back to the main manager screen without settings a device
+      // so it does not try to automatically connect to the device while it
+      // might still be on an unknown state because the fw update was just stopped
+      navigation.replace(ScreenName.Manager);
+    },
+    [device, navigation],
+  );
 
   return (
     <>
