@@ -1280,6 +1280,7 @@
     "hideCTA" : "토큰 숨기기"
   },
   "syncOnboarding" : {
+    "exitCTA" : "설정 나가기",
     "connection" : {
       "searching" : {
         "title" : "{{deviceModelName}} 장치를 컴퓨터에 연결",
@@ -1293,7 +1294,7 @@
       "title" : "{{deviceName}} 설정",
       "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
-        "title" : "{{deviceName}} 장치가 연결되었습니다.",
+        "title" : "{{deviceName}}가 안전하게 보호되고 있습니다",
         "description" : "{{deviceName}}에서 설정을 계속 진행하세요",
         "text" : "이 화면은 {{deviceName}} 설정이 진행되는 동안 관련 정보 제공을 위해 동적으로 변경됩니다.",
         "continueOnDevice" : "{{productName}}에서 탭하여 다음 화면을 확인하세요."
@@ -1320,19 +1321,51 @@
         "restoreChoiceRecoverDescription" : "Ledger 계정에 로그인하고 신원을 확인하여 복구 문구 백업을 복원하세요."
       },
       "softwareCheckContent" : {
-        "title" : "소프트웨어 점검",
+        "title" : {
+          "active" : "정품 확인 및\nOS 업데이트 확인",
+          "completed" : "귀하의 {{modelName}}는 정품이며 최신 상태입니다"
+        },
+        "exitWarningDrawer" : {
+          "cancelCheckCTA" : "확인 취소",
+          "resumeCheckCTA" : "확인 재개"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "설정 종료",
+          "goToSettingsCTA" : "설정으로 이동",
+          "retryCTA" : "다시 시도",
+          "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요"
+        },
+        "whyPerformChecksLink" : "왜 이러한 보안 검사를 수행하나요?",
+        "startChecksCTA" : "확인 시작",
+        "continueCTA" : "설정 계속하기",
         "genuineCheck" : {
-          "active" : "{{deviceName}} 확인 중",
-          "completed" : "{{deviceName}} 장치는 정품입니다"
+          "title" : {
+            "active" : "정품 확인",
+            "completed" : "귀하의 {{modelName}}는 정품입니다",
+            "cancelled" : "정품 확인이 거부되었습니다"
+          },
+          "subtitle" : {
+            "active" : "본 점검을 통해 귀하의 {{modelName}}가 Ledger의 공식 하드웨어임을 확인합니다",
+            "cancelled" : "이 점검을 허용하지 않으면 {{modelName}}의 설정을 완료할 수 없습니다"
+          },
+          "resumeCTA" : "정품 확인 재개"
         },
         "firmwareUpdate" : {
-          "inactive" : "소프트웨어 점검",
-          "active" : "소프트웨어 업데이트 확인",
-          "updateAvailable" : "{{firmwareVersion}} 소프트웨어 업데이트가 가능합니다",
-          "recommendation" : "지금 업데이트를 다운로드할 것을 권장드립니다.",
-          "downloadUpdate" : "업데이트 다운로드",
-          "skipUpdate" : "다음에",
-          "completed" : "최신 소프트웨어입니다"
+          "title" : {
+            "active" : "OS 업데이트 확인",
+            "completed" : "{{modelName}} OS는 최신 상태입니다",
+            "updateAvailable" : "OS 업데이트 {{firmwareVersion}} 버전을 사용할 수 있습니다"
+          },
+          "subtitle" : {
+            "active" : "본 점검을 통해 귀하의 {{modelName}} OS가 최신 상태임을 확인합니다",
+            "updateAvailable" : "최신 보안 기능에 액세스하려면 이 업데이트를 수행하는 것이 좋습니다"
+          },
+          "viewUpdateCTA" : "업데이트 보기",
+          "resumeUpdateCTA" : "업데이트 재개",
+          "skipUpdateCTA" : "업데이트 건너뛰기",
+          "retryUpdateCTA" : "다시 시도",
+          "finalStepSuccessDescription" : "OS 확인으로 돌아가기",
+          "finalStepSuccessButtonLabel" : "계속"
         }
       },
       "installApplications" : {
@@ -1344,30 +1377,10 @@
       "endOfSetup" : {
         "title" : "설정 종료"
       },
-      "genuineCheckModal" : {
-        "title" : "정품 확인",
-        "paragraph1" : "{{deviceName}}의 사용 안전성과 정품 여부를 확인하세요.",
-        "paragraph2" : "장치가 변조되지 않았는지 확인하기 위해 검사를 수행합니다. {{deviceName}}에서 이를 수락해야 합니다.",
-        "checkDeviceButton" : "장치 확인"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Ledger와 보안 연결을 허용"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "정품 확인",
-        "paragraph1" : "정품 확인이 취소되었습니다",
-        "paragraph2" : "정품 확인은 {{deviceName}}의 사용 안전성을 확인하는 데 매우 중요한 절차입니다.",
-        "checkDeviceButton" : "확인 절차를 다시 실행하세요",
-        "cancelButton" : "다음에 결정하기"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "정품 확인",
-        "paragraph1" : "사용하시는 장치가 정품이 아닙니다",
-        "paragraph2" : "정품 확인 실패",
-        "checkDeviceButton" : "확인 절차를 다시 실행하세요",
-        "cancelButton" : "다음에 결정하기"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "{{deviceName}}에서 관리자 허용"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "장치를 잠금 해제하세요"
       },
       "helpDrawer" : {
@@ -5127,6 +5140,9 @@
       "title" : "{{currencyName}}(은)는 지원되지 않습니다",
       "description" : "아직 지원되지 않는 암호화 자산입니다. Ledger 지원 부서로 문의하세요"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "장치에 이미 비밀 복구 문구 설정이 되어 있습니다."
+    },
     "DeviceNotGenuine" : {
       "title" : "정품이 아닐 수 있습니다.",
       "description" : "Ledger 지원 부서로 도움을 요청하세요"
@@ -5403,12 +5419,12 @@
       "description" : "장치의 대시보드로 돌아가세요"
     },
     "WebsocketConnectionError" : {
-      "title" : "죄송하지만 다시 시도해주세요(웹소켓 에러)",
-      "description" : null
+      "title" : "네트워크 오류",
+      "description" : "인터넷에 연결되어 있는지 확인하고 다시 시도하세요."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "죄송하지만 다시 시도해주세요(연결 종료됨)",
-      "description" : null
+      "title" : "네트워크 오류",
+      "description" : "인터넷에 연결되어 있는지 확인하고 다시 시도하세요."
     },
     "WrongDeviceForAccount" : {
       "title" : "문제가 발생했습니다",
@@ -5833,6 +5849,22 @@
     },
     "GasEstimationError" : {
       "title" : "가스비를 추정하지 못했습니다"
+    },
+    "ExitEarlySecurityChecksWarning" : {
+      "title" : "정말 설정에서 나가시겠습니까?",
+      "description" : "이 점검을 허용하지 않으면 Ledger Stax의 설정을 완료할 수 없습니다."
+    },
+    "NotFoundEntityError" : {
+      "title" : "해당 장치가 정품인지 확인하지 못했습니다.",
+      "description" : "실험 설정인 “My Ledger 공급자({{providerNumber}})”가 정품 확인 기능과 충돌할 수 있습니다. 이는 설정에서 비활성화할 수 있습니다."
+    },
+    "DeviceNotGenuineError" : {
+      "title" : "이 {{productName}} 장치는 정품입니다",
+      "description" : "이 {{productName}} 장치는 사용하기에 안전합니다.\nLedger 지원 부서로 문의하세요"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "OS 업데이트 확인 실패",
+      "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     }
   },
   "cryptoOrg" : {
