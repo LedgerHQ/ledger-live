@@ -31,7 +31,7 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
   const providerNumber = useEnv("FORCE_PROVIDER");
 
   const drawerAnalyticsName = `Error: ${
-    isNotFoundEntityError ? "couldn't check if the device was genuine" : error.name
+    isNotFoundEntityError ? "couldn't check if the device was genuine" : (error as Error).name
   }`;
 
   const goToExperimentalSettings = () => {
