@@ -182,8 +182,8 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      // If the fw update was completed, we know the device in a correct state
-      if (updateState === "completed") {
+      // If the fw update was completed or not yet started, we know the device in a correct state
+      if (["start", "completed"].includes(updateState)) {
         navigation.replace(ScreenName.Manager, {
           device,
         });
