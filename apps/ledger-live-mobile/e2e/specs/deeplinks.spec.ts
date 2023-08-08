@@ -38,7 +38,6 @@ const discoverApps = [
   { name: "BTCDirect", url: " https://btcdirect.eu/" },
   { name: "Banxa", url: " https://banxa.com/" },
   { name: "Bitrefill", url: " https://bitrefill.com" },
-  { name: "Wyre_buy", url: " https://www.sendwyre.com/" },
   { name: "Zerion", url: " https://zerion.io/" },
   { name: "Rainbow", url: " https://rainbow.me" },
   { name: "POAP", url: " https://app.poap.xyz/" },

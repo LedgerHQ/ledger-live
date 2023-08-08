@@ -151,6 +151,7 @@ function ProviderCard({ provider, onClick }: ProviderCardProps) {
     </ProviderCardContainer>
   );
 }
+
 type TradeParams = {
   type: "onRamp" | "offRamp";
   cryptoCurrencyId: string;
@@ -165,6 +166,7 @@ type ProviderViewProps = {
   parentAccount?: Account | null;
   trade: TradeParams;
 };
+
 function ProviderView({ provider, onClose, trade, account, parentAccount }: ProviderViewProps) {
   const manifest = useRemoteLiveAppManifest(provider.appId);
   const theme = useTheme();
@@ -205,12 +207,14 @@ type ProviderListProps = {
   providers?: RampCatalogEntry[];
   trade: TradeParams;
 };
+
 export function ProviderList({ account, parentAccount, providers = [], trade }: ProviderListProps) {
   const [selectedProvider, setSelectedProvider] = useState<RampLiveAppCatalogEntry | null>(null);
   const { t } = useTranslation();
-  const filteredProviders = filterRampCatalogEntries(providers, {
+  const filteredProviders: RampCatalogEntry[] = filterRampCatalogEntries(providers, {
     cryptoCurrencies: trade.cryptoCurrencyId ? [trade.cryptoCurrencyId] : undefined,
   });
+
   if (selectedProvider) {
     return (
       <ProviderView
@@ -222,6 +226,7 @@ export function ProviderList({ account, parentAccount, providers = [], trade }: 
       />
     );
   }
+
   return (
     <Container>
       <TrackPage category="Multibuy" name="ProviderList" trade={trade} />

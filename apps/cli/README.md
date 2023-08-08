@@ -535,7 +535,6 @@ Usage: ledger-live swap       # Perform an arbitrary swap between two currencies
  -m, --mock                   : Whether or not to use the real backend or a mocked version
  -a, --amount <Number>        : Amount in satoshi units to send
  -u, --useAllAmount           : Attempt to send all using the emulated max amount calculation
- -w, --wyreUserId <String>    : If provided, will attempt to use Wyre provider with given userId
  -t, --tokenId <String>       : Use a token account children of the account
  -f, --useFloat               : Use first floating rate returned. Defaults to false.
  -d, --device <String>        : provide a specific HID path of a device

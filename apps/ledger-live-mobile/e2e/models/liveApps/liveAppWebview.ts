@@ -3,8 +3,11 @@ import { web, by } from "detox";
 import { e2eBridgeServer } from "../../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 import { startDummyServer } from "@ledgerhq/test-utils";
+import { getElementById } from "../../helpers";
 
 export default class LiveAppWebview {
+  appTitle = () => getElementById("live-app-title");
+
   async startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
     try {
       const port = await startDummyServer(`${liveAppDirectory}/build`, liveAppPort);

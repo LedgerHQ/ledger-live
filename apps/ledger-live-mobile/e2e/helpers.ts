@@ -58,11 +58,10 @@ export async function clearTextByElement(elem: Detox.NativeElement) {
 export async function scrollToText(
   text: string,
   scrollViewId: string,
-  index = 0,
   pixels = 100,
   direction: Direction = "down",
 ) {
-  await waitFor(getElementByText(text, index))
+  await waitFor(element(by.text(text)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
     .scroll(pixels, direction);
@@ -99,8 +98,8 @@ export async function delay(ms: number) {
   });
 }
 
-export async function openDeeplink(link?: string) {
-  await device.openURL({ url: BASE_DEEPLINK + link });
+export function openDeeplink(link?: string) {
+  return device.openURL({ url: BASE_DEEPLINK + link });
 }
 
 export function isAndroid() {

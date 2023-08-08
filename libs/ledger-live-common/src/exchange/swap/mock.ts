@@ -2,40 +2,18 @@ import { BigNumber } from "bignumber.js";
 import { Observable, of } from "rxjs";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { getEnv } from "../../env";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
 import type {
-  CheckQuote,
   Exchange,
   ExchangeRate,
   GetMultipleStatus,
   GetProviders,
-  KYCStatus,
   PostSwapAccepted,
   PostSwapCancelled,
   SwapRequestEvent,
-  ValidKYCStatus,
 } from "./types";
 import type { Transaction } from "../../generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-export const getMockExchangeRate = ({
-  provider = "ftx",
-  tradeMethod = "fixed",
-}: {
-  provider?: string;
-  tradeMethod?: "fixed" | "float";
-} = {}): ExchangeRate => ({
-  rate: new BigNumber("1"),
-  toAmount: new BigNumber("12"),
-  magnitudeAwareRate: new BigNumber(1)
-    .div(new BigNumber(10).pow(18))
-    .times(new BigNumber(10).pow(8)),
-  rateId: "mockedRateId",
-  provider,
-  providerType: "CEX",
-  tradeMethod,
-});
 
 export const mockGetExchangeRates = async (
   exchange: Exchange,
@@ -90,7 +68,7 @@ export const mockGetExchangeRates = async (
       rate: new BigNumber("1"),
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
-      rateId: "mockedRateId1",
+      rateId: "changellyRateId1",
       provider: "changelly",
       providerType: "CEX",
       expirationDate: new Date(),
@@ -100,7 +78,7 @@ export const mockGetExchangeRates = async (
       rate: new BigNumber("1.1"),
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
-      rateId: "mockedRateId2",
+      rateId: "changellyRateId2",
       provider: "changelly",
       providerType: "CEX",
       expirationDate: new Date(),
@@ -110,7 +88,7 @@ export const mockGetExchangeRates = async (
       rate: new BigNumber("0.9"),
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
-      rateId: "mockedRateId3",
+      rateId: "cicRateId1",
       provider: "cic",
       providerType: "CEX",
       expirationDate: new Date(),
@@ -120,11 +98,12 @@ export const mockGetExchangeRates = async (
       rate: new BigNumber("0.95"),
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
-      rateId: "mockedRateId4",
+      rateId: "1inchRateId1",
       provider: "oneinch",
       providerType: "DEX",
       expirationDate: new Date(),
       tradeMethod: "float",
+      providerURL: `/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=${transaction.amount}`,
     },
   ];
 };
@@ -158,6 +137,7 @@ export const mockGetProviders: GetProviders = async () => {
         { from: "bitcoin", to: "dogecoin", tradeMethod: "fixed" },
         { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
         { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+        { from: "ethereum", to: "ethereum/erc20/usd_tether__erc20_", tradeMethod: "float" },
       ],
     },
     {
@@ -225,98 +205,6 @@ export const mockGetStatus: GetMultipleStatus = async statusList => {
   //Fake delay to show loading UI
   await new Promise(r => setTimeout(r, 800));
   return statusList.map(s => ({ ...s, status: "finished" }));
-};
-
-export const mockGetKYCStatus = async (id: string, status: ValidKYCStatus): Promise<KYCStatus> => {
-  //Fake delay to show the pending state in the UI
-  await new Promise(r => setTimeout(r, 2000));
-  return { id, status };
-};
-
-const mockedCheckQuoteStatusCode = getEnv("MOCK_SWAP_CHECK_QUOTE");
-
-export const mockCheckQuote: CheckQuote = async ({
-  provider: _provider,
-  quoteId: _quoteId,
-  bearerToken: _bearerToken,
-}) => {
-  //Fake delay to show the pending state in the UI
-  await new Promise(r => setTimeout(r, 2000));
-
-  switch (mockedCheckQuoteStatusCode) {
-    case "RATE_VALID":
-      return { codeName: mockedCheckQuoteStatusCode };
-
-    case "KYC_FAILED":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "KYC Failed",
-        description: "The KYC verification failed",
-      };
-
-    case "KYC_PENDING":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "KYC Pending",
-        description: "The KYC is pending",
-      };
-
-    case "KYC_UNDEFINED":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "KYC undifined",
-        description: "The KYC is undifined",
-      };
-
-    case "KYC_UPGRADE_REQUIRED":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "KYC upgrade requierd",
-        description: "Need to upgrade KYC level",
-      };
-
-    case "MFA_REQUIRED":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "MFA requierd",
-        description: "Need to enable MFA",
-      };
-
-    case "OVER_TRADE_LIMIT":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "Trade over the limit",
-        description: "You have reached your trade limit",
-      };
-
-    case "UNKNOW_USER":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "Unknown user",
-        description: "Provided bearerToken does not match any known user",
-      };
-
-    case "RATE_NOT_FOUND":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "Rate not found",
-        description: "Rate not found",
-      };
-
-    case "WITHDRAWALS_BLOCKED":
-      return {
-        codeName: mockedCheckQuoteStatusCode,
-        error: "Withdrawals blocked",
-        description: "Withdrawals blocked",
-      };
-
-    default:
-      return {
-        codeName: "UNKNOWN_ERROR",
-        error: "Unknown error",
-        description: "Something unexpected happened",
-      };
-  }
 };
 
 export const mockPostSwapAccepted: PostSwapAccepted = async ({

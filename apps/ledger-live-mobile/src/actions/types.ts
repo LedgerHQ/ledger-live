@@ -243,7 +243,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_LOCALE = "SETTINGS_SET_LOCALE",
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   SET_SWAP_SELECTABLE_CURRENCIES = "SET_SWAP_SELECTABLE_CURRENCIES",
-  SET_SWAP_KYC = "SET_SWAP_KYC",
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
@@ -263,7 +262,6 @@ export enum SettingsActionTypes {
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
-  RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_STATUS_CENTER = "SET_STATUS_CENTER",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
@@ -275,6 +273,7 @@ export enum SettingsActionTypes {
   SET_ONBOARDING_TYPE = "SET_ONBOARDING_TYPE",
   SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
+  SET_USER_NPS = "SET_USER_NPS",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -313,11 +312,6 @@ export type SettingsSetLanguagePayload = SettingsState["language"];
 export type SettingsSetLocalePayload = SettingsState["locale"];
 export type SettingsSetSwapSelectableCurrenciesPayload =
   SettingsState["swap"]["selectableCurrencies"];
-export type SettingsSetSwapKycPayload = {
-  provider?: string;
-  id?: string;
-  status?: string | null;
-};
 export type SettingsAcceptSwapProviderPayload = Unpacked<
   SettingsState["swap"]["acceptedProviders"]
 >;
@@ -376,6 +370,7 @@ export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsol
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
+export type SettingsSetUserNps = number;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -404,7 +399,6 @@ export type SettingsPayload =
   | SettingsSetLanguagePayload
   | SettingsSetLocalePayload
   | SettingsSetSwapSelectableCurrenciesPayload
-  | SettingsSetSwapKycPayload
   | SettingsAcceptSwapProviderPayload
   | SettingsLastSeenDevicePayload
   | SettingsLastSeenDeviceLanguagePayload
@@ -430,7 +424,8 @@ export type SettingsPayload =
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
-  | SettingsSetClosedNetworkBannerPayload;
+  | SettingsSetClosedNetworkBannerPayload
+  | SettingsSetUserNps;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
