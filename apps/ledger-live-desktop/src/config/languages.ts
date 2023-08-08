@@ -29,8 +29,9 @@ export type Language = (typeof LanguageIds)[number];
 
 /**
  * This is the Locale type.
+ * @dev the string type should be remove at some point
  */
-export type Locale = (typeof LocaleIds)[keyof typeof LocaleIds][number];
+export type Locale = (typeof LocaleIds)[keyof typeof LocaleIds][number] | string;
 
 /**
  * This is the Locales type.

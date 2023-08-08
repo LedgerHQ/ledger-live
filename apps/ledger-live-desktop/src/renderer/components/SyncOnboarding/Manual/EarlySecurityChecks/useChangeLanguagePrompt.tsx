@@ -8,7 +8,7 @@ import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { isEqual } from "lodash";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
+import { Languages, Locale } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import ChangeDeviceLanguagePromptDrawer from "~/renderer/screens/settings/sections/General/ChangeDeviceLanguagePromptDrawer";
@@ -30,7 +30,7 @@ export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParam
       });
   }, [device, deviceModelInfo?.deviceInfo]);
 
-  const currentLanguage = useSelector(languageSelector) as Locale;
+  const currentLanguage = useSelector(languageSelector);
 
   useEffect(() => {
     if (!deviceModelInfo) refreshDeviceInfo();
@@ -45,8 +45,7 @@ export const useChangeLanguagePrompt = ({ device }: useChangeLanguagePromptParam
   useEffect(() => {
     if (loaded && deviceModelInfo?.deviceInfo) {
       const deviceLanguageId = deviceModelInfo?.deviceInfo.languageId;
-      const potentialDeviceLanguage =
-        localeIdToDeviceLanguage[currentLanguage as keyof typeof localeIdToDeviceLanguage];
+      const potentialDeviceLanguage = Languages[currentLanguage].deviceSupport?.label;
       const langAvailableOnDevice =
         potentialDeviceLanguage !== undefined &&
         availableDeviceLanguages.includes(potentialDeviceLanguage);
