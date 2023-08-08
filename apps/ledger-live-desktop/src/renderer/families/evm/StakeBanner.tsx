@@ -10,8 +10,16 @@ import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { urls } from "~/config/urls";
 
-const kilnAppId = "kiln";
-const lidoAppId = "lido";
+/**
+ * This needs to stay a constant because it serves a different from
+ * type AccountBannerState["stakeProvider"] possible values.
+ * Type AccountBannerState["stakeProvider"] is internal to LL and used to
+ * differenciate available stake providers.
+ * Whereas KILN_LIVE_APP_ID and LIDO_LIVE_APP_ID are ids of the related LiveApps
+ * Today they might be the same but it's not guaranteed to stay like this.
+ */
+const KILN_LIVE_APP_ID = "kiln";
+const LIDO_LIVE_APP_ID = "lido";
 
 const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const history = useHistory();
@@ -53,7 +61,9 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       : t("account.banner.delegation.ethereum.lido.cta");
 
   const onClick =
-    stakeProvider === "kiln" ? () => stakeOnClick(kilnAppId) : () => stakeOnClick(lidoAppId);
+    stakeProvider === "kiln"
+      ? () => stakeOnClick(KILN_LIVE_APP_ID)
+      : () => stakeOnClick(LIDO_LIVE_APP_ID);
 
   const display = ethStakingProviders?.params?.listProvider?.some(
     (provider: { liveAppId: string }) => provider.liveAppId === stakeProvider,
