@@ -5,6 +5,13 @@ Array [
   Object {
     "balance": "10098829375",
     "cardanoResources": Object {
+      "delegation": Object {
+        "name": "Apex Cardano Pool",
+        "poolId": "7facad662e180ce45e5c504957cd1341940c72a708728f7ecfc6e349",
+        "rewards": "0",
+        "status": true,
+        "ticker": "APEX",
+      },
       "externalCredentials": Array [
         Object {
           "isUsed": true,
@@ -861,6 +868,7 @@ Array [
   Object {
     "balance": "0",
     "cardanoResources": Object {
+      "delegation": undefined,
       "externalCredentials": Array [
         Object {
           "isUsed": false,
@@ -1602,7 +1610,7 @@ Array [
       "extra": Object {},
       "fee": "172805",
       "hash": "1bc0f281044d852d6390c7977ff6cbf446e315c6b8879e1fa0dcc021372ac5e3",
-      "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-1bc0f281044d852d6390c7977ff6cbf446e315c6b8879e1fa0dcc021372ac5e3-FEES",
+      "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-1bc0f281044d852d6390c7977ff6cbf446e315c6b8879e1fa0dcc021372ac5e3-DELEGATE",
       "operator": undefined,
       "recipients": Array [
         "addr_test1qrd4usvu5fhsy2u5dwgqh8nqvgqkxx65x792tarksgrphxa4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smq08uhn5",
@@ -1612,7 +1620,7 @@ Array [
       ],
       "standard": undefined,
       "tokenId": undefined,
-      "type": "FEES",
+      "type": "DELEGATE",
       "value": "172805",
     },
     Object {
@@ -1685,10 +1693,12 @@ Array [
       "blockHash": undefined,
       "blockHeight": 274636,
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "deposit": "2 tADA",
+      },
       "fee": "174301",
       "hash": "cdfd34431c6345e7dafc3a32f0f90e5805b7d12eb9d1083e837645d7fd682bd6",
-      "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-cdfd34431c6345e7dafc3a32f0f90e5805b7d12eb9d1083e837645d7fd682bd6-OUT",
+      "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-cdfd34431c6345e7dafc3a32f0f90e5805b7d12eb9d1083e837645d7fd682bd6-DELEGATE",
       "operator": undefined,
       "recipients": Array [
         "addr_test1qrxusg8ujg7p7rppaksq0wpmzhd8wrk7uhma3ly7w7ls9w44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyrw2z3",
@@ -1698,7 +1708,7 @@ Array [
       ],
       "standard": undefined,
       "tokenId": undefined,
-      "type": "OUT",
+      "type": "DELEGATE",
       "value": "2174301",
     },
     Object {

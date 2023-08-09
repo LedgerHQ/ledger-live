@@ -31,6 +31,7 @@ const Root = (props: {
     </Box>
   );
 };
+
 export default {
   component: Root,
   fields: ["memo"],

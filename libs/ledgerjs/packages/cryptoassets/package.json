@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "9.11.0-nightly.2",
+  "version": "9.11.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"

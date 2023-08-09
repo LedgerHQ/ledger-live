@@ -52,7 +52,8 @@ export type PostOnboardingAction = {
   /**
    * Icon displayed for this action in the post onboarding hub.
    */
-  Icon: (props: { size: number; color: string }) => any;
+
+  Icon: (props: { size?: "XS" | "S" | "M" | "L" | "XL"; color?: string; style?: object }) => any;
 
   /**
    * Title displayed for this action in the post onboarding hub.

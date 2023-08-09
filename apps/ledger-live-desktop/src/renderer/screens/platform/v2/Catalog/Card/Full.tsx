@@ -5,8 +5,11 @@ import { PropsRaw } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 export function FullCard(props: PropsRaw) {
+  const language = useSelector(languageSelector);
   const { t } = useTranslation();
   const { hostname, disabled, onClick } = useCard(props);
   const { manifest } = props;
@@ -44,7 +47,7 @@ export function FullCard(props: PropsRaw) {
       </Flex>
 
       <Text fontSize={13} color="opacityDefault.c70">
-        {manifest.content.description.en}
+        {manifest.content.description[language] ?? manifest.content.description.en}
       </Text>
     </Container>
   );

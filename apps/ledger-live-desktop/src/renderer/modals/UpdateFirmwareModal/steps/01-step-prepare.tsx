@@ -189,7 +189,7 @@ const StepPrepare = ({
     // but only for stax.
     const deviceId = device ? device.deviceId : "";
     const maybeCLSBackup =
-      deviceModelId === DeviceModelId.stax
+      deviceInfo.onboarded && deviceModelId === DeviceModelId.stax
         ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
         : EMPTY;
 

@@ -5,7 +5,10 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import manager from "@ledgerhq/live-common/manager/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import UpdateModal, { StepId } from "~/renderer/modals/UpdateFirmwareModal";
+import UpdateModal, {
+  Props as UpdateModalProps,
+  StepId,
+} from "~/renderer/modals/UpdateFirmwareModal";
 import Text from "~/renderer/components/Text";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";
@@ -29,7 +32,7 @@ type Props = {
   openFirmwareUpdate?: boolean;
 };
 
-const initialStepId = ({
+export const initialStepId = ({
   deviceInfo,
   device,
 }: {
@@ -88,35 +91,33 @@ const FirmwareUpdate = (props: Props) => {
     });
 
     setFirmwareUpdateOpened(true); // Prevents manager from reacting to device changes (?)
-    setDrawer(
-      UpdateModal,
-      {
-        withAppsToReinstall:
-          !!installed &&
-          installed.length > 0 &&
-          manager.firmwareUpdateWillUninstallApps(deviceInfo, device.modelId),
-        withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
-          deviceInfo,
-          device.modelId,
-        ),
-        onDrawerClose,
-        status: modal,
-        stepId: stepId,
-        installed: installed,
-        firmware: firmware,
-        deviceInfo: deviceInfo,
-        device: device,
-        error: error,
-        deviceModelId: deviceSpecs.id,
-        setFirmwareUpdateOpened,
-        setFirmwareUpdateCompleted,
-      },
-      {
-        preventBackdropClick: true,
-        forceDisableFocusTrap: true,
-        onRequestClose,
-      },
-    );
+    const updateModalProps: UpdateModalProps = {
+      withAppsToReinstall:
+        !!installed &&
+        installed.length > 0 &&
+        manager.firmwareUpdateWillUninstallApps(deviceInfo, device.modelId),
+      withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
+        deviceInfo,
+        device.modelId,
+      ),
+      onDrawerClose,
+      status: modal,
+      stepId: stepId,
+      installed: installed,
+      firmware: firmware,
+      deviceInfo: deviceInfo,
+      device: device,
+      error: error,
+      deviceModelId: deviceSpecs.id,
+      setFirmwareUpdateOpened,
+      setFirmwareUpdateCompleted,
+      shouldReloadManagerOnCloseIfUpdateRefused: true,
+    };
+    setDrawer(UpdateModal, updateModalProps, {
+      preventBackdropClick: true,
+      forceDisableFocusTrap: true,
+      onRequestClose,
+    });
   }, [
     device,
     deviceInfo,

@@ -28,6 +28,8 @@ import type { PolkadotRebondFlowParamList } from "../families/polkadot/RebondFlo
 import type { PolkadotBondFlowParamList } from "../families/polkadot/BondFlow/types";
 import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { AlgorandOptInFlowParamList } from "../families/algorand/OptInFlow/types";
+import type { CardanoDelegationFlowParamList } from "../families/cardano/DelegationFlow/types";
+import type { CardanoUndelegationFlowParamList } from "../families/cardano/UndelegationFlow/types";
 import type { CeloWithdrawFlowParamList } from "../families/celo/WithdrawFlow/types";
 import type { CeloRevokeFlowFlowParamList } from "../families/celo/RevokeFlow/types";
 import type { CeloActivateFlowParamList } from "../families/celo/ActivateFlow/types";
@@ -70,6 +72,11 @@ type Props =
   | StackNavigatorProps<
       AlgorandClaimRewardsFlowParamList,
       ScreenName.AlgorandClaimRewardsConnectDevice
+    >
+  | StackNavigatorProps<CardanoDelegationFlowParamList, ScreenName.CardanoDelegationConnectDevice>
+  | StackNavigatorProps<
+      CardanoUndelegationFlowParamList,
+      ScreenName.CardanoUndelegationConnectDevice
     >
   | StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInConnectDevice>
   | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawConnectDevice>

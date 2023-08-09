@@ -5,7 +5,15 @@ import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevic
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Trans, useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Flex, InfiniteLoader, Text, Button, IconsLegacy, BoxedIcon } from "@ledgerhq/native-ui";
+import {
+  Flex,
+  InfiniteLoader,
+  Text,
+  Button,
+  IconsLegacy,
+  Icons,
+  BoxedIcon,
+} from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
@@ -59,18 +67,18 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
       <Flex flex={1} alignItems="center">
         <TrackScreen category="BT pairing successful" />
         <Flex width="100%" py={16} alignItems="center">
-          <Flex height={100} justifyContent="center">
+          <Flex height={100} justifyContent="center" mb={7}>
             <BoxedIcon
               Icon={IconsLegacy.CheckTickMedium}
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor="none"
+              borderColor={colors.opacityDefault.c05}
               iconSize={32}
               iconColor={colors.success.c50}
             />
           </Flex>
-          <Text mb={4} mt={16} textAlign="center" variant="h4" fontWeight="semiBold">
+          <Text mb={6} mt={16} textAlign="center" variant="h4" fontWeight="semiBold">
             {t("blePairingFlow.pairing.success.title", {
               deviceName,
             })}
@@ -141,13 +149,13 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Flex height={100} justifyContent="center">
             <BoxedIcon
-              Icon={IconsLegacy.CloseMedium}
-              backgroundColor={colors.opacityDefault.c05}
+              Icon={Icons.InformationFill}
+              backgroundColor={"opacityDefault.c05"}
               size={64}
               variant="circle"
-              borderColor="none"
-              iconSize={32}
-              iconColor={colors.error.c60}
+              borderColor="transparent"
+              iconSize={"L"}
+              iconColor="primary.c80"
             />
           </Flex>
           <Text mt={4} mb={2} textAlign="center" variant="h4" fontWeight="semiBold">
@@ -173,7 +181,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor="none"
+              borderColor={colors.opacityDefault.c05}
               iconSize={32}
               iconColor={colors.success.c50}
             />

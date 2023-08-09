@@ -1,6 +1,7 @@
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { isEqual } from "lodash";
+import { Linking } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import Animated, { Easing, Layout } from "react-native-reanimated";
@@ -119,6 +120,10 @@ const Stories: React.FC<Props> = props => {
          * up to date data (which story groups is "seen", their order etc.)
          */
         timeout = setTimeout(() => setRefreshingStorylyState(true), 1000);
+      }
+      if (event.event === "StoryCTAClicked" && event?.story?.media?.actionUrl) {
+        Linking.openURL(event.story.media.actionUrl);
+        storylyRef?.current?.close?.();
       }
       return () => {
         timeout && clearTimeout(timeout);

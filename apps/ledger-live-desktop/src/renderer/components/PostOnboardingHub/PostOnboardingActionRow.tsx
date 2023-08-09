@@ -43,7 +43,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           })}
     >
       <Flex flexDirection="row" alignItems="center" flexShrink={1}>
-        <Icon size={24} color={completed ? "neutral.c70" : "primary.c80"} />
+        <Icon size="M" color={completed ? "neutral.c70" : "primary.c80"} />
         <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
           <Text
             variant="largeLineHeight"

@@ -1,35 +1,22 @@
 # @ledgerhq/react-native-hid
 
-## 6.30.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921)]:
-  - @ledgerhq/errors@6.14.0-nightly.2
-  - @ledgerhq/devices@8.0.6-nightly.2
-  - @ledgerhq/hw-transport@6.28.7-nightly.2
-
-## 6.30.0-nightly.1
-
-### Minor Changes
-
-- [#3951](https://github.com/LedgerHQ/ledger-live/pull/3951) [`d21f0bc2e4`](https://github.com/LedgerHQ/ledger-live/commit/d21f0bc2e4bb7ec62c18bc878e6fb0f5240b5ca0) Thanks [@Ferossgp](https://github.com/Ferossgp)! - Android use compile sdk version from root project
-
-### Patch Changes
-
-- Updated dependencies [[`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
-  - @ledgerhq/errors@6.14.0-nightly.1
-  - @ledgerhq/devices@8.0.6-nightly.1
-  - @ledgerhq/hw-transport@6.28.7-nightly.1
-
-## 6.29.6-nightly.0
+## 6.29.6
 
 ### Patch Changes
 
 - Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
-  - @ledgerhq/errors@6.13.1-nightly.0
-  - @ledgerhq/devices@8.0.6-nightly.0
-  - @ledgerhq/hw-transport@6.28.7-nightly.0
+  - @ledgerhq/errors@6.13.1
+  - @ledgerhq/devices@8.0.6
+  - @ledgerhq/hw-transport@6.28.7
+
+## 6.29.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1-next.0
+  - @ledgerhq/devices@8.0.6-next.0
+  - @ledgerhq/hw-transport@6.28.7-next.0
 
 ## 6.29.5
 
