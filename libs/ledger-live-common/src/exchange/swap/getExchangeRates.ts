@@ -3,15 +3,16 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { getAccountCurrency, getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { getEnv } from "../../env";
 import {
   SwapExchangeRateAmountTooHigh,
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
-import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { getAvailableProviders, getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
+import { fetchCurrencyFrom } from "./api/v5/fetchCurrencyFrom";
+import { isPlaywrightEnv } from "./utils/isPlaywrightEnv";
 
 const getExchangeRates: GetExchangeRates = async ({
   exchange,
@@ -21,8 +22,7 @@ const getExchangeRates: GetExchangeRates = async ({
   timeout,
   timeoutErrorMessage,
 }) => {
-  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
-    return mockGetExchangeRates(exchange, transaction, currencyTo);
+  if (isPlaywrightEnv()) return mockGetExchangeRates(exchange, transaction, currencyTo);
 
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
@@ -35,6 +35,11 @@ const getExchangeRates: GetExchangeRates = async ({
   const providerList = providers
     .filter(provider => provider.pairs.some(pair => pair.from === from && pair.to === to))
     .map(item => item.provider);
+
+  fetchCurrencyFrom({
+    providers: getAvailableProviders(),
+    currencyTo: "bitcoin",
+  });
 
   const request = {
     from,
