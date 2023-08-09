@@ -461,6 +461,9 @@
       "title" : "ETH insuficientes para tarifa de red",
       "description" : "Envía más ETH a tu cuenta para pagar transacciones de token ERC20."
     },
+    "NotEnoughGasSwap" : {
+      "title" : "En la red {{cryptoName}} es necesaria una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Saldo insuficiente para delegar"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "No es posible enviar aún desde subcuentas",
       "description" : "Esta característica se agregará en una etapa posterior debido a los cambios introducidos recientemente por la actualización Babylon."
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Live requiere de una actualización",
-      "description" : "Actualiza Ledger Live a la última versión y vuelve a verificar tu identidad para permutar con Wyre"
     },
     "RecommendUndelegation" : {
       "title" : "Desdelega la cuenta antes de vaciarla"
@@ -2330,7 +2329,7 @@
       "seeLess" : "Ver menos subcuentas"
     },
     "send" : "Enviar",
-    "receive" : "Recibir",
+    "receive" : "Depositar",
     "buy" : "Comprar",
     "walletconnect" : "WalletConnect",
     "stake" : "Participar",
@@ -2344,7 +2343,7 @@
       "descWithBuy" : "Asegúrate de que la aplicación <1><0>{{managerAppName}}</0></1> esté instalada para poder comprar o recibir <3><0>{{currencyTicker}}</0></3>",
       "descToken" : "Verifica que la aplicación <1><0>{{managerAppName}}</0></1> esté instalada y comienza a recibir <3><0>{{currencyTicker}}</0></3> y tokens <5><0>{{tokenType}}</0></5>",
       "buttons" : {
-        "receiveFunds" : "Recibir",
+        "receiveFunds" : "Depositar",
         "buyCrypto" : "Comprar"
       },
       "addAccountCta" : "Agregar cuenta"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "Borrar",
       "exportLogs" : "Guardar registros",
       "exportLogsDesc" : "Puede ser necesario guardar los registros de Ledger Live para solucionar problemas.",
-      "resetThirdPartyData" : "Restablecer datos de terceros",
-      "resetThirdPartyDataDesc" : "Borra todos los datos locales de terceros que se usan para acceder al proveedor de transacciones de terceros.",
-      "resetThirdPartyDataModal" : "Eliminar los datos locales de terceros",
-      "resetThirdPartyDataModalDesc" : "Elimina los datos locales de terceros. Es posible que tengas que volver a realizar el KYC o iniciar sesión de nuevo para acceder a los servicios proporcionados por nuestros socios.",
       "hardReset" : "Restablecer Ledger Live",
       "hardResetDesc" : "Esto no tiene ningún impacto sobre tus activos. Borra todos los datos de Ledger Live, incluidos los datos de cuentas, historial de transacciones y ajustes. Utiliza tu dispositivo Ledger para volver a cargar y administrar tus activos cripto a un Ledger Live vacío.",
       "repairDevice" : "Repara tu dispositivo Ledger",
@@ -2843,8 +2838,8 @@
       "title" : "Editar tarifas"
     },
     "receive" : {
-      "title" : "Recibir",
-      "description" : "Recibe criptomonedas de otra billetera.",
+      "title" : "Depositar",
+      "description" : "Deposita cripto de otra billetera.",
       "titleReadOnly" : "Dirección no verificada",
       "headerTitle" : "Activo cripto",
       "titleDevice" : "Conectar dispositivo",
@@ -2854,26 +2849,35 @@
       "verifyAgain" : "Verifícala de nuevo",
       "noAccount" : "No se han encontrado cuentas.",
       "address" : "Dirección de la cuenta",
-      "copyAddress" : "Copiar",
+      "copyAddress" : "Copiar dirección",
       "shareAddress" : "Compartir dirección",
-      "addressCopied" : "Copiado",
+      "addressCopied" : "Dirección copiada en el portapapeles",
       "taprootWarning" : "Asegúrate de que el remitente soporta Taproot",
       "selectCrypto" : {
-        "title" : "Selecciona una cripto"
+        "title" : "Elige la cripto que quieres recibir"
+      },
+      "selectNetwork" : {
+        "title" : "Selecciona la red de la cripto seleccionada",
+        "account" : "Cuenta {{count}}",
+        "account_plural" : "Cuentas de {{count}}",
+        "subtitle" : "La red seleccionada debe ser la red desde la que retiras o a la que envías cripto.",
+        "bannerTitle" : "Asegúrate de seleccionar la red adecuada. Descubre cómo hacerlo."
       },
       "stepperHeader" : {
         "range" : "Paso {{currentStep}} de {{totalSteps}}",
         "connectDevice" : "Conectar dispositivo"
       },
       "selectAccount" : {
-        "title" : "Selecciona una cuenta",
-        "subtitle" : "Tus {{currencyTicker}} se depositarán en esta cuenta."
+        "title" : "Seleccionar o crear una nueva cuenta",
+        "subtitle" : "Tus {{currencyTicker}} se depositarán en esta cuenta.",
+        "cta" : "Crear una cuenta nueva"
       },
       "addAccount" : {
-        "title" : "Buscando en la cadena de bloques",
-        "subtitle" : "Comprobando si ya tienes cuentas de {{currencyTicker}}.",
+        "title" : "Buscando cuenta…",
+        "subtitle" : "Estamos verificando si ya tienes una cuenta de {{currencyName}} en la cadena de bloques.",
         "foundAccounts" : "Se han encontrado {{count}} cuentas",
-        "stopSynchronization" : "Detener sincronización"
+        "stopSynchronization" : "Detener sincronización",
+        "addingAccount" : "No se encontraron cuentas. Creando una nueva cuenta de {{currencyName}}…"
       },
       "verifyAddress" : {
         "title" : "Verifica la dirección",
@@ -2886,42 +2890,41 @@
       },
       "receiveConfirmation" : {
         "title" : "Recibir {{currencyTicker}}",
+        "onCurrencyName" : "En {{currencyName}}",
+        "copyAdress" : "Copiar dirección",
+        "addressCopied" : "¡Dirección copiada!",
         "addressVerified" : "Dirección verificada",
-        "verifyAddress" : "Toca aquí para verificar tu dirección",
+        "verifyAddress" : "Verifica tu dirección",
         "adviceVerify" : "Siempre recomendamos verificar la dirección con el dispositivo Ledger.",
-        "sendWarning" : "Envía solamente {{currencyName}} ({{currencyTicker}}) a esta dirección. El envío de cualquier otra moneda puede suponer una pérdida permanente.",
-        "dashStakingWarning" : "Asegúrate de no utilizar esta dirección para recibir recompensas de participación"
+        "sendWarning" : "Envía solamente {{currencyName}} ({{currencyTicker}}) a esta dirección. Si envías cualquier otra cripto a esta dirección, puedes perder tus cripto.",
+        "dashStakingWarning" : "Asegúrate de no utilizar esta dirección para recibir recompensas de participación",
+        "bannerTitle" : "Descubre cómo retirar fondos de un exchange"
       },
       "securityVerify" : {
-        "title" : "Por motivos de seguridad, te recomendamos que verifiques esta dirección con tu dispositivo Ledger.",
-        "subtitle1" : "La verificación de tu dirección te ofrece seguridad. No es posible modificar con un ataque la dirección que aparece en tu dispositivo Ledger.",
-        "subtitle2" : "Si verificas la dirección, podrás confirmar si la dirección que aparece en tu dispositivo es la misma que aparece en Ledger Live.",
+        "title" : "La verificación de la dirección es fundamental para garantizar la seguridad de esta transacción",
+        "subtitle1" : "Asegúrate de comparar específicamente la dirección pegada (después de haberla copiado de Ledger Live) con la dirección que aparece en la pantalla de confianza de tu Ledger (la pantalla del dispositivo Ledger). Las direcciones deben coincidir.",
+        "subtitle2" : "Esta verificación ayuda a contrarrestar los ataques de reemplazo de direcciones.",
         "verifyCta" : "Verificar mi dirección",
-        "dontVerifyCta" : "Mostrar mi dirección sin verificarla"
+        "dontVerifyCta" : "Mostrar dirección sin verificarla"
       },
       "securityDontVerify" : {
-        "title" : "¿Deseas continuar?",
-        "subtitle" : "La dirección que se muestre en Ledger Live no se verificará.",
+        "title" : "¿No verificar?",
+        "subtitle" : "Si no verificas la dirección, habrá más probabilidades de que seas víctima de una estafa y envíes los activos a una dirección equivocada.",
         "doNotRemindAgain" : "No volver a recordármelo",
-        "no" : "No",
-        "yes" : "Sí"
+        "no" : "Verificar",
+        "yes" : "No verificar"
       },
       "toastMessages" : {
         "accountImported" : "Hemos importado una cuenta de {{currencyTicker}} por ti. ",
         "why" : "Quiero saber por qué.",
         "addressVerified" : "Tu dirección se ha verificado"
       },
-      "additionalInfoModal" : {
-        "title" : "¿Por qué hemos importado una cuenta?",
-        "subtitle" : "Hemos detectado que previamente tenías una cuenta de {{currencyTicker}} en tu semilla. Hemos importado esa cuenta por ti.",
-        "closeCta" : "Entendido"
-      },
       "notSynced" : {
         "text" : "Sincronizando",
         "desc" : "Esto puede tardar un tiempo si tienes muchas transacciones o una conexión a Internet lenta."
       },
       "readOnly" : {
-        "title" : "Recibir",
+        "title" : "Depositar",
         "text" : "Por favor, ten cuidado",
         "desc" : "Estás a punto de ver una dirección que no ha sido verificada. Verifica las direcciones en el dispositivo para mayor seguridad.",
         "verify" : "No se ha verificado la dirección de {{accountType}}. Verifica las direcciones en el dispositivo para mayor seguridad."
@@ -2956,66 +2959,8 @@
         "whatIsSwap" : "¿Qué es la permuta?",
         "disclaimer" : "Intercambia cripto directamente desde tu dispositivo Ledger. Este servicio no está disponible en algunos países, entre ellos, Estados Unidos."
       },
-      "unauthorizedRates" : {
-        "cta" : "Restablece la verificación",
-        "banner" : "Restablece tu KYC y actualiza Live para permutar con Wyre.",
-        "bannerCTA" : "Restablecer KYC"
-      },
       "main" : {
         "header" : "Permutar"
-      },
-      "kyc" : {
-        "disclaimer" : "Acepto que mis datos de ubicación sean compartidos con terceros con fines de cumplimiento normativo.",
-        "cta" : "Continuar",
-        "wyre" : {
-          "title" : "Completar tu KYC",
-          "subtitle" : "LEDGER recopila tu información en nombre de WYRE y se la transfiere a WYRE con fines de KYC. Para obtener más información, revisa nuestra Política de Privacidad.",
-          "pending" : {
-            "cta" : "Continuar",
-            "title" : "KYC enviado para su aprobación",
-            "subtitle" : "Tu KYC ha sido enviado y está en espera de aprobación.",
-            "link" : "Más información sobre KYC"
-          },
-          "approved" : {
-            "cta" : "Continuar",
-            "title" : "¡KYC aprobado!",
-            "subtitle" : "Tu KYC ha sido enviado y ha sido aprobado.",
-            "link" : "Más información sobre KYC"
-          },
-          "closed" : {
-            "cta" : "Restablecer KYC",
-            "title" : "Solicitud de KYC rechazada",
-            "subtitle" : "Wyre ha rechazado los datos que has proporcionado para fines de KYC",
-            "link" : "Más información sobre KYC"
-          },
-          "form" : {
-            "firstName" : "Nombre",
-            "lastName" : "Apellidos",
-            "street1" : "Dirección postal línea 1",
-            "street2" : "Dirección postal línea 2",
-            "city" : "Ciudad",
-            "state" : "Provincia",
-            "country" : "País",
-            "postalCode" : "Código postal",
-            "dateOfBirth" : "Fecha de nacimiento",
-            "firstNamePlaceholder" : "Ingresa tu nombre",
-            "lastNamePlaceholder" : "Ingresa tu apellido",
-            "street1Placeholder" : "Ejemplo: Calle Maple, 13",
-            "street2Placeholder" : "Ejemplo: Calle Maple, 13",
-            "cityPlaceholder" : "Ejemplo: San José",
-            "postalCodePlaceholder" : "Ingresa tu código postal de 5 dígitos",
-            "statePlaceholder" : "Selecciona tu estado",
-            "dateOfBirthPlaceholder" : "AAAA-MM-DD",
-            "firstNameError" : "Ingresa tu nombre para continuar",
-            "lastNameError" : "Ingresa tu apellido para continuar",
-            "street1Error" : "Ingresa tu dirección",
-            "cityError" : "Ingresa la ciudad en la que vives en EE.UU.",
-            "stateError" : "Selecciona tu estado para continuar",
-            "postalCodeError" : "Ingresa un código postal de EE.UU. válido",
-            "dateOfBirthError" : "Ingresa tu fecha de nacimiento"
-          }
-        },
-        "states" : "Selecciona tu estado"
       },
       "notAvailable" : {
         "title" : "Servicio no disponible temporalmente, o no disponible en tu país"
@@ -3190,34 +3135,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC",
-            "required" : "Debes completar tu KYC",
-            "complete" : "Completa tu KYC",
-            "update" : "Actualiza tu KYC",
-            "rejected" : "KYC rechazado, vuelve a iniciar la verificación",
-            "rejectedContactProviderSupport" : "KYC rechazado, ponte en contacto con el soporte de {{providerName}}",
-            "updateRequired" : "Completa o actualiza tu KYC",
-            "status" : {
-              "pending" : "KYC pendiente",
-              "approved" : "KYC aprobado",
-              "closed" : "KYC rechazado",
-              "upgradeRequired" : "KYC insuficiente"
-            }
-          },
-          "login" : {
-            "title" : "Inicia sesión",
-            "required" : "Necesitas iniciar sesión con este proveedor",
-            "complete" : "Inicia sesión"
-          },
-          "mfa" : {
-            "title" : "Autenticación multifactor",
-            "required" : "Necesitas configurar la MFA con este proveedor",
-            "complete" : "Configurar la MFA"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "{{providerName}} ha bloqueado tu retiro.\n\n Para obtener más información, ponte en contacto con su equipo de soporte."
-          },
           "noProviders" : "No se han encontrado resultados. No hay cotizaciones disponibles con las preferencias actuales."
         }
       }
@@ -6356,7 +6273,7 @@
           "body" : "Convierte una cripto en otra de manera segura"
         },
         "receive" : {
-          "title" : "Recibir",
+          "title" : "Depositar",
           "body" : "Recibe cripto en tu billetera"
         }
       }
