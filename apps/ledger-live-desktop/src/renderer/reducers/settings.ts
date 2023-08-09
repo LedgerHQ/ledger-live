@@ -51,7 +51,7 @@ export type SettingsState = {
   autoLockTimeout: number;
   selectedTimeRange: PortfolioRange;
   currenciesSettings: {
-    [currencyId: string]: CurrencySettings;
+    [Id: string]: CurrencySettings;
   };
   pairExchanges: {
     [pair: string]: string | undefined | null;
