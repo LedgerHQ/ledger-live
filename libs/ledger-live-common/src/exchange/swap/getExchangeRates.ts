@@ -8,10 +8,9 @@ import {
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
-import { getAvailableProviders, getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
-import { fetchCurrencyFrom } from "./api/v5/fetchCurrencyFrom";
 import { isPlaywrightEnv } from "./utils/isPlaywrightEnv";
 
 const getExchangeRates: GetExchangeRates = async ({
@@ -35,11 +34,6 @@ const getExchangeRates: GetExchangeRates = async ({
   const providerList = providers
     .filter(provider => provider.pairs.some(pair => pair.from === from && pair.to === to))
     .map(item => item.provider);
-
-  fetchCurrencyFrom({
-    providers: getAvailableProviders(),
-    currencyTo: "bitcoin",
-  });
 
   const request = {
     from,
