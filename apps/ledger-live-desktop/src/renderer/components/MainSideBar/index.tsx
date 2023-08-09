@@ -477,7 +477,13 @@ const MainSideBar = () => {
                     isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
                     collapsed={secondAnim}
                     NotifComponent={
-                      referralProgramConfig?.params.isNew ? (
+                      referralProgramConfig?.params.amount ? (
+                        <CustomTag active type="plain" size="small">
+                          {t("referralProgram.reward", {
+                            amount: referralProgramConfig?.params.amount,
+                          })}
+                        </CustomTag>
+                      ) : referralProgramConfig?.params.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
                         </CustomTag>

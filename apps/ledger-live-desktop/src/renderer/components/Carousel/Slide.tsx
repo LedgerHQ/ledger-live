@@ -35,6 +35,14 @@ const EllipsedText = styled(Text)`
   -webkit-box-orient: vertical;
 `;
 
+const EllipsedLabel = styled(Label)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+`;
+
 type Props = ContentCard;
 
 const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide }: Props) => {
@@ -95,9 +103,9 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
   return (
     <Wrapper onClick={onClick} ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
       <Box flex={1} p={24}>
-        <Label ff="Inter|SemiBold" fontSize={2}>
+        <EllipsedLabel ff="Inter|SemiBold" fontSize={2}>
           {title}
-        </Label>
+        </EllipsedLabel>
         <EllipsedText
           style={{ marginBottom: 16 }}
           ff="Inter|Medium"
@@ -123,7 +131,7 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
       )}
       {image && (
         <Box mr={8}>
-          <Image resource={image} alt="" width={180} height={180} />
+          <Image resource={image} alt="" width={180} height={100} />
         </Box>
       )}
     </Wrapper>

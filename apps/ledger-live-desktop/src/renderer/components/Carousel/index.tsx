@@ -126,7 +126,6 @@ const Slides = styled.div`
 export const Label = styled(Text)`
   color: ${p => p.theme.colors.palette.text.shade100};
   margin-bottom: 8px;
-  max-width: 404px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 `;
