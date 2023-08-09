@@ -62,6 +62,5 @@ test("Earn @smoke", async ({ page }) => {
     await expect
       .soft(page)
       .toHaveScreenshot("earn-app-opened.png", { mask: [page.locator("webview")] });
-    await page.pause();
   });
 });
