@@ -16,7 +16,7 @@ module.exports = [
               7: "ethereum/erc20/usd_tether__erc20_",
             },
             providers: {
-              mockProvider1: [
+              changelly: [
                 {
                   methods: ["float", "fixed"],
                   pairs: {
@@ -26,7 +26,7 @@ module.exports = [
                   },
                 },
               ],
-              mockProvider2: [
+              cic: [
                 {
                   methods: ["float"],
                   pairs: {
@@ -37,6 +37,17 @@ module.exports = [
                 },
               ],
             },
+          },
+        },
+      },
+      {
+        id: "no-providers", // variant id
+        type: "json", // variant handler id
+        options: {
+          status: 200, // status to send
+          body: {
+            currencies: {},
+            providers: {},
           },
         },
       },

@@ -252,6 +252,7 @@
     "jest-environment-node": "^29.3.1",
     "jetifier": "^1.6.6",
     "local-web-server": "^4.2.1",
+    "main": "link:@types/mocks-server/main",
     "metro": "^0.76.0",
     "metro-extra-config": "workspace:*",
     "metro-minify-uglify": "^0.76.0",

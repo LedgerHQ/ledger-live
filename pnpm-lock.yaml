@@ -1278,6 +1278,9 @@ importers:
       local-web-server:
         specifier: ^4.2.1
         version: 4.2.1
+      main:
+        specifier: link:@types/mocks-server/main
+        version: link:@types/mocks-server/main
       metro:
         specifier: ^0.76.0
         version: 0.76.0

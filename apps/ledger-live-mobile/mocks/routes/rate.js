@@ -1,8 +1,8 @@
 module.exports = [
   {
-    id: "providers", // route id
-    url: "/providers", // url in express format
-    method: "GET", // HTTP method
+    id: "rate", // route id
+    url: "/rate", // url in express format
+    method: "POST", // HTTP method
     variants: [
       {
         id: "success", // variant id
@@ -11,10 +11,10 @@ module.exports = [
           status: 200, // status to send
           body: [
             {
-              provider: "mockProvider1",
+              provider: "changelly",
               providerType: "CEX",
-              from: "ethereum",
-              to: "bitcoin",
+              from: "bitcoin",
+              to: "ethereum",
               amountFrom: "0.038401364250361767",
               amountTo: "0.00233794",
               minAmountFrom: "0.0195",
@@ -24,37 +24,28 @@ module.exports = [
               status: "success",
             },
             {
-              provider: "mockProvider1",
+              provider: "changelly",
               providerType: "CEX",
-              from: "ethereum",
-              to: "bitcoin",
+              from: "bitcoin",
+              to: "ethereum",
               amountRequested: "0.038401364250361767",
               minAmountFrom: "0.05246177",
               maxAmountFrom: "105.00000000",
               tradeMethod: "fixed",
-              status: "success",
+              status: "error",
             },
             {
-              provider: "mockProvider2",
+              provider: "cic",
               providerType: "CEX",
-              from: "ethereum",
-              to: "bitcoin",
-              amountRequested: "0.038401364250361767",
+              from: "bitcoin",
+              to: "ethereum",
+              amountFrom: "0.038401364250361767",
+              amountTo: "0.00241234",
               minAmountFrom: "0.02",
-              maxAmountFrom: "106.00000000",
+              maxAmountFrom: "7293",
+              payoutNetworkFees: "0.0000910000000000000000",
               tradeMethod: "float",
               status: "success",
-            },
-            {
-              provider: "mockProvider2",
-              providerType: "CEX",
-              from: "ethereum",
-              to: "bitcoin",
-              amountRequested: "0.038401364250361767",
-              minAmountFrom: "0.02",
-              maxAmountFrom: "106.00000000",
-              tradeMethod: "fixed",
-              status: "error",
             },
           ],
         },

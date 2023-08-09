@@ -2,12 +2,20 @@ import { expect } from "detox";
 import { loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import SwapFormPage from "../../models/trade/swapFormPage";
+import { createServer } from "@mocks-server/main";
+import { delay } from "../../helpers";
 
+let server;
 let portfolioPage: PortfolioPage;
 let swapPage: SwapFormPage;
 
 describe("Swap", () => {
   beforeAll(async () => {
+    server = await createServer();
+    const { loadRoutes, loadCollections } = server.mock.createLoaders();
+    loadRoutes();
+    loadCollections();
+
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     portfolioPage = new PortfolioPage();
@@ -16,7 +24,12 @@ describe("Swap", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
+  afterAll(async () => {
+    server.stop();
+  });
+
   it("should load the Swap page from the Transfer menu", async () => {
+    await delay(30000);
     await swapPage.openViaDeeplink();
     await expect(swapPage.swapFormTab()).toBeVisible();
   });

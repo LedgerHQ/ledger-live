@@ -2,5 +2,9 @@
   {
     "id": "base",
     "routes": ["providers:success", "rate:success"]
+  },
+  {
+    "id": "no-providers",
+    "routes": ["providers:no-providers"]
   }
 ]
