@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.5.0-next.1
+
+### Patch Changes
+
+- [#4270](https://github.com/LedgerHQ/ledger-live/pull/4270) [`9fa642e428`](https://github.com/LedgerHQ/ledger-live/commit/9fa642e428dc88f88dcd3e6e439c3ee40337dbaf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - added an amount property to the feature_referral_program_desktop_sidebar feature flag
+
 ## 31.5.0-next.0
 
 ### Minor Changes
