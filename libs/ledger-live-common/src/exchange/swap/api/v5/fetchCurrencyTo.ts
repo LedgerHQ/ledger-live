@@ -5,6 +5,7 @@ import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5Currencies";
 
 type Props = {
   currencyFrom: string;
@@ -25,7 +26,9 @@ export async function fetchCurrencyTo({
   providers,
   additionalCoinsFlag = false,
 }: Props) {
-  if (isIntegrationTestEnv()) return Promise.resolve(fetchCurrencyToMock);
+  if (isIntegrationTestEnv()) {
+    return Promise.resolve(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
+  }
 
   const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/currencies/to`);
 
@@ -39,7 +42,8 @@ export async function fetchCurrencyTo({
       url: url.toString(),
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
     });
-    return data;
+
+    return flattenV5CurrenciesToAndFrom(data);
   } catch (e: unknown) {
     if (axios.isAxiosError(e)) {
       if (e.code === "ECONNABORTED") {

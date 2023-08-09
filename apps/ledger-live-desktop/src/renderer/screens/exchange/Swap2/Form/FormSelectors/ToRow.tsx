@@ -5,13 +5,10 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
 import { amountInputContainerProps, renderCurrencyValue, selectRowStylesMap } from "./utils";
 import { FormLabel } from "./FormLabel";
-import { toSelector } from "~/renderer/actions/swap";
-import { useSelector } from "react-redux";
 import {
   usePickDefaultCurrency,
   useSelectableCurrencies,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   SwapSelectorStateType,
   SwapTransactionType,
@@ -36,6 +33,7 @@ type Props = {
   provider: string | undefined | null;
   loadingRates: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
+  toCurrencies: SwapTransactionType["toCurrencies"];
 };
 
 const InputCurrencyContainer = styled(Box)`
@@ -59,12 +57,11 @@ function ToRow({
   fromAccount,
   loadingRates,
   updateSelectedRate,
+  toCurrencies,
 }: Props) {
-  const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : undefined;
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({
-    allCurrencies,
+    allCurrencies: toCurrencies.data ?? [],
   });
   const unit = toCurrency?.units[0];
   usePickDefaultCurrency(currencies, toCurrency, setToCurrency);
@@ -99,7 +96,7 @@ function ToRow({
             onChange={setCurrencyAndTrack}
             value={toCurrency}
             stylesMap={selectRowStylesMap}
-            isDisabled={!fromAccount}
+            isDisabled={!fromAccount || toCurrencies.isLoading || !!toCurrencies.error}
             renderValueOverride={renderCurrencyValue}
             onMenuOpen={trackEditCurrency}
           />

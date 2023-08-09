@@ -32,6 +32,8 @@ type FormInputsProps = {
   loadingRates: boolean;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
+  fromCurrencies: SwapTransactionType["fromCurrencies"];
+  toCurrencies: SwapTransactionType["toCurrencies"];
 };
 type SwapButtonProps = {
   onClick: SwapTransactionType["reverseSwap"];
@@ -82,6 +84,8 @@ export default function FormInputs({
   loadingRates,
   isSendMaxLoading,
   updateSelectedRate,
+  fromCurrencies,
+  toCurrencies,
 }: FormInputsProps) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const reverseSwapAndTrack = () => {
@@ -97,6 +101,7 @@ export default function FormInputs({
     <Main>
       <Box>
         <FromRow
+          fromCurrencies={fromCurrencies}
           fromAccount={fromAccount}
           setFromAccount={setFromAccount}
           fromAmount={fromAmount}
@@ -119,6 +124,7 @@ export default function FormInputs({
         }}
       >
         <ToRow
+          toCurrencies={toCurrencies}
           toCurrency={toCurrency}
           setToCurrency={setToCurrency}
           toAmount={toAmount}

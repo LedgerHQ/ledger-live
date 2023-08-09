@@ -340,6 +340,8 @@ const SwapForm = () => {
           loadingRates={swapTransaction.swap.rates.status === "loading"}
           isSendMaxLoading={swapTransaction.swap.isMaxLoading}
           updateSelectedRate={swapTransaction.swap.updateSelectedRate}
+          fromCurrencies={swapTransaction.fromCurrencies}
+          toCurrencies={swapTransaction.toCurrencies}
         />
         {pageState === "empty" && <EmptyState />}
         {pageState === "loading" && <LoadingState />}

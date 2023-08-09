@@ -25,11 +25,11 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
-import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
+import { useSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/hooks/useSelectableCurrencies";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -57,9 +57,12 @@ const usePickDefaultAccount = (
   accounts: AccountLike[],
   fromAccount: AccountLike | undefined,
   setFromAccount: (acc?: AccountLike) => void,
+  fromCurrencies: SwapTransactionType["fromCurrencies"],
 ): void => {
-  const list = [...listCryptoCurrencies(), ...listTokens()];
-  const allCurrencies = useCurrenciesByMarketcap(list);
+  const currencies = useSelectableCurrencies({
+    allCurrencies: fromCurrencies.data ?? [],
+  });
+  const allCurrencies = useCurrenciesByMarketcap(currencies);
   useEffect(() => {
     if (!fromAccount && allCurrencies.length > 0) {
       allCurrencies.some(({ id }) => {
@@ -94,6 +97,7 @@ type Props = {
   provider: string | undefined | null;
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
+  fromCurrencies: SwapTransactionType["fromCurrencies"];
 };
 
 /* @dev: Yeah, Im sorry if you read this, design asked us to
@@ -121,12 +125,13 @@ function FromRow({
   fromAmountWarning,
   isSendMaxLoading,
   updateSelectedRate,
+  fromCurrencies,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const unit = fromAccount && getAccountUnit(fromAccount);
   const { t } = useTranslation();
-  usePickDefaultAccount(accounts, fromAccount, setFromAccount);
+  usePickDefaultAccount(accounts, fromAccount, setFromAccount, fromCurrencies);
   const trackEditAccount = () =>
     track("button_clicked", {
       button: "Edit source account",
@@ -208,7 +213,9 @@ function FromRow({
             loading={isSendMaxLoading}
             value={fromAmount}
             onChange={setValue}
-            disabled={!fromAccount || isMaxEnabled}
+            disabled={
+              !fromAccount || isMaxEnabled || fromCurrencies.isLoading || !!fromCurrencies.error
+            }
             placeholder="0"
             textAlign="right"
             fontWeight={600}

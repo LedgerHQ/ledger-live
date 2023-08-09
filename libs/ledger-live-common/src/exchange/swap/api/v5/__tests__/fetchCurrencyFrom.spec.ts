@@ -2,6 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { fetchCurrencyFrom } from "../fetchCurrencyFrom";
 import { fetchCurrencyFromMock } from "../__mocks__/fetchCurrencyFrom.mocks";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../../const/timeout";
+import { flattenV5CurrenciesToAndFrom } from "../../../utils/flattenV5Currencies";
 
 jest.mock("@ledgerhq/live-network/network");
 
@@ -16,7 +17,7 @@ describe("fetchCurrencyFrom", () => {
       currencyTo: "bitcoin",
     });
 
-    expect(result).toStrictEqual(fetchCurrencyFromMock);
+    expect(result).toStrictEqual(flattenV5CurrenciesToAndFrom(fetchCurrencyFromMock));
     expect(network as jest.Mock).toHaveBeenCalledWith({
       method: "GET",
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
