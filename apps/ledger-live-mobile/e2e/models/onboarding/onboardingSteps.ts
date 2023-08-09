@@ -5,6 +5,7 @@ import {
   waitForElementById,
   tapById,
   isAndroid,
+  waitForElementByText,
 } from "../../helpers";
 import { device } from "detox";
 import * as bridge from "../../bridge/server";
@@ -70,9 +71,11 @@ export default class OnboardingSteps {
     await tapByElement(this.pairDeviceButton());
     bridge.addDevices();
     await device.enableSynchronization();
+    await waitForElementByText(this.deviceName(name));
     await tapByText(this.deviceName(name));
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
     bridge.open(); // Mocked action open ledger manager on the Nano
+    await waitForElementById("onboarding-paired-continue");
   }
 
   async openLedgerLive() {

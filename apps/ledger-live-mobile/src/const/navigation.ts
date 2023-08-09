@@ -158,10 +158,6 @@ export enum ScreenName {
   SwapFormSelectCrypto = "SwapFormSelectCrypto",
   SwapFormSelectProviderRate = "SwapFormSelectProviderRate",
   SwapHistory = "SwapHistory",
-  SwapKYC = "KYC",
-  SwapKYCStates = "SwapKYCStates",
-  SwapLogin = "Login",
-  SwapMFA = "MFA",
   SwapOperationDetails = "SwapOperationDetails",
   SwapPendingOperation = "PendingOperation",
   SwapSelectAccount = "SelectAccount",
@@ -169,6 +165,7 @@ export enum ScreenName {
   SwapSelectFees = "SelectFees",
   SwapSelectProvider = "SelectProvider",
   SwapTab = "SwapTab",
+  Earn = "Earn",
   TezosDelegationFlow = "TezosDelegationFlow",
   Transfer = "Transfer",
   UnfreezeAmount = "UnfreezeAmount",
@@ -338,6 +335,10 @@ export enum ScreenName {
   EthereumCustomFees = "EthereumCustomFees",
   EthereumEditGasLimit = "EthereumEditGasLimit",
   EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
+
+  // Evm
+  EvmEditGasLimit = "EvmEditGasLimit",
+  EvmCustomFees = "EvmCustomFees",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
@@ -545,6 +546,7 @@ export enum NavigatorName {
   Settings = "Settings",
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
+  Earn = "EarnNavigator",
   TezosDelegationFlow = "TezosDelegationFlow",
   TronVoteFlow = "TronVoteFlow",
   Unfreeze = "Unfreeze",

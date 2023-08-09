@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useContext } from "react";
 import { Linking, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons, Link, Text, Divider } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Link, Text, Divider } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 
 import { TermsContext, useLocalizedTermsUrl } from "../logic/terms";
@@ -48,7 +48,7 @@ const CheckTermOfUseUpdateModal = () => {
           </Flex>
 
           <Alert type="help" noIcon>
-            <Link type="color" onPress={handleLink} Icon={Icons.ExternalLinkMedium}>
+            <Link type="color" onPress={handleLink} Icon={IconsLegacy.ExternalLinkMedium}>
               {t("updatedTerms.link")}
             </Link>
           </Alert>

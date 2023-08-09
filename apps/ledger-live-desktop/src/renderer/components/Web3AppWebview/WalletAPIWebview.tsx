@@ -143,6 +143,15 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           }),
         );
       },
+      "device.select": ({ appName, onSuccess, onCancel }) => {
+        dispatch(
+          openModal("MODAL_CONNECT_DEVICE", {
+            appName,
+            onResult: onSuccess,
+            onCancel,
+          }),
+        );
+      },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
         dispatch(
           openModal("MODAL_PLATFORM_EXCHANGE_START", {

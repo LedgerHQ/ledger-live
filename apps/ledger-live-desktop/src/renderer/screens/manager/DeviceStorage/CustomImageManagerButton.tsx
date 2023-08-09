@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, Icons, Text, Link } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, Text, Link } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -33,7 +33,7 @@ const CustomImageManagerButton = (props: Props) => {
       </Text>
       <Link
         onClick={disabled ? undefined : onAdd}
-        Icon={Icons.ChevronRightMedium}
+        Icon={IconsLegacy.ChevronRightMedium}
         disabled={disabled}
         data-test-id="manager-custom-image-button"
       >
@@ -42,7 +42,7 @@ const CustomImageManagerButton = (props: Props) => {
       {lastSeenCustomImage.size ? (
         <Link
           onClick={onRemove}
-          Icon={Icons.ChevronRightMedium}
+          Icon={IconsLegacy.ChevronRightMedium}
           data-test-id="manager-custom-image-button"
         >
           {t("removeCustomLockscreen.cta")}

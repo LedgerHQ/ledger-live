@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
-import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Box } from "@ledgerhq/native-ui";
 import { StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -18,6 +18,8 @@ import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";
 import { sharedSwapTracking } from "../../screens/Swap/utils";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { PTX_SERVICES_TOAST_ID } from "../../constants";
 
 type ButtonItem = {
   title: string;
@@ -25,6 +27,7 @@ type ButtonItem = {
   tag?: string;
   Icon: IconType;
   onPress?: (() => void) | null;
+  onDisabledPress?: () => void;
   disabled?: boolean;
   event?: string;
   eventProperties?: Parameters<typeof track>[1];
@@ -36,6 +39,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const navigation = useNavigation();
   const route = useRoute();
   const { t } = useTranslation();
+  const { pushToast, dismissToast } = useToasts();
 
   const { page, track } = useAnalytics();
 
@@ -126,7 +130,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSendFunds : null,
-      Icon: Icons.ArrowTopMedium,
+      Icon: IconsLegacy.ArrowTopMedium,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
     },
     {
@@ -138,7 +142,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
       onPress: onReceiveFunds,
-      Icon: Icons.ArrowBottomMedium,
+      Icon: IconsLegacy.ArrowBottomMedium,
       disabled: readOnlyModeEnabled,
     },
     {
@@ -150,8 +154,20 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
       tag: t("common.popular"),
-      Icon: Icons.PlusMedium,
+      Icon: IconsLegacy.PlusMedium,
       onPress: onBuy,
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
       disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
     },
     {
@@ -162,8 +178,20 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
-      Icon: Icons.MinusMedium,
+      Icon: IconsLegacy.MinusMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSell : null,
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
       disabled:
         isPtxServiceCtaExchangeDrawerDisabled ||
         !accountsCount ||
@@ -181,7 +209,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             },
             title: t("transfer.stake.title"),
             description: t("transfer.stake.description"),
-            Icon: Icons.ClaimRewardsMedium,
+            Icon: IconsLegacy.ClaimRewardsMedium,
             onPress: onStake,
             disabled: readOnlyModeEnabled,
           },
@@ -195,8 +223,20 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
-      Icon: Icons.BuyCryptoMedium,
+      Icon: IconsLegacy.BuyCryptoMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSwap : null,
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
       disabled:
         isPtxServiceCtaExchangeDrawerDisabled ||
         !accountsCount ||
@@ -215,7 +255,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             },
             title: t("transfer.walletConnect.title"),
             description: t("transfer.walletConnect.description"),
-            Icon: Icons.WalletConnectMedium,
+            Icon: IconsLegacy.WalletConnectMedium,
             onPress: onWalletConnect,
             disabled: readOnlyModeEnabled,
           },
@@ -257,7 +297,11 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
-      <ScrollView alwaysBounceVertical={false} style={{ width: "100%" }}>
+      <ScrollView
+        alwaysBounceVertical={false}
+        style={{ width: "100%" }}
+        testID="transfer-scroll-list"
+      >
         {buttonsList.map((button, index) => (
           <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
             <TransferButton {...button} testID={button.testID} />

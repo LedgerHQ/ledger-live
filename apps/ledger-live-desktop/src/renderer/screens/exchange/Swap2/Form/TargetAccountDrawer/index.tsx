@@ -42,6 +42,7 @@ const AddAccountIconContainer = styled(Tabbable)`
   color: ${p => p.theme.colors.palette.primary.main};
   background: ${p => rgba(p.theme.colors.palette.primary.main, 0.2)};
 `;
+
 function AddAccountIcon() {
   return (
     <AddAccountIconContainer justifyContent="center" alignItems="center">
@@ -49,6 +50,7 @@ function AddAccountIcon() {
     </AddAccountIconContainer>
   );
 }
+
 const TargetAccount = memo(function TargetAccount({
   account,
   selected,
@@ -73,6 +75,7 @@ const TargetAccount = memo(function TargetAccount({
     account.type !== "ChildAccount" && account.spendableBalance
       ? account.spendableBalance
       : account.balance;
+
   const onClick = useCallback(() => {
     track("button_clicked", {
       page: "Swap accounts",
@@ -84,9 +87,11 @@ const TargetAccount = memo(function TargetAccount({
     });
     setAccount && setAccount(currency, account, parentAccount || undefined);
   }, [swapDefaultTrack, currency, name, parentName, setAccount, account, parentAccount]);
+
   const Wrapper: React.ComponentType<
     React.ComponentProps<typeof Box> & React.ComponentProps<typeof AccountWrapper>
   > = setAccount ? AccountWrapper : Box;
+
   return (
     <Wrapper
       horizontal
@@ -149,6 +154,7 @@ type Props = {
       | null;
   };
 };
+
 export default function TargetAccountDrawer({
   accounts,
   selectedAccount: initialSelectedAccount,
@@ -220,6 +226,7 @@ export default function TargetAccountDrawer({
       ),
     [targetAccounts, allAccounts],
   );
+
   return (
     <Box height="100%">
       <DrawerTitle i18nKey="swap2.form.to.title" />

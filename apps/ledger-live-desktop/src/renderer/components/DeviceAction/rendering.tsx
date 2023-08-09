@@ -57,6 +57,8 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
+import LinkWithExternalIcon from "../LinkWithExternalIcon";
+import { openURL } from "~/renderer/linking";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -625,6 +627,7 @@ export const renderError = ({
   withExportLogs,
   list,
   supportLink,
+  buyLedger,
   warning,
   info,
   managerAppName,
@@ -640,6 +643,7 @@ export const renderError = ({
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
+  buyLedger?: string;
   warning?: boolean;
   info?: boolean;
   managerAppName?: string;
@@ -708,6 +712,12 @@ export const renderError = ({
               </Button>
             ) : null}
             {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
+            {buyLedger ? (
+              <LinkWithExternalIcon
+                label={t("common.buyLedger")}
+                onClick={() => openURL(buyLedger)}
+              />
+            ) : null}
           </>
         )}
       </ButtonContainer>

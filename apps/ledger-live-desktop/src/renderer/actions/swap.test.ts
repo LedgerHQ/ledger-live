@@ -1,4 +1,6 @@
+import { test, expect } from "@jest/globals";
 import { filterAvailableToAssets, sortAccountsByStatus } from "./swap";
+
 const accounts = [
   {
     type: "Account",
@@ -51,6 +53,7 @@ const accounts = [
     disabled: false,
   },
 ];
+
 const expectedOrder = [
   "test1",
   "test1 - sub2",
@@ -63,10 +66,12 @@ const expectedOrder = [
   "test5",
   "test5 - sub1",
 ];
+
 test("SortAccountsByStatus should keep disable accounts with active subAccounts before disable accounts", () => {
   // @ts-expect-error For testing purposes
   expect(sortAccountsByStatus(accounts).map(value => value.name)).toEqual(expectedOrder);
 });
+
 test("filterAvailableToAssets returns to assets with fromId", () => {
   const toAssets = filterAvailableToAssets(
     [
@@ -95,6 +100,7 @@ test("filterAvailableToAssets returns to assets with fromId", () => {
   );
   expect(toAssets).toEqual(["b", "e"]);
 });
+
 test("filterAvailableToAssets returns to assets without fromId", () => {
   const toAssets = filterAvailableToAssets([
     {

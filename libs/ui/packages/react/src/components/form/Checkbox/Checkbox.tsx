@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Text from "../../asorted/Text";
-import CheckAloneMedium from "@ledgerhq/icons-ui/react/CheckAloneMedium";
+import CheckAloneMedium from "@ledgerhq/icons-ui/reactLegacy/CheckAloneMedium";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const Icon = () =>

@@ -17,11 +17,13 @@ type Props = {
   resizeMode?: VideoProperties["resizeMode"] & ResizeMode;
   colors: Theme["colors"];
   children?: React.ReactNode | null;
+  transparency?: boolean;
 };
 
 class NftVideo extends React.PureComponent<Props> {
   state = {
     isPosterMode: false,
+    loaded: false,
   };
 
   opacityAnim = new Animated.Value(0);
@@ -37,23 +39,33 @@ class NftVideo extends React.PureComponent<Props> {
   };
 
   onError = () => {
-    this.setState({ isPosterMode: true });
+    this.setState({ ...this.state, loaded: true, isPosterMode: true });
     this.startAnimation();
   };
 
   onLoad = (onLoadEvent: OnLoadData) => {
     if (!onLoadEvent?.duration) {
       this.onError();
+    } else {
+      this.setState({ ...this.state, loaded: true });
     }
   };
 
   render() {
-    const { style, src, colors, resizeMode = "cover", srcFallback, children } = this.props;
+    const {
+      style,
+      src,
+      colors,
+      transparency,
+      resizeMode = "cover",
+      srcFallback,
+      children,
+    } = this.props;
     const { isPosterMode } = this.state;
 
     return (
       <View style={[style, styles.root]}>
-        <Skeleton style={styles.skeleton} loading={true} />
+        <Skeleton style={styles.skeleton} loading={!this.state.loaded} />
         <Animated.View
           style={[
             styles.imageContainer,
@@ -82,9 +94,11 @@ class NftVideo extends React.PureComponent<Props> {
                 }}
                 style={[
                   styles.video,
-                  {
-                    backgroundColor: colors.white,
-                  },
+                  !transparency
+                    ? {
+                        backgroundColor: colors.white,
+                      }
+                    : {},
                 ]}
                 resizeMode={resizeMode}
                 source={{

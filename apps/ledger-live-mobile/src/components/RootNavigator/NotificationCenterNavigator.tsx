@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
 import { createStackNavigator } from "@react-navigation/stack";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
@@ -29,7 +29,7 @@ export default function NotificationCenterNavigator() {
   const goToNotificationsSettings = useCallback(() => {
     track("button_clicked", {
       button: "Settings",
-      screen: ScreenName.NotificationCenter,
+      page: ScreenName.NotificationCenter,
     });
     navigation.navigate(NavigatorName.Settings, {
       screen: ScreenName.NotificationsSettings,
@@ -39,7 +39,7 @@ export default function NotificationCenterNavigator() {
   const goToStatusCenter = useCallback(() => {
     track("button_clicked", {
       button: "Notification Center Status",
-      screen: ScreenName.NotificationCenterStatus,
+      page: ScreenName.NotificationCenterStatus,
     });
     navigation.navigate(NavigatorName.NotificationCenter, {
       screen: ScreenName.NotificationCenterStatus,
@@ -69,7 +69,7 @@ export default function NotificationCenterNavigator() {
                 style={{ marginRight: space[6] }}
                 onPress={goToNotificationsSettings}
               >
-                <Icons.SettingsMedium size={24} />
+                <IconsLegacy.SettingsMedium size={24} />
               </TouchableOpacity>
             </Flex>
           ),

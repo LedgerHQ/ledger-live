@@ -1,7 +1,7 @@
 import React from "react";
 
 import Tag from "../../../src/components/tags/Tag";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 
 export default {
   title: "Tag/Tag",
@@ -12,7 +12,7 @@ export const TagSample = (args: typeof TagSampleArgs) => (
   <Tag
     type={args.type}
     size={args.size}
-    Icon={args.icon ? Icons.CircledCheckSolidMedium : undefined}
+    Icon={args.icon ? IconsLegacy.CircledCheckSolidMedium : undefined}
     uppercase={args.uppercase}
   >
     {args.children}

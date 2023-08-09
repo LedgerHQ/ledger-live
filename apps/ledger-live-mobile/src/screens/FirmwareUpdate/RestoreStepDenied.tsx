@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import { TFunction } from "i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -39,7 +39,7 @@ export const RestoreStepDenied = ({
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={analyticsDrawerName} refreshSource={false} />
-      <IconBadge iconColor="primary.c100" iconSize={32} Icon={Icons.InfoAltFillMedium} />
+      <IconBadge iconColor="primary.c100" iconSize={32} Icon={IconsLegacy.InfoAltFillMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {t(`FirmwareUpdate.steps.restoreSettings.errors.${stepDeniedError.name}`, {
           deviceName: getDeviceModel(device.modelId).productName,
@@ -52,7 +52,7 @@ export const RestoreStepDenied = ({
         event="button_clicked"
         eventProperties={{
           button: "Retry",
-          screen: "Firmware update",
+          page: "Firmware update",
           drawer: analyticsDrawerName,
         }}
         type="main"
@@ -68,7 +68,7 @@ export const RestoreStepDenied = ({
           event="button_clicked"
           eventProperties={{
             button: "Skip",
-            screen: "Firmware update",
+            page: "Firmware update",
             drawer: analyticsDrawerName,
           }}
           onPress={onPressSkip}

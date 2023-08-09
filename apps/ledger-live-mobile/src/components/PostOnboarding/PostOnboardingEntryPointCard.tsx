@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,7 +26,7 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
       <Flex flexDirection="row" justifyContent="flex-end" alignItems="center">
         <Touchable onPress={dismissCard}>
           <Flex p={2}>
-            <Icons.CloseMedium size={20} />
+            <IconsLegacy.CloseMedium size={20} />
           </Flex>
         </Touchable>
       </Flex>

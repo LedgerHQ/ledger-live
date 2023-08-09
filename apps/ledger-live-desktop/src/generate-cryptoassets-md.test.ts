@@ -1,7 +1,7 @@
 // it is a bit a hack but it's a test that run in jest
 // to access the libs / babel ecosystem and generate a markdown file!
 // it passes if the file doesn't change (like a snapshot!)
-
+import { test, expect } from "@jest/globals";
 import fs from "fs";
 import "./live-common-set-supported-currencies";
 import {
