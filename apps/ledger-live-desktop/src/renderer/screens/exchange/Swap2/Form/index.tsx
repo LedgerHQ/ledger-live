@@ -191,7 +191,8 @@ const SwapForm = () => {
           : fromAccount.currency?.units[0].magnitude || 0;
       const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
 
-      const customFeesParams = feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : {};
+      const customFeesParams =
+        feesStrategy === "custom" ? await getCustomFeesPerFamily(transaction) : {};
       history.push({
         pathname: "/swap-web",
         state: {
