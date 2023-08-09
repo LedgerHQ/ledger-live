@@ -479,9 +479,7 @@ const MainSideBar = () => {
                     NotifComponent={
                       referralProgramConfig?.params.amount ? (
                         <CustomTag active type="plain" size="small">
-                          {t("referralProgram.reward", {
-                            amount: referralProgramConfig?.params.amount,
-                          })}
+                          {referralProgramConfig?.params.amount}
                         </CustomTag>
                       ) : referralProgramConfig?.params.isNew ? (
                         <CustomTag active type="plain" size="small">
