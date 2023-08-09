@@ -621,9 +621,18 @@ describe("EVM Family", () => {
           subAccounts: [tokenAccountWithPending],
           pendingOperations: [pendingOperation],
         };
+        const accountWithoutPending = {
+          ...accountWithPending,
+          subAccounts: [tokenAccountWithPending],
+          pendingOperations: [],
+        };
 
         // should not change anything if we maintain the pending op
         expect(synchronization.postSync(accountWithPending, accountWithPending)).toEqual(
+          accountWithPending,
+        );
+        // should keep pending ops even if the synced account(second parameter of postSync) has no pending op, because the pending op will be recalculated form the initial account
+        expect(synchronization.postSync(accountWithPending, accountWithoutPending)).toEqual(
           accountWithPending,
         );
 
