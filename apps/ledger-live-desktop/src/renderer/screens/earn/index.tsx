@@ -27,10 +27,6 @@ const Earn = () => {
 
   useDeepLinkListener();
 
-  console.log("Language: ", { language });
-  console.log("Locale: ", { locale });
-  console.log("Fiat Currency: ", { fiatCurrency });
-
   return (
     <Card grow style={{ overflow: "hidden" }} data-test-id="earn-app-container">
       {manifest ? (
