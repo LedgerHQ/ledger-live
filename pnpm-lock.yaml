@@ -1977,11 +1977,11 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.2
+        version: 1.0.2
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.0.1
-        version: 1.0.1(react@17.0.2)
+        specifier: ^1.1.0
+        version: 1.1.0(react@17.0.2)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.3)
@@ -4162,8 +4162,8 @@ importers:
         specifier: workspace:*
         version: link:../../ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.0.2
+        version: 1.0.2
       '@ledgerhq/wallet-api-simulator':
         specifier: ^1.0.1
         version: 1.0.1(react@17.0.2)
@@ -17229,8 +17229,25 @@ packages:
       bignumber.js: 9.1.1
     dev: false
 
+  /@ledgerhq/wallet-api-client@1.0.2:
+    resolution: {integrity: sha512-ClFmYqK+ySpaORHP7UodlBfph19jpEPkfGjUqic2MIyomyQEVO/BNS6s2jcRztyfCauBRyh7u+egJNRALVVLKg==}
+    dependencies:
+      '@ledgerhq/hw-transport': 6.28.5
+      '@ledgerhq/wallet-api-core': 1.0.2
+      bignumber.js: 9.1.1
+    dev: false
+
   /@ledgerhq/wallet-api-core@1.0.1:
     resolution: {integrity: sha512-ydhYjDkjiUxTCjFBoju+98cwFN0pt8PStJEcXH4GwJEAmC+rlZIL5fnd6UzwIyXhpP1N5W/98kirdypI0j8w/Q==}
+    dependencies:
+      '@ledgerhq/errors': 6.12.7
+      bignumber.js: 9.1.1
+      uuid: 9.0.0
+      zod: 3.21.4
+    dev: false
+
+  /@ledgerhq/wallet-api-core@1.0.2:
+    resolution: {integrity: sha512-xlpoJAC75R0OtqHj26WYQJ9xeNWhT1erb8eAWAfmMCQH2qIca4pxNWnXVousEX+o1EQQTEmmMjlv/JdvSo/43g==}
     dependencies:
       '@ledgerhq/errors': 6.12.7
       bignumber.js: 9.1.1
@@ -17247,6 +17264,21 @@ packages:
         optional: true
     dependencies:
       '@ledgerhq/wallet-api-core': 1.0.1
+      bignumber.js: 9.1.1
+      picomatch: 2.3.1
+      react: 17.0.2
+      rxjs: 7.8.1
+    dev: false
+
+  /@ledgerhq/wallet-api-server@1.1.0(react@17.0.2):
+    resolution: {integrity: sha512-irDNjD7eZ2s903AJNj5Q8+M3N5ClFEsXnVdxG0RPREX6AJtEIVyiIsJpj7ko05eXJ7kgjUfiL2gsYmoYLsrKCA==}
+    peerDependencies:
+      react: ^17.x || ^18.x
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      '@ledgerhq/wallet-api-core': 1.0.2
       bignumber.js: 9.1.1
       picomatch: 2.3.1
       react: 17.0.2

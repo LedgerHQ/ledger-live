@@ -323,7 +323,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountRequest) return;
 
-    server.setHandler("account.request", async ({ accounts$, currencies$ }) => {
+    server?.current?.setHandler("account.request", async ({ accounts$, currencies$ }) => {
       tracking.requestAccountRequested(manifest);
       const currencies = await firstValueFrom(currencies$);
 
@@ -367,7 +367,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountReceive) return;
 
-    server.setHandler("account.receive", ({ account }) =>
+    server?.current?.setHandler("account.receive", ({ account }) =>
       receiveOnAccountLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -398,7 +398,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiMessageSign) return;
 
-    server.setHandler("message.sign", ({ account, message }) =>
+    server?.current?.setHandler("message.sign", ({ account, message }) =>
       signMessageLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -429,19 +429,19 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiStorageGet) return;
 
-    server.setHandler("storage.get", uiStorageGet);
+    server?.current?.setHandler("storage.get", uiStorageGet);
   }, [server, uiStorageGet]);
 
   useEffect(() => {
     if (!uiStorageSet) return;
 
-    server.setHandler("storage.set", uiStorageSet);
+    server?.current?.setHandler("storage.set", uiStorageSet);
   }, [server, uiStorageSet]);
 
   useEffect(() => {
     if (!uiTxSign) return;
 
-    server.setHandler("transaction.sign", async ({ account, transaction, options }) => {
+    server?.current?.setHandler("transaction.sign", async ({ account, transaction, options }) => {
       const signedOperation = await signTransactionLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -472,7 +472,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiTxSign) return;
 
-    server.setHandler("transaction.signAndBroadcast", async ({ account, transaction, options }) => {
+    server?.current?.setHandler("transaction.signAndBroadcast", async ({ account, transaction, options }) => {
       const signedTransaction = await signTransactionLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -548,7 +548,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiDeviceTransport) return;
 
-    server.setHandler(
+    server?.current?.setHandler(
       "device.transport",
       ({ appName, appVersionRange, devices }) =>
         new Promise((resolve, reject) => {
@@ -595,7 +595,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiDeviceSelect) return;
 
-    server.setHandler(
+    server?.current?.setHandler(
       "device.select",
       ({ appName, appVersionRange, devices }) =>
         new Promise((resolve, reject) => {
@@ -638,7 +638,7 @@ export function useWalletAPIServer({
   }, [device.ref, manifest, server, tracking, uiDeviceSelect]);
 
   useEffect(() => {
-    server.setHandler("device.open", params => {
+    server?.current?.setHandler("device.open", params => {
       if (device.ref.current) {
         return Promise.reject(new Error("Device already opened"));
       }
@@ -651,7 +651,7 @@ export function useWalletAPIServer({
   }, [device, manifest, server, tracking]);
 
   useEffect(() => {
-    server.setHandler("device.exchange", params => {
+    server?.current?.setHandler("device.exchange", params => {
       if (!device.ref.current) {
         return Promise.reject(new Error("No device opened"));
       }
@@ -663,7 +663,7 @@ export function useWalletAPIServer({
   }, [device, manifest, server, tracking]);
 
   useEffect(() => {
-    server.setHandler("device.close", ({ transportId }) => {
+    server?.current?.setHandler("device.close", ({ transportId }) => {
       if (!device.ref.current) {
         return Promise.reject(new Error("No device opened"));
       }
@@ -679,7 +679,7 @@ export function useWalletAPIServer({
   }, [device, manifest, server, tracking]);
 
   useEffect(() => {
-    server.setHandler("bitcoin.getXPub", ({ accountId }) => {
+    server?.current?.setHandler("bitcoin.getXPub", ({ accountId }) => {
       return bitcoinFamillyAccountGetXPubLogic({ manifest, accounts, tracking }, accountId);
     });
   }, [accounts, manifest, server, tracking]);
@@ -689,7 +689,7 @@ export function useWalletAPIServer({
       return;
     }
 
-    server.setHandler("exchange.start", ({ exchangeType }) => {
+    server?.current?.setHandler("exchange.start", ({ exchangeType }) => {
       return startExchangeLogic(
         { manifest, accounts, tracking },
         exchangeType,
@@ -716,7 +716,7 @@ export function useWalletAPIServer({
       return;
     }
 
-    server.setHandler("exchange.complete", params => {
+    server?.current?.setHandler("exchange.complete", params => {
       // retrofit of the exchange params to fit the old platform spec
       const request: CompleteExchangeRequest = {
         provider: params.provider,
