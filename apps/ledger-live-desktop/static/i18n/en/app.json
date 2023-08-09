@@ -1353,9 +1353,6 @@
       "link": "Vault Help Center"
     }
   },
-  "referralProgram": {
-    "reward": "{{amount}}$ BTC"
-  },
   "signmessage": {
     "title": "Sign message",
     "steps": {
