@@ -18,6 +18,8 @@ import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 import { Transaction } from "../../../generated/types";
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { useFetchCurrencyFrom } from "./v5/useFetchCurrencyFrom";
+import { useFetchCurrencyTo } from "./v5/useFetchCurrecyTo";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -130,6 +132,9 @@ export const useSwapTransaction = ({
   // treat the gasPrice error as a warning for swap.
   const fromAmountWarning = useFromAmountStatusMessage(bridgeTransaction, ["gasPrice"]);
 
+  const fromCurrencies = useFetchCurrencyFrom({});
+  const toCurrencies = useFetchCurrencyTo({ currencyFrom: fromCurrency?.id ?? "" });
+
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,
     fromAccount,
@@ -188,5 +193,7 @@ export const useSwapTransaction = ({
     setFromAccount,
     setToAmount,
     reverseSwap,
+    fromCurrencies,
+    toCurrencies,
   };
 };
