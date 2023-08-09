@@ -22,7 +22,6 @@ import { FirmwareInfo } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
 import { urls } from "~/config/urls";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { LockedDeviceError } from "@ledgerhq/errors";
 import { Subscription } from "@xstate/react/lib/types";
 
 const RecoverRestore = () => {
