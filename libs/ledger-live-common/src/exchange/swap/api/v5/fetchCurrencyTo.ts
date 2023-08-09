@@ -3,6 +3,8 @@ import { getEnv } from "../../../../env";
 import { fetchCurrencyToMock } from "./__mocks__/fetchCurrencyTo.mocks";
 import { isPlaywrightEnv } from "../../utils/isPlaywrightEnv";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
+import axios from "axios";
+import { LedgerAPI4xx } from "@ledgerhq/errors";
 
 type Props = {
   currencyFrom: string;
@@ -38,7 +40,15 @@ export async function fetchCurrencyTo({
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
     });
     return data;
-  } catch (e) {
-    throw Error(`Something went wrong in fetchCurrencyTo call`);
+  } catch (e: unknown) {
+    if (axios.isAxiosError(e)) {
+      if (e.code === "ECONNABORTED") {
+        // TODO: LIVE-8901 (handle request timeout)
+      }
+    }
+    if (e instanceof LedgerAPI4xx) {
+      // TODO: LIVE-8901 (handle 4xx)
+    }
+    throw e;
   }
 }
