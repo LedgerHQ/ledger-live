@@ -21,11 +21,12 @@ const Container = styled(Box).attrs(() => ({
 
 type BodyProps = {
   modelId: DeviceModelId;
+  deviceHasPin?: boolean | undefined;
 };
 
-export const Body = ({ modelId }: BodyProps) => {
+export const Body = ({ modelId, deviceHasPin }: BodyProps) => {
   const type = useTheme().colors.palette.type;
-  return renderFirmwareUpdating({ modelId, type });
+  return renderFirmwareUpdating({ modelId, type, deviceHasPin });
 };
 
 const StepUpdating = ({
@@ -34,6 +35,7 @@ const StepUpdating = ({
   setError,
   transitionTo,
   setUpdatedDeviceInfo,
+  deviceHasPin,
 }: StepProps) => {
   useEffect(() => {
     const sub = (
@@ -66,7 +68,7 @@ const StepUpdating = ({
   return (
     <Container>
       <TrackPage category="Manager" name="Firmware Updating" />
-      <Body modelId={deviceModelId} />
+      <Body modelId={deviceModelId} deviceHasPin={deviceHasPin} />
     </Container>
   );
 };

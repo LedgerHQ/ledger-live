@@ -9,3 +9,5 @@ export const CardanoMinAmountError = createCustomErrorClass("CardanoMinAmountErr
  * Cardano error thrown when not enough funds to perform transaction
  */
 export const CardanoNotEnoughFunds = createCustomErrorClass("CardanoNotEnoughFunds");
+
+export const CardanoInvalidPoolId = createCustomErrorClass("CardanoInvalidPoolId");

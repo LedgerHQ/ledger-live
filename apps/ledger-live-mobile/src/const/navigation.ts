@@ -451,6 +451,20 @@ export enum ScreenName {
   LearnWebView = "LearnWebView",
   // cardano
   CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationStarted = "CardanoDelegationStarted",
+  CardanoDelegationSummary = "CardanoDelegationSummary",
+  CardanoDelegationPoolSelect = "CardanoDelegationPoolSelect",
+  CardanoDelegationAmount = "CardanoDelegationAmount",
+  CardanoDelegationSelectDevice = "CardanoDelegationSelectDevice",
+  CardanoDelegationConnectDevice = "CardanoDelegationConnectDevice",
+  CardanoDelegationValidationError = "CardanoDelegationValidationError",
+  CardanoDelegationValidationSuccess = "CardanoDelegationValidationSuccess",
+  CardanoUndelegationSummary = "CardanoUndelegationSummary",
+  CardanoUndelegationSelectDevice = "CardanoUndelegationSelectDevice",
+  CardanoUndelegationConnectDevice = "CardanoUndelegationConnectDevice",
+  CardanoUndelegationValidationError = "CardanoUndelegationValidationError",
+  CardanoUndelegationValidationSuccess = "CardanoUndelegationValidationSuccess",
+
   // stacks
   StacksEditMemo = "StacksEditMemo",
   // hedera
@@ -581,6 +595,10 @@ export enum NavigatorName {
   CeloActivateFlow = "CeloActivateFlow",
   CeloRevokeFlow = "CeloRevokeFlow",
   CeloWithdrawFlow = "CeloWithdrawFlow",
+  // Cardano
+  CardanoEditMemo = "CardanoEditMemo",
+  CardanoDelegationFlow = "CardanoDelegationFlow",
+  CardanoUndelegationFlow = "CardanoUndelegationFlow",
   // NEAR
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",

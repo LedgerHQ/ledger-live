@@ -1,73 +1,62 @@
 import React, { useCallback, useState } from "react";
 import { Flex, Text, Button, Divider } from "@ledgerhq/react-ui";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
-import { useDispatch, useSelector } from "react-redux";
 
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
-import { DeviceInfo, Language } from "@ledgerhq/types-live";
-import { setLastSeenDevice } from "~/renderer/actions/settings";
+import { DeviceModelInfo, Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import { from } from "rxjs";
-import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import isEqual from "lodash/isEqual";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 type Props = {
   currentLanguage: Locale;
-  deviceModelId: DeviceModelId;
+  analyticsContext: string;
+  deviceModelInfo?: DeviceModelInfo;
+  onClose?: () => void;
+  onSuccess?: () => void;
+  onError?: () => void;
 };
 
-const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({ currentLanguage, deviceModelId }) => {
+const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
+  currentLanguage,
+  analyticsContext,
+  deviceModelInfo,
+  onClose,
+  onSuccess,
+  onError,
+}) => {
   const [installingLanguage, setInstallingLanguage] = useState(false);
   const [languageInstalled, setLanguageInstalled] = useState(false);
 
-  const currentDevice = useSelector(getCurrentDevice);
-  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-
   const { t } = useTranslation();
-  const dispatch = useDispatch();
 
   const onCloseDrawer = useCallback(() => {
     setInstallingLanguage(false);
     setLanguageInstalled(false);
     setDrawer(undefined);
-  }, []);
+    if (onClose) onClose();
+  }, [onClose]);
 
-  const refreshDeviceInfo = useCallback(() => {
-    if (currentDevice) {
-      withDevice(currentDevice.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then((deviceInfo: DeviceInfo) => {
-          if (!isEqual(deviceInfo, lastSeenDevice?.deviceInfo))
-            dispatch(setLastSeenDevice({ deviceInfo }));
-        });
-    }
-  }, [dispatch, currentDevice, lastSeenDevice]);
-
-  const deviceName = getDeviceModel(deviceModelId).productName;
+  const deviceName = getDeviceModel(deviceModelInfo?.modelId ?? DeviceModelId.nanoX).productName;
 
   const handleSuccess = useCallback(() => {
-    refreshDeviceInfo();
-    track("Page LiveLanguageChange LanguageInstalled", {
+    if (onSuccess) onSuccess();
+    track(`${analyticsContext} LanguageInstalled`, {
       selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
     });
     setLanguageInstalled(true);
-  }, [currentLanguage, refreshDeviceInfo]);
+  }, [onSuccess, analyticsContext, currentLanguage]);
 
   const handleError = useCallback(
     (error: Error) => {
-      refreshDeviceInfo();
-      track("Page LiveLanguageChange LanguageInstallError", { error });
+      if (onError) onError();
+      track(`${analyticsContext} LanguageInstallError`, { error });
     },
-    [refreshDeviceInfo],
+    [onError, analyticsContext],
   );
 
   return (
@@ -110,10 +99,10 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({ currentLanguage, de
         </>
       ) : (
         <ChangeDeviceLanguagePrompt
-          deviceModelId={deviceModelId}
+          deviceModelId={deviceModelInfo?.modelId ?? DeviceModelId.nanoX}
           onSkip={onCloseDrawer}
           onConfirm={() => {
-            track("Page LiveLanguageChange LanguageInstallTriggered", {
+            track(`${analyticsContext} LanguageInstallTriggered`, {
               selectedLanguage: localeIdToDeviceLanguage[currentLanguage],
             });
             setInstallingLanguage(true);

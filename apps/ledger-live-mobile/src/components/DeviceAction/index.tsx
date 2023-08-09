@@ -270,8 +270,10 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   if (installingLanguage) {
     return (
       <Flex>
-        <DeviceActionProgress progress={progress} />
-        <Flex mt={5}>
+        <Flex my={7}>
+          <DeviceActionProgress progress={progress} />
+        </Flex>
+        <Flex mb={5}>
           <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
         </Flex>
         <ModalLock />

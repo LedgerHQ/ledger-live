@@ -169,6 +169,7 @@ export const urls = {
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=cosmos",
   stakingPolkadot:
     "https://support.ledger.com/hc/en-us/articles/360018131260?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
+  cardanoStakingRewards: "https://support.ledger.com/hc/articles/7880073204253?docs=true",
   algorandStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=algorand",
   nearStakingRewards:
@@ -271,6 +272,19 @@ export const urls = {
     playStore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   },
   howToUpdateNewLedger: "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
+  genuineCheck: {
+    en: "https://support.ledger.com/hc/en-us/articles/4404389367057-Is-my-Ledger-device-genuine-?docs=true",
+    ar: "https://support.ledger.com/hc/ar/articles/4404389367057-%D9%87%D9%84-%D8%AC%D9%87%D8%A7%D8%B2-Ledger-%D8%A7%D9%84%D8%AE%D8%A7%D8%B5-%D8%A8%D9%8A-%D8%A3%D8%B5%D9%84%D9%8A-?docs=true",
+    de: "https://support.ledger.com/hc/de/articles/4404389367057-Ist-mein-Ledger-Ger%C3%A4t-echt-?docs=true",
+    es: "https://support.ledger.com/hc/es/articles/4404389367057--Es-original-mi-dispositivo-Ledger-?docs=true",
+    fr: "https://support.ledger.com/hc/fr-fr/articles/4404389367057-Mon-appareil-Ledger-est-il-authentique-?docs=true",
+    ja: "https://support.ledger.com/hc/ja/articles/4404389367057-%E7%A7%81%E3%81%AELedger%E3%83%87%E3%83%90%E3%82%A4%E3%82%B9%E3%81%AF%E6%AD%A3%E8%A6%8F%E5%93%81%E3%81%A7%E3%81%99%E3%81%8B-?docs=true",
+    ko: "https://support.ledger.com/hc/ko/articles/4404389367057-%EB%82%B4-Ledger-%EC%9E%A5%EC%B9%98%EB%8A%94-%EC%A0%95%ED%92%88%EC%9D%B8%EA%B0%80%EC%9A%94-?docs=true",
+    pt: "https://support.ledger.com/hc/pt-br/articles/4404389367057-Meu-dispositivo-Ledger-%C3%A9-aut%C3%AAntico-?docs=true",
+    ru: "https://support.ledger.com/hc/ru/articles/4404389367057-%D0%AF%D0%B2%D0%BB%D1%8F%D0%B5%D1%82%D1%81%D1%8F-%D0%BB%D0%B8-%D0%BC%D0%BE%D1%91-%D1%83%D1%81%D1%82%D1%80%D0%BE%D0%B9%D1%81%D1%82%D0%B2%D0%BE-Ledger-%D0%BF%D0%BE%D0%B4%D0%BB%D0%B8%D0%BD%D0%BD%D1%8B%D0%BC-?docs=true",
+    tr: "https://support.ledger.com/hc/tr/articles/4404389367057-Ledger-cihaz%C4%B1m-orijinal-mi-?docs=true",
+    zh: "https://support.ledger.com/hc/zh-cn/articles/4404389367057-%E6%88%91%E7%9A%84-Ledger-%E8%AE%BE%E5%A4%87%E6%98%AF%E5%90%A6%E4%B8%BA%E6%AD%A3%E5%93%81-?docs=true",
+  },
 };
 
 export const vaultSigner = {

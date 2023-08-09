@@ -1,4 +1,4 @@
-import { IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language, DeviceInfo } from "@ledgerhq/types-live";
@@ -88,7 +88,7 @@ const DeviceLanguage: React.FC<Props> = ({
   return (
     <>
       <DeviceOptionRow
-        Icon={IconsLegacy.LanguageMedium}
+        Icon={Icons.Language}
         label={t("deviceLocalization.language")}
         onPress={disabled ? undefined : openChangeLanguageModal}
         linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
