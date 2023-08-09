@@ -258,7 +258,7 @@
     "metro-transform-worker": "^0.76.0",
     "react-native-bundle-visualizer": "^3.1.2",
     "react-native-debugger-open": "^0.4.0",
-    "react-native-flipper": "^0.164.0",
+    "react-native-flipper": "^0.211.0",
     "react-native-flipper-performance-plugin": "^0.4.0",
     "react-native-gradle-plugin": "^0.71.16",
     "react-native-performance": "^3.1.2",
