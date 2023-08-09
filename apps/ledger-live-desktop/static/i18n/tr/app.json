@@ -142,7 +142,8 @@
     "connectDevice" : "Cihazınızı bağlayın",
     "add" : "Ekle",
     "or" : "VEYA",
-    "clearAll" : "Tümünü temizle"
+    "clearAll" : "Tümünü temizle",
+    "buyLedger" : "Ledger satın alın"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -299,8 +300,7 @@
     "title" : "Takas edin",
     "tabs" : {
       "exchange" : "Takas edin",
-      "history" : "Geçmiş",
-      "kyc" : "KYC"
+      "history" : "Geçmiş"
     },
     "form" : {
       "changeCTA" : "Değiştir",
@@ -355,33 +355,6 @@
         "title" : "Bulunduğunuz yerde takas işlemleri henüz mevcut değil",
         "content" : "Lütfen biraz daha sabredin;<br/>bu özelliği çok yakında başlatacağız"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "KYC işlemini tamamlamalısınız",
-          "complete" : "KYC'yi tamamla",
-          "update" : "KYC'yi yenile",
-          "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
-          "rejectedContactProviderSupport" : "KYC reddedildi, lütfen {{providerName}} desteğiyle iletişime geçin",
-          "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
-          "status" : {
-            "pending" : "KYC beklemede",
-            "approved" : "KYC onaylandı",
-            "closed" : "KYC reddedildi",
-            "upgradeRequired" : "KYC eksik"
-          }
-        },
-        "login" : {
-          "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
-          "complete" : "Oturum aç"
-        },
-        "mfa" : {
-          "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
-          "complete" : "MFA kur"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
-        }
-      },
       "timeout" : {
         "message" : "Teknik sorunlar nedeniyle teklifler oluşturulamıyor. Kısa bir süre sonra tekrar takas etmeyi deneyin."
       }
@@ -394,54 +367,6 @@
       },
       "export" : "Dışa aktarma işlemleri",
       "exporting" : "Dışa aktarılıyor..."
-    },
-    "kyc" : {
-      "updateRequired" : "Uygulamayı güncelleyene kadar KYC işleminizi tamamlayamıyoruz",
-      "wyre" : {
-        "disclaimer" : "Bilgileriniz LEDGER tarafından KYC amacıyla WYRE adına toplanır ve aktarılır. Daha fazla bilgi için lütfen bakın:",
-        "policy" : "Gizlilik Politikası",
-        "title" : "Kimliğinizi doğrulayın",
-        "subtitle" : "Wyre ile takas işlemi yapmak için lütfen bilgilerinizi girin.",
-        "cta" : "Devam",
-        "pending" : {
-          "cta" : "Devam",
-          "title" : "Bilgileriniz onaylanmak üzere gönderildi",
-          "subtitle" : "İncelemenin tamamlanması birkaç dakika sürebilir.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin",
-          "info" : "Kimlik doğrulama: Gönderildi"
-        },
-        "closed" : {
-          "cta" : "KYC'yi sıfırla",
-          "title" : "KYC başvurusu reddedildi",
-          "subtitle" : "KYC işlemi için gönderdiğiniz veriler Wyre tarafından reddedildi.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-        },
-        "form" : {
-          "firstName" : "Adı",
-          "lastName" : "Soyadı",
-          "street1" : "Adres 1. Satır",
-          "street2" : "Adres 2. Satır",
-          "city" : "Şehir",
-          "state" : "Eyalet",
-          "country" : "Ülke",
-          "postalCode" : "Posta Kodu",
-          "dateOfBirth" : "Doğum tarihi",
-          "firstNamePlaceholder" : "Adınızı girin",
-          "lastNamePlaceholder" : "Soyadınızı girin",
-          "street1Placeholder" : "Örn. 13, Maple Street",
-          "street2Placeholder" : "Örn. 13, Maple Street",
-          "cityPlaceholder" : "Örn. San José",
-          "postalCodePlaceholder" : "5 haneli Posta Kodunuzu girin",
-          "dateOfBirthPlaceholder" : "AA/GG/YYYY",
-          "firstNameError" : "Devam etmek için adınızı girin",
-          "lastNameError" : "Devam etmek için soyadınızı girin",
-          "street1Error" : "Adresinizi girin",
-          "cityError" : "ABD'de yaşadığınız şehri girin",
-          "postalCodeError" : "Geçerli bir ABD Posta Kodu girin",
-          "dateOfBirthError" : "Doğum tarihinizi girin",
-          "dateOfBirthValidationError" : "Geçerli bir doğum tarihi girin"
-        }
-      }
     },
     "exchangeDrawer" : {
       "title" : "Takas işleminizi onaylayın",
@@ -491,17 +416,7 @@
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
       "learnMore" : "Takas (Swap) nedir?",
-      "kycRequired" : "KYC Gerekli",
       "cta" : "Devam",
-      "kyc" : {
-        "notAvailable" : "{{provider}} konumunuzda mevcut değil",
-        "status" : {
-          "required" : "KYC Gerekli",
-          "pending" : "KYC Beklemede",
-          "approved" : "KYC Onaylandı!",
-          "closed" : "KYC Reddedildi"
-        }
-      },
       "filter" : {
         "centralised" : "Merkezi",
         "decentralised" : "Merkeziyetsiz",
@@ -516,55 +431,7 @@
       "subtitle" : "Kripto varlıkları doğrudan Ledger cihazınızdan takas edin.",
       "disclaimer" : "Devam ettiğinizde konum verilerinizin, kendi AML/KYC prosedürlerine uymaları için üçüncü taraf hizmet sağlayıcılarıyla paylaşılmasını kabul etmiş olursunuz."
     },
-    "kyc" : {
-      "updateRequired" : "Uygulamayı güncelleyene kadar KYC işleminizi tamamlayamıyoruz",
-      "wyre" : {
-        "disclaimer" : "Bilgileriniz LEDGER tarafından KYC amacıyla WYRE adına toplanır ve aktarılır. Daha fazla bilgi için lütfen bakın:",
-        "policy" : "Gizlilik Politikası",
-        "title" : "Kimliğinizi doğrulayın",
-        "subtitle" : "Wyre ile takas işlemi yapmak için lütfen bilgilerinizi girin.",
-        "pending" : {
-          "cta" : "Devam",
-          "title" : "Onay bekliyor",
-          "subtitle" : "Bilgileriniz Wyre tarafından onaylanmak üzere iletildi.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-        },
-        "closed" : {
-          "cta" : "KYC'yi sıfırla",
-          "title" : "KYC başvurusu reddedildi",
-          "subtitle" : "KYC işlemi için gönderdiğiniz veriler Wyre tarafından reddedildi.",
-          "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-        },
-        "form" : {
-          "firstName" : "Adı",
-          "lastName" : "Soyadı",
-          "street1" : "Adres 1. Satır",
-          "street2" : "Adres 2. Satır",
-          "city" : "Şehir",
-          "state" : "Eyalet",
-          "country" : "Ülke",
-          "postalCode" : "Posta Kodu",
-          "dateOfBirth" : "Doğum tarihi",
-          "firstNamePlaceholder" : "Adınızı girin",
-          "lastNamePlaceholder" : "Soyadınızı girin",
-          "street1Placeholder" : "Örn. 13, Maple Street",
-          "street2Placeholder" : "Örn. 13, Maple Street",
-          "cityPlaceholder" : "Örn. San José",
-          "postalCodePlaceholder" : "5 haneli Posta Kodunuzu girin",
-          "dateOfBirthPlaceholder" : "AA/GG/YYYY",
-          "firstNameError" : "Devam etmek için adınızı girin",
-          "lastNameError" : "Devam etmek için soyadınızı girin",
-          "street1Error" : "Adresinizi girin",
-          "cityError" : "ABD'de yaşadığınız şehri girin",
-          "postalCodeError" : "Geçerli bir ABD Posta Kodu girin",
-          "dateOfBirthError" : "Doğum tarihinizi girin",
-          "dateOfBirthValidationError" : "Geçerli bir doğum tarihi girin"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Wyre ile takas işlemleri için KYC'nizi sıfırlayın ve Live'ı güncelleyin",
-      "resetKYCCTA" : "KYC'yi sıfırla",
       "amount" : "Tutar",
       "from" : {
         "title" : "Gönderici",
@@ -596,16 +463,6 @@
       "noApp" : "{{currencyName}} uygulaması yüklü değil.",
       "outdatedApp" : "{{currencyName}} uygulama güncellesi mevcut.",
       "loadingRates" : "Kurlar yükleniyor..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Ledger Live'ın güncellenmesi gerekiyor",
-      "subtitle" : "Wyre ile takas işlemleri yapmak için lütfen Ledger Live uygulamasını son sürümüne güncelleyin ve kimliğinizi tekrar doğrulayın",
-      "cta" : "Doğrulamayı sıfırla"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "Yerel üçüncü taraf verilerinizi silin",
-      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sunulan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
-      "cta" : "Onayla"
     },
     "modal" : {
       "title" : "Takas edin",
@@ -1280,6 +1137,7 @@
     "hideCTA" : "Token'ı gizle"
   },
   "syncOnboarding" : {
+    "exitCTA" : "Kurulumdan çık",
     "connection" : {
       "searching" : {
         "title" : "{{deviceModelName}} cihazınızı bilgisayarınıza bağlayın",
@@ -1293,7 +1151,7 @@
       "title" : "{{deviceName}} cihazını kurun",
       "continueOnDevice" : "Bu eylemi {{productName}} cihazında yapın",
       "pairedContent" : {
-        "title" : "{{deviceName}} bağlandı",
+        "title" : "{{deviceName}} güvenli",
         "description" : "{{deviceName}} üzerinde kuruluma devam edin",
         "text" : "Bu ekran, {{deviceName}} cihazınızın kurulumunu yaparken ilgili bilgileri sunmak üzere dinamik olarak değişecek",
         "continueOnDevice" : "Bir sonraki ekranı görmek için {{productName}} cihazına dokunun."
@@ -1320,19 +1178,61 @@
         "restoreChoiceRecoverDescription" : "Ledger hesabınıza giriş yapıp kimliğinizi doğrulayarak Kurtarma İfadesi Yedeğinizi geri yükleyin."
       },
       "softwareCheckContent" : {
-        "title" : "Yazılım kontrolü",
+        "title" : {
+          "active" : "Orijinallik denetimi ve\nişletim sistemi güncellemesi denetimi",
+          "completed" : "{{modelName}} cihazınız orijinal ve güncel"
+        },
+        "exitWarningDrawer" : {
+          "title" : "Are you sure you want to exit setup?",
+          "description" : "You cannot setup your Ledger Stax without allowing this check.",
+          "cancelCheckCTA" : "Denetimi iptal et",
+          "resumeCheckCTA" : "Denetimi sürdür"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "Kurulumdan çık",
+          "goToSettingsCTA" : "Ayarlara git",
+          "retryCTA" : "Tekrar dene",
+          "contactSupportCTA" : "Ledger Destek ile iletişime geçin",
+          "notFoundEntityError" : {
+            "title" : "We could not check if this device was genuine.",
+            "description" : "The experimental setting “My Ledger provider ({{providerNumber}})” may be conflicting with the genuine check. You can disable it in settings."
+          },
+          "deviceNotGenuineError" : {
+            "title" : "This {{productName}} is not genuine",
+            "description" : "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+          }
+        },
+        "whyPerformChecksLink" : "Bu güvenlik denetimlerini neden gerçekleştirmeliyim?",
+        "startChecksCTA" : "Denetimleri başlat",
+        "continueCTA" : "Kuruluma devam et",
         "genuineCheck" : {
-          "active" : "{{deviceName}} kontrol ediliyor",
-          "completed" : "{{deviceName}} cihazınız orijinal"
+          "title" : {
+            "active" : "Orijinallik denetimi",
+            "completed" : "{{modelName}} cihazınız orijinal",
+            "cancelled" : "Orijinallik denetimi reddedildi"
+          },
+          "subtitle" : {
+            "active" : "Bu denetim, {{modelName}} cihazınızın resmî bir Ledger donanımı olduğundan emin olmanızı sağlar",
+            "cancelled" : "Bu denetime izin vermezseniz {{modelName}} kurulumunu gerçekleştiremezsiniz"
+          },
+          "resumeCTA" : "Orijinallik denetimini sürdür"
         },
         "firmwareUpdate" : {
-          "inactive" : "Yazılım kontrolü",
-          "active" : "Yazılım güncellemeleri kontrol ediliyor",
-          "updateAvailable" : "Yazılım güncellemesi mevcut {{firmwareVersion}}",
-          "recommendation" : "Güncellemeyi şimdi indirmenizi öneririz",
-          "downloadUpdate" : "Güncellemeyi indir",
-          "skipUpdate" : "Şimdilik atla",
-          "completed" : "Yazılım güncel"
+          "title" : {
+            "active" : "İşletim sistemi güncellemesi denetimi",
+            "completed" : "{{modelName}} işletim sistemi güncel",
+            "updateAvailable" : "{{firmwareVersion}} için işletim sistemi güncellemesi mevcut"
+          },
+          "subtitle" : {
+            "active" : "Bu denetim, {{modelName}} işletim sisteminizin güncel olduğundan emin olmanızı sağlar",
+            "updateAvailable" : "En yeni güvenlik özelliklerine erişebilmeniz için bu güncellemeyi yapmanızı öneririz"
+          },
+          "viewUpdateCTA" : "Güncellemeyi görüntüle",
+          "resumeUpdateCTA" : "Güncellemeyi sürdür",
+          "skipUpdateCTA" : "Güncellemeyi atla",
+          "retryUpdateCTA" : "Tekrar dene",
+          "finalStepSuccessDescription" : "İşletim sistemi denetimine dön",
+          "finalStepSuccessButtonLabel" : "Devam"
         }
       },
       "installApplications" : {
@@ -1344,30 +1244,10 @@
       "endOfSetup" : {
         "title" : "Kurulum sonu"
       },
-      "genuineCheckModal" : {
-        "title" : "Orijinallik Denetimi",
-        "paragraph1" : "{{deviceName}} cihazınızın Orijinal ve güvenli olduğundan emin olalım",
-        "paragraph2" : "Cihazınızın kurcalanmadığından emin olmak için bir kontrol yapacağız. Bunu {{deviceName}} cihazınızda kabul etmeniz gerekecek.",
-        "checkDeviceButton" : "Cihazı kontrol et"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Ledger ile güvenli bağlantı kurulmasına izin verin"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "Orijinallik Denetimi",
-        "paragraph1" : "Orijinallik denetimi iptal edildi",
-        "paragraph2" : "Bu kontrol, {{deviceName}} cihazınızın güvenli bir şekilde kullanılabileceğinden emin olmak için çok önemlidir.",
-        "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
-        "cancelButton" : "Belki sonra"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "Orijinallik Denetimi",
-        "paragraph1" : "Cihazınız orijinal değil",
-        "paragraph2" : "Orijinallik denetimi başarısız oldu",
-        "checkDeviceButton" : "Kontrolü tekrar çalıştırın",
-        "cancelButton" : "Belki sonra"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "{{deviceName}} cihazında yöneticiye izin verin"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "Cihazınızın kilidini açın"
       },
       "helpDrawer" : {
@@ -2596,6 +2476,68 @@
     "account" : {
       "stakingRewardsBanner" : {
         "cardTitle" : "Staking ödülleri toplam bakiyeye dahil edilmez"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "Toplam Stake",
+      "cost" : "Maliyet",
+      "pool" : "Havuz",
+      "changeDelegation" : "Yetki Devrini Değiştirin",
+      "assetsAlreadyStaked" : "Varlıklarınız zaten stake edildi",
+      "addFundsToStake" : "Stake'e fon ekleyin",
+      "commission" : "Komisyon",
+      "stakeKeyRegistrationDeposit" : "Staking anahtar kaydı depozitosu",
+      "delegatingTo" : "Yetkiyi devralan:",
+      "flow" : {
+        "title" : "Yetki Devredin",
+        "steps" : {
+          "starter" : {
+            "description" : "ADA varlıklarınızın yetkisini bir havuza devrederek ödüller kazanabilirsiniz.",
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıkların yetkisini farklı bir havuza yeniden devredebilir veya yetki devrini istediğiniz zaman iptal edebilirsiniz."]
+          },
+          "validator" : {
+            "title" : "Havuzlar"
+          },
+          "summary" : {
+            "title" : "Özet"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "Yetki devrini iptal ettiğinizde mevcut ve sonraki epoch'lar için hiçbir ödül almayacaksınız",
+      "refund" : "Staking Kayıt Depozitosunun İadesi",
+      "flow" : {
+        "title" : "Yetki İptali",
+        "steps" : {
+          "summary" : {
+            "title" : "Özet"
+          },
+          "connectDevice" : {
+            "title" : "Cihaz"
+          },
+          "confirmation" : {
+            "title" : "Onaylayın",
+            "success" : {
+              "title" : "Yetki devrini başarıyla iptal ettiniz",
+              "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+              "cta" : "Ayrıntıları göster"
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
       }
     }
   },
@@ -3902,8 +3844,6 @@
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "catalogUrl" : "Katalog uygulama sağlayıcısını belirle",
       "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
-      "catalogRampServer" : "Al / sat sağlayıcılarını belirle",
-      "catalogRampServerDesc" : "Farklı alım satım sağlayıcıları arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
       "customLockScreen" : "Özel kilitli ekran varlıkları",
@@ -4298,7 +4238,7 @@
         "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
-        "recoverSignIn" : "Ledger Recover için giriş yapın",
+        "recoverSignIn" : "Ledger Recover'a giriş yapın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
         "termsAndConditions" : "Hüküm ve Koşullar",
         "and" : "ve",
@@ -5127,6 +5067,10 @@
       "title" : "{{currencyName}} desteklenmiyor",
       "description" : "Bu kripto varlık henüz desteklenmiyor. Lütfen Ledger Destek ile iletişime geçin."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "{{device}} cihazınız zaten bir Gizli Kurtarma İfadesi ile kurulmuş",
+      "description" : "Kurulumu yapılmamış bir Ledger bağlayın."
+    },
     "DeviceNotGenuine" : {
       "title" : "Muhtemelen orijinal değil",
       "description" : "Ledger Destek'ten yardım isteyin"
@@ -5300,6 +5244,9 @@
     "NotEnoughGas" : {
       "title" : "Ana hesaptaki bakiye ağ ücretlerini karşılamak için yetersiz"
     },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>"
+    },
     "OperatingSystemOutdated" : {
       "title" : "Your Operating System version is outdated",
       "description" : "Lütfen işletim sisteminizi yükseltin ve tekrar deneyin. Mevcut işletim sistemi sürümünüzde Ledger Live uygulamasının neden desteklenmediğini öğrenmek için aşağıdaki makaleyi inceleyebilirsiniz."
@@ -5403,12 +5350,12 @@
       "description" : "Lütfen cihazınızdaki Kontrol Paneline geri dönün"
     },
     "WebsocketConnectionError" : {
-      "title" : "Üzgünüz, tekrar deneyin (bağlantı hatası)",
-      "description" : null
+      "title" : "Ağ hatası",
+      "description" : "İnternet bağlantınızı kontrol edip tekrar deneyin."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "Üzgünüz, tekrar deneyin (bağlantı kapalı)",
-      "description" : null
+      "title" : "Ağ hatası",
+      "description" : "İnternet bağlantınızı kontrol edip tekrar deneyin."
     },
     "WrongDeviceForAccount" : {
       "title" : "Bir hata oluştu",
@@ -5833,6 +5780,10 @@
     },
     "GasEstimationError" : {
       "title" : "Tahmini Gas ücreti hesaplanamadı"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "İşletim sistemi güncellemesi denetlenemedi",
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     }
   },
   "cryptoOrg" : {
