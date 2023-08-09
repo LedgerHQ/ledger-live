@@ -737,7 +737,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.72.3_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
@@ -850,7 +852,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.72.3_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 			};
@@ -908,7 +912,9 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.72.3_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
