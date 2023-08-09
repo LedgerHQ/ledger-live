@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.65.2-nightly.0
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Pixel polishing for stax (LLM) : Error states, My Ledger, CLS, Post Onboarding, Device Selection
+
+- [#3909](https://github.com/LedgerHQ/ledger-live/pull/3909) [`c48fd44cad`](https://github.com/LedgerHQ/ledger-live/commit/c48fd44cad95dc456e4fec8b64b47c6e90445b65) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add device language change prompt to sync onboarding on the security check step
+
+- [#4261](https://github.com/LedgerHQ/ledger-live/pull/4261) [`13bb4b14aa`](https://github.com/LedgerHQ/ledger-live/commit/13bb4b14aa4c1f2a23c4d37c79284d13078a6e94) Thanks [@ComradeAERGO](https://github.com/ComradeAERGO)! - Adding translates support for discover v2 manifests
+
+- [#3909](https://github.com/LedgerHQ/ledger-live/pull/3909) [`c48fd44cad`](https://github.com/LedgerHQ/ledger-live/commit/c48fd44cad95dc456e4fec8b64b47c6e90445b65) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Ledger Stax onboarding: implementation of early security checks (genuine check and fw version check + upgrade before the sync onboarding)
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/types-live@6.38.1-nightly.0
+  - @ledgerhq/coin-evm@0.5.1-nightly.0
+  - @ledgerhq/coin-framework@0.5.1-nightly.0
+  - @ledgerhq/domain-service@1.1.8-nightly.0
+  - @ledgerhq/evm-tools@1.0.3
+  - @ledgerhq/live-common@31.4.1-nightly.0
+  - @ledgerhq/react-ui@0.14.6-nightly.0
+
 ## 2.65.1
 
 ### Patch Changes

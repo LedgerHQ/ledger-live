@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.28.2-nightly.0
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Pixel polishing for stax (LLM) : Error states, My Ledger, CLS, Post Onboarding, Device Selection
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6), [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/types-live@6.38.1-nightly.0
+  - @ledgerhq/native-ui@0.20.5-nightly.0
+  - @ledgerhq/coin-evm@0.5.1-nightly.0
+  - @ledgerhq/coin-framework@0.5.1-nightly.0
+  - @ledgerhq/domain-service@1.1.8-nightly.0
+  - @ledgerhq/evm-tools@1.0.3
+  - @ledgerhq/live-common@31.4.1-nightly.0
+
 ## 3.28.1
 
 ### Patch Changes

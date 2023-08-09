@@ -1,5 +1,13 @@
 # @ledgerhq/live-cli
 
+## 22.11.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.5.1-nightly.0
+  - @ledgerhq/live-common@31.4.1-nightly.0
+
 ## 22.11.0
 
 ### Minor Changes
