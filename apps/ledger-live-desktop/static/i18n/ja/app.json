@@ -142,7 +142,8 @@
     "connectDevice" : "デバイスを接続",
     "add" : "追加",
     "or" : "または",
-    "clearAll" : "全消去"
+    "clearAll" : "全消去",
+    "buyLedger" : "Ledgerを購入する"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -299,8 +300,7 @@
     "title" : "スワップ",
     "tabs" : {
       "exchange" : "取引",
-      "history" : "履歴",
-      "kyc" : "本人確認手続き"
+      "history" : "履歴"
     },
     "form" : {
       "changeCTA" : "変更",
@@ -355,33 +355,6 @@
         "title" : "お住まいの地域では、スワップを利用できません。",
         "content" : "この機能は近々追加予定ですので<br/>今しばらくお待ちください。"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "KYC（本人確認）を完了する必要があります。",
-          "complete" : "KYC（本人確認）を完了",
-          "update" : "KYC（本人確認）を更新",
-          "rejected" : "KYCが却下されたため、承認申請をやり直す必要があります。",
-          "rejectedContactProviderSupport" : "KYCが拒否されました。{{providerName}}サポートにお問い合わせください。",
-          "updateRequired" : "KYC（本人確認手続き）を完了または更新する",
-          "status" : {
-            "pending" : "KYC（本人確認）申請中",
-            "approved" : "KYC（本人確認）承認済み",
-            "closed" : "KYC（本人確認）却下",
-            "upgradeRequired" : "KYC（本人確認手続き）未完了"
-          }
-        },
-        "login" : {
-          "required" : "このプロバイダーでログインする必要があります",
-          "complete" : "ログイン"
-        },
-        "mfa" : {
-          "required" : "このプロバイダーでMFA（多要素認証）を設定する必要があります",
-          "complete" : "MFAを設定"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
-        }
-      },
       "timeout" : {
         "message" : "技術的な問題により、見積もりを作成できませんでした。しばらくしてから再度スワップをお試しください。"
       }
@@ -394,54 +367,6 @@
       },
       "export" : "エクスポート処理",
       "exporting" : "エクスポートしています..."
-    },
-    "kyc" : {
-      "updateRequired" : "アプリケーションをアップデートするまで、KYC（本人確認）を完了できません。",
-      "wyre" : {
-        "disclaimer" : "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくは以下をご確認ください：",
-        "policy" : "プライバシーポリシー",
-        "title" : "本人認証を行う",
-        "subtitle" : "Wyreでのスワップ実行に必要な情報を、入力してください。",
-        "cta" : "続行",
-        "pending" : {
-          "cta" : "続行",
-          "title" : "個人情報が提出されました。",
-          "subtitle" : "通常、審査が完了するまでに数分かかります。",
-          "link" : "KYC（本人確認）についての詳細",
-          "info" : "本人認証：提出済み"
-        },
-        "closed" : {
-          "cta" : "KYC（本人確認）をリセット",
-          "title" : "KYC（本人確認）の申請却下",
-          "subtitle" : "KYC（本人確認）用に提出したデータがWyreによって却下されました。",
-          "link" : "KYC（本人確認）についての詳細"
-        },
-        "form" : {
-          "firstName" : "名前（名）",
-          "lastName" : "名前（姓）",
-          "street1" : "住所1",
-          "street2" : "住所2",
-          "city" : "市区町村",
-          "state" : "都道府県",
-          "country" : "国",
-          "postalCode" : "郵便番号",
-          "dateOfBirth" : "生年月日",
-          "firstNamePlaceholder" : "名前（名）を入力",
-          "lastNamePlaceholder" : "名前（姓）を入力",
-          "street1Placeholder" : "Eg. 13, Maple street",
-          "street2Placeholder" : "Eg. 13, Maple street",
-          "cityPlaceholder" : "Eg. San José",
-          "postalCodePlaceholder" : "5桁の郵便番号を入力",
-          "dateOfBirthPlaceholder" : "MM/DD/YYYY",
-          "firstNameError" : "名前（名）を入力して続行",
-          "lastNameError" : "名前（姓）を入力して続行",
-          "street1Error" : "住所を入力",
-          "cityError" : "米国の州を入力",
-          "postalCodeError" : "有効な米国の郵便番号を入力してください。",
-          "dateOfBirthError" : "生年月日を入力",
-          "dateOfBirthValidationError" : "有効な生年月日を入力してください"
-        }
-      }
     },
     "exchangeDrawer" : {
       "title" : "取引を確認",
@@ -491,17 +416,7 @@
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
       "learnMore" : "スワップとは？",
-      "kycRequired" : "本人確認手続きが必要です。",
       "cta" : "続行",
-      "kyc" : {
-        "notAvailable" : "{{provider}}はお住まいの地域ではご利用いただけません。",
-        "status" : {
-          "required" : "本人確認手続きが必要です。",
-          "pending" : "本人確認手続き申請中",
-          "approved" : "本人確認が承認されました！",
-          "closed" : "本人確認却下"
-        }
-      },
       "filter" : {
         "centralised" : "中央集権型",
         "decentralised" : "分散型",
@@ -516,55 +431,7 @@
       "subtitle" : "Ledgerデバイスから直接、暗号資産を取引できます。",
       "disclaimer" : "続行することで、AML/KYCへの準拠におけるサードパーティのサービスプロバイダーと位置情報の共有に同意したことになります。"
     },
-    "kyc" : {
-      "updateRequired" : "アプリケーションをアップデートするまで、KYC（本人確認）を完了できません。",
-      "wyre" : {
-        "disclaimer" : "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくは以下をご確認ください：",
-        "policy" : "プライバシーポリシー",
-        "title" : "本人認証を行う",
-        "subtitle" : "Wyreでのスワップ実行に必要な情報を、入力してください。",
-        "pending" : {
-          "cta" : "続行",
-          "title" : "承認申請中",
-          "subtitle" : "個人情報がWyreに提出されました。",
-          "link" : "KYC（本人確認）についての詳細"
-        },
-        "closed" : {
-          "cta" : "KYC（本人確認）をリセット",
-          "title" : "KYC（本人確認）の申請却下",
-          "subtitle" : "KYC（本人確認）用に提出したデータがWyreによって却下されました。",
-          "link" : "KYC（本人確認）についての詳細"
-        },
-        "form" : {
-          "firstName" : "名前（名）",
-          "lastName" : "名前（姓）",
-          "street1" : "住所1",
-          "street2" : "住所2",
-          "city" : "市区町村",
-          "state" : "都道府県",
-          "country" : "国",
-          "postalCode" : "郵便番号",
-          "dateOfBirth" : "生年月日",
-          "firstNamePlaceholder" : "名前（名）を入力",
-          "lastNamePlaceholder" : "名前（姓）を入力",
-          "street1Placeholder" : "Eg. 13, Maple street",
-          "street2Placeholder" : "Eg. 13, Maple street",
-          "cityPlaceholder" : "Eg. San José",
-          "postalCodePlaceholder" : "5桁の郵便番号を入力",
-          "dateOfBirthPlaceholder" : "MM/DD/YYYY",
-          "firstNameError" : "名前（名）を入力して続行",
-          "lastNameError" : "名前（姓）を入力して続行",
-          "street1Error" : "住所を入力",
-          "cityError" : "米国の州を入力",
-          "postalCodeError" : "有効な米国の郵便番号を入力してください。",
-          "dateOfBirthError" : "生年月日を入力",
-          "dateOfBirthValidationError" : "有効な生年月日を入力してください"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Wyreでスワップを行うには、KYC（本人確認）をリセットしてLiveアプリをアップデートする必要があります。",
-      "resetKYCCTA" : "KYC（本人確認）をリセット",
       "amount" : "数量",
       "from" : {
         "title" : "送付元",
@@ -596,16 +463,6 @@
       "noApp" : "{{currencyName}}アプリはインストールされていません。",
       "outdatedApp" : "{{currencyName}}アプリのアップデートが可能です。",
       "loadingRates" : "レートを読み込んでいます..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Ledger Liveのアップデートが必要です。",
-      "subtitle" : "Wyreでスワップを実行するには、Ledger Liveを最新バージョンにアップデートし、本人確認を再度行ってください",
-      "cta" : "認証をリセット"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "ローカルのサードパーティーのデータを削除",
-      "subtitle" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC（本人確認）の再提出や再度ログインが必要になる場合があります。",
-      "cta" : "確認"
     },
     "modal" : {
       "title" : "スワップ",
@@ -1280,6 +1137,7 @@
     "hideCTA" : "トークンを非表示"
   },
   "syncOnboarding" : {
+    "exitCTA" : "設定を終了",
     "connection" : {
       "searching" : {
         "title" : "{{deviceModelName}}をコンピュータに接続",
@@ -1293,7 +1151,7 @@
       "title" : "{{deviceName}}をセットアップ",
       "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
-        "title" : "{{deviceName}}接続済み",
+        "title" : "{{deviceName}}は安全です",
         "description" : "{{deviceName}}でセットアップを続行する",
         "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。",
         "continueOnDevice" : "{{productName}}をタップして、次の画面を表示します。"
@@ -1320,19 +1178,61 @@
         "restoreChoiceRecoverDescription" : "Ledgerアカウントにログインして本人確認を行い、リカバリーフレーズのバックアップを復元します。"
       },
       "softwareCheckContent" : {
-        "title" : "ソフトウェアのチェック",
+        "title" : {
+          "active" : "正規品チェックと\nOSアップデートチェック",
+          "completed" : "お客様の{{modelName}}は正規品で最新のものです"
+        },
+        "exitWarningDrawer" : {
+          "title" : "Are you sure you want to exit setup?",
+          "description" : "You cannot setup your Ledger Stax without allowing this check.",
+          "cancelCheckCTA" : "チェックをキャンセル",
+          "resumeCheckCTA" : "チェックを再開"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "セットアップを終了する",
+          "goToSettingsCTA" : "設定を開く",
+          "retryCTA" : "再試行",
+          "contactSupportCTA" : "Ledgerサポートへ問い合わせ",
+          "notFoundEntityError" : {
+            "title" : "We could not check if this device was genuine.",
+            "description" : "The experimental setting “My Ledger provider ({{providerNumber}})” may be conflicting with the genuine check. You can disable it in settings."
+          },
+          "deviceNotGenuineError" : {
+            "title" : "This {{productName}} is not genuine",
+            "description" : "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+          }
+        },
+        "whyPerformChecksLink" : "これらのセキュリティチェックを実行する理由は？",
+        "startChecksCTA" : "チェックを開始",
+        "continueCTA" : "セットアップを続行する",
         "genuineCheck" : {
-          "active" : "{{deviceName}}をチェックしています",
-          "completed" : "{{deviceName}}は正規品です"
+          "title" : {
+            "active" : "正規品チェック",
+            "completed" : "お客様の{{modelName}}は正規品です",
+            "cancelled" : "正規品チェックが拒否されました"
+          },
+          "subtitle" : {
+            "active" : "このチェックにより、お持ちの{{modelName}}が公式のLedgerハードウェアであることが保証されます",
+            "cancelled" : "このチェックを許可されない場合、お客様の{{modelName}}をセットアップできません"
+          },
+          "resumeCTA" : "正規品チェックを再開"
         },
         "firmwareUpdate" : {
-          "inactive" : "ソフトウェアのチェック",
-          "active" : "ソフトウェアの更新をチェックしています",
-          "updateAvailable" : "ソフトウェアのアップデートが利用可能です{{firmwareVersion}}",
-          "recommendation" : "今すぐアップデートをダウンロードすることをお勧めします",
-          "downloadUpdate" : "アップデートをダウンロード",
-          "skipUpdate" : "今はしない",
-          "completed" : "ソフトウェアは最新です"
+          "title" : {
+            "active" : "OSアップデートチェック",
+            "completed" : "{{modelName}}のOSは最新です",
+            "updateAvailable" : "OSアップデート{{firmwareVersion}}がご利用可能です"
+          },
+          "subtitle" : {
+            "active" : "このチェックにより、お持ちの{{modelName}}のOSが最新であることが保証されます",
+            "updateAvailable" : "最新のセキュリティ機能にアクセスするために、このアップデートを実行することをお勧めします"
+          },
+          "viewUpdateCTA" : "アップデートを見る",
+          "resumeUpdateCTA" : "アップデートを再開する",
+          "skipUpdateCTA" : "アップデートをスキップする",
+          "retryUpdateCTA" : "再試行",
+          "finalStepSuccessDescription" : "OSチェックに戻る",
+          "finalStepSuccessButtonLabel" : "続行"
         }
       },
       "installApplications" : {
@@ -1344,30 +1244,10 @@
       "endOfSetup" : {
         "title" : "セットアップの終了"
       },
-      "genuineCheckModal" : {
-        "title" : "真正性確認",
-        "paragraph1" : "{{deviceName}}が正規品で安全に使用できることを確認しましょう",
-        "paragraph2" : "お客様のデバイスが改ざんされていないことを確認するためのチェックを行います。お使いの{{deviceName}}でこれを承諾していただく必要があります。",
-        "checkDeviceButton" : "デバイスをチェック"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Ledgerとの安全な接続を許可する"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "正規品チェック",
-        "paragraph1" : "正規品チェックがキャンセルされました",
-        "paragraph2" : "このチェックは、お客様の{{deviceName}}が安全に使用できることを確認するために重要です。",
-        "checkDeviceButton" : "再度チェックを実行する",
-        "cancelButton" : "後で"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "正規品チェック",
-        "paragraph1" : "お使いのデバイスは正規品ではありません",
-        "paragraph2" : "真正性チェックに失敗しました",
-        "checkDeviceButton" : "再度チェックを実行する",
-        "cancelButton" : "後で"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "{{deviceName}}でマネージャーを許可する"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "デバイスのロックを解除する"
       },
       "helpDrawer" : {
@@ -2596,6 +2476,68 @@
     "account" : {
       "stakingRewardsBanner" : {
         "cardTitle" : "合計残高にはステーキング報酬は含まれません"
+      }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "cost" : "費用",
+      "pool" : "プール",
+      "changeDelegation" : "デリゲートを変更する",
+      "assetsAlreadyStaked" : "お客様の資産はすでにステーキングされています",
+      "addFundsToStake" : "資金をステーキングに追加する",
+      "commission" : "コミッション",
+      "stakeKeyRegistrationDeposit" : "ステーキングキー登録デポジット",
+      "delegatingTo" : "デリゲート先：",
+      "flow" : {
+        "title" : "デリゲート",
+        "steps" : {
+          "starter" : {
+            "description" : "ADAをプールにデリゲートして報酬を獲得できます。",
+            "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "資産は別のプールに再デリゲートすることも、いつでもデリゲート解除を選択することもできます。"]
+          },
+          "validator" : {
+            "title" : "プール"
+          },
+          "summary" : {
+            "title" : "概要"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "デリゲートを解除すると、現在および今後のエポックを対象とした報酬を受け取ることができなくなります",
+      "refund" : "ステーキング登録デポジットの払い戻し",
+      "flow" : {
+        "title" : "デリゲート解除",
+        "steps" : {
+          "summary" : {
+            "title" : "概要"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "デリゲートが正常に解除されました",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
       }
     }
   },
@@ -3902,8 +3844,6 @@
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
       "catalogUrl" : "カタログアプリプロバイダーを設定",
       "catalogUrlDesc" : "カスタムカタログプロバイダーのURLを入力",
-      "catalogRampServer" : "購入/売却プロバイダーを設定",
-      "catalogRampServerDesc" : "複数のトレードプロバイダーを切り替える",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
       "customLockScreen" : "カスタムロック画面アセット",
@@ -4348,7 +4288,7 @@
           },
           "4" : {
             "title" : "Ledger Recoverを使用して復元",
-            "description" : "You need to have a Ledger Recover subscription."
+            "description" : "Ledger Recoverの登録が必要です。"
           }
         }
       },
@@ -5127,6 +5067,10 @@
       "title" : "{{currencyName}} には対応していません。",
       "description" : "この暗号資産には、未対応です。Ledgerサポートにお問合せください。"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "お客様の{{device}}はすでに、シークレットリカバリーフレーズを使用して設定されています",
+      "description" : "設定されていないLedgerを接続してください。"
+    },
     "DeviceNotGenuine" : {
       "title" : "正規品でない可能性があります",
       "description" : "Ledgerサポートのアシスタントを依頼する。"
@@ -5300,6 +5244,9 @@
     "NotEnoughGas" : {
       "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています"
     },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+    },
     "OperatingSystemOutdated" : {
       "title" : "お使いのオペレーティングシステムのバージョンが古くなっています",
       "description" : "オペレーティングシステムをアップグレードして、再試行してください。以下の記事を参照すると、Ledger Liveが現在のオペレーティングシステムのバージョンでサポートされていない理由がわかります。"
@@ -5403,12 +5350,12 @@
       "description" : "デバイスのダッシュボードに戻ってください。"
     },
     "WebsocketConnectionError" : {
-      "title" : "もう一度お試しください。（接続エラー）",
-      "description" : null
+      "title" : "ネットワークエラー",
+      "description" : "インターネットに接続していることを確認し、もう一度お試しください。"
     },
     "WebsocketConnectionFailed" : {
-      "title" : "申し訳ありませんが、もう一度お試しください。（接続が切断されました）",
-      "description" : null
+      "title" : "ネットワークエラー",
+      "description" : "インターネットに接続していることを確認し、もう一度お試しください。"
     },
     "WrongDeviceForAccount" : {
       "title" : "問題が発生しました。",
@@ -5833,6 +5780,10 @@
     },
     "GasEstimationError" : {
       "title" : "ガスの見積もりに失敗しました"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "OSアップデートチェックに失敗しました",
+      "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
     }
   },
   "cryptoOrg" : {
