@@ -395,7 +395,7 @@ export type CurrencySettings = {
   confirmationsNb: number;
 };
 export type CurrenciesSettings = {
-  [id: string]: CurrencySettings;
+  [currencyId: string]: CurrencySettings;
 };
 type ConfirmationDefaults = {
   confirmationsNb:
