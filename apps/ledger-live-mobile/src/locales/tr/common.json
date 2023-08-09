@@ -461,6 +461,9 @@
       "title" : "Ağ ücreti için yetersiz ETH",
       "description" : "ERC20 token işlemlerini ödemek için lütfen hesabınıza biraz ETH gönderin."
     },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Yetki devretmek için yetersiz bakiye"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "Henüz alt hesaplardan gönderilemiyor",
       "description" : "Babylon güncellemesinde yapılan değişikliklerden dolayı bu özellik ileriki bir zamanda eklenecek."
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Live'ın güncellenmesi gerekiyor",
-      "description" : "Wyre ile takas işlemleri yapmak için lütfen Ledger Live uygulamasını son sürümüne güncelleyin ve kimliğinizi tekrar doğrulayın"
     },
     "RecommendUndelegation" : {
       "title" : "Hesabı boşaltmadan önce lütfen yetkileri iptal edin"
@@ -2330,7 +2329,7 @@
       "seeLess" : "Daha az alt hesap gör"
     },
     "send" : "Gönder",
-    "receive" : "Al",
+    "receive" : "Yatır",
     "buy" : "Satın Al",
     "walletconnect" : "WalletConnect",
     "stake" : "Stake et",
@@ -2344,7 +2343,7 @@
       "descWithBuy" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{currencyTicker}}</0></3> almaya başlayabilirsiniz",
       "descToken" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza <3><0>{{currencyTicker}}</0></3> ve <5><0>{{tokenType}}</0>token'larını</5> almaya başlayabilirsiniz",
       "buttons" : {
-        "receiveFunds" : "Al",
+        "receiveFunds" : "Yatır",
         "buyCrypto" : "Satın Al"
       },
       "addAccountCta" : "Hesap ekle"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "Temizle",
       "exportLogs" : "Logları kaydedin",
       "exportLogsDesc" : "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
-      "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
-      "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
-      "resetThirdPartyDataModal" : "Yerel üçüncü taraf verilerinizi silin",
-      "resetThirdPartyDataModalDesc" : "Yerel üçüncü taraf verilerinizi silin. Sağlayıcılarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "hardReset" : "Ledger Live'ı sıfırlayın",
       "hardResetDesc" : "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
       "repairDevice" : "Ledger cihazınızı onarın",
@@ -2843,8 +2838,8 @@
       "title" : "Ücretleri düzenle"
     },
     "receive" : {
-      "title" : "Al",
-      "description" : "Başka bir cüzdandan kripto alın.",
+      "title" : "Yatır",
+      "description" : "Başka bir cüzdandan kripto yatırın.",
       "titleReadOnly" : "Doğrulanmamış adres",
       "headerTitle" : "Kripto varlık",
       "titleDevice" : "Cihazı bağlayın",
@@ -2854,26 +2849,35 @@
       "verifyAgain" : "Tekrar kontrol et",
       "noAccount" : "Hesap bulunamadı",
       "address" : "Hesap adresi",
-      "copyAddress" : "Kopyala",
+      "copyAddress" : "Adresi kopyala",
       "shareAddress" : "Adresi paylaş",
-      "addressCopied" : "Kopyalandı",
+      "addressCopied" : "Adres panoya kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
       "selectCrypto" : {
-        "title" : "Bir kripto seçin"
+        "title" : "Almak istediğiniz kriptoyu seçin"
+      },
+      "selectNetwork" : {
+        "title" : "Seçilen kripto için ağ seçin",
+        "account" : "{{count}} hesabı",
+        "account_plural" : "{{count}} hesapları",
+        "subtitle" : "Seçilen ağ, kriptoyu çektiğiniz veya gönderdiğiniz ağ ile eşleşmelidir.",
+        "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Bunu nasıl yapacağınızı öğrenin."
       },
       "stepperHeader" : {
         "range" : "Adım {{currentStep}} / {{totalSteps}}",
         "connectDevice" : "Cihazı Bağlayın"
       },
       "selectAccount" : {
-        "title" : "Bir hesap seçin",
-        "subtitle" : "{{currencyTicker}} varlıklarınız bu hesaba yatırılacak."
+        "title" : "Yeni hesap seçin veya oluşturun",
+        "subtitle" : "{{currencyTicker}} varlıklarınız bu hesaba yatırılacak.",
+        "cta" : "Yeni bir hesap oluşturun"
       },
       "addAccount" : {
-        "title" : "Blok zinciri aranıyor",
-        "subtitle" : "Önceden {{currencyTicker}} hesabınızın olup olmadığı kontrol ediliyor.",
+        "title" : "Hesap kontrol ediliyor...",
+        "subtitle" : "Blok zincirinde {{currencyName}} için bir hesabınızın olup olmadığı kontrol ediliyor.",
         "foundAccounts" : "{{count}} hesap bulundu",
-        "stopSynchronization" : "Senkronizasyonu durdur"
+        "stopSynchronization" : "Senkronizasyonu durdur",
+        "addingAccount" : "Hesap bulunamadı. {{currencyName}} için yeni bir hesap oluşturuluyor..."
       },
       "verifyAddress" : {
         "title" : "Adresi doğrula",
@@ -2886,42 +2890,41 @@
       },
       "receiveConfirmation" : {
         "title" : "{{currencyTicker}} al",
+        "onCurrencyName" : "{{currencyName}} üzerinden",
+        "copyAdress" : "Adresi kopyala",
+        "addressCopied" : "Adres kopyalandı!",
         "addressVerified" : "Adres doğrulandı",
-        "verifyAddress" : "Adresinizi doğrulamak için buraya dokunun",
+        "verifyAddress" : "Adresinizi doğrulayın",
         "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
-        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Başka herhangi bir coin gönderdiğiniz takdirde bu coin'leri kalıcı olarak yitirebilirsiniz.",
-        "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın"
+        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Bu adrese başka bir kripto gönderdiğiniz takdirde kriptolarınızı kaybedebilirsiniz.",
+        "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın",
+        "bannerTitle" : "Borsadan nasıl çekim yapacağınızı öğrenin"
       },
       "securityVerify" : {
-        "title" : "Güvenliğiniz açısından bu adresi Ledger cihazınızla doğrulamanızı öneririz.",
-        "subtitle1" : "Adresinizi doğrulamak güvende olmanızı sağlar. Ledger cihazınızda görüntülenen adresin hatalı olma ihtimali yoktur.",
-        "subtitle2" : "Adresi doğrulayarak cihazınızda gösterilen adresin Ledger Live'da gösterilen adres ile aynı olduğunu onaylayabilirsiniz.",
+        "title" : "Adres doğrulaması, bu işlemi güvenceye almak için çok önemlidir",
+        "subtitle1" : "Yapıştırılan adresi (Ledger Live'dan kopyaladıktan sonra) sadece Ledger'ınızın Güvenilir Ekranında (Ledger cihazı ekranı) beliren adresle karşılaştırdığınızdan emin olun. İkisi de aynı olmalıdır.",
+        "subtitle2" : "Bu doğrulama, adres değiştirme saldırılarının önlenmesine yardımcı olacaktır.",
         "verifyCta" : "Adresimi doğrula",
-        "dontVerifyCta" : "Adresimi doğrulamadan göster"
+        "dontVerifyCta" : "Adresi doğrulamadan göster"
       },
       "securityDontVerify" : {
-        "title" : "Emin misiniz?",
-        "subtitle" : "Ledger Live'da gösterilen adres doğrulanmayacak.",
+        "title" : "Doğrulama yapılmasın mı?",
+        "subtitle" : "Doğrulama işleminin yapılmaması, dolandırıcılık sonucu yanlış adrese varlık gönderme ihtimalini artırır.",
         "doNotRemindAgain" : "Tekrar hatırlatma",
-        "no" : "Hayır",
-        "yes" : "Evet"
+        "no" : "Doğrula",
+        "yes" : "Doğrulama yapılmasın"
       },
       "toastMessages" : {
         "accountImported" : "Sizin için bir {{currencyTicker}} hesabını içe aktardık. ",
         "why" : "Nedenini belirt.",
         "addressVerified" : "Adresiniz doğrulandı"
       },
-      "additionalInfoModal" : {
-        "title" : "Neden bir hesabı içe aktardık?",
-        "subtitle" : "Seed'inizde önceden bir {{currencyTicker}} hesabı olduğunu tespit ettik. Sizin için bu hesabı içe aktardık.",
-        "closeCta" : "Tamam, anladım"
-      },
       "notSynced" : {
         "text" : "Senkronize ediliyor",
         "desc" : "Çok sayıda işlem yaptıysanız veya internet bağlantınız yavaşsa bu işlem biraz zaman alabilir."
       },
       "readOnly" : {
-        "title" : "Al",
+        "title" : "Yatır",
         "text" : "Lütfen dikkatli olun",
         "desc" : "Doğrulanmamış bir adresi görüntülemek üzeresiniz. Güvende kalmak için cihazınızdaki adresleri doğrulayın.",
         "verify" : "{{accountType}} hesabının adresi doğrulanmadı. Güvende kalmak için cihazınızdaki adresleri doğrulayın."
@@ -2956,66 +2959,8 @@
         "whatIsSwap" : "Takas (Swap) nedir?",
         "disclaimer" : "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
       },
-      "unauthorizedRates" : {
-        "cta" : "Doğrulamayı sıfırla",
-        "banner" : "Wyre ile takas işlemleri yapmak için KYC'nizi sıfırlayın ve Live'ı güncelleyin",
-        "bannerCTA" : "KYC'yi sıfırla"
-      },
       "main" : {
         "header" : "Takas edin"
-      },
-      "kyc" : {
-        "disclaimer" : "Konum verilerimin uyumluluk için üçüncü taraflarla paylaşılacağını kabul ediyorum.",
-        "cta" : "Devam",
-        "wyre" : {
-          "title" : "KYC'nizi tamamlayın",
-          "subtitle" : "Bilgileriniz LEDGER tarafından KYC amacıyla WYRE adına toplanır ve aktarılır. Daha fazla bilgi için lütfen Gizlilik Politikamıza bakın",
-          "pending" : {
-            "cta" : "Devam",
-            "title" : "KYC onay için gönderildi",
-            "subtitle" : "KYC'niz gönderildi ve onay bekliyor.",
-            "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-          },
-          "approved" : {
-            "cta" : "Devam",
-            "title" : "KYC onaylandı!",
-            "subtitle" : "KYC'niz gönderildi ve onaylandı.",
-            "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-          },
-          "closed" : {
-            "cta" : "KYC'yi sıfırla",
-            "title" : "KYC başvurusu reddedildi",
-            "subtitle" : "KYC işlemi için gönderdiğiniz veriler Wyre tarafından reddedildi.",
-            "link" : "KYC işlemi hakkında daha fazla bilgi edinin"
-          },
-          "form" : {
-            "firstName" : "Adı",
-            "lastName" : "Soyadı",
-            "street1" : "Adres 1. Satır",
-            "street2" : "Adres 2. Satır",
-            "city" : "Şehir",
-            "state" : "Eyalet",
-            "country" : "Ülke",
-            "postalCode" : "Posta Kodu",
-            "dateOfBirth" : "Doğum tarihi",
-            "firstNamePlaceholder" : "Adınızı girin",
-            "lastNamePlaceholder" : "Soyadınızı girin",
-            "street1Placeholder" : "Örn. 13, Maple Street",
-            "street2Placeholder" : "Örn. 13, Maple Street",
-            "cityPlaceholder" : "Örn. San José",
-            "postalCodePlaceholder" : "5 haneli Posta Kodunuzu girin",
-            "statePlaceholder" : "Eyaletinizi seçin",
-            "dateOfBirthPlaceholder" : "YYYY-AA-GG",
-            "firstNameError" : "Devam etmek için adınızı girin",
-            "lastNameError" : "Devam etmek için soyadınızı girin",
-            "street1Error" : "Adresinizi girin",
-            "cityError" : "ABD'de yaşadığınız şehri girin",
-            "stateError" : "Devam etmek için eyaletinizi seçin",
-            "postalCodeError" : "Geçerli bir ABD Posta Kodu girin",
-            "dateOfBirthError" : "Doğum tarihinizi girin"
-          }
-        },
-        "states" : "Eyaletinizi seçin"
       },
       "notAvailable" : {
         "title" : "Hizmet geçici olarak kullanılamıyor veya ülkenize açık değil"
@@ -3190,34 +3135,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC",
-            "required" : "KYC işlemini tamamlamalısınız",
-            "complete" : "KYC'yi tamamla",
-            "update" : "KYC'yi yenile",
-            "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
-            "rejectedContactProviderSupport" : "KYC reddedildi, lütfen {{providerName}} desteğiyle iletişime geçin",
-            "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
-            "status" : {
-              "pending" : "KYC beklemede",
-              "approved" : "KYC onaylandı",
-              "closed" : "KYC reddedildi",
-              "upgradeRequired" : "KYC eksik"
-            }
-          },
-          "login" : {
-            "title" : "Oturum aç",
-            "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
-            "complete" : "Oturum aç"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
-            "complete" : "MFA kur"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
-          },
           "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
         }
       }
@@ -6356,7 +6273,7 @@
           "body" : "Bir kriptoyu diğerine güvenle dönüştürün"
         },
         "receive" : {
-          "title" : "Transfer alın",
+          "title" : "Yatır",
           "body" : "Cüzdanınıza kripto transferi alın"
         }
       }
