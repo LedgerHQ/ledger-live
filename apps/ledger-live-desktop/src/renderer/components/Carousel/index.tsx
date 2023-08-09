@@ -128,7 +128,7 @@ export const Label = styled(Text)`
   margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  
+
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
