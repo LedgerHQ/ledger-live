@@ -60,7 +60,10 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const { t } = useTranslation();
   const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
 
-  const isNotFoundEntity = error && error instanceof FirmwareNotRecognized;
+  // Depending from where the device was not recognized we can a FirmwareNotRecognized or a simple Error
+  const isNotFoundEntity =
+    error &&
+    (error instanceof FirmwareNotRecognized || (error as Error).message === "not found entity");
 
   const onGoToSettings = useCallback(() => {
     navigation.navigate(NavigatorName.Base, {
