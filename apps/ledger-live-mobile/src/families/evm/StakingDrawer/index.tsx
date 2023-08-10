@@ -4,12 +4,12 @@ import { Button, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
 import { EthStakingProviders } from "./types";
-import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
+import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import { Track } from "../../../analytics";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { useRootDrawerContext } from "../../../context/RootDrawerContext";
 
-export function EthereumStakingDrawer() {
+export function EvmStakingDrawer() {
   const { t } = useTranslation();
   const { isOpen, onModalHide, openDrawer, onClose, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
@@ -23,13 +23,13 @@ export function EthereumStakingDrawer() {
     }
   }, [ethStakingProviders, openDrawer]);
 
-  if (!ethStakingProviders) return null;
+  if (!ethStakingProviders || drawer.id !== "EvmStakingDrawer") return null;
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} onModalHide={onModalHide}>
       <Flex rowGap={52}>
         <Track onMount event="ETH Stake Modal" />
-        <EthereumStakingDrawerBody
+        <EvmStakingDrawerBody
           onClose={onClose}
           singleProviderRedirectMode={drawer.props.singleProviderRedirectMode ?? true}
           accountId={drawer.props.accountId}
