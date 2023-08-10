@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.66.0-next.2
+
+### Patch Changes
+
+- [#4279](https://github.com/LedgerHQ/ledger-live/pull/4279) [`d3df280539`](https://github.com/LedgerHQ/ledger-live/commit/d3df280539cc17f295fd178a2fddd2d1fb7ba59a) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix feature flag for Secret Network
+
 ## 2.66.0-next.1
 
 ### Patch Changes
