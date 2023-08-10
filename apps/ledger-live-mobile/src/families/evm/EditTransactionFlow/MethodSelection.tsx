@@ -13,7 +13,7 @@ import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation"
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
-import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types";
+import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { getTransactionByHash } from "@ledgerhq/coin-evm/api/transaction";
 
 import { ScreenName } from "../../../const";
