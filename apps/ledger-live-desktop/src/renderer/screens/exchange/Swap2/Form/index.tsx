@@ -179,7 +179,7 @@ const SwapForm = () => {
     const transaction = swapTransaction.transaction;
     const { account: fromAccount, parentAccount: fromParentAccount } = from;
     const { account: toAccount, parentAccount: toParentAccount } = to;
-    const { feesStrategy } = transaction;
+    const { feesStrategy } = transaction || {};
 
     const rateId = exchangeRate?.rateId || "12345";
     if (fromAccount && toAccount && feesStrategy) {
