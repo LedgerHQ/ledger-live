@@ -129,7 +129,7 @@ describe("EVM Family", () => {
 
     describe("applyEIP155", () => {
       const chainIds = listCryptoCurrencies(true)
-        .filter(c => c.family === "evm")
+        .filter(c => c.family === "evm" && c.ethereumLikeInfo !== undefined)
         .map(c => c.ethereumLikeInfo!.chainId)
         .sort((a, b) => a - b);
 
