@@ -32,7 +32,7 @@ export default function EditTransactionNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.EditTransactionSummary}
+        name={ScreenName.EthereumEditTransactionSummary}
         component={EditEthereumSummary}
         options={{
           headerTitle: () => <StepHeader title={t("editTransaction.header")} />,

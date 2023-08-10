@@ -17,7 +17,7 @@ export type EditTransactionParamList = {
     account: AccountLike;
     parentAccount: Account | undefined | null;
   };
-  [ScreenName.EditTransactionSummary]: {
+  [ScreenName.EthereumEditTransactionSummary]: {
     accountId: string;
     parentId?: string;
     deviceId?: string;

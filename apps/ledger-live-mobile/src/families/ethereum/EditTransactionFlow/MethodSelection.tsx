@@ -190,7 +190,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
         status,
       });
     } else if (selectedMethod === "speedup") {
-      navigation.navigate(ScreenName.EditTransactionSummary, {
+      navigation.navigate(ScreenName.EthereumEditTransactionSummary, {
         accountId: account.id,
         parentId: parentAccount?.id,
         transaction,
