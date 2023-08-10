@@ -2,19 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
-import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
-import DeviceAction from "~/renderer/components/DeviceAction";
-import BigSpinner from "~/renderer/components/BigSpinner";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
-import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-const exchangeAction = createAction(completeExchange);
-const sendAction = txCreateAction(connectApp);
+import { BodyContent } from "./BodyContent";
 
 export type Data = {
   provider: string;
@@ -25,36 +17,22 @@ export type Data = {
   onResult: (a: Operation) => void;
   onCancel: (a: Error) => void;
   exchangeType: number;
-  rateType: number;
+  rateType?: number;
 };
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const { onResult, onCancel, ...exchangeParams } = data;
-
   const { fromAccount: account, fromParentAccount: parentAccount } = exchangeParams.exchange;
-  let tokenCurrency: TokenCurrency | undefined;
-  if (account.type === "TokenAccount") tokenCurrency = account.token;
-  const request = {
-    ...exchangeParams,
-  };
+  const request = { ...exchangeParams };
+
+  const tokenCurrency: TokenCurrency | undefined =
+    account.type === "TokenAccount" ? account.token : undefined;
 
   const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
-  useEffect(() => {
-    if (signedOperation) {
-      broadcast(signedOperation).then(operation => {
-        onResult(operation);
-        onClose?.();
-      }, setError);
-    }
-  }, [broadcast, onClose, onResult, signedOperation]);
-  useEffect(() => {
-    if (error) {
-      onCancel(error);
-    }
-  }, [onCancel, error]);
+
   const signRequest = useMemo(
     () =>
       transaction
@@ -68,50 +46,43 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         : null,
     [account, parentAccount, tokenCurrency, transaction],
   );
+
+  useEffect(() => {
+    if (error) {
+      onCancel(error);
+    }
+  }, [onCancel, error]);
+
+  useEffect(() => {
+    if (signedOperation) {
+      broadcast(signedOperation).then(operation => {
+        onResult(operation);
+        onClose?.();
+      }, setError);
+    }
+  }, [broadcast, onClose, onResult, signedOperation]);
+
   return (
     <ModalBody
       onClose={() => {
         onCancel(new Error("Interrupted by user"));
         onClose?.();
       }}
-      render={() => {
-        return (
-          <Box alignItems={"center"} justifyContent={"center"} px={32}>
-            {error ? (
-              <ErrorDisplay error={error} />
-            ) : signedOperation ? (
-              <BigSpinner size={40} />
-            ) : !signRequest ? (
-              <DeviceAction
-                key="completeExchange"
-                action={exchangeAction}
-                request={request}
-                onResult={result => {
-                  if ("completeExchangeError" in result) {
-                    setError(result.completeExchangeError);
-                  } else {
-                    setTransaction(result.completeExchangeResult);
-                  }
-                }}
-              />
-            ) : (
-              <DeviceAction
-                key="sign"
-                action={sendAction}
-                request={signRequest}
-                onResult={result => {
-                  if ("transactionSignError" in result) {
-                    setError(result.transactionSignError);
-                  } else {
-                    setSignedOperation(result.signedOperation);
-                  }
-                }}
-              />
-            )}
-          </Box>
-        );
-      }}
+      render={() => (
+        <Box alignItems={"center"} justifyContent={"center"} px={32}>
+          <BodyContent
+            error={error}
+            signRequest={signRequest}
+            signedOperation={signedOperation}
+            request={request}
+            onError={setError}
+            onOperationSigned={setSignedOperation}
+            onTransactionComplete={setTransaction}
+          />
+        </Box>
+      )}
     />
   );
 };
+
 export default Body;
