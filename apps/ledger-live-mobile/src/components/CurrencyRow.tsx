@@ -30,7 +30,11 @@ const CurrencyRow = ({ currency, style, isOK = true, iconSize = 32, onPress }: P
   const { colors } = useTheme();
 
   return (
-    <StyledRectButton style={[style]} onPress={onPressAction}>
+    <StyledRectButton
+      testID={"currency-row-" + currency.id}
+      style={[style]}
+      onPress={onPressAction}
+    >
       <CircleCurrencyIcon
         size={iconSize}
         currency={currency}

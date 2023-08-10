@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex } from "@ledgerhq/native-ui";
@@ -24,6 +22,7 @@ import SkipSelectDevice from "../SkipSelectDevice";
 import { setLastConnectedDevice, setReadOnlyMode } from "../../actions/settings";
 import AddAccountsHeaderRightClose from "./AddAccountsHeaderRightClose";
 import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
 type Props = StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>;
 
@@ -35,9 +34,8 @@ export const addAccountsSelectDeviceHeaderOptions: ReactNavigationHeaderOptions 
   headerLeft: () => <NavigationHeaderBackButton />,
 };
 
-const action = createAction(connectApp);
-
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
+  const action = useAppDeviceAction();
   const { currency, analyticsPropertyFlow } = route.params;
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null | undefined>(null);

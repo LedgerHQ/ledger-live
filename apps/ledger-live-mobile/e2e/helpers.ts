@@ -1,4 +1,4 @@
-import { by, device, element, waitFor } from "detox";
+import { by, element, waitFor, device } from "detox";
 import { Direction } from "react-native-modal";
 
 const DEFAULT_TIMEOUT = 60000;
