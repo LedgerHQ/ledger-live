@@ -153,17 +153,33 @@ export type SignTransactionNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.EvmEditGasLimit]: {
+  [ScreenName.EvmCustomFees]: {
     accountId: string;
     parentId?: string;
+    transaction: EvmTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.EvmEditGasLimit]: {
+    accountId: string;
     setGasLimit: (_: BigNumber) => void;
     gasLimit?: BigNumber | null;
     transaction: EvmTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
+      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
