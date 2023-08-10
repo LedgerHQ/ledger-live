@@ -3,6 +3,7 @@ import {
   useSwapTransaction,
   usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { getCustomFeesPerFamily } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName, getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -133,39 +134,6 @@ const SwapForm = () => {
     pause: pauseRefreshing,
   });
 
-  const getCustomFeesPerFamily = useCallback(async transaction => {
-    const { family, maxFeePerGas, maxPriorityFeePerGas, userGasLimit, customGasLimit, feePerByte } =
-      transaction;
-
-    switch (family) {
-      case "ethereum": {
-        const { getGasLimit } = await import("@ledgerhq/live-common/families/ethereum/transaction");
-        return {
-          maxFeePerGas,
-          maxPriorityFeePerGas,
-          userGasLimit,
-          gasLimit: getGasLimit(transaction),
-        };
-      }
-      case "evm": {
-        const { getGasLimit } = await import("@ledgerhq/coin-evm/logic");
-        return {
-          maxFeePerGas,
-          maxPriorityFeePerGas,
-          gasLimit: getGasLimit(transaction),
-          customGasLimit,
-        };
-      }
-      case "bitcoin": {
-        return {
-          feePerByte,
-        };
-      }
-      default:
-        return {};
-    }
-  }, []);
-
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
@@ -191,8 +159,8 @@ const SwapForm = () => {
           : fromAccount.currency?.units[0].magnitude || 0;
       const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
 
-      const customFeesParams =
-        feesStrategy === "custom" ? await getCustomFeesPerFamily(transaction) : {};
+      const customFeesParams = feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : {};
+
       history.push({
         pathname: "/swap-web",
         state: {
