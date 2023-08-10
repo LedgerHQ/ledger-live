@@ -2305,8 +2305,8 @@ importers:
         specifier: ^2.1.4
         version: 2.1.4
       camelcase:
-        specifier: ^6.2.1
-        version: 6.3.0
+        specifier: ^8.0.0
+        version: 8.0.0
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -4332,8 +4332,8 @@ importers:
         specifier: ^5.1.13
         version: 5.1.15
       camelcase:
-        specifier: ^6.2.1
-        version: 6.3.0
+        specifier: ^8.0.0
+        version: 8.0.0
       esbuild:
         specifier: ^0.18.0
         version: 0.18.0
@@ -4383,8 +4383,8 @@ importers:
         specifier: ^5.1.13
         version: 5.1.15
       camelcase:
-        specifier: ^6.2.1
-        version: 6.3.0
+        specifier: ^8.0.0
+        version: 8.0.0
       esbuild:
         specifier: ^0.18.0
         version: 0.18.0
@@ -4597,8 +4597,8 @@ importers:
         specifier: ^9.3.0
         version: 9.3.0(@babel/core@7.22.8)
       camelcase:
-        specifier: ^6.2.1
-        version: 6.3.0
+        specifier: ^8.0.0
+        version: 8.0.0
       csstype:
         specifier: ^3.0.11
         version: 3.0.11
@@ -30033,6 +30033,11 @@ packages:
   /camelcase@6.3.0:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
+
+  /camelcase@8.0.0:
+    resolution: {integrity: sha512-8WB3Jcas3swSvjIeA2yvCJ+Miyz5l1ZmB6HFb9R1317dt9LCQoswg/BGrmAmkWVEszSrrg4RwmO46qIm2OEnSA==}
+    engines: {node: '>=16'}
+    dev: true
 
   /camelize@1.0.0:
     resolution: {integrity: sha512-W2lPwkBkMZwFlPCXhIlYgxu+7gC/NUlCtdK652DAJ1JdgV0sTrvuPFshNPrFa1TY2JOkLhgdeEBplB4ezEa+xg==}
