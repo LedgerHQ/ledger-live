@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction } from "@ledgerhq/coin-evm/types";
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import type { Account } from "@ledgerhq/types-live";
 
 import { SendFundsNavigatorStackParamList } from "../../../components/RootNavigator/types/SendFundsNavigator";
