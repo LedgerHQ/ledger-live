@@ -461,6 +461,9 @@
       "title" : "ETH가 네트워크 수수료로 부족합니다",
       "description" : "ERC20 토큰 트랜잭션 수수료로 계정에 ETH를 전송하세요."
     },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "위임에 필요한 잔금이 부족합니다"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "아직 부계정에서 전송할 수 없습니다",
       "description" : "이 기능은 최근 Babylon 업데이트로 발생한 변경 사항으로 인해 추후 추가될 예정입니다."
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Live의 업데이트가 필요합니다",
-      "description" : "Wyre로 스왑 하시려면 Ledger Live를 최신 버전으로 업데이트하고 다시 신원 인증을 해 주세요"
     },
     "RecommendUndelegation" : {
       "title" : "계정 위임을 해제한 후에 계정을 비우세요"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "제거",
       "exportLogs" : "로그 저장",
       "exportLogsDesc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
-      "resetThirdPartyData" : "타사 데이터 재설정",
-      "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
-      "resetThirdPartyDataModal" : "타사 로컬 데이터 삭제",
-      "resetThirdPartyDataModalDesc" : "타사 로컬 데이터 삭제 고객확인제도를 다시 제출하거나 다시 로그인해야 파트너가 제공하는 서비스를 이용할 수 있습니다.",
       "hardReset" : "Ledger Live 리셋",
       "hardResetDesc" : "귀하의 자산에는 영향을 주지 않습니다. 계정 데이터, 트랜잭션 내역, 설정을 포함하여 Ledger Live의 모든 데이터를 삭제합니다. Ledger 장치를 이용하여 빈 Ledger Live에 암호화폐를 다시 로드하고 관리합니다.",
       "repairDevice" : "Ledger 장치 복구",
@@ -2956,66 +2951,8 @@
         "whatIsSwap" : "스왑이란?",
         "disclaimer" : "내 Ledger 장치에서 암호화폐를 바로 교환하세요. 미국을 포함한 일부 국가에서 이용할 수 없는 서비스입니다."
       },
-      "unauthorizedRates" : {
-        "cta" : "인증 리셋",
-        "banner" : "Wyre로 스왑 하시려면 고객확인제도를 리셋하고 Live를 업데이트하세요.",
-        "bannerCTA" : "고객확인제도 리셋"
-      },
       "main" : {
         "header" : "스왑"
-      },
-      "kyc" : {
-        "disclaimer" : "본인은 규정 준수를 목적으로 자신의 위치 데이터를 제3자와 공유하는 것을 승인합니다.",
-        "cta" : "계속",
-        "wyre" : {
-          "title" : "고객확인제도를 완료하세요",
-          "subtitle" : "Ledger는 고객확인제도를 목적으로 Wyre를 대신하여 수집한 사용자 정보를 Wyre로 전송합니다. 자세한 정보는 개인 정보 보호 정책을 확인하세요",
-          "pending" : {
-            "cta" : "계속",
-            "title" : "고객확인제도 제출 후 승인 대기 중",
-            "subtitle" : "사용자의 고객확인제도가 제출되어 승인 대기 중입니다.",
-            "link" : "고객확인제도 자세히 알아보기"
-          },
-          "approved" : {
-            "cta" : "계속",
-            "title" : "고객확인제도 승인 완료!",
-            "subtitle" : "귀하의 고객확인제도가 제출되어 승인이 완료되었습니다.",
-            "link" : "고객확인제도 자세히 알아보기"
-          },
-          "closed" : {
-            "cta" : "고객확인제도 리셋",
-            "title" : "고객확인제도 신청 거부",
-            "subtitle" : "Wyre에서 고객확인제도를 위해 귀하가 제공한 데이터를 거부했습니다",
-            "link" : "고객확인제도 자세히 알아보기"
-          },
-          "form" : {
-            "firstName" : "이름",
-            "lastName" : "성",
-            "street1" : "주소 입력란 1",
-            "street2" : "주소 입력란 2",
-            "city" : "시",
-            "state" : "주",
-            "country" : "국가",
-            "postalCode" : "우편번호",
-            "dateOfBirth" : "생년월일",
-            "firstNamePlaceholder" : "이름을 입력하세요",
-            "lastNamePlaceholder" : "성을 입력하세요",
-            "street1Placeholder" : "예: 13, 메이플 스트리트",
-            "street2Placeholder" : "예: 13, 메이플 스트리트",
-            "cityPlaceholder" : "예: 산호세",
-            "postalCodePlaceholder" : "5자리 우편번호를 입력하세요",
-            "statePlaceholder" : "주를 선택하세요",
-            "dateOfBirthPlaceholder" : "연도-월-일",
-            "firstNameError" : "계속 하려면 이름을 입력하세요",
-            "lastNameError" : "계속 하려면 성을 입력하세요",
-            "street1Error" : "주소를 입력하세요",
-            "cityError" : "미국 내 거주 도시를 입력하세요",
-            "stateError" : "계속하려면 주를 입력하세요",
-            "postalCodeError" : "유효한 미국 우편번호를 입력하세요",
-            "dateOfBirthError" : "생년월일을 입력하세요"
-          }
-        },
-        "states" : "주를 선택하세요"
       },
       "notAvailable" : {
         "title" : "서비스가 잠시 이용 불가하거나 거주하시는 국가에서 이용할 수 없습니다"
@@ -3190,34 +3127,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "고객확인제도",
-            "required" : "고객확인제도를 완료해야 합니다",
-            "complete" : "고객확인제도 완료",
-            "update" : "고객확인제도 업데이트",
-            "rejected" : "고객확인제도가 거부되었습니다. 인증을 다시 시작하세요",
-            "rejectedContactProviderSupport" : "고객확인제도가 거부되었습니다. {{providerName}}지원팀에 문의해 주세요.",
-            "updateRequired" : "고객확인제도를 완료하거나 업데이트하세요",
-            "status" : {
-              "pending" : "고객확인제도 대기 중",
-              "approved" : "고객확인제도 승인됨",
-              "closed" : "고객확인제도 거부됨",
-              "upgradeRequired" : "고객확인제도 불충분"
-            }
-          },
-          "login" : {
-            "title" : "로그인",
-            "required" : "이 공급자로 로그인해야 합니다.",
-            "complete" : "로그인"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "이 공급자와 다중인증(MFA)을 설정해야 합니다.",
-            "complete" : "다중인증(MFA) 설정"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "고객님의 출금이 {{providerName}}에 의해 차단되었습니다.\n\n 자세한 내용은 해당 지원팀에 문의하세요."
-          },
           "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
       }
@@ -4145,7 +4054,9 @@
   },
   "FirmwareUpdate" : {
     "title" : "펌웨어를 업데이트하세요",
+    "beginUpdate" : "업데이트 시작",
     "updateDevice" : "{{deviceName}} OS 업데이트",
+    "releaseNotesTitle" : "OS에 무엇이 새롭게 업데이트되었나요?",
     "updateDone" : "모두 완료되었습니다! {{deviceName}}가 최신 상태입니다",
     "updateDoneDescription" : "신규 OS 버전: {{firmwareVersion}}",
     "preparing" : "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
@@ -4411,6 +4322,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "스테이킹 보상은 총 잔액에 포함되지 않습니다."
+      },
+      "delegationUnavailable" : {
+        "title" : "위임할 수 없습니다",
+        "description" : "계정에 이용 가능 잔액이 부족하여 새로운 위임을 시작할 수 없습니다."
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "위임 해제",
+      "undelegationMessage" : "위임을 취소하면 현재 및 향후 에포크에 대한 보상을 받을 수 없습니다.",
+      "verificationSuccessTitle" : "귀하의 자산을 성공적으로 위임 해제했습니다."
+    },
+    "delegation" : {
+      "pool" : "풀",
+      "poolId" : "풀 ID",
+      "selectPool" : "풀 선택",
+      "pools" : "풀",
+      "delegationEarn" : "자산을 위임하여 ADA 보상을 받을 수 있습니다.",
+      "delegatingFrom" : "위임인",
+      "delegatingTo" : "피 위임인",
+      "info" : "위임은 어떤 원리인가요?",
+      "header" : "위임",
+      "delegate" : "위임하기",
+      "redelegate" : "재위임",
+      "estYield" : "추정 수익",
+      "totalStake" : "총 스테이킹",
+      "commission" : "커미션",
+      "cost" : "비용",
+      "select" : "선택",
+      "change" : "변경",
+      "networkFees" : "네트워크 수수료",
+      "stakeKeyRegistrationDeposit" : "키 등록 예치금을 스테이킹하세요",
+      "stakeKeyRegistrationDepositRefund" : "키 등록 예치금 환불액을 스테이킹하세요",
+      "stepperHeader" : {
+        "starter" : "보상 받기",
+        "validator" : "자산 위임하기",
+        "summary" : "요약",
+        "verification" : "인증",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "풀에 ADA를 위임하여 보상을 받을 수 있습니다.",
+            "steps" : {
+              "0" : "위임된 자산의 소유권은 귀하가 갖습니다",
+              "1" : "Ledger 장치를 이용하여 위임하세요",
+              "2" : "언제든지 자산을 다른 풀에 다시 위임하거나 위임 취소를 선택할 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "validator" : {
+            "validators" : "검증인",
+            "myDelegations" : "내 위임",
+            "cta" : "계속",
+            "estYield" : "추정 수익: {{amount}}",
+            "totalAvailable" : "총 이용 가능 금액: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "noResultsFound" : "<0>{{search}}</0>에 대한 검증인이 없습니다"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "상태",
+        "rewards" : "보상",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "redelegatedFrom" : "다음으로부터 재위임됨"
       }
     }
   },
@@ -6214,7 +6205,7 @@
       "title" : "다음으로 {{productName}}를 사용해...",
       "allDoneTitle" : "이상입니다!",
       "skip" : "나중에 할께요",
-      "done" : "보다 안전한 미래를 준비하셨네요"
+      "viewWallet" : "View my wallet"
     },
     "entryPointCard" : {
       "title" : "{{productName}}의 다음 단계는 무엇인가요?",
