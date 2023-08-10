@@ -2,7 +2,6 @@ import {
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
-  LockedDeviceError,
   UnresponsiveDeviceError,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
