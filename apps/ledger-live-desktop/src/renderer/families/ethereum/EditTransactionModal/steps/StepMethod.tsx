@@ -1,4 +1,4 @@
-import React, { PureComponent, memo, useCallback } from "react";
+import React, { memo, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -135,14 +135,25 @@ const StepMethod = ({
   );
 };
 
-export class StepMethodFooter extends PureComponent<StepProps> {
-  state = {
-    transactionHasBeenValidated: false,
-  };
+export const StepMethodFooter: React.FC<StepProps> = props => {
+  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
 
-  handleContinueClick = () => {
-    const { transitionTo, editType, updateTransaction, account, parentAccount, transactionRaw } =
-      this.props;
+  const {
+    transitionTo,
+    editType,
+    updateTransaction,
+    account,
+    parentAccount,
+    transactionRaw,
+    transaction,
+    transactionHash,
+    t,
+    haveFundToSpeedup,
+    haveFundToCancel,
+    isOldestEditableOperation,
+  } = props;
+
+  const handleContinueClick = () => {
     invariant(account && transactionRaw, "account and transactionRaw required");
     const bridge = getAccountBridge(account, parentAccount);
     if (editType === "speedup") {
@@ -196,42 +207,41 @@ export class StepMethodFooter extends PureComponent<StepProps> {
     transitionTo(editType === "speedup" ? "fees" : "summary");
   };
 
-  componentDidMount() {
-    const { account, parentAccount, transaction, transactionHash } = this.props;
-    if (!account || !transaction || !transactionHash) return;
-    const mainAccount = getMainAccount(account, parentAccount);
-    if (mainAccount.currency.family !== "ethereum") return;
-    apiForCurrency(mainAccount.currency)
-      .getTransactionByHash(transactionHash)
-      .then(tx => {
-        if (tx?.confirmations) {
-          this.setState({ transactionHasBeenValidated: true });
-        }
-      });
+  if (!account || !transaction || !transactionHash) {
+    return null;
   }
 
-  render() {
-    const { t, haveFundToSpeedup, haveFundToCancel, isOldestEditableOperation } = this.props;
-
-    return (
-      <>
-        {this.state.transactionHasBeenValidated ? (
-          <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-        ) : null}
-        <Button
-          id={"send-recipient-continue-button"}
-          primary
-          disabled={
-            this.state.transactionHasBeenValidated ||
-            ((!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel)
-          } // continue button is disable if both "speedup" and "cancel" are not possible
-          onClick={this.handleContinueClick}
-        >
-          {t("common.continue")}
-        </Button>
-      </>
-    );
+  const mainAccount = getMainAccount(account, parentAccount);
+  if (mainAccount.currency.family !== "ethereum") {
+    return null;
   }
-}
+
+  apiForCurrency(mainAccount.currency)
+    .getTransactionByHash(transactionHash)
+    .then(tx => {
+      if (tx?.confirmations) {
+        setTransactionHasBeenValidated(true);
+      }
+    });
+
+  return (
+    <>
+      {transactionHasBeenValidated ? (
+        <ErrorBanner error={new TransactionHasBeenValidatedError()} />
+      ) : null}
+      <Button
+        id={"send-recipient-continue-button"}
+        primary
+        disabled={
+          transactionHasBeenValidated ||
+          ((!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel)
+        } // continue button is disable if both "speedup" and "cancel" are not possible
+        onClick={handleContinueClick}
+      >
+        {t("common.continue")}
+      </Button>
+    </>
+  );
+};
 
 export default memo<StepProps>(StepMethod);

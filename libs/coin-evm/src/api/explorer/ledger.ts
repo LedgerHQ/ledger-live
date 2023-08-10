@@ -126,6 +126,8 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
   };
 };
 
-export default {
+const ledgerExplorerAPI: ExplorerApi = {
   getLastOperations,
-} as ExplorerApi;
+};
+
+export default ledgerExplorerAPI;

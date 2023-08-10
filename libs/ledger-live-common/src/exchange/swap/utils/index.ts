@@ -35,6 +35,7 @@ export function getAccountTuplesForCurrency(
       }))
       .filter(a => (hideEmpty ? a.subAccount?.balance.gt(0) : true));
   }
+
   return allAccounts
     .filter(account => account.currency.id === currency.id)
     .map(account => ({

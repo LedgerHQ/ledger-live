@@ -67,4 +67,5 @@ const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
     </Box>
   );
 };
+
 export default SendFeeMode;

@@ -63,9 +63,7 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
   useEffect(() => {
     if (signMessageRequested.standard === "EIP712") {
       const specific = getLLDCoinFamily(currency.family);
-      specific?.message
-        ?.getMessageProperties(mainAccount, signMessageRequested)
-        .then(setMessageFields);
+      specific?.message?.getMessageProperties(signMessageRequested).then(setMessageFields);
     }
   }, [currency, mainAccount, signMessageRequested]);
 

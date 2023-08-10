@@ -1,23 +1,23 @@
-import React, { useCallback, useState } from "react";
-import { Account } from "@ledgerhq/types-live";
-import { useHistory } from "react-router-dom";
 import { Flex, Text } from "@ledgerhq/react-ui";
+import { Account } from "@ledgerhq/types-live";
+import React, { useCallback, useState } from "react";
+import { useHistory } from "react-router-dom";
 
-import { track } from "~/renderer/analytics/segment";
+import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 import { useTranslation } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
+import CheckBox from "~/renderer/components/CheckBox";
+import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { openURL } from "~/renderer/linking";
 import {
-  LOCAL_STORAGE_KEY_PREFIX,
   CheckBoxContainer,
+  LOCAL_STORAGE_KEY_PREFIX,
 } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
-import CheckBox from "~/renderer/components/CheckBox";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
-import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 
-import ProviderItem from "./component/ProviderItem";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import ProviderItem from "./component/ProviderItem";
 
 type Props = {
   account: Account;

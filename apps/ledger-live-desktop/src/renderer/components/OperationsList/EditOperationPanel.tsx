@@ -30,9 +30,11 @@ const EditOperationPanel = (props: Props) => {
       }),
     );
   }, [parentAccount, account, operation, dispatch]);
+
   if (!editEthTx?.enabled) {
     return null;
   }
+
   return (
     <div style={{ marginBottom: "15px" }}>
       <Alert type="warning">

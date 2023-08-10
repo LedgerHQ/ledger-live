@@ -99,7 +99,7 @@ function SignSummary({
 
   useEffect(() => {
     if (messageData.standard === "EIP712") {
-      getMessageProperties(mainAccount, messageData).then(setMessageFields);
+      getMessageProperties(messageData).then(setMessageFields);
     }
   }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
