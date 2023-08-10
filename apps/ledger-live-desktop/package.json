@@ -173,7 +173,7 @@
     "@types/styled-components": "^5.1.25",
     "@types/styled-system": "^5.1.16",
     "@types/trust__keyto": "^1.0.0",
-    "@types/uuid": "^8.3.4",
+    "@types/uuid": "^9.0.0",
     "@types/write-file-atomic": "^4.0.0",
     "@types/zxcvbn": "^4.4.1",
     "@vitejs/plugin-react": "^3.1.0",

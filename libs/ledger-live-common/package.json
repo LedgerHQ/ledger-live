@@ -283,7 +283,7 @@
     "@types/node": "^18",
     "@types/object-hash": "^2.1.0",
     "@types/react": "^17.0.53",
-    "@types/uuid": "^8.3.4",
+    "@types/uuid": "^9.0.0",
     "benchmark": "^2.1.4",
     "camelcase": "^6.2.1",
     "cross-env": "^7.0.3",
@@ -309,7 +309,7 @@
     "timemachine": "^0.3.2",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0",
-    "uuid": "^8.3.2",
+    "uuid": "^9.0.0",
     "ws": "7"
   }
 }
