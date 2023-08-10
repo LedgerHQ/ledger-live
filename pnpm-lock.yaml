@@ -4912,8 +4912,8 @@ importers:
         specifier: 0.10.6
         version: 0.10.6
       isomorphic-unfetch:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^4.0.0
+        version: 4.0.0
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -4951,8 +4951,8 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
       isomorphic-unfetch:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^4.0.0
+        version: 4.0.0
       semver:
         specifier: ^7.3.5
         version: 7.3.7
@@ -5005,8 +5005,8 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
       isomorphic-unfetch:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^4.0.0
+        version: 4.0.0
       tsup:
         specifier: ^6.6.3
         version: 6.6.3(typescript@5.1.3)
@@ -5086,8 +5086,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       isomorphic-unfetch:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^4.0.0
+        version: 4.0.0
       tsup:
         specifier: ^6.6.3
         version: 6.6.3(typescript@5.1.3)
@@ -40320,10 +40320,17 @@ packages:
   /isomorphic-unfetch@3.1.0:
     resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
     dependencies:
-      node-fetch: 2.6.7
+      node-fetch: 2.6.9
       unfetch: 4.2.0
     transitivePeerDependencies:
       - encoding
+    dev: true
+
+  /isomorphic-unfetch@4.0.0:
+    resolution: {integrity: sha512-faQdcv4iQsZXTQIRWVVjfibY7CRxLBpvafqrc5ZgEPUXkDDiQu4nqXRtG5SuJUurW2XHM9uwPuna2r4Px2iNKA==}
+    dependencies:
+      node-fetch: 3.3.1
+      unfetch: 4.2.0
     dev: true
 
   /isomorphic-ws@4.0.1(ws@7.5.7):
