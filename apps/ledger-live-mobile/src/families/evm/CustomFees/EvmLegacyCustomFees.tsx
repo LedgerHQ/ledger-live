@@ -14,7 +14,7 @@ import EthereumGasLimit from "../SendRowGasLimit";
 import EditFeeUnitEthereum from "../EditFeeUnitEvm";
 import SectionSeparator from "../../../components/SectionSeparator";
 import { CurrentNetworkFee } from "../CurrentNetworkFee";
-import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types";
+import { Transaction, TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 
 type Props = {
   account: Account;
