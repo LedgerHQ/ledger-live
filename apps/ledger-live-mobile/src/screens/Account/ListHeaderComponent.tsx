@@ -16,8 +16,6 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/live-common/env";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
@@ -34,7 +32,6 @@ import {
   FabAccountMainActions,
 } from "../../components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "../../components/FabActions";
-import { EditOperationCard } from "../../components/EditOperationCard";
 
 type Props = {
   account?: AccountLike;
@@ -113,17 +110,6 @@ export function getListHeaderComponents({
 
   const stickyHeaderIndices = empty ? [] : [0];
 
-  const [oldestEditableOperation] = account.pendingOperations
-    .filter(pendingOperation => {
-      return isEditableOperation(account, pendingOperation);
-    })
-    .sort((a, b) => a.transactionSequenceNumber! - b.transactionSequenceNumber!);
-
-  const isOperationStuck =
-    oldestEditableOperation &&
-    oldestEditableOperation.date.getTime() <=
-      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
-
   return {
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
@@ -145,15 +131,6 @@ export function getListHeaderComponents({
           <AccountSubHeader />
         </Box>
       ),
-      oldestEditableOperation ? (
-        <EditOperationCard
-          oldestEditableOperation={oldestEditableOperation}
-          isOperationStuck={isOperationStuck}
-          account={account}
-          parentAccount={parentAccount}
-          key="EditOperationCard"
-        />
-      ) : null,
       <SectionContainer px={6} bg={colors.background.main} key="FabAccountMainActions">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAccountMainActions account={account} parentAccount={parentAccount} />
