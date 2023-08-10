@@ -46,11 +46,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="cardano.delegation.flow.steps.starter.steps.0" />,
-            <Trans i18nKey="cardano.delegation.flow.steps.starter.steps.1" />,
-            <Trans i18nKey="cardano.delegation.flow.steps.starter.steps.2" />,
-          ].map(wording => (
-            <LText semiBold>{wording}</LText>
+            <Trans i18nKey="cardano.delegation.flow.steps.starter.steps.0" key="0" />,
+            <Trans i18nKey="cardano.delegation.flow.steps.starter.steps.1" key="1" />,
+            <Trans i18nKey="cardano.delegation.flow.steps.starter.steps.2" key="2" />,
+          ].map((wording, index) => (
+            <LText semiBold key={index}>
+              {wording}
+            </LText>
           ))}
         />
         <View style={[styles.howDelegationWorks]}>
