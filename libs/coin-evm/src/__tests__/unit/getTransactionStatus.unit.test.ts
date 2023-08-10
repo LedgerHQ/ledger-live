@@ -6,6 +6,7 @@ import {
   InvalidAddress,
   MaxFeeTooLow,
   NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
   NotEnoughGas,
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
@@ -454,6 +455,27 @@ describe("EVM Family", () => {
             }),
           );
         });
+
+        it("should detect a transaction for an ERC721 nft owned by the account but it does not have enough balance to pay for gas and have an error", async () => {
+          const tx = {
+            ...eip1559Tx,
+            mode: "erc721" as const,
+            nft: {
+              collectionName: "",
+              contract: nft.contract,
+              tokenId: nft.tokenId,
+              quantity: new BigNumber(1),
+            },
+          };
+          const res = await getTransactionStatus({ ...account, nfts: [nft] }, tx);
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              amount: new NotEnoughBalanceInParentAccount(),
+              gasPrice: new NotEnoughGas(),
+            }),
+          );
+        });
       });
 
       describe("ERC1155", () => {
@@ -534,6 +556,33 @@ describe("EVM Family", () => {
           expect(res.errors).toEqual(
             expect.objectContaining({
               amount: new NotEnoughNftOwned(),
+            }),
+          );
+        });
+
+        it("should detect a transaction for an ERC1155 nft owned by the account but it does not have enough balance to pay for gas and have an error", async () => {
+          const tx = {
+            ...eip1559Tx,
+            mode: "erc1155" as const,
+            nft: {
+              collectionName: "",
+              contract: nft.contract,
+              tokenId: nft.tokenId,
+              quantity: new BigNumber(1),
+            },
+          };
+          const res = await getTransactionStatus(
+            {
+              ...account,
+              nfts: [nft],
+            },
+            tx,
+          );
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              amount: new NotEnoughBalanceInParentAccount(),
+              gasPrice: new NotEnoughGas(),
             }),
           );
         });
