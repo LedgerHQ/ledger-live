@@ -44,7 +44,7 @@ export default function ValidateOnDevice({ device, message: messageData, account
 
   useEffect(() => {
     if (messageData.standard === "EIP712") {
-      getMessageProperties(mainAccount, messageData).then(setMessageFields);
+      getMessageProperties(messageData).then(setMessageFields);
     }
   }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
