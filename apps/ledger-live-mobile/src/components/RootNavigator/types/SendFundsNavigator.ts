@@ -36,7 +36,7 @@ import {
 import type {
   Transaction as EvmTransaction,
   TransactionRaw as EvmTransactionRaw,
-} from "@ledgerhq/coin-Evm/types";
+} from "@ledgerhq/coin-evm/types/index";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
 import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";

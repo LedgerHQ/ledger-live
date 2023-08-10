@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/coin-evm/types";
+import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { Navigation, RouteProps } from "./CustomFees/types";

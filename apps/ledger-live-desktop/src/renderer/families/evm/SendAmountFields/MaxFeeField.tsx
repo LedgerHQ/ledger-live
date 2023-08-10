@@ -1,12 +1,12 @@
-// FIXME: removed nextBaseFeeValue for now because data not available at the time
+import React, { memo, useCallback, useMemo } from "react";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AccountBridge } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
-import React, { memo, useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import { Transaction } from "@ledgerhq/coin-evm/lib/types/index";
 import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
