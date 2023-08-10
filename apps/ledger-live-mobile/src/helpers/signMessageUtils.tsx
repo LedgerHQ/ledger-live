@@ -1,11 +1,10 @@
-import { Account, AnyMessage } from "@ledgerhq/types-live";
+import { AnyMessage } from "@ledgerhq/types-live";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 export type MessageProperties = { label: string; value: string | string[] }[];
 
 export const getMessageProperties = async (
-  account: Account,
   messageData: AnyMessage,
 ): Promise<MessageProperties | null> => {
   if (messageData.standard === "EIP712") {
