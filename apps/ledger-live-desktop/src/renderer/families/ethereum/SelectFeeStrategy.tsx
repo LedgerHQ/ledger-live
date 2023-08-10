@@ -145,6 +145,7 @@ const SelectFeeStrategy = ({
         const amount = strategy.displayedAmount || strategy.amount;
         const { label, disabled } = strategy;
         const selected = transaction.feesStrategy === strategy.label && !disabled;
+
         return (
           <FeesWrapper
             key={strategy.label}
