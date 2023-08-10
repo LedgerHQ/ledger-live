@@ -143,6 +143,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
               <AmountInput
+                testID="amount-input"
                 editable={!useAllAmount}
                 account={account}
                 onChange={onChange}
@@ -191,6 +192,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 </View>
                 <View style={styles.continueWrapper}>
                   <Button
+                    testID="amount-continue-button"
                     event="SendAmountCoinContinue"
                     type="primary"
                     title={

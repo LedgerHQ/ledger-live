@@ -1,14 +1,4 @@
 import { log } from "@ledgerhq/logs";
-import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
-import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
-import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction as createStaxLoadImageAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
-import { createAction as createStaxFetchImageAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
-import { createAction as createInstallLanguageAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { createAction as createConnectAppAction } from "@ledgerhq/live-common/hw/actions/app";
-import { createAction as createConnectManagerAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useUpdateFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useUpdateFirmware";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import {
@@ -34,6 +24,13 @@ import {
   ImageLoadRefusedOnDevice,
   LanguageInstallRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
+import {
+  useAppDeviceAction,
+  useInstallLanguageDeviceAction,
+  useManagerDeviceAction,
+  useStaxFetchImageDeviceAction,
+  useStaxLoadImageDeviceAction,
+} from "../../hooks/deviceActions";
 
 export const reconnectDeviceErrors: LedgerErrorConstructor<{
   [key: string]: unknown;
@@ -73,12 +70,6 @@ export type UpdateStep =
   | "appsRestore"
   | "completed";
 
-const installLanguageAction = createInstallLanguageAction(installLanguage);
-const staxLoadImageAction = createStaxLoadImageAction(staxLoadImage);
-const staxFetchImageAction = createStaxFetchImageAction(staxFetchImage);
-const connectManagerAction = createConnectManagerAction(connectManager);
-const connectAppAction = createConnectAppAction(connectApp);
-
 export const useUpdateFirmwareAndRestoreSettings = ({
   updateFirmwareAction,
   device,
@@ -86,6 +77,11 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 }: FirmwareUpdateParams) => {
   const [updateStep, setUpdateStep] = useState<UpdateStep>("start");
   const [installedApps, setInstalledApps] = useState<string[]>([]);
+
+  const installLanguageAction = useInstallLanguageDeviceAction();
+  const staxLoadImageAction = useStaxLoadImageDeviceAction();
+  const staxFetchImageAction = useStaxFetchImageDeviceAction();
+  const connectManagerAction = useManagerDeviceAction();
 
   // device action hooks only get triggered when they have a device passed to them
   // so in order to control the chaining of actions we use a step state and only
@@ -147,6 +143,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     }),
     [installedApps],
   );
+
+  const connectAppAction = useAppDeviceAction();
 
   const restoreAppsState = connectAppAction.useHook(
     updateStep === "appsRestore" ? device : null,
