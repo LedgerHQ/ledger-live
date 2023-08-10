@@ -7,7 +7,14 @@ import {
   FAMILIES,
 } from "@ledgerhq/live-app-sdk";
 
-export const PLATFORM_FAMILIES = Object.values(FAMILIES);
+/**
+ * this is a hack to add the "evm" family to the list of supported families of
+ * the deprecated @ledgerhq/live-app-sdk, still used by some live apps.
+ * Since "evm" will be (is) the new family of original currencies under the
+ * "ethereum" family, following the "ethereum" / "evm" families merge
+ * (and removal of the "ethereum" family)
+ */
+export const PLATFORM_FAMILIES = [...Object.values(FAMILIES), "evm"];
 
 export type {
   Account as PlatformAccount,

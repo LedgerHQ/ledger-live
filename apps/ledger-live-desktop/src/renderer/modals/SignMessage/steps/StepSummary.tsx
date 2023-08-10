@@ -34,16 +34,19 @@ const Separator = styled.div`
 const MessageContainer = styled(Box)`
   white-space: pre;
 `;
+
 const PropertiesList = styled.ul`
   list-style: none;
   margin-bottom: 10px;
 `;
+
 const ValueWrapper = styled.span`
   margin-bottom: 6px;
   overflow-wrap: break-word;
   word-wrap: break-word;
   white-space: normal;
 `;
+
 const AdvancedMessageArea = styled.pre`
   border: 1px solid ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
   background-color: ${p => p.theme.colors.palette.background.default};
@@ -80,6 +83,7 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
     </Box>
   );
 });
+
 MessageProperty.displayName = "MessageProperty";
 
 const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
@@ -103,7 +107,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       const specific = getLLDCoinFamily(mainAccount.currency.family);
-      specific?.message?.getMessageProperties(mainAccount, messageData).then(setMessageFields);
+      specific?.message?.getMessageProperties(messageData).then(setMessageFields);
     }
   }, [account.currency.family, mainAccount, messageData, setMessageFields]);
 
