@@ -7,7 +7,7 @@ import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
-import { Navigation, RouteProps } from "./CustomFees/types";
+import { Navigation, RouteProps } from "./EvmCustomFees/types";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import { localeSelector } from "../../reducers/settings";
 import LText from "../../components/LText";
@@ -35,7 +35,6 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
       gasLimit,
     });
   }, [navigation, route.params, account.id, transaction, setGasLimit, gasLimit]);
-
   return (
     <View style={styles.root}>
       <SummaryRow
@@ -68,7 +67,6 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,

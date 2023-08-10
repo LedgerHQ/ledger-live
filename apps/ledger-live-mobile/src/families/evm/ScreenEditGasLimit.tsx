@@ -89,7 +89,6 @@ function EvmEditGasLimit({ navigation, route }: NavigationProps) {
 }
 
 export { options, EvmEditGasLimit as component };
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
