@@ -9,13 +9,10 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   EIP1559ShouldBeUsed,
-  fromTransactionRaw,
   getGasLimit,
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { FeeStrategy } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/live-env";
 
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
@@ -52,11 +49,7 @@ export default function EthereumFeesStrategy({
   const { currency } = getMainAccount(account, parentAccount);
   const { operation } = route.params;
 
-  let ethereumTransaction = transaction;
-  const isEditable = operation && isEditableOperation(account, operation);
-  if (operation?.transactionRaw && isEditable) {
-    ethereumTransaction = fromTransactionRaw(operation.transactionRaw as TransactionRaw);
-  }
+  const ethereumTransaction = transaction;
 
   const defaultStrategies = useFeesStrategy(ethereumTransaction);
 
@@ -65,55 +58,13 @@ export default function EthereumFeesStrategy({
   );
 
   const strategies = useMemo(
-    () =>
-      customStrategy && !isEditable ? [...defaultStrategies, customStrategy] : defaultStrategies,
-    [defaultStrategies, customStrategy, isEditable],
+    () => (customStrategy ? [...defaultStrategies, customStrategy] : defaultStrategies),
+    [defaultStrategies, customStrategy],
   );
 
   const disabledStrategies = useMemo(() => {
-    if (isEditable) {
-      return strategies
-        .filter(strategy => {
-          if (EIP1559ShouldBeUsed(currency)) {
-            const oldMaxPriorityFeePerGas = ethereumTransaction.maxPriorityFeePerGas;
-            const oldMaxFeePerGas = ethereumTransaction.maxFeePerGas;
-            const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
-            const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
-            const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
-            const feesGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
-
-            const disabled =
-              strategy.disabled ||
-              strategyMaxPriorityFeePerGas?.isLessThan(
-                BigNumber(oldMaxPriorityFeePerGas || 0).times(1 + maxPriorityFeeGap),
-              ) ||
-              strategyMaxFeePerGas?.isLessThan(BigNumber(oldMaxFeePerGas || 0).times(1 + feesGap));
-
-            return disabled;
-          }
-
-          const gaspriceGap: number = getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR");
-
-          const oldGasPrice = ethereumTransaction.gasPrice;
-
-          const disabled =
-            strategy.disabled ||
-            strategy.amount.isLessThan(BigNumber(oldGasPrice || 0).times(1 + gaspriceGap));
-
-          return disabled;
-        })
-        .map(strategy => strategy.label);
-    }
-
     return [];
-  }, [
-    currency,
-    strategies,
-    ethereumTransaction.gasPrice,
-    ethereumTransaction.maxFeePerGas,
-    ethereumTransaction.maxPriorityFeePerGas,
-    isEditable,
-  ]);
+  }, []);
 
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction, currency);
