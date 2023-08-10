@@ -472,59 +472,63 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiTxSign) return;
 
-    server?.current?.setHandler("transaction.signAndBroadcast", async ({ account, transaction, options }) => {
-      const signedTransaction = await signTransactionLogic(
-        { manifest, accounts, tracking },
-        account.id,
-        transaction,
-        (account, parentAccount, signFlowInfos) =>
-          new Promise((resolve, reject) =>
-            uiTxSign({
-              account,
-              parentAccount,
-              signFlowInfos,
-              options,
-              onSuccess: signedOperation => {
-                tracking.signTransactionSuccess(manifest);
-                resolve(signedOperation);
-              },
-              onError: error => {
-                tracking.signTransactionFail(manifest);
-                reject(error);
-              },
-            }),
-          ),
-      );
+    server?.current?.setHandler(
+      "transaction.signAndBroadcast",
+      async ({ account, transaction, options }) => {
+        const signedTransaction = await signTransactionLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          transaction,
+          (account, parentAccount, signFlowInfos) =>
+            new Promise((resolve, reject) =>
+              uiTxSign({
+                account,
+                parentAccount,
+                signFlowInfos,
+                options,
+                onSuccess: signedOperation => {
+                  tracking.signTransactionSuccess(manifest);
+                  resolve(signedOperation);
+                },
+                onError: error => {
+                  tracking.signTransactionFail(manifest);
+                  reject(error);
+                },
+              }),
+            ),
+        );
 
-      return broadcastTransactionLogic(
-        { manifest, accounts, tracking },
-        account.id,
-        signedTransaction,
-        async (account, parentAccount, signedOperation) => {
-          const bridge = getAccountBridge(account, parentAccount);
-          const mainAccount = getMainAccount(account, parentAccount);
+        return broadcastTransactionLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          signedTransaction,
+          async (account, parentAccount, signedOperation) => {
+            const bridge = getAccountBridge(account, parentAccount);
+            const mainAccount = getMainAccount(account, parentAccount);
 
-          let optimisticOperation: Operation = signedOperation.operation;
+            let optimisticOperation: Operation = signedOperation.operation;
 
-          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-            try {
-              optimisticOperation = await bridge.broadcast({
-                account: mainAccount,
-                signedOperation,
-              });
-              tracking.broadcastSuccess(manifest);
-            } catch (error) {
-              tracking.broadcastFail(manifest);
-              throw error;
+            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+              try {
+                optimisticOperation = await bridge.broadcast({
+                  account: mainAccount,
+                  signedOperation,
+                });
+                tracking.broadcastSuccess(manifest);
+              } catch (error) {
+                tracking.broadcastFail(manifest);
+                throw error;
+              }
             }
-          }
 
-          uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+            uiTxBroadcast &&
+              uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
 
-          return optimisticOperation.hash;
-        },
-      );
-    });
+            return optimisticOperation.hash;
+          },
+        );
+      },
+    );
   }, [accounts, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
 
   const onLoad = useCallback(() => {

@@ -174,14 +174,7 @@ const SwapForm = () => {
         },
       });
     }
-  }, [
-    swapTransaction.swap,
-    swapTransaction.transaction,
-    exchangeRate?.rateId,
-    getCustomFeesPerFamily,
-    history,
-    provider,
-  ]);
+  }, [swapTransaction.swap, swapTransaction.transaction, exchangeRate?.rateId, history, provider]);
 
   useEffect(() => {
     if (swapTransaction.swap.rates.status === "success") {
