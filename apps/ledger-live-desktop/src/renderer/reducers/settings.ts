@@ -51,7 +51,7 @@ export type SettingsState = {
   autoLockTimeout: number;
   selectedTimeRange: PortfolioRange;
   currenciesSettings: {
-    [Id: string]: CurrencySettings;
+    [currencyId: string]: CurrencySettings;
   };
   pairExchanges: {
     [pair: string]: string | undefined | null;
@@ -394,9 +394,7 @@ const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`
 export type CurrencySettings = {
   confirmationsNb: number;
 };
-export type CurrenciesSettings = {
-  [currencyId: string]: CurrencySettings;
-};
+
 type ConfirmationDefaults = {
   confirmationsNb:
     | {
