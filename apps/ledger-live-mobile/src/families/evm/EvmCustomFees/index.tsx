@@ -5,8 +5,6 @@ import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
-import type { Account } from "@ledgerhq/types-live";
-
 import { SendFundsNavigatorStackParamList } from "../../../components/RootNavigator/types/SendFundsNavigator";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import EvmLegacyCustomFees from "./EvmLegacyCustomFees";
@@ -16,6 +14,7 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 
 type Props = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.EvmCustomFees>
@@ -27,37 +26,37 @@ const options = {
 };
 
 export default function EvmCustomFees({ route }: Props) {
-  const { setTransaction, transaction, transactionRaw } = route.params;
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { setTransaction, transaction } = route.params;
+  const { account: accountLike } = useSelector(accountScreenSelector(route));
   const navigation = useNavigation();
+  invariant(accountLike, "no account found");
 
-  invariant(account, "no account found");
+  const account = getMainAccount(accountLike);
 
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = getAccountBridge(account);
 
   const onValidateFees = useCallback(
     (transactionPatch: Partial<Transaction>) => () => {
-      setTransaction(bridge.updateTransaction(transaction, transactionPatch));
+      setTransaction(bridge.updateTransaction(route.params.transaction, transactionPatch));
       navigation.goBack();
     },
-    [bridge, navigation, transaction, setTransaction],
+    [bridge, navigation, route.params, setTransaction],
   );
 
-  return transaction.type === 2 ? (
+  const shouldUseEip1559 = transaction.type === 2;
+
+  return shouldUseEip1559 ? (
     <Evm1559CustomFees
-      account={account as Account}
+      account={account}
       transaction={transaction}
       onValidateFees={onValidateFees}
     />
   ) : (
     <EvmLegacyCustomFees
-      account={account as Account}
-      parentAccount={parentAccount}
-      transaction={transaction as Transaction}
+      account={account}
+      transaction={transaction}
       onValidateFees={onValidateFees}
-      transactionRaw={transactionRaw}
     />
   );
 }
-
 export { options, EvmCustomFees as component };

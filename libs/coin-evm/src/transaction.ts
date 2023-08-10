@@ -108,7 +108,7 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
     mode: tx.mode,
     chainId: tx.chainId,
     nonce: tx.nonce,
-    gasLimit: tx.gasLimit.toFixed(0),
+    gasLimit: tx.gasLimit.toFixed(),
     feesStrategy: tx.feesStrategy,
     type: tx.type,
   };
@@ -118,32 +118,32 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
   }
 
   if (tx.gasPrice) {
-    txRaw.gasPrice = tx.gasPrice.toFixed(0);
+    txRaw.gasPrice = tx.gasPrice.toFixed();
   }
 
   if (tx.maxFeePerGas) {
-    txRaw.maxFeePerGas = tx.maxFeePerGas.toFixed(0);
+    txRaw.maxFeePerGas = tx.maxFeePerGas.toFixed();
   }
 
   if (tx.maxPriorityFeePerGas) {
-    txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas.toFixed(0);
+    txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas.toFixed();
   }
 
   if (tx.additionalFees) {
-    txRaw.additionalFees = tx.additionalFees.toFixed(0);
+    txRaw.additionalFees = tx.additionalFees.toFixed();
   }
 
   if (tx.nft) {
     txRaw.nft = {
       tokenId: tx.nft.tokenId,
       contract: tx.nft.contract,
-      quantity: tx.nft.quantity.toFixed(0),
+      quantity: tx.nft.quantity.toFixed(),
       collectionName: tx.nft.collectionName,
     };
   }
 
   if (tx.customGasLimit) {
-    txRaw.customGasLimit = tx.customGasLimit.toFixed(0);
+    txRaw.customGasLimit = tx.customGasLimit.toFixed();
   }
 
   return txRaw as EvmTransactionRaw;
@@ -162,7 +162,7 @@ export const getTransactionData = (
       const contract = new ethers.utils.Interface(ERC20ABI);
       const data = contract.encodeFunctionData("transfer", [
         transaction.recipient,
-        transaction.amount.toFixed(0),
+        transaction.amount.toFixed(),
       ]);
 
       // removing 0x prefix
@@ -186,7 +186,7 @@ export const getTransactionData = (
         account.freshAddress,
         transaction.recipient,
         transaction.nft.tokenId,
-        transaction.nft.quantity.isFinite() ? transaction.nft.quantity.toFixed(0) : 0,
+        transaction.nft.quantity.isFinite() ? transaction.nft.quantity.toFixed() : 0,
         "0x",
       ]);
 
