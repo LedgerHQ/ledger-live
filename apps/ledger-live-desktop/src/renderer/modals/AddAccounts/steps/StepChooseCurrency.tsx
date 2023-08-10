@@ -26,7 +26,8 @@ import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack"
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Feature } from "@ledgerhq/types-live";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
@@ -64,12 +65,10 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
-    () => ({
-      // Keys in this list must match an existing currency.id
-      // Pay attention to the case!
+    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
       stargaze,
-      secretNetwork,
+      secret_network: secretNetwork,
       umee,
       desmos,
       onomy,
@@ -93,7 +92,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       velas_evm: velasEvm,
       syscoin,
       internet_computer: internetComputer,
-      telos: telosEvm,
+      telos_evm: telosEvm,
       coreum,
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
