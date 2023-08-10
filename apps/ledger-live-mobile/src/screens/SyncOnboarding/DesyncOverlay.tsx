@@ -7,6 +7,9 @@ import { TrackScreen } from "../../analytics";
 
 type DelayProps = {
   isOpen: boolean;
+  /**
+   * Delay in ms before displaying the overlay
+   */
   delay?: number;
 };
 
@@ -66,7 +69,13 @@ export const PlainOverlay = ({ isOpen, delay }: DelayProps) => (
   </DisplayWithDelay>
 );
 
-const DesyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
+/**
+ * Overlay displayed during the sync onboarding when the polling does not return the current device state
+ * because an "allowed" error occurred.
+ *
+ * This overlay informs to the user that the sync onboarding is still trying to re-connect/synchronize with the device.
+ */
+const DesyncOverlay: React.FC<Props> = ({ isOpen, delay = 0, productName }) => {
   const { t } = useTranslation();
 
   const { radii } = useTheme();

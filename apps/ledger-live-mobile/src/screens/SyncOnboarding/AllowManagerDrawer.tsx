@@ -42,7 +42,7 @@ const AllowManagerDrawer = ({ isOpen, device, onClose }: Props) => {
       noCloseButton
     >
       <Flex mt={8} alignItems="center" justifyContent="center">
-        <Text fontWeight="semiBold" fontSize={24} textAlign="center">
+        <Text variant="h4" textAlign="center">
           {t("earlySecurityCheck.allowManagerDrawer.title")}
         </Text>
         <Flex alignSelf="stretch" alignItems="center" justifyContent="center">
