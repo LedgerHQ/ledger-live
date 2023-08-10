@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { TransactionRaw } from "@ledgerhq/coin-evm/types";
+import { TransactionRaw } from "@ledgerhq/coin-evm/types/index";
 import { fromTransactionRaw } from "@ledgerhq/coin-evm/transaction";
 import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
