@@ -8,7 +8,6 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../const";
-import { EditTransactionParamList } from "./EditTransactionFlow/EditTransactionParamList";
 
 export type SendRowsFeeProps<T extends Transaction = Transaction> = {
   transaction: T;
@@ -17,7 +16,6 @@ export type SendRowsFeeProps<T extends Transaction = Transaction> = {
   setTransaction: Result<T>["setTransaction"];
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
