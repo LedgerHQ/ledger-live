@@ -7,7 +7,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 
 import { ListProvider } from "./types";
-import { EthereumStakingDrawerProvider } from "./EthereumStakingDrawerProvider";
+import { EvmStakingDrawerProvider } from "./EvmStakingDrawerProvider";
 import { useAnalytics } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -19,7 +19,7 @@ type Props = {
   onClose(callback: () => void): void;
 };
 
-export function EthereumStakingDrawerBody({
+export function EvmStakingDrawerBody({
   providers,
   singleProviderRedirectMode,
   accountId,
@@ -88,7 +88,7 @@ export function EthereumStakingDrawerBody({
 
       <Flex rowGap={52}>
         {providers.map(provider => (
-          <EthereumStakingDrawerProvider
+          <EvmStakingDrawerProvider
             key={provider.id}
             provider={provider}
             onProviderPress={onProviderPress}
