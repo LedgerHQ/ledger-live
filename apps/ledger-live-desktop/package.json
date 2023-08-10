@@ -118,7 +118,7 @@
     "redux-actions": "^2.6.5",
     "redux-thunk": "^2.4.0",
     "reselect": "^4.1.4",
-    "rimraf": "^4.4.1",
+    "rimraf": "^5.0.0",
     "rxjs": "^6.6.7",
     "rxjs7": "npm:rxjs@7.8.1",
     "secp256k1": "^4.0.2",
