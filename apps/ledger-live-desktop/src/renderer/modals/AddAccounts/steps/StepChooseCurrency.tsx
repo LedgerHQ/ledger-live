@@ -65,7 +65,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
-    (): Partial<Record<CryptoCurrencyId, Feature<any> | null>> => ({
+    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
       stargaze,
       secret_network: secretNetwork,

@@ -89,7 +89,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const klaytn = useFeature("currencyKlaytn");
 
   const featureFlaggedCurrencies = useMemo(
-    (): Partial<Record<CryptoCurrencyId, Feature<any> | null>> => ({
+    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
       stargaze,
       umee,
