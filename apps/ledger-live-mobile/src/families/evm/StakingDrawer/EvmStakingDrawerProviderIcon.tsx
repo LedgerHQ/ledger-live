@@ -6,7 +6,7 @@ type Props = {
   icon?: string;
 };
 
-export function EthereumStakingDrawerProviderIcon({ icon = "" }: Props) {
+export function EvmStakingDrawerProviderIcon({ icon = "" }: Props) {
   const [name] = icon.split(":");
 
   if (name === "Kiln") {
