@@ -307,7 +307,7 @@ export type LLDCoinFamily<
   };
 
   message?: {
-    getMessageProperties: (account: A, message: AnyMessage) => Promise<MessageProperties | null>;
+    getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
   };
 };
 
