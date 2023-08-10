@@ -1,4 +1,4 @@
-export type StakingDrawerID = "EthStakingDrawer";
+type StakingDrawerID = "EthStakingDrawer" | "EvmStakingDrawer";
 
 export type StakingDrawerNavigationProps = {
   id: StakingDrawerID;
