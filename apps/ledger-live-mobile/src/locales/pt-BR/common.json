@@ -461,6 +461,9 @@
       "title" : "ETH insuficiente para a taxa de rede",
       "description" : "Envie um pouco de ETH à sua conta para pagar por transações de tokens ERC20."
     },
+    "NotEnoughGasSwap" : {
+      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "Saldo insuficiente para delegar"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "Ainda não é possível enviar de subcontas",
       "description" : "Este recurso será adicionado posteriormente devido a mudanças introduzidas recentemente pela atualização Babylon."
-    },
-    "AccessDeniedError" : {
-      "title" : "O Ledger Live precisa ser atualizado",
-      "description" : "Atualize o Ledger Live para a versão mais recente e verifique sua identidade novamente para trocar com a Wyre"
     },
     "RecommendUndelegation" : {
       "title" : "Desdelegue a conta antes de esvaziá-la"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "Limpar",
       "exportLogs" : "Salvar registros",
       "exportLogsDesc" : "Salvar os registros do Ledger Live pode ser necessário para solucionar problemas.",
-      "resetThirdPartyData" : "Redefinir dados de terceiros",
-      "resetThirdPartyDataDesc" : "Apague todos seus dados locais de provedores externos, usados para acessar serviços de transação.",
-      "resetThirdPartyDataModal" : "Exclua seus dados locais de terceiros",
-      "resetThirdPartyDataModalDesc" : "Exclua seus dados locais de terceiros Você pode precisar reenviar seu KYC e/ou fazer login novamente para acessar os serviços fornecidos por nossos parceiros.",
       "hardReset" : "Redefinir o Ledger Live",
       "hardResetDesc" : "Isso não afeta seus ativos. Apaga todos os dados no Ledger Live, incluindo dados de conta, históricos de transações e configurações. Use seu dispositivo Ledger para restaurar e gerenciar seus criptoativos em um Ledger Live vazio.",
       "repairDevice" : "Reparar seu dispositivo Ledger",
@@ -2956,66 +2951,8 @@
         "whatIsSwap" : "O que é Troca (Swap)?",
         "disclaimer" : "Negocie criptoativos diretamente no seu dispositivo Ledger. Este serviço não está disponível em alguns países, incluindo os EUA."
       },
-      "unauthorizedRates" : {
-        "cta" : "Redefinir Verificação",
-        "banner" : "Redefina seu KYC e atualize o Live para trocar com a Wyre.",
-        "bannerCTA" : "Redefinir KYC"
-      },
       "main" : {
         "header" : "Trocar"
-      },
-      "kyc" : {
-        "disclaimer" : "Reconheço que meus dados de localização serão compartilhados com terceiros para fins de conformidade com a lei.",
-        "cta" : "Continuar",
-        "wyre" : {
-          "title" : "Complete seu KYC",
-          "subtitle" : "Suas informações são coletadas pela LEDGER em nome da WYRE e transferidas para a WYRE para fins de KYC. Para mais informações, consulte a nossa Política de Privacidade",
-          "pending" : {
-            "cta" : "Continuar",
-            "title" : "KYC submetido para aprovação",
-            "subtitle" : "Seu KYC foi submetido e está pendente de aprovação.",
-            "link" : "Saiba mais sobre KYC"
-          },
-          "approved" : {
-            "cta" : "Continuar",
-            "title" : "KYC Aprovado!",
-            "subtitle" : "Seu KYC foi submetido e foi aprovado.",
-            "link" : "Saiba mais sobre KYC"
-          },
-          "closed" : {
-            "cta" : "Redefinir KYC",
-            "title" : "Solicitação de KYC rejeitada",
-            "subtitle" : "A Wyre rejeitou os dados que você forneceu para fins de KYC",
-            "link" : "Saiba mais sobre KYC"
-          },
-          "form" : {
-            "firstName" : "Primeiro Nome",
-            "lastName" : "Sobrenome",
-            "street1" : "Endereço linha 1",
-            "street2" : "Endereço linha 2",
-            "city" : "Cidade",
-            "state" : "Estado",
-            "country" : "País",
-            "postalCode" : "Código Postal",
-            "dateOfBirth" : "Data de nascimento",
-            "firstNamePlaceholder" : "Insira seu primeiro nome",
-            "lastNamePlaceholder" : "Insira seu sobrenome",
-            "street1Placeholder" : "Ex. Avenida Paulista 1578",
-            "street2Placeholder" : "Ex. Avenida Paulista 1578",
-            "cityPlaceholder" : "Ex. São Paulo",
-            "postalCodePlaceholder" : "Insira seu código postal de 8 dígitos",
-            "statePlaceholder" : "Selecione seu estado",
-            "dateOfBirthPlaceholder" : "AAAA-MM-DD",
-            "firstNameError" : "Insira seu primeiro nome para continuar",
-            "lastNameError" : "Insira seu sobrenome para continuar",
-            "street1Error" : "Insira seu endereço",
-            "cityError" : "Insira a cidade em que você mora no Brasil",
-            "stateError" : "Selecione seu estado para continuar",
-            "postalCodeError" : "Insira um código postal válido do Brasil",
-            "dateOfBirthError" : "Insira sua data de nascimento"
-          }
-        },
-        "states" : "Selecione seu estado"
       },
       "notAvailable" : {
         "title" : "Serviço temporariamente indisponível, ou indisponível no seu país"
@@ -3190,34 +3127,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC",
-            "required" : "Você precisa concluir seu KYC",
-            "complete" : "Concluir KYC",
-            "update" : "Atualizar KYC",
-            "rejected" : "KYC reprovado, inicie novamente a verificação",
-            "rejectedContactProviderSupport" : "KYC rejeitada, contate o suporte {{providerName}}.",
-            "updateRequired" : "Conclua ou atualize seu KYC",
-            "status" : {
-              "pending" : "KYC pendente",
-              "approved" : "KYC aprovado",
-              "closed" : "KYC rejeitado",
-              "upgradeRequired" : "KYC insuficiente"
-            }
-          },
-          "login" : {
-            "title" : "Login",
-            "required" : "Você precisa fazer login com este provedor",
-            "complete" : "Login"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "Você precisa configurar o MFA com este provedor",
-            "complete" : "Configurar MFA"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "Seu saque foi bloqueado por {{providerName}}.\n\n Entre em contato com o suporte deles para obter mais informações."
-          },
           "noProviders" : "Nenhum resultado encontrado. Não há cotações disponíveis com as preferências atuais."
         }
       }
@@ -4145,7 +4054,9 @@
   },
   "FirmwareUpdate" : {
     "title" : "Atualizar Firmware",
+    "beginUpdate" : "Iniciar atualização",
     "updateDevice" : "Atualização do OS da {{deviceName}}",
+    "releaseNotesTitle" : "O que tem nesta atualização do sistema operacional?",
     "updateDone" : "Tudo pronto! A {{deviceName}} está atualizada",
     "updateDoneDescription" : "Nova versão do sistema operacional: {{firmwareVersion}}",
     "preparing" : "Preparando a atualização de firmware, mantenha seu dispositivo desperto e conectado. Avisaremos sobre o progresso",
@@ -4411,6 +4322,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "O saldo total não inclui recompensas de staking"
+      },
+      "delegationUnavailable" : {
+        "title" : "Delegação indisponível",
+        "description" : "Não há saldo disponível suficiente em sua conta para iniciar uma nova delegação."
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "Desdelegar",
+      "undelegationMessage" : "Ao desdelegar, você não receberá nenhuma recompensa pela época atual e pelas próximas épocas",
+      "verificationSuccessTitle" : "Você desdelegou seus ativos com sucesso"
+    },
+    "delegation" : {
+      "pool" : "Reserva",
+      "poolId" : "Id da reserva",
+      "selectPool" : "Selecionar reserva",
+      "pools" : "Reservas",
+      "delegationEarn" : "Você pode ganhar recompensas em ADA delegando seus ativos.",
+      "delegatingFrom" : "Delegando de",
+      "delegatingTo" : "Delegando a",
+      "info" : "Como funciona a delegação",
+      "header" : "Delegação",
+      "delegate" : "Delegar",
+      "redelegate" : "Redelegar",
+      "estYield" : "Rendimento Est.",
+      "totalStake" : "Total Aplicado",
+      "commission" : "Comissão",
+      "cost" : "Custo",
+      "select" : "Selecionar",
+      "change" : "Variação",
+      "networkFees" : "Taxas de rede",
+      "stakeKeyRegistrationDeposit" : "Depósito do registro da chave de staking",
+      "stakeKeyRegistrationDepositRefund" : "Reembolso do depósito do registro da chave de staking",
+      "stepperHeader" : {
+        "starter" : "Receber recompensas",
+        "validator" : "Delegar ativos",
+        "summary" : "Resumo",
+        "verification" : "Verificação",
+        "selectDevice" : "Selecionar dispositivo",
+        "connectDevice" : "Conectar dispositivo",
+        "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Você pode ganhar recompensas ao delegar sua ADA a uma reserva.",
+            "steps" : {
+              "0" : "Você mantém a posse dos ativos delegados",
+              "1" : "Delegar usando seu dispositivo Ledger",
+              "2" : "Os ativos podem ser redelegados a outra reserva ou você pode optar por desdelegar a qualquer momento."
+            },
+            "cta" : "Continuar"
+          },
+          "validator" : {
+            "validators" : "Validadores",
+            "myDelegations" : "Minhas delegações",
+            "cta" : "Continuar",
+            "estYield" : "Rendimento est.: {{amount}}",
+            "totalAvailable" : "Total disponível: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos os ativos usados",
+            "noResultsFound" : "Nenhum validador encontrado para <0>{{search}}</0>"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Você delegou seus ativos com sucesso",
+              "text" : "O saldo de sua conta será atualizado assim que a rede confirmar a transação.",
+              "cta" : "Ver detalhes"
+            },
+            "pending" : {
+              "title" : "Transmitindo transação..."
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Status",
+        "rewards" : "Recompensas",
+        "active" : "Ativo",
+        "inactive" : "Inativo",
+        "redelegatedFrom" : "Redelegado de"
       }
     }
   },
@@ -6214,7 +6205,7 @@
       "title" : "Em seguida, use sua {{productName}} para...",
       "allDoneTitle" : "e pronto!",
       "skip" : "Farei isso mais tarde",
-      "done" : "Você tornou seu futuro mais seguro."
+      "viewWallet" : "View my wallet"
     },
     "entryPointCard" : {
       "title" : "Quais são os próximos passos com sua {{productName}}?",
