@@ -500,19 +500,31 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new explorer config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "eth" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "ledger", explorerId: "eth" },
+          },
         });
         const hash2 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "matic" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "ledger", explorerId: "matic" },
+          },
         });
         const hash3 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "etherscan", uri: "anything" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "etherscan", uri: "anything" },
+          },
         });
         const hash4 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "blockscout", uri: "somethingelse" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "blockscout", uri: "somethingelse" },
+          },
         });
 
         const hashes = [hash1, hash2, hash3, hash4];
