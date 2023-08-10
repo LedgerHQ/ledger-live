@@ -11,6 +11,7 @@ import {
   PriorityFeeTooHigh,
   PriorityFeeHigherThanMaxFee,
   MaxFeeTooLow,
+  NotEnoughBalanceInParentAccount,
 } from "@ledgerhq/errors";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
@@ -78,7 +79,7 @@ export const validateRecipient = (
 /**
  * Validate the amount of a transaction for an account
  */
-export const validateAmount = (
+const validateAmount = (
   account: Account | SubAccount,
   transaction: EvmTransaction,
   totalSpent: BigNumber,
@@ -96,7 +97,7 @@ export const validateAmount = (
   // if no amount or 0
   if ((!transaction.amount || transaction.amount.isZero()) && !canHaveZeroAmount) {
     errors.amount = new AmountRequired(); // "Amount required"
-  } else if (!transaction.nft && totalSpent.isGreaterThan(account.balance)) {
+  } else if (totalSpent.isGreaterThan(account.balance)) {
     // if not enough to make the transaction
     errors.amount = new NotEnoughBalance(); // "Sorry, insufficient funds"
   }
@@ -106,7 +107,7 @@ export const validateAmount = (
 /**
  * Validate gas properties of a transaction, depending on its type and the account emitter
  */
-export const validateGas = (
+const validateGas = (
   account: Account,
   tx: EvmTransaction,
   estimatedFees: BigNumber,
@@ -166,7 +167,11 @@ export const validateGas = (
   return [errors, warnings];
 };
 
-export const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssues> => {
+const validateNft = (
+  account: Account,
+  tx: EvmTransaction,
+  totalFees: BigNumber,
+): Array<ValidationIssues> => {
   if (!tx.nft) return [{}, {}];
 
   const errors: ValidationIssues = {};
@@ -183,6 +188,9 @@ export const validateNft = (account: Account, tx: EvmTransaction): Array<Validat
     errors.amount = new QuantityNeedsToBePositive();
   } else if (nftFromAccount.amount.lt(tx.nft.quantity)) {
     errors.amount = new NotEnoughNftOwned();
+  } else if (totalFees.isGreaterThan(account.balance)) {
+    // if not enough balance to pay fees
+    errors.amount = new NotEnoughBalanceInParentAccount();
   }
 
   return [errors, warnings];
@@ -208,7 +216,7 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
   const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
   // Gas related errors and warnings
   const [gasErr, gasWarn] = validateGas(account, tx, totalFees, gasLimit, customGasLimit);
-  const [nftErr, nftWarn] = validateNft(account, tx);
+  const [nftErr, nftWarn] = validateNft(account, tx, totalFees);
 
   const errors: ValidationIssues = {
     ...recipientErr,
