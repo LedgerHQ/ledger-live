@@ -39,7 +39,7 @@ type NodeConfig = EthereumLikeInfo["node"];
  * Type guard
  */
 export const isLedgerNodeConfig = (
-  nodeConfig: NodeConfig,
+  nodeConfig?: NodeConfig,
 ): nodeConfig is NodeConfig & { type: "ledger" } => {
   return nodeConfig?.type === "ledger";
 };
@@ -48,7 +48,7 @@ export const isLedgerNodeConfig = (
  * Type guard
  */
 export const isExternalNodeConfig = (
-  nodeConfig: NodeConfig,
+  nodeConfig?: NodeConfig,
 ): nodeConfig is NodeConfig & { type: "external" } => {
   return nodeConfig?.type === "external";
 };
