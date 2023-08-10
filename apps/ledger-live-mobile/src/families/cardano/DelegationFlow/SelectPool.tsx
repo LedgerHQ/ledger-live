@@ -74,7 +74,7 @@ export default function SelectPool({ navigation, route }: Props) {
 const poolSkeletons = () => {
   return (
     <View>
-      {[...Array(3)].map(() => (
+      {[...Array(3)].map((_, index) => (
         <Skeleton
           loading={true}
           animated={true}
@@ -84,6 +84,7 @@ const poolSkeletons = () => {
             height: 55,
             borderRadius: 5,
           }}
+          key={index}
         />
       ))}
     </View>
