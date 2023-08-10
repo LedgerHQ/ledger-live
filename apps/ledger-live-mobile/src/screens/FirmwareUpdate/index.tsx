@@ -171,7 +171,7 @@ export const FirmwareUpdate = ({
     deviceLockedOrUnresponsive,
     restoreStepDeniedError,
     hasReconnectErrors,
-    hasUserSolvableErrors,
+    userSolvableError,
     skipCurrentRestoreStep,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
@@ -553,27 +553,6 @@ export const FirmwareUpdate = ({
       );
     }
 
-    /**
-     * Finds the user-solvable error from the (current) fw update step, if there is one.
-     * If there is an error during the current fw update step but it is not user-solvable,
-     * then either: this current fw update step is skipped or this error is ignored
-     * (logic handled in `useUpdateFirmwareAndRestoreSettings`).
-     * And in both cases: nothing is displayed to the user (logs are saved from the hook).
-     *
-     * Especially: a `TransportRaceCondition` error is to be expected since we chain multiple
-     * device actions that use different transport acquisition paradigms the action should,
-     * however, retry to execute and resolve the error by itself.
-     * There is no need to present the error to the user.
-     */
-    const userSolvableError = hasUserSolvableErrors
-      ? connectManagerState.error ??
-        updateActionState.error ??
-        restoreAppsState.error ??
-        installLanguageState.error ??
-        staxLoadImageState.error ??
-        staxFetchImageState.error
-      : undefined;
-
     if (userSolvableError) {
       return (
         <DeviceActionError
@@ -661,19 +640,13 @@ export const FirmwareUpdate = ({
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
-    staxLoadImageState.error,
     restoreAppsState.allowManagerRequestedWording,
-    restoreAppsState.error,
     connectManagerState.allowManagerRequestedWording,
-    connectManagerState.error,
     installLanguageState.languageInstallationRequested,
-    installLanguageState.error,
     restoreStepDeniedError,
-    hasUserSolvableErrors,
-    updateActionState.error,
+    userSolvableError,
     updateActionState.step,
     updateActionState.progress,
-    staxFetchImageState.error,
     t,
     device,
     theme,
