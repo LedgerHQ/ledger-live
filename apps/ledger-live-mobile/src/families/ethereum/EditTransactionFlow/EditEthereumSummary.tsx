@@ -7,9 +7,11 @@ import { Trans } from "react-i18next";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { NotEnoughGas } from "@ledgerhq/errors";
-import { useTheme } from "@react-navigation/native";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+import { NotEnoughGas, TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import invariant from "invariant";
+import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
 
 import { NavigatorName, ScreenName } from "../../../const";
@@ -32,13 +34,14 @@ import Button from "../../../components/Button";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import AlertTriangle from "../../../icons/AlertTriangle";
 import TooMuchUTXOBottomModal from "../../../screens/SendFunds/TooMuchUTXOBottomModal";
+import { CurrentNetworkFee } from "../CurrentNetworkFee";
 import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function EditEthereumSummary({ navigation, route }: any) {
   const { colors } = useTheme();
-  const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
+  const { nextNavigation, overrideAmountLabel, hideTotal, operation } = route.params;
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
@@ -126,6 +129,24 @@ function EditEthereumSummary({ navigation, route }: any) {
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const errorNavigation = useNavigation<any>();
+  const editableOperation = operation && isEditableOperation(account, operation);
+
+  if (editableOperation) {
+    apiForCurrency(mainAccount.currency)
+      .getTransactionByHash(operation?.hash || "")
+      .then(tx => {
+        if (tx?.confirmations) {
+          errorNavigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+            error: new TransactionHasBeenValidatedError(
+              "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+            ),
+          });
+        }
+      });
+  }
+
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
     return null;
@@ -195,6 +216,14 @@ function EditEthereumSummary({ navigation, route }: any) {
           navigation={navigation}
           route={route}
         />
+
+        {editableOperation ? (
+          <CurrentNetworkFee
+            account={account}
+            parentAccount={parentAccount}
+            transactionRaw={operation.transactionRaw}
+          />
+        ) : null}
 
         {error ? (
           <View style={styles.gasPriceError}>

@@ -19,6 +19,8 @@ import {
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
@@ -45,6 +47,7 @@ import type {
   StackNavigatorNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { EditOperationPanel } from "../../families/ethereum/EditTransactionFlow/EditOperationPanel";
 
 type HelpLinkProps = {
   event: string;
@@ -130,6 +133,11 @@ export default function Content({
     mainAccount,
     currencySettings.confirmationsNb,
   );
+
+  const isEditable = isEditableOperation(mainAccount, operation);
+  const isOperationStuck =
+    isEditable &&
+    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const specific =
     byFamiliesOperationDetails[
@@ -311,6 +319,15 @@ export default function Content({
           title={t("operationDetails.details", {
             currency: currency.name,
           })}
+        />
+      ) : null}
+
+      {isEditable ? (
+        <EditOperationPanel
+          isOperationStuck={isOperationStuck}
+          account={account}
+          parentAccount={parentAccount}
+          operation={operation}
         />
       ) : null}
 
