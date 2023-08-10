@@ -4052,7 +4052,9 @@
   },
   "FirmwareUpdate": {
     "title": "Update firmware",
+    "beginUpdate": "Begin update",
     "updateDevice": "{{deviceName}} OS Update",
+    "releaseNotesTitle": "What's in this OS update?",
     "updateDone": "All done! Your {{deviceName}} is up to date",
     "updateDoneDescription": "New OS Version: {{firmwareVersion}}",
     "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
