@@ -21,6 +21,7 @@ import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementPr
 import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-common/countervalues/types";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsExportSelector } from "./reducers/settings";
+import logger from "./logger";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -86,7 +87,17 @@ const transforms: Transforms = {
     get: raws => {
       // NB to prevent parsing encrypted string as JSON
       if (typeof raws === "string") return null;
-      return (raws || []).map(accountModel.decode);
+      const accounts = [];
+      if (raws) {
+        for (const row of raws) {
+          try {
+            accounts.push(accountModel.decode(row));
+          } catch (e) {
+            logger.critical(e);
+          }
+        }
+      }
+      return accounts;
     },
     set: accounts => (accounts || []).map(accountModel.encode),
   },

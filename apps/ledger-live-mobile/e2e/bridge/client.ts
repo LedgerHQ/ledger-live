@@ -8,7 +8,7 @@ import { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
 import { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
-import { setAccounts } from "../../src/actions/accounts";
+import { importStore as importAccounts } from "../../src/actions/accounts";
 import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
@@ -129,7 +129,7 @@ function onMessage(event: WebSocketMessageEvent) {
       acceptGeneralTermsLastVersion();
       break;
     case "importAccounts": {
-      store.dispatch(setAccounts(msg.payload.map(accountModel.decode)));
+      store.dispatch(importAccounts({ active: msg.payload }));
       break;
     }
     case "mockDeviceEvent": {
