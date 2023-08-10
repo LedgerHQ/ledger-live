@@ -37,7 +37,7 @@ import {
 } from "@ledgerhq/live-common/errors";
 
 // Errors related to the device connection
-export const reconnectDeviceErrors: LedgerErrorConstructor<{
+export const reconnectDeviceErrorClasses: LedgerErrorConstructor<{
   [key: string]: unknown;
 }>[] = [
   CantOpenDevice,
@@ -49,10 +49,10 @@ export const reconnectDeviceErrors: LedgerErrorConstructor<{
 ];
 
 // Errors that could be solved by the user: either on their phone or on their device
-export const userSolvableErrors: LedgerErrorConstructor<{
+export const userSolvableErrorClasses: LedgerErrorConstructor<{
   [key: string]: unknown;
 }>[] = [
-  ...reconnectDeviceErrors,
+  ...reconnectDeviceErrorClasses,
   WebsocketConnectionError,
   UserRefusedAllowManager,
   LanguageInstallRefusedOnDevice,
@@ -211,7 +211,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsBackup":
         hasUnrecoverableError =
           connectManagerState.error &&
-          !userSolvableErrors.some(err => connectManagerState.error instanceof err);
+          !userSolvableErrorClasses.some(err => connectManagerState.error instanceof err);
 
         if (connectManagerState.result || hasUnrecoverableError) {
           if (connectManagerState.error) {
@@ -228,7 +228,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageBackup":
         hasUnrecoverableError =
           staxFetchImageState.error &&
-          !userSolvableErrors.some(err => staxFetchImageState.error instanceof err);
+          !userSolvableErrorClasses.some(err => staxFetchImageState.error instanceof err);
 
         if (staxFetchImageState.imageFetched || hasUnrecoverableError) {
           if (staxFetchImageState.error) {
@@ -249,7 +249,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "languageRestore":
         hasUnrecoverableError =
           installLanguageState.error &&
-          !userSolvableErrors.some(err => installLanguageState.error instanceof err);
+          !userSolvableErrorClasses.some(err => installLanguageState.error instanceof err);
 
         if (installLanguageState.languageInstalled || hasUnrecoverableError) {
           if (installLanguageState.error) {
@@ -262,7 +262,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageRestore":
         hasUnrecoverableError =
           staxLoadImageState.error &&
-          !userSolvableErrors.some(err => staxLoadImageState.error instanceof err);
+          !userSolvableErrorClasses.some(err => staxLoadImageState.error instanceof err);
 
         if (
           staxLoadImageState.imageLoaded ||
@@ -279,7 +279,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsRestore":
         hasUnrecoverableError =
           restoreAppsState.error &&
-          !userSolvableErrors.some(err => restoreAppsState.error instanceof err);
+          !userSolvableErrorClasses.some(err => restoreAppsState.error instanceof err);
 
         if (restoreAppsState.opened || hasUnrecoverableError) {
           if (restoreAppsState.error) {
@@ -321,7 +321,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 
   const hasReconnectErrors = useMemo(
     () =>
-      reconnectDeviceErrors.some(
+      reconnectDeviceErrorClasses.some(
         err =>
           connectManagerState.error instanceof err ||
           staxFetchImageState.error instanceof err ||
@@ -338,23 +338,35 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     ],
   );
 
-  // An error that can be solved by a user action exists
-  const hasUserSolvableErrors = useMemo(
+  /**
+   * An error from the (current) fw update step that can be solved by a user action.
+   *
+   * If there is an error during the current fw update step but it is not user-solvable,
+   * then either: this current fw update step is skipped or this error is ignored
+   * And in both cases: nothing should be displayed to the user (logs are saved).
+   *
+   * Especially: a `TransportRaceCondition` error is to be expected since we chain multiple
+   * device actions that use different transport acquisition paradigms the action should,
+   * however, retry to execute and resolve the error by itself.
+   * There is no need to present the error to the user.
+   */
+  const userSolvableError = useMemo(
     () =>
-      userSolvableErrors.some(
-        err =>
-          connectManagerState.error instanceof err ||
-          staxFetchImageState.error instanceof err ||
-          staxLoadImageState.error instanceof err ||
-          restoreAppsState.error instanceof err ||
-          installLanguageState.error instanceof err,
-      ),
+      [
+        connectManagerState.error,
+        staxFetchImageState.error,
+        updateActionState.error,
+        installLanguageState.error,
+        restoreAppsState.error,
+        staxLoadImageState.error,
+      ].find(error => userSolvableErrorClasses.some(errorClass => error instanceof errorClass)),
     [
       connectManagerState.error,
       installLanguageState.error,
       restoreAppsState.error,
       staxFetchImageState.error,
       staxLoadImageState.error,
+      updateActionState.error,
     ],
   );
 
@@ -468,7 +480,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     noOfAppsToReinstall: installedApps.length,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
-    hasUserSolvableErrors,
+    userSolvableError,
     restoreStepDeniedError,
   };
 };
