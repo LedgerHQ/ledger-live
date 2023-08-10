@@ -5,4 +5,4 @@ import { SendFundsNavigatorStackParamList } from "../../../components/RootNaviga
 
 export type Navigation = StackNavigatorNavigation<SendFundsNavigatorStackParamList>;
 
-export type RouteProps = RouteProp<SendFundsNavigatorStackParamList, ScreenName.EthereumCustomFees>;
+export type RouteProps = RouteProp<SendFundsNavigatorStackParamList, ScreenName.EvmCustomFees>;
