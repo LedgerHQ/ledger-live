@@ -66,6 +66,7 @@ function StepConfirmation({
         error = new TransactionHasBeenValidatedError();
       }
     }
+
     return (
       <Container shouldSpace={signed}>
         <TrackPage
