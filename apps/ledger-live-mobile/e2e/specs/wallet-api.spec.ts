@@ -1,4 +1,4 @@
-import { by, device, web } from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
+import { by, web } from "detox"; // this is because we need to use both the jest expect and the detox.expect version, which has some different assertions
 import { loadConfig } from "../bridge/server";
 import { isAndroid } from "../helpers";
 import PortfolioPage from "../models/wallet/portfolioPage";
