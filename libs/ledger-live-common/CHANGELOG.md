@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 31.4.1-nightly.1
+
+### Patch Changes
+
+- [#4256](https://github.com/LedgerHQ/ledger-live/pull/4256) [`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - added implementation only for /currencies/to endpoint on swap
+
+- [#4271](https://github.com/LedgerHQ/ledger-live/pull/4271) [`4cb6add5d9`](https://github.com/LedgerHQ/ledger-live/commit/4cb6add5d991e24acebac8b59549ced40ee1a19d) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add implementation only of /v5/currencies/all endpoint in swap
+
+- [#4258](https://github.com/LedgerHQ/ledger-live/pull/4258) [`e8a7bc5378`](https://github.com/LedgerHQ/ledger-live/commit/e8a7bc537898ef58ab312097860bae1d27999a81) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-8241): implement call to v5 /currencies/from endpoint for swap
+
+- [#4269](https://github.com/LedgerHQ/ledger-live/pull/4269) [`f7ab71db0e`](https://github.com/LedgerHQ/ledger-live/commit/f7ab71db0eaeb5c69a7c7b9aeed755f17c872797) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - added an amount property to the feature_referral_program_desktop_sidebar feature flag
+
+- Updated dependencies [[`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206), [`707e59f8b5`](https://github.com/LedgerHQ/ledger-live/commit/707e59f8b516448e6f2845288ad4cb3f5488e688)]:
+  - @ledgerhq/live-env@0.4.2-nightly.0
+  - @ledgerhq/coin-evm@0.5.1-nightly.1
+  - @ledgerhq/coin-algorand@0.2.6-nightly.1
+  - @ledgerhq/coin-framework@0.5.1-nightly.1
+  - @ledgerhq/coin-polkadot@0.3.3-nightly.1
+  - @ledgerhq/evm-tools@1.0.4-nightly.0
+  - @ledgerhq/live-network@1.1.5-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.3-nightly.1
+
 ## 31.4.1-nightly.0
 
 ### Patch Changes

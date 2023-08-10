@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.28.2-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206), [`4cb6add5d9`](https://github.com/LedgerHQ/ledger-live/commit/4cb6add5d991e24acebac8b59549ced40ee1a19d), [`e8a7bc5378`](https://github.com/LedgerHQ/ledger-live/commit/e8a7bc537898ef58ab312097860bae1d27999a81), [`707e59f8b5`](https://github.com/LedgerHQ/ledger-live/commit/707e59f8b516448e6f2845288ad4cb3f5488e688), [`f7ab71db0e`](https://github.com/LedgerHQ/ledger-live/commit/f7ab71db0eaeb5c69a7c7b9aeed755f17c872797)]:
+  - @ledgerhq/live-common@31.4.1-nightly.1
+  - @ledgerhq/live-env@0.4.2-nightly.0
+  - @ledgerhq/coin-evm@0.5.1-nightly.1
+  - @ledgerhq/coin-framework@0.5.1-nightly.1
+  - @ledgerhq/evm-tools@1.0.4-nightly.0
+
 ## 3.28.2-nightly.0
 
 ### Patch Changes

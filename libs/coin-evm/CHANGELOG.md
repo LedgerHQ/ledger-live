@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 0.5.1-nightly.1
+
+### Patch Changes
+
+- [#4268](https://github.com/LedgerHQ/ledger-live/pull/4268) [`707e59f8b5`](https://github.com/LedgerHQ/ledger-live/commit/707e59f8b516448e6f2845288ad4cb3f5488e688) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix pending transaction bug in evm family
+
+- Updated dependencies [[`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206)]:
+  - @ledgerhq/live-env@0.4.2-nightly.0
+  - @ledgerhq/coin-framework@0.5.1-nightly.1
+  - @ledgerhq/evm-tools@1.0.4-nightly.0
+  - @ledgerhq/live-network@1.1.5-nightly.0
+  - @ledgerhq/hw-app-eth@6.34.3-nightly.1
+
 ## 0.5.1-nightly.0
 
 ### Patch Changes

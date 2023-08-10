@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 0.4.2-nightly.0
+
+### Patch Changes
+
+- [#4256](https://github.com/LedgerHQ/ledger-live/pull/4256) [`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - added implementation only for /currencies/to endpoint on swap
+
 ## 0.4.1
 
 ### Patch Changes
