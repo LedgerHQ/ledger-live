@@ -128,7 +128,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "prettier": "^2.8.1",
+    "prettier": "^3.0.0",
     "rimraf": "^4.4.1",
     "turbo": "^1.10.1",
     "typescript": "^5.1.3",
