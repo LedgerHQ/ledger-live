@@ -34,10 +34,12 @@ import Clipboard from "@react-native-community/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
-import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "../../reducers/settings";
 import { setCloseWithdrawBanner } from "../../actions/settings";
+import * as Animatable from "react-native-animatable";
+
+const AnimatedView = Animatable.View;
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<
@@ -381,19 +383,17 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
 
-          {depositWithdrawBannerMobile?.enabled && displayBanner && (
-            <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-              <Flex pb={insets.bottom} mt={6}>
-                <BannerCard
-                  typeOfRightIcon="close"
-                  title={t("transfer.receive.receiveConfirmation.bannerTitle")}
-                  LeftElement={<BankMedium />}
-                  onPressDismiss={hideBanner}
-                  onPress={clickLearn}
-                />
-              </Flex>
-            </Animated.View>
-          )}
+          {depositWithdrawBannerMobile?.enabled ? (
+            displayBanner ? (
+              <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+                <WithdrawBanner hideBanner={hideBanner} onPress={clickLearn} />
+              </AnimatedView>
+            ) : (
+              <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
+                <WithdrawBanner hideBanner={hideBanner} onPress={clickLearn} />
+              </AnimatedView>
+            )
+          ) : null}
         </Flex>
       </Flex>
       {verified ? null : isModalOpened ? (
@@ -402,3 +402,24 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     </Flex>
   );
 }
+
+type BannerProps = {
+  hideBanner: () => void;
+  onPress: () => void;
+};
+
+const WithdrawBanner = ({ onPress, hideBanner }: BannerProps) => {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  return (
+    <Flex pb={insets.bottom} mt={6}>
+      <BannerCard
+        typeOfRightIcon="close"
+        title={t("transfer.receive.receiveConfirmation.bannerTitle")}
+        LeftElement={<BankMedium />}
+        onPressDismiss={hideBanner}
+        onPress={onPress}
+      />
+    </Flex>
+  );
+};

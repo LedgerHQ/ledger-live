@@ -16,7 +16,7 @@ import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ChartNetworkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
+import * as Animatable from "react-native-animatable";
 import { setCloseNetworkBanner } from "../../actions/settings";
 import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -32,6 +32,8 @@ type Props = {
 
 const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
 
+const AnimatedView = Animatable.View;
+
 export default function SelectNetwork({ navigation, route }: Props) {
   const provider = route?.params?.provider;
   const filterCurrencyIds = route?.params?.filterCurrencyIds;
@@ -45,7 +47,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
   );
 
   const dispatch = useDispatch();
-  const insets = useSafeAreaInsets();
+
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const [displayBanner, setBanner] = useState(!hasClosedNetworkBanner);
 
@@ -199,22 +201,41 @@ export default function SelectNetwork({ navigation, route }: Props) {
         keyboardDismissMode="on-drag"
       />
 
-      {depositNetworkBannerMobile?.enabled && displayBanner && (
-        <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-          <Flex pb={insets.bottom + 2} px={6} mb={6}>
-            <BannerCard
-              typeOfRightIcon="close"
-              title={t("transfer.receive.selectNetwork.bannerTitle")}
-              LeftElement={<ChartNetworkMedium />}
-              onPressDismiss={hideBanner}
-              onPress={clickLearn}
-            />
-          </Flex>
-        </Animated.View>
-      )}
+      {depositNetworkBannerMobile?.enabled ? (
+        displayBanner ? (
+          <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+            <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
+          </AnimatedView>
+        ) : (
+          <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
+            <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
+          </AnimatedView>
+        )
+      ) : null}
     </>
   );
 }
+
+type BannerProps = {
+  hideBanner: () => void;
+  onPress: () => void;
+};
+
+const NetworkBanner = ({ onPress, hideBanner }: BannerProps) => {
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  return (
+    <Flex pb={insets.bottom + 2} px={6} mb={6}>
+      <BannerCard
+        typeOfRightIcon="close"
+        title={t("transfer.receive.selectNetwork.bannerTitle")}
+        LeftElement={<ChartNetworkMedium />}
+        onPressDismiss={hideBanner}
+        onPress={onPress}
+      />
+    </Flex>
+  );
+};
 
 const styles = StyleSheet.create({
   list: {
