@@ -190,3 +190,7 @@ export function getRedelegationCompletionDate(
   const currentRedelegation = getRedelegation(account, delegation);
   return currentRedelegation ? currentRedelegation.completionDate : null;
 }
+
+export function parseAmountStringToNumber(amountString: string, unitCode): string {
+  return amountString.slice(amountString.lastIndexOf(",") + 1).replace(unitCode, "");
+}
