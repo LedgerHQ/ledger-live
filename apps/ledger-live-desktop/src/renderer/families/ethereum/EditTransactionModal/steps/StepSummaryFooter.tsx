@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { useState } from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Button from "~/renderer/components/Button";
@@ -12,59 +12,58 @@ import {
   NotEnoughNftOwned as Erc1155NotEnoughNftOwned,
 } from "@ledgerhq/live-common/families/ethereum/modules/erc1155";
 
-export class StepSummaryFooter extends PureComponent<StepProps> {
-  state = {
-    transactionHasBeenValidated: false,
-  };
+export const StepSummaryFooter: React.FC<StepProps> = props => {
+  const [transactionHasBeenValidated, setTransactionHasBeenValidated] = useState(false);
 
-  onNext = async () => {
-    const { transitionTo } = this.props;
+  const { account, parentAccount, transactionHash, status, bridgePending, transitionTo } = props;
+
+  const onNext = async () => {
     transitionTo("device");
   };
 
-  componentDidMount() {
-    const { account, parentAccount, transactionHash } = this.props;
-    if (!account || !transactionHash) return;
-    const mainAccount = getMainAccount(account, parentAccount);
-    if (mainAccount.currency.family !== "ethereum") return;
-    apiForCurrency(mainAccount.currency)
-      .getTransactionByHash(transactionHash)
-      .then(tx => {
-        if (tx?.confirmations) {
-          this.setState({ transactionHasBeenValidated: true });
-        }
-      });
+  if (!account || !transactionHash) {
+    return null;
   }
 
-  render() {
-    const { account, status, bridgePending } = this.props;
-    if (!account) return null;
-    const { errors } = status;
-    // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
-    let errorCount = Object.keys(errors).length;
-    if (
-      errors.amount &&
-      ((errors.amount as Error) instanceof Erc721NotOwnedNft ||
-        (errors.amount as Error) instanceof Erc1155NotOwnedNft ||
-        (errors.amount as Error) instanceof Erc1155NotEnoughNftOwned)
-    ) {
-      errorCount = errorCount - 1;
-    }
-    const canNext = !bridgePending && !errorCount && !this.state.transactionHasBeenValidated;
-    return (
-      <>
-        {this.state.transactionHasBeenValidated ? (
-          <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-        ) : null}
-        <Button
-          id={"send-summary-continue-button"}
-          primary
-          disabled={!canNext}
-          onClick={this.onNext}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </>
-    );
+  const mainAccount = getMainAccount(account, parentAccount);
+  if (mainAccount.currency.family !== "ethereum") {
+    return null;
   }
-}
+
+  apiForCurrency(mainAccount.currency)
+    .getTransactionByHash(transactionHash)
+    .then(tx => {
+      if (tx?.confirmations) {
+        setTransactionHasBeenValidated(true);
+      }
+    });
+
+  if (!account) {
+    return null;
+  }
+
+  const { errors } = status;
+  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
+  let errorCount = Object.keys(errors).length;
+  if (
+    errors.amount &&
+    ((errors.amount as Error) instanceof Erc721NotOwnedNft ||
+      (errors.amount as Error) instanceof Erc1155NotOwnedNft ||
+      (errors.amount as Error) instanceof Erc1155NotEnoughNftOwned)
+  ) {
+    errorCount = errorCount - 1;
+  }
+
+  const canNext = !bridgePending && !errorCount && !transactionHasBeenValidated;
+
+  return (
+    <>
+      {transactionHasBeenValidated ? (
+        <ErrorBanner error={new TransactionHasBeenValidatedError()} />
+      ) : null}
+      <Button id={"send-summary-continue-button"} primary disabled={!canNext} onClick={onNext}>
+        <Trans i18nKey="common.continue" />
+      </Button>
+    </>
+  );
+};

@@ -24,4 +24,5 @@ const AmountRelatedField = (props: Props) => {
   const Cmp = module.component;
   return <Cmp {...props} />;
 };
+
 export default AmountRelatedField;
