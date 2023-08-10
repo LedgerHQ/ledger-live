@@ -89,13 +89,23 @@ function readPackage(pkg, context) {
         glob: "*",
         invariant: "*",
       }),
+      addDependencies("@react-native/codegen", {
+        glob: "*",
+        invariant: "*",
+      }),
       // Crashes ios build if removed /!\
       addDependencies("react-native", {
         mkdirp: "*",
         yargs: "*",
+        invariant: "*",
       }),
+      
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
+        invariant: "*",
+      }),
+      addPeerDependencies("@react-native-community/cli-tools", {
+        "find-up": "*",
       }),
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",

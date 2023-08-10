@@ -20,9 +20,6 @@ import com.braze.BrazeActivityLifecycleCallbackListener;
 
 import java.util.List;
 
-import expo.modules.ApplicationLifecycleDispatcher;
-import expo.modules.ReactNativeHostWrapper;
-
 import com.shopify.reactnativeperformance.ReactNativePerformance;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -87,7 +84,7 @@ public class MainApplication extends Application implements ReactApplication {
     ReactNativePerformance.onAppStarted();
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    ApplicationLifecycleDispatcher.onApplicationCreate(this);
+    // ApplicationLifecycleDispatcher.onApplicationCreate(this);
     createNotificationChannel();
     registerActivityLifecycleCallbacks(new BrazeActivityLifecycleCallbackListener());
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -100,6 +97,6 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig);
+    // ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig);
   }
 }
