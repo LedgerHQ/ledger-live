@@ -1330,8 +1330,8 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
       ws:
-        specifier: ^7.5.2
-        version: 7.5.7
+        specifier: ^8.0.0
+        version: 8.6.0
 
   docs:
     dependencies:
@@ -2152,7 +2152,7 @@ importers:
         version: 2.2.4
       isomorphic-ws:
         specifier: ^4.0.1
-        version: 4.0.1(ws@7.5.7)
+        version: 4.0.1(ws@8.6.0)
       json-rpc-2.0:
         specifier: ^0.2.19
         version: 0.2.19
@@ -2380,8 +2380,8 @@ importers:
         specifier: ^8.3.2
         version: 8.3.2
       ws:
-        specifier: '7'
-        version: 7.5.7
+        specifier: '8'
+        version: 8.6.0
 
   libs/ledgerjs:
     dependencies:
@@ -3207,8 +3207,8 @@ importers:
         specifier: ^0.26.1
         version: 0.26.1
       ws:
-        specifier: ^7.5.2
-        version: 7.5.7
+        specifier: ^8.0.0
+        version: 8.6.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -3569,8 +3569,8 @@ importers:
         specifier: ^0.26.1
         version: 0.26.1
       ws:
-        specifier: ^7.5.2
-        version: 7.5.3
+        specifier: ^8.0.0
+        version: 8.6.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -40334,6 +40334,14 @@ packages:
       ws: 7.5.7
     dev: false
 
+  /isomorphic-ws@4.0.1(ws@8.6.0):
+    resolution: {integrity: sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==}
+    peerDependencies:
+      ws: '*'
+    dependencies:
+      ws: 8.6.0
+    dev: false
+
   /isstream@0.1.2:
     resolution: {integrity: sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g==}
 
@@ -56078,7 +56086,7 @@ packages:
     dependencies:
       jszip: 3.9.1
       tmp: 0.2.1
-      ws: 7.5.7
+      ws: 8.13.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -63517,7 +63525,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: false
 
   /x-default-browser@0.4.0:
     resolution: {integrity: sha512-7LKo7RtWfoFN/rHx1UELv/2zHGMx8MkZKDq1xENmOCTkfIqZJ0zZ26NEJX8czhnPXVcqS0ARjjfJB+eJ0/5Cvw==}
