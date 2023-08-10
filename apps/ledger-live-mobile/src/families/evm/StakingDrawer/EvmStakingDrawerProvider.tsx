@@ -6,7 +6,7 @@ import { Flex, Icon, Text, Link, IconsLegacy, Tag } from "@ledgerhq/native-ui";
 import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
-import { EthereumStakingDrawerProviderIcon } from "./EthereumStakingDrawerProviderIcon";
+import { EvmStakingDrawerProviderIcon } from "./EvmStakingDrawerProviderIcon";
 import { ListProvider } from "./types";
 
 type Props = {
@@ -28,7 +28,7 @@ type Props = {
   onSupportLinkPress({ provider }: { provider: ListProvider }): Promise<void>;
 };
 
-export function EthereumStakingDrawerProvider({
+export function EvmStakingDrawerProvider({
   provider,
   onProviderPress,
   redirectIfOneProvider,
@@ -57,7 +57,7 @@ export function EthereumStakingDrawerProvider({
   return (
     <TouchableOpacity onPress={providerPress}>
       <Flex flexDirection="row" columnGap={16}>
-        <EthereumStakingDrawerProviderIcon icon={provider.icon} />
+        <EvmStakingDrawerProviderIcon icon={provider.icon} />
         <Flex rowGap={2} alignItems="flex-start" flex={1}>
           <Flex flexDirection="row" columnGap={8} rowGap={8} mb={2}>
             <Text variant="body" fontWeight="semiBold">
