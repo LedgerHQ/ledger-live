@@ -191,6 +191,6 @@ export function getRedelegationCompletionDate(
   return currentRedelegation ? currentRedelegation.completionDate : null;
 }
 
-export function parseAmountStringToNumber(amountString: string, unitCode): string {
+export function parseAmountStringToNumber(amountString: string, unitCode: string): string {
   return amountString.slice(amountString.lastIndexOf(",") + 1).replace(unitCode, "");
 }
