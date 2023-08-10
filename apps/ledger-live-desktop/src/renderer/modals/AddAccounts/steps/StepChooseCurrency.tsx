@@ -69,7 +69,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       // Pay attention to the case!
       axelar,
       stargaze,
-      secretNetwork,
+      secret_network: secretNetwork,
       umee,
       desmos,
       onomy,

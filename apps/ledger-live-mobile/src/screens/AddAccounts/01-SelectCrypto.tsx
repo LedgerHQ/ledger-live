@@ -94,7 +94,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       stargaze,
       umee,
       desmos,
-      secretNetwork,
+      secret_network: secretNetwork,
       onomy,
       quicksilver,
       persistence,
