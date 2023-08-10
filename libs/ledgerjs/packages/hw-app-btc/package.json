@@ -70,7 +70,7 @@
     "ripemd160": "2",
     "semver": "^7.3.5",
     "sha.js": "2",
-    "tiny-secp256k1": "1.1.6",
+    "tiny-secp256k1": "2.2.3",
     "varuint-bitcoin": "1.1.2"
   },
   "devDependencies": {
