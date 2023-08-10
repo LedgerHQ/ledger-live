@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../../types";
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
@@ -25,7 +25,7 @@ const fakeCurrencyWithoutRPC: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
-  },
+  } as EthereumLikeInfo,
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 const account = makeAccount(
