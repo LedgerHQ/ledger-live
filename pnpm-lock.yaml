@@ -5239,8 +5239,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.1(esbuild@0.18.0)
       dotenv:
-        specifier: ^8.2.0
-        version: 8.6.0
+        specifier: ^16.0.0
+        version: 16.0.3
       esbuild:
         specifier: ^0.18.0
         version: 0.18.0
@@ -33455,7 +33455,6 @@ packages:
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
-    dev: false
 
   /dotenv@8.2.0:
     resolution: {integrity: sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==}
