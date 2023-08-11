@@ -263,7 +263,6 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const handleAutoRepairClose = useCallback(() => {
     setIsAutoRepairOpen(false);
     setIsPollingOn(true);
-    // TODO: reset polling ?
   }, []);
 
   let stepContent = (
