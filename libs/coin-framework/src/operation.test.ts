@@ -95,7 +95,7 @@ describe("Operation.ts", () => {
         blockHeight: null, // pending transaction
       };
       const transactionRaw = {
-        family: "ethereum",
+        family: "evm",
         amount: "1",
         recipient: "MockRecipient",
       };
@@ -112,7 +112,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: ethereum });
       const tokenAccount = genTokenAccount(0, account, usdc);
       const transactionRaw = {
-        family: "ethereum",
+        family: "evm",
         amount: "1",
         recipient: "MockRecipient",
       };
@@ -131,7 +131,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: ethereum });
       const tokenAccount = genTokenAccount(0, account, usdc);
       const transactionRaw = {
-        family: "ethereum",
+        family: "evm",
         amount: "1",
         recipient: "MockRecipient",
       };
@@ -153,7 +153,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: ethereum });
       const tokenAccount = genTokenAccount(0, account, usdc);
       const transactionRaw = {
-        family: "ethereum",
+        family: "evm",
         amount: "1",
         recipient: "MockRecipient",
       };
