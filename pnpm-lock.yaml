@@ -4217,8 +4217,8 @@ importers:
         specifier: workspace:^
         version: link:packages/shared
       '@playwright/test':
-        specifier: ~1.36.0
-        version: 1.36.0
+        specifier: ~1.37.0
+        version: 1.37.0
       concurrently:
         specifier: ^8.0.0
         version: 8.0.0
@@ -17550,13 +17550,13 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /@playwright/test@1.36.0:
-    resolution: {integrity: sha512-yN+fvMYtiyLFDCQos+lWzoX4XW3DNuaxjBu68G0lkgLgC6BP+m/iTxJQoSicz/x2G5EsrqlZTqTIP9sTgLQerg==}
+  /@playwright/test@1.37.0:
+    resolution: {integrity: sha512-181WBLk4SRUyH1Q96VZl7BP6HcK0b7lbdeKisn3N/vnjitk+9HbdlFz/L5fey05vxaAhldIDnzo8KUoy8S3mmQ==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
       '@types/node': 18.16.19
-      playwright-core: 1.36.0
+      playwright-core: 1.37.0
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -49869,8 +49869,8 @@ packages:
     hasBin: true
     dev: true
 
-  /playwright-core@1.36.0:
-    resolution: {integrity: sha512-7RTr8P6YJPAqB+8j5ATGHqD6LvLLM39sYVNsslh78g8QeLcBs5750c6+msjrHUwwGt+kEbczBj1XB22WMwn+WA==}
+  /playwright-core@1.37.0:
+    resolution: {integrity: sha512-1c46jhTH/myQw6sesrcuHVtLoSNfJv8Pfy9t3rs6subY7kARv0HRw5PpyfPYPpPtQvBOmgbE6K+qgYUpj81LAA==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
