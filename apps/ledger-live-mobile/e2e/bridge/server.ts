@@ -6,7 +6,7 @@ import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
 import { MessageData, MockDeviceEvent } from "./client";
 import { BleState } from "../../src/reducers/types";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 type ServerData = {
   type: "walletAPIResponse";
@@ -53,6 +53,18 @@ export function loadConfig(fileName: string, agreed: true = true): void {
 
 export function loadBleState(bleState: BleState) {
   postMessage({ type: "importBle", payload: bleState });
+}
+
+export function loadAccountsRaw(
+  payload: {
+    data: AccountRaw;
+    version: number;
+  }[],
+) {
+  postMessage({
+    type: "importAccounts",
+    payload,
+  });
 }
 
 export function loadAccounts(accounts: Account[]) {

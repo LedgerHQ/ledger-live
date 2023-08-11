@@ -28,9 +28,10 @@ import InvertTheme from "./theme/InvertTheme";
 import { urls } from "../config/urls";
 import { renderConnectYourDevice } from "./DeviceAction/rendering";
 import { DeviceActionError } from "./DeviceAction/common";
+import { UpdateStep } from "../screens/FirmwareUpdate";
 
-type FirmwareUpdateBannerProps = {
-  onBackFromUpdate?: () => void;
+export type FirmwareUpdateBannerProps = {
+  onBackFromUpdate: (updateState: UpdateStep) => void;
 };
 
 const requiredBatteryStatuses = [
@@ -61,6 +62,16 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
 
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
 
+  const {
+    requestCompleted: batteryRequestCompleted,
+    batteryStatusesState,
+    triggerRequest: triggerBatteryCheck,
+    cancelRequest: cancelBatteryCheck,
+  } = useBatteryStatuses({
+    deviceId: lastConnectedDevice?.deviceId,
+    statuses: requiredBatteryStatuses,
+  });
+
   const onExperimentalFirmwareUpdate = useCallback(() => {
     if (newFwUpdateUxFeatureFlag?.enabled) {
       navigation.navigate(NavigatorName.Manager, {
@@ -69,7 +80,10 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
           device: lastConnectedDevice,
           deviceInfo: lastSeenDevice?.deviceInfo,
           firmwareUpdateContext: latestFirmware,
-          onBackFromUpdate,
+          onBackFromUpdate: (updateState: UpdateStep) => {
+            cancelBatteryCheck();
+            if (onBackFromUpdate) onBackFromUpdate(updateState);
+          },
         },
       });
       return;
@@ -93,18 +107,9 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     lastConnectedDevice,
     lastSeenDevice?.deviceInfo,
     latestFirmware,
+    cancelBatteryCheck,
     onBackFromUpdate,
   ]);
-
-  const {
-    requestCompleted: batteryRequestCompleted,
-    batteryStatusesState,
-    triggerRequest: triggerBatteryCheck,
-    cancelRequest: cancelBatteryCheck,
-  } = useBatteryStatuses({
-    deviceId: lastConnectedDevice?.deviceId,
-    statuses: requiredBatteryStatuses,
-  });
 
   // Effect that will check the battery of stax before triggering the update and display a warning preventing the update
   // in case the battery is too low and the device is not charging
