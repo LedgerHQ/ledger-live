@@ -16,7 +16,6 @@ import {
   counterValueCurrencySelector,
   discreetModeSelector,
   languageSelector,
-  localeSelector,
 } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
 import { TAB_BAR_HEIGHT } from "../../../components/TabBar/shared";
