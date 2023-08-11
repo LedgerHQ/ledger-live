@@ -1,3 +1,5 @@
+// FIXME: to update when implementing edit transaction on evm
+
 import invariant from "invariant";
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -32,7 +34,7 @@ import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivation
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
-import { openModal } from "~/renderer/actions/modals";
+// import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 
@@ -216,14 +218,14 @@ const StepReceiveFunds = (props: StepProps) => {
         account: name,
       });
       if (receiveStakingFlowConfig?.params?.[id]?.direct) {
-        dispatch(
-          openModal("MODAL_ETH_STAKE", {
-            account: mainAccount,
-            hasCheckbox: true,
-            singleProviderRedirectMode: false,
-            source: "receive",
-          }),
-        );
+        // dispatch(
+        //   openModal("MODAL_ETH_STAKE", {
+        //     account: mainAccount,
+        //     hasCheckbox: true,
+        //     singleProviderRedirectMode: false,
+        //     source: "receive",
+        //   }),
+        // );
         onClose();
       } else {
         transitionTo("stakingFlow");
@@ -231,6 +233,7 @@ const StepReceiveFunds = (props: StepProps) => {
     } else {
       onClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     mainAccount,
     currencyName,
