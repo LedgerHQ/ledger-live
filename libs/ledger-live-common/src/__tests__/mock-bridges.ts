@@ -14,8 +14,9 @@ jest.setTimeout(120000);
 const mockedCoins: CryptoCurrencyId[] = [
   "bitcoin",
   "zcash",
-  "ethereum",
-  "ethereum_classic",
+  // FIXME: enable when we have a bridge mock for evm
+  // "ethereum",
+  // "ethereum_classic",
   "ripple",
   "tezos",
   "stellar",
