@@ -199,7 +199,10 @@ export function completeExchangeLogic(
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  if (transaction.family !== mainFromAccountFamily) {
+  if (
+    transaction.family !== mainFromAccountFamily &&
+    !(mainFromAccountFamily === "evm" && transaction.family === "ethereum")
+  ) {
     return Promise.reject(
       new Error(
         `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`,

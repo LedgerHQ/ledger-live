@@ -9,7 +9,7 @@ import type { PlatformTransaction } from "./types";
 const ethBridge = jest.fn();
 jest.mock("../generated/platformAdapter", () => {
   return {
-    ethereum: {
+    evm: {
       getPlatformTransactionSignFlowInfos: function () {
         return ethBridge();
       },

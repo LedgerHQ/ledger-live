@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 
@@ -22,8 +21,6 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     ethBridge.mockClear();
   });
 
-  const dummyAccount = {} as Account;
-
   it("calls the bridge if the implementation exists", () => {
     // Given
     const tx: WalletAPITransaction = {
@@ -33,7 +30,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    getWalletAPITransactionSignFlowInfos({ tx, account: dummyAccount });
+    getWalletAPITransactionSignFlowInfos(tx);
 
     // Then
     expect(ethBridge).toBeCalledTimes(1);
@@ -56,10 +53,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos({
-      tx,
-      account: dummyAccount,
-    });
+    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos(tx);
 
     // Then
     expect(ethBridge).toBeCalledTimes(0);
