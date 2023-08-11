@@ -8,7 +8,6 @@ import { localeSelector } from "~/renderer/reducers/settings";
  * @param d2 date two
  * @returns true if dates are equals, else returns false.
  */
-
 function dateEq(d1: Date, d2: Date) {
   return (
     d1.getFullYear() === d2.getFullYear() &&
@@ -19,11 +18,10 @@ function dateEq(d1: Date, d2: Date) {
 
 /**
  *
- * @param from date from which to execute the function. Default: today.
- * @returns an object containing 3 dates relatives to `from`: yesterday, today and tomorrow.
+ * @returns an object containing 3 dates relatives to the current time: yesterday, today and tomorrow.
  */
-const getDatesAround = (from: Date = new Date()) => {
-  const today = from;
+const getDatesAround = () => {
+  const today = new Date();
 
   const todayAsTime = today.getTime();
   const todayAsDate = today.getDate();
@@ -36,21 +34,30 @@ const getDatesAround = (from: Date = new Date()) => {
 
 /**
  *
+ * @dev default options for useDateFormatter.
+ */
+type useDateFormatterOptions = {
+  calendar?: boolean;
+};
+
+/**
+ *
  * @returns a function that format a date into a string based on the current
  * locale.
  */
-const useDateFormatter = () => {
+const useDateFormatter = (opts: useDateFormatterOptions, intlOpts?: Intl.DateTimeFormatOptions) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
   const f = (date: Date) => {
-    const { yesterday, today, tomorrow } = getDatesAround(date);
+    let formatedDate = new Intl.DateTimeFormat(locale, intlOpts).format(date);
+    if (!opts.calendar) return formatedDate;
+
+    const { yesterday, today, tomorrow } = getDatesAround();
 
     const isToday = dateEq(today, date);
     const isYesterday = dateEq(yesterday, date);
     const isTomorrow = dateEq(tomorrow, date);
-
-    let formatedDate = new Intl.DateTimeFormat(locale).format(date);
 
     formatedDate = isToday
       ? formatedDate + ` – ${t("calendar.today")}`

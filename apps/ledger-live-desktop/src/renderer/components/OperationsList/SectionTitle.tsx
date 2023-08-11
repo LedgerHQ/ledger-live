@@ -10,7 +10,7 @@ type Props = {
 
 const SectionTitle = ({ date }: Props) => {
   const theme = useTheme();
-  const { f } = useDateFormatter();
+  const { f } = useDateFormatter({ calendar: true });
 
   return (
     <HeaderWrapper>
