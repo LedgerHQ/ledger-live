@@ -141,7 +141,7 @@
     "@ethersproject/properties": "^5.7.0",
     "@ethersproject/strings": "^5.7.0",
     "@hashgraph/sdk": "^2.10.1",
-    "@keplr-wallet/cosmos": "^0.9.16",
+    "@keplr-wallet/cosmos": "^0.12.0",
     "@keplr-wallet/proto-types": "^0.10.4",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
