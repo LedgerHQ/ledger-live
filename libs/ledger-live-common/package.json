@@ -127,7 +127,7 @@
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-org-chain/chain-jslib": "1.1.2",
-    "@elrondnetwork/erdjs": "11.0.0",
+    "@elrondnetwork/erdjs": "11.1.2",
     "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@dfinity/agent": "^0.15.6",
     "@dfinity/candid": "^0.15.6",

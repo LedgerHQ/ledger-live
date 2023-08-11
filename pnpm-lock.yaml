@@ -1845,8 +1845,8 @@ importers:
         specifier: ^0.15.6
         version: 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
       '@elrondnetwork/erdjs':
-        specifier: 11.0.0
-        version: 11.0.0
+        specifier: 11.1.2
+        version: 11.1.2
       '@elrondnetwork/erdjs-network-providers':
         specifier: ^1.1.2
         version: 1.2.0
@@ -12223,8 +12223,8 @@ packages:
       json-bigint: 1.0.0
     dev: false
 
-  /@elrondnetwork/erdjs@11.0.0:
-    resolution: {integrity: sha512-XUvWYcEsKp5NKf81Avz0m3yHvHRzkyyztWFH+M/XEDhsPAy7FyZAY0HCH8ri5JvDhDr45IaE3Nlh6oeXqlOc9A==}
+  /@elrondnetwork/erdjs@11.1.2:
+    resolution: {integrity: sha512-KHjN2nma0j29hWCJRJO6MlZG2GqH+cebqFmR3exkeHOYINAZbTvf1AVyHjQoo8UQvWBJDz0vejffc1BiaQYjrA==}
     deprecated: 'WARNING: This project has been moved to @multiversx/sdk-core. Use @multiversx/sdk-core instead.'
     dependencies:
       '@elrondnetwork/transaction-decoder': 1.0.0
