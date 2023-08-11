@@ -1,5 +1,7 @@
+// FIXME: to update when implementing edit transaction on evm
+
 import React, { useMemo, Component, useCallback } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Trans, TFunction, useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -70,7 +72,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
 import { State } from "~/renderer/reducers";
-import { openModal } from "~/renderer/actions/modals";
+// import { openModal } from "~/renderer/actions/modals";
 import { getLLDCoinFamily } from "~/renderer/families";
 
 const mapStateToProps = (
@@ -244,34 +246,42 @@ const OperationD = (props: Props) => {
     : undefined;
   const editEthTx = useFeature("editEthTx");
   const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
-  const dispatch = useDispatch();
-  const handleOpenEditModal = useCallback(
-    (account, parentAccount, transactionRaw, transactionHash) => {
-      setDrawer(undefined);
-      if (subOperations.length > 0 && isToken) {
-        // if the operation is a token operation,(ERC-20 send), in order to speedup/cancel we need to find the subAccount
-        const opAccount = findSubAccountById(account, subOperations[0].accountId);
-        dispatch(
-          openModal("MODAL_EDIT_TRANSACTION", {
-            account: opAccount,
-            parentAccount: account,
-            transactionRaw,
-            transactionHash,
-          }),
-        );
-      } else {
-        dispatch(
-          openModal("MODAL_EDIT_TRANSACTION", {
-            account,
-            parentAccount,
-            transactionRaw,
-            transactionHash,
-          }),
-        );
-      }
-    },
-    [dispatch, isToken, subOperations],
-  );
+  // const dispatch = useDispatch();
+  // const handleOpenEditModal = useCallback(
+  //   (account, parentAccount, transactionRaw, transactionHash) => {
+  //     setDrawer(undefined);
+  //     if (subOperations.length > 0 && isToken) {
+  //       // if the operation is a token operation,(ERC-20 send), in order to speedup/cancel we need to find the subAccount
+  //       const opAccount = findSubAccountById(account, subOperations[0].accountId);
+  //       dispatch(
+  //         openModal("MODAL_EDIT_TRANSACTION", {
+  //           account: opAccount,
+  //           parentAccount: account,
+  //           transactionRaw,
+  //           transactionHash,
+  //         }),
+  //       );
+  //     } else {
+  //       dispatch(
+  //         openModal("MODAL_EDIT_TRANSACTION", {
+  //           account,
+  //           parentAccount,
+  //           transactionRaw,
+  //           transactionHash,
+  //         }),
+  //       );
+  //     }
+  //   },
+  //   [dispatch, isToken, subOperations],
+  // );
+
+  const handleOpenEditModal = (
+    _account: unknown,
+    _parentAccount: unknown,
+    _transactionRaw: unknown,
+    _transactionHash: unknown,
+  ) => {};
+
   // pending transactions that exceeds 5 minutes are considered as stuck transactions
   const isStuck =
     new Date().getTime() - operation.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
