@@ -6,7 +6,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
  *
  * @param d1 date one
  * @param d2 date two
- * @returns true if date are equals, else returns false.
+ * @returns true if dates are equals, else returns false.
  */
 
 function dateEq(d1: Date, d2: Date) {
