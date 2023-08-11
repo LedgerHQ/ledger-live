@@ -18,7 +18,10 @@ export default function prepareSignTransaction(
   });
 
   return bridge.updateTransaction(t2, {
-    userGasLimit: txData.gasLimit,
+    customGasLimit: txData.gasLimit,
+    type: 1,
+    maxFeePerGas: undefined,
+    maxPriorityFeePerGas: undefined,
     ...txData,
   });
 }
