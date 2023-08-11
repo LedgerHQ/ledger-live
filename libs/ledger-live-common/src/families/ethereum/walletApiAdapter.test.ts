@@ -1,13 +1,10 @@
 import { EthereumTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import eth from "./walletApiAdapter";
 import { Transaction } from "./types";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for ETH platform tx", () => {
-    const dummyAccount = { currency: { family: "ethereum" } } as Account;
-
     test("without fees provided", () => {
       const ethPlatformTx: WalletAPITransaction = {
         family: "ethereum",
@@ -21,10 +18,8 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         recipient: ethPlatformTx.recipient,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } = eth.getWalletAPITransactionSignFlowInfos({
-        tx: ethPlatformTx,
-        account: dummyAccount,
-      });
+      const { canEditFees, hasFeesProvided, liveTx } =
+        eth.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
 
       expect(canEditFees).toBe(true);
 
@@ -51,10 +46,8 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         feesStrategy: "custom",
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } = eth.getWalletAPITransactionSignFlowInfos({
-        tx: ethPlatformTx,
-        account: dummyAccount,
-      });
+      const { canEditFees, hasFeesProvided, liveTx } =
+        eth.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
 
       expect(canEditFees).toBe(true);
 

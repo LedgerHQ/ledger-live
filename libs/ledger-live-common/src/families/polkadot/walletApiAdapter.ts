@@ -11,7 +11,7 @@ const CAN_EDIT_FEES = false;
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIPolkadotTransaction,
   Transaction
-> = ({ tx }) => ({
+> = tx => ({
   ...tx,
   era: tx.era ? `${tx.era}` : undefined,
 });
@@ -19,10 +19,10 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIPolkadotTransaction,
   Transaction
-> = params => {
+> = tx => {
   return {
     canEditFees: CAN_EDIT_FEES,
-    liveTx: convertToLiveTransaction(params),
+    liveTx: convertToLiveTransaction(tx),
     hasFeesProvided: false,
   };
 };
