@@ -1837,10 +1837,10 @@ importers:
         version: 1.1.2
       '@dfinity/agent':
         specifier: ^0.15.6
-        version: 0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+        version: 0.15.6(@dfinity/candid@0.18.0)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
       '@dfinity/candid':
-        specifier: ^0.15.6
-        version: 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+        specifier: ^0.18.0
+        version: 0.18.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
       '@dfinity/principal':
         specifier: ^0.15.6
         version: 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
@@ -12102,13 +12102,13 @@ packages:
       ajv-keywords: 3.5.2(ajv@6.12.6)
     dev: true
 
-  /@dfinity/agent@0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
+  /@dfinity/agent@0.15.6(@dfinity/candid@0.18.0)(@dfinity/principal@0.15.6)(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
     resolution: {integrity: sha512-Ch+tXAszPap0zwRgr/oFEgJLDld4RDwBdFDqR1JUg38xhHWTFMrTkjMT6uQFvqf6d2wDXnh3zwhqbg5P7OCv7A==}
     peerDependencies:
       '@dfinity/candid': ^0.15.6
       '@dfinity/principal': ^0.15.6
     dependencies:
-      '@dfinity/candid': 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+      '@dfinity/candid': 0.18.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
       '@dfinity/principal': 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
       base64-arraybuffer: 0.2.0
       bignumber.js: 9.1.1
@@ -12125,11 +12125,10 @@ packages:
       - typescript
     dev: false
 
-  /@dfinity/candid@0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
-    resolution: {integrity: sha512-Q9PGvhTE/1dTLfSo0pu0+ifzA7NA4X1rgSy9TE6O1Glk6Kl8Nf+Pg2sCHS2hWt0RAiKfR2glEVlbUAm6S8vRxA==}
+  /@dfinity/candid@0.18.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3):
+    resolution: {integrity: sha512-w6EcvVE5CZNu3ysjuflhOAsZ8MqVo1XDNe1Bp7/i0WqHUGlF1S4ZxHPun7AjZkNfTiZ3wcmlUjgZyfCgwTvPyA==}
     dependencies:
       '@dfinity/principal': 0.15.6(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
-      ts-node: 10.9.1(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
