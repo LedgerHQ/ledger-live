@@ -114,10 +114,27 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const actionsMap: Record<"buy" | "swap" | "receive", boolean> = {
+    buy: availableOnBuy,
+    swap: availableOnSwap,
+    receive: availableOnReceive,
+  };
+
+  /** Capitalise first word for i18n list formatter to produce title e.g. "Buy or swap" */
+  const availableActionsFormatted = Object.keys(actionsMap)
+    .filter(action => actionsMap[action as keyof typeof actionsMap])
+    .map((action, i) =>
+      i === 0 ? `${action.substring(0, 1).toUpperCase()}${action.slice(1)}` : action,
+    );
+
   return (
     <Modal name={modalName} centered>
       <ModalBody
-        title={t("stake.noFundsModal.title")}
+        title={t("stake.noFundsModal.title", {
+          actions: availableActionsFormatted,
+          style: "long",
+          type: "disjunction",
+        })}
         onClose={onClose}
         render={() => (
           <Box paddingX={20}>
