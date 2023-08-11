@@ -129,7 +129,7 @@ export class OperationsList extends PureComponent<Props, State> {
           )}
           {groupedOperations?.sections.map(group => (
             <Box key={group.day.toISOString()}>
-              <SectionTitle day={group.day} />
+              <SectionTitle date={group.day} />
               <Box p={0}>
                 {group.data.map(operation => {
                   const account = accountsMap[operation.accountId];
