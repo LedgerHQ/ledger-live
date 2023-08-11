@@ -68,6 +68,7 @@ import NftViewerBackground from "./NftViewerBackground";
 import NftViewerScreenHeader from "./NftViewerScreenHeader";
 import invariant from "invariant";
 import DiscreetModeContext, { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { EvmNftTransaction, Transaction } from "@ledgerhq/coin-evm/types/index";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -209,31 +210,19 @@ const NftViewer = ({ route }: Props) => {
   };
 
   const goToRecipientSelection = useCallback(() => {
-    const bridge = getAccountBridge(account);
+    const bridge = getAccountBridge<Transaction>(account);
 
-    // FIXME: fix typing (defaultTransaction and transaction are "EthTransaction | EvmTransaction" until Ethereum / evm family merge)
     const defaultTransaction = bridge.createTransaction(account);
-    let transaction;
-    if (defaultTransaction.family === "evm") {
-      transaction = bridge.updateTransaction(defaultTransaction, {
-        mode: nft?.standard?.toLowerCase(),
-        nft: {
-          tokenId: nft?.tokenId,
-          // Quantity is set to Infinity first to allow the user to change it on the amount page
-          quantity: new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1),
-          contract: nft?.contract,
-        },
-      });
-      // TODO: should be deleted after doing the merge
-    } else if (defaultTransaction.family === "ethereum") {
-      transaction = bridge.updateTransaction(defaultTransaction, {
-        tokenIds: [nft?.tokenId],
+    const transaction = bridge.updateTransaction(defaultTransaction, {
+      mode: nft.standard.toLowerCase() as EvmNftTransaction["mode"],
+      nft: {
+        tokenId: nft.tokenId,
         // Quantity is set to Infinity first to allow the user to change it on the amount page
-        quantities: [new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1)],
-        collection: nft?.contract,
-        mode: `${nft?.standard?.toLowerCase()}.transfer`,
-      });
-    }
+        quantity: new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1),
+        contract: nft.contract,
+        collectionName: collectionMetadata?.tokenName ?? "",
+      },
+    });
 
     track("button_clicked", {
       button: "Send NFT",
@@ -246,7 +235,7 @@ const NftViewer = ({ route }: Props) => {
         transaction,
       },
     });
-  }, [account, nft, nftCapabilities.hasQuantity, navigation]);
+  }, [account, nft, nftCapabilities.hasQuantity, navigation, collectionMetadata]);
 
   const properties = useMemo(() => {
     if (isLoading && !nftMetadata?.properties?.length) {
