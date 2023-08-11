@@ -7,13 +7,15 @@ import Event from "./Event";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-type ListProps = {
+type Props = {
   showExtraProps: boolean;
   hideSyncEvents: boolean;
+  hidden: boolean;
 };
 
-const EventList: React.FC<ListProps> = ({ showExtraProps, hideSyncEvents }) => {
+const EventList: React.FC<Props> = ({ showExtraProps, hideSyncEvents, hidden }) => {
   const { items } = useAnalyticsEventsLog();
+  if (hidden) return null;
   return (
     <ScrollView>
       <AnimatedFlex paddingBottom={100} flexDirection="column-reverse">
