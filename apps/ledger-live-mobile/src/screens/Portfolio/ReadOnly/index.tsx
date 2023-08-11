@@ -37,6 +37,7 @@ import {
 import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
 import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletTabNavigator";
+import { UpdateStep } from "../../FirmwareUpdate";
 
 const maxAssetsToDisplay = 5;
 
@@ -158,6 +159,13 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
 
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
+  const onBackFromUpdate = useCallback(
+    (_updateState: UpdateStep) => {
+      navigation.goBack();
+    },
+    [navigation],
+  );
+
   useFocusEffect(
     useCallback(() => {
       setScreen && setScreen("Wallet");
@@ -171,7 +179,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   return (
     <>
       <Flex px={6} py={4}>
-        <FirmwareUpdateBanner />
+        <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />

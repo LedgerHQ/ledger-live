@@ -1,4 +1,4 @@
-import { Image, Linking } from "react-native";
+import { Image } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
   updateFirmwareActionArgs,
@@ -40,8 +40,10 @@ import {
   renderImageCommitRequested,
   renderImageLoadRequested,
 } from "../../components/DeviceAction/rendering";
-import { useUpdateFirmwareAndRestoreSettings } from "./useUpdateFirmwareAndRestoreSettings";
-import { urls } from "../../config/urls";
+import {
+  UpdateStep,
+  useUpdateFirmwareAndRestoreSettings,
+} from "./useUpdateFirmwareAndRestoreSettings";
 import { TrackScreen } from "../../analytics";
 import ImageHexProcessor from "../../components/CustomImage/ImageHexProcessor";
 import { targetDataDimensions } from "../CustomImage/shared";
@@ -50,12 +52,28 @@ import { ImageSourceContext } from "../../components/CustomImage/StaxFramedImage
 import Button from "../../components/wrappedUi/Button";
 import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
+import UpdateReleaseNotes from "./UpdateReleaseNotes";
 
-type FirmwareUpdateProps = {
+// Screens/components navigating to this screen shouldn't know the implementation fw update
+// -> re-exporting useful types.
+export type { UpdateStep };
+
+export type FirmwareUpdateProps = {
   device: Device;
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
-  onBackFromUpdate?: () => void;
+
+  /**
+   * Called when the user leaves the firmware update screen
+   *
+   * Two possible reasons:
+   * - the update has completed
+   * - the user quits before the completion of the update
+   *
+   * @param updateState The current state of the update when the user leaves the screen
+   */
+  onBackFromUpdate?: (updateState: UpdateStep) => void;
+
   updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
 };
 
@@ -135,23 +153,12 @@ export const FirmwareUpdate = ({
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const dispatch = useDispatch();
 
-  const quitUpdate = useCallback(() => {
-    if (onBackFromUpdate) {
-      onBackFromUpdate();
-    } else {
-      navigation.goBack();
-    }
-  }, [navigation, onBackFromUpdate]);
-
-  const onOpenReleaseNotes = useCallback(() => {
-    Linking.openURL(urls.fwUpdateReleaseNotes[device.modelId]);
-  }, [device.modelId]);
-
   const productName = getDeviceModel(device.modelId).productName;
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
 
   const {
+    startUpdate,
     connectManagerState,
     updateActionState,
     updateStep,
@@ -162,8 +169,9 @@ export const FirmwareUpdate = ({
     restoreAppsState,
     noOfAppsToReinstall,
     deviceLockedOrUnresponsive,
-    hasReconnectErrors,
     restoreStepDeniedError,
+    hasReconnectErrors,
+    userSolvableError,
     skipCurrentRestoreStep,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
@@ -182,6 +190,14 @@ export const FirmwareUpdate = ({
     }),
     [staxImageSource],
   );
+
+  const quitUpdate = useCallback(() => {
+    if (onBackFromUpdate) {
+      onBackFromUpdate(updateStep);
+    } else {
+      navigation.goBack();
+    }
+  }, [navigation, onBackFromUpdate, updateStep]);
 
   useEffect(() => {
     if (updateStep === "completed") {
@@ -537,37 +553,25 @@ export const FirmwareUpdate = ({
       );
     }
 
-    const error =
-      updateActionState.error ??
-      restoreAppsState.error ??
-      installLanguageState.error ??
-      staxLoadImageState.error ??
-      staxFetchImageState.error;
-
-    // a TransportRaceCondition error is to be expected since we chain multiple
-    // device actions that use different transport acquisition paradigms
-    // the action should, however, retry to execute and resolve the error by itself
-    // no need to present the error to the user
-    if (
-      error &&
-      !["TransportRaceCondition", "LockedDeviceError", "UnresponsiveDeviceError"].includes(
-        error.name,
-      )
-    ) {
+    if (userSolvableError) {
       return (
         <DeviceActionError
           device={device}
           t={t}
-          errorName={error.name}
+          errorName={userSolvableError.name}
           translationContext="FirmwareUpdate"
         >
-          <TrackScreen category={`Error: ${error.name}`} refreshSource={false} type="drawer" />
+          <TrackScreen
+            category={`Error: ${userSolvableError.name}`}
+            refreshSource={false}
+            type="drawer"
+          />
           <Button
             event="button_clicked"
             eventProperties={{
               button: "Retry flow",
               page: "Firmware update",
-              drawer: `Error: ${error.name}`,
+              drawer: `Error: ${userSolvableError.name}`,
             }}
             type="main"
             outline={false}
@@ -583,7 +587,7 @@ export const FirmwareUpdate = ({
               eventProperties={{
                 button: "Quit flow",
                 page: "Firmware update",
-                drawer: `Error: ${error.name}`,
+                drawer: `Error: ${userSolvableError.name}`,
               }}
               type="main"
               onPress={quitUpdate}
@@ -636,17 +640,13 @@ export const FirmwareUpdate = ({
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
-    staxLoadImageState.error,
     restoreAppsState.allowManagerRequestedWording,
     connectManagerState.allowManagerRequestedWording,
-    restoreAppsState.error,
     installLanguageState.languageInstallationRequested,
-    installLanguageState.error,
     restoreStepDeniedError,
-    updateActionState.error,
+    userSolvableError,
     updateActionState.step,
     updateActionState.progress,
-    staxFetchImageState.error,
     t,
     device,
     theme,
@@ -660,7 +660,12 @@ export const FirmwareUpdate = ({
 
   return (
     <>
-      {fullUpdateComplete ? (
+      {updateStep === "start" ? (
+        <UpdateReleaseNotes
+          onContinue={startUpdate}
+          firmwareNotes={firmwareUpdateContext.osu?.notes}
+        />
+      ) : fullUpdateComplete ? (
         <Flex flex={1} px={7} pb={7}>
           <TrackScreen category={`${productName} OS successfully updated`} />
           <Flex flex={1} justifyContent="center" alignItems="center">
@@ -684,9 +689,6 @@ export const FirmwareUpdate = ({
           <Flex>
             <Button type="main" outline={false} onPress={quitUpdate}>
               {t("FirmwareUpdate.finishUpdateCTA")}
-            </Button>
-            <Button type="default" mt={5} mb={9} outline={false} onPress={onOpenReleaseNotes}>
-              {t("FirmwareUpdate.viewUpdateChangelog")}
             </Button>
           </Flex>
         </Flex>

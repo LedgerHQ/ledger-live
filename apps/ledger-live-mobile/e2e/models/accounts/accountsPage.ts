@@ -11,4 +11,7 @@ export default class accountsPage {
   async waitForAccountsPageToLoad() {
     await waitForElementById("accounts-list-title");
   }
+  async waitForAccountsCoinPageToLoad(coin: string) {
+    await waitForElementById(`accounts-title-${coin}`);
+  }
 }

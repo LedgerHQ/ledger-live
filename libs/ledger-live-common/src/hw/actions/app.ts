@@ -102,7 +102,7 @@ export type AppResult = {
 
 type AppAction = Action<AppRequest, AppState, AppResult>;
 
-type Event =
+export type Event =
   | {
       type: "error";
       error: Error;

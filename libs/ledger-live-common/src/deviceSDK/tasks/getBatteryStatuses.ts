@@ -52,6 +52,8 @@ function internalGetBatteryStatusesTask({
               allowedErrors: [{ maxRetries: 3, errorClass: DisconnectedDevice }],
             })(transportRef, {}),
           );
+
+          // Runs sequentially the wanted status queries. Waits that the current observable completes.
           return concat(...statusesObservable);
         }),
         map(value => {

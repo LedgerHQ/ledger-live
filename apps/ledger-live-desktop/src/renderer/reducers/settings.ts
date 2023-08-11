@@ -394,9 +394,7 @@ const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`
 export type CurrencySettings = {
   confirmationsNb: number;
 };
-export type CurrenciesSettings = {
-  [id: string]: CurrencySettings;
-};
+
 type ConfirmationDefaults = {
   confirmationsNb:
     | {

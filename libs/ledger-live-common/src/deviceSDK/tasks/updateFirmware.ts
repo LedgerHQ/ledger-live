@@ -2,7 +2,7 @@ import {
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
-  LockedDeviceError,
+  UnresponsiveDeviceError,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -89,7 +89,7 @@ function internalUpdateFirmwareTask({
                     if (e.type === "unresponsive") {
                       return {
                         type: "error" as const,
-                        error: new LockedDeviceError(),
+                        error: new UnresponsiveDeviceError(),
                         // If unresponsive, the command is still waiting for a response
                         retrying: true,
                       };
