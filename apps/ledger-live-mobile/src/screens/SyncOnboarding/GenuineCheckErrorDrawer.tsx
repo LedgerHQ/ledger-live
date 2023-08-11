@@ -110,15 +110,14 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   else if (error) {
     content = (
       <>
-        <Flex p={3}>
-          <GenericErrorView
-            error={error}
-            Icon={WarningSolidMedium}
-            iconColor="warning.c70"
-            hasExportLogButton={false}
-          />
-        </Flex>
-        <Button type="main" mb={4} onPress={onRetry}>
+        <GenericErrorView
+          error={error}
+          Icon={WarningSolidMedium}
+          iconColor="warning.c70"
+          hasExportLogButton={false}
+          renderedInType="drawer"
+        />
+        <Button type="main" mt={4} onPress={onRetry}>
           {t("earlySecurityCheck.genuineCheckErrorDrawer.retryCta")}
         </Button>
         <Button onPress={onCancel}>

@@ -89,6 +89,7 @@ export const LanguagePrompt: React.FC<LanguagePromptProps> = ({ device }) => {
               setDeviceForChangeLanguageAction(null);
               closeDeviceLanguagePrompt();
             }}
+            renderedInType="drawer"
           />
         ) : (
           <ChangeDeviceLanguagePrompt

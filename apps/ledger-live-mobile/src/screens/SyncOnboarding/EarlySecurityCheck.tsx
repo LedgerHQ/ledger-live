@@ -88,7 +88,6 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   isAlreadyGenuine = false,
   onCancelOnboarding,
 }) => {
-  // const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
   const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
