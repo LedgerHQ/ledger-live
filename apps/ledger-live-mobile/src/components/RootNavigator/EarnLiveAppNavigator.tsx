@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createStackNavigator, StackNavigationProp } from "@react-navigation/stack";
 
 import { useTheme } from "styled-components/native";
@@ -14,6 +14,7 @@ import { EarnScreen } from "../../screens/PTX/Earn";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { accountsSelector } from "../../reducers/accounts";
+import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -25,6 +26,9 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
+  const [modalOpened, setModalOpened] = useState(false);
+  const openModal = useCallback(() => setModalOpened(true), []);
+  const closeModal = useCallback(() => setModalOpened(false), []);
 
   useEffect(() => {
     if (!ptxEarn?.enabled) {
@@ -84,33 +88,32 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
           break;
         }
         case "info-modal": {
-          navigation.navigate(NavigatorName.Base, {
-            screen: NavigatorName.Earn,
-            drawer: {
-              id: "EarnInfoDrawer",
-              props: {
-                message: _props.route.params.message,
-                messageTitle: _props.route.params.messageTitle,
-              },
-            },
-          });
+          openModal();
           break;
         }
       }
     }
     deeplinkRouting();
-  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route]);
+  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route, openModal]);
 
   return (
-    <EarnScreen
-      {..._props}
-      route={{
-        ..._props.route,
-        params: {
-          platform: ptxEarn?.params?.liveAppId || "earn",
-        },
-      }}
-    />
+    <>
+      <EarnScreen
+        {..._props}
+        route={{
+          ..._props.route,
+          params: {
+            platform: ptxEarn?.params?.liveAppId || "earn",
+          },
+        }}
+      />
+      <EarnInfoDrawer
+        modalOpened={modalOpened}
+        closeModal={closeModal}
+        message={_props.route.params.message || ""}
+        messageTitle={_props.route.params.messageTitle || ""}
+      />
+    </>
   );
 };
 

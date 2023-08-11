@@ -35,8 +35,6 @@ export function RootDrawerSelector() {
   switch (drawer.id) {
     case "EthStakingDrawer":
       return <EthereumStakingDrawer />;
-    case "EarnInfoDrawer":
-      return <EarnInfoDrawer />;
     case InitialDrawerID.PTXServicesAppleDrawerKey:
       return <PTXServicesAppleWarning />;
     default:
