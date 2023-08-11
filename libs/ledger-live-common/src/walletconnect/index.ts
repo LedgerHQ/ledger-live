@@ -1,15 +1,15 @@
 /* eslint-disable no-fallthrough */
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, AnyMessage, EIP712Message } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
-import sha from "sha.js";
+import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";
+import sha from "sha.js";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
-import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
-import type { Account, AnyMessage } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 type MessageData = {
   currency: CryptoCurrency;
@@ -51,6 +51,14 @@ export type WCCallRequest =
       data: Transaction;
     };
 type Parser = (account: Account, payload: WCPayload) => Promise<WCCallRequest>;
+
+const domainHash = (message: EIP712Message): Buffer => {
+  return TypedDataUtils.hashStruct("EIP712Domain", message.domain, message.types, true);
+};
+const messageHash = (message: EIP712Message): Buffer => {
+  return TypedDataUtils.hashStruct(message.primaryType, message.message, message.types, true);
+};
+
 export const parseCallRequest: Parser = async (account, payload) => {
   let wcTransactionData, bridge, transaction, message, rawMessage, hashes;
 

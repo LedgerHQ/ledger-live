@@ -91,6 +91,7 @@ export function signTransactionLogic(
 
   if (
     accountFamily !== platformTransaction.family &&
+    // `transaction` is a RawPlatformTransaction, so it doesn't have a evm family and use ethereum instead
     !(accountFamily === "evm" && transaction.family === "ethereum")
   ) {
     return Promise.reject(
@@ -201,6 +202,7 @@ export function completeExchangeLogic(
 
   if (
     transaction.family !== mainFromAccountFamily &&
+    // `transaction` is a RawPlatformTransaction, so it doesn't have a evm family and use ethereum instead
     !(mainFromAccountFamily === "evm" && transaction.family === "ethereum")
   ) {
     return Promise.reject(

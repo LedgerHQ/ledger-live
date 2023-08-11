@@ -1,7 +1,7 @@
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { EthereumTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
-import eth from "./walletApiAdapter";
+import evm from "./walletApiAdapter";
 
 // FIXME: add tests for tx of type 2
 
@@ -25,7 +25,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
-        eth.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
 
       expect(canEditFees).toBe(true);
 
@@ -57,7 +57,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
-        eth.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
 
       expect(canEditFees).toBe(true);
 

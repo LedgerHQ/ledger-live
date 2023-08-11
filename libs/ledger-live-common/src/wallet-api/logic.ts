@@ -101,6 +101,7 @@ export function signTransactionLogic(
 
   if (
     accountFamily !== transaction.family &&
+    // `transaction` is a WalletAPITransaction, so it doesn't have a evm family and use ethereum instead
     !(accountFamily === "evm" && transaction.family === "ethereum")
   ) {
     return Promise.reject(
