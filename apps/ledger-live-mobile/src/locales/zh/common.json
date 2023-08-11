@@ -461,6 +461,9 @@
       "title" : "以太币 ETH 不足以支付网络费用",
       "description" : "请向您的账户发送一些以太币 ETH 以支付 ERC20 代币交易。"
     },
+    "NotEnoughGasSwap" : {
+      "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"
+    },
     "NotEnoughBalanceToDelegate" : {
       "title" : "余额不足，无法委托"
     },
@@ -623,10 +626,6 @@
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "尚无法从子账户发送",
       "description" : "由于近期 Babylon 更新而引入的变化，此功能将在稍后阶段被添加。"
-    },
-    "AccessDeniedError" : {
-      "title" : "Ledger Live 需要更新",
-      "description" : "请将 Ledger Live 更新到最新版本，并重新验证您的身份，以便与 Wyre 进行互换"
     },
     "RecommendUndelegation" : {
       "title" : "请在清空账户之前将其解除委托"
@@ -2330,7 +2329,7 @@
       "seeLess" : "显示更少子账户"
     },
     "send" : "发送",
-    "receive" : "接收",
+    "receive" : "存款",
     "buy" : "买入",
     "walletconnect" : "WalletConnect",
     "stake" : "质押",
@@ -2344,7 +2343,7 @@
       "descWithBuy" : "确保已安装了 <1><0>{{managerAppName}}</0></1> 应用程序以用来买入或接收 <3><0>{{currencyTicker}}</0></3>",
       "descToken" : "确保已安装 <1><0>{{managerAppName}}</0></1> 应用程序并开始接收 <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> 代币</5>",
       "buttons" : {
-        "receiveFunds" : "接收",
+        "receiveFunds" : "存款",
         "buyCrypto" : "买入"
       },
       "addAccountCta" : "添加账户"
@@ -2720,10 +2719,6 @@
       "clearCacheButton" : "清除",
       "exportLogs" : "保存日志",
       "exportLogsDesc" : "出于排除故障目的所需，可能需要保存 Ledger Live 日志。",
-      "resetThirdPartyData" : "重置第三方数据",
-      "resetThirdPartyDataDesc" : "擦除您用于访问第三方交易服务提供方的所有本地第三方数据。",
-      "resetThirdPartyDataModal" : "删除您的本地第三方数据",
-      "resetThirdPartyDataModalDesc" : "删除您的本地第三方数据。您可能需要重新提交了解您的客户 (KYC) 信息并/或重新登录，从而访问我们的合作伙伴提供的服务。",
       "hardReset" : "重置 Ledger Live",
       "hardResetDesc" : "重置不会影响您的资产。清除 Ledger Live 中的所有数据，包括账户数据、交易历史记录和设置信息。使用您的 Ledger 设备，在清空的 Ledger Live 上重新加载并管理您的加密资产。",
       "repairDevice" : "修复您的 Ledger 设备",
@@ -2843,8 +2838,8 @@
       "title" : "编辑费用"
     },
     "receive" : {
-      "title" : "接收",
-      "description" : "从另一个钱包接收加密货币。",
+      "title" : "存款",
+      "description" : "从另一个钱包存入加密货币。",
       "titleReadOnly" : "未经验证的地址",
       "headerTitle" : "加密资产",
       "titleDevice" : "连接设备",
@@ -2854,26 +2849,35 @@
       "verifyAgain" : "再次检查",
       "noAccount" : "未能找到账户",
       "address" : "账户地址",
-      "copyAddress" : "复制",
+      "copyAddress" : "复制地址",
       "shareAddress" : "分享地址",
-      "addressCopied" : "已复制",
+      "addressCopied" : "地址已复制到剪贴板",
       "taprootWarning" : "确保发送方支持 taproot",
       "selectCrypto" : {
-        "title" : "选择一种加密货币"
+        "title" : "选择您要接收的加密货币"
+      },
+      "selectNetwork" : {
+        "title" : "为所选加密货币选择网络",
+        "account" : "{{count}} 账户",
+        "account_plural" : "{{count}} 个账户",
+        "subtitle" : "所选网络必须与您从中提取或发送加密货币的网络相匹配。",
+        "bannerTitle" : "请务必选择正确的网络。了解如何操作。"
       },
       "stepperHeader" : {
         "range" : "步骤 {{currentStep}} 之 {{totalSteps}}",
         "connectDevice" : "连接设备"
       },
       "selectAccount" : {
-        "title" : "选择账户",
-        "subtitle" : "您的 {{currencyTicker}} 将存入此账户。"
+        "title" : "选择或创建新账户",
+        "subtitle" : "您的 {{currencyTicker}} 将存入此账户。",
+        "cta" : "创建新账户"
       },
       "addAccount" : {
-        "title" : "正在搜索区块链",
-        "subtitle" : "正在检查您是否已经拥有 {{currencyTicker}} 账户。",
+        "title" : "正在检查账户……",
+        "subtitle" : "检查您在区块链上是否已经有 {{currencyName}} 账户。",
         "foundAccounts" : "已找到 {{count}} 个账户",
-        "stopSynchronization" : "停止同步"
+        "stopSynchronization" : "停止同步",
+        "addingAccount" : "未找到账户。正在创建新的 {{currencyName}} 账户……"
       },
       "verifyAddress" : {
         "title" : "核实地址",
@@ -2886,42 +2890,41 @@
       },
       "receiveConfirmation" : {
         "title" : "接收 {{currencyTicker}}",
+        "onCurrencyName" : "在 {{currencyName}} 上",
+        "copyAdress" : "复制地址",
+        "addressCopied" : "地址已复制！",
         "addressVerified" : "地址已核实",
-        "verifyAddress" : "点按此处核实您的地址",
+        "verifyAddress" : "核实您的地址",
         "adviceVerify" : "我们始终建议您使用 Ledger 设备核实地址",
-        "sendWarning" : "仅将 {{currencyName}} ({{currencyTicker}}) 发送到此地址。发送其他币种可能会导致永久丢失。",
-        "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励"
+        "sendWarning" : "仅将 {{currencyName}} ({{currencyTicker}}) 发送到此地址。向此地址发送其他加密货币可能导致您的加密货币丢失。",
+        "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励",
+        "bannerTitle" : "了解如何从交易所提取款项"
       },
       "securityVerify" : {
-        "title" : "出于安全考虑，我们建议使用 Ledger 设备核实此地址。",
-        "subtitle1" : "核实地址可为您提供安全保障。Ledger 设备上显示的地址不会泄露。",
-        "subtitle2" : "核实地址可帮助您确认设备上显示的地址与 Ledger Live 中显示的地址相同。",
+        "title" : "核实地址对于保障交易安全至关重要",
+        "subtitle1" : "确保只将粘贴的地址（从 Ledger Live 复制后）与 Ledger 可信任显示屏（Ledger 设备屏幕）上显示的地址进行比较。两者必须相同。",
+        "subtitle2" : "核实地址有助于避免地址替换攻击。",
         "verifyCta" : "验证我的地址",
-        "dontVerifyCta" : "不经核实便显示我的地址"
+        "dontVerifyCta" : "不经核实便显示地址"
       },
       "securityDontVerify" : {
-        "title" : "是否确定?",
-        "subtitle" : "将不会核实 Ledger Live 上显示的地址。",
+        "title" : "不核实？",
+        "subtitle" : "不核实会增加被骗将资产发送到错误地址的可能性。",
         "doNotRemindAgain" : "不再提醒",
-        "no" : "不可以",
-        "yes" : "是"
+        "no" : "验证",
+        "yes" : "不核实"
       },
       "toastMessages" : {
         "accountImported" : "我们已为您导入了 {{currencyTicker}} 账户。 ",
         "why" : "告诉我原因。",
         "addressVerified" : "您的地址已核实"
       },
-      "additionalInfoModal" : {
-        "title" : "我们为什么要导入账户？",
-        "subtitle" : "我们检测到您的种子助记词之前已有一个 {{currencyTicker}} 账户。我们为您导入了此账户。",
-        "closeCta" : "好，知道了"
-      },
       "notSynced" : {
         "text" : "正在同步",
         "desc" : "如果您有多笔交易或者您的网速偏慢，可能需要多花费一些时间。"
       },
       "readOnly" : {
-        "title" : "接收",
+        "title" : "存款",
         "text" : "请注意",
         "desc" : "您即将查看一个未经验证的地址。请在设备上验证地址，以确保安全。",
         "verify" : "{{accountType}} 的地址未经验证。请在设备上验证地址，以确保安全。"
@@ -2956,66 +2959,8 @@
         "whatIsSwap" : "什么是互换（Swap）？",
         "disclaimer" : "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
       },
-      "unauthorizedRates" : {
-        "cta" : "重置验证",
-        "banner" : "请重置您的 KYC 并更新 Live 以便使用 Wyre 进行 swap 互换。",
-        "bannerCTA" : "重置 KYC"
-      },
       "main" : {
         "header" : "互换"
-      },
-      "kyc" : {
-        "disclaimer" : "我确认：出于合规目的，我的位置数据将会分享给第三方。",
-        "cta" : "继续",
-        "wyre" : {
-          "title" : "完成您的 KYC",
-          "subtitle" : "您的信息由 LEDGER 代表收集并传输给 WYRE 用于 KYC 目的。如需了解更多信息，请查看我们的隐私政策",
-          "pending" : {
-            "cta" : "继续",
-            "title" : "KYC 已被提交以供审批",
-            "subtitle" : "您的 KYC 已被提交，正在等待批准。",
-            "link" : "了解关于 KYC 的更多信息"
-          },
-          "approved" : {
-            "cta" : "继续",
-            "title" : "KYC 已批准！",
-            "subtitle" : "您的 KYC 已被提交并已获得批准。",
-            "link" : "了解关于 KYC 的更多信息"
-          },
-          "closed" : {
-            "cta" : "重置 KYC",
-            "title" : "KYC 申请被拒绝",
-            "subtitle" : "Wyre 拒绝了您为 KYC 目的提供的数据",
-            "link" : "了解关于 KYC 的更多信息"
-          },
-          "form" : {
-            "firstName" : "名字",
-            "lastName" : "姓氏",
-            "street1" : "街道地址第 1 行",
-            "street2" : "街道地址第 2 行",
-            "city" : "城市",
-            "state" : "州/省/直辖市/自治区",
-            "country" : "国家/地区",
-            "postalCode" : "邮政编码",
-            "dateOfBirth" : "出生日期",
-            "firstNamePlaceholder" : "输入您的名字",
-            "lastNamePlaceholder" : "输入您的姓氏",
-            "street1Placeholder" : "例如：枫树街 13 号",
-            "street2Placeholder" : "例如：枫树街 13 号",
-            "cityPlaceholder" : "例如：圣何塞",
-            "postalCodePlaceholder" : "输入您的 5 位数邮政编码",
-            "statePlaceholder" : "选择您所在的州",
-            "dateOfBirthPlaceholder" : "年-月-日",
-            "firstNameError" : "输入您的名字以继续",
-            "lastNameError" : "输入您的姓氏以继续",
-            "street1Error" : "输入您的地址",
-            "cityError" : "输入您在美国居住的城市",
-            "stateError" : "选择您所在的州以继续",
-            "postalCodeError" : "输入一个有效的美国邮政编码",
-            "dateOfBirthError" : "输入您的出生日期"
-          }
-        },
-        "states" : "选择您所在的州"
       },
       "notAvailable" : {
         "title" : "服务暂时不可用，或在您的国家不可用"
@@ -3190,34 +3135,6 @@
           }
         },
         "providers" : {
-          "kyc" : {
-            "title" : "KYC（了解您的客户）",
-            "required" : "您需要完成您的 KYC（了解您的客户）",
-            "complete" : "完成 KYC",
-            "update" : "刷新 KYC",
-            "rejected" : "KYC 被拒绝，重新开始验证",
-            "rejectedContactProviderSupport" : "KYC 被拒绝，请联系 {{providerName}} 客服",
-            "updateRequired" : "完成或更新您的 KYC（了解您的客户）",
-            "status" : {
-              "pending" : "KYC 待处理",
-              "approved" : "KYC 已批准",
-              "closed" : "KYC 被拒绝",
-              "upgradeRequired" : "KYC（了解您的客户）不足"
-            }
-          },
-          "login" : {
-            "title" : "登录",
-            "required" : "您需要登录此供应方",
-            "complete" : "登录"
-          },
-          "mfa" : {
-            "title" : "MFA",
-            "required" : "您需要在此供应方处设置 MFA 多重身份验证",
-            "complete" : "设置 MFA 多重身份验证"
-          },
-          "withdrawalsBlockedError" : {
-            "message" : "您的提取请求已被 {{providerName}} 阻止。\n\n请联系对方客服了解更多信息。"
-          },
           "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
       }
@@ -4145,7 +4062,9 @@
   },
   "FirmwareUpdate" : {
     "title" : "更新固件",
+    "beginUpdate" : "开始更新",
     "updateDevice" : "{{deviceName}} 操作系统更新",
+    "releaseNotesTitle" : "此操作系统更新包含哪些内容？",
     "updateDone" : "操作完成！您的 {{deviceName}} 是最新的",
     "updateDoneDescription" : "新操作系统版本：{{firmwareVersion}}",
     "preparing" : "正在准备固件更新，请确保设备处于唤醒状态并保持连接。我们会通知您更新进度",
@@ -4411,6 +4330,86 @@
     "info" : {
       "balanceDoesNotIncludeRewards" : {
         "title" : "总余额不包括权益质押奖励"
+      },
+      "delegationUnavailable" : {
+        "title" : "委托不可用",
+        "description" : "您的账户中没有足够的可用余额来开始新的委托。"
+      }
+    },
+    "undelegation" : {
+      "undelegate" : "解除委托",
+      "undelegationMessage" : "取消委托后，您不会获得目前和后续周期的任何奖励",
+      "verificationSuccessTitle" : "您已经将资产成功解除委托"
+    },
+    "delegation" : {
+      "pool" : "池",
+      "poolId" : "池 ID",
+      "selectPool" : "选择池",
+      "pools" : "池",
+      "delegationEarn" : "您可以通过委托资产赚取 ADA 奖励。",
+      "delegatingFrom" : "正在委派自",
+      "delegatingTo" : "正在委托给",
+      "info" : "委托机制是如何运作的",
+      "header" : "委托",
+      "delegate" : "委托",
+      "redelegate" : "重新委托",
+      "estYield" : "预估收益",
+      "totalStake" : "质押总额",
+      "commission" : "佣金",
+      "cost" : "成本",
+      "select" : "选择",
+      "change" : "更改",
+      "networkFees" : "网络费用",
+      "stakeKeyRegistrationDeposit" : "权益质押密钥登记押金",
+      "stakeKeyRegistrationDepositRefund" : "权益质押密钥登记押金退款",
+      "stepperHeader" : {
+        "starter" : "赚取奖励",
+        "validator" : "委托资产",
+        "summary" : "概要",
+        "verification" : "验证",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "您可以将 ADA 委托给池来赚取奖励。",
+            "steps" : {
+              "0" : "您保有对已委托资产的所有权",
+              "1" : "使用您的 Ledger 设备进行委托",
+              "2" : "资产可以重新委托给不同的池，或者您可以选择随时取消委托。"
+            },
+            "cta" : "继续"
+          },
+          "validator" : {
+            "validators" : "验证者",
+            "myDelegations" : "我的委托",
+            "cta" : "继续",
+            "estYield" : "预估收益：{{amount}}",
+            "totalAvailable" : "可用总额：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "noResultsFound" : "未找到 \"<0>{{search}}</0>\" 验证者"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您的资产已经成功委托。",
+              "text" : "交易一经网络确认，您的账户余额就会更新。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "状态",
+        "rewards" : "奖励",
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "redelegatedFrom" : "已重新委托自"
       }
     }
   },
@@ -6214,7 +6213,7 @@
       "title" : "接下来，使用您的 {{productName}}...",
       "allDoneTitle" : "到此结束！",
       "skip" : "以后再说",
-      "done" : "您的未来有了保障"
+      "viewWallet" : "View my wallet"
     },
     "entryPointCard" : {
       "title" : "使用 {{productName}} 的下一步操作是什么？",
@@ -6356,7 +6355,7 @@
           "body" : "安全地转换加密货币"
         },
         "receive" : {
-          "title" : "接收",
+          "title" : "存款",
           "body" : "在您的钱包中接收加密货币"
         }
       }
