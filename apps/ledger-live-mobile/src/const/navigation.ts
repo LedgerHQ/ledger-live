@@ -331,11 +331,6 @@ export enum ScreenName {
   AlgorandOptInValidationError = "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess = "AlgorandOptInValidationSuccess",
 
-  // Ethereum
-  EthereumCustomFees = "EthereumCustomFees",
-  EthereumEditGasLimit = "EthereumEditGasLimit",
-  EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
-
   // Evm
   EvmEditGasLimit = "EvmEditGasLimit",
   EvmCustomFees = "EvmCustomFees",
