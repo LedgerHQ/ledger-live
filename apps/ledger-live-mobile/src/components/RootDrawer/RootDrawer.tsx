@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { EthereumStakingDrawer } from "../../families/ethereum/EthereumStakingDrawer";
 import { EvmStakingDrawer } from "../../families/evm/StakingDrawer";
 
 import { RootDrawerProvider, useRootDrawerContext } from "../../context/RootDrawerContext";
@@ -33,8 +32,6 @@ export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[])
 export function RootDrawerSelector() {
   const { drawer } = useRootDrawerContext();
   switch (drawer.id) {
-    case "EthStakingDrawer":
-      return <EthereumStakingDrawer />;
     case "EvmStakingDrawer":
       return <EvmStakingDrawer />;
     case InitialDrawerID.PTXServicesAppleDrawerKey:
