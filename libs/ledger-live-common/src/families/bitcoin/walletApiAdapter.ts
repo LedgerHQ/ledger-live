@@ -13,7 +13,7 @@ const areFeesProvided: AreFeesProvided<WalletAPIBitcoinTransaction> = tx => !!tx
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIBitcoinTransaction,
   Transaction
-> = ({ tx }) => {
+> = tx => {
   const hasFeesProvided = areFeesProvided(tx);
 
   const liveTx: Partial<Transaction> = {
@@ -29,11 +29,11 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIBitcoinTransaction,
   Transaction
-> = params => {
+> = tx => {
   return {
     canEditFees: CAN_EDIT_FEES,
-    liveTx: convertToLiveTransaction(params),
-    hasFeesProvided: areFeesProvided(params.tx),
+    liveTx: convertToLiveTransaction(tx),
+    hasFeesProvided: areFeesProvided(tx),
   };
 };
 
