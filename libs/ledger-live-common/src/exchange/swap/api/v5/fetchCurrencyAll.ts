@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { isPlaywrightEnv } from "../../utils/isPlaywrightEnv";
+import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
 import { getEnv } from "../../../../env";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
@@ -21,7 +21,7 @@ type From = {
 };
 
 export async function fetchCurrencyAll({ providers, additionalCoinsFlag = false }: Props) {
-  if (isPlaywrightEnv()) return Promise.resolve(fetchCurrencyAllMock);
+  if (isIntegrationTestEnv()) return Promise.resolve(fetchCurrencyAllMock);
 
   const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/currencies/all`);
   url.searchParams.append("providers-whitelist", providers.join(","));
