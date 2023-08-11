@@ -323,11 +323,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       // Updates the UI
       if (getLatestAvailableFirmwareStatus === "available-firmware" && latestFirmware) {
         // Only for QA to have always the same 1-way path: on infinite loop firmware
-        // the path 1.2.1-il2 -> 1.2.1-il0 does not trigger a firmware update during the ESC
+        // the path x.x.x-il2 -> x.x.x-il0 does not trigger a firmware update during the ESC
         if (
           getLatestAvailableFirmwareStatus === "available-firmware" &&
-          latestFirmware?.final.name === "1.2.1-il0" &&
-          deviceInfo?.version === "1.2.1-il2"
+          latestFirmware?.final.name.endsWith("-il0") &&
+          deviceInfo?.version.endsWith("-il2")
         ) {
           setFirmwareUpdateCheckStatus("completed");
           currentDisplayedDrawer = "none";
