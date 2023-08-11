@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { Trans, TFunction } from "react-i18next";
+import { Trans } from "react-i18next";
+import { TFunction } from "i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
