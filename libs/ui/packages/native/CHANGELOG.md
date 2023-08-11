@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.20.4
+
+### Patch Changes
+
+- [#4259](https://github.com/LedgerHQ/ledger-live/pull/4259) [`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - publish ui libraries with fixed tests
+
+- Updated dependencies [[`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e)]:
+  - @ledgerhq/crypto-icons-ui@0.5.1
+  - @ledgerhq/icons-ui@0.4.3
+  - @ledgerhq/ui-shared@0.2.1
+
 ## 0.20.3
 
 ### Patch Changes

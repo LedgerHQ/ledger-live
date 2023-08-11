@@ -1229,7 +1229,7 @@ Type: [FeatureId](#featureid)
 
 Icon displayed for this action in the post onboarding hub.
 
-Type: function (props: {size: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): any
+Type: function (props: {size: (`"XS"` | `"S"` | `"M"` | `"L"` | `"XL"`)?, color: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, style: [object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?}): any
 
 #### title
 

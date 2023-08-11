@@ -391,6 +391,7 @@ export const defaultFeatures = {
     params: {
       path: "/discover/refer-a-friend",
       isNew: true,
+      amount: "$20",
     },
   },
   referralProgramMobile: {

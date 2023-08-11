@@ -46,7 +46,7 @@ const AccountCard = ({
     getTagDerivationMode(currency, account.derivationMode as DerivationMode);
 
   return (
-    <TouchableOpacity disabled={disabled} onPress={onPress}>
+    <TouchableOpacity disabled={disabled} onPress={onPress} testID={"account-card-" + account.id}>
       <Card
         flexDirection="row"
         paddingY={4}

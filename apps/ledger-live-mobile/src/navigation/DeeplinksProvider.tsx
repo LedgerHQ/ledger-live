@@ -170,6 +170,8 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
               /**
                * @params ?completed: boolean
                * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
+               * * @params ?allCompleted: boolean
+               * ie: "ledgerlive://post-onboarding/nft-claimed?allCompleted=true" will open the post onboarding hub with all steps completed
                */
               [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
             },

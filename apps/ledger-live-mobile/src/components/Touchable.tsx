@@ -89,6 +89,7 @@ export default class Touchable extends Component<
     const { onPress, children, event, eventProperties, touchableTestID, ...rest } = this.props;
     const { pending } = this.state;
     const disabled = !onPress || pending;
+
     return (
       <TouchableOpacity
         delayPressIn={50}

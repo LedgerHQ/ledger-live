@@ -8,8 +8,6 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex } from "@ledgerhq/native-ui";
 
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -32,6 +30,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
 import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
 // Defines some of the header options for this screen to be able to reset back to them.
 export const connectDeviceHeaderOptions = (
@@ -41,8 +40,6 @@ export const connectDeviceHeaderOptions = (
   headerLeft: () => <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />,
 });
 
-const action = createAction(connectApp);
-
 export default function ConnectDevice({
   navigation,
   route,
@@ -50,8 +47,8 @@ export default function ConnectDevice({
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
-
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+  const action = useAppDeviceAction();
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";

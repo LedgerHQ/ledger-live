@@ -3,9 +3,7 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
@@ -23,6 +21,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { NavigationHeaderCloseButtonAdvanced } from "../../components/NavigationHeaderCloseButton";
 import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
 // Defines some of the header options for this screen to be able to reset back to them.
 export const addAccountsSelectDeviceHeaderOptions = (
@@ -32,8 +31,6 @@ export const addAccountsSelectDeviceHeaderOptions = (
   headerLeft: () => <NavigationHeaderBackButton />,
 });
 
-const action = createAction(connectApp);
-
 export default function AddAccountsSelectDevice({
   navigation,
   route,
@@ -42,6 +39,8 @@ export default function AddAccountsSelectDevice({
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
   const dispatch = useDispatch();
+
+  const action = useAppDeviceAction();
 
   const isFocused = useIsFocused();
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");

@@ -317,7 +317,13 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   />
                 </Flex>
               </Flex>
-              <Text variant={"body"} fontWeight={"medium"} textAlign={"center"} mt={6}>
+              <Text
+                testID="receive-fresh-address"
+                variant={"body"}
+                fontWeight={"medium"}
+                textAlign={"center"}
+                mt={6}
+              >
                 {mainAccount.freshAddress}
               </Text>
             </View>

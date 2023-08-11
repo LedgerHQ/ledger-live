@@ -52,6 +52,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
       </LText>
       <View style={styles.buttonsContainer}>
         <Button
+          testID="add-accounts-success-cta"
           event="AddAccountsDone"
           containerStyle={styles.button}
           type="primary"

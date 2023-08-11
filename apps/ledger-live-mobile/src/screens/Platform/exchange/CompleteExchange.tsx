@@ -1,7 +1,3 @@
-import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
-import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
-import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,6 +7,10 @@ import { useBroadcast } from "../../../components/useBroadcast";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { PlatformExchangeNavigatorParamList } from "../../../components/RootNavigator/types/PlatformExchangeNavigator";
 import { ScreenName } from "../../../const";
+import {
+  useTransactionDeviceAction,
+  useCompleteExchangeDeviceAction,
+} from "../../../hooks/deviceActions";
 
 type Props = StackNavigatorProps<
   PlatformExchangeNavigatorParamList,
@@ -78,6 +78,9 @@ const PlatformCompleteExchange: React.FC<Props> = ({
     [account, parentAccount, tokenCurrency, transaction],
   );
 
+  const sendAction = useTransactionDeviceAction();
+  const exchangeAction = useCompleteExchangeDeviceAction();
+
   return (
     <SafeAreaView style={styles.root}>
       {!transaction ? (
@@ -104,9 +107,6 @@ const PlatformCompleteExchange: React.FC<Props> = ({
     </SafeAreaView>
   );
 };
-
-const exchangeAction = createAction(completeExchange);
-const sendAction = txCreateAction(connectApp);
 
 const styles = StyleSheet.create({
   root: {
