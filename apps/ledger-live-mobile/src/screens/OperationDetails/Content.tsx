@@ -1,3 +1,5 @@
+// FIXME: to update when implementing edit transaction on evm
+
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
@@ -19,8 +21,8 @@ import {
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
+// import { getEnv } from "@ledgerhq/live-env";
+// import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -46,7 +48,7 @@ import type {
   StackNavigatorNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { EditOperationPanel } from "../../families/ethereum/EditTransactionFlow/EditOperationPanel";
+// import { EditOperationPanel } from "../../families/ethereum/EditTransactionFlow/EditOperationPanel";
 
 type HelpLinkProps = {
   event: string;
@@ -133,10 +135,10 @@ export default function Content({
     currencySettings.confirmationsNb,
   );
 
-  const isEditable = isEditableOperation(mainAccount, operation);
-  const isOperationStuck =
-    isEditable &&
-    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+  // const isEditable = isEditableOperation(mainAccount, operation);
+  // const isOperationStuck =
+  //   isEditable &&
+  //   operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const specific =
     byFamiliesOperationDetails[
@@ -320,14 +322,14 @@ export default function Content({
         />
       ) : null}
 
-      {isEditable ? (
+      {/* {isEditable ? (
         <EditOperationPanel
           isOperationStuck={isOperationStuck}
           account={account}
           parentAccount={parentAccount}
           operation={operation}
         />
-      ) : null}
+      ) : null} */}
 
       {!disableAllLinks ? (
         <Section
