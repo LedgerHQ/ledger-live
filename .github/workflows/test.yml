@@ -61,6 +61,14 @@ jobs:
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-s3-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i -F "live-common-tools..." -F "ledger-live"
       - name: build common-tools
@@ -82,8 +90,16 @@ jobs:
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-s3-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i -F "live-cli..." -F "ledger-live"
       - name: build cli
         run: pnpm build:cli
       - name: lint cli
@@ -116,12 +132,12 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.10"
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -179,10 +195,11 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.10"
       - uses: ruby/setup-ruby@v1
+        if: ${{ matrix.os == 'macos-latest' }}
         with:
           ruby-version: 2.6
       - name: TurboRepo local caching server
@@ -235,12 +252,12 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.10"
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -303,7 +320,7 @@ jobs:
               },
               cli: {
                 pass: ${{ needs.test-cli.outputs.test-fail == 'success' && needs.test-cli.outputs.fail != '1' }},
-                status: "${{ needs.test-docs.result }}",
+                status: "${{ needs.test-cli.result }}",
               },
               codecheck: {
                 pass: ${{ needs.codecheck-libraries.result == 'success' }},
