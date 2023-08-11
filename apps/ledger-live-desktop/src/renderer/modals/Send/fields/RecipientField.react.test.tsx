@@ -125,16 +125,15 @@ const baseMockTransaction: Transaction = {
   recipient: "",
   useAllAmount: false,
   mode: "send",
-  family: "ethereum",
-  gasPrice: null,
+  family: "evm",
+  gasPrice: undefined,
   maxFeePerGas: new BigNumber("28026227316"),
   maxPriorityFeePerGas: new BigNumber("1000000000"),
-  userGasLimit: null,
-  estimatedGasLimit: null,
-  feeCustomUnit: null,
-  networkInfo: {
-    family: "ethereum",
-  },
+  customGasLimit: undefined,
+  nonce: 0,
+  gasLimit: new BigNumber("21000"),
+  chainId: 1,
+  type: 2,
 };
 
 const baseMockStatus: TransactionStatus = {
