@@ -86,7 +86,7 @@ const Item = ({
 
   const flag = currencyId
     ? Object.entries(currencyFlags || {}).find(([flagName]) => {
-        return flagName.includes(currencyId);
+        return flagName.replace("feature_currency_", "") === currencyId;
       })
     : undefined;
 
