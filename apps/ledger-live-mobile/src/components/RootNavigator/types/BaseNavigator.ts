@@ -34,7 +34,6 @@ import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
 import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import type { MainNavigatorParamList } from "./MainNavigator";
-import type { WalletConnectNavigatorParamList } from "./WalletConnectNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
@@ -248,9 +247,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.NotificationCenter]: NavigatorScreenParams<NotificationCenterNavigatorParamList>;
   [NavigatorName.NftNavigator]: NavigatorScreenParams<NftNavigatorParamList>;
   [NavigatorName.Accounts]: NavigatorScreenParams<AccountsNavigatorParamList>;
-  [NavigatorName.WalletConnect]: NavigatorScreenParams<
-    WalletConnectNavigatorParamList | WalletConnectLiveAppNavigatorParamList
-  >;
+  [NavigatorName.WalletConnect]: NavigatorScreenParams<WalletConnectLiveAppNavigatorParamList>;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
   [NavigatorName.ClaimNft]: NavigatorScreenParams<ClaimNftNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;

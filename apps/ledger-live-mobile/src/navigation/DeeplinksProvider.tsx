@@ -11,7 +11,6 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import * as Sentry from "@sentry/react-native";
 import { hasCompletedOnboardingSelector } from "../reducers/settings";
-import { context as _wcContext } from "../screens/WalletConnect/Provider";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
@@ -155,7 +154,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                * @params ?uri: string
                * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
                */
-              [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
+              [ScreenName.WalletConnectConnect]: "wc",
             },
           },
 
@@ -426,7 +425,7 @@ export const DeeplinksProvider = ({
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
   const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
-  const wcContext = useContext(_wcContext);
+
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
@@ -439,7 +438,6 @@ export const DeeplinksProvider = ({
         ...(hasCompletedOnboarding
           ? linkingOptions(features)
           : getOnboardingLinkingOptions(!!userAcceptedTerms, features)),
-        enabled: wcContext.initDone && !wcContext.session.session,
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Prevent default deeplink if invalid wallet connect link
@@ -452,11 +450,7 @@ export const DeeplinksProvider = ({
             if (
               isWalletConnectLink(url) &&
               route &&
-              [
-                ScreenName.WalletConnectScan,
-                ScreenName.WalletConnectDeeplinkingSelectAccount,
-                ScreenName.WalletConnectConnect,
-              ].includes(route.name as ScreenName)
+              (route.name as ScreenName) === ScreenName.WalletConnectConnect
             ) {
               const uri = isWalletConnectUrl(url)
                 ? url
@@ -532,8 +526,6 @@ export const DeeplinksProvider = ({
       } as LinkingOptions<ReactNavigation.RootParamList>),
     [
       hasCompletedOnboarding,
-      wcContext.initDone,
-      wcContext.session.session,
       dispatch,
       liveAppProviderInitialized,
       manifests,
@@ -544,10 +536,9 @@ export const DeeplinksProvider = ({
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
-    if (!wcContext.initDone) return;
     if (userAcceptedTerms === null) return;
     setIsReady(true);
-  }, [wcContext.initDone, userAcceptedTerms]);
+  }, [userAcceptedTerms]);
 
   React.useEffect(
     () => () => {
