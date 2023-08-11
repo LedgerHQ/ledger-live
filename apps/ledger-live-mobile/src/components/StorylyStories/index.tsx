@@ -69,6 +69,18 @@ const defaultScrollContainerStyle: StyleProp<ViewStyle> = {
   flexGrow: 1,
 };
 
+const updateStoryGroupSeen = (storyGroupList: Storyly.StoryGroup) =>
+  storyGroupList.stories.every(story => story.seen)
+    ? { ...storyGroupList, seen: true }
+    : storyGroupList;
+
+const computeNewStoryGroupList = (storyGroupList: StoryGroupInfo[], event: Storyly.StoryEvent) =>
+  storyGroupList.map(group =>
+    group.id === event.storyGroup?.id && event.storyGroup
+      ? updateStoryGroupSeen(event.storyGroup)
+      : group,
+  );
+
 /**
  * This component wraps around the Storyly component to allow us to do a fully
  * custom rendering of story groups.
@@ -83,53 +95,34 @@ const Stories: React.FC<Props> = props => {
   const storylyRef = useRef<Storyly>(null);
   const [storyGroupList, setStoryGroupList] = useState<StoryGroupInfo[]>(placeholderContent);
 
-  const [refreshingStorylyState, setRefreshingStorylyState] = useState<boolean>(false);
-
   const handleFail = useCallback(() => {
     setStoryGroupList(placeholderContent);
   }, [setStoryGroupList]);
 
   const handleLoad = useCallback(
     (event: Storyly.StoryLoadEvent) => {
-      setRefreshingStorylyState(false);
-      const newStoryGroupList = event.storyGroupList.map(group => ({
-        ...group,
-        stories: group.stories.map(s => ({ id: s.id, seen: s.seen })),
-      }));
-      if (!isEqual(storyGroupList, newStoryGroupList)) setStoryGroupList(newStoryGroupList);
+      if (!isEqual(storyGroupList, event.storyGroupList)) setStoryGroupList(event.storyGroupList);
     },
-    [storyGroupList, setStoryGroupList, setRefreshingStorylyState],
+    [storyGroupList, setStoryGroupList],
   );
 
-  const handleStoryGroupPressed = useCallback(
-    (storyGroupId?: string, storyId?: string) => {
-      if (!storyGroupId || !storyId) return;
-      storylyRef?.current?.openStoryWithId(storyGroupId, storyId);
-    },
-    [storylyRef],
-  );
+  const handleStoryGroupPressed = useCallback((storyGroupId?: string, storyId?: string) => {
+    if (!storyGroupId || !storyId) return;
+    storylyRef.current?.openStoryWithId(storyGroupId, storyId);
+  }, []);
 
   const handleEvent = useCallback(
     (event: Storyly.StoryEvent) => {
-      let timeout: ReturnType<typeof setTimeout>;
       if (["StoryGroupClosed", "StoryGroupCompleted"].includes(event.event)) {
-        /** These are all the events that can be triggered when the full screen
-         * story view exits.
-         * The only way to get fresh data about the state of the stories is to
-         * mount a new Storyly component that will trigger a call of onLoad with
-         * up to date data (which story groups is "seen", their order etc.)
-         */
-        timeout = setTimeout(() => setRefreshingStorylyState(true), 1000);
+        const newStoryGroupList = computeNewStoryGroupList(storyGroupList, event);
+        if (!isEqual(storyGroupList, newStoryGroupList)) setStoryGroupList(newStoryGroupList);
       }
       if (event.event === "StoryCTAClicked" && event?.story?.media?.actionUrl) {
         Linking.openURL(event.story.media.actionUrl);
-        storylyRef?.current?.close?.();
+        storylyRef.current?.close?.();
       }
-      return () => {
-        timeout && clearTimeout(timeout);
-      };
     },
-    [setRefreshingStorylyState],
+    [storyGroupList],
   );
 
   const renderedStoryGroups = useMemo(
@@ -154,7 +147,7 @@ const Stories: React.FC<Props> = props => {
             </AnimatedStoryGroupWrapper>
           );
         }),
-    [storyGroupList, handleStoryGroupPressed, keepOriginalOrder, vertical],
+    [storyGroupList, keepOriginalOrder, vertical, handleStoryGroupPressed],
   );
 
   return (
@@ -182,15 +175,6 @@ const Stories: React.FC<Props> = props => {
           onFail={handleFail}
           onLoad={handleLoad}
         />
-        {refreshingStorylyState && (
-          /**
-           * We mount a 2nd StorylyWrapper component in parallel, which is the
-           * only way to trigger a "onLoad" with fresh data while keeping the
-           * storylyRef usable.
-           * cf. handleEvent method for explanation
-           */
-          <StorylyLocalizedWrapper {...props} onLoad={handleLoad} />
-        )}
       </Box>
     </Flex>
   );
