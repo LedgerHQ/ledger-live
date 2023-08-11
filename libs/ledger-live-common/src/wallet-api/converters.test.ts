@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
 
@@ -6,12 +5,18 @@ import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import type { Transaction } from "../generated/types";
 import type { WalletAPITransaction } from "./types";
 
-const ethBridge = jest.fn();
+const evmBridge = jest.fn();
+const bitcoinBridge = jest.fn();
 jest.mock("../generated/walletApiAdapter", () => {
   return {
-    ethereum: {
+    evm: {
       getWalletAPITransactionSignFlowInfos: function () {
-        return ethBridge();
+        return evmBridge();
+      },
+    },
+    bitcoin: {
+      getWalletAPITransactionSignFlowInfos: function () {
+        return bitcoinBridge();
       },
     },
   };
@@ -19,12 +24,27 @@ jest.mock("../generated/walletApiAdapter", () => {
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
   beforeEach(() => {
-    ethBridge.mockClear();
+    evmBridge.mockClear();
+    bitcoinBridge.mockClear();
   });
 
-  const dummyAccount = {} as Account;
+  it("should call the bridge if the implementation exists", () => {
+    // Given
+    const tx: WalletAPITransaction = {
+      family: "bitcoin",
+      amount: new BigNumber(100000),
+      recipient: "0xABCDEF",
+    };
 
-  it("calls the bridge if the implementation exists", () => {
+    // When
+    getWalletAPITransactionSignFlowInfos(tx);
+
+    // Then
+    expect(bitcoinBridge).toBeCalledTimes(1);
+    expect(evmBridge).toBeCalledTimes(0);
+  });
+
+  it("should call the evm bridge for WalletAPITransaction tx of ethereum family", () => {
     // Given
     const tx: WalletAPITransaction = {
       family: "ethereum",
@@ -33,13 +53,14 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    getWalletAPITransactionSignFlowInfos({ tx, account: dummyAccount });
+    getWalletAPITransactionSignFlowInfos(tx);
 
     // Then
-    expect(ethBridge).toBeCalledTimes(1);
+    expect(evmBridge).toBeCalledTimes(1);
+    expect(bitcoinBridge).toBeCalledTimes(0);
   });
 
-  it("uses its fallback if the bridge doesn't exist", () => {
+  it("should use its fallback if the bridge doesn't exist", () => {
     // Given
     const tx: WalletAPITransaction = {
       family: "algorand",
@@ -56,13 +77,11 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos({
-      tx,
-      account: dummyAccount,
-    });
+    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos(tx);
 
     // Then
-    expect(ethBridge).toBeCalledTimes(0);
+    expect(evmBridge).toBeCalledTimes(0);
+    expect(bitcoinBridge).toBeCalledTimes(0);
     expect(canEditFees).toBe(false);
     expect(hasFeesProvided).toBe(false);
     expect(liveTx).toEqual(expectedLiveTx);

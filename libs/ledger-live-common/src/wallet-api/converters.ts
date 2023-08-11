@@ -94,15 +94,15 @@ export function currencyToWalletAPICurrency(
 export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPITransaction,
   Transaction
-> = ({ tx, account, parentAccount }) => {
-  const family = byFamily[tx.family];
+> = tx => {
+  // This is a hack to link WalletAPI "ethereum" family to new "evm" family
+  const isEthereumFamily = tx.family === "ethereum";
+  const tyFamily = isEthereumFamily ? "evm" : tx.family;
+
+  const family = byFamily[tyFamily];
 
   if (family) {
-    return family.getWalletAPITransactionSignFlowInfos({
-      tx,
-      account,
-      parentAccount,
-    });
+    return family.getWalletAPITransactionSignFlowInfos(tx);
   }
 
   return {
