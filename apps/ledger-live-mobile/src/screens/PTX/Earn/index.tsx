@@ -29,7 +29,6 @@ const DEFAULT_EARN_APP_ID = "earn";
 export function EarnScreen({ route }: Props) {
   const { theme } = useTheme();
   const language = useSelector(languageSelector);
-  const locale = useSelector(localeSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
 
