@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, StackNavigationProp } from "@react-navigation/stack";
+
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName, NavigatorName } from "../../const";
@@ -21,7 +22,7 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
   // TODO: update to use specific mobile feature flag
   const ptxEarn = useFeature("ptxEarn");
   const paramAction = _props.route.params?.action;
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
 
@@ -80,6 +81,19 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
               params: { currencies: [currencyId], alwaysShowNoFunds: true },
             });
           }
+          break;
+        }
+        case "info-modal": {
+          navigation.navigate(NavigatorName.Base, {
+            screen: NavigatorName.Earn,
+            drawer: {
+              id: "EarnInfoDrawer",
+              props: {
+                message: _props.route.params.message,
+                messageTitle: _props.route.params.messageTitle,
+              },
+            },
+          });
           break;
         }
       }

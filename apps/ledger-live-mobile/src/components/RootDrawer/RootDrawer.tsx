@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "../../const";
 import { PTXServicesAppleWarning } from "./InitialDrawers/PTXServicesAppleWarning";
+import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
 
 export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[]) {
   const initialDrawersToShow = await AsyncStorage.multiGet(initialDrawers);
@@ -34,6 +35,8 @@ export function RootDrawerSelector() {
   switch (drawer.id) {
     case "EthStakingDrawer":
       return <EthereumStakingDrawer />;
+    case "EarnInfoDrawer":
+      return <EarnInfoDrawer />;
     case InitialDrawerID.PTXServicesAppleDrawerKey:
       return <PTXServicesAppleWarning />;
     default:
