@@ -44,16 +44,6 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
           mode: `${nft?.standard?.toLowerCase()}`,
         },
       });
-    } else if (account.currency.family === "ethereum") {
-      transaction = bridge.updateTransaction(defaultTransaction, {
-        tokenIds: [nft?.tokenId],
-        // When available, quantity is set to null first for the next UI.
-        // It allows the user to not have a default value during the
-        // first screen, like 0 or 1, which could trigger an error
-        quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
-        collection: nft?.contract,
-        mode: `${nft?.standard?.toLowerCase()}.transfer`,
-      });
     }
 
     navigation.navigate(ScreenName.SendSelectRecipient, {
