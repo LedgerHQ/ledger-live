@@ -1,15 +1,12 @@
 import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
-import { Transaction as EvmTx } from "@ledgerhq/coin-evm/types/index";
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import {
   AreFeesProvided,
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
-import { Transaction as EthTx } from "./types";
 
 const CAN_EDIT_FEES = true;
-
-type Transaction = EthTx | EvmTx;
 
 const areFeesProvided: AreFeesProvided<WalletAPIEthereumTransaction> = tx =>
   !!((tx.gasLimit && tx.gasPrice) || (tx.gasLimit && tx.maxFeePerGas && tx.maxPriorityFeePerGas));
@@ -20,9 +17,28 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 > = tx => {
   const hasFeesProvided = areFeesProvided(tx);
 
-  const liveTx: Partial<Transaction> = convertToEvmLiveTransaction(tx);
+  // FIXME: handle tx types (`Transaction["type"]`) properly
 
-  return hasFeesProvided ? { ...liveTx, feesStrategy: "custom" } : liveTx;
+  const params = {
+    family: "evm" as const,
+    nonce: tx.nonce,
+    amount: tx.amount,
+    recipient: tx.recipient,
+    data: tx.data,
+    gasLimit: tx.gasLimit,
+    feesStrategy: hasFeesProvided ? ("custom" as const) : undefined,
+    customGasLimit: hasFeesProvided ? tx.gasLimit : undefined,
+  };
+
+  const liveTx: Partial<Transaction> =
+    tx.maxPriorityFeePerGas || tx.maxFeePerGas
+      ? {
+          ...params,
+          type: 2,
+        }
+      : { ...params, gasPrice: tx.gasPrice, type: 0 };
+
+  return liveTx;
 };
 
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
@@ -37,21 +53,3 @@ const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos
 };
 
 export default { getWalletAPITransactionSignFlowInfos };
-
-function convertToEvmLiveTransaction(tx: WalletAPIEthereumTransaction): Partial<EvmTx> {
-  const params = {
-    family: "evm" as const,
-    nonce: tx.nonce,
-    amount: tx.amount,
-    recipient: tx.recipient,
-    data: tx.data,
-    gasLimit: tx.gasLimit,
-  };
-
-  return tx.maxPriorityFeePerGas || tx.maxFeePerGas
-    ? {
-        ...params,
-        type: 2,
-      }
-    : { ...params, type: 0 };
-}

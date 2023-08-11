@@ -18,7 +18,7 @@ export default function prepareSignTransaction(
   });
 
   return bridge.updateTransaction(t2, {
-    userGasLimit: txData.gasLimit,
+    customGasLimit: txData.gasLimit,
     ...txData,
   });
 }

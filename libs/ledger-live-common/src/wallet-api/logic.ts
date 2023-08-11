@@ -109,11 +109,8 @@ export function signTransactionLogic(
     );
   }
 
-  const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
-    tx: transaction,
-    account,
-    parentAccount,
-  });
+  const { canEditFees, liveTx, hasFeesProvided } =
+    getWalletAPITransactionSignFlowInfos(transaction);
 
   return uiNavigation(account, parentAccount, {
     canEditFees,
@@ -316,11 +313,7 @@ export function completeExchangeLogic(
     );
   }
 
-  const { liveTx } = getWalletAPITransactionSignFlowInfos({
-    tx: transaction,
-    account: fromAccount,
-    parentAccount: fromParentAccount,
-  });
+  const { liveTx } = getWalletAPITransactionSignFlowInfos(transaction);
 
   /**
    * 'subAccountId' is used for ETH and it's ERC-20 tokens.

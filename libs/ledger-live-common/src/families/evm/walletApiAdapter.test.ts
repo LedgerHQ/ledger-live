@@ -1,7 +1,9 @@
+import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { EthereumTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
 import eth from "./walletApiAdapter";
-import { Transaction } from "./types";
+
+// FIXME: add tests for tx of type 2
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for ETH platform tx", () => {
@@ -13,9 +15,13 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       };
 
       const expectedLiveTx: Partial<Transaction> = {
-        family: ethPlatformTx.family,
+        family: "evm",
         amount: ethPlatformTx.amount,
         recipient: ethPlatformTx.recipient,
+        data: undefined,
+        gasLimit: undefined,
+        nonce: undefined,
+        type: 0,
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
@@ -38,12 +44,16 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       };
 
       const expectedLiveTx: Partial<Transaction> = {
-        family: ethPlatformTx.family,
+        family: "evm",
         amount: ethPlatformTx.amount,
         recipient: ethPlatformTx.recipient,
         gasPrice: ethPlatformTx.gasPrice,
-        userGasLimit: ethPlatformTx.gasLimit,
+        gasLimit: ethPlatformTx.gasLimit,
+        customGasLimit: ethPlatformTx.gasLimit,
+        nonce: undefined,
+        data: undefined,
         feesStrategy: "custom",
+        type: 0,
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
