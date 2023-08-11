@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.65.2-nightly.2
+
+### Patch Changes
+
+- [#4273](https://github.com/LedgerHQ/ledger-live/pull/4273) [`32edd7e258`](https://github.com/LedgerHQ/ledger-live/commit/32edd7e2580ced4fbc54ef35d0bbe615bf009e14) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Added locale param to Earn app URL
+
+- [#4280](https://github.com/LedgerHQ/ledger-live/pull/4280) [`b1329e2d5b`](https://github.com/LedgerHQ/ledger-live/commit/b1329e2d5b17e62dd9ec2d88b9d80cc32423b883) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix feature flags settings performance issue
+
+- [#4199](https://github.com/LedgerHQ/ledger-live/pull/4199) [`f161be752a`](https://github.com/LedgerHQ/ledger-live/commit/f161be752a668110bdaa0039c721ebb55ca888f2) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update Swap Form - Edit Rates props
+
+- [#4307](https://github.com/LedgerHQ/ledger-live/pull/4307) [`82f9d775fc`](https://github.com/LedgerHQ/ledger-live/commit/82f9d775fc560843c19c9a0b25648cbe60d2b190) Thanks [@gre](https://github.com/gre)! - Implement resiliency on importing accounts that fail to be decoded (bad currencyId, bad derivationMode,...)
+
+- Updated dependencies [[`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a), [`7415ca2a67`](https://github.com/LedgerHQ/ledger-live/commit/7415ca2a67308d914a58d744bcaef47c48fae074)]:
+  - @ledgerhq/live-common@31.4.1-nightly.2
+
 ## 2.65.2-nightly.1
 
 ### Patch Changes

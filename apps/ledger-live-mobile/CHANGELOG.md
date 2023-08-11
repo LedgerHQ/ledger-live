@@ -1,5 +1,38 @@
 # live-mobile
 
+## 3.28.2-nightly.2
+
+### Patch Changes
+
+- [#4274](https://github.com/LedgerHQ/ledger-live/pull/4274) [`95c9573979`](https://github.com/LedgerHQ/ledger-live/commit/95c9573979d7a1cf435ac3b3b377f76d605ca214) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Added locale to Earn URL navigation
+
+- [#4152](https://github.com/LedgerHQ/ledger-live/pull/4152) [`7415ca2a67`](https://github.com/LedgerHQ/ledger-live/commit/7415ca2a67308d914a58d744bcaef47c48fae074) Thanks [@grsoares21](https://github.com/grsoares21)! - Feat: adds a first step to display the changelog of the fw update
+
+  Handling correctly when a user leaves the fw update from this first step
+
+- [#4169](https://github.com/LedgerHQ/ledger-live/pull/4169) [`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a) Thanks [@gre](https://github.com/gre)! - Introduces use\*DeviceAction() hooks in order to mock test all device actions. It impacts all screens that have device actions.
+
+- [#4199](https://github.com/LedgerHQ/ledger-live/pull/4199) [`f161be752a`](https://github.com/LedgerHQ/ledger-live/commit/f161be752a668110bdaa0039c721ebb55ca888f2) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update Swap Form - Edit Rates props
+
+- [#4152](https://github.com/LedgerHQ/ledger-live/pull/4152) [`7415ca2a67`](https://github.com/LedgerHQ/ledger-live/commit/7415ca2a67308d914a58d744bcaef47c48fae074) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix: several bugs during the firmware update on LLM
+
+  Several bug were fixed:
+
+  - an issue on how "user solvable" errors were handled on the logic and UI of the fw update
+  - a bug on errors that were supposed to be ignored (e.g. an inexistent lockscreen image when backing
+    up) and were actually being reported to the user
+  - a bug when a “allow manager”/secure channel was refused as the beginning of the fw update
+  - a bug on the battery check UX that made the app re-navigate to the firmware update automatically
+    once the user exited it
+
+- [#4307](https://github.com/LedgerHQ/ledger-live/pull/4307) [`82f9d775fc`](https://github.com/LedgerHQ/ledger-live/commit/82f9d775fc560843c19c9a0b25648cbe60d2b190) Thanks [@gre](https://github.com/gre)! - Implement resiliency on importing accounts that fail to be decoded (bad currencyId, bad derivationMode,...)
+
+- [#4287](https://github.com/LedgerHQ/ledger-live/pull/4287) [`c54f1a8d17`](https://github.com/LedgerHQ/ledger-live/commit/c54f1a8d17bd7d642a43de63420dcd3dda3892e2) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add missing keys to RN components
+
+- Updated dependencies [[`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a), [`7415ca2a67`](https://github.com/LedgerHQ/ledger-live/commit/7415ca2a67308d914a58d744bcaef47c48fae074), [`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a)]:
+  - @ledgerhq/live-common@31.4.1-nightly.2
+  - @ledgerhq/native-ui@0.20.5-nightly.1
+
 ## 3.28.2-nightly.1
 
 ### Patch Changes

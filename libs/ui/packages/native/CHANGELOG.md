@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.20.5-nightly.1
+
+### Patch Changes
+
+- [#4169](https://github.com/LedgerHQ/ledger-live/pull/4169) [`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a) Thanks [@gre](https://github.com/gre)! - Introduce testID prop on Form/SelectableList
+
 ## 0.20.5-nightly.0
 
 ### Patch Changes

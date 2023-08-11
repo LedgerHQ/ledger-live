@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 31.4.1-nightly.2
+
+### Patch Changes
+
+- [#4169](https://github.com/LedgerHQ/ledger-live/pull/4169) [`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a) Thanks [@gre](https://github.com/gre)! - Export Event type from 'app' device actions
+
+- [#4152](https://github.com/LedgerHQ/ledger-live/pull/4152) [`7415ca2a67`](https://github.com/LedgerHQ/ledger-live/commit/7415ca2a67308d914a58d744bcaef47c48fae074) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix: battery check command logic
+
+  The battery check command was updating and keeping (to a lower value) the unresponsive timeout due
+  to race conditions. It was creating incorrect locked device errors.
+
 ## 31.4.1-nightly.1
 
 ### Patch Changes
