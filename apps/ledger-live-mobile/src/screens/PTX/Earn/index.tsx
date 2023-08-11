@@ -59,7 +59,7 @@ export function EarnScreen({ route }: Props) {
         inputs={{
           theme,
           lang: language,
-          locale: locale,
+          locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           ...params,
