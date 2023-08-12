@@ -684,8 +684,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1
       react-refresh:
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.14.0
+        version: 0.14.0
       serve-handler:
         specifier: ^6.1.3
         version: 6.1.3
@@ -1086,8 +1086,8 @@ importers:
         specifier: ^7.3.7
         version: 7.3.7
       storyly-react-native:
-        specifier: 1.26.2
-        version: 1.26.2(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
+        specifier: 2.0.1
+        version: 2.0.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
       styled-components:
         specifier: ^5.3.3
         version: 5.3.5(react-is@18.1.0)(react@18.0.0)
@@ -4217,8 +4217,8 @@ importers:
         specifier: workspace:^
         version: link:packages/shared
       '@playwright/test':
-        specifier: ~1.36.0
-        version: 1.36.0
+        specifier: ~1.37.0
+        version: 1.37.0
       concurrently:
         specifier: ^8.0.0
         version: 8.0.0
@@ -4687,8 +4687,8 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0(react-native@0.71.6)(react@18.0.0)
       react-native-web:
-        specifier: ~0.18.12
-        version: 0.18.12(react-dom@18.0.0)(react@18.0.0)
+        specifier: ~0.19.0
+        version: 0.19.0(react-dom@18.0.0)(react@18.0.0)
       regenerator-runtime:
         specifier: ^0.13.9
         version: 0.13.9
@@ -17550,13 +17550,13 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /@playwright/test@1.36.0:
-    resolution: {integrity: sha512-yN+fvMYtiyLFDCQos+lWzoX4XW3DNuaxjBu68G0lkgLgC6BP+m/iTxJQoSicz/x2G5EsrqlZTqTIP9sTgLQerg==}
+  /@playwright/test@1.37.0:
+    resolution: {integrity: sha512-181WBLk4SRUyH1Q96VZl7BP6HcK0b7lbdeKisn3N/vnjitk+9HbdlFz/L5fey05vxaAhldIDnzo8KUoy8S3mmQ==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
       '@types/node': 18.16.19
-      playwright-core: 1.36.0
+      playwright-core: 1.37.0
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -31272,13 +31272,6 @@ packages:
   /create-mixin@3.0.0:
     resolution: {integrity: sha512-LkdMqnWT9LaqBN4huqpUnMz56Yr1mVSoCduAd2xXefgH/YZP2sXCMAyztXjk4q8hTF/TlcDa+zQW2aTgGdjjKQ==}
     engines: {node: '>=10'}
-    dev: true
-
-  /create-react-class@15.7.0:
-    resolution: {integrity: sha512-QZv4sFWG9S5RUvkTYWbflxeZX+JG7Cz0Tn33rQBJ+WFQTqTfUTjMjiv9tnfXazjsO5r0KhPs+AqCjyrQX6h2ng==}
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
     dev: true
 
   /create-require@1.1.1:
@@ -49876,8 +49869,8 @@ packages:
     hasBin: true
     dev: true
 
-  /playwright-core@1.36.0:
-    resolution: {integrity: sha512-7RTr8P6YJPAqB+8j5ATGHqD6LvLLM39sYVNsslh78g8QeLcBs5750c6+msjrHUwwGt+kEbczBj1XB22WMwn+WA==}
+  /playwright-core@1.37.0:
+    resolution: {integrity: sha512-1c46jhTH/myQw6sesrcuHVtLoSNfJv8Pfy9t3rs6subY7kARv0HRw5PpyfPYPpPtQvBOmgbE6K+qgYUpj81LAA==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
@@ -53376,14 +53369,13 @@ packages:
     dev: false
     patched: true
 
-  /react-native-web@0.18.12(react-dom@18.0.0)(react@18.0.0):
-    resolution: {integrity: sha512-fboP7yqobJ8InSr4fP+bQ3scOtSQtUoPcR+HWasH8b/fk/RO+mWcJs/8n+lewy9WTZc2D68ha7VwRDviUshEWA==}
+  /react-native-web@0.19.0(react-dom@18.0.0)(react@18.0.0):
+    resolution: {integrity: sha512-KT3QinirATviotqB8aX4GIvaLzA5WeGQgdqxmKTVBf9msRsrfmFDRUqZrIkYtXRrLo/GjBUZCXKTulSSV3wuog==}
     peerDependencies:
-      react: ^17.0.2 || ^18.0.0
-      react-dom: ^17.0.2 || ^18.0.0
+      react: ^18.0.0
+      react-dom: ^18.0.0
     dependencies:
       '@babel/runtime': 7.20.13
-      create-react-class: 15.7.0
       fbjs: 3.0.4
       inline-style-prefixer: 6.0.1
       normalize-css-color: 1.0.2
@@ -56777,11 +56769,11 @@ packages:
     resolution: {integrity: sha512-eO9xlzDpXLiMr9W1nQ3Nfp9EzZieIQc10zPPMP5jsVV7bLOziSFFBP0XoDXACEIFtdI+rIz0NwWVA/QVJ8zJtw==}
     dev: false
 
-  /storyly-react-native@1.26.2(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-wzbXiknxO6DUPNM81mo3Je1cLGiuMeNDoJj205C6T5MGzvLlWB9HsJ+TNYQsDGHWdsBcudOBO3GQafpU0zObuA==}
+  /storyly-react-native@2.0.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-UFJBNjrpcrOyC2lpDv/+Bz48PjST10AlnlZbqrN7TrPf2bDpKQ3LwWYU3QiGBXa6yoFXMEuR6NSc/vg1rKynRg==}
     peerDependencies:
       prop-types: '*'
-      react: ^17.0.2
+      react: ^18.0.0
       react-native: '>=0.64.2 <1.0.x'
     peerDependenciesMeta:
       prop-types:

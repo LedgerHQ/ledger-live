@@ -198,7 +198,7 @@
     "listr-verbose-renderer": "^0.6.0",
     "native-modules-tools": "workspace:*",
     "prebuild-install": "^7.1.1",
-    "react-refresh": "^0.11.0",
+    "react-refresh": "^0.14.0",
     "serve-handler": "^6.1.3",
     "ts-jest": "^28.0.8",
     "vite": "^4.1.1",

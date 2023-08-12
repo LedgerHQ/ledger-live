@@ -159,7 +159,7 @@
     "react-native": "0.71.6",
     "react-native-reanimated": "^3.1.0",
     "react-native-safe-area-context": "^4.5.0",
-    "react-native-web": "~0.18.12",
+    "react-native-web": "~0.19.0",
     "regenerator-runtime": "^0.13.9",
     "rimraf": "^4.4.1",
     "styled-components": "^5.3.3",
