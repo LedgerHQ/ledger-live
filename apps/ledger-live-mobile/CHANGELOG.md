@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.28.2-nightly.3
+
+### Patch Changes
+
+- [#4208](https://github.com/LedgerHQ/ledger-live/pull/4208) [`151ae54309`](https://github.com/LedgerHQ/ledger-live/commit/151ae543093d646b332851c6873ec7e735830445) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Analytics console: workaround for layout issue that happens after a while in the scrollview
+
 ## 3.28.2-nightly.2
 
 ### Patch Changes
