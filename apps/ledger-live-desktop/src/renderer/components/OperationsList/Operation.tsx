@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import { createStructuredSelector } from "reselect";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,

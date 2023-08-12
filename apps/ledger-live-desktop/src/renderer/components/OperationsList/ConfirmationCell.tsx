@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import styled from "styled-components";
 import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
