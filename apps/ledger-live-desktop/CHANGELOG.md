@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.65.2-nightly.3
+
+### Patch Changes
+
+- [#4278](https://github.com/LedgerHQ/ledger-live/pull/4278) [`2c9001d5f5`](https://github.com/LedgerHQ/ledger-live/commit/2c9001d5f56d6135d35e9d92ebabd9772ececdb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Upgrade i18next and react-18next packages; dynamically update NoFundsModal title based on which Buy, Swap or Sell actions are available and translate using disjunctive i18n list formatter.
+
 ## 2.65.2-nightly.2
 
 ### Patch Changes
