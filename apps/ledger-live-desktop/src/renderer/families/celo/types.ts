@@ -1,4 +1,4 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   CeloAccount,

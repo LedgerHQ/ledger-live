@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import invariant from "invariant";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { ModalBody } from "~/renderer/components/Modal";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import Breadcrumb from "./Breadcrumb";

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import React from "react";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { Unit, CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

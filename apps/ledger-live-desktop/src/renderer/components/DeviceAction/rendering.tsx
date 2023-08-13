@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import map from "lodash/map";
-import { TFunction, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";

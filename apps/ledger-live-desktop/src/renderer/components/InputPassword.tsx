@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import zxcvbn from "zxcvbn";
 import debounce from "lodash/debounce";
 import noop from "lodash/noop";
