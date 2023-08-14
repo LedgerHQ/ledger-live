@@ -9,6 +9,8 @@ import settings, { SettingsState } from "./settings";
 import swap, { SwapStateType } from "./swap";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
+import { WalletSyncState } from "./walletsync";
+import walletsync from "./walletsync";
 
 export type State = {
   accounts: AccountsState;
@@ -20,6 +22,7 @@ export type State = {
   UI: UIState;
   swap: SwapStateType;
   postOnboarding: PostOnboardingState;
+  walletsync: WalletSyncState;
 };
 
 export default combineReducers({
@@ -32,4 +35,5 @@ export default combineReducers({
   UI,
   postOnboarding,
   swap,
+  walletsync,
 });

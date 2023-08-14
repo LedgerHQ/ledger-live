@@ -46,6 +46,7 @@ import { expectOperatingSystemSupportStatus } from "~/support/os";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
+import { initWalletSync, setAuth } from "./actions/walletsync";
 if (process.env.VERBOSE) {
   enableDebugLogger();
 }
@@ -106,6 +107,10 @@ async function init() {
         }
       : initialSettings,
   )(store.dispatch);
+
+  const initialWalletsync = await getKey("app", "walletsync");
+  store.dispatch(initWalletSync(initialWalletsync));
+
   const state = store.getState();
   const language = languageSelector(state);
   const locale = localeSelector(state);
@@ -219,6 +224,9 @@ async function init() {
     },
     resetDevices: () => {
       store.dispatch(resetDevices());
+    },
+    setWalletSyncAuth: (auth: string) => {
+      store.dispatch(setAuth(auth));
     },
   };
 }

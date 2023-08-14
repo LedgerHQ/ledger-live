@@ -51,6 +51,7 @@ interface Window {
     addDevice: (device: Device) => void;
     removeDevice: (device: Device) => void;
     resetDevices: () => void;
+    setWalletSyncAuth: (auth: string) => void;
   };
 
   // used for the analytics, initialized in the index.html

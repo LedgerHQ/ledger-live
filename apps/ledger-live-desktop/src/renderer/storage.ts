@@ -22,6 +22,7 @@ import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-common/counterva
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsExportSelector } from "./reducers/settings";
 import logger from "./logger";
+import { WalletSyncState } from "./reducers/walletsync";
 
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
@@ -52,6 +53,7 @@ type DatabaseValues = {
   countervalues: Countervalues;
   postOnboarding: PostOnboarding;
   settings: Settings;
+  walletsync: WalletSyncState;
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };

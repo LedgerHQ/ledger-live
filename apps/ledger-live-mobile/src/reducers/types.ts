@@ -24,6 +24,7 @@ import {
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
+import { WalletSyncState } from "./walletsync";
 
 // === ACCOUNT STATE ===
 
@@ -322,4 +323,12 @@ export type State = {
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   nft: NftState;
+  walletsync: WalletSyncState;
+};
+
+export type Handlers<State, Types, PreciseKey = true> = {
+  [Key in keyof Types]: (
+    state: State,
+    body: { payload: Types[PreciseKey extends true ? Key : keyof Types] },
+  ) => State;
 };

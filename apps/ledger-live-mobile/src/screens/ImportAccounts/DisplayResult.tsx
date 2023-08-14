@@ -39,6 +39,7 @@ import type {
 } from "../../components/RootNavigator/types/helpers";
 import { SettingsImportDesktopPayload } from "../../actions/types";
 import { NavigationHeaderBackImage } from "../../components/NavigationHeaderBackButton";
+import { setAuth } from "../../actions/walletsync";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ImportAccountsNavigatorParamList, ScreenName.DisplayResult>
@@ -48,6 +49,7 @@ type ConnectProps = {
   backlistedTokenIds: string[];
   accounts: Account[];
   importAccounts: (_: ImportAccountsReduceInput) => void;
+  setAuth: typeof setAuth;
   importDesktopSettings: typeof importDesktopSettings;
 };
 
@@ -120,7 +122,14 @@ class DisplayResult extends Component<Props, State> {
   }
 
   onImport = async () => {
-    const { importAccounts, importDesktopSettings, navigation, backlistedTokenIds } = this.props;
+    const {
+      importAccounts,
+      importDesktopSettings,
+      navigation,
+      backlistedTokenIds,
+      route,
+      setAuth,
+    } = this.props;
     const { selectedAccounts, items, importSettings, importing } = this.state;
     if (importing) return;
     const onFinish = this.props.route.params?.onFinish;
@@ -134,10 +143,15 @@ class DisplayResult extends Component<Props, State> {
       backlistedTokenIds,
     );
     importAccounts({ items, selectedAccounts, syncResult });
-    if (importSettings) {
-      importDesktopSettings(
-        this.props.route.params?.result.settings as SettingsImportDesktopPayload,
-      );
+    const result = route.params?.result;
+    if (result) {
+      if (importSettings) {
+        importDesktopSettings(result.settings as SettingsImportDesktopPayload);
+        // also import the Wallet Sync auth token (considered as a "settings")
+        if (result.walletSyncAuth) {
+          setAuth(result.walletSyncAuth);
+        }
+      }
     }
 
     if (onFinish) onFinish();
@@ -260,6 +274,7 @@ export default compose(
     {
       importAccounts,
       importDesktopSettings,
+      setAuth,
     },
   ),
 )(DisplayResult);

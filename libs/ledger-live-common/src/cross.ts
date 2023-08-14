@@ -13,14 +13,19 @@ import type { Account, CryptoCurrencyIds } from "@ledgerhq/types-live";
 export type AccountData = {
   id: string;
   currencyId: string;
-  freshAddress?: string;
+  freshAddress: string;
   seedIdentifier: string;
   derivationMode: string;
-  // we are unsafe at this stage, validation is done later
   name: string;
   index: number;
-  balance: string;
+  /**
+   * @deprecated the balance is no longer necessary because it can be resolved by a synchronisation
+   */
+  balance?: string;
 };
+
+// TODO: use AccountDescriptor type instead everywhere (proposal to rename all to this more explicit type)
+export type AccountDescriptor = AccountData;
 
 export type CryptoSettings = {
   confirmationsNb?: number;
@@ -43,6 +48,8 @@ export type DataIn = {
   exporterName: string;
   // the version of the exporter. e.g. the desktop app version
   exporterVersion: string;
+  // wallet sync auth token
+  walletSyncAuth: string | undefined;
 };
 
 type Meta = {
@@ -54,9 +61,16 @@ export type Result = {
   accounts: AccountData[];
   settings: Settings;
   meta: Meta;
+  walletSyncAuth: string | undefined;
 };
 
-export function encode({ accounts, settings, exporterName, exporterVersion }: DataIn): string {
+export function encode({
+  accounts,
+  settings,
+  exporterName,
+  exporterVersion,
+  walletSyncAuth,
+}: DataIn): string {
   return Buffer.from(
     compressjs.Bzip2.compressFile(
       Buffer.from(
@@ -67,6 +81,7 @@ export function encode({ accounts, settings, exporterName, exporterVersion }: Da
           },
           accounts: accounts.map(accountToAccountData),
           settings,
+          walletSyncAuth,
         }),
       ),
     ),
@@ -138,11 +153,8 @@ const asResultAccount = (unsafe: Record<string, any>): AccountData => {
     name,
     index,
     balance,
+    freshAddress,
   };
-
-  if (typeof freshAddress === "string" && freshAddress) {
-    o.freshAddress = freshAddress;
-  }
 
   return o;
 };
@@ -240,10 +252,13 @@ export function decode(bytes: string): Result {
     throw new Error("invalid data");
   }
 
+  const walletSyncAuth = unsafe?.walletSyncAuth;
+
   return {
     meta: asResultMeta(unsafe.meta),
     accounts: asResultAccounts(unsafe.accounts),
     settings: asResultSettings(unsafe.settings),
+    walletSyncAuth: walletSyncAuth ? String(walletSyncAuth) : undefined,
   };
 }
 export function accountToAccountData({
@@ -318,7 +333,7 @@ export const accountDataToAccount = ({
     );
   }
 
-  const balanceBN = new BigNumber(balance);
+  const balanceBN = new BigNumber(balance || 0);
   const account: Account = {
     type: "Account",
     id,

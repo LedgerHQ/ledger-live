@@ -10,9 +10,9 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common",
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
+  "main": "./lib/index.js",
+  "module": "./lib-es/index.js",
+  "types": "./lib/index.d.ts",
   "typesVersions": {
     "*": {
       "*.json": [
@@ -127,11 +127,11 @@
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-org-chain/chain-jslib": "1.1.2",
-    "@elrondnetwork/erdjs": "11.0.0",
-    "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@dfinity/agent": "^0.15.6",
     "@dfinity/candid": "^0.15.6",
     "@dfinity/principal": "^0.15.6",
+    "@elrondnetwork/erdjs": "11.0.0",
+    "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@ethersproject/bignumber": "^5.7.0",
@@ -176,6 +176,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/wallet-api-core": "^1.0.2",
     "@ledgerhq/wallet-api-server": "^1.1.1",
+    "@ledgerhq/wss-sdk": "workspace:^",
     "@solana/spl-token": "^0.3.7",
     "@solana/web3.js": "1.77.3",
     "@stacks/network": "1.2.2",
@@ -265,7 +266,8 @@
     "utility-types": "^3.10.0",
     "varuint-bitcoin": "1.1.2",
     "winston": "^3.4.0",
-    "xstate": "^4.30.2"
+    "xstate": "^4.30.2",
+    "zod": "^3.22.1"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

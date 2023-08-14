@@ -34,6 +34,7 @@ import type {
   ProtectState,
   NftState,
 } from "../reducers/types";
+import { WalletSyncState } from "../reducers/walletsync";
 import type { Unpacked } from "../types/helpers";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -46,6 +47,7 @@ export enum AccountsActionTypes {
   ACCOUNTS_ADD = "ACCOUNTS_ADD",
   SET_ACCOUNTS = "SET_ACCOUNTS",
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
+  UPDATE_ACCOUNTS = "UPDATE_ACCOUNTS",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
   CLEAN_CACHE = "CLEAN_CACHE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -64,6 +66,9 @@ export type AccountsUpdateAccountWithUpdaterPayload = {
   accountId: string;
   updater: (arg0: Account) => Account;
 };
+export type AccountsUpdateAccountsWithUpdaterPayload = {
+  updater: (arg0: Account[]) => Account[];
+};
 export type AccountsDeleteAccountPayload = Account;
 export type AccountsPayload =
   | AccountsImportStorePayload
@@ -72,7 +77,10 @@ export type AccountsPayload =
   | AccountsReplaceAccountsPayload
   | AccountsSetAccountsPayload
   | AccountsUpdateAccountWithUpdaterPayload
+  | AccountsUpdateAccountsWithUpdaterPayload
   | AccountsDeleteAccountPayload;
+
+export type ActionsWalletSyncPayload = WalletSyncState | undefined;
 
 // === APPSTATE ACTIONS ===
 
@@ -480,6 +488,7 @@ export type ActionsPayload =
   | Action<RatingsPayload>
   | Action<SettingsPayload>
   | Action<WalletConnectPayload>
+  | Action<ActionsWalletSyncPayload>
   | Action<PostOnboardingPayload>
   | Action<SwapPayload>
   | Action<ProtectPayload>

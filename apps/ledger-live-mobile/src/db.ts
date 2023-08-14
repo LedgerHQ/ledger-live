@@ -12,6 +12,7 @@ import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { BleState, ProtectState, SettingsState } from "./reducers/types";
+import { WalletSyncState } from "./reducers/walletsync";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -37,6 +38,13 @@ export async function setUser(user: User): Promise<void> {
 }
 export async function updateUser(user: User): Promise<void> {
   await store.update("user", user);
+}
+export async function getWalletSync(): Promise<WalletSyncState | undefined> {
+  const state = (await store.get("walletsync")) as WalletSyncState | undefined;
+  return state;
+}
+export async function saveWalletSync(state: WalletSyncState) {
+  await store.save("walletsync", state);
 }
 export async function getSettings(): Promise<Partial<SettingsState>> {
   const settings = (await store.get("settings")) as Partial<SettingsState>;

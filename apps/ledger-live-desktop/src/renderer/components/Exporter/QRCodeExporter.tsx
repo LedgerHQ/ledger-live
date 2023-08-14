@@ -9,10 +9,12 @@ import { activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { exportSettingsSelector } from "~/renderer/reducers/settings";
 import QRCode from "~/renderer/components/QRCode";
 import { Account } from "@ledgerhq/types-live";
+import { walletSyncAuthSelector } from "~/renderer/reducers/walletsync";
 
 const mapStateToProps = createStructuredSelector({
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
   settings: exportSettingsSelector,
+  walletSyncAuth: walletSyncAuthSelector,
 });
 
 const QRCodeContainer = styled.div`
@@ -30,6 +32,7 @@ type OwnProps = {
 type Props = OwnProps & {
   accounts: Account[];
   settings: Settings;
+  walletSyncAuth: string | undefined;
 };
 class QRCodeExporter extends PureComponent<
   Props,
@@ -45,12 +48,13 @@ class QRCodeExporter extends PureComponent<
 
   constructor(props: Props) {
     super(props);
-    const { accounts, settings } = props;
+    const { accounts, settings, walletSyncAuth } = props;
     const data = encode({
       accounts,
       settings,
       exporterName: "desktop",
       exporterVersion: __APP_VERSION__,
+      walletSyncAuth,
     });
     this.chunks = dataToFrames(data, 160, 4);
     setTimeout(() => {

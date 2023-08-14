@@ -14,6 +14,7 @@ import Tooltip from "../Tooltip";
 import TranslatedError from "../TranslatedError";
 import Box from "../Box";
 import { ItemContainer } from "./shared";
+
 export default function ActivityIndicatorInner() {
   const bridgeSync = useBridgeSync();
   const globalSyncState = useGlobalSyncState();

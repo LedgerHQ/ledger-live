@@ -34,6 +34,7 @@ export default {
           },
           exporterName: "ledger-live-cli",
           exporterVersion: "0.0.0",
+          walletSyncAuth: undefined,
         });
         const frames = dataToFrames(data, 80, 4);
 

@@ -10,6 +10,7 @@ import type {
   AccountsReplaceAccountsPayload,
   AccountsSetAccountsPayload,
   AccountsUpdateAccountWithUpdaterPayload,
+  AccountsUpdateAccountsWithUpdaterPayload,
 } from "./types";
 import { AccountsActionTypes } from "./types";
 import logger from "../logger";
@@ -47,6 +48,11 @@ export const setAccounts = createAction<AccountsSetAccountsPayload>(
 export const updateAccountWithUpdater = createAction<AccountsUpdateAccountWithUpdaterPayload>(
   AccountsActionTypes.UPDATE_ACCOUNT,
 );
+
+export const updateAllAccountsWithUpdater = createAction<AccountsUpdateAccountsWithUpdaterPayload>(
+  AccountsActionTypes.UPDATE_ACCOUNTS,
+);
+
 export const updateAccount = (payload: Pick<Account, "id"> & Partial<Account>) =>
   updateAccountWithUpdater({
     accountId: payload.id,

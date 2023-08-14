@@ -8,6 +8,7 @@ import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccounts,
+  getWalletSync,
   getCountervalues,
   getSettings,
   getBle,
@@ -17,6 +18,7 @@ import {
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
+import { initWalletSync as importWalletSync } from "../actions/walletsync";
 import { importBle } from "../actions/ble";
 import { updateProtectData, updateProtectStatus } from "../actions/protect";
 import { INITIAL_STATE as settingsState, supportedCountervalues } from "../reducers/settings";
@@ -94,6 +96,9 @@ export default class LedgerStoreProvider extends Component<
     store.dispatch(importSettings(settingsData));
     const accountsData = await getAccounts();
     store.dispatch(importAccounts(accountsData));
+
+    const walletsyncData = await getWalletSync();
+    store.dispatch(importWalletSync(walletsyncData));
 
     const postOnboardingState = await getPostOnboardingState();
     if (postOnboardingState) {

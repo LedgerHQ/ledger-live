@@ -53,6 +53,11 @@ export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, up
   payload: { accountId, updater },
 });
 
+export const updateAllAccountsWithUpdater = (updater: (account: Account) => Account) => ({
+  type: "DB:UPDATE_ACCOUNTS",
+  payload: { updater },
+});
+
 export type UpdateAccount = (account: Partial<Account>) => UpdateAccountAction;
 export const updateAccount: UpdateAccount = payload => ({
   type: "DB:UPDATE_ACCOUNT",

@@ -77,6 +77,7 @@ describe("importAccountsMakeItems", () => {
         pairExchanges: {},
         developerModeEnabled: false,
       },
+      walletSyncAuth: undefined,
     };
     const accounts = [
       <AccountRaw>{

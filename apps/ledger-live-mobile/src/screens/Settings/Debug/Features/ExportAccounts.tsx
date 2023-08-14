@@ -13,11 +13,13 @@ import { exportSettingsSelector } from "../../../../reducers/settings";
 import LText from "../../../../components/LText";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import { State } from "../../../../reducers/types";
+import { walletSyncAuthSelector } from "../../../../reducers/walletsync";
 
 export type Props = {
   accounts: Account[];
   settings: Settings;
   children?: React.ReactNode;
+  walletSyncAuth: string | undefined;
 };
 
 class ExportAccounts extends PureComponent<
@@ -33,12 +35,13 @@ class ExportAccounts extends PureComponent<
   timer: NodeJS.Timeout | undefined;
 
   componentDidMount() {
-    const { accounts, settings } = this.props;
+    const { accounts, settings, walletSyncAuth } = this.props;
     const data = encode({
       accounts,
       settings,
       exporterName: "mobile",
       exporterVersion: VersionNumber.appVersion || "",
+      walletSyncAuth,
     });
     this.chunks = dataToFrames(data, 160, 4);
     const fps = 3;
@@ -102,10 +105,12 @@ export default connect(
     {
       accounts: Account[];
       settings: Settings;
+      walletSyncAuth: string | undefined;
     }
   >({
     accounts: accountsSelector,
     settings: exportSettingsSelector,
+    walletSyncAuth: walletSyncAuthSelector,
   }),
 )(ExportAccounts);
 

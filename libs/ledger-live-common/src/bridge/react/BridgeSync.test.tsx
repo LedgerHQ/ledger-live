@@ -14,11 +14,20 @@ jest.setTimeout(30000);
 const defaultsBridgeSyncOpts = {
   accounts: [],
   updateAccountWithUpdater: () => {},
+  updateAllAccounts: () => {},
   recoverError: e => e,
   trackAnalytics: () => {},
   prepareCurrency: () => Promise.resolve(),
   hydrateCurrency: () => Promise.resolve(),
   blacklistedTokenIds: [],
+  walletSyncAuth: undefined,
+  walletSyncVersionManager: {
+    getVersion: () => undefined,
+    onVersionUpdate: () => {},
+  },
+  setWalletSyncPayload: () => {},
+  getLatestWalletSyncPayload: () => [],
+  setLatestWalletSyncPayload: () => {},
 };
 
 setSupportedCurrencies(["bitcoin", "ethereum"]);
@@ -101,4 +110,6 @@ describe("BridgeSync", () => {
       );
     });
   });
+
+  // TODO add some tests for Wallet Sync related stuff
 });

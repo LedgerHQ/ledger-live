@@ -14,6 +14,7 @@ import protect from "./protect";
 import nft from "./nft";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
+import walletsync from "./walletsync";
 
 export type AppStore = Store<State>;
 
@@ -31,6 +32,7 @@ const appReducer = combineReducers({
   postOnboarding,
   protect,
   nft,
+  walletsync,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>

@@ -6,6 +6,7 @@ import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/li
 import { accountsSelector } from "./../reducers/accounts";
 import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
 import { State } from "../reducers";
+import { walletSyncSelector } from "../reducers/walletsync";
 let DB_MIDDLEWARE_ENABLED = true;
 
 // ability to temporary disable the db middleware from outside
@@ -28,6 +29,10 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
     next(action);
     const state = store.getState();
     setKey("app", "postOnboarding", postOnboardingSelector(state));
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("WALLETSYNC_")) {
+    next(action);
+    const state = store.getState();
+    setKey("app", "walletsync", walletSyncSelector(state));
   } else {
     const oldState = store.getState();
     const res = next(action);

@@ -38,6 +38,7 @@ test("encode/decode", () => {
     },
     exporterName: "test你好👋",
     exporterVersion: "0.0.0",
+    walletSyncAuth: undefined,
   };
   const exp = decode(encode(data));
   expect(exp.meta.exporterName).toEqual(data.exporterName);
@@ -65,6 +66,7 @@ test("encode/decode", () => {
     exporterName: "test",
     exporterVersion: "0.0.0",
     chunkSize: 100,
+    walletSyncAuth: undefined,
   };
   const data = encode(arg);
   const res = decode(data);

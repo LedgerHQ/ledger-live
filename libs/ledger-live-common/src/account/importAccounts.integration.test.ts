@@ -158,6 +158,7 @@ test("importAccounts with a set of real data", async () => {
     accounts: accounts.map(accountToAccountData),
     settings: { currenciesSettings: {}, pairExchanges: {} },
     meta: { exporterName: "Test", exporterVersion: "0" },
+    walletSyncAuth: undefined,
   };
 
   const accountsState = [];

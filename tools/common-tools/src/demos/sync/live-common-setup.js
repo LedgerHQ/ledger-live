@@ -1,4 +1,8 @@
 // @flow
+import winston from "winston";
+import { listen } from "@ledgerhq/logs";
+import simple from "@ledgerhq/live-common/lib/logs/simple";
+
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/lib/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/lib/wallet-api/constants";
@@ -60,3 +64,31 @@ setSupportedCurrencies([
   "near",
   "coreum",
 ]);
+
+const logger = winston.createLogger({
+  level: "debug",
+  transports: [
+    new winston.transports.Console({
+      format: simple(),
+      silent: false,
+      level: "debug",
+    }),
+  ],
+});
+
+listen(log => {
+  const { type } = log;
+  let level = "info";
+
+  if (type === "apdu" || type === "hw" || type === "speculos" || type.includes("debug")) {
+    level = "debug";
+  } else if (type.includes("warn")) {
+    level = "warn";
+  } else if (type.startsWith("network") || type.startsWith("socket")) {
+    level = "http";
+  } else if (type.includes("error")) {
+    level = "error";
+  }
+
+  logger.log(level, log);
+});

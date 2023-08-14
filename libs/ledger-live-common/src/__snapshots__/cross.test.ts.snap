@@ -53,5 +53,6 @@ Object {
       "BTC_USD": "KRAKEN",
     },
   },
+  "walletSyncAuth": undefined,
 }
 `;

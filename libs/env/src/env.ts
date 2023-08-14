@@ -611,6 +611,21 @@ const envDefinitions = {
     parser: boolParser,
     desc: "is walletconnect enabled",
   },
+  WALLET_SYNC_API: {
+    def: "https://cloud-sync-backend.aws.stg.ldg-tech.com",
+    parser: stringParser,
+    desc: "wallet sync api base url",
+  },
+  WALLET_SYNC_POLL_FREQUENCY: {
+    def: 5000,
+    parser: intParser,
+    desc: "wallet sync api poll frequency in ms",
+  },
+  WALLET_SYNC_PUSH_DEBOUNCE: {
+    def: 5000,
+    parser: intParser,
+    desc: "wallet sync api push debounce in ms",
+  },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
     parser: floatParser,

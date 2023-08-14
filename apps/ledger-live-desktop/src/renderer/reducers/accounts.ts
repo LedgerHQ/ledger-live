@@ -27,6 +27,7 @@ type HandlersPayloads = {
   ADD_ACCOUNT: Account;
   REPLACE_ACCOUNTS: Account[];
   UPDATE_ACCOUNT: { accountId: string; updater: (a: Account) => Account };
+  UPDATE_ACCOUNTS: { updater: (a: Account[]) => Account[] };
   REMOVE_ACCOUNT: Account;
   CLEAN_FULLNODE_DISCONNECT: never;
   CLEAN_ACCOUNTS_CACHE: never;
@@ -52,6 +53,7 @@ const handlers: AccountsHandlers = {
       }
       return updater(existingAccount);
     }),
+  UPDATE_ACCOUNTS: (state, { payload: { updater } }) => updater(state),
   REMOVE_ACCOUNT: (state, { payload: account }) => state.filter(acc => acc.id !== account.id),
   CLEAN_FULLNODE_DISCONNECT: state => state.filter(acc => acc.currency.id !== "bitcoin"),
   CLEAN_ACCOUNTS_CACHE: state => state.map(clearAccount),

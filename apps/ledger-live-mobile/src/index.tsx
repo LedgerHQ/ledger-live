@@ -27,6 +27,7 @@ import {
   saveAccounts,
   saveBle,
   saveSettings,
+  saveWalletSync,
   saveCountervalues,
   savePostOnboardingState,
 } from "./db";
@@ -81,6 +82,7 @@ import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
 import TransactionsAlerts from "./components/TransactionsAlerts";
+import { walletSyncSelector } from "./reducers/walletsync";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -104,6 +106,7 @@ function App() {
   useListenToHidDevices();
 
   const getSettingsChanged = useCallback((a, b) => a.settings !== b.settings, []);
+  const getWalletSyncChanged = useCallback((a, b) => a.walletsync !== b.walletsync, []);
   const getAccountsChanged = useCallback(
     (
       oldState: State,
@@ -157,6 +160,12 @@ function App() {
     throttle: 500,
     getChangesStats: getAccountsChanged,
     lense: accountsExportSelector,
+  });
+  useDBSaveEffect({
+    save: saveWalletSync,
+    throttle: 500,
+    getChangesStats: getWalletSyncChanged,
+    lense: walletSyncSelector,
   });
   useDBSaveEffect({
     save: saveBle,

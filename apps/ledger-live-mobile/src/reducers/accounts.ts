@@ -35,6 +35,7 @@ import type {
   AccountsUpdateAccountWithUpdaterPayload,
   SettingsBlacklistTokenPayload,
   DangerouslyOverrideStatePayload,
+  AccountsUpdateAccountsWithUpdaterPayload,
 } from "../actions/types";
 import { AccountsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
@@ -89,6 +90,15 @@ const handlers: ReducerMap<AccountsState, Payload> = {
 
     return {
       active: state.active.map(update),
+    };
+  },
+
+  [AccountsActionTypes.UPDATE_ACCOUNTS]: (state, action) => {
+    const {
+      payload: { updater },
+    } = action as Action<AccountsUpdateAccountsWithUpdaterPayload>;
+    return {
+      active: updater(state.active),
     };
   },
 
