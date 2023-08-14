@@ -150,7 +150,7 @@ const SwapForm = () => {
     const { feesStrategy } = transaction || {};
 
     const rateId = exchangeRate?.rateId || "12345";
-    if (fromAccount && toAccount && feesStrategy) {
+    if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromMagnitude =
@@ -169,7 +169,7 @@ const SwapForm = () => {
           toAccountId,
           fromAmount,
           quoteId: encodeURIComponent(rateId),
-          feeStrategy: feesStrategy.toUpperCase(),
+          feeStrategy: feesStrategy?.toUpperCase(),
           ...customFeesParams,
         },
       });
