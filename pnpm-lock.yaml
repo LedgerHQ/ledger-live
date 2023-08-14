@@ -1279,8 +1279,8 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
       main:
-        specifier: link:@types/mocks-server/main
-        version: link:@types/mocks-server/main
+        specifier: link:@types/@mocks-server/main
+        version: link:@types/@mocks-server/main
       metro:
         specifier: ^0.76.0
         version: 0.76.0
@@ -28533,7 +28533,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -35864,6 +35864,40 @@ packages:
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
+    dev: true
+
+  /expo-asset@8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-ugavxA7Scn96TBdeTYQA6xtHktnk0o/0xk7nFkxJKoH/t2cZDFSB05X0BI2/LDZY4iE6xTPOYw4C4mmourWfuA==}
+    peerDependencies:
+      expo-file-system: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-file-system:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      blueimp-md5: 2.19.0
+      expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-file-system: 15.2.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
+      invariant: 2.2.4
+      md5-file: 3.2.3
+      path-browserify: 1.0.1
+      react: 18.0.0
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - expo
+      - supports-color
 
   /expo-barcode-scanner@12.3.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-aJ/MJVikSESKUwMUTIsURGJTMgAuiFhcAj0NxH0WiezhG7cJE4iIzbuk/+Ns5xpQT8y5Zc8Ulhj02qSW8+kxDQ==}
@@ -36123,7 +36157,7 @@ packages:
         optional: true
     dependencies:
       expo: 48.0.9(@babel/core@7.22.8)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
-      expo-asset: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-asset: 8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       fontfaceobserver: 2.1.0
@@ -36456,7 +36490,7 @@ packages:
       babel-preset-expo: 9.3.2(@babel/core@7.22.8)
       cross-spawn: 6.0.5
       expo-application: 5.1.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
-      expo-asset: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-asset: 8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-file-system: 15.2.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-font: 11.1.1(expo-asset@8.9.1)(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
@@ -46576,7 +46610,7 @@ packages:
       metro-cache: 0.76.0
       metro-core: 0.76.0
       metro-runtime: 0.76.0
-      metro-transform-worker: 0.76.0
+      metro-transform-worker: 0.76.0(metro-minify-terser@0.76.0)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -57794,7 +57828,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-jsx@5.1.1(react@18.2.0):
     resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}

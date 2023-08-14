@@ -12,6 +12,7 @@ import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, GetExchangeRates } from "./types";
 import { isPlaywrightEnv } from "./utils/isPlaywrightEnv";
+import { getEnv } from "../../env";
 
 const getExchangeRates: GetExchangeRates = async ({
   exchange,

@@ -2,19 +2,28 @@ import { expect } from "detox";
 import { loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import SwapFormPage from "../../models/trade/swapFormPage";
-import { createServer } from "@mocks-server/main";
 import { delay } from "../../helpers";
+import { providersRoutes } from "../../../mocks/routes/providers";
+import { rateRoutes } from "../../../mocks/routes/rate";
 
+const { createServer } = require("@mocks-server/main");
+const collections = require("../../../mocks/collections.json");
+
+// @ts-expect-error no types
 let server;
 let portfolioPage: PortfolioPage;
 let swapPage: SwapFormPage;
 
 describe("Swap", () => {
   beforeAll(async () => {
+    console.log("collections", { collections });
     server = await createServer();
+    console.log("server", { server });
     const { loadRoutes, loadCollections } = server.mock.createLoaders();
-    loadRoutes();
-    loadCollections();
+    loadRoutes(providersRoutes);
+    loadRoutes(rateRoutes);
+    loadCollections(collections);
+    console.log("state of server", { server });
 
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
@@ -25,6 +34,7 @@ describe("Swap", () => {
   });
 
   afterAll(async () => {
+    // @ts-expect-error no types
     server.stop();
   });
 

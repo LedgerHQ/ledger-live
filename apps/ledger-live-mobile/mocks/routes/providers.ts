@@ -1,4 +1,4 @@
-module.exports = [
+export const providersRoutes = (): object => [
   {
     id: "providers", // route id
     url: "/providers", // url in express format
