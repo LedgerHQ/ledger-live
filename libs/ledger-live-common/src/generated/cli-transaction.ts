@@ -4,17 +4,8 @@ import crypto_org from "../families/crypto_org/cli-transaction";
 import elrond from "../families/elrond/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
-<<<<<<< HEAD
 import stacks from "../families/stacks/cli-transaction";
 import icon from "../families/icon/cli-transaction";
-=======
-import icon from "../families/icon/cli-transaction";
-import near from "../families/near/cli-transaction";
-import osmosis from "../families/osmosis/cli-transaction";
-import polkadot from "../families/polkadot/cli-transaction";
-import ripple from "../families/ripple/cli-transaction";
-import solana from "../families/solana/cli-transaction";
->>>>>>> 414b5dbd18 (feat: add staking feature for icon network)
 import stellar from "../families/stellar/cli-transaction";
 import tron from "../families/tron/cli-transaction";
 import vechain from "../families/vechain/cli-transaction";
@@ -35,17 +26,11 @@ export default {
   elrond,
   filecoin,
   hedera,
-<<<<<<< HEAD
   stacks,
   icon,
-=======
-  icon,
   near,
-  osmosis,
   polkadot,
-  ripple,
   solana,
->>>>>>> 414b5dbd18 (feat: add staking feature for icon network)
   stellar,
   tron,
   vechain,
@@ -53,9 +38,6 @@ export default {
   bitcoin,
   cardano,
   evm,
-  near,
-  polkadot,
-  solana,
   tezos,
   xrp,
 };

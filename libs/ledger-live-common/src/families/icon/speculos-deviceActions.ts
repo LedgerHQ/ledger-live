@@ -1,7 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow } from "../../bot/specs";
+import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
 
 const expectedAmount = ({ account, status }) => {
   return (
@@ -17,23 +17,23 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
     steps: [
       {
         title: "Confirm",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
       },
       {
         title: "Amount",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: expectedAmount,
       },
       {
         title: "Address",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           return transaction.recipient;
         },
       },
       {
         title: "Fees",
-        button: "Rr",
+        button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status }) =>
           formatCurrencyUnit(account.unit, status.estimatedFees, {
             disableRounding: true,
@@ -41,7 +41,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Accept",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
     ],
   });
