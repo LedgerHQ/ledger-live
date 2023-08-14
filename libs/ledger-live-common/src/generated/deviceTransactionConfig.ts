@@ -7,9 +7,9 @@ import elrond from "../families/elrond/deviceTransactionConfig";
 import ethereum from "../families/ethereum/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
+import icon from "../families/icon/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
 import near from "../families/near/deviceTransactionConfig";
-import icon from "../families/icon/deviceTransactionConfig";
 import ripple from "../families/ripple/deviceTransactionConfig";
 import solana from "../families/solana/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
@@ -30,9 +30,9 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  icon,
   internet_computer,
   near,
-  icon,
   ripple,
   solana,
   stacks,

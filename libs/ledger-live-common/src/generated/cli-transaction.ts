@@ -8,7 +8,6 @@ import ethereum from "../families/ethereum/cli-transaction";
 import filecoin from "../families/filecoin/cli-transaction";
 import hedera from "../families/hedera/cli-transaction";
 import near from "../families/near/cli-transaction";
-import icon from "../families/icon/cli-transaction";
 import ripple from "../families/ripple/cli-transaction";
 import solana from "../families/solana/cli-transaction";
 import stacks from "../families/stacks/cli-transaction";
@@ -30,7 +29,6 @@ export default {
   filecoin,
   hedera,
   near,
-  icon,
   ripple,
   solana,
   stacks,

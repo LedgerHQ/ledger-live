@@ -42,6 +42,10 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { TransactionStatus as hederaTransactionStatus } from "../families/hedera/types";
 import { TransactionStatusRaw as hederaTransactionStatusRaw } from "../families/hedera/types";
+import { Transaction as iconTransaction } from "../families/icon/types";
+import { TransactionRaw as iconTransactionRaw } from "../families/icon/types";
+import { TransactionStatus as iconTransactionStatus } from "../families/icon/types";
+import { TransactionStatusRaw as iconTransactionStatusRaw } from "../families/icon/types";
 import { Transaction as internet_computerTransaction } from "../families/internet_computer/types";
 import { TransactionRaw as internet_computerTransactionRaw } from "../families/internet_computer/types";
 import { TransactionStatus as internet_computerTransactionStatus } from "../families/internet_computer/types";
@@ -50,10 +54,6 @@ import { Transaction as nearTransaction } from "../families/near/types";
 import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
 import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
 import { TransactionStatusRaw as nearTransactionStatusRaw } from "../families/near/types";
-import { Transaction as iconTransaction } from "../families/icon/types";
-import { TransactionRaw as iconTransactionRaw } from "../families/icon/types";
-import { TransactionStatus as iconTransactionStatus } from "../families/icon/types";
-import { TransactionStatusRaw as iconTransactionStatusRaw } from "../families/icon/types";
 import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/types";
 import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/types";
 import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/types";
@@ -95,9 +95,9 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | iconTransaction
   | internet_computerTransaction
   | nearTransaction
-  | iconTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
@@ -118,9 +118,9 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | iconTransactionRaw
   | internet_computerTransactionRaw
   | nearTransactionRaw
-  | iconTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
@@ -141,9 +141,9 @@ export type TransactionStatus =
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | iconTransactionStatus
   | internet_computerTransactionStatus
   | nearTransactionStatus
-  | iconTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
@@ -164,9 +164,9 @@ export type TransactionStatusRaw =
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
-  | iconTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw

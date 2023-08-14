@@ -123,14 +123,11 @@
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
     "create-release-hash": "workspace:*",
-<<<<<<< HEAD
     "electron-rebuild": "^3.2.9",
-=======
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^4.2.1",
->>>>>>> 46f0f999a6a4b850b24cb87905256a2fd8c73976
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
     "prettier": "^2.8.1",

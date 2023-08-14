@@ -7,9 +7,9 @@ import elrond from "../families/elrond/transaction";
 import ethereum from "../families/ethereum/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
+import icon from "../families/icon/transaction";
 import internet_computer from "../families/internet_computer/transaction";
 import near from "../families/near/transaction";
-import icon from "../families/icon/transaction";
 import ripple from "../families/ripple/transaction";
 import solana from "../families/solana/transaction";
 import stacks from "../families/stacks/transaction";
@@ -30,9 +30,9 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  icon,
   internet_computer,
   near,
-  icon,
   ripple,
   solana,
   stacks,

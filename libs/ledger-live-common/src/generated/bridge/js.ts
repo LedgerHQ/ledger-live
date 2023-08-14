@@ -7,9 +7,9 @@ import elrond from "../../families/elrond/bridge/js";
 import ethereum from "../../families/ethereum/bridge/js";
 import filecoin from "../../families/filecoin/bridge/js";
 import hedera from "../../families/hedera/bridge/js";
+import icon from "../../families/icon/bridge/js";
 import internet_computer from "../../families/internet_computer/bridge/js";
 import near from "../../families/near/bridge/js";
-import icon from "../../families/icon/bridge/js";
 import ripple from "../../families/ripple/bridge/js";
 import solana from "../../families/solana/bridge/js";
 import stacks from "../../families/stacks/bridge/js";
@@ -30,9 +30,9 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  icon,
   internet_computer,
   near,
-  icon,
   ripple,
   solana,
   stacks,
