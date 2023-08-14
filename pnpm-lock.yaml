@@ -4696,8 +4696,8 @@ importers:
         specifier: ~0.19.0
         version: 0.19.0(react-dom@18.0.0)(react@18.0.0)
       regenerator-runtime:
-        specifier: ^0.13.9
-        version: 0.13.9
+        specifier: ^0.14.0
+        version: 0.14.0
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -20143,7 +20143,7 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       react-inspector: 5.1.1(react@17.0.2)
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       telejson: 5.3.3
       ts-dedent: 2.2.0
       util-deprecate: 1.0.2
@@ -20525,7 +20525,7 @@ packages:
       core-js: 3.22.5
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       ts-dedent: 2.2.0
       webpack: 5.72.1(esbuild@0.18.0)
     transitivePeerDependencies:
@@ -20665,7 +20665,7 @@ packages:
       qs: 6.10.3
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       ts-dedent: 2.2.0
     dev: true
 
@@ -22923,7 +22923,7 @@ packages:
       react-dom: 17.0.2(react@17.0.2)
       react-refresh: 0.11.0
       read-pkg-up: 7.0.1
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       ts-dedent: 2.2.0
       typescript: 5.1.3
       webpack: 4.42.1
@@ -54539,10 +54539,6 @@ packages:
 
   /regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
-
-  /regenerator-runtime@0.13.9:
-    resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
-    dev: true
 
   /regenerator-runtime@0.14.0:
     resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}
