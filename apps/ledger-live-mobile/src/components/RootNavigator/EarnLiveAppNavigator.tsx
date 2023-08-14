@@ -110,8 +110,8 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
       <EarnInfoDrawer
         modalOpened={modalOpened}
         closeModal={closeModal}
-        message={_props.route.params.message || ""}
-        messageTitle={_props.route.params.messageTitle || ""}
+        message={_props.route.params?.message || ""}
+        messageTitle={_props.route.params?.messageTitle || ""}
       />
     </>
   );
