@@ -968,6 +968,9 @@ importers:
       react-native-gesture-handler:
         specifier: ^2.9.0
         version: 2.9.0(react-native@0.71.6)(react@18.0.0)
+      react-native-haptic-feedback:
+        specifier: ^2.0.3
+        version: 2.0.3(react-native@0.71.6)
       react-native-image-crop-tools:
         specifier: ^1.6.4
         version: 1.6.4(patch_hash=p6wzwon3gzjcspjalwhmuroog4)(react-native@0.71.6)(react@18.0.0)
@@ -53004,6 +53007,14 @@ packages:
 
   /react-native-gradle-plugin@0.71.17:
     resolution: {integrity: sha512-OXXYgpISEqERwjSlaCiaQY6cTY5CH6j73gdkWpK0hedxtiWMWgH+i5TOi4hIGYitm9kQBeyDu+wim9fA8ROFJA==}
+
+  /react-native-haptic-feedback@2.0.3(react-native@0.71.6):
+    resolution: {integrity: sha512-7+qvcxXZts/hA+HOOIFyM1x9m9fn/TJVSTgXaoQ8uT4gLc97IMvqHQ559tDmnlth+hHMzd3HRMpmRLWoKPL0DA==}
+    peerDependencies:
+      react-native: '>=0.60.0'
+    dependencies:
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+    dev: false
 
   /react-native-image-crop-tools@1.6.4(patch_hash=p6wzwon3gzjcspjalwhmuroog4)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-GhI76SlKAI7vfUfg/UnG/MrPTe7ffwjsOowBnYYAB2npJ2ij/iAG4LRXOPlQygoY+yiCy158sYo4wmKDc0RfLQ==}

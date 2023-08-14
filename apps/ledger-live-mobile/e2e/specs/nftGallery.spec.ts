@@ -67,12 +67,14 @@ describe("NFT Gallery screen", () => {
     await expect(receivePage.getStep1HeaderTitle()).not.toBeVisible();
     await nftGalleryPage.continueFromReceiveNFTsModal();
     await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep3HeaderTitle()).not.toExist();
+    await expect(receivePage.getStep2HeaderTitle()).not.toExist();
     await tapByText("Ethereum");
     // NOTE: Use .toExist because the modal overlay with an opacity
     // means we cannot use .toBeVisible
     if (!isAndroid()) {
-      await expect(receivePage.getStep3HeaderTitle()).toExist();
+      await expect(receivePage.getStep2HeaderTitle()).toExist();
+      await tapByText("Ethereum");
+      await expect(receivePage.getStep2Accounts()).toBeVisible();
     }
   });
 

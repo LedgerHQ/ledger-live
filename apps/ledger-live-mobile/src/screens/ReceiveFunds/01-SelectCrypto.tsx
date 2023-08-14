@@ -1,31 +1,27 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { StyleSheet, FlatList } from "react-native";
-import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import { FlatList } from "react-native";
 import type {
   CryptoCurrency,
   CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import {
-  isCurrencySupported,
-  listTokens,
-  useCurrenciesByMarketcap,
-  listSupportedCurrencies,
-  findCryptoCurrencyByKeyword,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import debounce from "lodash/debounce";
 
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import CurrencyRow from "../../components/CurrencyRow";
-import LText from "../../components/LText";
+import BigCurrencyRow from "../../components/BigCurrencyRow";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { findAccountByCurrency } from "../../logic/deposit";
+
+import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -37,91 +33,61 @@ const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
 const renderEmptyList = () => (
   <Flex px={6}>
-    <LText textAlign="center">
+    <Text textAlign="center">
       <Trans i18nKey="common.noCryptoFound" />
-    </LText>
+    </Text>
   </Flex>
 );
 
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
-
-const findAccountByCurrency = (accounts: AccountLike[], currency: CryptoCurrency | TokenCurrency) =>
-  accounts.filter(
-    (acc: AccountLike) =>
-      (acc.type === "Account" ? acc.currency?.id : (acc as TokenAccount).token?.id) === currency.id,
-  );
-
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
+  const filterCurrencyIds = route?.params?.filterCurrencyIds;
 
   const { t } = useTranslation();
-  const filterCurrencyIds = useMemo(
-    () => route.params?.filterCurrencyIds || [],
-    [route.params?.filterCurrencyIds],
-  );
-  const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[])
-        .concat(listSupportedTokens())
-        .filter(({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id)),
-    [filterCurrencyIds],
-  );
-
   const accounts = useSelector(flattenAccountsSelector);
 
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+  const { currenciesByProvider, sortedCryptoCurrencies } = useGroupedCurrenciesByProvider();
 
   const onPressItem = useCallback(
-    (currency: CryptoCurrency | TokenCurrency) => {
-      track("currency_clicked", {
-        currency: currency.name,
+    (curr: CryptoCurrency | TokenCurrency) => {
+      track("asset_clicked", {
+        asset: curr.name,
+        page: "Choose a crypto to secure",
       });
 
-      const accs = findAccountByCurrency(accounts, currency);
-      if (accs.length > 1) {
-        // if we found one or more accounts of the given currency we select account
+      const provider = currenciesByProvider.find(elem =>
+        elem.currenciesByNetwork.some(
+          currencyByNetwork => (currencyByNetwork as CryptoCurrency | TokenCurrency).id === curr.id,
+        ),
+      );
+
+      // If the selected currency exists on multiple networks we redirect to the SelectNetwork screen
+      if (provider && provider?.currenciesByNetwork.length > 1) {
+        navigation.navigate(ScreenName.DepositSelectNetwork, {
+          provider,
+          filterCurrencyIds,
+        });
+        return;
+      }
+
+      const isToken = curr.type === "TokenCurrency";
+      const currency = isToken ? curr.parentCurrency : curr;
+      const currencyAccounts = findAccountByCurrency(accounts, currency);
+
+      if (currencyAccounts.length > 0) {
+        // If we found one or more accounts of the currency then we select account
         navigation.navigate(ScreenName.ReceiveSelectAccount, {
           currency,
         });
-      } else if (accs.length === 1) {
-        // if we found only one account of the given currency we go straight to QR code
-        navigation.navigate(ScreenName.ReceiveConfirmation, {
-          accountId: accs[0].id,
-          parentId: (accs[0] as TokenAccount)?.parentId,
-        });
-      } else if (currency.type === "TokenCurrency") {
-        // cases for token currencies
-        const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
-
-        if (parentAccounts.length > 1) {
-          // if we found one or more accounts of the parent currency we select account
-
-          navigation.navigate(ScreenName.ReceiveSelectAccount, {
-            currency,
-            createTokenAccount: true,
-          });
-        } else if (parentAccounts.length === 1) {
-          // if we found only one account of the parent currency we go straight to QR code
-          navigation.navigate(ScreenName.ReceiveConfirmation, {
-            accountId: parentAccounts[0].id,
-            currency,
-            createTokenAccount: true,
-          });
-        } else {
-          // if we didn't find any account of the parent currency we add and create one
-          navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-            currency: currency.parentCurrency,
-            createTokenAccount: true,
-          });
-        }
       } else {
-        // else we create a currency account
+        // If we didn't find any account of the parent currency then we add one
         navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
           currency,
+          createTokenAccount: isToken || undefined,
         });
       }
     },
-    [accounts, navigation],
+    [currenciesByProvider, accounts, navigation, filterCurrencyIds],
   );
 
   useEffect(() => {
@@ -134,13 +100,16 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   }, [onPressItem, paramsCurrency]);
 
+  const debounceTrackOnSearchChange = debounce((newQuery: string) => {
+    track("asset_searched", { page: "Choose a crypto to secure", asset: newQuery });
+  }, 1500);
+
   const renderList = useCallback(
     (items: CryptoOrTokenCurrency[]) => (
       <FlatList
-        contentContainerStyle={styles.list}
         data={items}
         renderItem={({ item }) => (
-          <CurrencyRow iconSize={32} currency={item} onPress={onPressItem} />
+          <BigCurrencyRow currency={item} onPress={onPressItem} subTitle={item.ticker} />
         )}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
@@ -150,36 +119,35 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     [onPressItem],
   );
 
+  const list = useMemo(
+    () =>
+      filterCurrencyIds
+        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIds.includes(crypto.id))
+        : sortedCryptoCurrencies,
+    [filterCurrencyIds, sortedCryptoCurrencies],
+  );
+
   return (
     <>
-      <TrackScreen category="Receive" name="Select Crypto" />
-      <LText
-        fontSize="32px"
-        fontFamily="InterMedium"
-        semiBold
-        px={6}
-        my={3}
-        testID="receive-header-step1-title"
-      >
+      <TrackScreen category="Deposit" name="Choose a crypto to secure" />
+      <Text variant="h4" fontWeight="semiBold" mx={6} mb={3} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
-      </LText>
-      <FilteredSearchBar
-        keys={SEARCH_KEYS}
-        inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-        list={sortedCryptoCurrencies}
-        renderList={renderList}
-        renderEmptySearch={renderEmptyList}
-      />
+      </Text>
+      {list.length > 0 ? (
+        <FilteredSearchBar
+          keys={SEARCH_KEYS}
+          inputWrapperStyle={{ marginHorizontal: 16, marginBottom: 8 }}
+          list={list}
+          renderList={renderList}
+          renderEmptySearch={renderEmptyList}
+          newSearchBar
+          onSearchChange={debounceTrackOnSearchChange}
+        />
+      ) : (
+        <Flex flex={1} mt={6}>
+          <InfiniteLoader />
+        </Flex>
+      )}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    paddingBottom: 32,
-  },
-  filteredSearchInputWrapperStyle: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-  },
-});
