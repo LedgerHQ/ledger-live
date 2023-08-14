@@ -265,7 +265,7 @@
     "react-native-performance": "^3.1.2",
     "react-native-performance-flipper-reporter": "^3.0.0",
     "react-test-renderer": "^18",
-    "strip-ansi": "6.0.1",
+    "strip-ansi": "7.1.0",
     "ts-jest": "^28.0.8",
     "ts-node": "^10.4.0",
     "tslib": "^2.5.0",
