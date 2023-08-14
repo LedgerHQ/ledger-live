@@ -45,13 +45,16 @@ type useDateFormatterOptions = {
  * @returns a function that format a date into a string based on the current
  * locale.
  */
-const useDateFormatter = (opts: useDateFormatterOptions, intlOpts?: Intl.DateTimeFormatOptions) => {
+const useDateFormatter = (
+  opts?: useDateFormatterOptions,
+  intlOpts?: Intl.DateTimeFormatOptions,
+) => {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
   const f = (date: Date) => {
     let formatedDate = new Intl.DateTimeFormat(locale, intlOpts).format(date);
-    if (!opts.calendar) return formatedDate;
+    if (!opts?.calendar) return formatedDate;
 
     const { yesterday, today, tomorrow } = getDatesAround();
 
@@ -72,5 +75,7 @@ const useDateFormatter = (opts: useDateFormatterOptions, intlOpts?: Intl.DateTim
 
   return { f };
 };
+
+export { dateEq, getDatesAround };
 
 export default useDateFormatter;
