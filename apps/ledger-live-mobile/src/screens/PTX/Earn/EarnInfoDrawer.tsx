@@ -1,5 +1,4 @@
 import React from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
