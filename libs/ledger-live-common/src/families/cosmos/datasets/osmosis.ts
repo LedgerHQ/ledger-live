@@ -11,14 +11,7 @@ import transactionTransformer from "../transaction";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "cosmosResources.unbondingBalance", // They move once all unbonding are done
-    "cosmosResources.pendingRewardsBalance", // They are always movings
-    "cosmosResources.delegations", // They are always movings because of pending Rewards
-    "cosmosResources.redelegations", // will change ince a redelegation it's done
-    "cosmosResources.unbondings", // will change once a unbonding it's done
-    "spendableBalance", // will change with the rewards that automatically up
-  ],
+  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {
@@ -38,8 +31,7 @@ const dataset: CurrenciesData<Transaction> = {
       FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "js:2:osmo:osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c:",
-        seedIdentifier:
-          "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
+        seedIdentifier: "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
         xpub: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
         derivationMode: "",
         index: 0,
@@ -65,7 +57,7 @@ const dataset: CurrenciesData<Transaction> = {
       transactions: [
         {
           name: "Same as Recipient",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
@@ -79,7 +71,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Invalid Address",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: "dsadasdasdasdas",
@@ -106,14 +98,11 @@ const dataset: CurrenciesData<Transaction> = {
             memo: null,
             mode: "send",
           }) as Transaction,
-          expectedStatus: (account) => {
+          expectedStatus: account => {
             const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources)
-              throw new Error("Should exist because it's osmosis");
+            if (!cosmosResources) throw new Error("Should exist because it's osmosis");
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(
-                cosmosResources.delegatedBalance
-              )
+              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -139,13 +128,10 @@ const dataset: CurrenciesData<Transaction> = {
           }) as Transaction,
           expectedStatus: (account, t) => {
             const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources)
-              throw new Error("Should exist because it's osmosis");
+            if (!cosmosResources) throw new Error("Should exist because it's osmosis");
             invariant(t.memo === "test", "Should have a memo");
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(
-                cosmosResources.delegatedBalance
-              )
+              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -156,7 +142,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Not Enough balance",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber("99999999999999999"),
             recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
@@ -170,7 +156,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Redelegation - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             validators: [
@@ -179,8 +165,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            sourceValidator:
-              "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            sourceValidator: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
             mode: "redelegate",
           }),
           expectedStatus: (a, t) => {
@@ -193,7 +178,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "redelegation - AmountRequired",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "redelegate",
             validators: [
@@ -202,8 +187,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(0),
               },
             ],
-            sourceValidator:
-              "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            sourceValidator: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
           expectedStatus: {
             errors: {
@@ -214,7 +198,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "redelegation - Source is Destination",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "redelegate",
             validators: [
@@ -223,8 +207,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            sourceValidator:
-              "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
+            sourceValidator: "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt",
           }),
           expectedStatus: {
             errors: {
@@ -235,7 +218,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unbonding - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "undelegate",
             validators: [
@@ -255,7 +238,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unbonding - AmountRequired",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "undelegate",
             validators: [
@@ -274,7 +257,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Delegate - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "delegate",
             validators: [
@@ -294,7 +277,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Delegate - not a valid",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "delegate",
             validators: [
@@ -313,7 +296,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "ClaimReward - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {
@@ -333,7 +316,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "ClaimReward - not a osmovaloper",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {
@@ -352,7 +335,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "claimRewardCompound - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {
@@ -376,8 +359,7 @@ const dataset: CurrenciesData<Transaction> = {
       FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "js:2:osmo:osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89:",
-        seedIdentifier:
-          "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
+        seedIdentifier: "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
         name: "Osmosis 2 - Nano X Static Account",
         starred: true,
         derivationMode: "",

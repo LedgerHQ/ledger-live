@@ -20,27 +20,15 @@ type Props = {
   disabled: boolean;
   value: BigNumber | null | undefined;
   showVal?: boolean;
-  onSelect: (
-    validator: CosmosValidatorItem,
-    value: BigNumber | null | undefined,
-  ) => void;
+  onSelect: (validator: CosmosValidatorItem, value: BigNumber | null | undefined) => void;
   unit: Unit;
   delegatedValue?: BigNumber;
 };
 
-function Item({
-  item,
-  value,
-  disabled,
-  onSelect,
-  unit,
-  showVal = true,
-  delegatedValue,
-}: Props) {
+function Item({ item, value, disabled, onSelect, unit, showVal = true, delegatedValue }: Props) {
   const { colors } = useTheme();
   const { validator } = item;
-  const { validatorAddress, estimatedYearlyRewardsRate, name } =
-    validator || {};
+  const { validatorAddress, estimatedYearlyRewardsRate, name } = validator || {};
   const select = useCallback(
     () => validator && onSelect(validator, value),
     [onSelect, validator, value],
@@ -48,19 +36,13 @@ function Item({
   const isDisabled = (!value || value.gt(0)) && disabled;
 
   return (
-    <TouchableOpacity
-      onPress={select}
-      disabled={isDisabled}
-      style={[styles.wrapper]}
-    >
+    <TouchableOpacity onPress={select} disabled={isDisabled} style={[styles.wrapper]}>
       <View style={[styles.iconWrapper]}>
         <ValidatorImage
           size={32}
           isLedger={
             validatorAddress !== undefined &&
-            cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(
-              validatorAddress,
-            )
+            cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(validatorAddress)
           }
           name={name || validatorAddress}
         />
@@ -85,30 +67,14 @@ function Item({
       <View style={styles.value}>
         {(showVal || value) && (
           <View style={styles.valueContainer}>
-            <LText
-              semiBold
-              style={[styles.valueLabel]}
-              color={isDisabled ? "grey" : "darkBlue"}
-            >
-              {value ? (
-                <CurrencyUnitValue value={value} unit={unit} showCode={false} />
-              ) : (
-                "0"
-              )}
+            <LText semiBold style={[styles.valueLabel]} color={isDisabled ? "grey" : "darkBlue"}>
+              {value ? <CurrencyUnitValue value={value} unit={unit} showCode={false} /> : "0"}
             </LText>
 
             {delegatedValue && delegatedValue.gt(0) ? (
-              <LText
-                style={[styles.valueLabel, styles.subText]}
-                color="grey"
-                numberOfLines={1}
-              >
+              <LText style={[styles.valueLabel, styles.subText]} color="grey" numberOfLines={1}>
                 <Trans i18nKey="cosmos.delegation.flow.steps.validator.currentAmount">
-                  <CurrencyUnitValue
-                    value={delegatedValue}
-                    unit={unit}
-                    showCode={false}
-                  />
+                  <CurrencyUnitValue value={delegatedValue} unit={unit} showCode={false} />
                 </Trans>
               </LText>
             ) : null}

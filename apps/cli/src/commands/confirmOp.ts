@@ -1,12 +1,6 @@
 import { switchMap } from "rxjs/operators";
-import {
-  formatOperation,
-  toOperationRaw,
-} from "@ledgerhq/live-common/account/index";
-import {
-  decodeOperationId,
-  findOperationInAccount,
-} from "@ledgerhq/live-common/operation";
+import { formatOperation, toOperationRaw } from "@ledgerhq/live-common/account/index";
+import { decodeOperationId, findOperationInAccount } from "@ledgerhq/live-common/operation";
 import { scan } from "../scan";
 
 export default {
@@ -32,14 +26,11 @@ export default {
     return scan({
       id: [accountId],
     }).pipe(
-      switchMap(async (account) => {
+      switchMap(async account => {
         const op = findOperationInAccount(account, id);
-        if (!op)
-          throw new Error("operation was not found in account " + account.id);
-        return format === "text"
-          ? formatOperation(account)(op)
-          : toOperationRaw(op);
-      })
+        if (!op) throw new Error("operation was not found in account " + account.id);
+        return format === "text" ? formatOperation(account)(op) : toOperationRaw(op);
+      }),
     );
   },
 };

@@ -8,30 +8,34 @@ import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import nanoSDark from "~/renderer/images/nanoSDark.v3.svg";
 import nanoS2Dark from "~/renderer/images/nanoS2Dark.v3.svg";
-
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 
 registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark, stax, staxDark]);
 
-const makeAssetSelector = (lightAsset: any, darkAsset: any) => (p: ThemeProps<DefaultTheme>) =>
-  p.theme.colors.palette.type === "light" ? lightAsset : darkAsset;
+const makeAssetSelector =
+  (lightAsset: string, darkAsset: string) => (p: ThemeProps<DefaultTheme>) =>
+    p.theme.colors.palette.type === "light" ? lightAsset : darkAsset;
 
 const NanoS = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
+  // prettier-ignore
   background: url('${p => makeAssetSelector(nanoS, nanoSDark)(p)}') no-repeat center;
 `;
 
 const NanoSP = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
+  // prettier-ignore
   background: url('${p => makeAssetSelector(nanoS2, nanoS2Dark)(p)}') no-repeat center;
 `;
 
 const NanoX = styled.div`
+  // prettier-ignore
   background: url('${p => makeAssetSelector(nanoX, nanoXDark)(p)}') no-repeat center;
 `;
 
 const Stax = styled.div`
+  // prettier-ignore
   background: url('${p => makeAssetSelector(stax, staxDark)(p)}') no-repeat center;
 `;
 

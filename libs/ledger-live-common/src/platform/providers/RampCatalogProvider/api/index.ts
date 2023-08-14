@@ -1,4 +1,4 @@
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../../../env";
 import type { RampCatalog } from "../types";
 import mockData from "./mock.json";
@@ -23,7 +23,7 @@ export const providers: RemoteRampProvider[] = [
 ];
 
 export function getProviderURL(value: string): string {
-  const provider = providers.find((provider) => provider.value === value);
+  const provider = providers.find(provider => provider.value === value);
 
   if (!provider) {
     throw new Error(`remote ramp catalog provider "${value}" not found`);
@@ -34,6 +34,7 @@ export function getProviderURL(value: string): string {
 const api = {
   fetchRampCatalog: async (provider: string): Promise<RampCatalog> => {
     if (getEnv("MOCK")) {
+      // TODO: replace this mock on playwright runs with controlled data
       return mockData as RampCatalog;
     }
 

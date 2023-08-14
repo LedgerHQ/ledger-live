@@ -2,11 +2,7 @@ module.exports = {
   typescript: {
     check: false,
     checkOptions: {},
-    reactDocgen: "react-docgen-typescript",
-    reactDocgenTypescriptOptions: {
-      shouldExtractLiteralValuesFromEnum: true,
-      propFilter: prop => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
-    },
+    reactDocgen: false, // FIXME: this is disabled for now due to incompatibilities with TS 5. re-enable when upgrading storybook.
   },
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(ts|tsx)"],
   addons: [

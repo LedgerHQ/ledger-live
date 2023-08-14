@@ -12,13 +12,7 @@ import type { StackNavigatorProps } from "../../components/RootNavigator/types/h
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 
-const RenderEmptyList = ({
-  theme,
-  search,
-}: {
-  theme: string;
-  search: string;
-}) => (
+const RenderEmptyList = ({ theme, search }: { theme: string; search: string }) => (
   // FIXME: NO textAlign ON VIEW COMPONENTS
   <Flex alignItems="center">
     <Image
@@ -33,10 +27,7 @@ const RenderEmptyList = ({
       <Trans i18nKey="market.warnings.noCurrencyFound" />
     </Text>
     <Text textAlign="center" variant="body" color="neutral.c70">
-      <Trans
-        i18nKey="market.warnings.noCurrencySearchResultsFor"
-        values={{ search }}
-      >
+      <Trans i18nKey="market.warnings.noCurrencySearchResultsFor" values={{ search }}>
         <Text fontWeight="bold" variant="body" color="neutral.c70">
           {""}
         </Text>
@@ -56,17 +47,13 @@ const CheckIconContainer = styled(Flex).attrs({
   border-radius: 24px;
 `;
 
-type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.MarketCurrencySelect
->;
+type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.MarketCurrencySelect>;
 
 function MarketCurrencySelect({ navigation }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { colors } = useTheme();
-  const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } =
-    useMarketData();
+  const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } = useMarketData();
   const [search, setSearch] = useState("");
   const ref = useRef<TextInput | null>(null);
 
@@ -75,9 +62,7 @@ function MarketCurrencySelect({ navigation }: Props) {
   }, [ref]);
 
   const items = supportedCountervalues
-    .filter(({ ticker }) =>
-      supportedCounterCurrencies.includes(ticker.toLowerCase()),
-    )
+    .filter(({ ticker }) => supportedCounterCurrencies.includes(ticker.toLowerCase()))
     .map(cur => ({
       value: cur.ticker.toLowerCase(),
       label: cur.name,
@@ -99,10 +84,7 @@ function MarketCurrencySelect({ navigation }: Props) {
       const color = isChecked ? "primary.c80" : "neutral.c100";
       const labelColor = isChecked ? "primary.c80" : "neutral.c80";
       return (
-        <TouchableOpacity
-          key={index}
-          onPress={() => onSelectCurrency(item.value)}
-        >
+        <TouchableOpacity key={index} onPress={() => onSelectCurrency(item.value)}>
           <Flex
             flexDirection="row"
             justifyContent="space-between"
@@ -144,12 +126,7 @@ function MarketCurrencySelect({ navigation }: Props) {
 
   return (
     <Flex bg="background.main" px={3} py={2}>
-      <SearchInput
-        placeholder={t("common.search")}
-        value={search}
-        onChange={setSearch}
-        ref={ref}
-      />
+      <SearchInput placeholder={t("common.search")} value={search} onChange={setSearch} ref={ref} />
 
       <Search
         fuseOptions={{

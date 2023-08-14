@@ -1,8 +1,5 @@
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import type {
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Observable } from "rxjs7";
@@ -20,6 +17,7 @@ export type RequestAccountNavigatorParamList = {
   };
   [ScreenName.RequestAccountsSelectAccount]: {
     accounts$?: Observable<WalletAPIAccount[]>;
+    currencies?: CryptoOrTokenCurrency[];
     currency: CryptoOrTokenCurrency;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;

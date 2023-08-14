@@ -19,7 +19,7 @@ const SpaceRow = styled(Flex).attrs({
   cursor: pointer;
 
   &:hover {
-    border-color: ${(props) => props.theme.colors.neutral.c40};
+    border-color: ${props => props.theme.colors.neutral.c40};
   }
 `;
 

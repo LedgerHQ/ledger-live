@@ -52,7 +52,8 @@ export type PostOnboardingAction = {
   /**
    * Icon displayed for this action in the post onboarding hub.
    */
-  Icon: (props: { size: number; color: string }) => any;
+
+  Icon: (props: { size?: "XS" | "S" | "M" | "L" | "XL"; color?: string; style?: object }) => any;
 
   /**
    * Title displayed for this action in the post onboarding hub.
@@ -82,14 +83,10 @@ export type PostOnboardingAction = {
   actionCompletedPopupLabel: string;
 
   /**
-   * Event that will be dispatched when starting this action.
+   * Value to use in the "button" property of the event sent when the user
+   * triggers the action by pressing the button in the post onboarding hub.
    */
-  startEvent?: string;
-
-  /**
-   * Event properties that will be dispatched when starting this action.
-   */
-  startEventProperties?: any;
+  buttonLabelForAnalyticsEvent?: string;
 } & (WithNavigationParams | WithStartActionFunction);
 
 /**

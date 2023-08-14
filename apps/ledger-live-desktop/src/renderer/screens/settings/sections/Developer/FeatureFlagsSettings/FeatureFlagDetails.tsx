@@ -1,19 +1,29 @@
 import React, { useCallback } from "react";
-import ButtonV2 from "~/renderer/components/Button";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { Text, Flex, Tag } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
-import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import FeatureFlagEdit from "./FeatureFlagEdit";
-
-const OldButton = withV2StyleProvider(ButtonV2);
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
 
 type Props = {
   flagName: FeatureId;
   focused?: boolean;
   setFocusedName: (arg0: string | undefined) => void;
 };
+
+export const Row: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(Flex).attrs({
+  px: 4,
+  py: 1,
+  padding: 4,
+  flexDirection: "row",
+  borderRadius: 1,
+})`
+  :hover {
+    background: ${p => p.theme.colors.opacityDefault.c05};
+  }
+`;
 
 const FeatureFlagDetails: React.FC<Props> = props => {
   const { flagName, focused, setFocusedName } = props;
@@ -35,10 +45,10 @@ const FeatureFlagDetails: React.FC<Props> = props => {
 
   return (
     <>
-      <OldButton flexDirection="row" py={1} onClick={handleClick}>
+      <Row onClick={handleClick}>
         <Flex flex={1} mr={3} alignItems="center">
           <Box
-            bg={flagValue?.enabled ? "success.c100" : "error.c100"}
+            bg={flagValue?.enabled ? "success.c50" : "error.c50"}
             height={10}
             width={10}
             mr={2}
@@ -65,7 +75,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
             </Tag>
           ) : null}
         </Flex>
-      </OldButton>
+      </Row>
       {focused ? <FeatureFlagEdit flagName={flagName} flagValue={flagValue} /> : null}
     </>
   );

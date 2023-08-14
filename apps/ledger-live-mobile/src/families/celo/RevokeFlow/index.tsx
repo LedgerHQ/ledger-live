@@ -20,10 +20,7 @@ const totalSteps = "3";
 function RevokeFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -52,9 +49,7 @@ function RevokeFlow() {
         component={SelectValidator}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("delegation.selectValidatorTitle")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
         }}
       />
 
@@ -63,9 +58,7 @@ function RevokeFlow() {
         component={VoteAmount}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("send.stepperHeader.selectAmount")} />
-          ),
+          headerTitle: () => <StepHeader title={t("send.stepperHeader.selectAmount")} />,
         }}
       />
 

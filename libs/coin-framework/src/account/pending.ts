@@ -1,9 +1,6 @@
 import type { Account, Operation, SubAccount } from "@ledgerhq/types-live";
-import { getEnv } from "../env";
-export function shouldRetainPendingOperation(
-  account: Account,
-  op: Operation
-): boolean {
+import { getEnv } from "@ledgerhq/live-env";
+export function shouldRetainPendingOperation(account: Account, op: Operation): boolean {
   // FIXME: valueOf to compare dates in typescript
   const delay = new Date().valueOf() - op.date.valueOf();
   const last = account.operations[0];
@@ -22,19 +19,19 @@ export function shouldRetainPendingOperation(
 
 const appendPendingOp = (ops: Operation[], op: Operation) => {
   const filtered: Operation[] = ops.filter(
-    (o) => o.transactionSequenceNumber !== op.transactionSequenceNumber
+    o => o.transactionSequenceNumber !== op.transactionSequenceNumber,
   );
   filtered.unshift(op);
   return filtered;
 };
 
-export const addPendingOperation = (account: Account, operation: Operation) => {
+export const addPendingOperation = (account: Account, operation: Operation): Account => {
   const accountCopy = { ...account };
   const { subOperations } = operation;
   const { subAccounts } = account;
 
   function addInSubAccount(subaccounts: SubAccount[], op: Operation) {
-    const acc = subaccounts.find((sub) => sub.id === op.accountId);
+    const acc = subaccounts.find(sub => sub.id === op.accountId);
 
     if (acc) {
       const copy: SubAccount = { ...acc };
@@ -45,17 +42,14 @@ export const addPendingOperation = (account: Account, operation: Operation) => {
 
   if (subOperations && subAccounts) {
     const taCopy: SubAccount[] = subAccounts.slice(0);
-    subOperations.forEach((op) => {
+    subOperations.forEach(op => {
       addInSubAccount(taCopy, op);
     });
     accountCopy.subAccounts = taCopy;
   }
 
   if (accountCopy.id === operation.accountId) {
-    accountCopy.pendingOperations = appendPendingOp(
-      accountCopy.pendingOperations,
-      operation
-    );
+    accountCopy.pendingOperations = appendPendingOp(accountCopy.pendingOperations, operation);
   } else if (subAccounts) {
     const taCopy: SubAccount[] = subAccounts.slice(0);
     addInSubAccount(taCopy, operation);

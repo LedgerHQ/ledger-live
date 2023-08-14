@@ -10,9 +10,9 @@ THIS FILE IS UNUSED AND PROVIDED AS EXAMPLE FOR USING SUBSCAN INDEXER.
 import uniqBy from "lodash/uniqBy";
 import camelCase from "lodash/camelCase";
 import type { Operation } from "@ledgerhq/types-live";
-import network from "@ledgerhq/coin-framework/network";
+import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/coin-framework/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { encodeAddress } from "@polkadot/util-crypto";
 import { getOperationType } from "./common";
 import type { PolkadotValidator } from "../types";
@@ -144,7 +144,7 @@ const mapSubscanTransfer = (
     blockHeight: transfer.block_num,
     date: new Date(transfer.block_timestamp * 1000),
     extra: {
-      palletMethod: "balances.transfer",
+      palletMethod: "balances.transfer_allow_death",
       // FIXME subscan plz
       transferAmount: amount,
     },
@@ -189,7 +189,7 @@ const mapSubscanExtrinsic = (
   };
 };
 
-const fetchSubscanList = async (
+const fetchSubscanList = (network: NetworkRequestCall) => async (
   resourceName,
   url,
   mapFn,
@@ -232,7 +232,7 @@ const fetchSubscanList = async (
     // console.log(`${url} - ${prevOperations.length} / ${count}`);
     operations = [...prevOperations, ...list.map(mapFn.bind(null, mapArgs))];
     return operations.length < count
-      ? fetchSubscanList(
+      ? fetchSubscanList(network)(
           resourceName,
           url,
           mapFn,
@@ -248,7 +248,7 @@ const fetchSubscanList = async (
   }
 };
 
-export const getOperations = async (
+export const getOperations = (network: NetworkRequestCall) => async (
   accountId: string,
   addr: string,
   startAt: number = 0
@@ -258,21 +258,21 @@ export const getOperations = async (
     accountId,
   };
   const [extrinsicsOp, transfersOp, rewardsOp] = await Promise.all([
-    fetchSubscanList(
+    fetchSubscanList(network)(
       "extrinsics",
       "/api/scan/extrinsics",
       mapSubscanExtrinsic,
       mapArgs,
       startAt
     ),
-    fetchSubscanList(
+    fetchSubscanList(network)(
       "transfers",
       "/api/scan/transfers",
       mapSubscanTransfer,
       mapArgs,
       startAt
     ),
-    fetchSubscanList(
+    fetchSubscanList(network)(
       "list",
       "/api/scan/account/reward_slash",
       mapSubscanReward,
@@ -308,7 +308,7 @@ const mapSubscanValidator = (validator, isElected): PolkadotValidator => {
   };
 };
 
-const fetchSubscanValidators = async (isElected) => {
+const fetchSubscanValidators = (network: NetworkRequestCall) => async (isElected) => {
   // Cannot fetch both at the same time through subscan
   const url = isElected
     ? "/api/scan/staking/validators"
@@ -338,15 +338,15 @@ const fetchSubscanValidators = async (isElected) => {
 /**
  * List all validators for the current era, and their exposure.
  */
-export const getValidators = async (stashes: string | string[] = "elected") => {
+export const getValidators = (network: NetworkRequestCall) => async (stashes: string | string[] = "elected") => {
   if (stashes === "elected") {
-    return fetchSubscanValidators(true);
+    return fetchSubscanValidators(network)(true);
   } else if (stashes === "waiting") {
-    return fetchSubscanValidators(false);
+    return fetchSubscanValidators(network)(false);
   } else if (stashes === "all" || Array.isArray(stashes)) {
     const [elected, waiting] = await Promise.all([
-      fetchSubscanValidators(true),
-      fetchSubscanValidators(false),
+      fetchSubscanValidators(network)(true),
+      fetchSubscanValidators(network)(false),
     ]);
 
     if (Array.isArray(stashes)) {

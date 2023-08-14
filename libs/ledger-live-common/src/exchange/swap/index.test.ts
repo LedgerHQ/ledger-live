@@ -55,7 +55,7 @@ describe("swap/index", () => {
 
       expect(getSwapAPIVersion).toThrow(Error);
       expect(getSwapAPIVersion).toThrow(
-        "Configured swap API base URL is invalid, should end with /v<number>"
+        "Configured swap API base URL is invalid, should end with /v<number>",
       );
     });
 
@@ -64,7 +64,7 @@ describe("swap/index", () => {
 
       expect(getSwapAPIVersion).toThrow(Error);
       expect(getSwapAPIVersion).toThrow(
-        "Configured swap API base URL is invalid, should end with /v<number>"
+        "Configured swap API base URL is invalid, should end with /v<number>",
       );
     });
   });

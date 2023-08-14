@@ -13,9 +13,6 @@ import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
@@ -25,26 +22,8 @@ type Props = {
   parentAccount?: Account | null;
   setTransaction: (..._: Array<Transaction>) => void;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
@@ -59,10 +38,7 @@ export default function BitcoinSendRowsFee({
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
-  const defaultStrategies = useFeesStrategy(
-    account,
-    transaction as BitcoinTransaction,
-  );
+  const defaultStrategies = useFeesStrategy(account, transaction as BitcoinTransaction);
   const [satPerByte, setSatPerByte] = useState<BigNumber | null>(null);
   const strategies = useMemo(
     () =>
@@ -100,14 +76,8 @@ export default function BitcoinSendRowsFee({
       satPerByte,
       setSatPerByte,
     });
-  }, [
-    navigation,
-    route.params,
-    account.id,
-    parentAccount?.id,
-    transaction,
-    satPerByte,
-  ]);
+  }, [navigation, route.params, account.id, parentAccount?.id, transaction, satPerByte]);
+
   return (
     <SelectFeesStrategy
       {...props}

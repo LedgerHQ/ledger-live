@@ -10,9 +10,7 @@ import ExternalLink from "../../../../../../../components/ExternalLink";
 import NavigationScrollView from "../../../../../../../components/NavigationScrollView";
 import IlluRewards from "../../../../../../../icons/images/Rewards";
 import Alert from "../../../../../../../components/Alert";
-import BulletList, {
-  BulletGreenCheck,
-} from "../../../../../../../components/BulletList";
+import BulletList, { BulletGreenCheck } from "../../../../../../../components/BulletList";
 
 import { urls } from "../../../../../../../config/urls";
 import { TrackScreen } from "../../../../../../../analytics";
@@ -62,11 +60,14 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen category="DelegationFlow" name="Started" />
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="delegate"
+          currency="egld"
+        />
         <IlluRewards style={styles.rewards} />
 
         <LText semiBold style={styles.description}>
@@ -76,7 +77,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
         <BulletList
           Bullet={BulletGreenCheck}
           list={bulletList.map(item => (
-            <LText semiBold={true}>
+            <LText semiBold={true} key={item}>
               <Trans i18nKey={item} />
             </LText>
           ))}
@@ -92,10 +93,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
       </NavigationScrollView>
 
       <View style={styles.footer}>
-        <Alert
-          type="help"
-          title={t("elrond.delegation.flow.steps.starter.warning.description")}
-        />
+        <Alert type="help" title={t("elrond.delegation.flow.steps.starter.warning.description")} />
 
         <Button onPress={onNext} type="main" mt={6}>
           <Trans i18nKey="elrond.delegation.flow.steps.starter.cta" />

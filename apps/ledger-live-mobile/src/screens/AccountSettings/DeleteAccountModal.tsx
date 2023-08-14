@@ -21,7 +21,7 @@ function DeleteAccountModal({ isOpen, onRequestClose, deleteAccount }: Props) {
       isRequestingToBeOpened={isOpen}
       onClose={onRequestClose}
       Icon={InfoMedium}
-      iconColor={"error.c100"}
+      iconColor={"error.c50"}
       title={t("account.settings.delete.confirmationTitle")}
     >
       <Text variant={"paragraph"} color={"neutral.c100"}>
@@ -31,20 +31,10 @@ function DeleteAccountModal({ isOpen, onRequestClose, deleteAccount }: Props) {
         {t("account.settings.delete.confirmationWarn")}
       </Text>
       <Flex justifyContent={"space-between"} mt={6} flexShrink={1} flexGrow={1}>
-        <Button
-          event="DeleteAccount"
-          type={"error"}
-          onPress={deleteAccount}
-          mt={4}
-        >
+        <Button event="DeleteAccount" type={"error"} onPress={deleteAccount} mt={4}>
           <Trans i18nKey="common.delete" />
         </Button>
-        <Button
-          event="DeleteAccountCancel"
-          type={"default"}
-          onPress={onRequestClose}
-          mt={4}
-        >
+        <Button event="DeleteAccountCancel" type={"default"} onPress={onRequestClose} mt={4}>
           <Trans i18nKey="common.cancel" />
         </Button>
       </Flex>

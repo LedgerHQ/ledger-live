@@ -223,7 +223,7 @@ export type IndexedProps<ExtraProps> = Omit<Props<ExtraProps>, "activeIndex" | "
  */
 function FlowStepperIndexed<ExtraProps>(props: IndexedProps<ExtraProps>) {
   const { activeKey, children, ...otherProps } = props;
-  const activeIndex = React.Children.toArray(children).findIndex((child) => {
+  const activeIndex = React.Children.toArray(children).findIndex(child => {
     const res = isElement(child) && child.props.itemKey === activeKey;
     return res;
   });

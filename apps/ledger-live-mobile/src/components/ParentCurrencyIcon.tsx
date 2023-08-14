@@ -48,11 +48,7 @@ const ParentCurrencyIcon = ({
       justifyContent={"center"}
       borderRadius={size}
     >
-      <CurrencyIcon
-        size={iconSize}
-        currency={currency}
-        color={colors.constant.white}
-      />
+      <CurrencyIcon size={iconSize} currency={currency} color={colors.constant.white} />
       {!hideParentIcon && currency.type === "TokenCurrency" && (
         <Flex
           position={"absolute"}

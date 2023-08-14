@@ -4,6 +4,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/solana/types";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -23,6 +24,7 @@ export type SolanaDelegationFlowParamList = {
   [ScreenName.SolanaDelegationStarted]: {
     accountId: string;
     transaction: Transaction;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationSummary]: {
     accountId: string;
@@ -32,12 +34,14 @@ export type SolanaDelegationFlowParamList = {
     validator?: ValidatorsAppValidator;
     transaction: Transaction;
     status?: TransactionStatus;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationSelectValidator]: {
     accountId: string;
     parentId?: string;
     transaction: Transaction;
     status?: TransactionStatus;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.SolanaEditAmount]: {
     accountId: string;
@@ -45,6 +49,7 @@ export type SolanaDelegationFlowParamList = {
     amount?: number;
     transaction: Transaction;
     status?: TransactionStatus;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationConnectDevice]: {
     device: Device;
@@ -57,6 +62,7 @@ export type SolanaDelegationFlowParamList = {
     onSuccess?: (payload: unknown) => void;
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationSelectDevice]: {
     device?: Device;
@@ -64,6 +70,8 @@ export type SolanaDelegationFlowParamList = {
     parentId?: string;
     transaction: Transaction;
     status: TransactionStatus;
+    validatorName?: ValidatorsAppValidator["name"];
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationValidationSuccess]: {
     accountId: string;
@@ -71,6 +79,8 @@ export type SolanaDelegationFlowParamList = {
     deviceId: string;
     transaction: Transaction;
     result: Operation;
+    validatorName?: ValidatorsAppValidator["name"];
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.DelegationValidationError]: {
     accountId: string;
@@ -78,5 +88,6 @@ export type SolanaDelegationFlowParamList = {
     deviceId: string;
     transaction: Transaction;
     error: Error;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
 };

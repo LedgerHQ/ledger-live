@@ -44,20 +44,10 @@ export default function ClearCacheRow() {
         title={t("settings.help.clearCache")}
         description={t("settings.help.clearCacheModalDesc")}
       >
-        <Button
-          type={"main"}
-          mt={4}
-          onPress={onClearCache}
-          event="DoClearCache"
-        >
+        <Button type={"main"} mt={4} onPress={onClearCache} event="DoClearCache">
           {t("settings.help.clearCacheButton")}
         </Button>
-        <Button
-          type={"default"}
-          mt={4}
-          onPress={onRequestClose}
-          event="CancelClearCache"
-        >
+        <Button type={"default"} mt={4} onPress={onRequestClose} event="CancelClearCache">
           {t("common.cancel")}
         </Button>
       </QueuedDrawer>

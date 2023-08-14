@@ -1,11 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -18,21 +12,11 @@ import {
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
-import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
-import {
-  addPendingOperation,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AccountLike, DeviceInfo, SignedOperation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  postSwapAccepted,
-  postSwapCancelled,
-} from "@ledgerhq/live-common/exchange/swap/index";
+import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
@@ -41,14 +25,14 @@ import DeviceAction from "../../../../components/DeviceAction";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
 import ModalBottomAction from "../../../../components/ModalBottomAction";
 import { useBroadcast } from "../../../../components/useBroadcast";
-import { swapKYCSelector } from "../../../../reducers/settings";
 import { UnionToIntersection } from "../../../../types/helpers";
 import type { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../../const";
 import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
-
-const silentSigningAction = createAction(connectApp);
-const swapAction = initSwapCreateAction(connectApp, initSwap);
+import {
+  useInitSwapDeviceAction,
+  useTransactionDeviceAction,
+} from "../../../../hooks/deviceActions";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -95,21 +79,15 @@ export function Confirmation({
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
   );
 
-  const swapKYC = useSelector(swapKYCSelector);
-  const providerKYC = swapKYC[provider];
-
   const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
-  const [signedOperation, setSignedOperation] =
-    useState<SignedOperation | null>(null);
+  const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
   const dispatch = useDispatch();
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
   });
   const tokenCurrency =
-    fromAccount && fromAccount.type === "TokenAccount"
-      ? fromAccount.token
-      : null;
+    fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;
   const navigation = useNavigation<NavigationProp>();
 
   const onComplete = useCallback(
@@ -129,26 +107,27 @@ export function Confirmation({
         });
       }
 
-      const mainAccount =
-        fromAccount && getMainAccount(fromAccount, fromParentAccount);
+      const mainAccount = fromAccount && getMainAccount(fromAccount, fromParentAccount);
 
       if (!mainAccount || !exchangeRate) return;
       dispatch(
-        updateAccountWithUpdater(mainAccount.id, account =>
-          addPendingOperation(
-            addToSwapHistory({
-              account,
+        updateAccountWithUpdater({
+          accountId: mainAccount.id,
+          updater: account =>
+            addPendingOperation(
+              addToSwapHistory({
+                account,
+                operation,
+                transaction: swapTx.current.transaction as Transaction,
+                swap: {
+                  exchange,
+                  exchangeRate: exchangeRate.current,
+                },
+                swapId,
+              }),
               operation,
-              transaction: swapTx.current.transaction as Transaction,
-              swap: {
-                exchange,
-                exchangeRate: exchangeRate.current,
-              },
-              swapId,
-            }),
-            operation,
-          ),
-        ),
+            ),
+        }),
       );
 
       if (typeof swapTx.current.swap.from.amount !== "undefined") {
@@ -195,20 +174,23 @@ export function Confirmation({
     }
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
 
+  const silentSigningAction = useTransactionDeviceAction();
+  const swapAction = useInitSwapDeviceAction();
+
   const { t } = useTranslation();
 
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isOpen}
-      preventBackdropClick
-      onClose={onCancel}
-    >
+    <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>
       <SyncSkipUnderPriority priority={100} />
       <ModalBottomAction
         footer={
           <View style={styles.footerContainer}>
             {signedOperation ? (
-              renderLoading({ t, description: t("transfer.swap.broadcasting") })
+              renderLoading({
+                t,
+                description: t("transfer.swap.broadcasting"),
+                lockModal: true,
+              })
             ) : !swapData ? (
               <DeviceAction
                 key={"initSwap"}
@@ -218,11 +200,11 @@ export function Confirmation({
                   exchange,
                   exchangeRate: exchangeRate.current,
                   transaction: swapTx.current.transaction as SwapTransaction,
-                  userId: providerKYC?.id,
                 }}
                 onResult={result => {
-                  const { initSwapResult, initSwapError, swapId } =
-                    result as UnionToIntersection<typeof result>;
+                  const { initSwapResult, initSwapError, swapId } = result as UnionToIntersection<
+                    typeof result
+                  >;
                   if (initSwapError) {
                     onError({ error: initSwapError, swapId });
                   } else {

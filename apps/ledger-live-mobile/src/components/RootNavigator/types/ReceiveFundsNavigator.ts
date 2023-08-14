@@ -1,5 +1,6 @@
 import {
   CryptoCurrency,
+  CryptoOrTokenCurrency,
   Currency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
@@ -12,6 +13,15 @@ export type ReceiveFundsStackParamList = {
     | {
         filterCurrencyIds?: string[];
         currency?: string;
+      }
+    | undefined;
+  [ScreenName.DepositSelectNetwork]:
+    | {
+        filterCurrencyIds?: string[];
+        provider: {
+          currenciesByNetwork: CryptoOrTokenCurrency[];
+          providerId: string;
+        };
       }
     | undefined;
   [ScreenName.ReceiveSelectAccount]: {

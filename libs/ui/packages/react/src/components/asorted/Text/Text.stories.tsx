@@ -57,7 +57,7 @@ export default {
 export const Overview = (() => {
   return (
     <Flex flexDirection="column">
-      {variants.map((variant) => {
+      {variants.map(variant => {
         const fontWeightsToShow: string[] = isHeader(variant)
           ? ["medium"]
           : isSubtitle(variant)
@@ -76,8 +76,8 @@ export const Overview = (() => {
                 fontWeights: {JSON.stringify(fontWeightsToShow)}
               </Text>
             </div>
-            {fontWeightsToShow.flatMap((fontWeight) =>
-              decorationsToShow.map((textDecorationLine) => (
+            {fontWeightsToShow.flatMap(fontWeight =>
+              decorationsToShow.map(textDecorationLine => (
                 <div style={{ flex: 1 }}>
                   <Text variant={variant} fontWeight={fontWeight} style={{ textDecorationLine }}>
                     Lend stablecoins to the Compound protocol...

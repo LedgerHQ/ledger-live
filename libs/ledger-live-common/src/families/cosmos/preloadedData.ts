@@ -3,8 +3,7 @@ import type { CosmosPreloadData, CosmosValidatorItem } from "./types";
 
 // this module holds the cached state of preload()
 // eslint-disable-next-line no-unused-vars
-const currentCosmosPreloadedData: { [currencyId: string]: CosmosPreloadData } =
-  {};
+const currentCosmosPreloadedData: { [currencyId: string]: CosmosPreloadData } = {};
 
 export function asSafeCosmosPreloadData(data?: {
   validators?: CosmosValidatorItem[];
@@ -20,7 +19,7 @@ export function asSafeCosmosPreloadData(data?: {
       validatorsUnsafe &&
       Array.isArray(validatorsUnsafe)
     ) {
-      validatorsUnsafe.forEach((v) => {
+      validatorsUnsafe.forEach(v => {
         // FIXME if model changes, we should validate the object
         validators.push(v);
       });
@@ -34,10 +33,7 @@ export function asSafeCosmosPreloadData(data?: {
 
 const updates = new Subject<{ [currencyId: string]: CosmosPreloadData }>();
 
-export function setCosmosPreloadData(
-  currencyId: string,
-  data: CosmosPreloadData
-): void {
+export function setCosmosPreloadData(currencyId: string, data: CosmosPreloadData): void {
   currentCosmosPreloadedData[currencyId] = data;
   updates.next(currentCosmosPreloadedData);
 }

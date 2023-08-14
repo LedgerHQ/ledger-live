@@ -1,11 +1,5 @@
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TransactionStatus as SolanaTransactionStatus } from "@ledgerhq/live-common/families/solana/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
@@ -22,9 +16,6 @@ import type { BaseNavigatorStackParamList } from "../../components/RootNavigator
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
@@ -34,26 +25,8 @@ type Props = {
   transaction: Transaction;
   status?: TransactionStatus;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;

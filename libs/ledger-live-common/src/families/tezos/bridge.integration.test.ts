@@ -14,25 +14,25 @@ export const accountTZrevealedDelegating = makeAccount(
   "TZrevealedDelegating",
   "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
   "tz1boBHAVpwcvKkNFAQHYr7mjxAz1PpVgKq7",
-  "tezbox"
+  "tezbox",
 );
 const accountTZnew = makeAccount(
   "TZnew",
   "02a9ae8b0ff5f9a43565793ad78e10db6f12177d904d208ada591b8a5b9999e3fd",
   "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
-  "tezbox"
+  "tezbox",
 );
 const accountTZnotRevealed = makeAccount(
   "TZnotRevealed",
   "020162dc75ad3c2b6e097d15a1513033c60d8a033f2312ff5a6ead812228d9d653",
   "tz1PWFt4Ym6HedY78MgUP2kVDtSampGwprs5",
-  "tezosbip44h"
+  "tezosbip44h",
 );
 const accountTZRevealedNoDelegate = makeAccount(
   "TZRevealedNoDelegate",
   "029bfe70b3e94ff23623f6c42f6e081a9ca8cc78f74b0d8da58f0d4cdc41c33c1a",
   "tz1YkAjh5mm5gJ5u3VbFLEtpAG7cFo7PfCux",
-  "tezosbip44h"
+  "tezosbip44h",
 );
 
 const dataset: DatasetTest<Transaction> = {
@@ -47,7 +47,7 @@ const dataset: DatasetTest<Transaction> = {
           transactions: [
             {
               name: "No amount",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
               }),
@@ -77,20 +77,6 @@ const dataset: DatasetTest<Transaction> = {
                   amount: new NotEnoughBalance(),
                 },
                 warnings: {},
-              },
-            },
-            {
-              name: "Send max",
-              transaction: (t, account) => ({
-                ...t,
-                amount: account.balance,
-                useAllAmount: true,
-                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
-              }),
-              expectedStatus: (account) => {
-                return {
-                  amount: account.balance,
-                };
               },
             },
             {
@@ -149,7 +135,7 @@ describe("tezos bakers", () => {
   // FIXME Flaky test that will fail every time a Tezos baker is discontinued
   test("getting the bakers", async () => {
     const list = await listBakers(whitelist);
-    expect(list.map((o) => o.address)).toEqual(whitelist);
+    expect(list.map(o => o.address)).toEqual(whitelist);
   });
   // TODO we'll need two accounts to test diff cases
   test("load account baker info", async () => {

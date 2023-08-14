@@ -1,8 +1,5 @@
 import { valid, gte } from "semver";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 import { getEnv } from "../env";
 import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
@@ -23,12 +20,13 @@ const exchangeSupportAppVersions = {
   stellar: "3.3.0",
   stratis: "1.5.0",
   tezos: "2.2.13",
+  tron: "0.4.100",
   zcash: "1.5.0",
   zencash: "1.5.0",
 };
 
 const findExchangeCurrencyConfig = (
-  id: string
+  id: string,
 ):
   | {
       config: string;
@@ -56,20 +54,13 @@ export type SwapProviderConfig = ExchangeProviderNameAndSignature & {
   needsBearerToken: boolean;
 };
 
-export const isExchangeSupportedByApp = (
-  appName: string,
-  appVersion: string
-): boolean => {
+export const isExchangeSupportedByApp = (appName: string, appVersion: string): boolean => {
   const minVersion = exchangeSupportAppVersions[appName];
-  return !!(
-    valid(minVersion) &&
-    valid(appVersion) &&
-    gte(appVersion, minVersion)
-  );
+  return !!(valid(minVersion) && valid(appVersion) && gte(appVersion, minVersion));
 };
 
 export const getCurrencyExchangeConfig = (
-  currency: CryptoCurrency | TokenCurrency
+  currency: CryptoCurrency | TokenCurrency,
 ): ExchangeCurrencyNameAndSignature => {
   const res = findExchangeCurrencyConfig(currency.id);
 
@@ -83,9 +74,7 @@ export const getCurrencyExchangeConfig = (
   };
 };
 
-export const isCurrencyExchangeSupported = (
-  currency: CryptoCurrency | TokenCurrency
-): boolean => {
+export const isCurrencyExchangeSupported = (currency: CryptoCurrency | TokenCurrency): boolean => {
   return !!findExchangeCurrencyConfig(currency.id);
 };
 

@@ -1,8 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import {
-  isBootloaderVersionSupported,
-  isHardwareVersionSupported,
-} from "./getVersion";
+import { isBootloaderVersionSupported, isHardwareVersionSupported } from "./getVersion";
 const { nanoS, nanoSP, nanoX, stax } = DeviceModelId;
 
 test("isBootloaderVersionSupported", () => {
@@ -54,8 +51,9 @@ test("isBootloaderVersionSupported", () => {
   /**
    * Stax
    * */
-  expect(isBootloaderVersionSupported("1.0.0", stax)).toBe(false);
-  expect(isBootloaderVersionSupported("1.0.0-whatever0", stax)).toBe(false);
+  expect(isBootloaderVersionSupported("0.9.0", stax)).toBe(false);
+  expect(isBootloaderVersionSupported("1.0.0", stax)).toBe(true);
+  expect(isBootloaderVersionSupported("1.0.0-whatever0", stax)).toBe(true);
 });
 
 test("isHardwareVersionSupported", () => {

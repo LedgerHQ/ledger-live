@@ -3,8 +3,7 @@ import React, { MutableRefObject } from "react";
 
 export const navigationRef =
   React.createRef<NavigationContainerRef<ReactNavigation.RootParamList>>();
-export const isReadyRef: MutableRefObject<boolean | null | undefined> =
-  React.createRef();
+export const isReadyRef: MutableRefObject<boolean | null | undefined> = React.createRef();
 
 export function navigate(name: string, params: unknown) {
   if (isReadyRef.current && navigationRef.current) {

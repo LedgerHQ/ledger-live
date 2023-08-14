@@ -40,34 +40,16 @@ const ValidatorRow = ({
           name={validator.name ?? validator.validatorAddress}
         />
         <View style={styles.validatorBody}>
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            style={styles.validatorName}
-          >
+          <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.name || validator.validatorAddress}
           </Text>
-          <Text
-            fontWeight="semiBold"
-            numberOfLines={1}
-            style={styles.overdelegated}
-          >
-            <Trans i18nKey="cosmos.delegation.commission" />{" "}
-            {validator.commission * 100} %
+          <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>
+            <Trans i18nKey="cosmos.delegation.commission" /> {validator.commission * 100} %
           </Text>
         </View>
-        <Text
-          fontWeight="semiBold"
-          numberOfLines={1}
-          style={[styles.validatorYield]}
-          color="smoke"
-        >
+        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue
-              showCode
-              unit={getAccountUnit(account)}
-              value={validator.tokens}
-            />
+            <CurrencyUnitValue showCode unit={getAccountUnit(account)} value={validator.tokens} />
           </Text>
         </Text>
       </View>

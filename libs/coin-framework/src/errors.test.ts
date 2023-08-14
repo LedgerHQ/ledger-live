@@ -15,7 +15,7 @@ describe("custom errors", () => {
 
   test("promise error instanceof", () => {
     expect(Promise.reject(new UnsupportedDerivation())).rejects.toBeInstanceOf(
-      UnsupportedDerivation
+      UnsupportedDerivation,
     );
   });
 });

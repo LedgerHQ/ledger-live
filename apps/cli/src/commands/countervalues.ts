@@ -12,7 +12,7 @@ import {
   getRanges,
   getDates,
   getPortfolioCountByDate,
- } from "@ledgerhq/live-common/portfolio/v2/index";
+} from "@ledgerhq/live-common/portfolio/v2/index";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,
@@ -30,13 +30,10 @@ const histoFormatters = {
   stats: (histo, currency, countervalue) =>
     (currency.ticker + " to " + countervalue.ticker).padEnd(12) +
     " availability=" +
-    ((100 * histo.filter((h) => h.value).length) / histo.length).toFixed(0) +
+    ((100 * histo.filter(h => h.value).length) / histo.length).toFixed(0) +
     "%",
   supportedFiats: (histo, _currency, countervalue) => {
-    const availability = (
-      (100 * histo.filter((h) => h.value).length) /
-      histo.length
-    ).toFixed(0);
+    const availability = ((100 * histo.filter(h => h.value).length) / histo.length).toFixed(0);
     return availability === "100" ? `"${countervalue.ticker}",` : undefined;
   },
   default: (histo, currency, countervalue) =>
@@ -50,10 +47,10 @@ const histoFormatters = {
           formatCurrencyUnit(countervalue.units[0], new BigNumber(value || 0), {
             showCode: true,
             disableRounding: true,
-          })
+          }),
       )
       .join("\n"),
-  json: (histo) => toBalanceHistoryRaw(histo),
+  json: histo => toBalanceHistoryRaw(histo),
   asciichart: (history, currency, countervalue) =>
     "\n" +
     "".padStart(22) +
@@ -62,25 +59,23 @@ const histoFormatters = {
     countervalue.name +
     "\n" +
     asciichart.plot(
-      history.map((h) =>
+      history.map(h =>
         new BigNumber(h.value || 0)
           .div(new BigNumber(10).pow(countervalue.units[0].magnitude))
-          .toNumber()
+          .toNumber(),
       ),
       {
         height: 10,
-        format: (value) =>
+        format: value =>
           formatCurrencyUnit(
             countervalue.units[0],
-            new BigNumber(value).times(
-              new BigNumber(10).pow(countervalue.units[0].magnitude)
-            ),
+            new BigNumber(value).times(new BigNumber(10).pow(countervalue.units[0].magnitude)),
             {
               showCode: true,
               disableRounding: true,
-            }
+            },
           ).padStart(20),
-      }
+      },
     ),
 };
 type Opts = Partial<{
@@ -161,7 +156,7 @@ export default {
     },
   ],
   job: (opts: Opts) =>
-    Observable.create((o) => {
+    Observable.create(o => {
       async function f() {
         const currencies = await getCurrencies(opts);
         const countervalues = getCountervalues(opts);
@@ -170,13 +165,11 @@ export default {
         const dates = getDatesWithOpts(opts);
         const cvs = await loadCountervalues(initialState, {
           trackingPairs: resolveTrackingPairs(
-            product(currencies, countervalues).map(
-              ([currency, countervalue]) => ({
-                from: currency,
-                to: countervalue,
-                startDate,
-              })
-            )
+            product(currencies, countervalues).map(([currency, countervalue]) => ({
+              from: currency,
+              to: countervalue,
+              startDate,
+            })),
           ),
           autofillGaps: !opts.disableAutofillGaps,
         });
@@ -186,39 +179,35 @@ export default {
           value: number | null | undefined;
           date: Date;
         }[][] = [];
-        product(currencies, countervalues).forEach(
-          ([currency, countervalue]) => {
-            const value = 10 ** currency.units[0].magnitude;
-            const histo = calculateMany(
-              cvs,
-              dates.map((date) => ({
-                value,
-                date,
-              })),
-              {
-                from: currency,
-                to: countervalue,
-              }
-            ).map((value, i) => ({
+        product(currencies, countervalues).forEach(([currency, countervalue]) => {
+          const value = 10 ** currency.units[0].magnitude;
+          const histo = calculateMany(
+            cvs,
+            dates.map(date => ({
               value,
-              date: dates[i],
-            }));
-            histos.push(histo);
-            o.next(format(histo, currency, countervalue));
-          }
-        );
+              date,
+            })),
+            {
+              from: currency,
+              to: countervalue,
+            },
+          ).map((value, i) => ({
+            value,
+            date: dates[i],
+          }));
+          histos.push(histo);
+          o.next(format(histo, currency, countervalue));
+        });
 
         if (opts.format === "stats") {
           const [available, total] = histos.reduce(
             ([available, total], histo) => [
-              available + histo.filter((h) => h.value).length,
+              available + histo.filter(h => h.value).length,
               total + histo.length,
             ],
-            [0, 0]
+            [0, 0],
           );
-          o.next(
-            "Total availability: " + ((100 * available) / total).toFixed() + "%"
-          );
+          o.next("Total availability: " + ((100 * available) / total).toFixed() + "%");
         }
       }
 
@@ -228,11 +217,7 @@ export default {
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();
-  invariant(
-    ranges.includes(period),
-    "invalid period. valid values are %s",
-    ranges.join(" | ")
-  );
+  invariant(ranges.includes(period), "invalid period. valid values are %s", ranges.join(" | "));
   return period as PortfolioRange;
 }
 
@@ -253,10 +238,8 @@ async function getCurrencies(opts: Opts): Promise<Currency[]> {
 
 function getCountervalues(opts: Opts): Currency[] {
   return opts.fiats
-    ? listFiatCurrencies().map((a) => a)
-    : ((opts.countervalue || ["USD"])
-        .map(findCurrencyByTicker)
-        .filter(Boolean) as Currency[]);
+    ? listFiatCurrencies().map(a => a)
+    : ((opts.countervalue || ["USD"]).map(findCurrencyByTicker).filter(Boolean) as Currency[]);
 }
 
 function getStartDate(opts: Opts): Date | null {

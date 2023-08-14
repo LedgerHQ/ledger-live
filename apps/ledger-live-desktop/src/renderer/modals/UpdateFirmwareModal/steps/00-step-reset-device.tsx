@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import {
   powerOff,
   powerOffDevice,
@@ -39,11 +39,7 @@ const BulletText = styled(Text).attrs(() => ({
   fontSize: 2,
 }))``;
 
-type Props = {
-  deviceModelId: DeviceModelId;
-};
-
-const StepResetDevice = ({ deviceModelId }: Props) => {
+const StepResetDevice = ({ deviceModelId }: StepProps) => {
   const device = getDeviceModel(deviceModelId);
   return (
     <Container>
@@ -106,10 +102,10 @@ const StepResetDevice = ({ deviceModelId }: Props) => {
   );
 };
 
-export function StepResetFooter({ transitionTo, t }: StepProps) {
+export function StepResetFooter({ transitionTo }: StepProps) {
   return (
     <Button primary onClick={() => transitionTo("idCheck")}>
-      {t("common.continue")}
+      <Trans i18nKey="common.continue" />
     </Button>
   );
 }

@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTheme } from "styled-components/native";
-import { Flex, Icons, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -15,10 +15,7 @@ import CircleCurrencyIcon from "../../../components/CircleCurrencyIcon";
 import { IconContainer } from "../MarketRowItem";
 import { counterValueFormatter, getDateFormatter } from "../utils";
 import DeltaVariation from "../DeltaVariation";
-import {
-  addStarredMarketCoins,
-  removeStarredMarketCoins,
-} from "../../../actions/settings";
+import { addStarredMarketCoins, removeStarredMarketCoins } from "../../../actions/settings";
 import MarketStats from "./MarketStats";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
 import AccountRow from "../../Accounts/AccountRow";
@@ -43,15 +40,12 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
 >;
 
-export const BackButton = ({
-  navigation,
-}: {
-  navigation: NavigationProps["navigation"];
-}) => (
+export const BackButton = ({ navigation }: { navigation: NavigationProps["navigation"] }) => (
   <Button
     size="large"
     onPress={() => navigation.goBack()}
-    Icon={Icons.ArrowLeftMedium}
+    Icon={IconsLegacy.ArrowLeftMedium}
+    testID="market-back-btn"
   />
 );
 
@@ -82,14 +76,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
     counterCurrency,
   } = useSingleCoinMarketData();
 
-  const {
-    name,
-    image,
-    price,
-    priceChangePercentage,
-    internalCurrency,
-    chartData,
-  } = currency || {};
+  const { name, image, price, priceChangePercentage, internalCurrency, chartData } = currency || {};
 
   useEffect(() => {
     const resetState = () => {
@@ -101,23 +88,15 @@ function MarketDetail({ navigation, route }: NavigationProps) {
     };
   }, [selectCurrency, resetSearchOnUmount, navigation]);
 
-  const allAccounts = useSelector(
-    flattenAccountsByCryptoCurrencyScreenSelector(internalCurrency),
-  );
+  const allAccounts = useSelector(flattenAccountsByCryptoCurrencyScreenSelector(internalCurrency));
 
   const filteredAccounts = useMemo(
-    () =>
-      allAccounts
-        .sort((a, b) => b.balance.minus(a.balance).toNumber())
-        .slice(0, 3),
+    () => allAccounts.sort((a, b) => b.balance.minus(a.balance).toNumber()).slice(0, 3),
     [allAccounts],
   );
 
   const defaultAccount = useMemo(
-    () =>
-      filteredAccounts && filteredAccounts.length === 1
-        ? filteredAccounts[0]
-        : undefined,
+    () => (filteredAccounts && filteredAccounts.length === 1 ? filteredAccounts[0] : undefined),
     [filteredAccounts],
   );
 
@@ -193,12 +172,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         TopLeftSection={<BackButton navigation={navigation} />}
         MiddleSection={
-          <Flex
-            height={48}
-            flexDirection="row"
-            justifyContent="flex-start"
-            alignItems="center"
-          >
+          <Flex height={48} flexDirection="row" justifyContent="flex-start" alignItems="center">
             {internalCurrency ? (
               <CircleCurrencyIcon
                 size={32}
@@ -224,6 +198,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
         }
         TopRightSection={
           <Button
+            testID="star-asset"
             size="large"
             onPress={toggleStar}
             iconName={isStarred ? "StarSolid" : "Star"}

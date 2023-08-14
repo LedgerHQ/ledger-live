@@ -3,32 +3,24 @@ import { useTranslation } from "react-i18next";
 import { NumberedList } from "@ledgerhq/native-ui";
 import Button from "../../../../../components/PreventDoubleClickButton";
 
-const RestoreRecoveryPhraseStep1Scene = ({
-  deviceModelId,
-}: {
-  deviceModelId: string;
-}) => {
+const RestoreRecoveryPhraseStep1Scene = ({ deviceModelId }: { deviceModelId: string }) => {
   const { t } = useTranslation();
 
   const items = [
     {
-      title:
-        "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.0.title",
+      title: "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.0.title",
       desc: `onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.0.${deviceModelId}.label`,
     },
     {
-      title:
-        "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.1.title",
+      title: "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.1.title",
       desc: `onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.1.label`,
     },
     {
-      title:
-        "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.2.title",
+      title: "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.2.title",
       desc: `onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.2.label`,
     },
     {
-      title:
-        "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.3.title",
+      title: "onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.3.title",
       desc: `onboarding.stepRecoveryPhrase.importRecoveryPhrase.bullets.3.label`,
     },
   ];

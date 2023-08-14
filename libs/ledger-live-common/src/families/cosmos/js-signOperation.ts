@@ -8,13 +8,9 @@ import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
 import { makeSignDoc } from "@cosmjs/launchpad";
 
-import type {
-  Account,
-  Operation,
-  OperationType,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./api/Cosmos";
+import cryptoFactory from "./chain/chain";
 
 const signOperation = ({
   account,
@@ -25,20 +21,15 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
+  withDevice(deviceId)(transport =>
+    Observable.create(o => {
       let cancelled;
 
       async function main() {
         const cosmosAPI = new CosmosAPI(account.currency.id);
-        const { accountNumber, sequence } = await cosmosAPI.getAccount(
-          account.freshAddress
-        );
+        const { accountNumber, sequence } = await cosmosAPI.getAccount(account.freshAddress);
         o.next({ type: "device-signature-requested" });
-        const { aminoMsgs, protoMsgs } = await buildTransaction(
-          account,
-          transaction
-        );
+        const { aminoMsgs, protoMsgs } = await buildTransaction(account, transaction);
         if (!transaction.gas) {
           throw new Error("transaction.gas is missing");
         }
@@ -64,17 +55,14 @@ const signOperation = ({
           chainId,
           transaction.memo || "",
           accountNumber.toString(),
-          sequence.toString()
+          sequence.toString(),
         );
         const ledgerSigner = new LedgerSigner(transport, {
           hdPaths: [stringToPath("m/" + account.freshAddressPath)],
-          prefix: account.currency.id,
+          prefix: cryptoFactory(account.currency.id).prefix,
         });
 
-        const signResponse = await ledgerSigner.signAmino(
-          account.freshAddress,
-          signDoc
-        );
+        const signResponse = await ledgerSigner.signAmino(account.freshAddress, signDoc);
         const tx_bytes = await postBuildTransaction(signResponse, protoMsgs);
         const signed = Buffer.from(tx_bytes).toString("hex");
 
@@ -154,13 +142,13 @@ const signOperation = ({
 
       main().then(
         () => o.complete(),
-        (e) => o.error(e)
+        e => o.error(e),
       );
 
       return () => {
         cancelled = true;
       };
-    })
+    }),
   );
 
 export default signOperation;

@@ -24,41 +24,17 @@ import type {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Navigation = CompositeNavigationProp<
-  StackNavigatorNavigation<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendSummary
-  >,
+  StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>,
   StackNavigatorNavigation<BaseNavigatorStackParamList>
 >;
 
 type Route = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >["route"];
 
@@ -67,11 +43,8 @@ type Props = {
   parentAccount?: Account | null;
   transaction: Transaction;
 };
-export default function RippleFeeRow({
-  account,
-  transaction,
-  parentAccount,
-}: Props) {
+
+export default function RippleFeeRow({ account, transaction, parentAccount }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<Route>();
@@ -107,10 +80,7 @@ export default function RippleFeeRow({
         <View style={styles.accountContainer}>
           {fee ? (
             <LText style={styles.valueText}>
-              <CurrencyUnitValue
-                unit={feeCustomUnit || account.unit}
-                value={fee}
-              />
+              <CurrencyUnitValue unit={feeCustomUnit || account.unit} value={fee} />
             </LText>
           ) : null}
 
@@ -128,14 +98,13 @@ export default function RippleFeeRow({
           </LText>
         </View>
         <LText style={styles.countervalue} color="grey">
-          {fee ? (
-            <CounterValue before="≈ " value={fee} currency={account.currency} />
-          ) : null}
+          {fee ? <CounterValue before="≈ " value={fee} currency={account.currency} /> : null}
         </LText>
       </View>
     </SummaryRow>
   );
 }
+
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,

@@ -1,25 +1,23 @@
+import { listCryptoCurrencies } from "@ledgerhq/coin-framework/currencies/index";
+import { listTokens } from "@ledgerhq/cryptoassets";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { useState, useEffect } from "react";
-import { makeLRUCache } from "../cache";
+import { useEffect, useState } from "react";
 import api from "../countervalues/api";
-import { listCryptoCurrencies, listTokens } from "../currencies";
 
 // FIXME in future we would put it back in ledgerjs to be more "dynamic"
-let currenciesAndTokenWithCountervaluesByTicker:
-  | Map<string, Currency>
-  | null
-  | undefined;
+let currenciesAndTokenWithCountervaluesByTicker: Map<string, Currency> | null | undefined;
 
 function lazyLoadTickerMap() {
   if (currenciesAndTokenWithCountervaluesByTicker)
     return currenciesAndTokenWithCountervaluesByTicker;
   const m: Map<string, Currency> = new Map();
-  listTokens().forEach((t) => {
+  listTokens().forEach(t => {
     if (!t.disableCountervalue && !m.has(t.ticker)) {
       m.set(t.ticker, t);
     }
   });
-  listCryptoCurrencies().forEach((c) => {
+  listCryptoCurrencies().forEach(c => {
     if (
       !c.disableCountervalue &&
       // FIXME Avoid duplicates & override if the already set currency is a token
@@ -33,14 +31,11 @@ function lazyLoadTickerMap() {
   return m;
 }
 
-export const sortByMarketcap = <C extends Currency>(
-  currencies: C[],
-  tickers: string[]
-): C[] => {
+export const sortByMarketcap = <C extends Currency>(currencies: C[], tickers: string[]): C[] => {
   const m = lazyLoadTickerMap();
   const list = currencies.slice(0);
   const prependList: C[] = [];
-  tickers.forEach((ticker) => {
+  tickers.forEach(ticker => {
     const item: C | undefined = m.get(ticker) as C | undefined;
 
     if (item) {
@@ -57,10 +52,10 @@ export const sortByMarketcap = <C extends Currency>(
 
 let marketcapTickersCache;
 export const getMarketcapTickers: () => Promise<string[]> = makeLRUCache(() =>
-  api.fetchMarketcapTickers().then((tickers) => {
+  api.fetchMarketcapTickers().then(tickers => {
     marketcapTickersCache = tickers;
     return tickers;
-  })
+  }),
 );
 // React style version of getMarketcapTickers
 export const useMarketcapTickers = (): string[] | null | undefined => {
@@ -68,7 +63,7 @@ export const useMarketcapTickers = (): string[] | null | undefined => {
   useEffect(() => {
     let isMounted = true;
 
-    getMarketcapTickers().then((data) => {
+    getMarketcapTickers().then(data => {
       if (isMounted) setMarketcapTickers(data);
     });
 
@@ -78,17 +73,13 @@ export const useMarketcapTickers = (): string[] | null | undefined => {
   }, []);
   return tickers;
 };
-export const currenciesByMarketcap = <C extends Currency>(
-  currencies: C[]
-): Promise<C[]> =>
+export const currenciesByMarketcap = <C extends Currency>(currencies: C[]): Promise<C[]> =>
   getMarketcapTickers().then(
-    (tickers) => sortByMarketcap(currencies, tickers),
-    () => currencies
+    tickers => sortByMarketcap(currencies, tickers),
+    () => currencies,
   );
 // React style version of currenciesByMarketcap
-export const useCurrenciesByMarketcap = <C extends Currency>(
-  currencies: C[]
-): C[] => {
+export const useCurrenciesByMarketcap = <C extends Currency>(currencies: C[]): C[] => {
   const tickers = useMarketcapTickers();
   return tickers ? sortByMarketcap(currencies, tickers) : currencies;
 };

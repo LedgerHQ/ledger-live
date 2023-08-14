@@ -14,11 +14,7 @@ import type {
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
-import type {
-  MutationSpec,
-  AppSpec,
-  TransactionTestInput,
-} from "../../bot/types";
+import type { MutationSpec, AppSpec, TransactionTestInput } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
 import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -30,12 +26,7 @@ type Arg = Partial<{
   recipientVariation: (arg0: string) => string;
 }>;
 
-const recoverBadTransactionStatus = ({
-  bridge,
-  account,
-  transaction,
-  status,
-}) => {
+const recoverBadTransactionStatus = ({ bridge, account, transaction, status }) => {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   if (
@@ -62,16 +53,13 @@ const genericTest = ({
   status,
   accountBeforeTransaction,
 }: TransactionTestInput<Transaction>): void => {
-  invariant(
-    Date.now() - operation.date.getTime() < 1000000,
-    "operation time to be recent"
-  );
+  invariant(Date.now() - operation.date.getTime() < 1000000, "operation time to be recent");
 
   // balance move
   botTest("account balance decreased with operation value", () =>
     expect(account.balance.toString()).toBe(
-      accountBeforeTransaction.balance.minus(operation.value).toString()
-    )
+      accountBeforeTransaction.balance.minus(operation.value).toString(),
+    ),
   );
   // inputs outputs
   const { txInputs, txOutputs } = status as TransactionStatus;
@@ -89,67 +77,51 @@ const genericTest = ({
   });
 
   botTest("operation matches tx senders and recipients", () => {
-    if (transaction.opReturnData) {
-      // transaction.recipient has format <coinId>:<address>
-      const [, recipientAddress] = transaction.recipient.split(":");
-      expect(operation.recipients).toContain(recipientAddress);
-      expect(operation.recipients.length).toBe(2);
-    } else {
-      let expectedSenders = nonDeterministicPicking
-        ? operation.senders
-        : (txInputs!.map((t) => t.address).filter(Boolean) as string[]);
+    let expectedSenders = nonDeterministicPicking
+      ? operation.senders
+      : (txInputs!.map(t => t.address).filter(Boolean) as string[]);
 
-      let expectedRecipients = txOutputs!
-        .filter((o) => o.address && !o.isChange)
-        .map((o) => o.address) as string[];
+    let expectedRecipients = txOutputs!
+      .filter(o => o.address && !o.isChange)
+      .map(o => o.address) as string[];
 
-      if (account.currency.id === "bitcoin_cash") {
-        expectedSenders = expectedSenders.map(
-          bchToCashaddrAddressWithoutPrefix
-        );
-        expectedRecipients = expectedRecipients.map(
-          bchToCashaddrAddressWithoutPrefix
-        );
-      }
-
-      expect(asSorted(operation)).toMatchObject(
-        asSorted({
-          senders: expectedSenders,
-          recipients: expectedRecipients,
-        })
-      );
+    if (account.currency.id === "bitcoin_cash") {
+      expectedSenders = expectedSenders.map(bchToCashaddrAddressWithoutPrefix);
+      expectedRecipients = expectedRecipients.map(bchToCashaddrAddressWithoutPrefix);
     }
+    expect(asSorted(operation)).toMatchObject(
+      asSorted({
+        senders: expectedSenders,
+        recipients: expectedRecipients,
+      }),
+    );
   });
 
   const utxosPicked = ((status as TransactionStatus).txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
       bitcoinResources.utxos.find(
-        (u) =>
-          u.hash === previousTxHash && u.outputIndex === previousOutputIndex
-      )
+        u => u.hash === previousTxHash && u.outputIndex === previousOutputIndex,
+      ),
     )
     .filter(Boolean);
   // verify that no utxo that was supposed to be exploded were used
   botTest("picked utxo has been consumed", () =>
     expect(
       utxosPicked.filter(
-        (utxo) =>
-          utxo &&
-          utxo.blockHeight &&
-          getUTXOStatus(utxo, transaction.utxoStrategy).excluded
-      )
-    ).toEqual([])
+        utxo => utxo && utxo.blockHeight && getUTXOStatus(utxo, transaction.utxoStrategy).excluded,
+      ),
+    ).toEqual([]),
   );
 };
 
 const testDestination = genericTestDestination;
 
-const genericMinimalAmount = new BigNumber(10000);
+const genericMinimalAmount = new BigNumber(15000);
 
 const bitcoinLikeMutations = ({
   minimalAmount = genericMinimalAmount,
   targetAccountSize = 3,
-  recipientVariation = (recipient) => recipient,
+  recipientVariation = recipient => recipient,
 }: Arg = {}): MutationSpec<Transaction>[] => [
   {
     name: "move ~50%",
@@ -234,8 +206,8 @@ const bitcoinLikeMutations = ({
       };
       const utxo = sample(
         (bitcoinResources as BitcoinResources).utxos.filter(
-          (u) => u.blockHeight
-        )
+          u => u.blockHeight && u.value.gt(genericMinimalAmount),
+        ),
       );
       invariant(utxo, "no confirmed utxo");
       return {
@@ -248,7 +220,7 @@ const bitcoinLikeMutations = ({
             utxoStrategy: {
               ...transaction.utxoStrategy,
               excludeUTXOs: (bitcoinResources as BitcoinResources).utxos
-                .filter((u) => u !== utxo)
+                .filter(u => u !== utxo)
                 .map(({ outputIndex, hash }) => ({
                   outputIndex,
                   hash,
@@ -266,13 +238,12 @@ const bitcoinLikeMutations = ({
     testDestination,
     test: ({ accountBeforeTransaction, account, operation, transaction }) => {
       const utxo = (
-        (accountBeforeTransaction as BitcoinAccount).bitcoinResources?.utxos ||
-        []
+        (accountBeforeTransaction as BitcoinAccount).bitcoinResources?.utxos || []
       ).find(
-        (utxo) =>
+        utxo =>
           !transaction.utxoStrategy.excludeUTXOs.some(
-            (u) => u.hash === utxo.hash && u.outputIndex === utxo.outputIndex
-          )
+            u => u.hash === utxo.hash && u.outputIndex === utxo.outputIndex,
+          ),
       );
       invariant(utxo, "utxo available");
       botTest("sender is only the utxo address", () => {
@@ -287,11 +258,11 @@ const bitcoinLikeMutations = ({
       botTest("utxo has been consumed", () =>
         expect(
           (account as BitcoinAccount).bitcoinResources?.utxos.find(
-            (u) =>
+            u =>
               u.hash === (utxo as BitcoinOutput).hash &&
-              u.outputIndex === (utxo as BitcoinOutput).outputIndex
-          )
-        ).toBe(undefined)
+              u.outputIndex === (utxo as BitcoinOutput).outputIndex,
+          ),
+        ).toBe(undefined),
       );
     },
   },
@@ -364,12 +335,10 @@ const bitcoinLikeMutations = ({
       botTest("total of utxos is zero", () =>
         expect(
           (account as BitcoinAccount).bitcoinResources?.utxos
-            .filter(
-              (u) => u.blockHeight && u.blockHeight < account.blockHeight - 10
-            ) // Exclude pending UTXOs and the Utxos just written into new block (10 blocks time)
+            .filter(u => u.blockHeight && u.blockHeight < account.blockHeight - 10) // Exclude pending UTXOs and the Utxos just written into new block (10 blocks time)
             .reduce((p, c) => p.plus(c.value), new BigNumber(0))
-            .toString()
-        ).toBe("0")
+            .toString(),
+        ).toBe("0"),
       );
     },
   },
@@ -416,7 +385,7 @@ const bitcoinGold: AppSpec<Transaction> = {
   minViableAmount: genericMinimalAmount,
 };
 
-const bchToCashaddrAddressWithoutPrefix = (recipient) =>
+const bchToCashaddrAddressWithoutPrefix = recipient =>
   bchaddrjs.toCashAddress(recipient).split(":")[1];
 
 const bitcoinCash: AppSpec<Transaction> = {
@@ -432,7 +401,7 @@ const bitcoinCash: AppSpec<Transaction> = {
   test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
-    recipientVariation: (recipient) => {
+    recipientVariation: recipient => {
       const [mode, fn] = sample([
         ["legacy address", bchaddrjs.toLegacyAddress],
         ["cash address", bchaddrjs.toCashAddress],
@@ -473,6 +442,7 @@ const pivx: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
   minViableAmount: genericMinimalAmount,
 };
+const minQtum = parseCurrencyUnit(getCryptoCurrencyById("qtum").units[0], "0.001");
 const qtum: AppSpec<Transaction> = {
   name: "Qtum",
   currency: getCryptoCurrencyById("qtum"),
@@ -484,8 +454,10 @@ const qtum: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
+  mutations: bitcoinLikeMutations({
+    minimalAmount: minQtum,
+  }),
+  minViableAmount: minQtum,
 };
 const vertcoin: AppSpec<Transaction> = {
   name: "Vertcoin",
@@ -501,6 +473,7 @@ const vertcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
   minViableAmount: genericMinimalAmount,
 };
+const minViacoin = parseCurrencyUnit(getCryptoCurrencyById("viacoin").units[0], "0.001");
 const viacoin: AppSpec<Transaction> = {
   name: "Viacoin",
   currency: getCryptoCurrencyById("viacoin"),
@@ -512,13 +485,12 @@ const viacoin: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   test: genericTest,
-  mutations: bitcoinLikeMutations(),
-  minViableAmount: genericMinimalAmount,
+  mutations: bitcoinLikeMutations({
+    minimalAmount: minViacoin,
+  }),
+  minViableAmount: minViacoin,
 };
-const minDash = parseCurrencyUnit(
-  getCryptoCurrencyById("dash").units[0],
-  "0.001"
-);
+const minDash = parseCurrencyUnit(getCryptoCurrencyById("dash").units[0], "0.001");
 const dash: AppSpec<Transaction> = {
   name: "Dash",
   currency: getCryptoCurrencyById("dash"),
@@ -536,10 +508,7 @@ const dash: AppSpec<Transaction> = {
   }),
   minViableAmount: minDash,
 };
-const minDoge = parseCurrencyUnit(
-  getCryptoCurrencyById("dogecoin").units[0],
-  "1"
-);
+const minDoge = parseCurrencyUnit(getCryptoCurrencyById("dogecoin").units[0], "1");
 const dogecoin: AppSpec<Transaction> = {
   name: "DogeCoin",
   currency: getCryptoCurrencyById("dogecoin"),
@@ -557,10 +526,7 @@ const dogecoin: AppSpec<Transaction> = {
   }),
   minViableAmount: minDoge,
 };
-const minZcash = parseCurrencyUnit(
-  getCryptoCurrencyById("zcash").units[0],
-  "0.0002"
-);
+const minZcash = parseCurrencyUnit(getCryptoCurrencyById("zcash").units[0], "0.0002");
 const zcash: AppSpec<Transaction> = {
   name: "ZCash",
   currency: getCryptoCurrencyById("zcash"),
@@ -575,10 +541,7 @@ const zcash: AppSpec<Transaction> = {
   }),
   minViableAmount: minZcash,
 };
-const minHorizen = parseCurrencyUnit(
-  getCryptoCurrencyById("zencash").units[0],
-  "0.01"
-);
+const minHorizen = parseCurrencyUnit(getCryptoCurrencyById("zencash").units[0], "0.01");
 const zencash: AppSpec<Transaction> = {
   name: "Horizen",
   currency: getCryptoCurrencyById("zencash"),
@@ -595,10 +558,7 @@ const zencash: AppSpec<Transaction> = {
   }),
   minViableAmount: minHorizen,
 };
-const minDigibyte = parseCurrencyUnit(
-  getCryptoCurrencyById("digibyte").units[0],
-  "0.1"
-);
+const minDigibyte = parseCurrencyUnit(getCryptoCurrencyById("digibyte").units[0], "0.1");
 const digibyte: AppSpec<Transaction> = {
   name: "Digibyte",
   currency: getCryptoCurrencyById("digibyte"),
@@ -616,10 +576,7 @@ const digibyte: AppSpec<Transaction> = {
   }),
   minViableAmount: minDigibyte,
 };
-const minKomodo = parseCurrencyUnit(
-  getCryptoCurrencyById("komodo").units[0],
-  "0.1"
-);
+const minKomodo = parseCurrencyUnit(getCryptoCurrencyById("komodo").units[0], "0.1");
 const komodo: AppSpec<Transaction> = {
   name: "Komodo",
   currency: getCryptoCurrencyById("komodo"),
@@ -636,10 +593,7 @@ const komodo: AppSpec<Transaction> = {
   }),
   minViableAmount: minKomodo,
 };
-const minDecred = parseCurrencyUnit(
-  getCryptoCurrencyById("decred").units[0],
-  "0.0001"
-);
+const minDecred = parseCurrencyUnit(getCryptoCurrencyById("decred").units[0], "0.0001");
 const decred: AppSpec<Transaction> = {
   name: "Decred",
   currency: getCryptoCurrencyById("decred"),
@@ -654,10 +608,7 @@ const decred: AppSpec<Transaction> = {
   }),
   minViableAmount: minDecred,
 };
-const minLitecoin = parseCurrencyUnit(
-  getCryptoCurrencyById("litecoin").units[0],
-  "0.001"
-);
+const minLitecoin = parseCurrencyUnit(getCryptoCurrencyById("litecoin").units[0], "0.001");
 const litecoin: AppSpec<Transaction> = {
   name: "Litecoin",
   currency: getCryptoCurrencyById("litecoin"),

@@ -7,8 +7,9 @@ import CustomImage from "~/renderer/screens/customImage";
 
 const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
-  Icon: Icons.GiftCardMedium,
+  Icon: Icons.Gift,
   title: "Claim my NFT",
+  titleCompleted: "Claim my NFT",
   description: "A special NFT for you.",
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
@@ -17,9 +18,10 @@ const claimMock: PostOnboardingAction = {
 
 const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
-  Icon: Icons.BracketsMedium,
+  Icon: Icons.PictureImage,
   featureFlagId: "customImage",
   title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
+  titleCompleted: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
   startAction: () =>
@@ -28,8 +30,9 @@ const personalizeMock: PostOnboardingAction = {
 
 const migrateAssetsMock: PostOnboardingAction = {
   id: PostOnboardingActionId.migrateAssetsMock,
-  Icon: Icons.TransferMedium,
+  Icon: Icons.ArrowDown,
   title: "Transfer assets to my Ledger",
+  titleCompleted: "Transfer assets to my Ledger",
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
   startAction: () =>
@@ -38,18 +41,25 @@ const migrateAssetsMock: PostOnboardingAction = {
 
 const customImage: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
-  Icon: Icons.BracketsMedium,
+  Icon: Icons.PictureImage,
   featureFlagId: "customImage",
   title: "customImage.postOnboarding.title",
+  titleCompleted: "customImage.postOnboarding.title",
   description: "customImage.postOnboarding.description",
   actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  startAction: () => setDrawer(CustomImage, { isFromPostOnboardingEntryPoint: true }),
+  startAction: () =>
+    setDrawer(
+      CustomImage,
+      { isFromPostOnboardingEntryPoint: true },
+      { forceDisableFocusTrap: true },
+    ),
+  buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
 
 /**
  * All implemented post onboarding actions.
  */
-const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction> = {
+const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAction } = {
   claimMock,
   migrateAssetsMock,
   personalizeMock,
@@ -65,7 +75,9 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   migrateAssetsMock,
 ];
 
-export function getPostOnboardingAction(id: PostOnboardingActionId): PostOnboardingAction {
+export function getPostOnboardingAction(
+  id: PostOnboardingActionId,
+): PostOnboardingAction | undefined {
   return postOnboardingActions[id];
 }
 

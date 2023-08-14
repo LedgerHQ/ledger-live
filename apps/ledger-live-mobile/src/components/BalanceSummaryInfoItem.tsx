@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text, Icons, Box } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 
 type Props = {
@@ -29,20 +29,15 @@ export default function BalanceSummaryInfoItem({
         borderRightWidth={isLast ? 0 : 1}
       >
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text
-            variant={"small"}
-            fontWeight={"medium"}
-            color={"neutral.c70"}
-            mr={2}
-          >
+          <Text variant={"small"} fontWeight={"medium"} color={"neutral.c70"} mr={2}>
             {title}
           </Text>
           {onPress && (
             <>
               {warning ? (
-                <Icons.WarningMedium size={16} color={"warning.c60"} />
+                <IconsLegacy.WarningMedium size={16} color={"warning.c30"} />
               ) : (
-                <Icons.InfoMedium size={16} color={"neutral.c70"} />
+                <IconsLegacy.InfoMedium size={16} color={"neutral.c70"} />
               )}
             </>
           )}

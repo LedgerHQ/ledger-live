@@ -7,18 +7,14 @@ export class ElrondEncodeTransaction {
   static ESDTTransfer(t: Transaction, ta: SubAccount): string {
     const { token } = decodeTokenAccountId(ta.id);
     const tokenIdentifierHex = token && extractTokenId(token.id);
-    let amountHex = t.useAllAmount
-      ? ta.balance.toString(16)
-      : t.amount.toString(16);
+    let amountHex = t.useAllAmount ? ta.balance.toString(16) : t.amount.toString(16);
 
     //hex amount length must be even so protocol would treat it as an ESDT transfer
     if (amountHex.length % 2 !== 0) {
       amountHex = "0" + amountHex;
     }
 
-    return Buffer.from(
-      `ESDTTransfer@${tokenIdentifierHex}@${amountHex}`
-    ).toString("base64");
+    return Buffer.from(`ESDTTransfer@${tokenIdentifierHex}@${amountHex}`).toString("base64");
   }
 
   static delegate(): string {

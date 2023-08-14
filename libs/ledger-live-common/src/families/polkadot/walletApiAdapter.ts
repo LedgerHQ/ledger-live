@@ -4,14 +4,14 @@ import {
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
 
-import { Transaction } from "./types";
+import { Transaction } from "@ledgerhq/coin-polkadot/types";
 
 const CAN_EDIT_FEES = false;
 
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIPolkadotTransaction,
   Transaction
-> = (tx) => ({
+> = ({ tx }) => ({
   ...tx,
   era: tx.era ? `${tx.era}` : undefined,
 });
@@ -19,10 +19,10 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIPolkadotTransaction,
   Transaction
-> = (tx) => {
+> = params => {
   return {
     canEditFees: CAN_EDIT_FEES,
-    liveTx: convertToLiveTransaction(tx),
+    liveTx: convertToLiveTransaction(params),
     hasFeesProvided: false,
   };
 };

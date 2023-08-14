@@ -21,7 +21,7 @@ public class LedgerHelper {
         sequenceIdx++;
         output.write(command.length >> 8);
         output.write(command.length);
-        int blockSize = (command.length > packetSize - 7 ? packetSize - 7 : command.length);
+        int blockSize = (Math.min(command.length, packetSize - 7));
         output.write(command, offset, blockSize);
         offset += blockSize;
         while (offset != command.length) {
@@ -31,7 +31,7 @@ public class LedgerHelper {
             output.write(sequenceIdx >> 8);
             output.write(sequenceIdx);
             sequenceIdx++;
-            blockSize = (command.length - offset > packetSize - 5 ? packetSize - 5 : command.length - offset);
+            blockSize = (Math.min(command.length - offset, packetSize - 5));
             output.write(command, offset, blockSize);
             offset += blockSize;
         }
@@ -70,7 +70,7 @@ public class LedgerHelper {
         if (data.length < 7 + responseLength) {
             return null;
         }
-        int blockSize = (responseLength > packetSize - 7 ? packetSize - 7 : responseLength);
+        int blockSize = (Math.min(responseLength, packetSize - 7));
         response.write(data, offset, blockSize);
         offset += blockSize;
         while (response.size() != responseLength) {
@@ -93,7 +93,7 @@ public class LedgerHelper {
             if (data[offset++] != (sequenceIdx & 0xff)) {
                 throw new Exception("Invalid sequence");
             }
-            blockSize = (responseLength - response.size() > packetSize - 5 ? packetSize - 5 : responseLength - response.size());
+            blockSize = (Math.min(responseLength - response.size(), packetSize - 5));
             if (blockSize > data.length - offset) {
                 return null;
             }

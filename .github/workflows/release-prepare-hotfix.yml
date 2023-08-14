@@ -29,18 +29,11 @@ jobs:
 
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
 
       - name: install dependencies
         run: pnpm i -F "ledger-live"
@@ -56,7 +49,7 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m ":fire: hotfix release [skip ci]"
+          git commit -m "chore(hotfix): :fire: hotfix release [skip ci]"
 
       - name: push changes
         run: |
@@ -73,21 +66,14 @@ jobs:
           git merge ${{ inputs.ref }}
           git push origin main
 
-      - name: merge into develop
+      - name: create PR to develop
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          git checkout develop
-          if git merge ${{ github.event.inputs.ref }}
-          then
-            git push origin develop
-          else
-            git merge --abort
-            git checkout ${{ github.event.inputs.ref }}
-            git checkout -b support/hotfix-merge-conflicts
-            git push origin support/hotfix-merge-conflicts
-            gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
-          fi
+          git checkout ${{ github.event.inputs.ref }}
+          git checkout -b support/hotfix-merge-conflicts
+          git push origin support/hotfix-merge-conflicts
+          gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
 
       - name: merge into release if present
         env:

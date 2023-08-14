@@ -3,21 +3,17 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { Box, Icons, Flex } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../const";
-import {
-  hasAvailableUpdateSelector,
-  lastSeenDeviceSelector,
-} from "../../reducers/settings";
-import Manager from "../../screens/Manager";
+import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "../../reducers/settings";
+import Manager, { managerHeaderOptions } from "../../screens/Manager";
 import ManagerMain from "../../screens/Manager/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
-import ProtectLogin from "../../screens/Protect/Login";
+import FirmwareUpdateScreen from "../../screens/FirmwareUpdate";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -43,53 +39,40 @@ const Badge = () => {
 
 export default function ManagerNavigator() {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   return (
     <Stack.Navigator
       screenOptions={{
         ...stackNavConfig,
-        headerStyle: {
-          ...styles.header,
-          backgroundColor: colors.background.main,
-          borderBottomColor: colors.background.main,
-        },
       }}
     >
+      <Stack.Screen
+        name={ScreenName.FirmwareUpdate}
+        component={FirmwareUpdateScreen}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => null,
+          headerLeft: () => null,
+          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
+        }}
+      />
       <Stack.Screen
         name={ScreenName.Manager}
         component={Manager}
         options={{
-          headerShown: false,
+          ...managerHeaderOptions,
           gestureEnabled: false,
         }}
       />
-      <Stack.Screen
-        name={ScreenName.ManagerMain}
-        component={ManagerMain}
-        options={{ title: "" }}
-      />
-      <Stack.Screen
-        name={ScreenName.ProtectLogin}
-        component={ProtectLogin}
-        options={{ title: "" }}
-      />
+      <Stack.Screen name={ScreenName.ManagerMain} component={ManagerMain} options={{ title: "" }} />
     </Stack.Navigator>
   );
 }
 
 const Stack = createStackNavigator<ManagerNavigatorStackParamList>();
 
-const DeviceIcon = ({
-  color,
-  size = 16,
-}: {
-  color?: string;
-  size?: number;
-}) => {
+const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -97,14 +80,14 @@ const DeviceIcon = ({
   switch (lastSeenDevice?.modelId) {
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:
-      icon = <Icons.NanoSFoldedMedium size={size} color={color} />;
+      icon = <IconsLegacy.NanoSFoldedMedium size={size} color={color} />;
       break;
     case DeviceModelId.stax:
-      icon = <Icons.StaxRegular size={size} color={color} />;
+      icon = <IconsLegacy.StaxMedium size={size} color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:
-      icon = <Icons.NanoXFoldedMedium size={size} color={color} />;
+      icon = <IconsLegacy.NanoXFoldedMedium size={size} color={color} />;
       break;
   }
 
@@ -123,9 +106,7 @@ export function ManagerTabIcon(
 ) {
   const isNavLocked = useIsNavLocked();
 
-  const content = (
-    <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />
-  );
+  const content = <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />;
 
   if (isNavLocked) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function

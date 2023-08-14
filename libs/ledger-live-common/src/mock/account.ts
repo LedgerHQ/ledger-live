@@ -14,6 +14,7 @@ import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types";
 import { TezosAccount } from "../families/tezos/types";
+import { TronAccount } from "../families/tron/types";
 
 /**
  * @memberof mock/account
@@ -21,28 +22,24 @@ import { TezosAccount } from "../families/tezos/types";
 export function genAddingOperationsInAccount(
   account: Account,
   count: number,
-  seed: number | string
+  seed: number | string,
 ): Account {
   const rng = new Prando(seed);
   const copy: Account = { ...account };
   copy.operations = Array(count)
     .fill(null)
-    .reduce((ops) => {
+    .reduce(ops => {
       const op = genOperation(copy, copy, ops, rng);
       return ops.concat(op);
     }, copy.operations);
   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
   const perFamilyOperation = perFamilyMock[account.currency.id];
-  const postSyncAccount =
-    perFamilyOperation && perFamilyOperation.postSyncAccount;
+  const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
   if (postSyncAccount) postSyncAccount(copy);
   return copy;
 }
 
-export function genAccount(
-  id: number | string,
-  opts: GenAccountOptions = {}
-): Account {
+export function genAccount(id: number | string, opts: GenAccountOptions = {}): Account {
   return genAccountCommon(
     id,
     opts,
@@ -85,6 +82,32 @@ export function genAccount(
             counter: 0,
           };
           break;
+        case "tron":
+          // TODO variation in these. you could use the account.name as a way to split cases
+          (account as TronAccount).tronResources = {
+            frozen: {
+              bandwidth: null,
+              energy: null,
+            },
+            delegatedFrozen: {
+              bandwidth: null,
+              energy: null,
+            },
+            votes: [],
+            tronPower: 0,
+            energy: BigNumber(0),
+            bandwidth: {
+              freeUsed: BigNumber(0),
+              freeLimit: BigNumber(1),
+              gainedUsed: BigNumber(0),
+              gainedLimit: BigNumber(0),
+            },
+            unwithdrawnReward: BigNumber(0),
+            lastWithdrawnRewardDate: null,
+            lastVotedDate: null,
+            cacheTransactionInfoById: {},
+          };
+          break;
         default: {
           try {
             const bridge = getAccountBridge(account);
@@ -105,6 +128,6 @@ export function genAccount(
       if (genAccountEnhanceOperations) {
         genAccountEnhanceOperations(account, rng);
       }
-    }
+    },
   );
 }

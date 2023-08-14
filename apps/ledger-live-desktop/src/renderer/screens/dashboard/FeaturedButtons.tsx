@@ -1,11 +1,8 @@
 import React, { useCallback } from "react";
-import { Grid } from "@ledgerhq/react-ui";
+import { Grid, IconsLegacy } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
-import Swap from "~/renderer/icons/Swap";
-import Exchange from "~/renderer/icons/Exchange";
-import Growth from "~/renderer/icons/Growth";
 import { useHistory } from "react-router-dom";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -31,21 +28,21 @@ const FeaturedButtons = () => {
   const startStakeFlow = useStakeFlow();
 
   const handleClickExchange = useCallback(() => {
-    track("button_clicked", { button: "buy", flow: "Buy" });
+    track("button_clicked", { button: "buy", flow: "Buy", page: "portfolio" });
 
     history.push("/exchange");
   }, [history]);
 
   const handleClickSwap = useCallback(() => {
-    track("button_clicked", { button: "swap", flow: "Swap" });
+    track("button_clicked", { button: "swap", flow: "Swap", page: "portfolio" });
 
     history.push("/swap");
   }, [history]);
 
   const handleClickStake = useCallback(() => {
-    track("button_clicked", { button: "stake", flow: "stake" });
+    track("button_clicked", { button: "stake", flow: "stake", page: "portfolio" });
 
-    startStakeFlow();
+    startStakeFlow({ source: "Portafolio" });
   }, [startStakeFlow]);
 
   if (!bannerEnabled) return null;
@@ -53,14 +50,14 @@ const FeaturedButtons = () => {
   return (
     <ButtonGrid>
       <EntryButton
-        Icon={() => <Exchange />}
+        Icon={() => <IconsLegacy.BuyCryptoAltMedium size={18} />}
         title={t("dashboard.featuredButtons.buySell.title")}
         body={t("dashboard.featuredButtons.buySell.description")}
         onClick={handleClickExchange}
         entryButtonTestId="buy-sell-entry-button"
       />
       <EntryButton
-        Icon={() => <Swap />}
+        Icon={() => <IconsLegacy.BuyCryptoMedium size={18} />}
         title={t("dashboard.featuredButtons.swap.title")}
         body={t("dashboard.featuredButtons.swap.description")}
         label={t("dashboard.featuredButtons.swap.label")}
@@ -68,7 +65,7 @@ const FeaturedButtons = () => {
         entryButtonTestId="swap-entry-button"
       />
       <EntryButton
-        Icon={() => <Growth />}
+        Icon={() => <IconsLegacy.LendMedium size={18} />}
         disabled={stakeDisabled}
         title={t("dashboard.featuredButtons.earn.title")}
         body={t("dashboard.featuredButtons.earn.description")}

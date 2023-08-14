@@ -6,23 +6,14 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { Account } from "@ledgerhq/types-live";
 
 export const formatTransaction = (
-  {
-    mode,
-    amount,
-    fees,
-    recipient,
-    validators,
-    memo,
-    sourceValidator,
-    useAllAmount,
-  }: Transaction,
-  account: Account
+  { mode, amount, fees, recipient, validators, memo, sourceValidator, useAllAmount }: Transaction,
+  account: Account,
 ): string => `
 ${mode.toUpperCase()} ${
   useAllAmount
@@ -41,13 +32,13 @@ ${
     ? ""
     : validators
         .map(
-          (v) =>
+          v =>
             "  " +
             formatCurrencyUnit(getAccountUnit(account), v.amount, {
               disableRounding: true,
             }) +
             " -> " +
-            v.address
+            v.address,
         )
         .join("\n")
 }${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
@@ -71,7 +62,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     memo: tr.memo,
     sourceValidator: tr.sourceValidator,
     validators: tr.validators
-      ? tr.validators.map((v) => ({ ...v, amount: new BigNumber(v.amount) }))
+      ? tr.validators.map(v => ({ ...v, amount: new BigNumber(v.amount) }))
       : [],
   };
 };
@@ -91,9 +82,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     gas: t.gas ? t.gas.toString() : null,
     memo: t.memo,
     sourceValidator: t.sourceValidator,
-    validators: t.validators
-      ? t.validators.map((v) => ({ ...v, amount: v.amount.toString() }))
-      : [],
+    validators: t.validators ? t.validators.map(v => ({ ...v, amount: v.amount.toString() })) : [],
   };
 };
 

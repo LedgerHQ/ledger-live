@@ -55,10 +55,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const defaultValidator = useMemo(
-    () =>
-      validators.find(
-        validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
-      ),
+    () => validators.find(validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS),
     [validators],
   );
 
@@ -66,18 +63,14 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    * Instantiate the transaction when opening the flow. Only gets runned once.
    */
 
-  const { transaction, updateTransaction, status, bridgeError } =
-    useBridgeTransaction(() => ({
-      account,
-      transaction: bridge.updateTransaction(
-        bridge.createTransaction(mainAccount),
-        {
-          amount: new BigNumber(0),
-          recipient: defaultValidator ? defaultValidator.contract : "",
-          mode: "delegate",
-        },
-      ),
-    }));
+  const { transaction, updateTransaction, status, bridgeError } = useBridgeTransaction(() => ({
+    account,
+    transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+      amount: new BigNumber(0),
+      recipient: defaultValidator ? defaultValidator.contract : "",
+      mode: "delegate",
+    }),
+  }));
 
   /*
    * Use the transaction recipient to find the chosen validator and access more data about it..
@@ -89,6 +82,11 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         transaction ? transaction.recipient === validator.contract : false,
       ),
     [transaction, validators],
+  );
+
+  const chosenValidatorName = useMemo(
+    () => (chosenValidator ? chosenValidator.identity.name || chosenValidator.contract : ""),
+    [chosenValidator],
   );
 
   /*
@@ -128,9 +126,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       }),
     );
 
-    Animated.loop(
-      Animated.sequence(sequence.concat([Animated.delay(1000)])),
-    ).start();
+    Animated.loop(Animated.sequence(sequence.concat([Animated.delay(1000)]))).start();
 
     return () => {
       animation.setValue(0);
@@ -146,8 +142,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       accountId: account.id,
       transaction,
       status,
+      validators: validators,
+      source: route.params.source,
     });
-  }, [status, account, navigation, transaction]);
+  }, [status, account, navigation, transaction, route.params.source, validators]);
 
   /*
    * Callback function to be called when wanting to change the transaction amount.
@@ -159,12 +157,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         account,
         validators,
         transaction,
-        validatorName: chosenValidator
-          ? chosenValidator.identity.name || chosenValidator.contract
-          : "",
+        validatorName: chosenValidatorName,
       });
     }
-  }, [transaction, account, chosenValidator, validators, navigation]);
+  }, [transaction, account, validators, navigation, chosenValidatorName]);
 
   /*
    * Callback function to be called when wanting to change the validator.
@@ -217,18 +213,10 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       {
         callback: onChangeValidator,
         i18nKey: "delegation.to",
-        name: chosenValidator
-          ? chosenValidator.identity.name || chosenValidator.contract
-          : "",
+        name: chosenValidator ? chosenValidator.identity.name || chosenValidator.contract : "",
       },
     ],
-    [
-      onChangeAmount,
-      onChangeValidator,
-      transactionAmount,
-      chosenValidator,
-      unit.code,
-    ],
+    [onChangeAmount, onChangeValidator, transactionAmount, chosenValidator, unit.code],
   );
 
   /*
@@ -244,7 +232,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="delegate"
+        currency="egld"
+      />
 
       <View style={styles.body}>
         <View style={styles.header}>
@@ -253,23 +247,14 @@ const SetDelegation = (props: SetDelegationPropsType) => {
               <CurrencyIcon size={32} currency={currency} />
             </Circle>
 
-            <View
-              style={[
-                styles.accountBalanceTag,
-                { backgroundColor: colors.border },
-              ]}
-            >
+            <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
               <Text
                 fontWeight="semiBold"
                 numberOfLines={1}
                 style={styles.accountBalanceTagText}
                 color="smoke"
               >
-                <CurrencyUnitValue
-                  showCode={true}
-                  unit={unit}
-                  value={account.balance}
-                />
+                <CurrencyUnitValue showCode={true} unit={unit} value={account.balance} />
               </Text>
             </View>
           </View>
@@ -279,19 +264,12 @@ const SetDelegation = (props: SetDelegationPropsType) => {
             source={require("../../../../../assets/delegation.png")}
           />
 
-          <Touchable
-            event="DelegationFlowSummaryChangeCircleBtn"
-            onPress={onChangeValidator}
-          >
-            <Circle
-              size={70}
-              style={[styles.validatorCircle, { borderColor: colors.primary }]}
-            >
+          <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeValidator}>
+            <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
               <Animated.View style={{ transform }}>
                 <Circle crop size={64}>
                   {chosenValidator ? (
-                    ELROND_LEDGER_VALIDATOR_ADDRESS ===
-                    chosenValidator.contract ? (
+                    ELROND_LEDGER_VALIDATOR_ADDRESS === chosenValidator.contract ? (
                       <LedgerLogo size={64 * 0.7} color={colors.text} />
                     ) : (
                       <FirstLetterIcon
@@ -300,8 +278,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
                         fontSize={24}
                         label={
                           chosenValidator
-                            ? chosenValidator.identity.name ||
-                              chosenValidator.contract
+                            ? chosenValidator.identity.name || chosenValidator.contract
                             : "-"
                         }
                       />
@@ -310,11 +287,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
                 </Circle>
               </Animated.View>
 
-              <Circle
-                style={styles.changeDelegator}
-                bg={colors.primary}
-                size={26}
-              >
+              <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
                 <Icon size={13} name="edit-2" />
               </Circle>
             </Circle>
@@ -325,21 +298,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       <View style={styles.summary}>
         {summaries.map(summary => (
           <View style={styles.summaryLine} key={summary.i18nKey}>
-            <Text
-              numberOfLines={1}
-              fontWeight="semiBold"
-              style={styles.summaryWords}
-              color="smoke"
-            >
+            <Text numberOfLines={1} fontWeight="semiBold" style={styles.summaryWords} color="smoke">
               <Trans i18nKey={summary.i18nKey} />
             </Text>
 
             <Touchable onPress={summary.callback}>
               <View
-                style={[
-                  styles.validatorSelection,
-                  { backgroundColor: rgba(colors.primary, 0.2) },
-                ]}
+                style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}
               >
                 <Text
                   fontWeight="bold"
@@ -350,12 +315,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
                   {summary.name}
                 </Text>
 
-                <View
-                  style={[
-                    styles.validatorSelectionIcon,
-                    { backgroundColor: colors.primary },
-                  ]}
-                >
+                <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
                   <Icon size={16} name="edit-2" color={colors.text} />
                 </View>
               </View>

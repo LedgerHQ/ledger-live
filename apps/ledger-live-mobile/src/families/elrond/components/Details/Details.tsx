@@ -3,22 +3,16 @@ import { Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
-import {
-  getAddressExplorer,
-  getDefaultExplorerView,
-} from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
 import type { ElrondPreloadData } from "@ledgerhq/live-common/families/elrond/types";
 import type { DetailsPropsType } from "./types";
 
 import Section from "../../../../screens/OperationDetails/Section";
-import {
-  discreetModeSelector,
-  localeSelector,
-} from "../../../../reducers/settings";
+import { discreetModeSelector, localeSelector } from "../../../../reducers/settings";
 
 /*
  * Handle the component declaration.
@@ -34,9 +28,7 @@ const Details = (props: DetailsPropsType) => {
 
   const contract = operation && operation.contract ? operation.contract : "";
   const data: ElrondPreloadData = useElrondPreloadData();
-  const validator = data.validators.find(
-    validator => contract === validator.contract,
-  );
+  const validator = data.validators.find(validator => contract === validator.contract);
 
   const name = validator ? validator.identity.name || validator.contract : "";
   const amount = formatCurrencyUnit(unit, BigNumber(extra.amount), {
@@ -53,10 +45,7 @@ const Details = (props: DetailsPropsType) => {
 
   const openExplorer = useCallback(
     (address: string) => {
-      const explorer = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const explorer = getAddressExplorer(getDefaultExplorerView(account.currency), address);
 
       if (explorer) {
         Linking.openURL(explorer);
@@ -74,25 +63,14 @@ const Details = (props: DetailsPropsType) => {
       return (
         <View>
           {Boolean(name) && (
-            <Section
-              title={t("operationDetails.extra.delegatedTo")}
-              value={name}
-            />
+            <Section title={t("operationDetails.extra.delegatedTo")} value={name} />
           )}
 
           {Boolean(amount) && (
-            <Section
-              title={t("operationDetails.extra.delegatedAmount")}
-              value={amount}
-            />
+            <Section title={t("operationDetails.extra.delegatedAmount")} value={amount} />
           )}
 
-          {extra.memo && (
-            <Section
-              title={t("operationDetails.extra.memo")}
-              value={extra.memo}
-            />
-          )}
+          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 
@@ -104,10 +82,7 @@ const Details = (props: DetailsPropsType) => {
       return (
         <View>
           {Boolean(name) && (
-            <Section
-              title={t("operationDetails.extra.undelegatedFrom")}
-              value={name}
-            />
+            <Section title={t("operationDetails.extra.undelegatedFrom")} value={name} />
           )}
 
           {Boolean(amount) && (
@@ -118,12 +93,7 @@ const Details = (props: DetailsPropsType) => {
             />
           )}
 
-          {extra.memo && (
-            <Section
-              title={t("operationDetails.extra.memo")}
-              value={extra.memo}
-            />
-          )}
+          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 
@@ -142,12 +112,7 @@ const Details = (props: DetailsPropsType) => {
             />
           )}
 
-          {extra.memo && (
-            <Section
-              title={t("operationDetails.extra.memo")}
-              value={extra.memo}
-            />
-          )}
+          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 
@@ -159,10 +124,7 @@ const Details = (props: DetailsPropsType) => {
       return (
         <View>
           {Boolean(name) && (
-            <Section
-              title={t("operationDetails.extra.withdrawnFrom")}
-              value={name}
-            />
+            <Section title={t("operationDetails.extra.withdrawnFrom")} value={name} />
           )}
 
           {Boolean(amount) && (
@@ -173,12 +135,7 @@ const Details = (props: DetailsPropsType) => {
             />
           )}
 
-          {extra.memo && (
-            <Section
-              title={t("operationDetails.extra.memo")}
-              value={extra.memo}
-            />
-          )}
+          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 

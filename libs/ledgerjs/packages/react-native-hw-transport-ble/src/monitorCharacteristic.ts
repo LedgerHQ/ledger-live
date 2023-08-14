@@ -2,24 +2,16 @@ import { Observable } from "rxjs";
 import { TransportError } from "@ledgerhq/errors";
 import type { Characteristic } from "./types";
 import { log } from "@ledgerhq/logs";
-export const monitorCharacteristic = (
-  characteristic: Characteristic
-): Observable<Buffer> =>
-  new Observable((o) => {
+export const monitorCharacteristic = (characteristic: Characteristic): Observable<Buffer> =>
+  new Observable(o => {
     log("ble-verbose", "start monitor " + characteristic.uuid);
     const subscription = characteristic.monitor((error, c) => {
       if (error) {
-        log(
-          "ble-verbose",
-          "error monitor " + characteristic.uuid + ": " + error
-        );
+        log("ble-verbose", "error monitor " + characteristic.uuid + ": " + error);
         o.error(error);
       } else if (!c) {
         o.error(
-          new TransportError(
-            "characteristic monitor null value",
-            "CharacteristicMonitorNull"
-          )
+          new TransportError("characteristic monitor null value", "CharacteristicMonitorNull"),
         );
       } else {
         try {

@@ -8,10 +8,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import {
-  ChevronRightMedium,
-  PlusMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { ChevronRightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftCollectionRow from "../../components/Nft/NftCollectionRow";
@@ -38,8 +35,7 @@ export default function NftCollectionsList({ account }: Props) {
   const nftCollections = useMemo(
     () =>
       Object.entries(nftsByCollections(nfts)).filter(
-        ([contract]) =>
-          !hiddenNftCollections.includes(`${account.id}|${contract}`),
+        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
       ),
     [account.id, hiddenNftCollections, nfts],
   ) as [string, ProtoNFT[]][];
@@ -56,10 +52,7 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   const data = useMemo(
-    () =>
-      nftCollections
-        .slice(0, MAX_COLLECTIONS_TO_SHOW)
-        .map(([, collection]) => collection),
+    () => nftCollections.slice(0, MAX_COLLECTIONS_TO_SHOW).map(([, collection]) => collection),
     [nftCollections],
   );
 
@@ -131,10 +124,7 @@ export default function NftCollectionsList({ account }: Props) {
           <Trans i18nKey="nft.account.seeAllNfts" />
         </Button>
       ) : (
-        <Touchable
-          event="AccountReceiveSubAccount"
-          onPress={navigateToReceiveConnectDevice}
-        >
+        <Touchable event="AccountReceiveSubAccount" onPress={navigateToReceiveConnectDevice}>
           <View
             style={[
               styles.footer,
@@ -146,15 +136,12 @@ export default function NftCollectionsList({ account }: Props) {
             <PlusMedium color={"primary.c80"} size={26} />
             <View style={styles.footerText}>
               <Text variant={"large"}>
-                <Trans
-                  i18nKey={`account.nft.howTo`}
-                  values={{ currency: account.currency.family }}
-                >
+                <Trans i18nKey={`account.nft.howTo`} values={{ currency: account.currency.family }}>
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                   <Text variant={"large"} fontWeight={"semiBold"}>
-                    text
+                    PLACEHOLDER_TEXT
                   </Text>
                 </Trans>
               </Text>

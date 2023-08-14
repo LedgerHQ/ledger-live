@@ -1,9 +1,9 @@
 import React from "react";
-import { BoxedIcon, Flex, Icons, Text, Button } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, IconsLegacy, Text, Button } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  onStart: () => any;
+  onStart: () => void;
 };
 
 const StartScreen = ({ onStart }: Props) => {
@@ -18,7 +18,7 @@ const StartScreen = ({ onStart }: Props) => {
     >
       <Flex flexDirection="column" alignItems="center" width={338} height={255} rowGap={7}>
         <BoxedIcon
-          Icon={Icons.TrophyMedium}
+          Icon={IconsLegacy.TrophyMedium}
           iconSize={28}
           size={64}
           borderColor="neutral.c100"
@@ -31,7 +31,7 @@ const StartScreen = ({ onStart }: Props) => {
         <Button
           data-test-id="v3-quiz-start-button"
           variant="main"
-          Icon={Icons.TrophyRegular}
+          Icon={IconsLegacy.TrophyMedium}
           iconPosition="left"
           onClick={onStart}
         >

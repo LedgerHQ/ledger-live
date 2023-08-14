@@ -157,7 +157,8 @@ pnpm desktop test
 ### Run code quality checks
 
 ```bash
-pnpm desktop test:codecheck
+pnpm desktop lint
+pnpm desktop typecheck
 ```
 
 ## File structure
@@ -184,7 +185,7 @@ src
 │   ├── hooks
 │   ├── i18n : all translation files
 │   ├── index.html : html point point
-│   ├── index.js : js entry point
+│   ├── index.ts : js entry point
 │   ├── init.js : initialize the rendering
 │   ├── live-common-setup.js : set up live-common for renderer specific parts
 │   └── ... other files related to renderer

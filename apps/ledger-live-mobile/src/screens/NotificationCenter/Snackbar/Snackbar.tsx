@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { TouchableHighlight } from "react-native";
 import Animated, {
-  set,
-  interpolateNode,
   Extrapolate,
-  useCode,
-  EasingNode,
+  useSharedValue,
+  withTiming,
+  Easing,
+  useAnimatedStyle,
+  interpolate,
 } from "react-native-reanimated";
-import { useClock, timing } from "react-native-redash/lib/module/v1";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
 import {
@@ -19,8 +19,7 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
 
-const AnimatedTouchableOpacity =
-  Animated.createAnimatedComponent(TouchableHighlight);
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableHighlight);
 
 type Props = {
   toast: ToastData;
@@ -39,24 +38,17 @@ type IconsKeys = keyof typeof icons;
 
 export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
   const { title, text, type, icon } = toast;
-  const [anim] = useState(new Animated.Value(0));
-  const clock = useClock();
-  const [closed, setIsClosed] = useState(false);
 
-  useCode(
-    () =>
-      set(
-        anim,
-        timing({
-          duration: 800,
-          easing: EasingNode.ease,
-          clock,
-          from: anim,
-          to: new Animated.Value(closed ? 0 : 1),
-        }),
-      ),
-    [closed],
-  );
+  const [closed, setIsClosed] = useState(false);
+  const openState = useSharedValue(0);
+
+  // Updates the animated open state
+  useEffect(() => {
+    openState.value = withTiming(closed ? 0 : 1, {
+      duration: 800,
+      easing: Easing.ease,
+    });
+  }, [closed, openState]);
 
   const handleClose = useCallback(() => {
     setIsClosed(true);
@@ -65,9 +57,11 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
+
     if (type === "success") {
       timeout = setTimeout(handleClose, 5000);
     }
+
     return () => {
       timeout && clearTimeout(timeout);
     };
@@ -80,42 +74,40 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
 
   const Icon = icon ? icons[icon as IconsKeys] : undefined;
 
-  const maxHeight = interpolateNode(anim, {
-    inputRange: [0, 0.4, 1],
-    outputRange: [0, 200, 200],
-    extrapolate: Extrapolate.CLAMP,
-  });
+  const animatedTouchableOpacityStyle = useAnimatedStyle(() => {
+    const maxHeight = interpolate(openState.value, [0, 0.4, 1], [0, 200, 200], Extrapolate.CLAMP);
 
-  const translateX = interpolateNode(anim, {
-    inputRange: [0, 0.6, 1],
-    outputRange: [width + 100, width - 100, 0],
-    extrapolate: Extrapolate.CLAMP,
-  });
+    const translateX = interpolate(
+      openState.value,
+      [0, 0.6, 1],
+      [width + 100, width - 100, 0],
+      Extrapolate.CLAMP,
+    );
 
-  const opacity = interpolateNode(anim, {
-    inputRange: [0, 0.6, 1],
-    outputRange: [0, 0, 1],
-    extrapolate: Extrapolate.CLAMP,
-  });
+    const opacity = interpolate(openState.value, [0, 0.6, 1], [0, 0, 1], Extrapolate.CLAMP);
 
-  const marginBottom = interpolateNode(anim, {
-    inputRange: [0, 0.4, 1],
-    outputRange: [0, 8, 8],
-    extrapolate: Extrapolate.CLAMP,
+    const marginBottom = interpolate(openState.value, [0, 0.4, 1], [0, 8, 8], Extrapolate.CLAMP);
+
+    return {
+      maxHeight,
+      transform: [{ translateX }],
+      opacity,
+      marginBottom,
+    };
   });
 
   const notificationProps =
     type === "success"
       ? {
           variant: "plain",
-          iconColor: "success.c50",
+          iconColor: "success.c60",
           title,
-          subtitle: text,
+          subtitle: text || undefined,
         }
       : {
           variant: "primary",
           title: type || title,
-          subtitle: type ? title : text,
+          subtitle: type ? title : text || undefined,
         };
 
   return (
@@ -124,12 +116,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
         {
           borderRadius: 4,
         },
-        {
-          maxHeight,
-          transform: [{ translateX }],
-          opacity,
-          marginBottom,
-        },
+        animatedTouchableOpacityStyle,
       ]}
       onPress={handleOnPress}
     >

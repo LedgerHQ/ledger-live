@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import { Flex } from "@ledgerhq/native-ui";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { StyleProp, ViewStyle } from "react-native";
 
 export type Props = FlexBoxProps & {

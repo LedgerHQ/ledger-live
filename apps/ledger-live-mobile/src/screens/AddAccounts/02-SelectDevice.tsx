@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex } from "@ledgerhq/native-ui";
@@ -12,24 +10,32 @@ import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type {
+  ReactNavigationHeaderOptions,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 import type { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import SkipSelectDevice from "../SkipSelectDevice";
-import {
-  setLastConnectedDevice,
-  setReadOnlyMode,
-} from "../../actions/settings";
+import { setLastConnectedDevice, setReadOnlyMode } from "../../actions/settings";
+import AddAccountsHeaderRightClose from "./AddAccountsHeaderRightClose";
+import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
-type Props = StackNavigatorProps<
-  AddAccountsNavigatorParamList,
-  ScreenName.AddAccountsSelectDevice
->;
+type Props = StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>;
 
-const action = createAction(connectApp);
+// Defines some of the header options for this screen.
+// headerRight and headerLeft for this screen were originally set by its associated Stack.Navigator.
+export const addAccountsSelectDeviceHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: true,
+  headerRight: AddAccountsHeaderRightClose,
+  headerLeft: () => <NavigationHeaderBackButton />,
+};
+
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
+  const action = useAppDeviceAction();
   const { currency, analyticsPropertyFlow } = route.params;
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null | undefined>(null);
@@ -64,13 +70,32 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
     },
     [navigation, route],
   );
+
   useEffect(() => {
     // load ahead of time
-    currency &&
-      prepareCurrency(
-        isTokenCurrency(currency) ? currency.parentCurrency : currency,
-      );
+    currency && prepareCurrency(isTokenCurrency(currency) ? currency.parentCurrency : currency);
   }, [currency]);
+
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerShown: true,
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+        });
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...addAccountsSelectDeviceHeaderOptions,
+        });
+      }
+    },
+    [navigation],
+  );
+
   return (
     <SafeAreaView
       style={[
@@ -86,18 +111,12 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
           <SelectDevice2
             onSelect={setDevice}
             stopBleScanning={!!device || !isFocused}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
           />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
-          <TrackScreen
-            category="AddAccounts"
-            name="SelectDevice"
-            currencyName={currency?.name}
-          />
+        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+          <TrackScreen category="AddAccounts" name="SelectDevice" currencyName={currency?.name} />
           <SelectDevice onSelect={onSetDevice} />
         </NavigationScrollView>
       )}
@@ -107,10 +126,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         onResult={onResult}
         onClose={onClose}
         request={{
-          currency:
-            currency && isTokenCurrency(currency)
-              ? currency.parentCurrency
-              : currency,
+          currency: currency && isTokenCurrency(currency) ? currency.parentCurrency : currency,
         }}
         onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}

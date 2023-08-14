@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Flex, Theme } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { createCanvas, scaleDimensions } from "./imageUtils";
+import { createCanvas } from "./imageUtils";
 import { ImageBase64Data, ImageDimensions } from "./types";
-import { targetDisplayDimensions } from "./shared";
 import ContrastChoice from "./ContrastChoice";
 import FramedImage from "./FramedImage";
 import { useTheme } from "styled-components";
@@ -34,8 +33,6 @@ const getContrasts = (theme: Theme) => [
     color: { topLeft: theme.colors.neutral.c70, bottomRight: theme.colors.neutral.c30 },
   },
 ];
-
-const imageDimensions = scaleDimensions(targetDisplayDimensions, 0.45);
 
 function clamp(val: number, min: number, max: number) {
   return Math.min(max, Math.max(min, val));
@@ -167,10 +164,11 @@ export type Props = ImageBase64Data & {
   onError: (_: Error) => void;
   onResult: (_: ProcessorResult) => void;
   setLoading: (_: boolean) => void;
+  onContrastChanged: (_: { index: number; value: number }) => void;
 };
 
 const ImageGrayscalePreview: React.FC<Props> = props => {
-  const { onError, imageBase64DataUri, onResult, setLoading } = props;
+  const { onError, imageBase64DataUri, onResult, setLoading, onContrastChanged } = props;
   const [contrastIndex, setContrastIndex] = useState<number>(0);
   const [sourceUriLoaded, setSourceUriLoaded] = useState<string | null>(null);
   const [previewResult, setPreviewResult] = useState<ProcessorPreviewResult | null>(null);
@@ -178,6 +176,10 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
 
   const theme = useTheme();
   const contrasts = useMemo(() => getContrasts(theme), [theme]);
+
+  useEffect(() => {
+    onContrastChanged({ index: contrastIndex, value: contrasts[contrastIndex].val });
+  }, [contrastIndex, contrasts, onContrastChanged]);
 
   useEffect(() => {
     if (sourceImageRef.current && sourceUriLoaded && sourceUriLoaded === imageBase64DataUri) {
@@ -236,4 +238,4 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
   );
 };
 
-export default ImageGrayscalePreview;
+export default React.memo(ImageGrayscalePreview);

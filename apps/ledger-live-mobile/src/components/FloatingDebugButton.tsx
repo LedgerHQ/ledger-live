@@ -9,7 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import { Flex } from "@ledgerhq/native-ui";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 
 type Props = {
   onPress: () => void;
@@ -30,14 +30,11 @@ const FloatingDebugButton: React.FC<Props> = ({
 }) => {
   const { height, width } = useWindowDimensions();
   const { top, left, right, bottom } = useSafeAreaInsets();
-  const pan = useRef(
-    new Animated.ValueXY({ x: 10000, y: top + 2 * boxHeight }),
-  ).current;
+  const pan = useRef(new Animated.ValueXY({ x: 10000, y: top + 2 * boxHeight })).current;
 
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gestureState) =>
-        Math.abs(gestureState.dx) > 5,
+      onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dx) > 5,
       onPanResponderGrant(e, gestureState) {
         pan.setOffset({
           x: gestureState.x0 - boxWidth / 2,
@@ -88,6 +85,7 @@ const FloatingDebugButton: React.FC<Props> = ({
           {React.isValidElement(Icon) ? (
             Icon
           ) : (
+            /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
             <Icon size={(2 * boxWidth) / 3} color="white" />
           )}
         </Flex>

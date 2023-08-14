@@ -2,6 +2,7 @@ import { Page, Locator } from "@playwright/test";
 
 export class PortfolioPage {
   readonly page: Page;
+  readonly portfolioContainer: Locator;
   readonly emptyStateTitle: Locator;
   readonly addAccountButton: Locator;
   readonly carousel: Locator;
@@ -10,10 +11,11 @@ export class PortfolioPage {
   readonly buySellEntryButton: Locator;
   readonly swapEntryButton: Locator;
   readonly stakeEntryButton: Locator;
-  readonly assetRow: Function;
+  readonly assetRow: (currency: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;
+    this.portfolioContainer = page.locator("data-test-id=portfolio-container");
     this.emptyStateTitle = page.locator("data-test-id=portfolio-empty-state-title");
     this.addAccountButton = page.locator("data-test-id=portfolio-empty-state-add-account-button");
     this.carousel = page.locator("data-test-id=carousel");
@@ -22,8 +24,7 @@ export class PortfolioPage {
     this.buySellEntryButton = page.locator("data-test-id=buy-sell-entry-button");
     this.swapEntryButton = page.locator("data-test-id=swap-entry-button");
     this.stakeEntryButton = page.locator("data-test-id=stake-entry-button");
-    this.assetRow = (currency: string) =>
-      page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
+    this.assetRow = currency => page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
   }
 
   async openAddAccountModal() {
@@ -45,5 +46,9 @@ export class PortfolioPage {
 
   async navigateToAsset(currency: string) {
     this.assetRow(currency).click();
+  }
+
+  async scrollToOperations() {
+    await this.page.locator("id=operation-list").scrollIntoViewIfNeeded();
   }
 }

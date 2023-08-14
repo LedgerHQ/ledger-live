@@ -94,58 +94,22 @@ const accounts = [
 const mockedCalculateCountervalue = (_, balance) => balance;
 
 test("Accounts ordering | name asc", () => {
-  const compareFn = sortAccountsComparatorFromOrder(
-    "name|asc",
-    mockedCalculateCountervalue
-  );
+  const compareFn = sortAccountsComparatorFromOrder("name|asc", mockedCalculateCountervalue);
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map((a) => a.name)).toEqual([
-    "A",
-    "AA",
-    "B",
-    "C",
-    "CA",
-  ]);
+  expect(sortedAccounts.map(a => a.name)).toEqual(["A", "AA", "B", "C", "CA"]);
 });
 test("Accounts ordering | name desc", () => {
-  const compareFn = sortAccountsComparatorFromOrder(
-    "name|desc",
-    mockedCalculateCountervalue
-  );
+  const compareFn = sortAccountsComparatorFromOrder("name|desc", mockedCalculateCountervalue);
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map((a) => a.name)).toEqual([
-    "CA",
-    "C",
-    "B",
-    "AA",
-    "A",
-  ]);
+  expect(sortedAccounts.map(a => a.name)).toEqual(["CA", "C", "B", "AA", "A"]);
 });
 test("Accounts ordering | balance asc", () => {
-  const compareFn = sortAccountsComparatorFromOrder(
-    "balance|asc",
-    mockedCalculateCountervalue
-  );
+  const compareFn = sortAccountsComparatorFromOrder("balance|asc", mockedCalculateCountervalue);
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map((a) => a.name)).toEqual([
-    "A",
-    "B",
-    "C",
-    "CA",
-    "AA",
-  ]);
+  expect(sortedAccounts.map(a => a.name)).toEqual(["A", "B", "C", "CA", "AA"]);
 });
 test("Accounts ordering | balance desc", () => {
-  const compareFn = sortAccountsComparatorFromOrder(
-    "balance|desc",
-    mockedCalculateCountervalue
-  );
+  const compareFn = sortAccountsComparatorFromOrder("balance|desc", mockedCalculateCountervalue);
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map((a) => a.name)).toEqual([
-    "AA",
-    "C",
-    "CA",
-    "B",
-    "A",
-  ]);
+  expect(sortedAccounts.map(a => a.name)).toEqual(["AA", "C", "CA", "B", "A"]);
 });

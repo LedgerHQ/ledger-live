@@ -11,10 +11,10 @@ const SvgComponent = ({
   <Svg width={197} height={52} fill="none" {...props}>
     <Mask
       id="a"
+      // @ts-expect-error maskType is not in the type definition
       style={{
         maskType: "alpha",
       }}
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
       maskUnits={"userSpaceOnUse" as const}
       x={1}
       y={-5}
@@ -37,10 +37,10 @@ const SvgComponent = ({
     </G>
     <Mask
       id="b"
+      // @ts-expect-error maskType is not in the type definition
       style={{
         maskType: "alpha",
       }}
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
       maskUnits={"userSpaceOnUse" as const}
       x={41}
       y={-5}
@@ -56,21 +56,15 @@ const SvgComponent = ({
     </Mask>
     <G mask="url(#b)">
       <Rect x={41} width={50} height={50} rx={25} fill="#0EBDCD" />
-      <Path
-        d="M73.81 24.375 65.999 12.5l-7.811 11.875 7.81 4.535 7.812-4.535Z"
-        fill="#fff"
-      />
-      <Path
-        d="m65.999 37.5 7.816-10.814L66 31.22l-7.811-4.534 7.81 10.814Z"
-        fill="#fff"
-      />
+      <Path d="M73.81 24.375 65.999 12.5l-7.811 11.875 7.81 4.535 7.812-4.535Z" fill="#fff" />
+      <Path d="m65.999 37.5 7.816-10.814L66 31.22l-7.811-4.534 7.81 10.814Z" fill="#fff" />
     </G>
     <Mask
       id="c"
+      // @ts-expect-error maskType is not in the type definition
       style={{
         maskType: "alpha",
       }}
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
       maskUnits={"userSpaceOnUse" as const}
       x={81}
       y={-5}

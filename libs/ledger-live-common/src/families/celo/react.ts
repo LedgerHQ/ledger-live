@@ -1,14 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import {
-  getCurrentCeloPreloadData,
-  getCeloPreloadDataUpdates,
-} from "./preload";
+import { getCurrentCeloPreloadData, getCeloPreloadDataUpdates } from "./preload";
 import type { CeloPreloadData, CeloValidatorGroup } from "./types";
 
 export function useCeloPreloadData(): CeloPreloadData {
   const [state, setState] = useState(getCurrentCeloPreloadData);
   useEffect(() => {
-    const sub = getCeloPreloadDataUpdates().subscribe((data) => {
+    const sub = getCeloPreloadDataUpdates().subscribe(data => {
       setState(data);
     });
     return () => sub.unsubscribe();
@@ -27,9 +24,9 @@ export function useValidatorGroups(search?: string): CeloValidatorGroup[] {
     const lowercaseSearch = search.toLowerCase();
 
     return validatorGroups.filter(
-      (vg) =>
+      vg =>
         vg.name.toLowerCase().includes(lowercaseSearch) ||
-        vg.address.toLowerCase().includes(lowercaseSearch)
+        vg.address.toLowerCase().includes(lowercaseSearch),
     );
   }, [validatorGroups, search]);
 }

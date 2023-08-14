@@ -36,18 +36,14 @@ export let disconnect: (...args: Array<any>) => any = () => {};
 export let approveSession: (account: AccountLike) => void = () => {};
 export let setCurrentCallRequestResult: (...args: Array<any>) => any = () => {};
 export let setCurrentCallRequestError: (...args: Array<any>) => any = () => {};
-export let handleCallRequest: (payload: any) => Promise<any> = () =>
-  Promise.resolve();
+export let handleCallRequest: (payload: any) => Promise<any> = () => Promise.resolve();
 
 // reducer
 const reducer = (state: State, update) => {
   return {
     ...state,
     ...update,
-    session:
-      update.session === null
-        ? {}
-        : { ...state.session, ...(update.session || {}) },
+    session: update.session === null ? {} : { ...state.session, ...(update.session || {}) },
   };
 };
 
@@ -90,7 +86,7 @@ const ProviderCommon = ({
   const account = useAccount(state.session.accountId);
 
   // actions
-  connect = (uri) => {
+  connect = uri => {
     let connector;
 
     try {
@@ -102,7 +98,7 @@ const ProviderCommon = ({
           : {
               uri,
               clientMeta,
-            }
+            },
       );
     } catch (e) {
       dispatch({
@@ -176,8 +172,7 @@ const ProviderCommon = ({
     }
 
     if (state.status !== STATUS.DISCONNECTED) {
-      const disconnectedAccount =
-        state.status === STATUS.CONNECTED ? account : null;
+      const disconnectedAccount = state.status === STATUS.CONNECTED ? account : null;
       dispatch({
         session: null,
         dappInfo: null,
@@ -190,7 +185,7 @@ const ProviderCommon = ({
     }
   };
 
-  handleCallRequest = async (payload) => {
+  handleCallRequest = async payload => {
     if (state.currentCallRequestId) {
       state.connector.rejectRequest({
         id: payload.id,
@@ -231,7 +226,7 @@ const ProviderCommon = ({
     }
   };
 
-  approveSession = (account) => {
+  approveSession = account => {
     if (!state.connector || account.type !== "Account") {
       return;
     }
@@ -247,7 +242,7 @@ const ProviderCommon = ({
     });
   };
 
-  setCurrentCallRequestResult = (result) => {
+  setCurrentCallRequestResult = result => {
     if (!state.currentCallRequestId || !state.connector) {
       return;
     }
@@ -261,7 +256,7 @@ const ProviderCommon = ({
     });
   };
 
-  setCurrentCallRequestError = (error) => {
+  setCurrentCallRequestError = error => {
     if (!state.currentCallRequestId || !state.connector) {
       return;
     }
@@ -300,12 +295,7 @@ const ProviderCommon = ({
     saveWCSession(state.session);
   }, [saveWCSession, state.initDone, state.session]);
   useEffect(() => {
-    if (
-      account &&
-      state.session.session &&
-      state.status === STATUS.DISCONNECTED &&
-      isReady
-    ) {
+    if (account && state.session.session && state.status === STATUS.DISCONNECTED && isReady) {
       connect();
       onSessionRestarted(account);
     }

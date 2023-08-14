@@ -1,9 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
-import {
-  accountToPlatformAccount,
-  currencyToPlatformCurrency,
-} from "./converters";
+import { accountToPlatformAccount, currencyToPlatformCurrency } from "./converters";
 import {
   filterPlatformAccounts,
   filterPlatformCurrencies,
@@ -27,30 +24,16 @@ import { listCurrencies } from "../currencies";
  *
  * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
  */
-export function usePlatformUrl(
-  manifest: LiveAppManifest,
-  params: { background?: string; text?: string; loadDate?: Date },
-  inputs?: Record<string, string>
-): URL {
+export function usePlatformUrl(manifest: LiveAppManifest, inputs?: Record<string, string>): URL {
   return useMemo(() => {
     const url = new URL(manifest.url.toString());
 
     if (inputs) {
       for (const key in inputs) {
-        if (
-          Object.prototype.hasOwnProperty.call(inputs, key) &&
-          inputs[key] !== undefined
-        ) {
+        if (Object.prototype.hasOwnProperty.call(inputs, key) && inputs[key] !== undefined) {
           url.searchParams.set(key, inputs[key]);
         }
       }
-    }
-
-    if (params.background)
-      url.searchParams.set("backgroundColor", params.background);
-    if (params.text) url.searchParams.set("textColor", params.text);
-    if (params.loadDate) {
-      url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
     }
 
     if (manifest.params) {
@@ -58,14 +41,12 @@ export function usePlatformUrl(
     }
 
     return url;
-  }, [manifest.url, manifest.params, params, inputs]);
+  }, [manifest.url, manifest.params, inputs]);
 }
 
-export function usePlatformAccounts(
-  accounts: AccountLike[]
-): PlatformAccount[] {
+export function usePlatformAccounts(accounts: AccountLike[]): PlatformAccount[] {
   return useMemo(() => {
-    return accounts.map((account) => {
+    return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
       return accountToPlatformAccount(account, parentAccount);
@@ -73,29 +54,24 @@ export function usePlatformAccounts(
   }, [accounts]);
 }
 
-export function useListPlatformAccounts(
-  accounts: AccountLike[]
-): ListPlatformAccount {
+export function useListPlatformAccounts(accounts: AccountLike[]): ListPlatformAccount {
   const platformAccounts = usePlatformAccounts(accounts);
   return useCallback(
     (filters: AccountFilters = {}) => {
       return filterPlatformAccounts(platformAccounts, filters);
     },
-    [platformAccounts]
+    [platformAccounts],
   );
 }
 
 export function usePlatformCurrencies(): PlatformCurrency[] {
   return useMemo(() => {
-    return listCurrencies(true).reduce<PlatformCurrency[]>(
-      (filtered, currency) => {
-        if (isPlatformSupportedCurrency(currency)) {
-          filtered.push(currencyToPlatformCurrency(currency));
-        }
-        return filtered;
-      },
-      []
-    );
+    return listCurrencies(true).reduce<PlatformCurrency[]>((filtered, currency) => {
+      if (isPlatformSupportedCurrency(currency)) {
+        filtered.push(currencyToPlatformCurrency(currency));
+      }
+      return filtered;
+    }, []);
   }, []);
 }
 
@@ -106,6 +82,6 @@ export function useListPlatformCurrencies(): ListPlatformCurrency {
     (filters?: CurrencyFilters) => {
       return filterPlatformCurrencies(currencies, filters || {});
     },
-    [currencies]
+    [currencies],
   );
 }

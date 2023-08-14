@@ -1,36 +1,30 @@
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, concat, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import getDeviceInfo from "./getDeviceInfo";
 import { getProviderId } from "../manager";
 import type { DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
-export const fetchNextFirmware = (
-  deviceInfo: DeviceInfo
-): Observable<FinalFirmware> =>
-  from(
-    ManagerAPI.getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo))
-  ).pipe(
-    mergeMap((device) =>
+export const fetchNextFirmware = (deviceInfo: DeviceInfo): Observable<FinalFirmware> =>
+  from(ManagerAPI.getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo))).pipe(
+    mergeMap(device =>
       from(
         ManagerAPI.getCurrentOSU({
           deviceId: device.id,
           version: deviceInfo.version,
           provider: getProviderId(deviceInfo),
-        })
-      )
+        }),
+      ),
     ),
-    mergeMap((firmware) =>
-      from(
-        ManagerAPI.getFinalFirmwareById(firmware.next_se_firmware_final_version)
-      )
-    )
+    mergeMap(firmware =>
+      from(ManagerAPI.getFinalFirmwareById(firmware.next_se_firmware_final_version)),
+    ),
   );
 export default (transport: Transport): Observable<any> =>
   from(getDeviceInfo(transport)).pipe(
-    mergeMap((deviceInfo) =>
+    mergeMap(deviceInfo =>
       fetchNextFirmware(deviceInfo).pipe(
-        mergeMap((nextFirmware) =>
+        mergeMap(nextFirmware =>
           concat(
             of({
               type: "install",
@@ -41,9 +35,9 @@ export default (transport: Transport): Observable<any> =>
               firmware: nextFirmware.firmware,
               firmwareKey: nextFirmware.firmware_key,
               perso: nextFirmware.perso,
-            })
-          )
-        )
-      )
-    )
+            }),
+          ),
+        ),
+      ),
+    ),
   );

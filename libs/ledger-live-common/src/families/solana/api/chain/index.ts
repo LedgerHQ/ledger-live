@@ -6,7 +6,7 @@ import {
 import {
   Connection,
   FetchMiddleware,
-  Message,
+  VersionedMessage,
   PublicKey,
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
@@ -25,52 +25,40 @@ export type ChainAPI = Readonly<{
 
   getLatestBlockhash: () => Promise<string>;
 
-  getFeeForMessage: (message: Message) => Promise<number>;
+  getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
 
-  getBalanceAndContext: (
-    address: string
-  ) => ReturnType<Connection["getBalanceAndContext"]>;
+  getBalanceAndContext: (address: string) => ReturnType<Connection["getBalanceAndContext"]>;
 
   getParsedTokenAccountsByOwner: (
-    address: string
+    address: string,
   ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
 
   getStakeAccountsByStakeAuth: (
-    authAddr: string
+    authAddr: string,
   ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
   getStakeAccountsByWithdrawAuth: (
-    authAddr: string
+    authAddr: string,
   ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
-  getStakeActivation: (
-    stakeAccAddr: string
-  ) => ReturnType<Connection["getStakeActivation"]>;
+  getStakeActivation: (stakeAccAddr: string) => ReturnType<Connection["getStakeActivation"]>;
 
-  getInflationReward: (
-    addresses: string[]
-  ) => ReturnType<Connection["getInflationReward"]>;
+  getInflationReward: (addresses: string[]) => ReturnType<Connection["getInflationReward"]>;
 
   getVoteAccounts: () => ReturnType<Connection["getVoteAccounts"]>;
 
   getSignaturesForAddress: (
     address: string,
-    opts?: SignaturesForAddressOptions
+    opts?: SignaturesForAddressOptions,
   ) => ReturnType<Connection["getSignaturesForAddress"]>;
 
-  getParsedTransactions: (
-    signatures: string[]
-  ) => ReturnType<Connection["getParsedTransactions"]>;
+  getParsedTransactions: (signatures: string[]) => ReturnType<Connection["getParsedTransactions"]>;
 
   getAccountInfo: (
-    address: string
-  ) => Promise<
-    Awaited<ReturnType<Connection["getParsedAccountInfo"]>>["value"]
-  >;
+    address: string,
+  ) => Promise<Awaited<ReturnType<Connection["getParsedAccountInfo"]>>["value"]>;
 
-  sendRawTransaction: (
-    buffer: Buffer
-  ) => ReturnType<Connection["sendRawTransaction"]>;
+  sendRawTransaction: (buffer: Buffer) => ReturnType<Connection["sendRawTransaction"]>;
 
   findAssocTokenAccAddress: (owner: string, mint: string) => Promise<string>;
 
@@ -84,13 +72,13 @@ export type ChainAPI = Readonly<{
 }>;
 
 // Naive mode, allow us to filter in sentry all this error comming from Sol RPC node
-const remapErrors = (e) => {
+const remapErrors = e => {
   throw new NetworkDown(e?.message);
 };
 
 export function getChainAPI(
   config: Config,
-  logger?: (url: string, options: any) => void
+  logger?: (url: string, options: any) => void,
 ): ChainAPI {
   const fetchMiddleware: FetchMiddleware | undefined =
     logger === undefined
@@ -104,9 +92,7 @@ export function getChainAPI(
     return new Connection(config.endpoint, {
       commitment: "finalized",
       fetchMiddleware,
-      confirmTransactionInitialTimeout: getEnv(
-        "SOLANA_TX_CONFIRMATION_TIMEOUT"
-      ),
+      confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT"),
     });
   };
 
@@ -117,19 +103,17 @@ export function getChainAPI(
     getLatestBlockhash: () =>
       connection()
         .getLatestBlockhash()
-        .then((r) => r.blockhash)
+        .then(r => r.blockhash)
         .catch(remapErrors),
 
-    getFeeForMessage: (msg: Message) =>
+    getFeeForMessage: (msg: VersionedMessage) =>
       connection()
         .getFeeForMessage(msg)
-        .then((r) => r.value)
+        .then(r => r.value)
         .catch(remapErrors),
 
     getBalanceAndContext: (address: string) =>
-      connection()
-        .getBalanceAndContext(new PublicKey(address))
-        .catch(remapErrors),
+      connection().getBalanceAndContext(new PublicKey(address)).catch(remapErrors),
 
     getParsedTokenAccountsByOwner: (address: string) =>
       connection()
@@ -167,32 +151,29 @@ export function getChainAPI(
         .catch(remapErrors),
 
     getStakeActivation: (stakeAccAddr: string) =>
-      connection()
-        .getStakeActivation(new PublicKey(stakeAccAddr))
-        .catch(remapErrors),
+      connection().getStakeActivation(new PublicKey(stakeAccAddr)).catch(remapErrors),
 
     getInflationReward: (addresses: string[]) =>
       connection()
-        .getInflationReward(addresses.map((addr) => new PublicKey(addr)))
+        .getInflationReward(addresses.map(addr => new PublicKey(addr)))
         .catch(remapErrors),
 
     getVoteAccounts: () => connection().getVoteAccounts().catch(remapErrors),
 
-    getSignaturesForAddress: (
-      address: string,
-      opts?: SignaturesForAddressOptions
-    ) =>
-      connection()
-        .getSignaturesForAddress(new PublicKey(address), opts)
-        .catch(remapErrors),
+    getSignaturesForAddress: (address: string, opts?: SignaturesForAddressOptions) =>
+      connection().getSignaturesForAddress(new PublicKey(address), opts).catch(remapErrors),
 
     getParsedTransactions: (signatures: string[]) =>
-      connection().getParsedTransactions(signatures).catch(remapErrors),
+      connection()
+        .getParsedTransactions(signatures, {
+          maxSupportedTransactionVersion: 0,
+        })
+        .catch(remapErrors),
 
     getAccountInfo: (address: string) =>
       connection()
         .getParsedAccountInfo(new PublicKey(address))
-        .then((r) => r.value)
+        .then(r => r.value)
         .catch(remapErrors),
 
     sendRawTransaction: (buffer: Buffer) => {
@@ -202,11 +183,8 @@ export function getChainAPI(
     },
 
     findAssocTokenAccAddress: (owner: string, mint: string) => {
-      return getAssociatedTokenAddress(
-        new PublicKey(mint),
-        new PublicKey(owner)
-      )
-        .then((r) => r.toBase58())
+      return getAssociatedTokenAddress(new PublicKey(mint), new PublicKey(owner))
+        .then(r => r.toBase58())
         .catch(remapErrors);
     },
 
@@ -214,9 +192,7 @@ export function getChainAPI(
       getMinimumBalanceForRentExemptAccount(connection()).catch(remapErrors),
 
     getMinimumBalanceForRentExemption: (dataLength: number) =>
-      connection()
-        .getMinimumBalanceForRentExemption(dataLength)
-        .catch(remapErrors),
+      connection().getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
 
     getEpochInfo: () => connection().getEpochInfo().catch(remapErrors),
 

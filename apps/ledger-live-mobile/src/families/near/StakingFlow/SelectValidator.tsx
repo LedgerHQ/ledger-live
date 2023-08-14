@@ -14,10 +14,7 @@ import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/Sea
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { NearStakingFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  NearStakingFlowParamList,
-  ScreenName.NearStakingValidatorSelect
->;
+type Props = StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingValidatorSelect>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -49,11 +46,14 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="SelectValidator" />
-      <SelectValidatorSearchBox
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+      <TrackScreen
+        category="DelegationFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="staking"
+        currency="near"
       />
+      <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>
         <ValidatorHead />
       </View>

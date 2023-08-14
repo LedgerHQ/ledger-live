@@ -1,8 +1,4 @@
-import {
-  Plugin,
-  PluginType,
-  SegmentEvent,
-} from "@segment/analytics-react-native";
+import { Plugin, PluginType, SegmentEvent } from "@segment/analytics-react-native";
 import getOrCreateUser from "../user";
 
 export class UserIdPlugin extends Plugin {

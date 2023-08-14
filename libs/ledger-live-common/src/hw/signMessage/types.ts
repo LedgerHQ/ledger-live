@@ -1,24 +1,23 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Transport from "@ledgerhq/hw-transport";
-import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { TypedMessageData } from "../../families/ethereum/types";
+import { Account, DeviceId, AnyMessage } from "@ledgerhq/types-live";
+
 export type Result = {
   rsv: {
     r: string;
     s: string;
-    v: number;
+    v: number | string;
   };
   signature: string;
 };
-export type MessageData = {
-  currency: CryptoCurrency;
-  path: string;
-  verify?: boolean;
-  derivationMode: DerivationMode;
-  message: string;
-  rawMessage: string;
-};
+
 export type SignMessage = (
   transport: Transport,
-  message: MessageData | TypedMessageData
+  account: Account,
+  messageData: AnyMessage,
+) => Promise<Result>;
+
+export type MessageSignerFn = (
+  deviceId: DeviceId,
+  account: Account,
+  messageData: AnyMessage,
 ) => Promise<Result>;

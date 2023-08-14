@@ -9,9 +9,7 @@ function formatAccountSpecifics(account: NearAccount): string {
   let str = " ";
 
   str += account.balance ? `\n    Full Balance: ${account.balance}` : "";
-  str += nearResources.stakedBalance
-    ? `\n    Staked Balance: ${nearResources.stakedBalance}`
-    : "";
+  str += nearResources.stakedBalance ? `\n    Staked Balance: ${nearResources.stakedBalance}` : "";
   str += nearResources.pendingBalance
     ? `\n    Pending Balance: ${nearResources.pendingBalance}`
     : "";
@@ -27,7 +25,7 @@ function formatAccountSpecifics(account: NearAccount): string {
     str += nearResources.stakingPositions
       .map(
         ({ validatorId, staked, pending, available, rewards }) =>
-          `        Validator ID: ${validatorId} | Staked: ${staked} | Pending Release: ${pending} | Available: ${available} | Rewards: ${rewards}`
+          `        Validator ID: ${validatorId} | Staked: ${staked} | Pending Release: ${pending} | Available: ${available} | Rewards: ${rewards}`,
       )
       .join("\n");
   }

@@ -5,5 +5,5 @@ import { getBTCValues } from "../countervalues/mock";
 test("sortByMarketcap snapshot", () => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const tickers = Object.keys(getBTCValues());
-  expect(sortByMarketcap(list, tickers).map((c) => c.id)).toMatchSnapshot();
+  expect(sortByMarketcap(list, tickers).map(c => c.id)).toMatchSnapshot();
 });

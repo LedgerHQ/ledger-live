@@ -3,15 +3,9 @@ import React, { useMemo, useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
-import type {
-  PolkadotValidator,
-  Transaction,
-} from "@ledgerhq/live-common/families/polkadot/types";
+import type { PolkadotValidator, Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import { DataRow, HeaderRow } from "../../components/ValidateOnDeviceDataRow";
@@ -44,10 +38,7 @@ function PolkadotValidatorsField({ account, transaction, field }: FieldProps) {
   );
   const redirectAddressCreator = useCallback(
     address => () => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account],
@@ -81,12 +72,7 @@ const Info = ({ transaction }: FieldProps) => {
       return (
         <DataRow>
           <InfoIcon size={22} color={colors.live} />
-          <LText
-            semiBold
-            style={[styles.text, styles.infoText]}
-            color="live"
-            numberOfLines={3}
-          >
+          <LText semiBold style={[styles.text, styles.infoText]} color="live" numberOfLines={3}>
             {t(`polkadot.${transaction.mode}.steps.confirm.info`)}
           </LText>
         </DataRow>

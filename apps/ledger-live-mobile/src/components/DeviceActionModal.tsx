@@ -66,9 +66,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
             <Flex alignItems="center">
               <DeviceActionContainer marginBottom={showAlert ? "16px" : 0}>
                 <DeviceAction
-                  action={
-                    action as unknown as Action<Req, PartialNullable<Stt>, Res>
-                  }
+                  action={action as unknown as Action<Req, PartialNullable<Stt>, Res>}
                   device={device}
                   onError={onError}
                   request={request!}
@@ -78,9 +76,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
                   analyticsPropertyFlow={analyticsPropertyFlow}
                 />
               </DeviceActionContainer>
-              {showAlert && (
-                <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />
-              )}
+              {showAlert && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}
             </Flex>
           )}
       {device && <SyncSkipUnderPriority priority={100} />}

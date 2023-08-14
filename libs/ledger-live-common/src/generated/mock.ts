@@ -1,9 +1,7 @@
-import algorand from "../families/algorand/mock";
 import cosmos from "../families/cosmos/mock";
-import ethereum from "../families/ethereum/mock";
+import algorand from "@ledgerhq/coin-algorand/mock";
 
 export default {
-  algorand,
   cosmos,
-  ethereum,
+  algorand,
 };

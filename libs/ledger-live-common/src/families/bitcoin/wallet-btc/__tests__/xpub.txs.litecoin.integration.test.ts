@@ -12,7 +12,7 @@ import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /*
 In order to launch this litecoin test locally
@@ -22,21 +22,17 @@ TICKER=ltc TAG=latest LOG_LEVEL=debug docker-compose -f ./environments/explorer-
 describe.skip("testing xpub legacy litecoin transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     cryptoCurrency: getCryptoCurrencyById("litecoin"),
-    disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
 
   const network = coininfo.litecoin.test.toBitcoinJS();
   const crypto = new Litecoin({ network });
 
-  const xpubs = [1, 2, 3].map((i) => {
+  const xpubs = [1, 2, 3].map(i => {
     const storage = new BitcoinLikeStorage();
     const seed = bip39.mnemonicToSeedSync(`test${i} test${i} test${i}`);
     const node = bip32.fromSeed(seed, network);
     const signer = (account: number, index: number) =>
-      bitcoin.ECPair.fromWIF(
-        node.derive(account).derive(index).toWIF(),
-        network
-      );
+      bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
     const xpub = new Xpub({
       storage,
       explorer,
@@ -87,23 +83,18 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
     const changeAddress = await xpubs[0].xpub.getNewAddress(1, 0);
     const psbt = new bitcoin.Psbt({ network });
 
-    const utxoPickingStrategy = new Merge(
-      xpubs[0].xpub.crypto,
-      xpubs[0].xpub.derivationMode,
-      []
-    );
+    const utxoPickingStrategy = new Merge(xpubs[0].xpub.crypto, xpubs[0].xpub.derivationMode, []);
 
-    const { inputs, associatedDerivations, outputs } =
-      await xpubs[0].xpub.buildTx({
-        destAddress: address,
-        amount: new BigNumber(100000000),
-        feePerByte: 100,
-        changeAddress,
-        utxoPickingStrategy,
-        sequence: 0,
-      });
+    const { inputs, associatedDerivations, outputs } = await xpubs[0].xpub.buildTx({
+      destAddress: address,
+      amount: new BigNumber(100000000),
+      feePerByte: 100,
+      changeAddress,
+      utxoPickingStrategy,
+      sequence: 0,
+    });
 
-    inputs.forEach((input) => {
+    inputs.forEach(input => {
       const nonWitnessUtxo = Buffer.from(input.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(input.txHex);
 
@@ -113,7 +104,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
         nonWitnessUtxo,
       });
     });
-    outputs.forEach((output) => {
+    outputs.forEach(output => {
       psbt.addOutput({
         script: output.script,
         value: output.value.toNumber(),
@@ -121,13 +112,7 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
     });
     expect(outputs.length).toEqual(2);
     inputs.forEach((_, i) => {
-      psbt.signInput(
-        i,
-        xpubs[0].signer(
-          associatedDerivations[i][0],
-          associatedDerivations[i][1]
-        )
-      );
+      psbt.signInput(i, xpubs[0].signer(associatedDerivations[i][0], associatedDerivations[i][1]));
       psbt.validateSignaturesOfInput(i);
     });
     psbt.finalizeAllInputs();
@@ -155,14 +140,11 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
     await xpubs[0].xpub.sync();
     await xpubs[1].xpub.sync();
 
-    expectedFee1 =
-      10 * 100 + inputs.length * 100 * 180 + outputs.length * 34 * 100;
+    expectedFee1 = 10 * 100 + inputs.length * 100 * 180 + outputs.length * 34 * 100;
 
     expect((await xpubs[0].xpub.getXpubBalance()).toNumber()).toEqual(
-      5700000000 - 100000000 - expectedFee1
+      5700000000 - 100000000 - expectedFee1,
     );
-    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(
-      100000000
-    );
+    expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(100000000);
   }, 100000);
 });

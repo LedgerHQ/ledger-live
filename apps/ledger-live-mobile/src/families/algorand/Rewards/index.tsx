@@ -2,10 +2,7 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
@@ -20,10 +17,7 @@ type Props = {
 };
 
 const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
-  invariant(
-    account && account.algorandResources,
-    "algorand resources required",
-  );
+  invariant(account && account.algorandResources, "algorand resources required");
   const { rewards } = account.algorandResources;
 
   const currency = getAccountCurrency(account);

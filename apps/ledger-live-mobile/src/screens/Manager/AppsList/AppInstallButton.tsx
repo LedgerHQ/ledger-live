@@ -7,7 +7,7 @@ import type { App } from "@ledgerhq/types-live";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
 import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import styled from "styled-components/native";
-import { Icons, Box } from "@ledgerhq/native-ui";
+import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 
@@ -80,9 +80,7 @@ export default function AppInstallButton({
   return (
     <TouchableOpacity onPress={installApp}>
       <ButtonContainer borderColor="neutral.c30">
-        {canBeInstalled ? (
-          <Icons.PlusMedium size={18} color="neutral.c100" />
-        ) : null}
+        {canBeInstalled ? <IconsLegacy.PlusMedium size={18} color="neutral.c100" /> : null}
       </ButtonContainer>
     </TouchableOpacity>
   );

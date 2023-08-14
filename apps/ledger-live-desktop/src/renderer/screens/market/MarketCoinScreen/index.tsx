@@ -3,7 +3,7 @@ import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled, { useTheme } from "styled-components";
@@ -16,14 +16,12 @@ import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
 import { useProviders } from "../../exchange/Swap2/Form";
-import Track from "~/renderer/analytics/Track";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "../../stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
@@ -74,7 +72,7 @@ export default function MarketCoinScreen() {
 
   const swapAvailableIds = useMemo(() => {
     return providers || storedProviders
-      ? (providers || storedProviders)
+      ? (providers || storedProviders)!
           .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
           .flat(2)
       : [];
@@ -92,7 +90,7 @@ export default function MarketCoinScreen() {
     counterCurrency,
     setCounterCurrency,
     supportedCounterCurrencies,
-  } = useSingleCoinMarketData(currencyId);
+  } = useSingleCoinMarketData();
 
   const rampCatalog = useRampCatalog();
 
@@ -120,11 +118,11 @@ export default function MarketCoinScreen() {
     chartData,
   } = currency || {};
 
-  const [onRampAvailableTickers] = useMemo(() => {
+  const onRampAvailableTickers = useMemo(() => {
     if (!rampCatalog.value) {
-      return [[], []];
+      return [];
     }
-    return [getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp)];
+    return getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp);
   }, [rampCatalog.value]);
 
   const availableOnBuy =
@@ -135,16 +133,14 @@ export default function MarketCoinScreen() {
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake =
     stakeProgramsEnabled && currency && listFlag.includes(currency?.internalCurrency?.id);
-  const startStakeFlow = useStakeFlow({
-    currencies: currency ? [currency?.internalCurrency?.id] : [],
-  });
+  const startStakeFlow = useStakeFlow();
 
   const color = internalCurrency
     ? getCurrencyColor(internalCurrency, colors.background.main)
     : colors.primary.c80;
 
   const onBuy = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market Coin");
@@ -178,7 +174,7 @@ export default function MarketCoinScreen() {
   }, [dispatch, currency]);
 
   const onSwap = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.SyntheticEvent<HTMLButtonElement>) => {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
@@ -203,9 +199,10 @@ export default function MarketCoinScreen() {
           state: {
             defaultCurrency: currency.internalCurrency,
             defaultAccount,
-            defaultParentAccount: defaultAccount?.parentId
-              ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
-              : null,
+            defaultParentAccount:
+              "parentId" in defaultAccount && defaultAccount?.parentId
+                ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
+                : null,
           },
         });
       }
@@ -221,7 +218,7 @@ export default function MarketCoinScreen() {
   );
 
   const onStake = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
       track("button_clicked", {
@@ -232,25 +229,26 @@ export default function MarketCoinScreen() {
       });
       setTrackingSource("Page Market Coin");
 
-      startStakeFlow();
+      startStakeFlow({
+        currencies: internalCurrency ? [internalCurrency.id] : undefined,
+        source: "Page Market Coin",
+      });
     },
-    [currency?.ticker, startStakeFlow],
+    [currency?.ticker, internalCurrency, startStakeFlow],
   );
 
   const toggleStar = useCallback(() => {
     if (isStarred) {
-      dispatch(removeStarredMarketCoins(id));
+      id && dispatch(removeStarredMarketCoins(id));
     } else {
-      dispatch(addStarredMarketCoins(id));
+      id && dispatch(addStarredMarketCoins(id));
     }
   }, [dispatch, isStarred, id]);
 
   return currency && counterCurrency ? (
     <Container data-test-id="market-coin-page-container">
-      <Track
-        event="Page Market Coin"
-        onMount
-        onUpdate
+      <TrackPage
+        category="Page Market Coin"
         currencyName={name}
         starred={isStarred}
         timeframe={chartRequestParams.range}
@@ -274,11 +272,11 @@ export default function MarketCoinScreen() {
             <Flex flexDirection="row" alignItems="center" justifyContent={"center"}>
               <Title>{name}</Title>
               <StarContainer data-test-id="market-coin-star-button" onClick={toggleStar}>
-                <Icon name={isStarred > 0 ? "StarSolid" : "Star"} size={28} />
+                <Icon name={isStarred ? "StarSolid" : "Star"} size={28} />
               </StarContainer>
             </Flex>
             <Text variant="small" color="neutral.c60">
-              {ticker.toUpperCase()}
+              {ticker?.toUpperCase()}
             </Text>
           </Flex>
         </Flex>

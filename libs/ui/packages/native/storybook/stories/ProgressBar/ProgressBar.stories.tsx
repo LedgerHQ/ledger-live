@@ -1,7 +1,6 @@
 import React from "react";
-import { number } from "@storybook/addon-knobs";
-import { storiesOf } from "../storiesOf";
-import { Flex, ProgressBar, Button, Icons, Text } from "../../../src";
+import { Flex, ProgressBar, Button, Text } from "../../../src/components";
+import { IconsLegacy } from "../../../src/assets";
 
 const description = `
 ### An animated progress bar.
@@ -33,10 +32,23 @@ const [index, setIndex] = React.useState(0);
 \`\`\`
 `;
 
-const Default = (): JSX.Element => {
-  const length = number("length", 5);
+export default {
+  title: "ProgressBar",
+  component: ProgressBar,
+  parameters: {
+    docs: {
+      title: "Default",
+      description: {
+        component: description,
+      },
+    },
+  },
+};
+
+export const Default = (args: typeof DefaultArgs): JSX.Element => {
+  const length = args.length;
   const [_index, setIndex] = React.useState<number | null>(null);
-  const index = _index ?? number("index", 1);
+  const index = _index ?? args.index;
 
   const add = () => setIndex((_index) => Math.min((_index ?? index) + 1, length - 1));
   const remove = () => setIndex((_index) => Math.max((_index ?? index) - 1, 0));
@@ -54,21 +66,16 @@ const Default = (): JSX.Element => {
           Active index: {index} / {length - 1}
         </Text>
         <Flex flexDirection="row" justifyContent="space-around" width="100%">
-          <Button Icon={Icons.MinusMedium} onPress={remove} mr={2} />
-          <Button Icon={Icons.PlusMedium} onPress={add} />
+          <Button Icon={IconsLegacy.MinusMedium} onPress={remove} mr={2} />
+          <Button Icon={IconsLegacy.PlusMedium} onPress={add} />
         </Flex>
       </Flex>
     </>
   );
 };
-
-storiesOf((story) =>
-  story("ProgressBar", module).add("Default", Default, {
-    docs: {
-      title: "Default",
-      description: {
-        component: description,
-      },
-    },
-  }),
-);
+Default.storyName = "ProgressBar";
+const DefaultArgs = {
+  length: 5,
+  index: 1,
+};
+Default.args = DefaultArgs;

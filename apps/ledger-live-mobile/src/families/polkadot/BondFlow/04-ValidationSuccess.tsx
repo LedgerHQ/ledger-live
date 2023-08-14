@@ -17,10 +17,7 @@ import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
-import {
-  BaseNavigation,
-  RootNavigation,
-} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigation, RootNavigation } from "../../../components/RootNavigator/types/helpers";
 
 type Props = {
   navigation: BaseNavigation;
@@ -72,15 +69,19 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="BondFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="BondFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action="bond"
+        currency="dot"
+      />
       <PreventNativeBack />
       {wasFirstBond.current ? (
         <ValidateSuccess
           onClose={onClose}
           onViewDetails={goToNominate}
-          title={
-            <Trans i18nKey="polkadot.bond.steps.validation.success.title" />
-          }
+          title={<Trans i18nKey="polkadot.bond.steps.validation.success.title" />}
           description={
             <Trans i18nKey="polkadot.bond.steps.validation.success.descriptionNominate" />
           }
@@ -98,9 +99,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
               )}
               <Button
                 event="PolkadotBondSuccessNominate"
-                title={
-                  <Trans i18nKey="polkadot.bond.steps.validation.success.nominate" />
-                }
+                title={<Trans i18nKey="polkadot.bond.steps.validation.success.nominate" />}
                 disabled={isLoading}
                 type="primary"
                 onPress={goToNominate}
@@ -110,9 +109,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
           secondaryButton={
             <Button
               event="PolkadotBondSuccessLater"
-              title={
-                <Trans i18nKey="polkadot.bond.steps.validation.success.later" />
-              }
+              title={<Trans i18nKey="polkadot.bond.steps.validation.success.later" />}
               type="lightSecondary"
               containerStyle={styles.button}
               onPress={onClose}
@@ -123,12 +120,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         <ValidateSuccess
           onClose={onClose}
           onViewDetails={goToOperationDetails}
-          title={
-            <Trans i18nKey="polkadot.bond.steps.validation.success.title" />
-          }
-          description={
-            <Trans i18nKey="polkadot.bond.steps.validation.success.description" />
-          }
+          title={<Trans i18nKey="polkadot.bond.steps.validation.success.title" />}
+          description={<Trans i18nKey="polkadot.bond.steps.validation.success.description" />}
         />
       )}
     </View>

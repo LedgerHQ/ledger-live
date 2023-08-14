@@ -7,7 +7,7 @@ import type {
 import { fromOperationRaw, toOperationRaw } from "../account";
 export const fromSignedOperationRaw = (
   signedOp: SignedOperationRaw,
-  accountId: string
+  accountId: string,
 ): SignedOperation => {
   const { operation, signature, expirationDate, signatureRaw } = signedOp;
   const out: SignedOperation = {
@@ -24,7 +24,7 @@ export const fromSignedOperationRaw = (
 };
 export const toSignedOperationRaw = (
   signedOp: SignedOperation,
-  preserveSubOperation?: boolean
+  preserveSubOperation?: boolean,
 ): SignedOperationRaw => {
   const { operation, signature, expirationDate, signatureRaw } = signedOp;
   const out: SignedOperationRaw = {
@@ -41,7 +41,7 @@ export const toSignedOperationRaw = (
 };
 export const fromSignOperationEventRaw = (
   e: SignOperationEventRaw,
-  accountId: string
+  accountId: string,
 ): SignOperationEvent => {
   switch (e.type) {
     case "signed":
@@ -54,9 +54,7 @@ export const fromSignOperationEventRaw = (
       return e;
   }
 };
-export const toSignOperationEventRaw = (
-  e: SignOperationEvent
-): SignOperationEventRaw => {
+export const toSignOperationEventRaw = (e: SignOperationEvent): SignOperationEventRaw => {
   switch (e.type) {
     case "signed":
       return {

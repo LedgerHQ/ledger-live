@@ -6,7 +6,7 @@ export const awaitsBleOn = (bleManager: BleManager, ms = 3000): Promise<void> =>
   new Promise((resolve, reject) => {
     let done = false;
     let lastState = "Unknown";
-    const stateSub = bleManager.onStateChange((state) => {
+    const stateSub = bleManager.onStateChange(state => {
       lastState = state;
       log("ble-verbose", `ble state -> ${state}`);
 
@@ -24,7 +24,7 @@ export const awaitsBleOn = (bleManager: BleManager, ms = 3000): Promise<void> =>
       reject(
         new BluetoothRequired("", {
           state: lastState,
-        })
+        }),
       );
     }, ms);
   });

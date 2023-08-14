@@ -1,4 +1,4 @@
-import { Flex, Text, Icons, Log, Button } from "@ledgerhq/native-ui";
+import { Flex, Text, IconsLegacy, Log, Button } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Track from "../../analytics/Track";
@@ -12,7 +12,7 @@ const FirmwareUpdatedStep = ({ onReinstallApps }: Props) => {
   return (
     <Flex alignItems="center">
       <Track event="FirmwareUpdateFinished" onMount />
-      <Icons.CircledCheckSolidLight size={56} color="success.c100" />
+      <IconsLegacy.CircledCheckSolidMedium size={56} color="success.c50" />
       <Flex my={7}>
         <Log>{t("FirmwareUpdate.success")}</Log>
       </Flex>

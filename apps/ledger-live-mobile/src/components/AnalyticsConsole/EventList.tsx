@@ -7,37 +7,28 @@ import Event from "./Event";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-type ListProps = {
+type Props = {
   showExtraProps: boolean;
   hideSyncEvents: boolean;
+  hidden: boolean;
 };
 
-const EventList: React.FC<ListProps> = ({ showExtraProps, hideSyncEvents }) => {
+const EventList: React.FC<Props> = ({ showExtraProps, hideSyncEvents, hidden }) => {
   const { items } = useAnalyticsEventsLog();
+  if (hidden) return null;
   return (
     <ScrollView>
       <AnimatedFlex paddingBottom={100} flexDirection="column-reverse">
         {items
-          .filter(
-            event => !(hideSyncEvents && event.eventName.startsWith("Sync")),
-          )
+          .filter(event => !(hideSyncEvents && event.eventName.startsWith("Sync")))
           .map((item, _, filteredItems) => {
             const isLast =
               Math.abs(
-                item.date.getTime() -
-                  filteredItems[filteredItems.length - 1].date.getTime(),
+                item.date.getTime() - filteredItems[filteredItems.length - 1].date.getTime(),
               ) < 1000;
             return (
-              <AnimatedFlex
-                key={item.id}
-                layout={Layout}
-                entering={SlideInLeft}
-              >
-                <Event
-                  {...item}
-                  showExtraProps={showExtraProps}
-                  isLast={isLast}
-                />
+              <AnimatedFlex key={item.id} layout={Layout} entering={SlideInLeft}>
+                <Event {...item} showExtraProps={showExtraProps} isLast={isLast} />
               </AnimatedFlex>
             );
           })}

@@ -23,46 +23,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: [ledger-live, linux]
-    outputs:
-      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Start EC2 Linux Runner
-        id: start-ec2-linux-runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: start
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          project: 2049
-          aws-nfs-logging: true
-          ami-name-filter: ledger-live-runner
-          instance-volume-size: 30
-          instance-type: c5.4xlarge
-
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, generate-screenshots-linux]
-    runs-on: [ledger-live, linux]
-    steps:
-      - name: Stop EC2 Linux Runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: stop
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-
   generate-screenshots-linux:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    needs: [start-runner]
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: [ledger-live-4xlarge-linux]
     steps:
       - name: generate token
         id: generate-token
@@ -81,11 +47,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
       - name: Install gh
         run: |
           type -p curl >/dev/null || sudo apt install curl -y
@@ -101,8 +62,15 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_ruby: true
+          install_playwright: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
@@ -114,7 +82,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: windows-latest
+    runs-on: [ledger-live-4xlarge-windows-2022]
     steps:
       - name: generate token
         id: generate-token
@@ -133,18 +101,23 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          install_playwright: true
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+          install_playwright: true
+          upgrade_npm: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
@@ -174,20 +147,23 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
+      - name: Checkout PR
+        if: ${{ inputs.number != null && inputs.ref == null }}
+        run: gh pr checkout ${{ inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_python: true
           skip_ruby: true
           install_playwright: true
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots

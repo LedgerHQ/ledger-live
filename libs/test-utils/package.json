@@ -1,0 +1,25 @@
+{
+  "name": "@ledgerhq/test-utils",
+  "version": "0.0.2",
+  "private": true,
+  "description": "Dummy apps and utils for tests",
+  "keywords": [
+    "Ledger"
+  ],
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "dummy-apps:build": "pnpm --filter='dummy-live-app' --filter='dummy-wallet-app' build",
+    "dummy-apps:start-ptx-app": "cd dummy-ptx-app && npx http-server"
+  },
+  "dependencies": {
+    "@ledgerhq/live-common": "workspace:^",
+    "serve-handler": "^6.1.3"
+  },
+  "devDependencies": {
+    "@types/serve-handler": "^6.1.1"
+  }
+}

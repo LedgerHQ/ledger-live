@@ -152,5 +152,4 @@ export const minAppVersion = {
   kUSD: "1.3.7",
 };
 export default ({ name, version }: AppAndVersion) =>
-  !(name in minAppVersion) ||
-  semver.gte(semver.coerce(version) || "", minAppVersion[name]);
+  !(name in minAppVersion) || semver.gte(semver.coerce(version) || "", minAppVersion[name]);

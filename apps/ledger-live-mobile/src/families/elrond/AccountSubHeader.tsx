@@ -6,8 +6,6 @@ import AccountSubHeader from "../../components/AccountSubHeader";
  * Handle the component declaration.
  */
 
-const ElrondAccountSubHeader = () => (
-  <AccountSubHeader family="MultiversX" team="MultiversX" />
-);
+const ElrondAccountSubHeader = () => <AccountSubHeader family="MultiversX" team="MultiversX" />;
 
 export default ElrondAccountSubHeader;

@@ -1,15 +1,8 @@
 import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { scan } from "rxjs/operators";
-import {
-  FullActionState,
-  initialSharedActionState,
-  sharedReducer,
-} from "./core";
-import {
-  getDeviceInfoTask,
-  GetDeviceInfoTaskError,
-} from "../tasks/getDeviceInfo";
+import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
+import { getDeviceInfoTask, GetDeviceInfoTaskError } from "../tasks/getDeviceInfo";
 
 export type GetDeviceInfoActionArgs = { deviceId: DeviceId };
 
@@ -50,6 +43,6 @@ export function getDeviceInfoAction({
             }),
           };
       }
-    }, initialState)
+    }, initialState),
   );
 }

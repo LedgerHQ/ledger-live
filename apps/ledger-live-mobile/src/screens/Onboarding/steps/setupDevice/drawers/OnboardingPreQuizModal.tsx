@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Button, Text, Icons, IconBox } from "@ledgerhq/native-ui";
+import { Flex, Button, Text, IconsLegacy, IconBox } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
@@ -26,18 +26,12 @@ const OnboardingPreQuizModal = () => {
     <Flex flex={1} justifyContent="space-between" bg="constant.purple">
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <IconBox
-          Icon={Icons.TrophyMedium}
+          Icon={IconsLegacy.TrophyMedium}
           color="constant.black"
           iconSize={24}
           boxSize={64}
         />
-        <Text
-          variant="h2"
-          color="constant.black"
-          mt={8}
-          uppercase
-          textAlign="center"
-        >
+        <Text variant="h2" color="constant.black" mt={8} uppercase textAlign="center">
           {t("onboarding.stepSetupDevice.hideRecoveryPhrase.warning.title")}
         </Text>
         <Text variant="body" color="constant.black" mt={6} textAlign="center">

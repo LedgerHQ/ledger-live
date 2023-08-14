@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.20.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -12,17 +11,18 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "scripts": {
+    "bump": "changeset version",
     "clean": "git clean -fdX",
     "changelog": "changeset add",
-    "bump": "changeset version",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
-    "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\"",
-    "build:libs:force": "pnpm -r --filter=\"./libs/**\" build",
+    "build:libs": "pnpm turbo build --no-daemon --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\"",
+    "build:libs:force": "pnpm -r --filter=\"./libs/**\" --filter=\"!./libs/ui/examples/**\" build",
     "build:actions": "pnpm turbo build --filter=@actions/*",
     "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
-    "build:coin": "pnpm turbo build --no-daemon --filter=coin-framework",
-    "build:coin:polkadot": "pnpm turbo build --no-daemon --filter=coin-polkadot",
+    "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
+    "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
+    "build:network": "pnpm turbo build --no-daemon --filter=live-network",
     "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",
@@ -38,7 +38,7 @@
     "watch:common": "pnpm turbo watch --no-daemon --filter=live-common",
     "dev:cli": "pnpm turbo watch --no-daemon --filter=live-cli",
     "dev:lld": "pnpm turbo start --no-daemon --filter=ledger-live-desktop",
-    "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect pnpm turbo start --no-daemon --filter=ledger-live-desktop",
+    "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --no-daemon --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
     "release:lld": "pnpm turbo release --no-daemon --filter=ledger-live-desktop",
     "pre:lld": "pnpm turbo pre-build --no-daemon --filter=ledger-live-desktop",
@@ -52,10 +52,19 @@
     "desktop": "pnpm --filter ledger-live-desktop",
     "cli": "pnpm --filter live-cli",
     "coin": "pnpm --filter coin-framework",
+    "coin:algorand": "pnpm --filter coin-algorand",
     "coin:polkadot": "pnpm --filter coin-polkadot",
+    "coin:evm": "pnpm --filter coin-evm",
+    "domain": "pnpm --filter domain-service",
+    "doc": "pnpm --filter docs",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
+    "live-env": "pnpm --filter live-env",
+    "portfolio": "pnpm --filter live-portfolio",
+    "promise": "pnpm --filter live-promise",
+    "network": "pnpm --filter live-network",
+    "utils": "pnpm --filter live-utils",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
@@ -64,7 +73,9 @@
     "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
     "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
     "ljs:hw-app-eth": "pnpm --filter hw-app-eth",
+    "ljs:hw-app-exchange": "pnpm --filter hw-app-exchange",
     "ljs:hw-app-helium": "pnpm --filter hw-app-helium",
+    "ljs:hw-app-near": "pnpm --filter hw-app-near",
     "ljs:hw-app-polkadot": "pnpm --filter hw-app-polkadot",
     "ljs:hw-app-solana": "pnpm --filter hw-app-solana",
     "ljs:hw-app-str": "pnpm --filter hw-app-str",
@@ -90,47 +101,66 @@
     "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
     "ljs:types-devices": "pnpm --filter types-devices",
     "ljs:types-live": "pnpm --filter types-live",
+    "test-utils": "pnpm --filter test-utils",
+    "test-utils:dummy-live-app": "pnpm --filter dummy-live-app",
+    "test-utils:dummy-wallet-app": "pnpm --filter dummy-wallet-app",
+    "ui": "pnpm --filter ui",
     "ui:react": "pnpm --filter react-ui",
     "ui:native": "pnpm --filter native-ui",
     "ui:icons": "pnpm --filter icons-ui",
     "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
-    "ui:shared": "pnpm --filter shared-ui",
+    "ui:shared": "pnpm --filter ui-shared",
+    "ui:example:next": "pnpm  --filter=\"next.js-example\"",
+    "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.26.0",
     "@commitlint/cli": "^17.4.2",
-    "@commitlint/config-conventional": "^17.4.2",
+    "@commitlint/config-conventional": "^17.6.5",
     "@commitlint/prompt-cli": "^17.4.2",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
     "create-release-hash": "workspace:*",
+<<<<<<< HEAD
     "electron-rebuild": "^3.2.9",
+=======
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+>>>>>>> 46f0f999a6a4b850b24cb87905256a2fd8c73976
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "rimraf": "^4.1.2",
-    "turbo": "^1.7.2",
-    "zx": "^7.1.1"
+    "prettier": "^2.8.1",
+    "rimraf": "^4.4.1",
+    "turbo": "^1.10.1",
+    "typescript": "^5.1.3",
+    "zx": "^7.2.2"
   },
   "pnpm": {
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
-      "metro": "^0.67.0",
-      "metro-config": "^0.67.0",
-      "metro-core": "^0.67.0",
-      "metro-react-native-babel-transformer": "^0.67.0",
-      "metro-resolver": "^0.67.0",
-      "metro-runtime": "^0.67.0",
-      "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
-      "react-native-image-crop-tools@1.6.2": "patches/react-native-image-crop-tools@1.6.2.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
-      "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
-      "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch"
+      "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
+      "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
+      "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
+      "detox@20.11.0": "patches/detox@20.11.0.patch",
+      "usb@2.9.0": "patches/usb@2.9.0.patch"
+    },
+    "packageExtensions": {
+      "eslint-config-next@*": {
+        "dependencies": {
+          "next": "*"
+        }
+      }
     }
   }
 }

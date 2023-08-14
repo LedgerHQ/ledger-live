@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Flex, Button, Text, Icons } from "@ledgerhq/react-ui";
+import { Flex, Button, Text, IconsLegacy } from "@ledgerhq/react-ui";
 
 const IllustrationContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -19,7 +19,7 @@ const DescriptionText = styled(Text).attrs(() => ({}))``;
 const ArrowButton = styled(Button).attrs(() => ({
   variant: "main",
   size: "medium",
-  Icon: Icons.ArrowRightRegular,
+  Icon: IconsLegacy.ArrowRightMedium,
   iconButton: true,
 }))`
   margin-top: 27px;

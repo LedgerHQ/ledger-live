@@ -7,10 +7,7 @@ import {
   findCryptoCurrencyByKeyword,
 } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -21,10 +18,7 @@ import { StackNavigatorProps } from "../../components/RootNavigator/types/helper
 import { ExchangeNavigatorParamList } from "../../components/RootNavigator/types/ExchangeNavigator";
 import { ScreenName } from "../../const";
 
-type Props = StackNavigatorProps<
-  ExchangeNavigatorParamList,
-  ScreenName.ExchangeBuy
->;
+type Props = StackNavigatorProps<ExchangeNavigatorParamList, ScreenName.ExchangeBuy>;
 
 type State = {
   sortedCurrencies: Array<TokenCurrency | CryptoCurrency>;
@@ -39,9 +33,7 @@ export default function OnRamp({ route }: Props) {
   });
   const { colors } = useTheme();
   const rampCatalog = useRampCatalog();
-  const allCurrencies = useRampCatalogCurrencies(
-    rampCatalog?.value?.onRamp || emptyArray,
-  );
+  const allCurrencies = useRampCatalogCurrencies(rampCatalog?.value?.onRamp || emptyArray);
   const { defaultAccountId, defaultTicker, currency } = route.params || {};
   // Check currency for the DeepLinking
   const defaultCurrencyId = useMemo(() => {

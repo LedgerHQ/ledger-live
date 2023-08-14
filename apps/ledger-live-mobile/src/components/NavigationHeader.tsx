@@ -1,24 +1,28 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { ArrowLeftMedium, CloseMedium } from "@ledgerhq/native-ui/assets/icons";
-import { Flex, Text, Link } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { StackHeaderProps } from "@react-navigation/stack";
 import { getHeaderTitle } from "@react-navigation/elements";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
+import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
 
 type NavigationHeaderProps = StackHeaderProps & {
   containerProps?: FlexBoxProps;
   hideBack?: boolean;
+  onPressClose?: () => void;
+  onPressBack?: () => void;
 };
 
 function NavigationHeader({
-  navigation,
   route,
   options,
   back,
   hideBack,
   containerProps,
+  onPressBack,
+  onPressClose,
 }: NavigationHeaderProps) {
   const { t } = useTranslation();
   const title = t(getHeaderTitle(options, route.name));
@@ -31,27 +35,15 @@ function NavigationHeader({
       mb={5}
       {...containerProps}
     >
-      {back && !hideBack ? (
-        <Link size="large" Icon={ArrowLeftMedium} onPress={navigation.goBack} />
-      ) : (
-        <View />
-      )}
+      {back && !hideBack ? <NavigationHeaderBackButton onPress={onPressBack} /> : <View />}
       {title.length ? (
         <Text variant="large" fontWeight="semiBold">
           {title}
         </Text>
       ) : null}
-      <Link
-        size="large"
-        Icon={CloseMedium}
-        onPress={() => {
-          navigation.getParent()?.goBack();
-        }}
-      />
+      <NavigationHeaderCloseButton onPress={onPressClose} />
     </Flex>
   );
 }
 
-export default (props: NavigationHeaderProps) => (
-  <NavigationHeader {...props} />
-);
+export default (props: NavigationHeaderProps) => <NavigationHeader {...props} />;

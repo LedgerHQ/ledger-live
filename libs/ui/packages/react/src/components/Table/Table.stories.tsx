@@ -139,7 +139,7 @@ const columns = [
   Table.Columns.icon({
     props: (elt) => ({
       name: elt.synchronized ? "CircledCheck" : "Clock",
-      color: elt.synchronized ? "success.c100" : "neutral.c80",
+      color: elt.synchronized ? "success.c50" : "neutral.c80",
     }),
   }),
 ]
@@ -187,7 +187,7 @@ const data = new Array(12).fill(0).map((_, idx) => ({
 
 // We have 4 columns here.
 const NB_OF_COLUMNS = 4;
-const columns: Column<typeof data[0]>[] = Array(NB_OF_COLUMNS)
+const columns: Column<(typeof data)[0]>[] = Array(NB_OF_COLUMNS)
   .fill(0)
   .map((_, idx) => ({
     // The header will be a letter based on the column (A / B / C / D).
@@ -204,7 +204,7 @@ const columns: Column<typeof data[0]>[] = Array(NB_OF_COLUMNS)
     ),
   }));
 
-export const Default: StoryTemplate<Props<typeof data[0]>> = (args) => {
+export const Default: StoryTemplate<Props<(typeof data)[0]>> = args => {
   return <Table {...args} data={data} columns={columns} />;
 };
 
@@ -220,7 +220,7 @@ In this example we are taking advantage of that by using the \`p\`, \`gridRowGap
 \`borderRadius\` and \`backgroundColor\` props to style the table container.
 `;
 
-export const Styled: StoryTemplate<Props<BalanceElement>> = (args) => {
+export const Styled: StoryTemplate<Props<BalanceElement>> = args => {
   return (
     <>
       <Table
@@ -350,7 +350,7 @@ export function Nested(args: Props<Account>): JSX.Element {
       p={8}
       borderRadius={8}
       backgroundColor="neutral.c20"
-      extraRender={(account) =>
+      extraRender={account =>
         account.subAccounts &&
         account.subAccounts.length > 0 && (
           <SubAccounts account={account} columns={accounts.columns} />
@@ -443,28 +443,28 @@ const CustomRowContainer = styled(Table.RowContainer).attrs<{ onClick: () => voi
   }),
 )<RowContainerProps>`
   & > * {
-    padding-left: ${(p) => p.theme.space[5]}px;
-    padding-right: ${(p) => p.theme.space[5]}px;
-    padding-top: ${(p) => p.theme.space[5]}px;
-    padding-bottom: ${(p) => p.theme.space[5]}px;
+    padding-left: ${p => p.theme.space[5]}px;
+    padding-right: ${p => p.theme.space[5]}px;
+    padding-top: ${p => p.theme.space[5]}px;
+    padding-bottom: ${p => p.theme.space[5]}px;
 
     &:first-child {
-      padding-left: ${(p) => p.theme.space[8]}px;
+      padding-left: ${p => p.theme.space[8]}px;
     }
     &:last-child {
-      padding-right: ${(p) => p.theme.space[8]}px;
+      padding-right: ${p => p.theme.space[8]}px;
     }
   }
 
   &:hover > * {
     transition: background-color 0.2s;
     cursor: pointer;
-    background-color: ${(p) =>
+    background-color: ${p =>
       p.rowIndex % 2 === 0 ? p.theme.colors.neutral.c30 : p.theme.colors.primary.c20};
   }
 `;
 
-export const CustomRows: StoryTemplate<Props<BalanceElement>> = (args) => {
+export const CustomRows: StoryTemplate<Props<BalanceElement>> = args => {
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
   const renderRow = useCallback(

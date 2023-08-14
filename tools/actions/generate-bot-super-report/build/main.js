@@ -3999,7 +3999,7 @@ var require_public_api = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs
+// ../../../node_modules/.pnpm/node-fetch@2.6.7/node_modules/node-fetch/lib/index.mjs
 var lib_exports = {};
 __export(lib_exports, {
   FetchError: () => FetchError,
@@ -4388,7 +4388,7 @@ function fetch(url, opts) {
       let error = new AbortError("The user aborted a request.");
       reject(error);
       if (request.body && request.body instanceof import_stream.default.Readable) {
-        destroyStream(request.body, error);
+        request.body.destroy(error);
       }
       if (!response || !response.body)
         return;
@@ -4423,31 +4423,8 @@ function fetch(url, opts) {
     }
     req.on("error", function(err) {
       reject(new FetchError(`request to ${request.url} failed, reason: ${err.message}`, "system", err));
-      if (response && response.body) {
-        destroyStream(response.body, err);
-      }
       finalize();
     });
-    fixResponseChunkedTransferBadEnding(req, function(err) {
-      if (signal && signal.aborted) {
-        return;
-      }
-      if (response && response.body) {
-        destroyStream(response.body, err);
-      }
-    });
-    if (parseInt(process.version.substring(1)) < 14) {
-      req.on("socket", function(s) {
-        s.addListener("close", function(hadError) {
-          const hasDataListener = s.listenerCount("data") > 0;
-          if (response && hasDataListener && !hadError && !(signal && signal.aborted)) {
-            const err = new Error("Premature close");
-            err.code = "ERR_STREAM_PREMATURE_CLOSE";
-            response.body.emit("error", err);
-          }
-        });
-      });
-    }
     req.on("response", function(res) {
       clearTimeout(reqTimeout);
       const headers = createHeadersLenient(res.headers);
@@ -4498,7 +4475,7 @@ function fetch(url, opts) {
               timeout: request.timeout,
               size: request.size
             };
-            if (!isDomainOrSubdomain(request.url, locationURL) || !isSameProtocol(request.url, locationURL)) {
+            if (!isDomainOrSubdomain(request.url, locationURL)) {
               for (const name of ["authorization", "www-authenticate", "cookie", "cookie2"]) {
                 requestOpts.headers.delete(name);
               }
@@ -4559,12 +4536,6 @@ function fetch(url, opts) {
           response = new Response(body, response_options);
           resolve(response);
         });
-        raw.on("end", function() {
-          if (!response) {
-            response = new Response(body, response_options);
-            resolve(response);
-          }
-        });
         return;
       }
       if (codings == "br" && typeof import_zlib.default.createBrotliDecompress === "function") {
@@ -4579,36 +4550,9 @@ function fetch(url, opts) {
     writeToStream(req, request);
   });
 }
-function fixResponseChunkedTransferBadEnding(request, errorCallback) {
-  let socket;
-  request.on("socket", function(s) {
-    socket = s;
-  });
-  request.on("response", function(response) {
-    const headers = response.headers;
-    if (headers["transfer-encoding"] === "chunked" && !headers["content-length"]) {
-      response.once("close", function(hadError) {
-        const hasDataListener = socket.listenerCount("data") > 0;
-        if (hasDataListener && !hadError) {
-          const err = new Error("Premature close");
-          err.code = "ERR_STREAM_PREMATURE_CLOSE";
-          errorCallback(err);
-        }
-      });
-    }
-  });
-}
-function destroyStream(stream, err) {
-  if (stream.destroy) {
-    stream.destroy(err);
-  } else {
-    stream.emit("error", err);
-    stream.end();
-  }
-}
-var import_stream, import_http, import_url, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL2, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, isSameProtocol, lib_default;
+var import_stream, import_http, import_url, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL2, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, lib_default;
 var init_lib = __esm({
-  "../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs"() {
+  "../../../node_modules/.pnpm/node-fetch@2.6.7/node_modules/node-fetch/lib/index.mjs"() {
     import_stream = __toESM(require("stream"), 1);
     import_http = __toESM(require("http"), 1);
     import_url = __toESM(require("url"), 1);
@@ -5118,11 +5062,6 @@ var init_lib = __esm({
       const orig = new URL$1(original).hostname;
       const dest = new URL$1(destination).hostname;
       return orig === dest || orig[orig.length - dest.length - 1] === "." && orig.endsWith(dest);
-    };
-    isSameProtocol = function isSameProtocol2(destination, original) {
-      const orig = new URL$1(original).protocol;
-      const dest = new URL$1(destination).protocol;
-      return orig === dest;
     };
     fetch.isRedirect = function(code) {
       return code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
@@ -11550,9 +11489,9 @@ var require_bluebird = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Buffer.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Buffer.js
 var require_Buffer = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Buffer.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Buffer.js"(exports2, module2) {
     var Buffer2 = require("buffer").Buffer;
     if (Buffer2.from === void 0) {
       Buffer2.from = function(a, b, c) {
@@ -11619,9 +11558,9 @@ var require_isarray = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/internal/streams/stream.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/internal/streams/stream.js
 var require_stream = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/internal/streams/stream.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/internal/streams/stream.js"(exports2, module2) {
     module2.exports = require("stream");
   }
 });
@@ -11799,9 +11738,9 @@ var require_inherits = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/internal/streams/BufferList.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/internal/streams/BufferList.js
 var require_BufferList = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/internal/streams/BufferList.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/internal/streams/BufferList.js"(exports2, module2) {
     "use strict";
     function _classCallCheck(instance, Constructor) {
       if (!(instance instanceof Constructor)) {
@@ -11864,8 +11803,6 @@ var require_BufferList = __commonJS({
       BufferList.prototype.concat = function concat(n) {
         if (this.length === 0)
           return Buffer2.alloc(0);
-        if (this.length === 1)
-          return this.head.data;
         var ret2 = Buffer2.allocUnsafe(n >>> 0);
         var p = this.head;
         var i = 0;
@@ -11887,9 +11824,9 @@ var require_BufferList = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/internal/streams/destroy.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/internal/streams/destroy.js
 var require_destroy = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/internal/streams/destroy.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/internal/streams/destroy.js"(exports2, module2) {
     "use strict";
     var pna = require_process_nextick_args();
     function destroy(err, cb) {
@@ -11899,8 +11836,13 @@ var require_destroy = __commonJS({
       if (readableDestroyed || writableDestroyed) {
         if (cb) {
           cb(err);
-        } else if (err && (!this._writableState || !this._writableState.errorEmitted)) {
-          pna.nextTick(emitErrorNT, this, err);
+        } else if (err) {
+          if (!this._writableState) {
+            pna.nextTick(emitErrorNT, this, err);
+          } else if (!this._writableState.errorEmitted) {
+            this._writableState.errorEmitted = true;
+            pna.nextTick(emitErrorNT, this, err);
+          }
         }
         return this;
       }
@@ -11912,9 +11854,11 @@ var require_destroy = __commonJS({
       }
       this._destroy(err || null, function(err2) {
         if (!cb && err2) {
-          pna.nextTick(emitErrorNT, _this, err2);
-          if (_this._writableState) {
+          if (!_this._writableState) {
+            pna.nextTick(emitErrorNT, _this, err2);
+          } else if (!_this._writableState.errorEmitted) {
             _this._writableState.errorEmitted = true;
+            pna.nextTick(emitErrorNT, _this, err2);
           }
         } else if (cb) {
           cb(err2);
@@ -11933,6 +11877,8 @@ var require_destroy = __commonJS({
         this._writableState.destroyed = false;
         this._writableState.ended = false;
         this._writableState.ending = false;
+        this._writableState.finalCalled = false;
+        this._writableState.prefinished = false;
         this._writableState.finished = false;
         this._writableState.errorEmitted = false;
       }
@@ -11954,9 +11900,9 @@ var require_node = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_writable.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_writable.js
 var require_stream_writable = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_writable.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_writable.js"(exports2, module2) {
     "use strict";
     var pna = require_process_nextick_args();
     module2.exports = Writable;
@@ -11978,7 +11924,7 @@ var require_stream_writable = __commonJS({
     };
     var Stream2 = require_stream();
     var Buffer2 = require_safe_buffer().Buffer;
-    var OurUint8Array = global.Uint8Array || function() {
+    var OurUint8Array = (typeof global !== "undefined" ? global : typeof window !== "undefined" ? window : typeof self !== "undefined" ? self : {}).Uint8Array || function() {
     };
     function _uint8ArrayToBuffer(chunk) {
       return Buffer2.from(chunk);
@@ -12145,7 +12091,7 @@ var require_stream_writable = __commonJS({
       var state = this._writableState;
       if (state.corked) {
         state.corked--;
-        if (!state.writing && !state.corked && !state.finished && !state.bufferProcessing && state.bufferedRequest)
+        if (!state.writing && !state.corked && !state.bufferProcessing && state.bufferedRequest)
           clearBuffer(this, state);
       }
     };
@@ -12333,7 +12279,7 @@ var require_stream_writable = __commonJS({
         state.corked = 1;
         this.uncork();
       }
-      if (!state.ending && !state.finished)
+      if (!state.ending)
         endWritable(this, state, cb);
     };
     function needFinish(state) {
@@ -12394,11 +12340,7 @@ var require_stream_writable = __commonJS({
         cb(err);
         entry = entry.next;
       }
-      if (state.corkedRequestsFree) {
-        state.corkedRequestsFree.next = corkReq;
-      } else {
-        state.corkedRequestsFree = corkReq;
-      }
+      state.corkedRequestsFree.next = corkReq;
     }
     Object.defineProperty(Writable.prototype, "destroyed", {
       get: function() {
@@ -12423,9 +12365,9 @@ var require_stream_writable = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_duplex.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_duplex.js
 var require_stream_duplex = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_duplex.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_duplex.js"(exports2, module2) {
     "use strict";
     var pna = require_process_nextick_args();
     var objectKeys = Object.keys || function(obj2) {
@@ -12763,9 +12705,9 @@ var require_string_decoder = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_readable.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_readable.js
 var require_stream_readable = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_readable.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_readable.js"(exports2, module2) {
     "use strict";
     var pna = require_process_nextick_args();
     module2.exports = Readable2;
@@ -12778,7 +12720,7 @@ var require_stream_readable = __commonJS({
     };
     var Stream2 = require_stream();
     var Buffer2 = require_safe_buffer().Buffer;
-    var OurUint8Array = global.Uint8Array || function() {
+    var OurUint8Array = (typeof global !== "undefined" ? global : typeof window !== "undefined" ? window : typeof self !== "undefined" ? self : {}).Uint8Array || function() {
     };
     function _uint8ArrayToBuffer(chunk) {
       return Buffer2.from(chunk);
@@ -13193,8 +13135,8 @@ var require_stream_readable = __commonJS({
         var ret2 = dest.write(chunk);
         if (false === ret2 && !increasedAwaitDrain) {
           if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
-            debug("false write response, pause", src._readableState.awaitDrain);
-            src._readableState.awaitDrain++;
+            debug("false write response, pause", state.awaitDrain);
+            state.awaitDrain++;
             increasedAwaitDrain = true;
           }
           src.pause();
@@ -13266,7 +13208,7 @@ var require_stream_readable = __commonJS({
         state.pipesCount = 0;
         state.flowing = false;
         for (var i = 0; i < len; i++) {
-          dests[i].emit("unpipe", this, unpipeInfo);
+          dests[i].emit("unpipe", this, { hasUnpiped: false });
         }
         return this;
       }
@@ -13518,9 +13460,9 @@ var require_stream_readable = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_transform.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_transform.js
 var require_stream_transform = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_transform.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_transform.js"(exports2, module2) {
     "use strict";
     module2.exports = Transform;
     var Duplex = require_stream_duplex();
@@ -13625,9 +13567,9 @@ var require_stream_transform = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_passthrough.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_passthrough.js
 var require_stream_passthrough = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/lib/_stream_passthrough.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/lib/_stream_passthrough.js"(exports2, module2) {
     "use strict";
     module2.exports = PassThrough2;
     var Transform = require_stream_transform();
@@ -13645,9 +13587,9 @@ var require_stream_passthrough = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/readable.js
+// ../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/readable.js
 var require_readable = __commonJS({
-  "../../../node_modules/.pnpm/readable-stream@2.3.7/node_modules/readable-stream/readable.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/readable-stream@2.3.8/node_modules/readable-stream/readable.js"(exports2, module2) {
     var Stream2 = require("stream");
     if (process.env.READABLE_STREAM === "disable" && Stream2) {
       module2.exports = Stream2;
@@ -13670,9 +13612,9 @@ var require_readable = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/PullStream.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/PullStream.js
 var require_PullStream = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/PullStream.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/PullStream.js"(exports2, module2) {
     var Stream2 = require("stream");
     var Promise2 = require_bluebird();
     var util = require("util");
@@ -13741,10 +13683,9 @@ var require_PullStream = __commonJS({
             });
         }
         if (!done) {
-          if (self2.finished && !this.__ended) {
+          if (self2.finished) {
             self2.removeListener("chunk", pull);
             self2.emit("error", new Error("FILE_ENDED"));
-            this.__ended = true;
             return;
           }
         } else {
@@ -13795,9 +13736,9 @@ var require_PullStream = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/NoopStream.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/NoopStream.js
 var require_NoopStream = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/NoopStream.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/NoopStream.js"(exports2, module2) {
     var Stream2 = require("stream");
     var util = require("util");
     if (!Stream2.Writable || !Stream2.Writable.prototype.destroy)
@@ -13816,9 +13757,9 @@ var require_NoopStream = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/BufferStream.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/BufferStream.js
 var require_BufferStream = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/BufferStream.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/BufferStream.js"(exports2, module2) {
     var Promise2 = require_bluebird();
     var Stream2 = require("stream");
     var Buffer2 = require_Buffer();
@@ -13840,9 +13781,9 @@ var require_BufferStream = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parseExtraField.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parseExtraField.js
 var require_parseExtraField = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parseExtraField.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parseExtraField.js"(exports2, module2) {
     var binary = require_binary();
     module2.exports = function(extraField, vars) {
       var extra;
@@ -13866,9 +13807,9 @@ var require_parseExtraField = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parseDateTime.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parseDateTime.js
 var require_parseDateTime = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parseDateTime.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parseDateTime.js"(exports2, module2) {
     module2.exports = function parseDateTime(date, time) {
       const day = date & 31;
       const month = date >> 5 & 15;
@@ -13881,9 +13822,9 @@ var require_parseDateTime = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parse.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parse.js
 var require_parse2 = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parse.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parse.js"(exports2, module2) {
     var util = require("util");
     var zlib2 = require("zlib");
     var Stream2 = require("stream");
@@ -13907,6 +13848,7 @@ var require_parse2 = __commonJS({
       self2._opts = opts || { verbose: false };
       PullStream.call(self2, self2._opts);
       self2.on("finish", function() {
+        self2.emit("end");
         self2.emit("close");
       });
       self2._readRecord().catch(function(e) {
@@ -13927,12 +13869,13 @@ var require_parse2 = __commonJS({
         if (signature === 67324752) {
           return self2._readFile();
         } else if (signature === 33639248) {
-          self2.__ended = true;
+          self2.reachedCD = true;
           return self2._readCentralDirectoryFileHeader();
         } else if (signature === 101010256) {
           return self2._readEndOfCentralDirectoryRecord();
-        } else if (self2.__ended) {
-          return self2.pull(endDirectorySignature).then(function() {
+        } else if (self2.reachedCD) {
+          var includeEof = true;
+          return self2.pull(endDirectorySignature, includeEof).then(function() {
             return self2._readEndOfCentralDirectoryRecord();
           });
         } else
@@ -13981,7 +13924,7 @@ var require_parse2 = __commonJS({
           entry.props.path = fileName;
           entry.props.pathBuffer = fileNameBuffer;
           entry.props.flags = {
-            "isUnicode": vars.flags & 17
+            "isUnicode": (vars.flags & 2048) != 0
           };
           entry.type = vars.uncompressedSize === 0 && /[\/\\]$/.test(fileName) ? "Directory" : "File";
           if (self2._opts.verbose) {
@@ -14142,9 +14085,9 @@ var require_duplexer2 = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parseOne.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parseOne.js
 var require_parseOne = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/parseOne.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/parseOne.js"(exports2, module2) {
     var Stream2 = require("stream");
     var Parse2 = require_parse2();
     var duplexer2 = require_duplexer2();
@@ -14268,9 +14211,9 @@ var require_abstract = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/polyfills.js
+// ../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/polyfills.js
 var require_polyfills = __commonJS({
-  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/polyfills.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/polyfills.js"(exports2, module2) {
     var constants = require("constants");
     var origCwd = process.cwd;
     var cwd = null;
@@ -14342,7 +14285,7 @@ var require_polyfills = __commonJS({
             var start = Date.now();
             var backoff = 0;
             fs$rename(from, to, function CB(er) {
-              if (er && (er.code === "EACCES" || er.code === "EPERM") && Date.now() - start < 6e4) {
+              if (er && (er.code === "EACCES" || er.code === "EPERM" || er.code === "EBUSY") && Date.now() - start < 6e4) {
                 setTimeout(function() {
                   fs.stat(to, function(stater, st) {
                     if (stater && stater.code === "ENOENT")
@@ -14584,9 +14527,9 @@ var require_polyfills = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/legacy-streams.js
+// ../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/legacy-streams.js
 var require_legacy_streams = __commonJS({
-  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/legacy-streams.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/legacy-streams.js"(exports2, module2) {
     var Stream2 = require("stream").Stream;
     module2.exports = legacy;
     function legacy(fs) {
@@ -14683,9 +14626,9 @@ var require_legacy_streams = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/clone.js
+// ../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/clone.js
 var require_clone = __commonJS({
-  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/clone.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/clone.js"(exports2, module2) {
     "use strict";
     module2.exports = clone2;
     var getPrototypeOf = Object.getPrototypeOf || function(obj2) {
@@ -14706,9 +14649,9 @@ var require_clone = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/graceful-fs.js
+// ../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/graceful-fs.js
 var require_graceful_fs = __commonJS({
-  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/graceful-fs.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/graceful-fs@4.2.11/node_modules/graceful-fs/graceful-fs.js"(exports2, module2) {
     var fs = require("fs");
     var polyfills = require_polyfills();
     var legacy = require_legacy_streams();
@@ -19254,9 +19197,9 @@ var require_fstream = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/extract.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/extract.js
 var require_extract = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/extract.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/extract.js"(exports2, module2) {
     module2.exports = Extract;
     var Parse2 = require_parse2();
     var Writer = require_fstream().Writer;
@@ -19292,6 +19235,814 @@ var require_extract = __commonJS({
         });
       };
       return extract;
+    }
+  }
+});
+
+// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/polyfills.js
+var require_polyfills2 = __commonJS({
+  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/polyfills.js"(exports2, module2) {
+    var constants = require("constants");
+    var origCwd = process.cwd;
+    var cwd = null;
+    var platform = process.env.GRACEFUL_FS_PLATFORM || process.platform;
+    process.cwd = function() {
+      if (!cwd)
+        cwd = origCwd.call(process);
+      return cwd;
+    };
+    try {
+      process.cwd();
+    } catch (er) {
+    }
+    if (typeof process.chdir === "function") {
+      chdir = process.chdir;
+      process.chdir = function(d) {
+        cwd = null;
+        chdir.call(process, d);
+      };
+      if (Object.setPrototypeOf)
+        Object.setPrototypeOf(process.chdir, chdir);
+    }
+    var chdir;
+    module2.exports = patch;
+    function patch(fs) {
+      if (constants.hasOwnProperty("O_SYMLINK") && process.version.match(/^v0\.6\.[0-2]|^v0\.5\./)) {
+        patchLchmod(fs);
+      }
+      if (!fs.lutimes) {
+        patchLutimes(fs);
+      }
+      fs.chown = chownFix(fs.chown);
+      fs.fchown = chownFix(fs.fchown);
+      fs.lchown = chownFix(fs.lchown);
+      fs.chmod = chmodFix(fs.chmod);
+      fs.fchmod = chmodFix(fs.fchmod);
+      fs.lchmod = chmodFix(fs.lchmod);
+      fs.chownSync = chownFixSync(fs.chownSync);
+      fs.fchownSync = chownFixSync(fs.fchownSync);
+      fs.lchownSync = chownFixSync(fs.lchownSync);
+      fs.chmodSync = chmodFixSync(fs.chmodSync);
+      fs.fchmodSync = chmodFixSync(fs.fchmodSync);
+      fs.lchmodSync = chmodFixSync(fs.lchmodSync);
+      fs.stat = statFix(fs.stat);
+      fs.fstat = statFix(fs.fstat);
+      fs.lstat = statFix(fs.lstat);
+      fs.statSync = statFixSync(fs.statSync);
+      fs.fstatSync = statFixSync(fs.fstatSync);
+      fs.lstatSync = statFixSync(fs.lstatSync);
+      if (fs.chmod && !fs.lchmod) {
+        fs.lchmod = function(path, mode, cb) {
+          if (cb)
+            process.nextTick(cb);
+        };
+        fs.lchmodSync = function() {
+        };
+      }
+      if (fs.chown && !fs.lchown) {
+        fs.lchown = function(path, uid, gid, cb) {
+          if (cb)
+            process.nextTick(cb);
+        };
+        fs.lchownSync = function() {
+        };
+      }
+      if (platform === "win32") {
+        fs.rename = typeof fs.rename !== "function" ? fs.rename : function(fs$rename) {
+          function rename(from, to, cb) {
+            var start = Date.now();
+            var backoff = 0;
+            fs$rename(from, to, function CB(er) {
+              if (er && (er.code === "EACCES" || er.code === "EPERM") && Date.now() - start < 6e4) {
+                setTimeout(function() {
+                  fs.stat(to, function(stater, st) {
+                    if (stater && stater.code === "ENOENT")
+                      fs$rename(from, to, CB);
+                    else
+                      cb(er);
+                  });
+                }, backoff);
+                if (backoff < 100)
+                  backoff += 10;
+                return;
+              }
+              if (cb)
+                cb(er);
+            });
+          }
+          if (Object.setPrototypeOf)
+            Object.setPrototypeOf(rename, fs$rename);
+          return rename;
+        }(fs.rename);
+      }
+      fs.read = typeof fs.read !== "function" ? fs.read : function(fs$read) {
+        function read(fd, buffer, offset, length, position, callback_) {
+          var callback;
+          if (callback_ && typeof callback_ === "function") {
+            var eagCounter = 0;
+            callback = function(er, _, __) {
+              if (er && er.code === "EAGAIN" && eagCounter < 10) {
+                eagCounter++;
+                return fs$read.call(fs, fd, buffer, offset, length, position, callback);
+              }
+              callback_.apply(this, arguments);
+            };
+          }
+          return fs$read.call(fs, fd, buffer, offset, length, position, callback);
+        }
+        if (Object.setPrototypeOf)
+          Object.setPrototypeOf(read, fs$read);
+        return read;
+      }(fs.read);
+      fs.readSync = typeof fs.readSync !== "function" ? fs.readSync : function(fs$readSync) {
+        return function(fd, buffer, offset, length, position) {
+          var eagCounter = 0;
+          while (true) {
+            try {
+              return fs$readSync.call(fs, fd, buffer, offset, length, position);
+            } catch (er) {
+              if (er.code === "EAGAIN" && eagCounter < 10) {
+                eagCounter++;
+                continue;
+              }
+              throw er;
+            }
+          }
+        };
+      }(fs.readSync);
+      function patchLchmod(fs2) {
+        fs2.lchmod = function(path, mode, callback) {
+          fs2.open(
+            path,
+            constants.O_WRONLY | constants.O_SYMLINK,
+            mode,
+            function(err, fd) {
+              if (err) {
+                if (callback)
+                  callback(err);
+                return;
+              }
+              fs2.fchmod(fd, mode, function(err2) {
+                fs2.close(fd, function(err22) {
+                  if (callback)
+                    callback(err2 || err22);
+                });
+              });
+            }
+          );
+        };
+        fs2.lchmodSync = function(path, mode) {
+          var fd = fs2.openSync(path, constants.O_WRONLY | constants.O_SYMLINK, mode);
+          var threw = true;
+          var ret2;
+          try {
+            ret2 = fs2.fchmodSync(fd, mode);
+            threw = false;
+          } finally {
+            if (threw) {
+              try {
+                fs2.closeSync(fd);
+              } catch (er) {
+              }
+            } else {
+              fs2.closeSync(fd);
+            }
+          }
+          return ret2;
+        };
+      }
+      function patchLutimes(fs2) {
+        if (constants.hasOwnProperty("O_SYMLINK") && fs2.futimes) {
+          fs2.lutimes = function(path, at, mt, cb) {
+            fs2.open(path, constants.O_SYMLINK, function(er, fd) {
+              if (er) {
+                if (cb)
+                  cb(er);
+                return;
+              }
+              fs2.futimes(fd, at, mt, function(er2) {
+                fs2.close(fd, function(er22) {
+                  if (cb)
+                    cb(er2 || er22);
+                });
+              });
+            });
+          };
+          fs2.lutimesSync = function(path, at, mt) {
+            var fd = fs2.openSync(path, constants.O_SYMLINK);
+            var ret2;
+            var threw = true;
+            try {
+              ret2 = fs2.futimesSync(fd, at, mt);
+              threw = false;
+            } finally {
+              if (threw) {
+                try {
+                  fs2.closeSync(fd);
+                } catch (er) {
+                }
+              } else {
+                fs2.closeSync(fd);
+              }
+            }
+            return ret2;
+          };
+        } else if (fs2.futimes) {
+          fs2.lutimes = function(_a, _b, _c, cb) {
+            if (cb)
+              process.nextTick(cb);
+          };
+          fs2.lutimesSync = function() {
+          };
+        }
+      }
+      function chmodFix(orig) {
+        if (!orig)
+          return orig;
+        return function(target, mode, cb) {
+          return orig.call(fs, target, mode, function(er) {
+            if (chownErOk(er))
+              er = null;
+            if (cb)
+              cb.apply(this, arguments);
+          });
+        };
+      }
+      function chmodFixSync(orig) {
+        if (!orig)
+          return orig;
+        return function(target, mode) {
+          try {
+            return orig.call(fs, target, mode);
+          } catch (er) {
+            if (!chownErOk(er))
+              throw er;
+          }
+        };
+      }
+      function chownFix(orig) {
+        if (!orig)
+          return orig;
+        return function(target, uid, gid, cb) {
+          return orig.call(fs, target, uid, gid, function(er) {
+            if (chownErOk(er))
+              er = null;
+            if (cb)
+              cb.apply(this, arguments);
+          });
+        };
+      }
+      function chownFixSync(orig) {
+        if (!orig)
+          return orig;
+        return function(target, uid, gid) {
+          try {
+            return orig.call(fs, target, uid, gid);
+          } catch (er) {
+            if (!chownErOk(er))
+              throw er;
+          }
+        };
+      }
+      function statFix(orig) {
+        if (!orig)
+          return orig;
+        return function(target, options, cb) {
+          if (typeof options === "function") {
+            cb = options;
+            options = null;
+          }
+          function callback(er, stats) {
+            if (stats) {
+              if (stats.uid < 0)
+                stats.uid += 4294967296;
+              if (stats.gid < 0)
+                stats.gid += 4294967296;
+            }
+            if (cb)
+              cb.apply(this, arguments);
+          }
+          return options ? orig.call(fs, target, options, callback) : orig.call(fs, target, callback);
+        };
+      }
+      function statFixSync(orig) {
+        if (!orig)
+          return orig;
+        return function(target, options) {
+          var stats = options ? orig.call(fs, target, options) : orig.call(fs, target);
+          if (stats) {
+            if (stats.uid < 0)
+              stats.uid += 4294967296;
+            if (stats.gid < 0)
+              stats.gid += 4294967296;
+          }
+          return stats;
+        };
+      }
+      function chownErOk(er) {
+        if (!er)
+          return true;
+        if (er.code === "ENOSYS")
+          return true;
+        var nonroot = !process.getuid || process.getuid() !== 0;
+        if (nonroot) {
+          if (er.code === "EINVAL" || er.code === "EPERM")
+            return true;
+        }
+        return false;
+      }
+    }
+  }
+});
+
+// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/legacy-streams.js
+var require_legacy_streams2 = __commonJS({
+  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/legacy-streams.js"(exports2, module2) {
+    var Stream2 = require("stream").Stream;
+    module2.exports = legacy;
+    function legacy(fs) {
+      return {
+        ReadStream,
+        WriteStream
+      };
+      function ReadStream(path, options) {
+        if (!(this instanceof ReadStream))
+          return new ReadStream(path, options);
+        Stream2.call(this);
+        var self2 = this;
+        this.path = path;
+        this.fd = null;
+        this.readable = true;
+        this.paused = false;
+        this.flags = "r";
+        this.mode = 438;
+        this.bufferSize = 64 * 1024;
+        options = options || {};
+        var keys = Object.keys(options);
+        for (var index = 0, length = keys.length; index < length; index++) {
+          var key = keys[index];
+          this[key] = options[key];
+        }
+        if (this.encoding)
+          this.setEncoding(this.encoding);
+        if (this.start !== void 0) {
+          if ("number" !== typeof this.start) {
+            throw TypeError("start must be a Number");
+          }
+          if (this.end === void 0) {
+            this.end = Infinity;
+          } else if ("number" !== typeof this.end) {
+            throw TypeError("end must be a Number");
+          }
+          if (this.start > this.end) {
+            throw new Error("start must be <= end");
+          }
+          this.pos = this.start;
+        }
+        if (this.fd !== null) {
+          process.nextTick(function() {
+            self2._read();
+          });
+          return;
+        }
+        fs.open(this.path, this.flags, this.mode, function(err, fd) {
+          if (err) {
+            self2.emit("error", err);
+            self2.readable = false;
+            return;
+          }
+          self2.fd = fd;
+          self2.emit("open", fd);
+          self2._read();
+        });
+      }
+      function WriteStream(path, options) {
+        if (!(this instanceof WriteStream))
+          return new WriteStream(path, options);
+        Stream2.call(this);
+        this.path = path;
+        this.fd = null;
+        this.writable = true;
+        this.flags = "w";
+        this.encoding = "binary";
+        this.mode = 438;
+        this.bytesWritten = 0;
+        options = options || {};
+        var keys = Object.keys(options);
+        for (var index = 0, length = keys.length; index < length; index++) {
+          var key = keys[index];
+          this[key] = options[key];
+        }
+        if (this.start !== void 0) {
+          if ("number" !== typeof this.start) {
+            throw TypeError("start must be a Number");
+          }
+          if (this.start < 0) {
+            throw new Error("start must be >= zero");
+          }
+          this.pos = this.start;
+        }
+        this.busy = false;
+        this._queue = [];
+        if (this.fd === null) {
+          this._open = fs.open;
+          this._queue.push([this._open, this.path, this.flags, this.mode, void 0]);
+          this.flush();
+        }
+      }
+    }
+  }
+});
+
+// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/clone.js
+var require_clone2 = __commonJS({
+  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/clone.js"(exports2, module2) {
+    "use strict";
+    module2.exports = clone2;
+    var getPrototypeOf = Object.getPrototypeOf || function(obj2) {
+      return obj2.__proto__;
+    };
+    function clone2(obj2) {
+      if (obj2 === null || typeof obj2 !== "object")
+        return obj2;
+      if (obj2 instanceof Object)
+        var copy = { __proto__: getPrototypeOf(obj2) };
+      else
+        var copy = /* @__PURE__ */ Object.create(null);
+      Object.getOwnPropertyNames(obj2).forEach(function(key) {
+        Object.defineProperty(copy, key, Object.getOwnPropertyDescriptor(obj2, key));
+      });
+      return copy;
+    }
+  }
+});
+
+// ../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/graceful-fs.js
+var require_graceful_fs2 = __commonJS({
+  "../../../node_modules/.pnpm/graceful-fs@4.2.10/node_modules/graceful-fs/graceful-fs.js"(exports2, module2) {
+    var fs = require("fs");
+    var polyfills = require_polyfills2();
+    var legacy = require_legacy_streams2();
+    var clone2 = require_clone2();
+    var util = require("util");
+    var gracefulQueue;
+    var previousSymbol;
+    if (typeof Symbol === "function" && typeof Symbol.for === "function") {
+      gracefulQueue = Symbol.for("graceful-fs.queue");
+      previousSymbol = Symbol.for("graceful-fs.previous");
+    } else {
+      gracefulQueue = "___graceful-fs.queue";
+      previousSymbol = "___graceful-fs.previous";
+    }
+    function noop() {
+    }
+    function publishQueue(context, queue2) {
+      Object.defineProperty(context, gracefulQueue, {
+        get: function() {
+          return queue2;
+        }
+      });
+    }
+    var debug = noop;
+    if (util.debuglog)
+      debug = util.debuglog("gfs4");
+    else if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || ""))
+      debug = function() {
+        var m = util.format.apply(util, arguments);
+        m = "GFS4: " + m.split(/\n/).join("\nGFS4: ");
+        console.error(m);
+      };
+    if (!fs[gracefulQueue]) {
+      queue = global[gracefulQueue] || [];
+      publishQueue(fs, queue);
+      fs.close = function(fs$close) {
+        function close(fd, cb) {
+          return fs$close.call(fs, fd, function(err) {
+            if (!err) {
+              resetQueue();
+            }
+            if (typeof cb === "function")
+              cb.apply(this, arguments);
+          });
+        }
+        Object.defineProperty(close, previousSymbol, {
+          value: fs$close
+        });
+        return close;
+      }(fs.close);
+      fs.closeSync = function(fs$closeSync) {
+        function closeSync(fd) {
+          fs$closeSync.apply(fs, arguments);
+          resetQueue();
+        }
+        Object.defineProperty(closeSync, previousSymbol, {
+          value: fs$closeSync
+        });
+        return closeSync;
+      }(fs.closeSync);
+      if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || "")) {
+        process.on("exit", function() {
+          debug(fs[gracefulQueue]);
+          require("assert").equal(fs[gracefulQueue].length, 0);
+        });
+      }
+    }
+    var queue;
+    if (!global[gracefulQueue]) {
+      publishQueue(global, fs[gracefulQueue]);
+    }
+    module2.exports = patch(clone2(fs));
+    if (process.env.TEST_GRACEFUL_FS_GLOBAL_PATCH && !fs.__patched) {
+      module2.exports = patch(fs);
+      fs.__patched = true;
+    }
+    function patch(fs2) {
+      polyfills(fs2);
+      fs2.gracefulify = patch;
+      fs2.createReadStream = createReadStream;
+      fs2.createWriteStream = createWriteStream;
+      var fs$readFile = fs2.readFile;
+      fs2.readFile = readFile;
+      function readFile(path, options, cb) {
+        if (typeof options === "function")
+          cb = options, options = null;
+        return go$readFile(path, options, cb);
+        function go$readFile(path2, options2, cb2, startTime) {
+          return fs$readFile(path2, options2, function(err) {
+            if (err && (err.code === "EMFILE" || err.code === "ENFILE"))
+              enqueue([go$readFile, [path2, options2, cb2], err, startTime || Date.now(), Date.now()]);
+            else {
+              if (typeof cb2 === "function")
+                cb2.apply(this, arguments);
+            }
+          });
+        }
+      }
+      var fs$writeFile = fs2.writeFile;
+      fs2.writeFile = writeFile;
+      function writeFile(path, data, options, cb) {
+        if (typeof options === "function")
+          cb = options, options = null;
+        return go$writeFile(path, data, options, cb);
+        function go$writeFile(path2, data2, options2, cb2, startTime) {
+          return fs$writeFile(path2, data2, options2, function(err) {
+            if (err && (err.code === "EMFILE" || err.code === "ENFILE"))
+              enqueue([go$writeFile, [path2, data2, options2, cb2], err, startTime || Date.now(), Date.now()]);
+            else {
+              if (typeof cb2 === "function")
+                cb2.apply(this, arguments);
+            }
+          });
+        }
+      }
+      var fs$appendFile = fs2.appendFile;
+      if (fs$appendFile)
+        fs2.appendFile = appendFile;
+      function appendFile(path, data, options, cb) {
+        if (typeof options === "function")
+          cb = options, options = null;
+        return go$appendFile(path, data, options, cb);
+        function go$appendFile(path2, data2, options2, cb2, startTime) {
+          return fs$appendFile(path2, data2, options2, function(err) {
+            if (err && (err.code === "EMFILE" || err.code === "ENFILE"))
+              enqueue([go$appendFile, [path2, data2, options2, cb2], err, startTime || Date.now(), Date.now()]);
+            else {
+              if (typeof cb2 === "function")
+                cb2.apply(this, arguments);
+            }
+          });
+        }
+      }
+      var fs$copyFile = fs2.copyFile;
+      if (fs$copyFile)
+        fs2.copyFile = copyFile;
+      function copyFile(src, dest, flags, cb) {
+        if (typeof flags === "function") {
+          cb = flags;
+          flags = 0;
+        }
+        return go$copyFile(src, dest, flags, cb);
+        function go$copyFile(src2, dest2, flags2, cb2, startTime) {
+          return fs$copyFile(src2, dest2, flags2, function(err) {
+            if (err && (err.code === "EMFILE" || err.code === "ENFILE"))
+              enqueue([go$copyFile, [src2, dest2, flags2, cb2], err, startTime || Date.now(), Date.now()]);
+            else {
+              if (typeof cb2 === "function")
+                cb2.apply(this, arguments);
+            }
+          });
+        }
+      }
+      var fs$readdir = fs2.readdir;
+      fs2.readdir = readdir;
+      var noReaddirOptionVersions = /^v[0-5]\./;
+      function readdir(path, options, cb) {
+        if (typeof options === "function")
+          cb = options, options = null;
+        var go$readdir = noReaddirOptionVersions.test(process.version) ? function go$readdir2(path2, options2, cb2, startTime) {
+          return fs$readdir(path2, fs$readdirCallback(
+            path2,
+            options2,
+            cb2,
+            startTime
+          ));
+        } : function go$readdir2(path2, options2, cb2, startTime) {
+          return fs$readdir(path2, options2, fs$readdirCallback(
+            path2,
+            options2,
+            cb2,
+            startTime
+          ));
+        };
+        return go$readdir(path, options, cb);
+        function fs$readdirCallback(path2, options2, cb2, startTime) {
+          return function(err, files) {
+            if (err && (err.code === "EMFILE" || err.code === "ENFILE"))
+              enqueue([
+                go$readdir,
+                [path2, options2, cb2],
+                err,
+                startTime || Date.now(),
+                Date.now()
+              ]);
+            else {
+              if (files && files.sort)
+                files.sort();
+              if (typeof cb2 === "function")
+                cb2.call(this, err, files);
+            }
+          };
+        }
+      }
+      if (process.version.substr(0, 4) === "v0.8") {
+        var legStreams = legacy(fs2);
+        ReadStream = legStreams.ReadStream;
+        WriteStream = legStreams.WriteStream;
+      }
+      var fs$ReadStream = fs2.ReadStream;
+      if (fs$ReadStream) {
+        ReadStream.prototype = Object.create(fs$ReadStream.prototype);
+        ReadStream.prototype.open = ReadStream$open;
+      }
+      var fs$WriteStream = fs2.WriteStream;
+      if (fs$WriteStream) {
+        WriteStream.prototype = Object.create(fs$WriteStream.prototype);
+        WriteStream.prototype.open = WriteStream$open;
+      }
+      Object.defineProperty(fs2, "ReadStream", {
+        get: function() {
+          return ReadStream;
+        },
+        set: function(val) {
+          ReadStream = val;
+        },
+        enumerable: true,
+        configurable: true
+      });
+      Object.defineProperty(fs2, "WriteStream", {
+        get: function() {
+          return WriteStream;
+        },
+        set: function(val) {
+          WriteStream = val;
+        },
+        enumerable: true,
+        configurable: true
+      });
+      var FileReadStream = ReadStream;
+      Object.defineProperty(fs2, "FileReadStream", {
+        get: function() {
+          return FileReadStream;
+        },
+        set: function(val) {
+          FileReadStream = val;
+        },
+        enumerable: true,
+        configurable: true
+      });
+      var FileWriteStream = WriteStream;
+      Object.defineProperty(fs2, "FileWriteStream", {
+        get: function() {
+          return FileWriteStream;
+        },
+        set: function(val) {
+          FileWriteStream = val;
+        },
+        enumerable: true,
+        configurable: true
+      });
+      function ReadStream(path, options) {
+        if (this instanceof ReadStream)
+          return fs$ReadStream.apply(this, arguments), this;
+        else
+          return ReadStream.apply(Object.create(ReadStream.prototype), arguments);
+      }
+      function ReadStream$open() {
+        var that = this;
+        open(that.path, that.flags, that.mode, function(err, fd) {
+          if (err) {
+            if (that.autoClose)
+              that.destroy();
+            that.emit("error", err);
+          } else {
+            that.fd = fd;
+            that.emit("open", fd);
+            that.read();
+          }
+        });
+      }
+      function WriteStream(path, options) {
+        if (this instanceof WriteStream)
+          return fs$WriteStream.apply(this, arguments), this;
+        else
+          return WriteStream.apply(Object.create(WriteStream.prototype), arguments);
+      }
+      function WriteStream$open() {
+        var that = this;
+        open(that.path, that.flags, that.mode, function(err, fd) {
+          if (err) {
+            that.destroy();
+            that.emit("error", err);
+          } else {
+            that.fd = fd;
+            that.emit("open", fd);
+          }
+        });
+      }
+      function createReadStream(path, options) {
+        return new fs2.ReadStream(path, options);
+      }
+      function createWriteStream(path, options) {
+        return new fs2.WriteStream(path, options);
+      }
+      var fs$open = fs2.open;
+      fs2.open = open;
+      function open(path, flags, mode, cb) {
+        if (typeof mode === "function")
+          cb = mode, mode = null;
+        return go$open(path, flags, mode, cb);
+        function go$open(path2, flags2, mode2, cb2, startTime) {
+          return fs$open(path2, flags2, mode2, function(err, fd) {
+            if (err && (err.code === "EMFILE" || err.code === "ENFILE"))
+              enqueue([go$open, [path2, flags2, mode2, cb2], err, startTime || Date.now(), Date.now()]);
+            else {
+              if (typeof cb2 === "function")
+                cb2.apply(this, arguments);
+            }
+          });
+        }
+      }
+      return fs2;
+    }
+    function enqueue(elem) {
+      debug("ENQUEUE", elem[0].name, elem[1]);
+      fs[gracefulQueue].push(elem);
+      retry2();
+    }
+    var retryTimer;
+    function resetQueue() {
+      var now = Date.now();
+      for (var i = 0; i < fs[gracefulQueue].length; ++i) {
+        if (fs[gracefulQueue][i].length > 2) {
+          fs[gracefulQueue][i][3] = now;
+          fs[gracefulQueue][i][4] = now;
+        }
+      }
+      retry2();
+    }
+    function retry2() {
+      clearTimeout(retryTimer);
+      retryTimer = void 0;
+      if (fs[gracefulQueue].length === 0)
+        return;
+      var elem = fs[gracefulQueue].shift();
+      var fn = elem[0];
+      var args = elem[1];
+      var err = elem[2];
+      var startTime = elem[3];
+      var lastTime = elem[4];
+      if (startTime === void 0) {
+        debug("RETRY", fn.name, args);
+        fn.apply(null, args);
+      } else if (Date.now() - startTime >= 6e4) {
+        debug("TIMEOUT", fn.name, args);
+        var cb = args.pop();
+        if (typeof cb === "function")
+          cb.call(null, err);
+      } else {
+        var sinceAttempt = Date.now() - lastTime;
+        var sinceStart = Math.max(lastTime - startTime, 1);
+        var desiredDelay = Math.min(sinceStart * 1.2, 100);
+        if (sinceAttempt >= desiredDelay) {
+          debug("RETRY", fn.name, args);
+          fn.apply(null, args.concat([startTime]));
+        } else {
+          fs[gracefulQueue].push(elem);
+        }
+      }
+      if (retryTimer === void 0) {
+        retryTimer = setTimeout(retry2, 0);
+      }
     }
   }
 });
@@ -20651,9 +21402,9 @@ var require_BigInteger = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Decrypt.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Decrypt.js
 var require_Decrypt = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Decrypt.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Decrypt.js"(exports2, module2) {
     var bigInt = require_BigInteger();
     var Stream2 = require("stream");
     if (!Stream2.Writable || !Stream2.Writable.prototype.destroy)
@@ -20710,9 +21461,9 @@ var require_Decrypt = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Open/unzip.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Open/unzip.js
 var require_unzip = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Open/unzip.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Open/unzip.js"(exports2, module2) {
     var Promise2 = require_bluebird();
     var Decrypt = require_Decrypt();
     var PullStream = require_PullStream();
@@ -20780,7 +21531,9 @@ var require_unzip = __commonJS({
         stream.pipe(inflater).on("error", function(err) {
           entry.emit("error", err);
         }).pipe(entry).on("finish", function() {
-          if (req.abort)
+          if (req.destroy)
+            req.destroy();
+          else if (req.abort)
             req.abort();
           else if (req.close)
             req.close();
@@ -20797,9 +21550,9 @@ var require_unzip = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Open/directory.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Open/directory.js
 var require_directory = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Open/directory.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Open/directory.js"(exports2, module2) {
     var binary = require_binary();
     var PullStream = require_PullStream();
     var unzip = require_unzip();
@@ -20877,10 +21630,16 @@ var require_directory = __commonJS({
           vars.offsetToStartOfCentralDirectory += startOffset;
         }
       }).then(function() {
+        if (vars.commentLength)
+          return endDir.pull(vars.commentLength).then(function(comment) {
+            vars.comment = comment.toString("utf8");
+          });
+      }).then(function() {
         source.stream(vars.offsetToStartOfCentralDirectory).pipe(records);
         vars.extract = function(opts) {
           if (!opts || !opts.path)
             throw new Error("PATH_MISSING");
+          opts.path = path.resolve(path.normalize(opts.path));
           return vars.files.then(function(files) {
             return Promise2.map(files, function(entry) {
               if (entry.type == "Directory")
@@ -20893,7 +21652,7 @@ var require_directory = __commonJS({
               return new Promise2(function(resolve, reject) {
                 entry.stream(opts.password).on("error", reject).pipe(writer).on("close", resolve).on("error", reject);
               });
-            }, opts.concurrency > 1 ? { concurrency: opts.concurrency || void 0 } : void 0);
+            }, { concurrency: opts.concurrency > 1 ? opts.concurrency : 1 });
           });
         };
         vars.files = Promise2.mapSeries(Array(vars.numberOfRecords), function() {
@@ -20904,7 +21663,7 @@ var require_directory = __commonJS({
             return records.pull(vars2.fileNameLength).then(function(fileNameBuffer) {
               vars2.pathBuffer = fileNameBuffer;
               vars2.path = fileNameBuffer.toString("utf8");
-              vars2.isUnicode = vars2.flags & 17;
+              vars2.isUnicode = (vars2.flags & 2048) != 0;
               return records.pull(vars2.extraFieldLength);
             }).then(function(extraField) {
               vars2.extra = parseExtraField(extraField, vars2);
@@ -20928,10 +21687,10 @@ var require_directory = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Open/index.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Open/index.js
 var require_Open = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/lib/Open/index.js"(exports2, module2) {
-    var fs = require_graceful_fs();
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/lib/Open/index.js"(exports2, module2) {
+    var fs = require_graceful_fs2();
     var Promise2 = require_bluebird();
     var directory = require_directory();
     var Stream2 = require("stream");
@@ -21018,14 +21777,17 @@ var require_Open = __commonJS({
           }
         };
         return directory(source, options);
+      },
+      custom: function(source, options) {
+        return directory(source, options);
       }
     };
   }
 });
 
-// ../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/unzip.js
+// ../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/unzip.js
 var require_unzip2 = __commonJS({
-  "../../../node_modules/.pnpm/unzipper@0.10.11/node_modules/unzipper/unzip.js"(exports2) {
+  "../../../node_modules/.pnpm/unzipper@0.10.14/node_modules/unzipper/unzip.js"(exports2) {
     "use strict";
     require_listenercount();
     require_buffer_indexof_polyfill();
@@ -21037,9 +21799,9 @@ var require_unzip2 = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/utils/Utf8Stream.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/utils/Utf8Stream.js
 var require_Utf8Stream = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/utils/Utf8Stream.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/utils/Utf8Stream.js"(exports2, module2) {
     "use strict";
     var { Transform } = require("stream");
     var { StringDecoder } = require("string_decoder");
@@ -21086,9 +21848,9 @@ var require_Utf8Stream = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/Parser.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/Parser.js
 var require_Parser = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/Parser.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/Parser.js"(exports2, module2) {
     "use strict";
     var Utf8Stream = require_Utf8Stream();
     var patterns = {
@@ -21629,18 +22391,18 @@ var require_Parser = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/utils/emit.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/utils/emit.js
 var require_emit = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/utils/emit.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/utils/emit.js"(exports2, module2) {
     "use strict";
     var emit = (stream) => stream.on("data", (item) => stream.emit(item.name, item.value));
     module2.exports = emit;
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/index.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/index.js
 var require_stream_json = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/index.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/index.js"(exports2, module2) {
     "use strict";
     var Parser = require_Parser();
     var emit = require_emit();
@@ -21651,9 +22413,9 @@ var require_stream_json = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/Assembler.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/Assembler.js
 var require_Assembler = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/Assembler.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/Assembler.js"(exports2, module2) {
     "use strict";
     var EventEmitter = require("events");
     var startObject = (Ctr) => function() {
@@ -21789,9 +22551,9 @@ var require_Assembler = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/streamers/StreamBase.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/streamers/StreamBase.js
 var require_StreamBase = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/streamers/StreamBase.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/streamers/StreamBase.js"(exports2, module2) {
     "use strict";
     var { Transform } = require("stream");
     var Assembler = require_Assembler();
@@ -22063,9 +22825,9 @@ var require_stream_chain = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/utils/withParser.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/utils/withParser.js
 var require_withParser = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/utils/withParser.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/utils/withParser.js"(exports2, module2) {
     "use strict";
     var Chain = require_stream_chain();
     var Parser = require_Parser();
@@ -22074,9 +22836,9 @@ var require_withParser = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/streamers/StreamValues.js
+// ../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/streamers/StreamValues.js
 var require_StreamValues = __commonJS({
-  "../../../node_modules/.pnpm/stream-json@1.7.4/node_modules/stream-json/streamers/StreamValues.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/stream-json@1.7.5/node_modules/stream-json/streamers/StreamValues.js"(exports2, module2) {
     "use strict";
     var StreamBase = require_StreamBase();
     var withParser = require_withParser();
@@ -24278,9 +25040,7 @@ function retry(f, options) {
         "promise-retry",
         context + " failed. " + remainingTry + " retry remain. " + String(e)
       );
-      return delay(i).then(
-        () => rec(remainingTry - 1, i * intervalMultiplicator)
-      );
+      return delay(i).then(() => rec(remainingTry - 1, i * intervalMultiplicator));
     });
   }
   return rec(maxRetry, interval);
@@ -24311,9 +25071,7 @@ async function promiseAllBatched(batch, items, fn) {
 var import_groupBy = __toESM(require_groupBy());
 function handleErrors(response) {
   if (!response.ok) {
-    throw Error(
-      response.url + ": " + response.status + " " + response.statusText
-    );
+    throw Error(response.url + ": " + response.status + " " + response.statusText);
   }
   return response;
 }
@@ -24356,7 +25114,7 @@ function successRateDisplay(a, b) {
     return "N/A";
   if (!a)
     return "\u274C 0%";
-  let r = a / b;
+  const r = a / b;
   return (r === 1 ? "\u2705 " : r < 0.8 ? "\u26A0\uFE0F " : "") + Math.round(100 * r) + "%";
 }
 async function loadReports({
@@ -24369,7 +25127,7 @@ async function loadReports({
   const maxPage = 100;
   const dateFrom = days ? new Date(Date.now() - 24 * 60 * 60 * 1e3 * parseInt(days, 10)) : void 0;
   let latestDateReached = false;
-  let artifacts = [];
+  const artifacts = [];
   let res;
   do {
     const url = `https://api.github.com/repos/LedgerHQ/ledger-live/actions/artifacts?per_page=100&page=${page}`;
@@ -24404,10 +25162,10 @@ async function loadReports({
   const reports = (await promiseAllBatched(
     5,
     artifacts,
-    (artifact) => downloadArchive(
-      githubToken,
-      artifact.archive_download_url
-    ).then((report) => ({ artifact, report }))
+    (artifact) => downloadArchive(githubToken, artifact.archive_download_url).then((report) => ({
+      artifact,
+      report
+    }))
   )).filter(Boolean).filter(({ report }) => {
     if (environment) {
       return report.environment === environment;
@@ -24425,7 +25183,7 @@ function generateSuperReport(all, days) {
   const stats = {};
   all.forEach(({ report }) => {
     report.results.forEach(({ specName, existingMutationNames }) => {
-      let s = stats[specName] = stats[specName] || {
+      const s = stats[specName] = stats[specName] || {
         specName,
         fatalErrors: [],
         runs: 0,
@@ -24474,7 +25232,7 @@ function generateSuperReport(all, days) {
       });
     });
   });
-  let ctx = days ? `${days} last days` : "all available reports";
+  const ctx = days ? `${days} last days` : "all available reports";
   const coverageInfo = Object.values(stats).reduce(
     ([success, total], { mutations }) => {
       const m = Object.values(mutations);
@@ -24486,10 +25244,7 @@ function generateSuperReport(all, days) {
   const summary = `${ctx}: ${totalReports} runs, ${totalOperations} success txs. ${successRateDisplay(
     totalOperations,
     totalMutations
-  )} success rate. ${successRateDisplay(
-    coverageInfo[0],
-    coverageInfo[1]
-  )} coverage rate.`;
+  )} success rate. ${successRateDisplay(coverageInfo[0], coverageInfo[1])} coverage rate.`;
   reportMarkdownBody += `# Bot "super report" on ${ctx}
 `;
   reportMarkdownBody += "\n> What is the Bot and how does it work? [Everything is documented here!](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot)\n\n";
@@ -24502,10 +25257,7 @@ function generateSuperReport(all, days) {
     const txsAttempts = m.reduce((acc, m2) => acc + m2.runs, 0) || 0;
     const txsSuccess = successRateDisplay(txs, txsAttempts);
     const mutationsWithOneSuccess = m.filter((m2) => m2.success > 0);
-    const mutationCoverage = successRateDisplay(
-      mutationsWithOneSuccess.length,
-      m.length
-    );
+    const mutationCoverage = successRateDisplay(mutationsWithOneSuccess.length, m.length);
     return `|${specName}|${successRateDisplay(
       runs - fatalErrors.length,
       runs
@@ -24540,10 +25292,7 @@ function generateSuperReport(all, days) {
       reportMarkdownBody += "|--|--|--|--|\n";
       reportMarkdownBody += m.map(({ errors, success, runs, mutationName }) => {
         const grouped = groupErrors(errors);
-        return `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(
-          success,
-          runs
-        )}|${success ? success : "\u274C"}|${groupedErrors.filter((e) => grouped.some((e2) => e2.error === e.error)).map(({ index }) => index).join(", ")}|
+        return `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(success, runs)}|${success ? success : "\u274C"}|${groupedErrors.filter((e) => grouped.some((e2) => e2.error === e.error)).map(({ index }) => index).join(", ")}|
 `;
       }).join("");
       if (groupedErrors.length) {
@@ -24634,9 +25383,7 @@ function safeErrorDisplay(txt) {
   return txt.slice(0, 200).replace(/[\s`]/g, " ");
 }
 function groupErrors(errors) {
-  const grouped = (0, import_groupBy.default)(
-    errors.map((e) => groupSimilarError(safeErrorDisplay(e)))
-  );
+  const grouped = (0, import_groupBy.default)(errors.map((e) => groupSimilarError(safeErrorDisplay(e))));
   return Object.keys(grouped).map((error, i) => ({
     error,
     index: i + 1,
@@ -24654,10 +25401,7 @@ async function main() {
   const slackApiToken = core.getInput("slackApiToken");
   const environment = core.getInput("environment");
   const reports = await loadReports({ branch, days, githubToken, environment });
-  const { reportMarkdownBody, reportSlackText } = generateSuperReport(
-    reports,
-    days
-  );
+  const { reportMarkdownBody, reportSlackText } = generateSuperReport(reports, days);
   const sha = await getLatestCommitShaOfBranch({ githubToken, branch });
   const githubComment = await uploadCommentToGithubSha({
     sha,

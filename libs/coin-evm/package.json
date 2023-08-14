@@ -1,0 +1,88 @@
+{
+  "name": "@ledgerhq/coin-evm",
+  "version": "0.5.0",
+  "description": "Ledger EVM Coin integration",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "evm",
+    "Ethereum",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-evm",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ethersproject/shims": "^5.7.0",
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/domain-service": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/evm-tools": "workspace:^",
+    "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "axios": "0.26.1",
+    "bignumber.js": "^9.1.1",
+    "eip55": "^2.1.1",
+    "ethers": "5.7.2",
+    "expect": "^27.4.6",
+    "invariant": "^2.2.2",
+    "lodash": "^4.17.21",
+    "react-native-get-random-values": "^1.8.0",
+    "rxjs": "^6.6.7"
+  },
+  "devDependencies": {
+    "@types/invariant": "^2.2.2",
+    "@types/jest": "^29.2.4",
+    "@types/lodash": "^4.14.191",
+    "jest": "^28.1.1",
+    "ts-jest": "^28.0.5"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  }
+}

@@ -1,17 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import {
-  getDefaultExplorerView,
-  getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
   useCosmosFamilyMappedDelegations,
   useCosmosFamilyPreloadData,
@@ -61,6 +58,7 @@ import DateFromNow from "../../../components/DateFromNow";
 import AccountBanner from "../../../components/AccountBanner";
 import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
+import { useCanShowStake } from "../../../screens/Account/hooks/useCanShowStake";
 
 type Props = {
   account: CosmosAccount;
@@ -73,12 +71,12 @@ function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account) as CosmosAccount;
-  const delegations: CosmosMappedDelegation[] =
-    useCosmosFamilyMappedDelegations(mainAccount);
+  const delegations: CosmosMappedDelegation[] = useCosmosFamilyMappedDelegations(mainAccount);
 
   const currency = getAccountCurrency(mainAccount);
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
+  const route = useRoute();
 
   const { validators } = useCosmosFamilyPreloadData(account.currency.id);
 
@@ -103,9 +101,8 @@ function Delegations({ account }: Props) {
   });
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
-  const [banner, setBanner] = useState<
-    AccountBannerState & { description: string; cta: string }
-  >({
+  const canShowStake = useCanShowStake(currency);
+  const [banner, setBanner] = useState<AccountBannerState & { description: string; cta: string }>({
     display: false,
     description: "",
     cta: "",
@@ -131,13 +128,10 @@ function Delegations({ account }: Props) {
     }) => {
       setDelegation(undefined);
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
-        route,
-        {
-          screen,
-          params: { ...params, accountId: account.id },
-        },
-      );
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
     },
     [navigation, account.id],
   );
@@ -149,25 +143,34 @@ function Delegations({ account }: Props) {
         delegations.length === 0
           ? ScreenName.CosmosDelegationValidator
           : ScreenName.CosmosDelegationStarted,
+      params: {
+        source: route,
+      },
     });
-  }, [onNavigate, delegations]);
+  }, [onNavigate, delegations, route]);
 
   const onRedelegate = useCallback(() => {
     onNavigate({
       route: NavigatorName.CosmosRedelegationFlow,
       screen: ScreenName.CosmosRedelegationValidator,
       params: {
+        source: route,
+        validatorName: delegation?.validator?.name,
         accountId: account.id,
         validatorSrcAddress: delegation?.validatorAddress,
       },
     });
-  }, [onNavigate, delegation, account]);
+  }, [onNavigate, delegation, account, route]);
 
   useEffect(() => {
     const state = getCosmosBannerState({ ...account });
     const bannerText = getCosmosBannerProps(state, { t }, account);
-    setBanner({ ...state, ...bannerText });
-  }, [account, t]);
+    setBanner({
+      ...state,
+      ...bannerText,
+      display: state.display && canShowStake,
+    });
+  }, [account, t, canShowStake]);
 
   const onRedelegateLedger = () => {
     const { validatorSrcAddress, ledgerValidator } = { ...banner };
@@ -178,12 +181,14 @@ function Delegations({ account }: Props) {
       route: NavigatorName.CosmosRedelegationFlow,
       screen: ScreenName.CosmosDefaultRedelegationAmount,
       params: {
+        source: route,
         accountId: account.id,
         validatorSrcAddress,
         transaction: {
           ...transaction,
           sourceValidator: validatorSrcAddress,
         },
+        validatorName: ledgerValidator?.name,
         validatorSrc: worstValidator?.validator,
         validator: ledgerValidator,
         max: worstValidator?.amount,
@@ -225,10 +230,7 @@ function Delegations({ account }: Props) {
 
   const onOpenExplorer = useCallback(
     (address: string) => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
     [account.currency],
@@ -309,11 +311,7 @@ function Delegations({ account }: Props) {
                 {
                   label: t("cosmos.delegation.drawer.rewards"),
                   Component: (
-                    <LText
-                      numberOfLines={1}
-                      semiBold
-                      style={[styles.valueText]}
-                    >
+                    <LText numberOfLines={1} semiBold style={[styles.valueText]}>
                       {delegation.formattedPendingRewards ?? ""}
                     </LText>
                   ),
@@ -326,9 +324,7 @@ function Delegations({ account }: Props) {
                   label: t("cosmos.delegation.drawer.completionDate"),
                   Component: (
                     <LText numberOfLines={1} semiBold>
-                      <DateFromNow
-                        date={new Date(undelegation.completionDate).getTime()}
-                      />
+                      <DateFromNow date={new Date(undelegation.completionDate).getTime()} />
                     </LText>
                   ),
                 },
@@ -340,9 +336,7 @@ function Delegations({ account }: Props) {
                   label: t("cosmos.delegation.drawer.redelegatedFrom"),
                   Component: (
                     <Touchable
-                      onPress={() =>
-                        onOpenExplorer(redelegation.validatorSrcAddress)
-                      }
+                      onPress={() => onOpenExplorer(redelegation.validatorSrcAddress)}
                       event="DelegationOpenExplorer"
                     >
                       <LText
@@ -361,9 +355,7 @@ function Delegations({ account }: Props) {
                   label: t("cosmos.delegation.drawer.completionDate"),
                   Component: (
                     <LText numberOfLines={1} semiBold>
-                      <DateFromNow
-                        date={new Date(redelegation.completionDate).getTime()}
-                      />
+                      <DateFromNow date={new Date(redelegation.completionDate).getTime()} />
                     </LText>
                   ),
                 },
@@ -375,9 +367,7 @@ function Delegations({ account }: Props) {
 
   const actions = useMemo<DelegationDrawerActions>(() => {
     const rewardsDisabled =
-      !delegation ||
-      !delegation.pendingRewards ||
-      delegation.pendingRewards.isZero();
+      !delegation || !delegation.pendingRewards || delegation.pendingRewards.isZero();
 
     const redelegateEnabled = delegation && canRedelegate(account, delegation);
 
@@ -388,13 +378,8 @@ function Delegations({ account }: Props) {
           {
             label: t("delegation.actions.redelegate"),
             Icon: (props: IconProps) => (
-              <Circle
-                {...props}
-                bg={!redelegateEnabled ? colors.lightFog : colors.fog}
-              >
-                <RedelegateIcon
-                  color={!redelegateEnabled ? colors.grey : undefined}
-                />
+              <Circle {...props} bg={!redelegateEnabled ? colors.lightFog : colors.fog}>
+                <RedelegateIcon color={!redelegateEnabled ? colors.grey : undefined} />
               </Circle>
             ),
             disabled: !redelegateEnabled,
@@ -404,15 +389,8 @@ function Delegations({ account }: Props) {
           {
             label: t("delegation.actions.collectRewards"),
             Icon: (props: IconProps) => (
-              <Circle
-                {...props}
-                bg={
-                  rewardsDisabled ? colors.lightFog : rgba(colors.yellow, 0.2)
-                }
-              >
-                <ClaimRewardIcon
-                  color={rewardsDisabled ? colors.grey : undefined}
-                />
+              <Circle {...props} bg={rewardsDisabled ? colors.lightFog : rgba(colors.yellow, 0.2)}>
+                <ClaimRewardIcon color={rewardsDisabled ? colors.grey : undefined} />
               </Circle>
             ),
             disabled: rewardsDisabled,
@@ -424,15 +402,9 @@ function Delegations({ account }: Props) {
             Icon: (props: IconProps) => (
               <Circle
                 {...props}
-                bg={
-                  !undelegationEnabled
-                    ? colors.lightFog
-                    : rgba(colors.alert, 0.2)
-                }
+                bg={!undelegationEnabled ? colors.lightFog : rgba(colors.alert, 0.2)}
               >
-                <UndelegateIcon
-                  color={!undelegationEnabled ? colors.grey : undefined}
-                />
+                <UndelegateIcon color={!undelegationEnabled ? colors.grey : undefined} />
               </Circle>
             ),
             disabled: !undelegationEnabled,
@@ -490,11 +462,7 @@ function Delegations({ account }: Props) {
                 <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
               </Text>
               <LText semiBold style={styles.subLabel} color="grey">
-                <CounterValue
-                  currency={currency}
-                  value={totalRewardsAvailable}
-                  withPlaceholder
-                />
+                <CounterValue currency={currency} value={totalRewardsAvailable} withPlaceholder />
               </LText>
             </View>
             <Button
@@ -532,10 +500,7 @@ function Delegations({ account }: Props) {
           <AccountSectionLabel
             name={t("account.delegation.sectionLabel")}
             RightComponent={
-              <DelegationLabelRight
-                disabled={delegationDisabled}
-                onPress={onDelegate}
-              />
+              <DelegationLabelRight disabled={delegationDisabled} onPress={onDelegate} />
             }
           />
           {delegations.map((d, i) => (
@@ -557,10 +522,7 @@ function Delegations({ account }: Props) {
           {undelegations.map((d, i) => (
             <View
               key={d.validatorAddress}
-              style={[
-                styles.delegationsWrapper,
-                { backgroundColor: colors.card },
-              ]}
+              style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
             >
               <DelegationRow
                 delegation={d}
@@ -576,11 +538,7 @@ function Delegations({ account }: Props) {
   );
 }
 
-export default function CosmosDelegations({
-  account,
-}: {
-  account: AccountLike;
-}) {
+export default function CosmosDelegations({ account }: { account: AccountLike }) {
   if (!(account as CosmosAccount).cosmosResources) return null;
   return <Delegations account={account as CosmosAccount} />;
 }

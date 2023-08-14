@@ -27,10 +27,7 @@ type Props = {
 } & NavigationProps;
 
 export type NavigationProps = CompositeScreenProps<
-  StackNavigatorProps<
-    AccountSettingsNavigatorParamList,
-    ScreenName.AccountSettingsMain
-  >,
+  StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.AccountSettingsMain>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -59,8 +56,7 @@ class AccountSettings extends PureComponent<Props, State> {
   };
 
   deleteAccount = () => {
-    const { account, parentAccount, deleteAccount, navigation, route } =
-      this.props;
+    const { account, parentAccount, deleteAccount, navigation, route } = this.props;
     if (!account) return;
     const mainAccount = getMainAccount(account, parentAccount);
     mainAccount && deleteAccount(mainAccount);

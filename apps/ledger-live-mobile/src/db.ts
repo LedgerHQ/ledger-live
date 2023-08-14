@@ -1,16 +1,14 @@
 import { log } from "@ledgerhq/logs";
 import { atomicQueue } from "@ledgerhq/live-common/promise";
-import type {
-  Account,
-  AccountRaw,
-  PostOnboardingState,
-} from "@ledgerhq/types-live";
+import type { Account, AccountRaw, PostOnboardingState } from "@ledgerhq/types-live";
 import type {
   CounterValuesStateRaw,
   RateMapRaw,
   CounterValuesStatus,
 } from "@ledgerhq/live-common/countervalues/types";
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
+import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { BleState, ProtectState, SettingsState } from "./reducers/types";
@@ -61,12 +59,9 @@ export async function getNotifications(): Promise<Notifications> {
 export async function saveNotifications(obj: Notifications): Promise<void> {
   await store.save("notifications", obj);
 }
-export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(
-  unsafeGetCountervalues,
-);
-export const saveCountervalues: typeof unsafeSaveCountervalues = atomicQueue(
-  unsafeSaveCountervalues,
-);
+export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(unsafeGetCountervalues);
+export const saveCountervalues: typeof unsafeSaveCountervalues =
+  atomicQueue(unsafeSaveCountervalues);
 export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
   const keys = await getKeys(COUNTERVALUES_DB_PREFIX);
 
@@ -77,11 +72,7 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
   }
 
   return ((await store.get(keys)) as CounterValuesStateRaw[]).reduce(
-    (
-      prev: CounterValuesStateRaw,
-      val: RateMapRaw | CounterValuesStatus,
-      i: number,
-    ) =>
+    (prev: CounterValuesStateRaw, val: RateMapRaw | CounterValuesStatus, i: number) =>
       ({
         ...prev,
         [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
@@ -106,12 +97,11 @@ async function unsafeSaveCountervalues(
 ): Promise<void> {
   if (!changed) return;
   const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(
-    k =>
-      ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
+    k => ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
   );
-  const data = Object.entries(state).map<
-    [string, RateMapRaw | CounterValuesStatus]
-  >(([key, val]) => [`${COUNTERVALUES_DB_PREFIX}${key}`, val]);
+  const data = Object.entries(state).map<[string, RateMapRaw | CounterValuesStatus]>(
+    ([key, val]) => [`${COUNTERVALUES_DB_PREFIX}${key}`, val],
+  );
   await store.save(data);
 
   if (deletedKeys.length) {
@@ -184,22 +174,19 @@ async function unsafeSaveAccounts(
   const currentAccountKeys = onlyAccountsKeys(keys);
 
   /** format data for DB persist */
-  const dbData: [string, { data: AccountRaw; version: number }][] =
-    newAccounts.map(({ data }) => [
-      formatAccountDBKey(data.id),
-      {
-        data,
-        // FIXME: IS THIS VERSION THE MIGRATION VERSION ?
-        version: 1,
-      },
-    ]);
+  const dbData: [string, { data: AccountRaw; version: number }][] = newAccounts.map(({ data }) => [
+    formatAccountDBKey(data.id),
+    {
+      data,
+      // FIXME: IS THIS VERSION THE MIGRATION VERSION ?
+      version: 1,
+    },
+  ]);
 
   /** Find current DB accounts keys diff with app state to remove them */
   const deletedKeys =
     currentAccountKeys && currentAccountKeys.length
-      ? currentAccountKeys.filter(key =>
-          dbData.every(([accountKey]) => accountKey !== key),
-        )
+      ? currentAccountKeys.filter(key => dbData.every(([accountKey]) => accountKey !== key))
       : [];
   // we only save those who effectively changed
   const dbDataWithOnlyChanges = !stats
@@ -226,10 +213,8 @@ async function unsafeSaveAccounts(
   );
 }
 
-export const getAccounts: typeof unsafeGetAccounts =
-  atomicQueue(unsafeGetAccounts);
-export const saveAccounts: typeof unsafeSaveAccounts =
-  atomicQueue(unsafeSaveAccounts);
+export const getAccounts: typeof unsafeGetAccounts = atomicQueue(unsafeGetAccounts);
+export const saveAccounts: typeof unsafeSaveAccounts = atomicQueue(unsafeSaveAccounts);
 
 async function migrateAccountsIfNecessary(): Promise<void> {
   const keys = await store.keys();
@@ -254,16 +239,16 @@ async function migrateAccountsIfNecessary(): Promise<void> {
     }
 
     /** format old data to be saved on an account based key */
-    const accountsData: { data: Account }[] =
-      (oldAccounts && oldAccounts.active) || [];
-    const newDBData: [string, { data: Account; version: number }][] =
-      accountsData.map(({ data }) => [
+    const accountsData: { data: Account }[] = (oldAccounts && oldAccounts.active) || [];
+    const newDBData: [string, { data: Account; version: number }][] = accountsData.map(
+      ({ data }) => [
         formatAccountDBKey(data.id),
         {
           data,
           version: 1,
         },
-      ]);
+      ],
+    );
 
     /** save new formatted data then remove old data from DB */
     await store.save(newDBData);
@@ -276,9 +261,7 @@ export function getPostOnboardingState(): Promise<PostOnboardingState> {
   return store.get("postOnboarding") as Promise<PostOnboardingState>;
 }
 
-export async function savePostOnboardingState(
-  obj: PostOnboardingState,
-): Promise<void> {
+export async function savePostOnboardingState(obj: PostOnboardingState): Promise<void> {
   await store.save("postOnboarding", obj);
 }
 
@@ -289,4 +272,22 @@ export async function getProtect(): Promise<ProtectState> {
 
 export async function saveProtect(obj: ProtectState): Promise<void> {
   await store.save("protect", obj);
+}
+
+export async function deleteProtect(): Promise<void> {
+  await store.delete("protect");
+}
+
+export function useDB<State, Selected>(
+  key: string,
+  initialState: State,
+  // @ts-expect-error State !== Selected
+  selector: (state: State) => Selected = state => state,
+): [Selected, Dispatch<SetStateAction<State>>] {
+  return useDBRaw<State, Selected>({
+    initialState,
+    getter: () => store.get(key) as Promise<State>,
+    setter: (state: State) => store.save(key, state),
+    selector,
+  });
 }

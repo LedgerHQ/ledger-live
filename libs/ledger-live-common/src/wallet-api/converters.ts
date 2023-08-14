@@ -16,13 +16,12 @@ import { Families } from "@ledgerhq/wallet-api-core";
 const NAMESPACE = "c3c78073-6844-409e-9e75-171ab4c7f9a2";
 const uuidToAccountId = new Map<string, string>();
 
-export const getAccountIdFromWalletAccountId = (
-  walletAccountId: string
-): string | undefined => uuidToAccountId.get(walletAccountId);
+export const getAccountIdFromWalletAccountId = (walletAccountId: string): string | undefined =>
+  uuidToAccountId.get(walletAccountId);
 
 export function accountToWalletAPIAccount(
   account: AccountLike,
-  parentAccount?: Account
+  parentAccount?: Account,
 ): WalletAPIAccount {
   const walletApiId = uuidv5(account.id, NAMESPACE);
   uuidToAccountId.set(walletApiId, account.id);
@@ -65,7 +64,7 @@ export function accountToWalletAPIAccount(
 }
 
 export function currencyToWalletAPICurrency(
-  currency: WalletAPISupportedCurrency
+  currency: WalletAPISupportedCurrency,
 ): WalletAPICurrency {
   if (currency.type === "TokenCurrency") {
     return {
@@ -86,7 +85,7 @@ export function currencyToWalletAPICurrency(
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: currency.family as Families,
+    family: currency.family === "evm" ? "ethereum" : (currency.family as Families),
     color: currency.color,
     decimals: currency.units[0].magnitude,
   };
@@ -95,11 +94,15 @@ export function currencyToWalletAPICurrency(
 export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPITransaction,
   Transaction
-> = (tx) => {
+> = ({ tx, account, parentAccount }) => {
   const family = byFamily[tx.family];
 
   if (family) {
-    return family.getWalletAPITransactionSignFlowInfos(tx);
+    return family.getWalletAPITransactionSignFlowInfos({
+      tx,
+      account,
+      parentAccount,
+    });
   }
 
   return {

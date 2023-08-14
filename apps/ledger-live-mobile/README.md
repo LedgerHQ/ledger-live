@@ -54,26 +54,24 @@ pnpm dev:llm -- --reset-cache
 ### `pnpm mobile test`
 
 ### `pnpm mobile ios`
+
 or `open ios/ledgerlivemobile.xcworkspace` in XCode
 
 Note:
-In some case if you never run `pnpm dev:llm` you will probably encounter an error while building it.
-Try to run `pnpm dev:llm` then `pnpm mobile ios`
+You need to have metro running with `pnpm dev:llm` then `pnpm mobile ios` in another terminal
 
 ### `pnpm mobile android`
+
 or open `android/` in Android Studio.
 
+Note:
+You need to have metro running with `pnpm dev:llm` then `pnpm mobile android` in another terminal
 
 ### `pnpm mobile android:clean`
 
 Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings
 
-### `pnpm mobile android:import importDataString`
-
-Passing a base64 encoded export string (the export from desktop) will trigger an import activity and allow
-easy data setting for development.
-
-### `pnpm build:llm:ios` 
+### `pnpm build:llm:ios`
 
 Produces a development .ipa signed with the developer's current certificates (can be installed on phones added to our apple dev center). Not eligible for AppStore/TestFlight
 
@@ -103,17 +101,23 @@ pnpm mobile sync-locales
 
 ## Debugging
 
-### Javascript / React
+#### Flipper 🐬
 
-It's recommended to use [react-native-debugger](https://github.com/jhen0409/react-native-debugger) instead of Chrome dev tools as it features some additional React and Redux panels.
+[Flipper](https://fbflipper.com/) has been integrated in the project, so you can use it to get debugging information (like network monitoring) and find other useful data you could previously get from scattered places, here neatly presented in a single interface (like logs and crash reports for both platforms).
 
-- Get the react-native-debugger app from the [official repo](https://github.com/jhen0409/react-native-debugger)
-- Run it
-- Run Ledger Live Mobile in debug mode (`pnpm mobile ios` or `pnpm mobile android`)
-- Open React Native _Development menu_ (shake gesture)
-- Chose _Enable Remote JS Debugging_
+React Native integration seems pretty bleeding edge right now, so don't expect everything to work just yet.
 
-Keep in mind that doing so will run your Javascript code on a Chromium JS engine ([V8](https://v8.dev/)) on your computer, instead of iOS' system JS engine (JavaScript Core), or our bundled JS engine (JSC for now, soon to be replaced with [Hermes](https://github.com/facebook/hermes)) on Android.
+- Install [Flipper](https://fbflipper.com/) on your computer
+- Launch it 🚀
+- Run Ledger Live Mobile in debug as usual (set `DEBUG_RNDEBUGGER=1` in your `.env`)
+- No need to enable remote debug!
+
+List of Flipper's plugins that will help you to debug efficiently the application:
+
+- Hermes Debugger (RN)
+- Logs
+- React DevTools
+- Redux Debugger
 
 ### End to end testing
 
@@ -127,26 +131,15 @@ Run the app from the Apple or Google own IDE to get some native debugging featur
 
 ### And more
 
-#### Flipper 🐬
-
-[Flipper](https://fbflipper.com/) has been integrated in the project, so you can use it to get additional debugging information (like network monitoring) and find other useful data you could previously get from scattered places, here neatly presented in a single interface (like logs and crash reports for both platforms).
-
-React Native integration seems pretty bleeding edge right now, so don't expect everything to work just yet.
-
-- Install [Flipper](https://fbflipper.com/) on your computer
-- Launch it 🚀
-- Run Ledger Live Mobile in debug as usual
-- No need to enable remote debug!
-
 ### Working on iOS or Android emulators
 
 #### Connection via HTTP bridge
 
 It is possible to run Ledger Live Mobile on an emulator and connect to a Nano that is plugged in via USB.
 
-- Install the [ledger-live cli](https://github.com/LedgerHQ/ledger-live/wiki/LLC:cli).
+- Install the [ledger-live cli](https://developers.ledger.com/docs/coin/ledger-live-cli/).
 - Plug in your Nano to your computer.
-- Run `ledger-live proxy`. A server starts and displays variable environments that can be used to build Ledger-Live Mobile. For example:
+- Run `ledger-live proxy` or `pnpm run:cli proxy`. A server starts and displays variable environments that can be used to build Ledger-Live Mobile. For example:
   ```
   DEVICE_PROXY_URL=ws://localhost:8435
   DEVICE_PROXY_URL=ws://192.168.1.14:8435

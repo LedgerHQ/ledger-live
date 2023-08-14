@@ -88,7 +88,7 @@ const AdvancedOptions = ({
             onClick={onEditClick}
             ml={2}
           >
-            <Box horizontal alignItems="center" underlined>
+            <Box horizontal alignItems="center">
               {t("send.steps.details.edit")}
             </Box>
           </Button>

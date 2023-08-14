@@ -34,11 +34,7 @@ type Result =
       completeExchangeError: Error;
     };
 
-type CompleteExchangeAction = Action<
-  CompleteExchangeRequest,
-  CompleteExchangeState,
-  Result
->;
+type CompleteExchangeAction = Action<CompleteExchangeRequest, CompleteExchangeState, Result>;
 export type ExchangeRequestEvent =
   | { type: "complete-exchange" }
   | { type: "complete-exchange-requested" }
@@ -110,29 +106,17 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 }
 
 export const createAction = (
-  completeExchangeExec: (
-    arg0: CompleteExchangeRequest
-  ) => Observable<ExchangeRequestEvent>
+  completeExchangeExec: (arg0: CompleteExchangeRequest) => Observable<ExchangeRequestEvent>,
 ): CompleteExchangeAction => {
   const useHook = (
     reduxDevice: Device | null | undefined,
-    completeExchangeRequest: CompleteExchangeRequest
+    completeExchangeRequest: CompleteExchangeRequest,
   ): CompleteExchangeState => {
     const [state, setState] = useState(initialState);
-    const reduxDeviceFrozen = useFrozenValue(
-      reduxDevice,
-      state?.freezeReduxDevice
-    );
+    const reduxDeviceFrozen = useFrozenValue(reduxDevice, state?.freezeReduxDevice);
 
-    const {
-      provider,
-      transaction,
-      binaryPayload,
-      signature,
-      exchange,
-      exchangeType,
-      rateType,
-    } = completeExchangeRequest;
+    const { provider, transaction, binaryPayload, signature, exchange, exchangeType, rateType } =
+      completeExchangeRequest;
 
     useEffect(() => {
       const sub = concat(
@@ -148,13 +132,13 @@ export const createAction = (
           exchange,
           exchangeType,
           rateType,
-        })
+        }),
       )
         .pipe(
-          tap((e) => {
+          tap(e => {
             log("actions-completeExchange-event", JSON.stringify(e));
           }),
-          scan(reducer, initialState)
+          scan(reducer, initialState),
         )
         .subscribe(setState);
       return () => {

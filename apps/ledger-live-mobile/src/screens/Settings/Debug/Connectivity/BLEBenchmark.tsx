@@ -48,12 +48,7 @@ function GraphComponent({ width, height, data }: GraphProps) {
     .curve(shape.curveLinear)(points);
   return (
     <Svg height={height} width={width}>
-      <Path
-        d={line as string}
-        stroke={colors.live}
-        strokeWidth={4}
-        fill="none"
-      />
+      <Path d={line as string} stroke={colors.live} strokeWidth={4} fill="none" />
     </Svg>
   );
 }
@@ -80,10 +75,7 @@ const benchmark = ({
 
 const speedStatusSize = 10;
 class DebugBLEBenchmark extends Component<
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.DebugBLEBenchmark
-  >,
+  StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugBLEBenchmark>,
   {
     exchangeStats: number[][];
     speedStats: number[];

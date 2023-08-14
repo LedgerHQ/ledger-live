@@ -4,13 +4,7 @@ import { Flex, Text, Box } from "@ledgerhq/native-ui";
 import { NFTMetadata } from "@ledgerhq/types-live";
 
 const renderItem = ({ item }: { item: NFTMetadata["properties"][number] }) => (
-  <Flex
-    py={3}
-    px={4}
-    borderRadius={1}
-    borderWidth={"1px"}
-    borderColor={"neutral.c30"}
-  >
+  <Flex py={3} px={4} borderRadius={1} borderWidth={"1px"} borderColor={"neutral.c30"}>
     <Text variant={"subtitle"} uppercase color={"primary.c80"}>
       {item.key}
     </Text>

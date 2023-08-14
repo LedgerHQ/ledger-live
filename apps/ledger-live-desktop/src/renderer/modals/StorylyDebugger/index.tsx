@@ -2,18 +2,17 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { Box, Text, Flex } from "@ledgerhq/react-ui";
-// import { StorylyWrapper } from "~/renderer/components/Storyly";
 import Alert from "~/renderer/components/Alert";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import LanguageSelect from "~/renderer/screens/settings/sections/General/LanguageSelect";
 
-const StorylyDebugger = ({ name }: { name: string }) => {
+const StorylyDebugger = () => {
   return (
     <Modal
-      name={name}
+      name="MODAL_STORYLY_DEBUGGER"
       centered
-      render={({ onClose }: { onClose: void }) => (
+      render={({ onClose }: { onClose?: () => void }) => (
         <ModalBody
           onClose={onClose}
           onBack={undefined}
@@ -31,7 +30,6 @@ const StorylyDebugger = ({ name }: { name: string }) => {
                 {Object.entries(StorylyInstanceID).map(([key]) => (
                   <Box key={key}>
                     <Text variant="paragraph">{key}</Text>
-                    {/* <StorylyWrapper instanceID={value as StorylyInstanceID} /> */}
                   </Box>
                 ))}
               </Flex>

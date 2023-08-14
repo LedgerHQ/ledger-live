@@ -2,7 +2,7 @@ import { fromAccountRaw } from "../account";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { setSupportedCurrencies } from "../currencies";
 
-setSupportedCurrencies(["ethereum"]);
+setSupportedCurrencies(["ethereum", "bitcoin", "litecoin"]);
 
 const accounts: Account[] = [
   {
@@ -240,6 +240,6 @@ const accounts: Account[] = [
       },
     ],
   },
-].map((raw) => fromAccountRaw(raw as AccountRaw));
+].map(raw => fromAccountRaw(raw as AccountRaw));
 
 export default accounts;

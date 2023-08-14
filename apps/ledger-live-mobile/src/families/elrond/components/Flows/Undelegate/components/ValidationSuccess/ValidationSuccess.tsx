@@ -64,7 +64,13 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="ElrondDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="undelegate"
+        currency="egld"
+      />
       <PreventNativeBack />
 
       <ValidateSuccess
@@ -72,12 +78,8 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
         iconSize={24}
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="elrond.undelegation.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="elrond.undelegation.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="elrond.undelegation.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="elrond.undelegation.flow.steps.verification.success.text" />}
       />
     </View>
   );

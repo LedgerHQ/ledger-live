@@ -44,9 +44,7 @@ function BottomModalChoice({
       eventProperties={eventProperties}
     >
       <Flex pr={6} alignItems="center" justifyContent="center">
-        {iconName ? (
-          <Icon name={iconName} size={24} color="primary.c100" />
-        ) : null}
+        {iconName ? <Icon name={iconName} size={24} color="primary.c100" /> : null}
       </Flex>
       <Flex flex={1}>
         <Text variant="h3" fontWeight="semiBold" color="neutral.c100">

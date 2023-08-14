@@ -1,11 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, Pressable } from "react-native";
-import { Flex, Switch, Icons, Divider, Alert, Text } from "@ledgerhq/native-ui";
+import { Flex, Switch, IconsLegacy, Divider, Alert, Text } from "@ledgerhq/native-ui";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import Slider from "react-native-slider";
 import EventList from "./EventList";
@@ -22,12 +19,9 @@ enum Visibility {
 
 const PerformanceConsole = () => {
   const render = useEnv("PERFORMANCE_CONSOLE");
-  const [visibility, setVisibility] = useState<Visibility>(
-    Visibility.transparent,
-  );
+  const [visibility, setVisibility] = useState<Visibility>(Visibility.transparent);
   const [previewTransparent, setPreviewTransparent] = useState(false);
-  const [transparentHeightPercentage, setTransparentHeightPercentage] =
-    useState(60);
+  const [transparentHeightPercentage, setTransparentHeightPercentage] = useState(60);
   const [showExtraProps, setShowExtraProps] = useState(false);
   const onPressPerformanceButton = useCallback(() => {
     switch (visibility) {
@@ -87,27 +81,20 @@ const PerformanceConsole = () => {
         <Flex
           style={StyleSheet.absoluteFillObject}
           bg={"white"}
-          opacity={
-            visibility === Visibility.opaque && !previewTransparent ? 1 : 0.6
-          }
+          opacity={visibility === Visibility.opaque && !previewTransparent ? 1 : 0.6}
         />
         <SafeAreaView>
           <AnimatedFlex>
             {visibility === Visibility.opaque ? (
               <AnimatedFlex entering={FadeIn} exiting={FadeOut} p={4}>
-                <Flex
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  mb={3}
-                >
+                <Flex flexDirection="row" alignItems="center" justifyContent="space-between" mb={3}>
                   <Switch
                     checked={showExtraProps}
                     onChange={setShowExtraProps}
                     label="Show all reports properties"
                   />
                   <Pressable onPress={handleClose}>
-                    <Icons.CloseMedium size={25} color="black" />
+                    <IconsLegacy.CloseMedium size={25} color="black" />
                   </Pressable>
                 </Flex>
                 <Flex>

@@ -16,8 +16,7 @@ function AppIcon({ size = 48, name, icon, isDisabled }: Props) {
   const [imageLoaded, setImageLoaded] = useState(true);
   const handleImageLoad = useCallback(() => setImageLoaded(true), []);
   const handleImageError = useCallback(() => setImageLoaded(false), []);
-  const firstLetter =
-    typeof name === "string" && name[0] ? name[0].toUpperCase() : "";
+  const firstLetter = typeof name === "string" && name[0] ? name[0].toUpperCase() : "";
   return (
     <View
       style={[

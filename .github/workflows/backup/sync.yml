@@ -1,0 +1,32 @@
+name: Sync remotes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Git stuff
+        run: |
+          git config checkout.defaultRemote origin
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+          git fetch -n origin
+      - name: Execute shell script
+        env:
+          PUSH_CHANGES: 1
+        run: ./tools/scripts/sync_remotes.sh

@@ -2,10 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import type {
-  Transaction,
-  NearAccount,
-} from "@ledgerhq/live-common/families/near/types";
+import type { Transaction, NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -20,10 +17,7 @@ import type {
 import type { NearWithdrawingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    NearWithdrawingFlowParamList,
-    ScreenName.NearWithdrawingAmount
-  >
+  StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingAmount>
 >;
 
 function WithdrawingAmount({ navigation, route }: Props) {

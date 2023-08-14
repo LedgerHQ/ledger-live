@@ -1,23 +1,23 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-
-import { Flex, Text, Icons, Link } from "@ledgerhq/react-ui";
+import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
-
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
 import CheckBox from "~/renderer/components/CheckBox";
-import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
+import { Account } from "@ledgerhq/types-live";
+import { getLLDCoinFamily } from "~/renderer/families";
+import { ManageAction } from "~/renderer/families/types";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
-export const CheckBoxContainer: ThemedComponent<{ state: string }> = styled(Flex)`
+export const CheckBoxContainer: typeof Flex = styled(Flex)`
   & > div {
     column-gap: 15px;
   }
@@ -36,15 +36,22 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   const { t } = useTranslation();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
-  const [action, setAction] = useState<object>({});
+  // FIXME action is not used?
+  const [action, setAction] = useState<ManageAction | undefined>();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const { account, parentAccount } = props;
 
-  const id = account.currency.id;
-  const supportLink = receiveStakingFlowConfig?.params[id]?.supportLink;
-  const manage = perFamilyManageActions[account.currency.family];
-  const familyManageActions = manage && manage({ account, parentAccount });
+  const id = account && "currency" in account ? account.currency?.id : undefined;
+  const supportLink = id ? receiveStakingFlowConfig?.params[id]?.supportLink : undefined;
+
+  const manage =
+    account && account.type === "Account"
+      ? getLLDCoinFamily(account.currency.family).accountHeaderManageActions
+      : null;
+
+  const familyManageActions =
+    account && manage ? manage({ account: account as Account, parentAccount }) : undefined;
 
   useEffect(() => {
     const manageList =
@@ -52,6 +59,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     const newAction = manageList && manageList.find(item => item.key === "Stake");
     const newTitle = t(`receive.steps.staking.${id}.title`);
     const newDescription = t(`receive.steps.staking.${id}.description`);
+    // FIXME fix this code. https://ledgerhq.atlassian.net/browse/LIVE-7343
     if (JSON.stringify(title) !== JSON.stringify(newTitle)) {
       setTitle(newTitle);
     }
@@ -85,7 +93,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
 
   const onChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, value);
+    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
     setDoNotShowAgain(value);
     track("button_clicked", {
       button: "not_show",
@@ -104,7 +112,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
         {description}
       </Text>
       {supportLink && (
-        <Link Icon={Icons.ExternalLinkMedium} onClick={openLink} mt={7} mb={7} type={"color"}>
+        <Link Icon={IconsLegacy.ExternalLinkMedium} onClick={openLink} mt={7} mb={7} type={"color"}>
           {t("receive.steps.staking.link")}
         </Link>
       )}
@@ -115,12 +123,17 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   );
 };
 
+const providerName = "Ledger";
+
 export const StepReceiveStakingFooter = (props: StepProps) => {
   const { t } = useTranslation();
-  const [action, setAction] = useState({});
+  const [action, setAction] = useState<ManageAction | undefined>();
   const { account, parentAccount, closeModal } = props;
-  const manage = perFamilyManageActions[account.currency.family];
-  const familyManageActions = manage && manage({ account, parentAccount });
+  const specific =
+    account && account.type === "Account" ? getLLDCoinFamily(account.currency.family) : null;
+  const manage = specific?.accountHeaderManageActions;
+  const familyManageActions =
+    manage && account && manage({ account: account as Account, parentAccount });
 
   useEffect(() => {
     const manageList =
@@ -138,22 +151,22 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
         .filter(e => e !== "#")
         .join("/"),
       flow: "stake",
-      currency: account?.currency?.name,
-      provider: action?.provider?.name || "Ledger",
+      currency: account && "currency" in account ? account?.currency?.name : undefined,
+      provider: providerName,
       modal: "receive",
-      account,
+      account: account && getAccountName(account),
     };
-  }, [account, action?.provider?.name]);
+  }, [account]);
 
   const onStake = useCallback(() => {
-    if (action?.onClick) {
+    if (action && "onClick" in action && action?.onClick) {
       track("button_clicked", {
         button: "stake",
         ...getTrackProperties(),
       });
 
       closeModal();
-      action.onClick();
+      (action.onClick as () => void)();
     } else {
       closeModal();
     }
@@ -172,7 +185,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       <Button onClick={onCloseModal}>{t("receive.steps.staking.footer.dismiss")}</Button>
       <Button variant="color" onClick={onStake}>
         {t("receive.steps.staking.footer.stake", {
-          provider: action?.provider?.name ? action?.provider?.name : "Ledger",
+          provider: providerName,
         })}
       </Button>
     </>

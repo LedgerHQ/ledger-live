@@ -1,9 +1,9 @@
 import { Context, ProbotOctokit } from "probot";
 
-type WorkflowRunPayload = Context<"workflow_run">["payload"];
-type CheckRunPayload = Context<"check_run">["payload"];
-type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
-type Octokit = InstanceType<typeof ProbotOctokit>;
+export type WorkflowRunPayload = Context<"workflow_run">["payload"];
+export type CheckRunPayload = Context<"check_run">["payload"];
+export type GetInputsPayload = WorkflowRunPayload | CheckRunPayload;
+export type Octokit = InstanceType<typeof ProbotOctokit>;
 export type PullRequestMetadata = {
   number: number;
   head_sha: string;
@@ -13,10 +13,9 @@ export type PullRequestMetadata = {
   base_owner: string;
   is_fork: boolean;
 };
-export type CheckSuite = Awaited<
-  ReturnType<Octokit["checks"]["getSuite"]>
->["data"];
+export type CheckSuite = Awaited<ReturnType<Octokit["checks"]["getSuite"]>>["data"];
 
+export const SYNC_ACTION = "sync_action";
 export const REPO_OWNER = "LedgerHQ";
 export const BOT_APP_ID = 198164;
 export const WATCHER_CHECK_RUN_NAME = "@@PR • Watcher 🪬";
@@ -29,19 +28,14 @@ export enum RUNNERS {
 const commonGetInputs = (
   payload: GetInputsPayload,
   metadata?: PullRequestMetadata,
-  localRef?: string
+  localRef?: string,
 ) => {
   return "workflow_run" in payload
     ? {
         login: payload.workflow_run.actor.login,
-        ref:
-          localRef ??
-          metadata?.head_branch ??
-          payload.workflow_run.pull_requests[0]?.head.ref,
+        ref: localRef ?? metadata?.head_branch ?? payload.workflow_run.pull_requests[0]?.head.ref,
         base_ref:
-          metadata?.base_branch ||
-          payload.workflow_run.pull_requests[0]?.base.ref ||
-          "develop",
+          metadata?.base_branch || payload.workflow_run.pull_requests[0]?.base.ref || "develop",
       }
     : {
         login: payload.sender.login,
@@ -58,7 +52,15 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (
+      payload: GetInputsPayload,
+      metadata?: PullRequestMetadata,
+      localRef?: string,
+      draft?: boolean,
+    ) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return { ...common, draft: `${draft}` };
+    },
   },
   "build-desktop-external.yml": {
     checkRunName: "@Desktop • Build App (external)",
@@ -68,7 +70,15 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (
+      payload: GetInputsPayload,
+      metadata?: PullRequestMetadata,
+      localRef?: string,
+      draft?: boolean,
+    ) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return { ...common, draft: `${draft}` };
+    },
   },
   "test-desktop.yml": {
     checkRunName: "@Desktop • Test App",
@@ -78,7 +88,15 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (
+      payload: GetInputsPayload,
+      metadata?: PullRequestMetadata,
+      localRef?: string,
+      draft?: boolean,
+    ) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return { ...common, draft: `${draft}` };
+    },
   },
   "test-desktop-external.yml": {
     checkRunName: "@Desktop • Test App (external)",
@@ -88,12 +106,19 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (
+      payload: GetInputsPayload,
+      metadata?: PullRequestMetadata,
+      localRef?: string,
+      draft?: boolean,
+    ) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return { ...common, draft: `${draft}` };
+    },
   },
   "build-mobile.yml": {
     checkRunName: "@Mobile • Build App",
-    description:
-      "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
+    description: "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.internal,
     required: true,
     affected: ["live-mobile"],
@@ -102,8 +127,7 @@ export const WORKFLOWS = {
   },
   "build-mobile-external.yml": {
     checkRunName: "@Mobile • Build App (external)",
-    description:
-      "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
+    description: "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.external,
     required: true,
     affected: ["live-mobile"],
@@ -136,28 +160,19 @@ export const WORKFLOWS = {
     required: true,
     affected: [/^libs\/.*/],
     summaryFile: "summary.json",
-    getInputs: (
-      payload: GetInputsPayload,
-      metadata?: PullRequestMetadata,
-      localRef?: string
-    ) => {
+    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata, localRef?: string) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
             ref:
-              localRef ??
-              metadata?.head_branch ??
-              payload.workflow_run.pull_requests[0]?.head.ref,
+              localRef ?? metadata?.head_branch ?? payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:
-              metadata?.base_branch ||
-              payload.workflow_run.pull_requests[0]?.base.ref ||
-              "develop",
+              metadata?.base_branch || payload.workflow_run.pull_requests[0]?.base.ref || "develop",
           }
         : {
             login: payload.sender.login,
             ref: payload.check_run.pull_requests[0]?.head.ref,
-            since_branch:
-              payload.check_run.pull_requests[0]?.base.ref || "develop",
+            since_branch: payload.check_run.pull_requests[0]?.base.ref || "develop",
           };
     },
   },

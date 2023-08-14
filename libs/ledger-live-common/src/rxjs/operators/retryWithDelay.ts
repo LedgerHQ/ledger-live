@@ -13,24 +13,21 @@ import { throwIf } from "./throwIf";
  * @param count The number of times the operator will retry the execution.
  *              Defaults to `1`.
  */
-export function retryWithDelay<T>(
-  delay: number,
-  count = 1
-): MonoTypeOperatorFunction<T> {
-  return (input) =>
+export function retryWithDelay<T>(delay: number, count = 1): MonoTypeOperatorFunction<T> {
+  return input =>
     input.pipe(
-      retryWhen((errors) =>
+      retryWhen(errors =>
         errors.pipe(
           scan((acc, error) => ({ count: acc.count + 1, error }), {
             count: 0,
             error: undefined as any,
           }),
           throwIf(
-            (current) => current.count > count,
-            (current) => current.error
+            current => current.count > count,
+            current => current.error,
           ),
-          delayOperator(delay)
-        )
-      )
+          delayOperator(delay),
+        ),
+      ),
     );
 }

@@ -33,9 +33,7 @@ function Allocation() {
   const { t } = useTranslation();
 
   const renderItem = useCallback(
-    ({ item }: { item: DistributionItem; index: number }) => (
-      <DistributionCard item={item} />
-    ),
+    ({ item }: { item: DistributionItem; index: number }) => <DistributionCard item={item} />,
     [],
   );
 

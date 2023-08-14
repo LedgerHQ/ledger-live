@@ -2,14 +2,10 @@ import React, { useState, useMemo, useCallback } from "react";
 import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import { Text, Input, Flex } from "@ledgerhq/react-ui";
+import { Text, Input, Flex, Switch } from "@ledgerhq/react-ui";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { InputRenderRightContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";
-import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
-import SwitchV2 from "~/renderer/components/Switch";
 import Alert from "~/renderer/components/Alert";
-
-const Switch = withV2StyleProvider(SwitchV2);
 
 const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = props => {
   const { flagName, flagValue } = props;
@@ -28,9 +24,10 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
     ...pureValue
   } = flagValue || {};
 
-  const stringifiedPureValue = useMemo(() => (pureValue ? JSON.stringify(pureValue) : undefined), [
-    pureValue,
-  ]);
+  const stringifiedPureValue = useMemo(
+    () => (pureValue ? JSON.stringify(pureValue) : undefined),
+    [pureValue],
+  );
 
   const inputValueDefaulted = inputValue || stringifiedPureValue;
 
@@ -69,12 +66,9 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
     }
   }, [inputValueDefaulted]);
 
-  const handleSwitchChange = useCallback(
-    enabled => {
-      featureFlagsProvider.overrideFeature(flagName, { ...flagValue, enabled });
-    },
-    [featureFlagsProvider, flagName, flagValue],
-  );
+  const handleSwitchChange = useCallback(() => {
+    featureFlagsProvider.overrideFeature(flagName, { ...flagValue, enabled: !isChecked });
+  }, [featureFlagsProvider, flagName, flagValue, isChecked]);
 
   return (
     <Flex flexDirection="column" pl={6} rowGap={3}>
@@ -90,7 +84,7 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
             onChange={handleInputChange}
             renderRight={() => (
               <InputRenderRightContainer>
-                <Switch isChecked={isChecked} onChange={handleSwitchChange} />
+                <Switch name="toggle" checked={isChecked} onChange={handleSwitchChange} />
               </InputRenderRightContainer>
             )}
           />
@@ -103,7 +97,7 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
         </Button>
       </Flex>
 
-      <Flex p={3} backgroundColor="neutral.c30">
+      <Flex p={3} backgroundColor="neutral.c30" overflowX={"scroll"}>
         <Text whiteSpace="pre">{JSON.stringify(pureValue, null, 2)}</Text>
       </Flex>
     </Flex>

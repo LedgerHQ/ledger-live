@@ -6,7 +6,7 @@ import { create, Infer } from "superstruct";
 import { PARSED_PROGRAMS } from "../../program/constants";
 
 export function parseSystemInstruction(
-  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SYSTEM }
+  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SYSTEM },
 ): SystemInstructionDescriptor {
   const parsed = create(ix.parsed, ParsedInfo);
   const { type: rawType, info } = parsed;
@@ -23,8 +23,8 @@ export function parseSystemInstruction(
 
 export type SystemInstructionDescriptor = {
   [K in SystemInstructionType]: {
-    title: typeof IX_TITLES[K];
+    title: (typeof IX_TITLES)[K];
     type: K;
-    info: Infer<typeof IX_STRUCTS[K]>;
+    info: Infer<(typeof IX_STRUCTS)[K]>;
   };
 }[SystemInstructionType];

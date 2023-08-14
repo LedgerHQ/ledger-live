@@ -10,10 +10,7 @@ type Props = {
 
 function Placeholder({ width, containerHeight, style }: Props) {
   return (
-    <Flex
-      justifyContent="center"
-      {...(containerHeight ? { height: containerHeight } : {})}
-    >
+    <Flex justifyContent="center" {...(containerHeight ? { height: containerHeight } : {})}>
       <Flex
         height={8}
         borderRadius={4}

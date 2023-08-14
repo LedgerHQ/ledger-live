@@ -4,11 +4,7 @@ import flatMap from "lodash/flatMap";
 import { getAccountCurrency } from "../../account";
 import type { Transaction } from "../../generated/types";
 import { modes } from "./modules";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 
 function hexAsBuffer(hex) {
   if (!hex) return;
@@ -42,8 +38,7 @@ const options = [
     name: "mode",
     alias: "m",
     type: String,
-    desc:
-      "action to do (possible modes: " + Object.keys(modes).join(" | ") + ")",
+    desc: "action to do (possible modes: " + Object.keys(modes).join(" | ") + ")",
   },
   {
     name: "gasLimit",
@@ -62,10 +57,7 @@ const options = [
   },
 ];
 
-function inferAccounts(
-  account: Account,
-  opts: Record<string, any>
-): AccountLikeArray {
+function inferAccounts(account: Account, opts: Record<string, any>): AccountLikeArray {
   invariant(account.currency.family === "ethereum", "ethereum family");
 
   if (!opts.token) {
@@ -73,12 +65,12 @@ function inferAccounts(
     return accounts;
   }
 
-  return opts.token.map((token) => {
+  return opts.token.map(token => {
     const subAccounts = account.subAccounts || [];
 
     if (token) {
       const tkn = token.toLowerCase();
-      const subAccount = subAccounts.find((t) => {
+      const subAccount = subAccounts.find(t => {
         const currency = getAccountCurrency(t);
         return tkn === currency.ticker.toLowerCase() || tkn === currency.id;
       });
@@ -88,7 +80,7 @@ function inferAccounts(
           "token account '" +
             token +
             "' not found. Available: " +
-            subAccounts.map((t) => getAccountCurrency(t).ticker).join(", ")
+            subAccounts.map(t => getAccountCurrency(t).ticker).join(", "),
         );
       }
 
@@ -104,7 +96,7 @@ function inferTransactions(
     mainAccount: Account;
   }>,
   opts: Record<string, any>,
-  { inferAmount }: any
+  { inferAmount }: any,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account, mainAccount }) => {
     invariant(transaction.family === "ethereum", "ethereum family");

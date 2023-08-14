@@ -1,6 +1,7 @@
 import type { Transaction } from "./types";
 import type { Account } from "@ledgerhq/types-live";
-import { Units, utils } from "@crypto-com/chain-jslib";
+import { Units, utils } from "@crypto-org-chain/chain-jslib";
+import { SIGN_MODE } from "@crypto-org-chain/chain-jslib/lib/dist/transaction/types";
 import { getAccountParams } from "./api/sdk";
 import { getCroSdk } from "./logic";
 
@@ -26,17 +27,10 @@ const getTransactionAmount = (a: Account, t: Transaction) => {
  * @param {Account} a
  * @param {Transaction} t
  */
-export const buildTransaction = async (
-  a: Account,
-  t: Transaction,
-  publicKey: string
-) => {
+export const buildTransaction = async (a: Account, t: Transaction, publicKey: string) => {
   const croSdk = getCroSdk(a.currency.id);
   const address = a.freshAddress;
-  const { accountNumber, sequence } = await getAccountParams(
-    address,
-    a.currency.id
-  );
+  const { accountNumber, sequence } = await getAccountParams(address, a.currency.id);
   const rawTx = new croSdk.RawTransaction();
   rawTx.setFee(new croSdk.Coin((t.fees || 0).toString(), Units.BASE));
 
@@ -56,7 +50,7 @@ export const buildTransaction = async (
       publicKey: utils.Bytes.fromHexString(publicKey),
       accountNumber: new utils.Big(accountNumber),
       accountSequence: new utils.Big(sequence),
-      signMode: 0,
+      signMode: SIGN_MODE.LEGACY_AMINO_JSON,
     })
     .toSignable();
   return signableTx;

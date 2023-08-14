@@ -80,7 +80,7 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
     p.error &&
     !p.disabled &&
     css`
-      border: 1px solid ${p.theme.colors.error.c100};
+      border: 1px solid ${p.theme.colors.error.c50};
     `};
 
   ${(p) =>
@@ -107,7 +107,7 @@ const BaseInput = styled.TextInput.attrs((p) => ({
 `;
 
 const InputErrorContainer = styled(Text)`
-  color: ${(p) => p.theme.colors.error.c100};
+  color: ${(p) => p.theme.colors.error.c50};
   margin-left: 12px;
 `;
 

@@ -51,16 +51,10 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.2

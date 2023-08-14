@@ -2,17 +2,8 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import {
-  Image,
-  ImageErrorEventData,
-  NativeSyntheticEvent,
-  Pressable,
-} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { Image, ImageErrorEventData, NativeSyntheticEvent, Pressable } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import useResizedImage, {
@@ -30,10 +21,7 @@ import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsCo
 import ContrastChoice from "../../components/CustomImage/ContrastChoice";
 import { ScreenName } from "../../const";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import ForceTheme from "../../components/theme/ForceTheme";
 import { TrackScreen } from "../../analytics";
 
@@ -72,10 +60,7 @@ const previewDimensions = {
 const analyticsScreenName = "Choose contrast";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageStep2Preview
-  >
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep2Preview>
 >;
 
 /**
@@ -92,15 +77,16 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
   const initialIndex = 0;
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
   const animSelectedIndex = useSharedValue(initialIndex);
-  const [processorPreviewImage, setProcessorPreviewImage] =
-    useState<ProcessorPreviewResult | null>(null);
+  const [processorPreviewImage, setProcessorPreviewImage] = useState<ProcessorPreviewResult | null>(
+    null,
+  );
   const [rawResultLoading, setRawResultLoading] = useState(false);
 
   const { t } = useTranslation();
 
   const { params } = route;
 
-  const { cropResult: croppedImage, device, baseImageFile } = params;
+  const { cropResult: croppedImage, device, baseImageFile, imageType } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -128,14 +114,13 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
 
   /** RESULT IMAGE HANDLING */
 
-  const handlePreviewResult: ImageProcessorProps["onPreviewResult"] =
-    useCallback(
-      data => {
-        setProcessorPreviewImage(data);
-        setLoading(false);
-      },
-      [setProcessorPreviewImage],
-    );
+  const handlePreviewResult: ImageProcessorProps["onPreviewResult"] = useCallback(
+    data => {
+      setProcessorPreviewImage(data);
+      setLoading(false);
+    },
+    [setProcessorPreviewImage],
+  );
 
   const handleRawResult: ImageProcessorProps["onRawResult"] = useCallback(
     (data: ProcessorRawResult) => {
@@ -151,16 +136,11 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
         imagePreview: processorPreviewImage,
         baseImageFile,
         device,
+        imageType,
       });
       setRawResultLoading(false);
     },
-    [
-      navigation,
-      setRawResultLoading,
-      processorPreviewImage,
-      device,
-      baseImageFile,
-    ],
+    [navigation, setRawResultLoading, processorPreviewImage, device, baseImageFile, imageType],
   );
 
   const handlePreviewImageError = useCallback(
@@ -201,10 +181,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
   );
 
   return (
-    <SafeAreaView
-      edges={["bottom"]}
-      style={{ flex: 1, justifyContent: "space-between" }}
-    >
+    <SafeAreaView edges={["bottom"]} style={{ flex: 1, justifyContent: "space-between" }}>
       <TrackScreen category={analyticsScreenName} />
       {resizedImage?.imageBase64DataUri && (
         <ImageProcessor
@@ -227,8 +204,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
             style={{
               width: previewDimensions.width,
               height:
-                (targetDisplayDimensions.height /
-                  targetDisplayDimensions.width) *
+                (targetDisplayDimensions.height / targetDisplayDimensions.width) *
                 previewDimensions.width,
             }}
             resizeMode="contain"

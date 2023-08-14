@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Flex, Icons } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -15,16 +15,13 @@ type Props = {
   deviceName: string;
   onRefreshDeviceInfo: () => void;
   device: Device;
+  disabled?: boolean;
 };
 
 const PenIcon = styled.div`
   display: flex;
-  border-radius: 999px;
-  background: ${p => p.theme.colors.blueTransparentBackground};
   align-items: center;
   justify-content: center;
-  height: 32px;
-  width: 32px;
   cursor: pointer;
 `;
 
@@ -32,6 +29,7 @@ const DeviceName: React.FC<Props> = ({
   deviceName,
   deviceInfo,
   device,
+  disabled,
   onRefreshDeviceInfo,
 }: Props) => {
   const model = identifyTargetId(deviceInfo.targetId as number);
@@ -49,25 +47,27 @@ const DeviceName: React.FC<Props> = ({
   );
 
   const openDeviceRename = useCallback(() => {
-    setDrawer(EditDeviceName, {
-      key: name,
-      device,
-      onSetName: onSuccess,
-      deviceName: name,
-    });
+    name &&
+      setDrawer(EditDeviceName, {
+        key: name,
+        device,
+        onSetName: onSuccess,
+        deviceName: name,
+        deviceInfo,
+      });
     track("Page Manager RenameDeviceEntered");
-  }, [device, name, onSuccess]);
+  }, [device, deviceInfo, name, onSuccess]);
 
   return (
     <Flex alignItems="center">
-      <Flex onClick={openDeviceRename}>
+      <Flex onClick={!disabled ? openDeviceRename : undefined}>
         <Flex mb={2} alignItems="center">
           <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={6} mr={3}>
             {name || deviceInfo.version}
           </Text>
           {editSupported ? (
             <PenIcon>
-              <Icons.PenMedium color="primary.c90" size={17} />
+              <IconsLegacy.PenMedium color={disabled ? "neutral.c50" : "neutral.c100"} size={17} />
             </PenIcon>
           ) : null}
         </Flex>

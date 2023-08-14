@@ -25,7 +25,7 @@ const mockedGetExchangeRates = jest.mocked(getExchangeRates, true);
 const mockedRatesPromise = mockGetExchangeRates(
   { fromAccount } as any,
   { amount: new BigNumber(1) } as any,
-  BTC
+  BTC,
 );
 
 describe("useProviderRates", () => {
@@ -97,7 +97,7 @@ describe("useProviderRates", () => {
       {} as any,
     ];
 
-    testProps.forEach((initialProps) => {
+    testProps.forEach(initialProps => {
       renderHook(useProviderRates, {
         initialProps,
       });
@@ -160,7 +160,7 @@ describe("useProviderRates", () => {
       expect.objectContaining({
         provider: "changelly",
         tradeMethod: "fixed",
-      })
+      }),
     );
 
     act(() => {
@@ -180,7 +180,7 @@ describe("useProviderRates", () => {
       expect.objectContaining({
         provider: "changelly",
         tradeMethod: "float",
-      })
+      }),
     );
   });
 
@@ -207,7 +207,7 @@ describe("useProviderRates", () => {
             ...rate,
             error: new Error("kaboom"),
           }
-        : rate
+        : rate,
     );
     mockedGetExchangeRates.mockResolvedValue(mockedRatesWithSingleError);
 
@@ -215,16 +215,14 @@ describe("useProviderRates", () => {
       initialProps: baseInitalProps,
     });
     await waitForNextUpdate({ timeout: 1000 });
-    expect(result.current.rates.value).not.toContain(
-      mockedRatesWithSingleError[0]
-    );
+    expect(result.current.rates.value).not.toContain(mockedRatesWithSingleError[0]);
     expect(result.current.rates.value?.length).toEqual(3);
     expect(result.current.rates.status).toBe("success");
   });
 
   it("should dispatch an error if all the rates contain an error", async () => {
     const error = new Error("kaboom");
-    const mockedRatesWithError = mockedRates.map((rate) => ({
+    const mockedRatesWithError = mockedRates.map(rate => ({
       ...rate,
       error,
     }));
@@ -240,33 +238,21 @@ describe("useProviderRates", () => {
 
   // FIXME: errors don't appear to be sorted by amount. Changing the amounts has no effect on the test passing or failing
   it("should sort SwapExchangeRateAmountTooLow based on amount", async () => {
-    const swapExchangeRateAmountTooLowError1 = new SwapExchangeRateAmountTooLow(
-      undefined,
-      {
-        amount: new BigNumber(1),
-      }
-    );
+    const swapExchangeRateAmountTooLowError1 = new SwapExchangeRateAmountTooLow(undefined, {
+      amount: new BigNumber(1),
+    });
 
-    const swapExchangeRateAmountTooLowError2 = new SwapExchangeRateAmountTooLow(
-      undefined,
-      {
-        amount: new BigNumber(2),
-      }
-    );
+    const swapExchangeRateAmountTooLowError2 = new SwapExchangeRateAmountTooLow(undefined, {
+      amount: new BigNumber(2),
+    });
 
-    const swapExchangeRateAmountTooLowError3 = new SwapExchangeRateAmountTooLow(
-      undefined,
-      {
-        amount: new BigNumber(2.5),
-      }
-    );
+    const swapExchangeRateAmountTooLowError3 = new SwapExchangeRateAmountTooLow(undefined, {
+      amount: new BigNumber(2.5),
+    });
 
-    const swapExchangeRateAmountTooLowError4 = new SwapExchangeRateAmountTooLow(
-      undefined,
-      {
-        amount: new BigNumber(0.5),
-      }
-    );
+    const swapExchangeRateAmountTooLowError4 = new SwapExchangeRateAmountTooLow(undefined, {
+      amount: new BigNumber(0.5),
+    });
 
     mockedRates[0].error = swapExchangeRateAmountTooLowError1;
     mockedRates[1].error = swapExchangeRateAmountTooLowError2;
@@ -279,32 +265,26 @@ describe("useProviderRates", () => {
     });
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.status).toBe("error");
-    expect(result.current.rates.error).toStrictEqual(
-      swapExchangeRateAmountTooLowError4
-    );
+    expect(result.current.rates.error).toStrictEqual(swapExchangeRateAmountTooLowError4);
     expect(result.current.rates.value).toBeUndefined();
   });
 
   it("should sort SwapExchangeRateAmountTooHigh based on amount", async () => {
-    const swapExchangeRateAmountTooHighError1 =
-      new SwapExchangeRateAmountTooHigh(undefined, {
-        amount: new BigNumber(1),
-      });
+    const swapExchangeRateAmountTooHighError1 = new SwapExchangeRateAmountTooHigh(undefined, {
+      amount: new BigNumber(1),
+    });
 
-    const swapExchangeRateAmountTooHighError2 =
-      new SwapExchangeRateAmountTooHigh(undefined, {
-        amount: new BigNumber(2),
-      });
+    const swapExchangeRateAmountTooHighError2 = new SwapExchangeRateAmountTooHigh(undefined, {
+      amount: new BigNumber(2),
+    });
 
-    const swapExchangeRateAmountTooHighError3 =
-      new SwapExchangeRateAmountTooHigh(undefined, {
-        amount: new BigNumber(2.5),
-      });
+    const swapExchangeRateAmountTooHighError3 = new SwapExchangeRateAmountTooHigh(undefined, {
+      amount: new BigNumber(2.5),
+    });
 
-    const swapExchangeRateAmountTooHighError4 =
-      new SwapExchangeRateAmountTooHigh(undefined, {
-        amount: new BigNumber(0.5),
-      });
+    const swapExchangeRateAmountTooHighError4 = new SwapExchangeRateAmountTooHigh(undefined, {
+      amount: new BigNumber(0.5),
+    });
 
     mockedRates[0].error = swapExchangeRateAmountTooHighError1;
     mockedRates[1].error = swapExchangeRateAmountTooHighError2;
@@ -317,19 +297,14 @@ describe("useProviderRates", () => {
     });
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.status).toBe("error");
-    expect(result.current.rates.error).toBe(
-      swapExchangeRateAmountTooHighError3
-    );
+    expect(result.current.rates.error).toBe(swapExchangeRateAmountTooHighError3);
     expect(result.current.rates.value).toBeUndefined();
   });
 
   it("SwapExchangeRateAmountTooLow should take precedence over standard errors", async () => {
-    const swapExchangeRateAmountTooLowError = new SwapExchangeRateAmountTooLow(
-      undefined,
-      {
-        amount: new BigNumber(1),
-      }
-    );
+    const swapExchangeRateAmountTooLowError = new SwapExchangeRateAmountTooLow(undefined, {
+      amount: new BigNumber(1),
+    });
 
     const standardError = new Error("Error");
 
@@ -349,10 +324,9 @@ describe("useProviderRates", () => {
   });
 
   it("SwapExchangeRateAmountTooHigh should take precedence over standard errors", async () => {
-    const SwapExchangeRateAmountTooHighError =
-      new SwapExchangeRateAmountTooHigh(undefined, {
-        amount: new BigNumber(1),
-      });
+    const SwapExchangeRateAmountTooHighError = new SwapExchangeRateAmountTooHigh(undefined, {
+      amount: new BigNumber(1),
+    });
 
     const standardError = new Error("Error");
 
@@ -372,17 +346,16 @@ describe("useProviderRates", () => {
   });
 
   it("SwapExchangeRateAmountTooLowOrTooHigh should take precedence over SwapExchangeRateAmountTooLow", async () => {
-    const swapExchangeRateAmountTooLowError = new SwapExchangeRateAmountTooLow(
+    const swapExchangeRateAmountTooLowError = new SwapExchangeRateAmountTooLow(undefined, {
+      amount: new BigNumber(1),
+    });
+
+    const swapExchangeRateAmountTooLowOrTooHighError = new SwapExchangeRateAmountTooLowOrTooHigh(
       undefined,
       {
-        amount: new BigNumber(1),
-      }
-    );
-
-    const swapExchangeRateAmountTooLowOrTooHighError =
-      new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
         message: "",
-      }) as Error;
+      },
+    ) as Error;
 
     mockedRates[0].error = swapExchangeRateAmountTooLowOrTooHighError;
     mockedRates[1].error = swapExchangeRateAmountTooLowError;
@@ -393,9 +366,7 @@ describe("useProviderRates", () => {
     });
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.status).toBe("error");
-    expect(result.current.rates.error).toBe(
-      swapExchangeRateAmountTooLowOrTooHighError
-    );
+    expect(result.current.rates.error).toBe(swapExchangeRateAmountTooLowOrTooHighError);
     expect(result.current.rates.value).toBeUndefined();
   });
 
@@ -406,6 +377,42 @@ describe("useProviderRates", () => {
     const { result, waitForNextUpdate } = renderHook(useProviderRates, {
       initialProps: { ...baseInitalProps, onNoRates },
     });
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(result.current.rates.value).toMatchObject([]);
+    expect(result.current.rates.status).toBe("success");
+    expect(onNoRates).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call onBeforeTransaction before new swap transaction begins", async () => {
+    mockedGetExchangeRates.mockResolvedValue(mockedRatesPromise);
+    const setExchangeRate = jest.fn();
+    const onBeforeTransaction = jest.fn();
+
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: {
+        ...baseInitalProps,
+        setExchangeRate,
+        onBeforeTransaction,
+      },
+    });
+    expect(onBeforeTransaction).toBeCalledTimes(1);
+    expect(result.current.rates.status).toBe("loading");
+
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(onBeforeTransaction).toBeCalledTimes(1);
+  });
+
+  it("should call onBeforeTransaction callback before onNoRates if there are no rates", async () => {
+    const onNoRates = jest.fn();
+    const onBeforeTransaction = jest.fn();
+
+    mockedGetExchangeRates.mockResolvedValue([]);
+
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: { ...baseInitalProps, onNoRates, onBeforeTransaction },
+    });
+    expect(onBeforeTransaction).toHaveBeenCalledTimes(1);
+    expect(onNoRates).toHaveBeenCalledTimes(0);
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.value).toMatchObject([]);
     expect(result.current.rates.status).toBe("success");

@@ -5,40 +5,19 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  formatCurrencyUnit,
-  getCurrencyColor,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useLedgerFirstShuffledValidatorsNear } from "@ledgerhq/live-common/families/near/react";
-import {
-  NearValidatorItem,
-  NearAccount,
-} from "@ledgerhq/live-common/families/near/types";
-import {
-  FIGMENT_NEAR_VALIDATOR_ADDRESS,
-  getMaxAmount,
-} from "@ledgerhq/live-common/families/near/logic";
+import { NearValidatorItem, NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
+import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
-import {
-  Animated,
-  SafeAreaView,
-  StyleSheet,
-  View,
-  TextStyle,
-  StyleProp,
-} from "react-native";
+import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
@@ -84,30 +63,24 @@ export default function StakingSummary({ navigation, route }: Props) {
     return validators[0];
   }, [validators, validator]);
 
-  const {
-    transaction,
-    updateTransaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
 
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "stake",
-          recipient: chosenValidator.validatorAddress,
-        }),
-      };
-    }
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "stake",
+            recipient: chosenValidator.validatorAddress,
+          }),
+        };
+      }
 
-    return { account, transaction: tx };
-  });
+      return { account, transaction: tx };
+    });
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "near", "transaction near");
@@ -191,23 +164,28 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.NearStakingSelectDevice, {
+      source: route.params.source,
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction,
       status,
     });
-  }, [status, account, parentAccount?.id, navigation, transaction]);
+  }, [status, account, parentAccount?.id, navigation, transaction, route.params.source]);
 
   const error =
-    transaction.amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+    transaction.amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="staking"
+        currency="near"
+      />
 
       <View style={styles.body}>
         <DelegatingContainer
@@ -220,17 +198,8 @@ export default function StakingSummary({ navigation, route }: Props) {
             </View>
           }
           right={
-            <Touchable
-              event="StakingFlowSummaryChangeCircleBtn"
-              onPress={onChangeValidator}
-            >
-              <Circle
-                size={70}
-                style={[
-                  styles.validatorCircle,
-                  { borderColor: colors.primary },
-                ]}
-              >
+            <Touchable event="StakingFlowSummaryChangeCircleBtn" onPress={onChangeValidator}>
+              <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
                 <Animated.View
                   style={{
                     transform: [
@@ -241,10 +210,7 @@ export default function StakingSummary({ navigation, route }: Props) {
                   }}
                 >
                   <ValidatorImage
-                    isLedger={
-                      chosenValidator.validatorAddress ===
-                      FIGMENT_NEAR_VALIDATOR_ADDRESS
-                    }
+                    isLedger={chosenValidator.validatorAddress === FIGMENT_NEAR_VALIDATOR_ADDRESS}
                     name={chosenValidator?.validatorAddress}
                   />
                 </Animated.View>
@@ -416,9 +382,7 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View
-      style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}
-    >
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}
@@ -466,12 +430,7 @@ const Words = ({
 const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
-    <View
-      style={[
-        styles.validatorSelection,
-        { backgroundColor: rgba(colors.primary, 0.2) },
-      ]}
-    >
+    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
       <Text
         fontWeight="bold"
         numberOfLines={1}
@@ -481,12 +440,7 @@ const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
         {name}
       </Text>
 
-      <View
-        style={[
-          styles.validatorSelectionIcon,
-          { backgroundColor: colors.primary },
-        ]}
-      >
+      <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
         <Icon size={16} name="edit-2" color={colors.text} />
       </View>
     </View>

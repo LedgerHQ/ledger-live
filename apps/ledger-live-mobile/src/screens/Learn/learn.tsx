@@ -52,15 +52,8 @@ function LearnSection() {
         my={`${space[3]}px`}
         borderRadius={`${radii[2]}px`}
       >
-        <Container
-          underlayColor={colors.neutral.c30}
-          onPress={() => onClickItem(card)}
-        >
-          <InformativeCard
-            imageUrl={card.image}
-            tag={card.tag}
-            title={card.title}
-          />
+        <Container underlayColor={colors.neutral.c30} onPress={() => onClickItem(card)}>
+          <InformativeCard imageUrl={card.image} tag={card.tag} title={card.title} />
         </Container>
       </Skeleton>
     );

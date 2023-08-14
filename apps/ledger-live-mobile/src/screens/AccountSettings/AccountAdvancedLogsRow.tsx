@@ -9,10 +9,7 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 type NavigationProps = CompositeScreenProps<
-  StackNavigatorProps<
-    AccountSettingsNavigatorParamList,
-    ScreenName.AccountSettingsMain
-  >,
+  StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.AccountSettingsMain>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 

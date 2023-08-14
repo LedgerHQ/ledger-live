@@ -10,8 +10,7 @@ import { ScreenName } from "../../../const";
 
 const CarouselRow = () => {
   const { t } = useTranslation();
-  const { walletCards, assetsCards, isAtLeastOneCardDisplayed } =
-    useDynamicContent();
+  const { walletCards, assetsCards, isAtLeastOneCardDisplayed } = useDynamicContent();
 
   const dispatch = useDispatch();
   const onSetDynamicCardsVisibility = useCallback(
@@ -24,7 +23,7 @@ const CarouselRow = () => {
       track("toggle_clicked", {
         toggle: "Content Cards",
         enabled: checked,
-        screen: ScreenName.GeneralSettings,
+        page: ScreenName.GeneralSettings,
       }); // TODO Handle Analytics correclty
     },
     [dispatch, walletCards, assetsCards],
@@ -36,10 +35,7 @@ const CarouselRow = () => {
       title={t("settings.display.carousel")}
       desc={t("settings.display.carouselDesc")}
     >
-      <Switch
-        checked={isAtLeastOneCardDisplayed}
-        onChange={onSetDynamicCardsVisibility}
-      />
+      <Switch checked={isAtLeastOneCardDisplayed} onChange={onSetDynamicCardsVisibility} />
     </SettingsRow>
   );
 };

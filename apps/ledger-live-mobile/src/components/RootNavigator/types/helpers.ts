@@ -24,11 +24,7 @@ export type StackNavigatorProps<
   RouteName = never,
 > = StackScreenProps<
   ParamList,
-  RouteName extends never
-    ? keyof ParamList
-    : RouteName extends keyof ParamList
-    ? RouteName
-    : never
+  RouteName extends never ? keyof ParamList : RouteName extends keyof ParamList ? RouteName : never
 >;
 
 export type StackNavigatorNavigation<
@@ -36,11 +32,7 @@ export type StackNavigatorNavigation<
   RouteName = never,
 > = StackNavigationProp<
   ParamList,
-  RouteName extends never
-    ? keyof ParamList
-    : RouteName extends keyof ParamList
-    ? RouteName
-    : never
+  RouteName extends never ? keyof ParamList : RouteName extends keyof ParamList ? RouteName : never
 >;
 export type StackNavigatorRoute<
   ParamList extends ParamListBase,
@@ -52,11 +44,7 @@ export type MaterialTopTabNavigatorProps<
   RouteName = never,
 > = MaterialTopTabScreenProps<
   ParamList,
-  RouteName extends never
-    ? keyof ParamList
-    : RouteName extends keyof ParamList
-    ? RouteName
-    : never
+  RouteName extends never ? keyof ParamList : RouteName extends keyof ParamList ? RouteName : never
 >;
 
 export type MaterialTopTabNavigatorNavigation<
@@ -64,11 +52,7 @@ export type MaterialTopTabNavigatorNavigation<
   RouteName = never,
 > = MaterialTopTabNavigationProp<
   ParamList,
-  RouteName extends never
-    ? keyof ParamList
-    : RouteName extends keyof ParamList
-    ? RouteName
-    : never
+  RouteName extends never ? keyof ParamList : RouteName extends keyof ParamList ? RouteName : never
 >;
 export type MaterialTopTabNavigatorRoute<
   ParamList extends ParamListBase,
@@ -148,3 +132,12 @@ export type RootNavigationComposite<
     any
   >,
 > = CompositeNavigationProp<A, StackNavigationProp<RootStackParamList>>;
+
+// Represents the header part of the react-navigation options
+// Could be expanded to add `headerTitle` and/or `header` if needed one day
+export type ReactNavigationHeaderOptions = {
+  title?: string;
+  headerShown?: boolean;
+  headerLeft?: () => React.ReactElement | null;
+  headerRight?: () => React.ReactElement | null;
+};

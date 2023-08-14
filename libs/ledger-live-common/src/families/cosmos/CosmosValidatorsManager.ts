@@ -1,11 +1,11 @@
-import network from "../../network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import { EnvName, EnvValue } from "../../env";
-import { makeLRUCache } from "../../cache";
-import type { CosmosValidatorItem } from "./types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { EnvName, EnvValue } from "../../env";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
+import type { CosmosValidatorItem } from "./types";
 
 export class CosmosValidatorsManager {
   protected _version: string;
@@ -21,7 +21,7 @@ export class CosmosValidatorsManager {
       namespace?: string;
       endPoint?: EnvValue<EnvName>;
       rewardsState?: any;
-    }
+    },
   ) {
     this._currency = currency;
     this._crypto = cryptoFactory(currency.id);
@@ -46,10 +46,8 @@ export class CosmosValidatorsManager {
         url,
         method: "GET",
       });
-      const validators = data.validators.map((validator) => {
-        const commission = parseFloat(
-          validator.commission.commission_rates.rate
-        );
+      const validators = data.validators.map(validator => {
+        const commission = parseFloat(validator.commission.commission_rates.rate);
         return {
           validatorAddress: validator.operator_address,
           name: validator.description.moniker,
@@ -61,7 +59,7 @@ export class CosmosValidatorsManager {
       });
       return validators;
     },
-    () => this._currency.id
+    () => this._currency.id,
   );
 
   getValidators = async (): Promise<CosmosValidatorItem[]> => {
@@ -71,10 +69,7 @@ export class CosmosValidatorsManager {
   };
 
   hydrateValidators = (validators: CosmosValidatorItem[]): void => {
-    log(
-      `${this._currency.id}/validators`,
-      "hydrate " + validators.length + " validators"
-    );
+    log(`${this._currency.id}/validators`, "hydrate " + validators.length + " validators");
     this.cacheValidators.hydrate("", validators);
   };
 }

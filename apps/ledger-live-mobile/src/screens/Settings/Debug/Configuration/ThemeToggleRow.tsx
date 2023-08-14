@@ -15,10 +15,7 @@ const ThemeToggleRow = () => {
       title={"Debug theme"}
       desc="Toggle debug theme UI, allowing for easy theme changes."
     >
-      <Switch
-        value={debugThemeVisibility}
-        onValueChange={toggleDebugThemeVisibility}
-      />
+      <Switch value={debugThemeVisibility} onValueChange={toggleDebugThemeVisibility} />
     </SettingsRow>
   );
 };

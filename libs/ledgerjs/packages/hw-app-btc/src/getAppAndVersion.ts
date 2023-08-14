@@ -7,9 +7,7 @@ export type AppAndVersion = {
   flags: number | Buffer;
 };
 
-export const getAppAndVersion = async (
-  transport: Transport
-): Promise<AppAndVersion> => {
+export const getAppAndVersion = async (transport: Transport): Promise<AppAndVersion> => {
   const r = await transport.send(0xb0, 0x01, 0x00, 0x00);
   let i = 0;
   const format = r[i++];
@@ -27,9 +25,7 @@ export const getAppAndVersion = async (
   };
 };
 
-export const checkIsBtcLegacy = async (
-  transport: Transport
-): Promise<boolean> => {
+export const checkIsBtcLegacy = async (transport: Transport): Promise<boolean> => {
   try {
     // Call old btc API, it will throw an exception with new btc app. It is a workaround to differentiate new/old btc nano app
     await transport.send(0xe0, 0xc4, 0, 0);

@@ -1,13 +1,10 @@
 import React, { useCallback, useMemo } from "react";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { NavigationType } from "../../../../types";
@@ -35,23 +32,14 @@ const Delegations = (props: DelegationsPropsType) => {
 
   const zeroBalance = account.spendableBalance.isZero();
   const navigation: StackNavigationProp<NavigationType> = useNavigation();
-  const currency = useMemo(
-    () => getAccountCurrency(getMainAccount(account, undefined)),
-    [account],
-  );
+  const currency = useMemo(() => getAccountCurrency(getMainAccount(account, undefined)), [account]);
 
   /*
    * Enabled delegations only if the spendable balance is above 1 EGLD.
    */
 
   const delegationEnabled = useMemo(
-    () =>
-      new BigNumber(
-        denominate({
-          input: String(account.spendableBalance),
-          showLastNonZeroDecimal: true,
-        }),
-      ).isGreaterThanOrEqualTo(1),
+    () => account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
     [account.spendableBalance],
   );
 
@@ -147,9 +135,7 @@ const Delegations = (props: DelegationsPropsType) => {
     <View style={styles.wrapper}>
       <AccountSectionLabel
         name={t("account.delegation.sectionLabel")}
-        RightComponent={
-          <Right disabled={!delegationEnabled} onPress={onDelegate} />
-        }
+        RightComponent={<Right disabled={!delegationEnabled} onPress={onDelegate} />}
       />
 
       {items.map((delegation, index) => (

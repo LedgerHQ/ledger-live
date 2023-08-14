@@ -2,10 +2,7 @@ import React, { useCallback, useState, memo, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  getAccountName,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -15,84 +12,68 @@ import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import WalletIcon from "../../icons/Wallet";
 import LText from "../../components/LText";
-import {
-  getMessageProperties,
-  NanoDisplayedInfoFor712,
-} from "../../helpers/signMessageUtils";
+import { getMessageProperties, MessageProperties } from "../../helpers/signMessageUtils";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
-const MessageProperty = memo(
-  ({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | string[] | null | undefined;
-  }) => {
-    const { colors } = useTheme();
+const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
+  const { colors } = useTheme();
 
-    if (!value) return null;
+  if (!value) return null;
 
-    return (
-      <View style={styles.messageProperty}>
-        <LText style={styles.messagePropertyLabel} bold>
-          {label}
-        </LText>
-        <LText
-          style={[
-            styles.messagePropertyValue,
-            {
-              color: colors.grey,
-            },
-          ]}
-        >
-          {typeof value === "string" ? (
-            value
-          ) : (
-            <View style={styles.propertiesList}>
-              {value.map((v, i) => (
-                <LText
-                  style={[
-                    styles.messagePropertyValue,
-                    {
-                      color: colors.grey,
-                    },
-                  ]}
-                  key={i}
-                >{`${v}${i < value.length - 1 ? "," : ""}`}</LText>
-              ))}
-            </View>
-          )}
-        </LText>
-      </View>
-    );
-  },
-);
+  return (
+    <View style={styles.messageProperty}>
+      <LText style={styles.messagePropertyLabel} bold>
+        {label}
+      </LText>
+      <LText
+        style={[
+          styles.messagePropertyValue,
+          {
+            color: colors.grey,
+          },
+        ]}
+      >
+        {typeof value === "string" ? (
+          value
+        ) : (
+          <View style={styles.propertiesList}>
+            {value.map((v, i) => (
+              <LText
+                style={[
+                  styles.messagePropertyValue,
+                  {
+                    color: colors.grey,
+                  },
+                ]}
+                key={i}
+              >{`${v}${i < value.length - 1 ? "," : ""}`}</LText>
+            ))}
+          </View>
+        )}
+      </LText>
+    </View>
+  );
+});
 MessageProperty.displayName = "MessageProperty";
 
-const MessageProperties = memo(
-  (props: { properties: { label: string; value: string | string[] }[] }) => {
-    const { properties } = props;
-    return (
-      <View>
-        {properties.map((p, i) => (
-          <MessageProperty key={i} {...p} />
-        ))}
-      </View>
-    );
-  },
-);
-MessageProperties.displayName = "MessageProperties";
+const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
+  const { properties } = props;
+  return properties ? (
+    <View style={styles.messageContainer}>
+      {properties.map((p, i) => (
+        <MessageProperty key={i} {...p} />
+      ))}
+    </View>
+  ) : null;
+});
+MessagePropertiesComp.displayName = "MessageProperties";
 
 function SignSummary({
   navigation,
   route,
-}: StackNavigatorProps<
-  SignMessageNavigatorStackParamList,
-  ScreenName.SignSummary
->) {
+}: StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignSummary>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -114,18 +95,13 @@ function SignSummary({
   }, [navigateToNext]);
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [messageProperties, setMessageProperties] = useState<{
-    message?: string;
-    fields?: NanoDisplayedInfoFor712;
-  }>({});
+  const [messageFields, setMessageFields] = useState<MessageProperties | null>(null);
 
   useEffect(() => {
-    getMessageProperties(mainAccount.currency, messageData).then(
-      setMessageProperties,
-    );
-  }, [mainAccount.currency, messageData, setMessageProperties]);
-
-  const { message, fields } = messageProperties;
+    if (messageData.standard === "EIP712") {
+      getMessageProperties(mainAccount, messageData).then(setMessageFields);
+    }
+  }, [mainAccount, mainAccount.currency, messageData, setMessageFields]);
 
   return (
     <SafeAreaView
@@ -172,38 +148,40 @@ function SignSummary({
           ]}
         />
         <ScrollView style={styles.scrollContainer}>
-          <View style={styles.messageContainer}>
-            {fields ? (
-              <MessageProperties properties={fields} />
-            ) : (
-              <MessageProperty label={"message"} value={message} />
-            )}
-          </View>
-          {fields ? (
-            <View>
-              <Button
-                type="color"
-                onPress={() => setShowAdvanced(!showAdvanced)}
-              >
-                {showAdvanced
-                  ? `- ${t("signMessage.eip712.hideFullMessage")}`
-                  : `+ ${t("signMessage.eip712.showFullMessage")}`}
-              </Button>
-              {showAdvanced ? (
-                <LText
-                  style={[
-                    styles.advancedMessageArea,
-                    {
-                      backgroundColor: colors.pillActiveBackground,
-                    },
-                  ]}
-                >
-                  {typeof messageData.message === "string"
-                    ? `"${messageData.message}"`
-                    : JSON.stringify(messageData.message, null, 2)}
-                </LText>
-              ) : null}
+          {messageData.standard === "EIP712" ? (
+            <MessagePropertiesComp properties={messageFields} />
+          ) : (
+            <View style={styles.messageContainer}>
+              <MessageProperty label={"message"} value={messageData.message || ""} />
             </View>
+          )}
+
+          {messageData.standard === "EIP712" ? (
+            <>
+              {messageFields ? (
+                <View>
+                  <Button type="color" onPress={() => setShowAdvanced(!showAdvanced)}>
+                    {showAdvanced
+                      ? `- ${t("signMessage.eip712.hideFullMessage")}`
+                      : `+ ${t("signMessage.eip712.showFullMessage")}`}
+                  </Button>
+                  {showAdvanced ? (
+                    <LText
+                      style={[
+                        styles.advancedMessageArea,
+                        {
+                          backgroundColor: colors.pillActiveBackground,
+                        },
+                      ]}
+                    >
+                      {typeof messageData.message === "string"
+                        ? `"${messageData.message}"`
+                        : JSON.stringify(messageData.message, null, 2)}
+                    </LText>
+                  ) : null}
+                </View>
+              ) : null}
+            </>
           ) : null}
         </ScrollView>
       </View>

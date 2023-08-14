@@ -116,7 +116,7 @@ dist
 !jsconfig.json
 !tools/dist
 
-src/renderer/generated/
+src/renderer/families/generated.ts
 tests/coverage/
 tests/artifacts/*
 !tests/artifacts/.gitkeep
@@ -134,3 +134,6 @@ ui-lib/storybook-static/*
 
 # IDE
 .vscode/*
+
+# release-notes generated file
+release-notes.json

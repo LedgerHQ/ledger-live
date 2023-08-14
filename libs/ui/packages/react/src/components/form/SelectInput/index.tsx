@@ -43,36 +43,36 @@ const stylesFn = <O, M extends boolean, G extends GroupBase<O>>(
   dropdownIndicator: DropdownIndicatorModule.getStyles(),
   menuList: MenuListModule.getStyles(theme),
   option: OptionModule.getStyles(),
-  input: (provided) => ({
+  input: provided => ({
     ...provided,
     color: theme.colors.neutral.c100,
   }),
-  placeholder: (provided) => ({
+  placeholder: provided => ({
     ...provided,
     color: theme.colors.neutral.c60,
   }),
-  singleValue: (provided) => ({
+  singleValue: provided => ({
     ...provided,
     color: "inherit",
   }),
-  multiValue: (provided) => ({
+  multiValue: provided => ({
     ...provided,
     backgroundColor: theme.colors.primary.c20,
     borderRadius: theme.radii[1],
   }),
-  multiValueLabel: (provided) => ({
+  multiValueLabel: provided => ({
     ...provided,
     color: theme.colors.neutral.c100,
   }),
-  multiValueRemove: (provided) => ({
+  multiValueRemove: provided => ({
     ...provided,
     cursor: "pointer",
     ":hover": {
-      color: theme.colors.error.c100,
+      color: theme.colors.error.c50,
       backgroundColor: theme.colors.error.c30,
     },
   }),
-  menu: (provided) => ({
+  menu: provided => ({
     ...provided,
     border: 0,
     boxShadow: "none",

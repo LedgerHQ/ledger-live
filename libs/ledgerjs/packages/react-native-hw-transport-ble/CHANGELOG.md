@@ -1,5 +1,209 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.29.4
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1
+  - @ledgerhq/devices@8.0.6
+  - @ledgerhq/hw-transport@6.28.7
+
+## 6.29.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1-next.0
+  - @ledgerhq/devices@8.0.6-next.0
+  - @ledgerhq/hw-transport@6.28.7-next.0
+
+## 6.29.3
+
+### Patch Changes
+
+- Updated dependencies [[`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d)]:
+  - @ledgerhq/errors@6.13.0
+  - @ledgerhq/devices@8.0.5
+  - @ledgerhq/hw-transport@6.28.6
+
+## 6.29.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0f4293e9bf`](https://github.com/LedgerHQ/ledger-live/commit/0f4293e9bf9cac4c2a195efeb0831aab3d51933d)]:
+  - @ledgerhq/errors@6.13.0-next.0
+  - @ledgerhq/devices@8.0.5-next.0
+  - @ledgerhq/hw-transport@6.28.6-next.0
+
+## 6.29.2
+
+### Patch Changes
+
+- [#3790](https://github.com/LedgerHQ/ledger-live/pull/3790) [`7719cbf508`](https://github.com/LedgerHQ/ledger-live/commit/7719cbf5087a44aefa3fc66e7a28c69ba7687bcc) Thanks [@juan-cortes](https://github.com/juan-cortes)! - BleTransport optimization in pairing flows for Stax
+
+## 6.29.2-next.0
+
+### Patch Changes
+
+- [#3790](https://github.com/LedgerHQ/ledger-live/pull/3790) [`7719cbf508`](https://github.com/LedgerHQ/ledger-live/commit/7719cbf5087a44aefa3fc66e7a28c69ba7687bcc) Thanks [@juan-cortes](https://github.com/juan-cortes)! - BleTransport optimization in pairing flows for Stax
+
+## 6.29.1
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7
+  - @ledgerhq/devices@8.0.4
+  - @ledgerhq/hw-transport@6.28.5
+
+## 6.29.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9adc1862dd`](https://github.com/LedgerHQ/ledger-live/commit/9adc1862dda605a722d19f3b6895bd324834c914)]:
+  - @ledgerhq/errors@6.12.7-next.0
+  - @ledgerhq/devices@8.0.4-next.0
+  - @ledgerhq/hw-transport@6.28.5-next.0
+
+## 6.29.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Remove BLE high priority connection request as it was breaking the firmware update via BLE on Android
+
+## 6.29.0-next.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Remove BLE high priority connection request as it was breaking the firmware update via BLE on Android
+
+## 6.28.8
+
+### Patch Changes
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546)]:
+  - @ledgerhq/errors@6.12.6
+  - @ledgerhq/devices@8.0.3
+  - @ledgerhq/hw-transport@6.28.4
+
+## 6.28.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546)]:
+  - @ledgerhq/errors@6.12.6-next.0
+  - @ledgerhq/devices@8.0.3-next.0
+  - @ledgerhq/hw-transport@6.28.4-next.0
+
+## 6.28.7
+
+### Patch Changes
+
+- [#3380](https://github.com/LedgerHQ/ledger-live/pull/3380) [`05c4b20b3a`](https://github.com/LedgerHQ/ledger-live/commit/05c4b20b3a89a1fe0e851189b51a2b5fdf625f01) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the mapping of errors on the BLE transport. "Disconnect" and "device not found" errors were not correctly being mapped.
+
+## 6.28.7-next.0
+
+### Patch Changes
+
+- [#3380](https://github.com/LedgerHQ/ledger-live/pull/3380) [`05c4b20b3a`](https://github.com/LedgerHQ/ledger-live/commit/05c4b20b3a89a1fe0e851189b51a2b5fdf625f01) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the mapping of errors on the BLE transport. "Disconnect" and "device not found" errors were not correctly being mapped.
+
+## 6.28.6
+
+### Patch Changes
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Better error handling for broken pairing
+
+- Updated dependencies [[`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472)]:
+  - @ledgerhq/errors@6.12.5
+  - @ledgerhq/devices@8.0.2
+  - @ledgerhq/hw-transport@6.28.3
+
+## 6.28.6-next.0
+
+### Patch Changes
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Better error handling for broken pairing
+
+- Updated dependencies [[`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472)]:
+  - @ledgerhq/errors@6.12.5-next.0
+  - @ledgerhq/devices@8.0.2-next.0
+  - @ledgerhq/hw-transport@6.28.3-next.0
+
+## 6.28.5
+
+### Patch Changes
+
+- [#3078](https://github.com/LedgerHQ/ledger-live/pull/3078) [`5fa4697e8d`](https://github.com/LedgerHQ/ledger-live/commit/5fa4697e8d1cfd1dba0f942745d1bfc6984ae1c9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: request for a specific MTU when trying to BLE connect
+
+  ConnectionOptions was commented as "not used" in react-native-ble-plx,
+  but it is actually used and needed when connecting to a device.
+
+## 6.28.5-next.0
+
+### Patch Changes
+
+- [#3078](https://github.com/LedgerHQ/ledger-live/pull/3078) [`5fa4697e8d`](https://github.com/LedgerHQ/ledger-live/commit/5fa4697e8d1cfd1dba0f942745d1bfc6984ae1c9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: request for a specific MTU when trying to BLE connect
+
+  ConnectionOptions was commented as "not used" in react-native-ble-plx,
+  but it is actually used and needed when connecting to a device.
+
+## 6.28.4
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`57c52a9fca`](https://github.com/LedgerHQ/ledger-live/commit/57c52a9fca18595e5fe6b0a81fc7b5967b2ca74c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: request for a specific MTU when trying to BLE connect
+
+  ConnectionOptions was commented as "not used" in react-native-ble-plx,
+  but it is actually used and needed when connecting to a device.
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/errors@6.12.4
+  - @ledgerhq/devices@8.0.1
+  - @ledgerhq/hw-transport@6.28.2
+
+## 6.28.4-next.1
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`57c52a9fca`](https://github.com/LedgerHQ/ledger-live/commit/57c52a9fca18595e5fe6b0a81fc7b5967b2ca74c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: request for a specific MTU when trying to BLE connect
+
+  ConnectionOptions was commented as "not used" in react-native-ble-plx,
+  but it is actually used and needed when connecting to a device.
+
+## 6.28.4-next.0
+
+### Patch Changes
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/errors@6.12.4-next.0
+  - @ledgerhq/devices@8.0.1-next.0
+  - @ledgerhq/hw-transport@6.28.2-next.0
+
+## 6.28.3
+
+### Patch Changes
+
+- Updated dependencies [[`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7)]:
+  - @ledgerhq/devices@8.0.0
+  - @ledgerhq/hw-transport@6.28.1
+
+## 6.28.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7)]:
+  - @ledgerhq/devices@8.0.0-next.0
+  - @ledgerhq/hw-transport@6.28.1-next.0
+
 ## 6.28.2
 
 ### Patch Changes

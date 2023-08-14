@@ -6,44 +6,9 @@ on:
     - cron: "0 */6 * * *"
 
 jobs:
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: [ledger-live, linux]
-    outputs:
-      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Start EC2 Linux Runner
-        id: start-ec2-linux-runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: start
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          project: 2049
-          aws-nfs-logging: true
-          ami-name-filter: ledger-live-runner
-          instance-volume-size: 30
-          instance-type: c5.4xlarge
-
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, checks-linux]
-    runs-on: [ledger-live, linux]
-    steps:
-      - name: Stop EC2 Linux Runner
-        if: ${{ always() && needs.start-runner.result == 'success' }}
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: stop
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-
   checks-linux:
     name: "CI runners Healthchecks (Linux)"
-    needs: [start-runner]
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: [ledger-live-4xlarge-linux]
     outputs:
       check-java: ${{ steps.check-java.outputs.result }}
       check-node: ${{ steps.check-node.outputs.result }}
@@ -68,12 +33,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         if: always()
         with:
-          version: latest
+          version: 8.6
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 16.x
+          node-version: 18
       - uses: ruby/setup-ruby@v1
         if: always()
         with:
@@ -87,7 +52,7 @@ jobs:
           java-version: "11"
       - name: setup Android SDK
         if: always()
-        uses: android-actions/setup-android@v2.0.6
+        uses: android-actions/setup-android@v2.0.10
       - name: check java
         if: always()
         id: check-java
@@ -116,7 +81,7 @@ jobs:
         if: always()
         id: check-node
         run: |
-          if [[ "$(node --version)" == *"v16."* ]]; then
+          if [[ "$(node --version)" == *"v18."* ]]; then
             result=ok
           else
             result=ko
@@ -154,12 +119,12 @@ jobs:
         id: check-android
         run: |
           command=$(which sdkmanager)
-          if [[ $(${ANDROID_HOME}/cmdline-tools/3.0/bin/sdkmanager --version) ]]; then
+          if [[ $($command --version) ]]; then
             result=ok
           else
             result=ko
           fi
-          version=$(${ANDROID_HOME}/cmdline-tools/3.0/bin/sdkmanager --version)
+          version=$($command --version)
           echo "result=$result" >> $GITHUB_OUTPUT
           echo "version=$version" >> $GITHUB_OUTPUT
       - name: check xvfb
@@ -180,7 +145,7 @@ jobs:
           ref: main
           token: ${{ github.token }}
   checks-windows:
-    runs-on: [ledger-live, windows]
+    runs-on: [ledger-live-4xlarge-windows-2022]
     outputs:
       check-git: ${{ steps.check-git.outputs.result }}
       check-node: ${{ steps.check-node.outputs.result }}
@@ -193,12 +158,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         if: always()
         with:
-          version: latest
+          version: 8.6
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 16.x
+          node-version: 18
       - name: check git
         if: always()
         id: check-git
@@ -267,12 +232,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         if: always()
         with:
-          version: latest
+          version: 8.6
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 16.x
+          node-version: 18
       # - uses: ruby/setup-ruby@v1
       #   if: always()
       #   with:
@@ -297,7 +262,7 @@ jobs:
         id: check-node
         shell: bash
         run: |
-          if [[ "$(node --version)" == *"v16."* ]]; then
+          if [[ "$(node --version)" == *"v18."* ]]; then
             result=ok
           else
             result=ko

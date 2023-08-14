@@ -21,7 +21,7 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
   const onClose = useCallback(() => setSide(), [setSide]);
 
   useEffect(() => {
-    setQueue((q) => {
+    setQueue(q => {
       if (!state.open || !state.Component) return [];
       return q.concat([{ ...state, key: nonce.current++ }]);
     });

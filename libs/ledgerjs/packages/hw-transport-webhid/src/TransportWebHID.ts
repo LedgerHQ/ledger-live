@@ -1,9 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import type {
-  Observer,
-  DescriptorEvent,
-  Subscription,
-} from "@ledgerhq/hw-transport";
+import type { Observer, DescriptorEvent, Subscription } from "@ledgerhq/hw-transport";
 import hidFraming from "@ledgerhq/devices/hid-framing";
 import { identifyUSBProductId, ledgerUSBVendorId } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
@@ -21,17 +17,12 @@ const ledgerDevices = [
   },
 ];
 
-const isSupported = () =>
-  Promise.resolve(!!(window.navigator && window.navigator.hid));
+const isSupported = () => Promise.resolve(!!(window.navigator && window.navigator.hid));
 
 const getHID = (): HID => {
   // $FlowFixMe
   const { hid } = navigator;
-  if (!hid)
-    throw new TransportError(
-      "navigator.hid is not supported",
-      "HIDNotSupported"
-    );
+  if (!hid) throw new TransportError("navigator.hid is not supported", "HIDNotSupported");
   return hid;
 };
 
@@ -45,7 +36,7 @@ async function requestLedgerDevices(): Promise<HIDDevice[]> {
 
 async function getLedgerDevices(): Promise<HIDDevice[]> {
   const devices = await getHID().getDevices();
-  return devices.filter((d) => d.vendorId === ledgerUSBVendorId);
+  return devices.filter(d => d.vendorId === ledgerUSBVendorId);
 }
 
 async function getFirstLedgerDevice(): Promise<HIDDevice> {
@@ -72,9 +63,7 @@ export default class TransportWebHID extends Transport {
     super();
     this.device = device;
     this.deviceModel =
-      typeof device.productId === "number"
-        ? identifyUSBProductId(device.productId)
-        : undefined;
+      typeof device.productId === "number" ? identifyUSBProductId(device.productId) : undefined;
     device.addEventListener("inputreport", this.onInputReport);
   }
 
@@ -85,7 +74,7 @@ export default class TransportWebHID extends Transport {
       return Promise.resolve(this.inputs.shift() as unknown as Buffer);
     }
 
-    return new Promise((success) => {
+    return new Promise(success => {
       this.inputCallback = success;
     });
   };
@@ -116,16 +105,12 @@ export default class TransportWebHID extends Transport {
    *
    * Important: it must be called in the context of a UI click!
    */
-  static listen = (
-    observer: Observer<DescriptorEvent<HIDDevice>>
-  ): Subscription => {
+  static listen = (observer: Observer<DescriptorEvent<HIDDevice>>): Subscription => {
     let unsubscribed = false;
     getFirstLedgerDevice().then(
-      (device) => {
+      device => {
         if (!device) {
-          observer.error(
-            new TransportOpenUserCancelled("Access denied to use Ledger device")
-          );
+          observer.error(new TransportOpenUserCancelled("Access denied to use Ledger device"));
         } else if (!unsubscribed) {
           const deviceModel =
             typeof device.productId === "number"
@@ -139,9 +124,9 @@ export default class TransportWebHID extends Transport {
           observer.complete();
         }
       },
-      (error) => {
+      error => {
         observer.error(new TransportOpenUserCancelled(error.message));
-      }
+      },
     );
 
     function unsubscribe() {
@@ -177,7 +162,7 @@ export default class TransportWebHID extends Transport {
     await device.open();
     const transport = new TransportWebHID(device);
 
-    const onDisconnect = (e) => {
+    const onDisconnect = e => {
       if (device === e.device) {
         getHID().removeEventListener("disconnect", onDisconnect);
 
@@ -233,7 +218,7 @@ export default class TransportWebHID extends Transport {
 
       log("apdu", "<= " + result.toString("hex"));
       return result;
-    }).catch((e) => {
+    }).catch(e => {
       if (e && e.message && e.message.includes("write")) {
         this._emitDisconnect(e);
 

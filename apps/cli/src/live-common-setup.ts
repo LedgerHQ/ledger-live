@@ -1,27 +1,18 @@
 export * from "./live-common-setup-base";
 import React from "react";
 import invariant from "invariant";
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { map, first, switchMap } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
-import SpeculosTransport, {
-  SpeculosTransportOpts,
-} from "@ledgerhq/hw-transport-node-speculos";
-import {
-  registerTransportModule,
-  disconnect,
-} from "@ledgerhq/live-common/hw/index";
+import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
+import { registerTransportModule, disconnect } from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
-import { disconnectAll } from "@ledgerhq/live-common/api/index";
 
 checkLibs({
   NotEnoughBalance,
@@ -57,7 +48,7 @@ export async function mockDeviceWithAPDUs(apdus: string) {
 
 registerTransportModule({
   id: "mock",
-  open: (id) => {
+  open: id => {
     if (id in mockTransports) {
       const Tr = mockTransports[id];
       return Tr;
@@ -121,23 +112,21 @@ async function init() {
     return TransportNodeBle as BluetoothTransport;
   };
 
-  const openBleByQuery = async (query) => {
+  const openBleByQuery = async query => {
     const m = query.match(/^ble:?(.*)/);
     if (!m) throw new Error("ble regexp should match");
     const [, q] = m;
     if (cacheBle[query]) return cacheBle[query];
     const t = await (!q
       ? ((await getTransport().constructor) as typeof TransportNodeBle).create()
-      : new Observable(
-          ((await getTransport().constructor) as typeof TransportNodeBle).listen
-        )
+      : new Observable(((await getTransport().constructor) as typeof TransportNodeBle).listen)
           .pipe(
             first(
               (e: any) =>
                 (e.device.name || "").toLowerCase().includes(q.toLowerCase()) ||
-                e.device.id.toLowerCase() === q.toLowerCase()
+                e.device.id.toLowerCase() === q.toLowerCase(),
             ),
-            switchMap((e) => TransportNodeBle.open(e.descriptor))
+            switchMap(e => TransportNodeBle.open(e.descriptor)),
           )
           .toPromise());
     cacheBle[query] = t;
@@ -149,15 +138,15 @@ async function init() {
 
   registerTransportModule({
     id: "ble",
-    open: (query) => {
+    open: query => {
       if (query.startsWith("ble")) {
         return openBleByQuery(query);
       }
     },
-    discovery: new Observable((o) => {
+    discovery: new Observable(o => {
       let s: any;
 
-      getTransport().then((module) => {
+      getTransport().then(module => {
         (module.constructor as typeof TransportNodeBle).listen(o);
         s = module;
       });
@@ -168,14 +157,13 @@ async function init() {
         type: e.type,
         id: "ble:" + e.device.id,
         name: e.device.name || "",
-      }))
+      })),
     ),
-    disconnect: async (query) =>
+    disconnect: async query =>
       query.startsWith("ble")
         ? cacheBle[query]
-          ? ((await getTransport()
-              .constructor) as typeof TransportNodeBle).disconnect(
-              cacheBle[query].id
+          ? ((await getTransport().constructor) as typeof TransportNodeBle).disconnect(
+              cacheBle[query].id,
             )
           : Promise.resolve()
         : undefined,
@@ -188,7 +176,7 @@ async function init() {
 
   registerTransportModule({
     id: "hid",
-    open: (devicePath) =>
+    open: devicePath =>
       retry(() => TransportNodeHid.open(devicePath), {
         context: "open-hid",
       }),
@@ -197,7 +185,7 @@ async function init() {
         type: e.type,
         id: e.device.path,
         name: e.device.deviceName || "",
-      }))
+      })),
     ),
     disconnect: () => Promise.resolve(),
   });
@@ -210,5 +198,4 @@ if (!process.env.CI) {
 export function closeAllDevices() {
   Object.keys(cacheBle).forEach(disconnect);
   closeAllSpeculosDevices();
-  disconnectAll();
 }

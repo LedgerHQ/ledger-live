@@ -18,7 +18,7 @@ import {
   getDerivationScheme,
   runDerivationScheme,
   asDerivationMode,
-} from "@ledgerhq/live-common/lib/derivation";
+} from "@ledgerhq/coin-framework/derivation";
 
 const localCache = {};
 const bridgeCache = makeBridgeCacheSystem({

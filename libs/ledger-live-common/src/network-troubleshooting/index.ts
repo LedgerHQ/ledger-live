@@ -6,7 +6,7 @@ import { getEnv } from "../env";
 import announcementsApi from "../notifications/AnnouncementProvider/api/api";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
 
-type TroubleshootStatus = {
+export type TroubleshootStatus = {
   title: string;
   technicalDescription: string;
   status: "success" | "error" | "loading";
@@ -27,8 +27,8 @@ export function troubleshoot(): Troubleshoot[] {
       title: "My Ledger services (scriptrunner)",
       ...websocketConnects(
         `${getEnv(
-          "BASE_SOCKET_URL"
-        )}/apps/list?targetId=856686596&perso=perso_11&livecommonversion=27.7.2` // TODO have a dummy echo endpoint
+          "BASE_SOCKET_URL",
+        )}/apps/list?targetId=856686596&perso=perso_11&livecommonversion=27.7.2`, // TODO have a dummy echo endpoint
       ),
     },
     {
@@ -41,9 +41,7 @@ export function troubleshoot(): Troubleshoot[] {
     },
     {
       title: "Countervalues API",
-      ...httpGet(
-        `${getEnv("LEDGER_COUNTERVALUES_API")}/latest/direct?pairs=btc:usd`
-      ),
+      ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/latest/direct?pairs=btc:usd`),
     },
     {
       title: "Announcements",
@@ -77,7 +75,7 @@ function websocketConnects(url) {
       resolve(url);
       ws.close();
     };
-    ws.onerror = (e) => {
+    ws.onerror = e => {
       reject(e);
     };
     ws.onclose = () => {
@@ -101,12 +99,12 @@ type TroubleshootEvent =
     };
 
 export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
-  return new Observable((o) => {
+  return new Observable(o => {
     try {
       const all = troubleshoot();
       o.next({
         type: "init",
-        all: all.map((s) => ({
+        all: all.map(s => ({
           title: s.title,
           technicalDescription: s.technicalDescription,
           status: "loading",
@@ -114,7 +112,7 @@ export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
       });
 
       let total = 0;
-      all.forEach((s) => {
+      all.forEach(s => {
         s.job
           .then(
             () => {
@@ -127,7 +125,7 @@ export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
                 },
               });
             },
-            (e) => {
+            e => {
               o.next({
                 type: "change",
                 status: {
@@ -137,7 +135,7 @@ export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
                   error: String(e?.message || e),
                 },
               });
-            }
+            },
           )
           .then(() => {
             if (++total === all.length) {
@@ -153,15 +151,13 @@ export function troubleshootOverObservable(): Observable<TroubleshootEvent> {
 
 export function troubleshootOverObservableReducer(
   state: TroubleshootStatus[],
-  event: TroubleshootEvent
+  event: TroubleshootEvent,
 ): TroubleshootStatus[] {
   if (event.type === "init") {
     return event.all;
   }
   if (event.type === "change") {
-    return state.map((s) =>
-      s.title === event.status.title ? event.status : s
-    );
+    return state.map(s => (s.title === event.status.title ? event.status : s));
   }
   return state;
 }

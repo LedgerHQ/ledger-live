@@ -1,5 +1,5 @@
 import isUpdateAvailable from "./isUpdateAvailable";
-import { deviceInfo155, deviceInfo202 } from "../apps/mock";
+import { deviceInfo155, deviceInfo222 } from "../apps/mock";
 import { AppAndVersion } from "../hw/connectApp";
 
 describe("isUpdateAvailable tests", () => {
@@ -24,9 +24,20 @@ describe("isUpdateAvailable tests", () => {
         flags: 0,
       },
     },
+    // FIXME The deviceInfo used for this scenario only works while its FW version is the one in prod,
+    // whenever the prod version changes this test will start failing because new nano apps don't get pushed on
+    // older FW version.
+    //
+    // The fix for now is to generate and use a new deviceInfo based on prod FW version:
+    // This can be done with REPL:
+    // > Connect on USB a device that's on FW prod version
+    // > https://live.ledger.tools/repl (chrome only)
+    // > WebHid transport or another one
+    // > getAppAndVersion command
+    // > dump the generated data in a new deviceInfo and use it here
     {
       name: "New device, outdated app expects an update",
-      deviceInfo: deviceInfo202,
+      deviceInfo: deviceInfo222,
       expectedResult: true,
       outdatedApp: {
         name: "Ethereum",
@@ -40,12 +51,9 @@ describe("isUpdateAvailable tests", () => {
   // to cover.
   scenarios.forEach(({ name, deviceInfo, outdatedApp, expectedResult }) => {
     it(name, async () => {
-      jest.mock("../api/Manager");
+      jest.mock("../manager/api");
       // I don't know how to avoid the internal API calls to the Manager API.
-      const result = await isUpdateAvailable(
-        deviceInfo,
-        outdatedApp as AppAndVersion
-      );
+      const result = await isUpdateAvailable(deviceInfo, outdatedApp as AppAndVersion);
       expect(result).toBe(expectedResult);
     });
   });

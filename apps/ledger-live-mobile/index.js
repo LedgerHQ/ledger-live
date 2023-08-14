@@ -102,6 +102,7 @@ const excludedErrorDescription = [
   "530 undefined",
   "524 undefined",
   "Missing or invalid topic field", // wallet connect issue
+  "Bad status on response: 503", // cryptoorg node
 ];
 
 if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
@@ -112,7 +113,7 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
     // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
     // dist: String(VersionNumber.buildVersion),
     sampleRate: 1,
-    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.005,
+    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
     integrations: [
       new Sentry.ReactNativeTracing({
         routingInstrumentation,

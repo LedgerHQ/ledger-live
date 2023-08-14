@@ -1,7 +1,7 @@
-import { Transaction as algorandTransaction } from "../families/algorand/types";
-import { TransactionRaw as algorandTransactionRaw } from "../families/algorand/types";
-import { TransactionStatus as algorandTransactionStatus } from "../families/algorand/types";
-import { TransactionStatusRaw as algorandTransactionStatusRaw } from "../families/algorand/types";
+import { Transaction as algorandTransaction } from "@ledgerhq/coin-algorand/types";
+import { TransactionRaw as algorandTransactionRaw } from "@ledgerhq/coin-algorand/types";
+import { TransactionStatus as algorandTransactionStatus } from "@ledgerhq/coin-algorand/types";
+import { TransactionStatusRaw as algorandTransactionStatusRaw } from "@ledgerhq/coin-algorand/types";
 import { Transaction as bitcoinTransaction } from "../families/bitcoin/types";
 import { TransactionRaw as bitcoinTransactionRaw } from "../families/bitcoin/types";
 import { TransactionStatus as bitcoinTransactionStatus } from "../families/bitcoin/types";
@@ -30,10 +30,10 @@ import { Transaction as ethereumTransaction } from "../families/ethereum/types";
 import { TransactionRaw as ethereumTransactionRaw } from "../families/ethereum/types";
 import { TransactionStatus as ethereumTransactionStatus } from "../families/ethereum/types";
 import { TransactionStatusRaw as ethereumTransactionStatusRaw } from "../families/ethereum/types";
-import { Transaction as evmTransaction } from "../families/evm/types";
-import { TransactionRaw as evmTransactionRaw } from "../families/evm/types";
-import { TransactionStatus as evmTransactionStatus } from "../families/evm/types";
-import { TransactionStatusRaw as evmTransactionStatusRaw } from "../families/evm/types";
+import { Transaction as evmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { TransactionRaw as evmTransactionRaw } from "@ledgerhq/coin-evm/types/index";
+import { TransactionStatus as evmTransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import { TransactionStatusRaw as evmTransactionStatusRaw } from "@ledgerhq/coin-evm/types/index";
 import { Transaction as filecoinTransaction } from "../families/filecoin/types";
 import { TransactionRaw as filecoinTransactionRaw } from "../families/filecoin/types";
 import { TransactionStatus as filecoinTransactionStatus } from "../families/filecoin/types";
@@ -42,6 +42,10 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { TransactionStatus as hederaTransactionStatus } from "../families/hedera/types";
 import { TransactionStatusRaw as hederaTransactionStatusRaw } from "../families/hedera/types";
+import { Transaction as internet_computerTransaction } from "../families/internet_computer/types";
+import { TransactionRaw as internet_computerTransactionRaw } from "../families/internet_computer/types";
+import { TransactionStatus as internet_computerTransactionStatus } from "../families/internet_computer/types";
+import { TransactionStatusRaw as internet_computerTransactionStatusRaw } from "../families/internet_computer/types";
 import { Transaction as nearTransaction } from "../families/near/types";
 import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
 import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
@@ -50,10 +54,6 @@ import { Transaction as iconTransaction } from "../families/icon/types";
 import { TransactionRaw as iconTransactionRaw } from "../families/icon/types";
 import { TransactionStatus as iconTransactionStatus } from "../families/icon/types";
 import { TransactionStatusRaw as iconTransactionStatusRaw } from "../families/icon/types";
-import { Transaction as neoTransaction } from "../families/neo/types";
-import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
-import { TransactionStatus as neoTransactionStatus } from "../families/neo/types";
-import { TransactionStatusRaw as neoTransactionStatusRaw } from "../families/neo/types";
 import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/types";
 import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/types";
 import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/types";
@@ -66,6 +66,10 @@ import { Transaction as solanaTransaction } from "../families/solana/types";
 import { TransactionRaw as solanaTransactionRaw } from "../families/solana/types";
 import { TransactionStatus as solanaTransactionStatus } from "../families/solana/types";
 import { TransactionStatusRaw as solanaTransactionStatusRaw } from "../families/solana/types";
+import { Transaction as stacksTransaction } from "../families/stacks/types";
+import { TransactionRaw as stacksTransactionRaw } from "../families/stacks/types";
+import { TransactionStatus as stacksTransactionStatus } from "../families/stacks/types";
+import { TransactionStatusRaw as stacksTransactionStatusRaw } from "../families/stacks/types";
 import { Transaction as stellarTransaction } from "../families/stellar/types";
 import { TransactionRaw as stellarTransactionRaw } from "../families/stellar/types";
 import { TransactionStatus as stellarTransactionStatus } from "../families/stellar/types";
@@ -91,12 +95,13 @@ export type Transaction =
   | evmTransaction
   | filecoinTransaction
   | hederaTransaction
+  | internet_computerTransaction
   | nearTransaction
   | iconTransaction
-  | neoTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
+  | stacksTransaction
   | stellarTransaction
   | tezosTransaction
   | tronTransaction;
@@ -113,12 +118,13 @@ export type TransactionRaw =
   | evmTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | internet_computerTransactionRaw
   | nearTransactionRaw
   | iconTransactionRaw
-  | neoTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
+  | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
   | tronTransactionRaw;
@@ -135,12 +141,13 @@ export type TransactionStatus =
   | evmTransactionStatus
   | filecoinTransactionStatus
   | hederaTransactionStatus
+  | internet_computerTransactionStatus
   | nearTransactionStatus
   | iconTransactionStatus
-  | neoTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
+  | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
   | tronTransactionStatus;
@@ -157,12 +164,13 @@ export type TransactionStatusRaw =
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
+  | internet_computerTransactionStatusRaw
   | nearTransactionStatusRaw
   | iconTransactionStatusRaw
-  | neoTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
+  | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
   | tronTransactionStatusRaw;

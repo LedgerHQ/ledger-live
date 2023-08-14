@@ -10,7 +10,7 @@ import { getStakingGas } from "./logic";
 export const buildTransaction = async (
   a: Account,
   t: Transaction,
-  publicKey: string
+  publicKey: string,
 ): Promise<NearApiTransaction> => {
   const { nonce, block_hash } = await getAccessKey({
     address: a.freshAddress,
@@ -22,8 +22,7 @@ export const buildTransaction = async (
     disableRounding: true,
     showAllDigits: true,
   });
-  const parsedNearAmount =
-    nearAPI.utils.format.parseNearAmount(formattedAmount);
+  const parsedNearAmount = nearAPI.utils.format.parseNearAmount(formattedAmount);
 
   const actions: Action[] = [];
 
@@ -34,19 +33,14 @@ export const buildTransaction = async (
           "deposit_and_stake",
           {},
           getStakingGas().toNumber(),
-          parsedNearAmount
-        )
+          parsedNearAmount,
+        ),
       );
       break;
     case "unstake":
       if (t.useAllAmount) {
         actions.push(
-          nearAPI.transactions.functionCall(
-            "unstake_all",
-            {},
-            getStakingGas().toNumber(),
-            "0"
-          )
+          nearAPI.transactions.functionCall("unstake_all", {}, getStakingGas().toNumber(), "0"),
         );
       } else {
         actions.push(
@@ -54,20 +48,15 @@ export const buildTransaction = async (
             "unstake",
             { amount: parsedNearAmount },
             getStakingGas().toNumber(),
-            "0"
-          )
+            "0",
+          ),
         );
       }
       break;
     case "withdraw":
       if (t.useAllAmount) {
         actions.push(
-          nearAPI.transactions.functionCall(
-            "withdraw_all",
-            {},
-            getStakingGas(t).toNumber(),
-            "0"
-          )
+          nearAPI.transactions.functionCall("withdraw_all", {}, getStakingGas(t).toNumber(), "0"),
         );
       } else {
         actions.push(
@@ -75,8 +64,8 @@ export const buildTransaction = async (
             "withdraw",
             { amount: parsedNearAmount },
             getStakingGas().toNumber(),
-            "0"
-          )
+            "0",
+          ),
         );
       }
       break;
@@ -90,7 +79,7 @@ export const buildTransaction = async (
     t.recipient,
     nonce + 1,
     actions,
-    nearAPI.utils.serialize.base_decode(block_hash)
+    nearAPI.utils.serialize.base_decode(block_hash),
   );
 
   return transaction;

@@ -83,11 +83,7 @@ const Rewards = (props: RewardsPropsType) => {
           </LText>
 
           <LText semiBold={true} style={styles.subLabel} color="grey">
-            <CounterValue
-              withPlaceholder={true}
-              value={rewardsAmount}
-              currency={currency}
-            />
+            <CounterValue withPlaceholder={true} value={rewardsAmount} currency={currency} />
           </LText>
         </View>
 

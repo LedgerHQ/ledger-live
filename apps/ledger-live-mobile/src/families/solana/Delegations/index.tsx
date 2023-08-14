@@ -4,14 +4,8 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  getAddressExplorer,
-  getDefaultExplorerView,
-} from "@ledgerhq/live-common/explorers";
-import {
-  stakeActions,
-  stakeActivePercent,
-} from "@ledgerhq/live-common/families/solana/logic";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { stakeActions, stakeActivePercent } from "@ledgerhq/live-common/families/solana/logic";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import {
   SolanaAccount,
@@ -37,9 +31,7 @@ import { rgba } from "../../../colors";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import Circle from "../../../components/Circle";
-import DelegationDrawer, {
-  IconProps,
-} from "../../../components/DelegationDrawer";
+import DelegationDrawer, { IconProps } from "../../../components/DelegationDrawer";
 import Touchable from "../../../components/Touchable";
 import { urls } from "../../../config/urls";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -91,9 +83,7 @@ function Delegations({ account }: Props) {
       params?: { [key: string]: unknown };
     }) => {
       setSelectedStakeWithMeta(undefined);
-      (
-        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
-      ).navigate(route, {
+      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
       });
@@ -111,10 +101,7 @@ function Delegations({ account }: Props) {
       const url =
         meta.validator?.url ??
         (delegation?.voteAccAddr &&
-          getAddressExplorer(
-            getDefaultExplorerView(account.currency),
-            delegation.voteAccAddr,
-          ));
+          getAddressExplorer(getDefaultExplorerView(account.currency), delegation.voteAccAddr));
       if (url) {
         Linking.openURL(url);
       }
@@ -183,10 +170,7 @@ function Delegations({ account }: Props) {
             style={[styles.valueText]}
             color="live"
           >
-            {stake.delegation === undefined
-              ? 0
-              : stakeActivePercent(stake).toFixed(2)}{" "}
-            %
+            {stake.delegation === undefined ? 0 : stakeActivePercent(stake).toFixed(2)} %
           </Text>
         ),
       },
@@ -216,8 +200,7 @@ function Delegations({ account }: Props) {
     ]);
 
     const availableActions =
-      (selectedStakeWithMeta && stakeActions(selectedStakeWithMeta.stake)) ??
-      [];
+      (selectedStakeWithMeta && stakeActions(selectedStakeWithMeta.stake)) ?? [];
 
     return allStakeActions.map(action => {
       const actionEnabled = availableActions.includes(action);
@@ -230,14 +213,8 @@ function Delegations({ account }: Props) {
       const drawerAction: DelegationDrawerActions[number] = {
         label: capitalize(action),
         Icon: (props: IconProps) => (
-          <Circle
-            {...props}
-            bg={actionEnabled ? enabledActionCircleBgColor : colors.lightFog}
-          >
-            <DrawerStakeActionIcon
-              stakeAction={action}
-              enabled={actionEnabled}
-            />
+          <Circle {...props} bg={actionEnabled ? enabledActionCircleBgColor : colors.lightFog}>
+            <DrawerStakeActionIcon stakeAction={action} enabled={actionEnabled} />
           </Circle>
         ),
         event: `DelegationAction${capitalize(action)}`,
@@ -258,14 +235,7 @@ function Delegations({ account }: Props) {
       };
       return drawerAction;
     });
-  }, [
-    selectedStakeWithMeta,
-    colors.fog,
-    colors.alert,
-    colors.yellow,
-    colors.lightFog,
-    onNavigate,
-  ]);
+  }, [selectedStakeWithMeta, colors.fog, colors.alert, colors.yellow, colors.lightFog, onNavigate]);
 
   const onDelegate = () => {
     onNavigate({
@@ -300,9 +270,7 @@ function Delegations({ account }: Props) {
             size={size}
           />
         )}
-        amount={
-          new BigNumber(selectedStakeWithMeta?.stake?.delegation?.stake ?? 0)
-        }
+        amount={new BigNumber(selectedStakeWithMeta?.stake?.delegation?.stake ?? 0)}
         data={data}
         actions={delegationActions}
       />
@@ -323,18 +291,13 @@ function Delegations({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel
             name={t("account.delegation.sectionLabel")}
-            RightComponent={
-              <DelegationLabelRight disabled={false} onPress={onDelegate} />
-            }
+            RightComponent={<DelegationLabelRight disabled={false} onPress={onDelegate} />}
           />
           <Box mt={6}>
             {stakesWithMeta.map((stakeWithMeta, i) => (
               <View
                 key={stakeWithMeta.stake.stakeAccAddr}
-                style={[
-                  styles.delegationsWrapper,
-                  { backgroundColor: colors.card },
-                ]}
+                style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
               >
                 <DelegationRow
                   stakeWithMeta={stakeWithMeta}
@@ -374,11 +337,7 @@ function DrawerStakeActionIcon({
   }
 }
 
-export default function SolanaDelegations({
-  account,
-}: {
-  account: AccountLike;
-}) {
+export default function SolanaDelegations({ account }: { account: AccountLike }) {
   if (!(account as SolanaAccount).solanaResources) return null;
   return <Delegations account={account as SolanaAccount} />;
 }

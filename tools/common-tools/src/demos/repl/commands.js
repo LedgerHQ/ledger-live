@@ -5,7 +5,7 @@ import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getBatteryStatus from "@ledgerhq/live-common/lib/hw/getBatteryStatus";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
-import { createDeviceSocket as socket } from "@ledgerhq/live-common/lib/api/socket";
+import { createDeviceSocket as socket } from "@ledgerhq/live-common/lib/socket";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
 import openApp from "@ledgerhq/live-common/lib/hw/openApp";
@@ -45,7 +45,7 @@ export const commands: Command[] = [
     exec: getBatteryStatus,
     mapArgs: mapP2,
     form: [
-      { 
+      {
         type: "ascii",
         default: "4",
         maxlength: 1,

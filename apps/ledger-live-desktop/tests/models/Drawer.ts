@@ -6,8 +6,16 @@ export class Drawer {
   readonly drawerOverlay: Locator;
   readonly continueButton: Locator;
   readonly closeButton: Locator;
-  readonly currencyButton: Function;
-  readonly accountButton: Function;
+  readonly currencyButton: (currency: string) => Locator;
+  readonly accountButton: (accountName: string, index: number) => Locator;
+  readonly selectAssetTitle: Locator;
+  readonly selectAssetSearchBar: Locator;
+  readonly selectAccountTitle: Locator;
+  readonly disclaimerCheckbox: Locator;
+  readonly swapAmountFrom: Locator;
+  readonly swapAmountTo: Locator;
+  readonly swapAccountFrom: Locator;
+  readonly swapAccountTo: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -15,10 +23,18 @@ export class Drawer {
     this.drawerOverlay = page.locator("[data-test-id='drawer-overlay'][style='opacity: 1;']");
     this.continueButton = page.locator("data-test-id=drawer-continue-button");
     this.closeButton = page.locator("data-test-id=drawer-close-button");
-    this.currencyButton = (currency: string) =>
+    this.currencyButton = currency =>
       page.locator(`data-test-id=currency-row-${currency.toLowerCase()}`);
-    this.accountButton = (accountName: string, index: number) =>
-      page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`);
+    this.accountButton = (accountName, index) =>
+      page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`).first();
+    this.selectAssetTitle = page.locator("data-test-id=select-asset-drawer-title");
+    this.selectAssetSearchBar = page.locator("data-test-id=select-asset-drawer-search-input");
+    this.selectAccountTitle = page.locator("data-test-id=select-account-drawer-title");
+    this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
+    this.swapAmountFrom = page.locator("data-test-id=swap-amount-from").first();
+    this.swapAmountTo = page.locator("data-test-id=swap-amount-to").first();
+    this.swapAccountFrom = page.locator("data-test-id=swap-account-from").first();
+    this.swapAccountTo = page.locator("data-test-id=swap-account-to").first();
   }
 
   async continue() {
@@ -48,5 +64,10 @@ export class Drawer {
 
   async selectAccount(accountName: string, index = 0) {
     await this.accountButton(accountName, index).click();
+  }
+
+  async verifyAssetIsReady() {
+    await this.selectAssetTitle.isVisible();
+    await this.selectAssetSearchBar.isEnabled();
   }
 }

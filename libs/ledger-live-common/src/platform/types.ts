@@ -1,8 +1,5 @@
 import type { SignedOperation } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountFilters, CurrencyFilters } from "./filters";
 import {
   Account as PlatformAccount,
@@ -37,28 +34,64 @@ export type Loadable<T> = {
   value: T | null;
 };
 
-export type AppPlatform =
-  | "desktop" // == windows || mac || linux
-  | "mobile" // == android || ios
-  | "all";
+export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
+export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {
   method: string;
   params?: any;
 };
 
+export type ParamsWithDappUrl = {
+  dappUrl: string;
+};
+
+export type ParamsWithNetwork = {
+  networks: Array<LiveAppManifestParamsNetwork>;
+};
+
+export type LiveAppManifestParamsDappWithNetwork = ParamsWithDappUrl & ParamsWithNetwork;
+export type LiveAppManifestParamsDappWithNetworkAndNanoApp =
+  LiveAppManifestParamsDappWithNetwork & {
+    nanoApp: string;
+    dappName: string;
+  };
+
+export type LiveAppManifestParamsDapp =
+  | LiveAppManifestParamsDappWithNetwork
+  | LiveAppManifestParamsDappWithNetworkAndNanoApp;
+
+export type LiveAppManifestParamsWebApp = {
+  currencies: string[];
+  webAppName: string;
+  webUrl: string;
+};
+
+export type LiveAppManifestParams =
+  | LiveAppManifestParamsDapp
+  | LiveAppManifestParamsWebApp
+  | ParamsWithNetwork
+  | Array<string>;
+
+export type LiveAppManifestParamsNetwork = {
+  currency: string;
+  chainID: number;
+  nodeURL?: string;
+};
+
 export type LiveAppManifest = {
   id: string;
+  author?: string;
   private?: boolean;
   name: string;
   url: string | URL;
-  params?: string[];
+  params?: LiveAppManifestParams;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
-  platform: AppPlatform;
+  platforms: AppPlatform[];
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
@@ -66,6 +99,7 @@ export type LiveAppManifest = {
   domains: string[];
   categories: string[];
   currencies: string[] | "*";
+  visibility: Visibility;
   content: {
     shortDescription: TranslatableString;
     description: TranslatableString;
@@ -78,12 +112,8 @@ export type PlatformApi = {
 
 export type PlatformSignedTransaction = SignedOperation;
 
-export type ListPlatformAccount = (
-  filters?: AccountFilters
-) => PlatformAccount[];
+export type ListPlatformAccount = (filters?: AccountFilters) => PlatformAccount[];
 
-export type ListPlatformCurrency = (
-  filters?: CurrencyFilters
-) => PlatformCurrency[];
+export type ListPlatformCurrency = (filters?: CurrencyFilters) => PlatformCurrency[];
 
 export type PlatformSupportedCurrency = CryptoCurrency | TokenCurrency;

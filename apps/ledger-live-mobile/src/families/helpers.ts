@@ -1,12 +1,9 @@
-import type { Account } from "@ledgerhq/types-live";
 import { useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../components/RootNavigator/types/helpers";
+import type { Account, DomainServiceResolution, OperationType } from "@ledgerhq/types-live";
+import type { BaseComposite, StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../const";
 
@@ -16,12 +13,10 @@ type Navigation = BaseComposite<
 
 export function useFieldByFamily(
   field: string,
-): BigNumber | string | boolean | null | undefined {
+): BigNumber | string | boolean | DomainServiceResolution | null | undefined {
   const route = useRoute<Navigation["route"]>();
 
-  return route.params?.transaction[
-    field as keyof typeof route.params.transaction
-  ];
+  return route.params?.transaction[field as keyof typeof route.params.transaction];
 }
 export function useEditTxFeeByFamily() {
   const transaction = useRoute<Navigation["route"]>().params?.transaction;
@@ -70,4 +65,18 @@ export function getFirstStatusError(
 export function hasStatusError(status: TransactionStatus): boolean {
   if (!status || !status.errors) return false;
   return !!Object.keys(status.errors).length;
+}
+
+/**
+ *  Returns the delegation type for tracking purposes.
+ */
+export function getTrackingDelegationType({ type }: { type: OperationType }) {
+  switch (type) {
+    case "DELEGATE":
+      return "delegation";
+    case "REDELEGATE":
+      return "redelegation";
+    default:
+      return undefined;
+  }
 }

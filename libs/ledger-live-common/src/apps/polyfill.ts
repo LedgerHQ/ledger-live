@@ -4,9 +4,10 @@ import semver from "semver";
 import {
   listCryptoCurrencies,
   findCryptoCurrencyById,
+  findCryptoCurrency,
 } from "@ledgerhq/cryptoassets";
-import { App, Application } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { App, AppType, Application, ApplicationV2 } from "@ledgerhq/types-live";
+import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
 const reverseDep = {};
 
@@ -17,6 +18,8 @@ export const whitelistDependencies = [
   "Bitcoin",
   "Bitcoin Test",
   "Zcash",
+  "Avalanche",
+  "Avalanche Test",
 ];
 
 export function declareDep(name: string, dep: string): void {
@@ -39,6 +42,7 @@ export function declareDep(name: string, dep: string): void {
   ["Alkemi", "Ethereum"],
   ["Angle", "Ethereum"],
   ["APWine", "Ethereum"],
+  ["ArtBlocks", "Ethereum"],
   ["ARTIS sigma1", "Ethereum"],
   ["cBridge", "Ethereum"],
   ["Cometh", "Ethereum"],
@@ -46,6 +50,7 @@ export function declareDep(name: string, dep: string): void {
   ["DODO", "Ethereum"],
   ["EnergyWebChain", "Ethereum"],
   ["Euler", "Ethereum"],
+  ["Harvest", "Ethereum"],
   ["Kiln", "Ethereum"],
   ["kUSD", "Ethereum"],
   ["Lido", "Ethereum"],
@@ -75,10 +80,7 @@ const versionBasedWhitelistDependencies = {
   Bitcoin: "2.1.0",
 };
 
-export const getDependencies = (
-  appName: string,
-  appVersion?: string
-): string[] => {
+export const getDependencies = (appName: string, appVersion?: string): string[] => {
   const maybeDirectDep = directDep[appName] || [];
 
   if (!appVersion || !maybeDirectDep.length) {
@@ -93,15 +95,15 @@ export const getDependencies = (
   });
 };
 
-export const getDependents = (appName: string): string[] =>
-  reverseDep[appName] || [];
+export const getDependents = (appName: string): string[] => reverseDep[appName] || [];
+
 export const polyfillApplication = (app: Application): Application => {
   const crypto = listCryptoCurrencies(true, true).find(
-    (crypto) =>
+    crypto =>
       app.name.toLowerCase() === crypto.managerAppName.toLowerCase() &&
       (crypto.managerAppName !== "Ethereum" ||
         // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-        app.name === "Ethereum")
+        app.name === "Ethereum"),
   );
 
   if (crypto && !app.currencyId) {
@@ -110,6 +112,48 @@ export const polyfillApplication = (app: Application): Application => {
 
   return app;
 };
+
+export const getCurrencyIdFromAppName = (
+  name: string,
+): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
+  const crypto =
+    // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
+    findCryptoCurrency(c => c.name === name) ||
+    // Else take the first one with that manager app
+    findCryptoCurrency(c => c.managerAppName === name);
+  return crypto?.id;
+};
+
+/**
+ * Due to the schema returned by the Manager API we need this key remapping and
+ * slight polyfill because we are not the only consumers of the API and they
+ * can't give us exactly what we need. It's a pity but it's our pity.
+ * @param param ApplicationV2
+ * @returns App
+ */
+export const mapApplicationV2ToApp = ({
+  versionId: id,
+  versionName: name,
+  versionDisplayName: displayName,
+  firmwareKey: firmware_key, // No point in refactoring since api wont change.
+  deleteKey: delete_key,
+  applicationType: type,
+  compatibleWallets,
+  parentName,
+  ...rest
+}: ApplicationV2): App => ({
+  id,
+  name,
+  displayName,
+  firmware_key,
+  delete_key,
+  dependencies: parentName ? [parentName] : [],
+  indexOfMarketCap: -1, // We don't know at this point.
+  type: name === "Exchange" ? AppType.swap : type,
+  ...rest,
+  currencyId: getCurrencyIdFromAppName(name),
+  compatibleWallets: parseCompatibleWallets(compatibleWallets, name),
+});
 
 export const calculateDependencies = (): void => {
   listCryptoCurrencies(true, true).forEach((currency: CryptoCurrency) => {
@@ -127,15 +171,36 @@ export const calculateDependencies = (): void => {
   });
 };
 
+export const parseCompatibleWallets = (
+  compatibleWalletsJSON: string | undefined,
+  appName: string,
+): Array<{ name: string; url: string }> => {
+  const compatibleWallets: Array<{ name: string; url: string }> = [];
+  if (compatibleWalletsJSON) {
+    try {
+      const parsed = JSON.parse(compatibleWalletsJSON);
+      if (parsed && Array.isArray(parsed)) {
+        parsed.forEach(({ name, url }) => {
+          compatibleWallets.push({
+            name,
+            url,
+          });
+        });
+      }
+      return parsed;
+    } catch (e) {
+      console.error("invalid compatibleWalletsJSON for " + appName, e);
+    }
+  }
+
+  return compatibleWallets;
+};
+
 export const polyfillApp = (app: App): App => {
-  const dependencies = whitelistDependencies.includes(app.name)
-    ? []
-    : app.dependencies;
+  const dependencies = whitelistDependencies.includes(app.name) ? [] : app.dependencies;
 
   return {
     ...app,
-    dependencies: uniq(
-      dependencies.concat(getDependencies(app.name, app.version))
-    ),
+    dependencies: uniq(dependencies.concat(getDependencies(app.name, app.version))),
   };
 };

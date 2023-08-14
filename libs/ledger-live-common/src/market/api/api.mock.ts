@@ -1,9 +1,4 @@
-import {
-  CurrencyData,
-  MarketCoin,
-  MarketListRequestParams,
-  SupportedCoins,
-} from "../types";
+import { CurrencyData, MarketCoin, MarketListRequestParams, SupportedCoins } from "../types";
 import { listCryptoCurrencies, listTokens } from "../../currencies";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
@@ -32,8 +27,7 @@ const paginatedData = [
     id: "bitcoin",
     symbol: "btc",
     name: "Bitcoin",
-    image:
-      "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579",
+    image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579",
     current_price: 46978,
     market_cap: 888084713113,
     market_cap_rank: 1,
@@ -62,8 +56,7 @@ const paginatedData = [
     id: "ethereum",
     symbol: "eth",
     name: "Ethereum",
-    image:
-      "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880",
+    image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1595348880",
     current_price: 3956.23,
     market_cap: 469967313961,
     market_cap_rank: 2,
@@ -96,8 +89,7 @@ const paginatedData = [
     id: "binancecoin",
     symbol: "bnb",
     name: "Binance Coin",
-    image:
-      "https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png?1547034615",
+    image: "https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png?1547034615",
     current_price: 530.99,
     market_cap: 89278760378,
     market_cap_rank: 3,
@@ -126,8 +118,7 @@ const paginatedData = [
     id: "tether",
     symbol: "usdt",
     name: "Tether",
-    image:
-      "https://assets.coingecko.com/coins/images/325/large/Tether-logo.png?1598003707",
+    image: "https://assets.coingecko.com/coins/images/325/large/Tether-logo.png?1598003707",
     current_price: 1,
     market_cap: 77439200796,
     market_cap_rank: 4,
@@ -156,8 +147,7 @@ const paginatedData = [
     id: "solana",
     symbol: "sol",
     name: "Solana",
-    image:
-      "https://assets.coingecko.com/coins/images/4128/large/Solana.jpg?1635329178",
+    image: "https://assets.coingecko.com/coins/images/4128/large/Solana.jpg?1635329178",
     current_price: 182.14,
     market_cap: 55791855479,
     market_cap_rank: 5,
@@ -186,8 +176,7 @@ const paginatedData = [
     id: "usd-coin",
     symbol: "usdc",
     name: "USD Coin",
-    image:
-      "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389",
+    image: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042389",
     current_price: 0.999438,
     market_cap: 41947712099,
     market_cap_rank: 6,
@@ -216,8 +205,7 @@ const paginatedData = [
     id: "cardano",
     symbol: "ada",
     name: "Cardano",
-    image:
-      "https://assets.coingecko.com/coins/images/975/large/cardano.png?1547034860",
+    image: "https://assets.coingecko.com/coins/images/975/large/cardano.png?1547034860",
     current_price: 1.25,
     market_cap: 40061737912,
     market_cap_rank: 7,
@@ -256,9 +244,7 @@ async function listPaginated({
   let filteredResponse = response;
 
   if (order !== "desc") {
-    filteredResponse = filteredResponse.sort(
-      (x, y) => y.market_cap_rank - x.market_cap_rank
-    );
+    filteredResponse = filteredResponse.sort((x, y) => y.market_cap_rank - x.market_cap_rank);
   }
 
   if (search) {
@@ -266,15 +252,11 @@ async function listPaginated({
   }
 
   if (starred.length > 0) {
-    filteredResponse = filteredResponse.filter((currency) =>
-      starred.includes(currency.id)
-    );
+    filteredResponse = filteredResponse.filter(currency => starred.includes(currency.id));
   }
 
   if (ids.length > 0) {
-    filteredResponse = filteredResponse.filter((currency) =>
-      ids.includes(currency.id)
-    );
+    filteredResponse = filteredResponse.filter(currency => ids.includes(currency.id));
   }
 
   // @ts-expect-error issue in typing
@@ -283,7 +265,7 @@ async function listPaginated({
     name: currency.name,
     image: currency.image,
     internalCurrency: cryptoCurrenciesList.find(
-      ({ ticker }) => ticker.toLowerCase() === currency.symbol
+      ({ ticker }) => ticker.toLowerCase() === currency.symbol,
     ),
     marketcap: currency.market_cap,
     marketcapRank: currency.market_cap_rank,

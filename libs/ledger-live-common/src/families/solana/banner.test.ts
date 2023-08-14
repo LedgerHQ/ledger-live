@@ -117,9 +117,7 @@ describe("solana/banner", () => {
     jest.restoreAllMocks();
   });
   it("should not display the banner is account is", async () => {
-    jest
-      .spyOn(preloadedData, "getCurrentSolanaPreloadData")
-      .mockReturnValue(validatorsMap);
+    jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(helpers, "isAccountEmpty").mockReturnValue(true);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
@@ -130,9 +128,7 @@ describe("solana/banner", () => {
     });
   });
   it("should return display delegate mode is account is not empty", async () => {
-    jest
-      .spyOn(preloadedData, "getCurrentSolanaPreloadData")
-      .mockReturnValue(validatorsMap);
+    jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(helpers, "isAccountEmpty").mockReturnValue(false);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
@@ -156,9 +152,7 @@ describe("solana/banner", () => {
       activation: { active: 0, inactive: 50000000, state: "activating" },
       withdrawable: 0,
     };
-    jest
-      .spyOn(preloadedData, "getCurrentSolanaPreloadData")
-      .mockReturnValue(validatorsMap);
+    jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(helpers, "isAccountEmpty").mockReturnValue(false);
     account.solanaResources?.stakes.push(badValidator);
     const result = getAccountBannerState(account);

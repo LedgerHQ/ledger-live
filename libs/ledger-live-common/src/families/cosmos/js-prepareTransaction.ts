@@ -1,9 +1,16 @@
-import { CosmosAccount, Transaction } from "./types";
-import BigNumber from "bignumber.js";
-import { getMaxEstimatedBalance } from "./logic";
-import { CacheRes, makeLRUCache } from "../../cache";
+import { CacheRes, makeLRUCache } from "@ledgerhq/live-network/cache";
+import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { getEnv } from "../../env";
+import { CosmosAPI } from "./api/Cosmos";
 import cryptoFactory from "./chain/chain";
+import {
+  buildUnsignedPayloadTransaction,
+  postBuildUnsignedPayloadTransaction,
+} from "./js-buildTransaction";
+import { getMaxEstimatedBalance } from "./logic";
+import { CosmosAccount, Transaction } from "./types";
 
 export const calculateFees: CacheRes<
   Array<{
@@ -29,29 +36,69 @@ export const calculateFees: CacheRes<
       transaction.recipient
     }_${String(transaction.useAllAmount)}_${transaction.mode}_${
       transaction.validators
-        ? transaction.validators.map((v) => v.address).join("-")
+        ? transaction.validators.map(v => `${v.address}-${v.amount}`).join("_")
         : ""
     }_${transaction.memo ? transaction.memo.toString() : ""}_${
       transaction.sourceValidator ? transaction.sourceValidator : ""
-    }`
+    }`,
+  {
+    ttl: 1000 * 60, // 60 sec
+  },
 );
 
-const getEstimatedFees = async (
+export const getEstimatedFees = async (
   account: CosmosAccount,
-  transaction: Transaction
-): Promise<any> => {
+  transaction: Transaction,
+): Promise<{ estimatedFees: BigNumber; estimatedGas: BigNumber }> => {
   const cosmosCurrency = cryptoFactory(account.currency.id);
   let estimatedGas = new BigNumber(cosmosCurrency.defaultGas);
-  if (cosmosCurrency.gas[transaction.mode]) {
-    estimatedGas = new BigNumber(cosmosCurrency.gas[transaction.mode]);
+
+  const cosmosAPI = new CosmosAPI(account.currency.id);
+  const unsignedPayload: { typeUrl: string; value: any }[] = await buildUnsignedPayloadTransaction(
+    account,
+    transaction,
+  );
+
+  if (unsignedPayload && unsignedPayload.length > 0) {
+    const signature = new Uint8Array(Buffer.from(account.seedIdentifier, "hex"));
+
+    // see https://github.com/cosmos/cosmjs/blob/main/packages/proto-signing/src/pubkey.spec.ts
+    const prefix = new Uint8Array([10, 33]);
+
+    const pubkey = {
+      typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+      value: new Uint8Array([...prefix, ...signature]),
+    };
+
+    const tx_bytes = await postBuildUnsignedPayloadTransaction(
+      account,
+      transaction,
+      pubkey,
+      unsignedPayload,
+      signature,
+    );
+    try {
+      const gasUsed = await cosmosAPI.simulate(tx_bytes);
+      estimatedGas = gasUsed
+        .multipliedBy(new BigNumber(getEnv("COSMOS_GAS_AMPLIFIER")))
+        .integerValue(BigNumber.ROUND_CEIL);
+    } catch (e) {
+      log("cosmos/simulate", "failed to estimate gas usage during tx simulation", {
+        e,
+      });
+    }
   }
-  const estimatedFees = estimatedGas.times(cosmosCurrency.minGasprice);
+
+  const estimatedFees = estimatedGas
+    .times(cosmosCurrency.minGasPrice)
+    .integerValue(BigNumber.ROUND_CEIL);
+
   return { estimatedFees, estimatedGas };
 };
 
 export const prepareTransaction = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<Transaction> => {
   let memo = transaction.memo;
   let amount = transaction.amount;

@@ -1,10 +1,7 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 
 import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
 import Unbonding from "./components/Unbonding";
@@ -20,10 +17,7 @@ const Unbondings = (props: UnbondingsPropsType) => {
   const { account, onDrawer, delegations } = props;
   const { t } = useTranslation();
 
-  const currency = useMemo(
-    () => getAccountCurrency(getMainAccount(account, undefined)),
-    [account],
-  );
+  const currency = useMemo(() => getAccountCurrency(getMainAccount(account, undefined)), [account]);
 
   /*
    * Filter out delegations without unbondings, and reduce the rest into a single array, assigning the validator.

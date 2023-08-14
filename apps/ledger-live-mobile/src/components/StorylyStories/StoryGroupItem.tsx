@@ -1,6 +1,6 @@
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
-import { Image, StyleProp, ViewStyle } from "react-native";
+import { Image, StyleProp, ViewStyle, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import Svg, { Circle, Defs, LinearGradient, Stop } from "react-native-svg";
@@ -24,7 +24,10 @@ const IllustrationContainer = styled(Flex)<{ seen: boolean }>`
   border-radius: 100px;
 `;
 
-const Illustration = styled(Image).attrs({ resizeMode: "cover" })`
+const Illustration = styled(Image).attrs({
+  blurRadius: 2.5,
+  resizeMode: "cover",
+})`
   height: ${innerImageSize}px;
   width: ${innerImageSize}px;
   border-radius: 72px;
@@ -32,23 +35,14 @@ const Illustration = styled(Image).attrs({ resizeMode: "cover" })`
 
 const Border: React.FC<{ seen: boolean }> = ({ seen }) => {
   const { colors } = useTheme();
-  const containerSize =
-    innerImageSize + 2 * borderWidth + 2 * borderInnerPadding;
+  const containerSize = innerImageSize + 2 * borderWidth + 2 * borderInnerPadding;
   return (
     <Flex position="absolute" height={containerSize} width={containerSize}>
       <Svg height={containerSize} width={containerSize}>
         <Defs>
           <LinearGradient id="grad" x1="0" y1="1" x2="1" y2="0">
-            <Stop
-              offset="0"
-              stopColor={seen ? colors.neutral.c30 : "#461AF7"}
-              stopOpacity="1"
-            />
-            <Stop
-              offset="1"
-              stopColor={seen ? colors.neutral.c30 : "#FF6E33"}
-              stopOpacity="1"
-            />
+            <Stop offset="0" stopColor={seen ? colors.neutral.c30 : "#461AF7"} stopOpacity="1" />
+            <Stop offset="1" stopColor={seen ? colors.neutral.c30 : "#FF6E33"} stopOpacity="1" />
           </LinearGradient>
         </Defs>
         <Circle
@@ -100,6 +94,15 @@ const StoryGroupItem: React.FC<Props> = props => {
           backgroundColor="neutral.c30"
         >
           <Illustration source={{ uri: iconUrl }} />
+          <Flex
+            style={StyleSheet.absoluteFillObject}
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="rgba(255,255,255,0.03)"
+            borderRadius={innerImageSize}
+          >
+            <IconsLegacy.PlayMedium size={24} color="constant.white" />
+          </Flex>
         </Flex>
         <Border seen={seen} />
       </IllustrationContainer>

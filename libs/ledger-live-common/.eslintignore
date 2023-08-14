@@ -4,7 +4,6 @@ src/data/flags
 src/families/*/types.js
 src/generated
 src/load/tokens/
-mobile-test-app/
 
 lib/
 lib-es/

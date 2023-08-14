@@ -13,23 +13,15 @@ function injectGetAddressParams(account: BitcoinAccount): any {
   }
 }
 
-export function formatInput(
-  account: BitcoinAccount,
-  input: BitcoinInput
-): string {
+export function formatInput(account: BitcoinAccount, input: BitcoinInput): string {
   return `${(input.value
     ? formatCurrencyUnit(account.unit, input.value, {
         showCode: false,
       })
     : ""
-  ).padEnd(12)} ${input.address || ""} ${input.previousTxHash || ""}@${
-    input.previousOutputIndex
-  }`;
+  ).padEnd(12)} ${input.address || ""} ${input.previousTxHash || ""}@${input.previousOutputIndex}`;
 }
-export function formatOutput(
-  account: BitcoinAccount,
-  o: BitcoinOutput
-): string {
+export function formatOutput(account: BitcoinAccount, o: BitcoinOutput): string {
   return [
     formatCurrencyUnit(account.unit, o.value, {
       showCode: false,
@@ -38,9 +30,7 @@ export function formatOutput(
     o.isChange ? "(change)" : "",
     o.rbf ? "rbf" : "",
     o.hash,
-    `@${o.outputIndex} (${
-      o.blockHeight ? account.blockHeight - o.blockHeight : 0
-    })`,
+    `@${o.outputIndex} (${o.blockHeight ? account.blockHeight - o.blockHeight : 0})`,
   ]
     .filter(Boolean)
     .join(" ");
@@ -56,7 +46,7 @@ function formatAccountSpecifics(account: BitcoinAccount): string {
     .slice(0)
     .sort(sortUTXO)
     .slice(0, displayAll ? utxos.length : n)
-    .map((utxo) => `\n${formatOutput(account, utxo)}`)
+    .map(utxo => `\n${formatOutput(account, utxo)}`)
     .join("");
 
   if (!displayAll) {

@@ -8,8 +8,7 @@ export type PerformanceEventRenderable = {
   date: Date;
 };
 
-export const performanceReportSubject =
-  new ReplaySubject<PerformanceEventRenderable>(30);
+export const performanceReportSubject = new ReplaySubject<PerformanceEventRenderable>(30);
 
 // Values based on "Creating React Native Vitals" https://www.coinbase.com/blog/performance-vitals-a-unified-scoring-system-to-guide-performance-health-and-prioritization
 const navigationVitalsPoorThreshold = 600;
@@ -30,10 +29,10 @@ export function getNavigationVitalsStatusStyle(
 
   const { bgColor, statusText } =
     timeToRenderMillis > navigationVitalsPoorThreshold
-      ? { bgColor: colors.error.c100, statusText: "Poor" }
+      ? { bgColor: colors.error.c50, statusText: "Poor" }
       : timeToRenderMillis > navigationVitalsWarningThreshold
-      ? { bgColor: colors.warning.c100, statusText: "Needs improvement" }
-      : { bgColor: colors.success.c100, statusText: "Good" };
+      ? { bgColor: colors.warning.c50, statusText: "Needs improvement" }
+      : { bgColor: colors.success.c50, statusText: "Good" };
   const textColor = colors.neutral.c100;
 
   return {

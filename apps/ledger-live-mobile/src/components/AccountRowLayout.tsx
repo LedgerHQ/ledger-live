@@ -2,7 +2,7 @@ import React from "react";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { ValueChange } from "@ledgerhq/types-live";
-import { Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text, Tag, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -49,30 +49,10 @@ const AccountRowLayout = ({
           mb={2}
         />
       )}
-      <Flex
-        flexDirection="row"
-        pt={topLink ? 0 : 6}
-        pb={bottomLink || isLast ? 0 : 6}
-      >
-        <Flex
-          flex={1}
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems={"center"}
-        >
-          <Flex
-            flexDirection="column"
-            alignItems={"flex-start"}
-            flexShrink={1}
-            flexGrow={1}
-            mr={4}
-          >
-            <Flex
-              flexGrow={1}
-              flexShrink={1}
-              flexDirection="row"
-              alignItems="center"
-            >
+      <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink || isLast ? 0 : 6}>
+        <Flex flex={1} flexDirection="row" justifyContent="space-between" alignItems={"center"}>
+          <Flex flexDirection="column" alignItems={"flex-start"} flexShrink={1} flexGrow={1} mr={4}>
+            <Flex flexGrow={1} flexShrink={1} flexDirection="row" alignItems="center">
               <Text
                 variant="large"
                 fontWeight="semiBold"
@@ -91,12 +71,7 @@ const AccountRowLayout = ({
             </Flex>
 
             {parentAccountName && (
-              <Tag
-                type={"shade"}
-                size={"small"}
-                numberOfLines={1}
-                ellipsizeMode="middle"
-              >
+              <Tag type={"shade"} size={"small"} numberOfLines={1} ellipsizeMode="middle">
                 {parentAccountName}
               </Tag>
             )}
@@ -111,28 +86,15 @@ const AccountRowLayout = ({
             mr={3}
           >
             <Text variant="large" fontWeight="semiBold" color="neutral.c100">
-              <CounterValue
-                currency={currency}
-                value={balance}
-                joinFragmentsSeparator=""
-              />
+              <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
             </Text>
             {currencyUnit ? (
-              <Text
-                variant="body"
-                fontWeight="medium"
-                color="neutral.c70"
-                flex={1}
-              >
-                <CurrencyUnitValue
-                  showCode
-                  unit={currencyUnit}
-                  value={balance}
-                />
+              <Text variant="body" fontWeight="medium" color="neutral.c70" flex={1}>
+                <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
               </Text>
             ) : null}
           </Flex>
-          <Icons.ChevronRightMedium size={24} />
+          <IconsLegacy.ChevronRightMedium size={24} />
         </Flex>
       </Flex>
       {bottomLink && (

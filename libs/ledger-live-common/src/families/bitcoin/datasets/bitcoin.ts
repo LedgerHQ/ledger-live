@@ -297,7 +297,7 @@ const dataset: CurrenciesData<Transaction> = {
               recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
               amount: new BigNumber(999),
               opReturnData: Buffer.from(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
               ),
               feePerByte: new BigNumber(1),
               networkInfo: {

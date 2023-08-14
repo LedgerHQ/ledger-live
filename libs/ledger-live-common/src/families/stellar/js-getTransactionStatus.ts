@@ -26,17 +26,12 @@ import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
-import {
-  isAddressValid,
-  isAccountMultiSign,
-  isMemoValid,
-  getRecipientAccount,
-} from "./logic";
+import { isAddressValid, isAccountMultiSign, isMemoValid, getRecipientAccount } from "./logic";
 import { BASE_RESERVE, MIN_BALANCE } from "./api";
 
 const getTransactionStatus = async (
   a: Account,
-  t: Transaction
+  t: Transaction,
 ): Promise<{
   errors: Record<string, Error>;
   warnings: Record<string, Error>;
@@ -48,10 +43,9 @@ const getTransactionStatus = async (
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!t.useAllAmount;
 
-  const destinationNotExistMessage =
-    new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: `${MIN_BALANCE} XLM`,
-    });
+  const destinationNotExistMessage = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+    minimalAmount: `${MIN_BALANCE} XLM`,
+  });
 
   if (a.pendingOperations.length > 0) {
     throw new AccountAwaitingSendPendingOperations();
@@ -164,17 +158,10 @@ const getTransactionStatus = async (
         errors.amount = new NotEnoughBalance();
       }
 
-      totalSpent = useAllAmount
-        ? nativeAmountAvailable
-        : t.amount.plus(estimatedFees);
+      totalSpent = useAllAmount ? nativeAmountAvailable : t.amount.plus(estimatedFees);
 
       // Need to send at least 1 XLM to create an account
-      if (
-        !errors.recipient &&
-        !recipientAccount?.id &&
-        !errors.amount &&
-        amount.lt(10000000)
-      ) {
+      if (!errors.recipient && !recipientAccount?.id && !errors.amount && amount.lt(10000000)) {
         errors.amount = destinationNotExistMessage;
       }
 
@@ -187,11 +174,7 @@ const getTransactionStatus = async (
         });
       }
 
-      if (
-        !errors.recipient &&
-        !errors.amount &&
-        (amount.lt(0) || totalSpent.gt(nativeBalance))
-      ) {
+      if (!errors.recipient && !errors.amount && (amount.lt(0) || totalSpent.gt(nativeBalance))) {
         errors.amount = new NotEnoughBalance();
         totalSpent = new BigNumber(0);
         amount = new BigNumber(0);

@@ -1,22 +1,36 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
+import { Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TrackScreen } from "../../analytics";
 
-type Props = {
+type DelayProps = {
   isOpen: boolean;
-  productName: string;
   delay?: number;
 };
 
-const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
-  const { t } = useTranslation();
-  const [showContent, setShowContent] = useState<boolean>(false);
-  const showContentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+type Props = DelayProps & {
+  productName: string;
+};
 
-  const { radii, colors } = useTheme();
+const Container = styled(Flex).attrs({
+  position: "absolute",
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+  backgroundColor: "constant.overlay",
+  zIndex: 100,
+})``;
+
+const DisplayWithDelay: React.FC<DelayProps & { children?: React.ReactNode | null }> = ({
+  children,
+  isOpen,
+  delay = 0,
+}) => {
+  const [showContent, setShowContent] = useState<boolean>(false);
+  const showContentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -43,41 +57,47 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
     return null;
   }
 
+  return <>{children}</>;
+};
+
+export const PlainOverlay = ({ isOpen, delay }: DelayProps) => (
+  <DisplayWithDelay isOpen={isOpen} delay={delay}>
+    <Container />
+  </DisplayWithDelay>
+);
+
+const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
+  const { t } = useTranslation();
+
+  const { radii } = useTheme();
+
+  const safeAreaInsets = useSafeAreaInsets();
+
   return (
-    <Flex
-      zIndex={1000}
-      position="absolute"
-      top={0}
-      left={0}
-      height="100%"
-      width="100%"
-      background={colors.constant.overlay}
-    >
-      <Flex position="absolute" width="100%" bottom={0} padding={4}>
-        <Flex
-          width="100%"
-          backgroundColor="neutral.c100"
-          borderRadius={radii[2]}
-          p={6}
-          flexDirection="row"
-          alignItems="center"
-          rowGap={4}
-        >
-          <Flex mr={4}>
-            <Icons.WarningSolidMedium color="warning.c80" size={20} />
-          </Flex>
-          <Text
-            variant="body"
-            flex={1}
-            textBreakStrategy="balanced"
-            color="neutral.c00"
+    <DisplayWithDelay isOpen={isOpen} delay={delay}>
+      <Container>
+        <TrackScreen category="Stax BT Pairing Lost" type="toast" refreshSource={false} />
+        <Flex position="absolute" width="100%" bottom={safeAreaInsets.bottom} padding={4}>
+          <Flex
+            width="100%"
+            backgroundColor="neutral.c100"
+            borderRadius={radii[2]}
+            p={6}
+            flexDirection="row"
+            alignItems="center"
+            rowGap={4}
           >
-            {t("syncOnboarding.resyncOverlay.content", { productName })}
-          </Text>
-          <InfiniteLoader color="neutral.c00" size={24} />
+            <Flex mr={4}>
+              <IconsLegacy.WarningSolidMedium color="warning.c40" size={20} />
+            </Flex>
+            <Text variant="body" flex={1} textBreakStrategy="balanced" color="neutral.c00">
+              {t("syncOnboarding.resyncOverlay.content", { productName })}
+            </Text>
+            <InfiniteLoader color="neutral.c00" size={24} />
+          </Flex>
         </Flex>
-      </Flex>
-    </Flex>
+      </Container>
+    </DisplayWithDelay>
   );
 };
 

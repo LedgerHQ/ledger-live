@@ -1,11 +1,5 @@
-import BigNumber from "bignumber.js";
-import {
-  GetAccountShape,
-  makeAccountBridgeReceive,
-  makeScanAccounts as makeScanHelper,
-  makeSync as makeSyncHelper,
-} from "../../../bridge/jsHelpers";
-import { makeLRUCache } from "../../../cache";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   AccountBridge,
   AccountLike,
@@ -13,25 +7,30 @@ import type {
   CurrencyBridge,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import {
+  GetAccountShape,
+  makeAccountBridgeReceive,
+  makeScanAccounts as makeScanHelper,
+  makeSync as makeSyncHelper,
+} from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
 import { minutes } from "../api/cached";
 import { broadcastWithAPI } from "../js-broadcast";
-import createTransaction, { updateTransaction } from "../js-createTransaction";
+import createTransaction from "../js-createTransaction";
 import estimateMaxSpendableWithAPI from "../js-estimateMaxSpendable";
 import getTransactionStatus from "../js-getTransactionStatus";
-import { hydrate, preloadWithAPI } from "../js-preload";
+import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
 import { signOperationWithAPI } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { SolanaAccount, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
-  async function prepareTransaction(
-    mainAccount: SolanaAccount,
-    transaction: Transaction
-  ) {
+  async function prepareTransaction(mainAccount: SolanaAccount, transaction: Transaction) {
     const config: Config = {
       endpoint: endpointByCurrencyId(mainAccount.currency.id),
     };
@@ -44,7 +43,7 @@ function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
 }
 
 function makeSyncAndScan(getChainAPI: (config: Config) => Promise<ChainAPI>) {
-  const getAccountShape: GetAccountShape = async (info) => {
+  const getAccountShape: GetAccountShape = async info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.currency.id),
     };
@@ -58,18 +57,14 @@ function makeSyncAndScan(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   };
 }
 
-function makeEstimateMaxSpendable(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
-) {
+function makeEstimateMaxSpendable(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   async function estimateMaxSpendable(
-    arg: Parameters<AccountBridge<Transaction>["estimateMaxSpendable"]>[0]
+    arg: Parameters<AccountBridge<Transaction>["estimateMaxSpendable"]>[0],
   ): Promise<BigNumber> {
     const { account, parentAccount } = arg;
 
     const currencyId =
-      account.type === "Account"
-        ? account.currency.id
-        : parentAccount?.currency.id;
+      account.type === "Account" ? account.currency.id : parentAccount?.currency.id;
 
     if (currencyId === undefined) {
       throw new Error("currency not found");
@@ -99,17 +94,11 @@ function makeEstimateMaxSpendable(
     }`;
   };
 
-  return makeLRUCache(
-    estimateMaxSpendable,
-    cacheKeyByAccSpendableBalance,
-    minutes(5)
-  );
+  return makeLRUCache(estimateMaxSpendable, cacheKeyByAccSpendableBalance, minutes(5));
 }
 
-function makeBroadcast(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
-): BroadcastFnSignature {
-  return async (info) => {
+function makeBroadcast(getChainAPI: (config: Config) => Promise<ChainAPI>): BroadcastFnSignature {
+  return async info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.account.currency.id),
     };
@@ -119,9 +108,9 @@ function makeBroadcast(
 }
 
 function makeSign(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
+  getChainAPI: (config: Config) => Promise<ChainAPI>,
 ): SignOperationFnSignature<Transaction> {
-  return (info) => {
+  return info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.account.currency.id),
     };
@@ -131,7 +120,7 @@ function makeSign(
 }
 
 function makePreload(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
+  getChainAPI: (config: Config) => Promise<ChainAPI>,
 ): CurrencyBridge["preload"] {
   const preload = (currency: CryptoCurrency): Promise<Record<string, any>> => {
     const config: Config = {
@@ -141,6 +130,12 @@ function makePreload(
     return preloadWithAPI(currency, api);
   };
   return preload;
+}
+
+function getPreloadStrategy() {
+  return {
+    preloadMaxAge: PRELOAD_MAX_AGE,
+  };
 }
 
 export function makeBridges({
@@ -159,7 +154,7 @@ export function makeBridges({
 
   const accountBridge: AccountBridge<Transaction> = {
     createTransaction,
-    updateTransaction,
+    updateTransaction: defaultUpdateTransaction,
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
     getTransactionStatus,
     sync,
@@ -167,12 +162,15 @@ export function makeBridges({
     prepareTransaction: makePrepare(getQueuedAndCachedAPI),
     broadcast: makeBroadcast(getAPI),
     signOperation: makeSign(getAPI),
+    assignFromAccountRaw,
+    assignToAccountRaw,
   };
 
   const currencyBridge: CurrencyBridge = {
     preload: makePreload(getQueuedAndCachedAPI),
     hydrate,
     scanAccounts: scan,
+    getPreloadStrategy,
   };
 
   return {

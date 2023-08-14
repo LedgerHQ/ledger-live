@@ -6,7 +6,12 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
 import { CardanoAccount, Transaction, TransactionStatus } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { decodeTokenName } from "./logic";
+import {
+  decodeTokenName,
+  getAccountStakeCredential,
+  getBech32PoolId,
+  getBipPathString,
+} from "./logic";
 
 function getDeviceTransactionConfig({
   account,
@@ -21,17 +26,25 @@ function getDeviceTransactionConfig({
   const { mode } = transaction;
   const fields: DeviceTransactionField[] = [];
   const mainAccount = getMainAccount(account, parentAccount);
+  const cardanoResources = (mainAccount as CardanoAccount).cardanoResources;
+
+  const { fees } = transaction;
+  if (fees) {
+    fields.push({
+      type: "text",
+      label: "Transaction Fee",
+      value: formatCurrencyUnit(getAccountUnit(account), fees, {
+        showCode: true,
+        disableRounding: true,
+      }),
+    });
+  }
 
   if (mode === "send") {
     if (account.type === "TokenAccount") {
-      const cardanoResources = (mainAccount as CardanoAccount).cardanoResources;
-
       const { assetId } = decodeTokenCurrencyId(account.token.id);
       const { policyId, assetName } = decodeTokenAssetId(assetId);
-      const transactionAmount = transaction.useAllAmount
-        ? account.balance
-        : transaction.amount;
-      const { fees } = transaction;
+      const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
 
       const tokensToSend = [
         {
@@ -43,16 +56,15 @@ function getDeviceTransactionConfig({
 
       const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
         tokensToSend,
-        new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord)
+        new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
       );
       fields.push({
         type: "text",
         label: "ADA",
-        value: formatCurrencyUnit(
-          getAccountUnit(mainAccount),
-          requiredMinAdaForTokens,
-          { showCode: true, disableRounding: true }
-        ),
+        value: formatCurrencyUnit(getAccountUnit(mainAccount), requiredMinAdaForTokens, {
+          showCode: true,
+          disableRounding: true,
+        }),
       });
       fields.push({
         type: "text",
@@ -67,21 +79,8 @@ function getDeviceTransactionConfig({
           disableRounding: true,
         }),
       });
-      if (fees) {
-        fields.push({
-          type: "text",
-          label: "Fees",
-          value: formatCurrencyUnit(getAccountUnit(mainAccount), fees, {
-            showCode: true,
-            disableRounding: true,
-          }),
-        });
-      }
     } else if (account.type === "Account") {
-      const { fees } = transaction;
-      const transactionAmount = transaction.useAllAmount
-        ? account.balance
-        : transaction.amount;
+      const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
       fields.push({
         type: "text",
         label: "Amount",
@@ -90,17 +89,34 @@ function getDeviceTransactionConfig({
           disableRounding: true,
         }),
       });
-      if (fees) {
-        fields.push({
-          type: "text",
-          label: "Fees",
-          value: formatCurrencyUnit(getAccountUnit(account), fees, {
-            showCode: true,
-            disableRounding: true,
-          }),
-        });
-      }
     }
+  } else if (mode === "delegate" && account.type === "Account") {
+    const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+    fields.push({
+      type: "text",
+      label: "Staking key",
+      value: getBipPathString({
+        account: stakeCredential.path.account,
+        chain: stakeCredential.path.chain,
+        index: stakeCredential.path.index,
+      }),
+    });
+    fields.push({
+      type: "text",
+      label: "Delegate stake to",
+      value: getBech32PoolId(transaction.poolId as string, account.currency.id),
+    });
+  } else if (mode === "undelegate" && account.type === "Account") {
+    const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+    fields.push({
+      type: "text",
+      label: "Staking key",
+      value: getBipPathString({
+        account: stakeCredential.path.account,
+        chain: stakeCredential.path.chain,
+        index: stakeCredential.path.index,
+      }),
+    });
   }
 
   return fields;

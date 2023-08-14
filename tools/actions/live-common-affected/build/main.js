@@ -1,3 +1,4 @@
+"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -2214,9 +2215,7 @@ function main(ref) {
       core.setOutput("is-affected", String(list.length > 0));
       core.setOutput("paths", list.join(" "));
       if (list.length > 0) {
-        core.info(
-          `${list.length} paths affected since ${ref}: ${list.join(" ")}`
-        );
+        core.info(`${list.length} paths affected since ${ref}: ${list.join(" ")}`);
       } else {
         core.info(`No paths affected since ${ref}`);
       }

@@ -41,8 +41,8 @@ export type InferDynamicRangeOpts = {
   minMult: number;
   maxMult: number;
   targetSteps: number;
-  minValue?: BigNumber;
-  maxValue?: BigNumber;
+  minValue?: BigNumber | null;
+  maxValue?: BigNumber | null;
 };
 // infer a range from ONE estimated fees value.
 // e.g. we just have a "gasPrice" and we want a slider to move a gas value around it.
@@ -50,7 +50,7 @@ export type InferDynamicRangeOpts = {
 // for (let i = 0.1; i < 10; i += 0.1) console.log(i, inferDynamicRange(i));
 export function inferDynamicRange(
   amount: BigNumber,
-  opts: Partial<InferDynamicRangeOpts> = {}
+  opts: Partial<InferDynamicRangeOpts> = {},
 ): Range {
   const { minMult, maxMult, targetSteps, minValue, maxValue } = {
     ...defaultOpts,
@@ -92,7 +92,7 @@ function stepping(n, step, roundingMode) {
 const log10 = Math.log(10);
 
 // return step to use for a [min,max] with a planned number of steps (will approx).
-function findBestRangeStep(min, max, steps) {
+function findBestRangeStep(min: BigNumber, max: BigNumber, steps: number) {
   const nonRoundedStep = (max.toNumber() - min.toNumber()) / steps;
   const mag = Math.log(nonRoundedStep) / log10;
   const magInt = Math.floor(mag);

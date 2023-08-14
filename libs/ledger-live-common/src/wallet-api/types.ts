@@ -1,10 +1,8 @@
-import type { SignedOperation } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { Transaction } from "../generated/types";
+import { LiveAppManifest } from "../platform/types";
 
 export type { WalletAPITransaction };
 
@@ -26,12 +24,14 @@ export type TranslatableString = {
   [locale: string]: string;
 };
 
-export type AppPlatform =
-  | "desktop" // == windows || mac || linux
-  | "mobile" // == android || ios
-  | "all";
+export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
+
+// complete: discover catalog + search + deeplink
+// searchable: only appears via search
+// deep: only appears via deeplink
+export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {
   method: string;
@@ -39,28 +39,7 @@ export type AppPermission = {
 };
 
 // TODO update to the new manifest types from wallet-api when released
-export type AppManifest = {
-  id: string;
-  private?: boolean;
-  name: string;
-  url: string | URL;
-  homepageUrl: string;
-  supportUrl?: string;
-  icon?: string | null;
-  platform: AppPlatform;
-  apiVersion: string;
-  manifestVersion: string;
-  branch: AppBranch;
-  params?: string[];
-  categories: string[];
-  currencies: string[] | "*";
-  content: {
-    shortDescription: TranslatableString;
-    description: TranslatableString;
-  };
-  permissions: AppPermission[];
-  domains: string[];
-};
+export type AppManifest = LiveAppManifest;
 
 export type WalletAPISignedTransaction = SignedOperation;
 
@@ -68,18 +47,25 @@ export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
 
 export type GetWalletAPITransactionSignFlowInfos<
   T extends WalletAPITransaction,
-  U extends Transaction
-> = (tx: T) => {
+  U extends Transaction,
+> = ({ tx, account, parentAccount }: { tx: T; account: AccountLike; parentAccount?: Account }) => {
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<U>;
 };
 
-export type AreFeesProvided<T extends WalletAPITransaction> = (
-  tx: T
-) => boolean;
+export type AreFeesProvided<T extends WalletAPITransaction> = (tx: T) => boolean;
 
 export type ConvertToLiveTransaction<
   T extends WalletAPITransaction,
-  U extends Transaction
-> = (tx: T) => Partial<U>;
+  U extends Transaction,
+> = (params: { tx: T; account: AccountLike; parentAccount?: Account }) => Partial<U>;
+
+export type DiscoverDB = {
+  recentlyUsed: RecentlyUsed[];
+};
+
+export type RecentlyUsed = {
+  id: string;
+  usedAt: string;
+};

@@ -1,29 +1,25 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { Icons, Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
-import PlatformApp from "../../screens/Platform/App";
 import styles from "../../navigation/styles";
 import type { ExchangeLiveAppNavigatorParamList } from "./types/ExchangeLiveAppNavigator";
 import type { StackNavigatorProps } from "./types/helpers";
+import { BuyAndSellScreen } from "../../screens/PTX/BuyAndSell";
 
 const Stack = createStackNavigator<ExchangeLiveAppNavigatorParamList>();
 
 const ExchangeBuy = (
-  _props: StackNavigatorProps<
-    ExchangeLiveAppNavigatorParamList,
-    ScreenName.ExchangeBuy
-  >,
+  _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeBuy>,
 ) => {
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
   return (
-    <PlatformApp
+    <BuyAndSellScreen
       {..._props}
       route={{
         ..._props.route,
@@ -41,16 +37,13 @@ const ExchangeBuy = (
 };
 
 const ExchangeSell = (
-  _props: StackNavigatorProps<
-    ExchangeLiveAppNavigatorParamList,
-    ScreenName.ExchangeSell
-  >,
+  _props: StackNavigatorProps<ExchangeLiveAppNavigatorParamList, ScreenName.ExchangeSell>,
 ) => {
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
 
   return (
-    <PlatformApp
+    <BuyAndSellScreen
       {..._props}
       route={{
         ..._props.route,
@@ -67,28 +60,17 @@ const ExchangeSell = (
   );
 };
 
-export default function ExchangeLiveAppNavigator(
-  _props?: Record<string, unknown>,
-) {
+export default function ExchangeLiveAppNavigator(_props?: Record<string, unknown>) {
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator {...stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.ExchangeBuy}
         options={{
-          headerBackImage: () => (
-            <Flex pl="16px">
-              <Icons.CloseMedium color="neutral.c100" size="20px" />
-            </Flex>
-          ),
           headerStyle: styles.headerNoShadow,
-          headerTitle: () => null,
         }}
       >
         {props => <ExchangeBuy {...props} />}
@@ -97,13 +79,7 @@ export default function ExchangeLiveAppNavigator(
       <Stack.Screen
         name={ScreenName.ExchangeSell}
         options={{
-          headerBackImage: () => (
-            <Flex pl="16px">
-              <Icons.CloseMedium color="neutral.c100" size="20px" />
-            </Flex>
-          ),
           headerStyle: styles.headerNoShadow,
-          headerTitle: () => null,
         }}
       >
         {props => <ExchangeSell {...props} />}

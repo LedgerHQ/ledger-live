@@ -4,7 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -22,10 +22,7 @@ import { ExchangeStackNavigatorParamList } from "../../components/RootNavigator/
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    ExchangeStackNavigatorParamList,
-    ScreenName.ExchangeSelectAccount
-  >,
+  StackNavigatorProps<ExchangeStackNavigatorParamList, ScreenName.ExchangeSelectAccount>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -34,12 +31,7 @@ type Props = Navigation;
 
 export default function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const {
-    mode = "buy",
-    currency,
-    analyticsPropertyFlow,
-    onAccountChange,
-  } = route.params;
+  const { mode = "buy", currency, analyticsPropertyFlow, onAccountChange } = route.params;
   const accounts = useSelector(accountsSelector);
   const availableAccounts = useMemo(
     () => (currency ? getAccountTuplesForCurrency(currency, accounts) : []),
@@ -53,15 +45,11 @@ export default function SelectAccount({ navigation, route }: Props) {
           acc &&
           acc.currency &&
           acc.currency.id ===
-            (currency.type === "TokenCurrency"
-              ? currency.parentCurrency.id
-              : currency.id),
+            (currency.type === "TokenCurrency" ? currency.parentCurrency.id : currency.id),
       );
 
     if (currency.type === "TokenCurrency") {
-      return filteredAccounts.map(
-        acc => acc && accountWithMandatoryTokens(acc, [currency]),
-      );
+      return filteredAccounts.map(acc => acc && accountWithMandatoryTokens(acc, [currency]));
     }
 
     return filteredAccounts;
@@ -131,9 +119,8 @@ export default function SelectAccount({ navigation, route }: Props) {
     () =>
       allAccounts.filter(
         account =>
-          (account?.type === "TokenAccount"
-            ? account?.token.id
-            : account?.currency.id) === currency.id,
+          (account?.type === "TokenAccount" ? account?.token.id : account?.currency.id) ===
+          currency.id,
       ),
     [allAccounts, currency.id],
   );
@@ -168,7 +155,7 @@ export default function SelectAccount({ navigation, route }: Props) {
           ListFooterComponent={
             <Button
               type="main"
-              Icon={Icons.PlusMedium}
+              Icon={IconsLegacy.PlusMedium}
               iconPosition="left"
               onPress={onAddAccount}
               mt={3}

@@ -25,16 +25,21 @@ inputs:
   BOT_ENVIRONMENT:
     description: "defines an environment to be included in the report.json"
     required: false
+  SPECULOS_USE_WEBSOCKET:
+    description: true if you want to use speculos has a websocket
+    type: boolean
+    required: false
+    default: false
 
 runs:
   using: "composite"
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: latest
+        version: 8.6
     - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - name: pull docker image
@@ -42,10 +47,10 @@ runs:
       shell: bash
     - name: install and build
       run: |
-        pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+        pnpm i --filter="live-cli..." --filter="ledger-live"
         pnpm build:llc
       shell: bash
-    - uses: 8BitJonny/gh-get-current-pr@2.1.1
+    - uses: 8BitJonny/gh-get-current-pr@v2.1.3
       id: PR
       with:
         github-token: ${{ github.token }}
@@ -62,6 +67,7 @@ runs:
         SHOW_LEGACY_NEW_ACCOUNT: ${{ inputs.SHOW_LEGACY_NEW_ACCOUNT }}
         BOT_ENVIRONMENT: ${{ inputs.BOT_ENVIRONMENT }}
         explorerinput: ${{ inputs.EXPLORER }}
+        SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
       run: |
         export COINAPPS=$PWD/coin-apps
         export NODE_ENV=production

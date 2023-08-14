@@ -7,25 +7,17 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (
-  {
-    amount,
-    recipient,
-    fees,
-    memoValue,
-    useAllAmount,
-    subAccountId,
-  }: Transaction,
-  mainAccount: Account
+  { amount, recipient, fees, memoValue, useAllAmount, subAccountId }: Transaction,
+  mainAccount: Account,
 ): string => {
   const account =
-    (subAccountId &&
-      (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
+    (subAccountId && (mainAccount.subAccounts || []).find(a => a.id === subAccountId)) ||
     mainAccount;
 
   return `

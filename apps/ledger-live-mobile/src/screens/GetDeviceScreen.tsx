@@ -1,7 +1,7 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback } from "react";
 import {
   Flex,
-  Icons,
+  IconsLegacy,
   Text,
   IconBoxList,
   Link as TextLink,
@@ -21,13 +21,8 @@ import { urls } from "../config/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
-import {
-  hasCompletedOnboardingSelector,
-  readOnlyModeEnabledSelector,
-} from "../reducers/settings";
+import { hasCompletedOnboardingSelector, readOnlyModeEnabledSelector } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
-import { AnalyticsContext } from "../analytics/AnalyticsContext";
-import type { Context } from "../analytics/AnalyticsContext";
 import {
   BaseNavigationComposite,
   StackNavigatorNavigation,
@@ -55,22 +50,22 @@ const items = [
   {
     title: "buyDevice.0.title",
     desc: "buyDevice.0.desc",
-    Icon: Icons.CrownMedium,
+    Icon: IconsLegacy.CrownMedium,
   },
   {
     title: "buyDevice.1.title",
     desc: "buyDevice.1.desc",
-    Icon: Icons.LendMedium,
+    Icon: IconsLegacy.LendMedium,
   },
   {
     title: "buyDevice.2.title",
     desc: "buyDevice.2.desc",
-    Icon: Icons.ClaimRewardsMedium,
+    Icon: IconsLegacy.ClaimRewardsMedium,
   },
   {
     title: "buyDevice.3.title",
     desc: "buyDevice.3.desc",
-    Icon: Icons.NanoXAltMedium,
+    Icon: IconsLegacy.NanoXAltMedium,
   },
 ];
 
@@ -103,7 +98,7 @@ export default function GetDeviceScreen() {
     if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "close",
-        screen: "Upsell Nano",
+        page: "Upsell Nano",
       });
     }
   }, [readOnlyModeEnabled, navigation]);
@@ -120,7 +115,7 @@ export default function GetDeviceScreen() {
     if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
-        screen: "Upsell Nano",
+        page: "Upsell Nano",
       });
     }
   }, [readOnlyModeEnabled, navigation, setFirstTimeOnboarding, setShowWelcome]);
@@ -138,13 +133,9 @@ export default function GetDeviceScreen() {
 
   const videoMounted = !useIsAppInBackground();
 
-  const { source } = useContext<Context>(AnalyticsContext);
-
   return (
     <StyledSafeAreaView>
-      {readOnlyModeEnabled ? (
-        <TrackScreen category="ReadOnly" name="Upsell Nano" source={source} />
-      ) : null}
+      {readOnlyModeEnabled ? <TrackScreen category="ReadOnly" name="Upsell Nano" /> : null}
       <Flex
         flexDirection="row"
         alignItems="center"
@@ -158,7 +149,7 @@ export default function GetDeviceScreen() {
           <Flex width={24} />
         ) : (
           <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
-            <Icons.ArrowLeftMedium size="24px" />
+            <IconsLegacy.ArrowLeftMedium size="24px" />
           </TouchableOpacity>
         )}
         <Text variant="h3" lineHeight="20" uppercase>
@@ -166,20 +157,14 @@ export default function GetDeviceScreen() {
         </Text>
         {hasCompletedOnboarding ? (
           <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
-            <Icons.CloseMedium size="24px" />
+            <IconsLegacy.CloseMedium size="24px" />
           </TouchableOpacity>
         ) : (
           <Flex width={24} />
         )}
       </Flex>
       <ScrollListContainer>
-        <Flex
-          height={240}
-          my={-50}
-          width="100%"
-          position="relative"
-          overflow="hidden"
-        >
+        <Flex height={240} my={-50} width="100%" position="relative" overflow="hidden">
           {videoMounted && (
             <Video
               disableFocus
@@ -225,9 +210,10 @@ export default function GetDeviceScreen() {
           type="main"
           outline={false}
           event="button_clicked"
+          testID="market-place-btn"
           eventProperties={{
             button: "Buy your Ledger now",
-            screen: ScreenName.GetDevice,
+            page: ScreenName.GetDevice,
           }}
           onPress={buyLedger}
           size="large"
@@ -238,7 +224,7 @@ export default function GetDeviceScreen() {
           <TextLink
             type="color"
             onPress={setupDevice}
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             iconPosition="right"
           >
             {t("buyDevice.footer")}

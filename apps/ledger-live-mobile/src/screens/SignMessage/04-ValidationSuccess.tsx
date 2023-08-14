@@ -6,10 +6,7 @@ import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 
-import {
-  context as _wcContext,
-  setCurrentCallRequestResult,
-} from "../WalletConnect/Provider";
+import { context as _wcContext, setCurrentCallRequestResult } from "../WalletConnect/Provider";
 import { ScreenName } from "../../const";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
@@ -22,10 +19,7 @@ export default function ValidationSuccess({
   navigation,
   route,
 }: CompositeScreenProps<
-  StackNavigatorProps<
-    SignMessageNavigatorStackParamList,
-    ScreenName.SignValidationSuccess
-  >,
+  StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignValidationSuccess>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >) {
   const { colors } = useTheme();
@@ -42,9 +36,7 @@ export default function ValidationSuccess({
     }
   }, [wcContext.currentCallRequestId, onConfirmationHandler, signature]);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   return (
     <View

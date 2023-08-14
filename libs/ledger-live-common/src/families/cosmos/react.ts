@@ -1,9 +1,6 @@
 import invariant from "invariant";
 import { useEffect, useMemo, useState } from "react";
-import {
-  getCurrentCosmosPreloadData,
-  getCosmosPreloadDataUpdates,
-} from "./preloadedData";
+import { getCurrentCosmosPreloadData, getCosmosPreloadDataUpdates } from "./preloadedData";
 import type {
   CosmosMappedDelegation,
   CosmosValidatorItem,
@@ -16,18 +13,12 @@ import type {
   CosmosPreloadData,
   CosmosAccount,
 } from "./types";
-import {
-  mapDelegations,
-  mapDelegationInfo,
-  searchFilter as defaultSearchFilter,
-} from "./logic";
+import { mapDelegations, mapDelegationInfo, searchFilter as defaultSearchFilter } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import cryptoFactory from "./chain/chain";
 
-export function useCosmosFamilyPreloadData(
-  currencyName: string
-): CosmosPreloadData {
+export function useCosmosFamilyPreloadData(currencyId?: string): CosmosPreloadData {
   const getCurrent = getCurrentCosmosPreloadData;
   const getUpdates = getCosmosPreloadDataUpdates;
 
@@ -36,29 +27,27 @@ export function useCosmosFamilyPreloadData(
     const sub = getUpdates().subscribe(setState);
     return () => sub.unsubscribe();
   }, [getCurrent, getUpdates]);
-  return (
-    state[currencyName === "osmosis" ? "osmo" : currencyName] ?? {
-      validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
-    }
-  );
+  return currencyId
+    ? state[currencyId] ?? {
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      }
+    : {
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      };
 }
 
 export function useCosmosFamilyMappedDelegations(
   account: CosmosAccount,
-  mode?: CosmosOperationMode
+  mode?: CosmosOperationMode,
 ): CosmosMappedDelegation[] {
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators } = useCosmosFamilyPreloadData(currencyId);
 
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
   const unit = getAccountUnit(account);
   return useMemo(() => {
-    const mappedDelegations = mapDelegations(
-      delegations || [],
-      validators,
-      unit
-    );
+    const mappedDelegations = mapDelegations(delegations || [], validators, unit);
     return mode === "claimReward"
       ? mappedDelegations.filter(({ pendingRewards }) => pendingRewards.gt(0))
       : mappedDelegations;
@@ -68,7 +57,7 @@ export function useCosmosFamilyMappedDelegations(
 export function useCosmosFamilyDelegationsQuerySelector(
   account: CosmosAccount,
   transaction: Transaction,
-  delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter
+  delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter,
 ): {
   query: string;
   setQuery: (query: string) => void;
@@ -76,34 +65,24 @@ export function useCosmosFamilyDelegationsQuerySelector(
   value: CosmosMappedDelegation | null | undefined;
 } {
   const [query, setQuery] = useState<string>("");
-  const delegations = useCosmosFamilyMappedDelegations(
-    account,
-    transaction.mode
-  );
+  const delegations = useCosmosFamilyMappedDelegations(account, transaction.mode);
   const options = useMemo<CosmosMappedDelegation[]>(
     () => delegations.filter(delegationSearchFilter(query)),
-    [query, delegations, delegationSearchFilter]
+    [query, delegations, delegationSearchFilter],
   );
   const selectedValidator = transaction.validators && transaction.validators[0];
   const value = useMemo(() => {
     switch (transaction.mode) {
       case "redelegate":
-        invariant(
-          transaction.sourceValidator,
-          "cosmos: sourceValidator is required"
-        );
+        invariant(transaction.sourceValidator, "cosmos: sourceValidator is required");
         return options.find(
-          ({ validatorAddress }) =>
-            validatorAddress === transaction.sourceValidator
+          ({ validatorAddress }) => validatorAddress === transaction.sourceValidator,
         );
 
       default:
         return (
           selectedValidator &&
-          delegations.find(
-            ({ validatorAddress }) =>
-              validatorAddress === selectedValidator.address
-          )
+          delegations.find(({ validatorAddress }) => validatorAddress === selectedValidator.address)
         );
     }
   }, [delegations, selectedValidator, transaction, options]);
@@ -120,39 +99,31 @@ export function useSortedValidators(
   search: string,
   validators: CosmosValidatorItem[],
   delegations: CosmosDelegationInfo[],
-  validatorSearchFilter: CosmosSearchFilter = defaultSearchFilter
+  validatorSearchFilter: CosmosSearchFilter = defaultSearchFilter,
 ): CosmosMappedValidator[] {
-  const initialVotes = useMemoOnce(() =>
-    delegations.map(({ address }) => address)
-  );
+  const initialVotes = useMemoOnce(() => delegations.map(({ address }) => address));
   const mappedValidators = useMemo(
     () =>
       validators.map((validator, rank) => ({
         rank: rank + 1,
         validator,
       })),
-    [validators]
+    [validators],
   );
   const sortedVotes = useMemo(
     () =>
       mappedValidators
-        .filter(({ validator }) =>
-          initialVotes.includes(validator.validatorAddress)
-        )
+        .filter(({ validator }) => initialVotes.includes(validator.validatorAddress))
         .concat(
           mappedValidators.filter(
-            ({ validator }) =>
-              !initialVotes.includes(validator.validatorAddress)
-          )
+            ({ validator }) => !initialVotes.includes(validator.validatorAddress),
+          ),
         ),
-    [mappedValidators, initialVotes]
+    [mappedValidators, initialVotes],
   );
   const sr = useMemo(
-    () =>
-      search
-        ? mappedValidators.filter(validatorSearchFilter(search))
-        : sortedVotes,
-    [search, mappedValidators, sortedVotes, validatorSearchFilter]
+    () => (search ? mappedValidators.filter(validatorSearchFilter(search)) : sortedVotes),
+    [search, mappedValidators, sortedVotes, validatorSearchFilter],
   );
   return sr;
 }
@@ -165,9 +136,7 @@ export function useMappedExtraOperationDetails({
   account: CosmosAccount;
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
-  const { validators } = useCosmosFamilyPreloadData(
-    account.currency.name.toLowerCase()
-  );
+  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
   const unit = getAccountUnit(account);
   return {
     validators: extra.validators
@@ -178,57 +147,48 @@ export function useMappedExtraOperationDetails({
       : undefined,
     sourceValidator: extra.sourceValidator ? extra.sourceValidator : undefined,
     autoClaimedRewards:
-      extra.autoClaimedRewards != null
-        ? extra.autoClaimedRewards
-        : "empty string",
+      extra.autoClaimedRewards != null ? extra.autoClaimedRewards : "empty string",
   };
 }
 
 export function useLedgerFirstShuffledValidatorsCosmosFamily(
-  currencyName: string,
-  searchInput?: string
+  currencyId: string,
+  searchInput?: string,
 ): CosmosValidatorItem[] {
-  const data =
-    getCurrentCosmosPreloadData()[
-      currencyName === "osmosis" ? "osmo" : currencyName
-    ];
-  const ledgerValidatorAddress = cryptoFactory(currencyName).ledgerValidator;
+  const data = getCurrentCosmosPreloadData()[currencyId];
+  const ledgerValidatorAddress = cryptoFactory(currencyId).ledgerValidator;
 
   return useMemo(() => {
-    return reorderValidators(
-      data?.validators ?? [],
-      ledgerValidatorAddress,
-      searchInput
-    );
+    return reorderValidators(data?.validators ?? [], ledgerValidatorAddress, searchInput);
   }, [data, ledgerValidatorAddress, searchInput]);
 }
 
 function reorderValidators(
   validators: CosmosValidatorItem[],
-  ledgerValidatorAddress: string,
-  searchInput?: string
+  ledgerValidatorAddress: string | undefined,
+  searchInput?: string,
 ): CosmosValidatorItem[] {
   const sortedValidators = validators
-    .filter((validator) => validator.commission !== 1.0)
-    .filter((validator) =>
-      searchInput
-        ? validator.name.toLowerCase().includes(searchInput.toLowerCase())
-        : true
+    .filter(validator => validator.commission !== 1.0)
+    .filter(validator =>
+      searchInput ? validator.name.toLowerCase().includes(searchInput.toLowerCase()) : true,
     )
     .sort((a, b) => b.tokens - a.tokens);
 
   // move Ledger validator to the first position
-  const ledgerValidator = sortedValidators.find(
-    (v) => v.validatorAddress === ledgerValidatorAddress
-  );
-
-  if (ledgerValidator) {
-    const sortedValidatorsLedgerFirst = sortedValidators.filter(
-      (v) => v.validatorAddress !== ledgerValidatorAddress
+  if (ledgerValidatorAddress) {
+    const ledgerValidator = sortedValidators.find(
+      v => v.validatorAddress === ledgerValidatorAddress,
     );
-    sortedValidatorsLedgerFirst.unshift(ledgerValidator);
 
-    return sortedValidatorsLedgerFirst;
+    if (ledgerValidator) {
+      const sortedValidatorsLedgerFirst = sortedValidators.filter(
+        v => v.validatorAddress !== ledgerValidatorAddress,
+      );
+      sortedValidatorsLedgerFirst.unshift(ledgerValidator);
+
+      return sortedValidatorsLedgerFirst;
+    }
   }
 
   return sortedValidators;

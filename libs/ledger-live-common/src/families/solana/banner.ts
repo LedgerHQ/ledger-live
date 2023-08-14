@@ -12,14 +12,10 @@ export interface AccountBannerState {
   ledgerValidator: ValidatorsAppValidator | undefined;
 }
 
-export function getAccountBannerState(
-  account: SolanaAccount
-): AccountBannerState {
+export function getAccountBannerState(account: SolanaAccount): AccountBannerState {
   // Group current validator
-  const solanaResources = account.solanaResources
-    ? account.solanaResources
-    : { stakes: [] };
-  const delegations = solanaResources?.stakes.map((delegation) => {
+  const solanaResources = account.solanaResources ? account.solanaResources : { stakes: [] };
+  const delegations = solanaResources?.stakes.map(delegation => {
     return delegation;
   });
 
@@ -28,7 +24,7 @@ export function getAccountBannerState(
     validators: [],
   };
   const ledgerValidator = validators.find(
-    (validator) => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS
+    validator => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS,
   );
 
   // If Ledger doesn't provide validator, we don't display banner
@@ -49,9 +45,7 @@ export function getAccountBannerState(
   let worstValidator = ledgerValidator;
   for (const delegation of delegations) {
     const validatorAdress = delegation.delegation?.voteAccAddr;
-    const validator = validators.find(
-      (validator) => validator.voteAccount === validatorAdress
-    );
+    const validator = validators.find(validator => validator.voteAccount === validatorAdress);
     const actions = stakeActions(delegation);
     const isValidRedelegation =
       validator &&

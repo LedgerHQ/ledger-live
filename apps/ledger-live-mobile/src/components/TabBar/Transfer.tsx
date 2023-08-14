@@ -10,9 +10,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import proxyStyled, {
-  BaseStyledProps,
-} from "@ledgerhq/native-ui/components/styled";
+import proxyStyled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
@@ -91,35 +89,37 @@ export function TransferTabIcon() {
 
   const track = useTrack();
 
+  // Value used to derive which step of animation is being displayed.
+  // Used by several animation: drawer translation and opacity, button's lottie etc.
   const openAnimValue = useSharedValue(initialIsModalOpened ? 1 : 0);
 
-  const getIsModalOpened = useCallback(
-    () => openAnimValue.value === 1,
-    [openAnimValue],
-  );
+  const getIsModalOpened = useCallback(() => openAnimValue.value === 1, [openAnimValue]);
 
   const backdropProps = useAnimatedProps(() => ({
-    pointerEvents:
-      openAnimValue.value === 1 ? ("auto" as const) : ("box-none" as const),
+    pointerEvents: openAnimValue.value === 1 ? ("auto" as const) : ("box-none" as const),
   }));
 
   const drawerContainerProps = useAnimatedProps(() => ({
-    pointerEvents:
-      openAnimValue.value === 1 ? ("auto" as const) : ("none" as const),
+    pointerEvents: openAnimValue.value === 1 ? ("auto" as const) : ("none" as const),
   }));
 
   const translateYStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: interpolate(
-          openAnimValue.value,
-          [0, 1, 2],
-          [Y_AMPLITUDE, 0, Y_AMPLITUDE],
-        ),
+        translateY: interpolate(openAnimValue.value, [0, 1, 2], [Y_AMPLITUDE, 0, Y_AMPLITUDE]),
       },
     ],
   }));
 
+  /**
+   * openAnimValue.value:
+   *            0             ->       1           ->             2
+   * transfer arrow icon (0)     close icon (0.5)        transfer arrow icon (1)
+   * with intermediate animation/steps in decimal (test 0.2 for ex)
+   *
+   * progress: from lottie-react-native. Represents the normalized progress of the animation.
+   * If this prop is updated, the animation will correspondingly update to the frame at that progress value.
+   */
   const lottieProps = useAnimatedProps(() => ({
     progress: interpolate(openAnimValue.value, [0, 1, 2], [0, 0.5, 1]),
   }));
@@ -137,6 +137,7 @@ export function TransferTabIcon() {
     const animCallback = () => {
       if (!readOnlyModeEnabled) track("drawer_viewed", { drawer: "trade" });
     };
+
     openAnimValue.value = 0;
     openAnimValue.value = withTiming(1, animParams, finished => {
       if (finished) {
@@ -184,10 +185,7 @@ export function TransferTabIcon() {
   }, [getIsModalOpened, closeModal]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackPress,
-    );
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
     return () => backHandler.remove();
   }, [handleBackPress]);
 
@@ -196,11 +194,7 @@ export function TransferTabIcon() {
 
   return (
     <>
-      <BackdropPressable
-        animatedProps={backdropProps}
-        onPress={closeModal}
-        style={opacityStyle}
-      />
+      <BackdropPressable animatedProps={backdropProps} onPress={closeModal} style={opacityStyle} />
       {isOpened ? (
         <AnimatedDrawerContainer
           animatedProps={drawerContainerProps}
@@ -208,8 +202,7 @@ export function TransferTabIcon() {
             {
               width: screenWidth,
               maxHeight: screenHeight * 0.9 - bottomInset - topInset,
-              paddingBottom:
-                bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
+              paddingBottom: bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
             },
             opacityStyle,
             translateYStyle,
@@ -224,6 +217,7 @@ export function TransferTabIcon() {
         hitSlop={hitSlop}
         onPress={onPressButton}
         bottom={MAIN_BUTTON_BOTTOM + bottomInset}
+        testID="transfer-button"
       >
         <ButtonAnimation
           source={themeType === "light" ? lightAnimSource : darkAnimSource}

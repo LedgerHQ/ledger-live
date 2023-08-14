@@ -57,7 +57,7 @@ export function VirtualMenuList<
   return (
     <div
       style={{ ...(menuStyle as React.CSSProperties), maxHeight: "auto" }}
-      onWheelCapture={(e) =>
+      onWheelCapture={e =>
         /*
           This event causes issues with react-window.
           react-select logic is based on whether the bottom/top of the list has been reached

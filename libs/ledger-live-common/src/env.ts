@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/env";
+export * from "@ledgerhq/live-env";

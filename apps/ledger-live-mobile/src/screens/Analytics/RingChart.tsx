@@ -2,10 +2,7 @@ import React, { PureComponent } from "react";
 import * as d3shape from "d3-shape";
 import { View } from "react-native";
 import Svg, { Path, G, Circle } from "react-native-svg";
-import {
-  getCurrencyColor,
-  ColorableCurrency,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor, ColorableCurrency } from "@ledgerhq/live-common/currencies/index";
 import { DefaultTheme } from "styled-components/native";
 import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
@@ -55,11 +52,7 @@ class RingChart extends PureComponent<Props> {
     this.generatePaths();
   }
 
-  reducer = (
-    data: Paths,
-    item: ColorableDistributionItem,
-    index: number,
-  ): Paths => {
+  reducer = (data: Paths, item: ColorableDistributionItem, index: number): Paths => {
     const increment = item.distribution * 2 * Math.PI;
 
     const pathData =
@@ -71,10 +64,7 @@ class RingChart extends PureComponent<Props> {
       }) ?? undefined;
 
     const parsedItem = {
-      color: ensureContrast(
-        getCurrencyColor(item.currency),
-        this.props.colors.background.main,
-      ),
+      color: ensureContrast(getCurrencyColor(item.currency), this.props.colors.background.main),
       pathData,
       endAngle: data.angle + increment,
       id: item.currency.id,

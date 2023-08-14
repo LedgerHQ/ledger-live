@@ -18,9 +18,6 @@ const localeDateTimeFormatSelector = createSelector(
 
 export default function OperationRowDate({ date }: Props) {
   const dateTimeFormat = useSelector(localeDateTimeFormatSelector);
-  const localeTimeString = useMemo(
-    () => dateTimeFormat.format(date),
-    [date, dateTimeFormat],
-  );
+  const localeTimeString = useMemo(() => dateTimeFormat.format(date), [date, dateTimeFormat]);
   return <>{localeTimeString}</>;
 }

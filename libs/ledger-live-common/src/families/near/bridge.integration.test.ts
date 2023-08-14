@@ -1,8 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import {
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughBalance,
-} from "@ledgerhq/errors";
+import { InvalidAddressBecauseDestinationIsAlsoSource, NotEnoughBalance } from "@ledgerhq/errors";
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
@@ -19,10 +16,8 @@ import {
   NearUseAllAmountStakeWarning,
 } from "../../errors";
 
-const ACCOUNT_ADDRESS =
-  "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec";
-const ACTIVE_RECIPIENT_ADDRESS =
-  "3cfb4df771c29cf040e2534b71b4df08b6232e7248aefc7decf45d2b40f80ad5";
+const ACCOUNT_ADDRESS = "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec";
+const ACTIVE_RECIPIENT_ADDRESS = "3cfb4df771c29cf040e2534b71b4df08b6232e7248aefc7decf45d2b40f80ad5";
 const INACTIVE_RECIPIENT_ADDRESS =
   "6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0";
 const VALIDATOR_ADDRESS = "figment.poolv1.near";

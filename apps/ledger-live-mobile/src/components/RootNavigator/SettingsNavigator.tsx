@@ -1,8 +1,5 @@
 import React, { useMemo } from "react";
-import {
-  createStackNavigator,
-  TransitionPresets,
-} from "@react-navigation/stack";
+import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
@@ -11,7 +8,9 @@ import DebugBenchmarkQRStream from "../../screens/Settings/Debug/Broken/Benchmar
 import DebugBLE from "../../screens/Settings/Debug/Connectivity/BLE";
 import DebugBLEBenchmark from "../../screens/Settings/Debug/Connectivity/BLEBenchmark";
 import DebugConfiguration from "../../screens/Settings/Debug/Configuration";
-import DebugConnectivity from "../../screens/Settings/Debug/Connectivity";
+import DebugConnectivity, {
+  connectivityHeaderOptions,
+} from "../../screens/Settings/Debug/Connectivity";
 import DebugCrash from "../../screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "../../screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "../../screens/Settings/Debug/Debugging";
@@ -19,16 +18,24 @@ import DebugEnv from "../../screens/Settings/Debug/Configuration/DebugEnv";
 import DebugExport from "../../screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugFeatures from "../../screens/Settings/Debug/Features";
-import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCustomImage";
+import DebugFetchCustomImage, {
+  debugFetchCustomImageHeaderOptions,
+} from "../../screens/Settings/Debug/Features/FetchCustomImage";
+import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugInstallSetOfApps from "../../screens/Settings/Debug/Features/InstallSetOfApps";
 import DebugPerformance from "../../screens/Settings/Debug/Performance";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/CommandSender";
+import DebugPlayground from "../../screens/Settings/Debug/Playground";
+import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
+import DebugSnackbars from "../../screens/Settings/Debug/Features/Snackbars";
+import DebugTransactionsAlerts from "../../screens/Settings/Debug/Features/TransactionsAlerts";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
@@ -46,15 +53,12 @@ import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
-import DeveloperSettings, {
-  DeveloperCustomManifest,
-} from "../../screens/Settings/Developer";
+import DeveloperSettings, { DeveloperCustomManifest } from "../../screens/Settings/Developer";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
-import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostOnboardingDebugScreen from "../../screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
@@ -67,10 +71,7 @@ const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 export default function SettingsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
@@ -144,11 +145,6 @@ export default function SettingsNavigator() {
         options={{ title: t("settings.accounts.cryptoAssets.header") }}
       />
       <Stack.Screen
-        name={ScreenName.HiddenNftCollections}
-        component={HiddenNftCollections}
-        options={{ title: t("settings.accounts.hiddenNFTCollections") }}
-      />
-      <Stack.Screen
         name={ScreenName.CurrencySettings}
         component={CurrencySettings}
         options={({ route }) => ({
@@ -220,15 +216,13 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugGenerators}
         component={DebugGenerators}
         options={{
-          title: "Generators",
+          title: "Generators and Destructors",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugConnectivity}
         component={DebugConnectivity}
-        options={{
-          title: "Connectivity",
-        }}
+        options={connectivityHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatures}
@@ -245,6 +239,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugInstallSetOfApps}
+        component={DebugInstallSetOfApps}
+        options={{
+          title: "Install set of apps",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugMockGenerateAccounts}
         component={GenerateMockAccountSelectScreen}
         options={{
@@ -256,6 +257,20 @@ export default function SettingsNavigator() {
         component={DebugExport}
         options={{
           title: "Export Accounts and Settings",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugPlayground}
+        component={DebugPlayground}
+        options={{
+          title: "Playground",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugBluetoothAndLocationServices}
+        component={DebugBluetoothAndLocationServices}
+        options={{
+          title: "Bluetooth and location services",
         }}
       />
       <Stack.Screen
@@ -351,8 +366,13 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
+        options={debugFetchCustomImageHeaderOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFirmwareUpdate}
+        component={DebugFirmwareUpdate}
         options={{
-          title: "Debug FetchCustomImage",
+          title: "Debug Firmware update",
         }}
       />
       <Stack.Screen
@@ -360,6 +380,20 @@ export default function SettingsNavigator() {
         component={DebugCustomImageGraphics}
         options={{
           title: "Custom image graphics",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSnackbars}
+        component={DebugSnackbars}
+        options={{
+          title: "Debug snackbars",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugTransactionsAlerts}
+        component={DebugTransactionsAlerts}
+        options={{
+          title: "Debug transactions alerts",
         }}
       />
       <Stack.Screen
@@ -396,10 +430,7 @@ export default function SettingsNavigator() {
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
       />
-      <Stack.Screen
-        name={ScreenName.DebugCameraPermissions}
-        component={CameraPermissions}
-      />
+      <Stack.Screen name={ScreenName.DebugCameraPermissions} component={CameraPermissions} />
       <Stack.Screen
         name={ScreenName.DebugPerformance}
         component={DebugPerformance}

@@ -1,21 +1,21 @@
 import React, { useCallback, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { Trans, TFunction } from "react-i18next";
+import { Trans } from "react-i18next";
+import { TFunction } from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import RequestAmount from "~/renderer/components/RequestAmount";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
 
-type Props = {
-  parentAccount?: Account;
+type Props<T extends TransactionCommon> = {
+  parentAccount?: Account | null;
   account: AccountLike;
   transaction: Transaction;
-  onChangeTransaction: (_: AccountBridge<any>) => void;
+  onChangeTransaction: (_: T) => void;
   status: TransactionStatus;
   bridgePending: boolean;
   t: TFunction;
@@ -25,7 +25,7 @@ type Props = {
   withUseMaxLabel?: boolean;
 };
 
-const AmountField = ({
+const AmountField = <T extends TransactionCommon>({
   account,
   parentAccount,
   transaction,
@@ -37,7 +37,7 @@ const AmountField = ({
   resetInitValue,
   walletConnectProxy,
   withUseMaxLabel,
-}: Props) => {
+}: Props<T>) => {
   const bridge = getAccountBridge(account, parentAccount);
 
   useEffect(() => {

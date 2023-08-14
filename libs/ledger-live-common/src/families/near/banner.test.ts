@@ -32,8 +32,7 @@ const account: NearAccount = {
   seedIdentifier: "ed25519:DewDMzsc2cnMYBrALESrf3vKWLp3zBB4HJnPoyvPL945",
   derivationMode: "nearbip44h",
   index: 1,
-  freshAddress:
-    "d812a582d0b30c1a13041fd564e5f0c4325804b1dd2447d63ab6b9a424747363",
+  freshAddress: "d812a582d0b30c1a13041fd564e5f0c4325804b1dd2447d63ab6b9a424747363",
   freshAddressPath: "44'/397'/0'/0'/1'",
   freshAddresses: [],
   name: "NEAR 2",
@@ -104,9 +103,7 @@ describe("near/banner", () => {
     jest.restoreAllMocks();
   });
   it("should not display the banner is account is", async () => {
-    jest
-      .spyOn(preloadedData, "getCurrentNearPreloadData")
-      .mockReturnValue(validatorsMap);
+    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(logic, "canStake").mockReturnValue(false);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
@@ -117,9 +114,7 @@ describe("near/banner", () => {
     });
   });
   it("should return display delegate mode is account is not empty", async () => {
-    jest
-      .spyOn(preloadedData, "getCurrentNearPreloadData")
-      .mockReturnValue(validatorsMap);
+    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     jest.spyOn(logic, "canUnstake").mockReturnValue(true);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({
@@ -137,9 +132,7 @@ describe("near/banner", () => {
       rewards: new BigNumber("1.462125309300073830515e+21"),
       validatorId: "vcap.poolv1.near",
     };
-    jest
-      .spyOn(preloadedData, "getCurrentNearPreloadData")
-      .mockReturnValue(validatorsMap);
+    jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);
     account.nearResources?.stakingPositions.push(badValidator);
     const result = getAccountBannerState(account);
     expect(result).toStrictEqual({

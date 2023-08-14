@@ -3,32 +3,48 @@ import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { HeaderBackButton } from "@react-navigation/elements";
 import { NavigationProp, useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
-import ReceiveConnectDevice from "../../screens/ReceiveFunds/03a-ConnectDevice";
+import ReceiveConnectDevice, {
+  connectDeviceHeaderOptions,
+} from "../../screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
 import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
-
-import ReceiveAddAccountSelectDevice from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
+import ReceiveSelectNetwork from "../../screens/ReceiveFunds/02-SelectNetwork";
+import ReceiveAddAccountSelectDevice, {
+  addAccountsSelectDeviceHeaderOptions,
+} from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
 import ReceiveSelectAccount from "../../screens/ReceiveFunds/02-SelectAccount";
 import ReceiveAddAccount from "../../screens/ReceiveFunds/02-AddAccount";
 
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import HeaderRightClose from "../HeaderRightClose";
+import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { track } from "../../analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { Flex } from "@ledgerhq/native-ui";
+import HelpButton from "../../screens/ReceiveFunds/HelpButton";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useSelector } from "react-redux";
+import {
+  hasClosedNetworkBannerSelector,
+  hasClosedWithdrawBannerSelector,
+} from "../../reducers/settings";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
+  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
+  const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
+  const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
+  const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
 
   const onClose = useCallback(() => {
     track("button_clicked", {
-      button: "Close 'x'",
+      button: "Close",
       screen: route.name,
     });
   }, [route]);
@@ -36,33 +52,30 @@ export default function ReceiveFundsNavigator() {
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <HeaderRightClose onClose={onClose} />,
+      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
     }),
     [colors, onClose],
   );
 
-  const onConnectDeviceBack = useCallback(
-    (navigation: NavigationProp<Record<string, unknown>>) => {
-      track("button_clicked", {
-        button: "Back arrow",
-        screen: ScreenName.ReceiveConnectDevice,
-      });
-      navigation.goBack();
-    },
-    [],
-  );
+  const onConnectDeviceBack = useCallback((navigation: NavigationProp<Record<string, unknown>>) => {
+    track("button_clicked", {
+      button: "Back arrow",
+      page: ScreenName.ReceiveConnectDevice,
+    });
+    navigation.goBack();
+  }, []);
 
   const onConfirmationClose = useCallback(() => {
     track("button_clicked", {
       button: "HeaderRight Close",
-      screen: ScreenName.ReceiveConfirmation,
+      page: ScreenName.ReceiveConfirmation,
     });
   }, []);
 
   const onVerificationConfirmationClose = useCallback(() => {
     track("button_clicked", {
       button: "HeaderRight Close",
-      screen: ScreenName.ReceiveVerificationConfirmation,
+      page: ScreenName.ReceiveVerificationConfirmation,
     });
   }, []);
 
@@ -78,8 +91,30 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveSelectCrypto}
         component={ReceiveSelectCrypto}
         options={{
-          headerLeft: () => null,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerTitle: "",
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.DepositSelectNetwork}
+        component={ReceiveSelectNetwork}
+        options={{
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerTitle: "",
+          headerRight: () => (
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              {hasClosedNetworkBanner && (
+                <HelpButton
+                  eventButton="Choose a network article"
+                  url={depositNetworkBannerMobile?.params.url}
+                  enabled={depositNetworkBannerMobile?.enabled ?? false}
+                />
+              )}
+              <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
+            </Flex>
+          ),
         }}
       />
 
@@ -106,6 +141,7 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
+          ...addAccountsSelectDeviceHeaderOptions(onClose),
         }}
       />
 
@@ -132,9 +168,7 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-          headerLeft: () => (
-            <HeaderBackButton onPress={() => onConnectDeviceBack(navigation)} />
-          ),
+          ...connectDeviceHeaderOptions(() => onConnectDeviceBack(navigation)),
         })}
       />
       {/* Select / Connect Device */}
@@ -152,9 +186,21 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveConfirmation}
         component={ReceiveConfirmation}
         options={{
+          // Nice to know: headerTitle is manually set in a useEffect of ReceiveConfirmation
           headerTitle: "",
-          headerLeft: () => null,
-          headerRight: () => <HeaderRightClose onClose={onConfirmationClose} />,
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerRight: () => (
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              {hasClosedWithdrawBanner && (
+                <HelpButton
+                  url={depositWithdrawBannerMobile?.params.url}
+                  enabled={depositWithdrawBannerMobile?.enabled ?? false}
+                  eventButton="How to withdraw from exchange"
+                />
+              )}
+              <NavigationHeaderCloseButtonAdvanced onClose={onConfirmationClose} />
+            </Flex>
+          ),
         }}
       />
       {/* Receive Address Device Verification */}
@@ -163,9 +209,18 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveConfirmation}
         options={{
           headerTitle: "",
-          headerLeft: () => null,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => (
-            <HeaderRightClose onClose={onVerificationConfirmationClose} />
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              {hasClosedWithdrawBanner && (
+                <HelpButton
+                  url={depositWithdrawBannerMobile?.params.url}
+                  enabled={depositWithdrawBannerMobile?.enabled ?? false}
+                  eventButton="How to withdraw from exchange"
+                />
+              )}
+              <NavigationHeaderCloseButtonAdvanced onClose={onVerificationConfirmationClose} />
+            </Flex>
           ),
         }}
       />

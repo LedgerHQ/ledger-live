@@ -1,15 +1,26 @@
-import { expect } from "@playwright/test";
+import { expect, Route } from "@playwright/test";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
 import { MarketCoinPage } from "../../models/MarketCoinPage";
+import { getProvidersMock } from "../services/services-api-mocks/getProviders.mock";
 
-test.use({ userdata: "skip-onboarding" });
+test.use({
+  userdata: "skip-onboarding",
+});
 
 test("Market", async ({ page }) => {
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const layout = new Layout(page);
+
+  await page.route("https://swap.ledger.com/v4/providers**", async (route: Route) => {
+    const mockProvidersResponse = getProvidersMock();
+    route.fulfill({
+      headers: { teststatus: "mocked" },
+      body: mockProvidersResponse,
+    });
+  });
 
   await test.step("go to market", async () => {
     await layout.goToMarket();
@@ -43,6 +54,7 @@ test("Market", async ({ page }) => {
   await test.step("filter starred", async () => {
     await marketPage.toggleStarFilter();
     await marketPage.waitForLoading();
+    await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
     await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png");
   });
 

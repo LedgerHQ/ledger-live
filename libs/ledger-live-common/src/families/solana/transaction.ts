@@ -18,7 +18,7 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById, getAccountUnit } from "../../account";
 import { formatCurrencyUnit, getTokenById } from "../../currencies";
@@ -52,10 +52,7 @@ const lamportsToSOL = (account: Account, amount: number) => {
   });
 };
 
-export const formatTransaction = (
-  tx: Transaction,
-  mainAccount: Account
-): string => {
+export const formatTransaction = (tx: Transaction, mainAccount: Account): string => {
   if (tx.model.commandDescriptor === undefined) {
     throw new Error("can not format unprepared transaction");
   }
@@ -67,11 +64,7 @@ export const formatTransaction = (
   return formatCommand(mainAccount, tx, commandDescriptor.command);
 };
 
-function formatCommand(
-  mainAccount: Account,
-  tx: Transaction,
-  command: Command
-) {
+function formatCommand(mainAccount: Account, tx: Transaction, command: Command) {
   switch (command.kind) {
     case "transfer":
       return formatTransfer(mainAccount, tx, command);
@@ -97,12 +90,9 @@ function formatCommand(
 function formatStakeCreateAccount(
   mainAccount: Account,
   tx: Transaction,
-  command: StakeCreateAccountCommand
+  command: StakeCreateAccountCommand,
 ) {
-  const amount = lamportsToSOL(
-    mainAccount,
-    command.amount + command.stakeAccRentExemptAmount
-  );
+  const amount = lamportsToSOL(mainAccount, command.amount + command.stakeAccRentExemptAmount);
   const str = [
     `  CREATE STAKE ACCOUNT: ${command.stakeAccAddress}`,
     `  FROM: ${command.fromAccAddress}`,
@@ -116,11 +106,7 @@ function formatStakeCreateAccount(
   return "\n" + str;
 }
 
-function formatTransfer(
-  mainAccount: Account,
-  tx: Transaction,
-  command: TransferCommand
-) {
+function formatTransfer(mainAccount: Account, tx: Transaction, command: TransferCommand) {
   const amount = lamportsToSOL(mainAccount, command.amount);
   const str = [
     `  SEND: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
@@ -133,11 +119,7 @@ function formatTransfer(
   return "\n" + str;
 }
 
-function formatTokenTransfer(
-  mainAccount: Account,
-  tx: Transaction,
-  command: TokenTransferCommand
-) {
+function formatTokenTransfer(mainAccount: Account, tx: Transaction, command: TokenTransferCommand) {
   if (!tx.subAccountId) {
     throw new Error("expected subaccountId on transaction");
   }
@@ -145,14 +127,10 @@ function formatTokenTransfer(
   if (!subAccount || subAccount.type !== "TokenAccount") {
     throw new Error("token subaccount expected");
   }
-  const amount = formatCurrencyUnit(
-    getAccountUnit(subAccount),
-    new BigNumber(command.amount),
-    {
-      showCode: true,
-      disableRounding: true,
-    }
-  );
+  const amount = formatCurrencyUnit(getAccountUnit(subAccount), new BigNumber(command.amount), {
+    showCode: true,
+    disableRounding: true,
+  });
   const recipient = command.recipientDescriptor.walletAddress;
   const str = [
     `  SEND: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
@@ -171,27 +149,18 @@ function formatCreateATA(command: TokenCreateATACommand) {
 }
 
 function formatStakeDelegate(command: StakeDelegateCommand) {
-  const str = [
-    `  DELEGATE: ${command.stakeAccAddr}`,
-    `  TO: ${command.voteAccAddr}`,
-  ]
+  const str = [`  DELEGATE: ${command.stakeAccAddr}`, `  TO: ${command.voteAccAddr}`]
     .filter(Boolean)
     .join("\n");
   return "\n" + str;
 }
 
 function formatStakeUndelegate(command: StakeUndelegateCommand) {
-  const str = [`  UNDELEGATE: ${command.stakeAccAddr}`]
-    .filter(Boolean)
-    .join("\n");
+  const str = [`  UNDELEGATE: ${command.stakeAccAddr}`].filter(Boolean).join("\n");
   return "\n" + str;
 }
 
-function formatStakeWithdraw(
-  mainAccount: Account,
-  tx: Transaction,
-  command: StakeWithdrawCommand
-) {
+function formatStakeWithdraw(mainAccount: Account, tx: Transaction, command: StakeWithdrawCommand) {
   const amount = lamportsToSOL(mainAccount, command.amount);
   const str = [
     `  WITHDRAW FROM: ${command.stakeAccAddr}`,
@@ -203,11 +172,7 @@ function formatStakeWithdraw(
   return "\n" + str;
 }
 
-function formatStakeSplit(
-  mainAccount: Account,
-  tx: Transaction,
-  command: StakeSplitCommand
-) {
+function formatStakeSplit(mainAccount: Account, tx: Transaction, command: StakeSplitCommand) {
   const amount = lamportsToSOL(mainAccount, command.amount);
   const str = [
     `  SPLIT: ${command.stakeAccAddr}`,

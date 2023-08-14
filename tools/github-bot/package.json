@@ -15,6 +15,8 @@
     "watch": "tsc --watch",
     "dev": "nodemon",
     "start": "probot run ./lib/index.js",
+    "lint": "eslint src --ext .json,.ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
     "_test": "jest"
   },
   "dependencies": {
@@ -28,10 +30,6 @@
     "nock": "^13.0.5",
     "nodemon": "^2.0.16",
     "smee-client": "^1.2.3",
-    "ts-jest": "^28.0.5",
-    "typescript": "^4.8.3"
-  },
-  "engines": {
-    "node": ">= 10.13.0"
+    "ts-jest": "^28.0.5"
   }
 }

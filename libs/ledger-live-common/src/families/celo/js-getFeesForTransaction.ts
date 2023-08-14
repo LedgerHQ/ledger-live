@@ -18,30 +18,24 @@ const getFeesForTransaction = async ({
 
   const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
   const lockedGold = await kit.contracts.getLockedGold();
-  const nonvotingLockedGoldBalance =
-    await lockedGold.getAccountNonvotingLockedGold(account.freshAddress);
+  const nonvotingLockedGoldBalance = await lockedGold.getAccountNonvotingLockedGold(
+    account.freshAddress,
+  );
   // Deduct pending vote operations from the non-voting locked balance
   const totalNonVotingLockedBalance = nonvotingLockedGoldBalance.minus(
-    pendingOperationAmounts.vote
+    pendingOperationAmounts.vote,
   );
   // Deduct pending lock operations from the spendable balance
-  const totalSpendableBalance = account.spendableBalance.minus(
-    pendingOperationAmounts.lock
-  );
+  const totalSpendableBalance = account.spendableBalance.minus(pendingOperationAmounts.lock);
 
-  if (
-    (transaction.mode === "unlock" || transaction.mode === "vote") &&
-    account.celoResources
-  ) {
+  if ((transaction.mode === "unlock" || transaction.mode === "vote") && account.celoResources) {
     value = transaction.useAllAmount
       ? totalNonVotingLockedBalance
       : BigNumber.minimum(amount, totalNonVotingLockedBalance);
   } else if (transaction.mode === "revoke" && account.celoResources) {
     const vote = getVote(account, transaction.recipient, transaction.index);
     if (vote) {
-      value = transaction.useAllAmount
-        ? vote.amount
-        : BigNumber.minimum(amount, vote.amount);
+      value = transaction.useAllAmount ? vote.amount : BigNumber.minimum(amount, vote.amount);
     }
   } else {
     value = transaction.useAllAmount
@@ -57,37 +51,28 @@ const getFeesForTransaction = async ({
   } else if (transaction.mode === "unlock") {
     const lockedGold = await kit.contracts.getLockedGold();
 
-    gas = await lockedGold
-      .unlock(value)
-      .txo.estimateGas({ from: account.freshAddress });
+    gas = await lockedGold.unlock(value).txo.estimateGas({ from: account.freshAddress });
   } else if (transaction.mode === "withdraw") {
     const lockedGold = await kit.contracts.getLockedGold();
 
-    gas = await lockedGold
-      .withdraw(index || 0)
-      .txo.estimateGas({ from: account.freshAddress });
+    gas = await lockedGold.withdraw(index || 0).txo.estimateGas({ from: account.freshAddress });
   } else if (transaction.mode === "vote") {
     const election = await kit.contracts.getElection();
 
-    const vote = await election.vote(
-      transaction.recipient,
-      new BigNumber(value)
-    );
+    const vote = await election.vote(transaction.recipient, new BigNumber(value));
 
     gas = await vote.txo.estimateGas({ from: account.freshAddress });
   } else if (transaction.mode === "revoke") {
     const election = await kit.contracts.getElection();
     const accounts = await kit.contracts.getAccounts();
-    const voteSignerAccount = await accounts.voteSignerToAccount(
-      account.freshAddress
-    );
+    const voteSignerAccount = await accounts.voteSignerToAccount(account.freshAddress);
     const revokeTxs = await election.revoke(
       voteSignerAccount,
       transaction.recipient,
-      new BigNumber(value)
+      new BigNumber(value),
     );
 
-    const revokeTx = revokeTxs.find((transactionObject) => {
+    const revokeTx = revokeTxs.find(transactionObject => {
       return (
         (transactionObject.txo as any)._method.name ===
         (transaction.index === 0 ? "revokePending" : "revokeActive")
@@ -99,33 +84,25 @@ const getFeesForTransaction = async ({
   } else if (transaction.mode === "activate") {
     const election = await kit.contracts.getElection();
     const accounts = await kit.contracts.getAccounts();
-    const voteSignerAccount = await accounts.voteSignerToAccount(
-      account.freshAddress
-    );
+    const voteSignerAccount = await accounts.voteSignerToAccount(account.freshAddress);
 
     const activates = await election.activate(voteSignerAccount);
 
-    const activate = activates.find(
-      (a) => a.txo.arguments[0] === transaction.recipient
-    );
+    const activate = activates.find(a => a.txo.arguments[0] === transaction.recipient);
     if (!activate) return new BigNumber(0);
 
     gas = await activate.txo.estimateGas({ from: account.freshAddress });
   } else if (transaction.mode === "register") {
     const accounts = await kit.contracts.getAccounts();
 
-    gas = await accounts
-      .createAccount()
-      .txo.estimateGas({ from: account.freshAddress });
+    gas = await accounts.createAccount().txo.estimateGas({ from: account.freshAddress });
   } else {
     const celoToken = await kit.contracts.getGoldToken();
 
     const celoTransaction = {
       from: account.freshAddress,
       to: celoToken.address,
-      data: celoToken
-        .transfer(transaction.recipient, value.toFixed())
-        .txo.encodeABI(),
+      data: celoToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
     };
 
     gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);

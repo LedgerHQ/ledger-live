@@ -9,7 +9,6 @@ import { DeviceSelector } from "./DeviceSelector";
 import { track } from "~/renderer/analytics/segment";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-
 import { OnboardingContext } from "../../index";
 
 const SelectDeviceContainer = styled(Flex).attrs({

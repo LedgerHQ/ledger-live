@@ -14,18 +14,13 @@ import { ScreenName } from "../../../const";
 import type { CeloWithdrawFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CeloWithdrawFlowParamList,
-    ScreenName.CeloWithdrawValidationError
-  >
+  StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const retry = useCallback(() => {
@@ -36,7 +31,13 @@ export default function ValidationError({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloWithdraw" name="ValidationError" />
+      <TrackScreen
+        category="CeloWithdraw"
+        name="ValidationError"
+        flow="stake"
+        action="withdraw"
+        currency="celo"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

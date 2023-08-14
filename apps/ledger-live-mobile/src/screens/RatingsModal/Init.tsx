@@ -37,12 +37,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       params: ratingsFeatureParams,
     });
     updateIdentify();
-  }, [
-    setStep,
-    handleSatisfied,
-    ratingsHappyMoment?.route_name,
-    ratingsFeatureParams,
-  ]);
+  }, [setStep, handleSatisfied, ratingsHappyMoment?.route_name, ratingsFeatureParams]);
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
     track("button_clicked", {
@@ -52,10 +47,9 @@ const Init = ({ closeModal, setStep }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
-    handleRatingsSetDateOfNextAllowedRequest(
-      ratingsFeatureParams?.conditions?.disappointed_delay,
-      { satisfaction: "disappointed" },
-    );
+    handleRatingsSetDateOfNextAllowedRequest(ratingsFeatureParams?.conditions?.disappointed_delay, {
+      satisfaction: "disappointed",
+    });
     updateIdentify();
   }, [
     setStep,
@@ -73,12 +67,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       params: ratingsFeatureParams,
     });
     handleInitNotNow();
-  }, [
-    closeModal,
-    ratingsHappyMoment?.route_name,
-    handleRatingsSetDateOfNextAllowedRequest,
-    ratingsFeatureParams,
-  ]);
+  }, [closeModal, ratingsHappyMoment?.route_name, ratingsFeatureParams, handleInitNotNow]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center" mt={3}>
@@ -113,13 +102,7 @@ const Init = ({ closeModal, setStep }: Props) => {
         <Button onPress={goToEnjoy} outline type="shade" size="large">
           <Trans i18nKey="ratings.init.cta.enjoy" />
         </Button>
-        <Button
-          onPress={goToDisappointed}
-          outline
-          type="shade"
-          mt={3}
-          size="large"
-        >
+        <Button onPress={goToDisappointed} outline type="shade" mt={3} size="large">
           <Trans i18nKey="ratings.init.cta.disappointed" />
         </Button>
         <NotNowButton onPress={onNotNow}>

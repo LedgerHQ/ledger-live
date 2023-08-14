@@ -1,18 +1,20 @@
 import { RecipientRequired } from "@ledgerhq/errors";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   SyncOneAccountOnMount,
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import Clipboard from "@react-native-community/clipboard";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
+import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
 import invariant from "invariant";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
@@ -24,50 +26,61 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import RecipientInput from "../../components/RecipientInput";
 import RetryButton from "../../components/RetryButton";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import SupportLinkError from "../../components/SupportLinkError";
-import TranslatedError from "../../components/TranslatedError";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
+import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
+import RecipientRow from "./RecipientRow";
+import { EditOperationCard } from "../../components/EditOperationCard";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendSelectRecipient
-  >
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
 >;
 
 export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  invariant(account, "account is missing");
+
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { enabled: isDomainResolutionEnabled, params } =
+    useFeature<{
+      supportedCurrencyIds: CryptoCurrencyId[];
+    }>("domainInputResolution") || {};
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => ({
       account,
       parentAccount,
-    }));
-  const shouldSkipAmount =
-    transaction?.family === "ethereum" &&
-    transaction?.mode === "erc721.transfer";
+    }),
+  );
+  const [value, setValue] = useState<string>("");
 
+  const shouldSkipAmount = useMemo(() => {
+    if (transaction?.family === "evm") {
+      return transaction.mode === "erc721";
+    } else if (transaction?.family === "ethereum") {
+      return transaction.mode === "erc721.transfer";
+    }
+
+    return false;
+  }, [transaction]);
   const isNftSend = isNftTransaction(transaction);
+
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
   useEffect(() => {
-    if (
-      initialTransaction.current !== navigationTransaction &&
-      navigationTransaction
-    ) {
+    if (initialTransaction.current !== navigationTransaction && navigationTransaction) {
       setTransaction(navigationTransaction);
     }
   }, [setTransaction, navigationTransaction]);
@@ -92,9 +105,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           recipient,
         }),
       );
+      setValue(recipient);
     },
-    [account, parentAccount, setTransaction, transaction],
+    [account, parentAccount, setTransaction, transaction, setValue],
   );
+
   // FIXME: PROP IS NOT USED. REMOVE ?
   // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
@@ -148,9 +163,14 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     parentAccount?.id,
     route.params,
   ]);
+
   if (!account || !transaction) return null;
+
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
+
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+
   return (
     <>
       <SafeAreaView
@@ -161,11 +181,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           },
         ]}
       >
-        <TrackScreen
-          category="SendFunds"
-          name="SelectRecipient"
-          currencyName={currency.name}
-        />
+        <TrackScreen category="SendFunds" name="SelectRecipient" currencyName={currency.name} />
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount
           reason="transaction-flow-init"
@@ -177,6 +193,14 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             flex: 1,
           }}
         >
+          {stuckAccountAndOperation?.operation ? (
+            <EditOperationCard
+              isOperationStuck
+              oldestEditableOperation={stuckAccountAndOperation.operation}
+              account={stuckAccountAndOperation.account}
+              parentAccount={stuckAccountAndOperation.parentAccount}
+            />
+          ) : null}
           <NavigationScrollView
             style={[
               styles.container,
@@ -212,47 +236,38 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 ]}
               />
             </View>
-            <View style={styles.inputWrapper}>
-              <RecipientInput
-                onPaste={async () => {
-                  const text = await Clipboard.getString();
-                  onChangeText(text);
-                }}
-                onFocus={onRecipientFieldFocus}
+            {isDomainResolutionEnabled && isCurrencySupported ? (
+              <DomainServiceRecipientRow
                 onChangeText={onChangeText}
-                // FIXME: onInputCleared PROP DOES NOT EXISTS
-                // onInputCleared={clear}
-                value={transaction.recipient}
+                value={value}
+                onRecipientFieldFocus={onRecipientFieldFocus}
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                setTransaction={setTransaction}
+                error={error}
+                warning={warning}
               />
-            </View>
-            {(error || warning) && (
-              <>
-                <LText
-                  style={[styles.warningBox]}
-                  color={error ? "alert" : warning ? "orange" : "darkBlue"}
-                >
-                  <TranslatedError error={error || warning} />
-                </LText>
-                <View
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <SupportLinkError error={error} type="alert" />
-                </View>
-              </>
+            ) : (
+              <RecipientRow
+                onChangeText={onChangeText}
+                onRecipientFieldFocus={onRecipientFieldFocus}
+                transaction={transaction}
+                warning={warning}
+                error={error}
+              />
             )}
           </NavigationScrollView>
           <View style={styles.container}>
-            {transaction.recipient && !(error || warning) ? (
+            {(!isDomainResolutionEnabled || !isCurrencySupported) &&
+            transaction.recipient &&
+            !(error || warning) ? (
               <View style={styles.infoBox}>
-                <Alert type="primary">
-                  {t("send.recipient.verifyAddress")}
-                </Alert>
+                <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
             ) : null}
             <Button
+              testID="recipient-continue-button"
               event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
@@ -269,10 +284,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}
@@ -284,13 +296,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 }
 
-const IconQRCode = ({
-  size = 16,
-  color,
-}: {
-  size?: number;
-  color?: string;
-}) => <Icon name="qrcode" size={size} color={color} />;
+const IconQRCode = ({ size = 16, color }: { size?: number; color?: string }) => (
+  <Icon name="qrcode" size={size} color={color} />
+);
 
 const styles = StyleSheet.create({
   root: {
@@ -314,19 +322,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderBottomWidth: 1,
     marginHorizontal: 8,
-  },
-  warningBox: {
-    marginTop: 8,
-    ...Platform.select({
-      android: {
-        marginLeft: 6,
-      },
-    }),
-  },
-  inputWrapper: {
-    marginTop: 32,
-    flexDirection: "row",
-    alignItems: "center",
   },
   button: {
     flex: 1,

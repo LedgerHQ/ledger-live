@@ -1,8 +1,5 @@
 import React, { useMemo, useCallback, useState } from "react";
-import {
-  SwapTransactionType,
-  ExchangeRate,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { useDispatch } from "react-redux";
 import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
@@ -49,11 +46,9 @@ export function Modal({
   }, [confirmed, termsAccepted, deviceMeta]);
 
   const onAcceptTerms = useCallback(() => {
-    if (!provider || provider === "ftx" || provider === "ftxus") {
-      return;
+    if (provider) {
+      dispatch(swapAcceptProvider(provider));
     }
-
-    dispatch(swapAcceptProvider(provider));
   }, [dispatch, provider]);
 
   const onError = useCallback(
@@ -86,14 +81,12 @@ export function Modal({
 
   return (
     <>
-      {provider !== "ftx" && provider !== "ftxus" && (
-        <Terms
-          provider={provider}
-          onClose={onClose}
-          onCTA={onAcceptTerms}
-          isOpen={target === Target.Terms}
-        />
-      )}
+      <Terms
+        provider={provider}
+        onClose={onClose}
+        onCTA={onAcceptTerms}
+        isOpen={target === Target.Terms}
+      />
 
       {deviceMeta && confirmed && !error && (
         <Confirmation

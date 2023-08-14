@@ -1,69 +1,82 @@
+import { useCallback } from "react";
+import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
-import { track, page } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
 
 type Props = {
   currencies?: string[];
+  shouldRedirect?: boolean;
+  alwaysShowNoFunds?: boolean;
+  source?: string;
 };
 
-const useStakeFlow = ({ currencies }: Props = {}) => {
+const useStakeFlow = () => {
   const history = useHistory();
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const { params: { list } = { list: undefined } } = useFeature("stakePrograms") || {};
   const dispatch = useDispatch();
-  const { params: paramsFlag } = stakeProgramsFeatureFlag || {};
-  const { list: listFlag } = paramsFlag || {};
 
-  const getStakeDrawer = () => {
-    page("Stake", "Drawer - Choose Asset", {
-      ...stakeDefaultTrack,
-      page: history.location.pathname,
-      type: "drawer",
-    });
-    setDrawer(
-      SelectAccountAndCurrencyDrawer,
-      {
-        currencies: currencies || listFlag || [],
-        onAccountSelected: (account: Account, parentAccount: Account | null = null) => {
-          track("button_clicked", {
-            ...stakeDefaultTrack,
-            button: "asset",
-            page: history.location.pathname,
-            currency: account?.currency?.family,
-            account,
-            parentAccount,
-            drawer: "Select Account And Currency Drawer",
-          });
-          setDrawer();
-          dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
-          history.push({
-            pathname: `/account/${account.id}`,
-          });
+  return useCallback(
+    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false, source }: Props = {}) => {
+      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
+        currencies: currencies || list,
+      });
+
+      trackPage("Stake", "Drawer - Choose Asset", {
+        ...stakeDefaultTrack,
+        page: history.location.pathname,
+        type: "drawer",
+      });
+      setDrawer(
+        SelectAccountAndCurrencyDrawer,
+        {
+          currencies: cryptoCurrencies,
+          onAccountSelected: (account: AccountLike, parentAccount: Account | null = null) => {
+            track("button_clicked", {
+              ...stakeDefaultTrack,
+              button: "asset",
+              page: history.location.pathname,
+              currency: account.type === "Account" && account?.currency?.family,
+              account: account ? getAccountName(account) : undefined,
+              parentAccount: parentAccount ? getAccountName(parentAccount) : undefined,
+              drawer: "Select Account And Currency Drawer",
+            });
+            setDrawer();
+
+            if (alwaysShowNoFunds) {
+              dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+            } else {
+              dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
+            }
+
+            if (shouldRedirect) {
+              history.push({
+                pathname: `/account/${account.id}`,
+              });
+            }
+          },
         },
-      },
-      {
-        onRequestClose: () => {
-          setDrawer();
-          track("button_clicked", {
-            ...stakeDefaultTrack,
-            button: "close",
-            page: history.location.pathname,
-          });
+        {
+          onRequestClose: () => {
+            setDrawer();
+            track("button_clicked", {
+              ...stakeDefaultTrack,
+              button: "close",
+              page: history.location.pathname,
+            });
+          },
         },
-      },
-    );
-  };
-
-  const getStakeFlow = () => {
-    getStakeDrawer();
-  };
-
-  return getStakeFlow;
+      );
+    },
+    [dispatch, history, list],
+  );
 };
 
 export default useStakeFlow;

@@ -41,11 +41,7 @@ export default class Near {
 
   constructor(transport: Transport) {
     this.transport = transport;
-    transport.decorateAppAPIMethods(
-      this,
-      ["getPublicKey", "getAddress", "sign"],
-      "NEAR"
-    );
+    transport.decorateAppAPIMethods(this, ["getPublicKey", "getAddress", "sign"], "NEAR");
   }
 
   /**
@@ -57,7 +53,7 @@ export default class Near {
    */
   async getAddress(
     path: string,
-    verify?: boolean
+    verify?: boolean,
   ): Promise<{
     publicKey: string;
     address: string;
@@ -86,10 +82,7 @@ export default class Near {
    * @param path
    * @return a signature to be broadcasted to the chain
    */
-  async signTransaction(
-    transaction: Uint8Array,
-    path: string
-  ): Promise<Buffer | undefined> {
+  async signTransaction(transaction: Uint8Array, path: string): Promise<Buffer | undefined> {
     const client = await createClient(this.transport);
     const signature = await client.sign(transaction, path);
 
@@ -106,7 +99,7 @@ async function createClient(transport) {
         INS_GET_PUBLIC_KEY,
         verify ? 0 : 1,
         NETWORK_ID,
-        bip32PathToBytes(path)
+        bip32PathToBytes(path),
       );
       return Buffer.from(response.subarray(0, -2));
     },
@@ -116,7 +109,7 @@ async function createClient(transport) {
         INS_GET_ADDRESS,
         0,
         NETWORK_ID,
-        bip32PathToBytes(path)
+        bip32PathToBytes(path),
       );
       return Buffer.from(response.subarray(0, -2));
     },
@@ -124,16 +117,14 @@ async function createClient(transport) {
       transactionData = Buffer.from(transactionData);
       const allData = Buffer.concat([bip32PathToBytes(path), transactionData]);
       for (let offset = 0; offset < allData.length; offset += CHUNK_SIZE) {
-        const chunk = Buffer.from(
-          allData.subarray(offset, offset + CHUNK_SIZE)
-        );
+        const chunk = Buffer.from(allData.subarray(offset, offset + CHUNK_SIZE));
         const isLastChunk = offset + CHUNK_SIZE >= allData.length;
         const response = await this.transport.send(
           CLA,
           INS_SIGN,
           isLastChunk ? P1_LAST_CHUNK : 0,
           NETWORK_ID,
-          chunk
+          chunk,
         );
         if (isLastChunk) {
           return Buffer.from(response.subarray(0, -2));

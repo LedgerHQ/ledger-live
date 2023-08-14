@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader, Text, Box } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { analyticsFlowName } from "./shared";
 
 const Overlay = styled(Flex)`
   background: linear-gradient(rgba(0, 0, 0, 0) 0%, ${p => p.theme.colors.constant.overlay} 25%);
@@ -47,6 +49,13 @@ export const DesyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
       width="100%"
       flexDirection="column"
     >
+      <TrackPage
+        category="device connection lost"
+        type="modal"
+        flow={analyticsFlowName}
+        error="device connection lost"
+        refreshSource={false}
+      />
       <Flex alignItems="flex-end" justifyContent="center" flex={1} padding={4}>
         <Flex
           width="400px"

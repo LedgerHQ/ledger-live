@@ -8,7 +8,7 @@ import TransparentHeaderNavigationOptions from "../../navigation/TransparentHead
 import WalletConnectScan from "../../screens/WalletConnect/Scan";
 import WalletConnectConnect from "../../screens/WalletConnect/Connect";
 import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
-import HeaderRightClose from "../HeaderRightClose";
+import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { WalletConnectNavigatorParamList } from "./types/WalletConnectNavigator";
 
@@ -16,10 +16,7 @@ export default function WalletConnectNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
@@ -30,7 +27,7 @@ export default function WalletConnectNavigator() {
           ...TransparentHeaderNavigationOptions,
           title: "Wallet Connect",
           headerRight: () => (
-            <HeaderRightClose color={colors.white} preferDismiss={false} />
+            <NavigationHeaderCloseButtonAdvanced color={colors.white} preferDismiss={false} />
           ),
           headerLeft: () => null,
         }}
@@ -40,7 +37,7 @@ export default function WalletConnectNavigator() {
         component={WalletConnectDeeplinkingSelectAccount}
         options={{
           title: t("walletconnect.deeplinkingTitle"),
-          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
           headerLeft: () => null,
         }}
       />

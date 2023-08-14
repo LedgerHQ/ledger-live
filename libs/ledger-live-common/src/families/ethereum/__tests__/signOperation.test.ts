@@ -1,9 +1,6 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
-import {
-  cryptocurrenciesById,
-  getCryptoCurrencyById,
-} from "@ledgerhq/cryptoassets/currencies";
+import { cryptocurrenciesById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 import createTransaction from "../createTransaction";
 import { fromAccountRaw } from "../../../account";
@@ -25,6 +22,7 @@ const signTransaction = jest.fn(() => {
 
 jest.mock("@ledgerhq/hw-app-eth", () => {
   return {
+    __esModule: true,
     ...jest.requireActual("@ledgerhq/hw-app-eth"),
     default: class {
       signTransaction = signTransaction;
@@ -34,12 +32,12 @@ jest.mock("@ledgerhq/hw-app-eth", () => {
 });
 
 jest.mock("../../../hw/deviceAccess", () => ({
-  withDevice: () => (job) => job({ decorateAppAPIMethods: () => {} }),
+  withDevice: () => job => job({ decorateAppAPIMethods: () => {} }),
 }));
 
 const dummyAccount = fromAccountRaw(ethereum1);
 
-const currencies = Object.values(cryptocurrenciesById).filter((currency) => {
+const currencies = Object.values(cryptocurrenciesById).filter(currency => {
   return currency.ethereumLikeInfo;
 });
 
@@ -67,7 +65,7 @@ describe("signOperation", () => {
         });
       });
 
-      type2CurrenciesIds.map(getCryptoCurrencyById).forEach((currency) => {
+      type2CurrenciesIds.map(getCryptoCurrencyById).forEach(currency => {
         it(`Should use EIP155 for ${currency.id} transaction`, async () => {
           await signOperation({
             account: {
@@ -85,15 +83,12 @@ describe("signOperation", () => {
           }).toPromise();
 
           const txHashProvidedToAppBindings = (
-            signTransaction.mock.calls[
-              signTransaction.mock.calls.length - 1
-            ] as unknown[]
+            signTransaction.mock.calls[signTransaction.mock.calls.length - 1] as unknown[]
           )[1];
 
-          expect(
-            ethers.utils.parseTransaction(`0x${txHashProvidedToAppBindings}`)
-              .chainId
-          ).toBe(currency.ethereumLikeInfo?.chainId);
+          expect(ethers.utils.parseTransaction(`0x${txHashProvidedToAppBindings}`).chainId).toBe(
+            currency.ethereumLikeInfo?.chainId,
+          );
         });
       });
     });
@@ -103,7 +98,7 @@ describe("signOperation", () => {
         setEnv("EIP1559_ENABLED_CURRENCIES", "");
       });
 
-      currencies.forEach((currency) => {
+      currencies.forEach(currency => {
         beforeEach(() => {
           signTransaction.mockImplementationOnce(() => {
             return Promise.resolve({
@@ -130,15 +125,12 @@ describe("signOperation", () => {
           }).toPromise();
 
           const txHashProvidedToAppBindings = (
-            signTransaction.mock.calls[
-              signTransaction.mock.calls.length - 1
-            ] as unknown[]
+            signTransaction.mock.calls[signTransaction.mock.calls.length - 1] as unknown[]
           )[1];
 
-          expect(
-            ethers.utils.parseTransaction(`0x${txHashProvidedToAppBindings}`)
-              .chainId
-          ).toBe(currency.ethereumLikeInfo?.chainId);
+          expect(ethers.utils.parseTransaction(`0x${txHashProvidedToAppBindings}`).chainId).toBe(
+            currency.ethereumLikeInfo?.chainId,
+          );
         });
       });
     });

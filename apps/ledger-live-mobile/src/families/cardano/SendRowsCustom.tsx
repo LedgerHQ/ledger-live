@@ -16,33 +16,12 @@ import type {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
@@ -70,12 +49,7 @@ export default function CardanoSendRowsCustom(props: Props) {
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
         {transaction.memo ? (
-          <LText
-            semiBold
-            style={styles.tagText}
-            onPress={editMemo}
-            numberOfLines={1}
-          >
+          <LText semiBold style={styles.tagText} onPress={editMemo} numberOfLines={1}>
             {transaction.memo}
           </LText>
         ) : (

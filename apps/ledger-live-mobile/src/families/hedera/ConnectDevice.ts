@@ -4,10 +4,7 @@ import { ScreenName } from "../../const";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 
-type Navigation = StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveConnectDevice
->;
+type Navigation = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>;
 
 type Props = Navigation;
 

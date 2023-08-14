@@ -1,11 +1,12 @@
 import EventEmitter from "events";
+import { usb } from "usb";
+import debounce from "lodash/debounce";
 import { getDevices } from "@ledgerhq/hw-transport-node-hid-noevents";
 import { log } from "@ledgerhq/logs";
-import usb from "usb";
-import debounce from "lodash/debounce";
+
 export default (
   delay: number,
-  listenDevicesPollingSkip: () => boolean
+  listenDevicesPollingSkip: () => boolean,
 ): {
   events: EventEmitter;
   stop: () => void;
@@ -14,14 +15,11 @@ export default (
   events.setMaxListeners(0);
   let listDevices = getDevices();
 
-  const flatDevice = (d) => d.path;
+  const flatDevice = d => d.path;
 
-  const getFlatDevices = () => [
-    ...new Set(getDevices().map((d) => flatDevice(d))),
-  ];
+  const getFlatDevices = () => [...new Set(getDevices().map(d => flatDevice(d)))];
 
-  const getDeviceByPaths = (paths) =>
-    listDevices.find((d) => paths.includes(flatDevice(d)));
+  const getDeviceByPaths = paths => listDevices.find(d => paths.includes(flatDevice(d)));
 
   let lastDevices = getFlatDevices();
 
@@ -30,7 +28,7 @@ export default (
       log("hid-listen", "Polling for added or removed devices");
       let changeFound = false;
       const currentDevices = getFlatDevices();
-      const newDevices = currentDevices.filter((d) => !lastDevices.includes(d));
+      const newDevices = currentDevices.filter(d => !lastDevices.includes(d));
 
       if (newDevices.length > 0) {
         log("hid-listen", "New device found:", newDevices);
@@ -41,16 +39,12 @@ export default (
         log("hid-listen", "No new device found");
       }
 
-      const removeDevices = lastDevices.filter(
-        (d) => !currentDevices.includes(d)
-      );
+      const removeDevices = lastDevices.filter(d => !currentDevices.includes(d));
 
       if (removeDevices.length > 0) {
         log("hid-listen", "Removed device found:", removeDevices);
         events.emit("remove", getDeviceByPaths(removeDevices));
-        listDevices = listDevices.filter(
-          (d) => !removeDevices.includes(flatDevice(d))
-        );
+        listDevices = listDevices.filter(d => !removeDevices.includes(flatDevice(d)));
         changeFound = true;
       } else {
         log("hid-listen", "No removed device found");
@@ -67,7 +61,7 @@ export default (
 
   const debouncedPoll = debounce(poll, delay);
 
-  const attachDetected = (device) => {
+  const attachDetected = device => {
     log("hid-listen", "Device add detected:", device);
     debouncedPoll();
   };
@@ -75,7 +69,7 @@ export default (
   usb.on("attach", attachDetected);
   log("hid-listen", "attach listener added");
 
-  const detachDetected = (device) => {
+  const detachDetected = device => {
     log("hid-listen", "Device removal detected:", device);
     debouncedPoll();
   };
@@ -84,10 +78,7 @@ export default (
   log("hid-listen", "detach listener added");
   return {
     stop: () => {
-      log(
-        "hid-listen",
-        "Stop received, removing listeners and cancelling pending debounced polls"
-      );
+      log("hid-listen", "Stop received, removing listeners and cancelling pending debounced polls");
       debouncedPoll.cancel();
       usb.removeListener("attach", attachDetected);
       usb.removeListener("detach", detachDetected);

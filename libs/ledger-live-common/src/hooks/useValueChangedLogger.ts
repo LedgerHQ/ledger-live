@@ -28,7 +28,7 @@ export function useValueChangedLogger<T>(val: T, name: string): void {
  */
 export function usePropsChangedLogger<T extends { [key: string]: unknown }>(
   obj: T,
-  name: string
+  name: string,
 ): void {
   const objRef = useRef<T>(obj);
   useEffect(() => {

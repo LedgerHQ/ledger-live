@@ -10,25 +10,11 @@ type Props = {
   RightComponent?: React.ReactNode;
 };
 
-export default function AccountSectionLabel({
-  name,
-  Icon,
-  onPress,
-  RightComponent,
-}: Props) {
+export default function AccountSectionLabel({ name, Icon, onPress, RightComponent }: Props) {
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={onPress}
-      disabled={!onPress}
-    >
+    <TouchableOpacity style={styles.container} onPress={onPress} disabled={!onPress}>
       <Flex flexDirection={"row"} alignItems={"center"} flex={1}>
-        <Text
-          variant="small"
-          fontWeight="semiBold"
-          color="neutral.c70"
-          uppercase
-        >
+        <Text variant="small" fontWeight="semiBold" color="neutral.c70" uppercase>
           {name}
         </Text>
         {Icon && (
@@ -37,9 +23,7 @@ export default function AccountSectionLabel({
           </Box>
         )}
       </Flex>
-      {!!RightComponent && (
-        <View style={styles.rightWrapper}>{RightComponent}</View>
-      )}
+      {!!RightComponent && <View style={styles.rightWrapper}>{RightComponent}</View>}
     </TouchableOpacity>
   );
 }

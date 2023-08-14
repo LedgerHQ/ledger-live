@@ -9,11 +9,7 @@ import {
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/families/tron/react";
 import { useTheme } from "@react-navigation/native";
-import {
-  DataRow,
-  HeaderRow,
-  ValidatorField,
-} from "../../components/ValidateOnDeviceDataRow";
+import { DataRow, HeaderRow, ValidatorField } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
 import { localeSelector } from "../../reducers/settings";
@@ -41,12 +37,7 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
       return (
         <DataRow>
           <Info size={22} color={colors.live} />
-          <LText
-            semiBold
-            style={[styles.text, styles.infoText]}
-            color="live"
-            numberOfLines={2}
-          >
+          <LText semiBold style={[styles.text, styles.infoText]} color="live" numberOfLines={2}>
             <Trans
               i18nKey={`ValidateOnDevice.infoWording.${transaction.mode}`}
               values={{
@@ -82,20 +73,17 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
   const locale = useSelector(localeSelector);
   const { votes } = transaction;
   const sp = useTronSuperRepresentatives();
-  const formattedVotes =
-    votes && votes.length > 0 ? formatVotes(votes, sp) : null;
+  const formattedVotes = votes && votes.length > 0 ? formatVotes(votes, sp) : null;
   return formattedVotes ? (
     <>
-      <HeaderRow
-        label={t("ValidateOnDevice.name")}
-        value={t("ValidateOnDevice.votes")}
-      />
+      <HeaderRow label={t("ValidateOnDevice.name")} value={t("ValidateOnDevice.votes")} />
 
-      {formattedVotes.map(({ address, voteCount, validator }) => (
+      {formattedVotes.map(({ address, voteCount, validator }, i) => (
         <ValidatorField
           address={address}
           name={validator?.name ?? address}
           amount={voteCount.toLocaleString(locale)}
+          key={`${address}-${i}`}
         />
       ))}
     </>

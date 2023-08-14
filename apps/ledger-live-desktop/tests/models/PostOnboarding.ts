@@ -11,6 +11,7 @@ export class PostOnboarding {
 
   readonly completeActionButton: Locator;
   readonly postOnboardingBannerEntryPoint: Locator;
+  readonly postOnboardingBannerEntryPointCloseButton: Locator;
   readonly postOnboardingHubSkipButton: Locator;
   readonly postOnboardingHubDrawerSkipButton: Locator;
 
@@ -33,17 +34,17 @@ export class PostOnboarding {
     this.postOnboardingBannerEntryPoint = page.locator(
       "data-test-id=postonboarding-banner-entry-point",
     );
+    this.postOnboardingBannerEntryPointCloseButton = page.locator(
+      "data-test-id=postonboarding-banner-entry-point-close-button",
+    );
     this.postOnboardingHubSkipButton = page.locator("data-test-id=postonboarding-hub-skip-button");
     this.postOnboardingHubDrawerSkipButton = page
       .locator("data-test-id=postonboarding-hub-drawer-skip-button")
       .nth(0);
   }
 
-  async waitForLaunch() {
+  async startNewMockPostOnboarding() {
     await this.postOnboardingHubTesterButton.waitFor({ state: "visible" });
-  }
-
-  async navigateToPostOnboardingScreen() {
     await this.postOnboardingHubTesterButton.click();
   }
 
@@ -76,5 +77,9 @@ export class PostOnboarding {
 
   async goPostOnboardingHubFromDashboardBanner() {
     await this.postOnboardingBannerEntryPoint.click();
+  }
+
+  async closePostOnboardingHubDashboardBanner() {
+    await this.postOnboardingBannerEntryPointCloseButton.click();
   }
 }

@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Icons, Flex } from "@ledgerhq/native-ui";
+import { IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 
 import Button from "../wrappedUi/Button";
@@ -9,24 +9,21 @@ import { ScreenName } from "../../const";
 import useCurrency from "../../helpers/useCurrency";
 import { track } from "../../analytics";
 
-const iconBuy = Icons.PlusMedium;
-const iconReceive = Icons.ArrowBottomMedium;
+const iconBuy = IconsLegacy.PlusMedium;
+const iconReceive = IconsLegacy.ArrowBottomMedium;
 
 function ReadOnlyFabActions() {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
   const currency = useCurrency().name;
 
-  const buyDevice = useCallback(
-    () => navigate(ScreenName.NoDeviceWallScreen),
-    [navigate],
-  );
+  const buyDevice = useCallback(() => navigate(ScreenName.NoDeviceWallScreen), [navigate]);
 
   const handleOnPress = useCallback(
     (buttonTitle: string) => {
       track("button_clicked", {
         button: buttonTitle,
-        screen: "Account",
+        page: "Account",
         currency,
       });
       buyDevice();
@@ -35,10 +32,7 @@ function ReadOnlyFabActions() {
   );
 
   const pressBuy = useCallback(() => handleOnPress("+ Buy"), [handleOnPress]);
-  const pressReceive = useCallback(
-    () => handleOnPress("Receive"),
-    [handleOnPress],
-  );
+  const pressReceive = useCallback(() => handleOnPress("Receive"), [handleOnPress]);
 
   return (
     <Flex mx={16} flexDirection={"row"}>

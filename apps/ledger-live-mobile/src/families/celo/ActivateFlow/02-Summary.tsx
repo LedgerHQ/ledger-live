@@ -2,10 +2,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import {
-  CeloValidatorGroup,
-  CeloAccount,
-} from "@ledgerhq/live-common/families/celo/types";
+import { CeloValidatorGroup, CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -56,29 +53,23 @@ export default function ActivateSummary({ navigation, route }: Props) {
     return undefined;
   }, [votes, validator, validators]);
 
-  const {
-    transaction,
-    updateTransaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
 
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "activate",
-        }),
-      };
-    }
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "activate",
+          }),
+        };
+      }
 
-    return { account, transaction: tx };
-  });
+      return { account, transaction: tx };
+    });
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "celo", "transaction celo");
@@ -112,32 +103,27 @@ export default function ActivateSummary({ navigation, route }: Props) {
 
   const hasErrors = Object.keys(status.errors).length > 0;
   const error =
-    status.errors &&
-    Object.keys(status.errors).length > 0 &&
-    Object.values(status.errors)[0];
+    status.errors && Object.keys(status.errors).length > 0 && Object.values(status.errors)[0];
   const warning =
-    status.warnings &&
-    Object.keys(status.warnings).length > 0 &&
-    Object.values(status.warnings)[0];
+    status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ActivateFlow" name="Summary" />
+      <TrackScreen
+        category="ActivateFlow"
+        name="Summary"
+        flow="stake"
+        action="activate"
+        currency="celo"
+      />
       <View style={styles.body}>
         <View style={styles.summary}>
-          <SummaryWords
-            onChangeValidator={onChangeDelegator}
-            validator={chosenValidator}
-          />
+          <SummaryWords onChangeValidator={onChangeDelegator} validator={chosenValidator} />
         </View>
       </View>
       <View style={styles.footer}>
-        {!!(error && error instanceof Error) && (
-          <ErrorAndWarning error={error} />
-        )}
-        {!!(warning && warning instanceof Error) && (
-          <ErrorAndWarning warning={warning} />
-        )}
+        {!!(error && error instanceof Error) && <ErrorAndWarning error={error} />}
+        {!!(warning && warning instanceof Error) && <ErrorAndWarning warning={warning} />}
         <Button
           event="SummaryContinue"
           type="primary"

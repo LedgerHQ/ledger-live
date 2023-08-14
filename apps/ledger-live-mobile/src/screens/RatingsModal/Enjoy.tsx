@@ -19,12 +19,8 @@ type Props = {
 };
 
 const Enjoy = ({ closeModal }: Props) => {
-  const {
-    ratingsFeatureParams,
-    ratingsHappyMoment,
-    handleEnjoyNotNow,
-    handleGoToStore,
-  } = useRatings();
+  const { ratingsFeatureParams, ratingsHappyMoment, handleEnjoyNotNow, handleGoToStore } =
+    useRatings();
   const goToStore = useCallback(() => {
     track("RedirectedToStore", { source: ratingsHappyMoment?.route_name });
     track("button_clicked", {
@@ -34,17 +30,10 @@ const Enjoy = ({ closeModal }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
-    Linking.openURL(
-      Platform.OS === "ios" ? urls.applestoreRate : urls.playstore,
-    );
+    Linking.openURL(Platform.OS === "ios" ? urls.applestoreRate : urls.playstore);
     closeModal();
     handleGoToStore();
-  }, [
-    ratingsHappyMoment?.route_name,
-    ratingsFeatureParams,
-    closeModal,
-    handleGoToStore,
-  ]);
+  }, [ratingsHappyMoment?.route_name, ratingsFeatureParams, closeModal, handleGoToStore]);
   const onNotNow = useCallback(() => {
     track("button_clicked", {
       flow: "review",
@@ -55,12 +44,7 @@ const Enjoy = ({ closeModal }: Props) => {
     });
     closeModal();
     handleEnjoyNotNow();
-  }, [
-    ratingsHappyMoment?.route_name,
-    ratingsFeatureParams,
-    closeModal,
-    handleEnjoyNotNow,
-  ]);
+  }, [ratingsHappyMoment?.route_name, ratingsFeatureParams, closeModal, handleEnjoyNotNow]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center" mt={3}>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
-import { Text, Icons, Flex } from "@ledgerhq/native-ui";
+import { Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { isEmpty } from "lodash";
 import { State } from "../../../../reducers/types";
@@ -42,13 +42,7 @@ const Leaf = ({ path, label, value, onPress, icon }: LeafProps) => (
           <Text variant={"small"} fontWeight={"medium"} color={"neutral.c70"}>
             {`${typeof value}`}
           </Text>
-          <Text
-            mt={3}
-            variant={"body"}
-            fontWeight={"medium"}
-            color={"neutral.c90"}
-            selectable
-          >
+          <Text mt={3} variant={"body"} fontWeight={"medium"} color={"neutral.c90"} selectable>
             {`${value}`}
           </Text>
         </Flex>
@@ -88,23 +82,20 @@ const Node = ({ data = {}, path, onEdit }: Props) => {
         const isOpen = childVisibility[rowKey as keyof typeof childVisibility];
         const icon = isObject ? (
           empty ? (
-            <Icons.BracketsMedium size={18} />
+            <IconsLegacy.BracketsMedium size={18} />
           ) : isOpen ? (
-            <Icons.DropdownMedium size={18} />
+            <IconsLegacy.DropdownMedium size={18} />
           ) : (
-            <Icons.DroprightMedium size={18} />
+            <IconsLegacy.DroprightMedium size={18} />
           )
         ) : (
-          <Icons.PenMedium size={18} />
+          <IconsLegacy.PenMedium size={18} />
         );
 
         return (
           <View
             key={rowKey}
-            style={[
-              styles.wrapper,
-              { borderColor: colors.black, borderLeftWidth: path ? 5 : 0 },
-            ]}
+            style={[styles.wrapper, { borderColor: colors.black, borderLeftWidth: path ? 5 : 0 }]}
           >
             <Leaf
               onPress={isObject ? toggleVisibility : onEdit}
@@ -117,11 +108,7 @@ const Node = ({ data = {}, path, onEdit }: Props) => {
             {isObject
               ? isOpen &&
                 value && (
-                  <Node
-                    data={value as Record<string, unknown>}
-                    path={rowKey}
-                    onEdit={onEdit}
-                  />
+                  <Node data={value as Record<string, unknown>} path={rowKey} onEdit={onEdit} />
                 )
               : null}
           </View>

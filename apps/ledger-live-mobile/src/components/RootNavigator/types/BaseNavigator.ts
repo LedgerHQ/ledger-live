@@ -1,13 +1,7 @@
-import type { Operation, AccountLike, Account } from "@ledgerhq/types-live";
-import type {
-  NavigatorScreenParams,
-  ParamListBase,
-} from "@react-navigation/native";
+import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
+import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { PropertyPath } from "lodash";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -15,11 +9,9 @@ import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { NavigatorName, ScreenName } from "../../../const";
-import type { LendingNavigatorParamList } from "./LendingNavigator";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
-import type { MigrateAccountsNavigatorParamList } from "./MigrateAccountsFlowNavigator";
 import type { NftNavigatorParamList } from "./NftNavigator";
 import type { NotificationCenterNavigatorParamList } from "./NotificationCenterNavigator";
 import type { PasswordAddFlowParamList } from "./PasswordAddFlowNavigator";
@@ -30,17 +22,13 @@ import type { SettingsNavigatorStackParamList } from "./SettingsNavigator";
 import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator";
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./SwapNavigator";
-import type { LendingInfoNavigatorParamList } from "./LendingInfoNavigator";
+import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { ExchangeNavigatorParamList } from "./ExchangeNavigator";
 import type { ExchangeLiveAppNavigatorParamList } from "./ExchangeLiveAppNavigator";
-import type { FirmwareUpdateNavigatorParamList } from "./FirmwareUpdateNavigator";
 import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
-import type { LendingEnableFlowParamsList } from "./LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "./LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "./LendingWithdrawFlowNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
 import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
@@ -72,8 +60,11 @@ import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/C
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
+import type { EditTransactionParamList } from "../../../families/ethereum/EditTransactionFlow/EditTransactionParamList";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
-import { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
+import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
+import type { StakeNavigatorParamList } from "./StakeNavigator";
+import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -100,9 +91,7 @@ export type BaseNavigatorStackParamList = {
         hideTabNavigation?: boolean;
       })
     | undefined;
-  [NavigatorName.BuyDevice]:
-    | NavigatorScreenParams<BuyDeviceNavigatorParamList>
-    | undefined;
+  [NavigatorName.BuyDevice]: NavigatorScreenParams<BuyDeviceNavigatorParamList> | undefined;
   [ScreenName.NoDeviceWallScreen]: undefined;
   [ScreenName.PostBuyDeviceSetupNanoWallScreen]: undefined;
 
@@ -113,9 +102,20 @@ export type BaseNavigatorStackParamList = {
     mode?: string;
     currency?: string;
     account?: string;
+    accountId?: string;
     defaultAccountId?: string;
     defaultCurrencyId?: string;
     defaultTicker?: string;
+    customDappURL?: string;
+  };
+  [ScreenName.Recover]: {
+    platform?: string;
+    device?: Device;
+    fromOnboarding?: boolean;
+    name?: string;
+    source?: string;
+    redirectTo?: string;
+    callback?: string;
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
@@ -148,6 +148,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.EditDeviceName]: {
     device: Device;
     deviceName: string;
+    deviceInfo: DeviceInfo;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
@@ -167,6 +168,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.BleDevicePairingFlow]: {
     filterByDeviceModelId?: DeviceModelId;
     areKnownDevicesDisplayed?: boolean;
+    areKnownDevicesPairable?: boolean;
     onSuccessAddToKnownDevices?: boolean;
     onSuccessNavigateToConfig: {
       navigateInput: NavigateInput;
@@ -202,22 +204,14 @@ export type BaseNavigatorStackParamList = {
   };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
-  [NavigatorName.ReceiveFunds]:
-    | NavigatorScreenParams<ReceiveFundsStackParamList>
-    | undefined;
+  [NavigatorName.ReceiveFunds]: NavigatorScreenParams<ReceiveFundsStackParamList> | undefined;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;
   };
   [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList>;
-  [NavigatorName.Swap]:
-    | NavigatorScreenParams<SwapNavigatorParamList>
-    | undefined;
-  [NavigatorName.Lending]: NavigatorScreenParams<LendingNavigatorParamList>;
-  [NavigatorName.LendingInfo]: NavigatorScreenParams<LendingInfoNavigatorParamList>;
-  [NavigatorName.LendingEnableFlow]: NavigatorScreenParams<LendingEnableFlowParamsList>;
-  [NavigatorName.LendingSupplyFlow]: NavigatorScreenParams<LendingSupplyFlowNavigatorParamList>;
-  [NavigatorName.LendingWithdrawFlow]: NavigatorScreenParams<LendingWithdrawFlowNavigatorParamList>;
+  [NavigatorName.Swap]: NavigatorScreenParams<SwapNavigatorParamList> | undefined;
+  [NavigatorName.Earn]: NavigatorScreenParams<EarnLiveAppNavigatorParamList> | undefined;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
@@ -235,7 +229,6 @@ export type BaseNavigatorStackParamList = {
     onError?: (_: Error) => void;
     error?: Error;
   };
-  [NavigatorName.FirmwareUpdate]: NavigatorScreenParams<FirmwareUpdateNavigatorParamList>;
   [NavigatorName.Exchange]:
     | NavigatorScreenParams<ExchangeLiveAppNavigatorParamList>
     | NavigatorScreenParams<ExchangeNavigatorParamList>
@@ -248,14 +241,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.ImportAccounts]:
     | NavigatorScreenParams<ImportAccountsNavigatorParamList>
     | undefined;
-  [NavigatorName.PasswordAddFlow]:
-    | NavigatorScreenParams<PasswordAddFlowParamList>
-    | undefined;
+  [NavigatorName.PasswordAddFlow]: NavigatorScreenParams<PasswordAddFlowParamList> | undefined;
   [NavigatorName.PasswordModifyFlow]:
     | NavigatorScreenParams<PasswordModifyFlowParamList>
-    | undefined;
-  [NavigatorName.MigrateAccountsFlow]:
-    | NavigatorScreenParams<MigrateAccountsNavigatorParamList>
     | undefined;
   [NavigatorName.NotificationCenter]: NavigatorScreenParams<NotificationCenterNavigatorParamList>;
   [NavigatorName.NftNavigator]: NavigatorScreenParams<NftNavigatorParamList>;
@@ -303,6 +291,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
+  // Ethereum
+  [NavigatorName.EditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
+
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
 
@@ -322,4 +313,9 @@ export type BaseNavigatorStackParamList = {
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
   };
+  [NavigatorName.NoFundsFlow]: NavigatorScreenParams<NoFundsNavigatorParamList>;
+  [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
+
+  [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
+  [ScreenName.RedirectToRecoverStaxFlow]: Record<string, unknown>;
 };

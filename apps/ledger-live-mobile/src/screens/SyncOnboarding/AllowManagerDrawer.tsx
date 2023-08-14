@@ -28,9 +28,7 @@ const AllowManagerDrawer = ({ isOpen, device, onClose }: Props) => {
       <Flex mb={260} pt={110}>
         <AllowManager
           t={t}
-          wording={t(
-            "syncOnboarding.softwareChecksSteps.allowManagerDrawer.wording",
-          )}
+          wording={t("syncOnboarding.softwareChecksSteps.allowManagerDrawer.wording")}
           device={device}
           theme={theme}
         />

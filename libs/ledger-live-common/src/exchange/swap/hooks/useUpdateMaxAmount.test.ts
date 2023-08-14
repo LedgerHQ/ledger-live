@@ -12,10 +12,7 @@ jest.mock("../../../account/support");
 const mockedCheckAccount = jest.mocked(checkAccountSupported);
 // Mock to use a custom estimate value and test the result.
 jest.mock("../../../families/ethereum/bridge/mock");
-const mockedEstimateMaxSpendable = jest.mocked(
-  ethBridge.accountBridge.estimateMaxSpendable,
-  true
-);
+const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable, true);
 
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
@@ -48,7 +45,7 @@ describe("updateAmountUsingMax", () => {
     setFromAmount.mockClear();
   });
 
-  const wait = () => new Promise((resolve) => setTimeout(resolve, 500));
+  const wait = () => new Promise(resolve => setTimeout(resolve, 500));
 
   it("should toggle the amount", async () => {
     const amount = new BigNumber(0.5);

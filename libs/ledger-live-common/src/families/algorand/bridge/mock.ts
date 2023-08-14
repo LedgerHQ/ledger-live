@@ -1,31 +1,21 @@
+// TODO: update path by moving mockHelpers to coin-framework
+
 import { BigNumber } from "bignumber.js";
+import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
+import type { AlgorandTransaction, Transaction } from "@ledgerhq/coin-algorand/types";
+import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
-  NotEnoughBalance,
-  RecipientRequired,
-  InvalidAddress,
-  FeeTooHigh,
-} from "@ledgerhq/errors";
-import type { AlgorandTransaction, Transaction } from "../types";
-import type {
-  Account,
-  AccountBridge,
-  CurrencyBridge,
-} from "@ledgerhq/types-live";
-import {
+  makeAccountBridgeReceive,
   scanAccounts,
   signOperation,
   broadcast,
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { getMainAccount } from "../../../account";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
-import {
-  applyReconciliation,
-  assignToAccountRaw,
-  assignFromAccountRaw,
-} from "../serialization";
-import { initAccount } from "../initAccount";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { assignToAccountRaw, assignFromAccountRaw } from "@ledgerhq/coin-algorand/serialization";
+import { initAccount } from "@ledgerhq/coin-algorand/initAccount";
 
 const receive = makeAccountBridgeReceive();
 
@@ -42,16 +32,12 @@ const createTransaction = (): AlgorandTransaction => ({
   assetId: null,
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
-
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction
     ? defaultGetFees(mainAccount, transaction)
     : new BigNumber(5000);
-  return Promise.resolve(
-    BigNumber.max(0, account.balance.minus(estimatedFees))
-  );
+  return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
 const getTransactionStatus = (account: Account, t: Transaction) => {
@@ -59,12 +45,8 @@ const getTransactionStatus = (account: Account, t: Transaction) => {
   const warnings: any = {};
   const useAllAmount = !!t.useAllAmount;
   const estimatedFees = defaultGetFees(account, t);
-  const totalSpent = useAllAmount
-    ? account.balance
-    : new BigNumber(t.amount).plus(estimatedFees);
-  const amount = useAllAmount
-    ? account.balance.minus(estimatedFees)
-    : new BigNumber(t.amount);
+  const totalSpent = useAllAmount ? account.balance : new BigNumber(t.amount).plus(estimatedFees);
+  const amount = useAllAmount ? account.balance.minus(estimatedFees) : new BigNumber(t.amount);
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
@@ -102,12 +84,11 @@ const prepareTransaction = async (a, t) => {
 const accountBridge: AccountBridge<AlgorandTransaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,
   receive,
-  applyReconciliation,
   assignToAccountRaw,
   assignFromAccountRaw,
   initAccount,

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Box, Button, Header, Icons } from "@ledgerhq/react-ui";
+import { Box, Button, Header, IconsLegacy } from "@ledgerhq/react-ui";
 import LangSwitcher from "./LangSwitcher";
 import ledgerLogo from "./assets/ledgerLogo.svg";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
@@ -22,7 +22,9 @@ const Logo = styled(Box).attrs({
   height: "25px",
   width: "75px",
 })`
+  // prettier-ignore
   -webkit-mask-image: url('${ledgerLogo}');
+  // prettier-ignore
   mask-image: url('${ledgerLogo}');
 `;
 
@@ -33,7 +35,7 @@ interface Props {
 export default function OnboardingNavHeader({ onClickPrevious }: Props) {
   const { t } = useTranslation();
   const left = (
-    <Button iconPosition="left" Icon={Icons.ArrowLeftRegular} onClick={onClickPrevious}>
+    <Button iconPosition="left" Icon={IconsLegacy.ArrowLeftMedium} onClick={onClickPrevious}>
       {t("common.previous")}
     </Button>
   );

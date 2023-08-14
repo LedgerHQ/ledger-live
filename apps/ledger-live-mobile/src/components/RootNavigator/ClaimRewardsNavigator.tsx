@@ -15,10 +15,7 @@ const totalSteps = "2";
 export default function ClaimRewardsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen

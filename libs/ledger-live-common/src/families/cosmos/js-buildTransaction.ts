@@ -1,4 +1,4 @@
-import { Transaction } from "./types";
+import { CosmosAccount, Transaction } from "./types";
 import {
   MsgDelegate,
   MsgUndelegate,
@@ -22,6 +22,9 @@ import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import { TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import Long from "long";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
+import BigNumber from "bignumber.js";
+import { EncodeObject, GeneratedType, makeAuthInfoBytes, Registry } from "@cosmjs/proto-signing";
+import { CosmosAPI } from "./api/Cosmos";
 
 type ProtoMsg = {
   typeUrl: string;
@@ -30,7 +33,7 @@ type ProtoMsg = {
 
 export const buildTransaction = async (
   account: Account,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<{ aminoMsgs: AminoMsg[]; protoMsgs: ProtoMsg[] }> => {
   const aminoMsgs: Array<AminoMsg> = [];
   const protoMsgs: Array<ProtoMsg> = [];
@@ -252,9 +255,174 @@ export const buildTransaction = async (
   return { aminoMsgs, protoMsgs };
 };
 
+/* Build transaction with unsigned payload for simulation and gas estimation */
+export const buildUnsignedPayloadTransaction = async (
+  account: CosmosAccount,
+  transaction: Transaction,
+): Promise<{ typeUrl: string; value: EncodeObject }[]> => {
+  const messages: Array<{ typeUrl: string; value: any }> = [];
+
+  // Ledger Live is able to build transaction atomically,
+  // Take care expected data are complete before push msg.
+  // Otherwise, the transaction is silently returned intact.
+
+  let isComplete = true;
+
+  switch (transaction.mode) {
+    case "send":
+      if (!transaction.recipient || transaction.amount.lte(0)) {
+        isComplete = false;
+      } else {
+        messages.push({
+          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+          value: {
+            fromAddress: account.freshAddress,
+            toAddress: transaction.recipient,
+            amount: [
+              {
+                denom: account.currency.units[1].code,
+                amount: transaction.amount.toString(),
+              },
+            ],
+          },
+        });
+      }
+      break;
+
+    case "delegate":
+      if (!transaction.validators || transaction.validators.length < 1) {
+        isComplete = false;
+      } else {
+        const validator = transaction.validators[0];
+        if (!validator) {
+          isComplete = false;
+          break;
+        } else if (!validator.address || transaction.amount.lte(0)) {
+          isComplete = false;
+        }
+
+        messages.push({
+          typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+          value: {
+            delegatorAddress: account.freshAddress,
+            validatorAddress: validator.address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: transaction.amount.toString(),
+            },
+          },
+        });
+      }
+      break;
+
+    case "undelegate":
+      if (
+        !transaction.validators ||
+        transaction.validators.length < 1 ||
+        !transaction.validators[0].address ||
+        transaction.validators[0].amount.lte(0)
+      ) {
+        isComplete = false;
+      } else {
+        messages.push({
+          typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
+          value: {
+            delegatorAddress: account.freshAddress,
+            validatorAddress: transaction.validators[0].address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: transaction.validators[0].amount.toString(),
+            },
+          },
+        });
+      }
+      break;
+
+    case "redelegate":
+      if (
+        !transaction.sourceValidator ||
+        !transaction.validators ||
+        transaction.validators.length < 1 ||
+        !transaction.validators[0].address ||
+        transaction.validators[0].amount.lte(0)
+      ) {
+        isComplete = false;
+      } else {
+        messages.push({
+          typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+          value: {
+            validatorSrcAddress: transaction.sourceValidator,
+            delegatorAddress: account.freshAddress,
+            validatorDstAddress: transaction.validators[0].address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: transaction.validators[0].amount.toString(),
+            },
+          },
+        });
+      }
+      break;
+
+    case "claimReward":
+      if (
+        !transaction.validators ||
+        transaction.validators.length < 1 ||
+        !transaction.validators[0].address
+      ) {
+        isComplete = false;
+      } else {
+        messages.push({
+          typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+          value: {
+            delegatorAddress: account.freshAddress,
+            validatorAddress: transaction.validators[0].address,
+          },
+        });
+      }
+      break;
+
+    case "claimRewardCompound":
+      if (
+        !transaction.validators ||
+        transaction.validators.length < 1 ||
+        !transaction.validators[0].address ||
+        transaction.validators[0].amount.lte(0)
+      ) {
+        isComplete = false;
+      } else {
+        messages.push({
+          typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+          value: {
+            delegatorAddress: account.freshAddress,
+            validatorAddress: transaction.validators[0].address,
+          },
+        });
+
+        messages.push({
+          typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+          value: {
+            delegatorAddress: account.freshAddress,
+            validatorAddress: transaction.validators[0].address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: transaction.validators[0].amount.toString(),
+            },
+          },
+        });
+      }
+      break;
+  }
+
+  if (!isComplete) {
+    return [];
+  }
+
+  return messages;
+};
+
 export const postBuildTransaction = async (
   signResponse: AminoSignResponse,
-  protoMsgs: Array<ProtoMsg>
+  protoMsgs: Array<ProtoMsg>,
 ): Promise<Uint8Array> => {
   const signed_tx_bytes = TxRaw.encode({
     bodyBytes: TxBody.encode(
@@ -264,7 +432,7 @@ export const postBuildTransaction = async (
         timeoutHeight: undefined,
         extensionOptions: [],
         nonCriticalExtensionOptions: [],
-      })
+      }),
     ).finish(),
     authInfoBytes: AuthInfo.encode({
       signerInfos: [
@@ -295,6 +463,59 @@ export const postBuildTransaction = async (
   }).finish();
 
   return signed_tx_bytes;
+};
+
+export const postBuildUnsignedPayloadTransaction = async (
+  account: CosmosAccount,
+  transaction: Transaction,
+  pubkey: EncodeObject,
+  unsignedPayload: EncodeObject[],
+  signature: Uint8Array,
+): Promise<number[]> => {
+  const txBodyFields = {
+    typeUrl: "/cosmos.tx.v1beta1.TxBody",
+    value: {
+      messages: unsignedPayload,
+      memo: transaction.memo || "",
+    },
+  };
+
+  const registry = new Registry([
+    ["/cosmos.staking.v1beta1.MsgDelegate", MsgDelegate as unknown as GeneratedType],
+    ["/cosmos.staking.v1beta1.MsgUndelegate", MsgUndelegate as unknown as GeneratedType],
+    ["/cosmos.staking.v1beta1.MsgBeginRedelegate", MsgBeginRedelegate as unknown as GeneratedType],
+    [
+      "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      MsgWithdrawDelegatorReward as unknown as GeneratedType,
+    ],
+  ]);
+
+  const cosmosAPI = new CosmosAPI(account.currency.id);
+  const { sequence } = await cosmosAPI.getAccount(account.freshAddress);
+
+  const txBodyBytes = registry.encode(txBodyFields);
+
+  const authInfoBytes = makeAuthInfoBytes(
+    [{ pubkey, sequence }],
+    [
+      {
+        amount: transaction.fees?.toString() || new BigNumber(2500).toString(),
+        denom: account.currency.units[1].code,
+      },
+    ],
+    transaction.gas?.toNumber() || new BigNumber(250000).toNumber(),
+    SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
+  );
+
+  const txRaw = TxRaw.fromPartial({
+    bodyBytes: txBodyBytes,
+    authInfoBytes,
+    signatures: [signature],
+  });
+
+  const tx_bytes = Array.from(Uint8Array.from(TxRaw.encode(txRaw).finish()));
+
+  return tx_bytes;
 };
 
 export default buildTransaction;

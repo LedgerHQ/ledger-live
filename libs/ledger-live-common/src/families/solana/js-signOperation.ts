@@ -1,10 +1,5 @@
 import { Observable } from "rxjs";
-import type {
-  Account,
-  Operation,
-  OperationType,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import type {
   Command,
@@ -25,10 +20,7 @@ import { encodeOperationId } from "../../operation";
 import { assertUnreachable } from "./utils";
 import { ChainAPI } from "./api";
 
-const buildOptimisticOperation = (
-  account: Account,
-  transaction: Transaction
-): Operation => {
+const buildOptimisticOperation = (account: Account, transaction: Transaction): Operation => {
   if (transaction.model.commandDescriptor === undefined) {
     throw new Error("command descriptor is missing");
   }
@@ -39,11 +31,7 @@ const buildOptimisticOperation = (
     throw new Error("invalid command");
   }
 
-  const optimisticOp = buildOptimisticOperationForCommand(
-    account,
-    transaction,
-    commandDescriptor
-  );
+  const optimisticOp = buildOptimisticOperationForCommand(account, transaction, commandDescriptor);
 
   const lastOpSeqNumber =
     account.pendingOperations[0]?.transactionSequenceNumber ??
@@ -65,16 +53,16 @@ export const signOperationWithAPI = (
     deviceId: any;
     transaction: Transaction;
   },
-  api: () => Promise<ChainAPI>
+  api: () => Promise<ChainAPI>,
 ): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((subscriber) => {
+    transport =>
+      new Observable(subscriber => {
         const main = async () => {
           const [tx, signOnChainTransaction] = await buildTransactionWithAPI(
             account,
             transaction,
-            await api()
+            await api(),
           );
 
           const hwApp = new Solana(transport);
@@ -85,7 +73,7 @@ export const signOperationWithAPI = (
 
           const { signature } = await hwApp.signTransaction(
             account.freshAddressPath,
-            tx.compileMessage().serialize()
+            Buffer.from(tx.message.serialize()),
           );
 
           subscriber.next({
@@ -98,7 +86,7 @@ export const signOperationWithAPI = (
             type: "signed",
             signedOperation: {
               operation: buildOptimisticOperation(account, transaction),
-              signature: signedTx.serialize().toString("hex"),
+              signature: Buffer.from(signedTx.serialize()).toString("hex"),
               expirationDate: null,
             },
           });
@@ -106,49 +94,30 @@ export const signOperationWithAPI = (
 
         main().then(
           () => subscriber.complete(),
-          (e) => subscriber.error(e)
+          e => subscriber.error(e),
         );
-      })
+      }),
   );
 
 function buildOptimisticOperationForCommand(
   account: Account,
   transaction: Transaction,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   const { command } = commandDescriptor;
   switch (command.kind) {
     case "transfer":
-      return optimisticOpForTransfer(
-        account,
-        transaction,
-        command,
-        commandDescriptor
-      );
+      return optimisticOpForTransfer(account, transaction, command, commandDescriptor);
     case "token.transfer":
-      return optimisticOpForTokenTransfer(
-        account,
-        transaction,
-        command,
-        commandDescriptor
-      );
+      return optimisticOpForTokenTransfer(account, transaction, command, commandDescriptor);
     case "token.createATA":
       return optimisticOpForCATA(account, commandDescriptor);
     case "stake.createAccount":
-      return optimisticOpForStakeCreateAccount(
-        account,
-        transaction,
-        command,
-        commandDescriptor
-      );
+      return optimisticOpForStakeCreateAccount(account, transaction, command, commandDescriptor);
     case "stake.delegate":
       return optimisticOpForStakeDelegate(account, command, commandDescriptor);
     case "stake.undelegate":
-      return optimisticOpForStakeUndelegate(
-        account,
-        command,
-        commandDescriptor
-      );
+      return optimisticOpForStakeUndelegate(account, command, commandDescriptor);
     case "stake.withdraw":
       return optimisticOpForStakeWithdraw(account, command, commandDescriptor);
     case "stake.split":
@@ -161,7 +130,7 @@ function optimisticOpForTransfer(
   account: Account,
   transaction: Transaction,
   command: TransferCommand,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   const commons = optimisticOpcommons(commandDescriptor);
   return {
@@ -180,7 +149,7 @@ function optimisticOpForTokenTransfer(
   account: Account,
   transaction: Transaction,
   command: TokenTransferCommand,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   if (!transaction.subAccountId) {
     throw new Error("sub account id is required for token transfer");
@@ -209,10 +178,7 @@ function optimisticOpForTokenTransfer(
   };
 }
 
-function optimisticOpForCATA(
-  account: Account,
-  commandDescriptor: CommandDescriptor
-): Operation {
+function optimisticOpForCATA(account: Account, commandDescriptor: CommandDescriptor): Operation {
   const opType: OperationType = "OPT_IN";
 
   return {
@@ -263,7 +229,7 @@ function optimisticOpForStakeCreateAccount(
   account: Account,
   transaction: Transaction,
   command: StakeCreateAccountCommand,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   const opType: OperationType = "DELEGATE";
   const commons = optimisticOpcommons(commandDescriptor);
@@ -283,7 +249,7 @@ function optimisticOpForStakeCreateAccount(
 function optimisticOpForStakeDelegate(
   account: Account,
   command: StakeDelegateCommand,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "DELEGATE";
@@ -302,7 +268,7 @@ function optimisticOpForStakeDelegate(
 function optimisticOpForStakeUndelegate(
   account: Account,
   command: StakeUndelegateCommand,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "UNDELEGATE";
@@ -321,7 +287,7 @@ function optimisticOpForStakeUndelegate(
 function optimisticOpForStakeWithdraw(
   account: Account,
   command: StakeWithdrawCommand,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "IN";
@@ -340,7 +306,7 @@ function optimisticOpForStakeWithdraw(
 function optimisticOpForStakeSplit(
   account: Account,
   command: StakeSplitCommand,
-  commandDescriptor: CommandDescriptor
+  commandDescriptor: CommandDescriptor,
 ): Operation {
   const commons = optimisticOpcommons(commandDescriptor);
   const opType: OperationType = "OUT";

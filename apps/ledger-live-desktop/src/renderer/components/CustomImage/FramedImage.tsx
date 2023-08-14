@@ -88,7 +88,7 @@ const FramedImage: React.FC<Props> = ({
   loadingProgress = 1,
   children,
   frameConfig = transferConfig,
-  scale,
+  scale = 0.8,
   background,
   ...imageProps
 }) => {

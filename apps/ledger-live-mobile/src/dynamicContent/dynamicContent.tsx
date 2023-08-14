@@ -21,6 +21,9 @@ import {
 import { track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
 
+export const getMobileContentCards = (array: BrazeContentCard[]) =>
+  array.filter(elem => !elem.extras.platform || elem.extras.platform === "mobile");
+
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
 
@@ -32,8 +35,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
     location: LocationContentCard.Wallet,
     image: card.extras.image,
     link: card.extras.link,
-    background:
-      Background[card.extras.background as Background] || Background.purple,
+    background: Background[card.extras.background as Background] || Background.purple,
     createdAt: card.created,
   } as WalletContentCard);
 
@@ -77,12 +79,8 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();
-  const {
-    logClickCard,
-    logDismissCard,
-    logImpressionCard,
-    refreshDynamicContent,
-  } = useBrazeContentCard();
+  const { logClickCard, logDismissCard, logImpressionCard, refreshDynamicContent } =
+    useBrazeContentCard();
   const notificationCards = useSelector(notificationsCardsSelector);
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
@@ -90,17 +88,11 @@ const useDynamicContent = () => {
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
   const walletCardsDisplayed = useMemo(
-    () =>
-      walletCards.filter(
-        (wc: WalletContentCard) => !hiddenCards.includes(wc.id),
-      ),
+    () => walletCards.filter((wc: WalletContentCard) => !hiddenCards.includes(wc.id)),
     [walletCards, hiddenCards],
   );
   const assetsCardsDisplayed = useMemo(
-    () =>
-      assetsCards.filter(
-        (ac: AssetContentCard) => !hiddenCards.includes(ac.id),
-      ),
+    () => assetsCards.filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id)),
     [assetsCards, hiddenCards],
   );
   const orderedNotificationsCards = useMemo(

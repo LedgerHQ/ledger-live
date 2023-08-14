@@ -8,14 +8,10 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import {
-  AvailableProviderV3,
-  ExchangeRate,
-  KYCStatus,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
@@ -27,6 +23,7 @@ import {
   NotificationContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
+import { ImageType } from "../components/CustomImage/types";
 
 // === ACCOUNT STATE ===
 
@@ -145,6 +142,12 @@ export type RatingsState = {
 
 // === SETTINGS STATE ===
 
+export enum OnboardingType {
+  restore = "restore",
+  connect = "connect",
+  setupNew = "setup new",
+}
+
 export type CurrencySettings = {
   confirmationsNb: number;
   // FIXME: SEEMS TO NEVER BE USED - DROPPING ?
@@ -163,8 +166,6 @@ export type Pair = {
   to: Currency;
   exchange?: string | null;
 };
-
-// export type SetExchangePairs = (_: Array<Pair>) => any;
 
 export type Theme = "system" | "light" | "dark";
 
@@ -203,19 +204,19 @@ export type SettingsState = {
     hasAcceptedIPSharing: false;
     acceptedProviders: string[];
     selectableCurrencies: string[];
-    KYC: {
-      [key: string]: KYCStatus;
-    };
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;
+  knownDeviceModelIds: Record<DeviceModelId, boolean>;
+  hasSeenStaxEnabledNftsPopup: boolean;
   starredMarketCoins: string[];
   lastConnectedDevice: Device | null | undefined;
   marketRequestParams: MarketListRequestParams;
   marketCounterCurrency: string | null | undefined;
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
-  firstConnectionHasDevice: boolean | null;
-  firstConnectHasDeviceUpdated: boolean | null;
+  onboardingHasDevice: boolean | null;
+  onboardingType: OnboardingType | null;
+  customImageType: ImageType | null;
   customImageBackup?: { hex: string; hash: string };
   lastSeenCustomImage: {
     size: number;
@@ -223,10 +224,17 @@ export type SettingsState = {
   };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
-  displayStatusCenter: boolean;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
+  dateFormat: string;
+  hasBeenUpsoldProtect: boolean;
+  generalTermsVersionAccepted?: string;
+  depositFlow: {
+    hasClosedNetworkBanner: boolean;
+    hasClosedWithdrawBanner: boolean;
+  };
+  userNps: number | null;
 };
 
 export type NotificationsSettings = {
@@ -234,6 +242,7 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
   largeMoverCategory: boolean;
+  transactionsAlertsCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===
@@ -276,6 +285,18 @@ export type ProtectState = {
   protectStatus: ProtectStateNumberEnum;
 };
 
+// === NFT STATE ===
+
+export type NftState = {
+  filterDrawerVisible: boolean;
+  galleryChainFilters: NftGalleryChainFiltersState;
+};
+
+export type NftGalleryChainFiltersState = Pick<
+  Record<CryptoCurrencyId, boolean>,
+  "polygon" | "ethereum"
+>;
+
 // === ROOT STATE ===
 
 export type State = {
@@ -290,4 +311,5 @@ export type State = {
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
+  nft: NftState;
 };

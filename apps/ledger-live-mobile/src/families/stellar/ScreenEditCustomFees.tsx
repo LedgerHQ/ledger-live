@@ -2,13 +2,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import {
-  Keyboard,
-  StyleSheet,
-  View,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
+import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -18,16 +12,10 @@ import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyInput from "../../components/CurrencyInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 const options = {
@@ -36,30 +24,9 @@ const options = {
 };
 
 type NavigationProps = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      SwapNavigatorParamList,
-      ScreenName.StellarEditCustomFees
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StellarEditCustomFees>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StellarEditCustomFees>
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.StellarEditCustomFees>
 >;
 
 function StellarEditCustomFees({ navigation, route }: NavigationProps) {
@@ -90,14 +57,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
         fees: BigNumber(customFee || 0),
       }),
     });
-  }, [
-    customFee,
-    account,
-    parentAccount,
-    route.params,
-    navigation,
-    transaction,
-  ]);
+  }, [customFee, account, parentAccount, route.params, navigation, transaction]);
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardView
@@ -108,10 +68,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <View style={styles.inputBox}>
             <View style={styles.feeWrapper}>
               <CurrencyInput
@@ -121,11 +78,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
                 unit={mainAccount.unit}
                 value={customFee}
                 renderRight={
-                  <LText
-                    style={[styles.currency, styles.active]}
-                    semiBold
-                    color="grey"
-                  >
+                  <LText style={[styles.currency, styles.active]} semiBold color="grey">
                     {mainAccount.unit.code}
                   </LText>
                 }
@@ -136,9 +89,9 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
           {networkCongestionLevel ? (
             <View style={styles.congestionNote}>
               <LText style={styles.congestionNoteText} color="grey">
-                {`${t(
-                  `stellar.networkCongestionLevel.${networkCongestionLevel}`,
-                )} ${t("stellar.networkCongestion")}`}
+                {`${t(`stellar.networkCongestionLevel.${networkCongestionLevel}`)} ${t(
+                  "stellar.networkCongestion",
+                )}`}
               </LText>
             </View>
           ) : null}

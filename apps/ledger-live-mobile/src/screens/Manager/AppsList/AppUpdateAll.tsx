@@ -16,12 +16,7 @@ type Props = {
   isModalOpened?: boolean;
 };
 
-const AppUpdateAll = ({
-  state,
-  appsToUpdate,
-  dispatch,
-  isModalOpened,
-}: Props) => {
+const AppUpdateAll = ({ state, appsToUpdate, dispatch, isModalOpened }: Props) => {
   const { updateAllQueue } = state;
   const [modalOpen, setModalOpen] = useState(isModalOpened);
 
@@ -37,19 +32,8 @@ const AppUpdateAll = ({
     <Flex mt={5}>
       <AppUpdateStepper state={state} />
       {appsToUpdate.length > 0 && updateAllQueue.length <= 0 && (
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          bg="neutral.c30"
-          borderRadius={4}
-          p={6}
-        >
-          <Text
-            flex={1}
-            variant="large"
-            fontWeight="semiBold"
-            numberOfLines={2}
-          >
+        <Flex flexDirection="row" alignItems="center" bg="neutral.c30" borderRadius={4} p={6}>
+          <Text flex={1} variant="large" fontWeight="semiBold" numberOfLines={2}>
             <Trans
               i18nKey="AppAction.update.title"
               count={appsToUpdate.length}

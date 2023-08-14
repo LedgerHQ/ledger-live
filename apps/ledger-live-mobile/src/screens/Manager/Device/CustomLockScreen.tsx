@@ -10,25 +10,33 @@ import { from } from "rxjs";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { hasCompletedCustomImageFlowSelector } from "../../../reducers/settings";
+import {
+  hasCompletedCustomImageFlowSelector,
+  lastSeenCustomImageSelector,
+} from "../../../reducers/settings";
 import { NavigatorName, ScreenName } from "../../../const";
 import CustomImageBottomModal from "../../../components/CustomImage/CustomImageBottomModal";
 import DeviceOptionRow from "./DeviceOptionRow";
 
-const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
+const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
+  device,
+  disabled,
+}) => {
   const navigation = useNavigation();
   const [isCustomImageOpen, setIsCustomImageOpen] = useState(false);
   const [deviceHasImage, setDeviceHasImage] = useState(false);
-  const hasCompletedCustomImageFlow = useSelector(
-    hasCompletedCustomImageFlowSelector,
-  );
+  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+
+  const hasCompletedCustomImageFlow = useSelector(hasCompletedCustomImageFlowSelector);
 
   const { t } = useTranslation();
 
   useEffect(() => {
-    withDevice(device.deviceId)(transport =>
-      from(staxFetchImageHash(transport)),
-    )
+    setDeviceHasImage(!!lastSeenCustomImage);
+  }, [lastSeenCustomImage]);
+
+  useEffect(() => {
+    withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport)))
       .toPromise()
       .then(hash => {
         setDeviceHasImage(hash !== "");
@@ -51,15 +59,16 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
   return (
     <>
       <DeviceOptionRow
-        Icon={Icons.PhotographRegular}
-        iconSize={20}
+        Icon={Icons.PictureImage}
         label={t("customImage.title")}
-        onPress={handleStartCustomImage}
+        onPress={disabled ? undefined : handleStartCustomImage}
         linkLabel={t(deviceHasImage ? "customImage.replace" : "common.add")}
       />
       <CustomImageBottomModal
         device={device}
+        deviceHasImage={deviceHasImage}
         isOpened={isCustomImageOpen}
+        setDeviceHasImage={setDeviceHasImage}
         onClose={() => setIsCustomImageOpen(false)}
       />
     </>

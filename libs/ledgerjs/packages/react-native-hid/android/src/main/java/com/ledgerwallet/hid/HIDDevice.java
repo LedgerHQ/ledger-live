@@ -20,14 +20,13 @@ import java.nio.ByteBuffer;
 
 public class HIDDevice {
 
-    private UsbDeviceConnection connection;
-    private UsbInterface dongleInterface;
-    private UsbEndpoint in;
-    private UsbEndpoint out;
-    private byte transferBuffer[];
+    private final UsbDeviceConnection connection;
+    private final UsbInterface dongleInterface;
+    private final UsbEndpoint in;
+    private final UsbEndpoint out;
+    private final byte[] transferBuffer;
     private boolean debug;
-    private boolean ledger;
-    private ExecutorService executor;
+    private final ExecutorService executor;
 
     public HIDDevice(UsbManager manager, UsbDevice device) {
 
@@ -72,7 +71,7 @@ public class HIDDevice {
                         throw new Exception("I/O error");
                     }
                     while (offset != command.length) {
-                        int blockSize = (command.length - offset > HID_BUFFER_SIZE ? HID_BUFFER_SIZE : command.length - offset);
+                        int blockSize = (Math.min(command.length - offset, HID_BUFFER_SIZE));
                         System.arraycopy(command, offset, transferBuffer, 0, blockSize);
                         if (!request.queue(ByteBuffer.wrap(transferBuffer), HID_BUFFER_SIZE)) {
                             request.close();
@@ -117,15 +116,15 @@ public class HIDDevice {
     }
 
     public static String toHex(byte[] buffer, int offset, int length) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < length; i++) {
             String temp = Integer.toHexString((buffer[offset + i]) & 0xff);
             if (temp.length() < 2) {
                 temp = "0" + temp;
             }
-            result += temp;
+            result.append(temp);
         }
-        return result;
+        return result.toString();
     }
 
     public static String toHex(byte[] buffer) {
@@ -145,6 +144,5 @@ public class HIDDevice {
 
     private static final int HID_BUFFER_SIZE = 64;
     private static final int LEDGER_DEFAULT_CHANNEL = 1;
-    private static final int SW1_DATA_AVAILABLE = 0x61;
 
 }

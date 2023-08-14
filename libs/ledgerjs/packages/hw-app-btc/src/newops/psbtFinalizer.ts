@@ -26,9 +26,7 @@ export function finalize(psbt: PsbtV2): void {
     }
     if (legacyPubkeys.length > 0) {
       if (legacyPubkeys.length > 1) {
-        throw Error(
-          `Expected exactly one signature, got ${legacyPubkeys.length}`
-        );
+        throw Error(`Expected exactly one signature, got ${legacyPubkeys.length}`);
       }
       if (taprootSig) {
         throw Error("Both taproot and non-taproot signatures present.");
@@ -38,8 +36,7 @@ export function finalize(psbt: PsbtV2): void {
       const redeemScript = psbt.getInputRedeemScript(i);
       const isWrappedSegwit = !!redeemScript;
       const signature = psbt.getInputPartialSig(i, legacyPubkeys[0]);
-      if (!signature)
-        throw new Error("Expected partial signature for input " + i);
+      if (!signature) throw new Error("Expected partial signature for input " + i);
       if (isSegwitV0) {
         const witnessBuf = new BufferWriter();
         witnessBuf.writeVarInt(2);
@@ -50,9 +47,7 @@ export function finalize(psbt: PsbtV2): void {
         psbt.setInputFinalScriptwitness(i, witnessBuf.buffer());
         if (isWrappedSegwit) {
           if (!redeemScript || redeemScript.length == 0) {
-            throw new Error(
-              "Expected non-empty redeemscript. Can't finalize intput " + i
-            );
+            throw new Error("Expected non-empty redeemscript. Can't finalize intput " + i);
           }
           const scriptSigBuf = new BufferWriter();
           // Push redeemScript length

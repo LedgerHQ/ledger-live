@@ -43,22 +43,18 @@ export function traced(api: ChainAPI): ChainAPI {
           const result = targetValue.apply(this, args);
           if (result instanceof Promise) {
             return result
-              .then((answer) => {
+              .then(answer => {
                 const { duration } = stopReqTrace(reqId);
                 log(
                   "network-success",
                   formatMsg({ reqId, msg: "success", duration }),
-                  getEnv("DEBUG_HTTP_RESPONSE") ? { answer } : undefined
+                  getEnv("DEBUG_HTTP_RESPONSE") ? { answer } : undefined,
                 );
                 return answer;
               })
-              .catch((error) => {
+              .catch(error => {
                 const { duration } = stopReqTrace(reqId);
-                log(
-                  "network-error",
-                  formatMsg({ reqId, msg: "error", duration }),
-                  { error }
-                );
+                log("network-error", formatMsg({ reqId, msg: "error", duration }), { error });
                 throw error;
               });
           } else {
@@ -66,7 +62,7 @@ export function traced(api: ChainAPI): ChainAPI {
             log(
               "info",
               formatMsg({ reqId, msg: "sync result", duration }),
-              getEnv("DEBUG_HTTP_RESPONSE") ? { result } : undefined
+              getEnv("DEBUG_HTTP_RESPONSE") ? { result } : undefined,
             );
             return result;
           }
@@ -80,15 +76,7 @@ export function traced(api: ChainAPI): ChainAPI {
   return proxy;
 }
 
-function formatMsg({
-  reqId,
-  msg,
-  duration,
-}: {
-  reqId: number;
-  msg?: string;
-  duration?: number;
-}) {
+function formatMsg({ reqId, msg, duration }: { reqId: number; msg?: string; duration?: number }) {
   const parts = [
     `solana req id: ${reqId}`,
     msg ?? "",

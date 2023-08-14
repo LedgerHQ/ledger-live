@@ -18,10 +18,7 @@ import {
 import { ScreenName } from "../../../const";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SendFundsNavigatorStackParamList,
-    ScreenName.EthereumCustomFees
-  >
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.EthereumCustomFees>
 >;
 
 const options = {
@@ -30,7 +27,7 @@ const options = {
 };
 
 export default function EthereumCustomFees({ route }: Props) {
-  const { setTransaction, transaction } = route.params;
+  const { setTransaction, transaction, transactionRaw } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const navigation = useNavigation();
   invariant(account, "no account found");
@@ -40,9 +37,7 @@ export default function EthereumCustomFees({ route }: Props) {
 
   const onValidateFees = useCallback(
     (transactionPatch: Partial<Transaction>) => () => {
-      setTransaction(
-        bridge.updateTransaction(route.params.transaction, transactionPatch),
-      );
+      setTransaction(bridge.updateTransaction(route.params.transaction, transactionPatch));
       navigation.goBack();
     },
     [bridge, navigation, route.params, setTransaction],
@@ -52,16 +47,19 @@ export default function EthereumCustomFees({ route }: Props) {
     <Ethereum1559CustomFees
       account={account}
       parentAccount={parentAccount}
-      transaction={transaction}
+      transaction={transaction as Transaction}
       onValidateFees={onValidateFees}
+      transactionRaw={transactionRaw}
     />
   ) : (
     <EthereumLegacyCustomFees
       account={account}
       parentAccount={parentAccount}
-      transaction={transaction}
+      transaction={transaction as Transaction}
       onValidateFees={onValidateFees}
+      transactionRaw={transactionRaw}
     />
   );
 }
+
 export { options, EthereumCustomFees as component };

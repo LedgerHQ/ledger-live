@@ -1,15 +1,14 @@
 import React, { useCallback, useState } from "react";
-
 import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
-import { Flex, Alert } from "@ledgerhq/react-ui";
-
+import { Flex } from "@ledgerhq/react-ui";
 import FramedImage from "~/renderer/components/CustomImage/FramedImage";
 import Animation from "~/renderer/animations";
 import Slider from "~/renderer/components/Slider";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import source from "./sampleimage";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const CustomLockScreen = () => {
   const history = useHistory();
@@ -19,7 +18,6 @@ const CustomLockScreen = () => {
   }, [history]);
 
   const [percentage, setPercentage] = useState<number>(0);
-  const [scale, setScale] = useState<number>(0);
 
   const fixedPercentage = percentage === 99 ? 100 : percentage; // Nb there's a bug in the slider
   return (
@@ -35,9 +33,10 @@ const CustomLockScreen = () => {
           <FramedImage
             source={source}
             loadingProgress={0}
-            scale={scale}
             background={
-              <Animation animation={getDeviceAnimation("stax", "light", "allowManager", true)} />
+              <Animation
+                animation={getDeviceAnimation(DeviceModelId.stax, "light", "allowManager")}
+              />
             }
           />
         </Flex>
@@ -45,19 +44,14 @@ const CustomLockScreen = () => {
           <FramedImage
             source={source}
             loadingProgress={1}
-            scale={scale}
             background={
               <Animation
-                animation={getDeviceAnimation("stax", "light", "confirmLockscreen", true)}
+                animation={getDeviceAnimation(DeviceModelId.stax, "light", "confirmLockscreen")}
               />
             }
           />
         </Flex>
-        <FramedImage
-          source={source}
-          loadingProgress={+(fixedPercentage / 100).toFixed(2)}
-          scale={scale}
-        />
+        <FramedImage source={source} loadingProgress={+(fixedPercentage / 100).toFixed(2)} />
       </Box>
       <Slider
         value={percentage}
@@ -65,12 +59,14 @@ const CustomLockScreen = () => {
           setPercentage(number);
         }}
         steps={100}
+        error={undefined}
       />
-      <Box horizontal>
+      {/* Murdered the scaling concept until it's done to all lotties, sorry. */}
+      {/* <Box horizontal>
+        <Button onClick={() => setScale(0.8)}>{"x0.8"}</Button>
         <Button onClick={() => setScale(1)}>{"x1"}</Button>
-        <Button onClick={() => setScale(1.5)}>{"x1.5"}</Button>
         <Button onClick={() => setScale(2)}>{"x2"}</Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

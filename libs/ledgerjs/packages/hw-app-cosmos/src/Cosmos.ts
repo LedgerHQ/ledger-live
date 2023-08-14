@@ -44,7 +44,7 @@ export default class Cosmos {
     transport.decorateAppAPIMethods(
       this,
       ["getAddress", "sign", "getAppConfiguration"],
-      scrambleKey
+      scrambleKey,
     );
   }
 
@@ -55,7 +55,7 @@ export default class Cosmos {
     device_locked: boolean;
     major: number;
   }> {
-    return this.transport.send(CLA, INS_GET_VERSION, 0, 0).then((response) => {
+    return this.transport.send(CLA, INS_GET_VERSION, 0, 0).then(response => {
       return {
         test_mode: response[0] !== 0,
         version: "" + response[1] + "." + response[2] + "." + response[3],
@@ -79,7 +79,7 @@ export default class Cosmos {
   }
 
   serializeHRP(hrp: string): Buffer {
-    if (hrp == null || hrp.length < 3 || hrp.length > 83) {
+    if (hrp == null || hrp.length === 0 || hrp.length > 83) {
       throw new Error("Invalid HRP");
     }
 
@@ -101,7 +101,7 @@ export default class Cosmos {
   getAddress(
     path: string,
     hrp: string,
-    boolDisplay?: boolean
+    boolDisplay?: boolean,
   ): Promise<{
     publicKey: string;
     address: string;
@@ -111,7 +111,7 @@ export default class Cosmos {
     const data = Buffer.concat([this.serializeHRP(hrp), serializedPath]);
     return this.transport
       .send(CLA, INS_GET_ADDR_SECP256K1, boolDisplay ? 1 : 0, 0, data, [SW_OK])
-      .then((response) => {
+      .then(response => {
         const address = Buffer.from(response.slice(33, -2)).toString();
         const publicKey = Buffer.from(response.slice(0, 33)).toString("hex");
         return {
@@ -121,10 +121,7 @@ export default class Cosmos {
       });
   }
 
-  foreach<T, A>(
-    arr: T[],
-    callback: (arg0: T, arg1: number) => Promise<A>
-  ): Promise<A[]> {
+  foreach<T, A>(arr: T[], callback: (arg0: T, arg1: number) => Promise<A>): Promise<A[]> {
     function iterate(index, array, result) {
       if (index >= array.length) {
         return result;
@@ -140,7 +137,7 @@ export default class Cosmos {
 
   async sign(
     path: string,
-    message: string
+    message: string,
   ): Promise<{
     signature: null | Buffer;
     return_code: number | string;
@@ -174,9 +171,9 @@ export default class Cosmos {
             : PAYLOAD_TYPE_ADD,
           0,
           data,
-          [SW_OK, SW_CANCEL]
+          [SW_OK, SW_CANCEL],
         )
-        .then((apduResponse) => (response = apduResponse))
+        .then(apduResponse => (response = apduResponse)),
     ).then(() => {
       const errorCodeData = response.slice(-2);
       const returnCode = errorCodeData[0] * 256 + errorCodeData[1];

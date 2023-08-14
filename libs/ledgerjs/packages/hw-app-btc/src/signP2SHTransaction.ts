@@ -5,12 +5,7 @@ import { getTrustedInputBIP143 } from "./getTrustedInputBIP143";
 import { signTransaction } from "./signTransaction";
 import { hashOutputFull } from "./finalizeInput";
 import type { TransactionOutput, Transaction, TrustedInput } from "./types";
-import {
-  DEFAULT_LOCKTIME,
-  DEFAULT_VERSION,
-  DEFAULT_SEQUENCE,
-  SIGHASH_ALL,
-} from "./constants";
+import { DEFAULT_LOCKTIME, DEFAULT_VERSION, DEFAULT_SEQUENCE, SIGHASH_ALL } from "./constants";
 const defaultArg = {
   lockTime: DEFAULT_LOCKTIME,
   sigHashType: SIGHASH_ALL,
@@ -22,9 +17,7 @@ const defaultArg = {
  *
  */
 export type SignP2SHTransactionArg = {
-  inputs: Array<
-    [Transaction, number, string | null | undefined, number | null | undefined]
-  >;
+  inputs: Array<[Transaction, number, string | null | undefined, number | null | undefined]>;
   associatedKeysets: string[];
   outputScriptHex: string;
   lockTime?: number;
@@ -32,10 +25,7 @@ export type SignP2SHTransactionArg = {
   segwit?: boolean;
   transactionVersion?: number;
 };
-export async function signP2SHTransaction(
-  transport: Transport,
-  arg: SignP2SHTransactionArg
-) {
+export async function signP2SHTransaction(transport: Transport, arg: SignP2SHTransactionArg) {
   const {
     inputs,
     associatedKeysets,
@@ -65,17 +55,11 @@ export async function signP2SHTransaction(
 
   for (const input of inputs) {
     if (!resuming) {
-      const trustedInput = await getTrustedInputCall(
-        transport,
-        input[1],
-        input[0]
-      );
+      const trustedInput = await getTrustedInputCall(transport, input[1], input[0]);
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(
-        input.length >= 4 && typeof input[3] === "number"
-          ? input[3]
-          : DEFAULT_SEQUENCE,
-        0
+        input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,
+        0,
       );
       trustedInputs.push({
         trustedInput: false,
@@ -101,7 +85,7 @@ export async function signP2SHTransaction(
       inputs[i].length >= 4 && typeof inputs[i][3] === "number"
         ? (inputs[i][3] as number)
         : DEFAULT_SEQUENCE,
-      0
+      0,
     );
     targetTransaction.inputs.push({
       script: nullScript,
@@ -116,7 +100,7 @@ export async function signP2SHTransaction(
       true,
       targetTransaction,
       trustedInputs,
-      true
+      true,
     );
     await hashOutputFull(transport, outputScript);
   }
@@ -141,23 +125,16 @@ export async function signP2SHTransaction(
       !segwit && firstRun,
       pseudoTX,
       pseudoTrustedInputs,
-      segwit
+      segwit,
     );
 
     if (!segwit) {
       await hashOutputFull(transport, outputScript);
     }
 
-    const signature = await signTransaction(
-      transport,
-      associatedKeysets[i],
-      lockTime,
-      sigHashType
-    );
+    const signature = await signTransaction(transport, associatedKeysets[i], lockTime, sigHashType);
     signatures.push(
-      segwit
-        ? signature.toString("hex")
-        : signature.slice(0, signature.length - 1).toString("hex")
+      segwit ? signature.toString("hex") : signature.slice(0, signature.length - 1).toString("hex"),
     );
     targetTransaction.inputs[i].script = nullScript;
 

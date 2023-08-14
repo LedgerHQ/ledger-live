@@ -27,7 +27,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("Enable password lock", async () => {
     await passwordlockModal.enablePassword("password", "password");
-    expect(await layout.topbarLockButton).toBeVisible();
+    await expect(layout.topbarLockButton).toBeVisible();
     await expect.soft(page).toHaveScreenshot("passwordlock-enabled.png");
   });
 
@@ -43,12 +43,12 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("Change password", async () => {
     await passwordlockModal.changePassword("password", "newpassword", "newpassword");
-    expect(await layout.topbarLockButton).toBeVisible();
+    await expect(layout.topbarLockButton).toBeVisible();
   });
   await test.step("Lock app", async () => {
     await layout.lockApp();
-    expect(await lockscreenPage.container).toBeVisible();
-    expect(await layout.logo).toBeVisible();
+    await expect(lockscreenPage.container).toBeVisible();
+    await expect(layout.logo).toBeVisible();
     await expect.soft(page).toHaveScreenshot("app-locked.png");
   });
 
@@ -60,15 +60,15 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("Unlock with wrong password", async () => {
     await lockscreenPage.login("wrong");
-    expect(await layout.inputError).toBeVisible();
+    await expect(layout.inputError).toBeVisible();
     await expect.soft(page).toHaveScreenshot("lockscreen-wrong-password.png");
   });
 
   await test.step("Unlock with correct password", async () => {
     await lockscreenPage.login("newpassword");
-    expect(await lockscreenPage.container).toBeHidden();
+    await expect(lockscreenPage.container).toBeHidden();
     await expect.soft(page).toHaveScreenshot("lockscreen-unlocked.png");
-    expect(await layout.topbarLockButton).toBeVisible();
+    await expect(layout.topbarLockButton).toBeVisible();
   });
 
   await test.step("Open disable password lock modal", async () => {
@@ -78,14 +78,14 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("Disable password lock: Set wrong password", async () => {
     await passwordlockModal.disablePassword("password");
-    expect(await layout.inputError).toBeVisible();
-    expect(await layout.topbarLockButton).toBeVisible();
+    await expect(layout.inputError).toBeVisible();
+    await expect(layout.topbarLockButton).toBeVisible();
     await expect.soft(modal.container).toHaveScreenshot("passwordlock-disable-bad-password.png");
   });
 
   await test.step("Disable password lock: Set correct password", async () => {
     await passwordlockModal.disablePassword("newpassword");
-    expect(await layout.topbarLockButton).toBeHidden();
+    await expect(layout.topbarLockButton).toBeHidden();
     await expect.soft(page).toHaveScreenshot("passwordlock-disabled.png");
   });
 

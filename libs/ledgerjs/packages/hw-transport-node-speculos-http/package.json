@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-speculos-http",
-  "version": "6.27.11",
+  "version": "6.27.18",
   "description": "Ledger Hardware Wallet communication layer with speculos Nano simulator using the http api",
   "keywords": [
     "Ledger",
@@ -31,7 +31,8 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "^0.26.1"
+    "axios": "^0.26.1",
+    "rxjs": "6"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -39,9 +40,19 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.3",
+    "documentation": "13.2.5",
+    "jest": "^28.1.1",
+    "rimraf": "^4.4.1",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.4.0"
+  }
 }

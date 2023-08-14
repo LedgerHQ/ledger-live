@@ -14,7 +14,7 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "../../account";
@@ -24,14 +24,10 @@ import { ModeModule, modes } from "./modules";
 import { fromRangeRaw, toRangeRaw } from "../../range";
 import { getDefaultFeeUnit } from "./logic";
 
-export const formatTransaction = (
-  t: Transaction,
-  mainAccount: Account
-): string => {
+export const formatTransaction = (t: Transaction, mainAccount: Account): string => {
   const gasLimit = getGasLimit(t);
   const account =
-    (t.subAccountId &&
-      (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
+    (t.subAccountId && (mainAccount.subAccounts || []).find(a => a.id === t.subAccountId)) ||
     mainAccount;
 
   const header = (() => {
@@ -42,14 +38,10 @@ export const formatTransaction = (
         }) TokenId: ${t.tokenIds?.[0]}`;
       case "erc1155.transfer":
         return (
-          `${t.mode.toUpperCase()} Collection: ${t.collection} (${
-            t.collectionName || ""
-          })` +
+          `${t.mode.toUpperCase()} Collection: ${t.collection} (${t.collectionName || ""})` +
           t.tokenIds
             ?.map((tokenId, index) => {
-              return `\n  - TokenId: ${tokenId} Quantity: ${
-                t.quantities?.[index]?.toFixed() ?? 0
-              }`;
+              return `\n  - TokenId: ${tokenId} Quantity: ${t.quantities?.[index]?.toFixed() ?? 0}`;
             })
             .join(",")
         );
@@ -70,16 +62,16 @@ export const formatTransaction = (
     feesMessage =
       `with maxFeePerGas=${formatCurrencyUnit(
         getDefaultFeeUnit(mainAccount.currency),
-        t.maxFeePerGas || new BigNumber(0)
+        t.maxFeePerGas || new BigNumber(0),
       )}\n` +
       `with maxPriorityFeePerGas=${formatCurrencyUnit(
         getDefaultFeeUnit(mainAccount.currency),
-        t.maxPriorityFeePerGas || new BigNumber(0)
+        t.maxPriorityFeePerGas || new BigNumber(0),
       )}`;
   } else {
     feesMessage = `with gasPrice=${formatCurrencyUnit(
       getDefaultFeeUnit(mainAccount.currency),
-      t.gasPrice || new BigNumber(0)
+      t.gasPrice || new BigNumber(0),
     )}`;
   }
 
@@ -105,20 +97,14 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     family: tr.family,
     gasPrice: tr.gasPrice ? new BigNumber(tr.gasPrice) : null,
     maxFeePerGas: tr.maxFeePerGas ? new BigNumber(tr.maxFeePerGas) : null,
-    maxPriorityFeePerGas: tr.maxPriorityFeePerGas
-      ? new BigNumber(tr.maxPriorityFeePerGas)
-      : null,
+    maxPriorityFeePerGas: tr.maxPriorityFeePerGas ? new BigNumber(tr.maxPriorityFeePerGas) : null,
     userGasLimit: tr.userGasLimit ? new BigNumber(tr.userGasLimit) : null,
-    estimatedGasLimit: tr.estimatedGasLimit
-      ? new BigNumber(tr.estimatedGasLimit)
-      : null,
+    estimatedGasLimit: tr.estimatedGasLimit ? new BigNumber(tr.estimatedGasLimit) : null,
     feeCustomUnit: tr.feeCustomUnit,
     // FIXME this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: networkInfo.gasPrice
-        ? fromRangeRaw(networkInfo.gasPrice)
-        : undefined,
+      gasPrice: networkInfo.gasPrice ? fromRangeRaw(networkInfo.gasPrice) : undefined,
       nextBaseFeePerGas: networkInfo.nextBaseFeePerGas
         ? new BigNumber(networkInfo.nextBaseFeePerGas)
         : undefined,
@@ -131,7 +117,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     tokenIds: tr.tokenIds,
     collection: tr.collection,
     collectionName: tr.collectionName,
-    quantities: tr.quantities?.map((q) => new BigNumber(q)),
+    quantities: tr.quantities?.map(q => new BigNumber(q)),
   };
 };
 
@@ -146,20 +132,14 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     data: t.data ? t.data.toString("hex") : undefined,
     gasPrice: t.gasPrice ? t.gasPrice.toString() : null,
     maxFeePerGas: t.maxFeePerGas ? t.maxFeePerGas.toString() : null,
-    maxPriorityFeePerGas: t.maxPriorityFeePerGas
-      ? t.maxPriorityFeePerGas.toString()
-      : null,
+    maxPriorityFeePerGas: t.maxPriorityFeePerGas ? t.maxPriorityFeePerGas.toString() : null,
     userGasLimit: t.userGasLimit ? t.userGasLimit.toString() : null,
-    estimatedGasLimit: t.estimatedGasLimit
-      ? t.estimatedGasLimit.toString()
-      : null,
+    estimatedGasLimit: t.estimatedGasLimit ? t.estimatedGasLimit.toString() : null,
     feeCustomUnit: t.feeCustomUnit,
     // FIXME drop?
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: networkInfo.gasPrice
-        ? toRangeRaw(networkInfo.gasPrice)
-        : undefined,
+      gasPrice: networkInfo.gasPrice ? toRangeRaw(networkInfo.gasPrice) : undefined,
       nextBaseFeePerGas: networkInfo.nextBaseFeePerGas
         ? networkInfo.nextBaseFeePerGas.toString()
         : undefined,
@@ -172,17 +152,14 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     tokenIds: t.tokenIds,
     collection: t.collection,
     collectionName: t.collectionName,
-    quantities: t.quantities?.map((q) => q?.toFixed() || "0"),
+    quantities: t.quantities?.map(q => q?.toFixed() || "0"),
   };
 };
 
 // see https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
 function getEthereumjsTxCommon(currency) {
   const { ethereumLikeInfo } = currency;
-  invariant(
-    ethereumLikeInfo,
-    `currency ${currency.id} did not set ethereumLikeInfo`
-  );
+  invariant(ethereumLikeInfo, `currency ${currency.id} did not set ethereumLikeInfo`);
   if (ethereumLikeInfo.chainId === 1) {
     return new Common({
       chain: ethereumLikeInfo.baseChain || "mainnet",
@@ -201,13 +178,10 @@ export function EIP1559ShouldBeUsed(currency: CryptoCurrency): boolean {
   return getEnv("EIP1559_ENABLED_CURRENCIES").includes(currency.id);
 }
 
-export function inferTokenAccount(
-  a: Account,
-  t: Transaction
-): TokenAccount | undefined {
+export function inferTokenAccount(a: Account, t: Transaction): TokenAccount | undefined {
   const tokenAccount = !t.subAccountId
     ? null
-    : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
+    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
 
   if (tokenAccount && tokenAccount.type === "TokenAccount") {
     return tokenAccount;
@@ -217,7 +191,7 @@ export function inferTokenAccount(
 export function buildEthereumTx(
   account: Account,
   transaction: Transaction,
-  nonce: number
+  nonce: number,
 ): {
   tx: EIP1559Transaction | LegacyTransaction;
   common: Common;
@@ -233,10 +207,7 @@ export function buildEthereumTx(
   const { currency } = account;
   const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = transaction;
   const subAccount = inferTokenAccount(account, transaction);
-  invariant(
-    !subAccount || subAccount.type === "TokenAccount",
-    "only token accounts expected"
-  );
+  invariant(!subAccount || subAccount.type === "TokenAccount", "only token accounts expected");
 
   const common = getEthereumjsTxCommon(currency);
   if (!common) {
@@ -258,20 +229,12 @@ export function buildEthereumTx(
   const mode = modes[transaction.mode];
   invariant(mode, "missing module for mode=" + transaction.mode);
 
-  const fillTransactionDataResult = mode.fillTransactionData(
-    account,
-    transaction,
-    ethTxObject
-  );
+  const fillTransactionDataResult = mode.fillTransactionData(account, transaction, ethTxObject);
 
   let tx: EIP1559Transaction | LegacyTransaction;
   if (EIP1559ShouldBeUsed(currency)) {
-    ethTxObject.maxFeePerGas = `0x${new BigNumber(maxFeePerGas || 0).toString(
-      16
-    )}`;
-    ethTxObject.maxPriorityFeePerGas = `0x${new BigNumber(
-      maxPriorityFeePerGas || 0
-    ).toString(16)}`;
+    ethTxObject.maxFeePerGas = `0x${new BigNumber(maxFeePerGas || 0).toString(16)}`;
+    ethTxObject.maxPriorityFeePerGas = `0x${new BigNumber(maxPriorityFeePerGas || 0).toString(16)}`;
     log("ethereum", "buildEIP1559Transaction", ethTxObject);
     tx = new EIP1559Transaction(ethTxObject as FeeMarketEIP1559TxData, {
       common,

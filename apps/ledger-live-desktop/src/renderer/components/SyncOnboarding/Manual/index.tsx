@@ -1,392 +1,323 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { useTranslation } from "react-i18next";
+import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
+import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { useTheme } from "styled-components";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
+import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
-import {
-  OnboardingStep as DeviceOnboardingStep,
-  fromSeedPhraseTypeToNbOfSeedWords,
-} from "@ledgerhq/live-common/hw/extractOnboardingState";
-
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
-import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import HelpDrawer from "./HelpDrawer";
-import TroubleshootingDrawer from "./TroubleshootingDrawer";
-import SoftwareCheckStep from "./SoftwareCheckStep";
-import { DesyncOverlay } from "./DesyncOverlay";
-import RecoveryContent from "./RecoveryContent";
-import { StepText } from "./shared";
 import Header from "./Header";
-import Animation from "~/renderer/animations";
-import { getDeviceAnimation } from "../../DeviceAction/animations";
-import DeviceIllustration from "../../DeviceIllustration";
-import OnboardingAppInstallStep from "../../OnboardingAppInstall";
+import { RecoverState } from "~/renderer/screens/recover/Player";
+import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
+import EarlySecurityChecks from "./EarlySecurityChecks";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { DeviceInfo } from "@ledgerhq/types-live";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import { from } from "rxjs";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { getEnv } from "@ledgerhq/live-common/env";
+import ExitChecksDrawer, {
+  Props as ExitChecksDrawerProps,
+} from "./EarlySecurityChecks/ExitChecksDrawer";
+import { renderError } from "../../DeviceAction/rendering";
+import { useTranslation } from "react-i18next";
+import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguagePrompt";
+import DeviceAction from "../../DeviceAction";
+import TroubleshootingDrawer, {
+  Props as TroubleshootingDrawerProps,
+} from "./TroubleshootingDrawer";
+import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import { LockedDeviceError } from "@ledgerhq/errors";
 
-const readyRedirectDelayMs = 2500;
-const pollingPeriodMs = 1000;
-const desyncTimeoutMs = 60000;
-const longDesyncTimeoutMs = 100000;
-const resyncDelayMs = 1000;
-const longResyncDelayMs = 30000;
+const POLLING_PERIOD_MS = 1000;
+const DESYNC_TIMEOUT_MS = 20000;
 
-enum StepKey {
-  Paired = 0,
-  Pin,
-  Seed,
-  SoftwareCheck,
-  Applications,
-  Ready,
-  Exit,
-}
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
-type StepStatus = "completed" | "active" | "inactive";
-
-type Step = {
-  key: StepKey;
-  status: StepStatus;
-  title: string;
-  estimatedTime?: number;
-  renderBody?: () => ReactNode;
-};
-
-const getOnboardingStatePollingCommand = command("getOnboardingStatePolling");
-
-function nextStepKey(step: StepKey): StepKey {
-  if (step === StepKey.Exit) {
-    return StepKey.Exit;
-  }
-  return step + 1;
-}
-
-export type SyncOnboardingManualProps = {
-  deviceModelId: string; // Should be DeviceModelId. react-router 5 seems to only handle [K in keyof Params]?: string props
+export type SyncOnboardingScreenProps = {
+  /**
+   * A device model used to render the animation and text.
+   * Needed because the device object can be null if disconnected.
+   *
+   * Should be DeviceModelId. react-router 5 seems to only handle [K in keyof Params]?: string props
+   */
+  deviceModelId: string;
 };
 
 /**
- * Component rendering the synchronous onboarding steps
+ * Synchronous onboarding screen composed of the "early security/onboarding checks" step and the "synchronous companion" step
  *
- * @param deviceModelId: a device model used to render the animation and text.
- *  Needed because the device object can be null if disconnected.
+ * This screen polls the state of the device to:
+ * - toggle the onboarding early checks (enter/exit) on the device if needed
+ * - know which steps it should display
  */
-const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardingManualProps) => {
+const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
+  deviceModelId: strDeviceModelId,
+}) => {
+  const history = useHistory<RecoverState>();
   const { t } = useTranslation();
-  const theme = useTheme();
-  const history = useHistory();
-  const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
-  const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
-  const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
 
   const device = useSelector(getCurrentDevice);
-
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
-  // Needed because the device object can be null or changed if disconnected/reconnected
-  const [lastKnownDeviceModelId, setLastKnownDeviceModelId] = useState<DeviceModelId>(
-    deviceModelId,
-  );
 
+  const [mustRecoverIfBootloader, setMustRecoverIfBootloader] = useState(true);
+  const [isBootloader, setIsBootloader] = useState<boolean | null>(null);
+  // Needed because `device` object can be null or changed if disconnected/reconnected
+  const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
   useEffect(() => {
     if (device) {
-      setLastKnownDeviceModelId(device.modelId);
+      setLastSeenDevice(device);
     }
   }, [device]);
 
-  const productName = device
-    ? getDeviceModel(device.modelId).productName || device.modelId
-    : "Ledger Device";
-  const deviceName = device?.deviceName || productName;
-
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
-  const handleSoftwareCheckComplete = useCallback(() => {
-    setStepKey(nextStepKey(StepKey.SoftwareCheck));
-  }, []);
-
-  const handleInstallRecommendedApplicationComplete = useCallback(() => {
-    setStepKey(nextStepKey(StepKey.Applications));
-  }, []);
-
-  const defaultSteps: Step[] = useMemo(
-    () => [
-      {
-        key: StepKey.Paired,
-        status: "active",
-        title: t("syncOnboarding.manual.pairedContent.title", {
-          deviceName: productName,
-        }),
-        renderBody: () => (
-          <Flex flexDirection="column">
-            <StepText mb={6}>
-              {t("syncOnboarding.manual.pairedContent.description", {
-                deviceName: productName,
-              })}
-            </StepText>
-            <StepText>
-              {t("syncOnboarding.manual.pairedContent.text", {
-                deviceName: productName,
-              })}
-            </StepText>
-          </Flex>
-        ),
-      },
-      {
-        key: StepKey.Pin,
-        status: "inactive",
-        title: t("syncOnboarding.manual.pinContent.title"),
-        renderBody: () => (
-          <Flex flexDirection="column">
-            <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
-            <StepText>
-              {t("syncOnboarding.manual.pinContent.text", {
-                deviceName: productName,
-              })}
-            </StepText>
-          </Flex>
-        ),
-        estimatedTime: 120,
-      },
-      {
-        key: StepKey.Seed,
-        status: "inactive",
-        title: t("syncOnboarding.manual.recoveryContent.title"),
-        renderBody: () => <RecoveryContent />,
-        estimatedTime: 300,
-      },
-      {
-        key: StepKey.SoftwareCheck,
-        status: "inactive",
-        title: t("syncOnboarding.manual.softwareCheckContent.title"),
-        renderBody: (isDisplayed?: boolean) => (
-          <SoftwareCheckStep
-            deviceModelId={lastKnownDeviceModelId}
-            isDisplayed={isDisplayed}
-            onComplete={handleSoftwareCheckComplete}
-            productName={productName}
-          />
-        ),
-      },
-      {
-        key: StepKey.Applications,
-        status: "inactive",
-        title: "Nano applications",
-        renderBody: () => (
-          <OnboardingAppInstallStep
-            device={device}
-            deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
-            onComplete={handleInstallRecommendedApplicationComplete}
-            onError={handleInstallRecommendedApplicationComplete}
-          />
-        ),
-      },
-      {
-        key: StepKey.Ready,
-        status: "inactive",
-        title: "Nano is ready",
-      },
-    ],
-    [
-      t,
-      device,
-      deviceToRestore,
-      shouldRestoreApps,
-      productName,
-      lastKnownDeviceModelId,
-      handleSoftwareCheckComplete,
-      handleInstallRecommendedApplicationComplete,
-    ],
+  const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
+    "loading",
   );
+  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
+  const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] = useState<
+    null | "enter" | "exit"
+  >(null);
 
-  const [steps, setSteps] = useState<Step[]>(defaultSteps);
-  const [stopPolling, setStopPolling] = useState<boolean>(false);
-  const [desyncTimer, setDesyncTimer] = useState<NodeJS.Timeout | null>(null);
-  const [resyncDelay, setResyncDelay] = useState<number>(resyncDelayMs);
-  const [desyncTimeout, setDesyncTimeout] = useState<number>(desyncTimeoutMs);
+  /* The early security checks are run again after a firmware update. */
+  const [isInitialRunOfSecurityChecks, setIsInitialRunOfSecurityChecks] = useState(true);
 
-  const {
-    onboardingState: deviceOnboardingState,
-    allowedError,
-    fatalError,
-    lockedDevice: lockedDeviceDuringPolling,
-  } = useOnboardingStatePolling({
-    getOnboardingStatePolling: getOnboardingStatePollingCommand,
-    device,
-    pollingPeriodMs,
-    stopPolling,
+  const { onboardingState, allowedError, fatalError, lockedDevice } = useOnboardingStatePolling({
+    device: lastSeenDevice,
+    pollingPeriodMs: POLLING_PERIOD_MS,
+    stopPolling: !isPollingOn || isBootloader === null || isBootloader,
   });
 
-  const handleClose = useCallback(() => {
-    history.push("/onboarding/select-device");
-  }, [history]);
+  const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
+    deviceId: lastSeenDevice?.deviceId ?? "",
+    toggleType: toggleOnboardingEarlyCheckType,
+  });
 
-  const handleTroubleshootingDrawerClose = useCallback(() => {
-    setTroubleshootingDrawerOpen(false);
-    setStopPolling(false);
+  const refreshIsBootloaderMode = useCallback(() => {
+    if (!device) return;
+    withDevice(device.deviceId)(transport => from(getDeviceInfo(transport)))
+      .toPromise()
+      .then((deviceInfo: DeviceInfo) => {
+        setIsBootloader(deviceInfo?.isBootloader);
+      });
+  }, [device]);
+
+  useEffect(() => {
+    refreshIsBootloaderMode();
+  }, [device, refreshIsBootloaderMode]);
+
+  // Called when the ESC is complete
+  const notifyOnboardingEarlyCheckEnded = useCallback(() => {
+    setToggleOnboardingEarlyCheckType("exit");
   }, []);
 
-  const handleDeviceReady = useCallback(() => {
-    history.push("/onboarding/sync/completion");
-  }, [history]);
-
-  const handleDesyncTimerRunsOut = useCallback(() => {
-    setTroubleshootingDrawerOpen(true);
+  // Called when the companion component thinks the device is not in a correct state anymore
+  const notifyOnboardingEarlyCheckShouldReset = useCallback(() => {
+    setIsPollingOn(true);
+    setCurrentStep("loading");
+    setMustRecoverIfBootloader(true);
   }, []);
 
+  const restartChecksAfterUpdate = useCallback(() => {
+    setIsInitialRunOfSecurityChecks(false);
+    notifyOnboardingEarlyCheckShouldReset();
+  }, [notifyOnboardingEarlyCheckShouldReset]);
+
   useEffect(() => {
-    if (
-      deviceOnboardingState?.isOnboarded &&
-      deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready
-    ) {
-      setStepKey(StepKey.SoftwareCheck);
+    if (lockedDevice) {
+      const props: LockedDeviceDrawerProps = {
+        deviceModelId,
+      };
+      setDrawer(LockedDeviceDrawer, props, {
+        forceDisableFocusTrap: true,
+        preventBackdropClick: true,
+      });
+    } else if (isTroubleshootingDrawerOpen) {
+      const props: TroubleshootingDrawerProps = {
+        lastKnownDeviceId: deviceModelId,
+        onClose: () => {
+          history.push("/onboarding/select-device");
+          setDrawer();
+        },
+      };
+      setDrawer(TroubleshootingDrawer, props, { forceDisableFocusTrap: true });
+    }
+    return () => setDrawer();
+  }, [deviceModelId, history, isTroubleshootingDrawerOpen, lockedDevice]);
+
+  // Handles current step and toggling onboarding early check logics
+  useEffect(() => {
+    if (!onboardingState) {
       return;
     }
+    const { currentOnboardingStep, isOnboarded } = onboardingState;
 
-    switch (deviceOnboardingState?.currentOnboardingStep) {
-      case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.SafetyWarning:
-        setStepKey(StepKey.Seed);
-        break;
-      case DeviceOnboardingStep.NewDevice:
-      case DeviceOnboardingStep.NewDeviceConfirming:
-        setShouldRestoreApps(false);
-        setStepKey(StepKey.Seed);
-        break;
-      case DeviceOnboardingStep.RestoreSeed:
-        setShouldRestoreApps(true);
-        setStepKey(StepKey.Seed);
-        break;
-      case DeviceOnboardingStep.WelcomeScreen1:
-      case DeviceOnboardingStep.WelcomeScreen2:
-      case DeviceOnboardingStep.WelcomeScreen3:
-      case DeviceOnboardingStep.WelcomeScreen4:
-      case DeviceOnboardingStep.WelcomeScreenReminder:
-      case DeviceOnboardingStep.ChooseName:
-        setStepKey(StepKey.Paired);
-        break;
-      case DeviceOnboardingStep.Pin:
-        setStepKey(StepKey.Pin);
-        break;
-      default:
-        break;
-    }
-  }, [deviceOnboardingState]);
-
-  // When the user gets close to the seed generation step, sets the lost synchronization delay
-  // and timers to a higher value. It avoids having a warning message while the connection is lost
-  // because the device is generating the seed.
-  useEffect(() => {
     if (
-      deviceOnboardingState?.seedPhraseType &&
-      [DeviceOnboardingStep.NewDeviceConfirming, DeviceOnboardingStep.RestoreSeed].includes(
-        deviceOnboardingState?.currentOnboardingStep,
-      )
+      !isOnboarded &&
+      [
+        OnboardingStep.WelcomeScreen1,
+        OnboardingStep.WelcomeScreen2,
+        OnboardingStep.WelcomeScreen3,
+        OnboardingStep.WelcomeScreen4,
+        OnboardingStep.WelcomeScreenReminder,
+      ].includes(currentOnboardingStep)
     ) {
-      const nbOfSeedWords = fromSeedPhraseTypeToNbOfSeedWords.get(
-        deviceOnboardingState.seedPhraseType,
-      );
-
-      if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
-        setResyncDelay(longResyncDelayMs);
-        setDesyncTimeout(longDesyncTimeoutMs);
-      }
+      setIsPollingOn(false);
+      setToggleOnboardingEarlyCheckType("enter");
+    } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
+      setIsPollingOn(false);
+      // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
+      // check type == "exit" and toggle status still being == "success" from the previous toggle
+      setToggleOnboardingEarlyCheckType(null);
+      setCurrentStep("early-security-check");
+      setMustRecoverIfBootloader(false);
+    } else {
+      setIsPollingOn(false);
+      setCurrentStep("companion");
     }
-  }, [deviceOnboardingState]);
+  }, [onboardingState]);
 
+  // A fatal error during polling triggers directly an error message
   useEffect(() => {
-    if (stepKey >= StepKey.SoftwareCheck) {
-      setStopPolling(true);
+    if (fatalError) {
+      setIsPollingOn(false);
+      setTroubleshootingDrawerOpen(true);
     }
-
-    if (stepKey === StepKey.Ready) {
-      setTimeout(() => setStepKey(StepKey.Exit), readyRedirectDelayMs / 2);
-    }
-
-    if (stepKey === StepKey.Exit) {
-      setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
-    }
-
-    setSteps(
-      defaultSteps.map(step => {
-        const stepStatus =
-          step.key > stepKey ? "inactive" : step.key < stepKey ? "completed" : "active";
-
-        return {
-          ...step,
-          status: stepStatus,
-        };
-      }),
-    );
-  }, [stepKey, defaultSteps, handleDeviceReady]);
-
-  useEffect(() => {
-    if (!fatalError) {
-      return;
-    }
-    setTroubleshootingDrawerOpen(true);
   }, [fatalError]);
 
+  // An allowed error during polling (which makes the polling retry) only triggers an error message after a timeout
   useEffect(() => {
-    if ((!device || allowedError) && !desyncTimer) {
-      setDesyncTimer(setTimeout(handleDesyncTimerRunsOut, desyncTimeout));
-    } else if (!!device && !allowedError && desyncTimer) {
-      clearTimeout(desyncTimer);
-      setDesyncTimer(null);
-    }
-  }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimer, desyncTimeout]);
+    let timeout: ReturnType<typeof setTimeout>;
 
+    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
+      timeout = setTimeout(() => {
+        setIsPollingOn(false);
+        setTroubleshootingDrawerOpen(true);
+      }, DESYNC_TIMEOUT_MS);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [allowedError]);
+
+  // Handles onboarding early check toggle result
   useEffect(() => {
-    if (isTroubleshootingDrawerOpen) {
-      setStopPolling(true);
-    }
-  }, [isTroubleshootingDrawerOpen]);
+    if (toggleOnboardingEarlyCheckState.toggleStatus === "none") return;
 
-  const displayUnlockOrPlugDeviceAnimation = !device || (lockedDeviceDuringPolling && !stopPolling);
+    if (toggleOnboardingEarlyCheckState.toggleStatus === "failure") {
+      // If an error occurred during the toggling the safe backup is to bring the device to the "companion" step
+      // This will happen for older firmware that does not handle this new action.
+      setToggleOnboardingEarlyCheckType(null);
+      setCurrentStep("companion");
+    }
+
+    // After a successful "enter" or "exit", the polling is restarted to know the device state
+    if (
+      toggleOnboardingEarlyCheckType !== null &&
+      toggleOnboardingEarlyCheckState.toggleStatus === "success"
+    ) {
+      // Resets the toggle hook
+      setToggleOnboardingEarlyCheckType(null);
+      setIsPollingOn(true);
+      // Not setting the `currentStep` to "loading" here to avoid UI flash
+    }
+  }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
+
+  useChangeLanguagePrompt({
+    device: currentStep === "early-security-check" && device ? device : undefined,
+  });
+
+  const onLostDevice = useCallback(() => {
+    setTroubleshootingDrawerOpen(true);
+  }, []);
+
+  const isEarlySecurityChecks = currentStep === "early-security-check" && lastSeenDevice;
+
+  const handleClose = useCallback(() => {
+    const exit = () => history.push("/onboarding/select-device");
+    if (isEarlySecurityChecks) {
+      const props: ExitChecksDrawerProps = {
+        onClose: () => setDrawer(),
+        onClickExit: () => {
+          exit();
+          setDrawer();
+        },
+      };
+      setDrawer(ExitChecksDrawer, props, { forceDisableFocusTrap: true });
+    } else {
+      exit();
+    }
+  }, [history, isEarlySecurityChecks]);
+
+  let stepContent = (
+    <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
+      <InfiniteLoader />
+    </Flex>
+  );
+
+  const error = fatalError || allowedError;
+  if (currentStep !== "companion" && error !== null) {
+    stepContent = (
+      <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
+        {renderError({
+          t,
+          device,
+          error,
+          onRetry: isPollingOn ? undefined : notifyOnboardingEarlyCheckShouldReset,
+        })}
+      </Flex>
+    );
+  } else if (currentStep === "early-security-check" && lastSeenDevice) {
+    stepContent = (
+      <EarlySecurityChecks
+        device={lastSeenDevice}
+        onComplete={notifyOnboardingEarlyCheckEnded}
+        restartChecksAfterUpdate={restartChecksAfterUpdate}
+        isInitialRunOfSecurityChecks={isInitialRunOfSecurityChecks}
+        isBootloader={isBootloader}
+      />
+    );
+  } else if (currentStep === "companion" && lastSeenDevice) {
+    stepContent = (
+      <SyncOnboardingCompanion
+        device={lastSeenDevice}
+        notifySyncOnboardingShouldReset={notifyOnboardingEarlyCheckShouldReset}
+        onLostDevice={onLostDevice}
+      />
+    );
+  }
+
+  const onDeviceActionResult = useCallback((result: Result) => {
+    setIsBootloader(result.deviceInfo.isBootloader);
+  }, []);
 
   return (
-    <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
-      <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
-      <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
-      <TroubleshootingDrawer
-        lastKnownDeviceId={lastKnownDeviceModelId}
-        isOpen={isTroubleshootingDrawerOpen}
-        onClose={handleTroubleshootingDrawerClose}
-      />
-      <Flex flex={1} position="relative" overflow="hidden">
-        <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} productName={productName} />
-        <Flex flex={1} px="120px" py={0}>
-          <Flex flex={1} flexDirection="column" overflow="hidden" justifyContent="center">
-            <Flex flex={1} flexGrow={0} alignItems="center" mb={12}>
-              <Text variant="h3Inter" fontSize="28px" fontWeight="semiBold">
-                {t("syncOnboarding.manual.title", { deviceName })}
-              </Text>
-            </Flex>
-            <Flex maxWidth="680px" flexShrink={1} overflowY="scroll">
-              <VerticalTimeline flex={1} steps={steps} />
-            </Flex>
-          </Flex>
-          <Flex flex={1} justifyContent="center" alignItems="center">
-            {displayUnlockOrPlugDeviceAnimation ? (
-              <Animation
-                height="540px"
-                animation={getDeviceAnimation(
-                  lastKnownDeviceModelId,
-                  theme.theme,
-                  lockedDeviceDuringPolling ? "enterPinCode" : "plugAndPinCode",
-                )}
-              />
-            ) : (
-              <DeviceIllustration deviceId={lastKnownDeviceModelId} />
-            )}
-          </Flex>
-        </Flex>
-      </Flex>
+    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
+      {isBootloader && mustRecoverIfBootloader ? (
+        /**
+         * In case a firmware update gets interrupted and the device is in
+         * Bootloader mode, we display this device action which will prompt the
+         * user to finish the update.
+         * */
+        <DeviceAction onResult={onDeviceActionResult} action={action} request={null} />
+      ) : (
+        <>
+          {stepContent}
+          <Header onClose={handleClose} />
+        </>
+      )}
     </Flex>
   );
 };
 
-export default SyncOnboardingManual;
+export default SyncOnboardingScreen;

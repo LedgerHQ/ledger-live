@@ -14,18 +14,13 @@ import type { BaseNavigatorStackParamList } from "../../../components/RootNaviga
 import type { NearUnstakingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    NearUnstakingFlowParamList,
-    ScreenName.NearUnstakingValidationError
-  >
+  StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();
@@ -40,7 +35,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="NearUnstaking" name="ValidationError" />
+      <TrackScreen
+        category="NearUnstaking"
+        name="ValidationError"
+        flow="stake"
+        action="unstaking"
+        currency="near"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

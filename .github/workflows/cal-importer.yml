@@ -1,18 +1,13 @@
 name: "Dynamic cal importer ERC20"
 on:
-  schedule:
-    - cron: 0 7 * * *
   workflow_dispatch:
-  push:
-    branches:
-      - feat/LIVE-2174-dynamic-cal
 
 concurrency:
   group: bot-dyn-cal
 
 jobs:
   run-bot:
-    runs-on: [self-hosted, ledger-live-assets]
+    runs-on: [ledger-live-assets-prd]
     steps:
       - uses: actions/checkout@v3
       - name: Retrieving crypto-assets
@@ -22,53 +17,23 @@ jobs:
           repository: LedgerHQ/crypto-assets
           token: ${{ secrets.CI_BOT_TOKEN }}
           path: crypto-assets
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-      - uses: pnpm/action-setup@v2
-        id: pnpm-install
-        with:
-          version: latest
-          run_install: false
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: |
-          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: install and build
         continue-on-error: true
         run: |
-          pnpm i --filter="live-cli..." --filter="ledger-live" --filter="ledger-libs" --frozen-lockfile
+          pnpm i --filter="live-cli..." --filter="ledger-live" --filter="ledger-libs"
           pnpm build:ljs
         shell: bash
       - name: run script
         run: |
-          mkdir cal
+          shopt -s globstar
+          out=$PWD/cal
+          mkdir $out
           node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
-          mv libs/ledgerjs/packages/cryptoassets/src/data/**.json cal
+          cd libs/ledgerjs/packages/cryptoassets/src/data
+          cp -vf --parents **/*.json $out
       - name: Deploy json to s3 PRD
-        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete
+        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete --acl public-read
       - name: Cache invalidate PRD
         run: aws cloudfront create-invalidation --distribution-id E53IORS7MW883 --paths "/cryptoassets/*" --debug
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ASSETS_RUNNER_ROLE_STG }}
-          aws-region: eu-west-1
-          role-duration-seconds: 3600
-      - name: Deploy json to s3 STG
-        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg/cryptoassets --delete --acl public-read
-      - name: Cache invalidate STG
-        run: aws cloudfront create-invalidation --distribution-id E2NGFIXS9QJTH --paths "/cryptoassets/*" --debug
-      - name: Propagate generated erc20 json towards backend server
-        run: |
-         echo "${{ secrets.DATA_FILE }}" | base64 -d > /tmp/data_file_storage
-         echo "${{ secrets.DATA_SCRIPT }}" | base64 -d > /tmp/data_file_script.sh
-         bash /tmp/data_file_script.sh
-

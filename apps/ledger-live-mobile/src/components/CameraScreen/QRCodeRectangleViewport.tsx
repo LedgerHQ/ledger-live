@@ -33,9 +33,7 @@ function QRCodeReactangleViewport({ viewFinderSize }: Props) {
         <View style={styles.innerRow}>
           <View style={[borderStyle, styles.borderLeft, styles.borderBottom]} />
           <View style={borderStyle} />
-          <View
-            style={[borderStyle, styles.borderRight, styles.borderBottom]}
-          />
+          <View style={[borderStyle, styles.borderRight, styles.borderBottom]} />
         </View>
       </View>
       <View

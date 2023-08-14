@@ -1,13 +1,13 @@
 import React, { useEffect, useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import { BarCodeScanningResult, Camera } from "expo-camera";
+import { BarCodeScanningResult, Camera, CameraType } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
-import HeaderRightClose from "./HeaderRightClose";
+import { NavigationHeaderCloseButtonAdvanced } from "./NavigationHeaderCloseButton";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import RequiresCameraPermissions from "./RequiresCameraPermissions";
 import CameraPermissionContext from "./RequiresCameraPermissions/CameraPermissionContext";
@@ -29,7 +29,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
     if (hasPermission) {
       navigation.setOptions({
         headerRight: () => (
-          <HeaderRightClose
+          <NavigationHeaderCloseButtonAdvanced
             color={colors.constant.white}
             preferDismiss={false}
           />
@@ -44,7 +44,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
       <StyledStatusBar barStyle="light-content" />
       <Camera
         style={styles.camera}
-        type={Camera.Constants.Type.back}
+        type={CameraType.back}
         ratio="16:9"
         onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
         barCodeScannerSettings={{
@@ -69,7 +69,7 @@ const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderRightClose color={colors.neutral.c100} preferDismiss={false} />
+        <NavigationHeaderCloseButtonAdvanced color={colors.neutral.c100} preferDismiss={false} />
       ),
     });
   }, [colors.neutral.c100, navigation]);

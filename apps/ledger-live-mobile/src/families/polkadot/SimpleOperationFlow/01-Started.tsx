@@ -37,10 +37,7 @@ function getStatusError(
   return firstKey ? status[type][firstKey] : null;
 }
 
-export default function PolkadotSimpleOperationStarted({
-  navigation,
-  route,
-}: Navigation) {
+export default function PolkadotSimpleOperationStarted({ navigation, route }: Navigation) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { mode } = route.params;
@@ -50,8 +47,8 @@ export default function PolkadotSimpleOperationStarted({
   const bridge = getAccountBridge(account, parentAccount);
   const { polkadotResources } = mainAccount as PolkadotAccount;
   invariant(polkadotResources, "polkadotResources required");
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const t = bridge.createTransaction(mainAccount);
       const transaction = bridge.updateTransaction(t, {
         mode,
@@ -60,7 +57,8 @@ export default function PolkadotSimpleOperationStarted({
         account: mainAccount,
         transaction,
       };
-    });
+    },
+  );
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.PolkadotSimpleOperationSelectDevice, {
       accountId: account.id,
@@ -75,6 +73,7 @@ export default function PolkadotSimpleOperationStarted({
   const infoTranslated = t(`polkadot.simpleOperation.modes.${mode}.info`, {
     defaultValue: "",
   });
+  const action = mode.replace(/([A-Z])/g, "_$1").toLowerCase();
   return (
     <>
       <View
@@ -86,12 +85,16 @@ export default function PolkadotSimpleOperationStarted({
         ]}
       >
         <View style={styles.container}>
-          <TrackScreen category="SimpleOperationFlow" name="Started" />
+          <TrackScreen
+            category="SimpleOperationFlow"
+            name="Started"
+            flow="stake"
+            action={action}
+            currency="dot"
+          />
           <View style={styles.content}>
             <Log>
-              <Trans
-                i18nKey={`polkadot.simpleOperation.modes.${mode}.description`}
-              />
+              <Trans i18nKey={`polkadot.simpleOperation.modes.${mode}.description`} />
             </Log>
           </View>
         </View>
@@ -112,22 +115,9 @@ export default function PolkadotSimpleOperationStarted({
               <TranslatedError error={error || warning} />
             </Text>
           )}
-          <SendRowsFee
-            account={account}
-            transaction={transaction as PolkadotTransaction}
-          />
-          <Button
-            type="main"
-            onPress={onContinue}
-            disabled={!!error || bridgePending}
-          >
-            <Trans
-              i18nKey={
-                !bridgePending
-                  ? "common.continue"
-                  : "send.amount.loadingNetwork"
-              }
-            />
+          <SendRowsFee account={account} transaction={transaction as PolkadotTransaction} />
+          <Button type="main" onPress={onContinue} disabled={!!error || bridgePending}>
+            <Trans i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"} />
           </Button>
         </View>
       </View>

@@ -13,20 +13,14 @@ type Props = {
   size?: number;
 };
 
-export default function AppProgressButton({
-  state,
-  name,
-  installing,
-  updating,
-  size = 48,
-}: Props) {
+export default function AppProgressButton({ state, name, installing, updating, size = 48 }: Props) {
   const { colors } = useTheme();
   const progress = useAppInstallProgress(state, name);
   const { currentAppOp } = state;
   const isPrimary = updating || installing;
   const isCurrentAppOp = currentAppOp?.name === name;
 
-  const mainColor = isPrimary ? colors.primary.c80 : colors.error.c100;
+  const mainColor = isPrimary ? colors.primary.c80 : colors.error.c50;
   const secondaryColor = isPrimary ? colors.primary.c30 : colors.error.c30;
 
   return (

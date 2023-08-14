@@ -8,11 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 
-export type RewardDestinationType =
-  | "Staked"
-  | "Stash"
-  | "Account"
-  | "Controller";
+export type RewardDestinationType = "Staked" | "Stash" | "Account" | "Controller";
 export type PolkadotNominationStatus = "active" | "inactive" | "waiting" | null;
 export type PolkadotOperationMode =
   | "send"
@@ -105,9 +101,7 @@ export type PolkadotPreloadData = {
   staking: PolkadotStakingProgress | undefined;
   minimumBondBalance: string;
 };
-export type PolkadotSearchFilter = (
-  query: string
-) => (validator: PolkadotValidator) => boolean;
+export type PolkadotSearchFilter = (query: string) => (validator: PolkadotValidator) => boolean;
 export type PolkadotAccount = Account & {
   polkadotResources: PolkadotResources;
 };

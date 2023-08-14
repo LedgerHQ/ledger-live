@@ -27,10 +27,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);
-  const onPressInfoCreator = useCallback(
-    (infoName: InfoName) => () => setInfoName(infoName),
-    [],
-  );
+  const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
 
   return delegatedBalance.gt(0) || unbondingBalance.gt(0) ? (
     <>
@@ -51,26 +48,14 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         <InfoItem
           title={t("account.availableBalance")}
           onPress={onPressInfoCreator("available")}
-          value={
-            <CurrencyUnitValue
-              unit={unit}
-              value={spendableBalance}
-              disableRounding
-            />
-          }
+          value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
           isLast={!delegatedBalance.gt(0) && !unbondingBalance.gt(0)}
         />
         {delegatedBalance.gt(0) && (
           <InfoItem
             title={t("account.delegatedAssets")}
             onPress={onPressInfoCreator("delegated")}
-            value={
-              <CurrencyUnitValue
-                unit={unit}
-                value={delegatedBalance}
-                disableRounding
-              />
-            }
+            value={<CurrencyUnitValue unit={unit} value={delegatedBalance} disableRounding />}
             isLast={!unbondingBalance.gt(0)}
           />
         )}
@@ -78,13 +63,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
           <InfoItem
             title={t("account.undelegating")}
             onPress={onPressInfoCreator("undelegating")}
-            value={
-              <CurrencyUnitValue
-                unit={unit}
-                value={unbondingBalance}
-                disableRounding
-              />
-            }
+            value={<CurrencyUnitValue unit={unit} value={unbondingBalance} disableRounding />}
             isLast={true}
           />
         )}

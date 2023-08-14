@@ -12,8 +12,7 @@ describe("testing transaction data load and export", () => {
             output_index: 0,
             value: "5000000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            output_hash:
-              "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
+            output_hash: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
             block_height: 1,
             rbf: false,
           },
@@ -21,8 +20,7 @@ describe("testing transaction data load and export", () => {
             output_index: 1,
             value: "0",
             address: "<unknown>",
-            output_hash:
-              "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
+            output_hash: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
             block_height: 1,
             rbf: false,
           },
@@ -41,8 +39,7 @@ describe("testing transaction data load and export", () => {
         id: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
         inputs: [
           {
-            output_hash:
-              "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
+            output_hash: "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
             output_index: 0,
             value: "5000000000",
             address: "2NCDBM9DAuMrD1T8XDHMxvbTmLutP7at4AB",
@@ -54,8 +51,7 @@ describe("testing transaction data load and export", () => {
             output_index: 0,
             value: "300000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            output_hash:
-              "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
+            output_hash: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
             block_height: 120,
             rbf: false,
           },
@@ -63,8 +59,7 @@ describe("testing transaction data load and export", () => {
             output_index: 1,
             value: "4699983200",
             address: "2MynSTpze5SDcuLr1DekSV7RVrFpQCo3LeP",
-            output_hash:
-              "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
+            output_hash: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
             block_height: 120,
             rbf: false,
           },

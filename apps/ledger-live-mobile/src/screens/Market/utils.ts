@@ -10,8 +10,7 @@ const indexes: [string, number][] = [
   ["Qn", 1000000000000000000],
 ];
 
-const dateFormatters: Record<string, { [key: string]: Intl.DateTimeFormat }> =
-  {};
+const dateFormatters: Record<string, { [key: string]: Intl.DateTimeFormat }> = {};
 
 const formatters: Record<string, { [key: string]: Intl.NumberFormat }> = {};
 

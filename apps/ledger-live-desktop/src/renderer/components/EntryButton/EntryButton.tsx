@@ -84,7 +84,7 @@ const IconWrapper = styled.div`
   height: 40px;
   border-radius: 100%;
   margin-right: ${p => p.theme.space[3]}px;
-  background-color: ${p => p.theme.colors.palette.neutral.c100a005};
+  background-color: ${p => p.theme.colors.palette.opacityDefault.c05};
 `;
 
 interface EntryButtonProps {

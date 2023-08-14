@@ -2,11 +2,7 @@ import React from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
 
 import getWindowDimensions from "../logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
@@ -116,14 +112,10 @@ function CurrencyHeaderLayout({
       <Box width={24}>{leftElement}</Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
-          <Animated.View style={[AfterScrollAnimation]}>
-            {centerAfterScrollElement}
-          </Animated.View>
+          <Animated.View style={[AfterScrollAnimation]}>{centerAfterScrollElement}</Animated.View>
         </CenteredElement>
         <CenteredElement width={windowsWidth}>
-          <Animated.View style={[BeforeScrollAnimation]}>
-            {centerBeforeScrollElement}
-          </Animated.View>
+          <Animated.View style={[BeforeScrollAnimation]}>{centerBeforeScrollElement}</Animated.View>
         </CenteredElement>
       </Flex>
       <Box width={24}>{rightElement}</Box>

@@ -31,21 +31,13 @@ const Item = (props: ItemPropsType) => {
    */
 
   return (
-    <TouchableOpacity
-      onPress={() => onSelect(validator, claimableRewards)}
-      style={styles.wrapper}
-    >
+    <TouchableOpacity onPress={() => onSelect(validator, claimableRewards)} style={styles.wrapper}>
       <View style={styles.iconWrapper}>
         <Circle crop={true} size={32}>
           {ELROND_LEDGER_VALIDATOR_ADDRESS === contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
-            <FirstLetterIcon
-              label={name || "-"}
-              round={true}
-              size={32}
-              fontSize={24}
-            />
+            <FirstLetterIcon label={name || "-"} round={true} size={32} fontSize={24} />
           )}
         </Circle>
       </View>

@@ -1,13 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Linking } from "react-native";
-import {
-  Flex,
-  Icons,
-  ScrollListContainer,
-  Box,
-  Text,
-} from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, ScrollListContainer, Box, Text } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { urls } from "../../../../../config/urls";
 import Button from "../../../../../components/wrappedUi/Button";
@@ -16,8 +10,7 @@ const ProtectConnectionInformationModal = () => {
   const { t } = useTranslation();
   const servicesConfig = useFeature("protectServicesMobile");
 
-  const restoreInfoDrawer =
-    servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
+  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
   const supportLink = restoreInfoDrawer?.supportLinkURI;
 
   const handlePressBluetoothIssue = useCallback(() => {
@@ -37,9 +30,7 @@ const ProtectConnectionInformationModal = () => {
       <ScrollListContainer contentContainerStyle={{ padding: 16 }}>
         <Box>
           <Text variant="h1" color="neutral.c100" uppercase mb={6}>
-            {t(
-              "onboarding.stepPairNew.protectConnectionInformationModal.title",
-            )}
+            {t("onboarding.stepPairNew.protectConnectionInformationModal.title")}
           </Text>
           <Text variant="body" color="neutral.c80" mb={6}>
             <Trans
@@ -65,22 +56,20 @@ const ProtectConnectionInformationModal = () => {
           type="main"
           size="large"
           onPress={handlePressLearnHowToUpdate}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           event={"button_clicked"}
           eventProperties={{
             button: "Learn more",
           }}
           mb={3}
         >
-          {t(
-            "onboarding.stepPairNew.protectConnectionInformationModal.learnHowToUpdate",
-          )}
+          {t("onboarding.stepPairNew.protectConnectionInformationModal.learnHowToUpdate")}
         </Button>
         <Button
           type={"default"}
           size="large"
           onPress={handlePressContactSupport}
-          Icon={Icons.ExternalLinkMedium}
+          Icon={IconsLegacy.ExternalLinkMedium}
           event={"link_clicked"}
           eventProperties={{
             button: "Contact Ledger Support",

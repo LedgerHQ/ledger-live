@@ -1,4 +1,3 @@
-import { disconnect } from "./api";
 import { BigNumber } from "bignumber.js";
 import { canUnbond, MAX_UNLOCKINGS } from "./logic";
 import {
@@ -20,13 +19,11 @@ import {
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { fromTransactionRaw } from "./transaction";
 import type { PolkadotAccount, Transaction } from "./types";
-const ACCOUNT_SAME_STASHCONTROLLER =
-  "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
+const ACCOUNT_SAME_STASHCONTROLLER = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";
 const ACCOUNT_STASH = "13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN";
 const ACCOUNT_CONTROLLER = "15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD";
 const ACCOUNT_EMPTY = "111111111111111111111111111111111HC1";
-const ACCOUNT_WITH_NO_OPERATION =
-  "12EsPA79dvhtjp1bYvCiEWPsQmmdKGss44GzE3CT9tTo9g4Q";
+const ACCOUNT_WITH_NO_OPERATION = "12EsPA79dvhtjp1bYvCiEWPsQmmdKGss44GzE3CT9tTo9g4Q";
 
 const polkadot: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
@@ -333,29 +330,27 @@ const polkadot: CurrenciesData<Transaction> = {
         },
         {
           name: "[unbond] use all amount",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             useAllAmount: true,
             mode: "unbond",
           }),
-          expectedStatus: (a) => ({
+          expectedStatus: a => ({
             errors: {},
             warnings: {},
-            amount: (
-              a as PolkadotAccount
-            ).polkadotResources?.lockedBalance.minus(
-              (a as PolkadotAccount).polkadotResources.unlockingBalance
+            amount: (a as PolkadotAccount).polkadotResources?.lockedBalance.minus(
+              (a as PolkadotAccount).polkadotResources.unlockingBalance,
             ),
           }),
         },
         {
           name: "[rebond] use all amount",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             useAllAmount: true,
             mode: "rebond",
           }),
-          expectedStatus: (a) => ({
+          expectedStatus: a => ({
             errors: {},
             warnings: {},
             amount: (a as PolkadotAccount).polkadotResources?.unlockingBalance,
@@ -384,13 +379,13 @@ const polkadot: CurrenciesData<Transaction> = {
       transactions: [
         {
           name: "[send] use all amount - should warn all funds",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             useAllAmount: true,
             mode: "send",
             recipient: ACCOUNT_SAME_STASHCONTROLLER,
           }),
-          expectedStatus: (account) => ({
+          expectedStatus: account => ({
             errors: {},
             warnings: {
               amount: new PolkadotAllFundsWarning(),
@@ -614,9 +609,7 @@ const polkadot: CurrenciesData<Transaction> = {
           }),
           expectedStatus: {
             errors: {
-              recipient: new PolkadotUnauthorizedOperation(
-                "Recipient is already a controller"
-              ),
+              recipient: new PolkadotUnauthorizedOperation("Recipient is already a controller"),
             },
             warnings: {},
           },
@@ -691,11 +684,6 @@ export const dataset: DatasetTest<Transaction> = {
     polkadot,
   },
 };
-
-// Disconnect all api clients that could be open.
-afterAll(async () => {
-  await disconnect();
-});
 
 describe("canUnbond", () => {
   test("can unbond", () => {

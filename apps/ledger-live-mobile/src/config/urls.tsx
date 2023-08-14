@@ -26,6 +26,19 @@ export const urls = {
     ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
+  contactSupportWebview: {
+    ar: "https://support.ledger.com/hc/ar/articles/4423020306705-%D8%AA%D9%88%D8%A7%D8%B5%D9%84-%D9%85%D8%B9%D9%86%D8%A7?support=true",
+    de: "https://support.ledger.com/hc/de/articles/4423020306705-Kontakt?support=true",
+    en: "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
+    es: "https://support.ledger.com/hc/es/articles/4423020306705-Contacto?support=true",
+    fr: "https://support.ledger.com/hc/fr-fr/articles/4423020306705-Nous-contacter?support=true",
+    ja: "https://support.ledger.com/hc/ja/articles/4423020306705-%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B?support=true",
+    ko: "https://support.ledger.com/hc/ko/articles/4423020306705-%EA%B3%A0%EA%B0%9D-%EB%AC%B8%EC%9D%98?support=true",
+    pt: "https://support.ledger.com/hc/pt-br/articles/4423020306705-Entre-em-contato-conosco?support=true",
+    ru: "https://support.ledger.com/hc/ru/articles/4423020306705-%D0%A1%D0%B2%D1%8F%D0%B6%D0%B8%D1%82%D0%B5%D1%81%D1%8C-%D1%81-%D0%BD%D0%B0%D0%BC%D0%B8?support=true",
+    tr: "https://support.ledger.com/hc/tr/articles/4423020306705-Bize-Ula%C5%9F%C4%B1n?support=true",
+    zh: "https://support.ledger.com/hc/zh-cn/articles/4423020306705-%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC?support=true",
+  },
   pairingIssues:
     "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?support=true",
   ratingsContact:
@@ -47,14 +60,15 @@ export const urls = {
   erc20:
     "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_erc20",
   errors: {
+    PeerRemovedPairing:
+      "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     PairingFailed:
       "https://support.ledger.com/hc/en-us/articles/360025864773?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     SyncError:
       "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
     LedgerAPIErrorWithMessage:
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
-    StratisDown2021Warning:
-      "https://support.ledger.com/hc/en-us/articles/115005175329",
+    StratisDown2021Warning: "https://support.ledger.com/hc/en-us/articles/115005175329",
     TronSendTrc20ToNewAccountForbidden:
       "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
   },
@@ -63,13 +77,14 @@ export const urls = {
   delegation:
     "https://www.ledger.com/staking-tezos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=delegation_tezos",
   appSupport:
-    "https://support.ledger.com/hc/en-us/articles/360011454079-What-are-apps-and-accounts-?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=appsupport",
+    "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?utm_source=ledger_live_mobile&utm_medium=self_referral&docs=true",
   goToManager:
     "https://support.ledger.com/hc/en-us/articles/4404382258961-Install-uninstall-and-update-apps?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=gotomanager",
   addAccount:
     "https://support.ledger.com/hc/en-us/articles/4404389482641?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=add_account",
   tronStaking:
     "https://www.ledger.com/staking-tron?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tron",
+  TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
   supportLinkByTokenType: {
     erc20:
       "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
@@ -85,12 +100,12 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
   cosmosStaking:
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
+  cardanoStaking: "https://support.ledger.com/hc/articles/7880073204253?docs=true",
   algorandStaking:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
     "https://support.ledger.com/hc/en-us/articles/360018131260-Earning-Polkadot-DOT-bonding-rewards?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
-  elrondStaking:
-    "https://support.ledger.com/hc/en-us/articles/360016750819-Elrond-EGLD-?docs=true",
+  elrondStaking: "https://support.ledger.com/hc/en-us/articles/360016750819-Elrond-EGLD-?docs=true",
   nearStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360020450619-NEAR-NEAR-?docs=true",
   swap: {
@@ -106,20 +121,6 @@ export const urls = {
         main: "https://criptointercambio.com/",
         support: "https://criptointercambio.com/en/about",
         tos: "https://criptointercambio.com/terms-of-use",
-      },
-      wyre: {
-        main: "https://support.sendwyre.com/hc/en-us/requests/new",
-        tos: "https://www.sendwyre.com/user-agreement/",
-      },
-      ftx: {
-        main: "https://ftx.com",
-        support: "https://ftx.com/support",
-        tos: null,
-      },
-      ftxus: {
-        main: "https://ftx.us/",
-        support: "https://help.ftx.us/hc/en-us",
-        tos: null,
       },
     },
   },
@@ -141,10 +142,6 @@ export const urls = {
     developerPage:
       "https://developers.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=catalog",
   },
-  compound:
-    "https://support.ledger.com/hc/en-us/articles/4404389208721-Lend-crypto-assets-with-Ledger-Live?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compound",
-  compoundTnC:
-    "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTnC",
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTX",
   recoveryPhraseInfo:
@@ -154,8 +151,7 @@ export const urls = {
   otgCable:
     "https://support.ledger.com/hc/en-us/articles/115005463729-OTG-Kit-adapters-for-your-Ledger-devices",
   ledgerStatus: "https://status.ledger.com/",
-  bitcoinAddressType:
-    "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
+  bitcoinAddressType: "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
   supportPage:
     "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
   maxSpendable:
@@ -170,8 +166,7 @@ export const urls = {
   },
   solana: {
     supportPage: "https://support.ledger.com",
-    stakingPage:
-      "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
+    stakingPage: "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
   },
   resources: {
     gettingStarted:
@@ -205,10 +200,25 @@ export const urls = {
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
   },
   nft: {
-    supportDisableIos:
-      "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
+    supportDisableIos: "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
-  lnxFirmwareUpdate:
-    "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+  fwUpdateReleaseNotes: {
+    nanoS:
+      "https://support.ledger.com/hc/en-us/articles/360010446000-Ledger-Nano-S-firmware-release-notes?docs=true",
+    nanoSP:
+      "https://support.ledger.com/hc/en-us/articles/4494540771997-Ledger-Nano-S-Plus-Firmware-Release-Notes?docs=true",
+    nanoX:
+      "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
+    stax: "https://support.ledger.com/hc/en-us/articles/9950654827293?docs=true",
+    blue: "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
+  },
+  lnxFirmwareUpdate: "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
+  recoverSources: {
+    myLedger: "ledgerlive://myledger",
+  },
+  domainService: "https://support.ledger.com/hc/articles/9710787581469?docs=true",
+  editEthTx: {
+    learnMore: "https://support.ledger.com/hc/articles/9756122596765?support=true",
+  },
 };

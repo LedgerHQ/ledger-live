@@ -40,9 +40,7 @@ export default function DelegationRow({
         styles.row,
         styles.wrapper,
         { backgroundColor: colors.card },
-        !isLast
-          ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey }
-          : undefined,
+        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
       ]}
       onPress={() => onPress(stakeWithMeta)}
     >

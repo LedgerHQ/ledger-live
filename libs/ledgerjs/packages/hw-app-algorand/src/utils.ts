@@ -9,10 +9,7 @@ const ALGORAND_CHECKSUM_BYTE_LENGTH = 4;
 export const encodeAddress = (address: Uint8Array): string => {
   const checksum = sha512.sha512_256
     .array(address)
-    .slice(
-      PUBLIC_KEY_LENGTH - ALGORAND_CHECKSUM_BYTE_LENGTH,
-      PUBLIC_KEY_LENGTH
-    );
+    .slice(PUBLIC_KEY_LENGTH - ALGORAND_CHECKSUM_BYTE_LENGTH, PUBLIC_KEY_LENGTH);
   const addr = base32.encode(concatArrays(address, checksum));
 
   return addr.toString().slice(0, ALGORAND_ADDRESS_LENGTH);

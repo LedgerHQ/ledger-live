@@ -2,10 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import {
-  ExchangeRate,
-  SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";
 import {
   usePickDefaultCurrency,
@@ -18,6 +15,8 @@ import { toSelector } from "../../../../actions/swap";
 import { ScreenName } from "../../../../const";
 import { useAnalytics } from "../../../../analytics";
 import { sharedSwapTracking } from "../../utils";
+import { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
+import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 
 interface Props {
   swapTx: SwapTransactionType;
@@ -28,7 +27,7 @@ interface Props {
 export function To({ swapTx, provider, exchangeRate }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
 
   const fromCurrencyId = swapTx.swap.from.account
     ? getAccountCurrency(swapTx.swap.from.account).id
@@ -37,18 +36,13 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({ allCurrencies });
 
-  usePickDefaultCurrency(
-    currencies,
-    swapTx.swap.to.currency,
-    swapTx.setToCurrency,
-  );
+  usePickDefaultCurrency(currencies, swapTx.swap.to.currency, swapTx.setToCurrency);
 
   const onPress = useCallback(() => {
     track("button_clicked", {
       ...sharedSwapTracking,
       button: "edit target account",
     });
-    // @ts-expect-error navigation type is only partially declared
     navigation.navigate(ScreenName.SwapSelectCurrency, {
       currencies,
       provider,
@@ -68,6 +62,7 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
             subTitle={swapTx.swap.to.currency?.units[0].code || "-"}
             onPress={onPress}
             disabled={!swapTx.swap.to.currency}
+            testID="swap-destination-selector"
           />
         </Flex>
 

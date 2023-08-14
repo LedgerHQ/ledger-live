@@ -1,21 +1,14 @@
 import React, { memo, useState, useCallback } from "react";
-import {
-  SectionList,
-  SectionListData,
-  SectionListRenderItemInfo,
-} from "react-native";
+import { SectionList, SectionListData, SectionListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import type { DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
 import { useRefreshAccountsOrdering } from "../../actions/general";
-import {
-  accountsSelector,
-  flattenAccountsSelector,
-} from "../../reducers/accounts";
+import { accountsSelector, flattenAccountsSelector } from "../../reducers/accounts";
 
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import OperationRow from "../../components/OperationRow";
@@ -28,10 +21,7 @@ import { track } from "../../analytics";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
-type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.PortfolioOperationHistory
->;
+type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PortfolioOperationHistory>;
 
 export const PortfolioHistoryList = withDiscreetMode(
   ({
@@ -62,11 +52,7 @@ export const PortfolioHistoryList = withDiscreetMode(
       return item.id;
     }
 
-    function renderItem({
-      item,
-      index,
-      section,
-    }: SectionListRenderItemInfo<Operation>) {
+    function renderItem({ item, index, section }: SectionListRenderItemInfo<Operation>) {
       const account = allAccounts.find(a => a.id === item.accountId);
       const parentAccount =
         account && account.type !== "Account"
@@ -141,11 +127,7 @@ function PortfolioHistory({ navigation }: Props) {
   }
 
   return (
-    <PortfolioHistoryList
-      navigation={navigation}
-      opCount={opCount}
-      onEndReached={onEndReached}
-    />
+    <PortfolioHistoryList navigation={navigation} opCount={opCount} onEndReached={onEndReached} />
   );
 }
 

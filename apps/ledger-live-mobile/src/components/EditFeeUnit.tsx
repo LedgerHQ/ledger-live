@@ -16,10 +16,7 @@ import CurrencyInput from "./CurrencyInput";
 import Touchable from "./Touchable";
 import QueuedDrawer from "./QueuedDrawer";
 import Button from "./Button";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "./RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 
 type Props = {
@@ -47,8 +44,7 @@ export default function EditFreeUnit({ account, field }: Props) {
   const [transaction, setTransaction] = useState<Transaction>(
     (route.params as { transaction: Transaction })?.transaction,
   );
-  const feeCustomUnit =
-    (transaction as { feeCustomUnit?: Unit }).feeCustomUnit || account.unit;
+  const feeCustomUnit = (transaction as { feeCustomUnit?: Unit }).feeCustomUnit || account.unit;
   const editTxFeeByFamily = useEditTxFeeByFamily();
 
   function onRequestClose() {
@@ -105,11 +101,7 @@ export default function EditFreeUnit({ account, field }: Props) {
             value={fee}
             onChange={onChange}
           />
-          <Touchable
-            event="EditFeeUnitOpen"
-            onPress={onPress}
-            style={styles.unitContainer}
-          >
+          <Touchable event="EditFeeUnitOpen" onPress={onPress} style={styles.unitContainer}>
             <View style={styles.unitSelectRow}>
               <LText secondary semiBold style={styles.unitStyle}>
                 {feeCustomUnit.code}
@@ -131,10 +123,7 @@ export default function EditFreeUnit({ account, field }: Props) {
           />
         </View>
       </View>
-      <QueuedDrawer
-        isRequestingToBeOpened={isModalOpened}
-        onClose={onRequestClose}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isModalOpened} onClose={onRequestClose}>
         <View style={styles.editFeesUnitsModalTitleRow}>
           <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
             {t("send.fees.edit.title")}
@@ -154,10 +143,7 @@ export default function EditFreeUnit({ account, field }: Props) {
                 updateTransaction(item);
               }}
             >
-              <SettingsRow
-                title={item.code}
-                selected={feeCustomUnit === item}
-              />
+              <SettingsRow title={item.code} selected={feeCustomUnit === item} />
             </Touchable>
           )}
         >

@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
+import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { command } from "~/renderer/commands";
+import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { getEnv } from "@ledgerhq/live-common/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { StepProps } from "..";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import useTheme from "~/renderer/hooks/useTheme";
+import { StepProps } from "..";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -21,14 +21,13 @@ const Container = styled(Box).attrs(() => ({
 
 type BodyProps = {
   modelId: DeviceModelId;
+  deviceHasPin?: boolean | undefined;
 };
 
-export const Body = ({ modelId }: BodyProps) => {
-  const type = useTheme("colors.palette.type");
-  return renderFirmwareUpdating({ modelId, type });
+export const Body = ({ modelId, deviceHasPin }: BodyProps) => {
+  const type = useTheme().colors.palette.type;
+  return renderFirmwareUpdating({ modelId, type, deviceHasPin });
 };
-
-type Props = StepProps;
 
 const StepUpdating = ({
   firmware,
@@ -36,23 +35,22 @@ const StepUpdating = ({
   setError,
   transitionTo,
   setUpdatedDeviceInfo,
-}: Props) => {
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
+  deviceHasPin,
+}: StepProps) => {
   useEffect(() => {
-    const sub = (getEnv("MOCK")
-      ? mockedEventEmitter()
-      : command("waitForDeviceInfo")({ deviceId: "" })
+    const sub = (
+      getEnv("MOCK")
+        ? mockedEventEmitter()
+        : withDevicePolling("")(
+            transport => from(getDeviceInfo(transport)),
+            () => true,
+          )
     )
       .pipe(timeout(5 * 60 * 1000))
       .subscribe({
         next: setUpdatedDeviceInfo,
         complete: () => {
-          const shouldGoToLanguageStep =
-            firmware &&
-            isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
-            deviceLocalizationFeatureFlag?.enabled;
-          transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
+          transitionTo("restore");
         },
         error: (error: Error) => {
           setError(error);
@@ -65,19 +63,12 @@ const StepUpdating = ({
         sub.unsubscribe();
       }
     };
-  }, [
-    setError,
-    transitionTo,
-    firmware,
-    deviceModelId,
-    setUpdatedDeviceInfo,
-    deviceLocalizationFeatureFlag?.enabled,
-  ]);
+  }, [setError, transitionTo, firmware, deviceModelId, setUpdatedDeviceInfo]);
 
   return (
     <Container>
       <TrackPage category="Manager" name="Firmware Updating" />
-      <Body modelId={deviceModelId} />
+      <Body modelId={deviceModelId} deviceHasPin={deviceHasPin} />
     </Container>
   );
 };

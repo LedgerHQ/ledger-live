@@ -2,11 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Address } from "@elrondnetwork/erdjs/out";
-import type {
-  ElrondProtocolTransaction,
-  ElrondTransactionMode,
-  Transaction,
-} from "./types";
+import type { ElrondProtocolTransaction, ElrondTransactionMode, Transaction } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
@@ -23,9 +19,7 @@ import { BinaryUtils } from "./utils/binary.utils";
 import { decodeTokenAccountId } from "../../account";
 import { extractTokenId } from "./logic";
 
-function getOptimisticOperationType(
-  transactionMode: ElrondTransactionMode
-): OperationType {
+function getOptimisticOperationType(transactionMode: ElrondTransactionMode): OperationType {
   switch (transactionMode) {
     case "delegate":
       return "DELEGATE";
@@ -42,9 +36,7 @@ function getOptimisticOperationType(
   }
 }
 
-function getOptimisticOperationDelegationAmount(
-  transaction: Transaction
-): BigNumber | undefined {
+function getOptimisticOperationDelegationAmount(transaction: Transaction): BigNumber | undefined {
   let dataDecoded;
   switch (transaction.mode) {
     case "delegate":
@@ -55,14 +47,14 @@ function getOptimisticOperationDelegationAmount(
       return new BigNumber(`0x${dataDecoded.split("@")[1]}`);
 
     default:
-      return undefined;
+      return new BigNumber(0);
   }
 }
 
 const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  unsignedTx: ElrondProtocolTransaction
+  unsignedTx: ElrondProtocolTransaction,
 ): Operation => {
   const senders = [account.freshAddress];
   const recipients = [transaction.recipient];
@@ -77,7 +69,7 @@ const buildOptimisticOperation = (
   const tokenAccount =
     (subAccountId &&
       account.subAccounts &&
-      account.subAccounts.find((ta) => ta.id === subAccountId)) ||
+      account.subAccounts.find(ta => ta.id === subAccountId)) ||
     null;
 
   const value =
@@ -142,8 +134,8 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
+  withDevice(deviceId)(transport =>
+    Observable.create(o => {
       async function main() {
         if (!transaction.fees) {
           throw new FeeNotLoaded();
@@ -153,7 +145,7 @@ const signOperation = ({
         const { subAccountId } = transaction;
         const tokenAccount = !subAccountId
           ? null
-          : subAccounts && subAccounts.find((ta) => ta.id === subAccountId);
+          : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
 
         const elrond = new Elrond(transport);
         await elrond.setAddress(account.freshAddressPath);
@@ -167,25 +159,18 @@ const signOperation = ({
               extractTokenId(token.id),
               token?.units[0].magnitude,
               CHAIN_ID,
-              token.ledgerSignature
+              token.ledgerSignature,
             );
           }
         }
 
-        const unsignedTx: string = await buildTransactionToSign(
-          account,
-          transaction
-        );
+        const unsignedTx: string = await buildTransactionToSign(account, transaction);
 
         o.next({
           type: "device-signature-requested",
         });
 
-        const r = await elrond.signTransaction(
-          account.freshAddressPath,
-          unsignedTx,
-          true
-        );
+        const r = await elrond.signTransaction(account.freshAddressPath, unsignedTx, true);
 
         o.next({
           type: "device-signature-granted",
@@ -193,11 +178,7 @@ const signOperation = ({
 
         const parsedUnsignedTx = JSON.parse(unsignedTx);
 
-        const operation = buildOptimisticOperation(
-          account,
-          transaction,
-          parsedUnsignedTx
-        );
+        const operation = buildOptimisticOperation(account, transaction, parsedUnsignedTx);
 
         o.next({
           type: "signed",
@@ -212,9 +193,9 @@ const signOperation = ({
 
       main().then(
         () => o.complete(),
-        (e) => o.error(e)
+        e => o.error(e),
       );
-    })
+    }),
   );
 
 export default signOperation;

@@ -8,7 +8,7 @@ import { getAvailableAccountsById } from "../utils";
 export const usePickDefaultAccount = (
   accounts: (AccountLike & { disabled?: boolean })[],
   fromAccount: AccountLike | null | undefined,
-  setFromAccount: (account: AccountLike) => void
+  setFromAccount: (account: AccountLike) => void,
 ): void => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const allCurrencies = useCurrenciesByMarketcap(list);
@@ -17,9 +17,7 @@ export const usePickDefaultAccount = (
     if (!fromAccount && allCurrencies.length > 0) {
       const defaultAccount: AccountLike | undefined = allCurrencies
         .map(({ id }) =>
-          getAvailableAccountsById(id, accounts).filter((account) =>
-            account.balance.gt(0)
-          )
+          getAvailableAccountsById(id, accounts).filter(account => account.balance.gt(0)),
         )
         .flat(1)
         .find(Boolean);

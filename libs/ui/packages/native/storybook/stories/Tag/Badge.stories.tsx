@@ -1,15 +1,26 @@
 import React from "react";
-import { storiesOf } from "../storiesOf";
-import { select, boolean, text } from "@storybook/addon-knobs";
 import Badge from "../../../src/components/tags/Badge";
 
-const BadgeSample = () => (
-  <Badge
-    badgeVariant={select("type", ["main", "primary", undefined], undefined)}
-    active={boolean("active", false)}
-  >
-    {text("children", "Label")}
+export default {
+  title: "Tag/Badge",
+  component: Badge,
+};
+
+export const BadgeSample = (args: typeof BadgeSampleArgs) => (
+  <Badge badgeVariant={args.badgeVariant} active={args.active}>
+    {args.children}
   </Badge>
 );
-
-storiesOf((story) => story("Tag", module).add("Badge", BadgeSample));
+BadgeSample.storyName = "Badge";
+const BadgeSampleArgs = {
+  badgeVariant: undefined,
+  active: false,
+  children: "Label",
+};
+BadgeSample.args = BadgeSampleArgs;
+BadgeSample.argTypes = {
+  badgeVariant: {
+    options: ["main", "primary", undefined],
+    control: { type: "select" },
+  },
+};

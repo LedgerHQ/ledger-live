@@ -24,7 +24,7 @@ import CrossRound from "../../icons/CrossRound";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import Circle from "../../components/Circle";
 import Alert from "../../components/Alert";
-import HeaderRightClose from "../../components/HeaderRightClose";
+import { NavigationHeaderCloseButtonAdvanced } from "../../components/NavigationHeaderCloseButton";
 import { TrackScreen } from "../../analytics";
 import AccountHeaderTitle from "../Account/AccountHeaderTitle";
 import { rgba, Theme } from "../../colors";
@@ -48,10 +48,7 @@ const DottedLine = ({ colors }: { colors: Theme["colors"] }) => (
   </View>
 );
 
-type Props = StackNavigatorProps<
-  WalletConnectNavigatorParamList,
-  ScreenName.WalletConnectConnect
->;
+type Props = StackNavigatorProps<WalletConnectNavigatorParamList, ScreenName.WalletConnectConnect>;
 
 export default function Connect({ route, navigation }: Props) {
   const { colors } = useTheme();
@@ -66,7 +63,7 @@ export default function Connect({ route, navigation }: Props) {
   useEffect(() => {
     const opts = {
       headerRight: () => (
-        <HeaderRightClose
+        <NavigationHeaderCloseButtonAdvanced
           onClose={() => {
             disconnect();
           }}
@@ -106,14 +103,10 @@ export default function Connect({ route, navigation }: Props) {
           },
         ]}
       >
-        {!account ||
-        account.type !== "Account" ||
-        wcContext.status === STATUS.ERROR ? (
+        {!account || account.type !== "Account" || wcContext.status === STATUS.ERROR ? (
           <View style={styles.centerContainer}>
             <CrossRound size={50} color={colors.alert} />
-            <LText style={styles.error}>
-              {wcContext.error?.message || "Invalid account id"}
-            </LText>
+            <LText style={styles.error}>{wcContext.error?.message || "Invalid account id"}</LText>
           </View>
         ) : wcContext.status === STATUS.CONNECTING && wcContext.dappInfo ? (
           <>
@@ -128,19 +121,14 @@ export default function Connect({ route, navigation }: Props) {
                   style={styles.logo}
                 />
                 <DottedLine colors={colors} />
-                <Image
-                  source={require("../../images/logo_small.png")}
-                  style={styles.logo}
-                />
+                <Image source={require("../../images/logo_small.png")} style={styles.logo} />
               </View>
               <LText semiBold style={styles.peerName}>
                 {wcContext.dappInfo.name}
               </LText>
               <LText style={styles.details}>{wcContext.dappInfo.url}</LText>
             </View>
-            <LText style={[styles.details, styles.infos]}>
-              {t("walletconnect.disclaimer")}
-            </LText>
+            <LText style={[styles.details, styles.infos]}>{t("walletconnect.disclaimer")}</LText>
             <View
               style={[
                 styles.accountContainer,
@@ -171,10 +159,7 @@ export default function Connect({ route, navigation }: Props) {
                   style={styles.logo}
                 />
                 <View style={styles.checkContainer}>
-                  <Circle
-                    bg={wcContext.socketReady ? colors.green : colors.orange}
-                    size={24}
-                  >
+                  <Circle bg={wcContext.socketReady ? colors.green : colors.orange} size={24}>
                     {wcContext.socketReady ? (
                       <Check color="white" size={12} />
                     ) : (
@@ -207,9 +192,7 @@ export default function Connect({ route, navigation }: Props) {
               </View>
             ) : (
               <View style={styles.messagesContainer}>
-                <Alert type="warning">
-                  {t("walletconnect.warningdisconnected")}
-                </Alert>
+                <Alert type="warning">{t("walletconnect.warningdisconnected")}</Alert>
               </View>
             )}
           </>
@@ -224,18 +207,14 @@ export default function Connect({ route, navigation }: Props) {
                   <LText semiBold style={styles.peerName}>
                     {wcContext.dappInfo.name}
                   </LText>
-                  <LText style={styles.details}>
-                    {t("walletconnect.isconnecting")}
-                  </LText>
+                  <LText style={styles.details}>{t("walletconnect.isconnecting")}</LText>
                 </>
               ) : null}
             </View>
           </>
         )}
       </View>
-      {wcContext.status === STATUS.CONNECTING &&
-      account &&
-      wcContext.dappInfo ? (
+      {wcContext.status === STATUS.CONNECTING && account && wcContext.dappInfo ? (
         <View style={styles.buttonsContainer}>
           <Button
             containerStyle={styles.buttonContainer}

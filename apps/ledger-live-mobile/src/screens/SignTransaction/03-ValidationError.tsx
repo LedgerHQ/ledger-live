@@ -5,10 +5,7 @@ import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import ValidateError from "../../components/ValidateError";
 
-import {
-  context as _wcContext,
-  setCurrentCallRequestError,
-} from "../WalletConnect/Provider";
+import { context as _wcContext, setCurrentCallRequestError } from "../WalletConnect/Provider";
 import { ScreenName } from "../../const";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
@@ -18,10 +15,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 
 type Navigation = CompositeScreenProps<
-  StackNavigatorProps<
-    SignTransactionNavigatorParamList,
-    ScreenName.SignTransactionValidationError
-  >,
+  StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionValidationError>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -38,9 +32,7 @@ export default function ValidationError({ navigation, route }: Navigation) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

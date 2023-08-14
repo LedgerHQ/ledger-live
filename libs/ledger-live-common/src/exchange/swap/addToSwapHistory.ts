@@ -26,13 +26,10 @@ export default ({
   const toCurrency = getAccountCurrency(toAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
   const subAccounts = account.type === "Account" && account.subAccounts;
-  const tokenId =
-    toCurrency.type === "TokenCurrency" ? toCurrency.id : undefined;
+  const tokenId = toCurrency.type === "TokenCurrency" ? toCurrency.id : undefined;
   const isFromToken = fromCurrency.type === "TokenCurrency";
   const operationId =
-    isFromToken && operation.subOperations
-      ? operation.subOperations[0].id
-      : operation.id;
+    isFromToken && operation.subOperations ? operation.subOperations[0].id : operation.id;
 
   const toAmount = transaction.amount.times(exchangeRate.magnitudeAwareRate);
 

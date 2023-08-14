@@ -3,10 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Currency, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
-import {
-  ArrowLeftMedium,
-  SettingsMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { ArrowLeftMedium, SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTranslation } from "react-i18next";
 import Animated from "react-native-reanimated";
@@ -14,10 +11,7 @@ import BigNumber from "bignumber.js";
 import Touchable from "../../components/Touchable";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import {
-  countervalueFirstSelector,
-  readOnlyModeEnabledSelector,
-} from "../../reducers/settings";
+import { countervalueFirstSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { track } from "../../analytics";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Placeholder from "../../components/Placeholder";
@@ -44,7 +38,7 @@ function Header({
     if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "Back",
-        screen: "Account",
+        page: "Account",
       });
     }
     navigation.goBack();
@@ -70,7 +64,12 @@ function Header({
       }
       centerBeforeScrollElement={
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text variant={"large"} fontWeight={"semiBold"} numberOfLines={1}>
+          <Text
+            variant={"large"}
+            fontWeight={"semiBold"}
+            numberOfLines={1}
+            testID={`accounts-title-${currency.name}`}
+          >
             {t("asset.title", { assetName: currency.name })}
           </Text>
         </Flex>
@@ -98,11 +97,7 @@ function Header({
                 {shouldUseCounterValue ? (
                   <CounterValue currency={currency} value={currencyBalance} />
                 ) : (
-                  <CurrencyUnitValue
-                    showCode
-                    unit={currency.units[0]}
-                    value={currencyBalance}
-                  />
+                  <CurrencyUnitValue showCode unit={currency.units[0]} value={currencyBalance} />
                 )}
               </Text>
             </>

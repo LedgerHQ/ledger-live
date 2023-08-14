@@ -40,24 +40,15 @@ const keyExtractor = (baker: Baker) => baker.address;
 
 const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <View style={styles.bakerHead}>
-      <LText
-        style={styles.bakerHeadText}
-        color="smoke"
-        numberOfLines={1}
-        semiBold
-      >
-        Validator
+      <LText style={styles.bakerHeadText} color="smoke" numberOfLines={1} semiBold>
+        {t("delegation.validator")}
       </LText>
       <View style={styles.bakerHeadContainer}>
-        <LText
-          style={styles.bakerHeadText}
-          color="smoke"
-          numberOfLines={1}
-          semiBold
-        >
-          Est. Yield
+        <LText style={styles.bakerHeadText} color="smoke" numberOfLines={1} semiBold>
+          {t("delegation.yield")}
         </LText>
         <Touchable
           style={styles.bakerHeadInfo}
@@ -71,13 +62,7 @@ const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
   );
 };
 
-const BakerRow = ({
-  onPress,
-  baker,
-}: {
-  onPress: (arg0: Baker) => void;
-  baker: Baker;
-}) => {
+const BakerRow = ({ onPress, baker }: { onPress: (arg0: Baker) => void; baker: Baker }) => {
   const { colors } = useTheme();
   const onPressT = useCallback(() => {
     onPress(baker);
@@ -108,12 +93,7 @@ const BakerRow = ({
             {baker.name}
           </LText>
           {baker.capacityStatus === "full" ? (
-            <LText
-              semiBold
-              numberOfLines={1}
-              style={styles.overdelegated}
-              color="orange"
-            >
+            <LText semiBold numberOfLines={1} style={styles.overdelegated} color="orange">
               <Trans i18nKey="delegation.overdelegated" />
             </LText>
           ) : null}
@@ -166,14 +146,8 @@ export default function SelectValidator({ navigation, route }: Props) {
     // The platform changing during runtime seems... unlikely
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-      const keyboardDidShowListener = Keyboard.addListener(
-        "keyboardDidShow",
-        keyboardDidShow,
-      );
-      const keyboardDidHideListener = Keyboard.addListener(
-        "keyboardDidHide",
-        keyboardDidHide,
-      );
+      const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", keyboardDidShow);
+      const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", keyboardDidHide);
       return () => {
         keyboardDidShowListener.remove();
         keyboardDidHideListener.remove();
@@ -182,8 +156,8 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   invariant(account, "account is undefined");
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const bridge = getAccountBridge(account, parentAccount);
       return {
         account,
@@ -192,7 +166,8 @@ export default function SelectValidator({ navigation, route }: Props) {
           recipient: "",
         }),
       };
-    });
+    },
+  );
   invariant(transaction, "transaction is undefined");
   let error: Error | null = bridgeError || status.errors.recipient;
 
@@ -258,7 +233,13 @@ export default function SelectValidator({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="DelegationFlow" name="SelectValidator" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
+      />
       <View style={styles.header}>
         {/* TODO SEARCH */}
         <BakerHead onPressHelp={displayInfos} />

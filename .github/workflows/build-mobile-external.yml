@@ -12,11 +12,11 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        required: false
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-mobile-app-android:
@@ -28,19 +28,13 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.ref_name }}
-          base_ref: ${{ inputs.base_ref }}
+          base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.2
@@ -51,7 +45,7 @@ jobs:
           distribution: "zulu" # See 'Supported distributions' for available options
           java-version: "11"
       - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.6
+        uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - uses: ./tools/actions/get-package-infos
@@ -65,17 +59,18 @@ jobs:
       - name: Get short SHA
         id: slug
         run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
         run: cd apps/ledger-live-mobile && npm version $VERSION
       - name: TurboRepo local caching server
         id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-gh-cache
+        uses: ./tools/actions/turborepo-s3-cache
         with:
           server-token: "yolo"
           cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -103,19 +98,13 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.ref_name }}
-          base_ref: ${{ inputs.base_ref }}
+          base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.2

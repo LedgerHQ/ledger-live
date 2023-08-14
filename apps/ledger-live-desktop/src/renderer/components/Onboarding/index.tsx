@@ -2,7 +2,6 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import React, { useEffect, useState, createContext } from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-
 import { Flex } from "@ledgerhq/react-ui";
 
 // screens
@@ -10,7 +9,6 @@ import { Welcome } from "~/renderer/components/Onboarding/Screens/Welcome";
 import { SelectDevice } from "~/renderer/components/Onboarding/Screens/SelectDevice";
 import { SelectUseCase } from "~/renderer/components/Onboarding/Screens/SelectUseCase";
 import Tutorial from "~/renderer/components/Onboarding/Screens/Tutorial";
-
 import styled from "styled-components";
 import { Pedagogy } from "~/renderer/components/Onboarding/Pedagogy";
 import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarning";
@@ -47,6 +45,7 @@ export enum UseCase {
   setupDevice = "setup-device",
   connectDevice = "connect-device",
   recoveryPhrase = "recovery-phrase",
+  recover = "recover",
 }
 
 type NullableDeviceModelId = DeviceModelId | null;
@@ -63,12 +62,13 @@ export const OnboardingContext = createContext<OnboardingContextTypes>({
 });
 
 export function Onboarding() {
+  const { path } = useRouteMatch();
+  const matchRecover = useRouteMatch(`${path}/${UseCase.recover}`);
   const [imgsLoaded, setImgsLoaded] = useState(false);
-  const [useCase, setUseCase] = useState(null);
+  const [useCase, setUseCase] = useState<UseCase | null>(matchRecover ? UseCase.recover : null);
   const [deviceModelId, setDeviceModelId] = useState<NullableDeviceModelId>(null);
   const [openedPedagogyModal, setOpenedPedagogyModal] = useState(false);
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
-  const { path } = useRouteMatch();
 
   useEffect(() => {
     preloadAssets().then(() => setImgsLoaded(true));
@@ -100,8 +100,8 @@ export function Onboarding() {
         <CSSTransition in appear key={path} timeout={DURATION} classNames="page-switch">
           <ScreenContainer>
             <Switch>
-              <Route exact path={path} render={props => <Welcome {...props} />} />
-              <Route path={`${path}/welcome`} render={props => <Welcome {...props} />} />
+              <Route exact path={path} component={Welcome} />
+              <Route path={`${path}/welcome`} component={Welcome} />
               <Route path={`${path}/select-device`} component={SelectDevice} />
               <Route path={`${path}/sync`} component={SyncOnboarding} />
               <Route
@@ -119,8 +119,22 @@ export function Onboarding() {
                   `${path}/${UseCase.setupDevice}`,
                   `${path}/${UseCase.connectDevice}`,
                   `${path}/${UseCase.recoveryPhrase}`,
+                  `${path}/${UseCase.recover}`,
                 ]}
-                render={props => useCase && <Tutorial {...props} useCase={useCase} />}
+                render={props =>
+                  useCase ? (
+                    <Tutorial {...props} useCase={useCase} />
+                  ) : (
+                    /**
+                     * In case we navigate to another screen then do a
+                     * history.goBack() we lose the state here so we fallback to
+                     * displaying the stateless device selection screen
+                     * One case for that is when we navigate to the USB
+                     * troubleshoot screen.
+                     */
+                    <SelectDevice />
+                  )
+                }
               />
             </Switch>
           </ScreenContainer>

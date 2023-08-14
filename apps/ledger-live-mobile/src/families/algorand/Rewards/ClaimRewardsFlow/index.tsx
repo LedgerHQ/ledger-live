@@ -21,10 +21,7 @@ import type { AlgorandClaimRewardsFlowParamList } from "./type";
 function ClaimRewardsFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -123,9 +120,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.AlgorandClaimRewardsInfo}
         component={ClaimRewardsInfo}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("algorand.claimRewards.stepperHeader.info")} />
-          ),
+          headerTitle: () => <StepHeader title={t("algorand.claimRewards.stepperHeader.info")} />,
           headerLeft: () => null,
           headerStyle: {
             ...defaultNavigationOptions.headerStyle,

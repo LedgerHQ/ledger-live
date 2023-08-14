@@ -1,12 +1,15 @@
-import { storiesOf } from "../../storiesOf";
 import React from "react";
 import NumberInput from "../../../../src/components/Form/Input/NumberInput";
-import { number } from "@storybook/addon-knobs";
 
-const NumberInputStory = () => {
+export default {
+  title: "Form/Input/NumberInput",
+  component: NumberInput,
+};
+
+export const NumberInputStory = (args: typeof NumberInputStoryArgs) => {
   const [value, setValue] = React.useState(24.42);
-  const max = number("max", 349);
-  const min = number("min", 0);
+
+  const { min, max } = args;
 
   // FixMe: Naive implementation, only for story demo
   const onChange = (nb?: number) => {
@@ -32,5 +35,9 @@ const NumberInputStory = () => {
     />
   );
 };
-
-storiesOf((story) => story("Form/Input", module).add("NumberInput", NumberInputStory));
+NumberInputStory.storyName = "NumberInput";
+const NumberInputStoryArgs = {
+  min: 0,
+  max: 349,
+};
+NumberInputStory.args = NumberInputStoryArgs;

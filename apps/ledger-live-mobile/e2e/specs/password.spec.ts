@@ -4,7 +4,6 @@ import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
 import PasswordEntryPage from "../models/passwordEntryPage";
 import { loadConfig } from "../bridge/server";
-import { delay } from "../helpers";
 
 const CORRECT_PASSWORD = "passWORD$123!";
 
@@ -15,7 +14,8 @@ let passwordEntryPage: PasswordEntryPage;
 
 describe("Password Lock Screen", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETH", true);
+    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+
     portfolioPage = new PortfolioPage();
     settingsPage = new SettingsPage();
     generalSettingsPage = new GeneralSettingsPage();

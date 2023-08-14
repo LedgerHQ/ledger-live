@@ -13,19 +13,14 @@ import type { ClaimRewardsNavigatorParamList } from "../../components/RootNaviga
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    ClaimRewardsNavigatorParamList,
-    ScreenName.ClaimRewardsValidationError
-  >,
+  StackNavigatorProps<ClaimRewardsNavigatorParamList, ScreenName.ClaimRewardsValidationError>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.navigate(ScreenName.ClaimRewardsSelectDevice, route.params);
@@ -40,11 +35,7 @@ export default function ValidationError({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen category="ClaimRewards" name="ValidationError" />
-      <ValidateError
-        error={route.params.error}
-        onRetry={retry}
-        onClose={onClose}
-      />
+      <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

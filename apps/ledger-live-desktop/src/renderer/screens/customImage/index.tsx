@@ -1,5 +1,12 @@
-import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
-import { BoxedIcon, Flex, FlowStepper, Icons, InfiniteLoader, Log, Text } from "@ledgerhq/react-ui";
+import React, {
+  ComponentProps,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -19,8 +26,11 @@ import StepTransfer from "./Step4Transfer";
 import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import { analyticsDrawerContext, setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
+import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
+import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = {
   imageUri?: string;
@@ -39,13 +49,13 @@ const orderedSteps: Step[] = [
 const ErrorDisplayV2 = withV2StyleProvider(ErrorDisplay);
 
 const CustomImage: React.FC<Props> = props => {
-  const {
-    imageUri,
-    isFromNFTEntryPoint,
-    reopenPreviousDrawer,
-    isFromPostOnboardingEntryPoint,
-  } = props;
+  const { imageUri, isFromNFTEntryPoint, reopenPreviousDrawer, isFromPostOnboardingEntryPoint } =
+    props;
   const { t } = useTranslation();
+  const track = useTrack();
+  const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
+
+  useEffect(() => setAnalyticsDrawerName(analyticsDrawerName), [setAnalyticsDrawerName]);
 
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
 
@@ -109,36 +119,28 @@ const CustomImage: React.FC<Props> = props => {
     if (loadedImage) setSourceLoading(false);
   }, [loadedImage]);
 
-  const handleStepChooseImageResult: ComponentProps<
-    typeof StepChooseImage
-  >["onResult"] = useCallback(
-    res => {
-      setLoadedImage(res);
-      setStepWrapper(Step.adjustImage);
-    },
-    [setStepWrapper],
-  );
+  const handleStepChooseImageResult: ComponentProps<typeof StepChooseImage>["onResult"] =
+    useCallback(
+      res => {
+        setLoadedImage(res);
+        setStepWrapper(Step.adjustImage);
+      },
+      [setStepWrapper],
+    );
 
-  const handleStepAdjustImageResult: ComponentProps<
-    typeof StepAdjustImage
-  >["onResult"] = useCallback(res => {
-    setCroppedImage(res);
-  }, []);
+  const handleStepAdjustImageResult: ComponentProps<typeof StepAdjustImage>["onResult"] =
+    useCallback(res => {
+      setCroppedImage(res);
+    }, []);
 
-  const handleStepChooseContrastResult: ComponentProps<
-    typeof StepChooseContrast
-  >["onResult"] = useCallback(res => {
-    setFinalResult(res);
-  }, []);
+  const handleStepChooseContrastResult: ComponentProps<typeof StepChooseContrast>["onResult"] =
+    useCallback(res => {
+      setFinalResult(res);
+    }, []);
 
   const handleStepTransferResult = useCallback(() => {
-    // TODO: when post onboarding hub is merged: completeAction(PostOnboardingAction.customImage)
     setTransferDone(true);
   }, []);
-
-  const handleErrorRetryClicked = useCallback(() => {
-    setStepWrapper(Step.chooseImage);
-  }, [setStepWrapper]);
 
   const handleError = useCallback(
     (step: Step, error: Error) => {
@@ -160,23 +162,24 @@ const CustomImage: React.FC<Props> = props => {
 
   const error = stepError[step];
 
+  const handleErrorRetryClicked = useCallback(() => {
+    error?.name && track("button_clicked", { button: "Retry" });
+    setStepWrapper(Step.chooseImage);
+  }, [error?.name, setStepWrapper, track]);
+
   const previousStep: Step | undefined = orderedSteps[orderedSteps.findIndex(s => s === step) - 1];
 
   const openPostOnboarding = useNavigateToPostOnboardingHubCallback();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (transferDone && isFromPostOnboardingEntryPoint) {
-      dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
-    }
-  }, [dispatch, transferDone, isFromPostOnboardingEntryPoint]);
-
   const handleDone = useCallback(() => {
     exit();
+    dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
     if (isFromPostOnboardingEntryPoint) {
+      setTrackingSource(analyticsPageNames.success);
       openPostOnboarding();
     }
-  }, [exit, openPostOnboarding, isFromPostOnboardingEntryPoint]);
+  }, [exit, dispatch, isFromPostOnboardingEntryPoint, openPostOnboarding]);
 
   const renderError = useMemo(
     () =>
@@ -189,9 +192,18 @@ const CustomImage: React.FC<Props> = props => {
                     previousStep={previousStep}
                     previousLabel={t("common.previous")}
                     setStep={setStepWrapper}
+                    previousEventProperties={{
+                      button: "Previous",
+                    }}
                   />
                 }
               >
+                <TrackPage
+                  category={analyticsPageNames.error + error.name}
+                  type="drawer"
+                  flow={analyticsFlowName}
+                  refreshSource={false}
+                />
                 <ErrorDisplayV2 error={error} onRetry={handleErrorRetryClicked} />
               </StepContainer>
             );
@@ -210,7 +222,7 @@ const CustomImage: React.FC<Props> = props => {
       flex={1}
       data-test-id="custom-image-container"
     >
-      <Text alignSelf="center" variant="h3Inter">
+      <Text alignSelf="center" variant="h5Inter">
         {t("customImage.title")}
       </Text>
       {!transferDone ? (
@@ -226,20 +238,15 @@ const CustomImage: React.FC<Props> = props => {
             itemKey={Step.chooseImage}
             label={t("customImage.steps.choose.stepLabel")}
           >
-            {sourceLoading ? (
-              <Flex flex={1} justifyContent="center" alignItems="center">
-                <InfiniteLoader />
-              </Flex>
-            ) : (
-              <StepChooseImage
-                onError={errorHandlers[Step.chooseImage]}
-                onResult={handleStepChooseImageResult}
-                setStep={setStepWrapper}
-                setLoading={setSourceLoading}
-                isShowingNftGallery={isShowingNftGallery}
-                setIsShowingNftGallery={setIsShowingNftGallery}
-              />
-            )}
+            <StepChooseImage
+              onError={errorHandlers[Step.chooseImage]}
+              onResult={handleStepChooseImageResult}
+              setStep={setStepWrapper}
+              loading={sourceLoading}
+              setLoading={setSourceLoading}
+              isShowingNftGallery={isShowingNftGallery}
+              setIsShowingNftGallery={setIsShowingNftGallery}
+            />
           </FlowStepper.Indexed.Step>
           <FlowStepper.Indexed.Step
             itemKey={Step.adjustImage}
@@ -286,27 +293,26 @@ const CustomImage: React.FC<Props> = props => {
               setStep={setStepWrapper}
               onClickNext={handleDone}
               nextTestId="custom-image-finish-button"
+              nextEventProperties={{ button: "Finish" }}
             />
           }
         >
+          <TrackPage
+            category={analyticsPageNames.success}
+            type="drawer"
+            flow={analyticsFlowName}
+            refreshSource={false}
+          />
           <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
             <BoxedIcon
+              Icon={IconsLegacy.CheckAloneMedium}
+              iconColor="success.c60"
               size={64}
               iconSize={24}
-              Icon={Icons.CheckAloneMedium}
-              iconColor="success.c50"
             />
-            <Flex flexDirection="row" flexShrink={0}>
-              <Log
-                extraTextProps={{
-                  variant: "h5",
-                }}
-                mt={12}
-                width={201}
-              >
-                {t("customImage.customImageSet")}
-              </Log>
-            </Flex>
+            <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
+              {t("customImage.customImageSet")}
+            </Text>
           </Flex>
         </StepContainer>
       )}

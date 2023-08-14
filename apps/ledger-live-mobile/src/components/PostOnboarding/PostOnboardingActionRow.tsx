@@ -1,17 +1,11 @@
 import React, { useCallback } from "react";
-import { Flex, Icons, Tag, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import {
-  PostOnboardingActionState,
-  PostOnboardingAction,
-} from "@ledgerhq/types-live";
+import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
 import Touchable from "../Touchable";
 import { track } from "../../analytics";
-import {
-  BaseNavigationComposite,
-  StackNavigatorNavigation,
-} from "../RootNavigator/types/helpers";
+import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
 
 export type Props = PostOnboardingAction & PostOnboardingActionState;
@@ -25,31 +19,26 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     titleCompleted,
     description,
     tagLabel,
-    startEvent,
-    startEventProperties,
     completed,
     disabled,
+    buttonLabelForAnalyticsEvent,
   } = props;
   const { t } = useTranslation();
   const navigation =
     useNavigation<
-      BaseNavigationComposite<
-        StackNavigatorNavigation<PostOnboardingNavigatorParamList>
-      >
+      BaseNavigationComposite<StackNavigatorNavigation<PostOnboardingNavigatorParamList>>
     >();
 
   const handlePress = useCallback(() => {
     if (navigationParams) {
       navigation.navigate(...navigationParams);
-      startEvent && track(startEvent, startEventProperties);
+      buttonLabelForAnalyticsEvent &&
+        track("button_clicked", { button: buttonLabelForAnalyticsEvent });
     }
-  }, [navigationParams, navigation, startEvent, startEventProperties]);
+  }, [navigationParams, navigation, buttonLabelForAnalyticsEvent]);
 
   return (
-    <Touchable
-      disabled={disabled}
-      onPress={completed ? undefined : handlePress}
-    >
+    <Touchable disabled={disabled} onPress={completed ? undefined : handlePress}>
       <Flex
         flexDirection="row"
         alignItems="center"
@@ -57,11 +46,8 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         justifyContent="space-between"
         opacity={disabled ? 0.5 : 1}
       >
-        <Flex flexDirection="row" alignItems="center" flexShrink={1}>
-          <Icon
-            size={24}
-            color={completed || disabled ? "neutral.c70" : "primary.c80"}
-          />
+        <Flex flexDirection="row" alignItems="flex-start" flexShrink={1}>
+          <Icon size={"M"} color={completed || disabled ? "neutral.c70" : "primary.c80"} />
           <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
             <Flex flexDirection="row" alignItems="center">
               <Text
@@ -84,17 +70,11 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
             )}
           </Flex>
         </Flex>
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          flexShrink={0}
-          flexGrow={1}
-          pl={6}
-        >
+        <Flex flexDirection="row" alignItems="center" flexShrink={0} flexGrow={1} pl={6}>
           {disabled ? null : completed ? (
-            <Icons.CheckAloneMedium color="success.c100" size={20} />
+            <IconsLegacy.CheckAloneMedium color="success.c50" size={20} />
           ) : (
-            <Icons.ChevronRightMedium color="neutral.c70" size={24} />
+            <IconsLegacy.ChevronRightMedium color="neutral.c70" size={24} />
           )}
         </Flex>
       </Flex>

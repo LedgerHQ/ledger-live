@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/react-ui";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { idsToLanguage, Language, DeviceInfo } from "@ledgerhq/types-live";
@@ -13,9 +13,15 @@ type Props = {
   deviceInfo: DeviceInfo & { languageId: number };
   onRefreshDeviceInfo: () => void;
   device: Device;
+  disabled?: boolean;
 };
 
-const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceInfo }: Props) => {
+const DeviceLanguage: React.FC<Props> = ({
+  deviceInfo,
+  device,
+  onRefreshDeviceInfo,
+  disabled,
+}: Props) => {
   const deviceLanguage = idsToLanguage[deviceInfo.languageId];
 
   const openLanguageInstallation = useCallback(() => {
@@ -40,16 +46,16 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceIn
 
   return (
     <Flex alignItems="center">
-      <Icons.LanguageMedium color="neutral.c80" size={24} />
       <Flex ml={1} mr={5}>
-        <Text color="neutral.c80" variant="bodyLineHeight" fontSize={4}>
+        <Text variant="h5Inter" fontSize={4} color="neutral.c70">
           {t("deviceLocalization.language")}
         </Text>
       </Flex>
       <Link
         type="main"
-        Icon={Icons.ChevronRightMedium}
-        onClick={openLanguageInstallation}
+        disabled={disabled}
+        Icon={IconsLegacy.ChevronRightMedium}
+        onClick={disabled ? undefined : openLanguageInstallation}
         data-test-id="manager-change-language-button"
       >
         {t(`deviceLocalization.languages.${deviceLanguage}`)}

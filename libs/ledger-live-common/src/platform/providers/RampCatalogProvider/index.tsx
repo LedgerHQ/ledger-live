@@ -1,11 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  createContext,
-  useMemo,
-  useState,
-  useCallback,
-} from "react";
+import React, { useContext, useEffect, createContext, useMemo, useState, useCallback } from "react";
 import { RampCatalog } from "./types";
 import { Loadable } from "../../types";
 
@@ -49,7 +42,7 @@ export function RampCatalogProvider({
   const [state, setState] = useState<Loadable<RampCatalog>>(initialState);
 
   const updateCatalog = useCallback(async () => {
-    setState((currentState) => ({
+    setState(currentState => ({
       ...currentState,
       isLoading: true,
       error: null,
@@ -63,7 +56,7 @@ export function RampCatalogProvider({
         error: null,
       }));
     } catch (error) {
-      setState((currentState) => ({
+      setState(currentState => ({
         ...currentState,
         isLoading: false,
         error,
@@ -76,7 +69,7 @@ export function RampCatalogProvider({
       state,
       updateCatalog,
     }),
-    [state, updateCatalog]
+    [state, updateCatalog],
   );
 
   useEffect(() => {
@@ -89,9 +82,5 @@ export function RampCatalogProvider({
     };
   }, [updateFrequency, updateCatalog]);
 
-  return (
-    <rampCatalogContext.Provider value={value}>
-      {children}
-    </rampCatalogContext.Provider>
-  );
+  return <rampCatalogContext.Provider value={value}>{children}</rampCatalogContext.Provider>;
 }

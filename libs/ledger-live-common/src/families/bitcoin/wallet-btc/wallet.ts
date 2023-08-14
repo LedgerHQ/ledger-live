@@ -18,7 +18,7 @@ import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address } from "./storage/types";
-import { blockchainBaseURL } from "../../../api/Ledger";
+import { blockchainBaseURL } from "../../../explorer";
 
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};
@@ -47,7 +47,7 @@ class BitcoinLikeWallet {
       network: "mainnet" | "testnet";
       derivationMode: DerivationModes;
     },
-    cryptoCurrency: CryptoCurrency
+    cryptoCurrency: CryptoCurrency,
   ): Promise<Account> {
     const explorerURI = blockchainBaseURL(cryptoCurrency);
     this.explorers[explorerURI] = this.getExplorer(cryptoCurrency);
@@ -68,7 +68,7 @@ class BitcoinLikeWallet {
     };
   }
 
-  async syncAccount(account: Account): Promise<number> {
+  async syncAccount(account: Account): Promise<void> {
     return account.xpub.sync();
   }
 
@@ -91,10 +91,8 @@ class BitcoinLikeWallet {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(
       await Promise.all(
-        addresses.map((address) =>
-          account.xpub.storage.getAddressUnspentUtxos(address)
-        )
-      )
+        addresses.map(address => account.xpub.storage.getAddressUnspentUtxos(address)),
+      ),
     );
   }
 
@@ -103,51 +101,39 @@ class BitcoinLikeWallet {
     feePerByte: number,
     excludeUTXOs: Array<{ hash: string; outputIndex: number }>,
     outputAddresses: string[] = [],
-    opReturnData?: Buffer
+    opReturnData?: Buffer,
   ): Promise<BigNumber> {
     const addresses = await account.xpub.getXpubAddresses();
-    const changeAddresses = (await account.xpub.getAccountAddresses(1)).map(
-      (item) => item.address
-    );
+    const changeAddresses = (await account.xpub.getAccountAddresses(1)).map(item => item.address);
 
     const utxos = flatten(
       await Promise.all(
-        addresses.map((address) =>
-          account.xpub.storage.getAddressUnspentUtxos(address)
-        )
-      )
+        addresses.map(address => account.xpub.storage.getAddressUnspentUtxos(address)),
+      ),
     );
 
     let balance = new BigNumber(0);
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     let usableUtxoCount = 0;
-    utxos.forEach((utxo) => {
+    utxos.forEach(utxo => {
       if (
         !excludeUTXOs.find(
-          (excludeUtxo) =>
-            excludeUtxo.hash === utxo.output_hash &&
-            excludeUtxo.outputIndex === utxo.output_index
+          excludeUtxo =>
+            excludeUtxo.hash === utxo.output_hash && excludeUtxo.outputIndex === utxo.output_index,
         )
       ) {
         // we can use either non pending utxo or change utxo
-        if (
-          changeAddresses.includes(utxo.address) ||
-          utxo.block_height !== null
-        ) {
+        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null) {
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
         }
       }
     });
 
-    const outputScripts = outputAddresses.map((addr) =>
-      account.xpub.crypto.toOutputScript(addr)
-    );
+    const outputScripts = outputAddresses.map(addr => account.xpub.crypto.toOutputScript(addr));
 
     if (opReturnData) {
-      outputScripts.push(
-        account.xpub.crypto.toOpReturnOutputScript(opReturnData)
-      );
+      outputScripts.push(account.xpub.crypto.toOpReturnOutputScript(opReturnData));
     }
 
     // fees if we use all utxo
@@ -158,7 +144,7 @@ class BitcoinLikeWallet {
         outputScripts,
         outputScripts.length == 0,
         account.xpub.crypto,
-        account.xpub.derivationMode
+        account.xpub.derivationMode,
       );
 
     log("btcwallet", "estimateAccountMaxSpendable balance", balance);
@@ -175,9 +161,7 @@ class BitcoinLikeWallet {
   async getAccountPendings(account: Account): Promise<TX[]> {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(
-      await Promise.all(
-        addresses.map((address) => account.xpub.explorer.getPendings(address))
-      )
+      await Promise.all(addresses.map(address => account.xpub.explorer.getPendings(address))),
     );
   }
 
@@ -218,11 +202,7 @@ class BitcoinLikeWallet {
     hasExtraData?: boolean;
     onDeviceSignatureRequested?: () => void;
     onDeviceSignatureGranted?: () => void;
-    onDeviceStreaming?: (arg0: {
-      progress: number;
-      total: number;
-      index: number;
-    }) => void;
+    onDeviceStreaming?: (arg0: { progress: number; total: number; index: number }) => void;
   }): Promise<string> {
     const {
       btc,
@@ -246,45 +226,29 @@ class BitcoinLikeWallet {
     }
     const buffer = Buffer.allocUnsafe(length);
     let bufferOffset = 0;
-    bufferOffset = utils.writeVarInt(
-      buffer,
-      txInfo.outputs.length,
-      bufferOffset
-    );
-    txInfo.outputs.forEach((txOut) => {
+    bufferOffset = utils.writeVarInt(buffer, txInfo.outputs.length, bufferOffset);
+    txInfo.outputs.forEach(txOut => {
       // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/59b21162a2c4645c64271ca004c7a3755a3d72fb/ts_src/bufferutils.ts#L26
-      buffer.writeUInt32LE(
-        txOut.value.modulo(new BigNumber(0x100000000)).toNumber(),
-        bufferOffset
-      );
+      buffer.writeUInt32LE(txOut.value.modulo(new BigNumber(0x100000000)).toNumber(), bufferOffset);
       buffer.writeUInt32LE(
         txOut.value.dividedToIntegerBy(new BigNumber(0x100000000)).toNumber(),
-        bufferOffset + 4
+        bufferOffset + 4,
       );
       bufferOffset += 8;
       if (additionals && additionals.includes("decred")) {
         bufferOffset = utils.writeVarInt(buffer, 0, bufferOffset);
         bufferOffset = utils.writeVarInt(buffer, 0, bufferOffset);
       }
-      bufferOffset = utils.writeVarInt(
-        buffer,
-        txOut.script.length,
-        bufferOffset
-      );
+      bufferOffset = utils.writeVarInt(buffer, txOut.script.length, bufferOffset);
       bufferOffset += txOut.script.copy(buffer, bufferOffset);
     });
     const outputScriptHex = buffer.toString("hex");
     const associatedKeysets = txInfo.associatedDerivations.map(
       ([account, index]) =>
-        `${fromAccount.params.path}/${fromAccount.params.index}'/${account}/${index}`
+        `${fromAccount.params.path}/${fromAccount.params.index}'/${account}/${index}`,
     );
-    type Inputs = [
-      Transaction,
-      number,
-      string | null | undefined,
-      number | null | undefined
-    ][];
-    const inputs: Inputs = txInfo.inputs.map((i) => {
+    type Inputs = [Transaction, number, string | null | undefined, number | null | undefined][];
+    const inputs: Inputs = txInfo.inputs.map(i => {
       if (additionals && additionals.includes("peercoin")) {
         // remove timestamp for new version of peercoin input, refer to https://github.com/peercoin/rfcs/issues/5 and https://github.com/LedgerHQ/ledgerjs/issues/701
         const version = i.txHex.substring(0, 8);
@@ -298,13 +262,7 @@ class BitcoinLikeWallet {
         additionals,
       });
       return [
-        btc.splitTransaction(
-          i.txHex,
-          true,
-          hasTimestamp,
-          hasExtraData,
-          additionals
-        ),
+        btc.splitTransaction(i.txHex, true, hasTimestamp, hasExtraData, additionals),
         i.output_index,
         null,
         i.sequence,
@@ -371,9 +329,7 @@ class BitcoinLikeWallet {
     });
   }
 
-  async importFromSerializedAccount(
-    account: SerializedAccount
-  ): Promise<Account> {
+  async importFromSerializedAccount(account: SerializedAccount): Promise<Account> {
     const xpub = this.instantiateXpubFromSerializedAccount(account);
 
     await xpub.storage.load(account.xpub.data);
@@ -395,9 +351,7 @@ class BitcoinLikeWallet {
     };
   }
 
-  async exportToSerializedAccount(
-    account: Account
-  ): Promise<SerializedAccount> {
+  async exportToSerializedAccount(account: Account): Promise<SerializedAccount> {
     const data = await account.xpub.storage.export();
 
     return {

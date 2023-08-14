@@ -1,6 +1,6 @@
 import Config from "react-native-config";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { Observable, timer } from "rxjs";
+import { map, debounce } from "rxjs/operators";
 import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
@@ -10,8 +10,6 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
@@ -31,10 +29,17 @@ import logger from "./logger";
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
+  "axelar",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
+  "onomy",
+  "quicksilver",
+  "persistence",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -48,6 +53,7 @@ setSupportedCurrencies([
   "dogecoin",
   "cosmos",
   "crypto_org",
+  "crypto_org_croeseid",
   "celo",
   "dash",
   "tron",
@@ -81,6 +87,32 @@ setSupportedCurrencies([
   "near",
   "icon",
   "icon_berlin_testnet",
+  "optimism",
+  "optimism_goerli",
+  "arbitrum",
+  "arbitrum_goerli",
+  "rsk",
+  "bittorrent",
+  "kava_evm",
+  "evmos_evm",
+  "energy_web",
+  "astar",
+  "metis",
+  "boba",
+  "moonriver",
+  "velas_evm",
+  "syscoin",
+  "internet_computer",
+  "ethereum_as_evm_test_only",
+  "polygon_as_evm_test_only",
+  "klaytn",
+  "polygon_zk_evm",
+  "polygon_zk_evm_testnet",
+  "base",
+  "base_goerli",
+  "stacks",
+  "telos_evm",
+  "coreum",
 ]);
 
 if (Config.VERBOSE) {
@@ -112,9 +144,7 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: new Observable<DescriptorEvent<string>>(o =>
-    HIDTransport.listen(o),
-  ).pipe(
+  discovery: new Observable<DescriptorEvent<string>>(o => HIDTransport.listen(o)).pipe(
     map(({ type, descriptor, deviceModel }) => {
       const name = deviceModel?.productName ?? "";
       return {
@@ -125,14 +155,14 @@ registerTransportModule({
         name,
       };
     }),
+    debounce(e => timer(e.type === "remove" ? 2000 : 0)),
   ),
 });
 // Add dev mode support of an http proxy
 let DebugHttpProxy: ReturnType<typeof withStaticURLs>;
 const httpdebug: TransportModule = {
   id: "httpdebug",
-  open: id =>
-    id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null,
+  open: id => (id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null),
   disconnect: id =>
     id.startsWith("httpdebug|")
       ? Promise.resolve() // nothing to do
@@ -141,15 +171,11 @@ const httpdebug: TransportModule = {
 
 if (__DEV__ && Config.DEVICE_PROXY_URL) {
   DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
-  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
-    DebugHttpProxy.listen(o),
-  ).pipe(
+  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o => DebugHttpProxy.listen(o)).pipe(
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,
-      deviceModel: getDeviceModel(
-        (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX",
-      ),
+      deviceModel: getDeviceModel((Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX"),
       wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
       name: descriptor,
     })),

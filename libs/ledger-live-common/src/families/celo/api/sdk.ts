@@ -1,7 +1,7 @@
 import { ContractKit, newKit } from "@celo/contractkit";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { getEnv } from "../../../env";
 import { CeloVote } from "../types";
-import { makeLRUCache } from "../../../cache";
 
 let kit: ContractKit;
 export const celoKit = () => {
@@ -12,9 +12,7 @@ export const celoKit = () => {
 /**
  * Fetch account registered status. To lock any Celo, account needs to be registered first
  */
-export const getAccountRegistrationStatus = async (
-  address: string
-): Promise<boolean> => {
+export const getAccountRegistrationStatus = async (address: string): Promise<boolean> => {
   const accounts = await celoKit().contracts.getAccounts();
   return await accounts.isAccount(address);
 };
@@ -41,12 +39,10 @@ export const getVotes = async (address: string): Promise<CeloVote[]> => {
   const election = await celoKit().contracts.getElection();
   const voter = await election.getVoter(await voteSignerAccount(address));
   const activates = await getActivateTransactionObjects(address);
-  const activatableValidatorGroups = activates.map(
-    (activate) => activate.txo.arguments[0]
-  );
+  const activatableValidatorGroups = activates.map(activate => activate.txo.arguments[0]);
 
   const votes: CeloVote[] = [];
-  voter.votes.forEach((vote) => {
+  voter.votes.forEach(vote => {
     let activeVoteRevokable = true;
     if (vote.pending.gt(0)) {
       // If there's a pending vote, it has to be revoked first
@@ -89,8 +85,8 @@ export const voteSignerAccount = makeLRUCache(
     const accounts = await celoKit().contracts.getAccounts();
     return await accounts.voteSignerToAccount(address);
   },
-  (address) => address,
+  address => address,
   {
     ttl: 60 * 60 * 1000, // 1 hour
-  }
+  },
 );

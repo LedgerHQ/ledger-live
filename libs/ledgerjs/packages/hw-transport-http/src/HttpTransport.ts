@@ -7,8 +7,7 @@ import { log } from "@ledgerhq/logs";
  */
 
 export default class HttpTransport extends Transport {
-  static isSupported = (): Promise<boolean> =>
-    Promise.resolve(typeof fetch === "function");
+  static isSupported = (): Promise<boolean> => Promise.resolve(typeof fetch === "function");
   // this transport is not discoverable
   static list = (): any => Promise.resolve([]);
   static listen = (_observer: any) => ({
@@ -22,11 +21,8 @@ export default class HttpTransport extends Transport {
 
     if (response.status !== 200) {
       throw new TransportError(
-        "failed to access HttpTransport(" +
-          url +
-          "): status " +
-          response.status,
-        "HttpTransportNotAccessible"
+        "failed to access HttpTransport(" + url + "): status " + response.status,
+        "HttpTransportNotAccessible",
       );
     }
   };
@@ -61,7 +57,7 @@ export default class HttpTransport extends Transport {
     if (response.status !== 200) {
       throw new TransportError(
         "failed to communicate to server. code=" + response.status,
-        "HttpTransportStatus" + response.status
+        "HttpTransportStatus" + response.status,
       );
     }
 

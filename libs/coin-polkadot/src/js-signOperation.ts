@@ -3,19 +3,22 @@ import { Observable } from "rxjs";
 import { TypeRegistry } from "@polkadot/types";
 import { u8aConcat } from "@polkadot/util";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import Polkadot from "@ledgerhq/hw-app-polkadot";
 import type { PolkadotAccount, Transaction } from "./types";
 import type {
   Account,
+  DeviceId,
   Operation,
   OperationType,
   SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
+import { PolkadotAPI } from "./api";
+import { PolkadotAddress, PolkadotSignature, PolkadotSigner } from "./signer";
+
 const MODE_TO_TYPE = {
   send: "OUT",
   bond: "BOND",
@@ -30,7 +33,7 @@ const MODE_TO_TYPE = {
 };
 const MODE_TO_PALLET_METHOD = {
   send: "balances.transferKeepAlive",
-  sendMax: "balances.transfer",
+  sendMax: "balances.transferAllowDeath",
   bond: "staking.bond",
   bondExtra: "staking.bondExtra",
   unbond: "staking.unbond",
@@ -42,11 +45,7 @@ const MODE_TO_PALLET_METHOD = {
   claimReward: "staking.payoutStakers",
 };
 
-const getExtra = (
-  type: string,
-  account: PolkadotAccount,
-  transaction: Transaction
-) => {
+const getExtra = (type: string, account: PolkadotAccount, transaction: Transaction) => {
   const extra = {
     palletMethod: MODE_TO_PALLET_METHOD[transaction.mode],
   };
@@ -70,9 +69,7 @@ const getExtra = (
     case "WITHDRAW_UNBONDED":
       return {
         ...extra,
-        withdrawUnbondedAmount: new BigNumber(
-          account.polkadotResources?.unlockedBalance || 0
-        ),
+        withdrawUnbondedAmount: new BigNumber(account.polkadotResources?.unlockedBalance || 0),
       };
 
     case "NOMINATE":
@@ -85,14 +82,10 @@ const getExtra = (
 const buildOptimisticOperation = (
   account: PolkadotAccount,
   transaction: Transaction,
-  fee: BigNumber
+  fee: BigNumber,
 ): Operation => {
-  const type = (MODE_TO_TYPE[transaction.mode] ??
-    MODE_TO_TYPE.default) as OperationType;
-  const value =
-    type === "OUT"
-      ? new BigNumber(transaction.amount).plus(fee)
-      : new BigNumber(fee);
+  const type = (MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default) as OperationType;
+  const value = type === "OUT" ? new BigNumber(transaction.amount).plus(fee) : new BigNumber(fee);
   const extra = getExtra(type, account, transaction);
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
@@ -124,7 +117,7 @@ const buildOptimisticOperation = (
 export const signExtrinsic = async (
   unsigned: Record<string, any>,
   signature: any,
-  registry: TypeRegistry
+  registry: TypeRegistry,
 ): Promise<string> => {
   const extrinsic = registry.createType("Extrinsic", unsigned, {
     version: unsigned.version,
@@ -141,12 +134,9 @@ export const signExtrinsic = async (
  */
 export const fakeSignExtrinsic = async (
   unsigned: Record<string, any>,
-  registry: TypeRegistry
+  registry: TypeRegistry,
 ): Promise<string> => {
-  const fakeSignature = u8aConcat(
-    new Uint8Array([1]),
-    new Uint8Array(64).fill(0x42)
-  );
+  const fakeSignature = u8aConcat(new Uint8Array([1]), new Uint8Array(64).fill(0x42));
   return signExtrinsic(unsigned, fakeSignature, registry);
 };
 
@@ -154,79 +144,78 @@ export const fakeSignExtrinsic = async (
  * Sign Transaction with Ledger hardware
  */
 const buildSignOperation =
-  (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> =>
+  (
+    signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
+    polkadotAPI: PolkadotAPI,
+  ): SignOperationFnSignature<Transaction> =>
   ({
     account,
     deviceId,
     transaction,
   }: {
     account: Account;
-    deviceId: any;
+    deviceId: DeviceId;
     transaction: Transaction;
   }): Observable<SignOperationEvent> =>
-    withDevice(deviceId)(
-      (transport) =>
-        new Observable((o) => {
-          async function main() {
-            o.next({
-              type: "device-signature-requested",
-            });
+    new Observable(o => {
+      async function main() {
+        o.next({
+          type: "device-signature-requested",
+        });
 
-            if (!transaction.fees) {
-              throw new FeeNotLoaded();
-            }
+        if (!transaction.fees) {
+          throw new FeeNotLoaded();
+        }
 
-            // Ensure amount is filled when useAllAmount
-            const transactionToSign = {
-              ...transaction,
-              amount: calculateAmount({
-                a: account as PolkadotAccount,
-                t: transaction,
-              }),
-            };
-            const { unsigned, registry } = await buildTransaction(
-              account as PolkadotAccount,
-              transactionToSign,
-              true
-            );
-            const payload = registry
-              .createType("ExtrinsicPayload", unsigned, {
-                version: unsigned.version,
-              })
-              .toU8a({
-                method: true,
-              });
-            // Sign by device
-            const polkadot = new Polkadot(transport);
-            // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
-            const r = await polkadot.sign(
-              account.freshAddressPath,
-              payload as any
-            );
-            const signed = await signExtrinsic(unsigned, r.signature, registry);
-            o.next({
-              type: "device-signature-granted",
-            });
-            const operation = buildOptimisticOperation(
-              account as PolkadotAccount,
-              transactionToSign,
-              transactionToSign.fees ?? new BigNumber(0)
-            );
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature: signed,
-                expirationDate: null,
-              },
-            });
-          }
+        // Ensure amount is filled when useAllAmount
+        const transactionToSign = {
+          ...transaction,
+          amount: calculateAmount({
+            a: account as PolkadotAccount,
+            t: transaction,
+          }),
+        };
+        const { unsigned, registry } = await buildTransaction(polkadotAPI)(
+          account as PolkadotAccount,
+          transactionToSign,
+          true,
+        );
+        const payload = registry
+          .createType("ExtrinsicPayload", unsigned, {
+            version: unsigned.version,
+          })
+          .toU8a({
+            method: true,
+          });
 
-          main().then(
-            () => o.complete(),
-            (e) => o.error(e)
-          );
-        })
-    );
+        const r = (await signerContext(deviceId, signer =>
+          // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
+          signer.sign(account.freshAddressPath, payload as any),
+        )) as PolkadotSignature;
+
+        const signed = await signExtrinsic(unsigned, r.signature, registry);
+        o.next({
+          type: "device-signature-granted",
+        });
+        const operation = buildOptimisticOperation(
+          account as PolkadotAccount,
+          transactionToSign,
+          transactionToSign.fees ?? new BigNumber(0),
+        );
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature: signed,
+            expirationDate: null,
+          },
+        });
+      }
+
+      main().then(
+        () => o.complete(),
+        e => o.error(e),
+      );
+    });
 
 export default buildSignOperation;

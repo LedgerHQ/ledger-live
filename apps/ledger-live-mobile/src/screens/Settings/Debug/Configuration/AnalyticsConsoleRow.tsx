@@ -17,17 +17,10 @@ const AnalyticsConsoleRow = () => {
       desc="Toggle analytics console, making tracked events visible as an overlay"
     >
       <Track
-        event={
-          analyticsConsoleVisibility
-            ? "EnableAnalyticsConsole"
-            : "DisableAnalyticsConsole"
-        }
+        event={analyticsConsoleVisibility ? "EnableAnalyticsConsole" : "DisableAnalyticsConsole"}
         onUpdate
       />
-      <Switch
-        value={analyticsConsoleVisibility}
-        onValueChange={toggleAnalyticsConsole}
-      />
+      <Switch value={analyticsConsoleVisibility} onValueChange={toggleAnalyticsConsole} />
     </SettingsRow>
   );
 };

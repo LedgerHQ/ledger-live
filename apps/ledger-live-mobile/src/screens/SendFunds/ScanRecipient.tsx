@@ -11,10 +11,7 @@ import type { SendFundsNavigatorStackParamList } from "../../components/RootNavi
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 type NavigationProps =
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSelectRecipient
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.ScanRecipient>;
 
 const ScanRecipient = ({ route, navigation }: NavigationProps) => {

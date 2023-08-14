@@ -5,12 +5,21 @@ import sha from "sha.js";
 import { bufferToHex } from "ethereumjs-util";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
-import type { DerivationMode } from "../derivation";
-import type { TypedMessageData } from "../families/ethereum/types";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
-import type { MessageData } from "../hw/signMessage/types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AnyMessage } from "@ledgerhq/types-live";
 import type { Transaction } from "../generated/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+type MessageData = {
+  currency: CryptoCurrency;
+  path: string;
+  verify?: boolean;
+  derivationMode: DerivationMode;
+  message: string;
+  rawMessage: string;
+};
+
 export type WCPayloadTransaction = {
   from: string;
   to?: string;
@@ -34,7 +43,7 @@ export type WCCallRequest =
     }
   | {
       type: "message";
-      data: MessageData | TypedMessageData;
+      data: MessageData | AnyMessage;
     }
   | {
       type: "transaction";
@@ -71,13 +80,6 @@ export const parseCallRequest: Parser = async (account, payload) => {
             .update(Buffer.from(payload.params[1].slice(2), "hex"))
             .digest("hex"),
       };
-    case "personal_sign":
-      message =
-        message || Buffer.from(payload.params[0].slice(2), "hex").toString();
-      rawMessage = rawMessage || payload.params[0];
-      hashes = hashes || {
-        stringHash: "0x" + sha("sha256").update(message).digest("hex"),
-      };
       return {
         type: "message",
         data: {
@@ -89,7 +91,14 @@ export const parseCallRequest: Parser = async (account, payload) => {
           hashes,
         },
       };
-
+    case "personal_sign":
+      message = message || Buffer.from(payload.params[0].slice(2), "hex").toString();
+      return {
+        type: "message",
+        data: {
+          message,
+        },
+      };
     case "eth_signTransaction":
     case "eth_sendTransaction":
       wcTransactionData = payload.params[0] as WCPayloadTransaction;
@@ -129,15 +138,9 @@ export const parseCallRequest: Parser = async (account, payload) => {
         });
       }
 
-      if (
-        wcTransactionData.maxFeePerGas &&
-        wcTransactionData.maxPriorityFeePerGas
-      ) {
+      if (wcTransactionData.maxFeePerGas && wcTransactionData.maxPriorityFeePerGas) {
         const maxFeePerGas = new BigNumber(wcTransactionData.maxFeePerGas, 16);
-        const maxPriorityFeePerGas = new BigNumber(
-          wcTransactionData.maxPriorityFeePerGas,
-          16
-        );
+        const maxPriorityFeePerGas = new BigNumber(wcTransactionData.maxPriorityFeePerGas, 16);
         if (maxFeePerGas.isGreaterThanOrEqualTo(maxPriorityFeePerGas)) {
           transaction = bridge.updateTransaction(transaction, {
             maxFeePerGas,

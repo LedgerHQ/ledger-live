@@ -13,23 +13,13 @@ import {
   utils as TyphonUtils,
 } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
-import {
-  getAccountStakeCredential,
-  getBaseAddress,
-  getTTL,
-  mergeTokens,
-} from "./logic";
+import { RewardAddress } from "@stricahq/typhonjs/dist/address";
+import { getAccountStakeCredential, getBaseAddress, getTTL, mergeTokens, isTestnet } from "./logic";
 import { getNetworkParameters } from "./networks";
-import {
-  decodeTokenAssetId,
-  decodeTokenCurrencyId,
-  getTokenAssetId,
-} from "./buildSubAccounts";
+import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
 
 function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
-  const address = TyphonUtils.getAddressFromHex(
-    utxo.address
-  ) as TyphonTypes.ShelleyAddress;
+  const address = TyphonUtils.getAddressFromHex(utxo.address) as TyphonTypes.ShelleyAddress;
   if (address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
     address.paymentCredential.bipPath = utxo.paymentCredential.path;
   }
@@ -40,6 +30,30 @@ function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
     tokens: utxo.tokens,
     address: address,
   };
+}
+
+function getRewardWithdrawalCertificate(a: CardanoAccount): TyphonTypes.Withdrawal | null {
+  if (!a.cardanoResources.delegation?.rewards.gt(0)) {
+    return null;
+  }
+
+  const stakeCredential = getAccountStakeCredential(a.xpub as string, a.index);
+  const stakeKeyHashCredential: TyphonTypes.HashCredential = {
+    hash: stakeCredential.key,
+    type: TyphonTypes.HashType.ADDRESS,
+    bipPath: stakeCredential.path,
+  };
+
+  const networkId = isTestnet(a.currency)
+    ? TyphonTypes.NetworkId.TESTNET
+    : TyphonTypes.NetworkId.MAINNET;
+  const rewardAddress = new RewardAddress(networkId, stakeKeyHashCredential);
+  const rewardsWithdrawalCertificate: TyphonTypes.Withdrawal = {
+    rewardAccount: rewardAddress,
+    amount: a.cardanoResources.delegation.rewards,
+  };
+
+  return rewardsWithdrawalCertificate;
 }
 
 const buildSendTokenTransaction = async ({
@@ -73,20 +87,16 @@ const buildSendTokenTransaction = async ({
   const tokenUtxos: Array<CardanoOutput> = [];
   const otherUtxos: Array<CardanoOutput> = [];
 
-  cardanoResources.utxos.forEach((u) => {
-    if (u.tokens.some((t) => getTokenAssetId(t) === assetId)) {
+  cardanoResources.utxos.forEach(u => {
+    if (u.tokens.some(t => getTokenAssetId(t) === assetId)) {
       tokenUtxos.push(u);
     } else {
       otherUtxos.push(u);
     }
   });
   const sortedTokenUtxo = tokenUtxos.sort((a, b) => {
-    const sendingTokenA = a.tokens.find(
-      (t) => getTokenAssetId(t) === assetId
-    ) as Token;
-    const sendingTokenB = b.tokens.find(
-      (t) => getTokenAssetId(t) === assetId
-    ) as Token;
+    const sendingTokenA = a.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
+    const sendingTokenB = b.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
     const diff = sendingTokenB.amount.minus(sendingTokenA.amount);
     return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
   });
@@ -98,26 +108,29 @@ const buildSendTokenTransaction = async ({
   const totalAddedTokenAmount = new BigNumber(0);
   const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
     tokensToSend,
-    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord)
+    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
   );
   // Add enough utxo to cover token amount
   for (let i = 0; i < sortedTokenUtxo.length; i++) {
     const u = sortedTokenUtxo[i];
-    const sendingToken = u.tokens.find(
-      (t) => getTokenAssetId(t) === assetId
-    ) as Token;
+    const sendingToken = u.tokens.find(t => getTokenAssetId(t) === assetId) as Token;
     typhonTx.addInput(getTyphonInputFromUtxo(u));
     totalAddedTokenAmount.plus(sendingToken.amount);
     if (totalAddedTokenAmount.gte(transactionAmount)) break;
   }
+
+  const requiredInputAmount = requiredMinAdaForTokens.plus(10e6);
   // Add enough utxos to cover the transaction fees
   for (let i = 0; i < sortedOtherUtxos.length; i++) {
     const u = sortedOtherUtxos[i];
-    if (typhonTx.getInputAmount().ada.gte(requiredMinAdaForTokens.plus(5e6))) {
+    if (typhonTx.getInputAmount().ada.gte(requiredInputAmount)) {
       break;
     }
     typhonTx.addInput(getTyphonInputFromUtxo(u));
   }
+
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
   typhonTx.addOutput({
     address: receiverAddress,
@@ -149,13 +162,9 @@ const buildSendAdaTransaction = async ({
 
   if (t.useAllAmount) {
     // add all utxo as input
-    cardanoResources.utxos.forEach((u) =>
-      typhonTx.addInput(getTyphonInputFromUtxo(u))
-    );
+    cardanoResources.utxos.forEach(u => typhonTx.addInput(getTyphonInputFromUtxo(u)));
 
-    const tokenBalance = mergeTokens(
-      cardanoResources.utxos.map((u) => u.tokens).flat()
-    );
+    const tokenBalance = mergeTokens(cardanoResources.utxos.map(u => u.tokens).flat());
 
     // if account holds any tokens then add it to changeAddress,
     // with minimum required ADA to spend those tokens
@@ -163,7 +172,7 @@ const buildSendAdaTransaction = async ({
       const minAmountToSpendTokens = TyphonUtils.calculateMinUtxoAmount(
         tokenBalance,
         new BigNumber(protocolParams.lovelacePerUtxoWord),
-        false
+        false,
       );
       typhonTx.addOutput({
         address: changeAddress,
@@ -171,6 +180,9 @@ const buildSendAdaTransaction = async ({
         tokens: tokenBalance,
       });
     }
+
+    const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+    if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
 
     return typhonTx.prepareTransaction({
       inputs: [],
@@ -187,24 +199,142 @@ const buildSendAdaTransaction = async ({
 
   const transactionInputs: Array<TyphonTypes.Input> = [];
   const usedUtxoAdaAmount = new BigNumber(0);
-  // Add 5 ADA as buffer for utxo selection to cover the transaction fees.
-  const requiredInputAmount = t.amount.plus(5e6);
-  for (
-    let i = 0;
-    i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount);
-    i++
-  ) {
+  // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
+  const requiredInputAmount = t.amount.plus(10e6);
+  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
     const utxo = sortedUtxos[i];
     const transactionInput = getTyphonInputFromUtxo(utxo);
     transactionInputs.push(transactionInput);
     usedUtxoAdaAmount.plus(transactionInput.amount);
   }
 
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
+
   typhonTx.addOutput({
     address: receiverAddress,
     amount: t.amount,
     tokens: [],
   });
+
+  return typhonTx.prepareTransaction({
+    inputs: transactionInputs,
+    changeAddress,
+  });
+};
+
+const buildDelegateTransaction = async ({
+  a,
+  t,
+  typhonTx,
+  changeAddress,
+}: {
+  a: CardanoAccount;
+  t: Transaction;
+  typhonTx: TyphonTransaction;
+  changeAddress: TyphonTypes.CardanoAddress;
+}): Promise<TyphonTransaction> => {
+  const cardanoResources = a.cardanoResources as CardanoResources;
+
+  const stakeCredential = getAccountStakeCredential(a.xpub as string, a.index);
+  const stakeKeyHashCredential: TyphonTypes.HashCredential = {
+    hash: stakeCredential.key,
+    type: TyphonTypes.HashType.ADDRESS,
+    bipPath: stakeCredential.path,
+  };
+
+  if (!cardanoResources.delegation || !cardanoResources.delegation.status) {
+    const stakeRegistrationCert: TyphonTypes.StakeRegistrationCertificate = {
+      certType: TyphonTypes.CertificateType.STAKE_REGISTRATION,
+      stakeCredential: stakeKeyHashCredential,
+    };
+    typhonTx.addCertificate(stakeRegistrationCert);
+  }
+
+  const delegationCert: TyphonTypes.StakeDelegationCertificate = {
+    certType: TyphonTypes.CertificateType.STAKE_DELEGATION,
+    stakeCredential: stakeKeyHashCredential,
+    poolHash: t.poolId as string,
+  };
+  typhonTx.addCertificate(delegationCert);
+
+  // sorting utxo from higher to lower ADA value
+  // to minimize the number of utxo use in transaction
+  const sortedUtxos = cardanoResources.utxos.sort((a, b) => {
+    const diff = b.amount.minus(a.amount);
+    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
+  });
+
+  const transactionInputs: Array<TyphonTypes.Input> = [];
+  const usedUtxoAdaAmount = new BigNumber(0);
+  // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
+  const requiredInputAmount = t.amount.plus(10e6);
+  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
+    const utxo = sortedUtxos[i];
+    const transactionInput = getTyphonInputFromUtxo(utxo);
+    transactionInputs.push(transactionInput);
+    usedUtxoAdaAmount.plus(transactionInput.amount);
+  }
+
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
+
+  return typhonTx.prepareTransaction({
+    inputs: transactionInputs,
+    changeAddress,
+  });
+};
+
+const buildUndelegateTransaction = async ({
+  a,
+  t,
+  typhonTx,
+  changeAddress,
+}: {
+  a: CardanoAccount;
+  t: Transaction;
+  typhonTx: TyphonTransaction;
+  changeAddress: TyphonTypes.CardanoAddress;
+}): Promise<TyphonTransaction> => {
+  const cardanoResources = a.cardanoResources as CardanoResources;
+
+  const stakeCredential = getAccountStakeCredential(a.xpub as string, a.index);
+  const stakeKeyHashCredential: TyphonTypes.HashCredential = {
+    hash: stakeCredential.key,
+    type: TyphonTypes.HashType.ADDRESS,
+    bipPath: stakeCredential.path,
+  };
+
+  if (!cardanoResources.delegation || !cardanoResources.delegation.status) {
+    throw new Error("StakeKey is not registered");
+  }
+
+  const rewardsWithdrawalCertificate = getRewardWithdrawalCertificate(a);
+  if (rewardsWithdrawalCertificate) typhonTx.addWithdrawal(rewardsWithdrawalCertificate);
+
+  const stakeKeyDeRegistrationCertificate: TyphonTypes.StakeDeRegistrationCertificate = {
+    certType: TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
+    stakeCredential: stakeKeyHashCredential,
+  };
+  typhonTx.addCertificate(stakeKeyDeRegistrationCertificate);
+
+  // sorting utxo from higher to lower ADA value
+  // to minimize the number of utxo use in transaction
+  const sortedUtxos = cardanoResources.utxos.sort((a, b) => {
+    const diff = b.amount.minus(a.amount);
+    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
+  });
+
+  const transactionInputs: Array<TyphonTypes.Input> = [];
+  const usedUtxoAdaAmount = new BigNumber(0);
+  // Add 10 ADA as buffer for utxo selection to cover the transaction fees.
+  const requiredInputAmount = t.amount.plus(10e6);
+  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lte(requiredInputAmount); i++) {
+    const utxo = sortedUtxos[i];
+    const transactionInput = getTyphonInputFromUtxo(utxo);
+    transactionInputs.push(transactionInput);
+    usedUtxoAdaAmount.plus(transactionInput.amount);
+  }
 
   return typhonTx.prepareTransaction({
     inputs: transactionInputs,
@@ -221,7 +351,7 @@ const buildSendAdaTransaction = async ({
  */
 export const buildTransaction = async (
   a: CardanoAccount,
-  t: Transaction
+  t: Transaction,
 ): Promise<TyphonTransaction> => {
   const cardanoResources = a.cardanoResources as CardanoResources;
   const protocolParams = cardanoResources.protocolParams;
@@ -253,9 +383,8 @@ export const buildTransaction = async (
   }
 
   const networkParams = getNetworkParameters(a.currency.id);
-  const receiverAddress = TyphonUtils.getAddressFromBech32(t.recipient);
   const unusedInternalCred = cardanoResources.internalCredentials.find(
-    (cred) => !cred.isUsed
+    cred => !cred.isUsed,
   ) as PaymentCredential;
 
   const changeAddress = getBaseAddress({
@@ -264,31 +393,42 @@ export const buildTransaction = async (
     stakeCred: getAccountStakeCredential(a.xpub as string, a.index),
   });
 
-  if (t.subAccountId) {
-    const tokenAccount = a.subAccounts
-      ? a.subAccounts.find((a) => {
-          return a.id === t.subAccountId;
-        })
-      : undefined;
+  if (t.mode === "send") {
+    const receiverAddress = TyphonUtils.getAddressFromBech32(t.recipient);
+    if (t.subAccountId) {
+      // Token Transaction
+      const tokenAccount = a.subAccounts
+        ? a.subAccounts.find(a => {
+            return a.id === t.subAccountId;
+          })
+        : undefined;
 
-    if (!tokenAccount || tokenAccount.type !== "TokenAccount") {
-      throw new Error("TokenAccount not found");
+      if (!tokenAccount || tokenAccount.type !== "TokenAccount") {
+        throw new Error("TokenAccount not found");
+      }
+
+      return buildSendTokenTransaction({
+        a,
+        t,
+        tokenAccount,
+        typhonTx,
+        receiverAddress,
+        changeAddress,
+      });
     }
-
-    return buildSendTokenTransaction({
+    // Normal ADA Transaction
+    return buildSendAdaTransaction({
       a,
       t,
-      tokenAccount,
       typhonTx,
       receiverAddress,
       changeAddress,
     });
+  } else if (t.mode === "delegate") {
+    return buildDelegateTransaction({ a, t, typhonTx, changeAddress });
+  } else if (t.mode === "undelegate") {
+    return buildUndelegateTransaction({ a, t, typhonTx, changeAddress });
+  } else {
+    throw new Error("Invalid transaction mode");
   }
-  return buildSendAdaTransaction({
-    a,
-    t,
-    typhonTx,
-    receiverAddress,
-    changeAddress,
-  });
 };

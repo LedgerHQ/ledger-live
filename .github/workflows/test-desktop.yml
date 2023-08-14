@@ -18,15 +18,28 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        required: false
+      draft:
+        description: true if the PR is in draft
+        required: false
+        default: "false"
+      full-tests:
+        description: Set to true to run the full e2e tests
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
+  REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
 
 jobs:
-  typecheck:
-    name: "Ledger Live Desktop TypeCheck"
+  codechecks:
+    name: "Desktop code checks"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -35,17 +48,54 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-      - name: Run code checkers
-        run: pnpm desktop test:codecheck
+          install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: lint
+        run: |
+          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+      - name: prettier
+        run: pnpm desktop prettier:check
+      - name: typecheck
+        run: pnpm desktop typecheck
+      - uses: actions/upload-artifact@v3
+        name: upload eslint json output
+        if: always()
+        with:
+          name: lint
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
+
+  deadcodecheck:
+    name: "Desktop deadcode check"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ env.REFNAME }}
+          base: ${{ inputs.base_ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_builds: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: check for dead code
+        run: cd apps/ledger-live-desktop && npx unimported
+        shell: bash
 
   unit-tests:
-    name: "Ledger Live Desktop Unit Tests"
+    name: "Desktop Unit Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -54,51 +104,19 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run unit tests
         run: pnpm desktop test:jest
 
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: [ledger-live, linux]
-    outputs:
-      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Start EC2 Linux Runner
-        id: start-ec2-linux-runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: start
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          project: 2049
-          aws-nfs-logging: true
-          ami-name-filter: ledger-live-runner
-          instance-volume-size: 30
-          instance-type: c5.4xlarge
-
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, e2e-tests-linux]
-    runs-on: [ledger-live, linux]
-    steps:
-      - name: Stop EC2 Linux Runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: stop
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-
-  # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
   e2e-tests-windows:
-    name: "Live Desktop Tests (Windows)"
+    name: "Desktop E2E (Windows)"
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
@@ -108,20 +126,30 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: windows-latest
+    runs-on: [ledger-live-4xlarge-windows-2022]
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 2.1.816
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           install_node_gyp: true
           install_playwright: true
+          upgrade_npm: true
+          install_dotnet: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests
         id: tests
-        run: pnpm desktop test:playwright
+        run: |
+          pnpm desktop test:playwright
+        shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -136,6 +164,12 @@ jobs:
         with:
           name: images
           path: images-windows.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-network-responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -155,7 +189,7 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   e2e-tests-linux:
-    name: "Live Desktop Tests (Linux)"
+    name: "Desktop E2E (Linux)"
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
@@ -166,12 +200,11 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    needs: [start-runner]
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: [ledger-live-4xlarge-linux]
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
@@ -179,9 +212,16 @@ jobs:
           skip_python: true
           skip_ruby: true
           install_playwright: true
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+        run: |
+          if [[ $RUN_FULL_SUITE == true ]]; then
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+          else
+            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
+          fi
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -196,6 +236,12 @@ jobs:
         with:
           name: images
           path: images-linux.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-network-responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -215,7 +261,7 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   e2e-tests-mac:
-    name: "Live Desktop Tests (macOS X)"
+    name: "Desktop E2E (macOS X)"
     runs-on: [m1, ARM64]
     outputs:
       status: ${{ steps.tests.outcome }}
@@ -226,10 +272,11 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
@@ -237,9 +284,13 @@ jobs:
           skip_python: true
           skip_ruby: true
           install_playwright: true
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Run playwright tests
         id: tests
-        run: pnpm desktop test:playwright
+        run: |
+          pnpm desktop test:playwright
       - name: upload diffs to imgur
         if: always() && !cancelled()
         uses: ./tools/actions/upload-images
@@ -254,6 +305,12 @@ jobs:
         with:
           name: images
           path: images-macos.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-network-responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -274,14 +331,18 @@ jobs:
 
   report:
     needs:
-      [typecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
+      [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: always() && !cancelled()
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ env.REFNAME }}
           base: ${{ inputs.base_ref }}
+      - name: "download linter results"
+        uses: actions/download-artifact@v3
+        with:
+          name: lint
       - name: download images artifacts
         uses: actions/download-artifact@v3
         with:
@@ -291,7 +352,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const files = ["images-linux", "images-windows", "images-macos"];
+            const files = ${{ env.RUN_FULL_SUITE }} ? ["images-linux", "images-windows", "images-macos"] : ["images-linux"]
             let result = {};
             for (const file of files) {
               try {
@@ -315,6 +376,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
+            const path = require("path");
 
             const [ owner, repo ] = "${{ github.repository }}".split("/");
 
@@ -347,8 +409,8 @@ jobs:
             };
 
             const typecheck = {
-              pass: ${{ needs.typecheck.result == 'success' }},
-              status: "${{ needs.typecheck.result }}",
+              pass: ${{ needs.codechecks.result == 'success' }},
+              status: "${{ needs.codechecks.result }}",
             };
 
             const unitTests = {
@@ -356,7 +418,11 @@ jobs:
               status: "${{ needs.unit-tests.result }}",
             };
 
-            const report = {
+            const deadcodecheck = {
+              pass: ${{ needs.deadcodecheck.result == 'success' }},
+            };
+
+            const report = ${{ env.RUN_FULL_SUITE }} ? {
               mac: {
                 pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-mac.outputs.status }}",
@@ -369,11 +435,21 @@ jobs:
                 pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-windows.outputs.status }}",
               },
+            } : {
+              linux: {
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
+              },
             };
 
             let summary = `### TypeCheck
+
             ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
               - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
+
+            ### Dead Code Check
+            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`npx unimported\` in apps/ledger-live-desktop"}
+              - ${deadcodecheck.pass ? "✅" : "❌"}
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
@@ -409,9 +485,40 @@ jobs:
             ${{ steps.comment.outputs.body }}
             `
 
+            // Store eslint results as annotations
+            let annotations = []
+            try {
+              const lintResult = require("./lint.json");
+              const LEVELS = {
+                0: "notice",
+                1: "warning",
+                2: "failure"
+              };
+              const withErrorOrWarning = lintResult.filter(r => r.errorCount > 0 || r.fatalErrorCount > 0 || r.warningCount > 0);
+              annotations = withErrorOrWarning.flatMap(({ filePath, messages }) =>
+                messages.map((m) => {
+                  const sameLine = m.line === m.endLine;
+                  return {
+                    path: path.relative(process.env.GITHUB_WORKSPACE, filePath),
+                    start_line: m.line,
+                    end_line: m.endLine,
+                    // Annotations only support start_column and end_column on the same line. Omit this parameter if start_line and end_line have different values.
+                    // https://docs.github.com/en/rest/reference/checks#create-a-check-run
+                    start_column: sameLine ? m.column : undefined,
+                    end_column: sameLine ? m.endColumn : undefined,
+                    annotation_level: LEVELS[m.severity],
+                    message: m.message,
+                    title: m.ruleId,
+                  }
+                })
+              );
+            } catch(error) {
+              console.error("Failed processing eslint annotations", error)
+            }
+
             const output = {
               summary,
-              // actions: playwrightSuccess ? [] : [{
+              annotations,
               actions: [{
                 // 20 chars max
                 label: "Regen. Screenshots",
@@ -419,10 +526,97 @@ jobs:
                 identifier: "regen_screenshots",
                 // 40 chars max
                 description: "Will regenerate playwright screenshots",
+              }, {
+                // 20 chars max
+                label: "Run full LLD suite",
+                // 20 chars max
+                identifier: "lld_full_suite",
+                // 40 chars max
+                description: "Run the full e2e test suite for LLD",
               }],
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+
+            if (${{ github.event_name != 'push' }}) return;
+
+            const slackPayload = {
+              "text": "[Alert] Ledger Live Desktop tests failed on ${{github.ref_name}}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":warning: [Alert] Ledger Live Desktop tests failed on ${{ github.ref_name }}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Checks"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- typechecks: ${typecheck.pass ? "✅" : "❌"}\n - deadcode checks: ${deadcodecheck.pass ? "✅" : "❌"}\n - unit tests: ${unitTests.pass ? "✅" : "❌"}\n`
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "E2E Tests"
+                  }
+                },
+                {
+                  ...(${{ env.RUN_FULL_SUITE }} ? {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
+                    }
+                  } :
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
+                    }
+                  })
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            };
+
+            fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        if: always() && !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure')
+        with:
+          channel-id: "C05FKJ7DFAP"
+          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
       - uses: actions/upload-artifact@v3
         name: upload summary
         with:
@@ -432,13 +626,13 @@ jobs:
   allure-report:
     name: "Allure Reports Export on Server"
     needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
-    runs-on: [ledger-live, linux]
+    runs-on: [ledger-live-medium-linux]
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - name: Download Allure Report - Windows
         uses: actions/download-artifact@v3
         with:

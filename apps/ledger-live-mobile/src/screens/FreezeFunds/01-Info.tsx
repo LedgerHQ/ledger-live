@@ -40,10 +40,7 @@ export default function FreezeInfo({ navigation, route }: NavigatorProps) {
         },
       ]}
     >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="FreezeFlow" name="Info" />
         <IlluRewards />
         <LText secondary style={styles.description}>
@@ -54,11 +51,11 @@ export default function FreezeInfo({ navigation, route }: NavigatorProps) {
           itemContainerStyle={styles.bulletItemContainer}
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="freeze.info.steps.0" />,
-            <Trans i18nKey="freeze.info.steps.1" />,
-            <Trans i18nKey="freeze.info.steps.2" />,
+            <Trans i18nKey="freeze.info.steps.0" key="FreezeText1" />,
+            <Trans i18nKey="freeze.info.steps.1" key="FreezeText2" />,
+            <Trans i18nKey="freeze.info.steps.2" key="FreezeText3" />,
           ].map(wording => (
-            <LText secondary semiBold style={[styles.bulletItem]}>
+            <LText secondary semiBold style={[styles.bulletItem]} key={wording.key}>
               {wording}
             </LText>
           ))}

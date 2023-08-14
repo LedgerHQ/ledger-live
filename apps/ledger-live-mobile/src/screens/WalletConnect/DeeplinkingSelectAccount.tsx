@@ -11,11 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { createStructuredSelector } from "reselect";
@@ -151,9 +147,7 @@ class SendFundsSelectAccount extends Component<Props> {
               list={allAccounts.filter(
                 account =>
                   account.type === "Account" &&
-                  ["ethereum", "bsc", "polygon"].includes(
-                    getAccountCurrency(account).id,
-                  ),
+                  ["ethereum", "bsc", "polygon"].includes(getAccountCurrency(account).id),
               )}
               inputWrapperStyle={styles.padding}
               renderList={this.renderList}

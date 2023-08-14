@@ -3,10 +3,7 @@ import React from "react";
 import type { ComponentType } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 // TODO move to component
@@ -56,21 +53,13 @@ export default function DelegationDrawer({
   const unit = getAccountUnit(account);
   const iconWidth = normalize(64);
   return (
-    <QueuedDrawer
-      style={styles.modal}
-      isRequestingToBeOpened={isOpen}
-      onClose={onClose}
-    >
+    <QueuedDrawer style={styles.modal} isRequestingToBeOpened={isOpen} onClose={onClose}>
       <View style={styles.root}>
         <DelegatingContainer
           left={
             icon || (
               <Circle size={iconWidth} bg={rgba(color, 0.2)}>
-                <CurrencyIcon
-                  size={iconWidth / 2}
-                  currency={currency}
-                  bg={"rgba(0,0,0,0)"}
-                />
+                <CurrencyIcon size={iconWidth / 2} currency={currency} bg={"rgba(0,0,0,0)"} />
               </Circle>
             )
           }
@@ -95,22 +84,15 @@ export default function DelegationDrawer({
           </LText>
         </View>
 
-        <ScrollView
-          style={styles.scrollSection}
-          showsVerticalScrollIndicator={true}
-        >
+        <ScrollView style={styles.scrollSection} showsVerticalScrollIndicator={true}>
           {data.map((field, i) => (
-            <DataField
-              {...field}
-              key={"data-" + i}
-              isLast={i === data.length - 1}
-            />
+            <DataField {...field} key={"data-" + i} isLast={i === data.length - 1} />
           ))}
         </ScrollView>
 
         <View style={[styles.row, styles.actionsRow]}>
-          {actions.map(props => (
-            <ActionButton {...props} />
+          {actions.map((props, i) => (
+            <ActionButton key={`actions-${i}`} {...props} />
           ))}
         </View>
       </View>
@@ -139,12 +121,7 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
       ]}
     >
       <View>
-        <LText
-          numberOfLines={1}
-          semiBold
-          style={styles.labelText}
-          color="smoke"
-        >
+        <LText numberOfLines={1} semiBold style={styles.labelText} color="smoke">
           {label}
         </LText>
       </View>
@@ -169,14 +146,7 @@ export type IconProps = {
   bg?: string;
 };
 
-function ActionButton({
-  label,
-  Icon,
-  event,
-  eventProperties,
-  onPress,
-  disabled,
-}: Action) {
+function ActionButton({ label, Icon, event, eventProperties, onPress, disabled }: Action) {
   return (
     <Touchable
       disabled={disabled}
@@ -186,11 +156,7 @@ function ActionButton({
       onPress={onPress}
     >
       <Icon size={48} style={styles.actionIcon} />
-      <LText
-        semiBold
-        style={[styles.actionText]}
-        color={disabled ? "grey" : "darkBlue"}
-      >
+      <LText semiBold style={[styles.actionText]} color={disabled ? "grey" : "darkBlue"}>
         {label}
       </LText>
     </Touchable>

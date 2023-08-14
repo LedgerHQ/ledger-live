@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { DerivationMode, isSegwitDerivationMode } from "./../../derivation";
+import { DerivationMode, isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { encodeOperationId } from "./../../operation";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
@@ -11,11 +11,7 @@ import { buildTransaction } from "./js-buildTransaction";
 import { calculateFees } from "./cache";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { perCoinLogic } from "./logic";
-import type {
-  Account,
-  Operation,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 
 const signOperation = ({
   account,
@@ -26,8 +22,8 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
+  withDevice(deviceId)(transport =>
+    Observable.create(o => {
       async function main() {
         const { currency } = account;
         const hwApp = new Btc({ transport, currency: currency.id });
@@ -43,11 +39,11 @@ const signOperation = ({
         await calculateFees({
           account,
           transaction,
-        }).then((res) => {
-          senders = new Set(res.txInputs.map((i) => i.address).filter(Boolean));
+        }).then(res => {
+          senders = new Set(res.txInputs.map(i => i.address).filter(Boolean));
           recipients = res.txOutputs
-            .filter((o) => o.address && !o.isChange)
-            .map((o) => o.address) as string[];
+            .filter(o => o.address && !o.isChange)
+            .map(o => o.address) as string[];
           fee = res.fees;
         });
 
@@ -67,14 +63,10 @@ const signOperation = ({
           throw new Error("sigHashType should not be NaN");
         }
 
-        const segwit = isSegwitDerivationMode(
-          account.derivationMode as DerivationMode
-        );
+        const segwit = isSegwitDerivationMode(account.derivationMode as DerivationMode);
 
         const hasTimestamp = currency.id === "peercoin";
-        const initialTimestamp = hasTimestamp
-          ? Math.floor(Date.now() / 1000)
-          : undefined;
+        const initialTimestamp = hasTimestamp ? Math.floor(Date.now() / 1000) : undefined;
 
         const perCoin = perCoinLogic[currency.id];
         let additionals: string[] = [currency.id];
@@ -91,7 +83,7 @@ const signOperation = ({
           additionals = additionals.concat(
             perCoin.getAdditionals({
               transaction,
-            })
+            }),
           );
         }
 
@@ -156,9 +148,9 @@ const signOperation = ({
 
       main().then(
         () => o.complete(),
-        (e) => o.error(e)
+        e => o.error(e),
       );
-    })
+    }),
   );
 
 export default signOperation;

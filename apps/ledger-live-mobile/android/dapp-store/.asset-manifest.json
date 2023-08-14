@@ -1,0 +1,14 @@
+{
+  "assets": {
+    "./media/playstore-icon.png": {
+      "path": "./media/playstore-icon.png",
+      "sha256": "nOGOgXgEp7+M5Ewt6Br61fznKZlnrMAb6+HpI/6gr7E=",
+      "uri": "https://arweave.net/I-xwUjuMGfJW39Lwx7TqBVQz7INI51dTImv1TkUhCXg"
+    },
+    "media/playstore-icon.png": {
+      "path": "media/playstore-icon.png",
+      "sha256": "nOGOgXgEp7+M5Ewt6Br61fznKZlnrMAb6+HpI/6gr7E=",
+      "uri": "https://arweave.net/0FGvLuf7oEFtM0JKMTzeVnuaKcVQdwNTlE2w_Iz1JD0"
+    }
+  }
+}

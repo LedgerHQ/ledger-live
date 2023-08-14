@@ -1,27 +1,25 @@
+import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import { Observable, interval, from } from "rxjs";
+import { Observable, from, interval } from "rxjs";
+import { filter, share, switchMap } from "rxjs/operators";
 import semver from "semver";
-import { share, switchMap, filter } from "rxjs/operators";
+import { getCryptoCurrencyById } from "../../currencies";
+import { getEnv } from "../../env";
 import {
-  SatStackVersionTooOld,
+  RPCHostInvalid,
+  RPCHostRequired,
+  RPCPassRequired,
+  RPCUserRequired,
   SatStackAccessDown,
   SatStackStillSyncing,
-  RPCHostRequired,
-  RPCUserRequired,
-  RPCPassRequired,
-  RPCHostInvalid,
+  SatStackVersionTooOld,
 } from "../../errors";
-import { getCryptoCurrencyById } from "../../currencies";
-import network from "../../network";
+import { getCurrencyExplorer } from "../../explorer";
 import type { AccountDescriptor } from "./descriptor";
-import { getEnv } from "../../env";
-import { getCurrencyExplorer } from "../../api/Ledger";
 const minVersionMatch = ">=0.11.1";
 
 function isAcceptedVersion(version: string | null | undefined) {
-  return (
-    !!version && semver.satisfies(semver.coerce(version) || "", minVersionMatch)
-  );
+  return !!version && semver.satisfies(semver.coerce(version) || "", minVersionMatch);
 }
 
 let mockStatus: SatStackStatus = {
@@ -35,6 +33,7 @@ export type RPCNodeConfig = {
   username: string;
   password: string;
   tls?: boolean;
+  notls?: boolean;
 };
 
 export function isValidHost(host: string): boolean {
@@ -42,7 +41,7 @@ export function isValidHost(host: string): boolean {
     "^" + // beginning of url
       "(((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,})|^[a-z\\d-]{2,}|" + // domain name
       "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*$"
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*$",
   ); // port and path
   return !!pattern.test(host);
 }
@@ -124,9 +123,7 @@ export type SatStackConfig = {
   extra?: Record<string, any>; // user's unknown fields are preserved in this
 };
 // we would need to call this any time we would "Edit" the flow
-export function parseSatStackConfig(
-  json: string
-): SatStackConfig | null | undefined {
+export function parseSatStackConfig(json: string): SatStackConfig | null | undefined {
   const obj = JSON.parse(json);
 
   if (obj && typeof obj === "object") {
@@ -147,7 +144,7 @@ export function parseSatStackConfig(
 
     if (accounts && typeof accounts === "object" && Array.isArray(accounts)) {
       result.accounts = accounts
-        .map((a) => {
+        .map(a => {
           const { external, internal, ...extra } = a;
           if (!external || typeof external !== "string") return;
           if (!internal || typeof internal !== "string") return;
@@ -172,7 +169,7 @@ export function parseSatStackConfig(
 export function stringifySatStackConfig(config: SatStackConfig): string {
   return JSON.stringify(
     {
-      accounts: config.accounts.map((a) => ({
+      accounts: config.accounts.map(a => ({
         external: a.descriptor.external,
         internal: a.descriptor.internal,
         ...a.extra,
@@ -184,22 +181,20 @@ export function stringifySatStackConfig(config: SatStackConfig): string {
       ...config.extra,
     },
     null,
-    2
+    2,
   );
 }
 // We would need it to apply an edition over an existing sats stack configuration (before saving it over)
 export function editSatStackConfig(
   existing: SatStackConfig,
-  edit: Partial<SatStackConfig>
+  edit: Partial<SatStackConfig>,
 ): SatStackConfig {
   const accounts = existing.accounts.concat(
     // append accounts that would not already exist
     (edit.accounts || []).filter(
-      (a) =>
-        !existing.accounts.some(
-          (existing) => a.descriptor.internal === existing.descriptor.internal
-        )
-    )
+      a =>
+        !existing.accounts.some(existing => a.descriptor.internal === existing.descriptor.internal),
+    ),
   );
   return {
     ...existing,
@@ -211,19 +206,24 @@ export function editSatStackConfig(
 export type SatStackStatus =
   | {
       type: "satstack-outdated";
+      progress?: undefined;
     }
   | {
       type: "satstack-disconnected";
+      progress?: undefined;
     }
   | {
       type: "node-disconnected";
+      progress?: undefined;
     }
   | {
       type: "invalid-chain";
       found: string;
+      progress?: undefined;
     }
   | {
       type: "initializing";
+      progress?: undefined;
     }
   | {
       type: "syncing";
@@ -235,6 +235,7 @@ export type SatStackStatus =
     } // progress percentage from 0 to 1
   | {
       type: "ready";
+      progress?: undefined;
     };
 export function isSatStackEnabled(): boolean {
   return Boolean(getEnv("SATSTACK"));
@@ -313,9 +314,7 @@ export async function fetchSatStackStatus(): Promise<SatStackStatus> {
     type: "ready",
   };
 }
-export async function checkDescriptorExists(
-  descriptor: string
-): Promise<boolean> {
+export async function checkDescriptorExists(descriptor: string): Promise<boolean> {
   if (getEnv("MOCK")) {
     return true;
   }
@@ -327,10 +326,7 @@ export async function checkDescriptorExists(
       descriptor,
     },
   });
-  log(
-    "satstack",
-    "checkDescriptorExists " + descriptor + " is " + r.data.exists
-  );
+  log("satstack", "checkDescriptorExists " + descriptor + " is " + r.data.exists);
   return Boolean(r.data.exists);
 }
 export async function requiresSatStackReady(): Promise<void> {
@@ -356,5 +352,5 @@ export async function requiresSatStackReady(): Promise<void> {
 export const statusObservable: Observable<SatStackStatus> = interval(1000).pipe(
   switchMap(() => from(fetchSatStackStatus())),
   filter((e, i) => i > 4 || e.type !== "satstack-disconnected"),
-  share()
+  share(),
 );

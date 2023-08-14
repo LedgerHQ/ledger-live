@@ -1,11 +1,12 @@
 import { device } from "detox";
-import * as bridge from "./bridge/server";
+import * as serverBridge from "./bridge/server";
 
 beforeAll(async () => {
-  bridge.init();
+  serverBridge.init();
 
   await device.reverseTcpPort(8081);
   await device.reverseTcpPort(8099);
+  await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
 
   await device.launchApp({
     languageAndLocale: {
@@ -13,8 +14,8 @@ beforeAll(async () => {
       locale: "en-US",
     },
   });
-}, 350000);
+}, 2000000);
 
 afterAll(async () => {
-  bridge.close();
+  serverBridge.close();
 });

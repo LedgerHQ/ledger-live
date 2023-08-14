@@ -1,11 +1,9 @@
 import invariant from "invariant";
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -16,8 +14,7 @@ import { navigateToSelectDevice } from "../ConnectDevice";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { ScreenName } from "../../const";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-
-const action = createAction(connectApp);
+import { useTransactionDeviceAction } from "../../hooks/deviceActions";
 
 function ConnectDevice({
   navigation,
@@ -26,6 +23,7 @@ function ConnectDevice({
   SignTransactionNavigatorParamList,
   ScreenName.SignTransactionConnectDevice
 >) {
+  const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -35,13 +33,24 @@ function ConnectDevice({
     account: mainAccount,
     transaction: route.params.transaction,
   }));
-  const tokenCurrency =
-    account.type === "TokenAccount" ? account.token : undefined;
+  const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandlerWithoutBroadcast({
     onSuccess,
   });
-  // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
-  const dependencies = [mainAccount];
+
+  const request = useMemo(
+    () => ({
+      account,
+      parentAccount,
+      appName,
+      transaction,
+      status,
+      tokenCurrency,
+      dependencies: [mainAccount],
+      requireLatestFirmware: true,
+    }),
+    [account, appName, mainAccount, parentAccount, status, tokenCurrency, transaction],
+  );
   return transaction ? (
     <SafeAreaView
       style={[
@@ -51,22 +60,11 @@ function ConnectDevice({
         },
       ]}
     >
-      <TrackScreen
-        category={route.name.replace("ConnectDevice", "")}
-        name="ConnectDevice"
-      />
+      <TrackScreen category={route.name.replace("ConnectDevice", "")} name="ConnectDevice" />
       <DeviceAction
         action={action}
-        request={{
-          account,
-          parentAccount,
-          appName,
-          transaction,
-          status,
-          tokenCurrency,
-          dependencies,
-          requireLatestFirmware: true,
-        }}
+        // @ts-expect-error Wrong types?
+        request={request}
         device={route.params.device}
         onResult={handleTx}
         onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}

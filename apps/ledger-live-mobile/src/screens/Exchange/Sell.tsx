@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { currenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
@@ -18,10 +15,7 @@ import { StackNavigatorProps } from "../../components/RootNavigator/types/helper
 import { ExchangeNavigatorParamList } from "../../components/RootNavigator/types/ExchangeNavigator";
 import { ScreenName } from "../../const";
 
-type Props = StackNavigatorProps<
-  ExchangeNavigatorParamList,
-  ScreenName.ExchangeSell
->;
+type Props = StackNavigatorProps<ExchangeNavigatorParamList, ScreenName.ExchangeSell>;
 
 type State = {
   sortedCurrencies: Array<TokenCurrency | CryptoCurrency>;
@@ -36,11 +30,8 @@ export default function OffRamp({ route }: Props) {
   });
   const { colors } = useTheme();
   const rampCatalog = useRampCatalog();
-  const allCurrencies = useRampCatalogCurrencies(
-    rampCatalog?.value?.offRamp || emptyArray,
-  );
-  const { defaultAccountId, defaultCurrencyId, defaultTicker } =
-    route.params || {};
+  const allCurrencies = useRampCatalogCurrencies(rampCatalog?.value?.offRamp || emptyArray);
+  const { defaultAccountId, defaultCurrencyId, defaultTicker } = route.params || {};
   useEffect(() => {
     const filteredCurrencies = defaultTicker
       ? allCurrencies.filter(currency => currency.ticker === defaultTicker)

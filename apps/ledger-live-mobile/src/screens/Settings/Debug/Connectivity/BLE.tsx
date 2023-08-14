@@ -17,7 +17,7 @@ import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "@react-navigation/native";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import LText from "../../../../components/LText";
 import KeyboardView from "../../../../components/KeyboardView";
@@ -201,9 +201,7 @@ class DebugBLE extends Component<
     const deviceId = this.props.route.params?.deviceId;
     const choices = ["Balanced", "High", "LowPower"] as const;
     const nextPriority =
-      choices[
-        (choices.indexOf(this.currentConnectionPriority) + 1) % choices.length
-      ];
+      choices[(choices.indexOf(this.currentConnectionPriority) + 1) % choices.length];
     this.currentConnectionPriority = nextPriority;
 
     try {
@@ -211,10 +209,7 @@ class DebugBLE extends Component<
         from((t as BluetoothTransport).requestConnectionPriority(nextPriority)),
       ).toPromise();
       if (Platform.OS === "android") {
-        ToastAndroid.show(
-          "connection priority set to " + nextPriority,
-          ToastAndroid.SHORT,
-        );
+        ToastAndroid.show("connection priority set to " + nextPriority, ToastAndroid.SHORT);
       } else {
         Alert.alert("connection priority set to " + nextPriority);
       }
@@ -289,19 +284,13 @@ class DebugBLE extends Component<
             }}
             selectTextOnFocus
             placeholder={useBLEframe ? "BLE frame here" : "APDU here"}
-            onChangeText={
-              useBLEframe ? this.onBLEframeChange : this.onAPDUChange
-            }
+            onChangeText={useBLEframe ? this.onBLEframeChange : this.onAPDUChange}
             value={useBLEframe ? this.state.bleframe : this.state.apdu}
             autoCapitalize="characters"
             autoCorrect={false}
             onSubmitEditing={this.send}
           />
-          <Button
-            type="main"
-            Icon={Icons.ArrowRightMedium}
-            onPress={this.send}
-          />
+          <Button type="main" Icon={IconsLegacy.ArrowRightMedium} onPress={this.send} />
           <Switch value={useBLEframe} onValueChange={this.onBleFrameChange} />
         </View>
         <LText

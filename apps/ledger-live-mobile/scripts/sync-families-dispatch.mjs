@@ -12,9 +12,7 @@ const dirContent = await fs.promises.readdir(path.join(basePath, "families"), {
   withFileTypes: true,
 });
 
-const families = dirContent
-  .filter(dirent => dirent.isDirectory())
-  .map(dirent => dirent.name);
+const families = dirContent.filter(dirent => dirent.isDirectory()).map(dirent => dirent.name);
 
 const targets = [
   "operationDetails",
@@ -23,13 +21,12 @@ const targets = [
   "AccountHeader",
   "AccountBodyHeader",
   "AccountSubHeader",
-  "SendAmountFields",
-  "screens",
   "SendRowsCustom",
   "SendRowsFee",
   "AccountBalanceSummaryFooter",
   "SubAccountList",
   "Confirmation",
+  "ReceiveConfirmationPostAlert",
   "ConnectDevice",
   "NoAssociatedAccounts",
 ];
@@ -42,9 +39,7 @@ async function genTarget(target) {
   for (const family of families) {
     const f = path.join(basePath, "families", family);
     const filesEnt = await fs.promises.readdir(f, { withFileTypes: true });
-    const files = filesEnt
-      .filter(ent => !ent.isDirectory())
-      .map(ent => ent.name);
+    const files = filesEnt.filter(ent => !ent.isDirectory()).map(ent => ent.name);
     const file = files.find(f => f.startsWith(target));
     if (file) {
       imports += `import ${family} from "../families/${family}/${target}";

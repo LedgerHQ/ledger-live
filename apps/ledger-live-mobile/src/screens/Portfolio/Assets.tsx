@@ -13,11 +13,7 @@ const AssetsList = ({ assets }: ListProps) => {
   const navigation = useNavigation<NavigationProp>();
   const renderItem = useCallback(
     ({ item }: { item: Asset }) => (
-      <AssetRow
-        asset={item}
-        navigation={navigation}
-        sourceScreenName={ScreenName.Portfolio}
-      />
+      <AssetRow asset={item} navigation={navigation} sourceScreenName={ScreenName.Portfolio} />
     ),
     [navigation],
   );

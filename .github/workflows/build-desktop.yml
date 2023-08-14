@@ -18,75 +18,39 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        required: false
+      draft:
+        description: true if the PR is in draft
+        required: false
+        default: "false"
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  start-runner:
-    name: Start self-hosted EC2 runner
-    runs-on: [ledger-live, linux]
-    outputs:
-      label: ${{ steps.start-ec2-linux-runner.outputs.label }}
-      ec2-instance-id: ${{ steps.start-ec2-linux-runner.outputs.ec2-instance-id }}
-    steps:
-      - name: Start EC2 Linux Runner
-        id: start-ec2-linux-runner
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: start
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          project: 2049
-          aws-nfs-logging: true
-          ami-name-filter: ledger-live-runner
-          instance-volume-size: 30
-          instance-type: c5.4xlarge
-
-  stop-runner:
-    name: Stop self-hosted EC2 runner
-    if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, build-desktop-app-linux]
-    runs-on: [ledger-live, linux]
-    steps:
-      - name: Stop EC2 Linux Runner
-        if: ${{ always() && needs.start-runner.result == 'success' }}
-        uses: LedgerHQ/actions/ec2-linux-runner@main
-        with:
-          mode: stop
-          github-token: ${{ secrets.CI_BOT_TOKEN }}
-          label: ${{ needs.start-runner.outputs.label }}
-          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
-
   build-desktop-app-linux:
     name: "Build Ledger Live Desktop (Linux)"
-    needs: [start-runner]
-    runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: [ledger-live-4xlarge-linux]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: linux
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Build the app
         run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
       - name: Upload linux app
@@ -97,32 +61,28 @@ jobs:
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
-    runs-on: [ledger-live, windows]
+    runs-on: [ledger-live-4xlarge-windows-2022]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: Update path
-        run: |
-          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
-      - uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 2.1.816
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
+          install_dotnet: true
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: win
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Build the app
         run: |
           pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
@@ -141,26 +101,23 @@ jobs:
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
           base: ${{ inputs.base_ref }}
           persist-credentials: false
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: mac
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Build the app
         run: |
           pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
@@ -171,12 +128,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
 
   report:
-    needs:
-      [
-        build-desktop-app-linux,
-        build-desktop-app-macos,
-        build-desktop-app-windows,
-      ]
+    needs: [build-desktop-app-linux, build-desktop-app-macos, build-desktop-app-windows]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:

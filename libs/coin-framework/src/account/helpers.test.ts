@@ -1,15 +1,5 @@
-import {
-  CryptoCurrency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  ChildAccount,
-  Operation,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { Account, ChildAccount, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   areAllOperationsLoaded,
@@ -18,12 +8,9 @@ import {
   getAccountName,
   getAccountSpendableBalance,
   getAccountUnit,
+  getFeesCurrency,
 } from ".";
-import {
-  isAccountEmpty,
-  isAccountBalanceSignificant,
-  clearAccount,
-} from "./helpers";
+import { isAccountEmpty, isAccountBalanceSignificant, clearAccount } from "./helpers";
 
 const mockAccount = {} as Account;
 const childAccount = {
@@ -135,6 +122,65 @@ describe(getAccountUnit.name, () => {
   });
 });
 
+describe(getFeesCurrency.name, () => {
+  describe("given an Account", () => {
+    beforeEach(() => {
+      mockAccount.type = "Account";
+    });
+    describe("without feesCurrency", () => {
+      it("should return the account's currency", () => {
+        const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
+        mockAccount.currency = sampleCurrency;
+        expect(getFeesCurrency(mockAccount)).toEqual(sampleCurrency);
+      });
+    });
+    describe("with feesCurrency", () => {
+      it("should return the fees currency", () => {
+        const sampleCurrency = { family: "vechain" } as CryptoCurrency;
+        const sampleFeesCurrency = { id: "VTHO" } as TokenCurrency;
+        mockAccount.currency = sampleCurrency;
+        mockAccount.feesCurrency = sampleFeesCurrency;
+        expect(getFeesCurrency(mockAccount)).toEqual(sampleFeesCurrency);
+      });
+    });
+  });
+
+  describe("given a ChildAccount", () => {
+    it("should return the currency", () => {
+      const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
+      childAccount.currency = sampleCurrency;
+      expect(getFeesCurrency(childAccount)).toEqual(sampleCurrency);
+    });
+  });
+
+  describe("given a TokenAccount", () => {
+    it("should return the token currency", () => {
+      const sampleToken = { id: "tokenId" } as TokenCurrency;
+      tokenAccount.token = sampleToken;
+      expect(getFeesCurrency(tokenAccount)).toEqual(sampleToken);
+    });
+  });
+
+  describe("given an unknown type Account", () => {
+    beforeEach(() => {
+      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
+    });
+
+    it("should throw an error", () => {
+      expect(() => getFeesCurrency(mockAccount)).toThrow(Error);
+    });
+
+    it("should display the account type in the error message", () => {
+      expect.assertions(1);
+      try {
+        getFeesCurrency(mockAccount);
+      } catch (e: unknown) {
+        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
+      }
+    });
+  });
+});
+
 describe(getAccountName.name, () => {
   describe("given an Account", () => {
     beforeEach(() => {
@@ -191,9 +237,7 @@ describe(getAccountSpendableBalance.name, () => {
     it("should return the account spendable balance", () => {
       const sampleAccountBalance = new BigNumber(10);
       mockAccount.spendableBalance = sampleAccountBalance;
-      expect(getAccountSpendableBalance(mockAccount)).toEqual(
-        sampleAccountBalance
-      );
+      expect(getAccountSpendableBalance(mockAccount)).toEqual(sampleAccountBalance);
     });
   });
 
@@ -201,9 +245,7 @@ describe(getAccountSpendableBalance.name, () => {
     it("should return the account balance", () => {
       const sampleAccountBalance = new BigNumber(10);
       childAccount.balance = sampleAccountBalance;
-      expect(getAccountSpendableBalance(childAccount)).toEqual(
-        sampleAccountBalance
-      );
+      expect(getAccountSpendableBalance(childAccount)).toEqual(sampleAccountBalance);
     });
   });
 
@@ -211,9 +253,7 @@ describe(getAccountSpendableBalance.name, () => {
     it("should return the token account spendable balance", () => {
       const sampleAccountBalance = new BigNumber(10);
       tokenAccount.spendableBalance = sampleAccountBalance;
-      expect(getAccountSpendableBalance(tokenAccount)).toEqual(
-        sampleAccountBalance
-      );
+      expect(getAccountSpendableBalance(tokenAccount)).toEqual(sampleAccountBalance);
     });
   });
 

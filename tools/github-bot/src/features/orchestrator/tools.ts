@@ -2,12 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { ProbotOctokit } from "probot";
 import { formatConclusion, getStatusEmoji } from "../../tools";
-import {
-  BOT_APP_ID,
-  REF_PREFIX,
-  WATCHER_CHECK_RUN_NAME,
-  WORKFLOWS,
-} from "./const";
+import { BOT_APP_ID, REF_PREFIX, WATCHER_CHECK_RUN_NAME, WORKFLOWS } from "./const";
 
 type Octokit = InstanceType<typeof ProbotOctokit>;
 
@@ -15,7 +10,7 @@ export async function updateWatcherCheckRun(
   octokit: Octokit,
   owner: string,
   repo: string,
-  ref: string
+  ref: string,
 ): Promise<ReturnType<Octokit["checks"]["update"]> | void> {
   const checkSuites = await octokit.checks.listSuitesForRef({
     owner,
@@ -23,9 +18,7 @@ export async function updateWatcherCheckRun(
     ref,
     app_id: BOT_APP_ID,
   });
-  const checkSuite = checkSuites.data.check_suites.find(
-    (suite) => suite.app?.id === BOT_APP_ID
-  );
+  const checkSuite = checkSuites.data.check_suites.find(suite => suite.app?.id === BOT_APP_ID);
 
   if (checkSuite) {
     const [rawCheckRuns, rawWorkflowRuns] = await Promise.all([
@@ -62,10 +55,7 @@ export async function updateWatcherCheckRun(
     summary += `\n\n`;
     summary += `### 👁 Watching`;
 
-    const [
-      aggregatedConclusion,
-      aggregatedStatus,
-    ] = rawCheckRuns.data.check_runs
+    const [aggregatedConclusion, aggregatedStatus] = rawCheckRuns.data.check_runs
       .slice()
       .sort((a, b) => a.name.localeCompare(b.name))
       .reduce(
@@ -76,7 +66,7 @@ export async function updateWatcherCheckRun(
           }
 
           const workflowMeta = Object.entries(WORKFLOWS).find(
-            ([, w]) => w.checkRunName === check_run.name
+            ([, w]) => w.checkRunName === check_run.name,
           );
 
           if (!workflowMeta) {
@@ -84,34 +74,27 @@ export async function updateWatcherCheckRun(
           }
 
           const workflowRun = rawWorkflowRuns.data.workflow_runs.find(
-            (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
+            wr => (wr as any).path === ".github/workflows/" + workflowMeta[0],
           );
 
-          const workflowLink =
-            workflowRun?.html_url &&
-            ` _[(workflow)](${workflowRun?.html_url})_`;
+          const workflowLink = workflowRun?.html_url
+            ? ` _[(workflow)](${workflowRun.html_url})_`
+            : "";
 
-          summary += `\n- ${getStatusEmoji(
+          summary += `\n- ${getStatusEmoji(check_run.conclusion || check_run.status)} **[${
+            check_run.name
+          }](${check_run.html_url})**${workflowLink}: \`${
             check_run.conclusion || check_run.status
-          )} **[${check_run.name}](${
-            check_run.html_url
-          })**${workflowLink}: \`${check_run.conclusion ||
-            check_run.status}\` ${
-            workflowMeta[1].required ? "" : "_(optional)_"
-          }`;
+          }\` ${workflowMeta[1].required ? "" : "_(optional)_"}`;
           let newPriority;
           let newStatus;
 
-          const priority = conclusions.indexOf(
-            check_run.conclusion || "neutral"
-          );
+          const priority = conclusions.indexOf(check_run.conclusion || "neutral");
           const accumulatorPriority = conclusions.indexOf(acc[0]);
 
           if (workflowMeta[1].required) {
             newPriority =
-              priority > accumulatorPriority
-                ? check_run.conclusion || "neutral"
-                : acc[0];
+              priority > accumulatorPriority ? check_run.conclusion || "neutral" : acc[0];
             newStatus =
               check_run.status === "completed" && acc[1] === "completed"
                 ? "completed"
@@ -123,7 +106,7 @@ export async function updateWatcherCheckRun(
 
           return [newPriority, newStatus];
         },
-        ["success", "completed"]
+        ["success", "completed"],
       );
 
     if (watcherId) {
@@ -169,12 +152,7 @@ export async function updateWatcherCheckRun(
   }
 }
 
-export async function prIsFork(
-  octokit: Octokit,
-  repo: string,
-  owner: string,
-  prNumber?: number
-) {
+export async function prIsFork(octokit: Octokit, repo: string, owner: string, prNumber?: number) {
   if (prNumber === undefined) return true;
 
   const { data: pr } = await octokit.rest.pulls.get({
@@ -186,9 +164,7 @@ export async function prIsFork(
   return !!pr.head.repo?.fork;
 }
 
-export async function getTips(
-  workflowFile: string
-): Promise<string | undefined> {
+export async function getTips(workflowFile: string): Promise<string | undefined> {
   const tipsFile = workflowFile.replace(".yml", ".md");
   const p = path.join(__dirname, "..", "..", "..", "tips", tipsFile);
   let tips = undefined;

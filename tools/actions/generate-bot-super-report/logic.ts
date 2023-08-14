@@ -12,7 +12,7 @@ type AppCandidate = {
   appName: string;
   appVersion: string;
 };
-type AccountRaw = Object;
+type AccountRaw = Record<string, unknown>;
 
 export type MinimalSerializedMutationReport = {
   appCandidate: AppCandidate;
@@ -45,16 +45,14 @@ export type Artifact = {
 
 function handleErrors(response) {
   if (!response.ok) {
-    throw Error(
-      response.url + ": " + response.status + " " + response.statusText
-    );
+    throw Error(response.url + ": " + response.status + " " + response.statusText);
   }
   return response;
 }
 
 async function downloadArchive(
   githubToken: string,
-  url: string
+  url: string,
 ): Promise<MinimalSerializedReport | null> {
   console.log("retrieving " + url);
   const blob = await retry(() =>
@@ -63,8 +61,8 @@ async function downloadArchive(
         Authorization: `Bearer ${githubToken}`,
         "Content-Type": "application/json",
       },
-    })
-  ).then((r) => {
+    }),
+  ).then(r => {
     if (r.ok) {
       return r.blob();
     }
@@ -78,13 +76,13 @@ async function downloadArchive(
     blob
       .stream()
       .pipe(Parse())
-      .on("entry", (entry) => {
+      .on("entry", entry => {
         const fileName = entry.path;
         if (fileName === "report.json") {
           entry
             .pipe(parser())
             .pipe(streamValues())
-            .on("data", (e) => resolve(e.value))
+            .on("data", e => resolve(e.value))
             .on("error", reject);
         } else {
           entry.autodrain();
@@ -101,7 +99,7 @@ function isDateBefore(a, b) {
 function successRateDisplay(a, b) {
   if (!b) return "N/A";
   if (!a) return "❌ 0%";
-  let r = a / b;
+  const r = a / b;
   return (r === 1 ? "✅ " : r < 0.8 ? "⚠️ " : "") + Math.round(100 * r) + "%";
 }
 
@@ -125,7 +123,7 @@ export async function loadReports({
 
   let latestDateReached = false;
 
-  let artifacts: Artifact[] = [];
+  const artifacts: Artifact[] = [];
   let res;
   do {
     const url = `https://api.github.com/repos/LedgerHQ/ledger-live/actions/artifacts?per_page=100&page=${page}`;
@@ -136,10 +134,10 @@ export async function loadReports({
           Authorization: `Bearer ${githubToken}`,
           "Content-Type": "application/json",
         },
-      })
+      }),
     )
-      .then((r) => (r.ok ? r.json() : r.status === 502 ? {} : handleErrors(r)))
-      .then((r) => {
+      .then(r => (r.ok ? r.json() : r.status === 502 ? {} : handleErrors(r)))
+      .then(r => {
         if (r.artifacts) {
           return r.artifacts;
         }
@@ -147,11 +145,8 @@ export async function loadReports({
       });
 
     if (res) {
-      res.forEach((a) => {
-        if (
-          a.name === "report" &&
-          (!branch || a.workflow_run.head_branch === branch)
-        ) {
+      res.forEach(a => {
+        if (a.name === "report" && (!branch || a.workflow_run.head_branch === branch)) {
           if (!dateFrom || isDateBefore(dateFrom, a.created_at)) {
             artifacts.push(a);
           } else {
@@ -165,11 +160,11 @@ export async function loadReports({
   } while (res && res.length > 0 && !latestDateReached && page < maxPage);
 
   const reports = (
-    await promiseAllBatched(5, artifacts, (artifact) =>
-      downloadArchive(
-        githubToken,
-        artifact.archive_download_url
-      ).then((report) => ({ artifact, report }))
+    await promiseAllBatched(5, artifacts, artifact =>
+      downloadArchive(githubToken, artifact.archive_download_url).then(report => ({
+        artifact,
+        report,
+      })),
     )
   )
     .filter(Boolean)
@@ -185,7 +180,7 @@ export async function loadReports({
 
 export function generateSuperReport(
   all: { report: MinimalSerializedReport; artifact: Artifact }[],
-  days: string | undefined
+  days: string | undefined,
 ): {
   reportMarkdownBody: string;
   reportSlackText: string;
@@ -216,13 +211,13 @@ export function generateSuperReport(
   // initialize all stats to make sure we have all the mutations known and so we can detect non coverage
   all.forEach(({ report }) => {
     report.results.forEach(({ specName, existingMutationNames }) => {
-      let s = (stats[specName] = stats[specName] || {
+      const s = (stats[specName] = stats[specName] || {
         specName,
         fatalErrors: [],
         runs: 0,
         mutations: {},
       });
-      existingMutationNames?.forEach((mutationName) => {
+      existingMutationNames?.forEach(mutationName => {
         s.mutations[mutationName] = {
           mutationName,
           runs: 0,
@@ -235,7 +230,7 @@ export function generateSuperReport(
 
   all.forEach(({ report }) => {
     totalReports++;
-    report.results?.forEach((result) => {
+    report.results?.forEach(result => {
       const { specName, fatalError, mutations } = result;
       const specStats = stats[specName];
       if (fatalError) {
@@ -243,7 +238,7 @@ export function generateSuperReport(
       } else {
         specStats.runs++;
       }
-      mutations?.forEach((mutation) => {
+      mutations?.forEach(mutation => {
         const { mutationName, operationId, error } = mutation;
         if (mutationName) {
           totalMutations++;
@@ -266,24 +261,21 @@ export function generateSuperReport(
     });
   });
 
-  let ctx = days ? `${days} last days` : "all available reports";
+  const ctx = days ? `${days} last days` : "all available reports";
 
   const coverageInfo = Object.values(stats).reduce(
     ([success, total], { mutations }) => {
       const m = Object.values(mutations);
-      const mutationsWithOneSuccess = m.filter((m) => m.success > 0);
+      const mutationsWithOneSuccess = m.filter(m => m.success > 0);
       return [success + mutationsWithOneSuccess.length, total + m.length];
     },
-    [0, 0]
+    [0, 0],
   );
 
   const summary = `${ctx}: ${totalReports} runs, ${totalOperations} success txs. ${successRateDisplay(
     totalOperations,
-    totalMutations
-  )} success rate. ${successRateDisplay(
-    coverageInfo[0],
-    coverageInfo[1]
-  )} coverage rate.`;
+    totalMutations,
+  )} success rate. ${successRateDisplay(coverageInfo[0], coverageInfo[1])} coverage rate.`;
 
   reportMarkdownBody += `# Bot "super report" on ${ctx}\n`;
   reportMarkdownBody +=
@@ -299,14 +291,11 @@ export function generateSuperReport(
       const txs = m.reduce((acc, m) => acc + m.success, 0) || 0;
       const txsAttempts = m.reduce((acc, m) => acc + m.runs, 0) || 0;
       const txsSuccess = successRateDisplay(txs, txsAttempts);
-      const mutationsWithOneSuccess = m.filter((m) => m.success > 0);
-      const mutationCoverage = successRateDisplay(
-        mutationsWithOneSuccess.length,
-        m.length
-      );
+      const mutationsWithOneSuccess = m.filter(m => m.success > 0);
+      const mutationCoverage = successRateDisplay(mutationsWithOneSuccess.length, m.length);
       return `|${specName}|${successRateDisplay(
         runs - fatalErrors.length,
-        runs
+        runs,
       )}|${txsSuccess}|${mutationCoverage}|${txs ? txs : "❌"}|\n`;
     })
     .join("");
@@ -323,7 +312,7 @@ export function generateSuperReport(
       reportMarkdownBody += grouped
         .map(
           ({ error, occurrences }) =>
-            `- ${occurrences > 1 ? `**(x${occurrences})** ` : ""}\`${error}\`\n`
+            `- ${occurrences > 1 ? `**(x${occurrences})** ` : ""}\`${error}\`\n`,
         )
         .join("");
       reportMarkdownBody += `\n</details>\n\n`;
@@ -339,11 +328,10 @@ export function generateSuperReport(
       reportMarkdownBody += m
         .map(({ errors, success, runs, mutationName }) => {
           const grouped = groupErrors(errors);
-          return `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(
-            success,
-            runs
-          )}|${success ? success : "❌"}|${groupedErrors
-            .filter((e) => grouped.some((e2) => e2.error === e.error))
+          return `|${mutationName.replace(/[|]/g, " ")}|${successRateDisplay(success, runs)}|${
+            success ? success : "❌"
+          }|${groupedErrors
+            .filter(e => grouped.some(e2 => e2.error === e.error))
             .map(({ index }) => index)
             .join(", ")}|\n`;
         })
@@ -351,16 +339,12 @@ export function generateSuperReport(
       if (groupedErrors.length) {
         reportMarkdownBody += "\n";
         reportMarkdownBody +=
-          "<details><summary>Detail of errors (" +
-          (allErrors.length + 1) +
-          ")</summary>\n\n\n";
+          "<details><summary>Detail of errors (" + (allErrors.length + 1) + ")</summary>\n\n\n";
         reportMarkdownBody +=
           groupedErrors
             .map(
               ({ error, index, occurrences }) =>
-                `${index}. ${
-                  occurrences > 1 ? `**(x${occurrences})** ` : ""
-                }\`${error}\`\n`
+                `${index}. ${occurrences > 1 ? `**(x${occurrences})** ` : ""}\`${error}\`\n`,
             )
             .join("") + "\n";
         reportMarkdownBody += "\n</details>\n\n";
@@ -385,18 +369,16 @@ export async function getLatestCommitShaOfBranch({
 }): Promise<string> {
   console.log("getting latest commit");
   const commits = await fetch(
-    `https://api.github.com/repos/LedgerHQ/ledger-live/commits${
-      branch ? "?sha=" + branch : ""
-    }`,
+    `https://api.github.com/repos/LedgerHQ/ledger-live/commits${branch ? "?sha=" + branch : ""}`,
     {
       headers: {
         Authorization: `Bearer ${githubToken}`,
         "Content-Type": "application/json",
       },
-    }
+    },
   )
     .then(handleErrors)
-    .then((r) => r.json());
+    .then(r => r.json());
   return commits[0].sha;
 }
 
@@ -424,7 +406,7 @@ export async function uploadCommentToGithubSha({
     body: JSON.stringify({ body: reportMarkdownBody }),
   })
     .then(handleErrors)
-    .then((r) => r.json());
+    .then(r => r.json());
   return githubComment;
 }
 
@@ -463,7 +445,7 @@ const groupErrorsIncluding = [
   "Failure(s) occurred during RPC call : co.ledger.jrpc.model.CallError: An error occurred: -32000",
 ];
 function groupSimilarError(str: string): string {
-  const g = groupErrorsIncluding.find((t) => str.includes(t));
+  const g = groupErrorsIncluding.find(t => str.includes(t));
   if (g) return g;
   return str;
 }
@@ -473,11 +455,9 @@ function safeErrorDisplay(txt) {
 }
 
 function groupErrors(
-  errors: string[]
+  errors: string[],
 ): Array<{ error: string; occurrences: number; index: number }> {
-  const grouped = groupBy(
-    errors.map((e) => groupSimilarError(safeErrorDisplay(e)))
-  );
+  const grouped = groupBy(errors.map(e => groupSimilarError(safeErrorDisplay(e))));
   return Object.keys(grouped).map((error, i) => ({
     error,
     index: i + 1,

@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { SettingsSectionRow as Row } from "../../SettingsSection";

@@ -10,12 +10,7 @@ type Props = {
   formattedAmount: string;
   onPress: (_: string) => void;
 };
-export default function DelegationInfo({
-  address,
-  name,
-  formattedAmount,
-  onPress,
-}: Props) {
+export default function DelegationInfo({ address, name, formattedAmount, onPress }: Props) {
   const { colors } = useTheme();
   return (
     <View
@@ -34,7 +29,7 @@ export default function DelegationInfo({
             name,
           }}
         >
-          <LText semiBold>text</LText>
+          <LText semiBold>PLACEHOLDER_TEXT</LText>
         </Trans>
       </LText>
 

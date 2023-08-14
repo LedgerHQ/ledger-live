@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { getTronSuperRepresentatives } from "../../api/Tron";
+import { getTronSuperRepresentatives } from "./api";
 import { BigNumber } from "bignumber.js";
 import type { SuperRepresentative, TronAccount, Vote } from "./types";
 import { useBridgeSync } from "../../bridge/react";
@@ -50,18 +50,14 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
 };
 
 /** Get last time voted */
-export const getLastVotedDate = (
-  account: TronAccount
-): Date | null | undefined => {
+export const getLastVotedDate = (account: TronAccount): Date | null | undefined => {
   return account.tronResources && account.tronResources.lastVotedDate
     ? account.tronResources.lastVotedDate
     : null;
 };
 
 /** Get next available date to claim rewards */
-export const getNextRewardDate = (
-  account: TronAccount
-): number | null | undefined => {
+export const getNextRewardDate = (account: TronAccount): number | null | undefined => {
   const lastWithdrawnRewardDate =
     account.tronResources && account.tronResources.lastWithdrawnRewardDate
       ? account.tronResources.lastWithdrawnRewardDate
@@ -79,7 +75,7 @@ export const getNextRewardDate = (
 /** format votes with superrepresentatives data */
 export const formatVotes = (
   votes: Array<Vote> | null | undefined,
-  superRepresentatives: Array<SuperRepresentative> | null | undefined
+  superRepresentatives: Array<SuperRepresentative> | null | undefined,
 ): Array<
   Vote & {
     validator?: SuperRepresentative | null;
@@ -89,9 +85,7 @@ export const formatVotes = (
 > => {
   return votes && superRepresentatives
     ? votes.map(({ address, voteCount }) => {
-        const srIndex = superRepresentatives.findIndex(
-          (sp) => sp.address === address
-        );
+        const srIndex = superRepresentatives.findIndex(sp => sp.address === address);
         return {
           validator: superRepresentatives[srIndex],
           rank: srIndex + 1,
@@ -105,8 +99,7 @@ export const formatVotes = (
 
 // wait an effect of a tron freeze until it effectively change
 export function useTronPowerLoading(account: TronAccount): boolean {
-  const tronPower =
-    (account.tronResources && account.tronResources.tronPower) || 0;
+  const tronPower = (account.tronResources && account.tronResources.tronPower) || 0;
   const initialTronPower = useRef(tronPower);
   const initialAccount = useRef(account);
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -148,7 +141,7 @@ const searchFilter =
 export function useSortedSr(
   search: string,
   superRepresentatives: SuperRepresentative[],
-  votes: Vote[]
+  votes: Vote[],
 ): {
   sr: SuperRepresentative;
   name: string | null | undefined;
@@ -166,25 +159,25 @@ export function useSortedSr(
         rank: rank + 1,
         isSR: rank < SR_THRESHOLD,
       })),
-    [superRepresentatives]
+    [superRepresentatives],
   );
   const sortedVotes = useMemo(
     () =>
       SR.filter(({ address }) => initialVotes.includes(address)).concat(
-        SR.filter(({ address }) => !initialVotes.includes(address))
+        SR.filter(({ address }) => !initialVotes.includes(address)),
       ),
-    [SR, initialVotes]
+    [SR, initialVotes],
   );
   const sr = useMemo(
     () => (search ? SR.filter(searchFilter(search)) : sortedVotes),
-    [search, SR, sortedVotes]
+    [search, SR, sortedVotes],
   );
   return sr;
 }
 
 /** format account to retrieve unfreeze data */
 export const getUnfreezeData = (
-  account: TronAccount
+  account: TronAccount,
 ): {
   unfreezeBandwidth: BigNumber;
   unfreezeEnergy: BigNumber;
@@ -213,13 +206,11 @@ export const getUnfreezeData = (
 
   const unfreezeBandwidth = new BigNumber(bandwidth ? bandwidth.amount : 0);
 
-  const canUnfreezeBandwidth =
-    unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
+  const canUnfreezeBandwidth = unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
 
   const unfreezeEnergy = new BigNumber(energy ? energy.amount : 0);
 
-  const canUnfreezeEnergy =
-    unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
+  const canUnfreezeEnergy = unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
 
   return {
     unfreezeBandwidth,

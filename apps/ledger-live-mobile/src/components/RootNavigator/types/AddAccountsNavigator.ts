@@ -1,7 +1,4 @@
-import type {
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
@@ -18,6 +15,8 @@ export type AddAccountsNavigatorParamList = {
     inline?: boolean;
     returnToSwap?: boolean;
     analyticsPropertyFlow?: string;
+    onSuccess?: () => void;
+    onError?: (_: Error) => void;
   };
   [ScreenName.AddAccountsAccounts]: {
     currency: CryptoOrTokenCurrency;
@@ -40,5 +39,6 @@ export type AddAccountsNavigatorParamList = {
     | undefined;
   [ScreenName.AddAccountsTokenCurrencyDisclaimer]: {
     token: TokenCurrency;
+    analyticsPropertyFlow?: string;
   };
 };

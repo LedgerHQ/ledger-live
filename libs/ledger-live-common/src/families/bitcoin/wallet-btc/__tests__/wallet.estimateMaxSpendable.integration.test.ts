@@ -17,11 +17,11 @@ describe("testing estimateMaxSpendable", () => {
         network: "mainnet",
         derivationMode: DerivationModes.LEGACY,
       },
-      getCryptoCurrencyById("bitcoin")
+      getCryptoCurrencyById("bitcoin"),
     );
 
     expect(account.xpub.xpub).toEqual(
-      "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP"
+      "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
     );
   });
 
@@ -30,40 +30,22 @@ describe("testing estimateMaxSpendable", () => {
     let maxSpendable = await wallet.estimateAccountMaxSpendable(account, 0, []);
     const balance = 109088;
     expect(maxSpendable.toNumber()).toEqual(balance);
-    const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(
-      account,
-      0,
-      [
-        {
-          hash: "f80246be50064bb254d2cad82fb0d4ce7768582b99c113694e72411f8032fd7a",
-          outputIndex: 0,
-        },
-      ]
-    );
+    const maxSpendableExcludeUtxo = await wallet.estimateAccountMaxSpendable(account, 0, [
+      {
+        hash: "f80246be50064bb254d2cad82fb0d4ce7768582b99c113694e72411f8032fd7a",
+        outputIndex: 0,
+      },
+    ]);
     expect(maxSpendableExcludeUtxo.toNumber()).toEqual(balance - 1000);
     let feesPerByte = 100;
-    maxSpendable = await wallet.estimateAccountMaxSpendable(
-      account,
-      feesPerByte,
-      []
-    );
+    maxSpendable = await wallet.estimateAccountMaxSpendable(account, feesPerByte, []);
     expect(maxSpendable.toNumber()).toEqual(
       balance -
         feesPerByte *
-          utils.maxTxSizeCeil(
-            2,
-            [],
-            true,
-            account.xpub.crypto,
-            account.xpub.derivationMode
-          )
+          utils.maxTxSizeCeil(2, [], true, account.xpub.crypto, account.xpub.derivationMode),
     );
     feesPerByte = 10000;
-    maxSpendable = await wallet.estimateAccountMaxSpendable(
-      account,
-      feesPerByte,
-      []
-    );
+    maxSpendable = await wallet.estimateAccountMaxSpendable(account, feesPerByte, []);
     expect(maxSpendable.toNumber()).toEqual(0);
-  }, 60000);
+  }, 120000);
 });

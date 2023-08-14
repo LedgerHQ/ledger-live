@@ -3,13 +3,11 @@ import {
   MappedSwapOperation,
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
+import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -37,9 +35,11 @@ import {
 } from "@ledgerhq/live-common/families/solana/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
+import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/families/internet_computer/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
+import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
 
 type Target = "from" | "to";
@@ -60,7 +60,7 @@ export type SwapNavigatorParamList = {
   };
   [ScreenName.SwapSelectCurrency]: {
     currencies: Currency[];
-    provider: string;
+    provider?: string;
   };
   [ScreenName.SwapSelectProvider]: {
     provider?: string;
@@ -76,34 +76,15 @@ export type SwapNavigatorParamList = {
     transaction?: Transaction | null;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
+    operation?: Operation;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
-  };
-  [ScreenName.SwapLogin]: {
-    provider: string;
-  };
-  [ScreenName.SwapKYC]: {
-    provider: string;
-  };
-  [ScreenName.SwapKYCStates]: {
-    onStateSelect: (_: { value: string; label: string }) => void;
-  };
-  [ScreenName.SwapMFA]: {
-    provider: string;
   };
   [ScreenName.SwapPendingOperation]: {
     swapOperation: SwapOperation;
@@ -119,18 +100,10 @@ export type SwapNavigatorParamList = {
     transaction: AlgorandTransaction;
     status?: AlgorandTransactionStatus;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -141,18 +114,10 @@ export type SwapNavigatorParamList = {
     transaction: BitcoinTransaction;
     status?: BitcoinTransactionStatus;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -165,18 +130,10 @@ export type SwapNavigatorParamList = {
     account: CardanoAccount;
     transaction: CardanoTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -186,18 +143,10 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     transaction: EthereumTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -209,18 +158,41 @@ export type SwapNavigatorParamList = {
     gasLimit?: BigNumber | null;
     transaction: EthereumTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.EvmCustomFees]: {
+    accountId: string;
+    parentId?: string;
+    transaction: EvmTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.EvmEditGasLimit]: {
+    accountId: string;
+    setGasLimit: (_: BigNumber) => void;
+    gasLimit?: BigNumber | null;
+    transaction: EvmTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -230,18 +202,10 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     transaction: RippleTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -251,18 +215,10 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     transaction: StellarTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -273,18 +229,10 @@ export type SwapNavigatorParamList = {
     account: CosmosAccount;
     transaction: CosmosTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -295,18 +243,10 @@ export type SwapNavigatorParamList = {
     account: CryptoOrgAccount;
     transaction: CryptoOrgTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -317,18 +257,10 @@ export type SwapNavigatorParamList = {
     account: Account;
     transaction: HederaTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -338,18 +270,10 @@ export type SwapNavigatorParamList = {
     parentId?: string;
     transaction: RippleTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -360,18 +284,10 @@ export type SwapNavigatorParamList = {
     account: SolanaAccount;
     transaction: SolanaTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -383,18 +299,33 @@ export type SwapNavigatorParamList = {
     transaction: StellarTransaction;
     memoType?: string;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
-      | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.InternetComputerEditMemo]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: ICPTransaction;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+  };
+
+  [ScreenName.StacksEditMemo]: {
+    accountId: string;
+    parentId?: string;
+    account: Account;
+    transaction: StacksTransaction;
+    memoType?: string;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;

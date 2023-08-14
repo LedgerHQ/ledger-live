@@ -3,11 +3,7 @@ import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Portfolio } from "@ledgerhq/types-live";
 import styled, { useTheme } from "styled-components/native";
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import Delta from "./Delta";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
@@ -16,7 +12,7 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import { useTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Graph from "./Graph";
-import FormatDate from "./FormatDate";
+import FormatDate from "./DateFormat/FormatDate";
 import { track } from "../analytics";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import EmptyGraph from "../icons/EmptyGraph";
@@ -137,6 +133,7 @@ function GraphCard({
                       color={"neutral.c100"}
                       numberOfLines={1}
                       adjustsFontSizeToFit
+                      testID={"graphCard-balance"}
                     >
                       <CurrencyUnitValue
                         unit={unit}

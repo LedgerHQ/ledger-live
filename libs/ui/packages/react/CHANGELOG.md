@@ -1,5 +1,204 @@
 # @ledgerhq/react-ui
 
+## 0.14.5
+
+### Patch Changes
+
+- [#4259](https://github.com/LedgerHQ/ledger-live/pull/4259) [`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - publish ui libraries with fixed tests
+
+- Updated dependencies [[`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e)]:
+  - @ledgerhq/crypto-icons-ui@0.5.1
+  - @ledgerhq/icons-ui@0.4.3
+  - @ledgerhq/ui-shared@0.2.1
+
+## 0.14.4
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2
+  - @ledgerhq/crypto-icons-ui@0.5.0
+
+## 0.14.4-next.0
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2-next.0
+  - @ledgerhq/crypto-icons-ui@0.5.0-next.0
+
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/crypto-icons-ui@0.4.0
+
+## 0.14.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/crypto-icons-ui@0.4.0-next.0
+
+## 0.14.2
+
+### Patch Changes
+
+- [#3613](https://github.com/LedgerHQ/ledger-live/pull/3613) [`6b3b5e6e71`](https://github.com/LedgerHQ/ledger-live/commit/6b3b5e6e718c48f9a98c12ba8f803db8d31e68ba) Thanks [@juan-cortes](https://github.com/juan-cortes)! - ui text wraps on stepper + fw update restore polishes
+
+- Updated dependencies [[`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502)]:
+  - @ledgerhq/icons-ui@0.4.1
+
+## 0.14.2-next.0
+
+### Patch Changes
+
+- [#3613](https://github.com/LedgerHQ/ledger-live/pull/3613) [`6b3b5e6e71`](https://github.com/LedgerHQ/ledger-live/commit/6b3b5e6e718c48f9a98c12ba8f803db8d31e68ba) Thanks [@juan-cortes](https://github.com/juan-cortes)! - ui text wraps on stepper + fw update restore polishes
+
+- Updated dependencies [[`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502)]:
+  - @ledgerhq/icons-ui@0.4.1-next.0
+
+## 0.14.1
+
+### Patch Changes
+
+- [#3314](https://github.com/LedgerHQ/ledger-live/pull/3314) [`5ed0a65543`](https://github.com/LedgerHQ/ledger-live/commit/5ed0a65543b68f0512e48d59c8ed77d33fb63550) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Infinite mode added to ProgressLoader, changes to divider
+
+## 0.14.1-next.0
+
+### Patch Changes
+
+- [#3314](https://github.com/LedgerHQ/ledger-live/pull/3314) [`5ed0a65543`](https://github.com/LedgerHQ/ledger-live/commit/5ed0a65543b68f0512e48d59c8ed77d33fb63550) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Infinite mode added to ProgressLoader, changes to divider
+
+## 0.14.0
+
+### Minor Changes
+
+- [#3176](https://github.com/LedgerHQ/ledger-live/pull/3176) [`9ca030c046`](https://github.com/LedgerHQ/ledger-live/commit/9ca030c0469f9ed1c8187d01f7f5927658ef662f) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - ContinueOnDevice: new UI item to indicate the user to continue on the device
+  Divider: add a `text` prop to display some text in the middle of the divider
+  Divider: remove the `variant` prop
+  VerticalTimeline: new appearance (colors, fonts, dashed lines, icon sizes)
+  VerticalTimeline: expose `BodyText` and `SubtitleText` components
+  Storybook - VerticalTimeline: more exhaustive examples
+
+- [#3286](https://github.com/LedgerHQ/ledger-live/pull/3286) [`500797488b`](https://github.com/LedgerHQ/ledger-live/commit/500797488b0604d2a8a7ac844429b691f4bc6234) Thanks [@sarneijim](https://github.com/sarneijim)! - Update alert component. Add new secondary and sucess types. Change border-radius, colors and other css details.
+
+### Patch Changes
+
+- Updated dependencies [[`c8920896d7`](https://github.com/LedgerHQ/ledger-live/commit/c8920896d7c96cab88f95ce705dc55aac5b345bc), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/ui-shared@0.2.0
+  - @ledgerhq/crypto-icons-ui@0.3.0
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#3176](https://github.com/LedgerHQ/ledger-live/pull/3176) [`9ca030c046`](https://github.com/LedgerHQ/ledger-live/commit/9ca030c0469f9ed1c8187d01f7f5927658ef662f) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - ContinueOnDevice: new UI item to indicate the user to continue on the device
+  Divider: add a `text` prop to display some text in the middle of the divider
+  Divider: remove the `variant` prop
+  VerticalTimeline: new appearance (colors, fonts, dashed lines, icon sizes)
+  VerticalTimeline: expose `BodyText` and `SubtitleText` components
+  Storybook - VerticalTimeline: more exhaustive examples
+
+- [#3286](https://github.com/LedgerHQ/ledger-live/pull/3286) [`500797488b`](https://github.com/LedgerHQ/ledger-live/commit/500797488b0604d2a8a7ac844429b691f4bc6234) Thanks [@sarneijim](https://github.com/sarneijim)! - Update alert component. Add new secondary and sucess types. Change border-radius, colors and other css details.
+
+### Patch Changes
+
+- Updated dependencies [[`c8920896d7`](https://github.com/LedgerHQ/ledger-live/commit/c8920896d7c96cab88f95ce705dc55aac5b345bc), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/ui-shared@0.2.0-next.0
+  - @ledgerhq/crypto-icons-ui@0.3.0-next.0
+
+## 0.13.0
+
+### Minor Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`9eaf095ff6`](https://github.com/LedgerHQ/ledger-live/commit/9eaf095ff6c6214b27f5c37c9c73564f95564fba) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Various performance and documentation improvements :- Updated documentation regarding fonts loading to prevent fonts flickering- Updated package.json to fix path issues on certain consumers- Updated minimal working examples (NextJS)- Removed Icon component from Button component to avoid embarking all icons when using button
+
+### Patch Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2
+  - @ledgerhq/icons-ui@0.4.0
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`9eaf095ff6`](https://github.com/LedgerHQ/ledger-live/commit/9eaf095ff6c6214b27f5c37c9c73564f95564fba) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Various performance and documentation improvements :- Updated documentation regarding fonts loading to prevent fonts flickering- Updated package.json to fix path issues on certain consumers- Updated minimal working examples (NextJS)- Removed Icon component from Button component to avoid embarking all icons when using button
+
+### Patch Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2-next.0
+  - @ledgerhq/icons-ui@0.4.0-next.0
+
+## 0.12.1
+
+### Patch Changes
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - fix to Tag component
+
+## 0.12.1-next.0
+
+### Patch Changes
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - fix to Tag component
+
+## 0.12.0
+
+### Minor Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support neutral info message on BaseInput
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+### Patch Changes
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`e41884bb9e`](https://github.com/LedgerHQ/ledger-live/commit/e41884bb9ed5fadbe893042939c12214ea5e9491) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support neutral info message on BaseInput
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5-next.0
+
+## 0.11.0
+
+### Minor Changes
+
+- [#2531](https://github.com/LedgerHQ/ledger-live/pull/2531) [`28105e0fd5`](https://github.com/LedgerHQ/ledger-live/commit/28105e0fd5cfa435f327e0ca6c2c643ff21c612e) Thanks [@gobeli](https://github.com/gobeli)! - Visual bugfix on input controls
+
+### Patch Changes
+
+- [#2460](https://github.com/LedgerHQ/ledger-live/pull/2460) [`b0849833f7`](https://github.com/LedgerHQ/ledger-live/commit/b0849833f7ff168610b288e24aab89de5eb04d7e) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add extraChildrenContainerProps to FlowStepper component
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#2531](https://github.com/LedgerHQ/ledger-live/pull/2531) [`28105e0fd5`](https://github.com/LedgerHQ/ledger-live/commit/28105e0fd5cfa435f327e0ca6c2c643ff21c612e) Thanks [@gobeli](https://github.com/gobeli)! - Visual bugfix on input controls
+
+### Patch Changes
+
+- [#2460](https://github.com/LedgerHQ/ledger-live/pull/2460) [`b0849833f7`](https://github.com/LedgerHQ/ledger-live/commit/b0849833f7ff168610b288e24aab89de5eb04d7e) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add extraChildrenContainerProps to FlowStepper component
+
 ## 0.10.4
 
 ### Patch Changes

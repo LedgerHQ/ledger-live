@@ -15,7 +15,7 @@ import invariant from "invariant";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { GraphTabs, Text, Icons } from "@ledgerhq/native-ui";
+import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction } from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
@@ -73,8 +73,8 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
 
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {
@@ -83,7 +83,8 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
       });
 
       return { account, transaction };
-    });
+    },
+  );
 
   const options = useMemo(
     () => [
@@ -215,9 +216,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   return (
     <>
       <TrackScreen category="FreezeFunds" name="Amount" />
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <View style={styles.topContainer}>
             <GraphTabs
@@ -232,7 +231,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                 <Text variant={"paragraph"} color="neutral.c70" mr={3}>
                   <Trans i18nKey="freeze.amount.infoLabel" />
                 </Text>
-                <Icons.InfoMedium size={20} color="neutral.c70" />
+                <IconsLegacy.InfoMedium size={20} color="neutral.c70" />
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <CurrencyInput
@@ -247,11 +246,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                   hasError={!!error}
                   hasWarning={!!warning}
                 />
-                <LText
-                  style={[styles.error]}
-                  color={error ? "alert" : "orange"}
-                  numberOfLines={2}
-                >
+                <LText style={[styles.error]} color={error ? "alert" : "orange"} numberOfLines={2}>
                   <TranslatedError error={error || warning} />
                 </LText>
               </View>
@@ -290,10 +285,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                     <CurrencyUnitValue
                       showCode
                       unit={unit}
-                      value={getDecimalPart(
-                        account.spendableBalance,
-                        defaultUnit.magnitude,
-                      )}
+                      value={getDecimalPart(account.spendableBalance, defaultUnit.magnitude)}
                     />
                   </Text>
                 </View>
@@ -314,21 +306,14 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
         </KeyboardView>
       </SafeAreaView>
 
-      <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
-        data={infoModalData}
-      />
+      <InfoModal isOpened={!!infoModalOpen} onClose={closeInfoModal} data={infoModalData} />
 
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}

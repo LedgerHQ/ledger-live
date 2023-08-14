@@ -37,11 +37,9 @@ export type TrackingPair = {
 export type CounterValuesAPI = {
   fetchHistorical: (
     granularity: RateGranularity,
-    pair: TrackingPair
+    pair: TrackingPair,
   ) => Promise<Record<string, number>>;
-  fetchLatest: (
-    pairs: TrackingPair[]
-  ) => Promise<Array<number | null | undefined>>;
+  fetchLatest: (pairs: TrackingPair[]) => Promise<Array<number | null | undefined>>;
   fetchMarketcapTickers: () => Promise<string[]>;
 };
 export type CounterValuesStatus = Record<

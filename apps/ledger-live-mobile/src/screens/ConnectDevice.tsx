@@ -5,8 +5,6 @@ import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -18,9 +16,6 @@ import { TrackScreen } from "../analytics";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../const";
 import type { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import type { LendingEnableFlowParamsList } from "../components/RootNavigator/types/LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { ClaimRewardsNavigatorParamList } from "../components/RootNavigator/types/ClaimRewardsNavigator";
 import type { FreezeNavigatorParamList } from "../components/RootNavigator/types/FreezeNavigator";
 import type { UnfreezeNavigatorParamList } from "../components/RootNavigator/types/UnfreezeNavigator";
@@ -31,6 +26,8 @@ import type { PolkadotRebondFlowParamList } from "../families/polkadot/RebondFlo
 import type { PolkadotBondFlowParamList } from "../families/polkadot/BondFlow/types";
 import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { AlgorandOptInFlowParamList } from "../families/algorand/OptInFlow/types";
+import type { CardanoDelegationFlowParamList } from "../families/cardano/DelegationFlow/types";
+import type { CardanoUndelegationFlowParamList } from "../families/cardano/UndelegationFlow/types";
 import type { CeloWithdrawFlowParamList } from "../families/celo/WithdrawFlow/types";
 import type { CeloRevokeFlowFlowParamList } from "../families/celo/RevokeFlow/types";
 import type { CeloActivateFlowParamList } from "../families/celo/ActivateFlow/types";
@@ -55,157 +52,57 @@ import { TezosDelegationFlowParamList } from "../families/tezos/DelegationFlow/t
 import { TronVoteFlowParamList } from "../families/tron/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "../components/RootNavigator/types/SignMessageNavigator";
+import { useTransactionDeviceAction } from "../hooks/deviceActions";
 
-const action = createAction(connectApp);
 type Props =
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendConnectDevice
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableConnectDevice
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplyConnectDevice
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawConnectDevice
-    >
-  | StackNavigatorProps<
-      ClaimRewardsNavigatorParamList,
-      ScreenName.ClaimRewardsConnectDevice
-    >
-  | StackNavigatorProps<
-      FreezeNavigatorParamList,
-      ScreenName.FreezeConnectDevice
-    >
-  | StackNavigatorProps<
-      UnfreezeNavigatorParamList,
-      ScreenName.UnfreezeConnectDevice
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
+  | StackNavigatorProps<ClaimRewardsNavigatorParamList, ScreenName.ClaimRewardsConnectDevice>
+  | StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeConnectDevice>
+  | StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeConnectDevice>
   | StackNavigatorProps<
       PolkadotSimpleOperationFlowParamList,
       ScreenName.PolkadotSimpleOperationConnectDevice
     >
-  | StackNavigatorProps<
-      PolkadotNominateFlowParamList,
-      ScreenName.PolkadotNominateConnectDevice
-    >
-  | StackNavigatorProps<
-      PolkadotUnbondFlowParamList,
-      ScreenName.PolkadotUnbondConnectDevice
-    >
-  | StackNavigatorProps<
-      PolkadotRebondFlowParamList,
-      ScreenName.PolkadotRebondConnectDevice
-    >
-  | StackNavigatorProps<
-      PolkadotBondFlowParamList,
-      ScreenName.PolkadotBondConnectDevice
-    >
+  | StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateConnectDevice>
+  | StackNavigatorProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondConnectDevice>
+  | StackNavigatorProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondConnectDevice>
+  | StackNavigatorProps<PolkadotBondFlowParamList, ScreenName.PolkadotBondConnectDevice>
   | StackNavigatorProps<
       AlgorandClaimRewardsFlowParamList,
       ScreenName.AlgorandClaimRewardsConnectDevice
     >
+  | StackNavigatorProps<CardanoDelegationFlowParamList, ScreenName.CardanoDelegationConnectDevice>
   | StackNavigatorProps<
-      AlgorandOptInFlowParamList,
-      ScreenName.AlgorandOptInConnectDevice
+      CardanoUndelegationFlowParamList,
+      ScreenName.CardanoUndelegationConnectDevice
     >
-  | StackNavigatorProps<
-      CeloWithdrawFlowParamList,
-      ScreenName.CeloWithdrawConnectDevice
-    >
-  | StackNavigatorProps<
-      CeloRevokeFlowFlowParamList,
-      ScreenName.CeloRevokeConnectDevice
-    >
-  | StackNavigatorProps<
-      CeloActivateFlowParamList,
-      ScreenName.CeloActivateConnectDevice
-    >
+  | StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInConnectDevice>
+  | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawConnectDevice>
+  | StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeConnectDevice>
+  | StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateConnectDevice>
   | StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteConnectDevice>
-  | StackNavigatorProps<
-      CeloUnlockFlowParamList,
-      ScreenName.CeloUnlockConnectDevice
-    >
+  | StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockConnectDevice>
   | StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockConnectDevice>
-  | StackNavigatorProps<
-      CeloRegistrationFlowParamList,
-      ScreenName.CeloRegistrationConnectDevice
-    >
-  | StackNavigatorProps<
-      CosmosDelegationFlowParamList,
-      ScreenName.CosmosDelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      CosmosRedelegationFlowParamList,
-      ScreenName.CosmosRedelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      CosmosUndelegationFlowParamList,
-      ScreenName.CosmosUndelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      CosmosClaimRewardsFlowParamList,
-      ScreenName.CosmosClaimRewardsConnectDevice
-    >
-  | StackNavigatorProps<
-      ElrondDelegationFlowParamList,
-      ScreenName.ElrondDelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      ElrondUndelegationFlowParamList,
-      ScreenName.ElrondUndelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      ElrondClaimRewardsFlowParamList,
-      ScreenName.ElrondClaimRewardsConnectDevice
-    >
-  | StackNavigatorProps<
-      ElrondWithdrawFlowParamList,
-      ScreenName.ElrondWithdrawConnectDevice
-    >
-  | StackNavigatorProps<
-      NearStakingFlowParamList,
-      ScreenName.NearStakingConnectDevice
-    >
-  | StackNavigatorProps<
-      NearUnstakingFlowParamList,
-      ScreenName.NearUnstakingConnectDevice
-    >
-  | StackNavigatorProps<
-      NearWithdrawingFlowParamList,
-      ScreenName.NearWithdrawingConnectDevice
-    >
-  | StackNavigatorProps<
-      SolanaDelegationFlowParamList,
-      ScreenName.DelegationConnectDevice
-    >
-  | StackNavigatorProps<
-      StellarAddAssetFlowParamList,
-      ScreenName.StellarAddAssetConnectDevice
-    >
-  | StackNavigatorProps<
-      TezosDelegationFlowParamList,
-      ScreenName.DelegationConnectDevice
-    >
+  | StackNavigatorProps<CeloRegistrationFlowParamList, ScreenName.CeloRegistrationConnectDevice>
+  | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationConnectDevice>
+  | StackNavigatorProps<CosmosRedelegationFlowParamList, ScreenName.CosmosRedelegationConnectDevice>
+  | StackNavigatorProps<CosmosUndelegationFlowParamList, ScreenName.CosmosUndelegationConnectDevice>
+  | StackNavigatorProps<CosmosClaimRewardsFlowParamList, ScreenName.CosmosClaimRewardsConnectDevice>
+  | StackNavigatorProps<ElrondDelegationFlowParamList, ScreenName.ElrondDelegationConnectDevice>
+  | StackNavigatorProps<ElrondUndelegationFlowParamList, ScreenName.ElrondUndelegationConnectDevice>
+  | StackNavigatorProps<ElrondClaimRewardsFlowParamList, ScreenName.ElrondClaimRewardsConnectDevice>
+  | StackNavigatorProps<ElrondWithdrawFlowParamList, ScreenName.ElrondWithdrawConnectDevice>
+  | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingConnectDevice>
+  | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingConnectDevice>
+  | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingConnectDevice>
+  | StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationConnectDevice>
+  | StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetConnectDevice>
+  | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionConnectDevice
-    >
-  | StackNavigatorProps<
-      SignMessageNavigatorStackParamList,
-      ScreenName.SignConnectDevice
-    >;
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionConnectDevice>
+  | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>;
 
-export const navigateToSelectDevice = (
-  navigation: Props["navigation"],
-  route: Props["route"],
-) =>
+export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"
   // type of component accepting mostly the same params as this one.
   (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
@@ -216,6 +113,7 @@ export const navigateToSelectDevice = (
     },
   );
 export default function ConnectDevice({ route, navigation }: Props) {
+  const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -226,8 +124,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     account: mainAccount,
     transaction: route.params.transaction,
   }));
-  const tokenCurrency =
-    account.type === "TokenAccount" ? account.token : undefined;
+  const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandler({
     account,
     parentAccount,
@@ -261,10 +158,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
             },
           ]}
         >
-          <TrackScreen
-            category={route.name.replace("ConnectDevice", "")}
-            name="ConnectDevice"
-          />
+          <TrackScreen category={route.name.replace("ConnectDevice", "")} name="ConnectDevice" />
           <DeviceAction
             action={action}
             request={{

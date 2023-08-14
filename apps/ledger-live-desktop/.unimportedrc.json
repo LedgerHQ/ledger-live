@@ -1,0 +1,23 @@
+{
+  "entry": [
+    "src/index.ts",
+    "src/renderer/index.ts",
+    "src/preloader/index.ts",
+    "src/renderer/webworkers/workers/*.ts",
+    "src/webviewPreloader/index.ts"
+  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "ignorePatterns": ["**/node_modules/**"],
+  "ignoreUnresolved": ["unzip-crx-3", "../../../../release-notes.json"],
+  "ignoreUnimported": ["**/*.test.*", "**/*.spec.*", "**/*.d.ts", "**/types.js", "**/types.*"],
+  "ignoreUnused": [
+    "@types/semver",
+    "@types/qrcode",
+    "@types/react-key-handler",
+    "rxjs7",
+    "prop-types"
+  ],
+  "aliases": {
+    "~/*": ["./src/*"]
+  }
+}

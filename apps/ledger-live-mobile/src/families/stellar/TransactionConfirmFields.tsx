@@ -17,9 +17,7 @@ const StellarMemoField = (props: Props) => {
       transaction.memoType &&
       deviceMemoLabels[transaction.memoType as keyof typeof deviceMemoLabels]
     ) {
-      return deviceMemoLabels[
-        transaction.memoType as keyof typeof deviceMemoLabels
-      ];
+      return deviceMemoLabels[transaction.memoType as keyof typeof deviceMemoLabels];
     }
     return deviceMemoLabels.NO_MEMO;
   }, [transaction.memoType]);

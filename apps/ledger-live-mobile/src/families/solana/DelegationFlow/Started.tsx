@@ -15,10 +15,7 @@ import { ScreenName } from "../../../const";
 import IlluStaking from "../../tezos/IlluStaking";
 import { SolanaDelegationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  SolanaDelegationFlowParamList,
-  ScreenName.SolanaDelegationStarted
->;
+type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaDelegationStarted>;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -34,11 +31,14 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen category="DelegationFlow" name="Started" />
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="delegation"
+          currency="sol"
+        />
         <IlluStaking />
         <Text fontWeight="semiBold" style={styles.title}>
           <Trans i18nKey="delegation.started.title" />
@@ -49,11 +49,11 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="delegation.started.steps.0" />,
-            <Trans i18nKey="delegation.started.steps.1" />,
-            <Trans i18nKey="delegation.started.steps.2" />,
+            <Trans i18nKey="delegation.started.steps.0" key="DelegationText1" />,
+            <Trans i18nKey="delegation.started.steps.1" key="DelegationText2" />,
+            <Trans i18nKey="delegation.started.steps.2" key="DelegationText3" />,
           ].map(wording => (
-            <Text fontWeight="semiBold" style={styles.bulletItem} color="black">
+            <Text fontWeight="semiBold" style={styles.bulletItem} color="black" key={wording.key}>
               {wording}
             </Text>
           ))}

@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
 import { useTheme } from "styled-components/native";
-import { Icons, IconBox, Flex } from "@ledgerhq/native-ui";
+import { IconsLegacy, IconBox, Flex } from "@ledgerhq/native-ui";
 import type { Props as IconBoxProps } from "@ledgerhq/native-ui/components/Icon/IconBox";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
@@ -41,7 +41,7 @@ const InfoModal = ({
   title,
   desc,
   bullets,
-  Icon = Icons.InfoMedium,
+  Icon = IconsLegacy.InfoMedium,
   withCancel,
   onContinue,
   children,
@@ -75,24 +75,14 @@ const InfoModal = ({
           ))}
         </View>
       ) : null}
-      <View
-        style={[
-          !title && !desc && !bullets ? styles.childrenContainer : null,
-          containerStyle,
-        ]}
-      >
+      <View style={[!title && !desc && !bullets ? styles.childrenContainer : null, containerStyle]}>
         {children}
       </View>
     </Flex>
 
     <Flex pt={6}>
       {withCancel ? (
-        <Button
-          event={(id || "") + "InfoModalClose"}
-          type={undefined}
-          onPress={onClose}
-          mt={7}
-        >
+        <Button event={(id || "") + "InfoModalClose"} type={undefined} onPress={onClose} mt={7}>
           <Trans i18nKey="common.cancel" />
         </Button>
       ) : null}

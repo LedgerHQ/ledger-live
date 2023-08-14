@@ -2,6 +2,8 @@ import { BigNumber } from "bignumber.js";
 import type {
   BipPath,
   BipPathRaw,
+  CardanoDelegation,
+  CardanoDelegationRaw,
   CardanoAccount,
   CardanoAccountRaw,
   CardanoOutput,
@@ -16,7 +18,6 @@ import type {
   TokenRaw,
 } from "./types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import isEqual from "lodash/isEqual";
 
 function toTokenRaw({ assetName, policyId, amount }: Token): TokenRaw {
   return {
@@ -34,13 +35,7 @@ function fromTokenRaw({ assetName, policyId, amount }: TokenRaw): Token {
   };
 }
 
-function toBipPathRaw({
-  purpose,
-  coin,
-  account,
-  chain,
-  index,
-}: BipPath): BipPathRaw {
+function toBipPathRaw({ purpose, coin, account, chain, index }: BipPath): BipPathRaw {
   return {
     purpose,
     coin,
@@ -50,13 +45,7 @@ function toBipPathRaw({
   };
 }
 
-function fromBipPathRaw({
-  purpose,
-  coin,
-  account,
-  chain,
-  index,
-}: BipPathRaw): BipPath {
+function fromBipPathRaw({ purpose, coin, account, chain, index }: BipPathRaw): BipPath {
   return {
     purpose,
     coin,
@@ -162,66 +151,69 @@ function fromProtocolParamsRaw({
   };
 }
 
+function toDelegationRaw({
+  status,
+  poolId,
+  ticker,
+  name,
+  rewards,
+}: CardanoDelegation): CardanoDelegationRaw {
+  return {
+    status,
+    poolId,
+    ticker,
+    name,
+    rewards: rewards.toString(),
+  };
+}
+
+function fromDelegationRaw({
+  status,
+  poolId,
+  ticker,
+  name,
+  rewards,
+}: CardanoDelegationRaw): CardanoDelegation {
+  return {
+    status,
+    poolId,
+    ticker,
+    name,
+    rewards: new BigNumber(rewards),
+  };
+}
+
 export function toCardanoResourceRaw(r: CardanoResources): CardanoResourcesRaw {
   return {
     internalCredentials: r.internalCredentials.map(toPaymentCredentialRaw),
     externalCredentials: r.externalCredentials.map(toPaymentCredentialRaw),
+    delegation: r.delegation ? toDelegationRaw(r.delegation) : undefined,
     utxos: r.utxos.map(toCardanoOutputRaw),
     protocolParams: toProtocolParamsRaw(r.protocolParams),
   };
 }
 
-export function fromCardanoResourceRaw(
-  r: CardanoResourcesRaw
-): CardanoResources {
+export function fromCardanoResourceRaw(r: CardanoResourcesRaw): CardanoResources {
   return {
     internalCredentials: r.internalCredentials.map(fromPaymentCredentialRaw),
     externalCredentials: r.externalCredentials.map(fromPaymentCredentialRaw),
+    delegation: r.delegation ? fromDelegationRaw(r.delegation) : undefined,
     utxos: r.utxos.map(fromCardanoOutputRaw),
     protocolParams: fromProtocolParamsRaw(r.protocolParams),
   };
 }
 
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  let changed = false;
-  const cardanoAcc = account as CardanoAccount;
-  const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
-  if (
-    cardanoUpdatedRaw.cardanoResources &&
-    (!cardanoAcc.cardanoResources ||
-      !isEqual(
-        toCardanoResourceRaw(cardanoAcc.cardanoResources),
-        cardanoUpdatedRaw.cardanoResources
-      ))
-  ) {
-    (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
-      cardanoUpdatedRaw.cardanoResources
-    );
-    changed = true;
-  }
-  return changed;
-}
-
-export function assignToAccountRaw(
-  account: Account,
-  accountRaw: AccountRaw
-): void {
+export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
   const cardanoAccount = account as CardanoAccount;
   if (cardanoAccount.cardanoResources) {
     (accountRaw as CardanoAccountRaw).cardanoResources = toCardanoResourceRaw(
-      cardanoAccount.cardanoResources
+      cardanoAccount.cardanoResources,
     );
   }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const cardanoResourcesRaw = (accountRaw as CardanoAccountRaw)
-    .cardanoResources;
+  const cardanoResourcesRaw = (accountRaw as CardanoAccountRaw).cardanoResources;
   if (cardanoResourcesRaw)
-    (account as CardanoAccount).cardanoResources =
-      fromCardanoResourceRaw(cardanoResourcesRaw);
+    (account as CardanoAccount).cardanoResources = fromCardanoResourceRaw(cardanoResourcesRaw);
 }

@@ -16,13 +16,10 @@ export const groupedFeatures: Record<
       "postOnboardingClaimNft",
       "staxWelcomeScreen",
       "syncOnboarding",
+      "llmNewFirmwareUpdateUx",
     ],
   },
   disableNft: {
-    featureIds: [
-      "disableNftLedgerMarket",
-      "disableNftRaribleOpensea",
-      "disableNftSend",
-    ],
+    featureIds: ["disableNftLedgerMarket", "disableNftRaribleOpensea", "disableNftSend"],
   },
 };

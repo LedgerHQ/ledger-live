@@ -13,11 +13,7 @@ type Props = {
 export default function AccountOrderModal({ onClose, isOpened }: Props) {
   const { t } = useTranslation();
   return (
-    <QueuedDrawer
-      onClose={onClose}
-      isRequestingToBeOpened={isOpened}
-      title={t("common.sortBy")}
-    >
+    <QueuedDrawer onClose={onClose} isRequestingToBeOpened={isOpened} title={t("common.sortBy")}>
       {choices.map(id => (
         <OrderOption key={id} id={id} />
       ))}

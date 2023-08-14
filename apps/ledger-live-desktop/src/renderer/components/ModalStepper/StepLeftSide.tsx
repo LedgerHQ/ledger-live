@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Icons, Flex, Text } from "@ledgerhq/react-ui";
+import { Button, IconsLegacy, Flex, Text } from "@ledgerhq/react-ui";
 
 const Container = styled(Flex).attrs(() => ({
   flexDirection: "column",
@@ -21,8 +21,8 @@ export type StepLeftSideProps = {
   continueDisabled?: boolean;
   hideBackButton?: boolean;
   backDisabled?: boolean;
-  onClickContinue?: (...args: any) => any;
-  onClickBack?: (...args: any) => any;
+  onClickContinue?: (...args: unknown[]) => unknown;
+  onClickBack?: (...args: unknown[]) => unknown;
 };
 
 const StepLeftSide = ({
@@ -62,7 +62,7 @@ const StepLeftSide = ({
             data-test-id={dataTestId}
             disabled={continueDisabled}
             variant="main"
-            Icon={Icons.ArrowRightRegular}
+            Icon={IconsLegacy.ArrowRightMedium}
             onClick={onClickContinue}
           >
             {continueLabel}

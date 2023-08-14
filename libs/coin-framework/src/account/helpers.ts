@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import type {
@@ -11,27 +11,43 @@ import type {
   TokenAccount,
   ChildAccount,
 } from "@ledgerhq/types-live";
-import {
-  CryptoCurrency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
-// by convention, a main account is the top level account
-// in case of an Account is the account itself
-// in case of a TokenAccount it's the parentAccount
-export const getMainAccount = (
-  account: AccountLike,
-  parentAccount?: Account | null | undefined
-): Account => {
+// By convention, a main account is the top level account
+// - in case of an Account is the account itself
+// - in case of a SubAccount it's the parentAccount
+export const getMainAccount = <A extends Account>(
+  account: A | SubAccount,
+  parentAccount?: A | null | undefined,
+): A => {
   const mainAccount = account.type === "Account" ? account : parentAccount;
   invariant(mainAccount, "an account is expected");
-  return mainAccount as Account;
+  return mainAccount as A;
 };
 
-export const getAccountCurrency = (
-  account?: AccountLike
-): TokenCurrency | CryptoCurrency => {
+// Return the currency in which fees are paid for this account
+export const getFeesCurrency = (account?: AccountLike): TokenCurrency | CryptoCurrency => {
+  switch (account?.type) {
+    case "Account":
+      return account.feesCurrency || account.currency;
+
+    case "ChildAccount":
+      return account.currency;
+
+    case "TokenAccount":
+      return account.token;
+
+    default:
+      throw new Error("invalid account.type=" + (account as unknown as { type: string })?.type);
+  }
+};
+
+// Return the unit to use with the fees currency
+export const getFeesUnit = (currency: TokenCurrency | CryptoCurrency): Unit => {
+  return currency.units[0];
+};
+
+export const getAccountCurrency = (account?: AccountLike): TokenCurrency | CryptoCurrency => {
   switch (account?.type) {
     case "Account":
     case "ChildAccount":
@@ -41,9 +57,7 @@ export const getAccountCurrency = (
       return account.token;
 
     default:
-      throw new Error(
-        "invalid account.type=" + (account as unknown as { type: string })?.type
-      );
+      throw new Error("invalid account.type=" + (account as unknown as { type: string })?.type);
   }
 };
 
@@ -92,8 +106,7 @@ export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
 };
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
-  const hasSubAccounts =
-    a.type === "Account" && a.subAccounts && a.subAccounts.length;
+  const hasSubAccounts = a.type === "Account" && a.subAccounts && a.subAccounts.length;
   return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
 };
 
@@ -109,15 +122,14 @@ export function areAllOperationsLoaded(account: AccountLike): boolean {
   return true;
 }
 
-export const isAccountBalanceSignificant = (a: AccountLike): boolean =>
-  a.balance.gt(100);
+export const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
 
 // in future, could be a per currency thing
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
 export function clearAccount<T extends AccountLike>(
   account: T,
-  familyClean?: (account: Account) => void
+  familyClean?: (account: Account) => void,
 ): T {
   if (account.type === "TokenAccount") {
     return {
@@ -145,9 +157,7 @@ export function clearAccount<T extends AccountLike>(
     pendingOperations: [],
     subAccounts:
       (account as Account).subAccounts &&
-      (account as Account).subAccounts?.map((acc) =>
-        clearAccount(acc, familyClean)
-      ),
+      (account as Account).subAccounts?.map(acc => clearAccount(acc, familyClean)),
   };
 
   familyClean?.(copy);
@@ -156,11 +166,8 @@ export function clearAccount<T extends AccountLike>(
   return copy as T;
 }
 
-export function findSubAccountById(
-  account: Account,
-  id: string
-): SubAccount | null | undefined {
-  return (account.subAccounts || []).find((a) => a.id === id);
+export function findSubAccountById(account: Account, id: string): SubAccount | null | undefined {
+  return (account.subAccounts || []).find(a => a.id === id);
 }
 
 // get the token accounts of an account, ignoring those that are zero IF user don't want them
@@ -168,7 +175,7 @@ export function listSubAccounts(account: Account): SubAccount[] {
   const accounts = account.subAccounts || [];
 
   if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
-    return accounts.filter((a) => !a.balance.isZero());
+    return accounts.filter(a => !a.balance.isZero());
   }
 
   return accounts;
@@ -180,7 +187,7 @@ export type FlattenAccountsOptions = {
 
 export function flattenAccounts(
   topAccounts: AccountLikeArray,
-  o: FlattenAccountsOptions = {}
+  o: FlattenAccountsOptions = {},
 ): AccountLike[] {
   const accounts: AccountLike[] = [];
 
@@ -210,9 +217,8 @@ export const shortAddressPreview = (addr: string, target = 20): string => {
 };
 
 export const isAccountBalanceUnconfirmed = (account: AccountLike): boolean =>
-  account.pendingOperations.some(
-    (op) => !account.operations.find((o) => o.hash === op.hash)
-  ) || account.operations.some((op) => !op.blockHeight);
+  account.pendingOperations.some(op => !account.operations.find(o => o.hash === op.hash)) ||
+  account.operations.some(op => !op.blockHeight);
 
 export const isUpToDateAccount = (account: Account | null | undefined) => {
   if (!account) return true;
@@ -220,16 +226,12 @@ export const isUpToDateAccount = (account: Account | null | undefined) => {
   const { blockAvgTime } = currency;
   if (!blockAvgTime) return true;
   const outdated =
-    // FIXME: same here, we need to use valueOf for typescript to compare dates
-    Date.now().valueOf() - (lastSyncDate.valueOf() || 0) >
+    Date.now() - lastSyncDate.getTime() >
     blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
   return !outdated;
 };
 
-export const makeEmptyTokenAccount = (
-  account: Account,
-  token: TokenCurrency
-): TokenAccount => ({
+export const makeEmptyTokenAccount = (account: Account, token: TokenCurrency): TokenAccount => ({
   type: "TokenAccount",
   id: account.id + "+" + token.contractAddress,
   parentId: account.id,
@@ -250,20 +252,18 @@ export const makeEmptyTokenAccount = (
  */
 export const accountWithMandatoryTokens = (
   account: Account,
-  tokenCurrencies: TokenCurrency[]
+  tokenCurrencies: TokenCurrency[],
 ): Account => {
   const { subAccounts } = account;
   if (!subAccounts) return account;
-  const existingTokens = subAccounts
-    .map((a) => a.type === "TokenAccount" && a.token)
-    .filter(Boolean);
+  const existingTokens = subAccounts.map(a => a.type === "TokenAccount" && a.token).filter(Boolean);
   const addition = tokenCurrencies
     .filter(
       (
-        t // token of the same currency
-      ) => t.parentCurrency === account.currency && !existingTokens.includes(t) // not yet in the sub accounts
+        t, // token of the same currency
+      ) => t.parentCurrency === account.currency && !existingTokens.includes(t), // not yet in the sub accounts
     )
-    .map<TokenAccount>((token) => ({
+    .map<TokenAccount>(token => ({
       type: "TokenAccount",
       id: encodeTokenAccountId(account.id, token),
       parentId: account.id,
@@ -288,13 +288,11 @@ export const accountWithMandatoryTokens = (
 export const withoutToken = (account: Account, tokenId: string): Account => {
   const { subAccounts } = account;
   if (!subAccounts) return account;
-  const tokenAccount = subAccounts.find(
-    (a) => a.type === "TokenAccount" && a.token.id === tokenId
-  );
+  const tokenAccount = subAccounts.find(a => a.type === "TokenAccount" && a.token.id === tokenId);
   if (!tokenAccount) return account;
   return {
     ...account,
-    subAccounts: subAccounts.filter((sa) => sa.id !== tokenAccount.id),
+    subAccounts: subAccounts.filter(sa => sa.id !== tokenAccount.id),
   };
 };
 
@@ -304,7 +302,7 @@ export const withoutToken = (account: Account, tokenId: string): Account => {
  */
 export const findTokenAccountByCurrency = (
   tokenCurrency: TokenCurrency,
-  accounts: Account[]
+  accounts: Account[],
 ):
   | {
       account?: SubAccount;
@@ -358,20 +356,15 @@ export function isSubAccount(account?: AccountLike): account is SubAccount {
   return isTokenAccount(account) || isChildAccount(account);
 }
 
-export function getParentAccount(
-  account: AccountLike,
-  accounts: AccountLike[]
-): Account {
+export function getParentAccount(account: AccountLike, accounts: AccountLike[]): Account {
   switch (account.type) {
     case "Account":
       return account;
     case "TokenAccount":
     case "ChildAccount": {
-      const parentAccount = accounts.find((a) => a.id == account.parentId);
+      const parentAccount = accounts.find(a => a.id == account.parentId);
       if (!parentAccount) {
-        throw new Error(
-          "No 'parentAccount' account provided for token account"
-        );
+        throw new Error("No 'parentAccount' account provided for token account");
       }
 
       return parentAccount as Account;

@@ -10,7 +10,7 @@ const Bar = styled(Box).attrs((p: { percentage: number }) => ({
   height: "4px",
   width: `${p.percentage}%`,
   backgroundColor: "neutral.c100",
-}))`
+}))<{ percentage: number }>`
   transition: width ease-out 200ms;
 `;
 

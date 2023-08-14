@@ -30,13 +30,10 @@ const SEEDS = {};
 const filterSeeds =
   (DEFAULT_FILTER_SEEDS || FILTER_SEEDS)
     ?.split(",")
-    .map((f) => f.trim())
+    .map(f => f.trim())
     .filter(Boolean) || [];
 for (const env of Object.keys(process.env)) {
-  if (
-    env.startsWith("SEED") &&
-    (!filterSeeds.length || filterSeeds.includes(env.slice(4)))
-  ) {
+  if (env.startsWith("SEED") && (!filterSeeds.length || filterSeeds.includes(env.slice(4)))) {
     SEEDS[env] = process.env[env];
   }
 }
@@ -62,87 +59,75 @@ if (REPORT_FOLDER) {
 let progress = 0;
 
 // run the jobs with a max parallelism to trigger sync of accounts on different bots
-promiseAllBatched(
-  parallelRuns,
-  specsPerBots,
-  async ({ env, family, key, seed }) => {
-    const localFolder = REPORT_FOLDER
-      ? path.join(REPORT_FOLDER, `${family}-${key}-${seed}`)
-      : undefined;
+promiseAllBatched(parallelRuns, specsPerBots, async ({ env, family, key, seed }) => {
+  const localFolder = REPORT_FOLDER
+    ? path.join(REPORT_FOLDER, `${family}-${key}-${seed}`)
+    : undefined;
 
-    if (localFolder) {
-      await mkdirp(localFolder);
-    }
+  if (localFolder) {
+    await mkdirp(localFolder);
+  }
 
-    const reportPromise = new Promise<Report>((resolve) => {
-      const child = spawn(
-        "node",
-        [
-          ...(localFolder ? ["--prof"] : []),
-          path.join(__dirname, "process-sync.js"),
-          family,
-          key,
-        ],
-        {
-          cwd: localFolder,
-          env: {
-            ...globalEnv,
-            ...env,
-            REPORT_FOLDER: localFolder,
-            START_TIME: String(Date.now()),
-          },
-        }
-      );
-
-      // TODO timeout
-      let lastResult = null;
-      child.stdout.on("data", (data) => {
-        const str = data.toString();
-        if (VERBOSE) {
-          // eslint-disable-next-line no-console
-          console.log(`${family}:${key}: stdout: ${str}`);
-        }
-        if (str.startsWith("{")) {
-          lastResult = JSON.parse(str);
-        }
-      });
-      child.stderr.on("data", (data) => {
-        console.error(`${family}:${key}: stderr: ${data}`);
-      });
-      child.on("error", (error) => {
-        console.error(`${family}:${key}: error: ${error}`);
-        resolve({ error: String(error) });
-      });
-      child.on("close", (code) => {
-        if (code === 0) {
-          resolve(lastResult || { error: "no result" });
-        } else {
-          resolve({ error: `child process exited with code ${code}` });
-        }
-      });
-    });
-
-    const report = await reportPromise;
-
-    progress++;
-
-    // eslint-disable-next-line no-console
-    console.log(
-      `${Math.floor(
-        (progress / specsPerBots.length) * 100
-      )}% progress (${progress}/${specsPerBots.length})`
+  const reportPromise = new Promise<Report>(resolve => {
+    const child = spawn(
+      "node",
+      [...(localFolder ? ["--prof"] : []), path.join(__dirname, "process-sync.js"), family, key],
+      {
+        cwd: localFolder,
+        env: {
+          ...globalEnv,
+          ...env,
+          REPORT_FOLDER: localFolder,
+          START_TIME: String(Date.now()),
+        },
+      },
     );
 
-    return report;
-  }
-).then(async (results: Report[]) => {
+    // TODO timeout
+    let lastResult = null;
+    child.stdout.on("data", data => {
+      const str = data.toString();
+      if (VERBOSE) {
+        // eslint-disable-next-line no-console
+        console.log(`${family}:${key}: stdout: ${str}`);
+      }
+      if (str.startsWith("{")) {
+        lastResult = JSON.parse(str);
+      }
+    });
+    child.stderr.on("data", data => {
+      console.error(`${family}:${key}: stderr: ${data}`);
+    });
+    child.on("error", error => {
+      console.error(`${family}:${key}: error: ${error}`);
+      resolve({ error: String(error) });
+    });
+    child.on("close", code => {
+      if (code === 0) {
+        resolve(lastResult || { error: "no result" });
+      } else {
+        resolve({ error: `child process exited with code ${code}` });
+      }
+    });
+  });
+
+  const report = await reportPromise;
+
+  progress++;
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `${Math.floor((progress / specsPerBots.length) * 100)}% progress (${progress}/${
+      specsPerBots.length
+    })`,
+  );
+
+  return report;
+}).then(async (results: Report[]) => {
   if (REPORT_FOLDER) {
     try {
       const opts = { cwd: REPORT_FOLDER, env: { PATH: process.env.PATH } };
-      await execp(
-        `node --prof-process --preprocess -j */isolate*.log > cpuprofile.txt`,
-        opts
-      );
+      await execp(`node --prof-process --preprocess -j */isolate*.log > cpuprofile.txt`, opts);
       await execp(`rm */isolate*.log`, opts);
     } catch (e) {
       console.error(e);
@@ -157,8 +142,8 @@ promiseAllBatched(
           if (!spb) return r;
           const { seed, family, key } = spb;
           return { seed, family, key, ...r };
-        })
-      )
+        }),
+      ),
     );
 
     const csvs = csvReports(results, specsPerBots);

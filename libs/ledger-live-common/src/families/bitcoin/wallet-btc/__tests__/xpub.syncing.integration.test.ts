@@ -167,7 +167,7 @@ describe("xpub integration sync", () => {
     },
   ];
 
-  walletDatasets.forEach((dataset) =>
+  walletDatasets.forEach(dataset =>
     describe(`xpub ${dataset.xpub} ${dataset.derivationMode}`, () => {
       const storage = new BitcoinLikeStorage();
       let crypto;
@@ -248,15 +248,13 @@ describe("xpub integration sync", () => {
           // const data = await storage.export();
           // data.txs = orderBy(data.txs, ['derivationMode', 'account', 'index', 'block.height', 'id']);
           // expect(JSON.stringify(txs, null, 2)).toMatchFile(truthDump);
-          expect((await xpub.getXpubBalance()).toNumber()).toEqual(
-            dataset.balance
-          );
+          expect((await xpub.getXpubBalance()).toNumber()).toEqual(dataset.balance);
           const addresses = await xpub.getXpubAddresses();
           expect(addresses.length).toEqual(dataset.addresses);
         },
         // github so slow
-        15 * 60 * 1000
+        15 * 60 * 1000,
       );
-    })
+    }),
   );
 });

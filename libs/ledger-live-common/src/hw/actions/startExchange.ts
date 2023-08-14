@@ -85,26 +85,20 @@ export const createAction = (
   startExchangeExec: (arg0: {
     deviceId: string;
     exchangeType: ExchangeType;
-  }) => Observable<ExchangeRequestEvent>
+  }) => Observable<ExchangeRequestEvent>,
 ): StartExchangeAction => {
   const useHook = (
     reduxDevice: Device | null | undefined,
-    startExchangeRequest: StartExchangeRequest
+    startExchangeRequest: StartExchangeRequest,
   ): StartExchangeState => {
     const [state, setState] = useState(initialState);
-    const reduxDeviceFrozen = useFrozenValue(
-      reduxDevice,
-      state.freezeReduxDevice
-    );
+    const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
 
     const { exchangeType } = startExchangeRequest;
 
-    const appState = createAppAction(connectAppExec).useHook(
-      reduxDeviceFrozen,
-      {
-        appName: "Exchange",
-      }
-    );
+    const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, {
+      appName: "Exchange",
+    });
 
     const { device, opened, error } = appState;
     const hasError = error || state.error;
@@ -119,13 +113,13 @@ export const createAction = (
         of(<ExchangeRequestEvent>{
           type: "start-exchange",
         }),
-        startExchangeExec({ deviceId: device.deviceId, exchangeType })
+        startExchangeExec({ deviceId: device.deviceId, exchangeType }),
       )
         .pipe(
-          tap((e) => {
+          tap(e => {
             log("actions-startExchange-event", JSON.stringify(e));
           }),
-          scan(reducer, initialState)
+          scan(reducer, initialState),
         )
         .subscribe(setState);
       return () => {

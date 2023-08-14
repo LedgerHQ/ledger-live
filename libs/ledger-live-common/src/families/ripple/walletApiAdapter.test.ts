@@ -1,10 +1,13 @@
-import xrp from "./walletApiAdapter";
+import { Account } from "@ledgerhq/types-live";
 import { RippleTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
+import xrp from "./walletApiAdapter";
 import { Transaction } from "./types";
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
   describe("should properly get infos for XRP platform tx", () => {
+    const dummyAccount = {} as Account;
+
     it("without fees provided", () => {
       const xrpPlatformTx: WalletAPITransaction = {
         family: "ripple",
@@ -17,8 +20,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         ...xrpPlatformTx,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        xrp.getWalletAPITransactionSignFlowInfos(xrpPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({
+        tx: xrpPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 
@@ -40,8 +45,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         ...xrpPlatformTx,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        xrp.getWalletAPITransactionSignFlowInfos(xrpPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({
+        tx: xrpPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 

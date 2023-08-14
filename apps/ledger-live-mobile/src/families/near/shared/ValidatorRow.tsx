@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
@@ -34,37 +34,21 @@ const ValidatorRow = ({
     >
       <View style={styles.validator}>
         <ValidatorImage
-          isLedger={
-            FIGMENT_NEAR_VALIDATOR_ADDRESS === validator.validatorAddress
-          }
+          isLedger={FIGMENT_NEAR_VALIDATOR_ADDRESS === validator.validatorAddress}
           size={32}
           name={validator.validatorAddress}
         />
         <View style={styles.validatorBody}>
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            style={styles.validatorName}
-          >
+          <Text numberOfLines={1} fontWeight="semiBold" style={styles.validatorName}>
             {validator.validatorAddress}
           </Text>
           {validator.commission ? (
-            <Text
-              fontWeight="semiBold"
-              numberOfLines={1}
-              style={styles.overdelegated}
-            >
-              <Trans i18nKey="near.staking.commission" /> {validator.commission}
-              %
+            <Text fontWeight="semiBold" numberOfLines={1} style={styles.overdelegated}>
+              <Trans i18nKey="near.staking.commission" /> {validator.commission}%
             </Text>
           ) : null}
         </View>
-        <Text
-          fontWeight="semiBold"
-          numberOfLines={1}
-          style={[styles.validatorYield]}
-          color="smoke"
-        >
+        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue
               showCode

@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
 import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-
 import { getPostOnboardingAction } from "./logic";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";

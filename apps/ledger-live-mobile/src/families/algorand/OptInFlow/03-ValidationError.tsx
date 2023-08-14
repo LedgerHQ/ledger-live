@@ -14,17 +14,12 @@ import type { BaseNavigatorStackParamList } from "../../../components/RootNaviga
 import { ScreenName } from "../../../const";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    AlgorandOptInFlowParamList,
-    ScreenName.AlgorandOptInValidationError
-  >
+  StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInValidationError>
 >;
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

@@ -18,38 +18,21 @@ export const INITIAL_STATE: DynamicContentState = {
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_WALLET_CARDS]: (
-    state,
-    action,
-  ) => ({
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_WALLET_CARDS]: (state, action) => ({
     ...state,
-    walletCards: (action as Action<DynamicContentSetWalletCardsPayload>).payload
-      .walletCards,
+    walletCards: (action as Action<DynamicContentSetWalletCardsPayload>).payload,
   }),
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_ASSET_CARDS]: (
-    state,
-    action,
-  ) => ({
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_ASSET_CARDS]: (state, action) => ({
     ...state,
-    assetsCards: (action as Action<DynamicContentSetAssetCardsPayload>).payload
-      .assetsCards,
+    assetsCards: (action as Action<DynamicContentSetAssetCardsPayload>).payload,
   }),
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LEARN_CARDS]: (
-    state,
-    action,
-  ) => ({
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LEARN_CARDS]: (state, action) => ({
     ...state,
-    learnCards: (action as Action<DynamicContentSetLearnCardsPayload>).payload
-      .learnCards,
+    learnCards: (action as Action<DynamicContentSetLearnCardsPayload>).payload,
   }),
-  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS]: (
-    state,
-    action,
-  ) => ({
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS]: (state, action) => ({
     ...state,
-    notificationCards: (
-      action as Action<DynamicContentSetNotificationCardsPayload>
-    ).payload.notificationCards,
+    notificationCards: (action as Action<DynamicContentSetNotificationCardsPayload>).payload,
   }),
 };
 
@@ -59,10 +42,6 @@ export const assetsCardsSelector = (s: State) => s.dynamicContent.assetsCards;
 export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
 
 export const learnCardsSelector = (s: State) => s.dynamicContent.learnCards;
-export const notificationsCardsSelector = (s: State) =>
-  s.dynamicContent.notificationCards;
+export const notificationsCardsSelector = (s: State) => s.dynamicContent.notificationCards;
 
-export default handleActions<DynamicContentState, DynamicContentPayload>(
-  handlers,
-  INITIAL_STATE,
-);
+export default handleActions<DynamicContentState, DynamicContentPayload>(handlers, INITIAL_STATE);

@@ -9,7 +9,8 @@ import { IconOrElementType } from "../../../Icon/type";
 import { BoxedIcon } from "../../../Icon";
 import { Flex } from "../../index";
 import { space } from "styled-system";
-import { Icons } from "../../../../assets";
+import { Close } from "@ledgerhq/icons-ui/native";
+import { useTheme } from "styled-components/native";
 
 const { width, height } = sizes;
 
@@ -27,6 +28,7 @@ export type BaseModalProps = {
   subtitle?: string;
   children?: React.ReactNode;
   noCloseButton?: boolean;
+  CustomHeader?: React.ComponentType;
 } & Partial<ModalProps>;
 
 const SafeContainer = styled.SafeAreaView`
@@ -49,6 +51,7 @@ const CloseContainer = styled.View`
   display: flex;
   align-items: flex-end;
   margin-bottom: ${(p) => p.theme.space[6]}px;
+  z-index: 10;
 `;
 
 const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
@@ -113,10 +116,12 @@ export function ModalHeader({
 export function ModalHeaderCloseButton({
   onClose,
 }: Pick<BaseModalProps, "onClose">): React.ReactElement {
+  const { colors } = useTheme();
+
   return (
     <CloseContainer>
       <ClosePressableExtendedBounds onPress={onClose}>
-        <Icons.CloseMedium color="neutral.c100" size="20px" />
+        <Close color={colors.neutral.c100} size="S" />
       </ClosePressableExtendedBounds>
     </CloseContainer>
   );
@@ -137,6 +142,7 @@ export default function BaseModal({
   subtitle,
   children,
   onModalHide,
+  CustomHeader,
   ...rest
 }: BaseModalProps): React.ReactElement {
   const backDropProps = preventBackdropClick
@@ -159,7 +165,7 @@ export default function BaseModal({
     <ReactNativeModal
       {...backDropProps}
       {...rest}
-      isVisible={isOpen}
+      isVisible={!!isOpen}
       deviceWidth={width}
       deviceHeight={height}
       useNativeDriver
@@ -169,8 +175,13 @@ export default function BaseModal({
       style={[defaultModalStyle, modalStyle]}
     >
       <SafeContainer style={safeContainerStyle}>
+        {CustomHeader && (
+          <CustomHeader>
+            {!noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
+          </CustomHeader>
+        )}
         <Container style={containerStyle}>
-          {!noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
+          {!CustomHeader && !noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
           <ModalHeader
             Icon={Icon}
             iconColor={iconColor}

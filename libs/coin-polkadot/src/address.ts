@@ -11,16 +11,12 @@ const POLKADOT_SS58_PREFIX = 0;
 // TODO Cache this to improve perf
 export const isValidAddress = (
   address: string,
-  ss58Format: number = POLKADOT_SS58_PREFIX
+  ss58Format: number = POLKADOT_SS58_PREFIX,
 ): boolean => {
   if (!address) return false;
 
   try {
-    encodeAddress(
-      isHex(address)
-        ? hexToU8a(address)
-        : decodeAddress(address, false, ss58Format)
-    );
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address, false, ss58Format));
     return true;
   } catch (err) {
     return false;

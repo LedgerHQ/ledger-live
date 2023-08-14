@@ -6,10 +6,10 @@ import styled from "styled-components";
 export type Props = InputProps & { legend: string };
 
 const Legend = styled(Text)`
-  color: ${(props) => props.theme.colors.neutral.c70};
+  color: ${props => props.theme.colors.neutral.c70};
 
   &[data-disabled="true"] {
-    color: ${(props) => props.theme.colors.neutral.c50};
+    color: ${props => props.theme.colors.neutral.c50};
   }
 `;
 

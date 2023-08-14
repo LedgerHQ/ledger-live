@@ -1,12 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -30,6 +24,7 @@ import Info from "../../../icons/Info";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const Row = ({
   item,
@@ -45,10 +40,7 @@ const Row = ({
   const { colors } = useTheme();
   const tokenId = extractTokenId(item.id);
   return (
-    <TouchableOpacity
-      style={[styles.row]}
-      onPress={disabled ? onDisabledPress : onPress}
-    >
+    <TouchableOpacity style={[styles.row]} onPress={disabled ? onDisabledPress : onPress}>
       <FirstLetterIcon
         label={item.name}
         labelStyle={
@@ -89,10 +81,7 @@ const renderEmptyList = () => (
   </View>
 );
 
-type Props = StackNavigatorProps<
-  AlgorandOptInFlowParamList,
-  ScreenName.AlgorandOptInSelectToken
->;
+type Props = StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInSelectToken>;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -100,10 +89,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount);
-  invariant(
-    mainAccount && mainAccount.algorandResources,
-    "algorand Account required",
-  );
+  invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
   const { transaction } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
     return {
@@ -128,14 +114,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const subAccounts = mainAccount.subAccounts;
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
-  const openModal = useCallback(
-    token => setInfoModalOpen(token),
-    [setInfoModalOpen],
-  );
-  const closeModal = useCallback(
-    () => setInfoModalOpen(false),
-    [setInfoModalOpen],
-  );
+  const openModal = useCallback(token => setInfoModalOpen(token), [setInfoModalOpen]);
+  const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const renderList = useCallback(
     (list: TokenCurrency[]) => (
       <FlatList
@@ -145,9 +125,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             item={item}
             disabled={(subAccounts || []).some(
               (sub: SubAccount) =>
-                sub.type === "TokenAccount" &&
-                sub.token &&
-                sub.token.id === item.id,
+                sub.type === "TokenAccount" && sub.token && sub.token.id === item.id,
             )}
             onPress={() => onNext(item.id)}
             onDisabledPress={() => openModal(item.name)}
@@ -174,15 +152,12 @@ export default function DelegationStarted({ navigation, route }: Props) {
             renderList={renderList}
             inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
             renderEmptySearch={renderEmptyList}
-            keys={["name", "ticker"]}
+            keys={getEnv("CRYPTO_ASSET_SEARCH_KEYS")}
             list={options}
           />
         </View>
       </KeyboardView>
-      <QueuedDrawer
-        isRequestingToBeOpened={!!infoModalOpen}
-        onClose={closeModal}
-      >
+      <QueuedDrawer isRequestingToBeOpened={!!infoModalOpen} onClose={closeModal}>
         <View style={styles.modal}>
           <View style={styles.infoIcon}>
             <InfoIcon bg={colors.lightLive}>
@@ -191,9 +166,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           </View>
           <View style={styles.infoRow}>
             <LText style={[styles.warnText, styles.title]} semiBold>
-              <Trans
-                i18nKey={`algorand.optIn.flow.steps.selectToken.warning.title`}
-              />
+              <Trans i18nKey={`algorand.optIn.flow.steps.selectToken.warning.title`} />
             </LText>
             <LText style={styles.warnText} color="grey">
               <Trans

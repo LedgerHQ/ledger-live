@@ -58,7 +58,7 @@ const Routes = ({
 
   return (
     <div style={{ paddingLeft: "1em" }}>
-      {routes.map((route) => (
+      {routes.map(route => (
         <>
           <RouteElement onClick={() => onClick([...previousPath, route.path].join("/"))}>
             {route.label} [{"/" + route.path}]
@@ -77,14 +77,14 @@ const Routes = ({
 export const Breadcrumb = (args: Props): JSX.Element => {
   const [route, setRoute] = useState("apps/swap/confirm");
 
-  const onChange = useCallback((value) => setRoute(value.join("/")), [setRoute]);
+  const onChange = useCallback(value => setRoute(value.join("/")), [setRoute]);
   const segments = useMemo(() => {
     const paths = route.split("/");
 
     const [, result] = paths.reduce<[Route[], React.ComponentProps<typeof Breadcrumb>["segments"]]>(
       ([routes, result], path) => {
         let activeRoute: Route | null = null;
-        const level = routes.map((route) => {
+        const level = routes.map(route => {
           if (route.path === path) {
             activeRoute = route;
           }

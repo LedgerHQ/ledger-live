@@ -1,23 +1,11 @@
-import React, {
-  useRef,
-  useEffect,
-  memo,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { useRef, useEffect, memo, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
-import {
-  State,
-  AppsDistribution,
-  Action,
-} from "@ledgerhq/live-common/apps/index";
+import { State, AppsDistribution, Action } from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 
-import { Flex, Text, Button, Divider } from "@ledgerhq/native-ui";
-import { CircledCheckSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Flex, Text, Button, Divider, IconsLegacy } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
@@ -54,10 +42,7 @@ type Props = {
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
-  setAppUninstallWithDependencies: (params: {
-    dependents: App[];
-    app: App;
-  }) => void;
+  setAppUninstallWithDependencies: (params: { dependents: App[]; app: App }) => void;
   dispatch: (action: Action) => void;
   appList: App[];
   onLanguageChange: () => void;
@@ -100,8 +85,6 @@ const DeviceCard = ({
     }
   }, [dispatch, lastSeenCustomImage]);
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
   }, [setAppsModalOpen]);
@@ -118,13 +101,12 @@ const DeviceCard = ({
     [deviceInfo.seVersion, deviceModel.id],
   );
 
-  const showDeviceLanguage =
-    deviceLocalizationFeatureFlag?.enabled &&
-    isLocalizationSupported &&
-    deviceInfo.languageId !== undefined;
+  const showDeviceLanguage = isLocalizationSupported && deviceInfo.languageId !== undefined;
 
   const hasCustomImage =
     useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
+
+  const disableFlows = pendingInstalls;
 
   return (
     <BorderCard>
@@ -139,21 +121,12 @@ const DeviceCard = ({
         >
           <DeviceName
             device={device}
+            deviceInfo={deviceInfo}
             initialDeviceName={initialDeviceName}
-            disabled={pendingInstalls}
+            disabled={disableFlows}
           />
-          <Flex
-            backgroundColor={"neutral.c30"}
-            py={1}
-            px={3}
-            borderRadius={4}
-            my={2}
-          >
-            <Text
-              variant={"subtitle"}
-              fontWeight={"semiBold"}
-              color={"neutral.c80"}
-            >
+          <Flex backgroundColor={"neutral.c30"} py={1} px={3} borderRadius={4} my={2}>
+            <Text variant={"subtitle"} fontWeight={"semiBold"} color={"neutral.c80"}>
               <Trans
                 i18nKey="FirmwareVersionRow.subtitle"
                 values={{ version: deviceInfo.version }}
@@ -161,7 +134,7 @@ const DeviceCard = ({
             </Text>
           </Flex>
           <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
-            <CircledCheckSolidMedium size={18} color={"palette.success.c80"} />
+            <IconsLegacy.CircledCheckSolidMedium size={18} color={"palette.success.c50"} />
             <Text
               variant={"body"}
               fontWeight={"medium"}
@@ -177,15 +150,13 @@ const DeviceCard = ({
       {hasCustomImage || showDeviceLanguage ? (
         <>
           <Flex px={6}>
-            {hasCustomImage && <CustomLockScreen device={device} />}
+            {hasCustomImage && <CustomLockScreen disabled={disableFlows} device={device} />}
             {showDeviceLanguage && (
               <Flex mt={hasCustomImage ? 6 : 0}>
                 <DeviceLanguage
-                  pendingInstalls={pendingInstalls}
+                  disabled={disableFlows}
                   currentDeviceLanguage={
-                    idsToLanguage[
-                      deviceInfo.languageId as keyof typeof idsToLanguage
-                    ]
+                    idsToLanguage[deviceInfo.languageId as keyof typeof idsToLanguage]
                   }
                   deviceInfo={deviceInfo}
                   device={device}
@@ -202,8 +173,11 @@ const DeviceCard = ({
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}
+        installQueue={state.installQueue}
+        uninstallQueue={state.uninstallQueue}
         deviceInfo={deviceInfo}
       />
+
       {appList.length > 0 && (
         <Flex mx={6} mb={6}>
           <Button size="small" type="color" onPress={openAppsModal}>

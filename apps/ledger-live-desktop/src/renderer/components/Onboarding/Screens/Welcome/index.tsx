@@ -7,12 +7,12 @@ import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { urls } from "~/config/urls";
 import { acceptTerms } from "~/renderer/terms";
-import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
+import { Text, Button, Logos, IconsLegacy, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 import { saveSettings } from "~/renderer/actions/settings";
-
 import BuyNanoX from "./assets/buyNanoX.webm";
-
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useLoginPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -89,28 +89,47 @@ export function Welcome() {
   const { colors } = useTheme();
   const locale = useSelector(languageSelector) || "en";
 
-  if (hasCompletedOnboarding) {
-    history.push("/onboarding/select-device");
-  }
+  useEffect(() => {
+    if (hasCompletedOnboarding) {
+      history.push("/onboarding/select-device");
+    }
+  }, [hasCompletedOnboarding, history]);
+
+  const recoverFeature = useFeature("protectServicesDesktop");
+  const loginPath = useLoginPath(recoverFeature);
+
+  const recoverLogIn = useCallback(() => {
+    if (!loginPath) return;
+
+    acceptTerms();
+    dispatch(saveSettings({ hasCompletedOnboarding: true }));
+    history.push(loginPath);
+  }, [dispatch, history, loginPath]);
 
   const buyNanoX = useCallback(() => {
-    openURL(urls.noDevice.buyNew[locale in urls.terms ? locale : "en"]);
+    openURL(
+      urls.noDevice.buyNew[
+        locale in urls.terms ? (locale as keyof typeof urls.noDevice.buyNew) : "en"
+      ],
+    );
   }, [locale]);
 
   const openTermsAndConditions = useCallback(() => {
-    openURL(urls.terms[locale in urls.terms ? locale : "en"]);
+    openURL(urls.terms[locale in urls.terms ? (locale as keyof typeof urls.terms) : "en"]);
   }, [locale]);
 
   const openPrivacyPolicy = useCallback(() => {
-    openURL(urls.privacyPolicy[locale in urls.privacyPolicy ? locale : "en"]);
+    openURL(
+      urls.privacyPolicy[
+        locale in urls.privacyPolicy ? (locale as keyof typeof urls.privacyPolicy) : "en"
+      ],
+    );
   }, [locale]);
 
   const countTitle = useRef(0);
   const countSubtitle = useRef(0);
-  const [
-    isFeatureFlagsSettingsButtonDisplayed,
-    setIsFeatureFlagsSettingsButtonDisplayed,
-  ] = useState<boolean>(false);
+  const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
+    useState<boolean>(false);
 
   const timeout = useRef<ReturnType<typeof setTimeout>>();
 
@@ -166,13 +185,26 @@ export function Welcome() {
           <Button
             data-test-id="v3-onboarding-get-started-button"
             iconPosition="right"
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
             onClick={handleAcceptTermsAndGetStarted}
-            mb="24px"
+            mb="5"
           >
             {t("onboarding.screens.welcome.nextButton")}
           </Button>
+          <FeatureToggle feature="protectServicesDesktop">
+            <Button
+              iconPosition="right"
+              variant="main"
+              onClick={recoverLogIn}
+              outline={true}
+              flexDirection="column"
+              whiteSpace="normal"
+              mb="5"
+            >
+              {t("onboarding.screens.welcome.recoverSignIn")}
+            </Button>
+          </FeatureToggle>
           <Button
             iconPosition="right"
             variant="main"

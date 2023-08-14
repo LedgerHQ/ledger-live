@@ -6,7 +6,7 @@ import QueuedDrawer from "../../../../components/QueuedDrawer";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import { ScreenName } from "../../../../const";
-import { setDebugAppLelevelDrawerOpened } from "../../../../actions/settings";
+import { setDebugAppLevelDrawerOpened } from "../../../../actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "../../../../reducers/settings";
 import LockModal from "../../../../components/ModalLock";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
@@ -23,20 +23,17 @@ import NavigationScrollView from "../../../../components/NavigationScrollView";
  * Also possible to navigate to another screen directly or after x seconds to test how the queued drawer system handles it.
  */
 export default function DebugQueuedDrawers() {
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
 
   const [isDrawer1Open, setIsDrawer1Open] = useState(false);
   const [isDrawer2Open, setIsDrawer2Open] = useState(false);
   const [isDrawer3Open, setIsDrawer3Open] = useState(false);
 
   const [isDrawer4Started, setIsDrawer4Started] = useState(false);
-  const [isDrawer4RequestingToBeOpened, setDrawer4IsRequestingToBeOpened] =
-    useState(false);
+  const [isDrawer4RequestingToBeOpened, setDrawer4IsRequestingToBeOpened] = useState(false);
 
   const [isDrawer5Started, setIsDrawer5Started] = useState(false);
-  const [isDrawer5ForcingToBeOpened, setDrawer5IsForcingToBeOpened] =
-    useState(false);
+  const [isDrawer5ForcingToBeOpened, setDrawer5IsForcingToBeOpened] = useState(false);
 
   const [isNavigatingAfter3s, setIsNavigatingAfter3s] = useState(false);
 
@@ -145,14 +142,12 @@ export default function DebugQueuedDrawers() {
     setIsDrawer6BOpen(false);
   }, []);
 
-  const isDebugAppLevelDrawerOpened = useSelector(
-    debugAppLevelDrawerOpenedSelector,
-  );
+  const isDebugAppLevelDrawerOpened = useSelector(debugAppLevelDrawerOpenedSelector);
 
   const dispatch = useDispatch();
   const handleDebugAppLevelDrawerOpenedChange = useCallback(
     (val: boolean) => {
-      dispatch(setDebugAppLelevelDrawerOpened(val));
+      dispatch(setDebugAppLevelDrawerOpened(val));
     },
     [dispatch],
   );
@@ -215,9 +210,7 @@ export default function DebugQueuedDrawers() {
             <Switch
               checked={isDebugAppLevelDrawerOpened}
               onChange={handleDebugAppLevelDrawerOpenedChange}
-              label={
-                "Open a drawer equivalent to the notification or ratings drawer 📲"
-              }
+              label={"Open a drawer equivalent to the notification or ratings drawer 📲"}
             />
           </Flex>
           <Flex mb="6">
@@ -243,15 +236,11 @@ export default function DebugQueuedDrawers() {
               }`}
             />
           </Flex>
-          <Alert
-            type="info"
-            title="Hey 🧙‍♀️ Test successive opening/closing of drawers !"
-          />
+          <Alert type="info" title="Hey 🧙‍♀️ Test successive opening/closing of drawers !" />
           <Flex mt="8">
             <Text>
-              Also, try navigating to a new screen by clicking on one of the
-              buttons below and come back here with the back arrow. To check if
-              the drawers are still working.
+              Also, try navigating to a new screen by clicking on one of the buttons below and come
+              back here with the back arrow. To check if the drawers are still working.
             </Text>
 
             <Button

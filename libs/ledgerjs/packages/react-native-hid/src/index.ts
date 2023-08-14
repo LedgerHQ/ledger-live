@@ -1,10 +1,7 @@
 import { NativeModules, DeviceEventEmitter } from "react-native";
 import { ledgerUSBVendorId, identifyUSBProductId } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
-import {
-  DisconnectedDeviceDuringOperation,
-  DisconnectedDevice,
-} from "@ledgerhq/errors";
+import { DisconnectedDeviceDuringOperation, DisconnectedDevice } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import type { DescriptorEvent } from "@ledgerhq/hw-transport";
@@ -18,11 +15,12 @@ const disconnectedErrors = [
   "I/O error",
   "Attempt to invoke virtual method 'int android.hardware.usb.UsbDevice.getDeviceClass()' on a null object reference",
   "Invalid channel",
+  "Permission denied by user for device",
 ];
 
 const listLedgerDevices = async () => {
   const devices = await NativeModules.HID.getDeviceList();
-  return devices.filter((d) => d.vendorId === ledgerUSBVendorId);
+  return devices.filter(d => d.vendorId === ledgerUSBVendorId);
 };
 
 const liveDeviceEventsSubject: Subject<DescriptorEvent<any>> = new Subject();
@@ -66,8 +64,7 @@ export default class HIDTransport extends Transport {
   /**
    * Check if the transport is supported (basically true on Android)
    */
-  static isSupported = (): Promise<boolean> =>
-    Promise.resolve(!!NativeModules.HID);
+  static isSupported = (): Promise<boolean> => Promise.resolve(!!NativeModules.HID);
 
   /**
    * List currently connected devices.
@@ -88,17 +85,17 @@ export default class HIDTransport extends Transport {
       };
     return concat(
       from(listLedgerDevices()).pipe(
-        mergeMap((devices) =>
+        mergeMap(devices =>
           from(
-            devices.map((device) => ({
+            devices.map(device => ({
               type: "add",
               descriptor: device,
               deviceModel: identifyUSBProductId(device.productId),
-            }))
-          )
-        )
+            })),
+          ),
+        ),
       ),
-      liveDeviceEvents
+      liveDeviceEvents,
     ).subscribe(observer);
   }
 

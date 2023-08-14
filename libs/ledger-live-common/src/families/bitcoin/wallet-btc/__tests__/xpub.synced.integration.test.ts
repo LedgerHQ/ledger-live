@@ -43,13 +43,13 @@ describe("synced xpub utilites functions", () => {
       expect((await xpub.getXpubBalance()).toNumber()).toEqual(360615);
       expect((await xpub.getAccountBalance(0)).toNumber()).toEqual(10000);
       const addressesBalances = await Promise.all(
-        addresses.map((address) => xpub.getAddressBalance(address))
+        addresses.map(address => xpub.getAddressBalance(address)),
       );
       expect(
         zipObject(
-          addresses.map((address) => address.address),
-          addressesBalances.map((balance) => balance.toNumber())
-        )
+          addresses.map(address => address.address),
+          addressesBalances.map(balance => balance.toNumber()),
+        ),
       ).toEqual({
         "bitcoincash:qp2ujnlxjmkwtc299zwat3vt7j0jgltwls3q5avzsj": 0,
         "bitcoincash:qp62d8j6ng0jhenc97dnnyn6qev24vykev5pea7jd3": 0,

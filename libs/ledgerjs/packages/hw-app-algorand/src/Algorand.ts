@@ -57,7 +57,7 @@ export default class Algorand {
    */
   getAddress(
     path: string,
-    boolDisplay?: boolean
+    boolDisplay?: boolean,
   ): Promise<{
     publicKey: string;
     address: string;
@@ -66,15 +66,10 @@ export default class Algorand {
     const buf = Buffer.alloc(4);
     buf.writeUInt32BE(bipPath[2], 0);
     return this.transport
-      .send(
-        CLA,
-        INS_GET_PUBLIC_KEY,
-        boolDisplay ? P1_WITH_REQUEST_USER_APPROVAL : 0,
-        0,
-        buf,
-        [SW_OK]
-      )
-      .then((response) => {
+      .send(CLA, INS_GET_PUBLIC_KEY, boolDisplay ? P1_WITH_REQUEST_USER_APPROVAL : 0, 0, buf, [
+        SW_OK,
+      ])
+      .then(response => {
         const buffer = Buffer.from(response.slice(0, 32));
         const publicKey = buffer.toString("hex");
         const address = encodeAddress(buffer);
@@ -85,10 +80,7 @@ export default class Algorand {
       });
   }
 
-  foreach<T, A>(
-    arr: T[],
-    callback: (arg0: T, arg1: number) => Promise<A>
-  ): Promise<A[]> {
+  foreach<T, A>(arr: T[], callback: (arg0: T, arg1: number) => Promise<A>): Promise<A[]> {
     function iterate(index, array, result) {
       if (index >= array.length) {
         return result;
@@ -104,7 +96,7 @@ export default class Algorand {
 
   async sign(
     path: string,
-    message: string
+    message: string,
   ): Promise<{
     signature: null | Buffer;
   }> {
@@ -133,9 +125,9 @@ export default class Algorand {
           j === 0 ? P1_WITH_ACCOUNT_ID : P1_MORE,
           j + 1 === chunks.length ? P2_LAST : P2_MORE,
           data,
-          [SW_OK, SW_CANCEL]
+          [SW_OK, SW_CANCEL],
         )
-        .then((apduResponse) => (response = apduResponse))
+        .then(apduResponse => (response = apduResponse)),
     ).then(() => {
       const errorCodeData = response;
 

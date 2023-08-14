@@ -64,7 +64,13 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="ElrondDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="claim"
+        currency="egld"
+      />
       <PreventNativeBack />
 
       <ValidateSuccess
@@ -77,9 +83,7 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
             i18nKey={`elrond.claimRewards.flow.steps.verification.success.${transaction.mode}Success`}
           />
         }
-        description={
-          <Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />
-        }
+        description={<Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />}
       />
     </View>
   );

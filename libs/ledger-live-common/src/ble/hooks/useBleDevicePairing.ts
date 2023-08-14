@@ -31,9 +31,7 @@ export const useBleDevicePairing = ({
   const [pairingError, setPairingError] = useState<PairingError>(null);
 
   useEffect(() => {
-    const requestObservable = withDevice(deviceId)((t) =>
-      from(getVersion(t))
-    ).pipe(first());
+    const requestObservable = withDevice(deviceId)(t => from(getVersion(t))).pipe(first());
 
     const sub = requestObservable.subscribe({
       next: (_value: FirmwareInfo) => {

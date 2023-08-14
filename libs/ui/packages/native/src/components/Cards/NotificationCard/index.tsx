@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ExternalLinkMedium } from "@ledgerhq/icons-ui/native";
+import { ExternalLinkMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import Box from "../../Layout/Box";
@@ -20,7 +20,7 @@ export type CardProps = TouchableOpacityProps & {
 };
 
 const Tag = ({ tag }: { tag: string }) => (
-  <Flex bg="neutral.c100a01" borderRadius={6} px={3} py="3px" maxWidth="75%">
+  <Flex bg="opacityDefault.c10" borderRadius={6} px={3} py="3px" maxWidth="75%">
     <Text variant="small" fontWeight="semiBold" color="neutral.c90" numberOfLines={1}>
       {tag}
     </Text>
@@ -35,7 +35,7 @@ const Timer = ({ time, viewed }: { time: string; viewed: boolean }) => (
 
     <Box
       ml={3}
-      backgroundColor={viewed ? "transparent" : "error.c80"}
+      backgroundColor={viewed ? "transparent" : "error.c40"}
       height="8px"
       width="8px"
       borderRadius={24}

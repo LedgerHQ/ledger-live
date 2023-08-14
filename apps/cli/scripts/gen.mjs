@@ -15,7 +15,6 @@ async function gen() {
   ${clean},`;
   }
 
-  exprts = exprts.substring(0, exprts.length - 1);
   exprts += `
 };
 `;

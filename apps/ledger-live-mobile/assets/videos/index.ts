@@ -9,4 +9,6 @@ export default {
   infinityPassPart01Light: require("./infinityPassLight/infinityPassPart01.mp4"),
   infinityPassPart02Dark: require("./infinityPassDark/infinityPassPart02.mp4"),
   infinityPassPart02Light: require("./infinityPassLight/infinityPassPart02.mp4"),
+  customLockScreenBannerLight: require("./customLockScreenBanner/customLockScreenBannerLight.mp4"),
+  customLockScreenBannerDark: require("./customLockScreenBanner/customLockScreenBannerDark.mp4"),
 };

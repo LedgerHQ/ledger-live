@@ -1,7 +1,4 @@
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/polkadot/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/polkadot/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
@@ -22,6 +19,7 @@ export type PolkadotSimpleOperationFlowParamList = {
   [ScreenName.PolkadotSimpleOperationConnectDevice]: {
     device: Device;
     accountId: string;
+    mode: "chill" | "withdrawUnbonded" | "setController";
     parentId?: string;
     transaction: Transaction;
     status: TransactionStatus;
@@ -34,12 +32,14 @@ export type PolkadotSimpleOperationFlowParamList = {
   };
   [ScreenName.PolkadotSimpleOperationValidationSuccess]: {
     accountId: string;
+    mode: "chill" | "withdrawUnbonded" | "setController";
     deviceId: string;
     transaction: Transaction;
     result: Operation;
   };
   [ScreenName.PolkadotSimpleOperationValidationError]: {
     accountId: string;
+    mode: "chill" | "withdrawUnbonded" | "setController";
     deviceId: string;
     transaction: Transaction;
     error: Error;

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -18,9 +18,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
   "typesVersions": {
     "*": {
       "*.json": [
@@ -50,55 +47,66 @@
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
+    "./account/*": {
+      "require": "./lib/account/*.js",
+      "default": "./lib-es/account/*.js"
+    },
+    "./batcher/*": {
+      "require": "./lib/batcher/*.js",
+      "default": "./lib-es/batcher/*.js"
+    },
+    "./bot/*": {
+      "require": "./lib/bot/*.js",
+      "default": "./lib-es/bot/*.js"
+    },
+    "./bridge/*": {
+      "require": "./lib/bridge/*.js",
+      "default": "./lib-es/bridge/*.js"
+    },
+    "./currencies/*": {
+      "require": "./lib/currencies/*.js",
+      "default": "./lib-es/currencies/*.js"
+    },
+    "./nft/*": {
+      "require": "./lib/nft/*.js",
+      "default": "./lib-es/nft/*.js"
+    },
+    "./transaction/*": {
+      "require": "./lib/transaction/*.js",
+      "default": "./lib-es/transaction/*.js"
+    },
+
     "./package.json": "./package.json"
   },
-  "files": [
-    "lib",
-    "lib-es",
-    "src"
-  ],
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "0.26.1",
-    "bignumber.js": "^9.1.0",
+    "bignumber.js": "^9.1.1",
+    "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
-    "minimatch": "^5.1.0",
     "numeral": "^2.0.6",
     "prando": "^6.0.1",
-    "rxjs": "^6.6.7",
-    "rxjs-compat": "^6.6.7",
-    "utility-types": "^3.10.0"
+    "rxjs": "^6.6.7"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",
     "@types/numeral": "^2.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
     "cross-env": "^7.0.3",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-typescript": "^3.0.0",
-    "eslint-formatter-pretty": "^3.0.1",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-typescript": "^0.14.0",
     "jest": "^28.1.1",
-    "prettier": "^2.8.1",
     "timemachine": "^0.3.2",
-    "ts-jest": "^28.0.5",
-    "typescript": "^4.9.4"
+    "ts-jest": "^28.0.5"
   },
   "scripts": {
     "clean": "rm -rf lib lib-es",
@@ -106,7 +114,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
-    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "cross-env TZ=America/New_York jest"
   }

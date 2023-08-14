@@ -1,26 +1,22 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
+import { genOperation } from "@ledgerhq/coin-framework/mocks/account";
+import { SyncError } from "@ledgerhq/errors";
+import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import { Observable, of } from "rxjs";
-import { BigNumber } from "bignumber.js";
-import { SyncError } from "@ledgerhq/errors";
-import { genOperation } from "@ledgerhq/coin-framework/mocks/account";
-import { genAccount } from "../mock/account";
-import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";
-import { delay } from "../promise";
 import { getEnv } from "../env";
 import perFamilyMock from "../generated/mock";
-import {
-  Account,
-  AccountBridge,
-  CurrencyBridge,
-  Operation,
-} from "@ledgerhq/types-live";
+import { genAccount } from "../mock/account";
+import { getOperationAmountNumber } from "../operation";
+import { delay } from "../promise";
 const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};
-export const sync: AccountBridge<any>["sync"] = (initialAccount) =>
-  new Observable((o) => {
+
+export const sync: AccountBridge<any>["sync"] = initialAccount =>
+  new Observable(o => {
     const accountId = initialAccount.id;
 
     const sync = () => {
@@ -31,10 +27,10 @@ export const sync: AccountBridge<any>["sync"] = (initialAccount) =>
 
       const ops = broadcasted[accountId] || [];
       broadcasted[accountId] = [];
-      o.next((acc) => {
+      o.next(acc => {
         const balance = ops.reduce(
           (sum, op) => sum.plus(getOperationAmountNumber(op)),
-          acc.balance
+          acc.balance,
         );
         const nextAcc = {
           ...acc,
@@ -46,8 +42,7 @@ export const sync: AccountBridge<any>["sync"] = (initialAccount) =>
           spendableBalance: balance,
         };
         const perFamilyOperation = perFamilyMock[acc.currency.id];
-        const postSyncAccount =
-          perFamilyOperation && perFamilyOperation.postSyncAccount;
+        const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
         if (postSyncAccount) return postSyncAccount(nextAcc);
         return nextAcc;
       });
@@ -61,14 +56,10 @@ export const sync: AccountBridge<any>["sync"] = (initialAccount) =>
       syncTimeouts[accountId] = null;
     };
   });
-export const broadcast: AccountBridge<any>["broadcast"] = ({
-  signedOperation,
-}) => Promise.resolve(signedOperation.operation);
-export const signOperation: AccountBridge<any>["signOperation"] = ({
-  account,
-  transaction,
-}) =>
-  new Observable((o) => {
+export const broadcast: AccountBridge<any>["broadcast"] = ({ signedOperation }) =>
+  Promise.resolve(signedOperation.operation);
+export const signOperation: AccountBridge<any>["signOperation"] = ({ account, transaction }) =>
+  new Observable(o => {
     let cancelled = false;
 
     async function main() {
@@ -118,23 +109,22 @@ export const signOperation: AccountBridge<any>["signOperation"] = ({
 
     main().then(
       () => o.complete(),
-      (e) => o.error(e)
+      e => o.error(e),
     );
     return () => {
       cancelled = true;
     };
   });
 export const isInvalidRecipient = (recipient: string) => {
-  if (recipient.includes("criticalcrash"))
-    throw new Error("isInvalidRecipient_mock_criticalcrash");
+  if (recipient.includes("criticalcrash")) throw new Error("isInvalidRecipient_mock_criticalcrash");
   return recipient.includes("invalid") || recipient.length <= 3;
 };
 
-const subtractOneYear = (date) =>
+const subtractOneYear = date =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
 export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
-  new Observable((o) => {
+  new Observable(o => {
     let unsubscribed = false;
 
     async function job() {
@@ -152,7 +142,7 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
         account.index = i;
         account.operations = isLast
           ? []
-          : account.operations.map((operation) => ({
+          : account.operations.map(operation => ({
               ...operation,
               date: subtractOneYear(operation.date),
             }));
@@ -165,8 +155,7 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
         }
 
         const perFamilyOperation = perFamilyMock[currency.id];
-        const postScanAccount =
-          perFamilyOperation && perFamilyOperation.postScanAccount;
+        const postScanAccount = perFamilyOperation && perFamilyOperation.postScanAccount;
         if (postScanAccount)
           postScanAccount(account, {
             isEmpty: isLast,
@@ -192,11 +181,11 @@ export const makeAccountBridgeReceive: () => (
     verify?: boolean;
     deviceId: string;
     subAccountId?: string;
-  }
+  },
 ) => Observable<{
   address: string;
   path: string;
-}> = () => (account) =>
+}> = () => account =>
   of({
     address: account.freshAddress,
     path: account.freshAddressPath,

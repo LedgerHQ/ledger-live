@@ -4,12 +4,7 @@ import { bip32asBuffer } from "./bip32";
 /**
  * address format is one of legacy | p2sh | bech32 | cashaddr
  */
-export type AddressFormat =
-  | "legacy"
-  | "p2sh"
-  | "bech32"
-  | "bech32m"
-  | "cashaddr";
+export type AddressFormat = "legacy" | "p2sh" | "bech32" | "bech32m" | "cashaddr";
 const addressFormatMap = {
   legacy: 0,
   p2sh: 1,
@@ -22,7 +17,7 @@ export async function getWalletPublicKey(
     path: string;
     verify?: boolean;
     format?: AddressFormat;
-  }
+  },
 ): Promise<{
   publicKey: string;
   bitcoinAddress: string;
@@ -49,10 +44,7 @@ export async function getWalletPublicKey(
     .slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength)
     .toString("ascii");
   const chainCode = response
-    .slice(
-      1 + publicKeyLength + 1 + addressLength,
-      1 + publicKeyLength + 1 + addressLength + 32
-    )
+    .slice(1 + publicKeyLength + 1 + addressLength, 1 + publicKeyLength + 1 + addressLength + 32)
     .toString("hex");
   return {
     publicKey,

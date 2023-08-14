@@ -7,21 +7,28 @@ import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
 import { Layout } from "../../models/Layout";
 import { Modal } from "../../models/Modal";
+import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
+import {
+  getBitcoinToDogecoinRatesMock,
+  getBitcoinToEthereumRatesMock,
+  getEthereumToTetherRatesMock,
+} from "./services-api-mocks/getRates.mock";
+import { getStatusMock } from "./services-api-mocks/getStatus.mock";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({
+  userdata: "1AccountBTC1AccountETH",
+});
 
 // Tests to cover in Playwright test suite
 // Enter specific amount
-// Change network fees
-// Filter quotes (centralised, decentralised, etc)
-// Correct fiat currency used
-// Navigate to
+// Coin strategy tests
 // Errors:
 // ‘Insufficient funds’
 // Amount too low for providers ‘Amount must be at least …’
+// could add pause to HTTP mock to test 'LOADING' component
 
 test.describe.parallel("Swap", () => {
-  test("Add accounts via Swap page", async ({ page }) => {
+  test("Add accounts via Swap page @smoke", async ({ page }) => {
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
@@ -29,6 +36,16 @@ test.describe.parallel("Swap", () => {
     const modal = new Modal(page);
 
     const ethereumAccountName = "Ethereum 2";
+
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      const mockProvidersResponse = getProvidersMock();
+      route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
+    });
+
+    await page.route("https://swap.ledger.com/v4/rate**", async route => {
+      const mockRatesResponse = getBitcoinToDogecoinRatesMock();
+      route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+    });
 
     await test.step("Navigate to swap via account page", async () => {
       await layout.goToAccounts();
@@ -38,7 +55,7 @@ test.describe.parallel("Swap", () => {
     });
 
     await test.step("Open source (From) account dropdown", async () => {
-      await swapPage.openAccountDropdownByAccountName(ethereumAccountName);
+      await swapPage.selectCurrencyByName(ethereumAccountName);
       await expect.soft(page).toHaveScreenshot("from-account-dropdown-opened.png");
     });
 
@@ -54,9 +71,11 @@ test.describe.parallel("Swap", () => {
     });
 
     await test.step("Add account button appears for missing Destination (To) account", async () => {
-      await swapPage.openAccountDropdownByAccountName("Ethereum");
-      await swapPage.selectAccountByName("Dogecoin");
+      await swapPage.openDestinationCurrencyDropdown();
+      await swapPage.selectCurrencyByName("Dogecoin");
       await swapPage.sendMax(); // entering amount in textbox doesn't generate a quote in mock/PW
+      await layout.waitForLoadingSpinnerToHaveDisappeared();
+      await swapPage.waitForProviderRates();
       await expect.soft(page).toHaveScreenshot("add-to-account-button.png");
     });
 
@@ -66,28 +85,107 @@ test.describe.parallel("Swap", () => {
     });
   });
 
-  test("Full Swap with Centralised Exchange", async ({ page }) => {
+  test("Filter Rates @smoke", async ({ page }) => {
+    const swapPage = new SwapPage(page);
+    const layout = new Layout(page);
+
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      const mockProvidersResponse = getProvidersMock();
+      route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
+    });
+
+    await page.route("https://swap.ledger.com/v4/rate**", async route => {
+      const mockRatesResponse = getEthereumToTetherRatesMock();
+      route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+    });
+
+    await test.step("Generate ETH to USDT quotes", async () => {
+      await swapPage.navigate();
+      await swapPage.reverseSwapPair();
+      await swapPage.openDestinationCurrencyDropdown();
+      await swapPage.selectCurrencyByName("Tether USD (USDT)");
+      await swapPage.sendMax();
+      await layout.waitForLoadingSpinnerToHaveDisappeared();
+      await swapPage.waitForProviderRates();
+      await expect.soft(page).toHaveScreenshot("eth-to-usdt-quotes-generated.png");
+    });
+
+    await test.step("Decentralised Quotes filtered", async () => {
+      await swapPage.filterByDecentralisedQuotes();
+      await expect.soft(page).toHaveScreenshot("only-decentralised-quotes-displayed.png");
+    });
+
+    await test.step("Fixed Decentralised Quotes filtered", async () => {
+      await swapPage.filterByFixedRateQuotes();
+      await expect.soft(page).toHaveScreenshot("fixed-decentralised-quotes-displayed.png");
+    });
+
+    await test.step("Floating Decentralised Quotes filtered", async () => {
+      await swapPage.filterByFloatingRateQuotes();
+      await expect.soft(page).toHaveScreenshot("floating-decentralised-quotes-displayed.png");
+    });
+
+    await test.step("Floating Centralised Quotes filtered", async () => {
+      await swapPage.filterByCentralisedQuotes();
+      await expect.soft(page).toHaveScreenshot("floating-centralised-quotes-displayed.png");
+    });
+
+    await test.step("Fixed Centralised filtered", async () => {
+      await swapPage.filterByFixedRateQuotes();
+      await expect.soft(page).toHaveScreenshot("fixed-centralised-quotes-diplayed.png");
+    });
+  });
+
+  test("Full Swap with Centralised Exchange @smoke", async ({ page }) => {
     const swapPage = new SwapPage(page);
     const deviceAction = new DeviceAction(page);
     const drawer = new Drawer(page);
+    const layout = new Layout(page);
 
-    let swapId: string;
-    let detailsSwapId: string;
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      const mockProvidersResponse = getProvidersMock();
+      route.fulfill({ headers: { teststatus: "mocked" }, body: mockProvidersResponse });
+    });
+
+    await page.route("https://swap.ledger.com/v4/rate**", async route => {
+      const mockRatesResponse = getBitcoinToEthereumRatesMock();
+      route.fulfill({ headers: { teststatus: "mocked" }, body: mockRatesResponse });
+    });
+
+    // We mock the 'cancelled' swap response because the transaction isn't broadcast when run locally.
+    // If 'cancelled' is called then it's a successful test
+    await page.route("https://swap.ledger.com/v4/swap/cancelled", async route => {
+      console.log("Mocking swap cancelled HTTP response");
+      route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
+    });
+
+    await page.route("https://swap.ledger.com/v4/swap/accepted", async route => {
+      console.log("Mocking swap accepted HTTP response");
+      route.fulfill({ headers: { teststatus: "mocked" }, body: "" });
+    });
+
+    await page.route("https://swap.ledger.com/v4/swap/status", async route => {
+      console.log("Mocking swap status HTTP response");
+      const mockStatusResponse = getStatusMock();
+      route.fulfill({ headers: { teststatus: "mocked" }, body: mockStatusResponse });
+    });
 
     await test.step("Open Swap Page", async () => {
       await swapPage.navigate();
+      await swapPage.waitForSwapFormToLoad();
       await expect.soft(page).toHaveScreenshot("open-swap-page.png");
     });
 
     await test.step("Select Max Spendable", async () => {
       await swapPage.sendMax();
+      await layout.waitForLoadingSpinnerToHaveDisappeared();
       await swapPage.waitForExchangeToBeAvailable();
       await expect.soft(page).toHaveScreenshot("max-spendable-swap.png");
     });
 
     await test.step("Select Different Target Account", async () => {
       await swapPage.openTargetAccountDrawer();
-      await expect.soft(page).toHaveScreenshot("target-account-drawer.png");
+      await expect.soft(drawer.content).toHaveScreenshot("target-account-drawer.png");
       await swapPage.selectTargetAccount("Ethereum 2");
     });
 
@@ -106,6 +204,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectAdvancedFees();
       await swapPage.enterCustomFee("5");
       await drawer.close();
+      await layout.waitForLoadingSpinnerToHaveDisappeared();
       await expect.soft(page).toHaveScreenshot("custom-fee-set-for-swap.png");
     });
 
@@ -113,22 +212,28 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectExchangeQuote("changelly", "float");
       await swapPage.confirmExchange();
       await deviceAction.initiateSwap();
-      await expect.soft(page).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
+      await expect.soft(drawer.content).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
     });
 
     await test.step("Confirm swap with Nano App", async () => {
       await deviceAction.confirmSwap();
       await deviceAction.silentSign();
-      const originalSwapId = await swapPage.verifySuccessfulExchange();
-      swapId = originalSwapId.replace("#", "");
-      await expect.soft(page).toHaveScreenshot("confirmed-swap.png");
+      await swapPage.waitForSuccessfulExchange();
+      await expect.soft(swapPage.swapId).toHaveText("#12345");
+      await expect.soft(drawer.content).toHaveScreenshot("confirmed-swap.png");
     });
 
     await test.step("Verify Swap details are present in the exchange drawer", async () => {
       await swapPage.navigateToExchangeDetails();
-      detailsSwapId = await swapPage.verifyExchangeDetails();
-      await expect(detailsSwapId).toEqual(swapId);
-      await expect.soft(page).toHaveScreenshot("verify-swap-details.png");
+      await swapPage.waitForExchangeDetails();
+      await expect.soft(swapPage.detailsSwapId).toHaveText("12345");
+      await expect.soft(drawer.swapAmountFrom).toContainText("-1.280"); // regex /-1.280\d+ BTC/ not working with toHaveText() and value can change after the first 3 decimals so this will have to do for now - see LIVE-8642
+      await expect.soft(drawer.swapAmountTo).toContainText("+17.898");
+      await expect.soft(drawer.swapAccountFrom).toHaveText("Bitcoin 2 (legacy)");
+      await expect.soft(drawer.swapAccountTo).toHaveText("Ethereum 2");
+
+      // Flaky due to LIVE-8642 - the formatting is sometimes different values - therefore we are doing the above text checks
+      // await expect.soft(drawer.content).toHaveScreenshot("verify-swap-details.png");
     });
 
     await test.step("Verify Swap details are present in the swap history", async () => {
@@ -136,5 +241,32 @@ test.describe.parallel("Swap", () => {
       await swapPage.verifyHistoricalSwapsHaveLoadedFully();
       await expect.soft(page).toHaveScreenshot("verify-swap-history.png", { timeout: 20000 });
     });
+  });
+
+  test("Swap not yet available due to API error", async ({ page }) => {
+    const swapPage = new SwapPage(page);
+
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      route.fulfill({ headers: { teststatus: "mocked" }, status: 404 });
+    });
+
+    await swapPage.navigate();
+    await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
+  });
+
+  test("Swap not yet available due to no valid providers", async ({ page }) => {
+    const swapPage = new SwapPage(page);
+
+    const providers = JSON.stringify({
+      currencies: {},
+      providers: {},
+    });
+
+    await page.route("https://swap.ledger.com/v4/providers**", async route => {
+      route.fulfill({ headers: { teststatus: "mocked" }, body: providers });
+    });
+
+    await swapPage.navigate();
+    await expect(page.getByText("swap is not available yet in your area")).toBeVisible();
   });
 });

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme, ParamListBase, RouteProp } from "@react-navigation/native";
 import { differenceInCalendarDays } from "date-fns";
 import {
   getDefaultExplorerView,
@@ -39,6 +39,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   delegation: Delegation;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 };
 const styles = StyleSheet.create({
   modal: {
@@ -147,6 +148,7 @@ export default function DelegationDetailsModal({
   account,
   parentAccount,
   delegation,
+  parentRoute,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -185,10 +187,11 @@ export default function DelegationDetailsModal({
       params: {
         accountId,
         parentId,
+        source: parentRoute,
       },
     });
     onClose();
-  }, [accountId, parentId, navigation, onClose]);
+  }, [navigation, accountId, parentId, parentRoute, onClose]);
   const onEndDelegation = useCallback(() => {
     // FIXME how to get rid of Started step in nav stack?
     navigation.navigate(NavigatorName.TezosDelegationFlow, {
@@ -200,15 +203,11 @@ export default function DelegationDetailsModal({
       },
     });
     onClose();
-  }, [accountId, parentId, navigation, onClose]);
+  }, [navigation, accountId, parentId, onClose]);
   const height = Math.min(getWindowDimensions().height - 400, 280);
   return (
     // TODO use DelegationDrawer component
-    <QueuedDrawer
-      isRequestingToBeOpened={isOpened}
-      onClose={onClose}
-      style={styles.modal}
-    >
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose} style={styles.modal}>
       <View style={styles.root}>
         <DelegatingContainer
           left={
@@ -236,11 +235,7 @@ export default function DelegationDetailsModal({
         >
           {baker ? (
             <Property label={<Trans i18nKey="delegation.validator" />}>
-              <LText
-                semiBold
-                style={styles.propertyValueText}
-                numberOfLines={1}
-              >
+              <LText semiBold style={styles.propertyValueText} numberOfLines={1}>
                 {baker.name}
               </LText>
             </Property>
@@ -284,10 +279,7 @@ export default function DelegationDetailsModal({
             </LText>
           </Property>
           <Property last label={<Trans i18nKey="delegation.transactionID" />}>
-            <Touchable
-              event="DelegationDetailsOpenTx"
-              onPress={onOpenTransaction}
-            >
+            <Touchable event="DelegationDetailsOpenTx" onPress={onOpenTransaction}>
               <LText
                 semiBold
                 style={[styles.propertyValueText]}

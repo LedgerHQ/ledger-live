@@ -1,9 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";
@@ -14,10 +10,7 @@ export type GranularityId = "HOUR" | "DAY" | "WEEK";
 // the cache is maintained for as many granularity as we need on Live.
 // it's currently an in memory cache so there is no problem regarding the storage.
 // in future, it could be saved and we can rethink how it's stored (independently of how it's in memory)
-export type BalanceHistoryCache = Record<
-  GranularityId,
-  BalanceHistoryDataCache
->;
+export type BalanceHistoryCache = Record<GranularityId, BalanceHistoryDataCache>;
 
 // the way BalanceHistoryDataCache works is:
 // - a "cursor" date which is the "latestDate" representing the latest datapoint date. it's null if it never was loaded or if it's empty.
@@ -38,8 +31,6 @@ export type TokenAccount = {
   token: TokenCurrency;
   balance: BigNumber;
   spendableBalance: BigNumber;
-  // in case of compound, this is the associated balance for the associated ctoken
-  compoundBalance?: BigNumber;
   creationDate: Date;
   operationsCount: number;
   operations: Operation[];
@@ -146,6 +137,8 @@ export type Account = {
   // ------------------------------------- Specific account fields
   // currency of this account
   currency: CryptoCurrency;
+  // Some blockchains may use a different currency than the main one to pay fees
+  feesCurrency?: CryptoCurrency | TokenCurrency;
   // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
   unit: Unit;
   // The total number of operations (operations[] can be partial)
@@ -199,11 +192,7 @@ export type AccountLike = Account | SubAccount;
 /**
  * An array of AccountLikes
  */
-export type AccountLikeArray =
-  | AccountLike[]
-  | TokenAccount[]
-  | ChildAccount[]
-  | Account[];
+export type AccountLikeArray = AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
 
 /** */
 export type TokenAccountRaw = {
@@ -218,7 +207,6 @@ export type TokenAccountRaw = {
   pendingOperations: OperationRaw[];
   balance: string;
   spendableBalance?: string;
-  compoundBalance?: string;
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   approvals?: Array<{
@@ -266,6 +254,7 @@ export type AccountRaw = {
   // this is optional for backward compat
   // ------------------------------------- Specific raw fields
   currencyId: string;
+  feesCurrencyId?: string;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
   unitMagnitude: number;

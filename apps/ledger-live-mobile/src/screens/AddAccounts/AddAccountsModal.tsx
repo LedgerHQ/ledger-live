@@ -23,12 +23,7 @@ type Props = {
   currency?: CryptoCurrency | TokenCurrency | null;
 };
 
-export default function AddAccountsModal({
-  navigation,
-  onClose,
-  isOpened,
-  currency,
-}: Props) {
+export default function AddAccountsModal({ navigation, onClose, isOpened, currency }: Props) {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -73,13 +68,7 @@ export default function AddAccountsModal({
       <Text variant="h4" fontWeight="semiBold" fontSize="24px" mb={2}>
         {t("addAccountsModal.title")}
       </Text>
-      <Text
-        variant="large"
-        fontWeight="medium"
-        fontSize="14px"
-        color="neutral.c70"
-        mb="32px"
-      >
+      <Text variant="large" fontWeight="medium" fontSize="14px" color="neutral.c70" mb="32px">
         {t("addAccountsModal.description")}
       </Text>
 
@@ -90,6 +79,7 @@ export default function AddAccountsModal({
           onPress={onClickAdd}
           imageSource={setupLedgerImg}
           hasMarginBottom
+          testID="add-accounts-modal-add-button"
         />
       )}
 

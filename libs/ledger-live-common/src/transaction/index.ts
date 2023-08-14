@@ -1,4 +1,4 @@
-export * from "./common";
+export * from "@ledgerhq/coin-framework/transaction/common";
 export * from "./signOperation";
 export * from "./deviceTransactionConfig";
 import type {
@@ -23,14 +23,14 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
 
 export const fromTransactionStatusRaw = (
   tr: TransactionStatusRaw,
-  family: string
+  family: string,
 ): TransactionStatus => {
   const TM = transactionModulePerFamily[family];
   return TM.fromTransactionStatusRaw(tr as any);
 };
 export const toTransactionStatusRaw = (
   t: TransactionStatus,
-  family: string
+  family: string,
 ): TransactionStatusRaw => {
   const TM = transactionModulePerFamily[family];
   return TM.toTransactionStatusRaw(t as any);
@@ -45,7 +45,7 @@ export const formatTransaction = (t: Transaction, a: Account): string => {
 export const formatTransactionStatus = (
   t: Transaction,
   ts: TransactionStatus,
-  mainAccount: Account
+  mainAccount: Account,
 ): string => {
   const TM = transactionModulePerFamily[t.family];
   return TM.formatTransactionStatus(t as any, ts as any, mainAccount as any);

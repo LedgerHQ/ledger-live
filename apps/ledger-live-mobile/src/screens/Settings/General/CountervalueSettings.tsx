@@ -3,10 +3,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import { setCountervalue } from "../../../actions/settings";
-import {
-  counterValueCurrencySelector,
-  supportedCountervalues,
-} from "../../../reducers/settings";
+import { counterValueCurrencySelector, supportedCountervalues } from "../../../reducers/settings";
 import { State } from "../../../reducers/types";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 

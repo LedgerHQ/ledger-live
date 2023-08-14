@@ -8,15 +8,13 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex } from "@ledgerhq/native-ui";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
@@ -26,22 +24,31 @@ import DeviceActionModal from "../../components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
 import byFamily from "../../generated/ConnectDevice";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import {
+  ReactNavigationHeaderOptions,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
+import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
+import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
-const action = createAction(connectApp);
+// Defines some of the header options for this screen to be able to reset back to them.
+export const connectDeviceHeaderOptions = (
+  onHeaderBackButtonPress: () => void,
+): ReactNavigationHeaderOptions => ({
+  headerRight: () => <NavigationHeaderCloseButton />,
+  headerLeft: () => <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />,
+});
 
 export default function ConnectDevice({
   navigation,
   route,
-}: StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveConnectDevice
->) {
+}: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
-
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+  const action = useAppDeviceAction();
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -62,7 +69,11 @@ export default function ConnectDevice({
       if (!account) {
         return null;
       }
-      setDevice(undefined);
+
+      // Nb Unsetting device here caused the scanning to start again,
+      // scanning causes a disconnect, which throws an error when we try to talk
+      // to the device on the next step.
+
       return navigation.navigate(ScreenName.ReceiveVerifyAddress, {
         ...route.params,
         ...payload,
@@ -82,6 +93,32 @@ export default function ConnectDevice({
     setDevice(undefined);
   }, []);
 
+  const onHeaderBackButtonPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Back arrow",
+      page: ScreenName.ReceiveConnectDevice,
+    });
+    navigation.goBack();
+  }, [navigation]);
+
+  // Reacts from request to update the screen header
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+        });
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          ...connectDeviceHeaderOptions(onHeaderBackButtonPress),
+        });
+      }
+    },
+    [navigation, onHeaderBackButtonPress],
+  );
+
   if (!account) return null;
 
   if (error) {
@@ -95,43 +132,37 @@ export default function ConnectDevice({
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
   if (currency.type !== "CryptoCurrency") return null; // this should not happen: currency of main account is a crypto currency
-  const tokenCurrency =
-    account && account.type === "TokenAccount" ? account.token : undefined;
+  const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
 
   // check for coin specific UI
-  const CustomConnectDevice =
-    byFamily[currency.family as keyof typeof byFamily];
-  if (CustomConnectDevice)
-    return <CustomConnectDevice {...{ navigation, route }} />;
+  const CustomConnectDevice = byFamily[currency.family as keyof typeof byFamily];
+  if (CustomConnectDevice) return <CustomConnectDevice {...{ navigation, route }} />;
 
   if (readOnlyModeEnabled) {
     return <ReadOnlyWarning continue={onSkipDevice} />;
   }
 
   if (!mainAccount.freshAddress) {
-    return (
-      <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />
-    );
+    return <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />;
   }
 
   return (
     <>
-      <TrackScreen category="ReceiveFunds" name="Device Selection" />
+      <TrackScreen category="Deposit" name="Device Selection" />
       <SkipSelectDevice route={route} onResult={setDevice} />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} py={5} flex={1}>
-          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
+        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
           <SelectDevice
             onSelect={setDevice}
-            onWithoutDevice={
-              route.params?.notSkippable ? undefined : onSkipDevice
-            }
+            onWithoutDevice={route.params?.notSkippable ? undefined : onSkipDevice}
           />
         </NavigationScrollView>
       )}

@@ -6,11 +6,6 @@ export default {
   args: [],
   job: () =>
     from(getAllEnvNames()).pipe(
-      map(
-        (name) =>
-          `# ${name} ${getEnvDesc(name)}\n${name}=${JSON.stringify(
-            getEnv(name)
-          )}\n`
-      )
+      map(name => `# ${name} ${getEnvDesc(name)}\n${name}=${JSON.stringify(getEnv(name))}\n`),
     ),
 };

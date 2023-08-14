@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-framework/promise";
+export * from "@ledgerhq/live-promise";

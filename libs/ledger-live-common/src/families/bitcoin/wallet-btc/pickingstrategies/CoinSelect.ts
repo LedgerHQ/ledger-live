@@ -13,7 +13,7 @@ export class CoinSelect extends PickingStrategy {
   async selectUnspentUtxosToUse(
     xpub: Xpub,
     outputs: OutputInfo[],
-    feePerByte: number
+    feePerByte: number,
   ): Promise<{
     unspentUtxos: Output[];
     totalValue: BigNumber;
@@ -26,42 +26,27 @@ export class CoinSelect extends PickingStrategy {
     log("picking strategy", "Coinselect");
 
     const unspentUtxos = flatten(
-      await Promise.all(
-        addresses.map((address) => xpub.storage.getAddressUnspentUtxos(address))
-      )
+      await Promise.all(addresses.map(address => xpub.storage.getAddressUnspentUtxos(address))),
     ).filter(
-      (o) =>
+      o =>
         !this.excludedUTXOs.filter(
-          (x) => x.hash === o.output_hash && x.outputIndex === o.output_index
-        ).length
+          x => x.hash === o.output_hash && x.outputIndex === o.output_index,
+        ).length,
     );
     const TOTAL_TRIES = 100000;
     log("picking strategy", "utxos", unspentUtxos);
     // Compute cost of change
-    const fixedSize = utils.maxTxSize(
-      0,
-      [],
-      false,
-      this.crypto,
-      this.derivationMode
-    );
-    const outputScripts = outputs.map((o) => o.script);
+    const fixedSize = utils.maxTxSize(0, [], false, this.crypto, this.derivationMode);
+    const outputScripts = outputs.map(o => o.script);
     // Size of only 1 output (without fixed size)
     const oneOutputSize =
       outputScripts.length > 0
-        ? utils.maxTxSize(
-            0,
-            [outputScripts[0]],
-            false,
-            this.crypto,
-            this.derivationMode
-          ) - fixedSize
-        : utils.maxTxSize(0, [], true, this.crypto, this.derivationMode) -
-          fixedSize;
+        ? utils.maxTxSize(0, [outputScripts[0]], false, this.crypto, this.derivationMode) -
+          fixedSize
+        : utils.maxTxSize(0, [], true, this.crypto, this.derivationMode) - fixedSize;
     // Size 1 signed UTXO (signed input)
     const oneInputSize =
-      utils.maxTxSize(1, [], false, this.crypto, this.derivationMode) -
-      fixedSize;
+      utils.maxTxSize(1, [], false, this.crypto, this.derivationMode) - fixedSize;
 
     // Calculate effective value of outputs
     let currentAvailableValue = 0;
@@ -71,8 +56,7 @@ export class CoinSelect extends PickingStrategy {
     }> = [];
 
     for (let i = 0; i < unspentUtxos.length; i += 1) {
-      const outEffectiveValue =
-        Number(unspentUtxos[i].value) - feePerByte * oneInputSize;
+      const outEffectiveValue = Number(unspentUtxos[i].value) - feePerByte * oneInputSize;
       if (outEffectiveValue > 0) {
         const effectiveUtxo = {
           index: i,
@@ -85,17 +69,13 @@ export class CoinSelect extends PickingStrategy {
 
     // Get no inputs fees
     // At beginning, there are no outputs in tx, so noInputFees are fixed fees
-    const notInputFees =
-      feePerByte * (fixedSize + oneOutputSize * outputs.length);
+    const notInputFees = feePerByte * (fixedSize + oneOutputSize * outputs.length);
 
     // Start coin selection algorithm (according to SelectCoinBnb from Bitcoin Core)
     let currentValue = 0;
     const currentSelection: boolean[] = [];
 
-    const amount = outputs.reduce(
-      (sum, output) => sum.plus(output.value),
-      new BigNumber(0)
-    );
+    const amount = outputs.reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
     // Actual amount we are targetting
     const actualTarget = notInputFees + amount.toNumber();
 
@@ -115,32 +95,20 @@ export class CoinSelect extends PickingStrategy {
     let currentSelectionNeedChangeoutput = false;
     for (let i = 0; i < TOTAL_TRIES; i += 1) {
       let backtrack = false;
-      const nbInput = currentSelection.filter((x) => x).length;
+      const nbInput = currentSelection.filter(x => x).length;
       if (currentValue >= actualTarget) {
         if (currentValue - actualTarget > feePerByte * oneOutputSize) {
           // changeoutput is required
           currentSelectionNeedChangeoutput = true;
           currentWaste =
             feePerByte *
-            utils.maxTxSizeCeil(
-              nbInput,
-              outputScripts,
-              true,
-              this.crypto,
-              this.derivationMode
-            );
+            utils.maxTxSizeCeil(nbInput, outputScripts, true, this.crypto, this.derivationMode);
         } else {
           // changeoutput is not required
           currentSelectionNeedChangeoutput = false;
           currentWaste =
             feePerByte *
-              utils.maxTxSizeCeil(
-                nbInput,
-                outputScripts,
-                false,
-                this.crypto,
-                this.derivationMode
-              ) +
+              utils.maxTxSizeCeil(nbInput, outputScripts, false, this.crypto, this.derivationMode) +
             currentValue -
             actualTarget;
         }
@@ -160,10 +128,7 @@ export class CoinSelect extends PickingStrategy {
       }
       // Move backwards
       if (backtrack) {
-        while (
-          currentSelection.length > 0 &&
-          !currentSelection[currentSelection.length - 1]
-        ) {
+        while (currentSelection.length > 0 && !currentSelection[currentSelection.length - 1]) {
           currentSelection.pop();
         }
         // Case we walked back to the first utxos and all solutions searched.
@@ -197,7 +162,7 @@ export class CoinSelect extends PickingStrategy {
           outputScripts,
           bestSelectionNeedChangeoutput,
           this.crypto,
-          this.derivationMode
+          this.derivationMode,
         );
       return {
         totalValue: total,
@@ -207,11 +172,7 @@ export class CoinSelect extends PickingStrategy {
       };
     }
 
-    const pickingStrategy = new DeepFirst(
-      this.crypto,
-      this.derivationMode,
-      this.excludedUTXOs
-    );
+    const pickingStrategy = new DeepFirst(this.crypto, this.derivationMode, this.excludedUTXOs);
     return pickingStrategy.selectUnspentUtxosToUse(xpub, outputs, feePerByte);
   }
 }

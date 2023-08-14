@@ -17,7 +17,6 @@ import globalSyncRefreshControl from "../../components/globalSyncRefreshControl"
 import TrackScreen from "../../analytics/TrackScreen";
 
 import AccountRow from "./AccountRow";
-import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -27,15 +26,10 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 
-const List = globalSyncRefreshControl(
-  FlatList as React.ComponentType<FlatListProps<AccountLike>>,
-);
+const List = globalSyncRefreshControl(FlatList as React.ComponentType<FlatListProps<AccountLike>>);
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Accounts>
@@ -54,17 +48,14 @@ function Accounts({ navigation, route }: NavigationProps) {
 
   const { params } = route;
 
-  const [account, setAccount] = useState<Account | TokenAccount | undefined>(
-    undefined,
-  );
+  const [account, setAccount] = useState<Account | TokenAccount | undefined>(undefined);
   const flattenedAccounts = useMemo(
     () =>
       route?.params?.currencyId
         ? flattenAccounts(accounts, {
             enforceHideEmptySubAccounts: true,
           }).filter(
-            (account: AccountLike) =>
-              getAccountCurrency(account).id === route?.params?.currencyId,
+            (account: AccountLike) => getAccountCurrency(account).id === route?.params?.currencyId,
           )
         : flattenAccounts(accounts, {
             enforceHideEmptySubAccounts: true,
@@ -76,15 +67,13 @@ function Accounts({ navigation, route }: NavigationProps) {
   useEffect(() => {
     if (params) {
       if (params.currency) {
-        const currency = findCryptoCurrencyByKeyword(
-          params.currency.toUpperCase(),
-        );
+        const currency = findCryptoCurrencyByKeyword(params.currency.toUpperCase());
         if (currency) {
           const account = params.address
             ? accounts.find(
                 acc =>
                   acc.currency.id === currency.id &&
-                  acc.freshAddress === params.address,
+                  acc.freshAddress.toLowerCase() === params.address?.toLowerCase(),
               )
             : null;
 
@@ -111,10 +100,7 @@ function Accounts({ navigation, route }: NavigationProps) {
         onSetAccount={setAccount}
         isLast={index === flattenedAccounts.length - 1}
         topLink={!params?.currencyId && item.type === "TokenAccount"}
-        bottomLink={
-          !params?.currencyId &&
-          flattenedAccounts[index + 1]?.type === "TokenAccount"
-        }
+        bottomLink={!params?.currencyId && flattenedAccounts[index + 1]?.type === "TokenAccount"}
         sourceScreenName={ScreenName.Accounts}
       />
     ),
@@ -142,7 +128,7 @@ function Accounts({ navigation, route }: NavigationProps) {
           keyExtractor={(i: AccountLike) => i.id}
           ListHeaderComponent={
             <Flex mt={3} mb={3}>
-              <Text variant="h4">
+              <Text testID="accounts-list-title" variant="h4">
                 {params?.currencyTicker
                   ? t("accounts.cryptoAccountsTitle", {
                       currencyTicker: params?.currencyTicker,
@@ -156,7 +142,6 @@ function Accounts({ navigation, route }: NavigationProps) {
             paddingBottom: TAB_BAR_SAFE_HEIGHT,
           }}
         />
-        <MigrateAccountsBanner />
         <TokenContextualModal
           onClose={() => setAccount(undefined)}
           isOpened={!!account}

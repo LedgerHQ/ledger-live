@@ -6,10 +6,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { PolkadotAccount, PolkadotResources } from "./types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
-function formatOperationSpecifics(
-  op: Operation,
-  unit: Unit | null | undefined
-): string {
+function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
   const {
     validators,
     bondedAmount,
@@ -18,7 +15,7 @@ function formatOperationSpecifics(
     validatorStash,
     amount,
   } = op.extra;
-  let str = (validators || []).map((v) => `\n    ${v}`).join("");
+  let str = (validators || []).map((v: any) => `\n    ${v}`).join("");
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -27,15 +24,11 @@ function formatOperationSpecifics(
   str +=
     bondedAmount && !bondedAmount.isNaN()
       ? `\n    bondedAmount: ${
-          unit
-            ? formatCurrencyUnit(unit, bondedAmount, formatConfig)
-            : bondedAmount
+          unit ? formatCurrencyUnit(unit, bondedAmount, formatConfig) : bondedAmount
         }`
       : unbondedAmount && !unbondedAmount.isNaN()
       ? `\n    unbondedAmount: ${
-          unit
-            ? formatCurrencyUnit(unit, unbondedAmount, formatConfig)
-            : unbondedAmount
+          unit ? formatCurrencyUnit(unit, unbondedAmount, formatConfig) : unbondedAmount
         }`
       : withdrawUnbondedAmount && !withdrawUnbondedAmount.isNaN()
       ? `\n    withdrawUnbondedAmount: ${
@@ -46,15 +39,13 @@ function formatOperationSpecifics(
       : "";
   str += validatorStash ? `\n    validatorStash: ${validatorStash}` : "";
   str += amount
-    ? `\n    amount: ${
-        unit ? formatCurrencyUnit(unit, amount, formatConfig) : amount
-      }`
+    ? `\n    amount: ${unit ? formatCurrencyUnit(unit, amount, formatConfig) : amount}`
     : "";
   return str;
 }
 
 function formatAccountSpecifics(account: PolkadotAccount): string {
-  const { polkadotResources } = account;
+  const polkadotResources = account.polkadotResources as PolkadotResources;
   invariant(polkadotResources, "polkadot account expected");
   const unit = getAccountUnit(account);
   const formatConfig = {
@@ -63,50 +54,34 @@ function formatAccountSpecifics(account: PolkadotAccount): string {
     showCode: true,
   };
   let str = " ";
-  str +=
-    formatCurrencyUnit(unit, account.spendableBalance, formatConfig) +
-    " spendable. ";
+  str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
-  if ((polkadotResources as PolkadotResources).lockedBalance.gt(0)) {
+  if (polkadotResources.lockedBalance.gt(0)) {
+    str += formatCurrencyUnit(unit, polkadotResources.lockedBalance, formatConfig) + " locked. ";
+  }
+
+  if (polkadotResources.unlockedBalance.gt(0)) {
     str +=
-      formatCurrencyUnit(
-        unit,
-        (polkadotResources as PolkadotResources).lockedBalance,
-        formatConfig
-      ) + " locked. ";
+      formatCurrencyUnit(unit, polkadotResources.unlockedBalance, formatConfig) + " unlocked. ";
   }
 
-  if ((polkadotResources as PolkadotResources).unlockedBalance.gt(0)) {
-    str +=
-      formatCurrencyUnit(
-        unit,
-        (polkadotResources as PolkadotResources).unlockedBalance,
-        formatConfig
-      ) + " unlocked. ";
+  if (polkadotResources.stash) {
+    str += "\nstash : " + polkadotResources.stash;
   }
 
-  if ((polkadotResources as PolkadotResources).stash) {
-    str += "\nstash : " + (polkadotResources as PolkadotResources).stash;
+  if (polkadotResources.controller) {
+    str += "\ncontroller : " + polkadotResources.controller;
   }
 
-  if ((polkadotResources as PolkadotResources).controller) {
-    str +=
-      "\ncontroller : " + (polkadotResources as PolkadotResources).controller;
-  }
-
-  if ((polkadotResources as PolkadotResources).nominations?.length) {
+  if (polkadotResources.nominations?.length) {
     str += "\nNominations\n";
-    str += ((polkadotResources as PolkadotResources).nominations as any[])
-      .map((v) => `  to ${v.address}`)
-      .join("\n");
+    str += (polkadotResources.nominations as any[]).map(v => `  to ${v.address}`).join("\n");
   }
 
   return str;
 }
 
-export function fromOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
-) {
+export function fromOperationExtraRaw(extra: Record<string, any> | null | undefined) {
   if (extra && extra.transferAmount) {
     extra = { ...extra, transferAmount: extra.transferAmount.toString() };
   }
@@ -133,9 +108,7 @@ export function fromOperationExtraRaw(
 
   return extra;
 }
-export function toOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
-) {
+export function toOperationExtraRaw(extra: Record<string, any> | null | undefined) {
   if (extra && extra.transferAmount) {
     extra = { ...extra, transferAmount: extra.transferAmount.toString() };
   }

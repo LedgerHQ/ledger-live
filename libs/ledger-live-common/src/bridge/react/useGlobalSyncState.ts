@@ -17,7 +17,7 @@ export function useGlobalSyncState(): SyncState {
       pending,
       error,
     }),
-    [pending, error]
+    [pending, error],
   );
   return globalState;
 }

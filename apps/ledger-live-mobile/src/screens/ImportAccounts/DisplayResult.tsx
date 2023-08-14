@@ -28,7 +28,6 @@ import StyledStatusBar from "../../components/StyledStatusBar";
 import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
-import HeaderBackImage from "../../components/HeaderBackImage";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import type { State as StoreState } from "../../reducers/types";
 import type { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
@@ -39,12 +38,10 @@ import type {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { SettingsImportDesktopPayload } from "../../actions/types";
+import { NavigationHeaderBackImage } from "../../components/NavigationHeaderBackButton";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    ImportAccountsNavigatorParamList,
-    ScreenName.DisplayResult
-  >
+  StackNavigatorProps<ImportAccountsNavigatorParamList, ScreenName.DisplayResult>
 >;
 
 type ConnectProps = {
@@ -69,10 +66,7 @@ export function BackButton() {
   const { colors } = useTheme();
   const navigation =
     useNavigation<
-      StackNavigatorNavigation<
-        ImportAccountsNavigatorParamList,
-        ScreenName.DisplayResult
-      >
+      StackNavigatorNavigation<ImportAccountsNavigatorParamList, ScreenName.DisplayResult>
     >();
   return (
     <HeaderBackButton
@@ -80,7 +74,7 @@ export function BackButton() {
       onPress={() => {
         if (navigation.replace) navigation.replace(ScreenName.ScanAccounts);
       }}
-      backImage={HeaderBackImage}
+      backImage={NavigationHeaderBackImage}
     />
   );
 }
@@ -126,12 +120,7 @@ class DisplayResult extends Component<Props, State> {
   }
 
   onImport = async () => {
-    const {
-      importAccounts,
-      importDesktopSettings,
-      navigation,
-      backlistedTokenIds,
-    } = this.props;
+    const { importAccounts, importDesktopSettings, navigation, backlistedTokenIds } = this.props;
     const { selectedAccounts, items, importSettings, importing } = this.state;
     if (importing) return;
     const onFinish = this.props.route.params?.onFinish;
@@ -147,8 +136,7 @@ class DisplayResult extends Component<Props, State> {
     importAccounts({ items, selectedAccounts, syncResult });
     if (importSettings) {
       importDesktopSettings(
-        this.props.route.params?.result
-          .settings as SettingsImportDesktopPayload,
+        this.props.route.params?.result.settings as SettingsImportDesktopPayload,
       );
     }
 
@@ -186,8 +174,7 @@ class DisplayResult extends Component<Props, State> {
     <ResultSection mode={mode} />
   );
 
-  onSwitchSettings = (importSettings: boolean) =>
-    this.setState({ importSettings });
+  onSwitchSettings = (importSettings: boolean) => this.setState({ importSettings });
 
   ListFooterComponent = () => (
     <DisplayResultSettingsSection
@@ -201,10 +188,8 @@ class DisplayResult extends Component<Props, State> {
       <ResultSection mode="empty" />
       <LText style={styles.emptyNotice}>
         <Trans i18nKey="account.import.result.descEmpty">
-          <LText semiBold>No accounts</LText>
-          {
-            "found on your desktop app, please try again or continue the onboarding."
-          }
+          <LText semiBold>NO_ACCOUNTS</LText>
+          {"found on your desktop app, please try again or continue the onboarding."}
         </Trans>
       </LText>
     </View>

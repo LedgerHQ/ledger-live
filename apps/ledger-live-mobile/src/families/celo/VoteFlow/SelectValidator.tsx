@@ -14,10 +14,7 @@ import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/Sea
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { CeloVoteFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloVoteFlowParamList,
-  ScreenName.CeloVoteValidatorSelect
->;
+type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteValidatorSelect>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -42,23 +39,21 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item }) => (
-      <ValidatorRow
-        account={account}
-        validator={item}
-        onPress={onItemPress}
-        amount={item.votes}
-      />
+      <ValidatorRow account={account} validator={item} onPress={onItemPress} amount={item.votes} />
     ),
     [onItemPress, account],
   );
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="VoteFlow" name="SelectValidator" />
-      <SelectValidatorSearchBox
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+      <TrackScreen
+        category="VoteFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="vote"
+        currency="celo"
       />
+      <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>
         <ValidatorHead />
       </View>

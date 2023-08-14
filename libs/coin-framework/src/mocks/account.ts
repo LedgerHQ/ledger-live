@@ -1,10 +1,6 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
-import {
-  listCryptoCurrencies,
-  listTokensForCryptoCurrency,
-  findCompoundToken,
-} from "../currencies";
+import { listCryptoCurrencies, listTokensForCryptoCurrency } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import {
   inferSubOperations,
@@ -14,16 +10,8 @@ import {
 } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
-import type {
-  Account,
-  AccountLike,
-  Operation,
-  TokenAccount,
-} from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 
 export function ensureNoNegative(operations: Operation[]) {
@@ -66,7 +54,6 @@ const hardcodedMarketcap = [
   "tezos",
   "iota",
   "ethereum/erc20/link_chainlink",
-  "neo",
   "ethereum/erc20/makerdao",
   "ethereum/erc20/usd__coin",
   "ontology",
@@ -192,9 +179,7 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   zcash: 0.000205798,
 };
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
-const currencies = listCryptoCurrencies().filter(
-  (c) => currencyIdApproxMarketPrice[c.id]
-);
+const currencies = listCryptoCurrencies().filter(c => currencyIdApproxMarketPrice[c.id]);
 // TODO fix the mock to never generate negative balance...
 
 /**
@@ -204,25 +189,20 @@ export function genOperation(
   superAccount: Account,
   account: AccountLike,
   ops: any,
-  rng: Prando
+  rng: Prando,
 ): Operation {
-  const ticker =
-    account.type === "TokenAccount"
-      ? account.token.ticker
-      : account.currency.ticker;
+  const ticker = account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker;
   const lastOp = ops[ops.length - 1];
   const date = new Date(
-    (lastOp ? lastOp.date : Date.now()) -
-      rng.nextInt(0, 100000000 * rng.next() * rng.next())
+    (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 100000000 * rng.next() * rng.next()),
   );
   const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
   const divider =
-    (account.type === "Account" &&
-      currencyIdApproxMarketPrice[account.currency.id]) ||
+    (account.type === "Account" && currencyIdApproxMarketPrice[account.currency.id]) ||
     currencyIdApproxMarketPrice.bitcoin;
   const value = new BigNumber(
-    Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider)
+    Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider),
   );
 
   if (Number.isNaN(value)) {
@@ -237,13 +217,9 @@ export function genOperation(
     value,
     fee: new BigNumber(Math.round(value.toNumber() * 0.01)),
     senders: [type !== "IN" ? genAddress(superAccount.currency, rng) : address],
-    recipients: [
-      type === "IN" ? genAddress(superAccount.currency, rng) : address,
-    ],
+    recipients: [type === "IN" ? genAddress(superAccount.currency, rng) : address],
     blockHash: genHex(64, rng),
-    blockHeight:
-      superAccount.blockHeight -
-      Math.floor((Date.now() - (date as any)) / 900000),
+    blockHeight: superAccount.blockHeight - Math.floor((Date.now() - (date as any)) / 900000),
     accountId: account.id,
     date,
     extra: {},
@@ -271,12 +247,13 @@ export type GenAccountOptions = {
   subAccountsCount?: number;
   swapHistorySize?: number;
   withNft?: boolean;
+  tokenIds?: string[];
 };
 
 export function genTokenAccount(
   index: number,
   account: Account,
-  token: TokenCurrency
+  token: TokenCurrency,
 ): TokenAccount {
   const rng = new Prando(account.id + "|" + index);
   const tokenAccount: TokenAccount = {
@@ -302,33 +279,26 @@ export function genTokenAccount(
       return ops.concat(op);
     }, []);
   tokenAccount.operationsCount = tokenAccount.operations.length;
-  tokenAccount.spendableBalance = tokenAccount.balance = ensureNoNegative(
-    tokenAccount.operations
-  );
+  tokenAccount.spendableBalance = tokenAccount.balance = ensureNoNegative(tokenAccount.operations);
   tokenAccount.creationDate =
     tokenAccount.operations.length > 0
       ? tokenAccount.operations[tokenAccount.operations.length - 1].date
       : new Date();
-  tokenAccount.balanceHistoryCache =
-    generateHistoryFromOperations(tokenAccount);
+  tokenAccount.balanceHistoryCache = generateHistoryFromOperations(tokenAccount);
   return tokenAccount;
 }
 
 type GenAccountEnhanceOperations = (
   account: Account,
   currency: CryptoCurrency,
-  rng: Prando
+  rng: Prando,
 ) => void;
 
 export function genAccount(
   id: number | string,
   opts: GenAccountOptions = {},
-  completeResources?: (
-    account: Account,
-    currency: CryptoCurrency,
-    address: string
-  ) => void,
-  genAccountEnhanceOperations?: GenAccountEnhanceOperations
+  completeResources?: (account: Account, currency: CryptoCurrency, address: string) => void,
+  genAccountEnhanceOperations?: GenAccountEnhanceOperations,
 ): Account {
   const rng = new Prando(id);
   const currency = opts.currency || rng.nextArrayItem(currencies);
@@ -341,16 +311,14 @@ export function genAccount(
       currency,
       derivationMode: "",
     }),
-    currency
+    currency,
   );
   const freshAddress = {
     address,
     derivationPath,
   };
   // nb Make the third (ethereum_classic, dogecoin) account originally migratable
-  const outdated =
-    ["ethereum_classic", "dogecoin"].includes(currency.id) &&
-    `${id}`.endsWith("_2");
+  const outdated = ["ethereum_classic", "dogecoin"].includes(currency.id) && `${id}`.endsWith("_2");
   const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
   const account: Account = {
     type: "Account",
@@ -391,40 +359,29 @@ export function genAccount(
     ...(withNft && {
       nfts: Array(10)
         .fill(null)
-        .map(() => createFixtureNFT(accountId, currency)),
+        // The index === 0 ensure at least one NFT is a Stax NFT if the currency is Ethereum
+        .map((_, index) => createFixtureNFT(accountId, currency, index === 0)),
     }),
   };
 
   if (
-    [
-      "ethereum",
-      "ethereum_ropsten",
-      "ethereum_goerli",
-      "tron",
-      "algorand",
-    ].includes(currency.id)
+    ["ethereum", "ethereum_ropsten", "ethereum_goerli", "tron", "algorand"].includes(currency.id)
   ) {
     const tokenCount =
-      typeof opts.subAccountsCount === "number"
-        ? opts.subAccountsCount
-        : rng.nextInt(0, 8);
-    const all = listTokensForCryptoCurrency(account.currency).filter((t) =>
-      hardcodedMarketcap.includes(t.id)
+      typeof opts.subAccountsCount === "number" ? opts.subAccountsCount : rng.nextInt(0, 8);
+    const all = listTokensForCryptoCurrency(account.currency, {
+      withDelisted: true,
+    }).filter(
+      ({ id, delisted }) =>
+        (hardcodedMarketcap.includes(id) && !delisted) || opts.tokenIds?.includes(id),
     );
-    const compoundReadyTokens = all.filter(findCompoundToken);
-    const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
-    // favorize the generation of compound tokens
-    const tokens = compoundReadyTokens
-      .concat(
-        // from random index
-        notCompoundReadyTokens.slice(
-          rng.nextInt(Math.floor(notCompoundReadyTokens.length / 2))
-        )
-      )
-      .slice(0, tokenCount);
-    account.subAccounts = tokens.map((token, i) =>
-      genTokenAccount(i, account, token)
-    );
+    const tokensFromOpts = all.filter(t => opts.tokenIds?.includes(t.id));
+
+    // [ explicit token from opts ] > compoundReady > rest
+    const tokens = tokensFromOpts
+      .concat(all)
+      .slice(0, Math.max(tokenCount, opts.tokenIds?.length || 0));
+    account.subAccounts = tokens.map((token, i) => genTokenAccount(i, account, token));
   }
 
   completeResources?.(account, currency, address);
@@ -444,15 +401,7 @@ export function genAccount(
 
         if (account.nfts && account.nfts[index]) {
           const { tokenId, contract, standard } = account.nfts[index];
-          const op = genNFTOperation(
-            account,
-            account,
-            ops,
-            rng,
-            contract,
-            standard,
-            tokenId
-          );
+          const op = genNFTOperation(account, account, ops, rng, contract, standard, tokenId);
           return ops.concat(op);
         }
       }, []);
@@ -465,12 +414,9 @@ export function genAccount(
       ? account.operations[account.operations.length - 1].date
       : new Date();
   account.operationsCount = account.operations.length;
-  account.spendableBalance = account.balance = ensureNoNegative(
-    account.operations
-  );
+  account.spendableBalance = account.balance = ensureNoNegative(account.operations);
   account.used = !isAccountEmpty(account);
-  if (genAccountEnhanceOperations)
-    genAccountEnhanceOperations(account, currency, rng);
+  if (genAccountEnhanceOperations) genAccountEnhanceOperations(account, currency, rng);
   account.balanceHistoryCache = generateHistoryFromOperations(account);
   return account;
 }

@@ -1,15 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-
-import { Box, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
+import { Box, Flex, IconsLegacy, Link, Text } from "@ledgerhq/react-ui";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";
 import Illustration from "~/renderer/components/Illustration";
-
 import bannerStaxLight from "./assets/bannerStaxLight.svg";
 import bannerStaxDark from "./assets/bannerStaxDark.svg";
+import { track } from "~/renderer/analytics/segment";
 
 const CloseButtonWrapper = styled(Box).attrs(() => ({
   top: 4,
@@ -24,9 +23,10 @@ const PostOnboardingHubBanner = () => {
   const dispatch = useDispatch();
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
-  const handleNavigateToPostOnboardingHub = useCallback(() => navigateToPostOnboardingHub(), [
-    navigateToPostOnboardingHub,
-  ]);
+  const handleNavigateToPostOnboardingHub = useCallback(() => {
+    track("button_clicked", { button: "What’s next for your Ledger Stax" });
+    navigateToPostOnboardingHub();
+  }, [navigateToPostOnboardingHub]);
 
   const handleHidePostOnboardingHubBanner = useCallback(() => {
     dispatch(hidePostOnboardingWalletEntryPoint());
@@ -59,8 +59,11 @@ const PostOnboardingHubBanner = () => {
       <Flex>
         <Illustration lightSource={bannerStaxLight} darkSource={bannerStaxDark} size={240} />
       </Flex>
-      <CloseButtonWrapper onClick={handleHidePostOnboardingHubBanner}>
-        <Icons.CloseMedium color="neutral.c00" size={30} />
+      <CloseButtonWrapper
+        onClick={handleHidePostOnboardingHubBanner}
+        data-test-id="postonboarding-banner-entry-point-close-button"
+      >
+        <IconsLegacy.CloseMedium color="neutral.c00" size={30} />
       </CloseButtonWrapper>
     </Flex>
   );

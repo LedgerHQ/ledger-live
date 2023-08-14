@@ -1,13 +1,9 @@
 import React, { ReactNode, useState, memo, useCallback } from "react";
 import { StyleProp, ViewStyle } from "react-native";
-import { SearchInput, Flex } from "@ledgerhq/native-ui";
+import { SearchInput, SquaredSearchBar, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-
-import { useRoute } from "@react-navigation/native";
 import Search from "./Search";
-import { track } from "../analytics";
-import { ScreenName } from "../const";
 
 type Props<T> = {
   initialQuery?: string;
@@ -16,6 +12,8 @@ type Props<T> = {
   keys?: string[];
   list: T[];
   inputWrapperStyle?: StyleProp<ViewStyle>;
+  newSearchBar?: boolean;
+  onSearchChange?: (newQuery: string) => void;
 };
 
 const FilteredSearchBar = <T,>({
@@ -25,31 +23,41 @@ const FilteredSearchBar = <T,>({
   list,
   renderEmptySearch,
   inputWrapperStyle,
+  newSearchBar,
+  onSearchChange,
 }: Props<T>) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [query, setQuery] = useState<string>(initialQuery || "");
-  const route = useRoute();
 
   const onChange = useCallback(
     (newQuery: string) => {
       setQuery(newQuery);
-      if (route.name === ScreenName.ReceiveSelectCrypto) {
-        track("search_clicked", { input: newQuery });
-      }
+      onSearchChange?.(newQuery);
     },
-    [route.name],
+    [onSearchChange],
   );
 
   return (
     <>
       <Flex style={inputWrapperStyle}>
-        <SearchInput
-          value={query}
-          onChange={onChange}
-          placeholder={t("common.search")}
-          placeholderTextColor={colors.neutral.c70}
-        />
+        {newSearchBar ? (
+          <SquaredSearchBar
+            value={query}
+            onChange={onChange}
+            placeholder={t("common.search")}
+            placeholderTextColor={colors.neutral.c70}
+            testID="common-search-field"
+          />
+        ) : (
+          <SearchInput
+            value={query}
+            onChange={onChange}
+            placeholder={t("common.search")}
+            placeholderTextColor={colors.neutral.c70}
+            testID="common-search-field"
+          />
+        )}
       </Flex>
       <Search
         fuseOptions={{

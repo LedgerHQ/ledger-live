@@ -12,11 +12,15 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        required: false
+      draft:
+        description: true if the PR is in draft
+        required: false
+        default: "false"
 
 concurrency:
-  # See: https://github.com/orgs/community/discussions/35341
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-desktop-app:
@@ -51,7 +55,7 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: actions/setup-python@v4
         with:
@@ -60,15 +64,10 @@ jobs:
         with:
           ruby-version: 3.1.2
           bundler-cache: true
-      - uses: pnpm/action-setup@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          upgrade_npm: ${{ matrix.os == 'windows-latest' }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:

@@ -21,9 +21,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     xpubOrAddress: address,
     derivationMode,
   });
-  const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(
-    address
-  );
+  const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(address);
 
   const oldOperations = initialAccount?.operations || [];
   const lastPagingToken = oldOperations[0]?.extra?.pagingToken || 0;
@@ -39,7 +37,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const allOperations = mergeOps(oldOperations, newOperations);
   const assetOperations: Operation[] = [];
 
-  allOperations.forEach((op) => {
+  allOperations.forEach(op => {
     if (
       op?.extra?.assetCode &&
       op?.extra?.assetIssuer &&
@@ -68,7 +66,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   };
   return {
     ...shape,
-    operations: allOperations.map((op) => {
+    operations: allOperations.map(op => {
       const subOperations = inferSubOperations(op.hash, subAccounts);
 
       return {

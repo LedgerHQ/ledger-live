@@ -1,5 +1,4 @@
 import React from "react";
-
 import Modal from "~/renderer/components/Modal";
 import TermOfUseUpdateBody from "./TermOfUseUpdateBody";
 
@@ -12,7 +11,7 @@ const TermOfUseUpdateModal = () => (
       <TermOfUseUpdateBody
         onClose={() => {
           data.acceptTerms();
-          onClose();
+          onClose?.();
         }}
       />
     )}

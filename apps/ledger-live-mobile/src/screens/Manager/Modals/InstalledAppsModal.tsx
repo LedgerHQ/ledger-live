@@ -38,10 +38,7 @@ const UninstallButton = ({
   setAppUninstallWithDependencies,
 }: UninstallButtonProps) => {
   const { uninstallQueue } = state;
-  const uninstalling = useMemo(
-    () => uninstallQueue.includes(app.name),
-    [uninstallQueue, app.name],
-  );
+  const uninstalling = useMemo(() => uninstallQueue.includes(app.name), [uninstallQueue, app.name]);
   const renderAppState = () => {
     switch (true) {
       case uninstalling:
@@ -70,19 +67,8 @@ type RowProps = {
   deviceInfo: DeviceInfo;
 };
 
-const Row = ({
-  app,
-  state,
-  dispatch,
-  setAppUninstallWithDependencies,
-  deviceInfo,
-}: RowProps) => (
-  <Flex
-    flexDirection="row"
-    py={4}
-    alignItems="center"
-    justifyContent="space-between"
-  >
+const Row = ({ app, state, dispatch, setAppUninstallWithDependencies, deviceInfo }: RowProps) => (
+  <Flex flexDirection="row" py={4} alignItems="center" justifyContent="space-between">
     <Flex flexDirection="row" alignItems="center">
       <AppIcon app={app} size={24} radius={8} />
       <Text variant="large" fontWeight="semiBold" color="neutral.c100" ml={4}>
@@ -144,10 +130,7 @@ const InstalledAppsModal = ({
   illustration,
   deviceInfo,
 }: Props) => {
-  const onUninstallAll = useCallback(
-    () => dispatch({ type: "wipe" }),
-    [dispatch],
-  );
+  const onUninstallAll = useCallback(() => dispatch({ type: "wipe" }), [dispatch]);
 
   const renderItem = useCallback(
     ({ item }: { item: App }) => (

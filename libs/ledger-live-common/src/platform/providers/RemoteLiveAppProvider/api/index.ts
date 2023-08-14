@@ -1,15 +1,12 @@
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/network";
+import qs from "qs";
 import { getEnv } from "../../../../env";
+import { FilterParams } from "../../../filters";
 import type { LiveAppManifest } from "../../../types";
 import mockData from "./mock.json";
-import { FilterParams } from "../../../filters";
-import qs from "qs";
 
 const api = {
-  fetchLiveAppManifests: async (
-    url: string,
-    params?: FilterParams
-  ): Promise<LiveAppManifest[]> => {
+  fetchLiveAppManifests: async (url: string, params?: FilterParams): Promise<LiveAppManifest[]> => {
     if (getEnv("MOCK")) {
       if (getEnv("MOCK_REMOTE_LIVE_MANIFEST")) {
         return [
@@ -23,7 +20,7 @@ const api = {
       const { data }: { data: LiveAppManifest[] } = await network({
         method: "GET",
         params,
-        paramsSerializer: (params) => {
+        paramsSerializer: params => {
           return qs.stringify(params, { arrayFormat: "repeat" });
         },
         url,

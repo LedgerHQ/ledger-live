@@ -1,25 +1,28 @@
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { getAccountBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
+import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
+import { track } from "~/renderer/analytics/segment";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
-export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
   const state = getAccountBannerState(account);
-  const { redelegate, ledgerValidator, validatorSrcAddress } = state;
+  const { redelegate, ledgerValidator, validatorSrcAddress, display } = state;
 
   if (redelegate && !stakeAccountBannerParams?.cosmos?.redelegate) return null;
-  if (!redelegate && !stakeAccountBannerParams?.cosmos?.delegate) return null;
+  if (!redelegate && !(stakeAccountBannerParams?.cosmos?.delegate && canDelegate(account)))
+    return null;
 
   const commission = ledgerValidator?.commission ? ledgerValidator?.commission * 100 : 1;
   const title = redelegate
@@ -36,6 +39,15 @@ export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) =
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
+    track("button_clicked", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "delegate",
+      redelegate,
+      currency: account?.currency?.id?.toUpperCase(),
+    });
+
     if (redelegate) {
       dispatch(
         openModal("MODAL_COSMOS_REDELEGATE", {
@@ -44,7 +56,7 @@ export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) =
           validatorDstAddress: ledgerValidator?.validatorAddress || "",
         }),
       );
-    } else {
+    } else if (canDelegate(account)) {
       dispatch(
         openModal("MODAL_COSMOS_DELEGATE", {
           account,
@@ -59,9 +71,11 @@ export const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) =
       description={description}
       cta={cta}
       onClick={onClick}
-      display={true}
+      display={display}
       linkText={t("account.banner.delegation.linkText")}
       linkUrl={"https://www.ledger.com/staking-ethereum"}
     />
   );
 };
+
+export default StakeBanner;

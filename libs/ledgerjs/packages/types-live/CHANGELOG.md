@@ -1,5 +1,205 @@
 # @ledgerhq/types-live
 
+## 6.38.0
+
+### Minor Changes
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#4040](https://github.com/LedgerHQ/ledger-live/pull/4040) [`95ac67a5e0`](https://github.com/LedgerHQ/ledger-live/commit/95ac67a5e0359b03c7d82c34fd1f2f3b6eb7df22) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add feature flags around ptx services in llm
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+## 6.38.0-next.0
+
+### Minor Changes
+
+- [#4021](https://github.com/LedgerHQ/ledger-live/pull/4021) [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add telos evm currency
+
+- [#4040](https://github.com/LedgerHQ/ledger-live/pull/4040) [`95ac67a5e0`](https://github.com/LedgerHQ/ledger-live/commit/95ac67a5e0359b03c7d82c34fd1f2f3b6eb7df22) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add feature flags around ptx services in llm
+
+- [#4015](https://github.com/LedgerHQ/ledger-live/pull/4015) [`374e339c27`](https://github.com/LedgerHQ/ledger-live/commit/374e339c27e317656d01463a822898ad3a60df85) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Polygon zkEVM, Base Goerli, Klaytn
+
+### Patch Changes
+
+- [#4130](https://github.com/LedgerHQ/ledger-live/pull/4130) [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - coreum integration
+
+## 6.37.0
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EVM messages types
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+## 6.37.0-next.0
+
+### Minor Changes
+
+- [#3924](https://github.com/LedgerHQ/ledger-live/pull/3924) [`14cce73003`](https://github.com/LedgerHQ/ledger-live/commit/14cce7300333c51cbcdbd5a7e290ddc600c9f3a1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EVM messages types
+
+- [#3825](https://github.com/LedgerHQ/ledger-live/pull/3825) [`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Cosmos chains : stargaze, desmos, umee, secret network
+
+## 6.36.0
+
+### Minor Changes
+
+- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+
+### Patch Changes
+
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+
+## 6.36.0-next.0
+
+### Minor Changes
+
+- [#2441](https://github.com/LedgerHQ/ledger-live/pull/2441) [`44192f2ab2`](https://github.com/LedgerHQ/ledger-live/commit/44192f2ab2857cbae2ef4a81ee9608d395dcd2b9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - edit eth transaction feature for LLD
+
+### Patch Changes
+
+- [#3696](https://github.com/LedgerHQ/ledger-live/pull/3696) [`5af41b6fa1`](https://github.com/LedgerHQ/ledger-live/commit/5af41b6fa1e43037ccdb2df279c82e12ef3d2b1a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow to enable listAppsV2 via feature flags instead of experimental settings
+
+## 6.35.1
+
+### Patch Changes
+
+- [#3591](https://github.com/LedgerHQ/ledger-live/pull/3591) [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swapWalletApiPartnerList Feature Flag
+
+## 6.35.1-next.0
+
+### Patch Changes
+
+- [#3591](https://github.com/LedgerHQ/ledger-live/pull/3591) [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swapWalletApiPartnerList Feature Flag
+
+## 6.35.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new feature flag for controlling the new firmware update UX
+
+## 6.35.0-next.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new feature flag for controlling the new firmware update UX
+
+## 6.34.1
+
+### Patch Changes
+
+- [#3466](https://github.com/LedgerHQ/ledger-live/pull/3466) [`745fbf2a54`](https://github.com/LedgerHQ/ledger-live/commit/745fbf2a54cdc34aea938d7fbe4c8b198dc36b54) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix bad merge in README.md file for ledgerjs types-live package
+
+## 6.34.1-next.0
+
+### Patch Changes
+
+- [#3466](https://github.com/LedgerHQ/ledger-live/pull/3466) [`745fbf2a54`](https://github.com/LedgerHQ/ledger-live/commit/745fbf2a54cdc34aea938d7fbe4c8b198dc36b54) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix bad merge in README.md file for ledgerjs types-live package
+
+## 6.34.0
+
+### Minor Changes
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - add feature flag protectServicesDesktop
+
+## 6.34.0-next.0
+
+### Minor Changes
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - add feature flag protectServicesDesktop
+
+## 6.33.0
+
+### Minor Changes
+
+- [#3153](https://github.com/LedgerHQ/ledger-live/pull/3153) [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for new EVM chains, including Layer 2s like Optimism & Arbitrum
+
+- [#2809](https://github.com/LedgerHQ/ledger-live/pull/2809) [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Quicksilver, Persistence, Onomy, Axelar to Cosmos family
+
+### Patch Changes
+
+- [#3332](https://github.com/LedgerHQ/ledger-live/pull/3332) [`835bfbaa45`](https://github.com/LedgerHQ/ledger-live/commit/835bfbaa45f2bee5416b40a34ae0bf150d780e2c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix merge conflict in readme file
+
+- [#3244](https://github.com/LedgerHQ/ledger-live/pull/3244) [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new FF
+
+- [#3097](https://github.com/LedgerHQ/ledger-live/pull/3097) [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce a new manager API for listApps, which should bring memory and time improvements.
+
+## 6.33.0-next.0
+
+### Minor Changes
+
+- [#3153](https://github.com/LedgerHQ/ledger-live/pull/3153) [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for new EVM chains, including Layer 2s like Optimism & Arbitrum
+
+- [#2809](https://github.com/LedgerHQ/ledger-live/pull/2809) [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Quicksilver, Persistence, Onomy, Axelar to Cosmos family
+
+### Patch Changes
+
+- [#3332](https://github.com/LedgerHQ/ledger-live/pull/3332) [`835bfbaa45`](https://github.com/LedgerHQ/ledger-live/commit/835bfbaa45f2bee5416b40a34ae0bf150d780e2c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix merge conflict in readme file
+
+- [#3244](https://github.com/LedgerHQ/ledger-live/pull/3244) [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new FF
+
+- [#3097](https://github.com/LedgerHQ/ledger-live/pull/3097) [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce a new manager API for listApps, which should bring memory and time improvements.
+
+## 6.32.1
+
+### Patch Changes
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add the staxImage property to the NFTMetadata types
+
+## 6.32.1-next.0
+
+### Patch Changes
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add the staxImage property to the NFTMetadata types
+
+## 6.32.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+* [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - add protectServicesDiscoverDesktop feature flag
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+## 6.32.0-next.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - add protectServicesDiscoverDesktop feature flag
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+## 6.31.0
+
+### Minor Changes
+
+- [#2569](https://github.com/LedgerHQ/ledger-live/pull/2569) [`5b65ae6b04`](https://github.com/LedgerHQ/ledger-live/commit/5b65ae6b04f20534962b986fab4e3ed29ad2e273) Thanks [@cksanders](https://github.com/cksanders)! - conditionally activate navigation on the buy&sell screen depending on the value of a feature flag
+
+### Patch Changes
+
+- [#2552](https://github.com/LedgerHQ/ledger-live/pull/2552) [`467822aaf6`](https://github.com/LedgerHQ/ledger-live/commit/467822aaf680df334531c1489e5a845fecad492a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Feature flag for WallectConnect Entry point
+
+## 6.31.0-next.0
+
+### Minor Changes
+
+- [#2569](https://github.com/LedgerHQ/ledger-live/pull/2569) [`5b65ae6b04`](https://github.com/LedgerHQ/ledger-live/commit/5b65ae6b04f20534962b986fab4e3ed29ad2e273) Thanks [@cksanders](https://github.com/cksanders)! - conditionally activate navigation on the buy&sell screen depending on the value of a feature flag
+
+### Patch Changes
+
+- [#2552](https://github.com/LedgerHQ/ledger-live/pull/2552) [`467822aaf6`](https://github.com/LedgerHQ/ledger-live/commit/467822aaf680df334531c1489e5a845fecad492a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Feature flag for WallectConnect Entry point
+
 ## 6.30.0
 
 ### Minor Changes

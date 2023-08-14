@@ -29,6 +29,12 @@ export default {
         type: "boolean",
       },
     },
+    infinite: {
+      defaultValue: false,
+      control: {
+        type: "boolean",
+      },
+    },
     frontStrokeColor: {
       type: "string",
       control: {
@@ -55,6 +61,7 @@ export const Default = (args: Props): JSX.Element => {
     <ProgressLoader
       radius={args.radius}
       progress={args.progress}
+      infinite={args.infinite}
       stroke={args.stroke}
       showPercentage={args.showPercentage}
       frontStrokeColor={args.frontStrokeColor}

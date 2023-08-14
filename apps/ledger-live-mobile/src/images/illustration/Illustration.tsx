@@ -10,14 +10,7 @@ export type Props = Omit<ImageProps, "source"> & {
   height?: number | string;
 };
 
-const Illustration = ({
-  lightSource,
-  darkSource,
-  size,
-  width,
-  height,
-  ...othersProps
-}: Props) => {
+const Illustration = ({ lightSource, darkSource, size, width, height, ...othersProps }: Props) => {
   const { theme } = useTheme();
 
   return (

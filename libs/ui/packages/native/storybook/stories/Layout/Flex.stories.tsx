@@ -1,43 +1,47 @@
 import React from "react";
-import { storiesOf } from "../storiesOf";
-import { select, text, number } from "@storybook/addon-knobs";
+import { ComponentStory } from "@storybook/react-native";
 import Flex from "../../../src/components/Layout/Flex";
 import Text from "../../../src/components/Text";
 
-const FlexStory = () => {
-  const alignItems = select(
-    "Align items",
-    ["flex-start", "flex-end", "center", "baseline", "stretch"],
-    "flex-start",
-    "Layout",
-  );
-  const flexDirection = select(
-    "Direction",
-    ["row", "row-reverse", "column", "column-reverse"],
-    "column",
-    "Layout",
-  );
-  const justifyContent = select(
-    "Justify Content",
-    [
-      "flex-start",
-      "flex-end",
-      "center",
-      "space-around",
-      "space-between",
-      "space-evenly",
-      undefined,
-    ],
-    "flex-start",
-    "Layout",
-  );
-  const background = text("Background", "", "Layout");
-  const flexBasis = text("FlexBasis", "auto", "Layout");
-  const flexGrow = number("FlexGrow", 0, undefined, "Layout");
-  const flexShrink = number("FlexShrink", 0, undefined, "Layout");
+export default {
+  title: "Layout/Flex",
+  component: Flex,
+  argTypes: {
+    alignItems: {
+      options: ["flex-start", "flex-end", "center", "baseline", "stretch"],
+      control: { type: "select" },
+    },
+    flexDirection: {
+      options: ["row", "row-reverse", "column", "column-reverse"],
+      control: { type: "select" },
+    },
+    justifyContent: {
+      options: [
+        "flex-start",
+        "flex-end",
+        "center",
+        "space-around",
+        "space-between",
+        "space-evenly",
+        undefined,
+      ],
+      control: { type: "select" },
+    },
+  },
+};
 
-  const p = number("Padding", 0, {}, "Layout");
-  const m = number("Margin", 0, {}, "Layout");
+export const FlexStory: ComponentStory<typeof Flex> = (args: typeof FlexStoryArgs) => {
+  const {
+    alignItems,
+    flexDirection,
+    justifyContent,
+    background,
+    flexBasis,
+    flexGrow,
+    flexShrink,
+    p,
+    m,
+  } = args;
 
   return (
     <Flex
@@ -51,47 +55,41 @@ const FlexStory = () => {
       p={p}
       m={m}
     >
-      <Text variant="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
-      <Text variant="h2">{text("Second text", "dolor sit", "Content")}</Text>
-      <Text variant="h3">{text("Third text", "amet", "Content")}</Text>
+      <Text variant="h1">{args.firstText}</Text>
+      <Text variant="h2">{args.secondText}</Text>
+      <Text variant="h3">{args.thirdText}</Text>
     </Flex>
   );
 };
+FlexStory.storyName = "Flex One";
+const FlexStoryArgs = {
+  alignItems: "flex-start",
+  flexDirection: "column" as const,
+  justifyContent: "flex-start",
+  background: "",
+  flexBasis: "auto",
+  flexGrow: 1,
+  flexShrink: 1,
+  p: 0,
+  m: 0,
+  firstText: "Lorem ipsum",
+  secondText: "dolor sit",
+  thirdText: "amet",
+};
+FlexStory.args = FlexStoryArgs;
 
-const FlexStoryTwo = () => {
-  const alignItems = select(
-    "AlignItems",
-    ["flex-start", "flex-end", "center", "baseline", "stretch"],
-    "flex-start",
-    "Layout",
-  );
-  const flexDirection = select(
-    "FlexDirection",
-    ["row", "row-reverse", "column", "column-reverse"],
-    "column",
-    "Layout",
-  );
-  const justifyContent = select(
-    "Justify Content",
-    [
-      "flex-start",
-      "flex-end",
-      "center",
-      "space-around",
-      "space-between",
-      "space-evenly",
-      undefined,
-    ],
-    "flex-start",
-    "Layout",
-  );
-  const background = text("Background", "", "Layout");
-  const flexBasis = text("FlexBasis", "auto", "Layout");
-  const flexGrow = number("FlexGrow", 0, undefined, "Layout");
-  const flexShrink = number("FlexShrink", 0, undefined, "Layout");
-
-  const p = number("Padding", 0, {}, "Layout");
-  const m = number("Margin", 0, {}, "Layout");
+export const FlexStoryTwo: ComponentStory<typeof Flex> = (args: typeof FlexStoryTwoArgs) => {
+  const {
+    alignItems,
+    flexDirection,
+    justifyContent,
+    background,
+    flexBasis,
+    flexGrow,
+    flexShrink,
+    p,
+    m,
+  } = args;
 
   return (
     <>
@@ -106,9 +104,9 @@ const FlexStoryTwo = () => {
         p={p}
         m={m}
       >
-        <Text variant="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
-        <Text variant="h2">{text("Second text", "dolor sit", "Content")}</Text>
-        <Text variant="h3">{text("Third text", "amet", "Content")}</Text>
+        <Text variant="h1">{args.firstText}</Text>
+        <Text variant="h2">{args.secondText}</Text>
+        <Text variant="h3">{args.thirdText}</Text>
       </Flex>
       <Flex p={4} style={{ borderWidth: 1, borderColor: "red" }}>
         <Text variant="h1">{"I'm not modified"}</Text>
@@ -118,9 +116,19 @@ const FlexStoryTwo = () => {
     </>
   );
 };
-
-storiesOf((story) =>
-  story("Layout/Flex", module)
-    .add("Flex One", () => <FlexStory />)
-    .add("Flex Two", () => <FlexStoryTwo />),
-);
+FlexStoryTwo.storyName = "Flex Two";
+const FlexStoryTwoArgs = {
+  alignItems: "flex-start",
+  flexDirection: "column" as const,
+  justifyContent: "flex-start",
+  background: "",
+  flexBasis: "auto",
+  flexGrow: 1,
+  flexShrink: 1,
+  p: 0,
+  m: 0,
+  firstText: "Lorem ipsum",
+  secondText: "dolor sit",
+  thirdText: "amet",
+};
+FlexStoryTwo.args = FlexStoryTwoArgs;

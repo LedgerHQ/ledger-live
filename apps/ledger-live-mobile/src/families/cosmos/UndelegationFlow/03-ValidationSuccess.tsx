@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
@@ -26,10 +27,9 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const { ticker } = getAccountCurrency(account);
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -49,17 +49,19 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="CosmosUndelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="CosmosUndelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="undelegation"
+        currency={ticker}
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.text" />}
       />
     </View>
   );

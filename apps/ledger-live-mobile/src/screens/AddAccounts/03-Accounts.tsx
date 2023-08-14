@@ -12,11 +12,8 @@ import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import {
-  isAccountEmpty,
-  groupAddAccounts,
-} from "@ledgerhq/live-common/account/index";
-import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/addAccounts";
+import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/index";
+import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/index";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
@@ -24,7 +21,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import type { DerivationMode } from "@ledgerhq/live-common/derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
@@ -75,10 +72,7 @@ const SectionAccounts = ({
 };
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    AddAccountsNavigatorParamList,
-    ScreenName.AddAccountsAccounts
-  >
+  StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsAccounts>
 >;
 type Props = {
   replaceAccounts: (_: {
@@ -111,8 +105,7 @@ function AddAccountsAccounts({
   const { colors } = useTheme();
   const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
-  const [latestScannedAccount, setLatestScannedAccount] =
-    useState<Account | null>(null);
+  const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
@@ -127,15 +120,10 @@ function AddAccountsAccounts({
   } = route.params || {};
   // Find accounts that are (scanned && !existing && !used)
   const newAccountSchemes = scannedAccounts
-    ?.filter(
-      a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used,
-    )
+    ?.filter(a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used)
     .map(a => a.derivationMode);
   const preferredNewAccountScheme = useMemo(
-    () =>
-      newAccountSchemes && newAccountSchemes.length > 0
-        ? newAccountSchemes[0]
-        : undefined,
+    () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
     [newAccountSchemes],
   );
   useEffect(() => {
@@ -146,12 +134,8 @@ function AddAccountsAccounts({
 
   useEffect(() => {
     if (latestScannedAccount) {
-      const hasAlreadyBeenScanned = scannedAccounts.some(
-        a => latestScannedAccount.id === a.id,
-      );
-      const hasAlreadyBeenImported = existingAccounts.some(
-        a => latestScannedAccount.id === a.id,
-      );
+      const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
+      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
       const isNewAccount = isAccountEmpty(latestScannedAccount);
 
       if (!isNewAccount && !hasAlreadyBeenImported) {
@@ -171,17 +155,9 @@ function AddAccountsAccounts({
         );
       }
     }
-  }, [
-    existingAccounts,
-    latestScannedAccount,
-    onlyNewAccounts,
-    scannedAccounts,
-    selectedIds,
-  ]);
+  }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
   const startSubscription = useCallback(() => {
-    const cryptoCurrency = isTokenCurrency(currency)
-      ? currency.parentCurrency
-      : currency;
+    const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
     const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
@@ -247,9 +223,7 @@ function AddAccountsAccounts({
   );
   const unselectAll = useCallback(
     (accounts: Account[]) => {
-      setSelectedIds(
-        selectedIds.filter(id => !accounts.find(a => a.id === id)),
-      );
+      setSelectedIds(selectedIds.filter(id => !accounts.find(a => a.id === id)));
     },
     [selectedIds],
   );
@@ -275,30 +249,17 @@ function AddAccountsAccounts({
           currency,
         });
     }
-  }, [
-    currency,
-    inline,
-    navigation,
-    replaceAccounts,
-    route.params,
-    scannedAccounts,
-    selectedIds,
-  ]);
+  }, [currency, inline, navigation, replaceAccounts, route.params, scannedAccounts, selectedIds]);
   const onCancel = useCallback(() => {
     setError(null);
     setCancelled(true);
   }, []);
   const onModalHide = useCallback(() => {
     if (cancelled) {
-      navigation
-        .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-        .pop();
+      navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
     }
   }, [cancelled, navigation]);
-  const viewAllCreatedAccounts = useCallback(
-    () => setShowAllCreatedAccounts(true),
-    [],
-  );
+  const viewAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(true), []);
   const onAccountNameChange = useCallback(
     (name: string, changedAccount: Account) => {
       setScannedAccounts(
@@ -331,9 +292,7 @@ function AddAccountsAccounts({
   );
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
-      ? noAssociatedAccountsByFamily[
-          currency.family as keyof typeof noAssociatedAccountsByFamily
-        ]
+      ? noAssociatedAccountsByFamily[currency.family as keyof typeof noAssociatedAccountsByFamily]
       : null;
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
@@ -365,16 +324,9 @@ function AddAccountsAccounts({
         },
       ]}
     >
-      <TrackScreen
-        category="AddAccounts"
-        name="Accounts"
-        currencyName={currency.name}
-      />
+      <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
       <PreventNativeBack />
-      <NavigationScrollView
-        style={styles.inner}
-        contentContainerStyle={styles.innerContent}
-      >
+      <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
         {sections.map(({ id, selectable, defaultSelected, data }, i) => {
           const hasMultipleSchemes =
             id === "creatable" &&
@@ -398,13 +350,9 @@ function AddAccountsAccounts({
                 }
                 index={i}
                 accounts={data}
-                onAccountNameChange={
-                  !selectable ? undefined : onAccountNameChange
-                }
+                onAccountNameChange={!selectable ? undefined : onAccountNameChange}
                 onPressAccount={!selectable ? undefined : onPressAccount}
-                onSelectAll={
-                  !selectable || id === "creatable" ? undefined : selectAll
-                }
+                onSelectAll={!selectable || id === "creatable" ? undefined : selectAll}
                 onUnselectAll={!selectable ? undefined : unselectAll}
                 selectedIds={selectedIds}
                 emptyState={emptyTexts[id as keyof typeof emptyTexts]}
@@ -459,6 +407,7 @@ function AddAccountsAccounts({
       )}
       <GenericErrorBottomModal
         error={error}
+        onClose={onCancel}
         onModalHide={onModalHide}
         footerButtons={
           <>
@@ -500,11 +449,7 @@ const AddressTypeTooltip = ({
         onPress={onOpen}
         IconRight={Info}
       />
-      <QueuedDrawer
-        isRequestingToBeOpened={isOpen}
-        onClose={onClose}
-        style={styles.modal}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} style={styles.modal}>
         <View style={styles.modalContainer}>
           <LText style={styles.subtitle} color="grey">
             <Trans i18nKey="addAccounts.addressTypeInfo.subtitle" />
@@ -601,6 +546,7 @@ class Footer extends PureComponent<{
           />
         ) : (
           <Button
+            testID="add-accounts-continue-button"
             event="AddAccountsSelected"
             type="primary"
             title={<Trans i18nKey="addAccounts.finalCta" />}

@@ -126,7 +126,7 @@ hex.
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
 *   `rawTxHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a raw hex string representing a serialized transaction blob.
     This parameter can be encoded using [ripple-binary-codec](https://www.npmjs.com/package/ripple-binary-codec).
-    See https://xrpl.org/serialization.html for more documentation on the serialization format.
+    See <https://xrpl.org/serialization.html> for more documentation on the serialization format.
 *   `ed25519` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** optionally enable or not the ed25519 curve (secp256k1 is default)
 
 ##### Examples

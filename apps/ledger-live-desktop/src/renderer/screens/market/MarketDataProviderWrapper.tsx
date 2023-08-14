@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function MarketDataProviderWrapper({ children }: Props): ReactElement {
-  const counterValueCurrency: any = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   return (
     <MarketDataProvider

@@ -3,12 +3,9 @@ import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { PortfolioRange, ValueChange } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import {
-  ArrowEvolutionUpMedium,
-  ArrowEvolutionDownMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { ArrowEvolutionUpMedium, ArrowEvolutionDownMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 type Props = {
@@ -37,26 +34,19 @@ function Delta({
   const { t } = useTranslation();
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
-    <Text
-      variant={"large"}
-      color="neutral.c60"
-      fontWeight={"semiBold"}
-      {...textProperties}
-    >
+    <Text variant={"large"} color="neutral.c60" fontWeight={"semiBold"} {...textProperties}>
       -
     </Text>
   ) : null;
 
   const delta =
-    percent && valueChange.percentage
-      ? valueChange.percentage * 100
-      : valueChange.value;
+    percent && valueChange.percentage ? valueChange.percentage * 100 : valueChange.value;
 
   const [color, ArrowIcon, sign] =
     delta !== 0
       ? delta > 0
-        ? ["success.c100", ArrowEvolutionUpMedium, "+"]
-        : ["error.c100", ArrowEvolutionDownMedium, "-"]
+        ? ["success.c50", ArrowEvolutionUpMedium, "+"]
+        : ["error.c50", ArrowEvolutionDownMedium, "-"]
       : ["neutral.c70", () => null, ""];
 
   if (
@@ -81,19 +71,9 @@ function Delta({
     <View style={[styles.root, style]}>
       {percent ? <ArrowIcon size={20} color={color} /> : null}
       <View style={percent ? styles.content : null}>
-        <Text
-          fontWeight={"semiBold"}
-          variant={"large"}
-          color={color}
-          {...textProperties}
-        >
+        <Text fontWeight={"semiBold"} variant={"large"} color={color} {...textProperties}>
           {unit && absDelta !== 0 ? (
-            <CurrencyUnitValue
-              before={`(${sign}`}
-              after={")"}
-              unit={unit}
-              value={absDelta}
-            />
+            <CurrencyUnitValue before={`(${sign}`} after={")"} unit={unit} value={absDelta} />
           ) : percent ? (
             `${absDelta.toFixed(0)}%`
           ) : null}

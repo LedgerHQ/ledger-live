@@ -18,7 +18,7 @@ export const loadInfosForContractMethod = async (
   contractAddress: string,
   selector: string,
   chainId: number,
-  userLoadConfig: LoadConfig
+  userLoadConfig: LoadConfig,
 ): Promise<ContractMethod | undefined> => {
   const { pluginBaseURL, extraPlugins } = getLoadConfig(userLoadConfig);
 
@@ -28,8 +28,8 @@ export const loadInfosForContractMethod = async (
     const url = `${pluginBaseURL}/plugins/ethereum.json`;
     data = await axios
       .get(`${pluginBaseURL}/plugins/ethereum.json`)
-      .then((r) => r.data as any)
-      .catch((e) => {
+      .then(r => r.data as any)
+      .catch(e => {
         log("error", "could not fetch from " + url + ": " + String(e));
         return null;
       });

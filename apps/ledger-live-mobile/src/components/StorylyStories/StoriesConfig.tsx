@@ -3,9 +3,9 @@ import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import React, { useCallback, useState } from "react";
 import { Camera } from "expo-camera";
-import { Flex, Switch, BaseInput, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
-import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
+import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
 import { CameraType } from "expo-camera/build/Camera.types";
 import QueuedDrawer from "../QueuedDrawer";
 
@@ -73,8 +73,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
   );
 
   const openCameraModal = useCallback(() => {
-    if (!permission?.granted)
-      requestPermission().then(() => setShowCameraModal(true));
+    if (!permission?.granted) requestPermission().then(() => setShowCameraModal(true));
     else setShowCameraModal(true);
   }, [permission, requestPermission]);
 
@@ -99,7 +98,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
         renderRight={
           <InputRenderRightContainer>
             <TouchableOpacity onPress={openCameraModal}>
-              <Icons.QrCodeMedium size={24} color={"neutral.c100"} />
+              <IconsLegacy.QrCodeMedium size={24} color={"neutral.c100"} />
             </TouchableOpacity>
           </InputRenderRightContainer>
         }
@@ -112,8 +111,8 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
         <Flex>
           <Text variant="h4">Story QR code scanning</Text>
           <Text mb={5}>
-            Go to dashboard.storyly.io/settings/apps and open any instance QR
-            code then you can scan it here
+            Go to dashboard.storyly.io/settings/apps and open any instance QR code then you can scan
+            it here
           </Text>
           <Camera
             type={CameraType.back}

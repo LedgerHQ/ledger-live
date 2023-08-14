@@ -17,10 +17,7 @@ import type { CeloRegistrationFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CeloRegistrationFlowParamList,
-    ScreenName.CeloRegistrationValidationSuccess
-  >
+  StackNavigatorProps<CeloRegistrationFlowParamList, ScreenName.CeloRegistrationValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -28,9 +25,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {
@@ -47,17 +42,19 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloRegistrationFlow" name="ValidationSuccess" />
+      <TrackScreen
+        category="CeloRegistrationFlow"
+        name="ValidationSuccess"
+        flow="stake"
+        action="registration"
+        currency="celo"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="celo.register.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="celo.register.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="celo.register.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="celo.register.flow.steps.verification.success.text" />}
       />
     </View>
   );

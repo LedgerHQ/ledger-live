@@ -12,8 +12,7 @@ export type ExtraDeviceTransactionField = {
   type: "polkadot.validators";
   label: string;
 };
-type DeviceTransactionField = CommonDeviceTransactionField &
-  ExtraDeviceTransactionField;
+type DeviceTransactionField = CommonDeviceTransactionField & ExtraDeviceTransactionField;
 
 const getSendFields = ({
   transaction,
@@ -26,10 +25,7 @@ const getSendFields = ({
   fields.push({
     type: "text",
     label: "Balances",
-    value:
-      transaction && transaction.useAllAmount
-        ? "Transfer"
-        : "Transfer keep alive",
+    value: transaction && transaction.useAllAmount ? "Transfer" : "Transfer keep alive",
   });
   fields.push({
     type: "text",
@@ -181,9 +177,7 @@ function getDeviceTransactionConfig({
         value:
           // NOTE: I added this here as TokenAccount and ChildAccount
           // both don't have freshAddress
-          account.type === "Account"
-            ? account.freshAddress
-            : mainAccount.freshAddress,
+          account.type === "Account" ? account.freshAddress : mainAccount.freshAddress,
       });
       break;
 

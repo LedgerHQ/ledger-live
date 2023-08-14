@@ -2,12 +2,9 @@ import { timer, of } from "rxjs";
 import { map, delayWhen } from "rxjs/operators";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice, LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { useOnboardingStatePolling } from "./useOnboardingStatePolling";
-import {
-  OnboardingState,
-  OnboardingStep,
-} from "../../hw/extractOnboardingState";
+import { OnboardingState, OnboardingStep } from "../../hw/extractOnboardingState";
 import { SeedPhraseType } from "@ledgerhq/types-live";
 import { getOnboardingStatePolling } from "../../hw/getOnboardingStatePolling";
 
@@ -67,7 +64,7 @@ describe("useOnboardingStatePolling", () => {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
             lockedDevice: false,
-          }
+          },
         ).pipe(
           delayWhen((_, index) => {
             // "delay" or "delayWhen" piped to a streaming source, for ex the "of" operator, will not block the next
@@ -76,17 +73,15 @@ describe("useOnboardingStatePolling", () => {
             // "concatMap" could have been used to wait for the previous Observable to complete, but
             // the "index" arg given to "delayWhen" would always be 0
             return timer(index * pollingPeriodMs);
-          })
-        )
+          }),
+        ),
       );
     });
 
     it("should update the onboarding state returned to the consumer", async () => {
       const device = aDevice;
 
-      const { result } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
 
       await act(async () => {
         jest.advanceTimersByTime(1);
@@ -101,9 +96,7 @@ describe("useOnboardingStatePolling", () => {
     it("should fetch again the state at a defined frequency and only update the onboarding state returned to the consumer if it different than the previous one", async () => {
       const device = aDevice;
 
-      const { result } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
 
       await act(async () => {
         jest.advanceTimersByTime(1);
@@ -145,7 +138,7 @@ describe("useOnboardingStatePolling", () => {
         let stopPolling = false;
 
         const { result, rerender } = renderHook(() =>
-          useOnboardingStatePolling({ device, pollingPeriodMs, stopPolling })
+          useOnboardingStatePolling({ device, pollingPeriodMs, stopPolling }),
         );
 
         await act(async () => {
@@ -203,21 +196,19 @@ describe("useOnboardingStatePolling", () => {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
             lockedDevice: false,
-          }
+          },
         ).pipe(
           delayWhen((_, index) => {
             return timer(index * pollingPeriodMs);
-          })
-        )
+          }),
+        ),
       );
     });
 
     it("should update the allowed error returned to the consumer if different than the previous one, update the fatal error to null and keep the previous onboarding state", async () => {
       const device = aDevice;
 
-      const { result } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
 
       await act(async () => {
         jest.advanceTimersByTime(1);
@@ -256,9 +247,7 @@ describe("useOnboardingStatePolling", () => {
     it("should be able to recover once the allowed error is fixed and the onboarding state is updated", async () => {
       const device = aDevice;
 
-      const { result } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
 
       await act(async () => {
         jest.advanceTimersByTime(pollingPeriodMs + 1);
@@ -306,21 +295,19 @@ describe("useOnboardingStatePolling", () => {
             onboardingState: { ...aSecondOnboardingState },
             allowedError: null,
             lockedDevice: false,
-          }
+          },
         ).pipe(
           delayWhen((_, index) => {
             return timer(index * pollingPeriodMs);
-          })
-        )
+          }),
+        ),
       );
     });
 
     it("should update the lockedDevice, only update the allowed error returned to the consumer if different than the previous one, update the fatal error to null and keep the previous onboarding state", async () => {
       const device = aDevice;
 
-      const { result } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
 
       await act(async () => {
         jest.advanceTimersByTime(1);
@@ -360,9 +347,7 @@ describe("useOnboardingStatePolling", () => {
     it("should be able to recover once the allowed error is fixed and the onboarding state is updated", async () => {
       const device = aDevice;
 
-      const { result } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
 
       await act(async () => {
         jest.advanceTimersByTime(pollingPeriodMs + 1);
@@ -409,7 +394,7 @@ describe("useOnboardingStatePolling", () => {
             onboardingState: { ...anOnboardingStateThatShouldNeverBeReached },
             allowedError: null,
             lockedDevice: false,
-          }
+          },
         ).pipe(
           delayWhen((_, index) => {
             return timer(index * pollingPeriodMs);
@@ -420,17 +405,15 @@ describe("useOnboardingStatePolling", () => {
               throw new Error("An unallowed error");
             }
             return value;
-          })
-        )
+          }),
+        ),
       );
     });
 
     it("should update the fatal error returned to the consumer, update the allowed error to null, keep the previous onboarding state and stop the polling", async () => {
       const device = aDevice;
 
-      const { result } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
 
       await act(async () => {
         jest.advanceTimersByTime(1);
@@ -459,9 +442,83 @@ describe("useOnboardingStatePolling", () => {
       // The polling should have been stopped, and we never update the onboardingState
       expect(result.current.allowedError).toBeNull();
       expect(result.current.fatalError).toBeInstanceOf(Error);
-      expect(result.current.onboardingState).not.toEqual(
-        anOnboardingStateThatShouldNeverBeReached
+      expect(result.current.onboardingState).not.toEqual(anOnboardingStateThatShouldNeverBeReached);
+      expect(result.current.lockedDevice).toBe(false);
+    });
+  });
+
+  describe("When the device is in bootloader mode while polling the device state", () => {
+    const anOnboardingStateThatShouldNeverBeReached = {
+      ...aSecondOnboardingState,
+    };
+
+    beforeEach(() => {
+      mockedGetOnboardingStatePolling.mockReturnValue(
+        of(
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+            lockedDevice: false,
+          },
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+            lockedDevice: false,
+          },
+          {
+            // It should never be reached
+            onboardingState: { ...anOnboardingStateThatShouldNeverBeReached },
+            allowedError: null,
+            lockedDevice: false,
+          },
+        ).pipe(
+          delayWhen((_, index) => {
+            return timer(index * pollingPeriodMs);
+          }),
+          map((value, index) => {
+            // Throws an "unexpected bootloader" error the second time
+            if (index === 1) {
+              throw new UnexpectedBootloader("Device in bootloader during the polling");
+            }
+            return value;
+          }),
+        ),
       );
+    });
+
+    it("should be considered a fatal error, and it should update the allowed error to null, keep the previous onboarding state and stop the polling", async () => {
+      const device = aDevice;
+
+      const { result } = renderHook(() => useOnboardingStatePolling({ device, pollingPeriodMs }));
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      // Everything is ok on the first run
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+      expect(result.current.lockedDevice).toBe(false);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      // Unexpected bootloader fatal error on the second run
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.fatalError).toBeInstanceOf(UnexpectedBootloader);
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+      expect(result.current.lockedDevice).toBe(false);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      // The polling should have been stopped, and we never update the onboardingState
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.fatalError).toBeInstanceOf(Error);
+      expect(result.current.onboardingState).not.toEqual(anOnboardingStateThatShouldNeverBeReached);
       expect(result.current.lockedDevice).toBe(false);
     });
   });

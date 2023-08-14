@@ -11,7 +11,6 @@ import { delay } from "@ledgerhq/live-common/promise";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
-import logger from "../../logger";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
@@ -28,20 +27,14 @@ import Paired from "./Paired";
 import Scanning from "./Scanning";
 import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 import { BaseOnboardingNavigatorParamList } from "../../components/RootNavigator/types/BaseOnboardingNavigator";
 
 type NavigationProps = RootComposite<
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
-  | StackNavigatorProps<
-      BaseOnboardingNavigatorParamList,
-      ScreenName.PairDevices
-    >
+  | StackNavigatorProps<BaseOnboardingNavigatorParamList, ScreenName.PairDevices>
 >;
 
 export default function PairDevices(props: NavigationProps) {
@@ -83,10 +76,7 @@ const initialState: State = {
 function PairDevicesInner({ navigation, route }: NavigationProps) {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatchRedux = useDispatch();
-  const [{ error, status, device, skipCheck, name }, dispatch] = useReducer(
-    reducer,
-    initialState,
-  );
+  const [{ error, status, device, skipCheck, name }, dispatch] = useReducer(reducer, initialState);
   const unmounted = useRef(false);
   useEffect(
     () => () => {
@@ -107,9 +97,9 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       type: "scanning",
     });
   }, [dispatch, navigation]);
+
   const onError = useCallback(
     (error: Error) => {
-      logger.critical(error);
       navigation.setParams({
         hasError: true,
       });
@@ -120,6 +110,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
     },
     [dispatch, navigation],
   );
+
   const onSelect = useCallback(
     async (bleDevice: TransportBleDevice, deviceMeta?: Device) => {
       const device = {
@@ -134,7 +125,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       });
 
       try {
-        const transport = await TransportBLE.open(bleDevice);
+        const transport = await TransportBLE.open(bleDevice.id);
         if (unmounted.current) return;
 
         try {
@@ -159,8 +150,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
                   appsInstalled = e.result && e.result.installed.length;
 
                   if (!hasCompletedOnboarding) {
-                    const hasAnyAppInstalled =
-                      e.result && e.result.installed.length > 0;
+                    const hasAnyAppInstalled = e.result && e.result.installed.length > 0;
 
                     if (!hasAnyAppInstalled) {
                       dispatchRedux(installAppFirstTime(false));
@@ -178,8 +168,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
             )
             .toPromise();
           if (unmounted.current) return;
-          const name =
-            (await getDeviceName(transport)) || device.deviceName || "";
+          const name = (await getDeviceName(transport)) || device.deviceName || "";
           if (unmounted.current) return;
           dispatchRedux(
             addKnownDevice({
@@ -262,7 +251,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
   switch (status) {
     case "scanning":
       return (
-        <Scanning // $FlowFixMe
+        <Scanning
           onSelect={onSelect}
           onError={onError}
           onTimeout={onTimeout}
@@ -280,9 +269,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       return <PendingGenuineCheck />;
 
     case "paired":
-      return device ? (
-        <Paired device={device} genuine={!skipCheck} onContinue={onDone} />
-      ) : null;
+      return device ? <Paired device={device} genuine={!skipCheck} onContinue={onDone} /> : null;
 
     default:
       return null;

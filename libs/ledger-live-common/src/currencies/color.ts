@@ -12,9 +12,7 @@ export type ColorableCurrency = {
   };
 };
 
-export function getCurrencyColor(
-  currency: ColorableCurrency | Currency
-): string {
+export function getCurrencyColor(currency: ColorableCurrency | Currency): string {
   switch (currency.type) {
     case "CryptoCurrency":
       return currency.color ?? defaultColor;

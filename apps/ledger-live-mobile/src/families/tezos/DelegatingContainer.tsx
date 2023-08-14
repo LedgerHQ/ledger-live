@@ -30,11 +30,7 @@ const DelegatingContainer = ({ left, right, undelegation }: Props) => (
     {left}
     <Image
       style={undelegation ? styles.undelegationImage : styles.delegationImage}
-      source={
-        undelegation
-          ? require("./undelegation.png")
-          : require("./delegation.png")
-      }
+      source={undelegation ? require("./undelegation.png") : require("./delegation.png")}
     />
     {right}
   </View>

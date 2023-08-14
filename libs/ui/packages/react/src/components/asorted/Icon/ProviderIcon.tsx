@@ -1,5 +1,5 @@
-import * as providers from "@ledgerhq/icons-ui/react/Providers/index";
-import * as providersBoxed from "@ledgerhq/icons-ui/react/ProvidersBoxed/index";
+import * as providers from "@ledgerhq/icons-ui/reactLegacy/Providers/index";
+import * as providersBoxed from "@ledgerhq/icons-ui/reactLegacy/ProvidersBoxed/index";
 
 import React from "react";
 import FlexBox from "../../layout/Flex";
@@ -39,7 +39,7 @@ export type IconGetterProps = {
 
 const getIconCaseInsensitive = ({ search, object }: IconGetterProps) => {
   const asLower = search.toLowerCase();
-  const key = Object.keys(object).find((key) => key.toLowerCase().replace(/^_/, "") === asLower);
+  const key = Object.keys(object).find(key => key.toLowerCase().replace(/^_/, "") === asLower);
   return key ? object[key] : null;
 };
 

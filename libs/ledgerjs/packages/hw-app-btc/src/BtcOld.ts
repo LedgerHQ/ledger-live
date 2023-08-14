@@ -7,6 +7,7 @@ import { createTransaction } from "./createTransaction";
 import type { AddressFormat } from "./getWalletPublicKey";
 import { getWalletPublicKey } from "./getWalletPublicKey";
 import { pathArrayToString, pathStringToArray } from "./bip32";
+import { signMessage } from "./signMessage";
 export type { AddressFormat };
 
 /**
@@ -39,12 +40,10 @@ export default class BtcOld {
   }): Promise<string> {
     const pathElements = pathStringToArray(path);
     const parentPath = pathElements.slice(0, -1);
-    const parentDerivation = await this.derivatePath(
-      pathArrayToString(parentPath)
-    );
+    const parentDerivation = await this.derivatePath(pathArrayToString(parentPath));
     const accountDerivation = await this.derivatePath(path);
     const fingerprint = makeFingerprint(
-      compressPublicKeySECP256(Buffer.from(parentDerivation.publicKey, "hex"))
+      compressPublicKeySECP256(Buffer.from(parentDerivation.publicKey, "hex")),
     );
     const xpub = makeXpub(
       xpubVersion,
@@ -52,7 +51,7 @@ export default class BtcOld {
       fingerprint,
       pathElements[pathElements.length - 1],
       Buffer.from(accountDerivation.chainCode, "hex"),
-      compressPublicKeySECP256(Buffer.from(accountDerivation.publicKey, "hex"))
+      compressPublicKeySECP256(Buffer.from(accountDerivation.publicKey, "hex")),
     );
     return xpub;
   }
@@ -84,7 +83,7 @@ export default class BtcOld {
     opts?: {
       verify?: boolean;
       format?: AddressFormat;
-    }
+    },
   ): Promise<{
     publicKey: string;
     bitcoinAddress: string;
@@ -131,10 +130,21 @@ export default class BtcOld {
   createPaymentTransaction(arg: CreateTransactionArg): Promise<string> {
     if (arguments.length > 1) {
       throw new Error(
-        "@ledgerhq/hw-app-btc: createPaymentTransaction multi argument signature is deprecated. please switch to named parameters."
+        "@ledgerhq/hw-app-btc: createPaymentTransaction multi argument signature is deprecated. please switch to named parameters.",
       );
     }
     return createTransaction(this.transport, arg);
+  }
+
+  async signMessage({ path, messageHex }: { path: string; messageHex: string }): Promise<{
+    v: number;
+    r: string;
+    s: string;
+  }> {
+    return signMessage(this.transport, {
+      path,
+      messageHex,
+    });
   }
 }
 
@@ -149,10 +159,7 @@ function asBufferUInt32BE(n: number): Buffer {
 }
 
 const compressPublicKeySECP256 = (publicKey: Buffer) =>
-  Buffer.concat([
-    Buffer.from([0x02 + (publicKey[64] & 0x01)]),
-    publicKey.slice(1, 33),
-  ]);
+  Buffer.concat([Buffer.from([0x02 + (publicKey[64] & 0x01)]), publicKey.slice(1, 33)]);
 
 function makeXpub(
   version: number,
@@ -160,7 +167,7 @@ function makeXpub(
   parentFingerprint: Buffer,
   index: number,
   chainCode: Buffer,
-  pubKey: Buffer
+  pubKey: Buffer,
 ) {
   const indexBuffer = asBufferUInt32BE(index);
   indexBuffer[0] |= 0x80;

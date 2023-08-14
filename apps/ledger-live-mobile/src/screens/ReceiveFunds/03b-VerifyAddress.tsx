@@ -5,14 +5,12 @@ import { TouchableOpacity, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { track, TrackScreen } from "../../analytics";
 import { accountScreenSelector } from "../../reducers/accounts";
 import PreventNativeBack from "../../components/PreventNativeBack";
@@ -38,10 +36,7 @@ type Props = {
   account?: TokenAccount | Account;
   parentAccount?: Account;
   readOnlyModeEnabled?: boolean;
-} & StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveVerifyAddress
->;
+} & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveVerifyAddress>;
 
 const AnimationContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -100,8 +95,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   );
 
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency =
-    route.params?.currency || (account && getAccountCurrency(account));
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -143,9 +137,10 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
     <>
       <PreventNativeBack />
       <SkipLock />
+      <SyncSkipUnderPriority priority={100} />
       {error ? (
         <>
-          <TrackScreen category="Receive" name="Address Verification Denied" />
+          <TrackScreen category="Deposit" name="Address Verification Denied" />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
             <Illustration
               lightSource={illustrations.light}
@@ -162,37 +157,23 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             <TouchableOpacity onPress={redirectToSupport}>
               <LText variant="body" color="neutral.c70" textAlign="center">
                 <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
-                  <LText
-                    color="primary.c80"
-                    style={{ textDecorationLine: "underline" }}
-                  />
+                  <LText color="primary.c80" style={{ textDecorationLine: "underline" }} />
                 </Trans>
               </LText>
             </TouchableOpacity>
           </Flex>
-          <Flex
-            p={6}
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Flex p={6} flexDirection="row" justifyContent="space-between" alignItems="center">
             <Button flex={1} type="secondary" outline onPress={goBack}>
               {t("common.cancel")}
             </Button>
-            <Button
-              flex={1}
-              type="main"
-              ml={6}
-              outline={false}
-              onPress={onRetry}
-            >
+            <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>
               {t("common.retry")}
             </Button>
           </Flex>
         </>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-          <TrackScreen category="ReceiveFunds" name="Verify Address" />
+          <TrackScreen category="Deposit" name="Verify Address" />
           <LText variant="h4" textAlign="center" mb={6}>
             {t("transfer.receive.verifyAddress.title")}
           </LText>

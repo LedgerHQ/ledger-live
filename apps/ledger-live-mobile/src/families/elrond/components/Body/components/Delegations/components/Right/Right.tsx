@@ -22,10 +22,7 @@ const Right = (props: RightPropsType) => {
    */
 
   const onClose = useCallback(() => setOpen(false), []);
-  const onClick = useCallback(
-    () => (disabled ? setOpen(true) : onPress()),
-    [onPress, disabled],
-  );
+  const onClick = useCallback(() => (disabled ? setOpen(true) : onPress()), [onPress, disabled]);
 
   /*
    * Return the rendered component.

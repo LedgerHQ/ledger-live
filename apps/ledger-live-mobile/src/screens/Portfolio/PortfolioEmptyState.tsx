@@ -7,11 +7,7 @@ import WalletCoinsSupported from "../../icons/WalletCoinsSupported";
 import { NavigatorName, ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 
-const PortfolioEmptyState = ({
-  openAddAccountModal,
-}: {
-  openAddAccountModal: () => void;
-}) => {
+const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { colors } = useTheme();
@@ -39,13 +35,7 @@ const PortfolioEmptyState = ({
       <Text variant="h4" fontWeight="semiBold" textAlign="center" mt={8}>
         {t("portfolio.emptyState.title")}
       </Text>
-      <Text
-        variant="body"
-        fontWeight="medium"
-        color="neutral.c70"
-        textAlign="center"
-        mt={4}
-      >
+      <Text variant="body" fontWeight="medium" color="neutral.c70" textAlign="center" mt={4}>
         {t("portfolio.emptyState.subtitle")}
       </Text>
       <Flex flexGrow={1} flexDirection="row" mt={9}>
@@ -68,6 +58,7 @@ const PortfolioEmptyState = ({
           ml={3}
           onPress={goToReceiveFunds}
           flex={1}
+          testID="receive-button"
         >
           {t("account.receive")}
         </Button>
@@ -89,6 +80,7 @@ const PortfolioEmptyState = ({
         width={"100%"}
         mt={7}
         mb={11}
+        testID="add-account-button"
       >
         {t("account.emptyState.addAccountCta")}
       </Button>

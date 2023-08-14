@@ -19,10 +19,8 @@ export const messageNotInCAL = {
   },
 };
 
-export const messageNotInCALSchemaHash =
-  "98d7ea16f310e5105efa5c01c63649c7fb786a7d5b8494e0ac52ad35";
+export const messageNotInCALSchemaHash = "98d7ea16f310e5105efa5c01c63649c7fb786a7d5b8494e0ac52ad35";
 
 export const dynamicCAL = {
-  [`0:0x0000000000000000000000000000000000000000:${messageNotInCALSchemaHash}`]:
-    "found",
+  [`0:0x0000000000000000000000000000000000000000:${messageNotInCALSchemaHash}`]: "found",
 };

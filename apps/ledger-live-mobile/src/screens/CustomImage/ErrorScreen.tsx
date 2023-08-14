@@ -8,10 +8,7 @@ import Button from "../../components/Button";
 import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
 import GenericErrorView from "../../components/GenericErrorView";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../const";
 
 const Container = styled(SafeAreaView).attrs({
@@ -21,10 +18,7 @@ const Container = styled(SafeAreaView).attrs({
 `;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageErrorScreen
-  >
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageErrorScreen>
 >;
 
 const buttonClickedEventProperties = {
@@ -51,11 +45,7 @@ const ErrorScreen = ({ route }: NavigationProps) => {
   return (
     <Container>
       <TrackScreen category={screenName} />
-      <CustomImageBottomModal
-        isOpened={isModalOpened}
-        onClose={closeModal}
-        device={device}
-      />
+      <CustomImageBottomModal isOpened={isModalOpened} onClose={closeModal} device={device} />
       <Flex flex={1} justifyContent="center" alignSelf="center" p={5}>
         <Flex flex={1} justifyContent="center">
           <GenericErrorView error={error} hasExportLogButton={false} />

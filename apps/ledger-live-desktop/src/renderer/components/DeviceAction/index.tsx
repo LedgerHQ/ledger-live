@@ -8,16 +8,32 @@ import {
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
   EConnResetError,
+  LanguageInstallRefusedOnDevice,
+  ImageDoesNotExistOnDevice,
 } from "@ledgerhq/live-common/errors";
+import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { setPreferredDeviceModel, setLastSeenDeviceInfo } from "~/renderer/actions/settings";
+import {
+  setPreferredDeviceModel,
+  setLastSeenDeviceInfo,
+  addNewDeviceModel,
+} from "~/renderer/actions/settings";
 import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import useTheme from "~/renderer/hooks/useTheme";
-import { ManagerNotEnoughSpaceError, UpdateYourApp, TransportStatusError } from "@ledgerhq/errors";
+import {
+  ManagerNotEnoughSpaceError,
+  UpdateYourApp,
+  TransportStatusError,
+  UserRefusedAddress,
+  UserRefusedAllowManager,
+  UserRefusedFirmwareUpdate,
+  UserRefusedOnDevice,
+  UserRefusedDeviceNameChange,
+} from "@ledgerhq/errors";
 import {
   InstallingApp,
   renderAllowManager,
@@ -35,27 +51,110 @@ import {
   renderSecureTransferDeviceConfirmation,
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
+  renderAllowRemoveCustomLockscreen,
   renderLockedDeviceError,
   RenderDeviceNotOnboardedError,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
+import {
+  Account,
+  AccountLike,
+  AnyMessage,
+  DeviceInfo,
+  DeviceModelInfo,
+} from "@ledgerhq/types-live";
+import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
+import { Device } from "@ledgerhq/types-devices";
+import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-type Props<R, H, P> = {
-  overridesPreferredDeviceModel?: DeviceModelId;
-  Result?: React.ComponentType<P>;
-  onResult?: (_: P) => void;
-  onError?: () => void;
-  action: Action<R, H, P>;
-  request: R;
-  status?: H;
-  payload?: P | null | undefined;
-  analyticsPropertyFlow?: string; // if there are some events to be sent, there will be a property "flow" with this value (e.g: "send"/"receive"/"add account" etc.)
+type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+
+type PartialNullable<T> = {
+  [P in keyof T]?: T[P] | null;
 };
 
-class OnResult<R, H, P> extends Component<P & { onResult: Props<R, H, P>["onResult"] }> {
+type States = PartialNullable<{
+  appAndVersion: AppAndVersion;
+  device: Device;
+  unresponsive: boolean;
+  isLocked: boolean;
+  error: LedgerError & {
+    name?: string;
+    managerAppName?: string;
+  };
+  isLoading: boolean;
+  allowManagerRequestedWording: string;
+  requestQuitApp: boolean;
+  deviceInfo: DeviceInfo;
+  latestFirmware: unknown;
+  onRepairModal: (open: boolean) => void;
+  requestOpenApp: string;
+  allowOpeningRequestedWording: string;
+  requiresAppInstallation: {
+    appName: string;
+    appNames: string[];
+  };
+  inWrongDeviceForAccount: {
+    accountName: string;
+  };
+  onRetry: () => void;
+  repairModalOpened: {
+    auto: boolean;
+  };
+  onAutoRepair: () => void;
+  closeRepairModal: () => void;
+  deviceSignatureRequested: boolean;
+  deviceStreamingProgress: number;
+  displayUpgradeWarning: boolean;
+  passWarning: () => void;
+  initSwapRequested: boolean;
+  initSwapError: Error;
+  initSwapResult: InitSwapResult | null;
+  installingLanguage: boolean;
+  languageInstallationRequested: boolean;
+  signMessageRequested: AnyMessage;
+  allowOpeningGranted: boolean;
+  completeExchangeStarted: boolean;
+  completeExchangeResult: Transaction;
+  completeExchangeError: Error;
+  imageRemoveRequested: boolean;
+  initSellRequested: boolean;
+  initSellResult: InitSellResult;
+  initSellError: Error;
+  installingApp: boolean;
+  progress: number;
+  listingApps: boolean;
+  amountExpectedTo: string;
+  estimatedFees: string;
+  imageLoadRequested: boolean;
+  loadingImage: boolean;
+  imageLoaded: boolean;
+  imageCommitRequested: boolean;
+}>;
+
+type InnerProps<P> = {
+  Result?: React.ComponentType<P>;
+  onResult?: (_: NonNullable<P>) => void;
+  onError?: (_: Error) => Promise<void> | void;
+  renderOnResult?: (_: P) => JSX.Element | null;
+  onSelectDeviceLink?: () => void;
+  analyticsPropertyFlow?: string;
+  overridesPreferredDeviceModel?: DeviceModelId;
+  inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
+};
+
+type Props<H extends States, P> = InnerProps<P> & {
+  status: H;
+  payload?: P | null;
+};
+
+class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
   componentDidMount() {
-    const { onResult } = this.props;
-    onResult && onResult(this.props);
+    const { onResult, payload } = this.props;
+    onResult && onResult(payload);
   }
 
   render() {
@@ -63,7 +162,7 @@ class OnResult<R, H, P> extends Component<P & { onResult: Props<R, H, P>["onResu
   }
 }
 
-export const DeviceActionDefaultRendering = <R, H, P>({
+export const DeviceActionDefaultRendering = <R, H extends States, P>({
   status: hookState,
   payload,
   request,
@@ -71,8 +170,11 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   onResult,
   onError,
   overridesPreferredDeviceModel,
+  inlineRetry = true,
   analyticsPropertyFlow,
-}: DefaultRenderingProps<R, H, P>) => {
+}: Props<H, P> & {
+  request?: R;
+}) => {
   const {
     appAndVersion,
     device,
@@ -81,6 +183,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     error,
     isLoading,
     allowManagerRequestedWording,
+    imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
     latestFirmware,
@@ -119,7 +222,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
   useEffect(() => {
@@ -137,21 +240,22 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   }, [error, onError]);
 
   useEffect(() => {
-    if (deviceInfo) {
-      const lastSeenDevice = {
+    if (deviceInfo && device) {
+      const lastSeenDevice: DeviceModelInfo = {
         modelId: device.modelId,
         deviceInfo,
+        apps: [],
       };
-
       dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware }));
+      dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
-  if (displayUpgradeWarning && appAndVersion) {
+  if (displayUpgradeWarning && appAndVersion && passWarning) {
     return renderWarningOutdated({ appName: appAndVersion.name, passWarning });
   }
 
-  if (repairModalOpened && repairModalOpened.auto) {
+  if (repairModalOpened && repairModalOpened.auto && closeRepairModal) {
     return <AutoRepair onDone={closeRepairModal} />;
   }
 
@@ -159,14 +263,22 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     return renderRequestQuitApp({ modelId, type });
   }
 
-  if (installingApp) {
+  if (installingApp && requestOpenApp && request) {
     const appName = requestOpenApp;
-    const props = { type, modelId, appName, progress, request, analyticsPropertyFlow };
-    return <InstallingApp {...props} />;
+    return (
+      <InstallingApp
+        type={type}
+        modelId={modelId}
+        appName={appName}
+        progress={progress ?? 0}
+        request={request}
+        analyticsPropertyFlow={analyticsPropertyFlow}
+      />
+    );
   }
 
   if (installingLanguage) {
-    return renderInstallingLanguage({ progress, t });
+    return renderInstallingLanguage({ progress: progress ?? 0, t });
   }
 
   if (requiresAppInstallation) {
@@ -185,12 +297,30 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     return renderAllowLanguageInstallation({ modelId, type, t });
   }
 
+  if (imageRemoveRequested) {
+    const refused = error instanceof UserRefusedOnDevice;
+    const noImage = error instanceof ImageDoesNotExistOnDevice;
+    if (error) {
+      if (refused || noImage) {
+        return renderError({
+          t,
+          inlineRetry,
+          error,
+          onRetry: refused ? onRetry : undefined,
+          info: true,
+        });
+      }
+    } else {
+      return renderAllowRemoveCustomLockscreen({ modelId, type });
+    }
+  }
+
   if (listingApps) {
     return renderListingApps();
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
-    const { exchangeType } = request;
+    const { exchangeType } = request as { exchangeType: number };
 
     // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
     switch (exchangeType) {
@@ -214,7 +344,11 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   }
 
   if (initSwapRequested && !initSwapResult && !initSwapError) {
-    const { transaction, exchange, exchangeRate, status } = request;
+    const { transaction, exchange, exchangeRate } = request as {
+      transaction: Transaction;
+      exchange: Exchange;
+      exchangeRate: ExchangeRate;
+    };
     const { amountExpectedTo, estimatedFees } = hookState;
     return renderSwapDeviceConfirmation({
       modelId,
@@ -222,9 +356,8 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       transaction,
       exchangeRate,
       exchange,
-      status,
-      amountExpectedTo,
-      estimatedFees,
+      amountExpectedTo: amountExpectedTo ?? undefined,
+      estimatedFees: estimatedFees ?? undefined,
       swapDefaultTrack,
     });
   }
@@ -235,8 +368,9 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
-    const wording = allowOpeningRequestedWording || requestOpenApp;
-    const tokenContext = request && request.tokenCurrency;
+    const wording = allowOpeningRequestedWording || requestOpenApp || "";
+    const { tokenCurrency } = request as { tokenCurrency: TokenCurrency };
+    const tokenContext = tokenCurrency;
     return renderAllowOpeningApp({
       modelId,
       type,
@@ -255,10 +389,11 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   }
 
   if (!isLoading && error) {
+    const e = error as unknown;
     if (
-      error instanceof ManagerNotEnoughSpaceError ||
-      error instanceof OutdatedApp ||
-      error instanceof UpdateYourApp
+      e instanceof ManagerNotEnoughSpaceError ||
+      e instanceof OutdatedApp ||
+      e instanceof UpdateYourApp
     ) {
       return renderError({
         t,
@@ -267,7 +402,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       });
     }
 
-    if (error instanceof LatestFirmwareVersionRequired) {
+    if (e instanceof LatestFirmwareVersionRequired) {
       return renderError({
         t,
         error,
@@ -278,14 +413,14 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (
-      error instanceof DeviceNotOnboarded ||
-      (error instanceof TransportStatusError &&
+      e instanceof DeviceNotOnboarded ||
+      (e instanceof TransportStatusError &&
         (error.message.includes("0x6d06") || error.message.includes("0x6d07")))
     ) {
       return <RenderDeviceNotOnboardedError t={t} device={device} />;
     }
 
-    if (error instanceof NoSuchAppOnProvider) {
+    if (e instanceof NoSuchAppOnProvider) {
       return renderError({
         t,
         error,
@@ -294,27 +429,47 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       });
     }
 
-    // workarround to catch ECONNRESET error and show better message
+    // workaround to catch ECONNRESET error and show better message
     if (error?.message?.includes("ECONNRESET")) {
       return renderError({
+        t,
         error: new EConnResetError(),
         onRetry,
         withExportLogs: true,
       });
     }
 
+    let withExportLogs = true;
+    let warning = false;
+    // User rejections, should be rendered as warnings and not export logs.
+    // All the error rendering needs to be unified, the same way we do for ErrorIcon
+    // not handled here.
+    if (
+      error instanceof UserRefusedFirmwareUpdate ||
+      (error as unknown) instanceof UserRefusedAllowManager ||
+      (error as unknown) instanceof UserRefusedOnDevice ||
+      (error as unknown) instanceof UserRefusedAddress ||
+      (error as unknown) instanceof UserRefusedDeviceNameChange ||
+      (error as unknown) instanceof LanguageInstallRefusedOnDevice
+    ) {
+      withExportLogs = false;
+      warning = true;
+    }
+
     return renderError({
       t,
       error,
+      warning,
       onRetry,
-      withExportLogs: true,
+      withExportLogs,
       device: device ?? undefined,
+      inlineRetry,
     });
   }
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
-    return renderLockedDeviceError({ t, device, onRetry });
+    return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {
@@ -324,20 +479,24 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       unresponsive,
       device,
       onRepairModal,
-      onRetry,
     });
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {
-    return renderLoading({ modelId });
+    return renderLoading();
   }
 
-  if (deviceInfo && deviceInfo.isBootloader) {
+  if (deviceInfo && deviceInfo.isBootloader && onAutoRepair) {
     return renderBootloaderStep({ onAutoRepair });
   }
 
   if (request && device && deviceSignatureRequested) {
-    const { account, parentAccount, status, transaction } = request;
+    const { account, parentAccount, status, transaction } = request as unknown as {
+      account: AccountLike;
+      parentAccount: Account | null;
+      status: TransactionStatus;
+      transaction: Transaction;
+    };
     if (account && status && transaction) {
       return (
         <TransactionConfirm
@@ -352,7 +511,10 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   }
 
   if (request && signMessageRequested) {
-    const { account, parentAccount } = request;
+    const { account, parentAccount } = request as unknown as {
+      account: AccountLike;
+      parentAccount: Account | null;
+    };
     return (
       <SignMessageConfirm
         device={device}
@@ -365,7 +527,6 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   if (typeof deviceStreamingProgress === "number") {
     return renderLoading({
-      modelId,
       children:
         deviceStreamingProgress > 0 ? (
           // with streaming event, we have accurate version of the wording
@@ -388,7 +549,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   return (
     <>
       {Result ? <Result {...payload} /> : null}
-      {onResult ? <OnResult onResult={onResult} {...payload} /> : null}
+      {onResult ? <OnResult onResult={onResult} payload={payload} /> : null}
     </>
   );
 };
@@ -400,7 +561,15 @@ export const DeviceActionDefaultRendering = <R, H, P>({
  * @prop Result optional: an action produces a result, this gives a component to render it
  * @prop onResult optional: an action produces a result, this gives a callback to be called with it
  */
-const DeviceAction = <R, H, P>({ action, request, ...props }: Props<R, H, P>) => {
+
+export default function DeviceAction<R, H extends States, P>({
+  action,
+  request,
+  ...props
+}: InnerProps<P> & {
+  action: Action<R, H, P>;
+  request: R;
+}): JSX.Element {
   const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);
@@ -413,8 +582,4 @@ const DeviceAction = <R, H, P>({ action, request, ...props }: Props<R, H, P>) =>
       {...props}
     />
   );
-};
-
-type DefaultRenderingProps<R, H, P> = Omit<Props<R, H, P>, "device" | "action">;
-
-export default DeviceAction;
+}

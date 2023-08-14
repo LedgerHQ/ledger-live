@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, Flex, Logos, Switch } from "@ledgerhq/react-ui";
+if (typeof window !== "undefined") require("@ledgerhq/react-ui/assets/fonts");
 
 export default function Home({ isLight, setPalette }) {
   return (

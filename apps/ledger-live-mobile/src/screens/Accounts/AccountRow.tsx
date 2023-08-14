@@ -6,10 +6,7 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
-import {
-  DerivationMode,
-  getTagDerivationMode,
-} from "@ledgerhq/live-common/derivation";
+import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";
@@ -20,17 +17,11 @@ import { parentAccountSelector } from "../../reducers/accounts";
 import { track } from "../../analytics";
 import { State } from "../../reducers/types";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
 
 type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      AccountsNavigatorParamList,
-      ScreenName.Asset | ScreenName.Accounts
-    >
+  | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset | ScreenName.Accounts>
   | StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
 >;
 
@@ -118,6 +109,8 @@ const AccountRow = ({
       navigation,
       navigationParams,
       parentId,
+      sourceScreenName,
+      startNavigationTTITimer,
     ],
   );
 

@@ -1,29 +1,52 @@
 import React from "react";
-import { storiesOf } from "../storiesOf";
-import { number, color, boolean, select } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import { Text, ProgressLoader } from "../../../src";
+import { Text, ProgressLoader } from "../../../src/components";
+import { ComponentStory } from "@storybook/react-native";
 
-const LoaderSample = () => {
-  const progress = number("progress", 0.5, { min: 0, max: 1, step: 0.1 });
+export default {
+  title: "Loader/ProgressLoader",
+  component: ProgressLoader,
+};
+
+export const LoaderSample: ComponentStory<typeof ProgressLoader> = (
+  args: typeof LoaderSampleArgs,
+) => {
   return (
     <ProgressLoader
-      progress={progress}
-      infinite={boolean("infinite", false)}
+      progress={args.progress}
+      infinite={args.infinite}
       onPress={action("onPress")}
-      mainColor={color("mainColor", "")}
-      secondaryColor={color("secondaryColor", "")}
-      radius={number("radius", 48)}
-      strokeWidth={number("strokeWidth", 10)}
-      frontStrokeLinecap={select("frontStrokeLinecap", ["butt", "round"], "butt")}
+      mainColor={args.mainColor}
+      secondaryColor={args.secondaryColor}
+      radius={args.radius}
+      strokeWidth={args.strokeWidth}
+      frontStrokeLinecap={args.frontStrokeLinecap}
     >
       {
         <Text textAlign="center">
-          (children{"\n"} {progress * 100}%)
+          (children{"\n"} {args.progress * 100}%)
         </Text>
       }
     </ProgressLoader>
   );
 };
-
-storiesOf((story) => story("Loader", module).add("ProgressLoader", LoaderSample));
+LoaderSample.storyName = "ProgressLoader";
+const LoaderSampleArgs = {
+  progress: 0.5,
+  infinite: false,
+  mainColor: "",
+  secondaryColor: "",
+  radius: 48,
+  strokeWidth: 10,
+  frontStrokeLinecap: "butt" as const,
+};
+LoaderSample.args = LoaderSampleArgs;
+LoaderSample.argTypes = {
+  progress: {
+    control: { type: "number", min: 0, max: 1, step: 0.1 },
+  },
+  frontStrokeLinecap: {
+    options: ["butt", "round"],
+    control: { type: "select" },
+  },
+};

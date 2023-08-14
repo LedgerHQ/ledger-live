@@ -14,12 +14,7 @@ type Props = {
   isLast: boolean;
 };
 
-const GroupedFeatures: React.FC<Props> = ({
-  groupName,
-  focused,
-  setFocusedGroupName,
-  isLast,
-}) => {
+const GroupedFeatures: React.FC<Props> = ({ groupName, focused, setFocusedGroupName, isLast }) => {
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const { featureIds } = groupedFeatures[groupName];
   const { t } = useTranslation();
@@ -66,22 +61,12 @@ const GroupedFeatures: React.FC<Props> = ({
 
   return (
     <Flex mb={2}>
-      <Pressable
-        onPress={() => setFocusedGroupName(focused ? undefined : groupName)}
-      >
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
+      <Pressable onPress={() => setFocusedGroupName(focused ? undefined : groupName)}>
+        <Flex flexDirection="row" alignItems="center" justifyContent="space-between">
           <Flex flexDirection={"row"} alignItems="center">
             <TagEnabled
               backgroundColor={
-                allEnabled
-                  ? "success.c100"
-                  : someEnabled
-                  ? "warning.c100"
-                  : "error.c100"
+                allEnabled ? "success.c50" : someEnabled ? "warning.c50" : "error.c50"
               }
             >
               {groupName}

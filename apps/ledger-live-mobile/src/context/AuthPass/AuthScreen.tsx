@@ -55,11 +55,7 @@ function NormalHeader() {
   const { colors } = useTheme();
   return (
     <Flex alignItems="center" justifyContent="center">
-      <Logos.LedgerLiveAltRegular
-        color={colors.neutral.c100}
-        width={50}
-        height={50}
-      />
+      <Logos.LedgerLiveAltRegular color={colors.neutral.c100} width={50} height={50} />
       <LText semiBold secondary style={styles.title}>
         <Trans i18nKey="auth.unlock.title" />
       </LText>
@@ -81,8 +77,7 @@ type FormFooterProps = {
 
 class FormFooter extends PureComponent<FormFooterProps> {
   render() {
-    const { inputFocused, passwordEmpty, onSubmit, passwordError, onPress } =
-      this.props;
+    const { inputFocused, passwordEmpty, onSubmit, passwordError, onPress } = this.props;
     return inputFocused ? (
       <TouchableWithoutFeedback>
         <BaseButton
@@ -202,8 +197,7 @@ class AuthScreen extends PureComponent<Props, State> {
 
   render() {
     const { t, privacy, biometricsError, lock, colors } = this.props;
-    const { passwordError, isModalOpened, secureTextEntry, passwordFocused } =
-      this.state;
+    const { passwordError, isModalOpened, secureTextEntry, passwordFocused } = this.state;
     return (
       <KeyboardBackgroundDismiss>
         <SafeAreaView
@@ -272,10 +266,7 @@ class AuthScreen extends PureComponent<Props, State> {
               <PoweredByLedger />
             </View>
           )}
-          <QueuedDrawer
-            isRequestingToBeOpened={isModalOpened}
-            onClose={this.onRequestClose}
-          >
+          <QueuedDrawer isRequestingToBeOpened={isModalOpened} onClose={this.onRequestClose}>
             <HardResetModal />
           </QueuedDrawer>
         </SafeAreaView>

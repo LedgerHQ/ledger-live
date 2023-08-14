@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Flex, Text, Button, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
@@ -24,23 +24,19 @@ const RuleIconContainer = styled(Flex).attrs({
 const ruleTypes = {
   success: {
     color: "#66BE54",
-    bgColor: Color("#66BE54")
-      .alpha(0.1)
-      .toString(),
+    bgColor: Color("#66BE54").alpha(0.1).toString(),
     Icon: IconCheck,
   },
   error: {
     color: "#EA2E49",
-    bgColor: Color("#EA2E49")
-      .alpha(0.1)
-      .toString(),
+    bgColor: Color("#EA2E49").alpha(0.1).toString(),
     Icon: IconCross,
   },
 };
 
 type RuleProps = {
   type: "success" | "error";
-  children: any;
+  children: unknown;
 };
 
 function Rule({ type, children }: RuleProps) {
@@ -127,7 +123,7 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
         width="248px"
         variant="main"
         onClick={props.handleNextInDrawer}
-        Icon={() => <Icons.ArrowRightMedium size={18} />}
+        Icon={() => <IconsLegacy.ArrowRightMedium size={18} />}
       >
         {t("onboarding.screens.welcome.nextButton")}
       </Button>

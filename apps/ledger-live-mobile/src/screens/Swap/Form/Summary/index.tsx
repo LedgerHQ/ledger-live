@@ -9,16 +9,11 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import {
-  CompositeScreenProps,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
-import { providerIcons } from "../../../../icons/swap/index";
-import { StatusTag } from "./StatusTag";
+import ProviderIcon from "../../../../components/ProviderIcon";
 import { Item } from "./Item";
 import { Banner } from "../Banner";
 import { NavigatorName, ScreenName } from "../../../../const";
@@ -39,7 +34,6 @@ import { sharedSwapTracking } from "../../utils";
 interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
-  kyc?: string;
 }
 
 type Navigation = CompositeScreenProps<
@@ -47,11 +41,7 @@ type Navigation = CompositeScreenProps<
   BaseComposite<MaterialTopTabNavigatorProps<SwapFormNavigatorParamList>>
 >;
 
-export function Summary({
-  provider,
-  swapTx: { swap, status, transaction },
-  kyc,
-}: Props) {
+export function Summary({ provider, swapTx: { swap, status, transaction } }: Props) {
   const { track } = useAnalytics();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
@@ -62,11 +52,6 @@ export function Summary({
   const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
-
-  const ProviderIcon = useMemo(
-    () => provider && providerIcons[provider.toLowerCase()],
-    [provider],
-  );
 
   const { from, to } = swap;
 
@@ -168,8 +153,7 @@ export function Summary({
   }, [track, navigation, to.currency, swap]);
 
   const fromUnit = from.currency?.units[0];
-  const mainFromAccount =
-    from.account && getMainAccount(from.account, from.parentAccount);
+  const mainFromAccount = from.account && getMainAccount(from.account, from.parentAccount);
   const mainAccountUnit = mainFromAccount && getAccountUnit(mainFromAccount);
 
   if (
@@ -178,7 +162,6 @@ export function Summary({
     !mainAccountUnit ||
     !to.currency ||
     !estimatedFees ||
-    !ProviderIcon ||
     !exchangeRate
   ) {
     return null;
@@ -189,11 +172,11 @@ export function Summary({
       <Item
         title={t("transfer.swap2.form.details.label.provider")}
         onEdit={onEditProvider}
+        testID="choose-provider-button"
       >
         <Flex flexDirection="row" alignItems="center">
-          <StatusTag kyc={kyc} />
           <Flex paddingRight={2}>
-            <ProviderIcon size={14} />
+            <ProviderIcon size="XXS" name={provider} />
           </Flex>
 
           <Text>{name}</Text>
@@ -205,16 +188,10 @@ export function Summary({
           exchangeRate.tradeMethod === "fixed" &&
           ratesExpiration.getTime() > Date.now() && (
             <Flex paddingX={2}>
-              <CountdownTimer
-                end={ratesExpiration}
-                callback={swap.refetchRates}
-              />
+              <CountdownTimer end={ratesExpiration} callback={swap.refetchRates} />
             </Flex>
           )}
-        <Icon
-          name={exchangeRate.tradeMethod === "fixed" ? "Lock" : "Unlock"}
-          color="neutral.c70"
-        />
+        <Icon name={exchangeRate.tradeMethod === "fixed" ? "Lock" : "Unlock"} color="neutral.c70" />
         <Text marginLeft={2}>
           <CurrencyUnitValue
             value={new BigNumber(10).pow(fromUnit.magnitude)}
@@ -222,28 +199,18 @@ export function Summary({
             showCode
           />
           {" = "}
-          <CurrencyUnitValue
-            unit={to.currency.units[0]}
-            value={counterValue}
-            showCode
-          />
+          <CurrencyUnitValue unit={to.currency.units[0]} value={counterValue} showCode />
         </Text>
       </Item>
 
-      <Item
-        title={t("transfer.swap2.form.details.label.fees")}
-        onEdit={onEditNetworkFees}
-      >
+      <Item title={t("transfer.swap2.form.details.label.fees")} onEdit={onEditNetworkFees}>
         <Text>
           <CurrencyUnitValue unit={mainAccountUnit} value={estimatedFees} />
         </Text>
       </Item>
 
       {to.account ? (
-        <Item
-          title={t("transfer.swap2.form.details.label.target")}
-          onEdit={onEditTargetAccount}
-        >
+        <Item title={t("transfer.swap2.form.details.label.target")} onEdit={onEditTargetAccount}>
           <Flex flexDirection="row" alignItems="center">
             {<CurrencyIcon size={20} currency={to.currency} />}
             <Text marginLeft={2}>{getAccountName(to.account)}</Text>

@@ -10,9 +10,11 @@ interface Props {
   editable: boolean;
   unit: Unit | undefined;
   onChange: (_: BigNumber) => void;
-  error: Error | undefined;
+  error?: Error;
+  warning?: Error;
   loading: boolean;
   onFocus?: (_: boolean) => void;
+  testID?: string;
 }
 
 export function AmountInput({
@@ -22,7 +24,9 @@ export function AmountInput({
   editable,
   unit,
   error,
+  warning,
   loading,
+  testID,
 }: Props) {
   return (
     <Flex justifyContent="flex-end" alignItems="flex-end">
@@ -38,8 +42,10 @@ export function AmountInput({
           value={value}
           inputStyle={styles.inputText}
           hasError={!!error}
+          hasWarning={!!warning}
           dynamicFontRatio={0.3}
           onFocus={onFocus}
+          testID={testID}
         />
       ) : (
         <Text variant="h1" color="neutral.c70">

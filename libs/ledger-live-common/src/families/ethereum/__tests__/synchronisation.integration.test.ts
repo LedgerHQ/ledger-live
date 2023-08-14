@@ -8,10 +8,7 @@ import { makeBridgeCacheSystem } from "../../../bridge/cache";
 import { ethereum1 } from "../datasets/ethereum1";
 import { ethereum2 } from "../datasets/ethereum2";
 import { encodeOperationId } from "../../../operation";
-import {
-  getCryptoCurrencyById,
-  listTokensForCryptoCurrency,
-} from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 
 describe("blacklistedTokenIds functionality", () => {
   const account = fromAccountRaw(ethereum1);
@@ -45,14 +42,14 @@ describe("blacklistedTokenIds functionality", () => {
     // Contains a known token
     expect(
       (synced.subAccounts as SubAccount[]).find(
-        (a) => getAccountCurrency(a)?.id === "ethereum/erc20/0x_project"
-      )
+        a => getAccountCurrency(a)?.id === "ethereum/erc20/0x_project",
+      ),
     ).toBeTruthy();
     // Does not contain a blacklisted token
     expect(
-      (synced.subAccounts as SubAccount[]).find((a) =>
-        blacklistedTokenIds.includes(getAccountCurrency(a)?.id)
-      )
+      (synced.subAccounts as SubAccount[]).find(a =>
+        blacklistedTokenIds.includes(getAccountCurrency(a)?.id),
+      ),
     ).toBe(undefined);
   });
   test("account resyncs tokens if no longer blacklisted", async () => {
@@ -69,9 +66,9 @@ describe("blacklistedTokenIds functionality", () => {
     expect(syncedWithoutWeth.subAccounts?.length).toBeTruthy();
     // Does not contain a blacklisted token
     expect(
-      (syncedWithoutWeth.subAccounts as SubAccount[]).find((a) =>
-        blacklistedTokenIds.includes(getAccountCurrency(a)?.id)
-      )
+      (syncedWithoutWeth.subAccounts as SubAccount[]).find(a =>
+        blacklistedTokenIds.includes(getAccountCurrency(a)?.id),
+      ),
     ).toBe(undefined);
     //Sync again with `syncedWithoutWeth` as a base but without it being blacklisted
     const synced = await bridge
@@ -84,8 +81,8 @@ describe("blacklistedTokenIds functionality", () => {
     // Does not contain a blacklisted token
     expect(
       (synced.subAccounts as SubAccount[]).find(
-        (a) => getAccountCurrency(a)?.id === "ethereum/erc20/weth"
-      )
+        a => getAccountCurrency(a)?.id === "ethereum/erc20/weth",
+      ),
     ).toBeTruthy();
   });
 });
@@ -114,8 +111,7 @@ describe("sync on reorg", () => {
       senders: ["0x789d2f10826BF8f3a56Ec524359bBA4e738Af5bF"],
       recipients: ["0xdA9EDcC3CF66bc18050dB55D376407Cf85e0617B"],
       blockHeight: blockHeight - 81, // 80 is defined today as the threshold number of confirmation to be safe for a reorg. @see SAFE_REORG_THRESHOLD
-      blockHash:
-        "0x00000000000000000000000000000000000Th1sH4shSh0u1dN0t3x1sTOnCh4iN",
+      blockHash: "0x00000000000000000000000000000000000Th1sH4shSh0u1dN0t3x1sTOnCh4iN",
       transactionSequenceNumber: 1,
       date: "May-11-2020 01:50:10 UTC",
       extra: {},
@@ -140,7 +136,7 @@ describe("sync on reorg", () => {
     // expect not to throw ok if you reach this point
     // + expect operations to be from full sync instead of incremental
     // so the fake op should be removed
-    expect(syncPromise.operations.map((o) => o.id)).not.toContain(opId);
+    expect(syncPromise.operations.map(o => o.id)).not.toContain(opId);
     // To this date (June 20th 2022) this account has 160 ops, we should at least get them all
     expect(syncPromise.operations.length >= 160).toBe(true);
   });

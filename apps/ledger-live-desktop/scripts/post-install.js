@@ -52,6 +52,11 @@ async function main() {
   if (fs.existsSync("src")) {
     child_process.exec("zx ./scripts/sync-families-dispatch.mjs");
   }
+
+  const releaseNotes = fs.existsSync("release-notes.json");
+  if (!releaseNotes) {
+    fs.writeFileSync("release-notes.json", JSON.stringify([], null, 2), "utf-8");
+  }
 }
 
 main();

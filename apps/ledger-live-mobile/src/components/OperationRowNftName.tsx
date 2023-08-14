@@ -1,19 +1,11 @@
 import React, { memo } from "react";
 
-import {
-  Account,
-  AccountLike,
-  NFTMetadata,
-  Operation,
-} from "@ledgerhq/types-live";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { Account, AccountLike, NFTMetadata, Operation } from "@ledgerhq/types-live";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { useTranslation } from "react-i18next";
 import Skeleton from "./Skeleton";
 
 type Props = {
@@ -23,30 +15,17 @@ type Props = {
   parentAccount?: Account | null;
 };
 
-const OperationRowNftName = ({
-  style,
-  operation,
-  account,
-  parentAccount,
-}: Props) => {
+const OperationRowNftName = ({ style, operation, account, parentAccount }: Props) => {
+  const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
-  const { status, metadata } = useNftMetadata(
-    operation.contract,
-    operation.tokenId,
-    currency.id,
-  ) as NFTResource & { metadata: NFTMetadata };
+  const { status, metadata } = useNftMetadata(operation.contract, operation.tokenId, currency.id);
 
   return (
     <View style={style}>
       <Skeleton style={styles.skeleton} loading={status === "loading"}>
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          variant="body"
-          fontWeight="semiBold"
-        >
-          {metadata?.nftName || "-"}
+        <Text numberOfLines={1} ellipsizeMode="tail" variant="body" fontWeight="semiBold">
+          {(metadata as Partial<NFTMetadata>)?.nftName || "-"}
         </Text>
       </Skeleton>
       <Text
@@ -56,7 +35,7 @@ const OperationRowNftName = ({
         ellipsizeMode="middle"
         numberOfLines={1}
       >
-        ID {operation.tokenId}
+        {t("common.patterns.id", { value: operation.tokenId })}
       </Text>
     </View>
   );

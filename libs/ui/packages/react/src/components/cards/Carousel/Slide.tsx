@@ -7,10 +7,10 @@ const Wrapper = styled(Flex)<{ image?: string }>`
   width: 100%;
   height: 100%;
   flex-direction: column;
-  padding: ${(p) => p.theme.space[8]}px ${(p) => p.theme.space[10]}px;
+  padding: ${p => p.theme.space[8]}px ${p => p.theme.space[10]}px;
   padding-right: 280px; /* Nb gives air to not overlap the illustration */
-  z-index: ${(p) => p.theme.zIndexes[8]};
-  background: url(${(p) => p.image}) no-repeat ${(p) => p.theme.colors.neutral.c100};
+  z-index: ${p => p.theme.zIndexes[8]};
+  background: url(${p => p.image}) no-repeat ${p => p.theme.colors.neutral.c100};
   background-size: contain;
   background-position: right 60px bottom;
 `;

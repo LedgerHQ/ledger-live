@@ -12,8 +12,7 @@ function PrivacyPolicyRow() {
   const onPrivacyLink = useCallback(
     () =>
       Linking.openURL(
-        (urls.privacyPolicy as Record<string, string>)[locale] ||
-          urls.privacyPolicy.en,
+        (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
       ),
     [locale],
   );

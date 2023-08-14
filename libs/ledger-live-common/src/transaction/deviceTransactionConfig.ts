@@ -5,9 +5,7 @@ import type { Transaction, TransactionStatus } from "../generated/types";
 import { getMainAccount } from "../account";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
-export type DeviceTransactionField =
-  | CommonDeviceTransactionField
-  | ExtraDeviceTransactionField;
+export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 export function getDeviceTransactionConfig(arg: {
   account: AccountLike;
   parentAccount: Account | null | undefined;

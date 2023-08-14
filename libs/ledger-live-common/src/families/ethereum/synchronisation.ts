@@ -4,6 +4,7 @@ import throttle from "lodash/throttle";
 import flatMap from "lodash/flatMap";
 import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
+import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { mergeNfts, mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import {
@@ -15,21 +16,15 @@ import {
 } from "../../account";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
-import type { Operation, TokenAccount, Account } from "@ledgerhq/types-live";
-import { API, apiForCurrency, Tx } from "../../api/Ethereum";
-import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
+import type { Operation, TokenAccount, SubAccount, Account } from "@ledgerhq/types-live";
+import { API, apiForCurrency, Block, Tx } from "./api";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
+import { encodeNftId, isNFTActive } from "../../nft";
 import { encodeOperationId, encodeSubOperationId } from "../../operation";
-import {
-  encodeERC1155OperationId,
-  encodeERC721OperationId,
-} from "../../nft/nftOperationId";
+import { encodeERC1155OperationId, encodeERC721OperationId } from "../../nft/nftOperationId";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-export const getAccountShape: GetAccountShape = async (
-  infoInput,
-  { blacklistedTokenIds }
-) => {
+export const getAccountShape: GetAccountShape = async (infoInput, { blacklistedTokenIds }) => {
   const { currency, initialAccount, derivationMode } = infoInput;
   let { address } = infoInput;
 
@@ -42,9 +37,7 @@ export const getAccountShape: GetAccountShape = async (
     derivationMode,
   });
   const api = apiForCurrency(currency);
-  const initialStableOperations = initialAccount
-    ? stableOperations(initialAccount)
-    : [];
+  const initialStableOperations = initialAccount ? stableOperations(initialAccount) : [];
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
   const currentBlockP = fetchCurrentBlock(currency);
@@ -70,12 +63,8 @@ export const getAccountShape: GetAccountShape = async (
       ? mostRecentStableOperation.blockHeight
       : undefined;
   const txsP = fetchAllTransactions(api, address, pullFromBlockHeight);
-  const [txs, currentBlock, balance] = await Promise.all([
-    txsP,
-    currentBlockP,
-    balanceP,
-  ]);
-  const blockHeight = currentBlock.height.toNumber();
+  const [txs, currentBlock, balance] = await Promise.all([txsP, currentBlockP, balanceP]);
+  const blockHeight = currentBlock?.height.toNumber();
 
   if (!pullFromBlockHeight && txs.length === 0) {
     log("ethereum", "no ops on " + address);
@@ -89,13 +78,18 @@ export const getAccountShape: GetAccountShape = async (
 
   // transform transactions into operations
   let newOps = flatMap(txs, txToOps({ address, id: accountId, currency }));
+
+  if (initialAccount) {
+    newOps = preserveInitialOperationsDate(newOps, initialAccount);
+  }
+
   // extracting out the sub operations by token account
   const perTokenAccountIdOperations = {};
-  newOps.forEach((op) => {
+  newOps.forEach(op => {
     const { subOperations } = op;
 
     if (subOperations?.length) {
-      subOperations.forEach((sop) => {
+      subOperations.forEach(sop => {
         if (!perTokenAccountIdOperations[sop.accountId]) {
           perTokenAccountIdOperations[sop.accountId] = [];
         }
@@ -105,7 +99,7 @@ export const getAccountShape: GetAccountShape = async (
     }
   });
   const subAccountsExisting = {};
-  initialAccount?.subAccounts?.forEach((a) => {
+  initialAccount?.subAccounts?.forEach(a => {
     // in case of coming from libcore, we need to converge to new ids
     const { token } = decodeTokenAccountId(a.id);
     if (!token) return;
@@ -116,22 +110,16 @@ export const getAccountShape: GetAccountShape = async (
   const perTokenAccountChangedIds = Object.keys(perTokenAccountIdOperations);
   log(
     "ethereum",
-    `${address} reconciliate ${txs.length} txs => ${newOps.length} new ops. ${perTokenAccountChangedIds.length} updates into ${subAccountsExistingIds.length} token accounts`
+    `${address} reconciliate ${txs.length} txs => ${newOps.length} new ops. ${perTokenAccountChangedIds.length} updates into ${subAccountsExistingIds.length} token accounts`,
   );
   // reconciliate token accounts
-  let tokenAccounts: TokenAccount[] = union(
-    subAccountsExistingIds,
-    perTokenAccountChangedIds
-  )
-    .map((id) => {
+  let tokenAccounts: TokenAccount[] = union(subAccountsExistingIds, perTokenAccountChangedIds)
+    .map(id => {
       const existing = subAccountsExisting[id];
       const newOps = perTokenAccountIdOperations[id];
       const { accountId, token } = decodeTokenAccountId(id);
 
-      if (
-        !token ||
-        (blacklistedTokenIds && blacklistedTokenIds.includes(token.id))
-      ) {
+      if (!token || (blacklistedTokenIds && blacklistedTokenIds.includes(token.id))) {
         return null;
       }
 
@@ -140,8 +128,7 @@ export const getAccountShape: GetAccountShape = async (
       const operations = newOps ? mergeOps(existingOps, newOps) : existingOps;
       const lastOperation = operations[operations.length - 1];
       const creationDate =
-        existing?.creationDate ||
-        (lastOperation ? lastOperation.date : new Date());
+        existing?.creationDate || (lastOperation ? lastOperation.date : new Date());
       const pendingOperations = existing?.pendingOperations || [];
       const starred = existing?.starred || false;
       const swapHistory = existing?.swapHistory || [];
@@ -164,26 +151,21 @@ export const getAccountShape: GetAccountShape = async (
       };
     })
     .filter(Boolean);
-  tokenAccounts = await prepareTokenAccounts(currency, tokenAccounts, address);
   tokenAccounts = await loadERC20Balances(tokenAccounts, address, api);
-  tokenAccounts = await digestTokenAccounts(currency, tokenAccounts, address);
   const subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
   // has sub accounts have changed, we need to relink the subOperations
-  newOps = newOps.map((o) => ({
+  newOps = newOps.map(o => ({
     ...o,
     subOperations: inferSubOperations(o.hash, subAccounts),
   }));
-  const operations = mergeOps(
-    blockHashExistsOnChain ? initialStableOperations : [],
-    newOps
-  );
+  const operations = mergeOps(blockHashExistsOnChain ? initialStableOperations : [], newOps);
 
   const nfts = isNFTActive(currency)
     ? mergeNfts(
         initialAccount?.nfts || [],
-        nftsFromOperations(
-          mergeOps(operations, initialAccount?.pendingOperations || [])
-        ).filter((n) => n.amount.gt(0))
+        nftsFromOperations(mergeOps(operations, initialAccount?.pendingOperations || [])).filter(
+          n => n.amount.gt(0),
+        ),
       )
     : undefined;
 
@@ -201,7 +183,7 @@ export const getAccountShape: GetAccountShape = async (
   return accountShape;
 };
 
-const safeEncodeEIP55 = (addr) => {
+const safeEncodeEIP55 = (addr: string) => {
   if (!addr || addr === "0x") return "";
 
   try {
@@ -249,11 +231,7 @@ const txToOps =
             // Since explorer is considering also wrapping tx as an internal action,
             // we must filter it by considering that only internal action with same data,
             // sender and receiver, is the one representing/corresponding to wrapping tx
-            if (
-              actionFrom === from &&
-              actionTo === to &&
-              value.eq(actionValue)
-            ) {
+            if (actionFrom === from && actionTo === to && value.eq(actionValue)) {
               return;
             }
 
@@ -292,10 +270,7 @@ const txToOps =
             return [];
           }
 
-          const token = findTokenByAddressInCurrency(
-            event.contract,
-            currency.id
-          );
+          const token = findTokenByAddressInCurrency(event.contract, currency.id);
           if (!token) return [];
           const accountId = encodeTokenAccountId(id, token);
           const value = new BigNumber(event.count);
@@ -346,7 +321,7 @@ const txToOps =
     const erc721Operations =
       !erc721_transfer_events || !isNFTActive(currency)
         ? []
-        : flatMap(erc721_transfer_events, (event) => {
+        : flatMap(erc721_transfer_events, event => {
             const sender = safeEncodeEIP55(event.sender);
             const receiver = safeEncodeEIP55(event.receiver);
             const contract = safeEncodeEIP55(event.contract);
@@ -538,9 +513,7 @@ const txToOps =
     if (
       !sending &&
       !receiving &&
-      (internalOperations.length ||
-        subOperations.length ||
-        nftOperations.length)
+      (internalOperations.length || subOperations.length || nftOperations.length)
     ) {
       const type = "NONE";
       ops.push({
@@ -566,66 +539,65 @@ const txToOps =
     return ops;
   };
 
-const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
-  if (perCurrencyId[currency.id]) return perCurrencyId[currency.id]();
-  const api = apiForCurrency(currency);
-  const f = throttle(
-    () =>
-      api.getCurrentBlock().catch((e) => {
-        f.cancel();
-        throw e;
-      }),
-    5000
-  );
-  perCurrencyId[currency.id] = f;
-  return f();
-})({});
+const fetchCurrentBlock = (
+  perCurrencyId =>
+  (currency: CryptoCurrency): Promise<Block> | undefined => {
+    if (perCurrencyId[currency.id]) return perCurrencyId[currency.id]();
+    const api = apiForCurrency(currency);
+    const f = throttle(
+      () =>
+        api.getCurrentBlock().catch(e => {
+          f.cancel();
+          throw e;
+        }),
+      5000,
+    );
+    perCurrencyId[currency.id] = f;
+    return f();
+  }
+)({});
 
-// FIXME : We need to use the pagination token from backend
-const fetchAllTransactions = async (api: API, address, blockHeight) => {
-  let getTransactionsResult: Tx[];
-  let txs: Tx[] = [];
-  let maxIteration = 20; // safe limit
-  let lastRequestTxHash: string | undefined;
+export const fetchAllTransactions = async (
+  api: API,
+  address: string,
+  blockHeight: number | null | undefined,
+): Promise<Tx[]> => {
+  let accumulatedTxs: Tx[] = [];
+  let currentToken: string | undefined;
 
   do {
-    getTransactionsResult = await api.getTransactions(address, blockHeight);
-    if (getTransactionsResult.length === 0) return txs;
-    if (
-      lastRequestTxHash &&
-      getTransactionsResult[getTransactionsResult.length - 1].hash ===
-        lastRequestTxHash
-    ) {
-      return txs;
-    }
+    const { txs, nextPageToken } = await api.getTransactions(
+      address,
+      blockHeight,
+      2000,
+      currentToken,
+    );
+    currentToken = nextPageToken;
+    accumulatedTxs = accumulatedTxs.concat(txs);
+  } while (currentToken != null);
 
-    txs = txs.concat(getTransactionsResult);
-    blockHeight = txs[txs.length - 1].block?.height;
-    lastRequestTxHash = txs[txs.length - 1].hash;
-
-    if (!blockHeight) {
-      log("ethereum", "block.height missing!");
-      return txs;
-    }
-  } while (--maxIteration);
-
-  return txs;
+  return accumulatedTxs;
 };
 
-async function loadERC20Balances(tokenAccounts, address, api) {
+async function loadERC20Balances(
+  tokenAccounts: TokenAccount[],
+  address: string,
+  api: API,
+): Promise<TokenAccount[]> {
   const erc20balances = await api.getERC20Balances(
     tokenAccounts.map(({ token }) => ({
       contract: token.contractAddress,
       address,
-    }))
+    })),
   );
+
   return tokenAccounts
-    .map((a) => {
+    .map(a => {
       const r = erc20balances.find(
-        (b) =>
+        b =>
           b.contract &&
           b.balance &&
-          b.contract.toLowerCase() === a.token.contractAddress.toLowerCase()
+          b.contract.toLowerCase() === a.token.contractAddress.toLowerCase(),
       );
 
       if (!r) {
@@ -639,37 +611,36 @@ async function loadERC20Balances(tokenAccounts, address, api) {
 
       return a;
     })
-    .filter(Boolean);
+    .filter((account): account is TokenAccount => !!account);
 }
 
 const SAFE_REORG_THRESHOLD = 80;
 
-function stableOperations(a) {
+function stableOperations(a: Account): Operation[] {
   return a.operations.filter(
-    (op) =>
-      op.blockHeight && a.blockHeight - op.blockHeight > SAFE_REORG_THRESHOLD
+    op => op.blockHeight && a.blockHeight - op.blockHeight > SAFE_REORG_THRESHOLD,
   );
 }
 
 // reconciliate the existing token accounts so that refs don't change if no changes is contained
-function reconciliateSubAccounts(tokenAccounts, initialAccount) {
-  let subAccounts;
+function reconciliateSubAccounts(
+  tokenAccounts: TokenAccount[],
+  initialAccount: Account | undefined,
+): SubAccount[] {
+  let subAccounts: SubAccount[] = [];
 
   if (initialAccount) {
     const initialSubAccounts = initialAccount.subAccounts;
     let anySubAccountHaveChanged = false;
     const stats: string[] = [];
 
-    if (
-      initialSubAccounts &&
-      tokenAccounts.length !== initialSubAccounts.length
-    ) {
+    if (initialSubAccounts && tokenAccounts.length !== initialSubAccounts.length) {
       stats.push("length differ");
       anySubAccountHaveChanged = true;
     }
 
-    subAccounts = tokenAccounts.map((ta) => {
-      const existing = initialSubAccounts?.find((a) => a.id === ta.id);
+    subAccounts = tokenAccounts.map(ta => {
+      const existing = initialSubAccounts?.find(a => a.id === ta.id);
 
       if (existing) {
         let shallowEqual = true;
@@ -700,20 +671,43 @@ function reconciliateSubAccounts(tokenAccounts, initialAccount) {
     if (!anySubAccountHaveChanged && initialSubAccounts) {
       log(
         "ethereum",
-        "incremental sync: " +
-          String(initialSubAccounts.length) +
-          " sub accounts have not changed"
+        "incremental sync: " + String(initialSubAccounts.length) + " sub accounts have not changed",
       );
       subAccounts = initialSubAccounts;
     } else {
-      log(
-        "ethereum",
-        "incremental sync: sub accounts changed: " + stats.join(", ")
-      );
+      log("ethereum", "incremental sync: sub accounts changed: " + stats.join(", "));
     }
   } else {
-    subAccounts = tokenAccounts.map((a) => a);
+    subAccounts = tokenAccounts.map(a => a);
   }
 
   return subAccounts;
+}
+
+// keep the initial dates of the operations to avoid the dates are overwrited by the ones from the blockchain
+export function preserveInitialOperationsDate(
+  newOps: Operation[],
+  initialAccount: Account,
+): Operation[] {
+  const initialOperationsDate = initialAccount.pendingOperations
+    .concat(initialAccount.operations)
+    .reduce((acc, op) => {
+      acc[op.hash] = op.date;
+      return acc;
+    }, {});
+
+  if (Object.keys(initialOperationsDate).length > 0) {
+    return newOps.map(op => {
+      const date = initialOperationsDate[op.hash];
+      if (date) {
+        return {
+          ...op,
+          date,
+          nftOperations: op.nftOperations?.map(nftOp => ({ ...nftOp, date })),
+        };
+      }
+      return op;
+    });
+  }
+  return newOps;
 }

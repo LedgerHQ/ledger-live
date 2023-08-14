@@ -1,40 +1,42 @@
-import React, {
-  useRef,
-  useEffect,
-  useCallback,
-  useState,
-  ComponentProps,
-} from "react";
+import React, { useRef, useEffect, useCallback, useState, ComponentProps } from "react";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { Image, StyleSheet, View } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
-import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
-
 import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import { customImageBackupSelector } from "../../../../reducers/settings";
 import { setCustomImageBackup } from "../../../../actions/settings";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import SelectDevice from "../../../../components/SelectDevice";
-import SelectDevice2 from "../../../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../../../components/SelectDevice2";
 import CustomImageDeviceAction from "../../../../components/CustomImageDeviceAction";
-import ResultDataTester from "../../../../components/CustomImage/ResultDataTester";
+import ImageHexProcessor from "../../../../components/CustomImage/ImageHexProcessor";
 import { ProcessorPreviewResult } from "../../../../components/CustomImage/ImageProcessor";
-import FramedImage, {
+import StaxFramedImage, {
   transferConfig,
-} from "../../../../components/CustomImage/FramedImage";
+} from "../../../../components/CustomImage/StaxFramedImage";
+import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
+import { ReactNavigationHeaderOptions } from "../../../../components/RootNavigator/types/helpers";
+import { useStaxFetchImageDeviceAction } from "../../../../hooks/deviceActions";
 
-const deviceAction = createAction(staxFetchImage);
+// Defines here some of the header options for this screen to be able to reset back to them.
+export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: true,
+  title: "Debug FetchCustomImage",
+  headerRight: () => null,
+  headerLeft: () => <NavigationHeaderBackButton />,
+};
 
 export default function DebugFetchCustomImage() {
+  const deviceAction = useStaxFetchImageDeviceAction();
   const { colors } = useTheme();
+  const navigation = useNavigation();
+
   const [device, setDevice] = useState<Device | null>(null);
   const [action, setAction] = useState<string>("");
-  const [imageSource, setImageSource] =
-    useState<ComponentProps<typeof Image>["source"]>();
+  const [imageSource, setImageSource] = useState<ComponentProps<typeof Image>["source"]>();
 
   const { hash, hex } = useSelector(customImageBackupSelector) || {};
   const currentBackup = useRef<string>(hash || "");
@@ -44,10 +46,10 @@ export default function DebugFetchCustomImage() {
 
   // TODO move all the logic here onto its own thing
   // when we implement the screens of the flow.
-  const status = deviceAction.useHook(
-    action === "fetch" ? device : undefined,
-    currentBackup.current,
-  );
+  const status = deviceAction.useHook(action === "fetch" ? device : undefined, {
+    backupHash: currentBackup.current,
+    allowedEmpty: false,
+  });
 
   const onReset = useCallback(() => {
     setDevice(null);
@@ -78,15 +80,8 @@ export default function DebugFetchCustomImage() {
     setImageSource({ uri: res.imageBase64DataUri });
   }, []);
 
-  const {
-    progress,
-    fetchingImage,
-    imageAlreadyBackedUp,
-    imageFetched,
-    hexImage,
-    imgHash,
-    error,
-  } = status;
+  const { progress, fetchingImage, imageAlreadyBackedUp, imageFetched, hexImage, imgHash, error } =
+    status;
 
   useEffect(() => {
     if (imgHash && hexImage) {
@@ -94,12 +89,34 @@ export default function DebugFetchCustomImage() {
     }
   }, [dispatch, imgHash, hexImage]);
 
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+        });
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...debugFetchCustomImageHeaderOptions,
+        });
+      }
+    },
+    [navigation],
+  );
+
   return (
     <NavigationScrollView>
       <View style={[styles.root, { backgroundColor: colors.background }]}>
         {!device ? (
           newDeviceSelectionFeatureFlag?.enabled ? (
-            <SelectDevice2 onSelect={setDevice} />
+            <SelectDevice2
+              onSelect={setDevice}
+              requestToSetHeaderOptions={requestToSetHeaderOptions}
+            />
           ) : (
             <SelectDevice onSelect={setDevice} />
           )
@@ -136,13 +153,9 @@ export default function DebugFetchCustomImage() {
                 ) : imageFetched ? (
                   <Text variant="bodyLineHeight">{"Completed backup"}</Text>
                 ) : error ? (
-                  <Text variant="bodyLineHeight">
-                    {error?.message || error?.name}
-                  </Text>
+                  <Text variant="bodyLineHeight">{error?.message || error?.name}</Text>
                 ) : hash ? (
-                  <Text variant="bodyLineHeight">
-                    {"Compare against backup"}
-                  </Text>
+                  <Text variant="bodyLineHeight">{"Compare against backup"}</Text>
                 ) : (
                   <Text variant="bodyLineHeight">{"Something else"}</Text>
                 )}
@@ -163,7 +176,7 @@ export default function DebugFetchCustomImage() {
         </Flex>
         {hex ? (
           <>
-            <ResultDataTester
+            <ImageHexProcessor
               hexData={hex as string}
               {...targetDisplayDimensions}
               onPreviewResult={handleImageSourceLoaded}
@@ -171,10 +184,7 @@ export default function DebugFetchCustomImage() {
             />
             {imageSource ? (
               <Flex flexDirection="row" flexGrow={0}>
-                <FramedImage
-                  frameConfig={transferConfig}
-                  source={imageSource}
-                />
+                <StaxFramedImage frameConfig={transferConfig} source={imageSource} />
               </Flex>
             ) : null}
           </>

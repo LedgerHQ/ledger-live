@@ -98,10 +98,7 @@ class ConfirmationModal extends PureComponent<Props> {
 
           <Button
             event="ConfirmationModalConfirm"
-            containerStyle={[
-              styles.confirmationButton,
-              styles.confirmationLastButton,
-            ]}
+            containerStyle={[styles.confirmationButton, styles.confirmationLastButton]}
             type={alert ? "alert" : "primary"}
             title={confirmButtonText || <Trans i18nKey="common.confirm" />}
             onPress={onConfirm}

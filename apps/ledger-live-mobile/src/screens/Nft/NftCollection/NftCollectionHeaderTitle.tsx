@@ -1,9 +1,6 @@
 import React, { memo } from "react";
 import { TouchableWithoutFeedback, StyleSheet } from "react-native";
-import {
-  useNftMetadata,
-  useNftCollectionMetadata,
-} from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import type {
   NFTResourceLoaded,
@@ -20,13 +17,9 @@ const NftCollectionHeaderTitle = () => {
   const { params } = useRoute<RouteParams>();
   const { collection } = params;
   const nft = collection?.[0];
-  const nftMedata = useNftMetadata(
-    nft?.contract,
-    nft?.tokenId,
-    nft?.currencyId,
-  );
-  const { status: nftStatus, metadata: nftMetadata } =
-    nftMedata as NFTResourceLoading & NFTResourceLoaded;
+  const nftMedata = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
+  const { status: nftStatus, metadata: nftMetadata } = nftMedata as NFTResourceLoading &
+    NFTResourceLoaded;
   const { metadata: collectionMetadata } = useNftCollectionMetadata(
     nft?.contract,
     nft?.currencyId,

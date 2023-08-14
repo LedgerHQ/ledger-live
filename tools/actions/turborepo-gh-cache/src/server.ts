@@ -4,11 +4,7 @@ import express from "express";
 import * as path from "path";
 import * as fs from "fs";
 import asyncHandler from "./utils/asyncHandler";
-import {
-  cacheDirectory,
-  absoluteCacheDirectory,
-  portFileName,
-} from "./utils/constants";
+import { cacheDirectory, absoluteCacheDirectory, portFileName } from "./utils/constants";
 
 async function startServer() {
   const app = express();
@@ -40,24 +36,24 @@ async function startServer() {
         undefined,
         {
           timeoutInMs: 5000,
-        }
+        },
       );
       if (!cacheKey) {
         console.log(`Artifact ${artifactId} not found.`);
         return res.status(404).send("Not found");
       } else {
         console.log(
-          `Artifact ${artifactId} downloaded successfully to ${cacheDirectory}/${filename}.`
+          `Artifact ${artifactId} downloaded successfully to ${cacheDirectory}/${filename}.`,
         );
       }
 
       fs.createReadStream(path.join(absoluteCacheDirectory, filename))
         .pipe(res)
-        .on("error", (err) => {
+        .on("error", err => {
           console.error(err);
           res.end(err);
         });
-    })
+    }),
   );
 
   app.put(
@@ -66,9 +62,7 @@ async function startServer() {
       const artifactId = req.params.artifactId;
       const filename = `${artifactId}.gz`;
 
-      const writeStream = fs.createWriteStream(
-        path.join(cacheDirectory, filename)
-      );
+      const writeStream = fs.createWriteStream(path.join(cacheDirectory, filename));
 
       try {
         await new Promise((resolve, reject) => {
@@ -83,7 +77,7 @@ async function startServer() {
 
       await cache.saveCache([`${cacheDirectory}/${filename}`], artifactId);
       res.end();
-    })
+    }),
   );
 
   app.post("/v8/artifacts/events", (req, res) => {
@@ -100,7 +94,7 @@ async function startServer() {
   });
 }
 
-startServer().catch((error) => {
+startServer().catch(error => {
   console.error(error);
   process.exit(1);
 });

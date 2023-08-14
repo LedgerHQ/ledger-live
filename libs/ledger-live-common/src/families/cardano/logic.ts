@@ -11,15 +11,7 @@ import {
   types as TyphonTypes,
   address as TyphonAddress,
 } from "@stricahq/typhonjs";
-import {
-  AddressType,
-  AssetGroup,
-  TxInput,
-  TxOutput,
-  TxOutputDestination,
-  TxOutputDestinationType,
-} from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+
 import {
   BipPath,
   PaymentChain,
@@ -37,6 +29,16 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import bech32 from "bech32";
+import {
+  AddressType,
+  AssetGroup,
+  TxInput,
+  TxOutput,
+  TxOutputDestination,
+  TxOutputDestinationType,
+} from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano
@@ -44,9 +46,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
  * @param {string} path
  */
 export function getBipPathFromString(path: string): BipPath {
-  const regEx = new RegExp(
-    `^${CARDANO_PURPOSE}'/${CARDANO_COIN_TYPE}'/(\\d*)'/([012])/(\\d*)`
-  );
+  const regEx = new RegExp(`^${CARDANO_PURPOSE}'/${CARDANO_COIN_TYPE}'/(\\d*)'/([012])/(\\d*)`);
   const result = path.match(regEx);
   if (result == null) {
     throw new Error("Invalid derivation path");
@@ -100,13 +100,9 @@ export function getExtendedPublicKeyFromHex(keyHex: string): Bip32PublicKey {
 
 export function getCredentialKey(
   accountKey: Bip32PublicKey,
-  path: BipPath
+  path: BipPath,
 ): { key: string; path: BipPath } {
-  const keyBytes = accountKey
-    .derive(path.chain)
-    .derive(path.index)
-    .toPublicKey()
-    .hash();
+  const keyBytes = accountKey.derive(path.chain).derive(path.index).toPublicKey().hash();
   const pubKeyHex = keyBytes.toString("hex");
   return {
     key: pubKeyHex,
@@ -137,11 +133,7 @@ export function getBaseAddress({
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: stakeCred.path,
   };
-  return new TyphonAddress.BaseAddress(
-    networkId,
-    paymentCredential,
-    stakeCredential
-  );
+  return new TyphonAddress.BaseAddress(networkId, paymentCredential, stakeCredential);
 }
 
 /**
@@ -155,9 +147,7 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
   try {
     const cardanoAddress = TyphonUtils.getAddressFromBech32(address);
     if (cardanoAddress instanceof ShelleyTypeAddress) {
-      const addressNetworkId = Number(
-        cardanoAddress.getHex().toLowerCase().charAt(1)
-      );
+      const addressNetworkId = Number(cardanoAddress.getHex().toLowerCase().charAt(1));
       if (addressNetworkId !== networkId) {
         return false;
       }
@@ -168,21 +158,13 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
   return true;
 };
 
-export const getAbsoluteSlot = function (
-  networkName: string,
-  time: Date
-): number {
+export const getAbsoluteSlot = function (networkName: string, time: Date): number {
   const networkParams = getNetworkParameters(networkName);
-  const byronChainEndSlots =
-    networkParams.shelleyStartEpoch * networkParams.byronSlotsPerEpoch;
-  const byronChainEndTime =
-    byronChainEndSlots * networkParams.byronSlotDuration;
+  const byronChainEndSlots = networkParams.shelleyStartEpoch * networkParams.byronSlotsPerEpoch;
+  const byronChainEndTime = byronChainEndSlots * networkParams.byronSlotDuration;
 
-  const shelleyChainTime =
-    time.getTime() - networkParams.chainStartTime - byronChainEndTime;
-  const shelleyChainSlots = Math.floor(
-    shelleyChainTime / networkParams.shelleySlotDuration
-  );
+  const shelleyChainTime = time.getTime() - networkParams.chainStartTime - byronChainEndTime;
+  const shelleyChainSlots = Math.floor(shelleyChainTime / networkParams.shelleySlotDuration);
   return byronChainEndSlots + shelleyChainSlots;
 };
 
@@ -199,24 +181,16 @@ export function getEpoch(networkName: string, time: Date): number {
   const networkParams = getNetworkParameters(networkName);
   const chainTime = time.getTime() - networkParams.chainStartTime;
   const epoch = Math.floor(
-    chainTime /
-      (networkParams.shelleySlotsPerEpoch * networkParams.shelleySlotDuration)
+    chainTime / (networkParams.shelleySlotsPerEpoch * networkParams.shelleySlotDuration),
   );
   return epoch;
 }
 
-export function mergeTokens(
-  tokens: Array<TyphonTypes.Token>
-): Array<TyphonTypes.Token> {
-  return Object.values(
-    groupBy(tokens, (t) => `${t.policyId}${t.assetName}`)
-  ).map((similarTokens) => ({
+export function mergeTokens(tokens: Array<TyphonTypes.Token>): Array<TyphonTypes.Token> {
+  return Object.values(groupBy(tokens, t => `${t.policyId}${t.assetName}`)).map(similarTokens => ({
     policyId: similarTokens[0].policyId,
     assetName: similarTokens[0].assetName,
-    amount: similarTokens.reduce(
-      (total, token) => total.plus(token.amount),
-      new BigNumber(0)
-    ),
+    amount: similarTokens.reduce((total, token) => total.plus(token.amount), new BigNumber(0)),
   }));
 }
 
@@ -227,11 +201,11 @@ export function mergeTokens(
  */
 export function getTokenDiff(
   a: Array<TyphonTypes.Token>,
-  b: Array<TyphonTypes.Token>
+  b: Array<TyphonTypes.Token>,
 ): Array<TyphonTypes.Token> {
-  return mergeTokens(
-    a.concat(b.map((t) => ({ ...t, amount: t.amount.negated() })))
-  ).filter((t) => !t.amount.eq(0));
+  return mergeTokens(a.concat(b.map(t => ({ ...t, amount: t.amount.negated() })))).filter(
+    t => !t.amount.eq(0),
+  );
 }
 
 /**
@@ -241,10 +215,7 @@ export function getTokenDiff(
  * @param accountIndex
  * @returns {TxOutput}
  */
-export function prepareLedgerOutput(
-  output: TyphonTypes.Output,
-  accountIndex: number
-): TxOutput {
+export function prepareLedgerOutput(output: TyphonTypes.Output, accountIndex: number): TxOutput {
   const isByronAddress = output.address instanceof TyphonAddress.ByronAddress;
   let isDeviceOwnedAddress = false;
   let destination: TxOutputDestination;
@@ -260,12 +231,10 @@ export function prepareLedgerOutput(
   if (isDeviceOwnedAddress) {
     const address = output.address as TyphonAddress.BaseAddress;
 
-    const paymentKeyPath = (
-      address.paymentCredential as TyphonTypes.HashCredential
-    ).bipPath as TyphonTypes.BipPath;
-    const stakingKeyPath = (
-      address.stakeCredential as TyphonTypes.HashCredential
-    ).bipPath as TyphonTypes.BipPath;
+    const paymentKeyPath = (address.paymentCredential as TyphonTypes.HashCredential)
+      .bipPath as TyphonTypes.BipPath;
+    const stakingKeyPath = (address.stakeCredential as TyphonTypes.HashCredential)
+      .bipPath as TyphonTypes.BipPath;
 
     const paymentKeyPathString = getBipPathString({
       account: accountIndex,
@@ -299,10 +268,10 @@ export function prepareLedgerOutput(
   }
 
   const tokenBundle: Array<AssetGroup> = Object.values(
-    groupBy(output.tokens, ({ policyId }) => policyId)
-  ).map((tokens) => ({
+    groupBy(output.tokens, ({ policyId }) => policyId),
+  ).map(tokens => ({
     policyIdHex: tokens[0].policyId,
-    tokens: tokens.map((token) => ({
+    tokens: tokens.map(token => ({
       assetNameHex: token.assetName,
       amount: token.amount.toString(),
     })),
@@ -322,10 +291,7 @@ export function prepareLedgerOutput(
  * @param {number} accountIndex
  * @returns {TxInput}
  */
-export function prepareLedgerInput(
-  input: TyphonTypes.Input,
-  accountIndex: number
-): TxInput {
+export function prepareLedgerInput(input: TyphonTypes.Input, accountIndex: number): TxInput {
   const paymentKeyPath =
     input.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS
       ? input.address.paymentCredential.bipPath
@@ -339,16 +305,13 @@ export function prepareLedgerInput(
             account: accountIndex,
             chain: paymentKeyPath.chain,
             index: paymentKeyPath.index,
-          })
+          }),
         )
       : null,
   };
 }
 
-export function getAccountStakeCredential(
-  xpub: string,
-  index: number
-): StakeCredential {
+export function getAccountStakeCredential(xpub: string, index: number): StakeCredential {
   const accountXPubKey = getExtendedPublicKeyFromHex(xpub);
   const keyPath = getCredentialKey(
     accountXPubKey,
@@ -356,7 +319,7 @@ export function getAccountStakeCredential(
       account: index,
       chain: StakeChain.stake,
       index: STAKING_ADDRESS_INDEX,
-    })
+    }),
   );
   return {
     key: keyPath.key,
@@ -386,34 +349,34 @@ export function isTestnet(currency: CryptoCurrency): boolean {
 
 export function getAccountChange(
   t: APITransaction,
-  accountCredentialsMap: Record<string, PaymentCredential>
+  accountCredentialsMap: Record<string, PaymentCredential>,
 ): { ada: BigNumber; tokens: Array<Token> } {
   let accountInputAda = new BigNumber(0);
   const accountInputTokens: Array<Token> = [];
-  t.inputs.forEach((i) => {
+  t.inputs.forEach(i => {
     if (accountCredentialsMap[i.paymentKey]) {
       accountInputAda = accountInputAda.plus(i.value);
       accountInputTokens.push(
-        ...i.tokens.map((t) => ({
+        ...i.tokens.map(t => ({
           assetName: t.assetName,
           policyId: t.policyId,
           amount: new BigNumber(t.value),
-        }))
+        })),
       );
     }
   });
 
   let accountOutputAda = new BigNumber(0);
   const accountOutputTokens: Array<Token> = [];
-  t.outputs.forEach((o) => {
+  t.outputs.forEach(o => {
     if (accountCredentialsMap[o.paymentKey]) {
       accountOutputAda = accountOutputAda.plus(o.value);
       accountOutputTokens.push(
-        ...o.tokens.map((t) => ({
+        ...o.tokens.map(t => ({
           assetName: t.assetName,
           policyId: t.policyId,
           amount: new BigNumber(t.value),
-        }))
+        })),
       );
     }
   });
@@ -426,17 +389,11 @@ export function getAccountChange(
 
 export function getMemoFromTx(tx: APITransaction): string | undefined {
   let memo;
-  const metadataValue = tx.metadata?.data.find(
-    (m) => m.label === MEMO_LABEL.toString()
-  );
+  const metadataValue = tx.metadata?.data.find(m => m.label === MEMO_LABEL.toString());
   if (metadataValue) {
     try {
       const parsedValue = JSON.parse(metadataValue.value);
-      if (
-        parsedValue.msg &&
-        Array.isArray(parsedValue.msg) &&
-        parsedValue.msg.length
-      ) {
+      if (parsedValue.msg && Array.isArray(parsedValue.msg) && parsedValue.msg.length) {
         memo = parsedValue.msg.join(", ");
       }
       // eslint-disable-next-line no-empty
@@ -453,9 +410,16 @@ export function isHexString(value: string): boolean {
 export function decodeTokenName(assetName: string): string {
   if (assetName.length > 0) {
     const bytes = [...Buffer.from(assetName, "hex")];
-    if (bytes.filter((byte) => byte <= 32 || byte >= 127).length === 0) {
+    if (bytes.filter(byte => byte <= 32 || byte >= 127).length === 0) {
       return String.fromCharCode(...bytes);
     }
   }
   return assetName;
+}
+
+export function getBech32PoolId(poolId: string, networkName: string): string {
+  const networkParams = getNetworkParameters(networkName);
+  const words = bech32.toWords(Buffer.from(poolId, "hex"));
+  const encoded = bech32.encode(networkParams.poolIdPrefix, words, 1000);
+  return encoded;
 }

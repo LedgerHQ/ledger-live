@@ -17,13 +17,7 @@ type Props = {
   value: string;
 };
 
-const PasswordForm = ({
-  onChange,
-  onSubmit,
-  error,
-  placeholder,
-  value,
-}: Props) => {
+const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [secureTextEntry, setSecureTextEntry] = useState(true);

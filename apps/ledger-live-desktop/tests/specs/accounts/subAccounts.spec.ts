@@ -10,7 +10,7 @@ import { PortfolioPage } from "../../models/PortfolioPage";
 test.use({ userdata: "skip-onboarding" });
 
 // FIXME: Sometimes first selected account is not the same, it should be the biggest balance.
-test.skip("subAccounts", async ({ page }) => {
+test.fixme("subAccounts @smoke", async ({ page }) => {
   const addAccountModal = new AddAccountModal(page);
   const accountsPage = new AccountsPage(page);
   const receiveModal = new ReceiveModal(page);

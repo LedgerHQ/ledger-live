@@ -5,8 +5,8 @@ import "../../__tests__/test-helpers/environment";
 import allSpecs from "../../generated/specs";
 import type { AppSpec } from "../types";
 import { Account } from "@ledgerhq/types-live";
+import { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import {
-  AppCandidate,
   createSpeculosDevice,
   findAppCandidate,
   listAppCandidates,
@@ -15,23 +15,23 @@ import {
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { getCurrencyBridge } from "../../bridge";
 import { filter, map, reduce, timeoutWith } from "rxjs/operators";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { throwError } from "rxjs";
 import { Report } from "./types";
 import { toAccountRaw } from "../../account";
 import { Audit } from "./audits";
 
 main().then(
-  (r) => {
+  r => {
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(r));
     process.exit(0);
   },
-  (error) => {
+  error => {
     // eslint-disable-next-line no-console
     console.log(JSON.stringify({ error: String(error) }));
     process.exit(0);
-  }
+  },
 );
 
 async function main(): Promise<Report> {
@@ -60,9 +60,7 @@ async function main(): Promise<Report> {
     console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   if (!appCandidate) {
-    throw new Error(
-      `no app found for ${spec.name}. Are you sure your COINAPPS is up to date?`
-    );
+    throw new Error(`no app found for ${spec.name}. Are you sure your COINAPPS is up to date?`);
   }
   const deviceParams = {
     ...(appCandidate as AppCandidate),
@@ -104,15 +102,13 @@ async function main(): Promise<Report> {
         syncConfig,
       })
       .pipe(
-        filter((e) => e.type === "discovered"),
-        map((e) => e.account),
+        filter(e => e.type === "discovered"),
+        map(e => e.account),
         reduce<Account, Account[]>((all, a) => all.concat(a), []),
         timeoutWith(
           getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-          throwError(
-            new Error("scan accounts timeout for currency " + currency.name)
-          )
-        )
+          throwError(new Error("scan accounts timeout for currency " + currency.name)),
+        ),
       )
       .toPromise();
 
@@ -132,9 +128,9 @@ async function main(): Promise<Report> {
     */
 
     report.refillAddress = accounts[0]?.freshAddress;
-    report.accountBalances = accounts.map((a) => a.balance.toString());
-    report.accountIds = accounts.map((a) => a.id);
-    report.accountOperationsLength = accounts.map((a) => a.operations.length);
+    report.accountBalances = accounts.map(a => a.balance.toString());
+    report.accountIds = accounts.map(a => a.id);
+    report.accountOperationsLength = accounts.map(a => a.operations.length);
     report.auditResult = audit.result();
   } finally {
     await releaseSpeculosDevice(device.id);

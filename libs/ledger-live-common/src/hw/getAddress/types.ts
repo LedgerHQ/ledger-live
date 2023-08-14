@@ -1,6 +1,6 @@
-export type {
-  GetAddressOptions,
-  Result,
-} from "@ledgerhq/coin-framework/derivation";
+import Transport from "@ledgerhq/hw-transport";
+import { GetAddressOptions, Result } from "@ledgerhq/coin-framework/derivation";
 
-export type { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+export { GetAddressOptions, Result };
+
+export type Resolver = (transport: Transport, addressOpt: GetAddressOptions) => Promise<Result>;

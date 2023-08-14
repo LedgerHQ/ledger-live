@@ -28,14 +28,12 @@ const getFormatForLocale = (locale: string) => {
 export const toLocaleString = (
   n: BigNumber,
   localeInput?: string,
-  options: Partial<SupportedOptions> = {}
+  options: Partial<SupportedOptions> = {},
 ): string => {
   let locale = localeInput;
   if (!locale) locale = "en";
   const minimumFractionDigits: number =
-    "minimumFractionDigits" in options
-      ? (options.minimumFractionDigits as number)
-      : 0;
+    "minimumFractionDigits" in options ? (options.minimumFractionDigits as number) : 0;
   const maximumFractionDigits: number =
     "maximumFractionDigits" in options
       ? (options.maximumFractionDigits as number)
@@ -54,10 +52,7 @@ export const toLocaleString = (
   const maxDecimals = bn.toFormat(maximumFractionDigits, BigNumber.ROUND_FLOOR);
 
   if (maximumFractionDigits !== minimumFractionDigits) {
-    const minDecimals = bn.toFormat(
-      minimumFractionDigits,
-      BigNumber.ROUND_FLOOR
-    );
+    const minDecimals = bn.toFormat(minimumFractionDigits, BigNumber.ROUND_FLOOR);
     let i = maxDecimals.length;
 
     // cleanup useless '0's from the right until the minimumFractionDigits

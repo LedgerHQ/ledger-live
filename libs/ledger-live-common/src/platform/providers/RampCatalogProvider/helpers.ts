@@ -1,9 +1,5 @@
 import { uniq, flatten } from "lodash";
-import {
-  QueryParams,
-  RampCatalogEntry,
-  RampLiveAppCatalogEntry,
-} from "./types";
+import { QueryParams, RampCatalogEntry, RampLiveAppCatalogEntry } from "./types";
 
 export type RampFilters = {
   fiatCurrencies?: string[];
@@ -13,17 +9,17 @@ export type RampFilters = {
 };
 
 function filterArray(array: string[], filters: string[]) {
-  return filters.every((filter) => array.includes(filter));
+  return filters.every(filter => array.includes(filter));
 }
 
 export function mapQueryParamsForProvider(
   entry: RampLiveAppCatalogEntry,
-  params: QueryParams
+  params: QueryParams,
 ): QueryParams {
   const result = {};
 
   const keys = Object.keys(params);
-  keys.forEach((key) => {
+  keys.forEach(key => {
     const providerKey = entry.paramsMapping[key];
     const providerValue = params[key];
 
@@ -36,23 +32,20 @@ export function mapQueryParamsForProvider(
 
 export function filterRampCatalogEntries(
   entries: RampCatalogEntry[],
-  filters: RampFilters
+  filters: RampFilters,
 ): RampCatalogEntry[] {
-  return entries.filter((entry) => {
+  return entries.filter(entry => {
     if (
       filters.cryptoCurrencies &&
       !filterArray(
-        entry.cryptoCurrencies.map((entry) => entry.id),
-        filters.cryptoCurrencies
+        entry.cryptoCurrencies.map(entry => entry.id),
+        filters.cryptoCurrencies,
       )
     ) {
       return false;
     }
 
-    if (
-      filters.fiatCurrencies &&
-      !filterArray(entry.fiatCurrencies, filters.fiatCurrencies)
-    ) {
+    if (filters.fiatCurrencies && !filterArray(entry.fiatCurrencies, filters.fiatCurrencies)) {
       return false;
     }
 
@@ -66,8 +59,8 @@ export function filterRampCatalogEntries(
     if (
       filters.tickers &&
       !filterArray(
-        entry.cryptoCurrencies.map((entry) => entry.ticker.toLowerCase()),
-        filters.tickers.map((ticker) => ticker.toLowerCase())
+        entry.cryptoCurrencies.map(entry => entry.ticker.toLowerCase()),
+        filters.tickers.map(ticker => ticker.toLowerCase()),
       )
     ) {
       return false;
@@ -76,24 +69,10 @@ export function filterRampCatalogEntries(
   });
 }
 
-export function getAllSupportedCryptoCurrencyIds(
-  entries: RampCatalogEntry[]
-): string[] {
-  return uniq(
-    flatten(
-      entries.map((entry) => entry.cryptoCurrencies.map((entry) => entry.id))
-    )
-  );
+export function getAllSupportedCryptoCurrencyIds(entries: RampCatalogEntry[]): string[] {
+  return uniq(flatten(entries.map(entry => entry.cryptoCurrencies.map(entry => entry.id))));
 }
 
-export function getAllSupportedCryptoCurrencyTickers(
-  entries: RampCatalogEntry[]
-): string[] {
-  return uniq(
-    flatten(
-      entries.map((entry) =>
-        entry.cryptoCurrencies.map((entry) => entry.ticker)
-      )
-    )
-  );
+export function getAllSupportedCryptoCurrencyTickers(entries: RampCatalogEntry[]): string[] {
+  return uniq(flatten(entries.map(entry => entry.cryptoCurrencies.map(entry => entry.ticker))));
 }

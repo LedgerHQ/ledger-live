@@ -13,13 +13,7 @@ type Props = {
   actions: Array<BaseButtonProps>;
 };
 
-const ActionModal = ({
-  isOpened,
-  onClose,
-  children,
-  actions = [],
-  ...rest
-}: Props) => (
+const ActionModal = ({ isOpened, onClose, children, actions = [], ...rest }: Props) => (
   <QueuedDrawer
     {...rest}
     isRequestingToBeOpened={isOpened}

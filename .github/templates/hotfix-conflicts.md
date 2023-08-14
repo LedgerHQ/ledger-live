@@ -16,3 +16,8 @@ To be ready to be merged, we must comply with all theses checks:
 
 - [ ] all CI checks have passed
 - [ ] reviews of the code owners impacted by the conflict
+
+## ⚠️ Warning ⚠️
+
+> **Warning**
+> Only merge the PR with the option `Create a merge commit`

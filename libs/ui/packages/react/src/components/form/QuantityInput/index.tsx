@@ -5,8 +5,8 @@ import Text from "../../asorted/Text";
 import styled from "styled-components";
 
 const MaxButton = styled.button`
-  color: ${(p) => p.theme.colors.neutral.c00};
-  background-color: ${(p) => p.theme.colors.neutral.c100};
+  color: ${p => p.theme.colors.neutral.c00};
+  background-color: ${p => p.theme.colors.neutral.c100};
   border-radius: 100px;
   border-width: 0;
   padding-left: 14px;
@@ -15,17 +15,17 @@ const MaxButton = styled.button`
   cursor: pointer;
 
   &:disabled {
-    background-color: ${(p) => p.theme.colors.neutral.c30};
-    color: ${(p) => p.theme.colors.neutral.c50};
+    background-color: ${p => p.theme.colors.neutral.c30};
+    color: ${p => p.theme.colors.neutral.c50};
     cursor: unset;
   }
 `;
 
 const Legend = styled(Text)`
-  color: ${(p) => p.theme.colors.neutral.c70};
+  color: ${p => p.theme.colors.neutral.c70};
 
   &[data-disabled="true"] {
-    color: ${(p) => p.theme.colors.neutral.c50};
+    color: ${p => p.theme.colors.neutral.c50};
   }
 `;
 

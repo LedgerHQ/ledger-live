@@ -15,10 +15,8 @@ export default function AdjustProvider() {
 
   useEffect(() => {
     const adjustConfig = new AdjustConfig(
-      Config.ADJUST_APP_TOKEN,
-      __DEV__
-        ? AdjustConfig.EnvironmentSandbox
-        : AdjustConfig.EnvironmentProduction, // @TODO: Change to Production when ready
+      Config.ADJUST_APP_TOKEN as string,
+      __DEV__ ? AdjustConfig.EnvironmentSandbox : AdjustConfig.EnvironmentProduction, // @TODO: Change to Production when ready
     );
     adjustConfig.setDelayStart(Math.random() * 7 + 1);
     if (__DEV__) {

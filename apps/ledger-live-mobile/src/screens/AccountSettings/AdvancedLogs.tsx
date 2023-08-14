@@ -4,31 +4,19 @@ import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Alert } from "@ledgerhq/native-ui";
-import {
-  getTagDerivationMode,
-  DerivationMode,
-} from "@ledgerhq/live-common/derivation";
-import {
-  getAccountCurrency,
-  isAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getTagDerivationMode, DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getAccountCurrency, isAccount } from "@ledgerhq/live-common/account/index";
 import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { localeIds } from "../../languages";
 import { localeSelector } from "../../reducers/settings";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
 import { ScreenName } from "../../const";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    AccountSettingsNavigatorParamList,
-    ScreenName.AdvancedLogs
-  >
+  StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.AdvancedLogs>
 >;
 
 export default function AdvancedLogs({ route }: NavigationProps) {
@@ -38,8 +26,7 @@ export default function AdvancedLogs({ route }: NavigationProps) {
   const usefulData = {
     xpub: (isAccount(account) && account?.xpub) || undefined,
     index: (isAccount(account) && account?.index) || undefined,
-    freshAddressPath:
-      (isAccount(account) && account?.freshAddressPath) || undefined,
+    freshAddressPath: (isAccount(account) && account?.freshAddressPath) || undefined,
     id: account?.id || undefined,
     blockHeight: (isAccount(account) && account?.blockHeight) || undefined,
   };

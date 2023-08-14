@@ -14,9 +14,7 @@ const AnalyticsProvider = ({
   children?: ReactNode;
 }): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [segmentClient, setSegmentClient] = useState<
-    SegmentClient | undefined
-  >();
+  const [segmentClient, setSegmentClient] = useState<SegmentClient | undefined>();
 
   const loadSegment = useCallback(async (store: AppStore) => {
     try {
@@ -30,17 +28,14 @@ const AnalyticsProvider = ({
 
   useEffect(() => {
     loadSegment(store);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!loaded || !segmentClient) {
     return <>{children}</>;
   }
 
-  return (
-    <SegmentAnalyticsProvider client={segmentClient}>
-      {children}
-    </SegmentAnalyticsProvider>
-  );
+  return <SegmentAnalyticsProvider client={segmentClient}>{children}</SegmentAnalyticsProvider>;
 };
 
 export default AnalyticsProvider;

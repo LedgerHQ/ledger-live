@@ -16,16 +16,13 @@ function inferTransactions(
     account: AccountLike;
     transaction: Transaction;
   }>,
-  _opts: Record<string, any>
+  _opts: Record<string, any>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "elrond", "elrond family");
 
     if (account.type === "Account") {
-      invariant(
-        (account as ElrondAccount).elrondResources,
-        "unactivated account"
-      );
+      invariant((account as ElrondAccount).elrondResources, "unactivated account");
     }
 
     transaction.family = "elrond";

@@ -5,12 +5,12 @@ const Illustration = () => (
   <Svg width="107" height="40" fill="none" viewBox="0 0 107 40">
     <Mask
       id="mask0_6211_193898"
+      // @ts-expect-error maskType is not in the type definition
       style={{ maskType: "alpha" }}
       width="76"
       height="52"
       x="2"
       y="-4"
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
       maskUnits={"userSpaceOnUse" as const}
     >
       <Path
@@ -29,12 +29,12 @@ const Illustration = () => (
     </G>
     <Mask
       id="mask1_6211_193898"
+      // @ts-expect-error maskType is not in the type definition
       style={{ maskType: "alpha" }}
       width="76"
       height="52"
       x="34"
       y="-4"
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
       maskUnits={"userSpaceOnUse" as const}
     >
       <Path
@@ -46,14 +46,8 @@ const Illustration = () => (
     </Mask>
     <G mask="url(#mask1_6211_193898)">
       <Rect width="40" height="40" x="34" fill="#0EBDCD" rx="20" />
-      <Path
-        fill="#fff"
-        d="M60.248 19.5L53.999 10l-6.249 9.5L54 23.128l6.248-3.628z"
-      />
-      <Path
-        fill="#fff"
-        d="M54 30l6.252-8.651L54 24.976 47.75 21.35l6.25 8.65z"
-      />
+      <Path fill="#fff" d="M60.248 19.5L53.999 10l-6.249 9.5L54 23.128l6.248-3.628z" />
+      <Path fill="#fff" d="M54 30l6.252-8.651L54 24.976 47.75 21.35l6.25 8.65z" />
     </G>
     <Rect width="40" height="40" x="66" fill="#8247E5" rx="20" />
     <Path

@@ -15,10 +15,9 @@ export const valueFormatter = (value: string | number): string => {
     { value: 1e3, unit: "K" },
     { value: 1, unit: "" },
   ];
-
-  const item = breakpoints.find((item) => value >= item.value);
-  const formatedValue = typeof value === "number" ? value : parseFloat(value);
-  return item ? `${(formatedValue / item.value).toFixed(1).replace(".0", "")} ${item.unit}` : "0";
+  const formattedValue = typeof value === "number" ? value : parseFloat(value);
+  const item = breakpoints.find(item => formattedValue >= item.value);
+  return item ? `${(formattedValue / item.value).toFixed(1).replace(".0", "")} ${item.unit}` : "0";
 };
 
 // set default font configuration for the chart - I used ll-text_subTitle class from our theme

@@ -43,10 +43,7 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isPushNotificationsModalOpen}
-      noCloseButton
-    >
+    <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
       <TrackScreen
         category="Notification Prompt"
         name={
@@ -76,7 +73,7 @@ const PushNotificationsModal = () => {
         <Button type={"main"} mt={8} mb={7} onPress={modalAllowNotifications}>
           {t("notifications.prompt.allow")}
         </Button>
-        <TextLink type={"shade"} onPress={modalDelayLater}>
+        <TextLink type={"shade"} onPress={modalDelayLater} testID="notifications-prompt-later">
           {t("notifications.prompt.later")}
         </TextLink>
       </Flex>

@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Button,
   Flex,
-  Icons,
+  IconsLegacy,
   ScrollContainer,
   SelectableList,
   Text,
@@ -11,6 +11,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { TrackScreen, track } from "../../../analytics";
 
 type Props = {
   deviceLanguage: Language;
@@ -33,8 +34,20 @@ const DeviceLanguageSelection: React.FC<Props> = ({
 
   const deviceName = getDeviceModel(device.modelId).productName;
 
+  const handleSelectLanguage = useCallback(
+    (language: Language) => {
+      track("language_clicked", {
+        firmwareLanguage: language,
+        drawer: "App Language Manager",
+      });
+      onSelectLanguage(language);
+    },
+    [onSelectLanguage],
+  );
+
   return (
     <Flex height="100%" justifyContent="space-between">
+      <TrackScreen category={"App Language Manager"} type="drawer" refreshSource={false} />
       <Flex flexShrink={1}>
         <Text variant="h4" textAlign="center">
           {t("deviceLocalization.language")}
@@ -43,23 +56,16 @@ const DeviceLanguageSelection: React.FC<Props> = ({
           {t("deviceLocalization.chooseLanguage", { deviceName })}
         </Text>
         <ScrollContainer mt={5}>
-          <SelectableList
-            currentValue={selectedLanguage}
-            onChange={onSelectLanguage}
-          >
+          <SelectableList currentValue={selectedLanguage} onChange={handleSelectLanguage}>
             {availableLanguages.map(currentLanguage => {
-              const isCurrentDeviceLanguage =
-                currentLanguage === deviceLanguage;
+              const isCurrentDeviceLanguage = currentLanguage === deviceLanguage;
               return (
                 <SelectableList.Element
                   key={currentLanguage}
                   value={currentLanguage}
                   renderRight={() =>
                     isCurrentDeviceLanguage ? (
-                      <Icons.CircledCheckSolidMedium
-                        color="primary.c80"
-                        size={24}
-                      />
+                      <IconsLegacy.CircledCheckSolidMedium color="primary.c80" size={24} />
                     ) : null
                   }
                 >

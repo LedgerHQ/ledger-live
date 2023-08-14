@@ -10,7 +10,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>$(APP_NAME)</string>
+	<string>LL [STAGING]</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,15 +22,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.3.0</string>
+	<string>3.16.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>NSCameraUsageDescription</key>	
-	<string>The Ledger Live app needs access to your camera to scan QR codes</string>	
-	<key>NSMicrophoneUsageDescription</key>	
-	<string>Allow $(PRODUCT_NAME) to use the microphone</string>	
-	<key>NSPhotoLibraryUsageDescription</key>	
-	<string>Allow $(PRODUCT_NAME) to access your photos</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -71,6 +65,8 @@
 	<string>This app requires Face ID permission to authenticate using Face recognition.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to use the microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow $(PRODUCT_NAME) to access your photos</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>MuseoSans-Bold.otf</string>

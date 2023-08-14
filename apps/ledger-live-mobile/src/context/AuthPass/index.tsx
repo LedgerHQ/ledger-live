@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, AppState } from "react-native";
+import { StyleSheet, View, AppState, Platform } from "react-native";
 import type { TFunction } from "i18next";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -65,20 +65,24 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   componentDidMount() {
+    // TODO: REWORK THIS COMPONENT WITHOUT USING STATE (eg: this.mounted instead)
+    // eslint-disable-next-line react/no-direct-mutation-state
     this.state.mounted = true;
     this.auth();
     AppState.addEventListener("change", this.handleAppStateChange);
   }
 
   componentWillUnmount() {
+    // eslint-disable-next-line react/no-direct-mutation-state
     this.state.mounted = false;
   }
 
+  // The state lifecycle differs between iOS and Android. This is to prevent FaceId from triggering an inactive state and looping.
+  checkAppStateChange = (appState: string) =>
+    Platform.OS === "ios" ? appState === "background" : appState.match(/inactive|background/);
+
   handleAppStateChange = (nextAppState: string) => {
-    if (
-      this.state.appState.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
+    if (this.checkAppStateChange(this.state.appState) && nextAppState === "active") {
       this.lock();
     }
 
@@ -92,13 +96,7 @@ class AuthPass extends PureComponent<Props, State> {
     const { privacy } = this.props;
     const { isLocked, authModalOpen } = this.state;
 
-    if (
-      isLocked &&
-      privacy &&
-      privacy.biometricsEnabled &&
-      !authModalOpen &&
-      this.state.mounted
-    ) {
+    if (isLocked && privacy && privacy.biometricsEnabled && !authModalOpen && this.state.mounted) {
       this.setState({
         authModalOpen: true,
       });

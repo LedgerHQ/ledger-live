@@ -3,10 +3,7 @@ import { useTranslation } from "react-i18next";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { Linking } from "react-native";
-import {
-  getAddressExplorer,
-  getDefaultExplorerView,
-} from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { FieldType } from "../../../../../../../components/DelegationDrawer";
@@ -22,10 +19,7 @@ import styles from "../styles";
  * Handle the hook declaration.
  */
 
-const useDrawerItems = (
-  data: DrawerPropsType["data"],
-  account: ElrondAccount,
-) => {
+const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) => {
   const { type, validator, claimableRewards, seconds } = data;
   const { t } = useTranslation();
 
@@ -41,10 +35,7 @@ const useDrawerItems = (
 
   const onExplorer = useCallback(
     (address: string) => {
-      const explorer = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
+      const explorer = getAddressExplorer(getDefaultExplorerView(account.currency), address);
 
       if (explorer) {
         Linking.openURL(explorer);
@@ -58,10 +49,7 @@ const useDrawerItems = (
    */
 
   const date = useMemo(
-    () =>
-      seconds
-        ? new Date(new Date().getTime() + 1000 * seconds).toISOString()
-        : false,
+    () => (seconds ? new Date(new Date().getTime() + 1000 * seconds).toISOString() : false),
     [seconds],
   );
 
@@ -77,10 +65,7 @@ const useDrawerItems = (
     [],
   );
 
-  const name = useMemo(
-    () => validator.identity.name || validator.contract,
-    [validator],
-  );
+  const name = useMemo(() => validator.identity.name || validator.contract, [validator]);
 
   /*
    * Memoize the denominated amount of claimable rewards, if it's a delegation item.
@@ -120,10 +105,7 @@ const useDrawerItems = (
       {
         label: t("delegation.validatorAddress"),
         Component: (
-          <Touchable
-            event="DelegationOpenExplorer"
-            onPress={() => onExplorer(validator.contract)}
-          >
+          <Touchable event="DelegationOpenExplorer" onPress={() => onExplorer(validator.contract)}>
             <LText
               numberOfLines={1}
               semiBold={true}
@@ -179,11 +161,7 @@ const useDrawerItems = (
             {
               label: t("elrond.delegation.drawer.rewards"),
               Component: (
-                <LText
-                  numberOfLines={1}
-                  semiBold={true}
-                  style={styles.valueText}
-                >
+                <LText numberOfLines={1} semiBold={true} style={styles.valueText}>
                   {`${rewards} ${unit.code}`}
                 </LText>
               ),

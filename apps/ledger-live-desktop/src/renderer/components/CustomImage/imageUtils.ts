@@ -1,8 +1,6 @@
 import { ImageDimensions } from "./types";
 
-export function createCanvas(
-  image?: HTMLImageElement,
-): {
+export function createCanvas(image?: HTMLImageElement): {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
 } {

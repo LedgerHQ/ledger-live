@@ -36,7 +36,7 @@ const Activity = styled.div`
   animation: ${loading} 0.8s infinite;
 `;
 
-function LoadingPlaceholder({ style }: { style?: any }) {
+function LoadingPlaceholder({ style }: { style?: React.CSSProperties }) {
   return (
     <Wrapper data-test-id="loading-placeholder" style={style}>
       <Activity />

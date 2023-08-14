@@ -24,12 +24,10 @@ export type AccountBannerState =
 function getWorstValidator(
   delegations: ElrondDelegation[],
   validators: ElrondProvider[],
-  ledgerValidator: ElrondProvider
+  ledgerValidator: ElrondProvider,
 ) {
   return delegations.reduce((worstValidator, delegation) => {
-    const validator = validators.find(
-      (validator) => validator.contract === delegation.contract
-    );
+    const validator = validators.find(validator => validator.contract === delegation.contract);
     if (validator && validator.aprValue < worstValidator.aprValue) {
       return validator;
     }
@@ -39,7 +37,7 @@ function getWorstValidator(
 
 export function getAccountBannerState(
   account: ElrondAccount,
-  elrondPreloadData: ElrondPreloadData
+  elrondPreloadData: ElrondPreloadData,
 ): AccountBannerState {
   const { validators } = elrondPreloadData;
   const elrondResources = account.elrondResources
@@ -48,7 +46,7 @@ export function getAccountBannerState(
 
   const hasDelegations = elrondResources.delegations.length > 0;
   const ledgerValidator = validators.find(
-    (validator) => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS
+    validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
   );
 
   // // if Ledger doesn't provide validator, we don't display banner
@@ -62,12 +60,12 @@ export function getAccountBannerState(
     const worstValidator: ElrondProvider = getWorstValidator(
       elrondResources.delegations,
       validators,
-      ledgerValidator
+      ledgerValidator,
     );
 
     if (worstValidator.contract !== ledgerValidator.contract) {
       const worstDelegation = elrondResources.delegations.find(
-        (delegation) => delegation.contract === worstValidator.contract
+        delegation => delegation.contract === worstValidator.contract,
       );
       if (!worstDelegation) return { bannerType: "hidden" };
 

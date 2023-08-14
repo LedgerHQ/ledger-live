@@ -16,13 +16,10 @@ export const MIN_GAS_LIMIT = 50000;
 export const GAS_PER_DATA_BYTE = 1500;
 export const GAS_PRICE_MODIFIER = 0.01;
 export const CHAIN_ID = "1";
-export const MIN_DELEGATION_AMOUNT: BigNumber = new BigNumber(
-  1000000000000000000
-);
+export const MIN_DELEGATION_AMOUNT: BigNumber = new BigNumber(1000000000000000000);
 export const DECIMALS_LIMIT = 18;
 
 export const ELROND_EXPLORER_URL = "https://explorer.elrond.com";
-export const ELROND_STAKING_POOL =
-  "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
+export const ELROND_STAKING_POOL = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l";
 export const ELROND_LEDGER_VALIDATOR_ADDRESS =
   "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqppllllls9ftvxy";

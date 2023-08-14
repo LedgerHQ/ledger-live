@@ -134,8 +134,6 @@ Most files for the tests are in the `/e2e` LLM app folder.
 
 - `/jest.config.js`: Configuration for Detox. Contains settings like what the setup and teardown files are, how long the timeout is, what test runner to use, etc.
 
-- `/e2e-bridge-setup`: Used to start the websocket bridge on the client (app) side.
-
 - `/helpers.ts`: Convenience methods for use in the models/tests to make writing tests easier.
 
 - `/setup.ts`: Run after the global setup. It starts the websocket bridge, sets up the emulators to be more consistent in the test run (for example sets the time to 12.00), and shuts down the websocket bridge. Any logic to be run before and after a test run would go here.

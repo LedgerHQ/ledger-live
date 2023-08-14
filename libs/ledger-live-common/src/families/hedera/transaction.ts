@@ -5,23 +5,16 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
-export function formatTransaction(
-  transaction: Transaction,
-  account: Account
-): string {
-  const amount = formatCurrencyUnit(
-    getAccountUnit(account),
-    transaction.amount,
-    {
-      showCode: true,
-      disableRounding: true,
-    }
-  );
+export function formatTransaction(transaction: Transaction, account: Account): string {
+  const amount = formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+    showCode: true,
+    disableRounding: true,
+  });
 
   return `SEND ${amount}\nTO ${transaction.recipient}`;
 }

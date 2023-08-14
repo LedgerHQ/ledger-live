@@ -55,7 +55,7 @@ export default class Xrp {
     transport.decorateAppAPIMethods(
       this,
       ["getAddress", "signTransaction", "getAppConfiguration"],
-      scrambleKey
+      scrambleKey,
     );
   }
 
@@ -75,7 +75,7 @@ export default class Xrp {
     path: string,
     display?: boolean,
     chainCode?: boolean,
-    ed25519?: boolean
+    ed25519?: boolean,
   ): Promise<{
     publicKey: string;
     address: string;
@@ -105,7 +105,7 @@ export default class Xrp {
         ? response
             .slice(
               1 + publicKeyLength + 1 + addressLength,
-              1 + publicKeyLength + 1 + addressLength + 32
+              1 + publicKeyLength + 1 + addressLength + 32,
             )
             .toString("hex")
         : undefined,
@@ -127,11 +127,7 @@ export default class Xrp {
    * @example
    * const signature = await xrp.signTransaction("44'/144'/0'/0/0", "12000022800000002400000002614000000001315D3468400000000000000C73210324E5F600B52BB3D9246D49C4AB1722BA7F32B7A3E4F9F2B8A1A28B9118CC36C48114F31B152151B6F42C1D61FE4139D34B424C8647D183142ECFC1831F6E979C6DA907E88B1CAD602DB59E2F");
    */
-  async signTransaction(
-    path: string,
-    rawTxHex: string,
-    ed25519?: boolean
-  ): Promise<string> {
+  async signTransaction(path: string, rawTxHex: string, ed25519?: boolean): Promise<string> {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const rawTx = Buffer.from(rawTxHex, "hex");
     const curveMask = ed25519 ? 0x80 : 0x40;
@@ -154,9 +150,7 @@ export default class Xrp {
         ins: 0x04,
         p1: (isFirst ? 0x00 : 0x01) | (hasMore ? 0x80 : 0x00),
         p2: curveMask,
-        data: isFirst
-          ? Buffer.alloc(1 + bipPath.length * 4 + chunkSize)
-          : Buffer.alloc(chunkSize),
+        data: isFirst ? Buffer.alloc(1 + bipPath.length * 4 + chunkSize) : Buffer.alloc(chunkSize),
       };
 
       if (isFirst) {
@@ -164,12 +158,7 @@ export default class Xrp {
         bipPath.forEach((segment, index) => {
           apdu.data.writeUInt32BE(segment, 1 + index * 4);
         });
-        rawTx.copy(
-          apdu.data,
-          1 + bipPath.length * 4,
-          offset,
-          offset + chunkSize
-        );
+        rawTx.copy(apdu.data, 1 + bipPath.length * 4, offset, offset + chunkSize);
       } else {
         rawTx.copy(apdu.data, 0, offset, offset + chunkSize);
       }
@@ -181,13 +170,7 @@ export default class Xrp {
     let response = Buffer.alloc(0);
 
     for (const apdu of apdus) {
-      response = await this.transport.send(
-        apdu.cla,
-        apdu.ins,
-        apdu.p1,
-        apdu.p2,
-        apdu.data
-      );
+      response = await this.transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data);
     }
 
     // the last 2 bytes are status code from the hardware

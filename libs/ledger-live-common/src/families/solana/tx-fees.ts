@@ -4,18 +4,18 @@ import { buildTransactionWithAPI } from "./js-buildTransaction";
 import createTransaction from "./js-createTransaction";
 import { Transaction, TransactionModel } from "./types";
 import { assertUnreachable } from "./utils";
-import { Transaction as OnChainTransaction } from "@solana/web3.js";
+import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
 
 export async function estimateTxFee(
   api: ChainAPI,
   account: Account,
-  kind: TransactionModel["kind"]
+  kind: TransactionModel["kind"],
 ) {
   const tx = createDummyTx(account, kind);
   const [onChainTx] = await buildTransactionWithAPI(account, tx, api);
 
-  const fee = await api.getFeeForMessage(onChainTx.compileMessage());
+  const fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
     log("error", `api.getFeeForMessage returned invalid fee: <${fee}>`);
@@ -161,32 +161,27 @@ const randomAddresses = [
   "AEtRo9MKfLqGtjvxdz8H93R7SQxXLEkibVSJbs9XKnD1",
 ];
 
-async function retryWithNewBlockhash(
-  api: ChainAPI,
-  onChainTx: OnChainTransaction
-) {
-  if (onChainTx.recentBlockhash === undefined) {
+async function retryWithNewBlockhash(api: ChainAPI, onChainTx: OnChainTransaction) {
+  if (onChainTx.message.recentBlockhash === undefined) {
     throw new Error("expected recentBlockhash");
   }
 
-  onChainTx.recentBlockhash = await waitNextBlockhash(
+  onChainTx.message.recentBlockhash = await waitNextBlockhash(
     api,
-    onChainTx.recentBlockhash
+    onChainTx.message.recentBlockhash,
   );
 
-  const fee = await api.getFeeForMessage(onChainTx.compileMessage());
+  const fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
-    throw new Error(
-      `unexpected fee: <${fee}>, after retry with a new blockhash`
-    );
+    throw new Error(`unexpected fee: <${fee}>, after retry with a new blockhash`);
   }
 
   return fee;
 }
 
 function sleep(durationMS: number): Promise<void> {
-  return new Promise((res) => setTimeout(res, durationMS));
+  return new Promise(res => setTimeout(res, durationMS));
 }
 
 async function waitNextBlockhash(api: ChainAPI, currentBlockhash: string) {

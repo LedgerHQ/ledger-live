@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
-import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";
+import AddAccountsSelectDevice, {
+  addAccountsSelectDeviceHeaderOptions,
+} from "../../screens/AddAccounts/02-SelectDevice";
 import AddAccountsTokenCurrencyDisclaimer from "../../screens/AddAccounts/02-TokenCurrencyDisclaimer";
 import AddAccountsAccounts from "../../screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "../../screens/AddAccounts/04-Success";
@@ -19,22 +21,15 @@ import { RequestAccountNavigatorParamList } from "./types/RequestAccountNavigato
 
 type NavigationProps =
   | StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.AddAccounts>
-  | StackNavigatorProps<
-      RequestAccountNavigatorParamList,
-      NavigatorName.RequestAccountsAddAccounts
-    >;
+  | StackNavigatorProps<RequestAccountNavigatorParamList, NavigatorName.RequestAccountsAddAccounts>;
 
 const totalSteps = "3";
 export default function AddAccountsNavigator({ route }: NavigationProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
-  const { currency, token, returnToSwap, analyticsPropertyFlow } =
-    route.params || {};
+  const { currency, token, returnToSwap, analyticsPropertyFlow } = route.params || {};
 
   return (
     <Stack.Navigator
@@ -104,6 +99,7 @@ export default function AddAccountsNavigator({ route }: NavigationProps) {
             />
           ),
           gestureEnabled: false,
+          ...addAccountsSelectDeviceHeaderOptions,
         }}
       />
       <Stack.Screen

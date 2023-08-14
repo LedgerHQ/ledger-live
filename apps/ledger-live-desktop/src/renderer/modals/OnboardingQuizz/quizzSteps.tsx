@@ -1,9 +1,6 @@
 import React from "react";
-import { TFunction } from "react-i18next";
-import { Icons } from "@ledgerhq/react-ui";
-
+import { TFunction } from "i18next";
 import Illustration from "~/renderer/components/Illustration";
-
 import cryptoStoredQuizz from "./assets/cryptoStoredQuizz.png";
 import privateKeyQuizz from "./assets/privateKeyQuizz.png";
 import recoveryPhraseQuizz from "./assets/recoveryPhraseQuizz.png";

@@ -1,0 +1,11 @@
+{
+  "extends": "../../../../../tsconfig.base",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

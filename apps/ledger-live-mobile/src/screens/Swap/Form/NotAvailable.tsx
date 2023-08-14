@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { BaseModal, Button, Icons } from "@ledgerhq/native-ui";
+import { BaseModal, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 
@@ -18,7 +18,7 @@ export function NotAvailable() {
     <BaseModal
       isOpen={isOpen}
       noCloseButton
-      Icon={Icons.RedelegateRegular}
+      Icon={IconsLegacy.RedelegateMedium}
       title={t("transfer.swap2.form.notAvailable.title")}
       description={t("transfer.swap2.form.notAvailable.content")}
     >

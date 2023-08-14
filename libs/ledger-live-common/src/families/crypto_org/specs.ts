@@ -6,10 +6,7 @@ import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
 
-const minAmount = parseCurrencyUnit(
-  getCryptoCurrencyById("crypto_org").units[0],
-  "0.01"
-);
+const minAmount = parseCurrencyUnit(getCryptoCurrencyById("crypto_org").units[0], "0.01");
 const transactionCheck = ({ maxSpendable }) => {
   invariant(maxSpendable.gt(minAmount), "balance is too low");
 };

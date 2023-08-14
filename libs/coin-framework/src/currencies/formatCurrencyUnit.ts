@@ -53,7 +53,7 @@ type FormatFragmentTypes = "value" | "sign" | "code" | "separator";
 export function formatCurrencyUnitFragment(
   unit: Unit,
   value: BigNumber,
-  _options?: formatCurrencyUnitOptions
+  _options?: formatCurrencyUnitOptions,
 ): FormatFragment[] {
   if (!BigNumber.isBigNumber(value)) {
     console.warn("formatCurrencyUnit called with value=", value);
@@ -70,10 +70,7 @@ export function formatCurrencyUnitFragment(
     return [];
   }
 
-  const options: Record<
-    string,
-    formatCurrencyUnitOptions[keyof formatCurrencyUnitOptions]
-  > = {};
+  const options: Record<string, formatCurrencyUnitOptions[keyof formatCurrencyUnitOptions]> = {};
 
   if (_options) {
     let k: keyof formatCurrencyUnitOptions;
@@ -109,20 +106,14 @@ export function formatCurrencyUnitFragment(
         Math.max(
           0, // dynamic max number of digits based on the value itself. to only show significant part
           Math.min(
-            dynamicSignificantDigits -
-              Math.ceil(Math.log10(floatValueAbs.toNumber())),
+            dynamicSignificantDigits - Math.ceil(Math.log10(floatValueAbs.toNumber())),
             magnitude + subMagnitude,
-            staticSignificantDigits
-          )
-        )
+            staticSignificantDigits,
+          ),
+        ),
       );
   const fragValueByKind = {
-    sign:
-      alwaysShowSign || floatValue.isNegative()
-        ? floatValue.isNegative()
-          ? "-"
-          : "+"
-        : null,
+    sign: alwaysShowSign || floatValue.isNegative() ? (floatValue.isNegative() ? "-" : "+") : null,
     code: showCode ? code : null,
     value: discreet
       ? "***"
@@ -136,7 +127,7 @@ export function formatCurrencyUnitFragment(
   const frags: FormatFragment[] = [];
   let nonSepIndex = -1;
   let sepConsumed = true;
-  (unit.prefixCode ? prefixFormat : suffixFormat).forEach((kind) => {
+  (unit.prefixCode ? prefixFormat : suffixFormat).forEach(kind => {
     const v = fragValueByKind[kind];
     if (!v) return;
     const isSep = kind === "separator";
@@ -156,12 +147,11 @@ export function formatCurrencyUnitFragment(
 export function formatCurrencyUnit(
   unit: Unit,
   value: BigNumber,
-  options?: formatCurrencyUnitOptions
+  options?: formatCurrencyUnitOptions,
 ): string {
   const joinFragmentsSeparator =
-    (options && options.joinFragmentsSeparator) ||
-    defaultFormatOptions.joinFragmentsSeparator;
+    (options && options.joinFragmentsSeparator) || defaultFormatOptions.joinFragmentsSeparator;
   return formatCurrencyUnitFragment(unit, value, options)
-    .map((f) => f.value)
+    .map(f => f.value)
     .join(joinFragmentsSeparator);
 }

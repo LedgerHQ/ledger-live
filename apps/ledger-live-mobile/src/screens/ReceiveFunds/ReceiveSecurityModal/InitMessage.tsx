@@ -34,17 +34,8 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
   }, [onVerifyAddress]);
   return (
     <Flex flex={1} justifyContent="center" mt={3}>
-      <TrackScreen
-        category="Receive"
-        name="Verification Security Disclaimer"
-        type="drawer"
-      />
-      <Text
-        variant="h4"
-        fontWeight="semiBold"
-        color="neutral.c100"
-        lineHeight="31.2px"
-      >
+      <TrackScreen category="Deposit" name="Verification Security Disclaimer" type="drawer" />
+      <Text variant="h4" fontWeight="semiBold" color="neutral.c100" lineHeight="31.2px">
         <Trans i18nKey="transfer.receive.securityVerify.title" />
       </Text>
       <Text
@@ -56,12 +47,7 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
       >
         <Trans i18nKey="transfer.receive.securityVerify.subtitle1" />
       </Text>
-      <Text
-        variant="bodyLineHeight"
-        fontWeight="medium"
-        color="neutral.c70"
-        lineHeight="23.8px"
-      >
+      <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c70" lineHeight="23.8px">
         <Trans i18nKey="transfer.receive.securityVerify.subtitle2" />
       </Text>
       <Flex alignSelf="stretch" my={8}>

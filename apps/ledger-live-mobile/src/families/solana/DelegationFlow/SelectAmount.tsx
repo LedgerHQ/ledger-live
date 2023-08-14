@@ -38,10 +38,7 @@ import type { SolanaDelegationFlowParamList } from "./types";
 
 type ModalInfoName = "maxSpendable";
 
-type Props = StackNavigatorProps<
-  SolanaDelegationFlowParamList,
-  ScreenName.SolanaEditAmount
->;
+type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaEditAmount>;
 
 export default function DelegationSelectAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -53,8 +50,8 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => ({
       account,
       transaction: {
         ...bridge.createTransaction(account),
@@ -67,7 +64,8 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
           },
         },
       },
-    }));
+    }),
+  );
 
   invariant(transaction, "transaction must be defined");
 
@@ -83,8 +81,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
     };
   }, [transaction, setMaxSpendable, bridge, account]);
 
-  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
-    useModalInfo();
+  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } = useModalInfo();
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));
@@ -133,10 +130,11 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         category="SendFunds"
         name="Amount"
         currencyName={currency.name}
+        flow="stake"
+        action="delegation"
+        currency="sol"
       />
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
@@ -167,11 +165,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                       </Text>
                       {maxSpendable > 0 && (
                         <Text fontWeight="semiBold" color="grey">
-                          <CurrencyUnitValue
-                            showCode
-                            unit={unit}
-                            value={maxSpendable}
-                          />
+                          <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                         </Text>
                       )}
                     </View>
@@ -193,11 +187,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}
@@ -221,10 +211,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}
@@ -243,14 +230,9 @@ function useModalInfo(): {
   closeInfoModal: () => void;
 } {
   const { t } = useTranslation();
-  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(
-    null,
-  );
+  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(null);
 
-  const onMaxSpendableLearnMore = useCallback(
-    () => Linking.openURL(urls.maxSpendable),
-    [],
-  );
+  const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
 
   return {
     openInfoModal: (infoName: ModalInfoName) => setModalInfoName(infoName),

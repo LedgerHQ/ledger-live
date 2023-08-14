@@ -1,10 +1,9 @@
-import React, { useState, useMemo, useCallback, useRef, memo } from "react";
+import React, { useState, useMemo, useCallback, memo } from "react";
 import { View, FlatList, StyleSheet, Platform } from "react-native";
-import type { FlatListProps, ListRenderItem } from "react-native";
+import type { ListRenderItem } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import Animated, { Value, event } from "react-native-reanimated";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -27,12 +26,10 @@ import {
 import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
 import InfoModal from "../../../modals/Info";
 import { notAvailableModalInfo } from "../NftInfoNotAvailable";
+import invariant from "invariant";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
-
-const CollectionsList =
-  Animated.createAnimatedComponent<FlatListProps<ProtoNFT[]>>(FlatList);
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.NftGallery>
@@ -46,52 +43,33 @@ const NftGallery = () => {
   const account = useSelector<State, Account | undefined>(state =>
     accountSelector(state, { accountId: params?.accountId }),
   );
+  invariant(account, "account required");
+
   const [isOpen, setOpen] = useState<boolean>(false);
   const onOpenModal = useCallback(() => {
     setOpen(true);
   }, []);
+
   const onCloseModal = useCallback(() => {
     setOpen(false);
   }, []);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
-
-  const scrollY = useRef(new Value(0)).current;
-  const onScroll = event(
-    [
-      {
-        nativeEvent: {
-          contentOffset: { y: scrollY },
-        },
-      },
-    ],
-    { useNativeDriver: true },
-  );
-
-  const [collectionsCount, setCollectionsCount] = useState(
-    MAX_COLLECTIONS_FIRST_RENDER,
-  );
   const collections = useMemo(
     () =>
-      Object.entries(nftsByCollections((account as Account).nfts)).filter(
-        ([contract]) =>
-          !hiddenNftCollections.includes(
-            `${(account as Account).id}|${contract}`,
-          ),
+      Object.entries(nftsByCollections(account.nfts)).filter(
+        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
       ),
     [account, hiddenNftCollections],
   ) as [string, ProtoNFT[]][];
-
+  const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
   const collectionsSlice: Array<ProtoNFT[]> = useMemo(
-    () =>
-      collections
-        .slice(0, collectionsCount)
-        .map(([, collection]) => collection),
+    () => collections.slice(0, collectionsCount).map(([, collection]) => collection),
     [collections, collectionsCount],
   );
 
-  const renderItem: ListRenderItem<ProtoNFT[]> = ({ item: collection }) =>
-    account ? (
+  const renderItem: ListRenderItem<ProtoNFT[]> = useCallback(
+    ({ item: collection }) => (
       <View>
         <NftCollectionWithName
           key={collection?.[0]?.contract}
@@ -99,32 +77,33 @@ const NftGallery = () => {
           account={account}
         />
       </View>
-    ) : null;
+    ),
+    [account],
+  );
 
   const onEndReached = useCallback(() => {
-    setCollectionsCount(
-      collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED,
-    );
+    setCollectionsCount(collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED);
   }, [collectionsCount]);
 
-  const goToCollectionSelection = () =>
-    account &&
-    navigation.navigate(NavigatorName.SendFunds, {
-      screen: ScreenName.SendCollection,
-      params: {
-        account,
-      },
-    });
+  const goToCollectionSelection = useCallback(
+    () =>
+      navigation.navigate(NavigatorName.SendFunds, {
+        screen: ScreenName.SendCollection,
+        params: {
+          account,
+        },
+      }),
+    [account, navigation],
+  );
 
-  const isNFTDisabled =
-    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+  const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   return (
     <>
       <InfoModal
         isOpened={isOpen}
         onClose={onCloseModal}
-        data={notAvailableModalInfo}
+        data={notAvailableModalInfo(onCloseModal)}
       />
       <TabBarSafeAreaView
         edges={["left", "right", "bottom"]}
@@ -135,12 +114,11 @@ const NftGallery = () => {
           },
         ]}
       >
-        <CollectionsList
+        <FlatList
           data={collectionsSlice}
           contentContainerStyle={styles.collectionsList}
           renderItem={renderItem}
           onEndReached={onEndReached}
-          onScroll={onScroll}
           maxToRenderPerBatch={1}
           initialNumToRender={1}
           showsVerticalScrollIndicator={false}

@@ -21,8 +21,7 @@ const args = [
     name: "file",
     alias: "f",
     type: String,
-    desc:
-      "in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU.",
+    desc: "in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU.",
   },
   {
     name: "verbose",
@@ -55,17 +54,9 @@ const args = [
   },
 ];
 
-const job = ({
-  device,
-  file,
-  record,
-  port,
-  silent,
-  verbose,
-  "disable-auto-skip": noAutoSkip,
-}) =>
-  new Observable((o) => {
-    const unsub = listen((l) => {
+const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip": noAutoSkip }) =>
+  new Observable(o => {
+    const unsub = listen(l => {
       if (verbose) {
         o.next(l.type + ": " + l.message);
       } else if (!silent && l.type === "proxy") {
@@ -105,10 +96,7 @@ const job = ({
           process.exit(0);
         }
 
-        log(
-          "proxy",
-          `${recordStore.queue.length} mocked APDUs will be replayed from ${file}`
-        );
+        log("proxy", `${recordStore.queue.length} mocked APDUs will be replayed from ${file}`);
         Transport = {
           open: () => openTransportReplayer(recordStore),
           create: () => openTransportReplayer(recordStore),
@@ -123,18 +111,18 @@ const job = ({
       .reduce(
         (acc, ifname) =>
           acc.concat(
-            (ifaces[ifname] as any[]).map((iface) => {
+            (ifaces[ifname] as any[]).map(iface => {
               if (iface.family !== "IPv4" || iface.internal !== false) {
                 // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
                 return;
               }
 
               return iface.address;
-            })
+            }),
           ),
-        [] as any[]
+        [] as any[],
       )
-      .filter((a) => a);
+      .filter(a => a);
     const PORT = port || "8435";
     const app = express();
     const server = http.createServer(app);
@@ -220,7 +208,7 @@ const job = ({
     });
     let wsIndex = 0;
     let wsBusyIndex = 0;
-    wss.on("connection", (ws) => {
+    wss.on("connection", ws => {
       const index = ++wsIndex;
 
       try {
@@ -235,8 +223,8 @@ const job = ({
           if (wsBusyIndex === index) {
             log("proxy", `WS(${index}): close`);
             await transportP.then(
-              (t) => t.close(),
-              () => {}
+              t => t.close(),
+              () => {},
             );
             wsBusyIndex = 0;
           }
@@ -253,14 +241,14 @@ const job = ({
         ws.on("close", onClose);
         ws.on("message", async (data, isBinary) => {
           if (destroyed) return;
-          
+
           const apduHex = isBinary ? data : data.toString();
           if (apduHex === "open") {
             if (wsBusyIndex) {
               ws.send(
                 JSON.stringify({
                   error: "WebSocket is busy (previous session not closed)",
-                })
+                }),
               );
               ws.close();
               destroyed = true;
@@ -278,14 +266,14 @@ const job = ({
               ws.send(
                 JSON.stringify({
                   type: "opened",
-                })
+                }),
               );
             } catch (e) {
               log("proxy", `WS(${index}): open failed! ${e}`);
               ws.send(
                 JSON.stringify({
                   error: (e as Error).message,
-                })
+                }),
               );
               ws.close();
             }
@@ -304,16 +292,14 @@ const job = ({
           }
 
           try {
-            const res = await transport.exchange(
-              Buffer.from(apduHex as string, "hex")
-            );
+            const res = await transport.exchange(Buffer.from(apduHex as string, "hex"));
             log("proxy", `WS(${index}): ${apduHex} => ${res.toString("hex")}`);
             if (destroyed) return;
             ws.send(
               JSON.stringify({
                 type: "response",
                 data: res.toString("hex"),
-              })
+              }),
             );
           } catch (e) {
             log("proxy", `WS(${index}): ${apduHex} =>`, e);
@@ -322,7 +308,7 @@ const job = ({
               JSON.stringify({
                 type: "error",
                 error: (e as Error).message,
-              })
+              }),
             );
 
             if ((e as Error).name === "RecordStoreWrongAPDU") {
@@ -336,8 +322,8 @@ const job = ({
       }
     });
     ["localhost", ...ips]
-      .map((ip) => `ws://${ip}:${PORT}`)
-      .forEach((ip) => {
+      .map(ip => `ws://${ip}:${PORT}`)
+      .forEach(ip => {
         log("proxy", "DEVICE_PROXY_URL=" + ip);
       });
     server.listen(PORT, () => {

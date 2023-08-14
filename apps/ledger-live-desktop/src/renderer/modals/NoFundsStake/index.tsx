@@ -5,19 +5,20 @@ import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { Account, AccountLike } from "~/../../../libs/ledgerjs/packages/types-live/lib";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
-import { page, track } from "~/renderer/analytics/segment";
+import { trackPage, track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface NoFundsStakeModalProps {
-  account: AccountLike;
-  parentAccount?: Account;
+  account: AccountLike | undefined | null;
+  parentAccount?: Account | undefined | null;
 }
 
 const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) => {
@@ -28,7 +29,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
   const rampCatalog = useRampCatalog();
   const { providers, storedProviders } = useProviders();
 
-  const onRampAvailableTickers = useMemo(() => {
+  const onRampAvailableTickers: string[] = useMemo(() => {
     if (!rampCatalog.value) {
       return [];
     }
@@ -37,13 +38,13 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
 
   const swapAvailableIds = useMemo(() => {
     return providers || storedProviders
-      ? (providers || storedProviders)
+      ? (providers || storedProviders)!
           .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
           .flat(2)
       : [];
   }, [providers, storedProviders]);
 
-  const currency = parentAccount?.currency || account.currency;
+  const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
   const availableOnSwap = useMemo(() => {
     return currency && swapAvailableIds.includes(currency.id);
@@ -107,16 +108,34 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
   }, [dispatch]);
 
   useEffect(() => {
-    page("Stake", "Service_modal", {
+    trackPage("Stake", "Service_modal", {
       source: history.location.pathname,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const actionsMap: Record<"buy" | "swap" | "receive", boolean> = {
+    buy: availableOnBuy,
+    swap: availableOnSwap,
+    receive: availableOnReceive,
+  };
+
+  /** Capitalise first word for i18n list formatter to produce title e.g. "Buy or swap" */
+  const availableActionsFormatted = Object.keys(actionsMap)
+    .filter(action => actionsMap[action as keyof typeof actionsMap])
+    .map(action => t(`stake.noFundsModal.options.${action}.title`).toLowerCase())
+    .map((action, i) =>
+      i === 0 ? `${action.substring(0, 1).toUpperCase()}${action.slice(1)}` : action,
+    );
+
   return (
     <Modal name={modalName} centered>
       <ModalBody
-        title={t("stake.noFundsModal.title")}
+        title={t("stake.noFundsModal.title", {
+          actions: availableActionsFormatted,
+          style: "long",
+          type: "disjunction",
+        })}
         onClose={onClose}
         render={() => (
           <Box paddingX={20}>

@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import {
@@ -8,8 +7,11 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { useTranslation, Trans } from "react-i18next";
-import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
-import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { Account, AccountLike, FeeStrategy, TransactionCommonRaw } from "@ledgerhq/types-live";
+import {
+  Transaction as EthereumTransaction,
+  TransactionRaw as EthereumTransactionRaw,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -18,6 +20,8 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Clock from "~/renderer/icons/Clock";
+import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
+import { getEnv } from "@ledgerhq/live-env";
 
 type OnClickType = {
   amount: BigNumber;
@@ -33,6 +37,7 @@ type Props = {
   strategies: FeeStrategy[];
   mapStrategies?: (arg: FeeStrategy) => FeeStrategy;
   suffixPerByte?: boolean;
+  transactionRaw?: TransactionCommonRaw;
 };
 
 const FeesWrapper = styled(Tabbable)`
@@ -56,7 +61,7 @@ const FeesWrapper = styled(Tabbable)`
   }
 `;
 
-const FeesHeader = styled(Box)`
+const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
   color: ${p =>
     p.selected
       ? p.theme.colors.palette.primary.main
@@ -71,7 +76,7 @@ const FeesValue = styled(Box)`
   text-align: center;
 `;
 
-const ApproximateTransactionTime = styled(Box)`
+const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
   flex-direction: row;
   align-items: center;
   border-radius: 3px;
@@ -88,19 +93,58 @@ const SelectFeeStrategy = ({
   strategies,
   mapStrategies,
   suffixPerByte,
+  transactionRaw,
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const accountUnit = getAccountUnit(mainAccount);
   const feesCurrency = getAccountCurrency(mainAccount);
   const { t } = useTranslation();
   strategies = mapStrategies ? strategies.map(mapStrategies) : strategies;
+  if (transactionRaw) {
+    // disable low transaction fee options in case of edit transaction modal
+    const ethTransactionRaw = transactionRaw as EthereumTransactionRaw;
+    if (EIP1559ShouldBeUsed(mainAccount.currency)) {
+      const oldMaxPriorityFeePerGas = ethTransactionRaw.maxPriorityFeePerGas;
+      const oldMaxFeePerGas = ethTransactionRaw.maxFeePerGas;
+      const feesGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
+      strategies.forEach(strategy => {
+        const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
+        const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
+        if (
+          oldMaxPriorityFeePerGas &&
+          strategyMaxPriorityFeePerGas &&
+          oldMaxFeePerGas &&
+          strategyMaxFeePerGas
+        ) {
+          // MaxPriorityFee should be at least 10% higher than the old one
+          // MaxFee should be at least old MaxFee + 10% of old MaxPriorityFee
+          strategy.disabled =
+            strategy.disabled ||
+            strategyMaxPriorityFeePerGas.isLessThan(
+              BigNumber(oldMaxPriorityFeePerGas).times(1 + feesGap),
+            ) ||
+            strategyMaxFeePerGas.isLessThan(BigNumber(oldMaxFeePerGas).times(1 + feesGap));
+        }
+      });
+    } else {
+      const gaspriceGap: number = getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR");
+      const oldGasPrice = ethTransactionRaw.gasPrice;
+      if (oldGasPrice) {
+        strategies.forEach(strategy => {
+          strategy.disabled =
+            strategy.disabled ||
+            strategy.amount.isLessThan(BigNumber(oldGasPrice).times(1 + gaspriceGap));
+        });
+      }
+    }
+  }
 
   return (
     <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
       {strategies.map(strategy => {
-        const selected = transaction.feesStrategy === strategy.label;
         const amount = strategy.displayedAmount || strategy.amount;
         const { label, disabled } = strategy;
+        const selected = transaction.feesStrategy === strategy.label && !disabled;
         return (
           <FeesWrapper
             key={strategy.label}

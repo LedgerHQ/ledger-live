@@ -1,11 +1,9 @@
 import React, { useMemo, useState, useCallback, useRef } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -32,13 +30,11 @@ import Header from "./Header";
 import { track, TrackScreen } from "../../analytics";
 import { FabAssetActions } from "../../components/FabActions/actionsList/asset";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
+import { ReferralProgram } from "./referralProgram";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -49,6 +45,7 @@ type NavigationProps = BaseComposite<
 >;
 
 const AssetScreen = ({ route }: NavigationProps) => {
+  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -58,8 +55,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
     isEqual,
   );
 
-  const defaultAccount =
-    cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
+  const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
   const cryptoAccountsEmpty = useMemo(
     () => cryptoAccounts.every(account => isAccountEmpty(account)),
@@ -81,8 +77,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, []);
 
   const currencyBalance = useMemo(
-    () =>
-      cryptoAccounts.reduce((acc, val) => acc.plus(val.balance), BigNumber(0)),
+    () => cryptoAccounts.reduce((acc, val) => acc.plus(val.balance), BigNumber(0)),
     [cryptoAccounts],
   );
 
@@ -107,7 +102,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   const data = useMemo(
     () => [
-      <Box mt={6} onLayout={onGraphCardLayout}>
+      <Box mt={6} onLayout={onGraphCardLayout} key="AssetGraph">
         <AssetGraph
           accounts={cryptoAccounts}
           currency={currency}
@@ -117,11 +112,13 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty={cryptoAccountsEmpty}
         />
       </Box>,
-      <SectionContainer px={6} isFirst>
-        <SectionTitle
-          title={t("account.quickActions")}
-          containerProps={{ mb: 6 }}
-        />
+      featureReferralProgramMobile?.enabled &&
+      featureReferralProgramMobile?.params?.path &&
+      currency.ticker === "BTC" ? (
+        <ReferralProgram key="ReferralProgram" />
+      ) : null,
+      <SectionContainer px={6} isFirst key="AssetDynamicContent">
+        <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
           currency={currency}
           accounts={cryptoAccounts}
@@ -134,7 +131,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           </Flex>
         ) : null}
       </SectionContainer>,
-      <SectionContainer px={6}>
+      <SectionContainer px={6} key="AccountsSection">
         <SectionTitle
           title={t("asset.accountsSection.title", {
             currencyName: currency.ticker,
@@ -148,7 +145,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currencyTicker={currency.ticker}
         />
       </SectionContainer>,
-      <AssetMarketSection currency={currency} />,
+      <AssetMarketSection currency={currency} key="AssetMarketSection" />,
       cryptoAccountsEmpty ? null : (
         <SectionContainer px={6}>
           <SectionTitle title={t("analytics.operations.title")} />
@@ -167,6 +164,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
       cryptoAccounts,
       defaultAccount,
       onAddAccount,
+      featureReferralProgramMobile?.enabled,
+      featureReferralProgramMobile?.params?.path,
     ],
   );
 
@@ -183,9 +182,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           style={{ flex: 1, paddingTop: 48 }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) =>
-            item as JSX.Element
-          }
+          renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}

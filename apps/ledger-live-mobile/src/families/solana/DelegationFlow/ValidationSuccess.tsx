@@ -1,10 +1,11 @@
 import { useTheme } from "@react-navigation/native";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import invariant from "invariant";
-import { TrackScreen } from "../../../analytics";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { TrackScreen, track } from "../../../analytics";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
 import { ScreenName } from "../../../const";
@@ -16,23 +17,37 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { SolanaDelegationFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { getTrackingDelegationType } from "../../helpers";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    SolanaDelegationFlowParamList,
-    ScreenName.DelegationValidationSuccess
-  >
+  StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
+  const validator = route.params.validatorName ?? "unknown";
+  const source = route.params.source?.name ?? "unknown";
+  const delegation = getTrackingDelegationType({
+    type: route.params.result.type,
+  });
+  const { ticker } = getAccountCurrency(account);
+
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
+
+  useEffect(() => {
+    if (delegation)
+      track("staking_completed", {
+        currency: ticker,
+        validator,
+        source,
+        delegation,
+        flow: "stake",
+      });
+  }, [source, validator, delegation, ticker]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -51,15 +66,19 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="SendFunds" name="ValidationSuccess" />
+      <TrackScreen
+        category="SendFunds"
+        name="ValidationSuccess"
+        flow="stake"
+        action="delegation"
+        currency="sol"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
         title={<Trans i18nKey={"solana.delegation.broadcastSuccessTitle"} />}
-        description={
-          <Trans i18nKey={"solana.delegation.broadcastSuccessDescription"} />
-        }
+        description={<Trans i18nKey={"solana.delegation.broadcastSuccessDescription"} />}
       />
     </View>
   );

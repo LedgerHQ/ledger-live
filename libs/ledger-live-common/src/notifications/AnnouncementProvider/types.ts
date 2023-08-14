@@ -55,7 +55,7 @@ export type AnnouncementsUserSettings = {
   language: string;
   currencies: string[];
   getDate: () => Date;
-  lastSeenDevice?: DeviceModelInfo;
+  lastSeenDevice?: DeviceModelInfo | null;
   platform?: string;
   appVersion?: string;
 };

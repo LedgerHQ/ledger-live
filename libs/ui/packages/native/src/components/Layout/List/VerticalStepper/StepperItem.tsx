@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Pressable } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
-import { CheckAloneMedium } from "@ledgerhq/icons-ui/native";
+import { CheckAloneMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 
 import { Item, ItemStatus } from "../types";
 import Flex from "../../Flex";
@@ -14,7 +14,7 @@ export type Props = {
   progress?: number;
   nested?: boolean;
   isLastItem?: boolean;
-  setActiveIndex?: (_: number) => void;
+  onTapIndex?: (_: number) => void;
   index: number;
 };
 
@@ -30,7 +30,7 @@ export default function StepperItem({
   progress,
   nested,
   isLastItem,
-  setActiveIndex,
+  onTapIndex,
   index,
 }: Props) {
   /**
@@ -61,8 +61,8 @@ export default function StepperItem({
   );
 
   const handlePress = useCallback(() => {
-    setActiveIndex && setActiveIndex(index);
-  }, [setActiveIndex, index]);
+    onTapIndex && onTapIndex(index);
+  }, [onTapIndex, index]);
 
   return (
     <Pressable onPress={handlePress}>
@@ -75,7 +75,7 @@ export default function StepperItem({
             justifyContent={nested ? "space-between" : "flex-start"}
           >
             <Flex width="28px" alignItems="center">
-              {item.status === "completed" && <CheckAloneMedium size={20} color="success.c100" />}
+              {item.status === "completed" && <CheckAloneMedium size={20} color="success.c50" />}
               {item.status === "active" && (
                 <ProgressLoader
                   progress={progress}

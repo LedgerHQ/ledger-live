@@ -26,20 +26,13 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - name: merge develop
         run: |
           git merge origin/develop -X theirs
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-          registry-url: "https://registry.npmjs.org"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version:
@@ -54,7 +47,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs
         run: pnpm run build:libs
       - name: versioning
@@ -64,7 +57,7 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m ":rocket: nightly release"
+          git commit -m "chore(nightly): :rocket: nightly release"
       - name: publish nightly
         run: pnpm changeset publish
         env:

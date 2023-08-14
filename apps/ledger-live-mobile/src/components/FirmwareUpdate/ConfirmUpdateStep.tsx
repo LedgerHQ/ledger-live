@@ -50,11 +50,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
             mt={4}
           >
             {manager
-              .formatHashName(
-                latestFirmware.osu.hash,
-                device.modelId,
-                deviceInfo,
-              )
+              .formatHashName(latestFirmware.osu.hash, device.modelId, deviceInfo)
               .map((hash, i) => (
                 <Text key={`${i}-${hash}`}>{hash}</Text>
               ))}

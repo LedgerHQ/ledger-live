@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import Touchable from "../../components/Touchable";
 import AccountOrderModal from "./AccountOrderModal";
 import { useRefreshAccountsOrderingEffect } from "../../actions/general";
@@ -19,7 +19,7 @@ export default function AccountOrder() {
 
   return (
     <Touchable event="AccountOrderOpen" onPress={onPress}>
-      <Icons.Sort2AltMedium size={24} />
+      <IconsLegacy.Sort2AltMedium size={24} />
       <AccountOrderModal isOpened={isOpened} onClose={onClose} />
     </Touchable>
   );

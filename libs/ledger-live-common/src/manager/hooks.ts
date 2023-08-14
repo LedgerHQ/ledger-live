@@ -3,22 +3,12 @@ import semver from "semver";
 import { useEnv } from "../env.react";
 import manager from ".";
 import { getProviderId } from "./provider";
-import ManagerAPI from "../api/Manager";
-import type {
-  DeviceModelInfo,
-  DeviceInfo,
-  Language,
-} from "@ledgerhq/types-live";
+import ManagerAPI from "./api";
+import type { DeviceModelInfo, DeviceInfo, Language } from "@ledgerhq/types-live";
 
-async function hasOudatedApps({
-  deviceInfo,
-  apps,
-}: DeviceModelInfo): Promise<boolean> {
+async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<boolean> {
   const provider = getProviderId(deviceInfo);
-  const deviceVersion = await ManagerAPI.getDeviceVersion(
-    deviceInfo.targetId,
-    provider
-  );
+  const deviceVersion = await ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
   const firmware = await ManagerAPI.getCurrentFirmware({
     deviceId: deviceVersion.id,
     version: deviceInfo.version,
@@ -29,15 +19,13 @@ async function hasOudatedApps({
     current_se_firmware_final_version: firmware.id,
     device_version: deviceVersion.id,
   });
-  return apps.some((app) => {
-    const currApp = compatibleAppVersionsList.find((e) => e.name === app.name);
+  return apps.some(app => {
+    const currApp = compatibleAppVersionsList.find(e => e.name === app.name);
     return currApp && semver.gt(currApp.version, app.version);
   });
 }
 
-export function useManagerBlueDot(
-  dmi: DeviceModelInfo | null | undefined
-): boolean {
+export function useManagerBlueDot(dmi: DeviceModelInfo | null | undefined): boolean {
   const [display, setDisplay] = useState(!dmi);
   const forceProvider = useEnv("FORCE_PROVIDER");
   useEffect(() => {
@@ -53,10 +41,7 @@ export function useManagerBlueDot(
     }
 
     const { deviceInfo } = dmi;
-    Promise.all([
-      manager.getLatestFirmwareForDevice(deviceInfo),
-      hasOudatedApps(dmi),
-    ])
+    Promise.all([manager.getLatestFirmwareForDevice(deviceInfo), hasOudatedApps(dmi)])
       .then(([fw, outdatedApp]) => {
         if (cancelled) return;
 
@@ -67,7 +52,7 @@ export function useManagerBlueDot(
 
         setDisplay(Boolean(fw || outdatedApp));
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         setDisplay(false);
       });
@@ -77,7 +62,7 @@ export function useManagerBlueDot(
 }
 
 export const useAvailableLanguagesForDevice = (
-  deviceInfo?: DeviceInfo
+  deviceInfo?: DeviceInfo,
 ): { availableLanguages: Language[]; loaded: boolean } => {
   const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
   const [loaded, setLoaded] = useState(false);

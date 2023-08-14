@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
-import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Carousel, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -49,13 +49,7 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
           lightSource={images.light[index]}
         />
       </Flex>
-      <Text
-        variant="h2"
-        mb={3}
-        textAlign="center"
-        color="constant.black"
-        lineHeight="34.8px"
-      >
+      <Text variant="h2" mb={3} textAlign="center" color="constant.black" lineHeight="34.8px">
         {t(`onboarding.stepNewDevice.${index}.title`)}
       </Text>
       <Text textAlign="center" variant="bodyLineHeight" color="constant.black">
@@ -90,11 +84,7 @@ const Footer = ({ index }: { index: number }) => {
   if (!Component) return null;
 
   return (
-    <Animatable.View
-      style={styles.animatable}
-      animation="fadeIn"
-      useNativeDriver
-    >
+    <Animatable.View style={styles.animatable} animation="fadeIn" useNativeDriver>
       <Component label={t(`onboarding.stepNewDevice.cta`)} />
     </Animatable.View>
   );
@@ -118,9 +108,7 @@ function OnboardingStepNewDevice() {
         height={48}
       >
         <Button
-          Icon={() => (
-            <Icons.ArrowLeftMedium color="constant.black" size={24} />
-          )}
+          Icon={() => <IconsLegacy.ArrowLeftMedium color="constant.black" size={24} />}
           onPress={handleBack}
           style={styles.backArrow}
         />
@@ -135,12 +123,7 @@ function OnboardingStepNewDevice() {
           ))}
         </Carousel>
 
-        <Flex
-          minHeight="60px"
-          width="100%"
-          justifyContent="center"
-          alignItems="center"
-        >
+        <Flex minHeight="60px" width="100%" justifyContent="center" alignItems="center">
           <Footer index={currentIndex} />
         </Flex>
       </ForceTheme>

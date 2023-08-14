@@ -24,8 +24,7 @@ export default function BiometricsRow({ iconLeft }: Props) {
   );
 
   const biometricsType =
-    t(`auth.enableBiometrics.${privacy?.biometricsType?.toLowerCase()}`) ??
-    privacy?.biometricsType;
+    t(`auth.enableBiometrics.${privacy?.biometricsType?.toLowerCase()}`) ?? privacy?.biometricsType;
 
   const onValueChange = useCallback(
     async (biometricsEnabled: boolean) => {
@@ -45,10 +44,7 @@ export default function BiometricsRow({ iconLeft }: Props) {
     error => {
       setValidationPending(false);
       setBiometricsEnabled((val: boolean) => !val);
-      Alert.alert(
-        t("auth.failed.title"),
-        `${t("auth.failed.denied")}\n${String(error || "")}`,
-      );
+      Alert.alert(t("auth.failed.title"), `${t("auth.failed.denied")}\n${String(error || "")}`);
     },
     [t],
   );

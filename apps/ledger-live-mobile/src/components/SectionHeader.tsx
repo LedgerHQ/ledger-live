@@ -2,22 +2,20 @@ import React from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { isEqual } from "lodash";
-import FormatDay from "./FormatDay";
+import FormatDay from "./DateFormat/FormatDay";
 
 type Props = {
   day: Date;
   withoutMarginBottom?: boolean;
 };
 
-const Container = styled(Flex).attrs(
-  (p: { withoutMarginBottom?: boolean }) => ({
-    backgroundColor: "neutral.c30",
-    padding: 5,
-    borderRadius: 2,
-    marginTop: 7,
-    marginBottom: !p.withoutMarginBottom && 3,
-  }),
-)<{ withoutMarginBottom?: boolean }>``;
+const Container = styled(Flex).attrs((p: { withoutMarginBottom?: boolean }) => ({
+  backgroundColor: "neutral.c30",
+  padding: 5,
+  borderRadius: 2,
+  marginTop: 7,
+  marginBottom: !p.withoutMarginBottom && 3,
+}))<{ withoutMarginBottom?: boolean }>``;
 
 function SectionHeader({ day, withoutMarginBottom = false }: Props) {
   return (

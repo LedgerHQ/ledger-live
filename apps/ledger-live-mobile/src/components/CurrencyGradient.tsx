@@ -1,12 +1,5 @@
 import * as React from "react";
-import Svg, {
-  Path,
-  Defs,
-  LinearGradient,
-  Stop,
-  Mask,
-  G,
-} from "react-native-svg";
+import Svg, { Path, Defs, LinearGradient, Stop, Mask, G } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import { ensureContrast } from "../colors";
 
@@ -17,10 +10,10 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
     <Svg width={541} height={454} viewBox="0 0 541 454" fill="none">
       <Mask
         id="a"
+        // @ts-expect-error maskType is not in the type definition
         style={{
           maskType: "alpha",
         }}
-        // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
         maskUnits={"userSpaceOnUse" as const}
         x={0}
         y={0}
@@ -31,11 +24,7 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
       </Mask>
       <G mask="url(#a)">
         <Path fill={colors.background.main} d="M0 0H541V454H0z" />
-        <Path
-          fill="url(#paint0_linear_22_3)"
-          fillOpacity={0.3}
-          d="M0 0H541V450.077H0z"
-        />
+        <Path fill="url(#paint0_linear_22_3)" fillOpacity={0.3} d="M0 0H541V450.077H0z" />
         <Path fill="url(#paint1_linear_22_3)" d="M0 0H541V450.077H0z" />
       </G>
       <Defs>

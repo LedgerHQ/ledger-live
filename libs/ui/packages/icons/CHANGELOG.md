@@ -1,5 +1,71 @@
 # @ledgerhq/icons-ui
 
+## 0.4.3
+
+### Patch Changes
+
+- [#4259](https://github.com/LedgerHQ/ledger-live/pull/4259) [`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - publish ui libraries with fixed tests
+
+## 0.4.2
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#4124](https://github.com/LedgerHQ/ledger-live/pull/4124) [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed color issue on new icon pack (Theme colors not working)
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#4124](https://github.com/LedgerHQ/ledger-live/pull/4124) [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed color issue on new icon pack (Theme colors not working)
+
+## 0.4.1
+
+### Patch Changes
+
+- [#3707](https://github.com/LedgerHQ/ledger-live/pull/3707) [`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update some icons to fit better the bounding box
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- [#3707](https://github.com/LedgerHQ/ledger-live/pull/3707) [`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Update some icons to fit better the bounding box
+
+## 0.4.0
+
+### Minor Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+### Patch Changes
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade dependencies
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+### Patch Changes
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade dependencies
+
+## 0.3.5
+
+### Patch Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
+## 0.3.5-next.0
+
+### Patch Changes
+
+- [#2728](https://github.com/LedgerHQ/ledger-live/pull/2728) [`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed Country Flags icons. Those are no longer included within ReactUI and IconUI
+
 ## 0.3.4
 
 ### Patch Changes

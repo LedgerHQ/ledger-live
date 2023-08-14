@@ -4,10 +4,7 @@ import { celoKit } from "./api/sdk";
 import { BigNumber } from "bignumber.js";
 import { getPendingStakingOperationAmounts, getVote } from "./logic";
 
-const buildTransaction = async (
-  account: CeloAccount,
-  transaction: Transaction
-) => {
+const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
 
   const value = transactionValue(account, transaction);
@@ -50,10 +47,7 @@ const buildTransaction = async (
     };
   } else if (transaction.mode === "vote") {
     const election = await kit.contracts.getElection();
-    const vote = await election.vote(
-      transaction.recipient,
-      new BigNumber(value)
-    );
+    const vote = await election.vote(transaction.recipient, new BigNumber(value));
 
     celoTransaction = {
       from: account.freshAddress,
@@ -64,17 +58,15 @@ const buildTransaction = async (
   } else if (transaction.mode === "revoke") {
     const election = await kit.contracts.getElection();
     const accounts = await kit.contracts.getAccounts();
-    const voteSignerAccount = await accounts.voteSignerToAccount(
-      account.freshAddress
-    );
+    const voteSignerAccount = await accounts.voteSignerToAccount(account.freshAddress);
 
     const revokes = await election.revoke(
       voteSignerAccount,
       transaction.recipient,
-      new BigNumber(value)
+      new BigNumber(value),
     );
 
-    const revoke = revokes.find((transactionObject) => {
+    const revoke = revokes.find(transactionObject => {
       return (
         (transactionObject.txo as any)._method.name ===
         (transaction.index === 0 ? "revokePending" : "revokeActive")
@@ -91,14 +83,10 @@ const buildTransaction = async (
   } else if (transaction.mode === "activate") {
     const election = await kit.contracts.getElection();
     const accounts = await kit.contracts.getAccounts();
-    const voteSignerAccount = await accounts.voteSignerToAccount(
-      account.freshAddress
-    );
+    const voteSignerAccount = await accounts.voteSignerToAccount(account.freshAddress);
 
     const activates = await election.activate(voteSignerAccount);
-    const activate = activates.find(
-      (a) => a.txo.arguments[0] === transaction.recipient
-    );
+    const activate = activates.find(a => a.txo.arguments[0] === transaction.recipient);
     if (!activate) throw new Error("No votes to activate");
 
     celoTransaction = {
@@ -115,9 +103,7 @@ const buildTransaction = async (
       from: account.freshAddress,
       to: accounts.address,
       data: accounts.createAccount().txo.encodeABI(),
-      gas: await accounts
-        .createAccount()
-        .txo.estimateGas({ from: account.freshAddress }),
+      gas: await accounts.createAccount().txo.estimateGas({ from: account.freshAddress }),
     };
   } else {
     // Send
@@ -125,14 +111,10 @@ const buildTransaction = async (
     celoTransaction = {
       from: account.freshAddress,
       to: celoToken.address,
-      data: celoToken
-        .transfer(transaction.recipient, value.toFixed())
-        .txo.encodeABI(),
+      data: celoToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
     };
 
-    const gas = await kit.connection.estimateGasWithInflationFactor(
-      celoTransaction
-    );
+    const gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
 
     celoTransaction = {
       ...celoTransaction,
@@ -149,28 +131,17 @@ const buildTransaction = async (
   return tx;
 };
 
-const transactionValue = (
-  account: CeloAccount,
-  transaction: Transaction
-): BigNumber => {
+const transactionValue = (account: CeloAccount, transaction: Transaction): BigNumber => {
   let value = transaction.amount;
 
   if (transaction.useAllAmount) {
-    if (
-      (transaction.mode === "unlock" || transaction.mode === "vote") &&
-      account.celoResources
-    ) {
+    if ((transaction.mode === "unlock" || transaction.mode === "vote") && account.celoResources) {
       // Deduct the amount of pending vote transactions from
       // the total non-voting locked balance to get the true non-voting locked balance.
-      const pendingOperationAmounts =
-        getPendingStakingOperationAmounts(account);
+      const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
       const pendingOperationAmount =
-        transaction.mode === "vote"
-          ? pendingOperationAmounts.vote
-          : new BigNumber(0);
-      value = account.celoResources.nonvotingLockedBalance.minus(
-        pendingOperationAmount
-      );
+        transaction.mode === "vote" ? pendingOperationAmounts.vote : new BigNumber(0);
+      value = account.celoResources.nonvotingLockedBalance.minus(pendingOperationAmount);
     } else if (transaction.mode === "revoke" && account.celoResources) {
       const revoke = getVote(account, transaction.recipient, transaction.index);
       if (revoke?.amount) value = revoke.amount;

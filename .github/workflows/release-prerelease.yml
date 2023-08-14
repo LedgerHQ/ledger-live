@@ -9,6 +9,12 @@ on:
       ref:
         description: the branch to prerelease from
         required: true
+      recover:
+        description: Recover Beta release track
+        required: false
+        type: boolean
+        default: false
+
 jobs:
   prerelease:
     name: Prerelease
@@ -34,30 +40,10 @@ jobs:
 
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-          registry-url: "https://registry.npmjs.org"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version:
-      #       3.1.2 # Not needed with a .ruby-version file
-      #       # runs 'bundle install' and caches installed gems automatically
-      # - name: Cache LLM pods
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       apps/ledger-live-mobile/ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
@@ -67,7 +53,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs
         run: pnpm run build:libs
       - name: versioning
@@ -89,7 +75,7 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          git commit -m "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
@@ -98,13 +84,13 @@ jobs:
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
         run: |
           git add . &&
-          git commit -m ":fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          git commit -m "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
           echo ""
       - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git add .
-          git commit -m ":rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
+          git commit -m "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
       - name: publish prerelease
         run: pnpm changeset publish
@@ -153,7 +139,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "pre-mobile.yml",
+              workflow_id: "${{ inputs.recover && 'pre-mobile-recover.yml' || 'pre-mobile.yml' }}",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }

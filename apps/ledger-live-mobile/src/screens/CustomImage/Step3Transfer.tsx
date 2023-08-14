@@ -9,6 +9,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import {
   completeCustomImageFlow,
+  setCustomImageType,
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
@@ -16,24 +17,30 @@ import { ScreenName } from "../../const";
 import CustomImageDeviceAction from "../../components/CustomImageDeviceAction";
 import TestImage from "../../components/CustomImage/TestImage";
 import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import {
   BaseComposite,
+  ReactNavigationHeaderOptions,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import { addKnownDevice } from "../../actions/ble";
 import { lastConnectedDeviceSelector } from "../../reducers/settings";
+import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
 
 const deviceModelIds = [DeviceModelId.stax];
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    CustomImageNavigatorParamList,
-    ScreenName.CustomImageStep3Transfer
-  >
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep3Transfer>
 >;
+
+export const step3TransferHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: true,
+  title: "",
+  headerRight: undefined,
+  headerLeft: () => <NavigationHeaderBackButton />,
+};
 
 /**
  * UI component that reconstructs an image from the raw hex data received as a
@@ -50,7 +57,7 @@ type NavigationProps = BaseComposite<
  */
 const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const dispatch = useDispatch();
-  const { rawData, device: deviceFromRoute, previewData } = route.params;
+  const { rawData, device: deviceFromRoute, previewData, imageType } = route.params;
 
   const [device, setDevice] = useState<Device | null>(deviceFromRoute);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
@@ -96,8 +103,29 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
   const handleResult = useCallback(() => {
     completeAction(PostOnboardingActionId.customImage);
     dispatch(completeCustomImageFlow());
+    dispatch(setCustomImageType(imageType));
     handleExit();
-  }, [completeAction, dispatch, handleExit]);
+  }, [completeAction, dispatch, handleExit, imageType]);
+
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerShown: true,
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+        });
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...step3TransferHeaderOptions,
+        });
+      }
+    },
+    [navigation],
+  );
 
   const insets = useSafeAreaInsets();
   const DEBUG = false;
@@ -119,7 +147,14 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
             onSkip={handleExit}
           />
         ) : newDeviceSelectionFeatureFlag?.enabled ? (
-          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+          <Flex flex={1} alignSelf="stretch">
+            <SelectDevice2
+              onSelect={setDevice}
+              filterByDeviceModelId={DeviceModelId.stax}
+              stopBleScanning={!!device}
+              requestToSetHeaderOptions={requestToSetHeaderOptions}
+            />
+          </Flex>
         ) : (
           <Flex flex={1} alignSelf="stretch">
             <SelectDevice

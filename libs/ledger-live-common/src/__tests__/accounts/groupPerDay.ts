@@ -1,6 +1,9 @@
 import flatMap from "lodash/flatMap";
 import { fromAccountRaw, groupAccountOperationsByDay } from "../../account";
 import { TezosAccountRaw } from "../../families/tezos/types";
+import { setSupportedCurrencies } from "../../currencies";
+setSupportedCurrencies(["tezos"]);
+
 const account = fromAccountRaw({
   id: "libcore:1:tezos:A:tezbox",
   seedIdentifier: "B",
@@ -191,12 +194,10 @@ test("pending operation are in order", () => {
     count: 100,
   });
   expect(byDay.completed).toBe(true);
-  const dates = flatMap(byDay.sections, (s) => s.data.map((o) => o.date));
-  const sortedByDates = dates
-    .slice(0)
-    .sort((a, b) => b.valueOf() - a.valueOf());
+  const dates = flatMap(byDay.sections, s => s.data.map(o => o.date));
+  const sortedByDates = dates.slice(0).sort((a, b) => b.valueOf() - a.valueOf());
   expect(dates).toMatchObject(sortedByDates);
-  expect(byDay.sections.map((s) => s.data.map((o) => o.id))).toMatchObject([
+  expect(byDay.sections.map(s => s.data.map(o => o.id))).toMatchObject([
     [
       "libcore:1:tezos:A:tezbox-seven-OUT",
       "libcore:1:tezos:A:tezbox-one-OUT",

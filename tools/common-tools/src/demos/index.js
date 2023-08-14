@@ -4,6 +4,7 @@ import repl from "./repl";
 import ethtxtools from "./eth-tx-tools";
 import sync from "./sync";
 import networkTroubleshoot from "./networkTroubleshooting";
+import domainTLV from "./domainTLV";
 
 export default {
   LogsViewer,
@@ -12,4 +13,5 @@ export default {
   ethtxtools,
   sync,
   networkTroubleshoot,
+  domainTLV
 };

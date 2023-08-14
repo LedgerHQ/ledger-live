@@ -1,10 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks";
 import { usePickDefaultCurrency } from "./usePickDefaultCurrency";
 import { getCryptoCurrencyById } from "../../../currencies";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("usePickDefaultCurrency", () => {
   const setCurrency = jest.fn();
@@ -21,11 +18,7 @@ describe("usePickDefaultCurrency", () => {
     ];
 
     renderHook(() =>
-      usePickDefaultCurrency(
-        currencies,
-        getCryptoCurrencyById("ethereum"),
-        setCurrency
-      )
+      usePickDefaultCurrency(currencies, getCryptoCurrencyById("ethereum"), setCurrency),
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(0);
@@ -38,9 +31,7 @@ describe("usePickDefaultCurrency", () => {
       getCryptoCurrencyById("bsc"),
     ];
 
-    renderHook(() =>
-      usePickDefaultCurrency(currencies, undefined, setCurrency)
-    );
+    renderHook(() => usePickDefaultCurrency(currencies, undefined, setCurrency));
 
     expect(setCurrency).toHaveBeenCalledTimes(0);
   });
@@ -53,11 +44,7 @@ describe("usePickDefaultCurrency", () => {
     ];
 
     renderHook(() =>
-      usePickDefaultCurrency(
-        currencies,
-        getCryptoCurrencyById("stellar"),
-        setCurrency
-      )
+      usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(0);
@@ -74,11 +61,7 @@ describe("usePickDefaultCurrency", () => {
     ];
 
     renderHook(() =>
-      usePickDefaultCurrency(
-        currencies,
-        getCryptoCurrencyById("stellar"),
-        setCurrency
-      )
+      usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(1);
@@ -96,11 +79,7 @@ describe("usePickDefaultCurrency", () => {
     ];
 
     renderHook(() =>
-      usePickDefaultCurrency(
-        currencies,
-        getCryptoCurrencyById("stellar"),
-        setCurrency
-      )
+      usePickDefaultCurrency(currencies, getCryptoCurrencyById("stellar"), setCurrency),
     );
 
     expect(setCurrency).toHaveBeenCalledTimes(1);
