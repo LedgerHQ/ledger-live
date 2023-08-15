@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.65.2-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb), [`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb)]:
+  - @ledgerhq/types-live@6.38.1-nightly.1
+  - @ledgerhq/live-env@0.4.2-nightly.1
+  - @ledgerhq/live-common@31.4.1-nightly.3
+  - @ledgerhq/coin-evm@0.5.1-nightly.2
+  - @ledgerhq/coin-framework@0.5.1-nightly.2
+  - @ledgerhq/domain-service@1.1.8-nightly.1
+  - @ledgerhq/evm-tools@1.0.4-nightly.1
+  - @ledgerhq/live-network@1.1.5-nightly.1
+
 ## 2.65.2-nightly.3
 
 ### Patch Changes

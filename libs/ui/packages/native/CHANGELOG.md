@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.20.5-nightly.2
+
+### Patch Changes
+
+- [#3928](https://github.com/LedgerHQ/ledger-live/pull/3928) [`5b2247695c`](https://github.com/LedgerHQ/ledger-live/commit/5b2247695c80af26d8c3187df1cb53c95e3317b1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new type of Card in DS
+
 ## 0.20.5-nightly.1
 
 ### Patch Changes

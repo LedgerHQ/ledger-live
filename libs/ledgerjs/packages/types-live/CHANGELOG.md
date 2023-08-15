@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.38.1-nightly.1
+
+### Patch Changes
+
+- [#3928](https://github.com/LedgerHQ/ledger-live/pull/3928) [`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new FF for banners in Deposit flow
+
 ## 6.38.1-nightly.0
 
 ### Patch Changes
