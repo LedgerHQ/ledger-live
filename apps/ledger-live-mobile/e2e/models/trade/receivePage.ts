@@ -7,6 +7,7 @@ export default class ReceivePage {
   getStep2HeaderTitle = () => getElementById("receive-header-step2-title");
   getStep3HeaderTitle = () => getElementById("receive-header-step3-title");
   getStep2Accounts = () => getElementById("receive-header-step2-accounts");
+  getStep2Networks = () => getElementById("receive-header-step2-networks");
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);

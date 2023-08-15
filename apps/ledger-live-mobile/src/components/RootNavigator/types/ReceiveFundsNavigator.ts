@@ -1,4 +1,9 @@
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  CryptoOrTokenCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { AccountLike } from "@ledgerhq/types-live";
 import type { ScreenName } from "../../../const";
@@ -8,6 +13,15 @@ export type ReceiveFundsStackParamList = {
     | {
         filterCurrencyIds?: string[];
         currency?: string;
+      }
+    | undefined;
+  [ScreenName.DepositSelectNetwork]:
+    | {
+        filterCurrencyIds?: string[];
+        provider: {
+          currenciesByNetwork: CryptoOrTokenCurrency[];
+          providerId: string;
+        };
       }
     | undefined;
   [ScreenName.ReceiveSelectAccount]: {

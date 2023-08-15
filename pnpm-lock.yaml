@@ -968,6 +968,9 @@ importers:
       react-native-gesture-handler:
         specifier: ^2.9.0
         version: 2.9.0(react-native@0.71.6)(react@18.0.0)
+      react-native-haptic-feedback:
+        specifier: ^2.0.3
+        version: 2.0.3(react-native@0.71.6)
       react-native-image-crop-tools:
         specifier: ^1.6.4
         version: 1.6.4(patch_hash=p6wzwon3gzjcspjalwhmuroog4)(react-native@0.71.6)(react@18.0.0)
@@ -4693,8 +4696,8 @@ importers:
         specifier: ~0.19.0
         version: 0.19.0(react-dom@18.0.0)(react@18.0.0)
       regenerator-runtime:
-        specifier: ^0.13.9
-        version: 0.13.9
+        specifier: ^0.14.0
+        version: 0.14.0
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -20140,7 +20143,7 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       react-inspector: 5.1.1(react@17.0.2)
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       telejson: 5.3.3
       ts-dedent: 2.2.0
       util-deprecate: 1.0.2
@@ -20522,7 +20525,7 @@ packages:
       core-js: 3.22.5
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       ts-dedent: 2.2.0
       webpack: 5.72.1(esbuild@0.18.0)
     transitivePeerDependencies:
@@ -20662,7 +20665,7 @@ packages:
       qs: 6.10.3
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       ts-dedent: 2.2.0
     dev: true
 
@@ -22920,7 +22923,7 @@ packages:
       react-dom: 17.0.2(react@17.0.2)
       react-refresh: 0.11.0
       read-pkg-up: 7.0.1
-      regenerator-runtime: 0.13.9
+      regenerator-runtime: 0.13.11
       ts-dedent: 2.2.0
       typescript: 5.1.3
       webpack: 4.42.1
@@ -53005,6 +53008,14 @@ packages:
   /react-native-gradle-plugin@0.71.17:
     resolution: {integrity: sha512-OXXYgpISEqERwjSlaCiaQY6cTY5CH6j73gdkWpK0hedxtiWMWgH+i5TOi4hIGYitm9kQBeyDu+wim9fA8ROFJA==}
 
+  /react-native-haptic-feedback@2.0.3(react-native@0.71.6):
+    resolution: {integrity: sha512-7+qvcxXZts/hA+HOOIFyM1x9m9fn/TJVSTgXaoQ8uT4gLc97IMvqHQ559tDmnlth+hHMzd3HRMpmRLWoKPL0DA==}
+    peerDependencies:
+      react-native: '>=0.60.0'
+    dependencies:
+      react-native: 0.71.6(@babel/core@7.22.8)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+    dev: false
+
   /react-native-image-crop-tools@1.6.4(patch_hash=p6wzwon3gzjcspjalwhmuroog4)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-GhI76SlKAI7vfUfg/UnG/MrPTe7ffwjsOowBnYYAB2npJ2ij/iAG4LRXOPlQygoY+yiCy158sYo4wmKDc0RfLQ==}
     peerDependencies:
@@ -54528,10 +54539,6 @@ packages:
 
   /regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
-
-  /regenerator-runtime@0.13.9:
-    resolution: {integrity: sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==}
-    dev: true
 
   /regenerator-runtime@0.14.0:
     resolution: {integrity: sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==}

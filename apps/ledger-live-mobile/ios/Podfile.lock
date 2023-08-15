@@ -633,6 +633,8 @@ PODS:
     - React-Core
   - RNLocalize (2.2.1):
     - React-Core
+  - RNReactNativeHapticFeedback (2.0.3):
+    - React-Core
   - RNReanimated (3.1.0):
     - DoubleConversion
     - FBLazyVector
@@ -805,6 +807,7 @@ DEPENDENCIES:
   - "RNInAppBrowser (from `../../../node_modules/.pnpm/react-native-inappbrowser-reborn@3.7.0_react-native@0.71.6/node_modules/react-native-inappbrowser-reborn`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize`)"
+  - "RNReactNativeHapticFeedback (from `../../../node_modules/.pnpm/react-native-haptic-feedback@2.0.3_react-native@0.71.6/node_modules/react-native-haptic-feedback`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.22.8_@babel+plugin-proposal-nullish-coalescing-op_44ribgho3ix26vxje5qgcyn3pa/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.20.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-screens`)"
   - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@5.3.0_react-native@0.71.6_react@18.0.0/node_modules/@sentry/react-native`)"
@@ -1014,6 +1017,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain"
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize"
+  RNReactNativeHapticFeedback:
+    :path: "../../../node_modules/.pnpm/react-native-haptic-feedback@2.0.3_react-native@0.71.6/node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.22.8_@babel+plugin-proposal-nullish-coalescing-op_44ribgho3ix26vxje5qgcyn3pa/node_modules/react-native-reanimated"
   RNScreens:
@@ -1143,6 +1148,7 @@ SPEC CHECKSUMS:
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
+  RNReactNativeHapticFeedback: afa5bf2794aecbb2dba2525329253da0d66656df
   RNReanimated: 3a58a9997837b1e673ee683a81292696c98a0327
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSentry: 8363f1eff1c685a502e15080b5e2f447969897c5
