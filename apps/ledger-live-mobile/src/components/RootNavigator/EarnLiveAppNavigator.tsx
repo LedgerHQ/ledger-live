@@ -20,15 +20,11 @@ const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
 const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>) => {
   // Earn dashboard feature flag
-  // TODO: update to use specific mobile feature flag
   const ptxEarn = useFeature("ptxEarn");
   const paramAction = _props.route.params?.action;
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const accounts = useSelector(accountsSelector);
   const route = useRoute();
-  const [modalOpened, setModalOpened] = useState(false);
-  const openModal = useCallback(() => setModalOpened(true), []);
-  const closeModal = useCallback(() => setModalOpened(false), []);
 
   useEffect(() => {
     if (!ptxEarn?.enabled) {
@@ -87,14 +83,10 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
           }
           break;
         }
-        case "info-modal": {
-          openModal();
-          break;
-        }
       }
     }
     deeplinkRouting();
-  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route, openModal]);
+  }, [paramAction, ptxEarn?.enabled, _props.route.params, accounts, navigation, route]);
 
   return (
     <>
@@ -107,12 +99,7 @@ const Earn = (_props: StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenN
           },
         }}
       />
-      <EarnInfoDrawer
-        modalOpened={modalOpened}
-        closeModal={closeModal}
-        message={_props.route.params?.message || ""}
-        messageTitle={_props.route.params?.messageTitle || ""}
-      />
+      <EarnInfoDrawer />
     </>
   );
 };

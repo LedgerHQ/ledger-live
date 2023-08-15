@@ -7,6 +7,7 @@ import ble from "./ble";
 import ratings from "./ratings";
 import notifications from "./notifications";
 import swap from "./swap";
+import earn from "./earn";
 import dynamicContent from "./dynamicContent";
 import walletconnect from "./walletconnect";
 import protect from "./protect";
@@ -25,6 +26,7 @@ const appReducer = combineReducers({
   dynamicContent,
   notifications,
   swap,
+  earn,
   walletconnect,
   postOnboarding,
   protect,
