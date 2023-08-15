@@ -3,7 +3,9 @@ import { useAPI } from "../useAPI";
 
 describe("useAPI hook", () => {
   it("sets initial state correctly", async () => {
-    const { result } = renderHook(() => useAPI(() => Promise.resolve(), false));
+    const { result } = renderHook(() =>
+      useAPI({ queryFn: () => Promise.resolve(), enabled: false }),
+    );
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeNull();
@@ -11,34 +13,34 @@ describe("useAPI hook", () => {
   });
 
   it("calls execute immediately if immediate is true", async () => {
-    const asyncFn = jest.fn().mockResolvedValue("data");
+    const queryFn = jest.fn().mockResolvedValue("data");
 
-    renderHook(() => useAPI(asyncFn));
+    renderHook(() => useAPI({ queryFn }));
 
-    expect(asyncFn).toHaveBeenCalledTimes(1);
+    expect(queryFn).toHaveBeenCalledTimes(1);
   });
 
   it("does not call execute immediately if immediate is false", async () => {
-    const asyncFn = jest.fn().mockResolvedValue("data");
+    const queryFn = jest.fn().mockResolvedValue("data");
 
-    renderHook(() => useAPI(asyncFn, false));
+    renderHook(() => useAPI({ queryFn, enabled: false }));
 
-    expect(asyncFn).toHaveBeenCalledTimes(0);
+    expect(queryFn).toHaveBeenCalledTimes(0);
   });
 
   it("sets isLoading while function is executing", async () => {
     let resolve: (value: string) => void = () => {};
-    const asyncFn = jest.fn(
+    const queryFn = jest.fn(
       () =>
         new Promise(r => {
           resolve = r;
         }),
     );
 
-    const { result, waitForNextUpdate } = renderHook(() => useAPI(asyncFn));
+    const { result, waitForNextUpdate } = renderHook(() => useAPI({ queryFn }));
 
     act(() => {
-      result.current.execute();
+      result.current.refetch();
     });
 
     expect(result.current.isLoading).toBe(true);
@@ -52,24 +54,24 @@ describe("useAPI hook", () => {
   });
 
   it("sets data when function resolves", async () => {
-    const asyncFn = jest.fn().mockResolvedValue("data");
+    const queryFn = jest.fn().mockResolvedValue("data");
 
-    const { result } = renderHook(() => useAPI(asyncFn));
+    const { result } = renderHook(() => useAPI({ queryFn }));
 
     await act(async () => {
-      result.current.execute();
+      result.current.refetch();
     });
 
     expect(result.current.data).toBe("data");
   });
 
   it("sets error when function throws", async () => {
-    const asyncFn = jest.fn().mockRejectedValue(new Error("error"));
+    const queryFn = jest.fn().mockRejectedValue(new Error("error"));
 
-    const { result } = renderHook(() => useAPI(asyncFn));
+    const { result } = renderHook(() => useAPI({ queryFn }));
 
     await act(async () => {
-      result.current.execute();
+      result.current.refetch();
     });
 
     expect(result.current.error).toBeInstanceOf(Error);

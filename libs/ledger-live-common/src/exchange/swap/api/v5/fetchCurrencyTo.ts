@@ -6,6 +6,7 @@ import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { flattenV5CurrenciesToAndFrom } from "../../utils/flattenV5Currencies";
+import { areAllItemsDefined } from "../../utils/areAllItemsDefined";
 
 type Props = {
   currencyFrom: string;
@@ -25,9 +26,16 @@ export async function fetchCurrencyTo({
   currencyFrom,
   providers,
   additionalCoinsFlag = false,
-}: Props) {
+}: Props): Promise<string[]> {
   if (isIntegrationTestEnv()) {
     return Promise.resolve(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
+  }
+  if (!areAllItemsDefined(currencyFrom)) {
+    return Promise.resolve(
+      flattenV5CurrenciesToAndFrom({
+        currencyGroups: [],
+      }),
+    );
   }
 
   const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/currencies/to`);

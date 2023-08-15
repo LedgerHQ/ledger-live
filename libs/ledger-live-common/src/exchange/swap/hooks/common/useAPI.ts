@@ -1,24 +1,45 @@
 import { useState, useEffect, useCallback } from "react";
 
-type AsyncFn<T> = () => Promise<T>;
+type AsyncFn<T, P = undefined> = P extends undefined ? () => Promise<T> : (props: P) => Promise<T>;
 
 type UseAsyncReturn<T> = {
   data: T | null;
   isLoading: boolean;
   error: Error | null;
-  execute: () => Promise<void>;
+  refetch: () => Promise<void>;
 };
 
-export function useAPI<T>(asyncFunction: AsyncFn<T>, immediate: boolean = true): UseAsyncReturn<T> {
+type ApiOptions = {
+  enabled?: boolean;
+};
+
+type Props<T, P> = ApiOptions & {
+  queryFn: AsyncFn<T, P>;
+  queryProps?: P;
+};
+
+export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
+  queryFn,
+  queryProps = {},
+  enabled = true,
+}: Props<T, P>): UseAsyncReturn<T> {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
+
+  const fn = useCallback(() => {
+    return queryFn({
+      ...queryProps,
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(queryProps)]);
 
   const execute = useCallback(() => {
     setIsLoading(true);
     setData(null);
     setError(null);
-    return asyncFunction()
+    return fn()
       .then((response: T) => {
         setData(response);
         setIsLoading(false);
@@ -27,13 +48,13 @@ export function useAPI<T>(asyncFunction: AsyncFn<T>, immediate: boolean = true):
         setError(error);
         setIsLoading(false);
       });
-  }, [asyncFunction]);
+  }, [fn]);
 
   useEffect(() => {
-    if (immediate) {
+    if (enabled) {
       execute();
     }
-  }, [execute, immediate]);
+  }, [execute, enabled]);
 
-  return { data, isLoading, error, execute };
+  return { data, isLoading, error, refetch: execute };
 }

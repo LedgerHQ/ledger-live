@@ -5,6 +5,7 @@ import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 import { useFetchCurrencyFrom } from "./hooks/v5/useFetchCurrencyFrom";
 import { useFetchCurrencyTo } from "./hooks/v5/useFetchCurrecyTo";
+import { useFetchRates } from "./hooks/v5/useFetchRates";
 
 export type Exchange = {
   fromParentAccount: Account | null | undefined;
@@ -277,4 +278,5 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   fromAmountWarning?: Error;
   toCurrencies: ReturnType<typeof useFetchCurrencyTo>;
   fromCurrencies: ReturnType<typeof useFetchCurrencyFrom>;
+  fetchRatesV5: ReturnType<typeof useFetchRates>;
 };

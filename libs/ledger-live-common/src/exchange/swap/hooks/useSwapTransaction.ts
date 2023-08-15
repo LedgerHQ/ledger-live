@@ -20,6 +20,7 @@ import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/accoun
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { useFetchCurrencyFrom } from "./v5/useFetchCurrencyFrom";
 import { useFetchCurrencyTo } from "./v5/useFetchCurrecyTo";
+import { useFetchRates } from "./v5/useFetchRates";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -165,6 +166,12 @@ export const useSwapTransaction = ({
     timeoutErrorMessage,
   });
 
+  const fetchRatesV5 = useFetchRates({
+    currencyFrom: fromState.currency?.id,
+    currencyTo: toState?.currency?.id,
+    amountFrom: fromState.amount,
+  });
+
   return {
     ...bridgeTransaction,
     swap: {
@@ -195,5 +202,6 @@ export const useSwapTransaction = ({
     reverseSwap,
     fromCurrencies,
     toCurrencies,
+    fetchRatesV5,
   };
 };

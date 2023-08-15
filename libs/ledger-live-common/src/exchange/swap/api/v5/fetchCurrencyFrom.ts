@@ -22,7 +22,7 @@ export async function fetchCurrencyFrom({
   providers,
   currencyTo,
   additionalCoinsFlag = false,
-}: Props) {
+}: Props): Promise<string[]> {
   if (isIntegrationTestEnv()) {
     return Promise.resolve(flattenV5CurrenciesToAndFrom(fetchCurrencyFromMock));
   }

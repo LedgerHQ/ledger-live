@@ -21,7 +21,9 @@ type From = {
 };
 
 export async function fetchCurrencyAll({ providers, additionalCoinsFlag = false }: Props) {
-  if (isIntegrationTestEnv()) return Promise.resolve(fetchCurrencyAllMock);
+  if (isIntegrationTestEnv()) {
+    return Promise.resolve(fetchCurrencyAllMock);
+  }
 
   const url = new URL(`${getEnv("SWAP_API_BASE_V5")}/currencies/all`);
   url.searchParams.append("providers-whitelist", providers.join(","));

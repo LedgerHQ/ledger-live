@@ -10,12 +10,12 @@ type Props = {
 };
 
 export function useFetchCurrencyFrom({ currencyTo, additionalCoinsFlag }: Props) {
-  const _fetchCurrencyFrom = useCallback(() => {
-    return fetchCurrencyFrom({
+  return useAPI({
+    queryFn: fetchCurrencyFrom,
+    queryProps: {
       providers: getAvailableProviders(),
       currencyTo,
       additionalCoinsFlag,
-    });
-  }, [currencyTo, additionalCoinsFlag]);
-  return useAPI(_fetchCurrencyFrom, true);
+    },
+  });
 }

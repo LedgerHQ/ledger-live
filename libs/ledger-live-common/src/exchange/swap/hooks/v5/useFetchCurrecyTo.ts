@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { getAvailableProviders } from "../..";
 import { useAPI } from "../common/useAPI";
 import { fetchCurrencyTo } from "../../api/v5";
@@ -9,12 +8,12 @@ type Props = {
 };
 
 export function useFetchCurrencyTo({ currencyFrom, additionalCoinsFlag }: Props) {
-  const _fetchCurrencyTo = useCallback(() => {
-    return fetchCurrencyTo({
+  return useAPI({
+    queryFn: fetchCurrencyTo,
+    queryProps: {
       providers: getAvailableProviders(),
       currencyFrom,
       additionalCoinsFlag,
-    });
-  }, [currencyFrom, additionalCoinsFlag]);
-  return useAPI(_fetchCurrencyTo, true);
+    },
+  });
 }
