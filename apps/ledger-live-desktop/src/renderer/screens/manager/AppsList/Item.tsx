@@ -1,7 +1,8 @@
 import React, { useMemo, memo, useCallback } from "react";
+import { camelCase } from "lodash";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App, Feature } from "@ledgerhq/types-live";
+import { App, FeatureId } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -15,6 +16,7 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const AppRow = styled.div`
   display: flex;
@@ -45,7 +47,6 @@ type Props = {
   onlyUpdate?: boolean;
   forceUninstall?: boolean;
   showActions?: boolean;
-  currencyFlags: Record<string, Feature>;
   dispatch: (a: Action) => void;
   setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
@@ -61,7 +62,6 @@ const Item = ({
   onlyUpdate,
   forceUninstall,
   showActions = true,
-  currencyFlags,
   dispatch,
   setAppInstallDep,
   setAppUninstallDep,
@@ -84,16 +84,13 @@ const Item = ({
     [app.name, state.apps],
   );
 
-  const flag = currencyId
-    ? Object.entries(currencyFlags || {}).find(([flagName]) => {
-        return flagName.replace("feature_currency_", "") === currencyId;
-      })
-    : undefined;
+  // FIXME No explicit mapping between Currency.id and FeatureId
+  const flag = useFeature(camelCase(`currency_${currencyId}`) as FeatureId);
 
   // when the flag doesn't exist it's equivalent to being enabled
   // flag[0]: name of the feature flag
   // flag[1]: { enabled: boolean }
-  const currencyFlagEnabled = !flag || flag[1].enabled;
+  const currencyFlagEnabled = !flag || flag.enabled;
   const currencySupported = !!currency && isCurrencySupported(currency) && currencyFlagEnabled;
   const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
 

@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, memo, useCallback, useEffect, useRef } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -23,7 +23,6 @@ import SearchBox from "../../accounts/AccountList/SearchBox";
 import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -124,9 +123,6 @@ const AppsList = ({
 
   const displayedAppList = isDeviceTab ? device : catalog;
 
-  const { getAllFlags } = useFeatureFlags();
-  const currencyFlags = useMemo(() => getAllFlags(), [getAllFlags]);
-
   const mapApp = useCallback(
     (app: App, appStoreView: boolean, onlyUpdate?: boolean, showActions?: boolean) => {
       return (
@@ -144,7 +140,6 @@ const AppsList = ({
           setAppInstallDep={setAppInstallDep}
           setAppUninstallDep={setAppUninstallDep}
           addAccount={addAccount}
-          currencyFlags={currencyFlags}
         />
       );
     },
@@ -156,7 +151,6 @@ const AppsList = ({
       setAppInstallDep,
       setAppUninstallDep,
       addAccount,
-      currencyFlags,
     ],
   );
   return (
