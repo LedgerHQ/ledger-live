@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import {
+  NFTStandard,
   ProtoNFT,
   ProtoNFTRaw,
   TransactionCommon,
@@ -7,8 +7,9 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
-export type EvmTransactionMode = "send" | "erc721" | "erc1155";
+export type EvmTransactionMode = "send" | NFTStandard;
 
 export type EvmTransactionBase = TransactionCommon & {
   family: "evm";
@@ -42,7 +43,7 @@ type EvmSendTransaction = EvmTransactionBase & {
 
 // NFT transactions are used for ERC721 & ERC1155 transactions
 export type EvmNftTransaction = EvmTransactionBase & {
-  mode: "erc721" | "erc1155";
+  mode: NFTStandard;
   nft: EvmTransactionNftParam;
 };
 
@@ -92,7 +93,7 @@ type EvmSendTransactionRaw = EvmTransactionBaseRaw & {
 };
 
 export type EvmNftTransactionRaw = EvmTransactionBaseRaw & {
-  mode: "erc721" | "erc1155";
+  mode: NFTStandard;
   nft: EvmTransactionNftParamRaw;
 };
 
