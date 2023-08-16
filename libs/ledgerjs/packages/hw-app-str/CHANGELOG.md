@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-str
 
+## 6.27.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.8
+
 ## 6.27.19-next.0
 
 ### Patch Changes

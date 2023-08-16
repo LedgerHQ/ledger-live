@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.4.4
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Changes on the new icons to allow for correct rendering in Native environments + types changes in NativeUI
+
 ## 0.4.4-next.0
 
 ### Patch Changes

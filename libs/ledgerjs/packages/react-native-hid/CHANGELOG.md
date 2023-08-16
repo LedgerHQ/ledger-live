@@ -1,5 +1,18 @@
 # @ledgerhq/react-native-hid
 
+## 6.30.0
+
+### Minor Changes
+
+- [#3951](https://github.com/LedgerHQ/ledger-live/pull/3951) [`d21f0bc2e4`](https://github.com/LedgerHQ/ledger-live/commit/d21f0bc2e4bb7ec62c18bc878e6fb0f5240b5ca0) Thanks [@Ferossgp](https://github.com/Ferossgp)! - Android use compile sdk version from root project
+
+### Patch Changes
+
+- Updated dependencies [[`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/errors@6.14.0
+  - @ledgerhq/devices@8.0.7
+  - @ledgerhq/hw-transport@6.28.8
+
 ## 6.30.0-next.0
 
 ### Minor Changes

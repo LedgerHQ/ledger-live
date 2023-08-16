@@ -1,5 +1,14 @@
 # @ledgerhq/evm-tools
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808), [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996)]:
+  - @ledgerhq/live-env@0.4.2
+  - @ledgerhq/cryptoassets@9.11.1
+  - @ledgerhq/live-network@1.1.5
+
 ## 1.0.4-next.0
 
 ### Patch Changes

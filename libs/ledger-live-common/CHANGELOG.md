@@ -1,5 +1,59 @@
 # @ledgerhq/live-common
 
+## 31.5.0
+
+### Minor Changes
+
+- [#4148](https://github.com/LedgerHQ/ledger-live/pull/4148) [`dfea8a7a0c`](https://github.com/LedgerHQ/ledger-live/commit/dfea8a7a0c24e85b45863a314d010bb7e2bcd878) Thanks [@Justkant](https://github.com/Justkant)! - feat: update wallet-api
+
+  Add `device.select` and `device.open` support
+  Bump `bignumber.js` to latest because of mismatch between wallet-api version and ours
+
+- [#4154](https://github.com/LedgerHQ/ledger-live/pull/4154) [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Added NotEnoughGasSwap to errors, will return amountFromWarning from useSwapTransaction and display and interpolate NotEnoughGasSwap in LLD
+
+### Patch Changes
+
+- [#4145](https://github.com/LedgerHQ/ledger-live/pull/4145) [`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Removing FTX and Wyre related code from LLD, LLM and LLC
+
+- [#4170](https://github.com/LedgerHQ/ledger-live/pull/4170) [`d5d0e399ce`](https://github.com/LedgerHQ/ledger-live/commit/d5d0e399ce3cf3a49802bc8a5563eedd8a590094) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle device in bootloader as a fatal error in the polling mechanism
+
+- [#4209](https://github.com/LedgerHQ/ledger-live/pull/4209) [`90d7c237a4`](https://github.com/LedgerHQ/ledger-live/commit/90d7c237a4380ad91134f24d0c39c10079896725) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add account as query param to multibuy redirect on NotEnoughGasSwap link click
+
+- [#4186](https://github.com/LedgerHQ/ledger-live/pull/4186) [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add linked errors to LLM
+
+- [#4270](https://github.com/LedgerHQ/ledger-live/pull/4270) [`9fa642e428`](https://github.com/LedgerHQ/ledger-live/commit/9fa642e428dc88f88dcd3e6e439c3ee40337dbaf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - added an amount property to the feature_referral_program_desktop_sidebar feature flag
+
+- [#4053](https://github.com/LedgerHQ/ledger-live/pull/4053) [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387) Thanks [@mle-gall](https://github.com/mle-gall)! - New NPS ratings flow
+
+- Updated dependencies [[`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808), [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/live-env@0.4.2
+  - @ledgerhq/errors@6.14.0
+  - @ledgerhq/cryptoassets@9.11.1
+  - @ledgerhq/coin-algorand@0.2.6
+  - @ledgerhq/coin-evm@0.5.1
+  - @ledgerhq/coin-framework@0.5.1
+  - @ledgerhq/coin-polkadot@0.3.3
+  - @ledgerhq/domain-service@1.1.8
+  - @ledgerhq/evm-tools@1.0.4
+  - @ledgerhq/hw-app-eth@6.34.3
+  - @ledgerhq/live-network@1.1.5
+  - @ledgerhq/devices@8.0.7
+  - @ledgerhq/hw-app-algorand@6.27.19
+  - @ledgerhq/hw-app-cosmos@6.28.5
+  - @ledgerhq/hw-app-exchange@0.2.3
+  - @ledgerhq/hw-app-near@6.27.14
+  - @ledgerhq/hw-app-polkadot@6.27.19
+  - @ledgerhq/hw-app-solana@7.0.13
+  - @ledgerhq/hw-app-trx@6.27.19
+  - @ledgerhq/hw-transport@6.28.8
+  - @ledgerhq/hw-transport-node-speculos@6.27.19
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.19
+  - @ledgerhq/hw-app-btc@10.0.8
+  - @ledgerhq/hw-app-str@6.27.19
+  - @ledgerhq/hw-app-tezos@6.27.19
+  - @ledgerhq/hw-app-xrp@6.27.19
+  - @ledgerhq/hw-transport-mocker@6.27.19
+
 ## 31.5.0-next.1
 
 ### Patch Changes
