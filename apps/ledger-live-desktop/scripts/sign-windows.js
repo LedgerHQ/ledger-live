@@ -1,7 +1,8 @@
-const execa = require("execa");
 const chalk = require("chalk");
 
 require("dotenv").config();
+
+let execa;
 
 const info = str => {
   console.log(chalk.blue(str));
@@ -15,6 +16,10 @@ async function azureSign(filePath) {
       "AZURE_APP_ID and AZURE_SECRET env variables are required for signing Windows builds.",
     );
   }
+
+  await import("execa").then(mod => {
+    execa = mod.execa;
+  });
 
   info(`Signing ${filePath}`);
 
