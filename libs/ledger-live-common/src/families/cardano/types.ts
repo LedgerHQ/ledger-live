@@ -193,12 +193,9 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type CardanoOperation = Omit<Operation, "extra"> & {
-  extra: CardanoOperationExtra;
-};
-export type CardanoOperationRaw = Omit<OperationRaw, "extra"> & {
-  extra: CardanoOperationExtraRaw;
-};
+export type CardanoOperation = Operation<CardanoOperationExtra>;
+export type CardanoOperationRaw = OperationRaw<CardanoOperationExtraRaw>;
+
 export type CardanoOperationExtra = {
   memo?: string;
 };

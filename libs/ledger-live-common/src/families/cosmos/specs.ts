@@ -16,18 +16,18 @@ import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData
 import type {
   CosmosAccount,
   CosmosDelegation,
-  CosmosOperation,
-  CosmosOperationRaw,
   CosmosOperationExtraRaw,
   CosmosDelegationInfoRaw,
   CosmosRedelegation,
   CosmosResources,
   CosmosUnbonding,
   Transaction,
+  CosmosOperationRaw,
 } from "../../families/cosmos/types";
 import cryptoFactory from "./chain/chain";
 import { canDelegate, canRedelegate, canUndelegate, getMaxDelegationAvailable } from "./logic";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { Operation } from "@ledgerhq/types-live";
 
 const maxAccounts = 16;
 
@@ -51,8 +51,8 @@ const cosmosLikeTest: ({
   optimisticOperation,
 }: {
   account: CosmosAccount;
-  operation: CosmosOperation;
-  optimisticOperation: CosmosOperation;
+  operation: Operation;
+  optimisticOperation: Operation;
 }) => void = ({ account, operation, optimisticOperation }) => {
   const allOperationsMatchingId = account.operations.filter(op => op.id === operation.id);
   if (allOperationsMatchingId.length > 1) {
@@ -65,19 +65,23 @@ const cosmosLikeTest: ({
   );
   const opExpected: Partial<CosmosOperationRaw> = toOperationRaw({
     ...optimisticOperation,
-  });
+  }) as CosmosOperationRaw;
+  const expectedExtra: CosmosOperationExtraRaw = opExpected.extra || {};
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;
   delete opExpected.blockHash;
   delete opExpected.blockHeight;
-  const extra: CosmosOperationExtraRaw = opExpected.extra || {};
   delete opExpected.extra;
   delete opExpected.transactionSequenceNumber;
-  const op = toOperationRaw(operation);
+
+  const op: Partial<CosmosOperationRaw> = toOperationRaw(operation) as CosmosOperationRaw;
+  const opExtra: CosmosOperationExtraRaw = op.extra || {};
+  delete op.extra;
+
   botTest("optimistic operation matches op", () => expect(op).toMatchObject(opExpected));
   botTest("operation extra matches", () =>
-    expect(approximateExtra(op.extra)).toMatchObject(approximateExtra(extra)),
+    expect(approximateExtra(opExtra)).toMatchObject(approximateExtra(expectedExtra)),
   );
 };
 

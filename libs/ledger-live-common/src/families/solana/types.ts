@@ -257,9 +257,7 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type SolanaOperation = Omit<Operation, "extra"> & {
-  extra: SolanaOperationExtra;
-};
+export type SolanaOperation = Operation<SolanaOperationExtra>;
 
 export type SolanaOperationExtra = {
   memo?: string;

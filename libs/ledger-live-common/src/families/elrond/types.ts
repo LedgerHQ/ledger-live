@@ -210,18 +210,12 @@ export type ElrondProvider = {
   };
 };
 
-export type ElrondOperation = Omit<Operation, "extra"> & {
-  extra: ElrondOperationExtra;
-};
-
-export type ElrondOperationRaw = Omit<OperationRaw, "extra"> & {
-  extra: ElrondOperationExtraRaw;
-};
+export type ElrondOperation = Operation<ElrondOperationExtra>;
+export type ElrondOperationRaw = OperationRaw<ElrondOperationExtraRaw>;
 
 export type ElrondOperationExtra = {
   amount?: BigNumber;
 };
-
 export type ElrondOperationExtraRaw = {
   amount?: string;
 };

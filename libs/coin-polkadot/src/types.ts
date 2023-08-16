@@ -113,12 +113,9 @@ export type PolkadotAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type PolkadotOperation = Omit<Operation, "extra"> & {
-  extra: PolkadotOperationExtra;
-};
-export type PolkadotOperationRaw = Omit<OperationRaw, "extra"> & {
-  extra: PolkadotOperationExtraRaw;
-};
+export type PolkadotOperation = Operation<PolkadotOperationExtra>;
+export type PolkadotOperationRaw = OperationRaw<PolkadotOperationExtraRaw>;
+
 export type PolkadotOperationExtra = {
   transferAmount?: BigNumber;
   palletMethod: string;

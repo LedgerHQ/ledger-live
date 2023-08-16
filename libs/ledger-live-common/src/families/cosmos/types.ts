@@ -130,12 +130,9 @@ export type NetworkInfoRaw = CosmosLikeNetworkInfoRaw & {
   family: "cosmos";
 };
 
-export type CosmosOperation = Omit<Operation, "extra"> & {
-  extra: CosmosOperationExtra;
-};
-export type CosmosOperationRaw = Omit<OperationRaw, "extra"> & {
-  extra: CosmosOperationExtraRaw;
-};
+export type CosmosOperation = Operation<CosmosOperationExtra>;
+export type CosmosOperationRaw = OperationRaw<CosmosOperationExtraRaw>;
+
 export type CosmosOperationExtra = {
   validators?: CosmosDelegationInfo[];
   validator?: CosmosDelegationInfo;

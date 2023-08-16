@@ -66,7 +66,7 @@ function expectCorrectOptimisticOperation(input: TransactionTestInput<Transactio
 
   const opExpected: Partial<ElrondOperationRaw> = toOperationRaw({
     ...optimisticOperation,
-  });
+  }) as ElrondOperationRaw;
   delete opExpected.value;
   delete opExpected.fee;
   delete opExpected.date;

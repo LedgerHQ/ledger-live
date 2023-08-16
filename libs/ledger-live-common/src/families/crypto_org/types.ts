@@ -50,9 +50,7 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type CryptoOrgOperation = Omit<Operation, "extra"> & {
-  extra: CryptoOrgOperationExtra;
-};
+export type CryptoOrgOperation = Operation<CryptoOrgOperationExtra>;
 
 export type CryptoOrgOperationExtra = {
   memo?: string | null;

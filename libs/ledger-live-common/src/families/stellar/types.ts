@@ -94,9 +94,7 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type StellarOperation = Omit<Operation, "extra"> & {
-  extra: StellarOperationExtra;
-};
+export type StellarOperation = Operation<StellarOperationExtra>;
 
 export type StellarOperationExtra = {
   pagingToken?: string;

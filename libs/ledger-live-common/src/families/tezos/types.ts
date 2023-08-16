@@ -59,10 +59,8 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type TezosOperation = Omit<Operation, "extra"> & {
-  extra: TezosOperationExtra;
-};
+export type TezosOperation = Operation<TezosOperationExtra>;
 
 export type TezosOperationExtra = {
-  id?: number; // Used as most recent id for incremental sync
+  id?: number; // Used as most recent operation id for incremental sync
 };

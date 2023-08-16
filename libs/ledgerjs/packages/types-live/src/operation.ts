@@ -53,7 +53,7 @@ export type OperationType =
 /**
  * An Operation is the Ledger Live abstraction of a transaction for any blockchain
  */
-export type Operation = {
+export type Operation<Extra = unknown> = {
   // unique identifier (usually hash)
   id: string;
   // transaction hash
@@ -104,10 +104,10 @@ export type Operation = {
   nftOperations?: Operation[];
   transactionRaw?: TransactionCommonRaw;
   // Extra crypto specific fields
-  extra: OperationExtra;
+  extra: Extra;
 };
 
-export type OperationRaw = {
+export type OperationRaw<ExtraRaw = unknown> = {
   id: string;
   hash: string;
   type: OperationType;
@@ -135,7 +135,7 @@ export type OperationRaw = {
   nftOperations?: OperationRaw[];
   transactionRaw?: TransactionCommonRaw;
   // would be a serializable version of the extra
-  extra: OperationExtraRaw;
+  extra: ExtraRaw;
 };
 
 export type DailyOperationsSection = {
@@ -149,6 +149,3 @@ export type DailyOperations = {
   // Is the sections complete? means there is no more operations to pull
   completed: boolean;
 };
-
-type OperationExtra = Record<string, unknown>;
-type OperationExtraRaw = Record<string, unknown>;

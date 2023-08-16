@@ -1,5 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { SyncConfig } from "@ledgerhq/types-live";
+import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AccountShapeInfo } from "../../bridge/jsHelpers";
 import { CosmosAPI } from "./api/Cosmos";
@@ -95,12 +95,10 @@ describe("getAccountShape", () => {
     CosmosAPI.mockClear();
     mergeOpsSpy = jest
       .spyOn(jsHelpers, "mergeOps")
-      .mockImplementation(
-        (existing: CosmosOperation[], newlyFetched: CosmosOperation[]): CosmosOperation[] => [
-          ...existing,
-          ...newlyFetched,
-        ],
-      );
+      .mockImplementation((existing: Operation[], newlyFetched: Operation[]): Operation[] => [
+        ...existing,
+        ...newlyFetched,
+      ]);
   });
 
   afterEach(() => {

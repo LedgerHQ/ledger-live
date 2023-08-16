@@ -134,12 +134,9 @@ export type PendingStakingOperationAmounts = {
   lock: BigNumber;
 };
 
-export type CeloOperation = Omit<Operation, "extra"> & {
-  extra: CeloOperationExtra;
-};
-export type CeloOperationRaw = Omit<OperationRaw, "extra"> & {
-  extra: CeloOperationExtraRaw;
-};
+export type CeloOperation = Operation<CeloOperationExtra>;
+export type CeloOperationRaw = OperationRaw<CeloOperationExtraRaw>;
+
 export type CeloOperationExtra = {
   celoOperationValue: BigNumber;
   celoSourceValidator?: string;

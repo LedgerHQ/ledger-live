@@ -12,8 +12,8 @@ import type {
   AlgorandResources,
 } from "./types";
 
-function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
-  const { rewards } = (op as AlgorandOperation).extra;
+function formatOperationSpecifics(op: AlgorandOperation, unit: Unit | null | undefined): string {
+  const { rewards } = op?.extra;
   return rewards
     ? " REWARDS : " +
         `${
@@ -27,8 +27,8 @@ function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined):
     : "";
 }
 
-function formatAccountSpecifics(account: Account): string {
-  const { algorandResources } = account as AlgorandAccount;
+function formatAccountSpecifics(account: AlgorandAccount): string {
+  const { algorandResources } = account;
   invariant(algorandResources, "algorand account expected");
   const unit = getAccountUnit(account);
   const formatConfig = {
@@ -39,10 +39,8 @@ function formatAccountSpecifics(account: Account): string {
   let str = " ";
   str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
-  if ((algorandResources as AlgorandResources).rewards.gt(0)) {
-    str +=
-      formatCurrencyUnit(unit, (algorandResources as AlgorandResources).rewards, formatConfig) +
-      " rewards. ";
+  if (algorandResources.rewards.gt(0)) {
+    str += formatCurrencyUnit(unit, algorandResources.rewards, formatConfig) + " rewards. ";
   }
 
   return str;

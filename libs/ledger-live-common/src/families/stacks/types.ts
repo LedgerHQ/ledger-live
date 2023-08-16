@@ -37,9 +37,7 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type StacksOperation = Omit<Operation, "extra"> & {
-  extra: StacksOperationExtra;
-};
+export type StacksOperation = Operation<StacksOperationExtra>;
 
 export type StacksOperationExtra = {
   memo?: string;

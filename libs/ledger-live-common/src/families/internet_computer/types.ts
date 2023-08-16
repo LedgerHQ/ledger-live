@@ -24,9 +24,7 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type InternetComputerOperation = Omit<Operation, "extra"> & {
-  extra: InternetComputerOperationExtra;
-};
+export type InternetComputerOperation = Operation<InternetComputerOperationExtra>;
 
 export type InternetComputerOperationExtra = {
   memo?: string;

@@ -47,12 +47,9 @@ export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type Transaction = AlgorandTransaction;
 export type TransactionRaw = AlgorandTransactionRaw;
 
-export type AlgorandOperation = Omit<Operation, "extra"> & {
-  extra: AlgorandOperationExtra;
-};
-export type AlgorandOperationRaw = Omit<OperationRaw, "extra"> & {
-  extra: AlgorandOperationExtraRaw;
-};
+export type AlgorandOperation = Operation<AlgorandOperationExtra>;
+export type AlgorandOperationRaw = OperationRaw<AlgorandOperationExtraRaw>;
+
 export type AlgorandOperationExtra = {
   rewards?: BigNumber;
   memo?: string;
