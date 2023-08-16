@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.66.0-next.3
+
+### Patch Changes
+
+- [#4339](https://github.com/LedgerHQ/ledger-live/pull/4339) [`b0af2c6f65`](https://github.com/LedgerHQ/ledger-live/commit/b0af2c6f65f0fd5f0afa24d41f35fdd6523ed65d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - In manager, look for exact currency name in Feature Flags
+
 ## 2.66.0-next.2
 
 ### Patch Changes
