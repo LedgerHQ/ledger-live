@@ -37,14 +37,7 @@ import {
   prepareStakeDeRegistrationCertificate,
   prepareWithdrawal,
 } from "./tx-helpers";
-import {
-  Account,
-  Operation,
-  OperationType,
-  SignedOperation,
-  SignOperationEvent,
-  SignOperationFnSignature,
-} from "@ledgerhq/types-live";
+import { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "../../currencies";
 import { HashType } from "@stricahq/typhonjs/dist/types";
 

@@ -1,7 +1,6 @@
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import type {
@@ -9,21 +8,19 @@ import type {
   AlgorandOperation,
   AlgorandOperationExtra,
   AlgorandOperationExtraRaw,
-  AlgorandResources,
 } from "./types";
 
 function formatOperationSpecifics(op: AlgorandOperation, unit: Unit | null | undefined): string {
-  const { rewards } = op?.extra;
+  const { rewards } = op.extra;
   return rewards
-    ? " REWARDS : " +
-        `${
-          unit
-            ? formatCurrencyUnit(unit, new BigNumber(rewards), {
-                showCode: true,
-                disableRounding: true,
-              }).padEnd(16)
-            : rewards
-        }`
+    ? ` REWARDS : ${
+        unit
+          ? formatCurrencyUnit(unit, rewards, {
+              showCode: true,
+              disableRounding: true,
+            }).padEnd(16)
+          : rewards.toString()
+      }`
     : "";
 }
 
@@ -51,6 +48,15 @@ export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
   if (extraRaw.rewards) {
     extra.rewards = new BigNumber(extraRaw.rewards);
   }
+
+  if (extraRaw.memo) {
+    extra.memo = extraRaw.memo;
+  }
+
+  if (extraRaw.assetId) {
+    extra.assetId = extraRaw.assetId;
+  }
+
   return extra;
 }
 
@@ -59,6 +65,15 @@ export function toOperationExtraRaw(extra: AlgorandOperationExtra) {
   if (extra.rewards) {
     extraRaw.rewards = extra.rewards.toString();
   }
+
+  if (extra.memo) {
+    extraRaw.memo = extra.memo;
+  }
+
+  if (extra.assetId) {
+    extraRaw.assetId = extra.assetId;
+  }
+
   return extraRaw;
 }
 

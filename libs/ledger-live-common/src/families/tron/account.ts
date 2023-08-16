@@ -31,7 +31,7 @@ export function toOperationExtraRaw(extra: TrongridExtraTxInfo): TrongridExtraTx
   }
 
   if (extra.votes) {
-    extraRaw.votes = extraRaw.votes;
+    extraRaw.votes = extra.votes;
   }
 
   return extraRaw;
