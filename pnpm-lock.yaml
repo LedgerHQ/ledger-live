@@ -4128,8 +4128,8 @@ importers:
   libs/test-utils/dummy-live-app:
     dependencies:
       '@ledgerhq/live-app-sdk':
-        specifier: ^0.5.0
-        version: 0.5.1
+        specifier: ^0.8.0
+        version: 0.8.1
       react:
         specifier: ^17.0.2
         version: 17.0.2
@@ -16653,13 +16653,6 @@ packages:
       '@ledgerhq/devices': 8.0.4
       '@ledgerhq/errors': 6.12.7
       events: 3.3.0
-    dev: false
-
-  /@ledgerhq/live-app-sdk@0.5.1:
-    resolution: {integrity: sha512-kWERpf8rVgxVGoksoU18SuYF2dc2WIC0t2zXgA5HI9toVK/gfmQz8x+ElXytImLbtQ+RhFUf73C03K2f9ZH5SQ==}
-    dependencies:
-      bignumber.js: 9.1.1
-      json-rpc-2.0: 0.2.19
     dev: false
 
   /@ledgerhq/live-app-sdk@0.8.1:
