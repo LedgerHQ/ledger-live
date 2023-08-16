@@ -16,7 +16,7 @@ const NFT_1 = {
   tokenId: "nft.tokenId",
   amount: new BigNumber(0),
   contract: "contract",
-  standard: "ERC721" as NFTStandard,
+  standard: "erc721" as NFTStandard,
   currencyId: "ethereum",
 };
 const NFT_2 = {
@@ -24,7 +24,7 @@ const NFT_2 = {
   tokenId: "nft.tokenId3",
   amount: new BigNumber(0),
   contract: "contract-pol",
-  standard: "ERC1155" as NFTStandard,
+  standard: "erc1155" as NFTStandard,
   currencyId: "polygon",
 };
 const NFT_3 = {
@@ -32,7 +32,7 @@ const NFT_3 = {
   tokenId: "nft.tokenId4",
   amount: new BigNumber(1),
   contract: "contract",
-  standard: "ERC721" as NFTStandard,
+  standard: "erc721" as NFTStandard,
   currencyId: "polygon",
 };
 const NFT_4 = {
@@ -40,7 +40,7 @@ const NFT_4 = {
   tokenId: "nft.tokenId2",
   amount: new BigNumber(0),
   contract: "contract-eth",
-  standard: "ERC721" as NFTStandard,
+  standard: "erc721" as NFTStandard,
   currencyId: "ethereum",
 };
 const NFTs = [NFT_1, NFT_2, NFT_3, NFT_4];

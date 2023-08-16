@@ -274,7 +274,7 @@ describe("EVM Family", () => {
               hash: coinOperation2.hash,
               recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
               senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              standard: "ERC721",
+              standard: "erc721",
               tokenId:
                 "49183440411075624253866807957299276245920874859439606792850319902048050479106",
               transactionSequenceNumber: coinOperation2.nonce_value,
@@ -293,7 +293,7 @@ describe("EVM Family", () => {
               hash: coinOperation3.hash,
               recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
               senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              standard: "ERC1155",
+              standard: "erc1155",
               tokenId:
                 "49183440411075624253866807957299276245920874859439606792850319904247073734666",
               transactionSequenceNumber: coinOperation3.nonce_value,
@@ -312,7 +312,7 @@ describe("EVM Family", () => {
               hash: coinOperation3.hash,
               recipients: ["0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C"],
               senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
-              standard: "ERC1155",
+              standard: "erc1155",
               tokenId:
                 "49183440411075624253866807957299276245920874859439606792850319904247073734665",
               transactionSequenceNumber: coinOperation3.nonce_value,

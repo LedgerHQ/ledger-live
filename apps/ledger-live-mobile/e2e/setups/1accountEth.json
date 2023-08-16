@@ -321,7 +321,7 @@
                   "fee": "1038500200135436",
                   "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
                   "operator": "0xA31bE4B29bff3A8Ac81f9d368BFa8B00EBFfA06b",
-                  "standard": "ERC1155",
+                  "standard": "erc1155",
                   "tokenId": "84515818763780569472559676924467268083364803154412842755684042359010886680577",
                   "transactionSequenceNumber": 50
                 }
@@ -375,7 +375,7 @@
                   "value": "1",
                   "fee": "3751646285849900",
                   "contract": "0xc9154424B823b10579895cCBE442d41b9Abd96Ed",
-                  "standard": "ERC721",
+                  "standard": "erc721",
                   "tokenId": "47857334576860951009254391845482212727974395370802630152667560842701427441665",
                   "transactionSequenceNumber": 3
                 }
@@ -430,7 +430,7 @@
                   "fee": "2257276918647360",
                   "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
                   "operator": "0xbAdA421bE3D5E77497D72B71E9336934eb3C571F",
-                  "standard": "ERC1155",
+                  "standard": "erc1155",
                   "tokenId": "84515818763780569472559676924467268083364803154412842755684042364508444840456",
                   "transactionSequenceNumber": 14
                 }
@@ -467,7 +467,7 @@
                   "fee": "3681867641362992",
                   "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
                   "operator": "0xbAdA421bE3D5E77497D72B71E9336934eb3C571F",
-                  "standard": "ERC1155",
+                  "standard": "erc1155",
                   "tokenId": "84515818763780569472559676924467268083364803154412842755684042363408933191681",
                   "transactionSequenceNumber": 7
                 }
@@ -521,7 +521,7 @@
               "tokenId": "84515818763780569472559676924467268083364803154412842755684042359010886680577",
               "amount": "1",
               "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-              "standard": "ERC1155",
+              "standard": "erc1155",
               "currencyId": "ethereum"
             },
             {
@@ -529,7 +529,7 @@
               "tokenId": "47857334576860951009254391845482212727974395370802630152667560842701427441665",
               "amount": "1",
               "contract": "0xc9154424B823b10579895cCBE442d41b9Abd96Ed",
-              "standard": "ERC721",
+              "standard": "erc721",
               "currencyId": "ethereum"
             },
             {
@@ -537,7 +537,7 @@
               "tokenId": "84515818763780569472559676924467268083364803154412842755684042364508444840456",
               "amount": "10",
               "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-              "standard": "ERC1155",
+              "standard": "erc1155",
               "currencyId": "ethereum"
             },
             {
@@ -545,7 +545,7 @@
               "tokenId": "84515818763780569472559676924467268083364803154412842755684042363408933191681",
               "amount": "1",
               "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-              "standard": "ERC1155",
+              "standard": "erc1155",
               "currencyId": "ethereum"
             }
           ],

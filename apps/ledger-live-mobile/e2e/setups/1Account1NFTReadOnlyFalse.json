@@ -160,7 +160,7 @@
                   "fee": "475217600000000",
                   "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
                   "operator": "0xCe0dd2748f024172351Ecf83c6D8471440DcdbBC",
-                  "standard": "ERC1155",
+                  "standard": "erc1155",
                   "tokenId": "77770246133050101334277152821957558007745772239357041338818208158214799753316",
                   "transactionSequenceNumber": 79
                 }

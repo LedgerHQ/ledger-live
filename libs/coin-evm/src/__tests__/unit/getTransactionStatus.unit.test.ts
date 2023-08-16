@@ -433,7 +433,7 @@ describe("EVM Family", () => {
           amount: new BigNumber(1),
           currencyId: account.currency.id,
           id: "doesn't matter",
-          standard: "ERC721" as const,
+          standard: "erc721" as const,
         };
 
         it("should detect a transaction for an ERC721 nft not owned by the account and have an error", async () => {
@@ -485,7 +485,7 @@ describe("EVM Family", () => {
           amount: new BigNumber(2),
           currencyId: account.currency.id,
           id: "still doesn't matter",
-          standard: "ERC1155" as const,
+          standard: "erc1155" as const,
         };
 
         it("should detect a transaction for an ERC1155 nft not owned by the account and have an error", async () => {

@@ -114,7 +114,7 @@ export const erc721Operations = [
       senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
       contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
       tokenId: "1",
-      standard: "ERC721",
+      standard: "erc721",
       value: new BigNumber(1),
       fee: coinOperations[0].fee,
       type: "NFT_IN",
@@ -132,7 +132,7 @@ export const erc721Operations = [
       senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
       contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
       tokenId: "2",
-      standard: "ERC721",
+      standard: "erc721",
       value: new BigNumber(1),
       fee: coinOperations[1].fee,
       type: "NFT_IN",
@@ -150,7 +150,7 @@ export const erc721Operations = [
       senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
       contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
       tokenId: "1",
-      standard: "ERC721",
+      standard: "erc721",
       value: new BigNumber(1),
       fee: coinOperations[1].fee,
       type: "NFT_OUT",
@@ -171,7 +171,7 @@ export const erc1155Operations = [
       senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // painauchocolat.eth
       contract: "0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a",
       tokenId: "1",
-      standard: "ERC1155",
+      standard: "erc1155",
       value: new BigNumber(10),
       fee: new BigNumber(1935663357068271),
       type: "NFT_IN",
@@ -189,7 +189,7 @@ export const erc1155Operations = [
       senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // painauchocolat.eth
       contract: "0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a",
       tokenId: "1",
-      standard: "ERC1155",
+      standard: "erc1155",
       value: new BigNumber(9),
       fee: new BigNumber(1935663357068271),
       type: "NFT_OUT",
@@ -218,7 +218,7 @@ export const nfts = [
     contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
     currencyId: "ethereum",
     id: "js:2:ethereum:0xkvn:+0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D+2+ethereum",
-    standard: "ERC721",
+    standard: "erc721",
     tokenId: "2",
   }),
   makeNft({
@@ -226,7 +226,7 @@ export const nfts = [
     contract: "0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a",
     currencyId: "ethereum",
     id: "js:2:ethereum:0xkvn:+0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a+1+ethereum",
-    standard: "ERC1155",
+    standard: "erc1155",
     tokenId: "1",
   }),
 ];

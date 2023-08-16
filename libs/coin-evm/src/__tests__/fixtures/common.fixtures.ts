@@ -161,12 +161,12 @@ export const makeNftOperation = (
   const type = partialOp?.type ?? "NFT_OUT";
   const contract = partialOp?.contract ?? "0xNftContract";
   const tokenId = partialOp?.tokenId ?? "tokenId1";
-  const standard = partialOp?.standard ?? "ERC721";
+  const standard = partialOp?.standard ?? "erc721";
   const nftId = encodeNftId(accountId, contract, tokenId, currencyId);
 
   return Object.freeze({
     id:
-      standard === "ERC721"
+      standard === "erc721"
         ? encodeERC721OperationId(nftId, hash, type, operationIndex)
         : encodeERC1155OperationId(nftId, hash, type, operationIndex),
     hash,
@@ -191,7 +191,7 @@ export const makeNft = (partialNft?: Partial<ProtoNFT>): ProtoNFT =>
     tokenId: "1",
     amount: new BigNumber(1),
     contract: "0xNftContract",
-    standard: "ERC721",
+    standard: "erc721",
     currencyId: "ethereum",
     ...partialNft,
   });

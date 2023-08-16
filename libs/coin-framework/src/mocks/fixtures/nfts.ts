@@ -16,7 +16,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xb1540922Be7c7Ed011cb41cc0Cc4adDf089b3AaF",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -25,7 +25,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xb1540922Be7c7Ed011cb41cc0Cc4adDf089b3AaF",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -34,7 +34,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x9191DFd6Ec2Ec31A7aaE86D89B44f94a70096194",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -43,7 +43,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x65498bF901A0C47ba9507C8a778d2bdee4Db12b4",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -52,7 +52,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x85ff6EC2BD7446C90F24F6a5e5acdD82Bcd2D4BE",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -61,7 +61,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
   {
@@ -70,7 +70,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x7A56a078da312bbfB5916CE118786f39cf6DF74f",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -79,7 +79,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x7A56a078da312bbfB5916CE118786f39cf6DF74f",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -88,7 +88,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xCa98FdF936243Edc3bbD65dc1dCc386Ec7a7d540",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -97,7 +97,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xCa98FdF936243Edc3bbD65dc1dCc386Ec7a7d540",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -106,7 +106,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xA04C6BD65E4352B30DCc6B0f21CF58aDEcc52781",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -115,7 +115,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xA35f12D3b934E21b9212e82f3CADdE20a0820352",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -124,7 +124,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x8e6da68d4a928e673b3A24014169515B293Ed5A4",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -133,7 +133,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x27fd9575a484E374B8e62B6738b5FbF415C9Be4E",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -142,7 +142,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x8e6da68d4a928e673b3A24014169515B293Ed5A4",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -151,7 +151,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x1447Cd4d3CE6C7FdB0da8d20450d92b08F7c4A54",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -160,7 +160,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xb1778D7Aa4a384757800D1429DfCae58dCD6DB42",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
   {
@@ -169,7 +169,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xf61F24c2d93bF2dE187546B14425BF631F28d6dC",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -178,7 +178,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x8e6da68d4a928e673b3A24014169515B293Ed5A4",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -187,7 +187,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x184c949436f6E4e8314dA3F4d78B2D38B0222823",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -196,7 +196,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x184c949436f6E4e8314dA3F4d78B2D38B0222823",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -205,7 +205,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x8e6da68d4a928e673b3A24014169515B293Ed5A4",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -214,7 +214,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x2963bA471e265e5F51cAfaFca78310FE87F8E6D1",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -223,7 +223,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xFBeef911Dc5821886e1dda71586d90eD28174B7d",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -232,7 +232,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xBEA73B677c2A8ec4d358a74ff5EC344F34a0d214",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -241,7 +241,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xd929FB5B7357Ed59ba770af812eFC116f873C795",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
   {
@@ -250,7 +250,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xd1169e5349d1cB9941F3DCbA135C8A4b9eACFDDE",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -259,7 +259,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0x6315d09bc75eE00B767142C05265Eeb180765093",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -268,7 +268,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xDDB149AE8E6635Df01a530da1E46921Bd78Dc385",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
   {
@@ -277,7 +277,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xABB3738f04Dc2Ec20f4AE4462c3d069d02AE045B",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -286,7 +286,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xABB3738f04Dc2Ec20f4AE4462c3d069d02AE045B",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
   {
@@ -295,7 +295,7 @@ export const NFTs = [
     amount: "1",
     collection: {
       contract: "0xa7d8d9ef8D8Ce8992Df33D8b8CF4Aebabd5bD270",
-      standard: "ERC721",
+      standard: "erc721",
     },
   },
 ];
@@ -308,7 +308,7 @@ export const NFTs_ETHEREUM_STAX_METADATA = [
     amount: "1",
     collection: {
       contract: "0x0b51eb9d0e54c562fedc07ceba453f05b70c4b79",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
 ];
@@ -320,7 +320,7 @@ export const NFTs_POLYGON = [
     amount: "1",
     collection: {
       contract: "0x68a0B29526f342de944BBd6bF61D9c644B96b771",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
 
@@ -330,7 +330,7 @@ export const NFTs_POLYGON = [
     amount: "1",
     collection: {
       contract: "0x68a0b29526f342de944bbd6bf61d9c644b96b771",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
 
@@ -340,7 +340,7 @@ export const NFTs_POLYGON = [
     amount: "1",
     collection: {
       contract: "0x68a0b29526f342de944bbd6bf61d9c644b96b771",
-      standard: "ERC1155",
+      standard: "erc1155",
     },
   },
 ];

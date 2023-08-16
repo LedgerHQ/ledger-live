@@ -529,7 +529,7 @@ describe("EVM Family", () => {
             contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
+            standard: "erc721",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -563,7 +563,7 @@ describe("EVM Family", () => {
             contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
+            standard: "erc721",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -609,7 +609,7 @@ describe("EVM Family", () => {
             contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
+            standard: "erc721",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -628,7 +628,7 @@ describe("EVM Family", () => {
             contract: "0x9a29E4e488Ab34FB792C0bD9ada78C2c07Ebe55A",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319902048050479106",
-            standard: "ERC721",
+            standard: "erc721",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -674,7 +674,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -693,7 +693,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -737,7 +737,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -756,7 +756,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -821,7 +821,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -840,7 +840,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("1"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -859,7 +859,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
@@ -878,7 +878,7 @@ describe("EVM Family", () => {
             contract: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
             tokenId:
               "49183440411075624253866807957299276245920874859439606792850319904247073734666",
-            standard: "ERC1155",
+            standard: "erc1155",
             value: new BigNumber("2"),
             fee: new BigNumber("4254163264389158"),
             date: new Date("2023-01-24T17:11:45Z"),
