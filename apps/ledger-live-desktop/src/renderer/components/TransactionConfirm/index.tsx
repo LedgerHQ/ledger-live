@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import React from "react";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import styled from "styled-components";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";

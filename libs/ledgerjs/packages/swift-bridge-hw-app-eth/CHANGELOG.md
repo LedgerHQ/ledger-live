@@ -1,5 +1,21 @@
 # @ledgerhq/swift-bridge-hw-app-eth
 
+## 1.0.13
+
+### Patch Changes
+
+- Updated dependencies [[`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
+  - @ledgerhq/hw-app-eth@6.34.2
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.0.7
+
+## 1.0.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`7675787398`](https://github.com/LedgerHQ/ledger-live/commit/767578739822597768f877f94fd8f7f35441395a)]:
+  - @ledgerhq/hw-app-eth@6.34.2-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.0.7-next.0
+
 ## 1.0.12
 
 ### Patch Changes

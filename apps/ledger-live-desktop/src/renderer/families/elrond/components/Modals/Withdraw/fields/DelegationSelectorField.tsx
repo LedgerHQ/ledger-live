@@ -6,7 +6,7 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { ElrondProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { UnbondingType } from "~/renderer/families/elrond/types";

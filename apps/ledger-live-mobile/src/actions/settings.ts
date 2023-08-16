@@ -63,6 +63,9 @@ import {
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
+  SettingsSetClosedNetworkBannerPayload,
+  SettingsSetClosedWithdrawBannerPayload,
+  SettingsSetUserNps,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -230,6 +233,12 @@ export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
 );
+export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
+  SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
+);
+export const setCloseWithdrawBanner = createAction<SettingsSetClosedNetworkBannerPayload>(
+  SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER,
+);
 export const setWalletTabNavigatorLastVisitedTab =
   createAction<SettingsSetWalletTabNavigatorLastVisitedTabPayload>(
     SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB,
@@ -262,6 +271,8 @@ export const setHasBeenUpsoldProtect = createAction<SettingsSetHasBeenUpsoldProt
 export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTermsVersionAccepted>(
   SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
 );
+
+export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.SET_USER_NPS);
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

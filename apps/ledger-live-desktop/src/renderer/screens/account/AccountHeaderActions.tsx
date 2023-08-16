@@ -8,7 +8,8 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
-import { TFunction, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { compose } from "redux";

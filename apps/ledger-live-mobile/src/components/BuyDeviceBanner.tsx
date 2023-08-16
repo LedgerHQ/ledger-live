@@ -86,7 +86,10 @@ export default function BuyDeviceBanner({
     navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: {
-        screen: ScreenName.OnboardingDeviceSelection,
+        screen: ScreenName.OnboardingPostWelcomeSelection,
+        params: {
+          userHasDevice: true,
+        },
       },
     });
   }, [navigate]);

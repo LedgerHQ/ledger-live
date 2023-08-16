@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

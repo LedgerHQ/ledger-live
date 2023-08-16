@@ -305,6 +305,20 @@ describe("getAccountShape", () => {
                     },
                   ],
                 },
+                {
+                  type: "withdraw_rewards",
+                  attributes: [
+                    {
+                      key: "amount",
+                      value:
+                        "56ibc/0025F8A87464A471E66B234C4F93AEC5B4DA3D42D7986451A059273426290DD5,512ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89,7uatom",
+                    },
+                    {
+                      key: "validator",
+                      value: "validatorAddressThree",
+                    },
+                  ],
+                },
               ],
               attributes: [],
             },
@@ -314,7 +328,7 @@ describe("getAccountShape", () => {
     });
 
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(15));
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(22));
     expect((account.operations as CosmosOperation[])[0].extra.validators).toEqual([
       {
         address: "validatorAddressHehe",
@@ -323,6 +337,10 @@ describe("getAccountShape", () => {
       {
         address: "validatorAddressTwo",
         amount: new BigNumber(5),
+      },
+      {
+        address: "validatorAddressThree",
+        amount: new BigNumber(7),
       },
     ]);
   });

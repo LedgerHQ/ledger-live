@@ -20,6 +20,7 @@ import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
 import { Feature } from "@ledgerhq/types-live/lib/feature";
+import { setEarnInfoModal } from "../actions/earn";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -170,6 +171,8 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
               /**
                * @params ?completed: boolean
                * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
+               * * @params ?allCompleted: boolean
+               * ie: "ledgerlive://post-onboarding/nft-claimed?allCompleted=true" will open the post onboarding hub with all steps completed
                */
               [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
             },
@@ -475,6 +478,21 @@ export const DeeplinksProvider = ({
           const { hostname, pathname } = url;
           const platform = pathname.split("/")[1];
 
+          if (hostname === "earn") {
+            const searchParams = url.searchParams;
+            if (searchParams.get("action") === "info-modal") {
+              const message = searchParams.get("message") || "";
+              const messageTitle = searchParams.get("messageTitle") || "";
+
+              dispatch(
+                setEarnInfoModal({
+                  message,
+                  messageTitle,
+                }),
+              );
+              return;
+            }
+          }
           if ((hostname === "discover" || hostname === "recover") && platform) {
             const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
               recoverManifests;

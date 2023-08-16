@@ -621,18 +621,31 @@ describe("EVM Family", () => {
           subAccounts: [tokenAccountWithPending],
           pendingOperations: [pendingOperation],
         };
+        const accountWithoutPending = {
+          ...accountWithPending,
+          subAccounts: [tokenAccountWithPending],
+          pendingOperations: [],
+        };
 
         // should not change anything if we maintain the pending op
         expect(synchronization.postSync(accountWithPending, accountWithPending)).toEqual(
           accountWithPending,
         );
-        // Should remove the pending from tokenAccount as well if removed from main account
-        expect(
-          synchronization.postSync(accountWithPending, {
-            ...accountWithPending,
-            pendingOperations: [],
-          }),
-        ).toEqual(account);
+        // should keep pending ops even if the synced account(second parameter of postSync) has no pending op, because the pending op will be recalculated form the initial account
+        expect(synchronization.postSync(accountWithPending, accountWithoutPending)).toEqual(
+          accountWithPending,
+        );
+
+        // Should remove the pending from account if the pending operations become operations from main account
+        const updateAccount = synchronization.postSync(accountWithPending, {
+          ...accountWithPending,
+          operations: [pendingOperation],
+          pendingOperations: [],
+        });
+        expect(updateAccount.pendingOperations).toHaveLength(0);
+
+        // Should remove the pending from tokenAccount if it was confirmed in the main account ops
+        expect(updateAccount.subAccounts?.[0].pendingOperations).toHaveLength(0);
       });
 
       it("should remove pending operation if the token account has confirmed it", () => {

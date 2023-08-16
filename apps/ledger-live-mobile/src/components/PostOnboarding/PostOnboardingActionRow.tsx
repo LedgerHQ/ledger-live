@@ -46,8 +46,8 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         justifyContent="space-between"
         opacity={disabled ? 0.5 : 1}
       >
-        <Flex flexDirection="row" alignItems="center" flexShrink={1}>
-          <Icon size={24} color={completed || disabled ? "neutral.c70" : "primary.c80"} />
+        <Flex flexDirection="row" alignItems="flex-start" flexShrink={1}>
+          <Icon size={"M"} color={completed || disabled ? "neutral.c70" : "primary.c80"} />
           <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
             <Flex flexDirection="row" alignItems="center">
               <Text

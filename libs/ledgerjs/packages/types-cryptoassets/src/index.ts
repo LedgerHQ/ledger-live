@@ -256,6 +256,7 @@ export type ExplorerView = {
   tx?: string;
   address?: string;
   token?: string;
+  stakePool?: string;
 };
 
 export type EthereumLikeInfo = {

@@ -76,6 +76,7 @@ function ValidateSuccess({
         {secondaryButton ||
           (onClose && (
             <Button
+              testID="success-close-button"
               event="SendSuccessClose"
               type={undefined}
               outline={false}

@@ -74,6 +74,9 @@ import type {
   SettingsSetOnboardingHasDevicePayload,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
+  SettingsSetClosedNetworkBannerPayload,
+  SettingsSetClosedWithdrawBannerPayload,
+  SettingsSetUserNps,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -176,6 +179,11 @@ export const INITIAL_STATE: SettingsState = {
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
   onboardingType: null,
+  depositFlow: {
+    hasClosedNetworkBanner: false,
+    hasClosedWithdrawBanner: false,
+  },
+  userNps: null,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -543,6 +551,20 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_CLOSED_NETWORK_BANNER]: (state, action) => ({
+    ...state,
+    depositFlow: {
+      ...state.depositFlow,
+      hasClosedNetworkBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
+    },
+  }),
+  [SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER]: (state, action) => ({
+    ...state,
+    depositFlow: {
+      ...state.depositFlow,
+      hasClosedWithdrawBanner: (action as Action<SettingsSetClosedWithdrawBannerPayload>).payload,
+    },
+  }),
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
     ...state,
     notifications: {
@@ -598,6 +620,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (state, action) => ({
     ...state,
     generalTermsVersionAccepted: (action as Action<SettingsSetGeneralTermsVersionAccepted>).payload,
+  }),
+  [SettingsActionTypes.SET_USER_NPS]: (state, action) => ({
+    ...state,
+    userNps: (action as Action<SettingsSetUserNps>).payload,
   }),
 };
 
@@ -769,6 +795,10 @@ export const customImageBackupSelector = (state: State) => state.settings.custom
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
+export const hasClosedNetworkBannerSelector = (state: State) =>
+  state.settings.depositFlow.hasClosedNetworkBanner;
+export const hasClosedWithdrawBannerSelector = (state: State) =>
+  state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
@@ -782,3 +812,4 @@ export const debugAppLevelDrawerOpenedSelector = (state: State) =>
 export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.hasBeenUpsoldProtect;
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
+export const userNpsSelector = (state: State) => state.settings.userNps;

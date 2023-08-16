@@ -2,7 +2,8 @@ import React, { useState, memo, useCallback, useEffect, useRef, useMemo } from "
 import { useLocation, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { Trans, TFunction } from "react-i18next";
+import { Trans } from "react-i18next";
+import { TFunction } from "i18next";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 import { State, Action } from "@ledgerhq/live-common/apps/types";
 import { currenciesSelector } from "~/renderer/reducers/accounts";

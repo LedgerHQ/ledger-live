@@ -5,8 +5,6 @@ import { useSelector } from "react-redux";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -28,6 +26,8 @@ import type { PolkadotRebondFlowParamList } from "../families/polkadot/RebondFlo
 import type { PolkadotBondFlowParamList } from "../families/polkadot/BondFlow/types";
 import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { AlgorandOptInFlowParamList } from "../families/algorand/OptInFlow/types";
+import type { CardanoDelegationFlowParamList } from "../families/cardano/DelegationFlow/types";
+import type { CardanoUndelegationFlowParamList } from "../families/cardano/UndelegationFlow/types";
 import type { CeloWithdrawFlowParamList } from "../families/celo/WithdrawFlow/types";
 import type { CeloRevokeFlowFlowParamList } from "../families/celo/RevokeFlow/types";
 import type { CeloActivateFlowParamList } from "../families/celo/ActivateFlow/types";
@@ -52,8 +52,8 @@ import { TezosDelegationFlowParamList } from "../families/tezos/DelegationFlow/t
 import { TronVoteFlowParamList } from "../families/tron/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "../components/RootNavigator/types/SignMessageNavigator";
+import { useTransactionDeviceAction } from "../hooks/deviceActions";
 
-const action = createAction(connectApp);
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
   | StackNavigatorProps<ClaimRewardsNavigatorParamList, ScreenName.ClaimRewardsConnectDevice>
@@ -70,6 +70,11 @@ type Props =
   | StackNavigatorProps<
       AlgorandClaimRewardsFlowParamList,
       ScreenName.AlgorandClaimRewardsConnectDevice
+    >
+  | StackNavigatorProps<CardanoDelegationFlowParamList, ScreenName.CardanoDelegationConnectDevice>
+  | StackNavigatorProps<
+      CardanoUndelegationFlowParamList,
+      ScreenName.CardanoUndelegationConnectDevice
     >
   | StackNavigatorProps<AlgorandOptInFlowParamList, ScreenName.AlgorandOptInConnectDevice>
   | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawConnectDevice>
@@ -108,6 +113,7 @@ export const navigateToSelectDevice = (navigation: Props["navigation"], route: P
     },
   );
 export default function ConnectDevice({ route, navigation }: Props) {
+  const action = useTransactionDeviceAction();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));

@@ -1,7 +1,8 @@
 import React, { useMemo, Component, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { Trans, TFunction, useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import uniq from "lodash/uniq";
 import { getEnv } from "@ledgerhq/live-common/env";

@@ -603,6 +603,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://cardanoscan.io/transaction/$hash",
         address: "https://cardanoscan.io/address/$address",
+        stakePool: "https://cardanoscan.io/pool/$poolId",
       },
     ],
     keywords: ["ada", "cardano"],
@@ -634,8 +635,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://testnet.cardanoscan.io/transaction/$hash",
-        address: "https://testnet.cardanoscan.io/address/$address",
+        tx: "https://preprod.cardanoscan.io/transaction/$hash",
+        address: "https://prerpod.cardanoscan.io/address/$address",
+        stakePool: "https://preprod.cardanoscan.io/pool/$poolId",
       },
     ],
   },

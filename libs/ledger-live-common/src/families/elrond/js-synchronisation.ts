@@ -20,7 +20,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   // Needed for incremental synchronisation
   const startAt = oldOperations.length ? Math.floor(oldOperations[0].date.valueOf() / 1000) : 0;
 
-  const { blockHeight, balance, nonce } = await getAccount(address);
+  const account = await getAccount(address);
 
   const delegations = await getAccountDelegations(address);
 
@@ -48,13 +48,14 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
 
   return {
     id: accountId,
-    balance: balance.plus(delegationBalance),
-    spendableBalance: balance,
+    balance: account.balance.plus(delegationBalance),
+    spendableBalance: account.balance,
     operationsCount: operations.length,
-    blockHeight,
+    blockHeight: account.blockHeight,
     elrondResources: {
-      nonce,
+      nonce: account.nonce,
       delegations,
+      isGuarded: account.isGuarded,
     },
     subAccounts,
     operations: operations.map(op => {

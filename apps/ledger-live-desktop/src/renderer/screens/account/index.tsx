@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
 import { connect, useSelector } from "react-redux";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isNFTActive } from "@ledgerhq/live-common/nft/support";

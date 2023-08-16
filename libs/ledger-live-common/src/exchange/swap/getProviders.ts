@@ -1,13 +1,13 @@
 import network from "@ledgerhq/live-network/network";
 import qs from "qs";
-import { getEnv } from "../../env";
 import { SwapNoAvailableProviders } from "../../errors";
 import { getAvailableProviders, getSwapAPIBaseURL } from "./";
 import { mockGetProviders } from "./mock";
 import type { GetProviders, ProvidersResponseV4 } from "./types";
+import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 
 const getProviders: GetProviders = async () => {
-  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN")) return mockGetProviders();
+  if (isIntegrationTestEnv()) return mockGetProviders();
 
   const res = await network({
     method: "GET",

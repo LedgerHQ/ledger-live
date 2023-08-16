@@ -53,8 +53,6 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-    outputs:
-      fail: ${{ steps.diff.outputs.diff }}
     runs-on: ubuntu-latest
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
@@ -63,6 +61,14 @@ jobs:
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-s3-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i -F "live-common-tools..." -F "ledger-live"
       - name: build common-tools
@@ -84,13 +90,25 @@ jobs:
           base: ${{ inputs.since_branch }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-s3-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i -F "live-cli..." -F "ledger-live"
       - name: build cli
         run: pnpm build:cli
+      - name: lint cli
+        run: pnpm lint --filter="live-cli" -- --quiet
+      - name: typecheck cli
+        run: pnpm typecheck --filter="live-cli"
       - name: test cli
         id: test
-        run: pnpm test --filter="live-cli"
+        run: pnpm run test --filter="live-cli"
       - name: get diff
         id: diff
         run: |
@@ -103,20 +121,9 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ${{ matrix.os }}
+      CI_OS: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          # Commenting because of random node-gyp failures on windows…
-          # See:
-          #  * https://github.com/serialport/node-serialport/issues/2322
-          # - windows-latest
-
-    runs-on: ${{ matrix.os }}
+    runs-on: [ledger-live-4xlarge-linux]
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -125,12 +132,12 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.10"
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 2.6
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -143,15 +150,72 @@ jobs:
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: ${{ format('live-common-src-{0}', matrix.os) }}
+          name: live-common-src
           path: |
             libs/ledger-live-common/src
+      - uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            const fs = require("fs");
+            fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: outputs
+          path: ${{ github.workspace }}/summary-tests.txt
+
+  test-ui:
+    name: "Test UI Libs"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.since_branch }}
+          fetch-depth: 0
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.10"
+      - uses: ruby/setup-ruby@v1
+        if: ${{ matrix.os == 'macos-latest' }}
+        with:
+          ruby-version: 2.6
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-s3-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: Install dependencies
+        run: pnpm i --filter="./libs/ui/**"
+      - name: Build and Test affected libraries
+        id: test-ui
+        run: pnpm run test --continue --filter="./libs/ui/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        shell: bash
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v3
         if: failure()
@@ -165,15 +229,68 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            fs.writeFileSync("summary-${{ matrix.os }}.txt", "${{ steps.test-libs.outcome }}", "utf-8");
+            fs.writeFileSync("summary-ui-${{ matrix.os }}.txt", "${{ steps.test-ui.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: outputs
-          path: ${{ github.workspace }}/summary-${{ matrix.os }}.txt
+          path: ${{ github.workspace }}/summary-ui-${{ matrix.os }}.txt
+
+  codecheck-libraries:
+    name: "Codecheck Libraries"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          base: ${{ inputs.since_branch }}
+          fetch-depth: 0
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      # - uses: actions/setup-python@v4
+      #   with:
+      #     python-version: "3.10"
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 2.6
+      - name: TurboRepo local caching server
+        id: turborepo-cache-server
+        uses: ./tools/actions/turborepo-s3-cache
+        with:
+          server-token: "yolo"
+          cleanup-cache-folder: "true"
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+      - name: Install dependencies
+        run: pnpm i --filter="!./apps/**"
+      - name: Lint affected libraries
+        id: lint-libs
+        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --quiet
+      - name: Typecheck affected libraries
+        id: typecheck-libs
+        run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+      - uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            const fs = require("fs");
+            fs.writeFileSync("summary-typecheck.txt", "${{ steps.typecheck-libs.outcome }}", "utf-8");
+            fs.writeFileSync("summary-lint.txt", "${{ steps.lint-libs.outcome }}", "utf-8");
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: outputs
+          path: |
+            ${{ github.workspace }}/summary-typecheck.txt
+            ${{ github.workspace }}/summary-lint.txt
 
   report:
-    needs: [test-cli, test-docs, test-libraries, test-common-tools]
+    needs: [test-cli, test-docs, test-libraries, test-ui, codecheck-libraries, test-common-tools]
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -185,35 +302,57 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const resultLinux = fs.readFileSync("${{ github.workspace }}/summary-ubuntu-latest.txt", "utf-8");
-            const resultMacos = fs.readFileSync("${{ github.workspace }}/summary-macos-latest.txt", "utf-8");
+            const resultTests = fs.readFileSync("${{ github.workspace }}/summary-tests.txt", "utf-8");
+            const resultLint = fs.readFileSync("${{ github.workspace }}/summary-lint.txt", "utf-8");
+            const resultTypecheck = fs.readFileSync("${{ github.workspace }}/summary-typecheck.txt", "utf-8");
+            const resultUILinux = fs.readFileSync("${{ github.workspace }}/summary-ui-ubuntu-latest.txt", "utf-8");
+            const resultUImacOS = fs.readFileSync("${{ github.workspace }}/summary-ui-macos-latest.txt", "utf-8");
+            const resultUIWindows = fs.readFileSync("${{ github.workspace }}/summary-ui-windows-latest.txt", "utf-8");
 
             const statuses = {
               doc: {
                 pass: ${{ needs.test-docs.outputs.fail != '1' }},
                 status: "${{ needs.test-docs.result }}",
               },
+              tool: {
+                pass: ${{ needs.test-common-tools.result == 'success' }},
+                status: "${{ needs.test-common-tools.result }}",
+              },
               cli: {
                 pass: ${{ needs.test-cli.outputs.test-fail == 'success' && needs.test-cli.outputs.fail != '1' }},
-                status: "${{ needs.test-docs.result }}",
+                status: "${{ needs.test-cli.result }}",
               },
-              libraries: {
+              codecheck: {
+                pass: ${{ needs.codecheck-libraries.result == 'success' }},
+                status: "${{ needs.codecheck-libraries.result }}",
+              },
+              tests: {
                 pass: ${{ needs.test-libraries.result == 'success' }},
                 status: "${{ needs.test-libraries.result }}",
               },
-              libs: {
+              lint: {
+                pass: resultLint == 'success',
+                status: resultLint,
+              },
+              typecheck: {
+                pass: resultTypecheck == 'success',
+                status: resultTypecheck,
+              },
+              ui: {
                 mac: {
-                  pass: resultMacos == 'success',
-                  status: resultMacos,
+                  pass: resultUImacOS == 'success',
+                  status: resultUImacOS,
                 },
                 linux: {
-                  pass: resultLinux == 'success',
-                  status: resultLinux,
+                  pass: resultUILinux == 'success',
+                  status: resultUILinux,
+                },
+                windows: {
+                  pass: resultUIWindows == 'success',
+                  status: resultUIWindows,
                 }
-              }
+              },
             };
-
-            const libsOk = Object.values(statuses.libs).every(os => os.pass);
 
             const summary = `### Test documentation files
             ${statuses.doc.pass ? "Documentation files are fine" : "Documentation files are outdated"}
@@ -223,13 +362,30 @@ jobs:
             ${statuses.cli.pass ? "CLI tests are successful" : "CLI tests did not end successfully"}
               - ${statuses.cli.pass ? "✅" : "❌"} **CLI tests** ended with status \`${statuses.cli.status}\`
 
-            ### Test Libraries
-            ${libsOk ? "All tests are fine" : "Some tests failed"}
+            ### Codecheck Libraries
 
-            | Linux (🤖) | macOS (🍏) |
+            ${statuses.codecheck.pass ? "Codecheck was successfull" : "Codecheck failed"}
+              - ${statuses.codecheck.pass ? "✅" : "❌"} **Codecheck** ended with status \`${statuses.codecheck.status}\`
+
+            | Lint | Typecheck |
             | :--: | :--: |
-            | ${statuses.libs.linux.pass ? "✅" : "❌"} (${statuses.libs.linux.status}) | ${statuses.libs.mac.pass ? "✅" : "❌"} (${statuses.libs.mac.status}) |
+            | ${statuses.lint.pass ? "✅" : "❌"} (${statuses.lint.status}) | ${statuses.typecheck.pass ? "✅" : "❌"} (${statuses.typecheck.status}) |
 
+            ### Test Libraries
+
+            ${statuses.tests.pass ? "All tests are fine" : "Some tests failed"}
+              - ${statuses.tests.pass ? "✅" : "❌"} **Test Libs** ended with status \`${statuses.tests.status}\`
+
+            ### Test UI Design System
+
+            | Linux (🤖) | macOS (🍏) | windows (🪟) |
+            | :--: | :--: | :--: |
+            | ${statuses.ui.linux.pass ? "✅" : "❌"} (${statuses.ui.linux.status}) | ${statuses.ui.mac.pass ? "✅" : "❌"} (${statuses.ui.mac.status}) | ${statuses.ui.windows.pass ? "✅" : "❌"} (${statuses.ui.windows.status}) |
+
+            ### Common Tools
+
+            ${statuses.tool.pass ? "Common Tools are fine" : "Common Tools tests failed"}
+              - ${statuses.tool.pass ? "✅" : "❌"} **Common Tools* tests* ended with status \`${statuses.tool.status}\`
             `;
 
             const actions = [];

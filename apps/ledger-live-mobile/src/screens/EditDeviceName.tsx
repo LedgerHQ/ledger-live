@@ -6,8 +6,6 @@ import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
-import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
-import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import { TrackScreen } from "../analytics";
 import KeyboardBackgroundDismiss from "../components/KeyboardBackgroundDismiss";
@@ -21,8 +19,7 @@ import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/B
 import { ScreenName } from "../const";
 import { BaseOnboardingNavigatorParamList } from "../components/RootNavigator/types/BaseOnboardingNavigator";
 import { BleSaveDeviceNamePayload } from "../actions/types";
-
-const action = createAction(renameDevice);
+import { useRenameDeviceAction } from "../hooks/deviceActions";
 
 const mapDispatchToProps = {
   saveBleDeviceName,
@@ -37,6 +34,7 @@ type Props = {
 } & NavigationProps;
 
 function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
+  const action = useRenameDeviceAction();
   const originalName = route.params?.deviceName;
   const device = route.params?.device;
   const deviceInfo = route.params?.deviceInfo;

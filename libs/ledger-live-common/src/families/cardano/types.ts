@@ -122,12 +122,29 @@ export type ProtocolParamsRaw = {
   languageView: TyphonTypes.LanguageView;
 };
 
+export type CardanoDelegation = {
+  status: boolean;
+  poolId: string;
+  ticker: string;
+  name: string;
+  rewards: BigNumber;
+};
+
+export type CardanoDelegationRaw = {
+  status: boolean;
+  poolId: string;
+  ticker: string;
+  name: string;
+  rewards: string;
+};
+
 /**
  * Cardano account resources
  */
 export type CardanoResources = {
   externalCredentials: Array<PaymentCredential>;
   internalCredentials: Array<PaymentCredential>;
+  delegation: CardanoDelegation | undefined;
   utxos: Array<CardanoOutput>;
   protocolParams: ProtocolParams;
 };
@@ -138,18 +155,22 @@ export type CardanoResources = {
 export type CardanoResourcesRaw = {
   externalCredentials: Array<PaymentCredentialRaw>;
   internalCredentials: Array<PaymentCredentialRaw>;
+  delegation: CardanoDelegationRaw | undefined;
   utxos: Array<CardanoOutputRaw>;
   protocolParams: ProtocolParamsRaw;
 };
+
+export type CardanoOperationMode = "send" | "delegate" | "undelegate";
 
 /**
  * Cardano transaction
  */
 export type Transaction = TransactionCommon & {
-  mode: string;
+  mode: CardanoOperationMode;
   family: "cardano";
   fees?: BigNumber;
   memo?: string;
+  poolId: string | undefined;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -158,9 +179,10 @@ export type Transaction = TransactionCommon & {
  */
 export type TransactionRaw = TransactionCommonRaw & {
   family: "cardano";
-  mode: string;
+  mode: CardanoOperationMode;
   fees?: string;
   memo?: string;
+  poolId: string | undefined;
   // also the transaction fields as raw JSON data
 };
 
@@ -174,6 +196,7 @@ export type CardanoLikeNetworkParameters = {
   shelleySlotDuration: number;
   shelleySlotsPerEpoch: number;
   addressPrefix: string;
+  poolIdPrefix: string;
 };
 
 /**
@@ -194,11 +217,11 @@ export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type CardanoOperation = Operation<CardanoOperationExtra>;
-export type CardanoOperationRaw = OperationRaw<CardanoOperationExtraRaw>;
+export type CardanoOperationRaw = OperationRaw<CardanoOperationExtra>;
 
 export type CardanoOperationExtra = {
   memo?: string;
-};
-export type CardanoOperationExtraRaw = {
-  memo?: string;
+  deposit?: string;
+  refund?: string;
+  rewards?: string;
 };

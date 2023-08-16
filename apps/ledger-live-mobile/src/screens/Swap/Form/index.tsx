@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Flex } from "@ledgerhq/native-ui";
@@ -17,6 +17,7 @@ import {
   accountWithMandatoryTokens,
   getParentAccount,
   isTokenAccount,
+  getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -53,6 +54,7 @@ import {
 import { ScreenName } from "../../../const";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -106,11 +108,12 @@ export function SwapForm({
   const navigation = useNavigation<Navigation["navigation"]>();
 
   const onNoRates: OnNoRatesCallback = useCallback(
-    ({ toState }) => {
+    ({ toState, fromState }) => {
       track("error_message", {
         ...sharedSwapTracking,
         message: "no_rates",
-        sourceCurrency: toState.currency?.name,
+        sourceCurrency: fromState.currency?.name,
+        targetCurrency: toState.currency?.name,
       });
     },
     [track],
@@ -127,10 +130,63 @@ export function SwapForm({
   });
 
   const exchangeRatesState = swapTransaction.swap?.rates;
+  const { partnersList, exchangeRateList } = useMemo(() => {
+    const partnerAndExchangeRateDefault = {
+      partnersList: [],
+      exchangeRateList: [],
+    };
+
+    return (
+      exchangeRatesState.value?.reduce<{
+        partnersList: string[];
+        exchangeRateList: string[];
+      }>((prev, curr) => {
+        return {
+          partnersList: [...new Set([...prev.partnersList, curr.provider])],
+          exchangeRateList: [
+            ...prev.exchangeRateList,
+            formatCurrencyUnit(getFeesUnit(swapTransaction.swap.to.currency!), curr.toAmount),
+          ],
+        };
+      }, partnerAndExchangeRateDefault) ?? partnerAndExchangeRateDefault
+    );
+  }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
+
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
+
+  const editRatesTrackingProps = JSON.stringify({
+    ...sharedSwapTracking,
+    provider,
+    partnersList,
+    exchangeRateList,
+    sourceCurrency: swapTransaction.swap.from.currency?.id,
+    targetCurrency: swapTransaction.swap.from.currency?.id,
+  });
+
+  useEffect(() => {
+    if (pageState === "loaded") {
+      track("Swap Form - Edit Rates", {
+        ...sharedSwapTracking,
+        provider,
+        partnersList,
+        exchangeRateList,
+        sourceCurrency: swapTransaction.swap.from.currency?.id,
+        targetCurrency: swapTransaction.swap.from.currency?.id,
+      });
+    }
+    /*
+     * By stringify-ing editRatesTrackingProps we are guaranteeing that the useEffect will
+     * only be rerun if there is a change in the editRatesTrackingProps keys & values.
+     * If we were to pass an object here the useEffect would re-run on
+     * each new creation of that object even if all the keys and values
+     * are the same. Causing unnecessary sends to segment/mixpanel.
+     */
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageState, editRatesTrackingProps]);
 
   useEffect(() => {
     dispatch(updateTransactionAction(swapTransaction.transaction));

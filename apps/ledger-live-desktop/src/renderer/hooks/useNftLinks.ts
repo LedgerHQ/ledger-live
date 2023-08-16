@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { TFunction, useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT, NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { IconsLegacy } from "@ledgerhq/react-ui";
