@@ -81,7 +81,7 @@ const StepAmount = (props: StepProps) => {
           />
         ) : null}
         {isNFTSend ? (
-          nft?.standard === "ERC1155" ? (
+          nft?.standard === "erc1155" ? (
             <Box mb={2}>
               <Label>{t("send.steps.amount.nftQuantity")}</Label>
               <Input

@@ -36,7 +36,7 @@ const ADD_NEW: ProtoNFT = {
   tokenId: "",
   amount: new BigNumber(0),
   contract: "",
-  standard: "ERC721",
+  standard: "erc721",
   currencyId: "",
 };
 

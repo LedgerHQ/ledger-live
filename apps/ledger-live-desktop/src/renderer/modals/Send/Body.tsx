@@ -232,7 +232,7 @@ const Body = ({
       if (!specific.nft || !transaction) return;
 
       const bridge = getAccountBridge(mainAccount);
-      const standard = nextNft.standard.toLowerCase();
+      const { standard } = nextNft;
       const newTransaction = specific.nft.injectNftIntoTransaction(
         transaction,
         {

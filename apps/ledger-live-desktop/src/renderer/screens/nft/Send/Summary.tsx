@@ -59,7 +59,7 @@ const Summary = ({ transaction }: Props) => {
           </Skeleton>
         </Box>
       </Box>
-      {nft?.standard === "ERC1155" ? (
+      {nft?.standard === "erc1155" ? (
         <Box horizontal justifyContent="space-between" mb={2}>
           <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
             <Trans i18nKey="send.steps.details.nftQuantity" />

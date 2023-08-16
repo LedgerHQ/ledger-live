@@ -43,7 +43,7 @@ const Option = ({ data: { tokenId, amount, contract, standard, currencyId } }: O
             </Text>
           </Skeleton>
         </Box>
-        {standard === "ERC1155" ? (
+        {standard === "erc1155" ? (
           <Text ff="Inter|Medium" fontSize={3}>
             {"x"}
             {amount.toFixed()}

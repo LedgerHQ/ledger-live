@@ -8,8 +8,8 @@ import { decodeAccountId } from "./account";
 import { encodeNftId } from "./nft/nftId";
 
 const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
-  ERC721: encodeERC721OperationId,
-  ERC1155: encodeERC1155OperationId,
+  erc721: encodeERC721OperationId,
+  erc1155: encodeERC1155OperationId,
 };
 
 export function findOperationInAccount(
@@ -122,7 +122,7 @@ export function patchOperationWithHash(operation: Operation, hash: string): Oper
           );
           const nftOperationIdEncoder =
             nftOperationIdEncoderPerStandard[(nftOp?.standard as NFTStandard) || ""] ||
-            nftOperationIdEncoderPerStandard.ERC721;
+            nftOperationIdEncoderPerStandard.erc721;
 
           return {
             ...nftOp,

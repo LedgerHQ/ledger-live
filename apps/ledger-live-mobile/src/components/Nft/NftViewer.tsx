@@ -214,7 +214,7 @@ const NftViewer = ({ route }: Props) => {
 
     const defaultTransaction = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(defaultTransaction, {
-      mode: nft.standard.toLowerCase() as EvmNftTransaction["mode"],
+      mode: nft.standard as EvmNftTransaction["mode"],
       nft: {
         tokenId: nft.tokenId,
         // Quantity is set to Infinity first to allow the user to change it on the amount page
@@ -485,7 +485,7 @@ const NftViewer = ({ route }: Props) => {
           copiedString={t("nft.viewer.tokenIdCopied")}
         />
 
-        {nft?.standard === "ERC1155" && (
+        {nft?.standard === "erc1155" && (
           <>
             <TouchableOpacity onPress={closeModal}>
               <Section title={t("nft.viewer.quantity")} value={nft?.amount?.toFixed()} />

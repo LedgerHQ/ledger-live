@@ -350,7 +350,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                 }
               </CopiableField>
             </Text>
-            {protoNft.standard === "ERC1155" ? (
+            {protoNft.standard === "erc1155" ? (
               <React.Fragment>
                 <NFTAttribute
                   separatorTop

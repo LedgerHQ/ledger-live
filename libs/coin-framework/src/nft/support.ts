@@ -14,7 +14,7 @@ export function isNFTActive(currency: CryptoCurrency | undefined | null): boolea
 }
 
 const nftCapabilities: Record<string, NFTStandard[]> = {
-  hasQuantity: ["ERC1155"],
+  hasQuantity: ["erc1155"],
 };
 
 type NftCapabilty = keyof typeof nftCapabilities;

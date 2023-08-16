@@ -139,7 +139,7 @@ export const buildOptimisticNftOperation = (
         date: new Date(),
         extra: {},
         contract: nft.contract,
-        standard: transaction.mode.toUpperCase(),
+        standard: transaction.mode,
         tokenId: nft.tokenId,
       },
     ],

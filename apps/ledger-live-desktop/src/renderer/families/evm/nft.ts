@@ -17,7 +17,7 @@ export const injectNftIntoTransaction = (
   standard?: NFTStandard,
 ): EvmTransaction => ({
   ...transaction,
-  mode: (standard ? standard.toLowerCase() : transaction.mode) as Lowercase<NFTStandard>,
+  mode: (standard ? standard : transaction.mode) as NFTStandard,
   nft: {
     collectionName: transaction.nft?.collectionName ?? "",
     contract: nftProperties?.contract ?? transaction.nft?.contract ?? "",

@@ -57,7 +57,7 @@ const NftCardView = ({
       <NftMediaComponent
         status={status}
         metadata={metadata}
-        nftAmount={nft.standard === "ERC1155" ? nft.amount : undefined}
+        nftAmount={nft.standard === "erc1155" ? nft.amount : undefined}
         isSelected={isSelected}
         selectable={selectable}
       />

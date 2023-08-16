@@ -120,7 +120,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
                   }}
                 />
               </Text>
-              {nft?.standard === "ERC1155" && isGrid && (
+              {nft?.standard === "erc1155" && isGrid && (
                 <Text ff="Inter|Medium" color="palette.text.shade50" fontSize={3}>
                   {`x${nft.amount.toFixed()}`}
                 </Text>
@@ -130,7 +130,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
         </Box>
         {!isGrid ? (
           <>
-            {nft?.standard === "ERC1155" && (
+            {nft?.standard === "erc1155" && (
               <Text ff="Inter|Medium" color="palette.text.shade50" fontSize={3} mr={15}>
                 {`x${nft.amount.toFixed()}`}
               </Text>
