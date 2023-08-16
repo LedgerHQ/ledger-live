@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { createStackNavigator, StackNavigationProp } from "@react-navigation/stack";
 
 import { useTheme } from "styled-components/native";
