@@ -92,7 +92,7 @@ export default class ElrondApi {
 
   async submit(signedOperation: SignedOperation): Promise<string> {
     const transaction = {
-      ...signedOperation.signatureRaw,
+      ...signedOperation.rawData,
       signature: signedOperation.signature,
     };
 

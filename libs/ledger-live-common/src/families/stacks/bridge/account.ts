@@ -4,6 +4,7 @@ import { StacksMainnet } from "@stacks/network";
 import { BigNumber } from "bignumber.js";
 import BN from "bn.js";
 import { Observable } from "rxjs";
+import invariant from "invariant";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -62,9 +63,10 @@ const createTransaction = (): Transaction => {
 const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation, signature, signatureRaw },
+  signedOperation: { operation, signature, rawData },
 }) => {
-  const tx = await getTxToBroadcast(operation, signature, signatureRaw ?? {});
+  invariant(operation as StacksOperation, "StacksOperation expected");
+  const tx = await getTxToBroadcast(operation as StacksOperation, signature, rawData ?? {});
 
   const hash = await broadcastTx(tx);
   const result = patchOperationWithHash(operation, hash);
@@ -274,7 +276,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             signedOperation: {
               operation,
               signature,
-              signatureRaw: {
+              rawData: {
                 xpub,
                 network,
                 anchorMode,

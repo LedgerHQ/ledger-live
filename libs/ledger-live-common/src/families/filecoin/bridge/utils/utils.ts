@@ -111,10 +111,10 @@ export const getAddress = (a: Account): Address =>
 export const getTxToBroadcast = (
   operation: Operation,
   signature: string,
-  signatureRaw: Record<string, any>,
+  rawData: Record<string, any>,
 ): BroadcastTransactionRequest => {
   const { senders, recipients, value, fee } = operation;
-  const { gasLimit, gasFeeCap, gasPremium, method, version, nonce, signatureType } = signatureRaw;
+  const { gasLimit, gasFeeCap, gasPremium, method, version, nonce, signatureType } = rawData;
 
   return {
     message: {

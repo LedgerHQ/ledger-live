@@ -169,8 +169,8 @@ const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({ signedOperation }) => {
   // log("debug", "[broadcast] start fn");
-  const { operation, signature, signatureRaw } = signedOperation;
-  const tx = getTxToBroadcast(operation, signature, signatureRaw as Record<any, unknown>);
+  const { operation, signature, rawData } = signedOperation;
+  const tx = getTxToBroadcast(operation, signature, rawData!);
 
   const resp = await broadcastTx(tx);
   const { hash } = resp;
@@ -266,7 +266,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               signedOperation: {
                 operation,
                 signature,
-                signatureRaw: additionalTxFields,
+                rawData: additionalTxFields,
               },
             });
           } finally {

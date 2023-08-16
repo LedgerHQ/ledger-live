@@ -22,6 +22,7 @@ import type {
   Transaction,
   TransactionStatus,
   TronAccount,
+  TronOperation,
   TrongridExtraTxInfo,
 } from "../types";
 import {
@@ -227,7 +228,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
            * And even after fixing this,  we're getting wrong fee estimation for TRC20 transactions
            * which are considered as 0 all the time, while it always being between 1 and 10 TRX.
            */
-          const operation: Operation = {
+          const operation: TronOperation = {
             id: encodeOperationId(account.id, hash, operationType),
             hash,
             // if it's a token op and there is no fee, this operation does not exist and is a "NONE"
@@ -273,7 +274,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
             signedOperation: {
               operation,
               signature,
-              signatureRaw: preparedTransaction.raw_data,
+              rawData: preparedTransaction.raw_data,
             },
           });
         }
@@ -286,13 +287,13 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
   );
 
 const broadcast = async ({
-  signedOperation: { signature, operation, signatureRaw },
+  signedOperation: { signature, operation, rawData },
 }: {
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> => {
   const transaction = {
-    raw_data: signatureRaw,
+    raw_data: rawData,
     txID: operation.hash,
     signature: [signature],
   };
@@ -361,7 +362,7 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         : new BigNumber(0),
     );
   const parentTxs = txs.filter(isParentTx);
-  const parentOperations: Operation[] = compact(
+  const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, info.address, tx)),
   );
   const trc10Tokens = get(acc, "assetV2", []).map(({ key, value }) => ({
@@ -413,14 +414,17 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
     }),
   );
   // get 'OUT' token operations with fee
-  const subOutOperationsWithFee: Operation[] = flatMap(subAccounts.map(s => s.operations))
+  const subOutOperationsWithFee: TronOperation[] = flatMap(subAccounts.map(s => s.operations))
     .filter(o => o.type === "OUT" && o.fee.isGreaterThan(0))
-    .map(o => ({
-      ...o,
-      accountId,
-      value: o.fee,
-      id: encodeOperationId(accountId, o.hash, "OUT"),
-    }));
+    .map(
+      (o): TronOperation => ({
+        ...o,
+        accountId,
+        value: o.fee,
+        id: encodeOperationId(accountId, o.hash, "OUT"),
+        extra: o.extra as TrongridExtraTxInfo,
+      }),
+    );
   // add them to the parent operations and sort by date desc
 
   /**

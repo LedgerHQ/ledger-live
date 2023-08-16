@@ -172,7 +172,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             signedOperation: {
               operation,
               signature: r,
-              signatureRaw: parsedUnsignedTx,
+              rawData: parsedUnsignedTx,
             },
           });
         }

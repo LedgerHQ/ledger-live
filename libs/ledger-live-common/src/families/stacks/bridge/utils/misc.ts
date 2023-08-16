@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import BN from "bn.js";
 import flatMap from "lodash/flatMap";
-import { Account, Address } from "@ledgerhq/types-live";
+import { Account, Address, Operation } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
@@ -25,7 +25,7 @@ import { StacksOperation } from "../../types";
 export const getTxToBroadcast = async (
   operation: StacksOperation,
   signature: string,
-  signatureRaw: Record<string, any>,
+  rawData: Record<string, any>,
 ): Promise<Buffer> => {
   const {
     value,
@@ -34,7 +34,7 @@ export const getTxToBroadcast = async (
     extra: { memo },
   } = operation;
 
-  const { anchorMode, network, xpub } = signatureRaw;
+  const { anchorMode, network, xpub } = rawData;
 
   const options: UnsignedTokenTransferOptions = {
     amount: new BN(BigNumber(value).minus(fee).toFixed()),
@@ -177,7 +177,7 @@ function reconciliatePublicKey(
 
 export const findNextNonce = async (
   senderAddress: string,
-  pendingOps: StacksOperation[],
+  pendingOps: Operation[],
 ): Promise<BigNumber> => {
   let nextNonce = BigNumber(0);
 

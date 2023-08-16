@@ -9,14 +9,14 @@ export const fromSignedOperationRaw = (
   signedOp: SignedOperationRaw,
   accountId: string,
 ): SignedOperation => {
-  const { operation, signature, expirationDate, signatureRaw } = signedOp;
+  const { operation, signature, expirationDate, rawData } = signedOp;
   const out: SignedOperation = {
     operation: fromOperationRaw(operation, accountId),
     signature,
   };
 
-  if (signatureRaw) {
-    out.signatureRaw = signatureRaw;
+  if (rawData) {
+    out.rawData = rawData;
   }
 
   if (expirationDate) {
@@ -29,14 +29,14 @@ export const toSignedOperationRaw = (
   signedOp: SignedOperation,
   preserveSubOperation?: boolean,
 ): SignedOperationRaw => {
-  const { operation, signature, expirationDate, signatureRaw } = signedOp;
+  const { operation, signature, expirationDate, rawData } = signedOp;
   const out: SignedOperationRaw = {
     operation: toOperationRaw(operation, preserveSubOperation),
     signature,
   };
 
-  if (signatureRaw) {
-    out.signatureRaw = signatureRaw;
+  if (rawData) {
+    out.rawData = rawData;
   }
 
   if (expirationDate) {
