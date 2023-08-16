@@ -178,9 +178,17 @@ Lint all packages
 pnpm lint --filter="./libs/ledgerjs/**"
 ```
 
+### Typecheck
+
+Typecheck all packages
+
+```bash
+pnpm typecheck --filter="./libs/ledgerjs/**"
+```
+
 ### Run Tests
 
-First of all, this ensure the libraries are correctly building, and passing lint and flow:
+First of all, this ensure the libraries are correctly building, and passing tests:
 
 ```bash
 pnpm test --filter="./libs/ledgerjs/**"

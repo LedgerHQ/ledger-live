@@ -57,6 +57,7 @@ export function sharedReducer({ event }: { event: SharedTaskEvent }): Partial<Sh
           message,
           retrying,
         },
+        lockedDevice: false,
       };
     }
     default:

@@ -1,5 +1,27 @@
 # @ledgerhq/icons-ui
 
+## 0.4.3
+
+### Patch Changes
+
+- [#4259](https://github.com/LedgerHQ/ledger-live/pull/4259) [`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - publish ui libraries with fixed tests
+
+## 0.4.2
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#4124](https://github.com/LedgerHQ/ledger-live/pull/4124) [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed color issue on new icon pack (Theme colors not working)
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#4124](https://github.com/LedgerHQ/ledger-live/pull/4124) [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed color issue on new icon pack (Theme colors not working)
+
 ## 0.4.1
 
 ### Patch Changes

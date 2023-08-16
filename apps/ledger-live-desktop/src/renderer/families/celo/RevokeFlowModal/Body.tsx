@@ -5,7 +5,8 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";

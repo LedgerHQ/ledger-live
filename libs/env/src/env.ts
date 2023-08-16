@@ -457,6 +457,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
+  MAPPING_SERVICE: {
+    def: "https://mapping-service.api.ledger.com",
+    parser: stringParser,
+    desc: "",
+  },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
     parser: intParser,
@@ -565,6 +570,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     def: "https://swap.ledger.com/v4",
     parser: stringParser,
     desc: "Swap API base",
+  },
+  SWAP_API_BASE_V5: {
+    def: "https://swap-stg.ledger.com/v5",
+    parser: stringParser,
+    desc: "Swap API base staging version 5",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,

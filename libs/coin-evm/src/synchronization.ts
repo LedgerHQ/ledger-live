@@ -5,7 +5,6 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
-  shouldRetainPendingOperation,
 } from "@ledgerhq/coin-framework/account/index";
 import {
   AccountShapeInfo,
@@ -246,19 +245,30 @@ export const getOperationStatus = async (
  * inside of subAccounts.
  */
 export const postSync = (initial: Account, synced: Account): Account => {
-  // Set of hashes from the pending operations of the main account
-  const coinPendingOperationsHashes = new Set();
-  for (const coinPendingOperation of synced.pendingOperations) {
-    coinPendingOperationsHashes.add(coinPendingOperation.hash);
-  }
+  // Get the latest nonce from the synced account
+  const lastOperation = synced.operations.find(op => ["OUT", "FEES", "NFT_OUT"].includes(op.type));
+  const latestNonce = lastOperation?.transactionSequenceNumber || -1;
   // Set of ids from the already existing subAccount from previous sync
   const initialSubAccountsIds = new Set();
   for (const subAccount of initial.subAccounts || []) {
     initialSubAccountsIds.add(subAccount.id);
   }
-
+  const initialPendingOperations = initial.pendingOperations || [];
+  const { operations } = synced;
+  const pendingOperations = initialPendingOperations.filter(
+    op =>
+      !operations.some(o => o.hash === op.hash) &&
+      op.transactionSequenceNumber !== undefined &&
+      op.transactionSequenceNumber > latestNonce,
+  );
+  // Set of hashes from the pending operations of the main account
+  const coinPendingOperationsHashes = new Set();
+  for (const op of pendingOperations) {
+    coinPendingOperationsHashes.add(op.hash);
+  }
   return {
     ...synced,
+    pendingOperations,
     subAccounts: synced.subAccounts?.map(subAccount => {
       // If the subAccount is new, just return the freshly synced subAccount
       if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
@@ -271,8 +281,9 @@ export const postSync = (initial: Account, synced: Account): Account => {
             coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
             // if the transaction has been confirmed, remove it
             !subAccount.operations.some(op => op.hash === tokenPendingOperation.hash) &&
-            // common rule for pending operations retention in the live
-            shouldRetainPendingOperation(synced, tokenPendingOperation),
+            // if the nonce is still lower than the last one in operations, keep it
+            tokenPendingOperation.transactionSequenceNumber !== undefined &&
+            tokenPendingOperation.transactionSequenceNumber > latestNonce,
         ),
       };
     }),

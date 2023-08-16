@@ -1,11 +1,11 @@
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "../../env";
 import { getSwapAPIBaseURL } from "./";
 import { mockGetStatus } from "./mock";
 import type { GetMultipleStatus } from "./types";
+import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 
 export const getMultipleStatus: GetMultipleStatus = async statusList => {
-  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN")) return mockGetStatus(statusList);
+  if (isIntegrationTestEnv()) return mockGetStatus(statusList);
 
   const res = await network({
     method: "POST",

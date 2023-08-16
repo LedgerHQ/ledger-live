@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.24.0
+      short_description: Ledger Live Mobile 3.28.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -116,10 +116,15 @@ release:
         recommendations on use of staking services.
       new_in_version: >-
         Features
-        Ledger Live now supports eight new Cardano tokens and twelve ESDT tokens, including WrappedUSDT (USDT).
+        Managing your NFT collection in Ledger Live just got better. You can now filter your NFTs by blockchain. This will help you view all your NFTs for a specific blockchain in one glance.
+
+        This filter also provides easy access to your hidden NFT collections directly from the Gallery. You no longer need to go to Settings to unhide NFTs.
+
+        Improvements
+        Want to get a closer look at your NFT? We’ve made some UI improvements to help you view NFT details.
 
         Fixes
-        Some users reported issues when trying to send XLM. We fixed this.
+        Optimism is now Op Mainnet. We’ve made the name change in Ledger Live.
       saga_features: ""
   media:
     - purpose: screenshot

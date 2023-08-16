@@ -78,7 +78,7 @@ function PostWelcomeSelection() {
             },
             testID: `Onboarding PostWelcome - Selection|Setup your Ledger`,
             onPress: setupLedger,
-            icon: <Icons.PlusCircle color={colors.primary.c80} />,
+            icon: <Icons.PlusCircle color={colors.primary.c80} size="M" />,
           },
           {
             title: t("onboarding.postWelcomeStep.accessWallet.title"),

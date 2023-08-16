@@ -3,7 +3,7 @@ import { BatteryStatusFlags, ChargingModes } from "@ledgerhq/types-devices";
 import { TransportStatusError, StatusCodes } from "@ledgerhq/errors";
 import { UnresponsiveCmdEvent } from "./core";
 import { Observable, from, of } from "rxjs";
-import { finalize, switchMap } from "rxjs/operators";
+import { switchMap } from "rxjs/operators";
 import { BatteryStatusTypes, FlagMasks } from "../../hw/getBatteryStatus";
 
 export type GetBatteryStatusCmdEvent =
@@ -20,22 +20,9 @@ export function getBatteryStatus({
   statusType,
 }: GetBatteryStatusCmdArgs): Observable<GetBatteryStatusCmdEvent> {
   return new Observable(subscriber => {
-    const oldTimeout = transport.unresponsiveTimeout;
-    transport.setExchangeUnresponsiveTimeout(1000);
-
-    const unresponsiveCallback = () => {
-      // Needs to push a value and not an error to allow the command to continue once
-      // the device is not unresponsive anymore. Pushing an error would stop the command.
-      subscriber.next({ type: "unresponsive" });
-    };
-
-    transport.on("unresponsive", unresponsiveCallback);
-
     return from(transport.send(0xe0, 0x10, 0x00, statusType))
       .pipe(
         switchMap((res): Observable<GetBatteryStatusCmdEvent> => {
-          transport.off("unresponsive", unresponsiveCallback);
-
           const status = res.readUInt16BE(res.length - 2);
 
           if (status !== StatusCodes.OK) {
@@ -87,7 +74,6 @@ export function getBatteryStatus({
             }
           }
         }),
-        finalize(() => transport.setExchangeUnresponsiveTimeout(oldTimeout)),
       )
       .subscribe(subscriber);
   });

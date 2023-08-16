@@ -267,6 +267,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               </View>
             ) : null}
             <Button
+              testID="recipient-continue-button"
               event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}

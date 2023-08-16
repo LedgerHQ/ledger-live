@@ -100,7 +100,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
     type === "success"
       ? {
           variant: "plain",
-          iconColor: "success.c20",
+          iconColor: "success.c60",
           title,
           subtitle: text || undefined,
         }

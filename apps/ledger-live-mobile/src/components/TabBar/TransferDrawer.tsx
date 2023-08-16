@@ -132,6 +132,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSendFunds : null,
       Icon: IconsLegacy.ArrowTopMedium,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+      testID: "transfer-send-button",
     },
     {
       eventProperties: {
@@ -144,6 +145,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       onPress: onReceiveFunds,
       Icon: IconsLegacy.ArrowBottomMedium,
       disabled: readOnlyModeEnabled,
+      testID: "transfer-receive-button",
     },
     {
       eventProperties: {
@@ -169,6 +171,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         }
       },
       disabled: isPtxServiceCtaExchangeDrawerDisabled || readOnlyModeEnabled,
+      testID: "transfer-receive-button",
     },
     {
       eventProperties: {
@@ -197,6 +200,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         !accountsCount ||
         readOnlyModeEnabled ||
         areAccountsEmpty,
+      testID: "transfer-sell-button",
     },
 
     ...(stakePrograms?.enabled
@@ -212,6 +216,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             Icon: IconsLegacy.ClaimRewardsMedium,
             onPress: onStake,
             disabled: readOnlyModeEnabled,
+            testID: "transfer-stake-button",
           },
         ]
       : []),
@@ -258,6 +263,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
             Icon: IconsLegacy.WalletConnectMedium,
             onPress: onWalletConnect,
             disabled: readOnlyModeEnabled,
+            testID: "transfer-walletconnect-button",
           },
         ]
       : []),

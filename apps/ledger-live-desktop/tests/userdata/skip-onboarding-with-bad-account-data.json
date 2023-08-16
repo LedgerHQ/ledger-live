@@ -1,0 +1,122 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "theme": null,
+      "region": null,
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "month",
+      "marketIndicator": "western",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "nanoS",
+      "hasInstalledApps": true,
+      "carouselVisibility": 0,
+      "hasAcceptedSwapKYC": false,
+      "lastSeenDevice": null,
+      "blacklistedTokenIds": [],
+      "swapAcceptedProviderIds": [],
+      "deepLinkUrl": null,
+      "firstTimeLend": false,
+      "swapProviders": [],
+      "showClearCacheBanner": false,
+      "starredAccountIds": [],
+      "hasPassword": false
+    },
+    "user": {
+      "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "mock:1:INVALID_CURRENCY_ID:1_tron_1:",
+          "seedIdentifier": "mock",
+          "name": "Tron 2",
+          "starred": false,
+          "used": true,
+          "derivationMode": "",
+          "index": 1,
+          "freshAddress": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
+          "freshAddressPath": "44'/195'/0'/0/0",
+          "freshAddresses": [
+            {
+              "address": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
+              "derivationPath": "44'/195'/0'/0/0"
+            }
+          ],
+          "blockHeight": 142575,
+          "creationDate": "2023-06-13T02:43:04.148Z",
+          "operationsCount": 100,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "INVALID_CURRENCY_ID",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2023-06-27T13:48:46.036Z",
+          "balance": "42418307",
+          "spendableBalance": "42418307",
+          "balanceHistoryCache": {},
+          "xpub": "38865EF7B7E11DE0F0BA4FEDE6BE23613D67EDAC17BCE14307E268166BCE8794",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+
+      {
+        "data": {
+          "id": "mock:1:tron:1_tron_1:INVALID_DERIVATION_MODE",
+          "seedIdentifier": "mock",
+          "name": "Tron 2",
+          "starred": false,
+          "used": true,
+          "derivationMode": "INVALID_DERIVATION_MODE",
+          "index": 1,
+          "freshAddress": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
+          "freshAddressPath": "44'/195'/0'/0/0",
+          "freshAddresses": [
+            {
+              "address": "1x1g9m7sH8D2gTfQFiVVKB7kmUF3B",
+              "derivationPath": "44'/195'/0'/0/0"
+            }
+          ],
+          "blockHeight": 142575,
+          "creationDate": "2023-06-13T02:43:04.148Z",
+          "operationsCount": 100,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "tron",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2023-06-27T13:48:46.036Z",
+          "balance": "42418307",
+          "spendableBalance": "42418307",
+          "balanceHistoryCache": {},
+          "xpub": "38865EF7B7E11DE0F0BA4FEDE6BE23613D67EDAC17BCE14307E268166BCE8794",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {}
+  }
+}

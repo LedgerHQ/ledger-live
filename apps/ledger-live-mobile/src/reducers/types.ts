@@ -230,6 +230,11 @@ export type SettingsState = {
   dateFormat: string;
   hasBeenUpsoldProtect: boolean;
   generalTermsVersionAccepted?: string;
+  depositFlow: {
+    hasClosedNetworkBanner: boolean;
+    hasClosedWithdrawBanner: boolean;
+  };
+  userNps: number | null;
 };
 
 export type NotificationsSettings = {

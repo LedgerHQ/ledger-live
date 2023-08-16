@@ -528,7 +528,7 @@
   },
   "stake": {
     "noFundsModal": {
-      "title": "Buy, swap or receive",
+      "title": "{{actions, list(type: disjunction)}}",
       "text": "You do not have enough {{coin}} available to stake",
       "description": "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
       "options": {
@@ -1137,6 +1137,7 @@
     "hideCTA": "Hide token"
   },
   "syncOnboarding": {
+    "exitCTA": "Exit setup",
     "connection": {
       "searching": {
         "title": "Connect {{deviceModelName}} to your computer",
@@ -1150,7 +1151,7 @@
       "title": "Setup {{deviceName}}",
       "continueOnDevice": "Perform this action on your {{productName}}",
       "pairedContent": {
-        "title": "{{deviceName}} is connected",
+        "title": "{{deviceName}} is secure",
         "description": "Continue setup on {{deviceName}}",
         "text": "This screen will change dynamically to provide you with relevant information while you set up your {{deviceName}}",
         "continueOnDevice": "Tap on {{productName}} to see the next screen."
@@ -1177,19 +1178,61 @@
         "restoreChoiceRecoverDescription": "Restore your Recovery Phrase Backup by logging into your Ledger account and confirming your identity."
       },
       "softwareCheckContent": {
-        "title": "Software check",
+        "title": {
+          "active": "Genuine check and\nOS update check",
+          "completed": "Your {{modelName}} is genuine and up to date"
+        },
+        "exitWarningDrawer": {
+          "title": "Are you sure you want to exit setup?",
+          "description": "You cannot setup your Ledger Stax without allowing this check.",
+          "cancelCheckCTA": "Cancel check",
+          "resumeCheckCTA": "Resume check"
+        },
+        "genuineCheckErrorDrawer": {
+          "quitSetupCTA": "Quit setup",
+          "goToSettingsCTA": "Go to settings",
+          "retryCTA": "Retry",
+          "contactSupportCTA": "Contact Ledger support",
+          "notFoundEntityError": {
+            "title": "We could not check if this device was genuine.",
+            "description": "The experimental setting “My Ledger provider ({{providerNumber}})” may be conflicting with the genuine check. You can disable it in settings."
+          },
+          "deviceNotGenuineError": {
+            "title": "This {{productName}} is not genuine",
+            "description": "This {{productName}} is not safe to use.\nPlease contact Ledger Support."
+          }
+        },
+        "whyPerformChecksLink": "Why perform these security checks?",
+        "startChecksCTA": "Start checks",
+        "continueCTA": "Continue to setup",
         "genuineCheck": {
-          "active": "Checking {{deviceName}}",
-          "completed": "{{deviceName}} is authentic"
+          "title": {
+            "active": "Genuine check",
+            "completed": "Your {{modelName}} is genuine",
+            "cancelled": "Genuine check declined"
+          },
+          "subtitle": {
+            "active": "This check ensures that your {{modelName}} is official Ledger hardware",
+            "cancelled": "You cannot setup your {{modelName}} without allowing this check"
+          },
+          "resumeCTA": "Resume genuine check"
         },
         "firmwareUpdate": {
-          "inactive": "Software check",
-          "active": "Checking for software updates",
-          "updateAvailable": "Software update available {{firmwareVersion}}",
-          "recommendation": "We recommend downloading the update now",
-          "downloadUpdate": "Download update",
-          "skipUpdate": "Skip for now",
-          "completed": "Software is up to date"
+          "title": {
+            "active": "OS update check",
+            "completed": "{{modelName}} OS is up to date",
+            "updateAvailable": "OS update {{firmwareVersion}} is available"
+          },
+          "subtitle": {
+            "active": "This check ensures your {{modelName}} OS is up to date",
+            "updateAvailable": "We recommend performing this update to have access to the latest security features"
+          },
+          "viewUpdateCTA": "View update",
+          "resumeUpdateCTA": "Resume update",
+          "skipUpdateCTA": "Skip update",
+          "retryUpdateCTA": "Retry",
+          "finalStepSuccessDescription": "Back to OS check",
+          "finalStepSuccessButtonLabel": "Continue"
         }
       },
       "installApplications": {
@@ -1201,30 +1244,10 @@
       "endOfSetup": {
         "title": "End of setup"
       },
-      "genuineCheckModal": {
-        "title": "Authenticity Check",
-        "paragraph1": "Let's make sure your {{deviceName}} is Authentic and safe to use",
-        "paragraph2": "We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your {{deviceName}}.",
-        "checkDeviceButton": "Check device"
+      "softwareCheckAllowSecureChannelDrawer": {
+        "title": "Allow a secure connection with Ledger"
       },
-      "genuineCheckCancelModal": {
-        "title": "Authenticity Check",
-        "paragraph1": "The genuine check was cancelled",
-        "paragraph2": "This check is very important to make sure your {{deviceName}} is safe to use.",
-        "checkDeviceButton": "Run check again",
-        "cancelButton": "Maybe later"
-      },
-      "genuineCheckNotGenuineModal": {
-        "title": "Authenticity Check",
-        "paragraph1": "Your device is not genuine",
-        "paragraph2": "Authenticity check failed",
-        "checkDeviceButton": "Run check again",
-        "cancelButton": "Maybe later"
-      },
-      "softwareCheckAllowSecureChannelModal": {
-        "title": "Allow manager on {{deviceName}}"
-      },
-      "softwareCheckLockedDeviceModal": {
+      "softwareCheckLockedDeviceDrawer": {
         "title": "Unlock your device"
       },
       "helpDrawer": {
@@ -2269,6 +2292,7 @@
     "header": "Account allocation ({{count}})"
   },
   "elrond": {
+    "guardedAccountWarning": "If you have a guardian set on your account, you won't be able to successfully send transactions via Ledger Live.",
     "summary": {
       "availableBalanceTooltip": "This amount can be transferred.",
       "availableBalance": "Available balance",
@@ -2457,6 +2481,72 @@
     "account": {
       "stakingRewardsBanner": {
         "cardTitle": "Total balance doesn't include staking rewards"
+      }
+    },
+    "delegation": {
+      "totalStake": "Total Stake",
+      "cost": "Cost",
+      "pool": "Pool",
+      "changeDelegation": "Change Delegation",
+      "assetsAlreadyStaked": "Your assets are already staked",
+      "addFundsToStake": "Add Funds to stake",
+      "commission": "Commission",
+      "stakeKeyRegistrationDeposit": "Stake key registration deposit",
+      "delegatingTo": "Delegating to",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your ADA to a pool.",
+            "bullet": [
+              "You keep ownership of delegated assets",
+              "Delegate using your Ledger device",
+              "Assets can be re-delegated to different pool or you can choose to un-delegate at anytime."
+            ]
+          },
+          "validator": {
+            "title": "Pools"
+          },
+          "summary": {
+            "title": "Summary"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "unDelegation": {
+      "message": "By un-delegating you will not receive any rewards for current and upcoming epochs",
+      "refund": "Stake Registration Deposit Refund",
+      "flow": {
+        "title": "Undelegate",
+        "steps": {
+          "summary": {
+            "title": "Summary"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully un delegated",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
       }
     }
   },
@@ -5284,12 +5374,12 @@
       "description": "Please navigate back to the Dashboard on your device"
     },
     "WebsocketConnectionError": {
-      "title": "Sorry, try again (connection error)",
-      "description": null
+      "title": "Network error",
+      "description": "Make sure you are connected to the internet and try again."
     },
     "WebsocketConnectionFailed": {
-      "title": "Sorry, try again (connection closed)",
-      "description": null
+      "title": "Network error",
+      "description": "Make sure you are connected to the internet and try again."
     },
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
@@ -5714,6 +5804,10 @@
     },
     "GasEstimationError": {
       "title": "Gas estimation failed"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo": {
+      "title": "OS update check failed",
+      "description": "Something went wrong. Please try again or contact Ledger Support if in doubt."
     }
   },
   "cryptoOrg": {

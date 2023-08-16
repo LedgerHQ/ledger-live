@@ -5,10 +5,8 @@ import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex } from "@ledgerhq/native-ui";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
@@ -27,14 +25,14 @@ import {
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
-
-const action = createAction(connectApp);
+import { useAppDeviceAction } from "../../hooks/deviceActions";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.VerifyAccount>
 >;
 
 export default function VerifyAccount({ navigation, route }: NavigationProps) {
+  const action = useAppDeviceAction();
   const { colors } = useTheme();
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const [device, setDevice] = useState<Device | null | undefined>();

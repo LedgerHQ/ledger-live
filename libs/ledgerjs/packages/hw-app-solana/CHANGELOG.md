@@ -1,5 +1,21 @@
 # @ledgerhq/hw-app-solana
 
+## 7.0.12
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1
+  - @ledgerhq/hw-transport@6.28.7
+
+## 7.0.12-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c7c484acf0`](https://github.com/LedgerHQ/ledger-live/commit/c7c484acf01e9db8dc5a5507b62ffcb863c77ca4)]:
+  - @ledgerhq/errors@6.13.1-next.0
+  - @ledgerhq/hw-transport@6.28.7-next.0
+
 ## 7.0.11
 
 ### Patch Changes

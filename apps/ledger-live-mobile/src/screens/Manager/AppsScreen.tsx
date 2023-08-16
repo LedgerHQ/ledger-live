@@ -46,6 +46,7 @@ import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/t
 import { ScreenName } from "../../const";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
 import ProviderWarning from "./ProviderWarning";
+import { UpdateStep } from "../FirmwareUpdate";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -69,7 +70,7 @@ type Props = {
   optimisticState: State;
   result: ListAppsResult;
   onLanguageChange: () => void;
-  onBackFromUpdate: () => void;
+  onBackFromUpdate: (updateState: UpdateStep) => void;
 };
 
 const AppsScreen = ({

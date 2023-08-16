@@ -264,6 +264,7 @@ function SendSummary({ navigation, route }: Props) {
           <Button
             event="SummaryContinue"
             type="primary"
+            testID="summary-continue-button"
             title={<Trans i18nKey="common.continue" />}
             containerStyle={styles.continueButton}
             onPress={() => setContinuing(true)}
