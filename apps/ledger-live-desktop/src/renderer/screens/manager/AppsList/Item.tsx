@@ -88,8 +88,6 @@ const Item = ({
   const flag = useFeature(camelCase(`currency_${currencyId}`) as FeatureId);
 
   // when the flag doesn't exist it's equivalent to being enabled
-  // flag[0]: name of the feature flag
-  // flag[1]: { enabled: boolean }
   const currencyFlagEnabled = !flag || flag.enabled;
   const currencySupported = !!currency && isCurrencySupported(currency) && currencyFlagEnabled;
   const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
