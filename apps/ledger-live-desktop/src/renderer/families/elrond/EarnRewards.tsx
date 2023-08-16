@@ -21,6 +21,7 @@ import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegationType, ElrondFamily, UnbondingType } from "~/renderer/families/elrond/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 export interface DelegationPropsType {
   account: ElrondAccount;
@@ -42,13 +43,7 @@ const Delegation = (props: DelegationPropsType) => {
   );
   const dispatch = useDispatch();
   const delegationEnabled = useMemo(
-    (): boolean =>
-      BigNumber(
-        denominate({
-          input: account.spendableBalance.toString(),
-          showLastNonZeroDecimal: true,
-        }),
-      ).gte(1),
+    () => BigNumber(account.spendableBalance).isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
     [account.spendableBalance],
   );
   const findValidator = useCallback(

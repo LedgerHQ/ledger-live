@@ -1,12 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import { denominate } from "./denominate";
 import { Account } from "@ledgerhq/types-live";
 
-export const areEarnRewardsEnabled = (account: Account): boolean => {
-  return BigNumber(
-    denominate({
-      input: String(account.spendableBalance),
-      showLastNonZeroDecimal: true,
-    }),
-  ).gte(1);
-};
+import { MIN_DELEGATION_AMOUNT } from "../constants";
+
+export const areEarnRewardsEnabled = (account: Account) =>
+  BigNumber(account.spendableBalance).isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT);
