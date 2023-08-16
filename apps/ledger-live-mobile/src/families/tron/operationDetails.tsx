@@ -34,29 +34,27 @@ function getURLWhatIsThis(
 }
 
 type OperationDetailsExtraProps = {
-  extra: {
-    votes: Array<Vote>;
-    frozenAmount: BigNumber;
-    unfreezeAmount: BigNumber;
-  };
+  operation: TronOperation;
   type: string;
   account: Account;
 };
 
-function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraProps) {
+function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
+  const {
+    extra: { votes, frozenAmount, unfreezeAmount },
+  } = operation;
 
   switch (type) {
     case "VOTE": {
-      const { votes } = extra;
       if (!votes || !votes.length) return null;
       return <OperationDetailsVotes votes={votes} account={account} />;
     }
 
     case "FREEZE": {
-      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.frozenAmount), {
+      const value = formatCurrencyUnit(account.unit, frozenAmount, {
         showCode: true,
         discreet,
         locale,
@@ -65,7 +63,7 @@ function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraPr
     }
 
     case "UNFREEZE": {
-      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.unfreezeAmount), {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount, {
         showCode: true,
         discreet,
         locale,
