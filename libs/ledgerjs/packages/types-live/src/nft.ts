@@ -6,7 +6,7 @@ export type CryptoCurrencyIds = string;
 /**
  *
  */
-export type NFTStandard = "ERC721" | "ERC1155";
+export type NFTStandard = "erc721" | "erc1155";
 
 /**
  *
