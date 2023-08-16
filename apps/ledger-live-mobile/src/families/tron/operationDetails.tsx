@@ -8,7 +8,7 @@ import {
   formatVotes,
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/families/tron/react";
-import type { Vote } from "@ledgerhq/live-common/families/tron/types";
+import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
@@ -149,20 +149,20 @@ const AmountCell = ({
   ) : null;
 
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = (operation.extra.frozenAmount as BigNumber) ?? new BigNumber(0);
+  const amount = (operation as TronOperation).extra.frozenAmount || new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = (operation.extra.unfreezeAmount as BigNumber) ?? new BigNumber(0);
+  const amount = (operation as TronOperation).extra.unfreezeAmount || new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const VoteAmountCell = ({ operation }: Props) => {
-  const amount = operation.extra.votes
-    ? (operation.extra.votes as Vote[]).reduce((sum, { voteCount }) => sum + voteCount, 0)
+  const amount = (operation as TronOperation).extra.votes
+    ? (operation as TronOperation).extra.votes?.reduce((sum, { voteCount }) => sum + voteCount, 0)
     : 0;
-  return amount > 0 ? (
+  return amount && amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>
       <Trans
         i18nKey={"operationDetails.extra.votes"}

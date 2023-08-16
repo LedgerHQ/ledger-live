@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import type { OperationType } from "@ledgerhq/types-live";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useSelector } from "react-redux";
@@ -9,7 +9,11 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import Section from "../../screens/OperationDetails/Section";
 import OperationStatusIcon from "../../icons/OperationStatusIcon";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
-import { AlgorandOperation, AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+import {
+  AlgorandOperation,
+  AlgorandAccount,
+  AlgorandOperationExtra,
+} from "@ledgerhq/live-common/families/algorand/types";
 
 type Props = {
   operation: AlgorandOperation;
@@ -49,7 +53,7 @@ type OperationIconProps = {
   type: OperationType;
   size: number;
   confirmed: boolean;
-  operation: AlgorandOperation;
+  operation: Operation;
 };
 
 const OperationIcon = ({
@@ -58,7 +62,8 @@ const OperationIcon = ({
   confirmed,
   operation: { hasFailed, extra },
 }: OperationIconProps) => {
-  const rewards = extra.rewards?.gt(0) ? extra.rewards : null;
+  const e = extra as AlgorandOperationExtra;
+  const rewards = e?.rewards?.gt(0) ? e.rewards : null;
   return rewards ? (
     <View style={styles.operationIconContainer}>
       <OperationStatusIcon

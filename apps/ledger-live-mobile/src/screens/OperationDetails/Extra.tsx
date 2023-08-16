@@ -8,11 +8,17 @@ type Props = {
 };
 export default function OperationDetailsExtra({ operation }: Props) {
   const { t } = useTranslation();
-  return (
+
+  // Safety type checks
+  return operation.extra &&
+    typeof operation.extra === "object" &&
+    !Array.isArray(operation.extra) ? (
     <>
-      {Object.entries(operation.extra).map(([key, value]) => (
+      {Object.entries(operation.extra as object).map(([key, value]) => (
         <Section title={t(`operationDetails.extra.${key}`)} value={String(value)} key={key} />
       ))}
     </>
+  ) : (
+    <></>
   );
 }

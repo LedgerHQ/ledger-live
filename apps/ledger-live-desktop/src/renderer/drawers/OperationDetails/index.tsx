@@ -696,19 +696,25 @@ type OperationDetailsExtraProps = {
   type: OperationType;
 };
 const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
-  const jsx = Object.entries(operation.extra).map(([key, value]) => {
-    if (typeof value === "object" || typeof value === "function") return null;
-    return (
-      <OpDetailsSection key={key}>
-        <OpDetailsTitle>
-          <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
-        </OpDetailsTitle>
-        <OpDetailsData>
-          <Ellipsis>{value}</Ellipsis>
-        </OpDetailsData>
-      </OpDetailsSection>
-    );
-  });
+  let jsx = null;
+
+  // Safety type checks
+  if (operation.extra && typeof operation.extra === "object" && !Array.isArray(operation.extra)) {
+    jsx = Object.entries(operation.extra as Object).map(([key, value]) => {
+      if (typeof value === "object" || typeof value === "function") return null;
+      return (
+        <OpDetailsSection key={key}>
+          <OpDetailsTitle>
+            <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis>{value}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    });
+  }
+
   return <>{jsx}</>;
 };
 const More = styled(Text).attrs<TextProps>(p => ({

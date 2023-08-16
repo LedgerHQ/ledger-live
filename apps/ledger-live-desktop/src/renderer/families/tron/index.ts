@@ -2,6 +2,7 @@ import {
   TronAccount,
   Transaction,
   TransactionStatus,
+  TronOperation,
 } from "@ledgerhq/live-common/families/tron/types";
 import { LLDCoinFamily } from "../types";
 import operationDetails from "./operationDetails";
@@ -11,9 +12,8 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import AccountSubHeader from "./AccountSubHeader";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
-import { Operation } from "@ledgerhq/types-live";
 
-const family: LLDCoinFamily<TronAccount, Transaction, TransactionStatus, Operation> = {
+const family: LLDCoinFamily<TronAccount, Transaction, TransactionStatus, TronOperation> = {
   operationDetails,
   accountHeaderManageActions,
   transactionConfirmFields,
