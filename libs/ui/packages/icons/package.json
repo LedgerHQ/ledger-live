@@ -13,7 +13,9 @@
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/icons",
   "files": [
     "react",
+    "reactLegacy",
     "native",
+    "nativeLegacy",
     "index.js"
   ],
   "exports": {
