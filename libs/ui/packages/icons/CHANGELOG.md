@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.5.0
+
+### Minor Changes
+
+- [#4378](https://github.com/LedgerHQ/ledger-live/pull/4378) [`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix npm package by adding reactLegacy and nativeLegacy folders to it
+
 ## 0.5.0-hotfix.0
 
 ### Minor Changes
