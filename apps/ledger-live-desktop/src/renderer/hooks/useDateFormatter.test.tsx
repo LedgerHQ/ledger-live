@@ -110,7 +110,9 @@ describe("useDateFormatter", () => {
 
   describe("useDateFormatter", () => {
     // Needed to wrap hook in a Redux Store
-    const HookWrapper = ({ children }: any) => <Provider store={store}>{children}</Provider>;
+    const HookWrapper = ({ children }: { children: React.ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    );
 
     // prepare mocking useSelector
     const spy = jest.spyOn(redux, "useSelector");

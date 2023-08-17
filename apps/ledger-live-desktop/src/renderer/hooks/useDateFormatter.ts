@@ -53,7 +53,7 @@ const useDateFormatter = (
   const locale = useSelector(localeSelector);
 
   const f = (date: Date) => {
-    let formatedDate = new Intl.DateTimeFormat(locale, intlOpts).format(date);
+    const formatedDate = new Intl.DateTimeFormat(locale, intlOpts).format(date);
     if (!opts?.calendar) return formatedDate;
 
     const { yesterday, today, tomorrow } = getDatesAround();
