@@ -1,9 +1,10 @@
 const chalk = require("chalk");
 const hasha = require("hasha");
-const execa = require("execa");
 const fs = require("fs");
 const child_process = require("child_process");
 const path = require("path");
+
+let execa;
 
 const rebuildDeps = async (folder, file) => {
   await execa("npm", ["run", "install-deps"], {
@@ -26,6 +27,10 @@ async function main() {
   const folder = "node_modules/.cache/";
   const file = "LEDGER_HASH_pnpm-lock.yaml.hash";
   const fullPath = `${folder}${file}`;
+
+  await import("execa").then(mod => {
+    execa = mod.execa;
+  });
 
   try {
     const oldChecksum = await fs.promises.readFile(fullPath, { encoding: "utf8" });

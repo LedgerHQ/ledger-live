@@ -31,6 +31,7 @@ import {
   GAS_PRICE_MODIFIER,
   MIN_GAS_LIMIT,
 } from "../constants";
+import { MultiversXAccount } from "./dtos/multiversx-account";
 const api = new ElrondApi(getEnv("ELROND_API_ENDPOINT"), getEnv("ELROND_DELEGATION_API_ENDPOINT"));
 
 const proxy = new ApiNetworkProvider(getEnv("ELROND_API_ENDPOINT"));
@@ -38,14 +39,12 @@ const proxy = new ApiNetworkProvider(getEnv("ELROND_API_ENDPOINT"));
 /**
  * Get account balances and nonce
  */
-export const getAccount = async (addr: string) => {
-  const { balance, nonce } = await api.getAccountDetails(addr);
+export const getAccount = async (addr: string): Promise<MultiversXAccount> => {
+  const { balance, nonce, isGuarded } = await api.getAccountDetails(addr);
   const blockHeight = await api.getBlockchainBlockHeight();
-  return {
-    blockHeight,
-    balance: new BigNumber(balance),
-    nonce,
-  };
+
+  const account = new MultiversXAccount(new BigNumber(balance), nonce, isGuarded, blockHeight);
+  return account;
 };
 
 export const getProviders = async (): Promise<ElrondProvider[]> => {

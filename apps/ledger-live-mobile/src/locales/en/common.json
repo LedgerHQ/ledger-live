@@ -4893,6 +4893,7 @@
     }
   },
   "elrond": {
+    "guardedAccountWarning": "If you have a guardian set on your account, you won't be able to successfully send transactions via Ledger Live.",
     "info": {
       "available": {
         "title": "EGLD available",
