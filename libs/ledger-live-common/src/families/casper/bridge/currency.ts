@@ -1,6 +1,6 @@
 import { makeScanAccounts } from "../../../bridge/jsHelpers";
 import { CurrencyBridge } from "@ledgerhq/types-live";
-import { getAccountShape } from "./utils/accountShape";
+import { getAccountShape } from "./bridgeHelpers/accountShape";
 
 const scanAccounts = makeScanAccounts({ getAccountShape });
 

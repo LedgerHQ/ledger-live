@@ -2,7 +2,7 @@ import Casper from "@zondax/ledger-casper";
 import { log } from "@ledgerhq/logs";
 
 import type { SignMessage, Result } from "../../hw/signMessage/types";
-import { getBufferFromString, getPath, isError } from "./utils";
+import { getBufferFromString, getPath, isError } from "./msc-utils";
 
 const signMessage: SignMessage = async (transport, account, { message }): Promise<Result> => {
   log("debug", "start signMessage process");
