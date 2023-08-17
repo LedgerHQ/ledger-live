@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.29.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/native-ui@0.20.6-hotfix.0
+
 ## 3.29.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.20.5",
+  "version": "0.20.6-hotfix.0",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
