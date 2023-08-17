@@ -96,7 +96,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             recipient: new InvalidAddress("", {
-              currency: account.currency,
+              currencyName: account.currency.name,
             }),
           }),
         );
@@ -111,7 +111,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             recipient: new InvalidAddress("", {
-              currency: account.currency,
+              currencyName: account.currency.name,
             }),
           }),
         );
