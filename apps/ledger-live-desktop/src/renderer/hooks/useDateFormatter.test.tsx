@@ -142,7 +142,14 @@ describe("useDateFormatter", () => {
     });
 
     describe("opts:", () => {
-      jest.useFakeTimers();
+      beforeAll(() => {
+        jest.useFakeTimers();
+      });
+
+      afterAll(() => {
+        jest.runOnlyPendingTimers();
+        jest.useRealTimers();
+      });
 
       test("calendar", () => {
         const yesterday = new Date("January 31, 2000 10:00:00");
@@ -156,11 +163,6 @@ describe("useDateFormatter", () => {
         expect(f(today)).toEqual("2/1/2000 – calendar.today");
         expect(f(tomorrow)).toEqual("2/2/2000 – calendar.tomorrow");
       });
-    });
-
-    afterAll(() => {
-      jest.runOnlyPendingTimers();
-      jest.useRealTimers();
     });
   });
 });
