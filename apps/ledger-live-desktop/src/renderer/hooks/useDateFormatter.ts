@@ -36,7 +36,7 @@ const getDatesAround = () => {
  *
  * @dev default options for useDateFormatter.
  */
-type useDateFormatterOptions = {
+export type useDateFormatterOptions = {
   calendar?: boolean;
 };
 

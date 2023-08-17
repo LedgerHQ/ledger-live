@@ -3,9 +3,17 @@
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { combineReducers, createStore } from "redux";
+import { renderHook } from "@testing-library/react-hooks";
+import React from "react";
+import * as redux from "react-redux";
+import { Provider } from "react-redux";
+import { combineReducers, legacy_createStore as createStore } from "redux";
 import settings from "../reducers/settings";
-import { dateEq, getDatesAround } from "./useDateFormatter";
+import useDateFormatter, {
+  dateEq,
+  getDatesAround,
+  useDateFormatterOptions,
+} from "./useDateFormatter";
 
 const MILLISECOND = 1000;
 const SECOND = 1 * MILLISECOND;
@@ -18,8 +26,6 @@ const store = createStore(
     settings,
   }),
 );
-
-// const Wrapper = ({ children }: any) => <Provider store={store}>{children}</Provider>;
 
 describe("useDateFormatter", () => {
   describe("dateEq", () => {
@@ -102,5 +108,59 @@ describe("useDateFormatter", () => {
     });
   });
 
-  describe("useDateFormatter", () => {});
+  describe("useDateFormatter", () => {
+    // Needed to wrap hook in a Redux Store
+    const HookWrapper = ({ children }: any) => <Provider store={store}>{children}</Provider>;
+
+    // prepare mocking useSelector
+    const spy = jest.spyOn(redux, "useSelector");
+
+    let f: ReturnType<typeof useDateFormatter>["f"];
+
+    const setLocale_Mock = (
+      locale: string,
+      opts?: {
+        opts?: useDateFormatterOptions;
+        intlOpts?: Intl.DateTimeFormatOptions;
+      },
+    ) => {
+      spy.mockReturnValue(locale);
+      const { result } = renderHook(() => useDateFormatter(opts?.opts, opts?.intlOpts), {
+        wrapper: HookWrapper,
+      });
+      f = result.current.f;
+    };
+
+    test("should format date properly", () => {
+      const date = new Date("February 1, 2000 10:00:00");
+
+      setLocale_Mock("fr");
+      expect(f(date)).toEqual("01/02/2000");
+
+      setLocale_Mock("en");
+      expect(f(date)).toEqual("2/1/2000");
+    });
+
+    describe("opts:", () => {
+      jest.useFakeTimers();
+
+      test("calendar", () => {
+        const yesterday = new Date("January 31, 2000 10:00:00");
+        const today = new Date("February 1, 2000 10:00:00");
+        const tomorrow = new Date("February 2, 2000 10:00:00");
+        jest.setSystemTime(today);
+
+        setLocale_Mock("en", { opts: { calendar: true } });
+
+        expect(f(yesterday)).toEqual("1/31/2000 – calendar.yesterday");
+        expect(f(today)).toEqual("2/1/2000 – calendar.today");
+        expect(f(tomorrow)).toEqual("2/2/2000 – calendar.tomorrow");
+      });
+    });
+
+    afterAll(() => {
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+    });
+  });
 });
