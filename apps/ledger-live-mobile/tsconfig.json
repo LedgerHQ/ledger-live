@@ -8,7 +8,13 @@
     "types": ["jest", "@testing-library/jest-native/extend-expect"],
     "noEmit": true,
     "target": "esnext",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "tests/*": ["src/__tests__/*"]
+    }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
   "exclude": [

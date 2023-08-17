@@ -2,7 +2,7 @@
 import * as React from "react";
 
 import LText from ".";
-import { render } from "../../__test__/test-renderer";
+import { render } from "tests/test-renderer";
 
 describe("LText", () => {
   it("Should render text correctly", () => {
