@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
+
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -21,7 +23,6 @@ import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegationType, ElrondFamily, UnbondingType } from "~/renderer/families/elrond/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
 export interface DelegationPropsType {
   account: ElrondAccount;
@@ -41,11 +42,10 @@ const Delegation = (props: DelegationPropsType) => {
   const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
     account.elrondResources ? account.elrondResources.delegations : [],
   );
+
   const dispatch = useDispatch();
-  const delegationEnabled = useMemo(
-    () => BigNumber(account.spendableBalance).isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
-    [account.spendableBalance],
-  );
+  const delegationEnabled = hasMinimumDelegableBalance(account);
+
   const findValidator = useCallback(
     (validator: string) => validators.find(item => item.contract === validator),
     [validators],

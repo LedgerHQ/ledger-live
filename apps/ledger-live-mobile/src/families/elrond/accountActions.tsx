@@ -2,7 +2,7 @@ import React from "react";
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { getCurrentElrondPreloadData } from "@ledgerhq/live-common/families/elrond/preload";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
-import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 
@@ -34,7 +34,7 @@ const getMainActions = ({
   parentAccount,
   parentRoute,
 }: getActionsType): getActionsReturnType => {
-  const delegationEnabled = account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT);
+  const delegationEnabled = hasMinimumDelegableBalance(account);
 
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.

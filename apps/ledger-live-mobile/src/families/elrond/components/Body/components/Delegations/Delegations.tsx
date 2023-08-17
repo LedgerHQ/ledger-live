@@ -1,9 +1,8 @@
 import React, { useCallback, useMemo } from "react";
-import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { BigNumber } from "bignumber.js";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
@@ -38,10 +37,7 @@ const Delegations = (props: DelegationsPropsType) => {
    * Enabled delegations only if the spendable balance is above 1 EGLD.
    */
 
-  const delegationEnabled = useMemo(
-    () => account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
-    [account.spendableBalance],
-  );
+  const delegationEnabled = hasMinimumDelegableBalance(account);
 
   /*
    * Trigger the delegation flow, opening conditionally a screen based on the amount of existing delegations.
