@@ -54,7 +54,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "FREEZE": {
-      const value = formatCurrencyUnit(account.unit, frozenAmount, {
+      const value = formatCurrencyUnit(account.unit, frozenAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale,
@@ -63,7 +63,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "UNFREEZE": {
-      const value = formatCurrencyUnit(account.unit, unfreezeAmount, {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale,
