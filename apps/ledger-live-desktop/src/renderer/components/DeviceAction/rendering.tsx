@@ -636,12 +636,12 @@ export const ErrorBody: React.FC<{
   list?: string | React.ReactNode;
 }> = ({ Icon, title, description, list }) => {
   return (
-    <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+    <>
       <BoxedIcon Icon={Icon} size={64} iconSize={24} />
       <ErrorTitle>{title}</ErrorTitle>
       <ErrorDescription>{description}</ErrorDescription>
       {list ? <ErrorDescription>{list}</ErrorDescription> : null}
-    </Flex>
+    </>
   );
 };
 

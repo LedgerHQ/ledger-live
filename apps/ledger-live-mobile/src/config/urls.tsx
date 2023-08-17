@@ -221,4 +221,8 @@ export const urls = {
   editEthTx: {
     learnMore: "https://support.ledger.com/hc/articles/9756122596765?support=true",
   },
+  genuineCheck: {
+    learnMore:
+      "https://support.ledger.com/hc/en-us/articles/4404389367057-Is-my-Ledger-device-genuine-?docs=true",
+  },
 };
