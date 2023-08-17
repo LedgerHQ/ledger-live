@@ -13,10 +13,18 @@ export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 10
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
 export const MIN_WIDTH = intFromEnv("LEDGER_MIN_WIDTH", 1024);
 export const MIN_HEIGHT = intFromEnv("LEDGER_MIN_HEIGHT", 700);
-const { DEV_TOOLS } = process.env;
+const { DEV_TOOLS, DISABLE_DEV_TOOLS, BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } = process.env;
+
+// Used for minirecover (recover local dev env)
+if (__DEV__ && IGNORE_CERTIFICATE_ERRORS) {
+  app.commandLine.appendSwitch("ignore-certificate-errors");
+}
+
 let mainWindow: BrowserWindow | null = null;
 let theme: string | undefined | null;
+
 export const getMainWindow = () => mainWindow;
+
 export const getMainWindowAsync = async (maxTries = 5): Promise<BrowserWindow> => {
   if (maxTries <= 0) {
     throw new Error("could not get the mainWindow");
@@ -28,6 +36,7 @@ export const getMainWindowAsync = async (maxTries = 5): Promise<BrowserWindow> =
   }
   return w;
 };
+
 const getWindowPosition = (width: number, height: number, display = screen.getPrimaryDisplay()) => {
   const { bounds } = display;
   return {
@@ -35,12 +44,13 @@ const getWindowPosition = (width: number, height: number, display = screen.getPr
     y: Math.ceil(bounds.y + (bounds.height - height) / 2),
   };
 };
+
 const defaultWindowOptions = {
   icon: path.join(__dirname, "/build/icons/icon.png"),
   backgroundColor: "#fff",
   webPreferences: {
     // This is a TEMPORARY workaround for some of our backend not yet supporting CORS. we will remove this once it's the case. this is only for develop mode because production don't do strict CORS check at the moment.
-    webSecurity: !(__DEV__ && process.env.BYPASS_CORS === "1"),
+    webSecurity: !(__DEV__ && BYPASS_CORS === "1"),
     webviewTag: true,
     blinkFeatures: "OverlayScrollbars",
     devTools: !!(__DEV__ || DEV_TOOLS),
@@ -52,6 +62,7 @@ const defaultWindowOptions = {
     nativeWindowOpen: false,
   },
 };
+
 export const loadWindow = async () => {
   const url = __DEV__ ? INDEX_URL : path.join("file://", __dirname, "index.html");
   if (mainWindow) {
@@ -65,6 +76,7 @@ export const loadWindow = async () => {
     await mainWindow.loadURL(fullUrl.href);
   }
 };
+
 export async function createMainWindow(
   {
     dimensions,
@@ -105,7 +117,7 @@ export async function createMainWindow(
   remoteMain.enable(mainWindow.webContents);
   mainWindow.name = "MainWindow";
   loadWindow();
-  if (DEV_TOOLS && !process.env.DISABLE_DEV_TOOLS) {
+  if (DEV_TOOLS && !DISABLE_DEV_TOOLS) {
     mainWindow.webContents.on("did-frame-finish-load", () => {
       if (mainWindow) {
         mainWindow.webContents.once("devtools-opened", () => {

@@ -323,8 +323,8 @@ importers:
         specifier: 2.9.4
         version: 2.9.4
       color:
-        specifier: ^3.1.3
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.2.3
       dotenv:
         specifier: ^16.0.3
         version: 16.0.3
@@ -846,8 +846,8 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
       color:
-        specifier: ^3.1.3
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.2.3
       d3-array:
         specifier: ~2.3.0
         version: 2.3.3
@@ -1361,8 +1361,8 @@ importers:
         specifier: ^20.4.2
         version: 20.4.2
       eslint-config-next:
-        specifier: 13.4.13
-        version: 13.4.13(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3)
+        specifier: 13.4.16
+        version: 13.4.16(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3)
       typescript:
         specifier: ^5.1.3
         version: 5.1.3
@@ -4128,8 +4128,8 @@ importers:
   libs/test-utils/dummy-live-app:
     dependencies:
       '@ledgerhq/live-app-sdk':
-        specifier: ^0.5.0
-        version: 0.5.1
+        specifier: ^0.8.0
+        version: 0.8.1
       react:
         specifier: ^17.0.2
         version: 17.0.2
@@ -4431,8 +4431,8 @@ importers:
         specifier: ^5.1.13
         version: 5.1.15
       color:
-        specifier: ^3.1.3
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.2.3
       moment:
         specifier: ^2.29.1
         version: 2.29.3
@@ -4753,8 +4753,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(chart.js@3.7.1)(moment@2.29.3)
       color:
-        specifier: ^3.1.3
-        version: 3.2.1
+        specifier: ^4.0.0
+        version: 4.2.3
       moment:
         specifier: ^2.29.1
         version: 2.29.3
@@ -16655,13 +16655,6 @@ packages:
       events: 3.3.0
     dev: false
 
-  /@ledgerhq/live-app-sdk@0.5.1:
-    resolution: {integrity: sha512-kWERpf8rVgxVGoksoU18SuYF2dc2WIC0t2zXgA5HI9toVK/gfmQz8x+ElXytImLbtQ+RhFUf73C03K2f9ZH5SQ==}
-    dependencies:
-      bignumber.js: 9.1.1
-      json-rpc-2.0: 0.2.19
-    dev: false
-
   /@ledgerhq/live-app-sdk@0.8.1:
     resolution: {integrity: sha512-RYQS76VPu/e0+KHi8/Q1yFjdxOUENxxP21ncSjHBRbyLbF/CfD7WDGTsoYv3dCMS7em14Sg3mxOv1P2uaCbCVw==}
     dependencies:
@@ -17029,8 +17022,8 @@ packages:
   /@next/env@13.4.10:
     resolution: {integrity: sha512-3G1yD/XKTSLdihyDSa8JEsaWOELY+OWe08o0LUYzfuHp1zHDA8SObQlzKt+v+wrkkPcnPweoLH1ImZeUa0A1NQ==}
 
-  /@next/eslint-plugin-next@13.4.13:
-    resolution: {integrity: sha512-RpZeXlPxQ9FLeYN84XHDqRN20XxmVNclYCraLYdifRsmibtcWUWdwE/ANp2C8kgesFRsvwfsw6eOkYNl9sLJ3A==}
+  /@next/eslint-plugin-next@13.4.16:
+    resolution: {integrity: sha512-QuFtQl+oSEEQb0HMYBdvBoUaTiMxbY3go/MFkF3zOnfY0t84+IbAX78cw8ZCfr6cA6UcTq3nMIlCrHwDC/moxg==}
     dependencies:
       glob: 7.1.7
     dev: true
@@ -34053,8 +34046,8 @@ packages:
     optionalDependencies:
       source-map: 0.6.1
 
-  /eslint-config-next@13.4.13(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3):
-    resolution: {integrity: sha512-EXAh5h1yG/YTNa5YdskzaSZncBjKjvFe2zclMCi2KXyTsXha22wB6MPs/U7idB6a2qjpBdbZcruQY1TWjfNMZw==}
+  /eslint-config-next@13.4.16(eslint@8.41.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-Of73d/FiaGf0GLCxxTGdh4rW8bRDvsqypylefkshE/uDDpQr8ifVQsD4UiB99rhegks7nJGkYtUnR3dC7kfFlw==}
     peerDependencies:
       eslint: ^7.23.0 || ^8.0.0
       typescript: '>=3.3.1'
@@ -34062,7 +34055,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@next/eslint-plugin-next': 13.4.13
+      '@next/eslint-plugin-next': 13.4.16
       '@rushstack/eslint-patch': 1.1.4
       '@typescript-eslint/parser': 6.2.0(eslint@8.41.0)(typescript@5.1.3)
       eslint: 8.41.0

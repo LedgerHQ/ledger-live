@@ -1,3 +1,15 @@
+# 2.66.0
+
+### 🚀 Features
+
+Starting today, you can stake Cardano (ADA) through Ledger Live and earn rewards. 
+
+When swapping crypto assets, a warning message will alert you if you don’t have enough funds to pay the network fees.
+
+### 🐛 Fixes
+
+Optimism is now Op Mainnet. We’ve made the name change in Ledger Live. 
+
 # 2.64.2
 
 Some users reported issues when adding accounts and trying to swap crypto. We've patched this up, and everything is running smoothly again.
