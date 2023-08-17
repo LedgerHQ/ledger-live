@@ -28,7 +28,9 @@ import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Feature } from "@ledgerhq/types-live";
+
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
@@ -64,6 +66,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
   const mock = useEnv("MOCK");
+
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
@@ -136,21 +139,24 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       klaytn,
     ],
   );
+
   const currencies = useMemo(() => {
     const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
       listSupportedTokens(),
     );
     const deactivatedCurrencies = mock
-      ? [] // mock mode: all currencies are available for playwrigth tests
+      ? []
       : Object.entries(featureFlaggedCurrencies)
           .filter(([, feature]) => !feature?.enabled)
           .map(([name]) => name);
     return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
   }, [featureFlaggedCurrencies, mock]);
+
   const url =
     currency && currency.type === "TokenCurrency"
       ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
       : null;
+
   return (
     <>
       {!navigator.onLine ? (
@@ -181,6 +187,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     </>
   );
 };
+
 export const StepChooseCurrencyFooter = ({
   transitionTo,
   currency,
@@ -192,6 +199,7 @@ export const StepChooseCurrencyFooter = ({
   const dispatch = useDispatch();
   const isToken = currency && currency.type === "TokenCurrency";
   const satStackAlreadyConfigured = useEnv("SATSTACK");
+  const mock = useEnv("MOCK");
   const latestStatus: SatStackStatus | undefined | null = useSatStackStatus();
   const fullNodeNotReady =
     satStackAlreadyConfigured &&
@@ -229,6 +237,10 @@ export const StepChooseCurrencyFooter = ({
     } else if (parentCurrency) {
       // set parentCurrency in already opened add account flow and continue
       setCurrency(parentCurrency);
+      if (mock) {
+        window.mock.events.mockDeviceEvent({ type: "opened" });
+      }
+
       transitionTo("connectDevice");
     }
   }, [
@@ -239,7 +251,9 @@ export const StepChooseCurrencyFooter = ({
     setCurrency,
     tokenAccount,
     transitionTo,
+    mock,
   ]);
+
   return (
     <>
       <TrackPage category="AddAccounts" name="Step1" />
@@ -260,7 +274,12 @@ export const StepChooseCurrencyFooter = ({
         <Button
           primary
           disabled={!currency || fullNodeNotReady || !navigator.onLine}
-          onClick={() => transitionTo("connectDevice")}
+          onClick={() => {
+            if (mock) {
+              window.mock.events.mockDeviceEvent({ type: "opened" });
+            }
+            transitionTo("connectDevice");
+          }}
           data-test-id="modal-continue-button"
         >
           {t("common.continue")}
@@ -269,4 +288,5 @@ export const StepChooseCurrencyFooter = ({
     </>
   );
 };
+
 export default StepChooseCurrency;
