@@ -123,7 +123,7 @@ export default function AddAccountsSelectDevice({
         </Flex>
       ) : (
         <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-          <TrackScreen category="AddAccounts" name="SelectDevice" currencyName={currency.name} />
+          <TrackScreen category="Deposit" name="SelectDevice" asset={currency.name} />
           <SelectDevice onSelect={onSetDevice} />
         </NavigationScrollView>
       )}

@@ -2,7 +2,8 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { Operation, Account, AccountLike } from "@ledgerhq/types-live";
 import keyBy from "lodash/keyBy";
 import {

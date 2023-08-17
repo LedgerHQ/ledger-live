@@ -49,9 +49,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
     [accounts],
   );
-
-  const hasMultipleAccounts = useMemo(() => !!(accounts && accounts.length > 1), [accounts]);
-
   const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
   const availableOnSwap = currency && swapSelectableCurrencies.includes(currency.id);
 
@@ -207,31 +204,12 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               Icon: iconReceive,
               navigationParams: [
                 NavigatorName.ReceiveFunds,
-                defaultAccount
-                  ? {
-                      screen: ScreenName.ReceiveConfirmation,
-                      params: {
-                        accountId: defaultAccount.id,
-                        parentId:
-                          defaultAccount.type === "TokenAccount"
-                            ? defaultAccount.parentId
-                            : undefined,
-                        currency,
-                      },
-                    }
-                  : hasMultipleAccounts
-                  ? {
-                      screen: ScreenName.ReceiveSelectAccount,
-                      params: {
-                        currency,
-                      },
-                    }
-                  : {
-                      screen: ScreenName.ReceiveSelectCrypto,
-                      params: {
-                        filterCurrencyIds: currency ? [currency.id] : undefined,
-                      },
-                    },
+                {
+                  screen: ScreenName.ReceiveSelectAccount,
+                  params: {
+                    currency,
+                  },
+                },
               ] as const,
             },
             {
@@ -293,7 +271,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     currency,
     defaultAccount,
     hasAccounts,
-    hasMultipleAccounts,
     readOnlyModeEnabled,
     t,
     route,

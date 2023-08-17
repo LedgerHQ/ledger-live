@@ -17,11 +17,13 @@ export type ElrondAccountRaw = AccountRaw & {
 export type ElrondResources = {
   nonce: number;
   delegations: ElrondDelegation[];
+  isGuarded: boolean;
 };
 
 export type ElrondResourcesRaw = {
   nonce: number;
   delegations: ElrondDelegation[];
+  isGuarded: boolean;
 };
 
 export type ElrondDelegation = {

@@ -148,7 +148,7 @@ export default function ConnectDevice({
 
   return (
     <>
-      <TrackScreen category="ReceiveFunds" name="Device Selection" />
+      <TrackScreen category="Deposit" name="Device Selection" />
       <SkipSelectDevice route={route} onResult={setDevice} />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} py={5} flex={1}>
