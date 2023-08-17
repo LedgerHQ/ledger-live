@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.66.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.14.7
+
+## 2.66.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.14.7-hotfix.0
+
 ## 2.66.0
 
 ### Minor Changes
