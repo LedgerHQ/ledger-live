@@ -33,7 +33,7 @@ describe("useDateFormatter", () => {
     let date: Date;
 
     beforeEach(() => {
-      date = new Date(origin.getTime());
+      date = new Date(origin);
     });
 
     test("should returns true when 2 equal dates are given", () => {

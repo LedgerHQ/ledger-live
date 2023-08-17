@@ -58,18 +58,9 @@ const useDateFormatter = (
 
     const { yesterday, today, tomorrow } = getDatesAround();
 
-    const isToday = dateEq(today, date);
-    const isYesterday = dateEq(yesterday, date);
-    const isTomorrow = dateEq(tomorrow, date);
-
-    formatedDate = isToday
-      ? formatedDate + ` – ${t("calendar.today")}`
-      : isYesterday
-      ? formatedDate + ` – ${t("calendar.yesterday")}`
-      : isTomorrow
-      ? formatedDate + ` – ${t("calendar.tomorrow")}`
-      : formatedDate;
-
+    if (dateEq(yesterday, date)) return `${formatedDate} – ${t("calendar.yesterday")}`;
+    if (dateEq(today, date)) return `${formatedDate} – ${t("calendar.today")}`;
+    if (dateEq(tomorrow, date)) return `${formatedDate} – ${t("calendar.tomorrow")}`;
     return formatedDate;
   };
 

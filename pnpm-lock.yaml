@@ -51803,7 +51803,7 @@ packages:
     dependencies:
       '@jest/schemas': 29.6.0
       ansi-styles: 5.2.0
-      react-is: 18.1.0
+      react-is: 18.2.0
     dev: true
 
   /pretty-format@29.6.2:
@@ -54020,7 +54020,7 @@ packages:
     dependencies:
       object-assign: 4.1.1
       react: 17.0.2
-      react-is: 17.0.2
+      react-is: 18.2.0
 
   /react-shallow-renderer@16.15.0(react@18.0.0):
     resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
@@ -54029,7 +54029,7 @@ packages:
     dependencies:
       object-assign: 4.1.1
       react: 18.0.0
-      react-is: 17.0.2
+      react-is: 18.2.0
 
   /react-sizeme@3.0.2:
     resolution: {integrity: sha512-xOIAOqqSSmKlKFJLO3inBQBdymzDuXx4iuwkNcJmC96jeiOg5ojByvL+g3MW9LPEsojLbC6pf68zOfobK8IPlw==}
@@ -54103,17 +54103,6 @@ packages:
       react-is: 18.1.0
       react-shallow-renderer: 16.15.0(react@18.0.0)
       scheduler: 0.21.0
-    dev: true
-
-  /react-test-renderer@18.2.0(react@17.0.2):
-    resolution: {integrity: sha512-JWD+aQ0lh2gvh4NM3bBM42Kx+XybOxCpgYK7F8ugAlpaTSnWsX+39Z4XkOykGZAHrjwwTZT3x3KxswVWxHPUqA==}
-    peerDependencies:
-      react: ^18.2.0
-    dependencies:
-      react: 17.0.2
-      react-is: 18.2.0
-      react-shallow-renderer: 16.15.0(react@17.0.2)
-      scheduler: 0.23.0
     dev: true
 
   /react-textarea-autosize@8.3.3(@types/react@17.0.53)(react@17.0.2):
