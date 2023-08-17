@@ -1,7 +1,7 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
-import { casperPubKeyToAccountHash } from "./bridge/utils/addresses";
+import { casperPubKeyToAccountHash } from "./bridge/bridgeHelpers/addresses";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [

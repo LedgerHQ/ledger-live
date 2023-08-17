@@ -10,7 +10,7 @@ import type {
 import type { Transaction, TransactionStatus } from "../types";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 
-import { getPath, isError } from "../utils";
+import { getPath, isError } from "../msc-utils";
 import { CLPublicKey, DeployUtil } from "casper-js-sdk";
 import BigNumber from "bignumber.js";
 import { CASPER_MINIMUM_VALID_AMOUNT } from "../consts";
@@ -19,7 +19,7 @@ import {
   getPubKeySignature,
   getPublicKeyFromCasperAddress,
   validateAddress,
-} from "./utils/addresses";
+} from "./bridgeHelpers/addresses";
 import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { withDevice } from "../../../hw/deviceAccess";
@@ -30,18 +30,17 @@ import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
-  InvalidMinimumAmount,
   NotEnoughBalance,
   RecipientRequired,
-  MayBlockAccount,
 } from "@ledgerhq/errors";
-import { CasperInvalidTransferId } from "../errors";
-import { broadcastTx } from "./utils/network";
+import { CasperInvalidTransferId, MayBlockAccount, InvalidMinimumAmount } from "../errors";
+import { broadcastTx } from "./bridgeHelpers/network";
 import { getMainAccount } from "../../../account/helpers";
-import { createNewDeploy, deployHashToString } from "./utils/txn";
-import { getAccountShape } from "./utils/accountShape";
-import { getEstimatedFees } from "./utils/fee";
-import { validateTransferId } from "./utils/transferId";
+import { createNewDeploy, deployHashToString } from "./bridgeHelpers/txn";
+import { getAccountShape } from "./bridgeHelpers/accountShape";
+import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { validateTransferId } from "./bridgeHelpers/transferId";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 const receive = makeAccountBridgeReceive();
 
@@ -55,12 +54,6 @@ const createTransaction = (): Transaction => {
     recipient: "",
     useAllAmount: false,
   };
-};
-
-const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
-  // log("debug", "[updateTransaction] patching tx");
-
-  return { ...t, ...patch };
 };
 
 const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
@@ -78,10 +71,9 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
       validateTransferId(transferId).isValid
     ) {
       if (t.useAllAmount) {
-        t.amount = a.spendableBalance.minus(t.fees);
+        const amount = a.spendableBalance.minus(t.fees);
+        return { ...t, amount };
       }
-
-      // t.deploy =
     }
   }
 
@@ -100,11 +92,17 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!validateAddress(recipient).isValid) errors.recipient = new InvalidAddress();
+  else if (!validateAddress(recipient).isValid)
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   else if (recipient.toLowerCase() === address.toLowerCase())
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
 
-  if (!validateAddress(address).isValid) errors.sender = new InvalidAddress();
+  if (!validateAddress(address).isValid)
+    errors.sender = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   else if (!validateTransferId(t.transferId).isValid) {
     errors.sender = new CasperInvalidTransferId();
   }
@@ -296,7 +294,7 @@ const sync = makeSync({ getAccountShape });
 const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,

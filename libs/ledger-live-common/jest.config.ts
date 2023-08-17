@@ -35,16 +35,6 @@ const defaultConfig = {
     "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
   ],
-  transform: {
-    "\\.js$": [
-      "babel-jest",
-      {
-        parserOpts: {
-          allowReturnOutsideFunction: true
-        }
-      }
-    ]
-  },
   testPathIgnorePatterns,
   testRegex,
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],

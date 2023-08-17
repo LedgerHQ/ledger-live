@@ -2,8 +2,8 @@ import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { DeviceTransactionField } from "../../transaction";
 import { Transaction, TransactionStatus } from "./types";
-import { methodToString } from "./utils";
-import { casperPubKeyToAccountHash } from "./bridge/utils/addresses";
+import { methodToString } from "./msc-utils";
+import { casperPubKeyToAccountHash } from "./bridge/bridgeHelpers/addresses";
 
 export type ExtraDeviceTransactionField = {
   type: "casper.extendedAmount";

@@ -2,8 +2,8 @@ import Capser from "@zondax/ledger-casper";
 import { log } from "@ledgerhq/logs";
 
 import type { Resolver } from "../../hw/getAddress/types";
-import { getPath, isError } from "./utils";
-import { casperAddressFromPubKey } from "./bridge/utils/addresses";
+import { getPath, isError } from "./msc-utils";
+import { casperAddressFromPubKey } from "./bridge/bridgeHelpers/addresses";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   log("debug", "start getAddress process");
