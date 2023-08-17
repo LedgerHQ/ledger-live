@@ -31,48 +31,63 @@ const createTransaction = (): Transaction => ({
 });
 
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+  if (parentAccount) return Promise.resolve(account.balance);
   const mainAccount = getMainAccount(account, parentAccount);
-  const estimatedFees = parentAccount
-    ? new BigNumber(0)
-    : transaction
-    ? defaultGetFees(mainAccount, transaction)
-    : new BigNumber(1000000000000);
+  let estimatedFees = new BigNumber(1000000000000);
+  if (transaction) {
+    estimatedFees = defaultGetFees(mainAccount, transaction);
+  }
   return Promise.resolve(BigNumber.max(0, account.balance.minus(estimatedFees)));
 };
 
-const getTransactionStatus = (a, t) => {
+const getTransactionStatus = (account, transaction) => {
   const errors: {
     amount?: Error;
     recipient?: Error;
   } = {};
+
   const warnings: {
     feeTooHigh?: Error;
     gasLimit?: Error;
   } = {};
-  const tokenAccount = !t.subAccountId
-    ? null
-    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
-  const account = tokenAccount || a;
-  const useAllAmount = !!t.useAllAmount;
-  const estimatedFees = defaultGetFees(a, t);
-  const totalSpent = useAllAmount
-    ? account.balance
-    : tokenAccount
-    ? new BigNumber(t.amount)
-    : new BigNumber(t.amount).plus(estimatedFees);
-  const amount = useAllAmount
-    ? tokenAccount
-      ? new BigNumber(t.amount)
-      : account.balance.minus(estimatedFees)
-    : new BigNumber(t.amount);
+
+  let tokenAccount = null;
+  if (transaction.subAccountId) {
+    tokenAccount = account.subAccounts?.find(ta => ta.id === transaction.subAccountId);
+  }
+
+  const currentAccount = tokenAccount || account;
+  const useAllAmount = Boolean(transaction.useAllAmount);
+  const estimatedFees = defaultGetFees(account, transaction);
+
+  let totalSpent: BigNumber;
+  if (useAllAmount) {
+    totalSpent = currentAccount.balance;
+  } else if (tokenAccount) {
+    totalSpent = new BigNumber(transaction.amount);
+  } else {
+    totalSpent = new BigNumber(transaction.amount).plus(estimatedFees);
+  }
+
+  let amount: BigNumber;
+  if (useAllAmount) {
+    if (tokenAccount) {
+      amount = currentAccount.balance;
+    } else {
+      amount = currentAccount.balance.minus(estimatedFees);
+    }
+  } else {
+    amount = new BigNumber(transaction.amount);
+  }
 
   // Fill up transaction errors...
-  if (totalSpent.gt(account.balance)) {
+  if (totalSpent.gt(currentAccount.balance)) {
     errors.amount = new NotEnoughBalance();
   }
-  if (!t.recipient) {
+  if (!transaction.recipient) {
     errors.recipient = new RecipientRequired("");
   }
+
   return Promise.resolve({
     errors,
     warnings,
