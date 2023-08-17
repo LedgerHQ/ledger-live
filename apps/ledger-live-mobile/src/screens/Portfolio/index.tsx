@@ -48,6 +48,7 @@ import {
 } from "../../reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
+import { UpdateStep } from "../FirmwareUpdate";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -72,6 +73,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const protectFeature = useFeature("protectServicesMobile");
   const recoverUpsellURL = useLearnMoreURI(protectFeature);
   const dispatch = useDispatch();
+
+  const onBackFromUpdate = useCallback(
+    (_updateState: UpdateStep) => {
+      navigation.goBack();
+    },
+    [navigation],
+  );
 
   useEffect(() => {
     const openProtectUpsell = async () => {
@@ -118,7 +126,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const data = useMemo(
     () => [
       <Flex px={6} py={4} key="FirmwareUpdateBanner">
-        <FirmwareUpdateBanner />
+        <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>,
       <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
       showAssets ? (
@@ -163,12 +171,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           ]),
     ],
     [
+      onBackFromUpdate,
       showAssets,
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
-      // TODO: discreetMode is never used 😱 is it safe to remove
-      // discreetMode,
       isAWalletCardDisplayed,
       t,
     ],

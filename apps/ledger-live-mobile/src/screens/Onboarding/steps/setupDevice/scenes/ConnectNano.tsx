@@ -3,8 +3,7 @@ import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
+import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
 import SelectDevice2 from "../../../../../components/SelectDevice2";
@@ -17,8 +16,7 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../../../../actions/settings";
-
-const action = createAction(connectManager);
+import { useManagerDeviceAction } from "../../../../../hooks/deviceActions";
 
 const ConnectNanoScene = ({
   onNext,
@@ -27,6 +25,7 @@ const ConnectNanoScene = ({
   onNext: () => void;
   deviceModelId: string;
 }) => {
+  const action = useManagerDeviceAction();
   const dispatch = useDispatch();
   const [device, setDevice] = useState<Device | undefined>();
 

@@ -1,14 +1,4 @@
 import { log } from "@ledgerhq/logs";
-import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
-import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
-import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { createAction as createStaxLoadImageAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
-import { createAction as createStaxFetchImageAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
-import { createAction as createInstallLanguageAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { createAction as createConnectAppAction } from "@ledgerhq/live-common/hw/actions/app";
-import { createAction as createConnectManagerAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useUpdateFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useUpdateFirmware";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import {
@@ -24,6 +14,7 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
+  UnresponsiveDeviceError,
   UserRefusedAllowManager,
   WebsocketConnectionError,
   WebsocketConnectionFailed,
@@ -34,21 +25,31 @@ import {
   ImageLoadRefusedOnDevice,
   LanguageInstallRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
+import {
+  useAppDeviceAction,
+  useInstallLanguageDeviceAction,
+  useManagerDeviceAction,
+  useStaxFetchImageDeviceAction,
+  useStaxLoadImageDeviceAction,
+} from "../../hooks/deviceActions";
 
-export const reconnectDeviceErrors: LedgerErrorConstructor<{
+// Errors related to the device connection
+export const reconnectDeviceErrorClasses: LedgerErrorConstructor<{
   [key: string]: unknown;
 }>[] = [
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
+  UnresponsiveDeviceError,
   ConnectManagerTimeout,
 ];
 
-export const retriableErrors: LedgerErrorConstructor<{
+// Errors that could be solved by the user: either on their phone or on their device
+export const userSolvableErrorClasses: LedgerErrorConstructor<{
   [key: string]: unknown;
 }>[] = [
-  ...reconnectDeviceErrors,
+  ...reconnectDeviceErrorClasses,
   WebsocketConnectionError,
   UserRefusedAllowManager,
   LanguageInstallRefusedOnDevice,
@@ -73,12 +74,6 @@ export type UpdateStep =
   | "appsRestore"
   | "completed";
 
-const installLanguageAction = createInstallLanguageAction(installLanguage);
-const staxLoadImageAction = createStaxLoadImageAction(staxLoadImage);
-const staxFetchImageAction = createStaxFetchImageAction(staxFetchImage);
-const connectManagerAction = createConnectManagerAction(connectManager);
-const connectAppAction = createConnectAppAction(connectApp);
-
 export const useUpdateFirmwareAndRestoreSettings = ({
   updateFirmwareAction,
   device,
@@ -86,6 +81,11 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 }: FirmwareUpdateParams) => {
   const [updateStep, setUpdateStep] = useState<UpdateStep>("start");
   const [installedApps, setInstalledApps] = useState<string[]>([]);
+
+  const installLanguageAction = useInstallLanguageDeviceAction();
+  const staxLoadImageAction = useStaxLoadImageDeviceAction();
+  const staxFetchImageAction = useStaxFetchImageDeviceAction();
+  const connectManagerAction = useManagerDeviceAction();
 
   // device action hooks only get triggered when they have a device passed to them
   // so in order to control the chaining of actions we use a step state and only
@@ -148,6 +148,8 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     [installedApps],
   );
 
+  const connectAppAction = useAppDeviceAction();
+
   const restoreAppsState = connectAppAction.useHook(
     updateStep === "appsRestore" ? device : null,
     restoreAppsRequest,
@@ -197,20 +199,19 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     }
   }, [proceedToImageRestore, deviceInfo.languageId]);
 
-  // this hook controls the chaining of device actions by updating the current step
-  // when needed. It basically implements a state macgine
+  // Controls the chaining of device actions by updating the current step when needed.
+  // You can see it as a state machine.
+  // On "unrecoverable" errors we try to go to the next step to avoid letting the device is an unknown state
   useEffect(() => {
-    let unrecoverableError;
+    let hasUnrecoverableError;
 
     switch (updateStep) {
-      case "start":
-        proceedToAppsBackup();
-        break;
       case "appsBackup":
-        unrecoverableError =
+        hasUnrecoverableError =
           connectManagerState.error &&
-          !retriableErrors.some(err => connectManagerState.error instanceof err);
-        if (connectManagerState.result || unrecoverableError) {
+          !userSolvableErrorClasses.some(err => connectManagerState.error instanceof err);
+
+        if (connectManagerState.result || hasUnrecoverableError) {
           if (connectManagerState.error) {
             log("FirmwareUpdate", "error while backing up device apps", connectManagerState.error);
           }
@@ -221,16 +222,20 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           proceedToImageBackup();
         }
         break;
+
       case "imageBackup":
-        unrecoverableError =
+        hasUnrecoverableError =
           staxFetchImageState.error &&
-          !retriableErrors.some(err => staxFetchImageState.error instanceof err);
-        if (staxFetchImageState.imageFetched || unrecoverableError) {
-          if (staxFetchImageState.error)
+          !userSolvableErrorClasses.some(err => staxFetchImageState.error instanceof err);
+
+        if (staxFetchImageState.imageFetched || hasUnrecoverableError) {
+          if (staxFetchImageState.error) {
             log("FirmwareUpdate", "error while backing up stax image", staxFetchImageState.error);
+          }
           proceedToFirmwareUpdate();
         }
         break;
+
       case "firmwareUpdate":
         if (updateActionState.step === "preparingUpdate" && !updateActionState.lockedDevice) {
           triggerUpdate();
@@ -238,38 +243,50 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           proceedToLanguageRestore();
         }
         break;
+
       case "languageRestore":
-        unrecoverableError =
+        hasUnrecoverableError =
           installLanguageState.error &&
-          !retriableErrors.some(err => installLanguageState.error instanceof err);
-        if (installLanguageState.languageInstalled || unrecoverableError) {
-          if (installLanguageState.error)
+          !userSolvableErrorClasses.some(err => installLanguageState.error instanceof err);
+
+        if (installLanguageState.languageInstalled || hasUnrecoverableError) {
+          if (installLanguageState.error) {
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
+          }
           proceedToImageRestore();
         }
         break;
+
       case "imageRestore":
-        unrecoverableError =
+        hasUnrecoverableError =
           staxLoadImageState.error &&
-          !retriableErrors.some(err => staxLoadImageState.error instanceof err);
-        if (staxLoadImageState.imageLoaded || unrecoverableError || !staxFetchImageState.hexImage) {
+          !userSolvableErrorClasses.some(err => staxLoadImageState.error instanceof err);
+
+        if (
+          staxLoadImageState.imageLoaded ||
+          hasUnrecoverableError ||
+          !staxFetchImageState.hexImage
+        ) {
           if (staxLoadImageState.error) {
             log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
           }
           proceedToAppsRestore();
         }
         break;
+
       case "appsRestore":
-        unrecoverableError =
+        hasUnrecoverableError =
           restoreAppsState.error &&
-          !retriableErrors.some(err => restoreAppsState.error instanceof err);
-        if (restoreAppsState.opened || unrecoverableError) {
+          !userSolvableErrorClasses.some(err => restoreAppsState.error instanceof err);
+
+        if (restoreAppsState.opened || hasUnrecoverableError) {
           if (restoreAppsState.error) {
             log("FirmwareUpdate", "error while restoring apps", restoreAppsState.error);
           }
           proceedToUpdateCompleted();
         }
         break;
+
       default:
         break;
     }
@@ -302,7 +319,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 
   const hasReconnectErrors = useMemo(
     () =>
-      reconnectDeviceErrors.some(
+      reconnectDeviceErrorClasses.some(
         err =>
           connectManagerState.error instanceof err ||
           staxFetchImageState.error instanceof err ||
@@ -316,6 +333,38 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       staxLoadImageState.error,
       restoreAppsState.error,
       installLanguageState.error,
+    ],
+  );
+
+  /**
+   * An error from the (current) fw update step that can be solved by a user action.
+   *
+   * If there is an error during the current fw update step but it is not user-solvable,
+   * then either: this current fw update step is skipped or this error is ignored
+   * And in both cases: nothing should be displayed to the user (logs are saved).
+   *
+   * Especially: a `TransportRaceCondition` error is to be expected since we chain multiple
+   * device actions that use different transport acquisition paradigms the action should,
+   * however, retry to execute and resolve the error by itself.
+   * There is no need to present the error to the user.
+   */
+  const userSolvableError = useMemo(
+    () =>
+      [
+        connectManagerState.error,
+        staxFetchImageState.error,
+        updateActionState.error,
+        installLanguageState.error,
+        restoreAppsState.error,
+        staxLoadImageState.error,
+      ].find(error => userSolvableErrorClasses.some(errorClass => error instanceof errorClass)),
+    [
+      connectManagerState.error,
+      installLanguageState.error,
+      restoreAppsState.error,
+      staxFetchImageState.error,
+      staxLoadImageState.error,
+      updateActionState.error,
     ],
   );
 
@@ -416,6 +465,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, [updateStep, proceedToImageRestore, proceedToAppsRestore, proceedToUpdateCompleted]);
 
   return {
+    startUpdate: proceedToAppsBackup,
     updateStep,
     connectManagerState,
     staxFetchImageState,
@@ -428,6 +478,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     noOfAppsToReinstall: installedApps.length,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
+    userSolvableError,
     restoreStepDeniedError,
   };
 };

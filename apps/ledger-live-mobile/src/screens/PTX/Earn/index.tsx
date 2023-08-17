@@ -8,12 +8,16 @@ import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "../../../analytics/TrackScreen";
 import GenericErrorView from "../../../components/GenericErrorView";
-import { useLocale } from "../../../context/Locale";
 import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
 import { EarnLiveAppNavigatorParamList } from "../../../components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
-import { counterValueCurrencySelector, discreetModeSelector } from "../../../reducers/settings";
+import {
+  counterValueCurrencySelector,
+  discreetModeSelector,
+  languageSelector,
+  localeSelector,
+} from "../../../reducers/settings";
 import { useSelector } from "react-redux";
 import { TAB_BAR_HEIGHT } from "../../../components/TabBar/shared";
 
@@ -24,7 +28,8 @@ const DEFAULT_EARN_APP_ID = "earn";
 
 export function EarnScreen({ route }: Props) {
   const { theme } = useTheme();
-  const { locale } = useLocale();
+  const language = useSelector(languageSelector);
+  const locale = useSelector(localeSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
 
@@ -53,7 +58,8 @@ export function EarnScreen({ route }: Props) {
         disableHeader
         inputs={{
           theme,
-          lang: locale,
+          lang: language,
+          locale: locale,
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           ...params,

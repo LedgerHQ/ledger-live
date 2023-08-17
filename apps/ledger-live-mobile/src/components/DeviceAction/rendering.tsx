@@ -881,7 +881,9 @@ export function renderLoading({
       <SpinnerContainer>
         <InfiniteLoader />
       </SpinnerContainer>
-      <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
+      <CenteredText testID="device-action-loading">
+        {description ?? t("DeviceAction.loading")}
+      </CenteredText>
       {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
