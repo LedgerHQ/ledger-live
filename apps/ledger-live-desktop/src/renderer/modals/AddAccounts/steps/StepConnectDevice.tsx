@@ -8,9 +8,6 @@ import { StepProps } from "..";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-if (getEnv("MOCK")) {
-  window.mock.events.mockDeviceEvent({ type: "opened" });
-}
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
   invariant(currency, "No crypto asset given");

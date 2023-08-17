@@ -193,6 +193,7 @@ export const StepChooseCurrencyFooter = ({
   const dispatch = useDispatch();
   const isToken = currency && currency.type === "TokenCurrency";
   const satStackAlreadyConfigured = useEnv("SATSTACK");
+  const mock = useEnv("MOCK");
   const latestStatus: SatStackStatus | undefined | null = useSatStackStatus();
   const fullNodeNotReady =
     satStackAlreadyConfigured &&
@@ -230,6 +231,9 @@ export const StepChooseCurrencyFooter = ({
     } else if (parentCurrency) {
       // set parentCurrency in already opened add account flow and continue
       setCurrency(parentCurrency);
+      if (mock) {
+        window.mock.events.mockDeviceEvent({ type: "opened" });
+      }
       transitionTo("connectDevice");
     }
   }, [
@@ -240,6 +244,7 @@ export const StepChooseCurrencyFooter = ({
     setCurrency,
     tokenAccount,
     transitionTo,
+    mock,
   ]);
   return (
     <>
@@ -261,7 +266,12 @@ export const StepChooseCurrencyFooter = ({
         <Button
           primary
           disabled={!currency || fullNodeNotReady || !navigator.onLine}
-          onClick={() => transitionTo("connectDevice")}
+          onClick={() => {
+            if (mock) {
+              window.mock.events.mockDeviceEvent({ type: "opened" });
+            }
+            transitionTo("connectDevice");
+          }}
           data-test-id="modal-continue-button"
         >
           {t("common.continue")}
