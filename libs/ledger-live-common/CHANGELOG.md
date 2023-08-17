@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 31.4.1-nightly.4
+
+### Patch Changes
+
+- [#4360](https://github.com/LedgerHQ/ledger-live/pull/4360) [`2f73df6545`](https://github.com/LedgerHQ/ledger-live/commit/2f73df65457c16cceb632a9c745e4c20a6ae4934) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): missing new on error constructor
+
+- [#4281](https://github.com/LedgerHQ/ledger-live/pull/4281) [`88846cc39d`](https://github.com/LedgerHQ/ledger-live/commit/88846cc39d053726800aabb435b04dc299c4c485) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos amount string parser
+
 ## 31.4.1-nightly.3
 
 ### Patch Changes

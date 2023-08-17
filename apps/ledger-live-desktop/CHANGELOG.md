@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.65.2-nightly.5
+
+### Patch Changes
+
+- [#4359](https://github.com/LedgerHQ/ledger-live/pull/4359) [`cf35fae21c`](https://github.com/LedgerHQ/ledger-live/commit/cf35fae21c1cda4700ff4ac76739ba79ef89a77b) Thanks [@Justkant](https://github.com/Justkant)! - fix(RecoverRestore): add onRetry to error handling
+
+- Updated dependencies [[`2f73df6545`](https://github.com/LedgerHQ/ledger-live/commit/2f73df65457c16cceb632a9c745e4c20a6ae4934), [`88846cc39d`](https://github.com/LedgerHQ/ledger-live/commit/88846cc39d053726800aabb435b04dc299c4c485)]:
+  - @ledgerhq/live-common@31.4.1-nightly.4
+
 ## 2.65.2-nightly.4
 
 ### Patch Changes

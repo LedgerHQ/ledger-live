@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.29.0-nightly.5
+
+### Minor Changes
+
+- [#4327](https://github.com/LedgerHQ/ledger-live/pull/4327) [`1cfd51f86f`](https://github.com/LedgerHQ/ledger-live/commit/1cfd51f86f08670e47c77dea45ad8f17f68c9041) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add earn info modal
+
+### Patch Changes
+
+- Updated dependencies [[`2f73df6545`](https://github.com/LedgerHQ/ledger-live/commit/2f73df65457c16cceb632a9c745e4c20a6ae4934), [`88846cc39d`](https://github.com/LedgerHQ/ledger-live/commit/88846cc39d053726800aabb435b04dc299c4c485)]:
+  - @ledgerhq/live-common@31.4.1-nightly.4
+
 ## 3.29.0-nightly.4
 
 ### Minor Changes
