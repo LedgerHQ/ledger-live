@@ -193,7 +193,7 @@
     "@xstate/react": "^1.6.3",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/izari-filecoin": "^1.2.0",
-    "@zondax/ledger-filecoin": "^0.11.2",
+    "@zondax/ledger-filecoin": "^0.13.0",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
     "async": "^3.2.3",
