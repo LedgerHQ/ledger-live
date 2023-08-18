@@ -49,7 +49,19 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const onDone = useCallback(() => {
     const n = navigation.getParent<StackNavigatorNavigation<RootStackParamList>>();
 
-    if (n) {
+    // get the route at the given index on navigation
+    const { index, routes } = navigation.getState();
+    const { name: routeAtIndexName } = routes[index];
+
+    // if this route is a live app we do not want to pop
+    // as doing so would take the user out of the live app.
+    // an example of this is the BTCDirect app.
+    const isRouteAtIndexALiveApp = [ScreenName.Exchange, ScreenName.PlatformApp].includes(
+      routeAtIndexName as ScreenName,
+    );
+
+    // if we have n and the route is not a live app then pop as normal
+    if (!isRouteAtIndexALiveApp && n) {
       n.pop();
     }
   }, [navigation]);
