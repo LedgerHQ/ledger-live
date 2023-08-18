@@ -89,7 +89,6 @@ const getTransactionStatus = async (
       },
     ];
   } else {
-    // ADA transaction
     amount = transaction.useAllAmount ? await estimateMaxSpendable({ account }) : amount;
     totalSpent = amount.plus(estimatedFees);
   }
