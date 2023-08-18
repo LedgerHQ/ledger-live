@@ -56,7 +56,7 @@
     "@polkadot/types": "9.8.2",
     "@polkadot/types-known": "9.8.2",
     "@polkadot/util": "10.3.1",
-    "@polkadot/util-crypto": "10.3.1",
+    "@polkadot/util-crypto": "10.4.2",
     "bignumber.js": "^9.1.1",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
