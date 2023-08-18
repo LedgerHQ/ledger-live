@@ -119,7 +119,7 @@
     "expo-modules-core": "^1.2.2",
     "fuse.js": "^6.4.6",
     "hoist-non-react-statics": "3.3.2",
-    "i18next": "20.3.5",
+    "i18next": "20.6.1",
     "invariant": "2.2.4",
     "json-rpc-2.0": "^0.2.19",
     "lodash": "4.17.21",
