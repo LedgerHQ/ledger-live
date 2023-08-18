@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
   /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/,
@@ -35,3 +37,17 @@ export const getBufferFromString = (message: string): Buffer => {
 
   return Buffer.from(message);
 };
+
+function randomIntFromInterval(min, max): string {
+  const minBig = new BigNumber(min);
+  const maxBig = new BigNumber(max);
+
+  const random = BigNumber.random().multipliedBy(maxBig.minus(minBig).plus(1)).plus(minBig);
+  const randomInt = random.integerValue(BigNumber.ROUND_FLOOR);
+
+  return randomInt.toString();
+}
+
+export function getRandomTransferID(): string {
+  return randomIntFromInterval(0, Number.MAX_SAFE_INTEGER);
+}
