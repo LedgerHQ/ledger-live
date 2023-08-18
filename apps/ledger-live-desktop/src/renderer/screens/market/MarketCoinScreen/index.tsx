@@ -78,9 +78,6 @@ export default function MarketCoinScreen() {
       : [];
   }, [providers, storedProviders]);
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
-
   const {
     selectedCoinData: currency,
     chartRequestParams,
@@ -147,20 +144,19 @@ export default function MarketCoinScreen() {
 
       history.push({
         pathname: "/exchange",
-        state:
-          ptxSmartRouting?.enabled && currency?.internalCurrency
-            ? {
-                currency: currency.internalCurrency?.id,
-                mode: "buy", // buy or sell
-              }
-            : {
-                mode: "onRamp",
-                defaultTicker:
-                  currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-              },
+        state: currency?.internalCurrency
+          ? {
+              currency: currency.internalCurrency?.id,
+              mode: "buy", // buy or sell
+            }
+          : {
+              mode: "onRamp",
+              defaultTicker:
+                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+            },
       });
     },
-    [currency, history, ptxSmartRouting],
+    [currency, history],
   );
 
   const openAddAccounts = useCallback(() => {
