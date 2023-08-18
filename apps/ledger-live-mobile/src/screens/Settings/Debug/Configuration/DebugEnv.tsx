@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback } from "react";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import Config from "react-native-config";
 import { EnvName, setEnvUnsafe, getAllEnvs, getDefinition } from "@ledgerhq/live-common/env";
 import { Flex, Button, Text, Tag, Alert } from "@ledgerhq/native-ui";
