@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import Slide from "./Slide";
 import BuyCryptoBgImage from "./banners/BuyCrypto/images/bg.png";
 import BuyCryptoCartImage from "./banners/BuyCrypto/images/cart.png";

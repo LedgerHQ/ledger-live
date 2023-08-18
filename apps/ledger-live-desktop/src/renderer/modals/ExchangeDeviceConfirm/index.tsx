@@ -3,7 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { urls } from "~/config/urls";

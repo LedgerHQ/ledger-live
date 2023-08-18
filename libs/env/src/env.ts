@@ -1,36 +1,31 @@
-// TODO: this file will be moved to a @ledgerhq/env library
-import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
 import { $ElementType } from "utility-types";
-type EnvDef<V> = {
-  desc: string;
-  def: V;
-  parser: (arg0: unknown) => V | null | undefined;
-};
 // type ExtractEnvValue = <V>(arg0: EnvDef<V>) => V;
 type EnvDefs = typeof envDefinitions;
 type Env = typeof env;
+
+type EnvDef<T extends string> = T extends EnvName ? EnvDefs[T] : undefined;
+
 export type EnvName = keyof EnvDefs;
 export type EnvValue<Name extends EnvName> = $ElementType<Env, Name>;
 
-const intParser = (v: any): number | null | undefined => {
+const intParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseInt(v, 10);
 };
 
-const floatParser = (v: any): number | null | undefined => {
+const floatParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseFloat(v);
 };
 
-const boolParser = (v: unknown): boolean | null | undefined => {
+const boolParser = (v: unknown): boolean | undefined => {
   if (typeof v === "boolean") return v;
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: unknown): string | null | undefined =>
-  typeof v === "string" ? v : undefined;
+const stringParser = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
 
-type JSONValue = string | number | boolean | null | { [x: string]: JSONValue } | Array<JSONValue>;
+type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
 const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
@@ -41,12 +36,12 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
-const stringArrayParser = (v: any): string[] | null | undefined => {
+const stringArrayParser = (v: unknown): string[] | undefined => {
   const v_array = typeof v === "string" ? v.split(",") : null;
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
-const envDefinitions: Record<string, EnvDef<boolean | string | number | string[] | unknown>> = {
+const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
     def: "ethereum,evm,tron",
     parser: stringParser,
@@ -783,15 +778,25 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
   },
 };
 
-export const getDefinition = (name: string): EnvDef<any> | null | undefined => envDefinitions[name];
+export const getDefinition = (name: string): EnvDef<any> => {
+  if (name in envDefinitions) {
+    return envDefinitions[name];
+  }
+  return undefined;
+};
 
-envDefinitions as Record<EnvName, EnvDef<any>>;
-const defaults: Record<EnvName, any> = mapValues(envDefinitions, o => o.def) as unknown as Record<
-  EnvName,
-  any
->;
+const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[Key]["def"] }>(
+  (acc, curr) => {
+    return {
+      ...acc,
+      [curr]: envDefinitions[curr].def,
+    };
+  },
+  {} as { [Key in EnvName]: EnvDefs[Key]["def"] },
+);
+
 // private local state
-const env: Record<EnvName, any> = { ...defaults };
+const env = { ...defaults };
 export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions) as EnvName[];
 export const getAllEnvs = (): Env => ({ ...env });
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
@@ -820,7 +825,7 @@ export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>):
   }
 };
 // change one environment with safety. returns true if it succeed
-export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
+export const setEnvUnsafe = (name: string, unsafeValue: unknown): boolean => {
   const definition = getDefinition(name);
   if (!definition) return false;
   const { parser } = definition;
@@ -831,7 +836,6 @@ export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
     return false;
   }
 
-  // $FlowFixMe flow don't seem to type proof it
-  setEnv(name, value);
+  setEnv(name as EnvName, value);
   return true;
 };

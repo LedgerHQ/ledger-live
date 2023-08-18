@@ -17,7 +17,7 @@ import { useRampCatalogCurrencies } from "./hooks";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { ExchangeStackNavigatorParamList } from "../../components/RootNavigator/types/ExchangeStackNavigator";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 type Navigation = CompositeScreenProps<
   StackNavigatorProps<ExchangeStackNavigatorParamList, ScreenName.ExchangeSelectCurrency>,

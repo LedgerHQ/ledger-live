@@ -4,7 +4,7 @@ import {
   Announcement,
   AnnouncementsUserSettings,
 } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getKey, setKey } from "~/renderer/storage";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
 import { languageSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";

@@ -24,9 +24,9 @@ const mockedCoins: CryptoCurrencyId[] = [
 
 mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
   describe("mock " + currency.id, () => {
-    setEnv("MOCK", true);
+    setEnv("MOCK", "true");
     const bridge = getCurrencyBridge(currency);
-    setEnv("MOCK", false);
+    setEnv("MOCK", "false");
     test("scanAccounts", async () => {
       const accounts = await bridge
         .scanAccounts({

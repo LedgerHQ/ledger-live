@@ -5,7 +5,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
 import { Theme, Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";

@@ -189,7 +189,7 @@ function setup(): {
   transaction: Transaction;
   prepare: () => Promise<any>;
 } {
-  setEnv("MOCK", 1);
+  setEnv("MOCK", "1");
   setEnv("EXPERIMENTAL_CURRENCIES", "cosmos");
   const seed = "cosmos-2";
   const currency = getCryptoCurrencyById("cosmos");

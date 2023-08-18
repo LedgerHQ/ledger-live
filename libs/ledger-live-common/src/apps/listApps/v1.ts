@@ -34,7 +34,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   const deviceModelId =
     (transport.deviceModel && transport.deviceModel.id) ||
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
-    getEnv("DEVICE_PROXY_MODEL");
+    (getEnv("DEVICE_PROXY_MODEL") as DeviceModelId);
 
   return new Observable(o => {
     let sub;
