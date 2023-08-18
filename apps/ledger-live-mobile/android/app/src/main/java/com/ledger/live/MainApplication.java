@@ -18,6 +18,9 @@ import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import com.braze.BrazeActivityLifecycleCallbackListener;
 
+import expo.modules.ApplicationLifecycleDispatcher;
+import expo.modules.ReactNativeHostWrapper;
+
 import java.util.List;
 
 import com.shopify.reactnativeperformance.ReactNativePerformance;
@@ -43,7 +46,8 @@ public class MainApplication extends Application implements ReactApplication {
   }
 
   private final ReactNativeHost mReactNativeHost =
-      new DefaultReactNativeHost(this) {
+      new ReactNativeHostWrapper(this, new DefaultReactNativeHost(this) {
+      // new DefaultReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
@@ -72,7 +76,8 @@ public class MainApplication extends Application implements ReactApplication {
         protected Boolean isHermesEnabled() {
           return BuildConfig.IS_HERMES_ENABLED;
         }
-      };
+      // };
+      });
 
   @Override
   public ReactNativeHost getReactNativeHost() {
@@ -84,7 +89,7 @@ public class MainApplication extends Application implements ReactApplication {
     ReactNativePerformance.onAppStarted();
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    // ApplicationLifecycleDispatcher.onApplicationCreate(this);
+    ApplicationLifecycleDispatcher.onApplicationCreate(this);
     createNotificationChannel();
     registerActivityLifecycleCallbacks(new BrazeActivityLifecycleCallbackListener());
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
@@ -97,6 +102,6 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    // ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig);
+    ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig);
   }
 }
