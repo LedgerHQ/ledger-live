@@ -586,21 +586,6 @@ Usage: ledger-live user
 
 Usage: ledger-live version
 
-Usage: ledger-live walletconnect # Create a walletconnect session
- -d, --device <String>        : provide a specific HID path of a device
-     --xpub <String>          : use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]
-     --id <String>            : restore an account id (or a partial version of an id) (alternatively to --device)
-     --file <filename>        : use a JSON account file or '-' for stdin (alternatively to --device)
-     --appjsonFile <filename> : use a desktop app.json (alternatively to --device)
- -c, --currency <String>      : Currency name or ticker. If not provided, it will be inferred from the device.
- -s, --scheme <String>        : if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.
- -i, --index <Number>         : select the account by index
- -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
-     --paginateOperations <Number>: if defined, will paginate operations
-     --walletConnectURI <String>: WallecConnect URI to use.
-     --walletConnectSession <String>: WallecConnect Session to use.
- -v, --verbose                : verbose mode
-     --silent                 : do not output the proxy logs
 
 
                 ````
