@@ -846,8 +846,8 @@ importers:
         specifier: ^4.0.0
         version: 4.2.3
       d3-array:
-        specifier: ~2.3.0
-        version: 2.3.3
+        specifier: ~2.12.0
+        version: 2.12.0
       d3-scale:
         specifier: ^3.2.1
         version: 3.3.0
@@ -1165,8 +1165,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       '@types/d3-array':
-        specifier: ~2.3.0
-        version: 2.3.0
+        specifier: ~2.12.0
+        version: 2.12.0
       '@types/d3-scale':
         specifier: ^3.2.1
         version: 3.3.2
@@ -24205,8 +24205,8 @@ packages:
     resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
     dev: true
 
-  /@types/d3-array@2.3.0:
-    resolution: {integrity: sha512-eBQLBDq0bcXW9K14ktZDL/oeTzhS7BIoyEb0ZQb7gq4kTI/nZD+OISrpmxFll9LIXp7gOmYk+yPPoxt3GeXtQg==}
+  /@types/d3-array@2.12.0:
+    resolution: {integrity: sha512-UuX3Ikw90Ey90qMdQh+CagAgl1y5p/WWvkpTenCNa4A4n6dFPbVR2RDQMbmJUD6yy+3JnxJguVJeC/dvFT7igw==}
     dev: true
 
   /@types/d3-path@3.0.0:
@@ -31786,6 +31786,18 @@ packages:
   /d3-array@1.2.4:
     resolution: {integrity: sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==}
 
+  /d3-array@2.12.0:
+    resolution: {integrity: sha512-T6H/qNldyD/1OlRkJbonb3u3MPhNwju8OPxYv0YSjDb/B2RUeeBEHzIpNrYiinwpmz8+am+puMrpcrDWgY9wRg==}
+    dependencies:
+      internmap: 1.0.1
+    dev: false
+
+  /d3-array@2.12.1:
+    resolution: {integrity: sha512-B0ErZK/66mHtEsR1TkPEEkwdy+WDesimkM5gpZr5Dsg54BiTA5RXtYW5qTLIAcekaS9xfZrzBLF/OAkB3Qn1YQ==}
+    dependencies:
+      internmap: 1.0.1
+    dev: false
+
   /d3-array@2.3.3:
     resolution: {integrity: sha512-syv3wp0U5aB6toP2zb2OdBkhTy1MWDsCAaYk6OXJZv+G4u7bSWEmYgxLoFyc88RQUhZYGCebW9a9UD1gFi5+MQ==}
 
@@ -31911,7 +31923,7 @@ packages:
     resolution: {integrity: sha512-JEo5HxXDdDYXCaWdwLRt79y7giK8SbhZJbFWXqbRTolCHFI5jRqteLzCsq51NKbUoX0PjBVSohxrx+NoOUujYA==}
     engines: {node: '>=12'}
     dependencies:
-      d3-array: 3.2.4
+      d3-array: 2.12.1
     dev: false
 
   /d3-hierarchy@3.1.2:
@@ -31982,7 +31994,7 @@ packages:
   /d3-scale@3.3.0:
     resolution: {integrity: sha512-1JGp44NQCt5d1g+Yy+GeOnZP7xHo0ii8zsQp6PGzd+C1/dl0KGsp9A7Mxwp+1D1o4unbTTxVdU/ZOIEBoeZPbQ==}
     dependencies:
-      d3-array: 2.3.3
+      d3-array: 2.12.0
       d3-format: 2.0.0
       d3-interpolate: 2.0.1
       d3-time: 2.1.1
@@ -31993,7 +32005,7 @@ packages:
     resolution: {integrity: sha512-GZW464g1SH7ag3Y7hXjf8RoUuAFIqklOAq3MRl4OaWabTFJY9PN/E1YklhXLh+OQ3fM9yS2nOkCoS+WLZ6kvxQ==}
     engines: {node: '>=12'}
     dependencies:
-      d3-array: 3.2.4
+      d3-array: 2.12.1
       d3-format: 3.1.0
       d3-interpolate: 3.0.1
       d3-time: 3.1.0
@@ -32041,14 +32053,14 @@ packages:
   /d3-time@2.1.1:
     resolution: {integrity: sha512-/eIQe/eR4kCQwq7yxi7z4c6qEXf2IYGcjoWB5OOQy4Tq9Uv39/947qlDcN2TLkiTzQWzvnsuYPB9TrWaNfipKQ==}
     dependencies:
-      d3-array: 2.3.3
+      d3-array: 2.12.0
     dev: false
 
   /d3-time@3.1.0:
     resolution: {integrity: sha512-VqKjzBLejbSMT4IgbmVgDjpkYrNWUYJnbCGo874u7MMKIWsILRX+OpX/gTk8MqjpT1A/c6HY2dCA77ZN0lkQ2Q==}
     engines: {node: '>=12'}
     dependencies:
-      d3-array: 2.3.3
+      d3-array: 2.12.1
     dev: false
 
   /d3-timer@1.0.10:
@@ -39048,6 +39060,10 @@ packages:
       get-intrinsic: 1.2.0
       has: 1.0.3
       side-channel: 1.0.4
+
+  /internmap@1.0.1:
+    resolution: {integrity: sha512-lDB5YccMydFBtasVtxnZ3MRBHuaoE8GKsppq+EchKL2U4nK/DmEpPHNH8MZe5HkMtpSiTSOZwfN0tzYjO/lJEw==}
+    dev: false
 
   /internmap@2.0.3:
     resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
