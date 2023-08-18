@@ -4437,8 +4437,8 @@ importers:
         specifier: ^13.0.0
         version: 13.0.1(react-native@0.71.6)(react@18.0.0)
       react-native-svg:
-        specifier: 13.4.0
-        version: 13.4.0(react-native@0.71.6)(react@18.0.0)
+        specifier: ^13.11.0
+        version: 13.11.0(react-native@0.71.6)(react@18.0.0)
       rn-range-slider:
         specifier: 2.1.1
         version: 2.1.1(prop-types@15.8.1)(react-native@0.71.6)(react@18.0.0)
@@ -28152,7 +28152,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -53169,18 +53169,6 @@ packages:
       react-native: 0.71.6(react@17.0.2)
     dev: true
 
-  /react-native-svg@13.4.0(react-native@0.71.6)(react@18.0.0):
-    resolution: {integrity: sha512-B3TwK+H0+JuRhYPzF21AgqMt4fjhCwDZ9QUtwNstT5XcslJBXC0FoTkdZo8IEb1Sv4suSqhZwlAY6lwOv3tHag==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-    dependencies:
-      css-select: 5.1.0
-      css-tree: 1.1.3
-      react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.22.8)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
-    dev: false
-
   /react-native-svg@13.4.0(react@18.0.0):
     resolution: {integrity: sha512-B3TwK+H0+JuRhYPzF21AgqMt4fjhCwDZ9QUtwNstT5XcslJBXC0FoTkdZo8IEb1Sv4suSqhZwlAY6lwOv3tHag==}
     peerDependencies:
@@ -57288,7 +57276,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-jsx@5.1.1(react@18.2.0):
     resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
