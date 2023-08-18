@@ -7,38 +7,14 @@ import type { Transaction } from "@ledgerhq/live-common/families/casper/types";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
@@ -63,10 +39,7 @@ export default function StacksMemoRow({ account, transaction }: Props) {
   return (
     <View>
       {!transferId ? (
-        <SummaryRow
-          title={<Trans i18nKey="send.summary.transferId" />}
-          onPress={editTransferId}
-        >
+        <SummaryRow title={<Trans i18nKey="send.summary.transferId" />} onPress={editTransferId}>
           <LText
             style={[
               styles.link,
@@ -81,10 +54,7 @@ export default function StacksMemoRow({ account, transaction }: Props) {
           </LText>
         </SummaryRow>
       ) : (
-        <SummaryRow
-          title={<Trans i18nKey="common.edit" />}
-          onPress={editTransferId}
-        >
+        <SummaryRow title={<Trans i18nKey="common.edit" />} onPress={editTransferId}>
           <LText semiBold style={styles.tagText} onPress={editTransferId}>
             {String(transferId)}
           </LText>

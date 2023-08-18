@@ -13,10 +13,7 @@ function OperationDetailsExtra({ extra }: Props) {
   return (
     <>
       {extra.transferId && (
-        <Section
-          title={t("operationDetails.extra.transferId")}
-          value={extra.transferId}
-        />
+        <Section title={t("operationDetails.extra.transferId")} value={extra.transferId} />
       )}
     </>
   );

@@ -12,25 +12,14 @@ import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TextInput from "../../components/FocusedTextInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
-    | LendingEnableFlowParamsList
-    | LendingSupplyFlowNavigatorParamList
-    | LendingWithdrawFlowNavigatorParamList
-    | SendFundsNavigatorStackParamList
-    | SignTransactionNavigatorParamList
-    | SwapNavigatorParamList,
+    SendFundsNavigatorStackParamList | SignTransactionNavigatorParamList | SwapNavigatorParamList,
     ScreenName.CasperEditTransferId
   >
 >;
@@ -41,9 +30,7 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const [transferId, setTransferId] = useState(
-    route.params?.transaction.transferId,
-  );
+  const [transferId, setTransferId] = useState(route.params?.transaction.transferId);
   const onChangeTransferIdValue = useCallback((str: string) => {
     let value: string = str;
     value = str.replace(/\D/g, "");
@@ -70,10 +57,7 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           {isFocused && (
             <TextInput
               allowFontScaling={false}
