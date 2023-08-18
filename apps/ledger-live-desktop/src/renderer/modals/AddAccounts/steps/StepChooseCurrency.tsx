@@ -29,7 +29,8 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Feature } from "@ledgerhq/types-live";
 
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+const listSupportedTokens = () =>
+  listTokens().filter(token => isCurrencySupported(token.parentCurrency));
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
@@ -144,11 +145,13 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
       listSupportedTokens(),
     );
+
     const deactivatedCurrencies = mock
       ? []
       : Object.entries(featureFlaggedCurrencies)
           .filter(([, feature]) => !feature?.enabled)
           .map(([name]) => name);
+
     return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
   }, [featureFlaggedCurrencies, mock]);
 
