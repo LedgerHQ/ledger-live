@@ -146,6 +146,8 @@ function readPackage(pkg, context) {
       addPeerDependencies("expo", {
         "react-native": "*",
         react: "*",
+        "expo-modules-autolinking": "*",
+        "expo-modules-core": "*",
       }),
       addPeerDependencies(/^expo-/, {
         "expo-modules-core": "*",
