@@ -4,9 +4,7 @@ def relative_path(module_name)
   module_pathname.relative_path_from(Pathname.new File.absolute_path ".")
 end
 
-expo_autolinking = File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
-
-require expo_autolinking
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
