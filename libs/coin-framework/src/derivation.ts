@@ -179,8 +179,6 @@ const modes = Object.freeze({
   },
   casper_wallet: {
     overridesDerivation: "44'/506'/0'/0/<account>",
-    startsAt: 1,
-    tag: "third-party",
   },
   solanaMain: {
     isNonIterable: true,
@@ -367,6 +365,7 @@ const disableBIP44: Record<string, boolean> = {
   cardano_testnet: true,
   near: true,
   internet_computer: true,
+  casper: true,
 };
 type SeedInfo = {
   purpose: number;
