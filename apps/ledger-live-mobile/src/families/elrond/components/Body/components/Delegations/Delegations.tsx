@@ -4,11 +4,11 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-
+import BigNumber from "bignumber.js";
 import type { StackNavigationProp } from "@react-navigation/stack";
+
 import type { NavigationType } from "../../../../types";
 import type { DelegationsPropsType } from "./types";
-
 import AccountDelegationInfo from "../../../../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
 import IlluRewards from "../../../../../../icons/images/Rewards";
