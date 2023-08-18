@@ -2106,8 +2106,8 @@ importers:
         specifier: ^5.1.0
         version: 5.2.1
       cosmjs-types:
-        specifier: 0.2.1
-        version: 0.2.1
+        specifier: 0.8.0
+        version: 0.8.0
       crc:
         specifier: ^4.2.0
         version: 4.2.0(buffer@6.0.3)
@@ -31016,6 +31016,13 @@ packages:
 
   /cosmjs-types@0.2.1:
     resolution: {integrity: sha512-EUG6TgdWkYHBzXjo5tZ82L+0QLijTu/rZGNIbJ/n07ST30GmptYkPmO+REX7qF4YUtli//Rfy0rrNzH9IMrMmw==}
+    dependencies:
+      long: 4.0.0
+      protobufjs: 6.11.3
+    dev: false
+
+  /cosmjs-types@0.8.0:
+    resolution: {integrity: sha512-Q2Mj95Fl0PYMWEhA2LuGEIhipF7mQwd9gTQ85DdP9jjjopeoGaDxvmPa5nakNzsq7FnO1DMTatXTAx6bxMH7Lg==}
     dependencies:
       long: 4.0.0
       protobufjs: 6.11.3

@@ -216,7 +216,7 @@
     "c32check": "1.1.3",
     "cashaddrjs": "^0.4.4",
     "coininfo": "^5.1.0",
-    "cosmjs-types": "0.2.1",
+    "cosmjs-types": "0.8.0",
     "crc": "^4.2.0",
     "create-hmac": "^1.1.7",
     "crypto-js": "^4.1.1",
