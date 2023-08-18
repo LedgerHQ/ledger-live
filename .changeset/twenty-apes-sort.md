@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Add track properties to deeplink
+Fix errors layout regression

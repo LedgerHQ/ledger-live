@@ -1,41 +1,36 @@
 # @ledgerhq/coin-evm
 
-## 0.5.1-nightly.2
+## 0.5.1
 
 ### Patch Changes
 
-- Updated dependencies [[`45be23c776`](https://github.com/LedgerHQ/ledger-live/commit/45be23c77666697dbe395f836ab592062173d5cb)]:
-  - @ledgerhq/types-live@6.38.1-nightly.1
-  - @ledgerhq/live-env@0.4.2-nightly.1
-  - @ledgerhq/coin-framework@0.5.1-nightly.2
-  - @ledgerhq/domain-service@1.1.8-nightly.1
-  - @ledgerhq/evm-tools@1.0.4-nightly.1
-  - @ledgerhq/hw-app-eth@6.34.3-nightly.2
-  - @ledgerhq/live-network@1.1.5-nightly.1
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6), [`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808), [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996), [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/types-live@6.38.1
+  - @ledgerhq/live-env@0.4.2
+  - @ledgerhq/errors@6.14.0
+  - @ledgerhq/cryptoassets@9.11.1
+  - @ledgerhq/coin-framework@0.5.1
+  - @ledgerhq/domain-service@1.1.8
+  - @ledgerhq/evm-tools@1.0.4
+  - @ledgerhq/hw-app-eth@6.34.3
+  - @ledgerhq/live-network@1.1.5
+  - @ledgerhq/devices@8.0.7
 
-## 0.5.1-nightly.1
-
-### Patch Changes
-
-- [#4268](https://github.com/LedgerHQ/ledger-live/pull/4268) [`707e59f8b5`](https://github.com/LedgerHQ/ledger-live/commit/707e59f8b516448e6f2845288ad4cb3f5488e688) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix pending transaction bug in evm family
-
-- Updated dependencies [[`f6f70ba0e8`](https://github.com/LedgerHQ/ledger-live/commit/f6f70ba0e85c7898cdeec19402b1eadfde6a2206)]:
-  - @ledgerhq/live-env@0.4.2-nightly.0
-  - @ledgerhq/coin-framework@0.5.1-nightly.1
-  - @ledgerhq/evm-tools@1.0.4-nightly.0
-  - @ledgerhq/live-network@1.1.5-nightly.0
-  - @ledgerhq/hw-app-eth@6.34.3-nightly.1
-
-## 0.5.1-nightly.0
+## 0.5.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
-  - @ledgerhq/types-live@6.38.1-nightly.0
-  - @ledgerhq/coin-framework@0.5.1-nightly.0
-  - @ledgerhq/domain-service@1.1.8-nightly.0
-  - @ledgerhq/evm-tools@1.0.3
-  - @ledgerhq/hw-app-eth@6.34.3-nightly.0
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6), [`95088eab45`](https://github.com/LedgerHQ/ledger-live/commit/95088eab45f6af919e347a605cefefb6d7705808), [`a61a43fc47`](https://github.com/LedgerHQ/ledger-live/commit/a61a43fc47399e969fa68539de6af51bfa41e921), [`4c2539a1d5`](https://github.com/LedgerHQ/ledger-live/commit/4c2539a1d5c9c01c0f9fa7cd1daf5a5a63c02996), [`229cf62304`](https://github.com/LedgerHQ/ledger-live/commit/229cf623043b29eefed3e8e37a102325fa6e0387), [`3455944496`](https://github.com/LedgerHQ/ledger-live/commit/34559444969ce1571ff4c54f33feb7f3fb59a33a)]:
+  - @ledgerhq/types-live@6.38.1-next.0
+  - @ledgerhq/live-env@0.4.2-next.0
+  - @ledgerhq/errors@6.14.0-next.0
+  - @ledgerhq/cryptoassets@9.11.1-next.0
+  - @ledgerhq/coin-framework@0.5.1-next.0
+  - @ledgerhq/domain-service@1.1.8-next.0
+  - @ledgerhq/evm-tools@1.0.4-next.0
+  - @ledgerhq/hw-app-eth@6.34.3-next.0
+  - @ledgerhq/live-network@1.1.5-next.0
+  - @ledgerhq/devices@8.0.7-next.0
 
 ## 0.5.0
 
