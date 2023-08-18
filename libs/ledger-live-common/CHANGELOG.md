@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 31.5.1-nightly.0
+
+### Patch Changes
+
+- [#3887](https://github.com/LedgerHQ/ledger-live/pull/3887) [`f19f0b3b1e`](https://github.com/LedgerHQ/ledger-live/commit/f19f0b3b1ed57f1f4dc718fa2cdccb45a42c2ab5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: returns a function to reset states of useOnboardingStatePolling hook
+
+- [#3887](https://github.com/LedgerHQ/ledger-live/pull/3887) [`f19f0b3b1e`](https://github.com/LedgerHQ/ledger-live/commit/f19f0b3b1ed57f1f4dc718fa2cdccb45a42c2ab5) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Slight change to the hook API on the getDeviceInfo action (make dependency injection of the action optional on TypeScript)
+
 ## 31.5.0
 
 ### Minor Changes

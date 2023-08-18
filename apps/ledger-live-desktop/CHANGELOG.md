@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.66.2-nightly.0
+
+### Patch Changes
+
+- [#4362](https://github.com/LedgerHQ/ledger-live/pull/4362) [`60992a9b20`](https://github.com/LedgerHQ/ledger-live/commit/60992a9b20a23952f75900767f481df2bf69ed18) Thanks [@Justkant](https://github.com/Justkant)! - support: add recover local dev support
+
+- [#4371](https://github.com/LedgerHQ/ledger-live/pull/4371) [`b76fe4fb37`](https://github.com/LedgerHQ/ledger-live/commit/b76fe4fb375cc73bebd2c57653f953fac090224a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix errors layout regression
+
+- Updated dependencies [[`f19f0b3b1e`](https://github.com/LedgerHQ/ledger-live/commit/f19f0b3b1ed57f1f4dc718fa2cdccb45a42c2ab5), [`f19f0b3b1e`](https://github.com/LedgerHQ/ledger-live/commit/f19f0b3b1ed57f1f4dc718fa2cdccb45a42c2ab5)]:
+  - @ledgerhq/live-common@31.5.1-nightly.0
+  - @ledgerhq/react-ui@0.14.8-nightly.0
+
 ## 2.66.1
 
 ### Patch Changes
