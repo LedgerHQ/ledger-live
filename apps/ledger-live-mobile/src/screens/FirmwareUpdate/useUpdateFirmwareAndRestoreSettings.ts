@@ -62,6 +62,7 @@ export type FirmwareUpdateParams = {
   device: Device;
   deviceInfo: DeviceInfo;
   updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
+  isBeforeOnboarding?: boolean;
 };
 
 export type UpdateStep =
@@ -74,10 +75,17 @@ export type UpdateStep =
   | "appsRestore"
   | "completed";
 
+/**
+ * Handles the full logic of a firmware update + restoring settings like the locked screen image or apps
+ *
+ * @param isBeforeOnboarding: to adapt the firmware update in case the device is starting
+ *   its onboarding and it's normal it is not yet seeded. If set to true, short-circuit some steps that are unnecessary
+ */
 export const useUpdateFirmwareAndRestoreSettings = ({
   updateFirmwareAction,
   device,
   deviceInfo,
+  isBeforeOnboarding = false,
 }: FirmwareUpdateParams) => {
   const [updateStep, setUpdateStep] = useState<UpdateStep>("start");
   const [installedApps, setInstalledApps] = useState<string[]>([]);
@@ -253,7 +261,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           if (installLanguageState.error) {
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
           }
-          proceedToImageRestore();
+
+          if (isBeforeOnboarding) {
+            proceedToUpdateCompleted();
+          } else {
+            proceedToImageRestore();
+          }
         }
         break;
 
@@ -315,7 +328,17 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     restoreAppsState.opened,
     proceedToAppsBackup,
     connectManagerState.error,
+    isBeforeOnboarding,
   ]);
+
+  const startUpdate = useCallback(() => {
+    // The backup of the language package is actually done using the input device info `languageId`
+    if (isBeforeOnboarding) {
+      proceedToFirmwareUpdate();
+    } else {
+      proceedToAppsBackup();
+    }
+  }, [isBeforeOnboarding, proceedToAppsBackup, proceedToFirmwareUpdate]);
 
   const hasReconnectErrors = useMemo(
     () =>
@@ -465,7 +488,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, [updateStep, proceedToImageRestore, proceedToAppsRestore, proceedToUpdateCompleted]);
 
   return {
-    startUpdate: proceedToAppsBackup,
+    startUpdate,
     updateStep,
     connectManagerState,
     staxFetchImageState,

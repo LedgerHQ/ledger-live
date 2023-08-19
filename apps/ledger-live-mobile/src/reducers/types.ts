@@ -261,6 +261,15 @@ export type SwapStateType = {
   exchangeRateExpiration?: Date;
 };
 
+// === EARN STATE ===
+
+export type EarnState = {
+  infoModal: {
+    message?: string;
+    messageTitle?: string;
+  };
+};
+
 // === PROTECT STATE ===
 
 export type ProtectData = {
@@ -308,6 +317,7 @@ export type State = {
   dynamicContent: DynamicContentState;
   notifications: NotificationsState;
   swap: SwapStateType;
+  earn: EarnState;
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

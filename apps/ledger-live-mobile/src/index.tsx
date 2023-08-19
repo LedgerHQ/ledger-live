@@ -51,7 +51,6 @@ import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
-import WalletConnectProvider from "./screens/WalletConnect/Provider";
 
 import AnalyticsProvider from "./analytics/AnalyticsProvider";
 import HookSentry from "./components/HookSentry";
@@ -276,48 +275,47 @@ export default class Root extends Component {
                 <AnalyticsProvider store={store}>
                   <HookNotifications />
                   <HookDynamicContentCards />
-                  <WalletConnectProvider>
-                    <PlatformAppProviderWrapper>
-                      <FirebaseRemoteConfigProvider>
-                        <FirebaseFeatureFlagsProvider>
-                          <SafeAreaProvider>
-                            <PerformanceProvider>
-                              <StylesProvider>
-                                <StyledStatusBar />
-                                <NavBarColorHandler />
-                                <AuthPass>
-                                  <I18nextProvider i18n={i18n}>
-                                    <LocaleProvider>
-                                      <BridgeSyncProvider>
-                                        <CounterValuesProvider initialState={initialCountervalues}>
-                                          <ButtonUseTouchable.Provider value={true}>
-                                            <OnboardingContextProvider>
-                                              <PostOnboardingProviderWrapped>
-                                                <ToastProvider>
-                                                  <NotificationsProvider>
-                                                    <SnackbarContainer />
-                                                    <NftMetadataProvider>
-                                                      <MarketDataProvider>
-                                                        <App />
-                                                      </MarketDataProvider>
-                                                    </NftMetadataProvider>
-                                                  </NotificationsProvider>
-                                                </ToastProvider>
-                                              </PostOnboardingProviderWrapped>
-                                            </OnboardingContextProvider>
-                                          </ButtonUseTouchable.Provider>
-                                        </CounterValuesProvider>
-                                      </BridgeSyncProvider>
-                                    </LocaleProvider>
-                                  </I18nextProvider>
-                                </AuthPass>
-                              </StylesProvider>
-                            </PerformanceProvider>
-                          </SafeAreaProvider>
-                        </FirebaseFeatureFlagsProvider>
-                      </FirebaseRemoteConfigProvider>
-                    </PlatformAppProviderWrapper>
-                  </WalletConnectProvider>
+
+                  <PlatformAppProviderWrapper>
+                    <FirebaseRemoteConfigProvider>
+                      <FirebaseFeatureFlagsProvider>
+                        <SafeAreaProvider>
+                          <PerformanceProvider>
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <I18nextProvider i18n={i18n}>
+                                  <LocaleProvider>
+                                    <BridgeSyncProvider>
+                                      <CounterValuesProvider initialState={initialCountervalues}>
+                                        <ButtonUseTouchable.Provider value={true}>
+                                          <OnboardingContextProvider>
+                                            <PostOnboardingProviderWrapped>
+                                              <ToastProvider>
+                                                <NotificationsProvider>
+                                                  <SnackbarContainer />
+                                                  <NftMetadataProvider>
+                                                    <MarketDataProvider>
+                                                      <App />
+                                                    </MarketDataProvider>
+                                                  </NftMetadataProvider>
+                                                </NotificationsProvider>
+                                              </ToastProvider>
+                                            </PostOnboardingProviderWrapped>
+                                          </OnboardingContextProvider>
+                                        </ButtonUseTouchable.Provider>
+                                      </CounterValuesProvider>
+                                    </BridgeSyncProvider>
+                                  </LocaleProvider>
+                                </I18nextProvider>
+                              </AuthPass>
+                            </StylesProvider>
+                          </PerformanceProvider>
+                        </SafeAreaProvider>
+                      </FirebaseFeatureFlagsProvider>
+                    </FirebaseRemoteConfigProvider>
+                  </PlatformAppProviderWrapper>
                 </AnalyticsProvider>
               </>
             ) : (

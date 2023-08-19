@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.11.0",
+  "version": "22.11.1",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -46,7 +46,6 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "@walletconnect/client": "^1.7.1",
     "asciichart": "^1.5.25",
     "bignumber.js": "^9.1.1",
     "bip39": "^3.0.4",
