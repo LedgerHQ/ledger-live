@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { areEarnRewardsEnabled } from "@ledgerhq/live-common/families/elrond/helpers/areEarnRewardsEnabled";
+import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/elrond/helpers/hasMinimumDelegableBalance";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
@@ -18,7 +18,7 @@ const AccountHeaderManageActions = (props: {
   const dispatch = useDispatch();
   const validators = useElrondRandomizedValidators();
   const earnRewardEnabled = useMemo(
-    () => account.type === "Account" && areEarnRewardsEnabled(account),
+    () => account.type === "Account" && hasMinimumDelegableBalance(account),
     [account],
   );
   const hasDelegations =

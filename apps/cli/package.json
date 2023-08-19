@@ -46,7 +46,6 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "@walletconnect/client": "^1.7.1",
     "asciichart": "^1.5.25",
     "bignumber.js": "^9.1.1",
     "bip39": "^3.0.4",
