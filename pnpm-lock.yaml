@@ -1995,8 +1995,8 @@ importers:
         specifier: 1.2.2
         version: 1.2.2
       '@stacks/transactions':
-        specifier: 1.3.5
-        version: 1.3.5
+        specifier: 1.4.1
+        version: 1.4.1
       '@stricahq/bip32ed25519':
         specifier: ^1.0.3
         version: 1.0.4
@@ -20064,8 +20064,8 @@ packages:
       - encoding
     dev: false
 
-  /@stacks/transactions@1.3.5:
-    resolution: {integrity: sha512-KhZ9y48KnOB+Es3whxbpxtPm6o5CYLrhxCCG5Tfglmj9AcFtpWCBjkcFwZJ/R3eI4OYthD5aMB9nYY31xGiULA==}
+  /@stacks/transactions@1.4.1:
+    resolution: {integrity: sha512-7LFA9yQqlmN+oVJeYaj+NfZyuInJxF8ozJ8kypCmJ9rUrbbGC/es1KyseB96YBiiOh4eLUfRlD1j6boSdNR8aA==}
     dependencies:
       '@stacks/common': 1.2.2
       '@stacks/network': 1.2.2
@@ -63320,7 +63320,7 @@ packages:
     dev: false
 
   github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e:
-    resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
+    resolution: {commit: d9e8e4d994923e0ea76a32b97289bcccfe71b82e, repo: git+ssh://git@github.com/LedgerHQ/compressjs.git, type: git}
     name: '@ledgerhq/compressjs'
     version: 1.3.1
     hasBin: true
