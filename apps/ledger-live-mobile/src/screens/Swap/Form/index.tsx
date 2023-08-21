@@ -363,7 +363,7 @@ export function SwapForm({
 
   if (providers?.length) {
     return (
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView testID="exchange-scrollView">
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>
             <TrackScreen category="Swap" providerName={provider} {...sharedSwapTracking} />
