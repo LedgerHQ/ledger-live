@@ -5136,6 +5136,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../libs/env
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs

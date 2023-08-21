@@ -16,6 +16,7 @@
     "@ledgerhq/hw-transport-webauthn": "5.36.0-deprecated",
     "@ledgerhq/hw-transport-webhid": "workspace:^",
     "@ledgerhq/hw-transport-webusb": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "axios": "*",
