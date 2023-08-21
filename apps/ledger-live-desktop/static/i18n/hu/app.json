@@ -4104,12 +4104,6 @@
       "title": "Sorry, connection failed",
       "description": "Device detected but connection failed. Please try again or contact Ledger Support if the problem persists."
     },
-    "CasperInvalidTransferId": {
-      "title": "Az átutalás azonosítójának pozitív számnak kell lennie, amely kisebb, mint 18446744073709551615"
-    },
-    "InvalidMinimumAmount": {
-      "title": "Az átutalás minimális összege 2,5 CSPR"
-    },
     "ETHAddressNonEIP": {
       "title": "Az automatikus ellenőrzés nem elérhető: gondosan ellenőrizd a címet",
       "description": null

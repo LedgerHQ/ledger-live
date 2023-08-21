@@ -5366,12 +5366,6 @@
       "title" : "抱歉，连接失败",
       "description" : "检测到设备但连接失败。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
-    "CasperInvalidTransferId": {
-      "title": "转账 ID 应为小于 18446744073709551615 的正数"
-    },
-    "InvalidMinimumAmount": {
-      "title": "最低转账金额为 2.5 CSPR"
-    },
     "ETHAddressNonEIP" : {
       "title" : "无法自动验证：请仔细核对该地址。",
       "description" : null
