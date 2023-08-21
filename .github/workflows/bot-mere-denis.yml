@@ -7,7 +7,7 @@ on:
         description: coin family filter, separated with commas (,)
         required: false
       currencies:
-        description: currency ids to filter, separated with commas (,)
+        description: currency ids to test, separated with commas (,)
         required: false
       speculos_websocket:
         description: check to use speculos with Websocket

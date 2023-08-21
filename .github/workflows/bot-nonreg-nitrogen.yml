@@ -33,4 +33,5 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed7:"
           SEED: ${{ secrets.SEED7 }}
           BOT_ENVIRONMENT: production
+          # We don't run these currencies daily because fees are expensive
           BOT_DISABLED_CURRENCIES: bitcoin,ethereum,qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,telos_evm,polygon_zk_evm,polkadot
