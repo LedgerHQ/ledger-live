@@ -428,7 +428,7 @@ export default function Market({ navigation }: NavigationProps) {
   const MarketHeader = useCallback(
     () =>
       ptxEarnFeature?.enabled ? (
-        <Flex px={6} marginTop={Platform.OS === "ios" ? "20px" : "40px"}>
+        <Flex px={6} pt={6}>
           <SearchHeader search={search} refresh={refresh} />
           <BottomSection navigation={navigation} />
         </Flex>
