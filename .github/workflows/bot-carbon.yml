@@ -1,5 +1,5 @@
 name: "[Bot] Testing with 'Carbon'"
-run-name: Test with 🤖 Carbon by @${{github.actor}} ${{inputs.families &&  format('family={0}',inputs.families) || ''}} ${{inputs.currencies && format('currency={0}',inputs.currencies) || ''}}
+run-name: Test with 🤖 Carbon by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:
     inputs:
