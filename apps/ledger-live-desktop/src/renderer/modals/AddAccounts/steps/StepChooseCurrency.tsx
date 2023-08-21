@@ -260,9 +260,7 @@ export const StepChooseCurrencyFooter = ({
         <Button
           primary
           disabled={!currency || fullNodeNotReady || !navigator.onLine}
-          onClick={() => {
-            transitionTo("connectDevice");
-          }}
+          onClick={() => transitionTo("connectDevice")}
           data-test-id="modal-continue-button"
         >
           {t("common.continue")}
