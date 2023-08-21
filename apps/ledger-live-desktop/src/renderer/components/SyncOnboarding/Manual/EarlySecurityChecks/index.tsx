@@ -28,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
+import { useDynamicUrl } from "~/renderer/terms";
 
 export type Props = {
   onComplete: () => void;
@@ -66,11 +67,7 @@ const EarlySecurityChecks = ({
   isBootloader,
 }: Props) => {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
-  const whySecurityChecksUrl =
-    locale in urls.genuineCheck
-      ? urls.genuineCheck[locale as keyof typeof urls.genuineCheck]
-      : urls.genuineCheck.en;
+  const whySecurityChecksUrl = useDynamicUrl("genuineCheck");
 
   const optimisticGenuineCheck = !isInitialRunOfSecurityChecks;
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(

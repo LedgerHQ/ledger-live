@@ -1,4 +1,4 @@
-import { Language } from "~/config/languages";
+import { LanguageMap } from "~/config/languages";
 
 import de from "../../../static/i18n/de/app.json";
 import en from "../../../static/i18n/en/app.json";
@@ -11,7 +11,9 @@ import ru from "../../../static/i18n/ru/app.json";
 import tr from "../../../static/i18n/tr/app.json";
 import zh from "../../../static/i18n/zh/app.json";
 
-const LanguageToAppLanguageFile: { [key in Language]: Object } = {
+export const i18_DEFAULT_NAMESPACE = "app";
+
+const LanguageToAppLanguageFile: LanguageMap<Object> = {
   de,
   en,
   es,
@@ -25,7 +27,7 @@ const LanguageToAppLanguageFile: { [key in Language]: Object } = {
 };
 
 export default Object.entries(LanguageToAppLanguageFile).reduce((acc, [lang, translation]) => {
-  return { ...acc, [lang]: { app: translation } };
+  return { ...acc, [lang]: { [i18_DEFAULT_NAMESPACE]: translation } };
 }, {});
 
 /*

@@ -20,7 +20,7 @@ export const LanguageLocaleIds = {
   ru: ["ru-RU"],
   tr: ["tr-TR"],
   zh: ["zh-CN"],
-} as const satisfies LocaleMap<readonly LanguagePrefixed[]>;
+} as const satisfies LanguageMap<readonly LanguagePrefixed[]>;
 
 /**
  * This is the Language type.
@@ -136,7 +136,7 @@ export const Languages = {
 
     deviceSupport: undefined,
   },
-} as const satisfies LocaleMap<LanguageDefinition>;
+} as const satisfies LanguageMap<LanguageDefinition>;
 
 /**
  * The default language.
@@ -159,5 +159,5 @@ function buildLocales<T extends readonly unknown[]>(src: T): T & { default: T[0]
 /**
  * Utils types
  */
-type LanguagePrefixed = `${Language}-${string}`;
-type LocaleMap<T> = { [key in Language]: T };
+export type LanguageMap<T = string> = { [key in Language]: T };
+export type LanguagePrefixed = `${Language}-${string}`;
