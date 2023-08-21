@@ -12,7 +12,7 @@ import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
 import { Observable } from "rxjs7";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const options = {
   includeScore: false,

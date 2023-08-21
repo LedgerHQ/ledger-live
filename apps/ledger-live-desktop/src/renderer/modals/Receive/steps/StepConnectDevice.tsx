@@ -9,7 +9,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { StepProps } from "../Body";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 export default function StepConnectDevice({
   account,

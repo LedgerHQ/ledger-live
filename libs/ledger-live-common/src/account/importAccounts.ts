@@ -8,7 +8,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { BridgeCacheSystem } from "../bridge/cache";
 import { getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Observable } from "rxjs";
 import { reduce } from "rxjs/operators";
 

@@ -3,7 +3,7 @@ import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 const capacityStatuses = {
   normal: null,
   full: null,

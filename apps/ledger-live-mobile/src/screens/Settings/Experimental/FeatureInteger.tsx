@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { TextInput, StyleSheet, Keyboard, Platform } from "react-native";
-import { EnvName, getEnvDefault } from "@ledgerhq/live-common/env";
+import { EnvName, getEnvDefault } from "@ledgerhq/live-env";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Box, Flex, Switch } from "@ledgerhq/native-ui";
 import Track from "../../../analytics/Track";

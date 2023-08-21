@@ -2,7 +2,7 @@ import { utils } from "@crypto-org-chain/chain-jslib";
 import network from "@ledgerhq/live-network/network";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "../../../operation";
 import { getCroSdk, isTestNet } from "../logic";
 import {

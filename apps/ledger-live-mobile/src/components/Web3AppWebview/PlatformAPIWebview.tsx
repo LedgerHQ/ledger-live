@@ -11,7 +11,7 @@ import type {
   RawPlatformSignedTransaction,
   RawPlatformAccount,
 } from "@ledgerhq/live-common/platform/rawTypes";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";

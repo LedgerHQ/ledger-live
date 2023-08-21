@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
-import { EnvName, getEnv } from "@ledgerhq/live-common/env";
+import { EnvName, getEnv } from "@ledgerhq/live-env";
 import { defaultFeatures, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
+import { Primitive } from "@sentry/types";
 
-type Tags = { [_: string]: boolean | number | string | undefined };
+type Tags = { [key: string]: Primitive };
 
 function setSentryTagsEverywhere(tags: Tags) {
   ipcRenderer.invoke("set-sentry-tags", tags);
@@ -31,8 +32,8 @@ export const ConnectEnvsToSentry = () => {
     const syncTheTags = () => {
       const tags: Tags = {};
       // if there are experimental on, we will add them in tags
-      enabledExperimentalFeatures().forEach((key: EnvName) => {
-        tags[safekey(key)] = getEnv(key);
+      enabledExperimentalFeatures().forEach(key => {
+        tags[safekey(key)] = getEnv(key as EnvName) as Primitive;
       });
       // if there are features on, we will add them in tags
       const features: { [key in FeatureId]?: boolean } = {};

@@ -15,7 +15,7 @@ import {
 } from "./satstack";
 import dataset from "./datasets/bitcoin";
 import { inferDescriptorFromAccount, AccountDescriptor } from "./descriptor";
-import { setEnv } from "../../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { fromAccountRaw } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
 

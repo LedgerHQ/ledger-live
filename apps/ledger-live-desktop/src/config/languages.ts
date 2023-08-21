@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Language } from "@ledgerhq/types-live";
 
 export type Locale =

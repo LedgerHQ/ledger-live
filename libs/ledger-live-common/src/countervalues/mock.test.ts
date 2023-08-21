@@ -1,7 +1,7 @@
 import "../__tests__/test-helpers/staticTime";
 import { initialState, loadCountervalues, calculate } from "./logic";
 import CountervaluesAPI from "./api";
-import { setEnv } from "../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { getFiatCurrencyByTicker, getTokenById, getCryptoCurrencyById } from "../currencies";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
 setEnv("MOCK", "1");

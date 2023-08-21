@@ -131,6 +131,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../libs/env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../libs/live-network
@@ -1740,9 +1743,6 @@ importers:
 
   libs/env:
     dependencies:
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       rxjs:
         specifier: ^6.6.7
         version: 6.6.7
@@ -5136,6 +5136,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../libs/env
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs

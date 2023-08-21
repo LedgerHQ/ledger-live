@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { Trans } from "react-i18next";
-import { isEnvDefault } from "@ledgerhq/live-common/env";
+import { EnvName, isEnvDefault } from "@ledgerhq/live-env";
 import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experimental";
 import { useDispatch } from "react-redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
@@ -37,7 +37,7 @@ const ExperimentalFeatureRow = ({
   const envValue = useEnv(feature.name);
   const isDefault = isEnvDefault(feature.name);
   const onChange = useCallback(
-    (name: string, value) => {
+    (name: EnvName, value) => {
       if (dirty) {
         onDirtyChange();
       }
@@ -48,11 +48,11 @@ const ExperimentalFeatureRow = ({
   return Children ? (
     <Row title={feature.title} desc={feature.description}>
       <Children
-        value={envValue}
         readOnly={isReadOnlyEnv(feature.name)}
         isDefault={isDefault}
         onChange={onChange}
         {...rest}
+        value={envValue as number}
       />
     </Row>
   ) : null;

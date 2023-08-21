@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { getCurrentNearPreloadData } from "../preload";
 import { NearAccount } from "../types";

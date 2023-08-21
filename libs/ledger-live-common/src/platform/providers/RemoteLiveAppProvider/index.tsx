@@ -4,7 +4,7 @@ import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
 import api from "./api";
 import { FilterParams } from "../../filters";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { AppManifest, Visibility } from "../../../wallet-api/types";
 
