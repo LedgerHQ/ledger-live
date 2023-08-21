@@ -140,7 +140,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
             appName,
             onResult: onSuccess,
             onCancel,
-          }), 
+          }),
         );
       },
       "device.select": ({ appName, onSuccess, onCancel }) => {

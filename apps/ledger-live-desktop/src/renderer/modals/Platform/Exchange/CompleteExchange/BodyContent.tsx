@@ -68,9 +68,7 @@ export const BodyContent = (props: BodyContentProps) => {
     <DeviceAction
       key="completeExchange"
       action={exchangeAction}
-      request={{
-        ...props.request,
-      } as any}
+      request={props.request}
       onResult={result => {
         if ("completeExchangeError" in result) {
           props.onError(result.completeExchangeError);
@@ -81,4 +79,3 @@ export const BodyContent = (props: BodyContentProps) => {
     />
   );
 };
-

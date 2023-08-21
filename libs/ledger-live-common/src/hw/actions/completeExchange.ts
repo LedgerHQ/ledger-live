@@ -24,7 +24,7 @@ type CompleteExchangeRequest = {
   signature: string;
   exchange: Exchange;
   exchangeType: number;
-  rateType: number;
+  zateType?: number;
 };
 type Result =
   | {
