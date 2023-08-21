@@ -223,7 +223,7 @@ const UndelegateAmountCell = ({
   currency,
   unit,
 }: AmountCellExtraProps<ElrondOperation>) => {
-  return !operation.extra.amount ? null : (
+  return !operation.extra.amount || operation.extra.amount?.isZero() ? null : (
     <Fragment>
       <FormattedVal
         val={operation.extra.amount}
