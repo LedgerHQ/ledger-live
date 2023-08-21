@@ -19,7 +19,7 @@ import {
   swapSelectableCurrenciesSelector,
 } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
-import WalletConnect from "../../../icons/WalletConnect";
+
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
 import { useCanShowStake } from "./useCanShowStake";
@@ -273,15 +273,12 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
               {
                 screen: NavigatorName.WalletConnect,
                 params: {
-                  screen: ScreenName.WalletConnectScan,
-                  params: {
-                    accountId: account?.id,
-                  },
+                  screen: ScreenName.WalletConnectConnect,
                 },
               },
             ],
             label: t("account.walletconnect"),
-            Icon: WalletConnect,
+            Icon: IconsLegacy.WalletConnectMedium,
             event: "WalletConnect Account Button",
             eventProperties: { currencyName: currency?.name },
           },

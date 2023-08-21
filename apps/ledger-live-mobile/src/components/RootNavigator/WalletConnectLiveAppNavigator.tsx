@@ -50,41 +50,6 @@ export default function WalletConnectLiveAppNavigator() {
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
-      <Stack.Screen name={ScreenName.WalletConnectScan} options={options}>
-        {_props => (
-          <LiveApp
-            {..._props}
-            // @ts-expect-error What are you expecting when spreading 3 times in a row?
-            {...routeParams}
-            route={{
-              ..._props.route,
-              params: {
-                platform,
-                mode: "scan",
-                uri: uri || _props.route.params?.uri,
-                account: _props.route.params?.accountId,
-              },
-            }}
-          />
-        )}
-      </Stack.Screen>
-      <Stack.Screen name={ScreenName.WalletConnectDeeplinkingSelectAccount} options={options}>
-        {_props => (
-          <LiveApp
-            {..._props}
-            // @ts-expect-error What are you expecting when spreading 3 times in a row?
-            {...routeParams}
-            route={{
-              ..._props.route,
-              params: {
-                platform,
-                uri: uri || _props.route.params?.uri,
-                account: _props.route.params?.accountId,
-              },
-            }}
-          />
-        )}
-      </Stack.Screen>
       <Stack.Screen name={ScreenName.WalletConnectConnect} options={options}>
         {_props => (
           <LiveApp
@@ -96,7 +61,6 @@ export default function WalletConnectLiveAppNavigator() {
               params: {
                 platform,
                 uri: uri || _props.route.params?.uri,
-                account: _props.route.params?.accountId,
               },
             }}
           />
