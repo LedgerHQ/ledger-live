@@ -9,7 +9,7 @@ export const LanguageIds = ["en", "fr", "de", "ru", "es", "ja", "tr", "ko", "zh"
  * This is the only place new locale should be added.
  * @dev The first element is the default locale of the language.
  */
-export const LocaleIds = {
+export const LanguageLocaleIds = {
   en: ["en-US"],
   fr: ["fr-FR"],
   es: ["es-ES"],
@@ -28,10 +28,14 @@ export const LocaleIds = {
 export type Language = (typeof LanguageIds)[number];
 
 /**
- * This is the Locale type.
- * @dev the string type should be remove at some point
+ * This is the Language Locale type.
  */
-export type Locale = (typeof LocaleIds)[keyof typeof LocaleIds][number] | string;
+export type LanguageLocale = (typeof LanguageLocaleIds)[keyof typeof LanguageLocaleIds][number];
+
+/**
+ * This is the Locale type.
+ */
+export type Locale = string;
 
 /**
  * This is the Locales type.
@@ -64,21 +68,21 @@ export const Languages = {
   en: {
     id: "en",
     label: "English",
-    locales: buildLocales(LocaleIds.en),
+    locales: buildLocales(LanguageLocaleIds.en),
 
     deviceSupport: { label: "english", id: languageIds.english },
   },
   fr: {
     id: "fr",
     label: "Français",
-    locales: buildLocales(LocaleIds.fr),
+    locales: buildLocales(LanguageLocaleIds.fr),
 
     deviceSupport: { label: "french", id: languageIds.french },
   },
   es: {
     id: "es",
     label: "Español",
-    locales: buildLocales(LocaleIds.es),
+    locales: buildLocales(LanguageLocaleIds.es),
 
     deviceSupport: { label: "spanish", id: languageIds.spanish },
   },
@@ -86,49 +90,49 @@ export const Languages = {
   de: {
     id: "de",
     label: "Deutsch",
-    locales: buildLocales(LocaleIds.de),
+    locales: buildLocales(LanguageLocaleIds.de),
 
     deviceSupport: undefined,
   },
   ja: {
     id: "ja",
     label: "日本語",
-    locales: buildLocales(LocaleIds.ja),
+    locales: buildLocales(LanguageLocaleIds.ja),
 
     deviceSupport: undefined,
   },
   ko: {
     id: "ko",
     label: "한국어",
-    locales: buildLocales(LocaleIds.ko),
+    locales: buildLocales(LanguageLocaleIds.ko),
 
     deviceSupport: undefined,
   },
   pt: {
     id: "pt",
     label: "Português (Brasil)",
-    locales: buildLocales(LocaleIds.pt),
+    locales: buildLocales(LanguageLocaleIds.pt),
 
     deviceSupport: undefined,
   },
   ru: {
     id: "ru",
     label: "Русский",
-    locales: buildLocales(LocaleIds.ru),
+    locales: buildLocales(LanguageLocaleIds.ru),
 
     deviceSupport: undefined,
   },
   tr: {
     id: "tr",
     label: "Türkçe",
-    locales: buildLocales(LocaleIds.tr),
+    locales: buildLocales(LanguageLocaleIds.tr),
 
     deviceSupport: undefined,
   },
   zh: {
     id: "zh",
     label: "简体中文",
-    locales: buildLocales(LocaleIds.zh),
+    locales: buildLocales(LanguageLocaleIds.zh),
 
     deviceSupport: undefined,
   },
