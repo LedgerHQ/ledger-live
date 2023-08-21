@@ -1,6 +1,6 @@
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";

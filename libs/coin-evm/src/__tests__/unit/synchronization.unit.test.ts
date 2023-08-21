@@ -686,7 +686,7 @@ describe("EVM Family", () => {
       it("should remove pending operation if ", () => {
         const latePending = {
           ...pendingOperation,
-          date: new Date() + getEnv("OPERATION_OPTIMISTIC_RETENTION") + 1,
+          date: new Date(new Date().getTime() + getEnv("OPERATION_OPTIMISTIC_RETENTION") + 1),
         };
         const tokenAccountWithPending = {
           ...tokenAccount,

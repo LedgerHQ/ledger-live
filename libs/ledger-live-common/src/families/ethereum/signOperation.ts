@@ -18,7 +18,7 @@ import { apiForCurrency } from "./api";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { isNFTActive } from "../../nft";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { modes } from "./modules";
 import { getGasLimit, buildEthereumTx, EIP1559ShouldBeUsed, toTransactionRaw } from "./transaction";
 import { padHexString } from "./logic";

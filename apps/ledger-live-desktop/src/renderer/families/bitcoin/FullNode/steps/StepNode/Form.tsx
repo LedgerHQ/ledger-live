@@ -64,9 +64,19 @@ const Form = ({
 }) => {
   const { t } = useTranslation();
   const satStackAlreadyConfigured = useEnv("SATSTACK");
-  const hostError = maybeError(errors, "host", satStackAlreadyConfigured, RPCHostRequired);
-  const usernameError = maybeError(errors, "username", satStackAlreadyConfigured, RPCUserRequired);
-  const passwordError = maybeError(errors, "password", satStackAlreadyConfigured, RPCPassRequired);
+  const hostError = maybeError(errors, "host", !!satStackAlreadyConfigured, RPCHostRequired);
+  const usernameError = maybeError(
+    errors,
+    "username",
+    !!satStackAlreadyConfigured,
+    RPCUserRequired,
+  );
+  const passwordError = maybeError(
+    errors,
+    "password",
+    !!satStackAlreadyConfigured,
+    RPCPassRequired,
+  );
   return (
     <Box>
       <Text

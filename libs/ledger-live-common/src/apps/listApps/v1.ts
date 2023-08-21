@@ -13,7 +13,7 @@ import {
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import getDeviceName from "../../hw/getDeviceName";
@@ -34,7 +34,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   const deviceModelId =
     (transport.deviceModel && transport.deviceModel.id) ||
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
-    getEnv("DEVICE_PROXY_MODEL");
+    (getEnv("DEVICE_PROXY_MODEL") as DeviceModelId);
 
   return new Observable(o => {
     let sub;

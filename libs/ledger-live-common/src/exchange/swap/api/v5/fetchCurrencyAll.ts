@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import { isIntegrationTestEnv } from "../../utils/isIntegrationTestEnv";
-import { getEnv } from "../../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";

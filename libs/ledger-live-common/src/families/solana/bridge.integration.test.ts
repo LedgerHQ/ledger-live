@@ -33,7 +33,7 @@ import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "./logic
 import createTransaction from "./js-createTransaction";
 import { compact } from "lodash/fp";
 import { assertUnreachable } from "./utils";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ChainAPI } from "./api";
 import {
   SolanaStakeAccountIsNotDelegatable,

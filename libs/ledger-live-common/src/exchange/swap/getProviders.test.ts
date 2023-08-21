@@ -1,6 +1,6 @@
 import axios from "axios";
 import getProviders from "./getProviders";
-import { getEnv, setEnv } from "../../env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 const EXPECTED_RESULT_V4 = [
   {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-env",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Ledger Live environment definition",
   "keywords": [
     "Ledger"
@@ -21,7 +21,6 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "lodash": "^4.17.21",
     "rxjs": "^6.6.7",
     "utility-types": "^3.10.0"
   },
@@ -36,6 +35,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix"
+    "lint:fix": "pnpm lint --fix",
+    "typecheck": "tsc --noEmit"
   }
 }

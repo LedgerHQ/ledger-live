@@ -16,6 +16,7 @@ on:
   workflow_run:
     workflows:
       - \[Release\] Prepare for releasing
+      - \[Release\](Hotfix) Prepare for releasing
     types:
       - "completed"
 

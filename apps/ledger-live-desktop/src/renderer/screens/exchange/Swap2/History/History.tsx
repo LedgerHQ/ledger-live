@@ -173,7 +173,7 @@ const History = () => {
               </Head>
               {mappedSwapOperations.map(section => (
                 <>
-                  <SectionTitle day={section.day} />
+                  <SectionTitle date={section.day} />
                   <Box>
                     {section.data.map(mappedSwapOperation => (
                       <OperationRow

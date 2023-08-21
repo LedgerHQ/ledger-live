@@ -41,7 +41,13 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
       <TrackPage category={analyticsDrawerName} type="drawer" refreshSource={false} />
-      <Flex px={13} flex={1}>
+      <Flex
+        px={13}
+        flex={1}
+        flexDirection={"column"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
         <ErrorBody
           Icon={ErrorIcon}
           title={t(

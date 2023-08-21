@@ -625,6 +625,7 @@ export function renderError({
   iconColor,
   device,
   hasExportLogButton,
+  renderedInType = "view",
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -634,6 +635,13 @@ export function renderError({
   iconColor?: string;
   device?: Device;
   hasExportLogButton?: boolean;
+  /*
+   * Used when rendering a Bluetooth disabled error
+   *
+   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
+   * If "view", the component will be rendered as a view. Defaults to "view".
+   */
+  renderedInType?: "drawer" | "view";
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -671,6 +679,7 @@ export function renderError({
         Icon={Icon}
         iconColor={iconColor}
         hasExportLogButton={hasExportLogButton}
+        renderedInType={renderedInType}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>

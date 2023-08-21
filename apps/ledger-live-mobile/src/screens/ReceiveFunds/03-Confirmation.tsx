@@ -30,7 +30,7 @@ import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";

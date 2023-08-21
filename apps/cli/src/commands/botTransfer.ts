@@ -6,7 +6,7 @@ import {
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv, setEnv } from "@ledgerhq/live-common/env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { autoSignTransaction } from "@ledgerhq/live-common/bot/engine";
@@ -67,7 +67,9 @@ export default {
     async function getAllRecipients(currencies: CryptoCurrency[]) {
       const prevSeed = getEnv("SEED");
       const { SEED_RECIPIENT } = process.env;
-      setEnv("SEED", SEED_RECIPIENT);
+      if (SEED_RECIPIENT) {
+        setEnv("SEED", SEED_RECIPIENT);
+      }
       const recipientsPerCurrencyId: Map<string, string> = new Map();
       await promiseAllBatched(CONCURRENT, currencies, async currency => {
         let device;

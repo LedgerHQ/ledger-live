@@ -12,8 +12,8 @@ import { areAllOperationsLoaded, decodeAccountId } from "../../account";
 import type { Account } from "@ledgerhq/types-live";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
-import { getEnv } from "../../env";
 import { TezosOperation } from "./types";
+import { getEnv } from "@ledgerhq/live-env";
 
 function reconciliatePublicKey(
   publicKey: string | undefined,

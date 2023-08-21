@@ -10,7 +10,7 @@ import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";

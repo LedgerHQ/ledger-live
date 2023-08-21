@@ -21,7 +21,7 @@ import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
@@ -125,11 +125,7 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
       // we will not send it to Sentry.
       if (event && typeof event === "object") {
         const { exception } = event;
-        if (
-          exception &&
-          typeof exception === "object" &&
-          Array.isArray(exception.values)
-        ) {
+        if (exception && typeof exception === "object" && Array.isArray(exception.values)) {
           const { values } = exception;
           const shouldExclude = values.some(item => {
             if (item && typeof item === "object") {
@@ -137,9 +133,7 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
               return (typeof type === "string" &&
                 excludedErrorName.some(pattern => type.match(pattern))) ||
                 (typeof value === "string" &&
-                  excludedErrorDescription.some(pattern =>
-                    value.match(pattern),
-                  ))
+                  excludedErrorDescription.some(pattern => value.match(pattern)))
                 ? event
                 : null;
             }
@@ -190,7 +184,4 @@ logReport.logReportInit();
 const AppWithSentry = Sentry.wrap(App);
 
 AppRegistry.registerComponent("ledgerlivemobile", () => AppWithSentry);
-AppRegistry.registerHeadlessTask(
-  "BackgroundRunnerService",
-  () => BackgroundRunnerService,
-);
+AppRegistry.registerHeadlessTask("BackgroundRunnerService", () => BackgroundRunnerService);

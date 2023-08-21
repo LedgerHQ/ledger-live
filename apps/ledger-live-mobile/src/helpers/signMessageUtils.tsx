@@ -1,6 +1,6 @@
 import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export type MessageProperties = { label: string; value: string | string[] }[];
 

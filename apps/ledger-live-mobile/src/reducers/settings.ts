@@ -7,7 +7,7 @@ import {
   getFiatCurrencyByTicker,
   listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";

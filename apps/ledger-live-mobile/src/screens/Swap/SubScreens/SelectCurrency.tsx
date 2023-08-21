@@ -11,7 +11,7 @@ import CurrencyRow from "../../../components/CurrencyRow";
 import { SelectCurrencyParamList } from "../types";
 import { ScreenName } from "../../../const";
 import { sharedSwapTracking } from "../utils";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export function SelectCurrency({
   navigation,

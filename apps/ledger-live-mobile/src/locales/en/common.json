@@ -1899,6 +1899,98 @@
       }
     }
   },
+  "earlySecurityCheck": {
+    "title": "Genuine Check and OS update check",
+    "idle": {
+      "description": "Genuine Check makes sure your Ledger Stax is an official Ledger. OS update check makes sure Ledger Stax OS is up to date.",
+      "learnMore": "Learn more about Genuine Check",
+      "checkCta": "Check Ledger Stax"
+    },
+    "completed": {
+      "continueCta": "Continue to setup"
+    },
+    "earlySecurityCheckMandatoryDrawer": {
+      "title": "Genuine Check is mandatory",
+      "description": "You cannot setup your {{productName}} without allowing this Check.",
+      "resumeCta": "Resume Check",
+      "cancelCta": "Cancel Checks"
+    },
+    "genuineCheckErrorDrawer": {
+      "title": "Genuine Check error",
+      "description": "An error occurred while running the genuine check on {{productName}}.",
+      "retryCta": "Try again",
+      "cancelCta": "Cancel set up",
+      "notFoundEntity": {
+        "title": "Initiate Genuine Check again",
+        "description": "You must first disable \"My Ledger Provider\" setting. To disable it, open Ledger Live \"Settings\", select \"Experimental features\", and then toggle off \"Manager provider\".",
+        "settingsCta": "Go to settings"
+      }
+    },
+    "genuineCheckNonGenuineDrawer": {
+      "title": "This Ledger Stax failed the Genuine Check",
+      "description": "This {{productName}} is not safe to use. Please contact Ledger Support.",
+      "supportCta": "Contact Ledger Support"
+    },
+    "allowManagerDrawer": {
+      "title": "Tap 'Allow' to enable Genuine Check and OS update check"
+    },
+    "genuineCheckStep": {
+      "learnMore": "Learn more about Genuine Check",
+      "inactive": {
+        "title": "Genuine Check",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
+      },
+      "active": {
+        "title": "Genuine Check",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
+      },
+      "completed": {
+        "title": "{{productName}} is genuine",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
+      },
+      "refused": {
+        "title": "Genuine Check declined",
+        "description": "You cannot setup your Ledger Stax without allowing this Check.",
+        "cta": "Resume Check"
+      },
+      "error": {
+        "title": "Genuine Check",
+        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
+      }
+    },
+    "firmwareUpdateCheckStep": {
+      "active": {
+        "title": "OS update check",
+        "description": "OS update check makes sure {{productName}} Operating System is up to date."
+      },
+      "completed": {
+        "noUpdateAvailable": {
+          "title": "OS update check",
+          "description": "OS update check makes sure {{productName}} Operating System is up to date."
+        }
+      },
+      "error": {
+        "title": "Software update check failed",
+        "skipCta": "Skip update"
+      },
+      "refused": {
+        "title": "OS version {{firmwareVersion}} is available",
+        "description": "We recommend performing this update to benefit from the latest security and functionality.",
+        "updateCta": "Update Ledger Stax",
+        "skipCta": "Skip update"
+      },
+      "inactive": {
+        "title": "OS update check",
+        "description": "OS update check makes sure {{productName}} Operating System is up to date."
+      }
+    },
+    "firmwareUpdateAvailableDrawer": {
+      "title": "OS update available",
+      "description": "Update your {{productName}} to benefit from the latest security and functionality.",
+      "descriptionVersion": "Version {{firmwareVersion}}",
+      "updateCta": "Update now"
+    }
+  },
   "syncOnboarding": {
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
@@ -1953,10 +2045,9 @@
       "docCta": "View our FAQs",
       "supportCta": "Speak to a human"
     },
-    "pairingStep": {
-      "title": "{{productName}} is paired",
-      "description": "Continue setting up on {{productName}}.\nLook back here for step-by-step assistance.",
-      "continueOnDevice": "Tap anywhere to continue on your {{productName}}"
+    "earlySecurityCheckCompletedStep": {
+      "title": "This {{productName}} is genuine",
+      "description": "Continue setting up on {{productName}}."
     },
     "pinStep": {
       "title": "PIN",
@@ -1991,49 +2082,10 @@
         "title": "This check assures that your Ledger Stax is an official Ledger.",
         "checkCta": "Start Genuine Check"
       },
-      "allowManagerDrawer": {
-        "wording": "Genuine Check"
-      },
-      "genuineCheckCancelledDrawer": {
-        "title": "Genuine Check canceled",
-        "description": "This check is important to make sure your {{productName}} is an official Ledger.",
-        "retryCta": "Run Genuine Check again",
-        "skipCta": "I'll do it later"
-      },
       "updateAvailableDrawer": {
         "title": "New software found",
         "description": "To access the latest security features, we highly recommend updating your {{productName}}",
         "updateCta": "Update"
-      },
-      "genuineCheckStep": {
-        "inactive": {
-          "title": "Authenticity check"
-        },
-        "active": {
-          "title": "Genuine Check in progress..."
-        },
-        "completed": {
-          "title": "{{productName}} is genuine"
-        },
-        "failed": {
-          "title": "Genuine Check skipped"
-        }
-      },
-      "firmwareUpdateStep": {
-        "active": {
-          "title": "Check for OS update"
-        },
-        "completed": {
-          "updateAvailable": {
-            "title": "Software version {{firmwareVersion}} available"
-          },
-          "noUpdateAvailable": {
-            "title": "{{productName}} is up to date"
-          }
-        },
-        "failed": {
-          "title": "Software update failed"
-        }
       }
     },
     "appsStep": {
@@ -4113,6 +4165,10 @@
       "preparing": "Preparing update",
       "firmware": "Downloading update",
       "prepareUpdate": {
+        "earlySecurityCheck": {
+          "titlePreparingUpdate": "Preparing update for install",
+          "description": "Transferring the update to {{deviceName}}."
+        },
         "titleBackingUp": "Backing up apps and settings",
         "titleTransferring": "Transferring update",
         "description": "Backing up your configuration and transferring the update to {{deviceName}}."
@@ -4123,6 +4179,10 @@
         "description": "{{deviceName}} will restart multiple times.\n\nAfter installation is finished on your {{deviceName}}, unlock your device to complete installation"
       },
       "restoreSettings": {
+        "earlySecurityCheck": {
+          "titleInactive": "Restore settings",
+          "description": "Your settings will be restored."
+        },
         "titleInactive": "Restore apps and settings",
         "description": "Your settings and blockchain apps will be restored.",
         "restoreLockScreenPicture": "Restoring lock screen picture",
@@ -5859,23 +5919,7 @@
     }
   },
   "walletconnect": {
-    "scan": "Scan Wallet Connect QR code",
-    "disclaimer": "Wants to connect to the following Ethereum account through your wallet :",
-    "reject": "Reject",
-    "connect": "Connect",
-    "connected": "Connected",
-    "disconnected": "Disconnected",
-    "warningdisconnected": "There is a connection problem between the dApp, WalletConnect and Ledger Live. Wait a few moments or relaunch the connection",
-    "info": "You can now access the {{name}} dApp on your web browser.",
-    "warning": "Sharing receive addresses from dApp is not secure. Always use Ledger Live when sharing your address to receive funds.",
-    "isconnecting": "is connecting, please wait...",
-    "disconnect": "Disconnect",
-    "retry": "Retry",
-    "close": "Close",
     "message": "Message",
-    "messageHash": "Message Hash",
-    "domainHash": "Domain Hash",
-    "stringHash": "Hash",
     "from": "From",
     "successTitle": "Message signed",
     "successDescription": "You have signed the message received from a third party application",
@@ -5888,9 +5932,7 @@
     "stepVerification": {
       "action": "Please confirm the operation on your device",
       "accountName": "Account name"
-    },
-    "deeplinkingTitle": "Select an Ethereum account",
-    "addAccount": "Add new account"
+    }
   },
   "notificationCenter": {
     "title": "Notification center",

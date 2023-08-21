@@ -4,7 +4,7 @@ import Transport, { TransportStatusError } from "@ledgerhq/hw-transport";
 import type { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../socket";
 import { catchError, filter, map } from "rxjs/operators";

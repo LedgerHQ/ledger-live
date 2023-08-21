@@ -31,5 +31,6 @@ export type ManagerNavigatorStackParamList = {
     firmwareUpdateContext?: FirmwareUpdateContext | null;
     device?: Device | null;
     onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
+    isBeforeOnboarding?: boolean;
   };
 };

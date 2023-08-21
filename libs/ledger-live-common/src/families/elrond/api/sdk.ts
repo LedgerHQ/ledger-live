@@ -12,7 +12,7 @@ import {
 } from "../types";
 import type { TokenAccount, OperationType, SignedOperation } from "@ledgerhq/types-live";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { inferSubOperations } from "@ledgerhq/coin-framework/account/index";
 import {

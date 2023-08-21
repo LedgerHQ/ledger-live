@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import { Observable, of } from "rxjs";
 import { validateNameEdition } from "../account";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import perFamilyMock from "../generated/mock";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
