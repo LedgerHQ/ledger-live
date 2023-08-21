@@ -1,7 +1,8 @@
-import i18n from "i18next";
+import i18n, { InitOptions } from "i18next";
 import { initReactI18next } from "react-i18next";
 import locales from ".";
-const config = {
+
+const config: InitOptions = {
   resources: locales,
   lng: "en",
   defaultNS: "app",
@@ -14,5 +15,7 @@ const config = {
     useSuspense: false,
   },
 };
+
 i18n.use(initReactI18next).init(config);
+
 export default i18n;
