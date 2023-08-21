@@ -49,16 +49,18 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
       <TrackPage category={drawerAnalyticsName} type="drawer" refreshSource={false} />
       <Flex px={13} flex={1}>
         {isNotFoundEntityError ? (
-          <ErrorBody
-            Icon={ErrorIcon}
-            title={t(
-              "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.notFoundEntityError.title",
-            )}
-            description={t(
-              "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.notFoundEntityError.description",
-              { providerNumber },
-            )}
-          />
+          <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+            <ErrorBody
+              Icon={ErrorIcon}
+              title={t(
+                "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.notFoundEntityError.title",
+              )}
+              description={t(
+                "syncOnboarding.manual.softwareCheckContent.genuineCheckErrorDrawer.notFoundEntityError.description",
+                { providerNumber },
+              )}
+            />
+          </Flex>
         ) : (
           <ErrorDisplay error={error} Icon={ErrorIcon} />
         )}

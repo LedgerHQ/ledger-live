@@ -16,7 +16,8 @@ const { createServer } = require("vite");
 const { buildMainEnv, buildRendererEnv, buildViteConfig, lldRoot } = require("./utils");
 
 const startDev = async argv => {
-  const electron = new Electron("./.webpack/main.bundle.js");
+  let execa = await import("execa").then(mod => mod.execa);
+  const electron = new Electron("./.webpack/main.bundle.js", execa);
 
   const OnRebuildPlugin = {
     name: "onRebuild",

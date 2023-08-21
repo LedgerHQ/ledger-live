@@ -1,8 +1,9 @@
 import React from "react";
 import axios from "axios";
 import { jest, describe, beforeAll, beforeEach, it, expect } from "@jest/globals";
-import "@testing-library/jest-dom";
 import BigNumber from "bignumber.js";
+import { render, screen, waitFor } from "tests/testUtils";
+
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
@@ -10,11 +11,10 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { screen, waitFor } from "@testing-library/react";
-import { render } from "tests/testUtils";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/generated/types";
 import RecipientField from "./RecipientField";
+import { TFunction } from "i18next";
 
 // Temp mock to prevent error on sentry init
 jest.mock("../../../../sentry/install", () => ({
@@ -145,6 +145,8 @@ const baseMockStatus: TransactionStatus = {
   totalSpent: new BigNumber("0"),
 };
 
+const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;
+
 const setup = (
   mockStatus: Partial<TransactionStatus> | null = {},
   mockTransaction: Partial<Transaction> | null = {},
@@ -155,7 +157,8 @@ const setup = (
       <RecipientField
         account={account}
         transaction={{ ...baseMockTransaction, ...mockTransaction } as Transaction}
-        t={any => any.toString()}
+        // tslint:disable-next-line
+        t={mockTFunction as unknown as TFunction}
         onChangeTransaction={mockedOnChangeTransaction}
         status={{ ...baseMockStatus, ...mockStatus }}
       />
@@ -189,6 +192,7 @@ describe("RecipientField", () => {
   describe("Rendering", () => {
     it("should render without problem with minimum config", async () => {
       setup();
+      // NB: Document is not available in test dom so use truthy instead of .toBeInTheDocument()
       expect(screen.queryByRole("textbox")).toBeTruthy();
     });
 
@@ -280,9 +284,9 @@ describe("RecipientField", () => {
             recipient: "vitalik👋.eth",
             recipientDomain: undefined,
           });
-          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
-          expect(screen.getByTestId("domain-error-invalid-domain")).toBeInTheDocument();
         });
+
+        expect(screen.getByTestId("domain-error-invalid-domain")).toBeTruthy();
       });
 
       it("should not change domain if domain has no resolution", async () => {
@@ -296,9 +300,12 @@ describe("RecipientField", () => {
             recipient: "anything-not-existing.eth",
             recipientDomain: undefined,
           });
-          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
-          expect(screen.getByTestId("domain-error-no-resolution")).toBeInTheDocument();
         });
+        expect(
+          screen.getByText("send.steps.recipient.domainService.noResolution.title"),
+        ).toBeTruthy();
+
+        expect(screen.getByTestId("domain-error-no-resolution")).toBeTruthy();
       });
 
       it("should remove domain on input change", async () => {

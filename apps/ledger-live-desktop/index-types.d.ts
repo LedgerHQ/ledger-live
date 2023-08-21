@@ -19,7 +19,6 @@ type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
 type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
 type UpdateStatus = import("./src/main/updater/init").UpdateStatus;
-type WalletConnectClient = import("./tests/mocks/WalletConnectClient");
 
 interface RawEvents {
   [key: string]: unknown;
@@ -38,8 +37,6 @@ declare namespace Electron {
 interface Window {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
-
-  WCinstance?: WalletConnectClient;
 
   api?: {
     appLoaded: () => void;

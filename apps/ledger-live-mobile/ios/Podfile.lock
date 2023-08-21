@@ -633,6 +633,8 @@ PODS:
     - React-Core
   - RNLocalize (2.2.1):
     - React-Core
+  - RNReactNativeHapticFeedback (2.0.3):
+    - React-Core
   - RNReanimated (3.1.0):
     - DoubleConversion
     - FBLazyVector
@@ -687,10 +689,10 @@ PODS:
   - SocketRocket (0.6.0)
   - sovran-react-native (0.4.5):
     - React-Core
-  - Storyly (1.26.2)
-  - storyly-react-native (1.26.2):
+  - Storyly (2.0.2)
+  - storyly-react-native (2.0.1):
     - React
-    - Storyly (~> 1.26.0)
+    - Storyly (~> 2.0.0)
   - TOCropViewController (2.5.3)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -805,6 +807,7 @@ DEPENDENCIES:
   - "RNInAppBrowser (from `../../../node_modules/.pnpm/react-native-inappbrowser-reborn@3.7.0_react-native@0.71.6/node_modules/react-native-inappbrowser-reborn`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize`)"
+  - "RNReactNativeHapticFeedback (from `../../../node_modules/.pnpm/react-native-haptic-feedback@2.0.3_react-native@0.71.6/node_modules/react-native-haptic-feedback`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.22.8_@babel+plugin-proposal-nullish-coalescing-op_44ribgho3ix26vxje5qgcyn3pa/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.20.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-screens`)"
   - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@5.3.0_react-native@0.71.6_react@18.0.0/node_modules/@sentry/react-native`)"
@@ -813,7 +816,7 @@ DEPENDENCIES:
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@9.2.0/node_modules/react-native-vector-icons`)"
   - "segment-analytics-react-native (from `../../../node_modules/.pnpm/@segment+analytics-react-native@2.9.1_react-native@0.71.6_react@18.0.0/node_modules/@segment/analytics-react-native`)"
   - "sovran-react-native (from `../../../node_modules/.pnpm/@segment+sovran-react-native@0.4.5_react-native@0.71.6_react@18.0.0/node_modules/@segment/sovran-react-native`)"
-  - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@1.26.2_prop-types@15.8.1_react-native@0.71.6_react@18.0.0/node_modules/storyly-react-native`)"
+  - "storyly-react-native (from `../../../node_modules/.pnpm/storyly-react-native@2.0.1_prop-types@15.8.1_react-native@0.71.6_react@18.0.0/node_modules/storyly-react-native`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native/ReactCommon/yoga`)"
 
 SPEC REPOS:
@@ -1014,6 +1017,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain"
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize"
+  RNReactNativeHapticFeedback:
+    :path: "../../../node_modules/.pnpm/react-native-haptic-feedback@2.0.3_react-native@0.71.6/node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.22.8_@babel+plugin-proposal-nullish-coalescing-op_44ribgho3ix26vxje5qgcyn3pa/node_modules/react-native-reanimated"
   RNScreens:
@@ -1031,7 +1036,7 @@ EXTERNAL SOURCES:
   sovran-react-native:
     :path: "../../../node_modules/.pnpm/@segment+sovran-react-native@0.4.5_react-native@0.71.6_react@18.0.0/node_modules/@segment/sovran-react-native"
   storyly-react-native:
-    :path: "../../../node_modules/.pnpm/storyly-react-native@1.26.2_prop-types@15.8.1_react-native@0.71.6_react@18.0.0/node_modules/storyly-react-native"
+    :path: "../../../node_modules/.pnpm/storyly-react-native@2.0.1_prop-types@15.8.1_react-native@0.71.6_react@18.0.0/node_modules/storyly-react-native"
   Yoga:
     :path: "../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.22.8_metro-resolver@0.76.0_metro-transform-worker@0.76.0_react@18.0.0/node_modules/react-native/ReactCommon/yoga"
 
@@ -1143,6 +1148,7 @@ SPEC CHECKSUMS:
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
+  RNReactNativeHapticFeedback: afa5bf2794aecbb2dba2525329253da0d66656df
   RNReanimated: 3a58a9997837b1e673ee683a81292696c98a0327
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSentry: 8363f1eff1c685a502e15080b5e2f447969897c5
@@ -1156,8 +1162,8 @@ SPEC CHECKSUMS:
   SentryPrivate: bf776a47a131648f5023097215987b40fbd47025
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   sovran-react-native: fd3dc8f1a4b14acdc4ad25fc6b4ac4f52a2a2a15
-  Storyly: 9f7694d816cbe22d1d5604b7653e75feabf1915f
-  storyly-react-native: 2e2e21c3b8d966327659948ab1bed55e1e05127c
+  Storyly: df48014753dfb30c663242c26478d5a6c58379e3
+  storyly-react-native: 5c67a9cc9bf2a327ce6544a5093c35d8449ef727
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   Yoga: ba09b6b11e6139e3df8229238aa794205ca6a02a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

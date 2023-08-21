@@ -23,11 +23,15 @@ const ExitChecksDrawer: React.FC<Props> = ({ onClose, onClickExit }) => {
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
       <TrackPage category={analyticsDrawerName} type="drawer" refreshSource={false} />
-      <ErrorBody
-        Icon={ErrorIcon}
-        title={t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.title")}
-        description={t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.description")}
-      />
+      <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+        <ErrorBody
+          Icon={ErrorIcon}
+          title={t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.title")}
+          description={t(
+            "syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.description",
+          )}
+        />
+      </Flex>
       <DrawerFooter>
         <Link
           mr={8}

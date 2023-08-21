@@ -13,7 +13,6 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
-import { RemoteConfigProvider } from "~/renderer/components/RemoteConfig";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
@@ -61,34 +60,32 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           }
         }}
       >
-        <RemoteConfigProvider>
-          <FirebaseRemoteConfigProvider>
-            <FirebaseFeatureFlagsProvider>
-              <ConnectEnvsToSentry />
-              <UpdaterProvider>
-                <CountervaluesProvider initialState={initialCountervalues}>
-                  <ToastProvider>
-                    <AnnouncementProviderWrapper>
-                      <Router>
-                        <PostOnboardingProviderWrapped>
-                          <PlatformAppProviderWrapper>
-                            <DrawerProvider>
-                              <NftMetadataProvider>
-                                <MarketDataProvider>
-                                  <Default />
-                                </MarketDataProvider>
-                              </NftMetadataProvider>
-                            </DrawerProvider>
-                          </PlatformAppProviderWrapper>
-                        </PostOnboardingProviderWrapped>
-                      </Router>
-                    </AnnouncementProviderWrapper>
-                  </ToastProvider>
-                </CountervaluesProvider>
-              </UpdaterProvider>
-            </FirebaseFeatureFlagsProvider>
-          </FirebaseRemoteConfigProvider>
-        </RemoteConfigProvider>
+        <FirebaseRemoteConfigProvider>
+          <FirebaseFeatureFlagsProvider>
+            <ConnectEnvsToSentry />
+            <UpdaterProvider>
+              <CountervaluesProvider initialState={initialCountervalues}>
+                <ToastProvider>
+                  <AnnouncementProviderWrapper>
+                    <Router>
+                      <PostOnboardingProviderWrapped>
+                        <PlatformAppProviderWrapper>
+                          <DrawerProvider>
+                            <NftMetadataProvider>
+                              <MarketDataProvider>
+                                <Default />
+                              </MarketDataProvider>
+                            </NftMetadataProvider>
+                          </DrawerProvider>
+                        </PlatformAppProviderWrapper>
+                      </PostOnboardingProviderWrapped>
+                    </Router>
+                  </AnnouncementProviderWrapper>
+                </ToastProvider>
+              </CountervaluesProvider>
+            </UpdaterProvider>
+          </FirebaseFeatureFlagsProvider>
+        </FirebaseRemoteConfigProvider>
       </ThrowBlock>
     </StyleProvider>
   );

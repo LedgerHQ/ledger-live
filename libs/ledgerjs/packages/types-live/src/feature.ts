@@ -38,6 +38,8 @@ export type FeatureId =
   | "currencyPersistence"
   | "currencyQuicksilver"
   | "currencyInternetComputer"
+  | "depositNetworkBannerMobile"
+  | "depositWithdrawBannerMobile"
   | "currencyTelosEvm"
   | "currencyCoreum"
   | "currencyPolygonZkEvm"

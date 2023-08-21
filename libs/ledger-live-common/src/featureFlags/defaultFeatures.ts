@@ -95,6 +95,18 @@ export const defaultFeatures = {
   currencyDesmos: {
     enabled: false,
   },
+  depositNetworkBannerMobile: {
+    enabled: false,
+    params: {
+      url: "https://www.ledger.com/ledger-live",
+    },
+  },
+  depositWithdrawBannerMobile: {
+    enabled: false,
+    params: {
+      url: "https://www.ledger.com/ledger-live",
+    },
+  },
   currencyTelosEvm: {
     enabled: false,
   },

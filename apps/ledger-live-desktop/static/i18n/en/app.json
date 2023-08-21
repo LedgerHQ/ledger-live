@@ -528,7 +528,7 @@
   },
   "stake": {
     "noFundsModal": {
-      "title": "Buy, swap or receive",
+      "title": "{{actions, list(type: disjunction)}}",
       "text": "You do not have enough {{coin}} available to stake",
       "description": "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
       "options": {
@@ -1369,31 +1369,7 @@
     }
   },
   "walletconnect": {
-    "titleAccount": "Wallet Connect",
-    "disconnect": "Disconnect",
-    "disconnected": "Disconnected",
-    "connected": "Connected",
-    "connecting": "Connecting...",
-    "invalidAccount": "Invalid account id",
-    "steps": {
-      "paste": {
-        "title": "Paste link",
-        "label": "Wallet Connect address",
-        "placeholder": "Paste Wallet Connect Link"
-      },
-      "confirm": {
-        "title": "Connect",
-        "details": "Wants to connect to the following account through your wallet :",
-        "deeplinkDetails": "Wants to connect to Ledger Live. Choose your account:",
-        "noAccount": "You don't have any compatible account. Please add an compatible account to use Wallet Connect.",
-        "alreadyConnected": "You are trying to connect to a dApp while having another one already connected. Please disconnect from the connected dApp before reconnecting Live with a new dApp."
-      }
-    },
-    "connectedscreen": {
-      "info": "You can now access the {{name}} dApp on your web browser.",
-      "warning": "Sharing receive addresses from dApps is not secure. Always use Ledger Live when sharing your address to receive funds.",
-      "disconnected": "There is a connection problem between the dApp, WalletConnect and Ledger Live. Wait a few moments or relaunch the connection"
-    }
+    "titleAccount": "WalletConnect"
   },
   "dashboard": {
     "title": "Portfolio",
@@ -2292,6 +2268,7 @@
     "header": "Account allocation ({{count}})"
   },
   "elrond": {
+    "guardedAccountWarning": "If you have a guardian set on your account, you won't be able to successfully send transactions via Ledger Live.",
     "summary": {
       "availableBalanceTooltip": "This amount can be transferred.",
       "availableBalance": "Available balance",

@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "dependencies": {
-    "@ledgerhq/live-app-sdk": "^0.5.0",
+    "@ledgerhq/live-app-sdk": "^0.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.1"

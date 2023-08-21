@@ -5,7 +5,7 @@ export default class ReceivePage {
     return openDeeplink("receive");
   }
   async selectCurrency(currencyId: string) {
-    const id = "currency-row-" + currencyId;
+    const id = "big-currency-row-" + currencyId;
     await waitForElementById(id);
     await tapById(id);
   }

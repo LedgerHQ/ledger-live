@@ -414,7 +414,7 @@ export function useWalletAPIServer({
               },
               onCancel: () => {
                 tracking.signMessageFail(manifest);
-                reject(UserRefusedOnDevice());
+                reject(new UserRefusedOnDevice());
               },
               onError: error => {
                 tracking.signMessageFail(manifest);

@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { Operation } from "@ledgerhq/types-live";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import Box from "~/renderer/components/Box";
 import OperationDate from "./OperationDate";
 import { InfiniteLoader } from "@ledgerhq/react-ui";

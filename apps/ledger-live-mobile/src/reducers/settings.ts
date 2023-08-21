@@ -74,6 +74,8 @@ import type {
   SettingsSetOnboardingHasDevicePayload,
   SettingsSetOnboardingTypePayload,
   SettingsSetKnownDeviceModelIdsPayload,
+  SettingsSetClosedNetworkBannerPayload,
+  SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
 } from "../actions/types";
 import {
@@ -177,6 +179,10 @@ export const INITIAL_STATE: SettingsState = {
   dateFormat: "default",
   hasBeenUpsoldProtect: false,
   onboardingType: null,
+  depositFlow: {
+    hasClosedNetworkBanner: false,
+    hasClosedWithdrawBanner: false,
+  },
   userNps: null,
 };
 
@@ -545,6 +551,20 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_CLOSED_NETWORK_BANNER]: (state, action) => ({
+    ...state,
+    depositFlow: {
+      ...state.depositFlow,
+      hasClosedNetworkBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
+    },
+  }),
+  [SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER]: (state, action) => ({
+    ...state,
+    depositFlow: {
+      ...state.depositFlow,
+      hasClosedWithdrawBanner: (action as Action<SettingsSetClosedWithdrawBannerPayload>).payload,
+    },
+  }),
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
     ...state,
     notifications: {
@@ -775,6 +795,10 @@ export const customImageBackupSelector = (state: State) => state.settings.custom
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
+export const hasClosedNetworkBannerSelector = (state: State) =>
+  state.settings.depositFlow.hasClosedNetworkBanner;
+export const hasClosedWithdrawBannerSelector = (state: State) =>
+  state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;

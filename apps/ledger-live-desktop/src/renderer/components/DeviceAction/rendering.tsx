@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import map from "lodash/map";
-import { TFunction, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -635,12 +636,12 @@ export const ErrorBody: React.FC<{
   list?: string | React.ReactNode;
 }> = ({ Icon, title, description, list }) => {
   return (
-    <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+    <>
       <BoxedIcon Icon={Icon} size={64} iconSize={24} />
       <ErrorTitle>{title}</ErrorTitle>
       <ErrorDescription>{description}</ErrorDescription>
       {list ? <ErrorDescription>{list}</ErrorDescription> : null}
-    </Flex>
+    </>
   );
 };
 

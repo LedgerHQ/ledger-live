@@ -69,7 +69,6 @@ import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWa
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 import MarketDetail from "../../screens/Market/MarketDetail";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import WalletConnectNavigator from "./WalletConnectNavigator";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
@@ -471,16 +470,17 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        <Stack.Screen
-          name={NavigatorName.WalletConnect}
-          component={
-            walletConnectLiveApp?.enabled ? WalletConnectLiveAppNavigator : WalletConnectNavigator
-          }
-          options={{
-            headerShown: false,
-          }}
-          {...noNanoBuyNanoWallScreenOptions}
-        />
+        {walletConnectLiveApp?.enabled && (
+          <Stack.Screen
+            name={NavigatorName.WalletConnect}
+            component={WalletConnectLiveAppNavigator}
+            options={{
+              headerShown: false,
+            }}
+            {...noNanoBuyNanoWallScreenOptions}
+          />
+        )}
+
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
           component={NotificationCenterNavigator}

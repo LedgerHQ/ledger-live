@@ -4,10 +4,10 @@ import { SwapNoAvailableProviders } from "../../errors";
 import { getAvailableProviders, getSwapAPIBaseURL } from "./";
 import { mockGetProviders } from "./mock";
 import type { GetProviders, ProvidersResponseV4 } from "./types";
-import { isPlaywrightEnv } from "./utils/isPlaywrightEnv";
+import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 
 const getProviders: GetProviders = async () => {
-  if (isPlaywrightEnv()) return mockGetProviders();
+  if (isIntegrationTestEnv()) return mockGetProviders();
 
   const res = await network({
     method: "GET",
