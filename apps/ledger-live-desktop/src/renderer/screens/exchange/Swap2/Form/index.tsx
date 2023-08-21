@@ -3,7 +3,10 @@ import {
   useSwapTransaction,
   usePageState,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getCustomFeesPerFamily } from "@ledgerhq/live-common/exchange/swap/webApp/index";
+import {
+  getCustomFeesPerFamily,
+  convertToNonAtomicUnit,
+} from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName, getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -153,11 +156,7 @@ const SwapForm = () => {
     if (fromAccount && toAccount) {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-      const fromMagnitude =
-        fromAccount.type === "TokenAccount"
-          ? fromAccount.token.units[0].magnitude || 0
-          : fromAccount.currency?.units[0].magnitude || 0;
-      const fromAmount = transaction?.amount.shiftedBy(-fromMagnitude);
+      const fromAmount = convertToNonAtomicUnit(transaction?.amount, fromAccount);
 
       const customFeesParams = feesStrategy === "custom" ? getCustomFeesPerFamily(transaction) : {};
 
