@@ -67,7 +67,9 @@ export default {
     async function getAllRecipients(currencies: CryptoCurrency[]) {
       const prevSeed = getEnv("SEED");
       const { SEED_RECIPIENT } = process.env;
-      setEnv("SEED", SEED_RECIPIENT);
+      if (SEED_RECIPIENT) {
+        setEnv("SEED", SEED_RECIPIENT);
+      }
       const recipientsPerCurrencyId: Map<string, string> = new Map();
       await promiseAllBatched(CONCURRENT, currencies, async currency => {
         let device;
