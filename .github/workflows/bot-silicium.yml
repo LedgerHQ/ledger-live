@@ -1,15 +1,19 @@
 name: "[Bot] Testing with 'Silicium'"
-run-name: Test with 🤖 Silicium by @${{github.actor}} with ${{inputs.family}}
+run-name: Test with 🤖 Silicium by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:
     inputs:
-      family:
-        description: coin family to filter with (if any)
+      families:
+        description: coin families to test, separated with commas (,)
         required: false
-  push:
-    branches:
-      - support/bot-silicium
-      - support/bot-silicium-*
+      currencies:
+        description: currency ids to test, separated with commas (,)
+        required: false
+      speculos_websocket:
+        description: check to use speculos with Websocket
+        type: boolean
+        required: false
+        default: false
 
 concurrency:
   group: bot-seed3
@@ -41,4 +45,6 @@ jobs:
           SLACK_ICON_EMOJI: ":bot-seed3:"
           SEED: ${{ secrets.SEED3 }}
           BOT_ENVIRONMENT: testing
-          BOT_FILTER_FAMILY: ${{inputs.family}}
+          BOT_FILTER_FAMILIES: ${{github.event.inputs.families}}
+          BOT_FILTER_CURRENCIES: ${{github.event.inputs.currencies}}
+          SPECULOS_USE_WEBSOCKET: ${{inputs.speculos_websocket}}
