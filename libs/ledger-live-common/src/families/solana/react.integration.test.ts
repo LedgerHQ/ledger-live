@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react-hooks";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
-import { setEnv } from "../../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";

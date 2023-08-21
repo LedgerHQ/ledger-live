@@ -1,7 +1,7 @@
 import semver from "semver";
 import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
 import { getDependencies } from "./polyfill";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export function shouldUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;

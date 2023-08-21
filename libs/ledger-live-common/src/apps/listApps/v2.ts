@@ -14,7 +14,7 @@ import {
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import getDeviceName from "../../hw/getDeviceName";
 

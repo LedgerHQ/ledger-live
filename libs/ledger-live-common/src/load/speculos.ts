@@ -12,7 +12,7 @@ import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
 import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { registerTransportModule } from "../hw";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
